@@ -147,7 +147,7 @@ $(function () {
                         for (var i = 0; i < datosTabla.length; i++) {
                             servicios.push({servicio: datosTabla[i][4], sucursal: datosTabla[i][5], atiende: datosTabla[i][6], descripcion: datosTabla[i][3], nombreServicio: datosTabla[i][0], nombreSucursal: datosTabla[i][1]});
                         }
-                        var data = {solicitud: datos[0], ticket: datos[1], servicios: servicios, cliente: cliente, descripcion: descripcionSolicitud};
+                        var data = {solicitud: datos[0], ticket: datos[3], servicios: servicios, cliente: cliente, descripcion: descripcionSolicitud};
                         evento.enviarEvento('Solicitud/Generar_Ticket', data, '#modal-dialogo', function (respuesta) {
                             var fila = [];
                             if (typeof respuesta === 'object') {
