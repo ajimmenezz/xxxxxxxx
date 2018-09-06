@@ -58,10 +58,11 @@
             </div>            
         </div>        
     </div>
-
+    
     <div id="divNuevoProyecto" style="display:none;"></div>
     <div id="divDetallesProyecto" style="display:none;"></div>
     <div id="divNuevaUbicacion" style="display:none;"></div>
+    <div id="divDetallesTarea" style="display:none;"></div>
 
     <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
