@@ -489,7 +489,7 @@ class EditarSolicitud extends General {
                     } else {
                         $apiKey = $this->DBS->getApiKeyMesaAyuda();
                     }
-                    $data['datosSD'] = json_decode($this->ServiceDesk->getDetallesFolio($apiKey, $datosSolicitud['Folio']));
+                    $data['datosSD'] = $this->ServiceDesk->getDetallesFolio($apiKey, $datosSolicitud['Folio']);
                     $data['datosResolucionSD'] = json_decode($this->ServiceDesk->getResolucionFolio($apiKey, $datosSolicitud['Folio']));
                 }
                 $data['usuarioApiKey'] = $usuario['SDKey'];
