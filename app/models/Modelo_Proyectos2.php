@@ -551,20 +551,34 @@ class Modelo_Proyectos2 extends Modelo_Base {
     public function getSucursalesEstados(int $cliente) {
         $consulta = $this->consulta("select
                                     cs.Id,
-                                    concat(cs.Nombre,' (',(select Nombre from cat_v3_estados where Id = cs.IdEstado),')') as Nombre
-                                    from cat_v3_sucursales cs where IdCliente = '" . $cliente . "' AND Flag = 1 order by Nombre;");
+                                    concat(cs.Nombre,' (',(select Nombre from cat_v3_estados where Id = cs.IdEstado),')') as Nombre,
+                                    NombreCinemex
+                                    from cat_v3_sucursales cs where IdCliente = '" . $cliente . "' order by Nombre;");
         return $consulta;
     }
 
-    public function getLideres() {
-        $consulta = $this->consulta("select 
-                                    cu.Id,
-                                    nombreUsuario(cu.Id) as Nombre,
-                                    (select Nombre from cat_perfiles where Id = cu.IdPerfil) as Perfil
-                                    from cat_v3_usuarios cu
-                                    where IdPerfil in (24,26,27,42) 
-                                    and Flag = 1
-                                    order by Nombre;");
+    public function getLideres(int $sistema = 0) {
+        $query = "select 
+                cu.Id,
+                nombreUsuario(cu.Id) as Nombre,
+                (select Nombre from cat_perfiles where Id = cu.IdPerfil) as Perfil
+                from cat_v3_usuarios cu
+                where Flag = 1 
+                and nombreUsuario(cu.Id) <> ''
+                order by Nombre;";
+
+        if ($sistema == 1) {
+            $query = "select 
+                cu.Id,
+                nombreUsuario(cu.Id) as Nombre,
+                (select Nombre from cat_perfiles where Id = cu.IdPerfil) as Perfil
+                from cat_v3_usuarios cu
+                where IdPerfil in (24,26,27,42) 
+                and Flag = 1
+                order by Nombre;";
+        }
+
+        $consulta = $this->consulta($query);
         return $consulta;
     }
 
@@ -671,7 +685,12 @@ class Modelo_Proyectos2 extends Modelo_Base {
     }
 
     public function getGeneralesProyecto(int $id) {
-        $consulta = $this->consulta("select * from t_proyectos where Id = '" . $id . "'");
+        $consulta = $this->consulta("select "
+                . "tp.*, "
+                . "DATE_FORMAT(FechaInicio,'%d-%m-%Y') as IniG, "
+                . "DATE_FORMAT(FechaTermino,'%d-%m-%Y') as FinG "
+                . "from t_proyectos tp "
+                . "where Id = '" . $id . "'");
         return $consulta[0];
     }
 
@@ -696,6 +715,16 @@ class Modelo_Proyectos2 extends Modelo_Base {
     public function getLideresProyecto(int $id) {
         $consulta = $this->consulta("select group_concat(IdUsuario) as Lideres from t_lideres_proyecto where IdProyecto = '" . $id . "'");
         return $consulta[0];
+    }
+
+    public function getLideresProyectoString(int $proyecto) {
+        $consulta = $this->consulta("select nombreUsuario(IdUsuario) as Lider from t_lideres_proyecto where IdProyecto = '" . $proyecto . "'");
+        return $consulta;
+    }
+
+    public function getAsistentesProyectoString(int $proyecto) {
+        $consulta = $this->consulta("select nombreUsuario(IdUsuario) as Asistente from t_asistentes_proyecto where IdProyecto = '" . $proyecto . "'");
+        return $consulta;
     }
 
     public function guardarGeneralesProyecto(array $datos) {
@@ -940,20 +969,60 @@ class Modelo_Proyectos2 extends Modelo_Base {
     }
 
     public function cargaMaterialProyectado(int $proyecto) {
-        $consulta = $this->consulta("select                                     
-                                    concat(cap.Nombre,' - ',sae.Nombre) as Material,
-                                    sae.Clave,
-                                    sum(tnap.Cantidad) as Total,
-                                    sae.Unidad
-                                    from t_nodos_alcance_proyecto tnap
-                                    inner join t_alcance_proyecto tap on tap.Id = tnap.IdAlcance
-                                    inner join cat_v3_equipos_sae sae on tnap.IdMaterial = sae.Id
-                                    inner join cat_v3_accesorios_proyecto cap on tnap.IdAccesorio = cap.Id
-                                    where tap.IdProyecto = '" . $proyecto . "'
-                                    and tap.Flag = 1
-                                    and tnap.Flag = 1
-                                    group by sae.Clave;
-                                    ");
+        $generales = $this->getGeneralesProyecto($proyecto);
+
+        $query = "select 
+                concat(cap.Nombre,' - ',sae.Nombre) as Material,
+                sae.Clave,
+                tptm.Cantidad as Total,
+                sae.Unidad
+                from t_proyectos_tarea_material tptm
+                inner join t_proyectos_tareas tpt on tptm.IdTarea = tpt.Id
+                inner join cat_v3_equipos_sae sae on tptm.IdMaterial = sae.Id
+                inner join cat_v3_accesorios_proyecto cap on tptm.IdAccesorio = cap.Id
+                where tpt.IdProyecto = '" . $proyecto . "'
+                and tpt.Flag = 1
+                and tptm.Flag = 1";
+
+        if ($generales['IdSistema'] == 1) {
+            $query = "SELECT
+                                    Material,
+                                    Clave,
+                                    sum(Total) as Total,
+                                    Unidad
+                                    from (
+                                        select                                     
+                                        concat(cap.Nombre,' - ',sae.Nombre) as Material,
+                                        sae.Clave,
+                                        tnap.Cantidad as Total,
+                                        sae.Unidad
+                                        from t_nodos_alcance_proyecto tnap
+                                        inner join t_alcance_proyecto tap on tap.Id = tnap.IdAlcance
+                                        inner join cat_v3_equipos_sae sae on tnap.IdMaterial = sae.Id
+                                        inner join cat_v3_accesorios_proyecto cap on tnap.IdAccesorio = cap.Id
+                                        where tap.IdProyecto = '" . $proyecto . "'
+                                        and tap.Flag = 1
+                                        and tnap.Flag = 1
+
+                                        union all
+
+                                        select 
+                                        concat(cap.Nombre,' - ',sae.Nombre) as Material,
+                                        sae.Clave,
+                                        tptm.Cantidad as Total,
+                                        sae.Unidad
+                                        from t_proyectos_tarea_material tptm
+                                        inner join t_proyectos_tareas tpt on tptm.IdTarea = tpt.Id
+                                        inner join cat_v3_equipos_sae sae on tptm.IdMaterial = sae.Id
+                                        inner join cat_v3_accesorios_proyecto cap on tptm.IdAccesorio = cap.Id
+                                        where tpt.IdProyecto = '" . $proyecto . "'
+                                        and tpt.Flag = 1
+                                        and tptm.Flag = 1
+                                    ) as tf
+                                    group by Clave order by Material";
+        }
+
+        $consulta = $this->consulta($query);
         return $consulta;
     }
 
@@ -965,14 +1034,14 @@ class Modelo_Proyectos2 extends Modelo_Base {
                     inve.UNI_MED as Unidad
                     from MULT03 almacen
                     INNER JOIN INVE03 inve on almacen.CVE_ART = inve.CVE_ART
-                    where almacen.CVE_ALM = '" . $almacen . "';";
+                    where almacen.CVE_ALM = '" . $almacen . "'
+                    and almacen.EXIST > 0";
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta->result_array();
     }
 
-    public function getTecnicosAsistentes() {
-        $consulta = $this->consulta('
-                select 
+    public function getTecnicosAsistentes(int $sistema = 0) {
+        $query = "select 
                     cu.Id, 
                     nombreUsuario(cu.Id) as Nombre,
                     rhp.NSS,
@@ -981,8 +1050,23 @@ class Modelo_Proyectos2 extends Modelo_Base {
                 from cat_v3_usuarios cu                 
                 inner join t_rh_personal rhp 
                 on cu.Id = rhp.IdUsuario 
-                where cu.IdPerfil in (30,31,32,81,82) 
-                order by Nombre');
+                where cu.Flag = 1
+                order by Nombre";
+        if ($sistema == 1) {
+            $query = "select 
+                    cu.Id, 
+                    nombreUsuario(cu.Id) as Nombre,
+                    rhp.NSS,
+                    (select Nombre from cat_perfiles where Id = cu.IdPerfil) as Perfil,
+                    cu.Flag
+                from cat_v3_usuarios cu                 
+                inner join t_rh_personal rhp 
+                on cu.Id = rhp.IdUsuario 
+                where cu.IdPerfil in (30,31,32,81,82) and cu.Flag = 1
+                order by Nombre";
+        }
+
+        $consulta = $this->consulta($query);
         return $consulta;
     }
 
@@ -1037,15 +1121,24 @@ class Modelo_Proyectos2 extends Modelo_Base {
     }
 
     public function getTareasPredecesoras(int $proyecto, int $id = null) {
-        $condicion = (!is_null($id)) ? " and Id <> '" . $id . "'" : "";
-        $consulta = "select 
+        $condicion = '';
+        if (!is_null($id)) {
+            $ligadas = array_merge([$id], $this->getTareasLigadas($id));
+            $ligadas = implode(",", $ligadas);
+            $condicion = ' and Id not in (' . $ligadas . ')';
+        }
+
+        $consulta = $this->consulta("select 
                     Id,
                     Nombre,
-                    Fin
+                    DATE_FORMAT(Fin,'%d/%m/%Y') as Fin,
+                    DATE_FORMAT(Fin,'%d-%m-%Y') as FinG
                     from t_proyectos_tareas
                     where IdProyecto = '" . $proyecto . "'
                     and Fin <> ''
-                    and Fin is not null " . $condicion . " order by Nombre asc";
+                    and Fin is not null " . $condicion . " 
+                    and Flag = 1
+                    order by Nombre asc");
         return $consulta;
     }
 
@@ -1055,7 +1148,7 @@ class Modelo_Proyectos2 extends Modelo_Base {
 
         $connection = parent::connectDBPrueba();
         $connection->trans_begin();
-        if (!isset($datos['idTarea'])) {
+        if ((int) $datos['idTarea'] == 0) {
             $connection->insert('t_proyectos_tareas', [
                 'IdProyecto' => $datos['id'],
                 'IdPredecesora' => $datos['predecesora'],
@@ -1065,9 +1158,43 @@ class Modelo_Proyectos2 extends Modelo_Base {
                 'IdLider' => $datos['lider'],
                 'IdEstatus' => 1
             ]);
+            $idTarea = $connection->insert_id();
+        } else {
+
+            $generalesTarea = $this->cargaTareasProyecto($datos['id'], $datos['idTarea'])[0];
+            $consulta = $this->consulta("select datediff('" . $ffin . "',Fin) as Diferencia from t_proyectos_tareas where Id = 1;")[0];
+
+            $diferenciaDias = $consulta['Diferencia'];
+
+            $connection->where(['Id' => $datos['idTarea']]);
+            $connection->update('t_proyectos_tareas', [
+                'IdProyecto' => $datos['id'],
+                'IdPredecesora' => $datos['predecesora'],
+                'Nombre' => mb_strtoupper($datos['nombre']),
+                'Inicio' => $fini,
+                'Fin' => $ffin,
+                'IdLider' => $datos['lider'],
+                'IdEstatus' => 1
+            ]);
+
+            $connection->delete('t_proyectos_tarea_asistentes', [
+                'IdTarea' => $datos['idTarea']
+            ]);
+            $idTarea = $datos['idTarea'];
+
+            if ((int) $diferenciaDias !== 0) {
+                $tareasLigadas = $this->getTareasLigadas($idTarea);
+                if (!empty($tareasLigadas)) {
+                    $tareasLigadas = implode(",", $tareasLigadas);
+                    $connection->query("update "
+                            . "t_proyectos_tareas "
+                            . "set Inicio = date_add(Inicio, INTERVAL " . $diferenciaDias . " DAY), "
+                            . "Fin = date_add(Fin, INTERVAL " . $diferenciaDias . " DAY)"
+                            . "where Id in (" . $tareasLigadas . ") ");
+                }
+            }
         }
 
-        $idTarea = $connection->insert_id();
         if (isset($datos['tecnicos']) && !empty($datos['tecnicos'])) {
             foreach ($datos['tecnicos'] as $key => $value) {
                 $connection->insert('t_proyectos_tarea_asistentes', [
@@ -1097,17 +1224,489 @@ class Modelo_Proyectos2 extends Modelo_Base {
         return $consulta;
     }
 
-    public function cargaTareasProyecto(int $idProyecto = null) {
+    public function cargaTareasProyecto(int $idProyecto, int $id = null) {
+        $condicion = (!is_null($id)) ? " and tpt.Id = '" . $id . "'" : "";
         $consulta = $this->consulta("select
                                     tpt.Id,
                                     tpt.Nombre,
+                                    tpt.IdPredecesora,
                                     (select Nombre from t_proyectos_tareas where Id = tpt.IdPredecesora) as Predecesora,
-                                    tpt.Inicio,
-                                    tpt.Fin,
+                                    DATE_FORMAT(tpt.Inicio,'%d/%m/%Y') as Inicio,
+                                    DATE_FORMAT(tpt.Inicio,'%d-%m-%Y') as InicioG,
+                                    tpt.Inicio as InicioN,
+                                    DATE_FORMAT(tpt.Fin,'%d/%m/%Y') as Fin,
+                                    DATE_FORMAT(tpt.Fin,'%d-%m-%Y') as FinG,
+                                    tpt.Fin as FinN,
+                                    tpt.IdLider,
                                     nombreUsuario(tpt.IdLider) as Lider,
-                                    (select GROUP_CONCAT(nombreUsuario(IdTecnico)) as Tecnicos from t_proyectos_tarea_asistentes where IdTarea = tpt.Id) as Tecnicos
+                                    (select GROUP_CONCAT(IdTecnico) from t_proyectos_tarea_asistentes where IdTarea = tpt.Id) as IdTecnicos,
+                                    (select GROUP_CONCAT(nombreUsuario(IdTecnico)) as Tecnicos from t_proyectos_tarea_asistentes where IdTarea = tpt.Id) as Tecnicos,
+                                    (select count(*) from t_proyectos_tarea_nodos where IdTarea = tpt.Id and Flag = 1) as Nodos,
+                                    (select count(*) from t_proyectos_tarea_material  where IdTarea = tpt.Id and Flag = 1) as RM
                                     from t_proyectos_tareas tpt
-                                    where tpt.IdProyecto = '" . $idProyecto . "'");
+                                    where tpt.IdProyecto = '" . $idProyecto . "' " . $condicion . " and tpt.Flag = 1");
+        return $consulta;
+    }
+
+    public function getTareasLigadas(int $idTarea) {
+        $faltan = [$idTarea];
+        $tareas = [];
+        while (!empty($faltan)) {
+            foreach ($faltan as $key => $value) {
+                $consulta = $this->consulta("select Id from t_proyectos_tareas where IdPredecesora = '" . $value . "' and Flag = 1");
+                foreach ($consulta as $k => $v) {
+                    array_push($faltan, $v['Id']);
+                    array_push($tareas, $v['Id']);
+                }
+                $faltan = array_diff($faltan, [$value]);
+            }
+        }
+
+        return $tareas;
+    }
+
+    public function getNodosActivosProyecto(int $idProyecto, int $idTarea) {
+        $consulta = $this->consulta("select 
+                                    tnap.Id,
+                                    (select Nombre from cat_v3_conceptos_proyecto where Id = tap.IdConcepto) as Concepto,
+                                    (select Nombre from cat_v3_areas_proyectos where Id = tap.IdArea) as Area,
+                                    (select Nombre from cat_v3_ubicaciones_proyectos where Id = tap.IdUbicacion) as Ubicacion,
+                                    (select Nombre from cat_v3_tipos_nodo_proyectos where Id = tnap.IdTipoNodo) as TipoNodo,
+                                    tnap.Nombre,
+                                    concat(
+                                        (select Nombre from cat_v3_accesorios_proyecto where Id = tnap.IdAccesorio),' - ',
+                                        (select concat('[',Clave,'] ',Nombre) from cat_v3_equipos_sae where Id = tnap.IdMaterial)
+                                    ) as Material,
+                                    (select count(*) from t_proyectos_tarea_nodos where IdNodo = tnap.Id and Flag = 1) as Existe
+                                    from t_alcance_proyecto tap
+                                    inner join t_nodos_alcance_proyecto tnap on tap.Id = tnap.IdAlcance
+                                    where tap.IdProyecto = '" . $idProyecto . "'
+                                    and tap.Flag = 1
+                                    and tnap.Flag = 1
+                                    and tnap.Id not in (
+                                    select IdNodo
+                                    from t_proyectos_tareas tpt 
+                                    inner join t_proyectos_tarea_nodos tptn on tpt.Id = tptn.IdTarea
+                                    where tpt.IdProyecto = '" . $idProyecto . "'
+                                    and tpt.Id <> '" . $idTarea . "' 
+                                    and tptn.Flag = 1 
+                                    and tpt.Flag = 1);");
+        return $consulta;
+    }
+
+    public function eliminarTarea($id) {
+        $this->iniciaTransaccion();
+
+        $tarea = $this->consulta("select * from t_proyectos_tareas where Id = '" . $id . "'")[0];
+
+        $tareasLigadas = $this->consulta("select Id from t_proyectos_tareas where IdPredecesora = '" . $id . "'");
+        foreach ($tareasLigadas as $key => $value) {
+            $this->actualizar('t_proyectos_tareas', ['IdPredecesora' => $tarea['IdPredecesora']], ['Id' => $value['Id']]);
+        }
+
+        $this->actualizar('t_proyectos_tareas', ['Flag' => 0, 'IdPredecesora' => null], ['Id' => $id]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function guardarNodosTarea(array $datos) {
+        $this->iniciaTransaccion();
+
+        $this->actualizar("t_proyectos_tarea_nodos", ['Flag' => 0], ['IdTarea' => $datos['tarea']]);
+
+        foreach ($datos['nodos'] as $key => $value) {
+            $consulta = $this->consulta("select "
+                    . "Id "
+                    . "from t_proyectos_tarea_nodos "
+                    . "where IdTarea = '" . $datos['tarea'] . "' "
+                    . "and IdNodo = '" . $value . "'");
+            if (!empty($consulta)) {
+                $this->actualizar("t_proyectos_tarea_nodos", ['Flag' => 1], ['Id' => $consulta[0]['Id']]);
+            } else {
+                $this->insertar("t_proyectos_tarea_nodos", ['IdTarea' => $datos['tarea'], 'IdNodo' => $value, 'Flag' => 1]);
+            }
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function guardarMaterialTarea(array $datos) {
+        $this->iniciaTransaccion();
+
+        foreach ($datos['material'] as $key => $value) {
+            if ($value['id'] !== '') {
+                $this->actualizar('t_proyectos_tarea_material', [
+                    'IdTarea' => $datos['idTarea'],
+                    'IdAccesorio' => $value['accesorio'],
+                    'IdMaterial' => $value['material'],
+                    'Cantidad' => $value['cantidad'],
+                    'Flag' => 1
+                        ], ['Id' => $value['id']]);
+            } else {
+                $this->insertar('t_proyectos_tarea_material', [
+                    'IdTarea' => $datos['idTarea'],
+                    'IdAccesorio' => $value['accesorio'],
+                    'IdMaterial' => $value['material'],
+                    'Cantidad' => $value['cantidad'],
+                    'Flag' => 1
+                ]);
+            }
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function getMaterialTarea(int $tarea) {
+        $nodos = $this->consulta("SELECT
+                                Id,                                
+                                IdAccesorio,
+                                IdMaterial,                                
+                                (select Nombre from cat_v3_accesorios_proyecto where Id = IdAccesorio) as Accesorio,
+                                (select Nombre from cat_v3_equipos_sae where Id = IdMaterial) as Material,
+                                Cantidad
+                                from t_proyectos_tarea_material
+                                where IdTarea = '" . $tarea . "' and Flag = 1;");
+
+        return $nodos;
+    }
+
+    public function getInfoHeaderInicioProyecto(int $proyecto) {
+        $consulta = $this->consulta("select 
+                                    cliente(cs.IdCliente) as Cliente,
+                                    cs.Nombre as Sucursal,
+                                    concat(
+                                            cs.Calle,' ',
+                                            NoExt, ', ',
+                                            (select Nombre from cat_v3_municipios where Id = cs.IdMunicipio),', ',
+                                            (select Nombre from cat_v3_estados where Id = cs.IdEstado),', ',
+                                            (select Nombre from cat_v3_paises where Id = cs.IdPais)
+                                    ) as Direccion, 
+                                    tp.IdSistema,
+                                    (select Nombre from cat_v3_sistemas_proyecto where Id = tp.IdSistema) as Sistema,
+                                    (select Nombre from cat_v3_tipo_proyecto where Id = tp.IdTipo) as Tipo,
+                                    DATE_FORMAT(tp.FechaInicio,'%d/%m/%Y') as Inicio,
+                                    DATE_FORMAT(tp.FechaTermino,'%d/%m/%Y') as Fin
+                                    from t_proyectos tp
+                                    inner join cat_v3_sucursales cs on tp.IdSucursal = cs.Id
+                                    where tp.Id = '" . $proyecto . "';");
+        return $consulta;
+    }
+
+    public function getProyectosAlmacenSAE() {
+        $consulta = $this->consulta("SELECT
+                                    tp.Id
+                                    from t_proyectos tp
+                                    LEFT JOIN t_proyectos_almacen_sae_asignado tpasa on tp.Id = tpasa.IdProyecto
+                                    where tp.IdEstatus <> 6
+                                    and tpasa.Id is null");
+        if (!empty($consulta)) {
+            $this->iniciaTransaccion();
+            foreach ($consulta as $key => $value) {
+                $this->insertar('t_proyectos_almacen_sae_asignado', ['IdProyecto' => $value['Id']]);
+            }
+
+            if ($this->estatusTransaccion() === FALSE) {
+                $this->roolbackTransaccion();
+            } else {
+                $this->commitTransaccion();
+            }
+        }
+
+        $almacenes = $this->getAlmacenesVirtualesSAE();
+        $almacenesArray[''] = '';
+        $almacenesArray[0] = '';
+        foreach ($almacenes as $key => $value) {
+            $almacenesArray[$value['CVE_ALM']] = $value['DESCR'];
+        }
+
+        $consulta = $this->consulta("select
+                        p.Id,
+                        p.Ticket,                    
+                        p.Nombre,    
+                        e.Nombre Estado,
+                        s.Nombre Complejo,
+                        tpasa.CVE_ALM
+                    from t_proyectos p 
+                    left join cat_v3_sucursales s on p.IdSucursal = s.Id 
+                    left join cat_v3_estados e on s.IdEstado = e.Id 
+                    left join t_proyectos_almacen_sae_asignado tpasa on p.Id = tpasa.IdProyecto
+                    where p.IdEstatus <> 6");
+
+        $datos = [];
+        if (!empty($consulta)) {
+            foreach ($consulta as $key => $value) {
+                array_push($datos, array(
+                    'Id' => $value['Id'],
+                    'Ticket' => $value['Ticket'],
+                    'Nombre' => $value['Nombre'],
+                    'Complejo' => $value['Complejo'],
+                    'Estado' => $value['Estado'],
+                    'Almacen' => $almacenesArray[$value['CVE_ALM']],
+                    'CVE_ALM' => $value['CVE_ALM']
+                ));
+            }
+        }
+        return $datos;
+    }
+
+    public function getAlmacenesVirtualesSAE() {
+        $consulta = parent::connectDBSAE7()->query("select CVE_ALM, DESCR from ALMACENES03 order by DESCR");
+        return $consulta->result_array();
+    }
+
+    public function asignarAlmacenVirtual($data) {
+        $fecha = $this->getFecha();
+        $result = $this->actualizar('t_proyectos_almacen_sae_asignado', [
+            'CVE_ALM' => $data['almacen'],
+            'IdUsuario' => $this->usuario['Id'],
+            'Fecha' => $fecha], ['IdProyecto' => $data['proyecto']]);
+        if (!is_null($result)) {
+            return ['code' => 200, 'error' => 'Almacén Vitual guardado con éxito.'];
+        } else {
+            return ['code' => 200, 'error' => 'No se ha podido guardar la información del almacén en la base de datos. Recargue la página e intente de nuevo.'];
+        }
+    }
+
+    public function getAlmacenSAEAsignado(int $id) {
+        $consulta = $this->consulta("select CVE_ALM as Almacen from t_proyectos_almacen_sae_asignado where IdProyecto = '" . $id . "'");
+        if (isset($consulta[0])) {
+            return $consulta[0]['Almacen'];
+        } else {
+            return 0;
+        }
+    }
+
+    public function getTareasProyectos() {
+        $condicion = " and (tpa.IdLider = 2 or (select count(*) from t_proyectos_tarea_asistentes tpta where tpta.IdTarea = tpa.Id and tpta.IdTecnico = 2)) ";
+
+        //279 permiso para ver todas las tareas de todos los proyectos       
+        if (in_array(279, array_merge($this->usuario['Permisos'], $this->usuario['PermisosAdicionales']))) {
+            $condicion = "";
+        }
+
+        $consulta = $this->consulta("select 
+                                    tpa.Id,
+                                    tp.Nombre as Proyecto,
+                                    sucursalCliente(tp.IdSucursal) as Sucursal,
+                                    tpa.Nombre as Tarea,
+                                    tpa.Avance,
+                                    tpa.IdPredecesora,
+                                    (select Nombre from t_proyectos_tareas WHERE Id = tpa.IdPredecesora) as Predecesora,
+                                    DATE_FORMAT(tpa.Inicio,'%d/%m/%Y') as Inicio,
+                                    DATE_FORMAT(tpa.Fin,'%d/%m/%Y') as Fin,
+                                    nombreUsuario(tpa.IdLider) as Lider,
+                                    (select GROUP_CONCAT(tpta.IdTecnico) from t_proyectos_tarea_asistentes tpta where tpta.IdTarea = tpa.Id) as IdUsuarios,
+                                    (select GROUP_CONCAT(nombreUsuario(tpta.IdTecnico)) from t_proyectos_tarea_asistentes tpta where tpta.IdTarea = tpa.Id) as Usuarios
+                                    from
+                                    t_proyectos_tareas tpa 
+                                    inner join t_proyectos tp on tpa.IdProyecto = tp.Id
+                                    where tp.IdEstatus in (1,2) 
+                                    and tpa.IdEstatus in (1,2) 
+                                    and tpa.Flag = 1 " . $condicion);
+        return $consulta;
+    }
+
+    public function tienePermisoTodasTareas() {
+        if (in_array(279, array_merge($this->usuario['Permisos'], $this->usuario['PermisosAdicionales']))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getGeneralesTarea(int $id) {
+        $consulta = $this->consulta("select 
+                                    tpa.Id,
+                                    tp.Id as IdProyecto,
+                                    tp.Nombre as Proyecto,
+                                    sucursalCliente(tp.IdSucursal) as Sucursal,
+                                    tpa.Nombre as Tarea,
+                                    tpa.Avance,
+                                    tpa.IdPredecesora,
+                                    (select Nombre from t_proyectos_tareas WHERE Id = tpa.IdPredecesora) as Predecesora,
+                                    (select Avance from t_proyectos_tareas WHERE Id = tpa.IdPredecesora) as AvancePredecesora,
+                                    DATE_FORMAT(tpa.Inicio,'%d/%m/%Y') as Inicio,
+                                    DATE_FORMAT(tpa.Fin,'%d/%m/%Y') as Fin,
+                                    nombreUsuario(tpa.IdLider) as Lider,
+                                    (select GROUP_CONCAT(tpta.IdTecnico) from t_proyectos_tarea_asistentes tpta where tpta.IdTarea = tpa.Id) as IdUsuarios,
+                                    (select GROUP_CONCAT(nombreUsuario(tpta.IdTecnico)) from t_proyectos_tarea_asistentes tpta where tpta.IdTarea = tpa.Id) as Usuarios
+                                    from
+                                    t_proyectos_tareas tpa 
+                                    inner join t_proyectos tp on tpa.IdProyecto = tp.Id
+                                    where tpa.Id = '" . $id . "'");
+        return $consulta[0];
+    }
+
+    public function guardarAvanceTarea($data) {
+        $result = $this->actualizar('t_proyectos_tareas', ['Avance' => $data['avance']], ['Id' => $data['id']]);
+        if (!is_null($result)) {
+            return ['code' => 200, 'error' => 'Avance guardado.'];
+        } else {
+            return ['code' => 200, 'error' => 'No se ha podido guardar el avance. Recargue la página e intente de nuevo.'];
+        }
+    }
+
+    public function getNodosByTarea(int $id) {
+        $consulta = $this->consulta("select 
+                                    (select Nombre from cat_v3_conceptos_proyecto where Id = tap.IdConcepto) as Concepto,
+                                    (select Nombre from cat_v3_areas_proyectos where Id = tap.IdArea) as Area,
+                                    (select Nombre from cat_v3_ubicaciones_proyectos where Id = tap.IdUbicacion) as Ubicacion,
+                                    concat(tnap.IdAlcance,'-',tnap.IdTipoNodo,'-',tnap.Nombre) as IdNodo,
+                                    tnap.Id as IdRegistroMaterial,
+                                    (select Nombre from cat_v3_tipos_nodo_proyectos where Id = tnap.IdTipoNodo) as TipoNodo,
+                                    tnap.Nombre as Nodo,
+                                    (select Nombre from cat_v3_accesorios_proyecto where Id = tnap.IdAccesorio) as Accesorio,
+                                    (select Nombre from cat_v3_equipos_sae where Id = tnap.IdMaterial) as Material,
+                                    tnap.Cantidad,
+                                    tnap.Utilizado
+                                    from t_proyectos_tarea_nodos tptn
+                                    inner join t_nodos_alcance_proyecto tnap on tptn.IdNodo = tnap.Id
+                                    inner join t_alcance_proyecto tap on tnap.IdAlcance = tap.Id
+                                    where tptn.IdTarea = '" . $id . "'
+                                    and tptn.Flag = 1
+                                    and tnap.Flag = 1
+                                    and tap.Flag = 1");
+        return $consulta;
+    }
+
+    public function guardaMaterialUtilizadoNodosTarea($data) {
+        $fecha = $this->getFecha();
+        $this->iniciaTransaccion();
+
+        foreach ($data as $key => $value) {
+            $datos = $this->consulta("select Utilizado from t_nodos_alcance_proyecto where Id = '" . $value['id'] . "'");
+            $utilizado = $datos[0]['Utilizado'];
+
+            if ((float) $utilizado !== (float) $value['utilizado']) {
+                $this->actualizar('t_nodos_alcance_proyecto', ['Utilizado' => $value['utilizado']], ['Id' => $value['id']]);
+                $this->insertar('historico_material_nodo_proyectos', [
+                    'IdUsuario' => $this->usuario['Id'],
+                    'Fecha' => $fecha,
+                    'IdNodo' => $value['id'],
+                    'Cantidad' => $value['utilizado']
+                ]);
+            }
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function getMaterialByTarea(int $id) {
+        $consulta = $this->consulta("select
+                                    Id,
+                                    (select Nombre from cat_v3_accesorios_proyecto where Id = tptm.IdAccesorio) as Accesorio,
+                                    (select Nombre from cat_v3_equipos_sae where Id = tptm.IdMaterial) as Material,
+                                    tptm.Cantidad,
+                                    tptm.Utilizado
+
+                                    from t_proyectos_tarea_material tptm
+                                    where tptm.IdTarea = '" . $id . "'
+                                    and tptm.Flag = 1");
+        return $consulta;
+    }
+
+    public function guardaMaterialUtilizadoTarea($data) {
+        $fecha = $this->getFecha();
+        $this->iniciaTransaccion();
+
+        foreach ($data as $key => $value) {
+            $datos = $this->consulta("select Utilizado from t_proyectos_tarea_material where Id = '" . $value['id'] . "'");
+            $utilizado = $datos[0]['Utilizado'];
+
+            if ((float) $utilizado !== (float) $value['utilizado']) {
+                $this->actualizar('t_proyectos_tarea_material', ['Utilizado' => $value['utilizado']], ['Id' => $value['id']]);
+                $this->insertar('historico_material_tarea_proyectos', [
+                    'IdUsuario' => $this->usuario['Id'],
+                    'Fecha' => $fecha,
+                    'IdMaterialTarea' => $value['id'],
+                    'Cantidad' => $value['utilizado']
+                ]);
+            }
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function guardarNotasAdjuntos($data) {
+        $fecha = $this->getFecha();
+        $this->iniciaTransaccion();
+        $this->insertar('t_proyectos_tarea_notas', [
+            'IdTarea' => $data['id'],
+            'IdUsuario' => $this->usuario['Id'],
+            'Fecha' => $fecha,
+            'Nota' => $data['nota'],
+            'Adjuntos' => $data['archivos'],
+            'Flag' => 1
+        ]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function getNotasAdjuntos(int $id) {
+        $consulta = $this->consulta("select 
+                                    tptn.Id,
+                                    nombreUsuario(tptn.IdUsuario) as Usuario,
+                                    (select UrlFoto from t_rh_personal where IdUsuario = tptn.IdUsuario) as UrlFoto,
+                                    DATE_FORMAT(tptn.Fecha,'%M %e, %Y - %l:%i %p') as Fecha,
+                                    tptn.Nota,
+                                    tptn.Adjuntos
+                                    from t_proyectos_tarea_notas tptn
+                                    where tptn.IdTarea = '" . $id . "' and tptn.Flag = 1
+                                    order by Id desc");
         return $consulta;
     }
 
