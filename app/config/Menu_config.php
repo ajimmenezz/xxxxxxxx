@@ -468,7 +468,8 @@ $config['Proyectos'] = array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
             'parsley/src/parsley',
-            'bootstrap-combobox/css/bootstrap-combobox'
+            'bootstrap-combobox/css/bootstrap-combobox',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
         ),
         'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Proyectos2/catalogos'),
         'pluginsJs' => array(
@@ -493,9 +494,10 @@ $config['Proyectos'] = array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
             'parsley/src/parsley',
-            'bootstrap-combobox/css/bootstrap-combobox'
+            'bootstrap-combobox/css/bootstrap-combobox',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Proyectos2/planeacion'),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/Fecha', 'Proyectos2/planeacion'),
         'pluginsJs' => array(
             'bootstrap-datepicker/js/bootstrap-datepicker',
             'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
@@ -505,112 +507,78 @@ $config['Proyectos'] = array(
             'select2/dist/js/select2.min',
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
-            'bootstrap-combobox/js/bootstrap-combobox'
+            'bootstrap-combobox/js/bootstrap-combobox',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
         ),
         'Permiso' => 'VPN'
-    ),
-    'Nuevo-Proyectos' => array(
-        'liga' => 'Planeación',
-        'icono' => 'fa fa-file',
-        'Url' => '/Proyectos/Nuevo',
-        'css' => array('Proyecto/nuevo'),
+    ),   
+    'Almacen-Proyectos' => array(
+        'liga' => 'Almacén',
+        'icono' => '',
+        'Url' => '/Proyectos2/Almacen',
+        'css' => array('Proyectos2/Catalogo'),
         'pluginsCss' => array(
             'bootstrap-datepicker/css/datepicker',
             'bootstrap-datepicker/css/datepicker3',
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
             'parsley/src/parsley',
-            'Gantt/codebase/dhtmlxgantt'
+            'bootstrap-combobox/css/bootstrap-combobox',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
         ),
-        'js' => array(
-            'Componentes/Pagina',
-            'Componentes/Tablas/Tabla',
-            'Componentes/Tablas/TablaBasica',
-            'Componentes/Tablas/TablaColumnaOculta',
-            'Componentes/Formulario',
-            'Componentes/Socket',
-            'Componentes/FileUpload/Upload',
-            'Componentes/FileUpload/FileUpload_Basico',
-            'Componentes/Selects/Select',
-            'Componentes/Selects/SelectBasico',
-            'Componentes/Selects/SelectMultiple',
-            'Componentes/Fecha',
-            'Componentes/Inputs/Input',
-            'Componentes/Modal/ModalBase',
-            'Componentes/Modal/Modal',
-            'Componentes/Modal/Alertas',
-            'Componentes/Gantt/Gantt',
-            'Proyectos/Paginas/PaginaProyecto',
-            'Proyectos/Paginas/PaginaNuevo',
-            'Proyectos/Controladores/Controller_nuevo'
-        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/Fecha', 'Proyectos2/almacen'),
         'pluginsJs' => array(
             'bootstrap-datepicker/js/bootstrap-datepicker',
             'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
             'select2/dist/js/select2.min',
-            'jquery-fileUpload/js/fileinput',
-            'jquery-fileUpload/js/es',
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
-            'Gantt/codebase/dhtmlxgantt',
-            'Gantt/codebase/locale/locale_es',
-            'Gantt/codebase/ext/dhtmlxgantt_tooltip'
+            'bootstrap-combobox/js/bootstrap-combobox',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
         ),
-        'Permiso' => 'VPN'
-    ),
-    'Nuevo-Proyectos-Administrativo-Proyectos' => array(
-        'liga' => 'Planeación',
-        'icono' => 'fa fa-file',
-        'Url' => '/Proyectos/NuevoAdminProyect',
-        'css' => array('Proyecto/nuevo'),
+        'Permiso' => 'VAP'
+    ), 
+    'Seguimiento-Tareas' => array(
+        'liga' => 'Seguimiento Tareas',
+        'icono' => '',
+        'Url' => '/Proyectos2/Tareas',
+        'css' => array('Proyectos2/Catalogo'),
         'pluginsCss' => array(
             'bootstrap-datepicker/css/datepicker',
             'bootstrap-datepicker/css/datepicker3',
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
+            'jquery-fileUpload/css/fileinput.min',
             'parsley/src/parsley',
-            'Gantt/codebase/dhtmlxgantt'
+            'bootstrap-combobox/css/bootstrap-combobox',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
         ),
-        'js' => array(
-            'Componentes/Pagina',
-            'Componentes/Tablas/Tabla',
-            'Componentes/Tablas/TablaBasica',
-            'Componentes/Tablas/TablaColumnaOculta',
-            'Componentes/Formulario',
-            'Componentes/Socket',
-            'Componentes/FileUpload/Upload',
-            'Componentes/FileUpload/FileUpload_Basico',
-            'Componentes/Selects/Select',
-            'Componentes/Selects/SelectBasico',
-            'Componentes/Selects/SelectMultiple',
-            'Componentes/Fecha',
-            'Componentes/Inputs/Input',
-            'Componentes/Modal/ModalBase',
-            'Componentes/Modal/Modal',
-            'Componentes/Modal/Alertas',
-            'Componentes/Gantt/Gantt',
-            'Proyectos/Paginas/PaginaProyecto',
-            'Proyectos/Paginas/PaginaNuevo',
-            'Proyectos/Controladores/Controller_nuevo'
-        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/Fecha', 'Base/fileUpload', 'Proyectos2/tareas'),
         'pluginsJs' => array(
             'bootstrap-datepicker/js/bootstrap-datepicker',
             'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
             'select2/dist/js/select2.min',
-            'jquery-fileUpload/js/fileinput',
-            'jquery-fileUpload/js/es',
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
-            'Gantt/codebase/dhtmlxgantt',
-            'Gantt/codebase/locale/locale_es',
-            'Gantt/codebase/ext/dhtmlxgantt_tooltip'
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'bootstrap-combobox/js/bootstrap-combobox',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
         ),
-        'Permiso' => 'VPNAP'
-    ),
+        'Permiso' => 'VSTP'
+    ), 
     'Seguimiento-Proyectos' => array(
         'liga' => 'Seguimiento',
         'icono' => 'fa fa-eye',
@@ -2165,39 +2133,6 @@ $config['Tesoreria'] = array(
         ),
         'Permiso' => 'VTESE'
     ),
-//    'Facturacion-Tesoreria' => array(
-//        'liga' => 'Facturacion',
-//        'icono' => 'fa fa-file-text',
-//        'Url' => '/Tesoreria/Facturacion',
-//        'css' => array('Generales/notas', 'Generales/servicios', 'Generales/minuta_resumen'),
-//        'pluginsCss' => array(
-//            'bootstrap-datepicker/css/datepicker',
-//            'bootstrap-datepicker/css/datepicker3',
-//            'DataTables/css/data-table',
-//            'jquery-tag-it/css/jquery.tagit',
-//            'parsley/src/parsley',
-//            'jquery-fileUpload/css/fileinput.min',
-//            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
-//            'DrawingBoard/css/drawingboard.min'
-//        ),
-//        'js' => array('Base/Base', 'Base/Socket', 'Base/fileUpload', 'Base/Tabla', 'Tesoreria/facturacion'),
-//        'pluginsJs' => array(
-//            'bootstrap-datepicker/js/bootstrap-datepicker',
-//            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
-//            'DataTables/js/jquery.dataTables',
-//            'DataTables/js/dataTables.responsive',
-//            'jquery-tag-it/js/tag-it.min',
-//            'parsley/dist/parsley',
-//            'parsley/src/i18n/es',
-//            'jquery-fileUpload/js/fileinput',
-//            'jquery-fileUpload/js/es',
-//            'moment/moment-locales.min',
-//            'moment/es',
-//            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
-//            'DrawingBoard/js/drawingboard.min'
-//        ),
-//        'Permiso' => 'VTEFA'
-//    ),
     'Facturacion-Tesoreria' => array(
         'liga' => 'Facturacion',
         'icono' => 'fa fa-file-text',
