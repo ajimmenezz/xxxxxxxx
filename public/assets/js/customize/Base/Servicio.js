@@ -136,7 +136,6 @@ Servicio.prototype.nuevaSolicitud = function () {
     //variables
     var departamentos;
     var ticket = arguments[0];
-    var panel = arguments[1];
     var data = [];
 
     //Obteniendo los datos de los departamentos    
@@ -144,7 +143,7 @@ Servicio.prototype.nuevaSolicitud = function () {
         departamentos = respuesta;
     });
 
-    evento.enviarEvento('/Generales/Solicitud/Formulario_Nueva_Solicitud', {'apoyo': true, 'ticket': ticket}, panel, function (respuesta) {
+    evento.enviarEvento('/Generales/Solicitud/Formulario_Nueva_Solicitud', {'apoyo': true, 'ticket': ticket}, null, function (respuesta) {
         _this.mostrarModal('Solicitar apoyo a otra área', respuesta.html);
         $("#modal-dialogo #content").prop('style', 'margin-left:0px !important;');
         var select = new Select();
@@ -450,7 +449,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
 
     _this.botonAgregarVuelta(dataServicio, '#seccion-servicio-sin-clasificar');
     _this.GuardarNotas(dataServicio, nombreControlador);
-    _this.initBotonNuevaSolicitud(ticket, '#seccion-servicio-sin-clasificar');
+    _this.initBotonNuevaSolicitud(ticket);
 
     if (avanceServicio !== null) {
         $.each(avanceServicio, function (key, item) {
@@ -800,12 +799,11 @@ Servicio.prototype.mensajeAlerta = function () {
 Servicio.prototype.initBotonNuevaSolicitud = function () {
     var _this = this;
     var ticket = arguments[0];
-    var panel = arguments[1];
 
     //Encargado de mostrar el modal para generar una nueva solicitud
     $("#btnNuevaSolicitud").off("click");
     $("#btnNuevaSolicitud").on("click", function () {
-        _this.nuevaSolicitud(ticket, panel);
+        _this.nuevaSolicitud(ticket);
     });
 };
 
@@ -1116,7 +1114,7 @@ Servicio.prototype.formConcluirServicio = function () {
                     <div class="panel-body">\n\
                         <form class="margin-bottom-0" id="formConcluirServicioFirma" data-parsley-validate="true">';
 
-    html += '<div class="row m-t-10">\n\
+            html += '<div class="row m-t-10">\n\
                                     <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
                                         <div class="form-group">\n\
                                             <label for="nombre-personal">Nombre personal que Recibe *</label>\n\
@@ -1124,7 +1122,7 @@ Servicio.prototype.formConcluirServicio = function () {
                                         </div>\n\
                                     </div>\n\
                                 </div>';
-    html += '<div class="row m-t-10">\n\
+            html += '<div class="row m-t-10">\n\
                                     <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
                                         <div class="form-group">\n\
                                             <label id="inputCorreo">Correo(s) *</label>\n\
@@ -1132,7 +1130,7 @@ Servicio.prototype.formConcluirServicio = function () {
                                         </div>\n\
                                     </div>\n\
                                 </div>';
-    html += '<div class="row m-t-10">\n\
+            html += '<div class="row m-t-10">\n\
                                     <div class="col-md-12 text-center">\n\
                                         <div id="campoFirma"></div>\n\
                                     </div>\n\
@@ -1143,13 +1141,13 @@ Servicio.prototype.formConcluirServicio = function () {
                                         <label>Firma de conformidad del Gerente o TI *</label><br>\n\
                                     </div>\n\
                                 </div>';
-    html += '               <div class="row m-t-20">\n\
+            html += '               <div class="row m-t-20">\n\
                                         <div class="col-md-12 text-center">\n\
                                             <br>\n\
                                             <label><input type="checkbox" id="terminos" value="first_checkbox"> He leído y acepto los <a href="">Términos de Uso</a> y <a href="">Declaración de Privacidad</a> para SICCOB</label><br>\n\
                                         </div>\n\
                                     </div>';
-    html += '           <div class="row m-t-10">\n\
+            html += '           <div class="row m-t-10">\n\
                                     <div class="col-md-12">\n\
                                         <div class="errorConcluirServicio"></div>\n\
                                     </div>\n\
@@ -1160,11 +1158,11 @@ Servicio.prototype.formConcluirServicio = function () {
                                     </div>\n\
                                 </div>';
 
-    html += '       </form>\n\
+            html += '       </form>\n\
                             </div>\n\
                          </div>';
     return html;
-}
+};
 
 Servicio.prototype.validarCamposFirma = function () {
     var _this = this;

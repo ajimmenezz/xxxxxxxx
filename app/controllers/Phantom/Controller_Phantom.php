@@ -44,6 +44,11 @@ class Controller_Phantom extends Base {
                 $titulo = 'Resumen de Servicio - '.$nombreServicio;
                 $contenido = $this->Servicio4D->getDetallesServicio4D($servicio, true);
                 break;
+            case '7': case 7:
+                $nombreServicio = $this->Servicio4D->getNombreServicio($servicio);
+                $titulo = 'Resumen de Servicio - '.$nombreServicio;
+                $contenido = $this->Servicio4D->getDetallesServicioCorrectivo4D($servicio, true);
+                break;
             case '10': case 10:
                 $contenido = $this->Servicio->getDetallesUber($servicio, true);
                 $titulo = 'Resumen de Servicio - Uber';
