@@ -238,4 +238,9 @@ class Base {
         return self::connectDBPrueba()->insert_id();
     }
 
+    public function getFecha(){
+        $this->consulta = self::connectDBPrueba()->query("select NOW() as Fecha");
+        $data = $this->consulta->result_array();
+        return $data[0]['Fecha'];        
+    }
 }

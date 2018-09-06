@@ -4,6 +4,7 @@ $(function () {
     var websocket = new Socket();
     var tabla = new Tabla();
     var select = new Select();
+    var fecha = new Fecha();
 
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();
@@ -20,6 +21,45 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
+    google.charts.load('current', {'packages': ['gantt']});
+
+    function daysToMilliseconds(days) {
+        return days * 24 * 60 * 60 * 1000;
+    }
+
+    function drawChart() {
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Task ID');
+        data.addColumn('string', 'Task Name');
+        data.addColumn('date', 'Start Date');
+        data.addColumn('date', 'End Date');
+        data.addColumn('number', 'Duration');
+        data.addColumn('number', 'Percent Complete');
+        data.addColumn('string', 'Dependencies');
+
+        data.addRows([
+            ['Research', 'Find sources',
+                new Date(2015, 0, 1), new Date(2015, 0, 5), null, 100, null],
+            ['Write', 'Write paper',
+                null, new Date(2015, 0, 9), daysToMilliseconds(3), 25, 'Research,Outline'],
+            ['Cite', 'Create bibliography',
+                null, new Date(2015, 0, 7), daysToMilliseconds(1), 20, 'Research'],
+            ['Complete', 'Hand in paper',
+                null, new Date(2015, 0, 10), daysToMilliseconds(1), 0, 'Cite,Write'],
+            ['Outline', 'Outline paper',
+                null, new Date(2015, 0, 6), daysToMilliseconds(1), 100, 'Research']
+        ]);
+
+        var options = {
+            height: 275
+        };
+
+        var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+    }
+
     tabla.generaTablaPersonal('#table-proyectos-sin-iniciar', null, null, true, true, [[0, 'asc']]);
 
     $("#btn-proyecto-nuevo").off("click");
@@ -27,6 +67,7 @@ $(function () {
         evento.enviarEvento('Planeacion/FormularioNuevoProyecto', {}, '#panel-table-proyectos', function (respuesta) {
             $("#divNuevoProyecto").empty().append(respuesta.formulario);
             evento.cambiarDiv("#divListaProyectos", "#divNuevoProyecto", initFormNuevoProyecto());
+            drawChart();
         });
     });
 
@@ -36,11 +77,7 @@ $(function () {
         select.crearSelect("#listTipoProyecto");
         select.crearSelectMultiple("#listSucursales", 'Selecciona...');
         select.crearSelectMultiple("#listLideres", 'Selecciona...');
-        $("#rangoFechas").datepicker({
-            language: 'es',
-            format: 'dd-mm-yyyy',
-            todayBtn: true
-        });
+        fecha.dateRange("#fini", "#ffin", 'DD-MM-YYYY');
 
         $("#listClientes").on("change", function () {
             var _cliente = $(this).val();
@@ -55,6 +92,22 @@ $(function () {
                 });
             } else {
                 $("#listSucursales").attr("disabled", "disabled");
+            }
+        });
+
+        $("#listSistemas").on("change", function () {
+            var _sistema = $(this).val();
+            select.limpiarSelecccion("#listLideres");
+            if (_sistema !== '') {
+                evento.enviarEvento('Planeacion/LideresBySistema', {'id': _sistema}, '#panel-table-proyectos', function (respuesta) {
+                    $("#listLideres").empty();
+                    $.each(respuesta, function (k, v) {
+                        $("#listLideres").append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                    });
+                    $("#listLideres").removeAttr("disabled");
+                });
+            } else {
+                $("#listLideres").attr("disabled", "disabled");
             }
         });
 
@@ -103,7 +156,7 @@ $(function () {
         });
     }
 
-    $('#table-proyectos-sin-iniciar tbody').on('dblclick', 'tr', function () {
+    $('#table-proyectos-sin-iniciar tbody').on('click', 'tr', function () {
         let _this = this;
         var datosTabla = $("#table-proyectos-sin-iniciar").DataTable().row(_this).data();
         var datos = {
@@ -127,10 +180,7 @@ $(function () {
         select.crearSelect("#listSucursales");
         select.crearSelect("#listTecnicos");
         select.crearSelectMultiple("#listLideres", 'Selecciona...');
-        $("#rangoFechas").datepicker({
-            language: 'es',
-            format: 'dd-mm-yyyy'
-        });
+        fecha.dateRange("#fini", "#ffin", 'DD-MM-YYYY');
 
         tabla.generaTablaPersonal('#table-ubicaciones', null, null, true, true, [[0, 'asc']]);
 
@@ -153,6 +203,9 @@ $(function () {
                 case "#Tareas":
                     cargaTareasProyecto();
                     break;
+                case "#nodosTarea":
+                    cargaNodosTarea();
+                    break;
             }
         });
 
@@ -169,6 +222,22 @@ $(function () {
                     });
                     $("#listSucursales").removeAttr("disabled");
                 });
+            }
+        });
+
+        $("#listSistemas").on("change", function () {
+            var _sistema = $(this).val();
+            select.limpiarSelecccion("#listLideres");
+            if (_sistema !== '') {
+                evento.enviarEvento('Planeacion/LideresBySistema', {'id': _sistema}, '#panel-table-proyectos', function (respuesta) {
+                    $("#listLideres").empty();
+                    $.each(respuesta, function (k, v) {
+                        $("#listLideres").append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                    });
+                    $("#listLideres").removeAttr("disabled");
+                });
+            } else {
+                $("#listLideres").attr("disabled", "disabled");
             }
         });
 
@@ -191,7 +260,14 @@ $(function () {
 
                 evento.enviarEvento('Planeacion/GuardarGeneralesProyecto', datos, '#panelFormDetallesProyecto', function (respuesta) {
                     if (respuesta.code == 200) {
-                        evento.mostrarMensaje("#errorMessage", true, "se han guardado los cambios correctamente.", 5000);
+                        evento.enviarEvento('Planeacion/FormularioDetallesProyecto', datos, '#panelFormDetallesProyecto', function (respuesta) {
+                            if (respuesta.code == 200) {
+                                $("#divDetallesProyecto").empty().append(respuesta.formulario);
+                                evento.cambiarDiv("#divListaProyectos", "#divDetallesProyecto", initDetallesProyecto());
+                            } else {
+                                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
+                            }
+                        });
                     } else {
                         evento.mostrarMensaje("#errorMessage", false, "Ocurrió un error al guardar los cambios: " + respuesta.error, 5000);
                     }
@@ -228,6 +304,35 @@ $(function () {
                 } else {
                     evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
                 }
+            });
+        });
+
+        $("#btnDocumentoInicial").off("click");
+        $("#btnDocumentoInicial").on("click", function () {
+            evento.enviarEvento('Planeacion/GeneraDocumentoInicial', {'id': $.trim($("#IdProyecto").val())}, '#panelFormDetallesProyecto', function (respuesta) {
+                window.open(respuesta, '_blank');
+            });
+        });
+
+        $("#btnSolicitudMaterial").off("click");
+        $("#btnSolicitudMaterial").on("click", function () {
+            var datos = {
+                'id': $("#IdProyecto").val(),
+                'almacen': $.trim($("#IdAlmacenSAE").val())
+            }
+            evento.enviarEvento('Planeacion/GeneraSolicitudMaterial', datos, '#panelFormDetallesProyecto', function (respuesta) {
+                window.open(respuesta, '_blank');
+            });
+        });
+
+        $("#btnSolicitudMaterialFaltante").off("click");
+        $("#btnSolicitudMaterialFaltante").on("click", function () {
+            var datos = {
+                'id': $("#IdProyecto").val(),
+                'almacen': $.trim($("#IdAlmacenSAE").val())
+            }
+            evento.enviarEvento('Planeacion/GeneraSolicitudMaterialFaltante', datos, '#panelFormDetallesProyecto', function (respuesta) {
+                window.open(respuesta, '_blank');
             });
         });
 
@@ -404,7 +509,7 @@ $(function () {
                         }
                     });
 
-                    $('#table-nodos-ubicacion tbody').on('dblclick', 'tr', function () {
+                    $('#table-nodos-ubicacion tbody').on('click', 'tr', function () {
                         let _thisFila = this;
                         var datosTabla = $('#table-nodos-ubicacion').DataTable().row(_thisFila).data();
                         var datos = {
@@ -507,6 +612,8 @@ $(function () {
                             'nodos': []
                         }
 
+                        var table = $('#table-nodos-ubicacion').DataTable().search('').columns().search('').draw();
+
                         $('#table-nodos-ubicacion tbody tr').each(function () {
                             var _this = this;
                             var datosTabla = $("#table-nodos-ubicacion").DataTable().row(_this).data();
@@ -568,7 +675,7 @@ $(function () {
             });
             tabla.reordenarTabla("#table-ubicaciones", [[1, "asc"]]);
 
-            $('#table-ubicaciones tbody').on('dblclick', 'tr', function () {
+            $('#table-ubicaciones tbody').on('click', 'tr', function () {
                 let _thisFila = this;
                 var datosTabla = $('#table-ubicaciones').DataTable().row(_thisFila).data();
                 var datos = {
@@ -589,7 +696,11 @@ $(function () {
     }
 
     function cargaMaterialTotales() {
-        evento.enviarEvento('Planeacion/CargaMaterialTotales', {'id': $.trim($("#IdProyecto").val())}, '#panelFormDetallesProyecto', function (respuesta) {
+        var datos = {
+            'id': $.trim($("#IdProyecto").val()),
+            'almacen': $.trim($("#IdAlmacenSAE").val())
+        };
+        evento.enviarEvento('Planeacion/CargaMaterialTotales', datos, '#panelFormDetallesProyecto', function (respuesta) {
 
             tabla.limpiarTabla("#table-material-proyectado");
             $.each(respuesta.proyectado, function (k, v) {
@@ -648,7 +759,7 @@ $(function () {
 
             select.cambiarOpcion("#listTecnicos", '');
 
-            $('#table-tecnicos tbody').on('dblclick', 'tr', function () {
+            $('#table-tecnicos tbody').on('click', 'tr', function () {
                 let _this = this;
                 var datosTabla = $("#table-tecnicos").DataTable().row(_this).data();
                 evento.enviarEvento('Planeacion/FormDetallesAsistente', {'id': $.trim($("#IdProyecto").val()), 'idRegistro': datosTabla[0]}, '#panelFormDetallesProyecto', function (respuesta) {
@@ -720,17 +831,61 @@ $(function () {
         select.crearSelect("#listPredecesora");
         select.crearSelect("#listLiderTarea");
         select.crearSelectMultiple("#listTecnicosTarea", 'Selecciona...');
-        $("#rangoFechasTarea").datepicker({
-            language: 'es',
-            format: 'dd-mm-yyyy',
-            todayBtn: true
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            switch (target) {
+                case "#nodosTarea":
+                    cargaNodosTarea();
+                    break;
+                case "#materialTarea":
+                    cargaMaterialTarea();
+                    break;
+            }
         });
 
-        $("#btnGuardarCambiosModal").off("click");
-        $("#btnGuardarCambiosModal").on("click", function () {
+        var minDate = $("#hiddenIni").val();
+        var maxDate = $("#hiddenFin").val();
+        minDate = (minDate != null && minDate != '00-00-0000') ? minDate.toString() : false;
+        maxDate = (maxDate != null && maxDate != '00-00-0000') ? maxDate.toString() : false;
+
+        fecha.dateRange("#finitarea", "#ffintarea", 'DD-MM-YYYY');
+//        $("#finitarea").data("DateTimePicker").minDate(minDate);
+//        $("#finitarea").data("DateTimePicker").maxDate(maxDate);
+//        $("#ffintarea").data("DateTimePicker").minDate(minDate);
+//        $("#ffintarea").data("DateTimePicker").maxDate(maxDate);
+
+        $("#listPredecesora").on("change", function () {
+            var pred = $(this).val();
+            if (pred !== '') {
+                var _minDate = $("#listPredecesora option:selected").attr("data-fin");
+                var _finicio;
+                if ($("#finitarea").val() != "") {
+                    _finicio = $("#finitarea").val();
+                } else {
+                    _finicio = _minDate;
+                }
+
+                $("#finitarea").data("DateTimePicker").minDate(_minDate);
+                $("#finitarea").data("DateTimePicker").date(_finicio);
+            } else {
+                $("#finitarea").data("DateTimePicker").minDate(minDate);
+                if ($.trim($("#finitarea").val()) === "") {
+                    $("#finitarea").data("DateTimePicker").date('');
+                }
+            }
+        });
+
+        $("#listPredecesora").change();
+
+        var button = ($("#IdTarea").val() > 0) ? 'btnGuardarTarea' : 'btnGuardarCambiosModal';
+
+        $("#" + button).off("click");
+        $("#" + button).on("click", function () {
             if (evento.validarFormulario("#formNuevaTarea")) {
                 var datos = {
                     'id': $.trim($("#IdProyecto").val()),
+                    'idTarea': $("#IdTarea").val(),
                     'nombre': $.trim($("#txtNombreTarea").val()),
                     'predecesora': $("#listPredecesora").val(),
                     'predecesoraS': $("#listPredecesora option:selected").text(),
@@ -741,43 +896,213 @@ $(function () {
                     'tecnicos': $("#listTecnicosTarea").val()
                 };
 
-                evento.enviarEvento('Planeacion/NuevaTarea', datos, '#modalEdit', function (respuesta) {
-                    if (respuesta.code == 200) {
-                        evento.terminarModal("#modalEdit");
-                        cargaTareasProyecto();
-                        tabla.agregarFilaHtml('#table-tareas', html);
-                    } else {
-                        evento.mostrarMensaje("#error-in-modal", false, "Ocurrió un error al guardar la tarea: " + respuesta.error, 5000);
-                    }
-                });
+                if (datos.idTarea > 0) {
+                    evento.enviarEvento('Planeacion/NuevaTarea', datos, '#panelFormEditarTarea', function (respuesta) {
+                        if (respuesta.code == 200) {
+                            evento.mostrarMensaje("#divErrorTarea", true, "Cambios guardados.", 5000);
+                            cargaTareasProyecto();
+                        } else {
+                            evento.mostrarMensaje("#divErrorTarea", false, "Ocurrió un error al guardar la tarea: " + respuesta.error, 5000);
+                        }
+                    });
+                } else {
+                    evento.enviarEvento('Planeacion/NuevaTarea', datos, '#modalEdit', function (respuesta) {
+                        if (respuesta.code == 200) {
+                            evento.terminarModal("#modalEdit");
+                            cargaTareasProyecto();
+                        } else {
+                            evento.mostrarMensaje("#error-in-modal", false, "Ocurrió un error al guardar la tarea: " + respuesta.error, 5000);
+                        }
+                    });
+                }
             } else {
                 evento.mostrarMensaje("#error-in-modal", false, "Los campos marcados son obligatorios. Por favor revise la información.", 5000);
             }
         });
+
+        $("#btnEliminarTarea").off("click");
+        $("#btnEliminarTarea").on("click", function () {
+            var datos = {
+                'id': $(this).attr("data-id")
+            };
+
+            evento.enviarEvento('Planeacion/EliminarTarea', datos, '#panelFormEditarTarea', function (respuesta) {
+                if (respuesta.code == 200) {
+                    $("#divDetallesTarea #btnRegresar").click();
+                    cargaTareasProyecto();
+                } else {
+                    evento.mostrarMensaje("#divErrorTarea", false, "Ocurrió un error al eliminar la tarea: " + respuesta.error, 5000);
+                }
+            });
+        });
     }
-    
-    function cargaTareasProyecto(){
+
+    function drawGanttChart() {
+        var _data = tabla.getTableData("#table-tareas");
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Task ID');
+        data.addColumn('string', 'Task Name');
+        data.addColumn('date', 'Start Date');
+        data.addColumn('date', 'End Date');
+        data.addColumn('number', 'Duration');
+        data.addColumn('number', 'Percent Complete');
+        data.addColumn('string', 'Dependencies');
+
+        $.each(_data, function (k, v) {
+            if ($.isNumeric(k)) {
+                var _inicio = null;
+                var _fin = null;
+                if (v[4] !== '') {
+                    _inicio = new Date(v[4].substring(6) + "-" + v[4].substring(3, 5) + "-" + v[4].substring(0, 2));
+                    _inicio.setDate(_inicio.getDate() + 1);
+                }
+                if (v[5] !== '') {
+                    var _fin = new Date(v[5].substring(6) + "-" + v[5].substring(3, 5) + "-" + v[5].substring(0, 2));
+                    _fin.setDate(_fin.getDate() + 1);
+                }
+
+                data.addRows([
+                    [
+                        v[0],
+                        v[2],
+                        _inicio,
+                        _fin,
+                        null,
+                        20,
+                        (v[1] > 0) ? v[1] : null
+                    ]
+                ]);
+            }
+        });
+
+        var options = {
+            height: 300
+        };
+
+        var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+    }
+
+    function cargaTareasProyecto() {
         evento.enviarEvento('Planeacion/CargaTareasProyecto', {'id': $.trim($("#IdProyecto").val())}, '#panelFormDetallesProyecto', function (respuesta) {
             tabla.limpiarTabla("#table-tareas");
             $.each(respuesta, function (k, v) {
-                tabla.agregarFila("#table-tareas", [
-                    v.Id, v.Nombre, v.Predecesora, v.Inicio, v.Fin, v.Lider, v.Tecnicos
-                ]);
-            });
-            tabla.reordenarTabla("#table-tareas", [[1, "asc"]]);
+                var datos = {
+                    'idPredecesora': v.IdPredecesora || '',
+                    'predecesora': v.Predecesora || '',
+                    'inicio': (v.Inicio !== null && v.Inicio != '0000-00-00 00:00:00') ? v.Inicio : '',
+                    'fin': (v.Fin !== null && v.Fin != '0000-00-00 00:00:00') ? v.Fin : '',
+                    'lider': v.Lider || '',
+                    'tecnicos': (v.Tecnicos !== null) ? v.Tecnicos.replace(",", "<br />") : '',
+                    'rm': (v.RM <= 0) ? 'NO' : 'SI'
+                };
 
-//            $('#table-ubicaciones tbody').on('dblclick', 'tr', function () {
+                var html = `
+                            <tr>
+                                <td>` + v.Id + `</td>
+                                <td>` + datos.idPredecesora + `</td>
+                                <td>` + v.Nombre + `</td>
+                                <td>` + datos.predecesora + `</td>
+                                <td>` + datos.inicio + `</td>
+                                <td>` + datos.fin + `</td>
+                                <td>` + datos.lider + `</td>
+                                <td>` + datos.tecnicos + `</td>
+                                <td>` + v.Nodos + `</td>
+                                <td>` + datos.rm + `</td>
+                            </tr>`;
+                tabla.agregarFilaHtml("#table-tareas", html);
+            });
+            tabla.reordenarTabla("#table-tareas", [[3, "asc"]]);
+
+            drawGanttChart();
+
+            $('#table-tareas tbody').on('click', 'tr', function () {
+                let _thisFila = this;
+                var datosTabla = $('#table-tareas').DataTable().row(_thisFila).data();
+                var datos = {
+                    'id': $.trim($("#IdProyecto").val()),
+                    'tarea': datosTabla[0]
+                };
+                evento.enviarEvento('Planeacion/DetallesTarea', datos, '#panelFormDetallesProyecto', function (respuesta) {
+                    if (respuesta.code == 200) {
+                        $("#divDetallesTarea").empty().append(respuesta.formulario);
+                        tabla.generaTablaPersonal('#table-nodos-tarea', null, null, true, false, [[1, 'asc']], null, null, false);
+                        evento.cambiarDiv("#divDetallesProyecto", "#divDetallesTarea", initFormularioNuevaTarea());
+                    } else {
+                        evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
+                    }
+                });
+            });
+        });
+    }
+
+    function cargaNodosTarea() {
+        evento.enviarEvento('Planeacion/CargaNodosTarea', {'id': $.trim($("#IdProyecto").val()), 'tarea': $.trim($("#IdTarea").val())}, '#panelFormEditarTarea', function (respuesta) {
+            tabla.limpiarTabla("#table-nodos-tarea");
+            $.each(respuesta, function (k, v) {
+                var checked = (v.Existe > 0) ? 'checked' : '';
+                var clase = (v.Existe > 0) ? 'class="text-white f-w-700 bg-green-lighter"' : '';
+                var claseCheck = (v.Existe > 0) ? 'text-white bg-green-lighter ' : '';
+
+                var html = `
+                            <tr>
+                                <td ` + clase + `>` + v.Id + `</td>
+                                <td ` + clase + `>` + v.TipoNodo + `</td>
+                                <td ` + clase + `>` + v.Nombre + `</td>
+                                <td ` + clase + `>` + v.Concepto + `</td>
+                                <td ` + clase + `>` + v.Area + `</td>
+                                <td ` + clase + `>` + v.Ubicacion + `</td>
+                                <td ` + clase + `>` + v.Material + `</td>
+                                <td class="` + claseCheck + ` text-center"><input type="checkbox" class="checkNodosTarea" data-id="` + v.Id + `" ` + checked + ` /></td>               
+                            </tr>`;
+                tabla.agregarFilaHtml("#table-nodos-tarea", html);
+            });
+
+            tabla.reordenarTabla("#table-nodos-tarea", [[1, "asc"]]);
+
+            $('#table-nodos-tarea tbody').off('click', 'tr');
+            $('#table-nodos-tarea tbody').on('click', 'tr', function () {
+                var checkBox = $(this).find(".checkNodosTarea:checkbox");
+                checkBox.attr("checked", !checkBox.attr("checked"));
+            });
+
+            $(".btnGuardarNodosTarea").off("click");
+            $(".btnGuardarNodosTarea").on("click", function () {
+                var nodos = [];
+                $(".checkNodosTarea").each(function () {
+                    if ($(this).is(":checked")) {
+                        nodos.push($(this).attr("data-id"));
+                    }
+                });
+
+                var datos = {
+                    'tarea': $.trim($("#IdTarea").val()),
+                    'nodos': nodos
+                };
+
+                evento.enviarEvento('Planeacion/GuardarNodosTarea', datos, '#panelFormEditarTarea', function (respuesta) {
+                    if (respuesta.code == 200) {
+                        cargaNodosTarea();
+                    } else {
+                        evento.mostrarMensaje("#divErrorTarea", false, respuesta.error, 4000);
+                    }
+                });
+            });
+
+
+
+//            $('#table-tareas tbody').on('click', 'tr', function () {
 //                let _thisFila = this;
-//                var datosTabla = $('#table-ubicaciones').DataTable().row(_thisFila).data();
+//                var datosTabla = $('#table-tareas').DataTable().row(_thisFila).data();
 //                var datos = {
 //                    'id': $.trim($("#IdProyecto").val()),
-//                    'alcance': datosTabla[0]
+//                    'tarea': datosTabla[0]
 //                };
-//                evento.enviarEvento('Planeacion/FormularioNuevaUbicacion', datos, '#panelFormDetallesProyecto', function (respuesta) {
+//                evento.enviarEvento('Planeacion/DetallesTarea', datos, '#panelFormDetallesProyecto', function (respuesta) {
 //                    if (respuesta.code == 200) {
-//                        $("#divNuevaUbicacion").empty().append(respuesta.formulario);
-//                        evento.cambiarDiv("#divDetallesProyecto", "#divNuevaUbicacion", initNuevaUbicacion());
-//                        select.cambiarOpcion("#listUbicaciones", $("#listUbicaciones").val());
+//                        $("#divDetallesTarea").empty().append(respuesta.formulario);
+//                        evento.cambiarDiv("#divDetallesProyecto", "#divDetallesTarea", initFormularioNuevaTarea());
 //                    } else {
 //                        evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
 //                    }
@@ -785,7 +1110,259 @@ $(function () {
 //            });
         });
     }
-    
+
+    function cargaMaterialTarea() {
+        var _idProyecto = $.trim($("#IdProyecto").val());
+        var _idTarea = $("#IdTarea").val();
+        evento.enviarEvento('Planeacion/FormularioMaterialesTarea', {'id': _idProyecto, 'idTarea': _idTarea}, '#panelFormEditarTarea', function (respuesta) {
+            $("#materialTarea").empty().append(respuesta.formulario);
+            select.crearSelect("#listMateriales");
+            tabla.generaTablaPersonal('#table-material-tarea', null, null, true, false, [[1, 'asc']], null, null, false);
+
+            $('input[type=radio][name=radioMaterialKit]').change(function () {
+                if (this.value == '1') {
+                    evento.ocultarDiv('div#agregarKit', evento.mostraDiv("div#agregarMaterial"));
+//                            $('#formNodoUbicacion').parsley().destroy();
+                    $("#listKits").removeAttr("data-parsley-required");
+                    $("#listMateriales").attr("data-parsley-required", "true");
+                    $("#txtCantidad").attr("data-parsley-required", "true");
+                    $("#txtCantidad").val('');
+                    $("#formNodoUbicacion").parsley().reset();
+                } else if (this.value == '2') {
+//                            $('#formNodoUbicacion').parsley().destroy();
+                    evento.ocultarDiv('div#agregarMaterial', evento.mostraDiv("div#agregarKit"));
+                    $("#listKits").attr("data-parsley-required", 'true');
+                    $("#listMateriales").removeAttr("data-parsley-required");
+                    $("#txtCantidad").removeAttr("data-parsley-required");
+                    $("#txtCantidad").val(1);
+                    $("#formNodoUbicacion").parsley().reset();
+                }
+            });
+
+            $("#btnAddMaterialTarea").off("click");
+            $("#btnAddMaterialTarea").on("click", function () {
+                if (evento.validarFormulario("#formNodoUbicacion")) {
+                    var datos = {
+                        'idTarea': _idTarea,
+                        'idAccesorio': $("#listMateriales option:selected").attr("data-id-accesorio"),
+                        'accesorio': $("#listMateriales option:selected").attr("data-accesorio"),
+                        'idMaterial': $("#listMateriales option:selected").attr("data-id-material"),
+                        'material': $("#listMateriales option:selected").attr("data-material"),
+                        'cantidad': parseFloat($.trim($("#txtCantidad").val()))
+                    };
+
+                    var existe = false;
+                    $('#table-material-tarea tbody tr').each(function () {
+                        var _this = this;
+                        var datosTabla = $("#table-material-tarea").DataTable().row(_this).data();
+                        if (typeof datosTabla !== 'undefined') {
+                            if (datosTabla[1] == datos.idAccesorio && datosTabla[2] == datos.idMaterial) {
+                                existe = true;
+                            }
+                        }
+                    });
+
+                    if (existe) {
+                        evento.mostrarMensaje("#errorMaterialTarea", false, "Ya existe un registro similar al que intenta agregar. Si desea cambiar la cantidad o eliminar el registro de doble clic sobre el registro en la tabla.", 5000);
+                    } else {
+                        tabla.agregarFila('#table-material-tarea', [
+                            '', datos.idAccesorio, datos.idMaterial, datos.accesorio, datos.material, datos.cantidad
+                        ]);
+                        select.cambiarOpcion("#listMateriales", '');
+                        $("#txtCantidad").val('');
+                        $("#formNodoUbicacion").parsley().reset();
+                        evento.mostrarMensaje("#errorMaterialTarea", true, "Registro agregado. No olvide gardar todos los cambios antes de salir.", 5000);
+                    }
+                } else {
+                    evento.mostrarMensaje("#errorMaterialTarea", false, "Los campos marcados son obligatorios. Por favor revise la información.", 5000);
+                }
+            });
+
+
+            $("#btnAgregarKit").off("click");
+            $("#btnAgregarKit").on("click", function () {
+                if (evento.validarFormulario("#formNodoUbicacion")) {
+                    var _idKit = $("#listKits").val();
+                    var _registrosExiten = [];
+                    $(".divHiddenValues-" + _idKit).each(function () {
+                        var _thisMaterialKit = this;
+                        var datos = {
+                            'idAccesorio': $(_thisMaterialKit).find(".materialKit-idAccesorio").val(),
+                            'accesorio': $(_thisMaterialKit).find(".materialKit-accesorio").val(),
+                            'idMaterial': $(_thisMaterialKit).find(".materialKit-idMaterial").val(),
+                            'material': $(_thisMaterialKit).find(".materialKit-material").val(),
+                            'cantidad': $(_thisMaterialKit).find(".materialKit-cantidad").val()
+                        };
+
+                        var existe = false;
+                        $('#table-material-tarea tbody tr').each(function () {
+                            var _this = this;
+                            var datosTabla = $("#table-material-tarea").DataTable().row(_this).data();
+                            if (typeof datosTabla !== 'undefined') {
+                                if (datosTabla[1] == datos.idAccesorio && datosTabla[2] == datos.idMaterial) {
+                                    existe = true;
+                                }
+                            }
+                        });
+
+                        if (existe) {
+                            _registrosExiten.push('<br />Ya existe un registro similar para: ' + datos.material);
+                        } else {
+                            tabla.agregarFila('#table-material-tarea', [
+                                '', datos.idAccesorio, datos.idMaterial, datos.accesorio, datos.material, datos.cantidad
+                            ]);
+                        }
+                    });
+
+                    if (_registrosExiten.length <= 0) {
+                        evento.mostrarMensaje("#errorMaterialTarea", true, "Se ha agregado el kit correctamente.", 5000);
+                    } else {
+                        var htmlError = '';
+                        $.each(_registrosExiten, function (k, v) {
+                            htmlError += v;
+                        });
+                        htmlError += '<br />Si desea cambiar la cantidad o eliminar el registro de doble clic sobre el registro en la tabla.';
+                        evento.mostrarMensaje("#errorMaterialTarea", false, htmlError, 10000);
+                    }
+
+                    select.cambiarOpcion("#listKits", '');
+                    $("#formNodoUbicacion").parsley().reset();
+
+                } else {
+                    evento.mostrarMensaje("#errorMaterialTarea", false, "Los campos marcados son obligatorios. Por favor revise la información.", 5000);
+                }
+            });
+
+
+
+
+            $('#table-material-tarea tbody').on('click', 'tr', function () {
+                let _thisFila = this;
+                var datosTabla = $('#table-material-tarea').DataTable().row(_thisFila).data();
+                var datos = {
+                    'id': _idProyecto,
+                    'idTarea': _idTarea,
+                    'accesorio': datosTabla[1],
+                    'material': datosTabla[2],
+                    'cantidad': datosTabla[5]
+                };
+                evento.enviarEvento('Planeacion/FormularioEditarMaterialTarea', datos, '#panelFormEditarTarea', function (respuesta) {
+                    if (respuesta.code == 200) {
+                        evento.iniciarModal('#modalEdit', 'Editar Material de Tarea', respuesta.formulario);
+
+                        $("#listMaterialesEdit").combobox();
+
+                        $("#btnEliminarMaterialTarea").off("click");
+                        $("#btnEliminarMaterialTarea").on("click", function () {
+                            var datosTabla = $('#table-material-tarea').DataTable().row(_thisFila).data();
+                            if (datosTabla[0] !== "") {
+                                evento.enviarEvento('Planeacion/EliminarMaterialTarea', {'id': datosTabla[0]}, '#panelFormEditarTarea', function (respuesta) {
+                                    if (respuesta.code == 200) {
+                                        tabla.eliminarFila('#table-material-tarea', _thisFila);
+                                        evento.terminarModal('#modalEdit');
+                                    } else {
+                                        evento.mostrarMensaje("#error-in-modal", false, "No se ha podido eliminar el material: " + respuesta.error, 4000);
+                                    }
+                                });
+                            } else {
+                                tabla.eliminarFila('#table-material-tarea', _thisFila);
+                                evento.terminarModal('#modalEdit');
+                            }
+                        });
+
+                        $("#btnGuardarCambiosModal").off("click");
+                        $("#btnGuardarCambiosModal").on("click", function () {
+                            var datos = {
+                                'aux': $("#listMaterialesEdit").val(),
+                                'idAccesorio': $("#listMaterialesEdit option:selected").attr("data-id-accesorio"),
+                                'accesorio': $("#listMaterialesEdit option:selected").attr("data-accesorio"),
+                                'idMaterial': $("#listMaterialesEdit option:selected").attr("data-id-material"),
+                                'material': $("#listMaterialesEdit option:selected").attr("data-material"),
+                                'cantidad': parseFloat($.trim($("#txtCantidadEdit").val()))
+                            };
+                            if (datos.aux !== '' && datos.cantidad > 0) {
+                                var existe = false;
+                                $('#table-material-tarea tbody tr').each(function () {
+                                    var _this = this;
+                                    if (_this == _thisFila) {
+                                        return true;
+                                    } else {
+                                        var datosTabla = $("#table-material-tarea").DataTable().row(_this).data();
+                                        if (typeof datosTabla !== 'undefined') {
+                                            if (datosTabla[1] == datos.idAccesorio && datosTabla[2] == datos.idMaterial) {
+                                                existe = true;
+                                            }
+                                        }
+                                    }
+                                });
+
+                                if (existe) {
+                                    evento.mostrarMensaje("#error-in-modal", false, "Ya existe un registro similar al que intenta agregar.", 4000);
+                                } else {
+                                    evento.terminarModal('#modalEdit');
+                                    $('#table-material-tarea').DataTable().row(_thisFila).data([
+                                        datosTabla[0], datos.idAccesorio, datos.idMaterial, datos.accesorio, datos.material, datos.cantidad
+                                    ]);
+                                    tabla.reordenarTabla('#table-material-tarea', [3, 'asc']);
+                                    evento.mostrarMensaje("#errorMaterialTarea", true, "Registro actualizado. No olvide gardar todos los cambios antes de salir.", 5000);
+                                }
+                            } else {
+                                evento.mostrarMensaje("#error-in-modal", false, "Todos los campos marcados son obligatorios. Revise su información", 4000);
+                            }
+
+                        });
+
+                    } else {
+                        evento.mostrarMensaje("#errorMaterialTarea", false, respuesta.error, 4000);
+                    }
+                });
+            });
+
+            $("#btnGuardarMaterialTarea").off("click");
+            $("#btnGuardarMaterialTarea").on("click", function () {
+                var datos = {
+                    'idTarea': _idTarea,
+                    'material': []
+                }
+
+                $('#table-material-tarea tbody tr').each(function () {
+                    var _this = this;
+                    var datosTabla = $("#table-material-tarea").DataTable().row(_this).data();
+                    if (typeof datosTabla !== 'undefined') {
+                        datos.material.push({
+                            'id': datosTabla[0],
+                            'accesorio': datosTabla[1],
+                            'material': datosTabla[2],
+                            'cantidad': datosTabla[5]
+                        });
+                    }
+                });
+
+                if (datos.material.length <= 0) {
+                    evento.mostrarMensaje("#errorMaterialTarea", false, "La tabla de nodos debe contener al menos un registro para ser guardada", 5000);
+                } else {
+                    evento.enviarEvento('Planeacion/GuardarMaterialTarea', datos, '#panelFormEditarTarea', function (respuesta) {
+                        if (respuesta.code == 200) {
+                            cargaMaterialTarea();
+                        } else {
+                            evento.mostrarMensaje("#errorMaterialTarea", false, "Ocurrió un error: " + respuesta.error, 5000);
+                        }
+                    });
+                }
+
+            });
+
+            $("#listKits").on("change", function () {
+                var _thisKit = $(this).val();
+                evento.ocultarDiv(".divMaterialKit");
+                if (_thisKit !== '') {
+                    evento.mostraDiv("#divMaterialKit-" + _thisKit);
+                }
+            });
+
+        });
+    }
+
 });
 
 
