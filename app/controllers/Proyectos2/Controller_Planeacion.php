@@ -26,9 +26,6 @@ class Controller_Planeacion extends Base {
             case 'SucursalesByCliente':
                 $resultado = $this->planeacion->sucursalesByCliente($this->input->post());
                 break;
-            case 'LideresBySistema':
-                $resultado = $this->planeacion->lideresBySistema($this->input->post());
-                break;
             case 'GenerarProyecto':
                 $resultado = $this->planeacion->generarProyecto($this->input->post());
                 break;
@@ -49,7 +46,7 @@ class Controller_Planeacion extends Base {
                 break;
             case 'FormularioNodosUbicacion':
                 $resultado = $this->planeacion->formularioNodosUbicacion($this->input->post());
-                break;            
+                break;
             case 'FormularioEditarNodo':
                 $resultado = $this->planeacion->formularioEditarNodo($this->input->post());
                 break;            
@@ -85,36 +82,6 @@ class Controller_Planeacion extends Base {
                 break;
             case 'CargaTareasProyecto':
                 $resultado = $this->planeacion->cargaTareasProyecto($this->input->post());
-                break;
-            case 'DetallesTarea':
-                $resultado = $this->planeacion->detallesTarea($this->input->post());
-                break;
-            case 'EliminarTarea':
-                $resultado = $this->planeacion->eliminarTarea($this->input->post());
-                break;
-            case 'CargaNodosTarea':
-                $resultado = $this->planeacion->cargaNodosTarea($this->input->post());
-                break;
-            case 'GuardarNodosTarea':
-                $resultado = $this->planeacion->guardarNodosTarea($this->input->post());
-                break;
-            case 'FormularioMaterialesTarea':
-                $resultado = $this->planeacion->formularioMaterialesTarea($this->input->post());
-                break;
-            case 'FormularioEditarMaterialTarea':
-                $resultado = $this->planeacion->formularioEditarMaterialTarea($this->input->post());
-                break;
-            case 'GuardarMaterialTarea':
-                $resultado = $this->planeacion->guardarMaterialTarea($this->input->post());
-                break;
-            case 'GeneraDocumentoInicial':
-                $resultado = $this->planeacion->generaDocumentoInicial($this->input->post());
-                break;
-            case 'GeneraSolicitudMaterial':
-                $resultado = $this->planeacion->generaSolicitudMaterial($this->input->post());
-                break;
-            case 'GeneraSolicitudMaterialFaltante':
-                $resultado = $this->planeacion->generaSolicitudMaterialFaltante($this->input->post());
                 break;
             default:
                 $resultado = FALSE;

@@ -57,28 +57,3 @@ Fecha.prototype.rangoFechas = function (campoFecha1, campoFecha2) {
         $(campoFecha1).data("DateTimePicker").maxDate(e.date);
     });
 };
-
-Fecha.prototype.dateRange = function (campoFecha1, campoFecha2, format) {
-    $(campoFecha1).datetimepicker({
-        format: format,
-        widgetPositioning: {
-            horizontal: 'left',
-            vertical: 'bottom'
-        }
-    });
-    $(campoFecha2).datetimepicker({
-        format: format,
-        widgetPositioning: {
-            horizontal: 'left',
-            vertical: 'bottom'
-        },
-        useCurrent: false //Important! See issue #1075
-    });
-    $(campoFecha1).on("dp.change", function (e) {
-        $(campoFecha2).data("DateTimePicker").minDate(e.date);
-    });
-    $(campoFecha2).on("dp.change", function (e) {
-        $(campoFecha1).data("DateTimePicker").maxDate(e.date);
-    });
-};
-

@@ -3,7 +3,6 @@
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
                 <label class="f-w-600 f-s-13">Tarea*:</label>
-                <input type="hidden" id="IdTarea" value="0" />
                 <input type="text" class="form-control" id="txtNombreTarea" data-parsley-required="true" />
             </div> 
         </div>
@@ -18,7 +17,7 @@
                 <?php
                 if (isset($predecesoras) && !empty($predecesoras)) {
                     foreach ($predecesoras as $key => $value) {
-                        echo '<option data-fin="' . $value['FinG'] . '" value="' . $value['Id'] . '">' . $value['Nombre'] . ' Fin: ' . $value['Fin'] . '</option>';
+                        echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
                     }
                 }
                 ?>
@@ -30,8 +29,6 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">            
             <label class="f-w-600 f-s-13">Fechas:</label>
-            <input type="hidden" id="hiddenIni" value="<?php echo $generales['IniG']; ?>" />
-            <input type="hidden" id="hiddenFin" value="<?php echo $generales['FinG']; ?>" />
             <div id="rangoFechasTarea" class="input-group input-daterange">                        
                 <input id="finitarea" type="text" class="form-control" value="">
                 <div class="input-group-addon">hasta</div>

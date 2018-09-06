@@ -62,8 +62,6 @@
             <div class="col-md-4">          
                 <div class="form-group">
                     <label for="creado">Creado Por : </label>
-                    <input type="hidden" id="creator-sd" value="<?php echo $datosSD->CREATEDBY; ?>" />
-                    <input type="hidden" id="requester-sd" value="<?php echo $datosSD->REQUESTER; ?>" />
                     <p><strong><?php echo $datosSD->CREATEDBY; ?></strong></p>
                 </div>    
             </div> 
@@ -102,7 +100,7 @@
                 <div class="col-md-12">          
                     <div class="form-group">
                         <label for="Solicitud">Solicitud: </label>
-                        <p><strong><?php echo $datosSD->SHORTDESCRIPTION; ?></strong></p>
+                        <p><strong><?php echo $datosSD->DESCRIPTION; ?></strong></p>
                     </div>    
                 </div>
             </div>
@@ -110,17 +108,7 @@
                 <div class="col-md-12">          
                     <div class="form-group">
                         <label for="resolucion">Resolución: </label>
-                        <p>
-                            <strong>
-                                <?php
-                                if (isset($datosResolucionSD->operation->Details)) {
-                                    echo $datosResolucionSD->operation->Details->RESOLUTION;
-                                } else {
-                                    echo "No hay resolución para este Folio.";
-                                }
-                                ?>
-                            </strong>
-                        </p>
+                        <p><strong><?php echo $datosResolucionSD->operation->Details->RESOLUTION; ?></strong></p>
                     </div>    
                 </div>
             </div>
@@ -175,54 +163,22 @@
     </div>
     <!--Empezando titulo de servicios-->
     <!--Empezando formulario para los servicios-->
+    <div class="row">
+        <div class="col-md-12">          
+            <div class="form-group">
+                <label for="servicioCliente"> Cliente * </label>
+                <select id="selectCliente" class="form-control" name="clienteServicio" style="width: 100%" >
+                    <option value="">Seleccionar</option>
+                    <?php
+                    foreach ($cliente as $key => $value) {
+                        echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+                    }
+                    ?>
+                </select>                            
+            </div>    
+        </div>
+    </div>
     <form id="formAgregarSservicio" class="margin-bottom-0" data-parsley-validate="true" enctype="multipart/form-data">
-        <div class="row">
-            <div class="col-md-12">          
-                <div class="form-group">
-                    <label for="servicioCliente"> Cliente * </label>
-                    <select id="selectCliente" class="form-control" name="clienteServicio" style="width: 100%" data-parsley-required="true" >
-                        <option value="">Seleccionar</option>
-                        <?php
-                        foreach ($cliente as $key => $value) {
-                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
-                        }
-                        ?>
-                    </select>                            
-                </div>    
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">          
-                <div class="form-group">
-                    <label for="servicioCliente"> Sucursal * </label>
-                    <select id="selectSucursal" class="form-control" name="sucursalServicio" style="width: 100%" data-parsley-required="true" >
-                        <option value="">Seleccionar</option>
-                        <?php
-                        foreach ($sucursales as $key => $value) {
-                            $selected = ($value['NombreCinemex'] == $datosSD->REQUESTER || $value['NombreCinemex'] == $datosSD->CREATEDBY) ? 'selected' : '';
-                            echo '<option value="' . $value['Id'] . '" ' . $selected . '>' . $value['Nombre'] . '</option>';
-                        }
-                        ?>
-                    </select>                            
-                </div>    
-            </div>
-        </div>   
-        <div class="row">          
-            <div class="col-md-12">          
-                <div class="form-group">
-                    <label for="atiendeServicio"> Atiende * </label>
-                    <select id="selectAtiendeServicio" class="form-control" name="atiendeServicio" style="width: 100%" data-parsley-required="true" >
-                        <option value="">Seleccionar</option>
-                        <?php
-                        foreach ($atiende as $key => $value) {
-                            $selected = ($value['SDName'] == $datosSD->TECHNICIAN) ? 'selected' : '';
-                            echo '<option value="' . $value['IdUsuario'] . '" ' . $selected . '>' . $value['Nombre'] . '</option>';
-                        }
-                        ?>
-                    </select>                            
-                </div>   
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-12">          
                 <div class="form-group">
@@ -238,18 +194,39 @@
                 </div>    
             </div>
         </div>
-
+        <div class="row">
+            <div id="content-selectAtiende" class="col-md-12">          
+                <div class="form-group">
+                    <label for="atiendeServicio"> Atiende * </label>
+                    <select id="selectAtiendeServicio" class="form-control" name="atiendeServicio" style="width: 100%" data-parsley-required="true" >
+                        <option value="">Seleccionar</option>
+                        <?php
+                        foreach ($atiende as $key => $value) {
+                            echo '<option value="' . $value['IdUsuario'] . '">' . $value['Nombre'] . '</option>';
+                        }
+                        ?>
+                    </select>                            
+                </div>    
+            </div>
+            <div id="content-selectClasificacion" class="col-md-6 hidden">
+                <div class="form-group">
+                    <label for="clasificacion"> Clasificacion * </label>
+                    <select id="selectClasificacion" class="form-control" name="clasificacion" style="width: 100%"  >
+                        <option value="">Seleccionar</option>
+                        <?php
+                        foreach ($clasificacion as $key => $value) {
+                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+                        }
+                        ?>
+                    </select>                            
+                </div>    
+            </div>            
+        </div>
         <div class="row">
             <div class="col-md-12">          
                 <div class="form-group">
                     <label for="servicioDepartamento"> Descripción *</label>
-                    <?php
-                    $descripcion = '';
-                    if (isset($datosSD->WORKORDERID)) {
-                        $descripcion = $datosSD->WORKORDERID . "  --  " . $datosSD->SUBJECT;
-                    }
-                    ?>
-                    <input value="<?php echo $descripcion; ?>" id="inputDescripcionServicio" type="text"  class="form-control" placeholder="Describicion breve .." data-parsley-required="true"/>
+                    <input id="inputDescripcionServicio" type="text"  class="form-control" placeholder="Describicion breve .." data-parsley-required="true"/>
                 </div>    
             </div>
         </div>
@@ -274,12 +251,12 @@
                     <thead>
                         <tr>                            
                             <th>Servicio</th>
-                            <th>Sucursal</th>
-                            <th>Atiende</th>                            
+                            <th>Atiende</th>
+                            <th>Clasificación</th>
                             <th>Descripción</th>
                             <th class="none">Idservicio</th>
-                            <th class="none">IdSucursal</th>
-                            <th class="none">IdAtiende</th>                        
+                            <th class="none">IdAtiende</th>
+                            <th class="none">IdClasificacion</th>
                         </tr>
                     </thead>
                     <tbody>

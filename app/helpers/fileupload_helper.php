@@ -2,7 +2,6 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-use Aws\S3\S3Client;
 
 if (!function_exists('setMultiplesArchivos')) {
 
@@ -16,7 +15,6 @@ if (!function_exists('setMultiplesArchivos')) {
      * @return	mixed	depends on what the array contains
      */
     function setMultiplesArchivos(&$CI, string $name, string $carpeta) {
-        $host = $_SERVER['SERVER_NAME'];
         $CI->load->helper(array('conversionpalabra'));
         $archivos = array();
         $posicionExtencion = null;
@@ -29,15 +27,6 @@ if (!function_exists('setMultiplesArchivos')) {
         $config['upload_path'] = $carpeta;
         $config['allowed_types'] = 'jpg|bmp|jpeg|gif|png|doc|docx|xls|xlsx|pdf|xml';
         $CI->load->library('upload');
-        $CI->load->library('image_lib');
-        $S3 = new S3Client([
-            'version' => 'latest',
-            'region' => 'us-west-2',
-            'credentials' => [
-                'key' => 'AKIAJS7DH4TPDSKDHXSA',
-                'secret' => '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'
-            ]
-        ]);
         if (!empty($files)) {
             for ($i = 0; $i < count($files[$name]['name']); $i++) {
                 $posicionExtencion = strrpos($files[$name]['name'][$i], '.');
@@ -52,68 +41,9 @@ if (!function_exists('setMultiplesArchivos')) {
                 $_FILES[$name]['size'] = $files[$name]['size'][$i];
                 $CI->upload->initialize($config);
                 if (!$CI->upload->do_upload($name)) {
-//                    $error = array('error' => $CI->upload->display_errors());
-//                    var_dump($error);
-                    return FALSE;
+                    $archivos = FALSE;
                 } else {
                     array_push($archivos, substr($carpeta, 1) . utf8_encode($CI->upload->data('file_name')));
-                    $_image = end($archivos);
-                    $image_data = getimagesize("." . $_image);
-                    if ($image_data[0] > 640 || $image_data[1] > 640) {
-                        $_ancho = ($image_data[0] > $image_data[1]) ? 640 : ((640 * (int) $image_data[0]) / (int) $image_data[1]);
-                        $_alto = ($image_data[1] > $image_data[0]) ? 640 : ((640 * (int) $image_data[1]) / (int) $image_data[0]);
-
-                        $_config['image_library'] = 'gd2';
-                        $_config['source_image'] = "." . $_image;
-                        $_config['create_thumb'] = FALSE;
-                        $_config['maintain_ratio'] = TRUE;
-                        $_config['width'] = $_ancho;
-                        $_config['height'] = $_alto;
-
-                        $CI->image_lib->clear();
-                        $CI->image_lib->initialize($_config);
-                        if (!$CI->image_lib->resize()) {
-                            array_pop($archivos);
-                            unlink("." . $_image);
-                            return false;
-                        } else {
-                            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-                                try {
-                                    $respuesta = $S3->putObject(array(
-                                        'Bucket' => 'storagesolutions',
-                                        'Key' => substr($_image, 1),
-                                        'ACL' => 'public-read',
-                                        'SourceFile' => "." . $_image
-                                    ));
-                                    $url = $respuesta->get('ObjectURL');
-//                                    array_pop($archivos);
-//                                    array_push($archivos, $url);
-                                } catch (Aws\S3\Exception\S3Exception $e) {
-                                    array_pop($archivos);
-                                    unlink("." . $_image);
-                                    return false;
-                                }
-                            }
-                        }
-                    } else {
-                        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-                            try {
-                                $respuesta = $S3->putObject(array(
-                                    'Bucket' => 'storagesolutions',
-                                    'Key' => substr($_image, 1),
-                                    'ACL' => 'public-read',
-                                    'SourceFile' => "." . $_image
-                                ));
-                                $url = $respuesta->get('ObjectURL');
-//                                array_pop($archivos);
-//                                array_push($archivos, $url);
-                            } catch (Aws\S3\Exception\S3Exception $e) {
-                                array_pop($archivos);
-                                unlink("." . $_image);
-                                return false;
-                            }
-                        }
-                    }
                 }
             }
             return $archivos;

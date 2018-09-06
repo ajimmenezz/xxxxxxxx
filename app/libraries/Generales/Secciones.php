@@ -61,7 +61,6 @@ class Secciones extends General {
         $this->Proyectos2 = \Librerias\Proyectos2\Catalogos::factory();
         $this->Gapsi = \Librerias\Gapsi\Catalogos::factory();
         $this->PEV2 = \Librerias\Reportes\PEV2::factory();
-        $this->DBP2 = \Modelos\Modelo_Proyectos2::factory();
     }
 
     /*
@@ -168,13 +167,6 @@ class Secciones extends General {
                 break;
             case 'Proyectos2/Planeacion':
                 $datos['ProyectosSinAtender'] = $this->DBP->getProyectosSinAtender();
-                break;
-            case 'Proyectos2/Almacen':
-                $datos['ProyectosAlmacenSAE'] = $this->DBP2->getProyectosAlmacenSAE();
-                break;
-            case 'Proyectos2/Tareas':
-                $datos['Tareas'] = $this->DBP2->getTareasProyectos();
-                $datos['TodasTareas'] = $this->DBP2->tienePermisoTodasTareas();
                 break;
             case 'Proyectos/Nuevo':
 //                $datos['Clientes'] = $this->DBP->getClientes();
@@ -344,8 +336,7 @@ class Secciones extends General {
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('20');
                 break;
             case 'Tesoreria/Facturacion':
-                $usuario = $this->Usuario->getDatosUsuario();
-                $datos['ServiciosFacturacion'] = $this->Tesoreria->consultaIdOrdenIngeniero($usuario['Id']);
+                $datos['TablaFacturacion'] = $this->Tesoreria->mostrarTablaDependiendoUsuario();
                 break;
             case 'Poliza/Regiones_Cliente':
                 $datos['ListaRegionesCliente'] = $this->Catalogo->catRegionesCliente("3");

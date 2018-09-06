@@ -80,9 +80,6 @@ class Controller_Proyectos extends Base {
             case 'Carga_Ubicaciones_By_Area':
                 $resultado = $this->proyecto->getUbicacionesByArea($this->input->post());
                 break;           
-            case 'GeneraDocumentoInicial':
-                $resultado = $this->proyecto->generaDocumentoInicial($this->input->post());
-                break;           
             default:
                 $resultado = FALSE;
                 break;

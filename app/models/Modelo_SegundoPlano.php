@@ -125,32 +125,4 @@ class Modelo_SegundoPlano extends Base {
         return $consulta;
     }
 
-    public function getFoliosExistentesEnSolicitudes(string $folios = ",0") {
-        $consulta = $this->consulta("select Folio from t_solicitudes where Folio in (''" . $folios . ")");
-        return $consulta;
-    }
-
-    public function getFoliosExistentesEnV2(string $folios = ",0") {
-        $consulta = parent::connectDBAdist2()->query("select  
-                                                        Folio_Cliente as Folio
-                                                        from t_servicios
-                                                        where Folio_Cliente in (''" . $folios . ")");
-        return $consulta->result_array();
-    }
-
-    public function insertaSolicitudesAdISTV3($array, $arrayAsunto) {
-        $this->iniciaTransaccion();
-        $this->insertar("t_solicitudes", $array);
-        $ultimo = $this->ultimoId();
-        $this->insertar('t_solicitudes_internas', array_merge(['IdSolicitud' => $ultimo], $arrayAsunto));
-        
-        if($this->estatusTransaccion() === FALSE) {
-            $this->roolbackTransaccion();
-            return false;
-        }else{
-            $this->commitTransaccion();
-            return true;
-        }
-    }
-
 }

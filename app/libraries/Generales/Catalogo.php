@@ -254,7 +254,6 @@ class Catalogo extends General {
                     return $this->DBC->getJuntarTablas('SELECT 
                         a.Id as IdUsuario,
                         nombreUsuario(a.Id) AS Nombre,
-                        SDName,
                         a.Usuario,
                         b.Nombre as Perfil, 
                         a.EmailCorporativo, a.SDKey, 

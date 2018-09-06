@@ -246,7 +246,8 @@ class ServiciosTicket extends General {
         $data['datosServicio'] = $datosServicio;
         $data['notas'] = $this->Notas->getNotasByServicio($datos['servicio'], $idSolicitud);
         $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $datosServicio['Ticket'] . '"');
-//        var_dump($datosServicio['tieneSeguimiento']);
+        $data['idPerfil'] = $usuario['IdPerfil'];
+        
         if ($datosServicio['tieneSeguimiento'] !== '0') {
 
             //No eliminar se ocupara despues
@@ -1186,7 +1187,8 @@ class ServiciosTicket extends General {
                                                                 t_servicios_ticket
                                                             WHERE Id = "' . $servicio . '"');
         $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $data['datosServicio']['Ticket'] . '"');
-
+        $data['idPerfil'] = $usuario['IdPerfil'];
+        
         if ($usuario['IdPerfil'] === '83' || $usuario['IdDepartamento'] === '19') {
             $data['botonAgregarVuelta'] = '<li id="btnAgregarVuelta"><a href="#"><i class="fa fa-plus"></i> Agregar Vuelta</a></li>';
         } else {
@@ -1306,7 +1308,7 @@ class ServiciosTicket extends General {
     public function verificarServicio(array $datos) {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '4');
-        $serviciosTicket = $this->DBST->consultaGeneral('SELECT Id FROM t_servicios_ticket WHERE Ticket = "' . $datos['ticket'] . '" AND IdEstatus in(10,5,3,2,1)');
+        $serviciosTicket = $this->DBST->consultaGeneral('SELECT Id FROM t_servicios_ticket WHERE Ticket = "' . $datos['ticket'] . '" AND IdEstatus in(10,5,2,1)');
         $contador = 0;
         $linkPDF = '';
 
@@ -1916,8 +1918,7 @@ class ServiciosTicket extends General {
         ));
         $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
         $descripcion = 'Descripción: <strong>Se le ha mandado un documento del avance del día de hoy.</strong><br>';
-        $sucursal = $this->InformacionServicios->sucursalServicio($datos['sucursal']);
-        $titulo = 'Documento Firmado - Avance' . $sucursal;
+        $titulo = 'Documento Firmado - Avance';
         $texto = '<p>Estimado(a) <strong>' . $datos['recibe'] . '</strong>, se le ha mandado el reporte firmado.</p>' . $descripcion . $PDF;
 
         $mensajeFirma = $this->Correo->mensajeCorreo($titulo, $texto);

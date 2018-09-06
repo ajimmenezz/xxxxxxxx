@@ -23,10 +23,11 @@
                     <thead>
                         <tr>
                             <th class="all">Numero de solicitud</th>
-                            <th class="all">Ticket</th>
-                            <th class="all">Folio</th>
                             <th class="all">Asunto</th>
-                            <th class="all">Solicita</th>                            
+                            <th class="all">Tipo</th>
+                            <th class="all">Ticket</th>
+                            <th class="all">Solicita</th>
+                            <th class="all">Asunto SD</th>
                             <th class="all">Fecha</th>
                             <th class="all">Estatus</th>                                
                         </tr>
@@ -36,19 +37,22 @@
                         foreach ($datos['solicitudesAsignadas']['solicitudes'] as $key => $value) {
                             echo '<tr>';
                             echo '<td>' . $value['Numero'] . '</td>';
-                            echo '<td>' . $value['Ticket'] . '</td>';
-                            echo '<td>' . $value['Folio'] . '</td>';
                             echo '<td>' . $value['Asunto'] . '</td>';
+                            echo '<td>' . $value['Tipo'] . '</td>';
+                            echo '<td>' . $value['Ticket'] . '</td>';
                             if (!empty($datos['solicitudesAsignadas']['SolicitudesSD'])) {
                                 foreach ($datos['solicitudesAsignadas']['SolicitudesSD'] as $folioSD) {
                                     if (((string) $folioSD['solicitud']) === $value['Numero']) {
                                         echo '<td>' . $folioSD['datos']['Solicitante'] . '</td>';
+                                        echo '<td>' . $folioSD['datos']['Asunto'] . '</td>';
                                     } else {
                                         echo '<td>' . $value['Solicita'] . '</td>';
+                                        echo '<td></td>';
                                     }
                                 }
                             } else {
-                                echo '<td>' . $value['Solicita'] . '</td>';                               
+                                echo '<td>' . $value['Solicita'] . '</td>';
+                                echo '<td></td>';
                             }
                             echo '<td>' . $value['Fecha'] . '</td>';
                             echo '<td>' . $value['Estatus'] . '</td>';

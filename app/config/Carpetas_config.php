@@ -49,8 +49,6 @@ $config['Secciones'] = array(
     'Proyectos2' => array(
         'Catalogo-Proyectos' => 'Catalogos',
         'Planeacion-Proyectos' => 'Planeacion',
-        'Almacen-Proyectos' => 'Almacen',
-        'Seguimiento-Tareas' => 'Tareas',
     ),
     'Logistica' => array(
         'Dashboard-Logistica' => 'Dashboard',

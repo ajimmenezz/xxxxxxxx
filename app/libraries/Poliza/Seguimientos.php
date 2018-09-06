@@ -801,13 +801,13 @@ class Seguimientos extends General {
 
     public function guardarDatosGeneralesCorrectivo(array $datos) {
         $datosRecoleccion = $this->DBS->consultaGeneralSeguimiento('SELECT Id FROM t_correctivos_generales WHERE IdServicio = ' . $datos['servicio']);
-
-        if (isset($datos['multimedia'])) {
+        
+        if(isset($datos['multimedia'])){
             $multimedia = $datos['multimedia'];
-        } else {
+        }else{
             $multimedia = '0';
         }
-
+        
         $arrayCorrectivo = array(
             'IdServicio' => $datos['servicio'],
             'IdArea' => $datos['area'],
@@ -1042,7 +1042,6 @@ class Seguimientos extends General {
         $this->cambiarEstatus(array('servicio' => $datos['servicio'], 'estatus' => '3'));
 
         $linkPDF = $this->cargarPDF($datos);
-        $sucursal = $this->InformacionServicios->sucursalServicio($datos['servicio']);
 
         if ($datos['tipoSolicitud'] === 'almacen') {
             $dataNuevoServicio = array(
@@ -1069,7 +1068,7 @@ class Seguimientos extends General {
                         La fecha de creacion fue el ' . $fecha . '. <br><br> Por lo que se solicita que se atienda lo mas pronto posible el servicio.');
 
                 $textoTecnico = '<p>Estimado(a) <strong>' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la solicitud de refacción a Almacén que realizo.</p><br><a href="' . $linkPDF . '">Documento PDF</a>';
-                $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Solicitud de Refacción' . $sucursal, $textoTecnico);
+                $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Solicitud de Refacción', $textoTecnico);
 
                 return $this->consultaCorrectivosSolicitudRefaccion($datos['servicio']);
             } else {
@@ -1098,8 +1097,8 @@ class Seguimientos extends General {
                             $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
                             $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
                             $textoTI = '<p>El técnico <strong>' . $usuario['Nombre'] . ' </strong> le ha reasignado la solicitud para solicitar una Refacción.<br>Número de Solicitud: <strong>' . $verificarFolio[0]['Folio'] . '</strong>.</p><br><a href="' . $linkPDF . '">Documento PDF</a><br><p>Favor de verificar en Service Desk</p>';
-                            $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud' . $sucursal, $textoTI);
-                            $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'Reasignación de Solicitud' . $sucursal, $textoTI);
+                            $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud', $textoTI);
+                            $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'Reasignación de Solicitud', $textoTI);
 
                             return $this->consultaCorrectivosSolicitudRefaccion($datos['servicio']);
                         } else {
@@ -1134,7 +1133,6 @@ class Seguimientos extends General {
         $this->cambiarEstatus(array('servicio' => $datos['servicio'], 'estatus' => '3'));
 
         $linkPDF = $this->cargarPDF($datos);
-        $sucursal = $this->InformacionServicios->sucursalServicio($datos['servicio']);
 
         if ($datos['tipoSolicitud'] === 'almacen') {
             $dataNuevoServicio = array(
@@ -1160,7 +1158,7 @@ class Seguimientos extends General {
                         La fecha de creacion fue el ' . $fecha . '. <br><br> Por lo que se solicita que se atienda lo mas pronto posible el servicio.');
 
                 $textoTecnico = '<p>Estimado(a) <strong>' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la solicitud de equipo a Almacén que realizo.</p><br><a href="' . $linkPDF . '">Documento PDF</a>';
-                $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Solicitud de Equipo' . $sucursal, $textoTecnico);
+                $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Solicitud de Equipo', $textoTecnico);
 
                 return $this->consultaCorrectivosSolicitudEquipo($datos['servicio']);
             } else {
@@ -1189,7 +1187,7 @@ class Seguimientos extends General {
                             $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
                             $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
                             $textoTI = '<p>El técnico <strong>' . $usuario['Nombre'] . '</strong> le ha reasignado la solicitud para solicitar un Equipo.<br>Número de Solicitud: <strong>' . $verificarFolio[0]['Folio'] . '</strong>.</p><br><a href="' . $linkPDF . '">Documento PDF</a><br><p>Favor de verificar en Service Desk</p>';
-                            $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud' . $sucursal, $textoTI);
+                            $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud', $textoTI);
 
                             return $this->consultaCorrectivosSolicitudEquipo($datos['servicio']);
                         } else {
@@ -1754,8 +1752,7 @@ class Seguimientos extends General {
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
         $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
-        $sucursal = $this->InformacionServicios->sucursalServicio($datos['servicio']);
-        $titulo = 'Retiro a Garantía con Respaldo' . $sucursal;
+        $titulo = 'Retiro a Garantía con Respaldo';
         $texto = '<p><strong>Estimado(a) ' . $datos['recibe'] . ',</strong> se le ha mandado el documento del retiro a garantía con respaldo que ha firmado.</p>' . $PDF . $linkDetallesServicio;
 
         $mensajeFirma = $this->Correo->mensajeCorreo($titulo, $texto);
@@ -1835,8 +1832,7 @@ class Seguimientos extends General {
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
         $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
-        $sucursal = $this->InformacionServicios->sucursalServicio($datos['servicio']);
-        $titulo = 'Acuse de Entrega' . $sucursal;
+        $titulo = 'Acuse de Entrega';
         $texto = '<p>Se le ha mandado una copia del documento de Acuse de Entrega que ha entregado el técnico' . $usuario['Nombre'] . '.</p>' . $PDF . $linkDetallesServicio;
 
         $mensajeFirma = $this->Correo->mensajeCorreo($titulo, $texto);
@@ -1891,15 +1887,10 @@ class Seguimientos extends General {
     public function enviarSolucionCorrectivoSD(array $datos) {
         $this->enviar_Reporte_PDF($datos);
 
-        $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
+        $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
 
         $verificarEstatusTicket = $this->consultaCorrectivosServiciosTicket($datos['ticket'], $datos['servicio']);
 
-//        if (!empty($verificarEstatusTicket)) {
-//            return array('faltanServicios', $resultadoSD);
-//        } else {
-//            return array('serviciosConcluidos', $resultadoSD);
-//        }
         if (!empty($verificarEstatusTicket)) {
             return 'faltanServicios';
         } else {
@@ -2344,7 +2335,7 @@ class Seguimientos extends General {
                         $linkPDF = $this->cargarPDF($datos);
 
                         $this->DBP->insertarCorrectivosSolicitudesProblemas($datos, $datosExtra);
-                        $this->asignarMultimedia($linkPDF, $folio[0]['Folio'], $key, $datos['servicio']);
+                        $this->asignarMultimedia($linkPDF, $folio[0]['Folio'], $key);
                         $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
                             'IdEstatus' => '3',
                                 ), array('Id' => $datos['servicio'])
@@ -2371,14 +2362,13 @@ class Seguimientos extends General {
         }
     }
 
-    public function asignarMultimedia(string $linkPdf, string $folio, string $key, string $servicio) {
+    public function asignarMultimedia(string $linkPdf, string $folio, string $key) {
         $usuario = $this->Usuario->getDatosUsuario();
         $linkPDF = '<br>Ver PDF Resumen General <a href="' . $linkPdf . '" target="_blank">Aquí</a>';
         $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $folio);
         $textoMultimedia = '<p><strong>Multimedia,</strong> el técnico <strong>' . $usuario['Nombre'] . '</strong> le ha reasignado la solicitud <strong>' . $folio . '</strong>.</p>' . $linkPDF;
-        $sucursal = $this->InformacionServicios->sucursalServicio($servicio);
-        $this->enviarCorreoConcluido(array('ajimenez@siccob.com.mx'), 'Reasignación de Solicitud' . $sucursal, $textoMultimedia);
-        $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'Reasignación de Solicitud' . $sucursal, $textoMultimedia);
+        $this->enviarCorreoConcluido(array('ajimenez@siccob.com.mx'), 'Reasignación de Solicitud', $textoMultimedia);
+        $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'Reasignación de Solicitud', $textoMultimedia);
 
         $this->ServiceDesk->reasignarFolioSD($folio, '9304', $key);
     }
@@ -2422,8 +2412,7 @@ class Seguimientos extends General {
     public function enviar_Reporte_PDF(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $host = $_SERVER['SERVER_NAME'];
-        $sucursal = $this->InformacionServicios->sucursalServicio($datos['servicio']);
-        $titulo = 'Se concluyo el servicio' . $sucursal;
+        $titulo = 'Se concluyo el servicio';
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
@@ -2434,21 +2423,12 @@ class Seguimientos extends General {
                                             tst.Descripcion AS DescripcionServicio,
                                             tst.IdSolicitud,
                                             tsi.Asunto AS AsuntoSolicitud,
-                                            tsi.Descripcion AS DescripcionSolicitud,
-                                            (SELECT Folio FROM t_solicitudes WHERE Id=tst.IdSolicitud) Folio
+                                            tsi.Descripcion AS DescripcionSolicitud
                                            FROM t_servicios_ticket tst
                                            INNER JOIN t_solicitudes_internas tsi
                                            ON tsi.IdSolicitud = tst.IdSolicitud
                                            WHERE tst.Id = "' . $datos['servicio'] . '"');
-
-        if (!empty($datosDescripcionConclusion[0]['Folio'] && $datosDescripcionConclusion[0]['Folio'] !== '0')) {
-            $folio = '<br>Folio: <strong>' . $datosDescripcionConclusion[0]['Folio'] . '</strong>';
-        } else {
-            $folio = '';
-        }
-
         $descripcionConclusion = '<br><br>Solicitud: <strong>' . $datosDescripcionConclusion[0]['IdSolicitud'] . '</strong>
-                ' . $folio . '
                 <br>Asunto de la Solicitud: <strong>' . $datosDescripcionConclusion[0]['AsuntoSolicitud'] . '</strong>
                 <br>Descripcion de la Solcitud: <strong>' . $datosDescripcionConclusion[0]['AsuntoSolicitud'] . '</strong>
                 <br><br>Ticket: <strong>' . $datos['ticket'] . '</strong>

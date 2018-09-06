@@ -211,7 +211,6 @@ Servicio.prototype.nuevaSolicitud = function () {
                             });
                         }
 
-
                         $("#modal-dialogo .modal-body").empty().append('<div class="row">\n\
                                         <div class="col-md-12 text-center">\n\
                                             <h5>Se genero la solicitud <b>' + respuesta + '</b></h5>\n\
@@ -297,6 +296,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
     var idSucursal = arguments[10];
     var datosSD = arguments[11];
     var tipoServicio = arguments[12] || '';
+    var idPerfil = arguments[13] || '';
     var dataServicio = {servicio: servicio, ticket: ticket};
 
     $(resumenSeguimiento).addClass('hidden');
@@ -342,6 +342,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
                 nombreControlador + '/Servicio_Cancelar'
                 );
     });
+    
     _this.file.crearUpload('#evidenciaSinClasificar',
             '/Generales/Servicio/Concluir_SinClasificar',
             null,
@@ -358,19 +359,48 @@ Servicio.prototype.ServicioSinClasificar = function () {
         var evidencias = $('#evidenciaSinClasificar').val();
         var archivosPreview = _this.file.previews('.previewSinClasificar');
         if (descripcion !== '') {
-            var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, correo: '', operacion: '9'};
-            _this.modalConfirmacionFirma(ticket, data);
-            $('#btnNoFirma').on('click', function () {
-                $('#btnSiFirma').attr('disabled', 'disabled');
-                $('#btnNoFirma').attr('disabled', 'disabled');
-                _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#modal-dialogo', data, function (respuesta) {
+            if (idPerfil !== '83') {
+                var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, correo: '', operacion: '9'};
+                _this.modalConfirmacionFirma(ticket, data);
+                $('#btnNoFirma').on('click', function () {
+                    $('#btnSiFirma').attr('disabled', 'disabled');
+                    $('#btnNoFirma').attr('disabled', 'disabled');
+                    _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#modal-dialogo', data, function (respuesta) {
+                        if (respuesta === true) {
+                            _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+                        } else {
+                            _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+                        }
+                    });
+                });
+            } else {
+                var data = {servicio: servicio};
+                _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, panel, function (respuesta) {
                     if (respuesta === true) {
-                        _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+                        _this.validarTecnicoPoliza();
+
+                        var html = '<div class="row" m-t-10">\n\
+                                        <div id="col-md-12 text-center">\n\
+                                            <div id="campoLapizTecnico"></div>\n\
+                                        </div>\n\
+                                    </div>\n\
+                                    <div class="row m-t-20">\n\
+                                        <div class="col-md-12 text-center">\n\
+                                            <br>\n\
+                                            <label>Firma del técnico</label><br>\n\
+                                        </div>\n\
+                                    </div>\n\
+                                    <br>';
+
+                        $('#btnModalConfirmar').addClass('hidden');
+                        $('#btnModalConfirmar').off('click');
+                        _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
+                        _this.validarCamposFirma(ticket, servicio, true, true, '4');
                     } else {
-                        _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+                        _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
                     }
                 });
-            });
+            }
         } else {
             _this.mostrarMensaje('.errorGeneralServicioSinClasificar', false, 'Debes llenar el campo Descripción.', 3000);
         }
@@ -418,7 +448,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
         _this.mostrarFormularioReasigarServicio(servicio, ticket);
     });
 
-    _this.botonAgregarVuelta(dataServicio);
+    _this.botonAgregarVuelta(dataServicio, '#seccion-servicio-sin-clasificar');
     _this.GuardarNotas(dataServicio, nombreControlador);
     _this.initBotonNuevaSolicitud(ticket, '#seccion-servicio-sin-clasificar');
 
@@ -1826,10 +1856,12 @@ Servicio.prototype.subirInformacionSD = function (servicio) {
 Servicio.prototype.botonAgregarVuelta = function () {
     var _this = this;
     var dataServicio = arguments[0];
+    var panel = arguments[1];
 
     var data = {servicio: dataServicio.servicio};
+    $('#btnAgregarVuelta').off('click');
     $('#btnAgregarVuelta').on('click', function () {
-        _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, '#modal-dialogo', function (respuesta) {
+        _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, panel, function (respuesta) {
             if (respuesta === true) {
                 _this.enviarEvento('/Generales/Servicio/VerificarVueltaAsociado', data, '#modal-dialogo', function (respuesta) {
                     if (respuesta === true) {
@@ -1858,8 +1890,12 @@ Servicio.prototype.botonAgregarVuelta = function () {
                     } else {
                         if (respuesta === 'sinSucural') {
                             _this.mensajeModal('No cuenta con sucursal guardada.', 'Advertencia', true);
+                        } else if (respuesta === 'noEstaProblema') {
+                            _this.mensajeModal('El servicio debe estar en Problema para agregar una vuelta.', 'Advertencia', true);
                         } else if (respuesta === 'yaTieneVueltas') {
-                            _this.mensajeModal('No puede agregar otra vuelta a esta Folio; hasta dentro de 8 horas.', 'Advertencia', true);
+                            _this.mensajeModal('No puede agregar otra vuelta a esta Folio hasta dentro de 14 horas.', 'Advertencia', true);
+                        } else if (respuesta === 'noHaySolucion') {
+                            _this.mensajeModal('No puede agregar otra vuelta si no tiene solución el servicio.', 'Advertencia', true);
                         }
                     }
                 });
@@ -1921,7 +1957,7 @@ Servicio.prototype.guardarVueltaAsociado = function () {
 
     _this.enviarEvento('/Generales/Servicio/GuardarVueltaAsociado', data, '#modal-dialogo', function (respuesta) {
         if (respuesta === true) {
-            _this.mensajeModal('Documento enviado.', 'Correcto');
+            _this.mensajeModal('Documento enviado.', 'Correcto', true);
         } else {
             _this.mensajeModal('Por favor contacte al administrador del Sistema AdIST.', 'Error', true);
         }

@@ -95,7 +95,6 @@ class Solicitud extends General {
                 ts.Id as Numero,
                 tipoSolicitud(ts.IdTipoSolicitud) as Tipo,
                 ts.Ticket,
-                ts.Folio,
                 ts.FechaCreacion as Fecha, 
                 estatus(ts.IdEstatus) as Estatus,
                 nombreUsuario(ts.Solicita) as Solicita, 
@@ -410,7 +409,11 @@ class Solicitud extends General {
         $data['datos'] = $datosSolicitud;
         $data['servicios'] = $this->Catalogo->catServiciosDepartamento('3', array('departamento' => $usuario['IdDepartamento']));
         $data['atiende'] = $this->Catalogo->catUsuarios('3', array('Flag' => '1'), array('IdDepartamento' => $datosSolicitud['IdDepartamento']));
-        $data['cliente'] = $this->clientesActivos();
+        $data['cliente'] = $this->DBS->consultaGral('SELECT
+                                                        Id,
+                                                        Nombre
+                                                    FROM cat_v3_clientes
+                                                    WHERE Id IN(1,4,12)');
 
         if (in_array('187', $usuario['PermisosAdicionales'])) {
             $data['autorizacionAtenderServicio'] = TRUE;
@@ -476,15 +479,8 @@ class Solicitud extends General {
                     } else {
                         $apiKey = $this->DBS->getApiKeyMesaAyuda();
                     }
-
-                    $data['datosSD'] = $this->ServiceDesk->getDetallesFolio($apiKey, $datosSolicitud['Folio']);
+                    $data['datosSD'] = json_decode($this->ServiceDesk->getDetallesFolio($apiKey, $datosSolicitud['Folio']));
                     $data['datosResolucionSD'] = json_decode($this->ServiceDesk->getResolucionFolio($apiKey, $datosSolicitud['Folio']));
-
-                    if (isset($data['datosSD']->WORKORDERID)) {
-                        $data['sucursales'] = $this->DBS->consulta("select Id, IdCliente, Nombre, NombreCinemex from cat_v3_sucursales where IdCliente = 1 and Flag = 1 order by Nombre");
-                    } else {
-                        $data['sucursales'] = $this->DBS->consulta("select Id, IdCliente, Nombre, NombreCinemex from cat_v3_sucursales where Flag = 1 order by Nombre");
-                    }
                 }
                 $data['usuarioApiKey'] = $usuario['SDKey'];
                 $data['formularioSolicitud'] = parent::getCI()->load->view('Generales/Modal/formularioAsignadaSolicitudSistemasExternos', $data, TRUE);
@@ -565,30 +561,21 @@ class Solicitud extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $solicitante = $this->DBS->getDatosSolicitante($datosSolicitud['Solicita']);
 
-        if (empty($datos['ticket']) || is_null($datos['ticket'])) {
+        if (empty($datos['ticket'])) {
             $ticket = $this->Ticket->setTicket($datosSolicitud, $datos);
-            if ($ticket <= 0 || $ticket > 400000) {
-                return false;
-            } else {
-                $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array(
-                    'IdEstatus' => '2',
-                    'Ticket' => $ticket,
-                    'FechaRevision' => $fecha,
-                    'Atiende' => $usuario['Id']
-                        ), array('Id' => $datos['solicitud']));
-            }
+            $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array(
+                'IdEstatus' => '2',
+                'Ticket' => $ticket,
+                'FechaRevision' => $fecha,
+                'Atiende' => $usuario['Id']
+                    ), array('Id' => $datos['solicitud']));
         } else {
+            $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array(
+                'IdEstatus' => '2',
+                'FechaRevision' => $fecha,
+                'Atiende' => $usuario['Id']
+                    ), array('Id' => $datos['solicitud']));
             $ticket = $datos['ticket'];
-            if ($ticket <= 0 || $ticket > 400000) {
-                return false;
-            } else {
-                $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array(
-                    'IdEstatus' => '2',
-                    'Ticket' => $ticket,
-                    'FechaRevision' => $fecha,
-                    'Atiende' => $usuario['Id']
-                        ), array('Id' => $datos['solicitud']));
-            }
         }
 
         if (!empty($consulta)) {
@@ -607,7 +594,6 @@ class Solicitud extends General {
                                 'Ticket' => $ticket,
                                 'IdSolicitud' => $datos['solicitud'],
                                 'IdTipoServicio' => $value['servicio'],
-                                'IdSucursal' => $value['sucursal'],
                                 'IdEstatus' => '1',
                                 'Solicita' => $usuario['Id'],
                                 'Atiende' => $value['atiende'],
@@ -615,10 +601,6 @@ class Solicitud extends General {
                                 'Descripcion' => $value['descripcion']
                                     ), $value['nombreServicio']));
                 }
-
-                $detallesSolicitud = $this->linkDetallesSolicitud($datos['solicitud']);
-                $linkDetallesSolicitud = '<br>Ver Detalles de la Solicitud <a href="' . $detallesSolicitud . '" target="_blank">Aquí</a>';
-
                 $this->enviarNotificacion(array(
                     'Departamento' => $solicitante['IdDepartamento'],
                     'remitente' => $usuario['Id'],
@@ -626,9 +608,6 @@ class Solicitud extends General {
                     'descripcion' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> ya es atendida por ' . $usuario['Nombre'] . ' del ticket ' . $ticket,
                     'titulo' => 'Seguimiento de Solicitud',
                     'mensaje' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> del ticket ' . $ticket . ' ya esta siendo atendida por el usuario <b>' . $usuario['Nombre'] . '</b>.'
-                    . '             <br>' . $linkDetallesSolicitud . '<br><br>
-                                    Asunto: <p><b>' . $datosSolicitud['detalles'][0]['Asunto'] . '</b> </p><br>
-                                    Descripción:<br> <p><b>' . $datosSolicitud['detalles'][0]['Descripcion'] . '</b> </p>'
                     , $solicitante));
                 return array('ticket' => $ticket, 'folios' => $foliosServicios, 'solicitudes' => $this->getSolicitudesAsignadas());
             } else {
@@ -1536,7 +1515,7 @@ class Solicitud extends General {
                                             Id,
                                             Nombre
                                         FROM cat_v3_clientes
-                                        WHERE Id IN(1,4,12,18)');
+                                        WHERE Id IN(1,4,12)');
     }
 
     public function sucursalesCliente(array $datos) {

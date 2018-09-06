@@ -30,7 +30,7 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
-    //Evento que carga la seccion de seguimiento de un servicio de tipo Logistica
+    //Evento que carga la seccion de seguimiento de un servicio de tipo Poliza
     $('#data-table-poliza tbody').on('click', 'tr', function () {
         var datos = $('#data-table-poliza').DataTable().row(this).data();
         if (datos !== undefined) {
@@ -94,6 +94,7 @@ $(function () {
 
             if (datosDelServicio.tieneSeguimiento === '0') {
                 var idSucursal = respuesta.idSucursal[0].IdSucursal;
+                var idPerfil = respuesta.idPerfil;
                 servicios.ServicioSinClasificar(
                         formulario,
                         '#listaPoliza',
@@ -107,7 +108,8 @@ $(function () {
                         avanceServicio,
                         idSucursal,
                         datosSD,
-                        datosTabla[3]
+                        datosTabla[3],
+                        idPerfil
                         );
             } else {
                 switch (datosDelServicio.IdTipoServicio) {
@@ -2359,7 +2361,6 @@ $(function () {
 
         $('#btnGuardarReparacionSinEquipo').off('click');
         $('#btnGuardarReparacionSinEquipo').on('click', function (e) {
-
             if (validarCampos($('#selectSolucionReparacionSinEquipo').val(), '.errorFormularioSolucionReparacionSinEquipo', 'Debes seleccionar el campo Solución.')) {
                 if (validarCampos($('#inputObservacionesSolucionRepa-racionSinEquipo').val(), '.errorFormularioSolucionReparacionSinEquipo', 'Debes llenar el campo de Observaciones.')) {
                     if ($('#evidenciasSolucionReparacionSinEquipo').val() !== '' || respuesta.informacion.evidenciasCorrectivosSoluciones !== null) {
@@ -2523,7 +2524,7 @@ $(function () {
         servicios.initBotonNuevaSolicitud(datosTabla[1], '#seccion-servicio-correctivo');
         servicios.eventosFolio(datosTabla[2], '#seccion-servicio-correctivo', servicio);
         servicios.subirInformacionSD(servicio, '#seccion-servicio-correctivo');
-        servicios.botonAgregarVuelta({servicio: servicio});
+        servicios.botonAgregarVuelta({servicio: servicio}, '#seccion-servicio-correctivo');
     };
 
     var validarFormularioDatosGeneralesCorrectivo = function () {
@@ -3408,14 +3409,6 @@ $(function () {
                     var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
                     if (operacion === '2' && respuesta !== 'faltanServicios') {
                         evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
-//                            console.log(respuesta);
-//                            if (respuesta[0] === 'serviciosConcluidos') {
-//                                if (respuesta[1] !== true) {
-//                                    servicios.mensajeModal(respuesta[1], 'Advertencia', true);
-//                                }
-//                                modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, '.errorFormularioSolucionReparacionSinEquipo', respuestaAnterior, true, '4');
-//
-//                            }
                             if (respuesta === 'serviciosConcluidos') {
                                 modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, '.errorFormularioSolucionReparacionSinEquipo', respuestaAnterior, true, '4');
                             } else {
@@ -3443,13 +3436,6 @@ $(function () {
                     var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
                     if (operacion === '2' && respuesta !== 'faltanServicios') {
                         evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
-//                            if (respuesta[0] === 'serviciosConcluidos') {
-//                                if (!respuesta[1] !== true) {
-//                                    servicios.mensajeModal(respuesta[1], 'Advertencia', true);
-//                                }
-//                                modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, '.errorFormularioSolucionReparacionSinEquipo', respuestaAnterior, true, '4');
-//
-//                            }
                             if (respuesta === 'serviciosConcluidos') {
                                 modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, '.errorFormularioSolucionReparacionSinEquipo', respuestaAnterior, true, '4');
                             } else {

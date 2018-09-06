@@ -20,15 +20,38 @@ class Controller_Tesoreria extends Base {
 
     public function manejarEvento(string $evento = null) {
         switch ($evento) {
-
             case 'validarPuesto':
                 $resultado = $this->tesoreria->validarPuesto($this->input->post());
                 break;
-            case 'mostrarFormularioDocumentacionFacturacion':
-                $resultado = $this->tesoreria->mostrarFormularioDocumentacionFacturacion($this->input->post());
+            case 'mostrarFormularioSubirFactura':
+                $resultado = $this->tesoreria->formularioSubirFactura($this->input->post());
+                break;
+            case 'mostrarFormularioValidarVuelta':
+                $resultado = $this->tesoreria->formularioValidarVuelta($this->input->post());
+                break;
+            case 'mostrarFormularioPago':
+                $resultado = $this->tesoreria->formularioPago($this->input->post());
+                break;
+            case 'mostrarEvidenciaPagoFactura':
+                $resultado = $this->tesoreria->evidenciaPagoFactura($this->input->post());
+                break;
+            case 'mostrarDetallesFactura':
+                $resultado = $this->tesoreria->detallesFactura($this->input->post());
+                break;
+            case 'mostrarObservacionesFactura':
+                $resultado = $this->tesoreria->observacionesFactura($this->input->post());
                 break;
             case 'guardarDocumentosFacturaAsociados':
                 $resultado = $this->tesoreria->guardarDocumentosFacturaAsociados($this->input->post());
+                break;
+            case 'guardarValidacionVuelta':
+                $resultado = $this->tesoreria->guardarValidacionVuelta($this->input->post());
+                break;
+            case 'guardarFacturaAsociado':
+                $resultado = $this->tesoreria->guardarFacturaAsociado($this->input->post());
+                break;
+            case 'guardarEvidenciaPagoFactura':
+                $resultado = $this->tesoreria->guardarEvidenciaPagoFactura($this->input->post());
                 break;
             case 'colocarFechaValidacion':
                 $resultado = $this->tesoreria->colocarFechaValidacion($this->input->post());
@@ -36,14 +59,14 @@ class Controller_Tesoreria extends Base {
             case 'colocarReferenciaPago':
                 $resultado = $this->tesoreria->colocarReferenciaPago($this->input->post());
                 break;
-            case 'rechazarFacturaAsociado':
-                $resultado = $this->tesoreria->rechazarFacturaAsociado($this->input->post());
+            case 'rechazarVuelta':
+                $resultado = $this->tesoreria->rechazarVuelta($this->input->post());
                 break;
-
             default:
                 $resultado = FALSE;
                 break;
         }
         echo json_encode($resultado);
     }
+
 }

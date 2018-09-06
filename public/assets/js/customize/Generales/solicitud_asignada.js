@@ -23,7 +23,6 @@ $(function () {
     //Obteniendo informacion de la solictud
     //Evento donde se muestra la informacion de la solicitud
     $('#data-table-solicitudes-asignadas tbody').on('click', 'tr', function () {
-        var _fila = this;
         var datos = $('#data-table-solicitudes-asignadas').DataTable().row(this).data();
         var data = {solicitud: datos[0], operacion: '1'};
 
@@ -38,8 +37,9 @@ $(function () {
             evento.mostrarModal('Solicitud ' + datos[0], respuesta.formularioSolicitud);
             $('#btnModalConfirmar').addClass('hidden');
             $('#btnModalAbortar').addClass('hidden');
+            $('#solicita').append(datos[3] + '  [' + respuesta.datos.DepartamentoSolicitante + ']');
+            $('#fechaSolicitud').append(datos[5]);
             select.crearSelect('#selectCliente');
-            select.crearSelect('#selectSucursal');
             select.crearSelect('#selectServicioDepartamento');
             select.crearSelect('#selectAtiendeServicio');
             select.crearSelect('#selectClasificacion');
@@ -61,33 +61,6 @@ $(function () {
                 }
             });
 
-            $("#selectCliente").on("change", function () {
-                var creator = $("#creator-sd").val();
-                var requester = $("#requester-sd").val();
-                var sucursal_interna = $("#id-sucursal-interna").val();
-
-                var _cliente = $(this).val();
-                if (_cliente !== "") {
-                    evento.enviarEvento('/Proyectos2/Planeacion/SucursalesByCliente', {'id': _cliente}, '#modal-dialogo', function (respuesta) {
-                        $("#selectSucursal").empty().append("<option value=''>Selecciona . . .</option>");
-                        var _option = 'XX';
-                        $.each(respuesta, function (k, v) {
-                            if ((creator !== '' && requester !== '' && (v.NombreCinemex == creator || v.NombreCinemex == requester)) || (sucursal_interna !== '' && v.Id == sucursal_interna)) {
-                                _option = v.Id;
-                            }
-                            $("#selectSucursal").append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
-                        });
-                        select.cambiarOpcion("#selectSucursal", _option);
-                        $("#selectSucursal").removeAttr("disabled");
-
-                    });
-                } else {
-                    $("#selectSucursal").empty().append("<option value=''>Selecciona . . .</option>");
-                    $("#selectSucursal").attr("disabled", "disabled");
-                    select.cambiarOpcion("#selectSucursal", '');
-                }
-            });
-
             if (respuesta.datos.IdCliente !== null) {
                 select.cambiarOpcion('#selectCliente', respuesta.datos.IdCliente);
             }
@@ -97,9 +70,7 @@ $(function () {
                 if ($(this).val() !== '' && $(this).val() === '5') {
                     $('#selectAtiendeServicio').val('42').trigger('change');
                 } else {
-                    if ($('#selectAtiendeServicio').val() === '') {
-                        $('#selectAtiendeServicio').val('').trigger('change');
-                    }
+                    $('#selectAtiendeServicio').val('').trigger('change');
                 }
             });
 
@@ -114,15 +85,15 @@ $(function () {
                 if (evento.validarFormulario('#formAgregarSservicio')) {
                     tabla.agregarFila('#data-table-servicio', [
                         $('#selectServicioDepartamento option:selected').text(),
-                        $('#selectSucursal option:selected').text(),
                         $('#selectAtiendeServicio option:selected').text(),
                         $('#inputDescripcionServicio').val(),
                         $('#selectServicioDepartamento').val(),
-                        $('#selectSucursal').val(),
                         $('#selectAtiendeServicio').val()
                     ]);
-                    $('#formAgregarSservicio').parsley().reset();
-                    select.cambiarOpcion("#selectServicioDepartamento");
+                    evento.limpiarFormulario('#formAgregarSservicio');
+                    $('#content-selectAtiende').removeClass('col-md-6').addClass('col-md-12');
+                    $('#content-selectClasificacion').addClass('hidden');
+                    $('#selectClasificacion').removeAttr('data-parsley-required');
                 }
             });
 
@@ -145,30 +116,56 @@ $(function () {
                     var servicios = [];
                     if (datosTabla.length > 0) {
                         for (var i = 0; i < datosTabla.length; i++) {
-                            servicios.push({servicio: datosTabla[i][4], sucursal: datosTabla[i][5], atiende: datosTabla[i][6], descripcion: datosTabla[i][3], nombreServicio: datosTabla[i][0], nombreSucursal: datosTabla[i][1]});
+                            servicios.push({servicio: datosTabla[i][3], atiende: datosTabla[i][4], descripcion: datosTabla[i][2], nombreServicio: datosTabla[i][0]});
                         }
-                        var data = {solicitud: datos[0], ticket: datos[1], servicios: servicios, cliente: cliente, descripcion: descripcionSolicitud};
+                        var data = {solicitud: datos[0], ticket: datos[3], servicios: servicios, cliente: cliente, descripcion: descripcionSolicitud};
                         evento.enviarEvento('Solicitud/Generar_Ticket', data, '#modal-dialogo', function (respuesta) {
                             var fila = [];
                             if (typeof respuesta === 'object') {
                                 evento.cargaContenidoModal('<div class="row">\n\
-                                                                <div class="col-md-12 text-center">\n\
-                                                                    <div class="form-group">\n\
-                                                                        <p>Se genero el ticket <strong>' + respuesta.ticket + '</strong>  con exito y el personal encargado de brindar \n\
-                                                                           seguimiento al servicio ya fue notificado para su seguimiento. </p>\n\
-                                                                    </div>\n\
-                                                                </div>\n\
-                                                            </div>');
+                                <div class="col-md-12 text-center">\n\
+                                    <div class="form-group">\n\
+                                        <p>Se genero el ticket <strong>' + respuesta.ticket + '</strong>  con exito y el personal encargado de brindar \n\
+                                           seguimiento al servicio ya fue notificado para su seguimiento. </p>\n\
+                                    </div>\n\
+                                </div>\n\
+                            </div>');
                                 $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
-                                $('#data-table-solicitudes-asignadas').DataTable().row(_fila).remove().draw();
+                                tabla.limpiarTabla('#data-table-solicitudes-asignadas');
+                                if (respuesta.solicitudes.solicitudes.length > 0) {
+                                    $.each(respuesta.solicitudes.solicitudes, function (indice, item) {
+                                        fila = [];
+                                        fila.push(item.Numero);
+                                        fila.push(item.Asunto);
+                                        fila.push(item.Tipo);
+                                        fila.push(item.Ticket);
+                                        if (respuesta.solicitudes.SolicitudesSD.length > 0) {
+                                            $.each(respuesta.solicitudes.SolicitudesSD, function (key, value) {
+                                                if (value.solicitud === item.Numero) {
+                                                    fila.push(value.datos.Solicitante);
+                                                    fila.push(value.datos.Asunto);
+                                                } else {
+                                                    fila.push(item.Solicita);
+                                                    fila.push('');
+                                                }
+                                            });
+                                        } else {
+                                            fila.push(item.Solicita);
+                                            fila.push('');
+                                        }
+                                        fila.push(item.Fecha);
+                                        fila.push(item.Estatus);
+                                        tabla.agregarFila('#data-table-solicitudes-asignadas', fila);
+                                    });
+                                }
                             } else {
                                 evento.cargaContenidoModal('<div class="row">\n\
-                                                                <div class="col-md-12">\n\
-                                                                    <div class="form-group">\n\
-                                                                        <p>No se pudo generar el ticket por favor de volver a intentarlo. </p>\n\
-                                                                    </div>\n\
-                                                                </div>\n\
-                                                            </div>');
+                                <div class="col-md-12">\n\
+                                    <div class="form-group">\n\
+                                        <p>No se pudo generar el ticket por favor de volver a intentarlo. </p>\n\
+                                    </div>\n\
+                                </div>\n\
+                            </div>');
                                 $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
                             }
                         });
@@ -289,7 +286,7 @@ $(function () {
             //Se confirma el rechazo de la solicitud
             $('#btnConfirmarRechazo').on('click', function () {
                 if (evento.validarFormulario('#formRechazarSolicitud')) {
-                    if (datos[3] === 'SERVICE DESK') {
+                    if (datos[1] === 'SERVICE DESK') {
                         var data = {solicitud: datos[0], operacion: '4', tecnicoSD: $('#selectTecnicosSD').val(), descripcion: $('#textareaDescripcionRechazada').val()};
                         var mensajeExito = 'Se a reasignado el folio con exito.';
                         var mensajeError = 'No se pudo reasignar el folio Service Desk por favor de volver a intentarlo.';

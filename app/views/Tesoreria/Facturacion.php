@@ -1,11 +1,16 @@
-<!-- Empezando #contenido -->
-<div id="listaFacturas" class="content">
-
-    <!-- Empezando titulo de la pagina -->
-    <h1 class="page-header">Facturación</h1>
-    <!-- Finalizando titulo de la pagina -->
-
+<div id="listaPoliza" class="content">
     <!-- Empezando panel facturacin tesoreria-->
+    <!-- Empezando titulo de la pagina -->
+    <div class="row">
+        <div class="col-md-6 col-xs-6">
+            <h1 class="page-header">Facturación</h1>
+        </div>
+        <div class="col-md-6 col-xs-6 text-right">
+            <label id="btnRegresarFacturacionTesoreria" class="btn btn-success hidden">
+                <i class="fa fa fa-reply"></i> Regresar
+            </label>  
+        </div>
+    </div>
     <div id="panelFacturacionTesoreria" class="panel panel-inverse">
 
         <!--Empezando cabecera del panel-->
@@ -20,69 +25,22 @@
 
         <!--Empezando cuerpo del panel-->
         <div class="panel-body">
-            <div class="row"> 
+            
+            <!-- Empezando #contenido -->
+            <div id="listaFacturas">
+                <?php echo $datos['TablaFacturacion']['datos']['titulo'] ?>
+                <?php echo $datos['TablaFacturacion']['datos']['tablaVueltas'] ?>
+                <?php echo $datos['TablaFacturacion']['datos']['tablaTesoreria'] ?>
 
-                <!--Empezando error--> 
-                <div class="col-md-12">
-                    <div class="errorListaFacturacionTesoreria"></div>
-                </div>
-                <!--Finalizando Error-->
-
-                <div class="col-md-12">  
-                    <div class="form-group">
-                        <div class="col-md-6">
-                            <h3 class="m-t-10">Lista Facturas</h3>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="underline m-b-15 m-t-15"></div>
-                        </div>
-                        <!--Finalizando Separador-->
-                    </div>    
-                </div> 
             </div>
-
-            <div class="table-responsive">
-                <table id="data-table-facturas-tesoreria" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-                    <thead>
-                        <tr>
-                            <th class="all">Ticket</th>
-                            <th class="all">Ingeniero</th>
-                            <th class="all">Fecha Documenación</th>
-                            <th class="all">Fecha Validación Supervisor</th>
-                            <th class="all">Fecha Validación Cordinador</th>
-                            <th class="all">Fecha Pago</th>
-                            <th class="all">Estatus</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        if (!empty($datos['ServiciosFacturacion'])) {
-                            foreach ($datos['ServiciosFacturacion'] as $key => $value) {
-                                echo '<tr>';
-                                echo '<td>' . $value['Ticket'] . '</td>';
-                                echo '<td>' . $value['Ingeniero'] . '</td>';
-                                echo '<td>' . $value['FechaDocumentacion'] . '</td>';
-                                echo '<td>' . $value['FechaValidacionSup'] . '</td>';
-                                echo '<td>' . $value['FechaValidacionCoord'] . '</td>';
-                                echo '<td>' . $value['FechaPago'] . '</td>';
-                                echo '<td>' . $value['Estatus'] . '</td>';
-                                echo '</tr>';
-                            }
-                        }
-                        ?>                                       
-                    </tbody>
-                </table>
-            </div>
+            <!-- Empezando seccion para la Documentacion -->
+            <div id="seccionProcesoFacturacion" class="hidden"></div>
+            <!--Finalizando cuerpo del panel-->
 
         </div>
-
-        <!--Finalizando cuerpo del panel-->
+        <!-- Finalizando panel facturacion tesoreria -->
 
     </div>
-    <!-- Finalizando panel facturacion tesoreria -->
-
+    <!-- Finalizando #contenido -->
 </div>
-<!-- Finalizando #contenido -->
 
-<!-- Empezando seccion para la Documentacion -->
-<div id="seccionProcesoFacturacion" class="content hidden"></div>

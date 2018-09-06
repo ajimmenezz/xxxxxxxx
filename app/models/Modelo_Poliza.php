@@ -378,4 +378,24 @@ class Modelo_Poliza extends Modelo_Base {
         return TRUE;
     }
 
+    public function consultaCorrectivosSolucionesServicio(string $servicio) {
+        $consulta = $this->consulta('SELECT 
+                                        *
+                                    FROM
+                                        t_correctivos_soluciones
+                                    WHERE
+                                        IdServicio = "' . $servicio . '"
+                                    ORDER BY Id DESC
+                                    LIMIT 1');
+        return $consulta;
+    }
+
+    public function consultaCorreoCoordinadorPoliza() {
+        $consulta = $this->consulta('SELECT 
+                                        EmailCorporativo 
+                                    FROM cat_v3_usuarios
+                                    WHERE IdPerfil = 46');
+        return $consulta;
+    }
+
 }

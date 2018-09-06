@@ -1,20 +1,11 @@
 <div class="row">
-    <div class="col-md-6 col-sm-6 col-xs-12">
+    <div class="col-md-9 col-sm-6 col-xs-12">
         <h1 class="page-header">Planeación del Proyecto</h1>
     </div>
-    <div class="col-md-6 col-xs-6 text-right">
-        <div class="btn-group">
-            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Acciones <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">                
-                <li id="btnDocumentoInicial"><a href="#"><i class="fa fa-file"></i> Imprimir Inicio de Proyecto</a></li>
-                <li id="btnSolicitudMaterial"><a href="#"><i class="fa fa-file"></i> Imprimir Solicitud de Material</a></li>
-                <li id="btnSolicitudMaterialFaltante"><a href="#"><i class="fa fa-file"></i> Imprimir Material Faltante</a></li>
-        </div>
+    <div class="col-md-3 col-sm-6 col-xs-12 text-right">
         <label id="btnRegresar" class="btn btn-success">
             <i class="fa fa fa-reply"></i> Regresar
-        </label> 
+        </label>  
     </div>
 </div>    
 <div id="panelFormDetallesProyecto" class="panel panel-inverse panel-with-tabs">        
@@ -29,13 +20,7 @@
                 <li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>
                 <li class="active"><a href="#Generales" data-toggle="tab">Generales</a></li>
                 <li class=""><a href="#Material" data-toggle="tab">Material del Proyecto</a></li>
-                <?php
-                if (isset($generales['IdSistema']) && $generales['IdSistema'] == 1) {
-                    ?>
-                    <li class=""><a href="#Alcance" data-toggle="tab">Alcance del Proyecto</a></li>
-                    <?php
-                }
-                ?>
+                <li class=""><a href="#Alcance" data-toggle="tab">Alcance del Proyecto</a></li>
                 <li class=""><a href="#Tecnicos" data-toggle="tab">Técnicos</a></li>
                 <li class=""><a href="#Tareas" data-toggle="tab">Tareas</a></li>
                 <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
@@ -65,7 +50,6 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <h4>Generales del Proyecto</h4>
                         <input type="hidden" id="IdProyecto" value="<?php echo $generales['Id']; ?>" />
-                        <input type="hidden" id="IdAlmacenSAE" value="<?php echo $generales['cve_almacen']; ?>" />
                         <div class="underline m-b-10"></div>
                     </div>
                 </div>
@@ -297,45 +281,43 @@
         </div>        
         <!--Empezando la seccion Material-->
 
-        <?php if (isset($generales['IdSistema']) && $generales['IdSistema'] == 1) { ?>
-            <!--Empezando la seccion Alcance-->
-            <div class="tab-pane fade" id="Alcance">
-                <div class="panel-body">                                        
-                    <div class="row">
-                        <div class="col-md-6 col-sm-9 col-xs-12">
-                            <h4>Ubicaciones del Proyecto</h4>                                                
-                        </div>
-                        <div class="col-md-6 col-sm-3 col-xs-12 text-right">
-                            <a id="btnAddUbicacion" class="btn btn-success">
-                                <i class="fa fa fa-plus"></i> Nueva Ubicación
-                            </a>
-                        </div>
+        <!--Empezando la seccion Alcance-->
+        <div class="tab-pane fade" id="Alcance">
+            <div class="panel-body">                                        
+                <div class="row">
+                    <div class="col-md-6 col-sm-9 col-xs-12">
+                        <h4>Ubicaciones del Proyecto</h4>                                                
                     </div>
-                    <div class="row">
-                        <div class="underline m-b-10"></div>
+                    <div class="col-md-6 col-sm-3 col-xs-12 text-right">
+                        <a id="btnAddUbicacion" class="btn btn-success">
+                            <i class="fa fa fa-plus"></i> Nueva Ubicación
+                        </a>
                     </div>
-                    <div class="row m-t-10">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div class="table-responsive">
-                                <table id="table-ubicaciones" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer">
-                                    <thead>
-                                        <tr>
-                                            <th class="never">Id</th>
-                                            <th class="all">Concepto</th>
-                                            <th class="all">Área</th>
-                                            <th class="all">Ubicación</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
+                </div>
+                <div class="row">
+                    <div class="underline m-b-10"></div>
+                </div>
+                <div class="row m-t-10">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="table-responsive">
+                            <table id="table-ubicaciones" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer">
+                                <thead>
+                                    <tr>
+                                        <th class="never">Id</th>
+                                        <th class="all">Concepto</th>
+                                        <th class="all">Área</th>
+                                        <th class="all">Ubicación</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-            </div>        
-            <!--Terminando la seccion Alcance-->
-        <?php } ?>
+            </div>
+        </div>        
+        <!--Empezando la seccion Alcance-->
 
         <!--Empezando la seccion Tecnicos-->
         <div class="tab-pane fade" id="Tecnicos">
@@ -394,14 +376,14 @@
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <a id="btnNuevaTarea" class="btn btn-sm btn-success pull-right m-l-10"><i class="fa fa-plus"> </i> Nueva Tarea</a>
-                            <!--<a id="btnVerDiagrama" class="btn btn-sm btn-info pull-right m-l-10"><i class="fa fa-bars"> </i> Diagrama de Gantt</a>-->
+                            <a id="btnVerDiagrama" class="btn btn-sm btn-info pull-right m-l-10"><i class="fa fa-bars"> </i> Diagrama de Gantt</a>
                         </div>
                     </div>                
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="underline m-b-10"></div>
                         </div>
-                    </div>                    
+                    </div>
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="table-responsive">
@@ -409,45 +391,21 @@
                                     <thead>
                                         <tr>
                                             <th class="never">Id</th>
-                                            <th class="never">IdPredecesora</th>
                                             <th class="all">Tarea</th>
                                             <th class="all">Predecesora</th>
                                             <th class="all">Comienzo</th>
                                             <th class="all">Fin</th>
                                             <th class="all">Líder</th>
                                             <th class="all">Técnicos</th>                                            
-                                            <th class="all">Nodos</th>                                            
-                                            <th class="all">RM</th>                                            
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
                             </div>
                         </div>
-                    </div>                                        
-                </div>
-                <div id="divDiagramaGantt m-t-20">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <h4 class="pull-left">Diagrama de Gantt</h4>
-                        </div>
-                        <div class="col-md-6 col-sm-6 col-xs-12">                            
-                            <!--<a id="btnVerListaTareas" class="btn btn-sm btn-info pull-right m-l-10"><i class="fa fa-bars"> </i> Lista de Tareas</a>-->
-                        </div>
-                    </div>                
-                    <div class="row">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div class="underline m-b-10"></div>
-                        </div>
-                    </div>     
-                    <div class="row">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div class="table-responsive">
-                                <div id="chart_div"></div>
-                            </div>
-                        </div>
                     </div>
                 </div>
+                <div id="divGantt" style="display: none;"></div>
             </div>
         </div>        
         <!--Empezando la seccion Tareas-->

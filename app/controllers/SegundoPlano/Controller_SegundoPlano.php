@@ -8,21 +8,17 @@
 class Controller_SegundoPlano extends \CI_Controller {
 
     private $DB;
-    private $DBS;
     private $SD;
     private $mail;
     private $ubicaphone;
-    private $informacionServicios;
 
     public function __construct() {
         parent::__construct();
         ini_set('max_execution_time', 300);
         $this->DB = \Modelos\Modelo_SegundoPlano::factory();
-        $this->DBS = \Modelos\Modelo_ServiceDesk::factory();
         $this->SD = \Librerias\WebServices\ServiceDesk::factory();
         $this->mail = \Librerias\Generales\Correo::factory();
         $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
-        $this->informacionServicios = \Librerias\WebServices\InformacionServicios::factory();
     }
 
     public function actulizarTablaEquiposSae() {
@@ -207,8 +203,6 @@ class Controller_SegundoPlano extends \CI_Controller {
         $folios = '';
         $foliosSD = [];
         $foliosAdIST = [];
-        $foliosSolicitudes = [];
-        $foliosV2 = [];
 
         foreach ($requests as $key => $value) {
             $folios .= "," . $value->WORKORDERID;
@@ -221,23 +215,12 @@ class Controller_SegundoPlano extends \CI_Controller {
             array_push($foliosAdIST, $value['Folio']);
         }
 
+        $foliosParaRevisar = array_diff($foliosSD, $foliosAdIST);               
 
-        $foliosEnSolitudes = $this->DB->getFoliosExistentesEnSolicitudes($folios);
-        foreach ($foliosEnSolitudes as $key => $value) {
-            array_push($foliosSolicitudes, $value['Folio']);
-        }
-
-        $foliosEnTicketsV2 = $this->DB->getFoliosExistentesEnV2($folios);
-        foreach ($foliosEnTicketsV2 as $key => $value) {
-            array_push($foliosV2, $value['Folio']);
-        }
-
-        $foliosParaSolicitudes = array_diff($foliosSD, $foliosSolicitudes);
-        $foliosParaSolicitudes = array_diff($foliosParaSolicitudes, $foliosV2);
-
-        $foliosParaRevisar = array_diff($foliosSD, $foliosAdIST);
-
+//        $cont = 0;
         foreach ($foliosParaRevisar as $key => $value) {
+//            $cont++;
+//            if ($cont <= 10) {
             $details = $this->SD->getRequestDetails($value, $apiKey);
             $arrayInsert = [
                 'Folio' => $details->WORKORDERID,
@@ -257,124 +240,7 @@ class Controller_SegundoPlano extends \CI_Controller {
             var_dump($arrayInsert);
             var_dump($details->CREATEDTIME);
             echo "</pre>";
-        }
-
-        $cont = 0;
-        foreach ($foliosParaSolicitudes as $key => $value) {
-            $cont++;
-            if ($cont <= 1) {
-                $correos = [];
-
-                $details = $this->SD->getRequestDetails($value, $apiKey);
-                $dataUsuario = $this->DB->consulta("select EmailCorporativo, (select IdDepartamento from cat_perfiles where Id = cu.IdPerfil) as IdDepartamento from cat_v3_usuarios cu where SDName = '" . $details->TECHNICIAN . "'");
-                if (!empty($dataUsuario)) {
-                    array_push($correos, $dataUsuario[0]['EmailCorporativo']);
-                    $departamento = $dataUsuario[0]['IdDepartamento'];
-                } else {
-                    $departamento = 0;
-                }
-
-                $sucursal = $this->DB->consulta("select "
-                        . "cs.Id, "
-                        . "(select EmailCorporativo from cat_v3_usuarios where Id = cs.IdResponsable) as Email, "
-                        . "(select EmailCorporativo from cat_v3_usuarios where Id = (select IdResponsableInterno from cat_v3_regiones_cliente where Id = cs.IdRegionCliente)) as EmailSupervisor "
-                        . "from cat_v3_sucursales cs "
-                        . "where NombreCinemex = '" . $details->CREATEDBY . "' "
-                        . "or NombreCinemex = '" . $details->REQUESTER . "' limit 1");
-                if (!empty($sucursal)) {
-                    if (!in_array($sucursal[0]['Email'], ['', 'NULL'])) {
-                        array_push($correos, $sucursal[0]['Email']);
-                    }
-                    if (!in_array($sucursal[0]['EmailSupervisor'], ['', 'NULL'])) {
-                        array_push($correos, $sucursal[0]['EmailSupervisor']);
-                    }
-                    $sucursal = $sucursal[0]['Id'];
-                } else {
-                    $sucursal = 0;
-                }
-                $prioridad = '3';
-                switch ($details->PRIORITY) {
-                    case 'Alta':
-                        $prioridad = 1;
-                        break;
-                    case 'Media':
-                        $prioridad = 2;
-                        break;
-                    default :
-                        $prioridad = 3;
-                        break;
-                }
-                $arrayInsert = [
-                    'IdTipoSolicitud' => '5',
-                    'IdEstatus' => '1',
-                    'IdDepartamento' => (!in_array($departamento, ['', 'NULL'])) ? $departamento : '11',
-                    'IdSucursal' => $sucursal,
-                    'IdPrioridad' => $prioridad,
-                    'Folio' => $details->WORKORDERID,
-                    'FechaCreacion' => date('Y-m-d H:i:s', $details->CREATEDTIME / 1000),
-                    'Solicita' => '1'
-                ];
-
-                $requesterText = 'Solicita: ' . $details->REQUESTER;
-
-                $arrayInsertAsunto = [
-                    'Asunto' => $details->WORKORDERID . ' - ' . $details->SUBJECT,
-                    'Descripcion' => $requesterText . "  --  " . $details->SHORTDESCRIPTION
-                ];
-
-                $insertaSolicitud = $this->DB->insertaSolicitudesAdISTV3($arrayInsert, $arrayInsertAsunto);
-
-                if ($insertaSolicitud) {
-                    if (empty($correos)) {
-                        $correosDB = $this->DB->consulta("select 
-                                                        EmailCorporativo as Email
-                                                        from cat_v3_usuarios 
-                                                        where IdPerfil in (
-                                                                select 
-                                                                Id
-                                                                from cat_perfiles
-                                                                where IdDepartamento = 11
-                                                        ) and Flag = 1 
-                                                        and EmailCorporativo <> ''");
-                        if (!empty($correosDB)) {
-                            foreach ($correosDB as $key => $value) {
-                                array_push($correos, $value['Email']);
-                            }
-                        }
-                    }
-
-//                    $correos = ['ajimenez@siccob.com.mx'];
-                    $texto = '<p>Se ha generado una solicitud automática ligada al Folio: <strong>' . $arrayInsert['Folio'] . '</strong>.</p>'
-                            . '<p><strong>Solicitante:</strong> ' . $details->REQUESTER . ' </p>'
-                            . '<p><strong>Asunto:</strong> ' . $arrayInsertAsunto['Asunto'] . ' </p>'
-                            . '<p><strong>Descripción:</strong> ' . $arrayInsertAsunto['Descripcion'] . ' </p>'
-                            . '<br><br>';
-                    $mensaje = $this->mail->mensajeCorreo('Nueva Solicitud por Folio ' . $arrayInsert['Folio'], $texto);
-                    $this->mail->enviarCorreo('notificaciones@siccob.solutions', $correos, 'Nueva Solicitud por Folio ' . $arrayInsert['Folio'], $mensaje);
-                }
-
-                echo "<pre>";
-                var_dump($details);
-                echo "</pre>";
-                echo "<pre>";
-                var_dump($arrayInsert);
-                echo "</pre>";
-            }
-        }
-
-        echo $cont;
-
-        //Se coloca en Completado los SD que anteriormente no cambio su estatus 
-        $logSDCierres = $this->DBS->consultarFlagLogSDCierres();
-
-        foreach ($logSDCierres as $key => $value) {
-            $resultadoSD = $this->SD->cambiarEstatusServiceDesk($apiKey, 'Completado', $value['Folio']);
-
-            if ($resultadoSD->operation->result->status === 'Success') {
-                $this->DBS->actualizarFlagLogSDCierres($value['Folio']);
-            } else {
-                $this->informacionServicios->guardarLogSD($resultadoSD, $value['Folio']);
-            }
+//            }
         }
     }
 
@@ -414,58 +280,6 @@ class Controller_SegundoPlano extends \CI_Controller {
         }
 
 
-
-        echo "<pre>";
-        var_dump($array);
-        echo "</pre>";
-    }
-
-    public function getUbicaphoneGeofenceActivations() {
-        $from = strtotime("2018-08-21 00:00:00");
-        $to = strtotime("2018-08-21 23:59:59");
-        $data = [
-            'imei' => '351515080889951',
-            'from' => $from,
-            'to' => $to
-        ];
-        $result = $this->ubicaphone->getGeofenceActivations($data);
-
-        $array = [];
-        $origins = '19.3625308,-99.1851497';
-        foreach ($result as $key => $value) {
-            if ($value['eventType'] == 'GEO_IN_START') {
-                $agregar = false;
-
-
-                if (empty($array)) {
-                    $agregar = true;
-                } else if (end($array)['idGeocerca'] != $value['geofenceID'] && end($array)['timestamp'] != $value['timestamp'] && end($array)['lat'] != $value['lat'] && end($array)['lng'] != $value['lng']) {
-                    $agregar = true;
-                    $origins = end($array)['lat'] . ',' . end($array)['lng'];
-                }
-
-
-                if ($agregar) {
-
-                    $resultado = $this->Url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" . $origins . "&destinations=" . $value['lat'] . "," . $value['lng'] . "&key=AIzaSyD3ELeFOp0xTOMrj2GDa9xNyzRuSbI-C3s";
-                    $json = json_decode(@file_get_contents($resultado));
-
-                    array_push($array, [
-                        'imei' => $value['deviceImei'],
-                        'usuario' => $value['deviceName'],
-                        'idGeocerca' => $value['geofenceID'],
-                        'geocerca' => $value['geofenceName'],
-                        'fecha' => date('Y-m-d H:i:s', $value['timestamp']),
-                        'timestamp' => $value['timestamp'],
-                        'lat' => $value['lat'],
-                        'lng' => $value['lng'],
-                        'direccion' => $value['street'],
-                        'distance' => $json->rows[0]->elements[0]->distance->value,
-                        'duration' => $json->rows[0]->elements[0]->duration->value
-                    ]);
-                }
-            }
-        }
 
         echo "<pre>";
         var_dump($array);

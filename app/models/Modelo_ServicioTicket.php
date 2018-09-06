@@ -154,7 +154,6 @@ class Modelo_ServicioTicket extends Modelo_Base {
                 $datos['SDKeyAtiende'] = $value['SDKeyAtiende'];
                 $datos['IdServicio'] = $value['Id'];
                 $datos['IdSucursal'] = $value['IdSucursal'];
-                
             }
 
             $consultaNotas = $this->consulta('
@@ -763,4 +762,22 @@ class Modelo_ServicioTicket extends Modelo_Base {
         $consulta = parent::connectDBAdist2()->query($sentencia);
         return $consulta->result_array();
     }
+
+    public function consultaFolio(string $servicio) {
+
+        $consulta = $this->consulta('SELECT 
+                                        ts.Folio
+                                    FROM t_servicios_ticket tst
+                                    INNER JOIN t_solicitudes ts
+                                    ON tst.IdSolicitud = ts.Id
+                                    WHERE tst.Id =  "' . $servicio. '"');
+
+        if (!empty($consulta)) {
+            return $consulta[0]['Folio'];
+        }else{
+            return FALSE;
+        }
+
+    }
+
 }

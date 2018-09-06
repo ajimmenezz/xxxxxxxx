@@ -402,8 +402,8 @@ Base.prototype.mensajeValidar = function () {
                       </div>';
     html += '<div class="row m-t-20">\n\
                                 <div class="col-md-12 text-center">\n\
-                                    <button id="btnAceptarConfirmacion" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
-                                    <button id="btnCancelarConfirmacion" type="button" class="btn btn-sm btn-danger"><i class="fa fa-times"></i> Cancelar</button>\n\
+                                    <button id="btnAceptarConfirmacion" type="button" class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Aceptar</button>\n\
+                                    <button id="btnCancelarConfirmacion" type="button" class="btn btn-sm btn-warning"><i class="fa fa-times"></i> Cancelar</button>\n\
                                 </div>\n\
                             </div>\n\
                         </div>';
@@ -472,7 +472,7 @@ Base.prototype.plasmarInformacionSD = function () {
 
 Base.prototype.cambiarDiv = function () {
     var _div1 = arguments[0];
-    var _div2 = arguments[1];        
+    var _div2 = arguments[1];
     $(_div1).fadeOut(400, function () {
         $(_div2).fadeIn(400, arguments[2]);
     });
@@ -481,7 +481,7 @@ Base.prototype.cambiarDiv = function () {
     $(_div2 + " #btnRegresar").on("click", function () {
         $(_div2).fadeOut(400, function () {
             $(_div1).fadeIn(400, function () {
-                $(_div2).empty();                
+                $(_div2).empty();
             });
         });
     });

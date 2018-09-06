@@ -236,21 +236,51 @@ class Poliza extends General {
                                                                     tfo.Folio,
                                                                     tfo.Fecha,
                                                                     tfo.Archivo,
+                                                                    tfo.Vuelta,
                                                                     tst.Ticket,
                                                                     sucursal(IdSucursal) Sucursal,
                                                                     estatus(tfo.IdEstatus) Estatus,
                                                                     nombreUsuario(tfo.IdUsuario) NombreAtiende,
                                                                     tst.Atiende,
-                                                                    cvu.IdJefe
+                                                                    cvu.IdJefe,
+                                                                    (SELECT estatus(IdEstatus) FROM t_servicios_ticket WHERE Id = tfo.IdServicio) EstatusServicio
                                                                     FROM t_facturacion_outsourcing tfo
                                                                     INNER JOIN t_servicios_ticket tst
                                                                     ON tst.Id = tfo.IdServicio
                                                                     INNER JOIN cat_v3_usuarios cvu
                                                                     ON cvu.Id = tst.Atiende
                                                                     WHERE cvu.IdJefe = "' . $usuario['Id'] . '"
+                                                                    AND (CASE
+                                                                            WHEN tfo.Vuelta = 1 THEN tst.IdEstatus IN(3,4)
+                                                                            WHEN tfo.Vuelta > 1 THEN tst.IdEstatus = 4 END)
+                                                                    AND tfo.IdEstatus = 8
+                                                                    AND tfo.Fecha <= 2018-09-07
                                                                     ORDER BY tfo.Folio ASC');
             if (empty($vueltasAsociados)) {
-                $vueltasAsociados = $this->consultaTodasVueltasAsociados();
+                $vueltasAsociados = $this->catalogo->catConsultaGeneral('SELECT 
+                                                                            tfo.Id,
+                                                                            tfo.IdServicio,
+                                                                            tfo.Folio,
+                                                                            tfo.Fecha,
+                                                                            tfo.Archivo,
+                                                                            tfo.Vuelta,
+                                                                            tst.Ticket,
+                                                                            sucursal(tst.IdSucursal) Sucursal,
+                                                                            nombreUsuario(tfo.IdUsuario) NombreAtiende,
+                                                                            estatus(tfo.IdEstatus) Estatus,
+                                                                            estatus(tst.IdEstatus) AS EstatusServicio
+                                                                        FROM
+                                                                            t_facturacion_outsourcing tfo
+                                                                                INNER JOIN
+                                                                            t_servicios_ticket tst ON tst.Id = tfo.IdServicio
+                                                                        WHERE
+                                                                            (CASE
+                                                                                WHEN tfo.Vuelta = 1 THEN tst.IdEstatus IN (3 , 4)
+                                                                                WHEN tfo.Vuelta > 1 THEN tst.IdEstatus = 4
+                                                                            END)
+                                                                                AND tfo.IdEstatus = 8
+                                                                        AND tfo.Fecha <= 2018-09-07
+                                                                        ORDER BY tfo.Folio ASC');
             }
         } else if (in_array('229', $usuario['PermisosAdicionales']) || in_array('229', $usuario['Permisos'])) {
             $vueltasAsociados = $this->catalogo->catConsultaGeneral('SELECT
@@ -259,15 +289,18 @@ class Poliza extends General {
                                                                     tfo.Folio,
                                                                     tfo.Fecha,
                                                                     tfo.Archivo,
+                                                                    tfo.Vuelta,
                                                                     tst.Ticket,
                                                                     sucursal(IdSucursal) Sucursal,
                                                                     estatus(tfo.IdEstatus) Estatus,
                                                                     nombreUsuario(tfo.IdUsuario) NombreAtiende,
-                                                                    tst.Atiende
+                                                                    tst.Atiende,
+                                                                    (SELECT estatus(IdEstatus) FROM t_servicios_ticket WHERE Id = tfo.IdServicio) EstatusServicio
                                                                     FROM t_facturacion_outsourcing tfo
                                                                     INNER JOIN t_servicios_ticket tst
                                                                     ON tst.Id = tfo.IdServicio
                                                                     WHERE Atiende = "' . $usuario['Id'] . '"
+                                                                    AND tfo.Fecha <= 2018-09-07
                                                                     ORDER BY tfo.Folio ASC');
         } else {
             $vueltasAsociados = array();
@@ -277,18 +310,24 @@ class Poliza extends General {
     }
 
     public function consultaTodasVueltasAsociados() {
-        return $this->catalogo->catConsultaGeneral('SELECT
-                                                    Id,
-                                                    IdServicio,
-                                                    Folio,
-                                                    Fecha,
-                                                    Archivo,
-                                                    (SELECT Ticket FROM t_servicios_ticket WHERE Id = IdServicio) Ticket,
-                                                    (SELECT sucursal(IdSucursal) FROM t_servicios_ticket WHERE Id = IdServicio) Sucursal,
-                                                    estatus(IdEstatus) Estatus,
-                                                    nombreUsuario(IdUsuario) NombreAtiende
-                                                    FROM t_facturacion_outsourcing
-                                                    ORDER BY Folio ASC');
+        return $this->catalogo->catConsultaGeneral('SELECT 
+                                                        tfo.Id,
+                                                        tfo.IdServicio,
+                                                        tfo.Folio,
+                                                        tfo.Fecha,
+                                                        tfo.Archivo,
+                                                        tfo.Vuelta,
+                                                        tst.Ticket,
+                                                        sucursal(tst.IdSucursal) Sucursal,
+                                                        nombreUsuario(tfo.IdUsuario) NombreAtiende,
+                                                        estatus(tfo.IdEstatus) Estatus,
+                                                        estatus(tst.IdEstatus) AS EstatusServicio
+                                                    FROM
+                                                        t_facturacion_outsourcing tfo
+                                                            INNER JOIN
+                                                        t_servicios_ticket tst ON tst.Id = tfo.IdServicio
+                                                    WHERE tfo.Fecha <= 2018-09-07
+                                                    ORDER BY tfo.Folio ASC');
     }
 
 }

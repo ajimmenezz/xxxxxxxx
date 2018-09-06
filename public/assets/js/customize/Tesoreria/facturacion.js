@@ -4,6 +4,8 @@ $(function () {
     var websocket = new Socket();
     var tabla = new Tabla();
     var file = new Upload();
+    var file1 = new Upload();
+    var servicios = new Servicio();
 
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();
@@ -16,6 +18,7 @@ $(function () {
 
     //Creando tabla de resumen minuta
     tabla.generaTablaPersonal('#data-table-facturas-tesoreria', null, null, true, true, [[0, 'desc']]);
+    tabla.generaTablaPersonal('#data-table-facturas-poliza', null, null, true, true);
 
     //Evento para mostrar la ayuda del sistema
     evento.mostrarAyuda('Ayuda_Proyectos');
@@ -23,257 +26,354 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
-    //Evento que permite actualizar el personal
-    $('#data-table-facturas-tesoreria tbody').on('click', 'tr', function () {
-        var datos = $('#data-table-facturas-tesoreria').DataTable().row(this).data();
-        var ticket = datos[0];
-        var estatus = datos[6];
-
-        evento.enviarEvento('Facturacion/validarPuesto', [], '#panelFacturacionTesoreria', function (respuesta) {
-            var perfil = respuesta;
-            if (perfil === '36') {
-                if (estatus === 'FALTA PAGO') {
-                    referenciaPago(ticket);
-                }
-            } else {
-                var data = {ticket: ticket};
-                evento.enviarEvento('Facturacion/mostrarFormularioDocumentacionFacturacion', data, '#panelFacturacionTesoreria', function (respuesta) {
-                    var pdf = respuesta.datos.DocumentoPDF;
-                    var xml = respuesta.datos.DocumentoXML;
-
-                    $('#listaFacturas').addClass('hidden');
-                    $('#seccionProcesoFacturacion').removeClass('hidden').empty().append(respuesta.formulario);
-                    cargarElementos(perfil, ticket, pdf, xml, estatus);
-
-                    $('#btnValidarFacturacionTesoreria').on('click', function () {
-                        validarDocumentacion(ticket);
-                    });
-
-                    $('#btnRegresarFacturacionTesoreria').on('click', function () {
-                        location.reload();
-                    });
-                });
-            }
+    $('#btnSubirFactura').off('click');
+    $('#btnSubirFactura').on('click', function () {
+        var data = {};
+        evento.enviarEvento('Facturacion/mostrarFormularioSubirFactura', data, '#panelFacturacionTesoreria', function (respuesta) {
+            cargarSeccionFacturacion(respuesta);
+            cargarElementosFormularioSubirFactura();
+            eventosFormularioSubirFactura(respuesta);
+            botonRegresarFacturacion();
         });
     });
 
-    var cargarElementos = function () {
-        var file1 = new Upload();
-        var file2 = new Upload();
-        var perfil = arguments[0];
-        var ticket = arguments[1];
-        var pdf = arguments[2];
-        var xml = arguments[3];
-        var estatus = arguments[4];
+    $('#data-table-facturas-poliza tbody').on('click', 'tr', function () {
+        var datosTabla = $('#data-table-facturas-poliza').DataTable().row(this).data();
+        var estatusVuelta = datosTabla[8];
+        var idVuelta = datosTabla[0];
 
-        var editarPDF = false;
-        var editarXML = false;
-        if (perfil === '46' || perfil === '39') {
-            if (estatus === 'EN VALIDACIÓN' || estatus === 'RECHAZADO') {
-                $('#btnValidarFacturacionTesoreria').removeClass('hidden');
-            }
-        }
-
-        if (estatus !== 'FALTA DOCUMENTACIÓN') {
-            if (estatus !== 'EN VALIDACIÓN') {
-                editarPDF = true;
-                editarXML = true;
-            }
-        }
-
-        if (perfil !== '83') {
-            editarPDF = true;
-            editarXML = true;
-        }
-
-        file1.crearUpload('#inputPDFFacturacion',
-                'Facturacion/guardarDocumentosFacturaAsociados',
-                ['pdf'],
-                editarPDF,
-                pdf,
-                null,
-                null,
-                true,
-                '1',
-                true,
-                true,
-                {ticket: ticket, input: 'PDFFacturacion'}
-        );
-        file2.crearUpload('#inputXMLFacturacion',
-                'Facturacion/guardarDocumentosFacturaAsociados',
-                ['xml'],
-                editarXML,
-                xml,
-                null,
-                null,
-                true,
-                '1',
-                true,
-                true,
-                {ticket: ticket, input: 'XMLFacturacion'}
-        );
-    };
-
-    var validarDocumentacion = function () {
-        var ticket = arguments[0];
-        var html = '<div id="formularioValidarFacturacionTesoreria">\n\
-                        <div class="panel-body">\n\
-                            <div class="row m-t-20">\n\
-                                <div class="col-md-12 text-center">\n\
-                                    <button id="btnValidarFactura" type="button" class="btn btn-md btn-success"><i class="fa fa-check"></i> Validar</button>\n\
-                                    <button id="btnRechazarFactura" type="button" class="btn btn-md btn-danger"><i class="fa fa-times"></i> Rechazar</button>\n\
-                                    <button id="btnRegresarValidarFactura" type="button" class="btn btn-md btn-primary"><i class="fa fa-reply"></i> Regresar</button>\n\
-                                </div>\n\
-                            </div>\n\
-                        </div>\n\
-                    </div>';
-
-        $('#btnModalConfirmar').addClass('hidden');
-        $('#btnModalAbortar').addClass('hidden');
-        evento.mostrarModal('<h3>Validación</h3>', html);
-
-        $('#btnValidarFactura').on('click', function () {
-            $('#btnValidarFactura').attr('disabled', 'disabled');
-            $('#btnRechazarFactura').attr('disabled', 'disabled');
-            $('#btnRegresarValidarFactura').attr('disabled', 'disabled');
-            var data = {ticket: ticket};
-            evento.enviarEvento('Facturacion/colocarFechaValidacion', data, '#formularioValidarFacturacionTesoreria', function (respuesta) {
-                if (respuesta instanceof Array) {
-                    location.reload();
+        if (estatusVuelta === "SIN AUTORIZACIÓN") {
+            var data = {datosTabla: datosTabla};
+            evento.enviarEvento('Facturacion/mostrarFormularioValidarVuelta', data, '#panelFacturacionTesoreria', function (respuesta) {
+                if (respuesta.datos.arregloUsuario.Permisos.indexOf("276") !== -1 || respuesta.datos.arregloUsuario.PermisosAdicionales.indexOf("276") !== -1) {
+                    cargarSeccionFacturacion(respuesta);
+                    eventosFormularioValidarVuelta(respuesta);
+                    botonRegresarFacturacion();
                 }
+            });
+        } else if (estatusVuelta === 'PAGADO') {
+            var data = {idVuelta: idVuelta};
+            evento.enviarEvento('Facturacion/mostrarEvidenciaPagoFactura', data, '#panelFacturacionTesoreria', function (respuesta) {
+                window.open(respuesta, '_blank');
+            });
+        } else if (estatusVuelta === 'RECHAZADO') {
+            observacionesRechazo(idVuelta);
+        }
+    });
+
+    $('#data-table-facturas-tesoreria tbody').on('click', 'tr', function () {
+        var datosTablaTesoreria = $('#data-table-facturas-tesoreria').DataTable().row(this).data();
+        var data = {id: datosTablaTesoreria[0]};
+        evento.enviarEvento('Facturacion/mostrarFormularioPago', data, '#panelFacturacionTesoreria', function (respuesta) {
+            cargarSeccionFacturacion(respuesta);
+            cargarElementosFormularioPago();
+            eventosFormularioSubirPago(respuesta);
+            botonRegresarFacturacion();
+        });
+    });
+
+    var cargarSeccionFacturacion = function () {
+        var respuesta = arguments[0];
+        $('#listaFacturas').addClass('hidden');
+        $('#seccionProcesoFacturacion').removeClass('hidden').empty().append(respuesta.formulario);
+        $('#btnRegresarFacturacionTesoreria').removeClass('hidden');
+
+    }
+
+    var cargarElementosFormularioSubirFactura = function () {
+        tabla.generaTablaPersonal('#data-table-subir-facturas', null, null, true, true, [[0, 'desc']]);
+
+        file1.crearUpload('#evidenciasFacturaTesoreria',
+                'Facturacion/guardarFacturaAsociado',
+                ['pdf', 'xml'],
+                null,
+                null,
+                'Seguimiento/Eliminar_Evidencia',
+                null,
+                null,
+                2,
+                null,
+                null,
+                null,
+                null,
+                2
+                );
+    }
+
+    var cargarElementosFormularioPago = function () {
+        file.crearUpload('#evidenciasPago',
+                'Facturacion/guardarEvidenciaPagoFactura'
+                );
+    }
+
+    var eventosFormularioSubirFactura = function () {
+        var respuesta = arguments[0];
+        var listaTickets = [];
+        var listaIds = [];
+
+        $.each(respuesta.datos.tablaFacturacionOutsourcingAutorizado, function (key, value) {
+            $('#checkbox-' + value.Id).change(function () {
+                var dataCheckbox = $('#checkbox-' + value.Id).attr("data-checkbox");
+                if ($(this).is(":checked")) {
+                    listaTickets.push(dataCheckbox);
+                    listaIds.push(value.Id);
+                } else {
+                    listaTickets.splice($.inArray(dataCheckbox, listaTickets), 1);
+                    listaIds.splice($.inArray(value.Id, listaIds), 1);
+                }
+
+                var listaTicketsFiltrada = listaTickets.unique();
+                var stringListaTickets = listaTicketsFiltrada.join(",");
+                $('#inputTicketsFacturaTesoreria').val(stringListaTickets);
             });
         });
 
-        $('#btnRegresarValidarFactura').on('click', function () {
-            evento.cerrarModal();
-        });
-
-        $('#btnRechazarFactura').on('click', function () {
-            var formularioRechazoFactura = '';
-            formularioRechazoFactura += '<div id="formularioRechazarFacturacionTesoreria">\n\
-                                            <div class="panel-body">\n\
-                                                <form id="formRechazarFactura" class="margin-bottom-0 " data-parsley-validate="true" enctype="multipart/form-data">\n\
-                                                    <div class="row">\n\
-                                                        <div  class="col-md-12 ">\n\
-                                                            <label>Causa del Rechazo </label>\n\
-                                                            <textarea id="textareaRechazarFactura" class="form-control" name="descricpcionRechazo" placeholder="Ingresa la causa del Rechazo... " rows="3" data-parsley-required="true" ></textarea>\n\
-                                                        </div>\n\
-                                                    </div>\n\
-                                                    <div class="row m-t-20">\n\
-                                                    <div  class="col-md-12 ">\n\
-                                                        <div class="text-danger">\n\
-                                                            <div class="mensajeErrorRechazar"></div>\n\
-                                                        </div>\n\
-                                                    </div>';
-            formularioRechazoFactura += '           <div class="row m-t-20">\n\
-                                                        <div class="col-md-12 text-center">\n\
-                                                            <button id="btnGuardarRechazoFactura" type="button" class="btn btn-sm btn-primary"><i class="fa fa-save"></i> Guardar</button>\n\
-                                                            <button id="btnCancelarRechazoFactura" type="button" class="btn btn-sm btn-default"><i class="fa fa-reply"></i> Cancelar</button>\n\
-                                                        </div>\n\
-                                                    </div>\n\
-                                                </form>\n\
-                                            </div>\n\
-                                        </div>';
-            evento.mostrarModal('<h3>Rechazar</h3>', formularioRechazoFactura);
-            $('#btnModalConfirmar').empty().append('Aceptar').addClass('btn-danger');
-            $('#btnModalAbortar').empty().append('Cancelar');
-
-            $('#btnGuardarRechazoFactura').on('click', function () {
-                var descripcionRechazo = $('#textareaRechazarFactura').val();
-                if (descripcionRechazo !== '') {
-                    var data = {ticket: ticket, descripcionRechazo: descripcionRechazo};
-                    evento.enviarEvento('Facturacion/rechazarFacturaAsociado', data, '#formularioRechazarFacturacionTesoreria', function (respuesta) {
-                        if (respuesta instanceof Array) {
-                            evento.cerrarModal();
-                            location.reload();
+        $('#btnGuardarSubirArchivos').off('click');
+        $('#btnGuardarSubirArchivos').on('click', function () {
+            var tickets = $('#inputTicketsFacturaTesoreria').val();
+            var evidencias = $('#evidenciasFacturaTesoreria').val();
+            if (tickets !== '') {
+                if (evidencias !== '') {
+                    var data = {tickets: tickets, listaIds: listaIds};
+                    file1.enviarArchivos('#evidenciasFacturaTesoreria', 'Facturacion/guardarFacturaAsociado', '#panelFacturacionTesoreria', data, function (respuesta) {
+                        if (respuesta instanceof Array || respuesta instanceof Object) {
+                            recargandoTablaFacturasPoliza(respuesta);
+                            $('#seccionProcesoFacturacion').addClass('hidden').empty();
+                            $('#listaFacturas').removeClass('hidden');
+                            $('#btnRegresarFacturacionTesoreria').addClass('hidden');
+                            servicios.mensajeModal('Se subio la factura con exito', 'Correcto', true);
+                        } else {
+                            file.limpiar('#evidenciasFacturaTesoreria');
+                            evento.mostrarMensaje('#errorFormularioSubirFacturas', false, respuesta, 3000);
                         }
                     });
                 } else {
-                    evento.mostrarMensaje('.mensajeErrorRechazar', false, 'Debe llenar el campo de Causa del Rechazo', 3000);
-                }
-            });
-            $('#btnCancelarRechazoFactura').on('click', function () {
-                evento.cerrarModal();
-            });
-        });
-    };
-
-    var referenciaPago = function () {
-        var ticket = arguments[0];
-        var formularioReferciaPagoFactura = '';
-
-        formularioReferciaPagoFactura += '<div id="formularioPagoFacturacionTesoreria">\n\
-                                            <div class="panel-body">\n\
-                                                <form id="formReferenciaPagoFactura" class="margin-bottom-0 " data-parsley-validate="true" enctype="multipart/form-data">\n\
-                                                    <div class="row">\n\
-                                                        <div  class="col-md-6 ">\n\
-                                                            <label>Refencia * </label>\n\
-                                                            <input type="text" class="form-control" id="inputReferenciaPago" placeholder="Referencia de pago" style="width: 100%" data-parsley-required="true"/>\n\
-                                                        </div>\n\
-                                                    </div>';
-
-        formularioReferciaPagoFactura += '          <div class="row m-t-20">\n\
-                                                        <div class="col-md-12">\n\
-                                                            <div class="form-group">\n\
-                                                                <label>Evidencia *</label>\n\
-                                                                <input id="inputEvidenciaFacturacion" name="evidenciaFacturacion[]" type="file" multiple>\n\
-                                                            </div>\n\
-                                                        </div>\n\
-                                                    </div>\n\
-                                                    <div class="row m-t-20">\n\
-                                                        <div  class="col-md-12 ">\n\
-                                                            <div class="text-danger">\n\
-                                                                <div class="mensajeErrorRechazar"></div>\n\
-                                                            </div>\n\
-                                                        </div>\n\
-                                                    </div>';
-        formularioReferciaPagoFactura += '          <div class="row m-t-20">\n\
-                                                        <div class="col-md-12 text-center">\n\
-                                                            <button id="btnGuardarReferenciaPagoFactura" type="button" class="btn btn-sm btn-primary"><i class="fa fa-save"></i> Guardar</button>\n\
-                                                            <button id="btnRegresarReferenciaPagoFactura" type="button" class="btn btn-sm btn-default"><i class="fa fa-reply"></i> Cancelar</button>\n\
-                                                        </div>\n\
-                                                    </div>\n\
-                                                </form>\n\
-                                            </div>\n\
-                                        </div>';
-        $('#btnModalConfirmar').addClass('hidden');
-        $('#btnModalAbortar').addClass('hidden');
-        evento.mostrarModal('<h3>Referencia de Pago</h3>', formularioReferciaPagoFactura);
-        file.crearUpload('#inputEvidenciaFacturacion', 'Facturacion/colocarReferenciaPago', ['doc', 'docx', 'pdf', 'jpg', 'jpeg', 'png']);
-
-        $('#btnGuardarReferenciaPagoFactura').on('click', function () {
-            var referenciaPago = $('#inputReferenciaPago').val();
-            var evidenciaPago = $('#inputEvidenciaFacturacion').val();
-            if (referenciaPago !== '') {
-                if (evidenciaPago !== '') {
-                    var data = {ticket: ticket, referenciaPago: referenciaPago};
-                    file.enviarArchivos('#inputEvidenciaFacturacion', 'Facturacion/colocarReferenciaPago', '#formularioPagoFacturacionTesoreria', data, function (respuesta) {
-                        if (respuesta instanceof Array) {
-                            evento.cerrarModal();
-                            recargandoTablaFacturasTesoreria(respuesta, 'Referencia de Pago agregado Correctamente', '.errorListaFacturacionTesoreria')
-                        }
-                    });
-                } else {
-                    evento.mostrarMensaje('.mensajeErrorRechazar', false, 'Debe llenar el campo de Evidencia', 3000);
+                    evento.mostrarMensaje('#errorFormularioSubirFacturas', false, 'Debe seleccionar los archivos de la factura.', 3000);
                 }
             } else {
-                evento.mostrarMensaje('.mensajeErrorRechazar', false, 'Debe llenar el campo de Referencia', 3000);
+                evento.mostrarMensaje('#errorFormularioSubirFacturas', false, 'Debe seleccionar por lo menos un ticket.', 3000);
             }
         });
-        $('#btnRegresarReferenciaPagoFactura').on('click', function () {
+    }
+
+    var eventosFormularioValidarVuelta = function () {
+        var respuesta = arguments[0];
+        var id = respuesta.datos.datosTablaVueltas[0];
+
+        if (respuesta.datos.arregloUsuario.IdPerfil == '46') {
+            $('#inputMontoValidarVuelta').removeAttr('disabled');
+        } else {
+            $("#inputViaticosValidarVuelta").focusout(function () {
+                var _cantidad = $('#inputViaticosValidarVuelta').val();
+                var max = respuesta.datos.viatico;
+
+                if (parseFloat(_cantidad) > parseFloat(max)) {
+                    $('#inputViaticosValidarVuelta').val(max);
+                }
+
+                if (parseFloat(_cantidad) < parseFloat(0)) {
+                    $('#inputViaticosValidarVuelta').val(0);
+                }
+
+            }).bind(function () {
+                var _cantidad = $('#inputViaticosValidarVuelta').val();
+                var max = respuesta.datos.viatico;
+
+                if (parseFloat(_cantidad) > parseFloat(max)) {
+                    $('#inputViaticosValidarVuelta').val(max);
+                }
+
+                if (parseFloat(_cantidad) < parseFloat(0)) {
+                    $('#inputViaticosValidarVuelta').val(0);
+                }
+            });
+        }
+
+        $('#modalArchivoValidarVuelta').off('click');
+        $('#modalArchivoValidarVuelta').on('click', function () {
+            var html = '<div class="embed-responsive embed-responsive-16by9">\n\
+                                        <iframe class="embed-responsive-item" src="' + respuesta.datos.archivo + '" allowfullscreen></iframe>\n\
+                                    </div>';
+            evento.mostrarModal('PDF', html);
+            $('#btnModalConfirmar').addClass('hidden');
+            $('#btnModalAbortar').empty().append('Cerrar');
+        });
+
+        $('#btnValidarVuelta').off('click');
+        $('#btnValidarVuelta').on('click', function () {
+            validarVuelta(id);
+        });
+
+        $('#btnRechazarVuelta').off('click');
+        $('#btnRechazarVuelta').on('click', function () {
+            rechazarVuelta(id);
+        });
+
+    }
+
+    var eventosFormularioSubirPago = function () {
+        var respuesta = arguments[0];
+        var evidenciaPDF = respuesta.datos.datosFactura[0].PDF;
+        var evidenciaXML = respuesta.datos.datosFactura[0].XML;
+
+        $('#modalArchivoFacturaPDF').off('click');
+        $('#modalArchivoFacturaPDF').on('click', function () {
+            var html = '<div class="embed-responsive embed-responsive-16by9">\n\
+                                        <iframe class="embed-responsive-item" src="' + evidenciaPDF + '" allowfullscreen></iframe>\n\
+                                    </div>';
+            evento.mostrarModal('PDF', html);
+            $('#btnModalConfirmar').addClass('hidden');
+            $('#btnModalAbortar').empty().append('Cerrar');
+        });
+
+        $('#modalArchivoFacturaXML').off('click');
+        $('#modalArchivoFacturaXML').on('click', function () {
+            window.open(evidenciaXML, '_blank');
+        });
+
+        $('#btnSubirPago').off('click');
+        $('#btnSubirPago').on('click', function () {
+            var arrayPDF = evidenciaPDF.split("Tickets-", 2);
+            var arrayTickets = arrayPDF[1].split("/", 2);
+            var evidencias = $('#evidenciasPago').val();
+            if (evidencias !== '') {
+                var data = {tickets: arrayTickets[0], xml: evidenciaXML};
+                file.enviarArchivos('#evidenciasPago', 'Facturacion/guardarEvidenciaPagoFactura', '#panelFacturacionTesoreria', data, function (respuesta) {
+                    if (respuesta instanceof Array || respuesta instanceof Object) {
+                        recargandoTablaFacturasPago(respuesta);
+                        $('#seccionProcesoFacturacion').addClass('hidden').empty();
+                        $('#listaFacturas').removeClass('hidden');
+                        $('#btnRegresarFacturacionTesoreria').addClass('hidden');
+                        servicios.mensajeModal('Se subio la evidencía con exito', 'Correcto', true);
+                    } else {
+                        file.limpiar('#evidenciasPago');
+                        evento.mostrarMensaje('#errorPago', false, 'Hubo un problema contacte al área correspondiente', 3000);
+                    }
+                });
+            } else {
+                evento.mostrarMensaje('#errorPago', false, 'Debe seleccionar la eviencía de Pago.', 3000);
+            }
+        });
+
+        $('#btnDetallesFactura').off('click');
+        $('#btnDetallesFactura').on('click', function () {
+            var data = {xml: evidenciaXML};
+            evento.enviarEvento('Facturacion/mostrarDetallesFactura', data, '#panelFacturacionTesoreria', function (respuesta) {
+                evento.mostrarModal('Detalles de Factura', respuesta.formulario);
+                tabla.generaTablaPersonal('#data-table-detalles-factura', null, null, true, true);
+                $('#btnModalConfirmar').addClass('hidden');
+                $('#btnModalAbortar').empty().append('Cerrar');
+            });
+        });
+    }
+
+    var validarVuelta = function () {
+        var id = arguments[0];
+        var monto = $('#inputMontoValidarVuelta').val();
+        var viatico = $('#inputViaticosValidarVuelta').val();
+        var observaciones = $('#inputObservacionesValidarVuelta').val();
+
+        if (viatico > 0) {
+            var data = {id: id, monto: monto, viatico: viatico, observaciones: observaciones};
+            evento.enviarEvento('Facturacion/guardarValidacionVuelta', data, '#panelFacturacionTesoreria', function (respuesta) {
+                if (respuesta === true) {
+                    evento.mensajeConfirmacion('Se valido con exito', 'Correcto');
+                } else {
+                    evento.mostrarMensaje('#erroValidarVuelta', false, 'Hubo algún problema con la validación de la vuelta.', 3000);
+                }
+            });
+        } else {
+            evento.mostrarMensaje('#erroValidarVuelta', false, 'El monto debe ser mayor a cero.', 3000);
+        }
+    }
+
+    var rechazarVuelta = function () {
+        var id = arguments[0];
+        var observaciones = $('#inputObservacionesValidarVuelta').val();
+
+        if (observaciones !== '') {
+            var html = evento.mensajeValidar('¿Estas seguro de querer rechazar la vuelta?');
+            $('#btnModalConfirmar').addClass('hidden');
+            $('#btnModalAbortar').addClass('hidden');
+            evento.mostrarModal('Rechazar Vuelta', html);
+            $('#btnModalConfirmar').empty().append('Eliminar');
+            $('#btnModalConfirmar').off('click');
+
+            $('#btnAceptarConfirmacion').off('click');
+            $('#btnAceptarConfirmacion').on('click', function () {
+                var data = {id: id, observaciones: observaciones};
+                evento.enviarEvento('Facturacion/rechazarVuelta', data, '#panelFacturacionTesoreria', function (respuesta) {
+                    if (respuesta === true) {
+                        evento.mensajeConfirmacion('Se rechazo con exito', 'Correcto');
+                    } else {
+                        evento.mostrarMensaje('#erroValidarVuelta', false, 'Hubo algún problema con la validación de la vuelta.', 3000);
+                    }
+                });
+            });
+        } else {
+            evento.mostrarMensaje('#erroValidarVuelta', false, 'El campo Observaciones esta vacío.', 3000);
+        }
+
+        $('#btnCancelarConfirmacion').off('click');
+        $('#btnCancelarConfirmacion').on('click', function () {
             evento.cerrarModal();
+        });
+    }
+
+    var observacionesRechazo = function () {
+        var idVuelta = arguments[0];
+        var data = {id: idVuelta};
+
+        evento.enviarEvento('Facturacion/mostrarObservacionesFactura', data, '#panelFacturacionTesoreria', function (respuesta) {
+            var html = '<div class="row text-center">\n\
+                                <div class="col-md-12">\n\
+                                    <h3>' + respuesta + '</h3>\n\
+                                </div>\n\
+                            </div>';
+
+            evento.mostrarModal('Observaciones de Rechazo', html);
+            $('#btnModalConfirmar').addClass('hidden');
+            $('#btnModalAbortar').empty().append('Cerrar');
+        });
+    }
+
+    var recargandoTablaFacturasPoliza = function () {
+        var respuesta = arguments[0];
+
+        tabla.limpiarTabla('#data-table-facturas-poliza');
+        $.each(respuesta, function (key, valor) {
+            tabla.agregarFila('#data-table-facturas-poliza', [valor.Id, valor.IdServicio, valor.Ticket, valor.Folio, valor.Vuelta, valor.Sucursal, valor.NombreAtiende, valor.Fecha, valor.Estatus, valor.EstatusServicio], true);
         });
     };
 
-    var recargandoTablaFacturasTesoreria = function () {
+    var recargandoTablaFacturasPago = function () {
         var respuesta = arguments[0];
-        var mensaje = arguments[1];
-        var divError = arguments[2];
 
         tabla.limpiarTabla('#data-table-facturas-tesoreria');
         $.each(respuesta, function (key, valor) {
-            tabla.agregarFila('#data-table-facturas-tesoreria', [valor.Ticket, valor.Ingeniero, valor.FechaDocumentacion, valor.FechaValidacionSup, valor.FechaValidacionCoord, valor.FechaPago, valor.Estatus], true);
+            tabla.agregarFila('#data-table-facturas-poliza', [valor.Id, valor.Tecnico, valor.Autoriza, valor.Fecha, valor.MontoFactura], true);
         });
-        evento.mostrarMensaje(divError, true, mensaje, 3000);
     };
+
+    var botonRegresarFacturacion = function () {
+        $('#btnRegresarFacturacionTesoreria').off('click');
+        $('#btnRegresarFacturacionTesoreria').on('click', function () {
+            $('#seccionProcesoFacturacion').addClass('hidden').empty();
+            $('#listaFacturas').removeClass('hidden');
+            $('#btnRegresarFacturacionTesoreria').addClass('hidden');
+        });
+    }
+
+    Array.prototype.unique = function () {
+        var a = [];
+        var l = this.length;
+        for (var i = 0; i < l; i++) {
+            for (var j = i + 1; j < l; j++) {
+                if (this[i] === this[j])
+                    j = ++i;
+            }
+            a.push(this[i]);
+        }
+        return a;
+    }
 });

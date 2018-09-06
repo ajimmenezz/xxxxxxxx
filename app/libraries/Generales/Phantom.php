@@ -34,6 +34,10 @@ class Phantom extends General {
         if (file_exists($nombreArchivo)) {
             unlink($nombreArchivo);
         }
+//        echo 'phantomjs ' . $this->archivoJS . ' ' . $ruta . ' ' . $phantomArchivo . ' ' . $this->size;
+//        echo 'gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile='.$archivoSalida.' /public/'.$phantomArchivo;
+//        echo exec("ls");
+//        echo $_SERVER['HTTP_USER_AGENT'];
 
         if (!empty($datosServicio)) {
             if (!empty($datosServicio['Sucursal'] && !empty($datosServicio['Folio']))) {
@@ -61,6 +65,13 @@ class Phantom extends General {
             unlink($phantomArchivo);
         }
         return $archivoSalida;
+//        
+//        
+//        if (file_exists($archivoSalida)) {
+//            unlink($archivoSalida);
+//        }
+//        exec('phantomjs ' . $this->archivoJS . ' ' . $ruta . ' ' . $archivoSalida . ' ' . $this->size, $out);         
+//        return $archivoSalida;
     }
 
 }

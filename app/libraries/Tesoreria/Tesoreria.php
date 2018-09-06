@@ -7,10 +7,18 @@ use Controladores\Controller_Datos_Usuario as General;
 class Tesoreria extends General {
 
     private $DBST;
+    private $DBT;
+    private $DBP;
+    private $poliza;
+    private $correo;
 
     public function __construct() {
         parent::__construct();
         $this->DBST = \Modelos\Modelo_ServicioTicket::factory();
+        $this->DBT = \Modelos\Modelo_Tesoreria::factory();
+        $this->DBP = \Modelos\Modelo_Poliza::factory();
+        $this->poliza = \Librerias\Poliza\Poliza::factory();
+        $this->correo = \Librerias\Generales\Correo::factory();
         parent::getCI()->load->helper('date');
     }
 
@@ -19,196 +27,438 @@ class Tesoreria extends General {
         return $usuario['IdPerfil'];
     }
 
-    public function mostrarFormularioDocumentacionFacturacion(array $datos) {
+    public function mostrarTablaDependiendoUsuario() {
         $data = array();
-        $facturacionAsociados = $this->facturasAsociados($datos['ticket']);
-        $contadorFacturacionAsociados = count($facturacionAsociados);
-
-        if ($contadorFacturacionAsociados > 0) {
-            $idCoordinador = $facturacionAsociados[0]['IdCoordinador'];
-            $idSupervisor = $facturacionAsociados[0]['IdSupervisor'];
-            $idTesoreria = $facturacionAsociados[0]['IdTesoreria'];
-            $idRechaza = $facturacionAsociados[0]['IdUsuarioRechaza'];
-            $data['datosFacturacionAsociados'] = $facturacionAsociados[0];
-            $data['DocumentoPDF'] = explode(',', $facturacionAsociados[0]['Pdf']);
-            $data['DocumentoXML'] = explode(',', $facturacionAsociados[0]['Xml']);
-            $data['NombreCoordinador'] = ($idCoordinador !== NULL) ? $this->nombreUsuario($idCoordinador) : NULL;
-            $data['NombreSupervisor'] = ($idSupervisor !== NULL) ? $this->nombreUsuario($idSupervisor) : NULL;
-            $data['NombreTesoreria'] = ($idTesoreria !== NULL) ? $this->nombreUsuario($idTesoreria) : NULL;
-            $data['NombreRechaza'] = ($idRechaza !== NULL) ? $this->nombreUsuario($idRechaza) : NULL;
-        } else {
-            $data['DocumentoPDF'] = NULL;
-            $data['DocumentoXML'] = NULL;
-            $data['NombreCoordinador'] = NULL;
-            $data['NombreSupervisor'] = NULL;
-        }
-        return array('formulario' => parent::getCI()->load->view('Tesoreria/Formularios/FormularioDocumentacionFacturacion', $data, TRUE), 'datos' => $data);
-    }
-
-    public function consultaIdOrdenIngeniero(string $usuario) {
-        $perfil = $this->validarPuesto();
-        $data = [];
-        if ($perfil !== '36') {
-            $nombreUsuario = $this->nombreUsuario($usuario);
-            $buscarPorNombre = ($perfil !== '83') ? '' : ' AND Nombre LIKE "' . $nombreUsuario[0]['NombreUsuario'] . '"';
-            $buscarEstatus = ($perfil !== '36') ? '' : '' . $nombreUsuario[0]['NombreUsuario'] . '"';
-
-            $consultaAdist2TicketIngeniero = $this->DBST->consultaQueryAdist2('SELECT 
-                                                        ts.Id_Orden,
-                                                        ts.Ingeniero,
-                                                        ts.Estatus,
-                                                        ct.Nombre AS NombreIngeniero 
-                                                    FROM t_servicios ts
-                                                    INNER JOIN cat_tecnicos ct
-                                                    ON ct.Id = ts.Ingeniero
-                                                    WHERE ts.F_Start >= "20170714"
-                                                    AND ts.Estatus = "Concluido"'
-                    . $buscarPorNombre);
-
-            foreach ($consultaAdist2TicketIngeniero as $key => $value) {
-                $facturacionAsociados = $this->facturasAsociados($value['Id_Orden']);
-                $data[$key]['Ticket'] = $value['Id_Orden'];
-                $data[$key]['Ingeniero'] = $value['NombreIngeniero'];
-                $contadorFacturacionAsociados = count($facturacionAsociados);
-                if ($contadorFacturacionAsociados > 0) {
-                    $data[$key]['FechaDocumentacion'] = ($facturacionAsociados[0]['FechaDocumentacion'] !== NULL) ? $facturacionAsociados[0]['FechaDocumentacion'] : '-';
-                    $data[$key]['FechaValidacionSup'] = ($facturacionAsociados[0]['FechaValidacionSup'] !== NULL) ? $facturacionAsociados[0]['FechaValidacionSup'] : '-';
-                    $data[$key]['FechaValidacionCoord'] = ($facturacionAsociados[0]['FechaValidacionCoord'] !== NULL) ? $facturacionAsociados[0]['FechaValidacionCoord'] : '-';
-                    $data[$key]['FechaPago'] = ($facturacionAsociados[0]['FechaPago'] !== NULL) ? $facturacionAsociados[0]['FechaPago'] : '-';
-                    $data[$key]['Estatus'] = ($facturacionAsociados[0]['Pdf'] !== NULL && $facturacionAsociados[0]['Xml'] !== NULL) ? $facturacionAsociados[0]['Estatus'] : 'FALTA DOCUMENTACIÓN';
-                } else {
-                    $data[$key]['FechaDocumentacion'] = '-';
-                    $data[$key]['FechaValidacionSup'] = '-';
-                    $data[$key]['FechaValidacionCoord'] = '-';
-                    $data[$key]['FechaPago'] = '-';
-                    $data[$key]['Estatus'] = 'FALTA DOCUMENTACIÓN';
-                }
-            }
-            return $data;
-        } else {
-            return $this->faltaPagoAsociados();
-        }
-    }
-
-    public function facturasAsociados(string $ticket) {
-        $consulta = $this->DBST->consultaGeneral('SELECT 
-                                                        *,
-                                                        estatus(IdEstatus) AS Estatus
-                                                    FROM t_facturacion_asociados
-                                                    WHERE Ticket = "' . $ticket . '"');
-        return $consulta;
-    }
-
-    public function nombreUsuario(string $usuario) {
-        $consulta = $this->DBST->consultaGeneral('SELECT 
-                                        nombreUsuario(Id) AS NombreUsuario 
-                                    FROM cat_v3_usuarios
-                                    WHERE Id = "' . $usuario . '"');
-        return $consulta;
-    }
-
-    public function guardarDocumentosFacturaAsociados(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $archivos = null;
-        $CI = parent::getCI();
-        $carpeta = 'documentosAsociados/Usuario-' . $usuario['Id'] . '/Ticket-' . $datos['ticket'] . '/';
-        $archivos = setMultiplesArchivos($CI, $datos['input'], $carpeta);
-        $campoDocumento = ($datos['input'] === 'PDFFacturacion') ? 'Pdf' : 'Xml';
+        $data['tablaVueltas'] = '';
+        $data['tablaTesoreria'] = '';
+        $data['vueltas'] = $this->poliza->resumenVueltasAsociadosFolio();
+        $htmlTitulo = '';
 
-        if ($archivos) {
-            $archivos = implode(',', $archivos);
-            $verificarFacturacionAsociados = $this->facturasAsociados($datos['ticket']);
-            if (empty($verificarFacturacionAsociados)) {
-                $this->DBST->setNuevoElemento('t_facturacion_asociados', array(
-                    'IdEstatus' => '5',
-                    'Ticket' => $datos['ticket'],
-                    'IdIngeniero' => $usuario['Id'],
-                    'FechaDocumentacion' => $fecha,
-                    $campoDocumento => $archivos
-                ));
-            } else {
-                $this->DBST->actualizarServicio('t_facturacion_asociados', array(
-                    'FechaDocumentacion' => $fecha,
-                    $campoDocumento => $archivos
-                        ), array('Ticket' => $datos['ticket'])
-                );
-            }
+        if (in_array('275', $usuario['PermisosAdicionales']) || in_array('275', $usuario['Permisos'])) {
+            $htmlTitulo = '<div class="row">
+                                <div class="col-md-12">
+                                    <h3 class="m-t-10">Resumen de Vueltas</h3>
+                                </div>
+                                <!--Empezando Separador-->
+                                <div class="col-md-12">
+                                    <div class="underline m-b-15 m-t-15"></div>
+                                </div>
+                            </div>';
+            $data['tablaVueltas'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaSupervisoresPoliza", $data, TRUE);
+            $data['tablaTesoreria'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaTesoreriaPagos", $data, TRUE);
+        } else if (in_array('229', $usuario['PermisosAdicionales']) || in_array('229', $usuario['Permisos'])) {
+            $htmlTitulo = '<div class="row">
+                                <div class="col-md-6">
+                                    <h3 class="m-t-10">Resumen de Vueltas</h3>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group text-right">
+                                        <a href="javascript:;" class="btn btn-success btn-lg " id="btnSubirFactura"><i class="fa fa-cloud-upload"></i> Subir Factura</a>
+                                    </div>
+                                </div>
+                                <!--Empezando Separador-->
+                                <div class="col-md-12">
+                                    <div class="underline m-b-15 m-t-15"></div>
+                                </div>
+                            </div>';
+            $data['tablaVueltas'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaSupervisoresPoliza", $data, TRUE);
+        } else if (in_array('228', $usuario['PermisosAdicionales']) || in_array('228', $usuario['Permisos'])) {
+            $htmlTitulo = '<div class="row">
+                                <div class="col-md-12">
+                                    <h3 class="m-t-10">Vueltas Pendientes por Autorizar</h3>
+                                </div>
+                                <!--Empezando Separador-->
+                                <div class="col-md-12">
+                                    <div class="underline m-b-15 m-t-15"></div>
+                                </div>
+                            </div>';
+            $data['tablaVueltas'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaSupervisoresPoliza", $data, TRUE);
+        } else if (in_array('227', $usuario['PermisosAdicionales']) || in_array('227', $usuario['Permisos'])) {
+            $htmlTitulo = '<div class="row">
+                                <div class="col-md-12">
+                                    <h3 class="m-t-10">Resumen de Vueltas</h3>
+                                </div>
+                                <!--Empezando Separador-->
+                                <div class="col-md-12">
+                                    <div class="underline m-b-15 m-t-15"></div>
+                                </div>
+                            </div>';
+            $data['tablaVueltas'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaSupervisoresPoliza", $data, TRUE);
+        }
+
+        if ($usuario['IdDepartamento'] === '20') {
+            $data['facturasTesoreriaPago'] = $this->DBT->facturasTesoreriaPago();
+            $data['tablaTesoreria'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaTesoreriaPagos", $data, TRUE);
+        }
+
+        $data['titulo'] = $htmlTitulo;
+
+        return array('formulario' => parent::getCI()->load->view('/Tesoreria/Facturacion', $data, TRUE), 'datos' => $data);
+    }
+
+    public function formularioSubirFactura() {
+        $data = array();
+        $usuario = $this->Usuario->getDatosUsuario();
+        $data['tablaFacturacionOutsourcingAutorizado'] = $this->DBT->tablaFacturacionOutsourcingAutorizado(array('usuario' => $usuario['Id']));
+        return array('formulario' => parent::getCI()->load->view('/Tesoreria/Formularios/FormularioSubirFactura', $data, TRUE), 'datos' => $data);
+    }
+
+    public function detallesFactura(array $datos) {
+        $data = array();
+        $data['detallesFactura'] = $this->DBT->consultaDetallesFactura($datos['xml']);
+        return array('formulario' => parent::getCI()->load->view('/Tesoreria/Formularios/TablaDetallesFactura', $data, TRUE), 'datos' => $data);
+    }
+    
+    public function observacionesFactura(array $datos){
+        $consulta = $this->DBT->consultaObservacionesFactura($datos['id']);
+        return $consulta;
+    }
+
+    public function formularioValidarVuelta(array $datos) {
+        $data = array();
+        $usuario = $this->Usuario->getDatosUsuario();
+        $data['datosTablaVueltas'] = $datos['datosTabla'];
+        $montosVueltasOutsourcing = $this->DBST->consultaGeneral('SELECT * FROM t_montos_x_vuelta_outsourcing');
+        $viaticoSucursalOutsourcing = $this->DBST->consultaGeneral('SELECT
+                                                                    (SELECT Monto FROM cat_v3_viaticos_outsourcing WHERE IdSucursal = tst.IdSucursal) Monto
+                                                                    FROM t_servicios_ticket tst
+                                                                    WHERE Id = "' . $datos['datosTabla'][1] . '"');
+        $archivoVueltaOutsourcing = $this->DBST->consultaGeneral('SELECT Archivo FROM t_facturacion_outsourcing WHERE Id = "' . $datos['datosTabla'][0] . '"');
+
+        if ($datos['datosTabla'][4] === '1') {
+            $monto = $montosVueltasOutsourcing[0]['Monto'];
+        } else {
+            $monto = $montosVueltasOutsourcing[1]['Monto'];
+        }
+
+        $data['monto'] = $monto;
+        $data['viatico'] = $viaticoSucursalOutsourcing[0]['Monto'];
+        $data['archivo'] = $archivoVueltaOutsourcing[0]['Archivo'];
+        $data['arregloUsuario'] = $usuario;
+        return array('formulario' => parent::getCI()->load->view('/Tesoreria/Formularios/FormularioValidarVuelta', $data, TRUE), 'datos' => $data);
+    }
+
+    public function formularioPago(array $datos) {
+        $rutaActual = getcwd();
+        $data = array();
+        $data['datosFactura'] = $this->DBT->consultaFacturaOutsourcingDocumantacion($datos['id']);
+        $xml = simplexml_load_file($rutaActual . $data['datosFactura'][0]['XML']);
+        $arrayEmisor = (array) $xml->xpath('//cfdi:Emisor');
+        $arrayEmisor = (array) $arrayEmisor[0];
+        $data['emisor'] = $arrayEmisor["@attributes"]['Nombre'];
+        $arrayComprobante = (array) $xml->xpath('//cfdi:Comprobante');
+        $arrayComprobante = (array) $arrayComprobante[0];
+        $data['totalPago'] = $arrayComprobante["@attributes"]['Total'];
+
+        return array('formulario' => parent::getCI()->load->view('/Tesoreria/Formularios/FormularioPago', $data, TRUE), 'datos' => $data);
+    }
+
+    public function guardarValidacionVuelta(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fechaEstatus = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+        $consulta = $this->DBST->actualizarServicio('t_facturacion_outsourcing', array(
+            'FechaEstatus' => $fechaEstatus,
+            'Monto' => $datos['monto'],
+            'Viatico' => $datos['viatico'],
+            'IdSupervisor' => $usuario['Id'],
+            'Observaciones' => $datos['observaciones'],
+            'IdEstatus' => '7'
+                ), array('Id' => $datos['id'])
+        );
+
+        $factura = $this->DBT->consultaFactura($datos['id']);
+        $vueltaFactura = (int) $factura['Vuelta'];
+
+        if ($vueltaFactura > 1) {
+            $correoCoordinadorPoliza = $this->DBP->consultaCorreoCoordinadorPoliza();
+            $correoCoordinadorPoliza = (array) $correoCoordinadorPoliza[0]['EmailCorporativo'];
+
+            $texto = '<p><strong>' . $factura['Supervisor'] . '</strong> autorizo la vuelta del Folio: <strong>' . $factura['Folio'] . '</strong>.
+                    <br><br>Ver PDF Resumen Vuelta <a href="' . $factura['Archivo'] . '" target="_blank">Aquí</a>
+                    <br><br>Ticket: <strong>' . $factura['Ticket'] . '</strong>
+                    <br><br>Solicitud: <strong>' . $factura['IdSolicitud'] . '</strong>
+                    <br>Asunto de la Solicitud: <strong>' . $factura['Asunto'] . '</strong>.
+                    <br>Descripción de la Solicitud: <strong>' . $factura['DescripcionSolicitud'] . '</strong>.
+                    <br><br>Servicio: <strong>' . $factura['IdServicio'] . '</strong>
+                    <br>Descripción del Servicio: <strong>' . $factura['Descripcion'] . '</strong>.';
+            $mensaje = $this->correo->mensajeCorreo('Autorización de Vuelta ' . $vueltaFactura . ' - ' . $factura['Folio'], $texto);
+            $this->correo->enviarCorreo('notificaciones@siccob.solutions', $correoCoordinadorPoliza, 'Autorización de Vuelta ' . $vueltaFactura . ' - ' . $factura['Folio'], $mensaje);
+        }
+
+        if (!empty($consulta)) {
             return TRUE;
         } else {
             return FALSE;
         }
     }
 
-    public function colocarFechaValidacion(array $datos) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $perfil = $this->validarPuesto();
+    public function guardarEvidenciaPagoFactura(array $datos) {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-
-        $campoFechaValidacion = ($perfil === '46') ? 'FechaValidacionCoord' : 'FechaValidacionSup';
-        $campoIdUsuario = ($perfil === '46') ? 'IdCoordinador' : 'IdSupervisor';
-        $this->DBST->actualizarServicio('t_facturacion_asociados', array(
-            $campoFechaValidacion => $fecha,
-            $campoIdUsuario => $usuario['Id'],
-                ), array('Ticket' => $datos['ticket'])
-        );
-
-        $facturacionAsociados = $this->facturasAsociados($datos['ticket']);
-        if ($facturacionAsociados[0]['FechaValidacionCoord'] !== NULL) {
-            $this->DBST->actualizarServicio('t_facturacion_asociados', array(
-                'IdEstatus' => '14',
-                    ), array('Ticket' => $datos['ticket'])
-            );
-        }
-
-        return $this->consultaIdOrdenIngeniero($usuario['Id']);
-    }
-
-    public function colocarReferenciaPago(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-        $IdIngeniero = $this->facturasAsociados($datos['ticket']);
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $archivos = null;
         $CI = parent::getCI();
-        $carpeta = 'documentosAsociados/Usuario-' . $IdIngeniero[0]['IdIngeniero'] . '/Ticket-' . $datos['ticket'] . '/';
-        $archivos = setMultiplesArchivos($CI, 'evidenciaFacturacion', $carpeta);
+        $carpeta = 'documentosAsociados/Tickets-' . $datos['tickets'] . '/EviendenciaPago/';
+        $archivos = setMultiplesArchivos($CI, 'evidenciasPago', $carpeta);
+        $evidencias = implode(',', $archivos);
+        $arrayEvidenciaPagoFactura = array(
+            'evidencias' => $evidencias,
+            'xml' => $datos['xml'],
+            'fecha' => $fecha,
+            'usuarioPaga' => $usuario['Id']);
 
-        if ($archivos) {
-            $archivos = implode(',', $archivos);
+        $consulta = $this->DBT->guardarEvidenciaPagoFactura($arrayEvidenciaPagoFactura);
 
-            $this->DBST->actualizarServicio('t_facturacion_asociados', array(
-                'FechaPago' => $fecha,
-                'Referencia' => $datos['referenciaPago'],
-                'EvidenciaPago' => $archivos,
-                'IdEstatus' => '15',
-                'IdTesoreria' => $usuario['Id']
-                    ), array('Ticket' => $datos['ticket'])
-            );
-            return $this->faltaPagoAsociados();
+        if (!empty($consulta)) {
+            $correoTecnico = $this->DBT->consultaCorreoUsuario($consulta);
+            $texto = '<p>Tesorería le ha realizado el pago de los tickest: <strong>' . $datos['tickets'] . '</strong>.';
+            $mensaje = $this->correo->mensajeCorreo('Pago de Factura', $texto);
+            $this->correo->enviarCorreo('notificaciones@siccob.solutions', array($correoTecnico), 'Pago de Factura', $mensaje);
+            return $this->DBT->facturasTesoreriaPago();
         } else {
             return FALSE;
         }
     }
 
-    public function faltaPagoAsociados() {
-        $faltaPagoAsociados = $this->DBST->consultaGeneral('SELECT *,
-                                                    estatus(IdEstatus) AS Estatus,
-                                                    nombreUsuario(IdIngeniero) AS Ingeniero 
-                                                FROM t_facturacion_asociados
-                                                WHERE IdEstatus = "14"');
-        return $faltaPagoAsociados;
-    }
-
-    public function rechazarFacturaAsociado(array $datos) {
+    public function rechazarVuelta(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
+        $fechaEstatus = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
-        $this->DBST->actualizarServicio('t_facturacion_asociados', array(
-            'IdEstatus' => '10',
-            'Rechazo' => $datos['descripcionRechazo'],
-            'IdUsuarioRechaza' => $usuario['Id'],
-                ), array('Ticket' => $datos['ticket'])
+        $constulta = $this->DBST->actualizarServicio('t_facturacion_outsourcing', array(
+            'FechaEstatus' => $fechaEstatus,
+            'IdSupervisor' => $usuario['Id'],
+            'Observaciones' => $datos['observaciones'],
+            'IdEstatus' => '10'
+                ), array('Id' => $datos['id'])
         );
-
-        return $this->consultaIdOrdenIngeniero($usuario['Id']);
+        if (!empty($constulta)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
     }
+
+    public function guardarFacturaAsociado(array $datos) {
+        $rutaActual = getcwd();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $usuario = $this->Usuario->getDatosUsuario();
+        $archivos = null;
+        $CI = parent::getCI();
+        $carpeta = 'documentosAsociados/Tickets-' . $datos['tickets'] . '/ArchivosFactura/';
+        $archivos = setMultiplesArchivos($CI, 'evidenciasFacturaTesoreria', $carpeta);
+        $resultadoComprobante = TRUE;
+        $resultadoCFDI = TRUE;
+        $resultadoConcepto = TRUE;
+        $datosFacturasOutsourcing = $this->DBT->facturasOutsourcing($datos['listaIds']);
+        $totalFactura = $this->totalVueltasFactura($datosFacturasOutsourcing);
+        $nombreExtencion = '';
+
+        foreach ($archivos as $key => $value) {
+            $extencion = pathinfo($value, PATHINFO_EXTENSION);
+            if ($nombreExtencion !== $extencion) {
+                if ($extencion === 'xml') {
+                    $xml = simplexml_load_file($rutaActual . $value);
+
+                    $arrayComprobante = (array) $xml->xpath('//cfdi:Comprobante');
+                    $arrayComprobante = (array) $arrayComprobante[0];
+
+                    $resultadoComprobante = $this->validarXMLComprobante($arrayComprobante, $totalFactura);
+
+                    $arrayReceptor = (array) $xml->xpath('//cfdi:Receptor');
+                    $arrayReceptor = (array) $arrayReceptor[0];
+                    $resultadoCFDI = $this->validarXMLCFDI($arrayReceptor);
+
+                    $arrayConcepto = (array) $xml->xpath('//cfdi:Concepto');
+                    $resultadoConcepto = $this->validarXMLConcepto($arrayConcepto, $datos['tickets']);
+                }
+            } else {
+                $this->elimarArchivoFactura($archivos);
+                return 'El tipo de archivo son iguales.';
+            }
+            $nombreExtencion = $extencion;
+        }
+
+        if ($resultadoComprobante === TRUE && $resultadoCFDI === TRUE && $resultadoConcepto === TRUE) {
+            $arrayDocumentacion = array(
+                'datosFacturasOutsourcing' => $datosFacturasOutsourcing,
+                'tickets' => $datos['tickets'],
+                'archivos' => $archivos,
+                'carpeta' => $carpeta,
+                'usuario' => $usuario['Id'],
+                'fecha' => $fecha,
+                'total' => $totalFactura);
+
+            $facturasGuardadas = $this->DBT->guardarFacturaOutsourcingDocumentacion($arrayDocumentacion);
+
+            if ($facturasGuardadas) {
+                $this->elimarArchivoFactura($archivos);
+                $proximoPago = date("d-m-Y", strtotime("next Friday"));
+                $texto = '<p>El pago de la factura de los tickets <strong>' . $datos['tickets'] . '</strong> que ha realizado, se hará el viernes  <strong>' . $proximoPago . '</strong>.';
+                $mensaje = $this->correo->mensajeCorreo('Fecha de Pago', $texto);
+                $this->correo->enviarCorreo('notificaciones@siccob.solutions', array($usuario['EmailCorporativo']), 'Fecha de Pago', $mensaje);
+                return $this->poliza->resumenVueltasAsociadosFolio();
+            } else {
+                $this->elimarArchivoFactura($archivos);
+                return $facturasGuardadas;
+            }
+        } else {
+            $this->elimarArchivoFactura($archivos);
+
+            if ($resultadoComprobante !== TRUE) {
+                return $resultadoComprobante;
+            } else if ($resultadoCFDI !== TRUE) {
+                return $resultadoCFDI;
+            } else if ($resultadoConcepto !== TRUE) {
+                return $resultadoConcepto;
+            }
+        }
+    }
+
+    public function elimarArchivoFactura(array $archivos) {
+        foreach ($archivos as $key => $value) {
+            eliminarArchivo($value);
+        }
+    }
+
+    public function validarXMLComprobante(array $datos, float $total) {
+        $resultadoComprobante = TRUE;
+
+        foreach ($datos as $k => $nodoComprobante) {
+            if (isset($nodoComprobante['MetodoPago'])) {
+                if ($nodoComprobante['MetodoPago'] === 'PUE' || $nodoComprobante['MetodoPago'] === 'PUE - Pago en una Exhibición' || $nodoComprobante['MetodoPago'] === 'Pago en una Exhibición') {
+                    $resultadoComprobante = TRUE;
+                } else {
+                    return 'El Metodo de Pago es incorrecto';
+                }
+            } else {
+                return 'La etiqueta Metodo de pago no existe';
+            }
+
+            if (isset($nodoComprobante['Version'])) {
+                if ($nodoComprobante['Version'] === '3.3' || $nodoComprobante['Version'] === 'V3.3' || $nodoComprobante['Version'] === 'V 3.3') {
+                    $resultadoComprobante = TRUE;
+                } else {
+                    return 'La Version de XML es incorrecta';
+                }
+            } else {
+                return 'La etiqueta Versión no existe';
+            }
+
+            if (isset($nodoComprobante['FormaPago'])) {
+                if ($nodoComprobante['FormaPago'] === '03' || $nodoComprobante['FormaPago'] === 'Transferencia electrónica de fondos' || $nodoComprobante['FormaPago'] === '03 - Transferencia electrónica de fondos') {
+                    $resultadoComprobante = TRUE;
+                } else {
+                    return 'La Forma de Pago es incorrecta';
+                }
+            } else {
+                return 'La etiqueta Forma de Pago no existe';
+            }
+
+            if (isset($nodoComprobante['Total'])) {
+                $totalFloat = (float) $nodoComprobante['Total'];
+
+                if (round($totalFloat) === $total || round($totalFloat) === $total + 1) {
+                    $resultadoComprobante = TRUE;
+                } else {
+                    return 'El Total de la factura es incorrecto';
+                }
+            } else {
+                return 'La etiqueta Total no existe';
+            }
+        }
+        return $resultadoComprobante;
+    }
+
+    public function validarXMLCFDI(array $datos) {
+        $resultadoCFDI = TRUE;
+        foreach ($datos as $k => $nodoReceptor) {
+            if (isset($nodoReceptor['UsoCFDI'])) {
+                if ($nodoReceptor['UsoCFDI'] === 'P01' || $nodoReceptor['UsoCFDI'] === 'Por definir') {
+                    $resultadoCFDI = TRUE;
+                } else {
+                    return 'El Uso CFDI es incorrecto';
+                }
+            } else {
+                return 'La etiqueta Uso CFDI no existe';
+            }
+        }
+        return $resultadoCFDI;
+    }
+
+    public function validarXMLConcepto(array $datos, string $tickets) {
+        $arrayTickets = explode(',', $tickets);
+        $resultadoConcepto = TRUE;
+        $arrayCatalogoServicio = array('81111800', '81111812', '81112300', '81112308', '81112309', '81111803', '81111804', '72151605', '01010101');
+
+        foreach ($datos as $k => $nodoConcepto) {
+            $nodoConcepto = (array) $nodoConcepto;
+            if (isset($nodoConcepto["@attributes"]['ClaveUnidad'])) {
+                if ($nodoConcepto["@attributes"]['ClaveUnidad'] === 'E48' || $nodoConcepto["@attributes"]['ClaveUnidad'] === 'E048') {
+                    $resultadoConcepto = TRUE;
+                } else {
+                    return 'La Clave de Unidad es incorrecta';
+                }
+            } else {
+                return 'La etiqueta Clave de Unidad no existe';
+            }
+
+            if (isset($nodoConcepto["@attributes"]['ClaveProdServ'])) {
+                if (in_array($nodoConcepto["@attributes"]['ClaveProdServ'], $arrayCatalogoServicio)) {
+                    $resultadoConcepto = TRUE;
+                } else {
+                    return 'La Clave(s) del producto y/o servicio es incorrecto';
+                }
+            } else {
+                return 'La etiqueta La Clave(s) del producto y/o servicio no existe';
+            }
+
+            if (isset($nodoConcepto["@attributes"]['Descripcion'])) {
+                $stringTicket = strpos($nodoConcepto["@attributes"]['Descripcion'], 'TICKET');
+                if ($stringTicket) {
+                    $ticketEncontrado = $this->validarTicketDescripcion($arrayTickets, $nodoConcepto["@attributes"]['Descripcion']);
+                    if ($ticketEncontrado) {
+                        $resultadoConcepto = TRUE;
+                    } else {
+                        return 'Uno de los tickets es incorrecto';
+                    }
+                }
+            } else {
+                return 'La etiqueta Descripcion no existe';
+            }
+        }
+        return $resultadoConcepto;
+    }
+
+    public function validarTicketDescripcion(array $arrayTickets, string $descripcion) {
+        foreach ($arrayTickets as $key => $value) {
+            $ticketEncontrado = strpos($descripcion, $value);
+            if ($ticketEncontrado) {
+                return TRUE;
+            }
+        }
+        return FALSE;
+    }
+
+    public function totalVueltasFactura(array $datos) {
+        $totalFactura = 0;
+
+        foreach ($datos as $k => $v) {
+            $montoIvaVuelta = number_format($v['Monto'] * 16 / 100, 2);
+            $totalIvaMontoVuelta = $v['Monto'] + $montoIvaVuelta;
+            $viaticoIvaVuelta = number_format($v['Viatico'] * 16 / 100, 2);
+            $totalIvaViaticoVuelta = $v['Viatico'] + $viaticoIvaVuelta;
+            $sumaMontoViatico = $totalIvaMontoVuelta + $totalIvaViaticoVuelta;
+            $totalFactura = $totalFactura + $sumaMontoViatico;
+        }
+
+        return (float) $totalFactura;
+    }
+
+    public function evidenciaPagoFactura(array $datos) {
+        $evidenciaPago = $this->DBT->evidenciaPagoFactura($datos['idVuelta']);
+
+        return $evidenciaPago;
+    }
+
 }

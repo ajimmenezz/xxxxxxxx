@@ -14,7 +14,6 @@ class Seguimiento extends General {
     private $DBM;
     private $Correo;
     private $Phantom;
-    private $InformacionServicios;
 
     public function __construct() {
         parent::__construct();
@@ -25,7 +24,6 @@ class Seguimiento extends General {
         $this->DBS = \Modelos\Modelo_Loguistica_Seguimiento::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
         $this->Phantom = \Librerias\Generales\Phantom::factory();
-        $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
 
         parent::getCI()->load->helper('date');
     }
@@ -330,8 +328,7 @@ class Seguimiento extends General {
         $infoActividad = $this->DBCS->getActividadesSeguimientoSalas4D($datos['servicio']);
         $host = $_SERVER['SERVER_NAME'];
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $sucursal = $this->InformacionServicios->sucursalServicio($datos['servicio']);
-        $titulo = 'Se concluyo el servicio' . $sucursal;
+        $titulo = 'Se concluyo el servicio';
         $imgFirma = $datos['img'];
         $imgFirma = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirma));
         $linkPDF = '';
@@ -365,10 +362,11 @@ class Seguimiento extends General {
         $textoCorreo = '<p>Se notifica que el servicio de ' . $nombreServ . ' con numero de ticket se a concluido por ' . $usuario['Nombre'] . '<br>' . $linkPDF . '</p>';
 
 
-        foreach ($correoEnviar as $key => $value) {
-            $this->enviarCorreoConcluido(array($value['CorreoCopiaFirma']), $titulo, $textoCorreo);
-            return TRUE;
-        }
+            foreach ($correoEnviar as $key => $value) {
+                $this->enviarCorreoConcluido(array($value['CorreoCopiaFirma']), $titulo, $textoCorreo);
+                return TRUE;
+            }
+        
     }
 
     public function enviarCorreoConcluido(array $correo, string $titulo, string $texto) {
@@ -384,21 +382,21 @@ class Seguimiento extends General {
         $vistaAvance = array();
         $avances = array();
 
-        foreach ($infoActividad as $valor) {
-
-            $avances = $this->DBCS->getInformeActividades($valor['Id'], $servicio);
-
+        foreach($infoActividad as $valor){
+            
+            $avances = $this->DBCS->getInformeActividades($valor['Id'],$servicio);
+            
             $vistaAvance[$valor['Id']] = array();
-            foreach ($avances as $v) {
+            foreach ($avances as $v) {  
                 array_push($vistaAvance[$valor['Id']], $v);
-                $tablaProductos = $this->DBCS->getProductosInforme($v['Id']);
-
-                if (!empty($tablaProductos)) {
-                    $vistaProductos[$v['Id']] = array();
+                $tablaProductos = $this->DBCS->getProductosInforme($v['Id']);               
+                
+                if(!empty($tablaProductos)){                    
+                    $vistaProductos[$v['Id']]= array();
                     foreach ($tablaProductos as $clave => $value) {
-                        array_push($vistaProductos[$v['Id']], $value);
+                         array_push($vistaProductos[$v['Id']], $value);
                     }
-                } else {
+                }else{
                     $vistaProductos[$v['Id']] = '';
                 }
             }

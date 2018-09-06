@@ -78,7 +78,6 @@ $(function () {
     $('#btnGenerarSolicitud').on('click', function () {
         var correo = $("#tagValor").tagit("assignedTags");
         var verificarCorreo;
-        var verificarSucursal;
 
         if (correo.length > 0) {
             if (servicios.validarCorreoArray(correo)) {
@@ -90,52 +89,37 @@ $(function () {
             verificarCorreo = true;
         }
 
-        if ($('#inputFolioSolicitud').val() !== '' || $('#selectClienteSolicitud').val() === '1') {
-            if ($('#selectSucursalSolicitud').val() !== '') {
-                verificarSucursal = true;
-            } else {
-                verificarSucursal = false;
-            }
-        } else {
-            verificarSucursal = true;
-        }
-
         if (evento.validarFormulario('#formNuevaSolicitud')) {
             if (verificarCorreo) {
-                if (verificarSucursal) {
-                    var data = {
-                        tipo: '3',
-                        departamento: $('#selectDepartamentoSolicitud').val(),
-                        prioridad: $('#selectPrioridadSolicitud').val(),
-                        descripcion: $('#textareaDescripcionSolicitud').val(),
-                        asunto: $('#inputAsuntoSolicitud').val(),
-                        correo: correo,
-                        folio: $('#inputFolioSolicitud').val(),
-                        sucursal: $('#selectSucursalSolicitud').val()};
-                    
-                    file.enviarArchivos('#inputEvidenciasSolicitud', 'Solicitud/Nueva_solicitud', '#panelNuevaSolicitud', data, function (respuesta) {
-                        if (respuesta !== 'otraImagen') {
-                            evento.mostrarModal('Numero de solicitud',
-                                    '<div class="row">\n\
+                var data = {
+                    tipo: '3',
+                    departamento: $('#selectDepartamentoSolicitud').val(),
+                    prioridad: $('#selectPrioridadSolicitud').val(),
+                    descripcion: $('#textareaDescripcionSolicitud').val(),
+                    asunto: $('#inputAsuntoSolicitud').val(),
+                    correo: correo,
+                    folio: $('#inputFolioSolicitud').val(),
+                    sucursal: $('#selectSucursalSolicitud').val()};
+                file.enviarArchivos('#inputEvidenciasSolicitud', 'Solicitud/Nueva_solicitud', '#panelNuevaSolicitud', data, function (respuesta) {
+                    if (respuesta !== 'otraImagen') {
+                        evento.mostrarModal('Numero de solicitud',
+                                '<div class="row">\n\
                                         <div class="col-md-12 text-center">\n\
                                             <h5>Se genero la solicitud <b>' + respuesta + '</b></h5>\n\
                                         </div>\n\
                                     </div>');
-                            $("#tagValor").tagit("removeAll");
-                            select.cambiarOpcion('#selectParsonalSolicitud', '');
-                            $('#btnModalConfirmar').addClass('hidden');
-                            $('#btnModalAbortar').empty().append('Cerrar');
-                        } else {
-                            evento.mostrarMensaje('.errorSolicitudNueva', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
-                        }
+                        $("#tagValor").tagit("removeAll");
+                        select.cambiarOpcion('#selectParsonalSolicitud', '');
+                        $('#btnModalConfirmar').addClass('hidden');
+                        $('#btnModalAbortar').empty().append('Cerrar');
+                    } else {
+                        evento.mostrarMensaje('.errorSolicitudNueva', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
+                    }
 
-                        $('#btnModalAbortar').on('click', function () {
-                            $('#btnCancelarNuevaSolicitud').trigger('click');
-                        });
+                    $('#btnModalAbortar').on('click', function () {
+                        $('#btnCancelarNuevaSolicitud').trigger('click');
                     });
-                } else {
-                    evento.mostrarMensaje('.errorSolicitudNueva', false, 'Debe seleccionar una sucursal.', 3000);
-                }
+                });
             } else {
                 evento.mostrarMensaje('.errorSolicitudNueva', false, 'Algun Correo no es correcto.', 3000);
             }
@@ -164,5 +148,5 @@ $(function () {
     $("#tagValor").tagit({
         allowSpaces: false
     });
-
+  
 });

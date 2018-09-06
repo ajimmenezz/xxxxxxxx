@@ -843,6 +843,6 @@ class Proyecto2 {
                 . "where IdArea = '" . $datos['area'] . "' "
                 . "and Flag = 1 order by Nombre");
         return ['ubicaciones' => $consulta];
-    }        
+    }
 
 }

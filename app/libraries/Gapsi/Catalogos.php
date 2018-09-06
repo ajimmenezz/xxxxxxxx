@@ -76,18 +76,18 @@ class Catalogos extends General {
     }
 
     public function solicitarGasto(array $datos) {
-        $resultado = $this->DB->solicitarGasto($datos);
-        $last = ($resultado['code'] == 200) ? $resultado['last'] . '/' : '';
-
         $archivos = $result = null;
         $CI = parent::getCI();
-        $carpeta = 'Gapsi/Gastos/' . $last;
+        $carpeta = 'Gapsi/Gastos/';
         $archivos = "";
         if (!empty($_FILES)) {
             $archivos = setMultiplesArchivos($CI, 'fotosGasto', $carpeta);
             if ($archivos) {
                 $archivos = implode(',', $archivos);
             }
+            $resultado = $this->DB->solicitarGasto($datos);
+        } else {
+            $resultado = $this->DB->solicitarGasto($datos);
         }
 
 //        $resultado = $this->DB->solicitarGasto($datos);
@@ -116,36 +116,34 @@ class Catalogos extends General {
 
             $conceptos = json_decode($datos['Conceptos'], true);
 
-            if (isset($conceptos) && count($conceptos) > 0) {
-                foreach ($conceptos as $key => $value) {
-                    $bodyMail .= ''
-                            . '<tr>'
-                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                            . '         ' . $value['categoria']
-                            . '         </span></p>'
-                            . ' </td>'
-                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                            . '         ' . $value['subcategoria']
-                            . '         </span></p>'
-                            . ' </td>'
-                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                            . '         ' . $value['concepto']
-                            . '         </span></p>'
-                            . ' </td>'
-                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                            . '         ' . number_format($value['monto'], 2, '.', ",")
-                            . '         </span></p>'
-                            . ' </td>'
-                            . '</tr>';
-                }
+            foreach ($conceptos as $key => $value) {
+                $bodyMail .= ''
+                        . '<tr>'
+                        . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
+                        . '     <p class="MsoNormal" style="margin-top:11.25pt">'
+                        . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
+                        . '         ' . $value['categoria']
+                        . '         </span></p>'
+                        . ' </td>'
+                        . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
+                        . '     <p class="MsoNormal" style="margin-top:11.25pt">'
+                        . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
+                        . '         ' . $value['subcategoria']
+                        . '         </span></p>'
+                        . ' </td>'
+                        . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
+                        . '     <p class="MsoNormal" style="margin-top:11.25pt">'
+                        . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
+                        . '         ' . $value['concepto']
+                        . '         </span></p>'
+                        . ' </td>'
+                        . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
+                        . '     <p class="MsoNormal" style="margin-top:11.25pt">'
+                        . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
+                        . '         ' . number_format($value['monto'], 2, '.', ",")
+                        . '         </span></p>'
+                        . ' </td>'
+                        . '</tr>';
             }
 
             $adjuntos = '';

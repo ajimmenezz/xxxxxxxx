@@ -87,7 +87,15 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Líder(es):</label>
-                        <select id="listLideres" class="form-control" style="width: 100% !important;" multiple="" disabled=""></select>
+                        <select id="listLideres" class="form-control" style="width: 100% !important;" multiple="">                        
+                            <?php
+                            if (isset($lideres) && !empty($lideres)) {
+                                foreach ($lideres as $key => $value) {
+                                    echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+                                }
+                            }
+                            ?>
+                        </select>
                     </div>
                 </div>
             </div>
