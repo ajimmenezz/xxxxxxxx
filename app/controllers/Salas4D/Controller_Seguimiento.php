@@ -107,6 +107,30 @@ class Controller_Seguimiento extends Base {
             case 'concluirServicoFirma':
                 $resultado = $this->seguimientoSalasX4D->concluirServicioFirma($this->input->post());
                 break;
+            case 'MostrarElementosSucursal':
+                $resultado = $this->seguimientoSalasX4D->getElementos($this->input->post());
+                break;
+            case 'GuardarServicioCorrectivo':
+                $resultado = $this->seguimientoSalasX4D->insertarMantenimientoCorrectivo($this->input->post());
+                break;
+            case 'EditarServicioCorrectivo':
+                $resultado = $this->seguimientoSalasX4D->editarMantenimientoCorrectivo($this->input->post());
+                break;
+            case 'MostrarTipoProductoAlmacen':
+                $resultado = $this->seguimientoSalasX4D->mostrarProductoAlmacen($this->input->post());
+                break;
+            case 'MostrarSubelementoCorrectivo':
+                $resultado = $this->seguimientoSalasX4D->getSubelementosByRegistro($this->input->post());
+                break;
+            case 'GuardarMantenimientoCorrectivo':
+                $resultado = $this->seguimientoSalasX4D->insertarArchivoCorrectivo($this->input->post());
+                break;
+            case 'MostrarSolucionCorrectivo4D':
+                $resultado = $this->seguimientoSalasX4D->mostrarSolcuionCorrectivo($this->input->post());
+                break;
+            case 'EliminarEvidencia':
+                $resultado = $this->seguimientoSalasX4D->eliminarEvidencia($this->input->post());
+                break;
         }
         echo json_encode($resultado);
     }

@@ -308,7 +308,7 @@ class ServiciosTicket extends General {
                 }
             } else if ($datosServicio['IdTipoServicio'] === '6') {
                 switch ($datos['operacion']) {
-                    //inicia servicio segimiento de los servicios salasx4d
+                    //inicia servicio seguimiento de los servicios mantenimiento preventivo salasx4d
                     case '1':
                         $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '2', '4');
                         $data['informacion']['serviciosAsignados'] = $this->getServiciosAsignados('7');
@@ -318,7 +318,24 @@ class ServiciosTicket extends General {
                         $data['formulario'] = parent::getCI()->load->view('Salas4D/Modal/FormularioSeguimientoMantenimiento', $data, TRUE);
                         break;
                 }
-            } else if ($datosServicio['IdTipoServicio'] === '10') {
+            } else if ($datosServicio['IdTipoServicio'] === '7') {
+                switch ($datos['operacion']) {
+                    //inicia servicio seguimiento de los servicios mantenimiento correctivo salasx4d
+                    case '1':
+                        $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '2', '4');
+                        $data['informacion']['serviciosAsignados'] = $this->getServiciosAsignados('7');
+                        break;
+                    case '2':
+                        $data['tipoSolucion'] = $this->DBCS->getTipoSolucion();
+                        $data['getSolucionByServicio'] = $this->DBCS->getSolucionByServicio(array('servicio' => $datos['servicio']));
+                        $data['consultarServicio'] = $this->DBCS->getCorrectivosGenerales(array('servicio' => $datos['servicio']));
+                        $data['sucursal4D'] = $this->DBCS->getSucursales4D();
+                        $data['tipoFalla'] = $this->DBCS->getTipoFalla();
+                        $data['informacion'] = $this->getServicioMantenimientoSalas(array('ticket' => $datosServicio['Ticket'], 'servicio' => $datos['servicio']));
+                        $data['formulario'] = parent::getCI()->load->view('Salas4D/Modal/FormularioSeguimientoMantenimientoCorrectivo', $data, TRUE);
+                        break;
+                }
+            }else if ($datosServicio['IdTipoServicio'] === '10') {
                 /* Aqui comienzan las lineas de seguimiento de los servicios de Uber */
                 switch ($datos['operacion']) {
                     /* Inicia el servicio de Uber */

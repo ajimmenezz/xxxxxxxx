@@ -45,16 +45,16 @@ class Modelo_Salas4D extends Modelo_Base {
                                     (select Nombre from cat_v3_x4d_ubicaciones WHERE Id = tes.IdUbicacion) as Ubicacion,
                                     (select Nombre from cat_v3_x4d_tipos_sistema WHERE Id = tes.IdSistema) as Sistema,
                                     concat(
-                                                                    (select Nombre from cat_v3_x4d_equipos where Id = cxe.IdEquipo),
-                                                                    ' - ',
-                                                                    (select Nombre from cat_v3_x4d_marcas where Id = cxe.IdMarca),
-                                                                    ' - ',
-                                                                    cxe.Nombre
+                                            (select Nombre from cat_v3_x4d_equipos where Id = cxe.IdEquipo),
+                                            ' - ',
+                                            (select Nombre from cat_v3_x4d_marcas where Id = cxe.IdMarca),
+                                            ' - ',
+                                            cxe.Nombre
                                     ) as Elemento,                                    
                                     concat(	
-                                                                    cxs.Nombre,
-                                                                    ' - ',
-                                                                    (select Nombre from cat_v3_x4d_marcas where Id = cxs.IdMarca)
+                                            cxs.Nombre,
+                                            ' - ',
+                                            (select Nombre from cat_v3_x4d_marcas where Id = cxs.IdMarca)
 
                                     ) as Subelemento,  
                                     tss.Serie,
@@ -65,7 +65,7 @@ class Modelo_Salas4D extends Modelo_Base {
                                     inner join cat_v3_x4d_elementos cxe on tes.IdElemento = cxe.Id
                                     inner join cat_v3_x4d_subelementos cxs on tss.IdSubelemento = cxs.Id
 
-                                    where IdSucursal = '" . $id . "' and tes.Flag = 1 and tss.Flag = 1;");
+                                    where IdSucursal = '" . $id . "' and tes.Flag = 1 and tss.Flag = 1");
         return $consulta;
     }
 
@@ -104,7 +104,7 @@ class Modelo_Salas4D extends Modelo_Base {
         foreach ($data['data'] as $key => $value) {
             $fecha = $this->consulta("select now() as Fecha;");
 
-            $this->insertar("t_elementos_salas4D", [
+            $this->insertar("t_elementos_salas4d", [
                 "IdUsuario" => $this->usuario['Id'],
                 "IdSucursal" => $data['sucursal'],
                 "IdUbicacion" => $value['ubicacion'],
@@ -157,7 +157,7 @@ class Modelo_Salas4D extends Modelo_Base {
     public function guardaCambiosElemento($data, $imagenes = '') {
         $fecha = $this->consulta("select now() as Fecha;");
         if (!$this->connectDBPrueba()->simple_query(""
-                        . "update t_elementos_salas4D "
+                        . "update t_elementos_salas4d "
                         . "set IdUsuario = '" . $this->usuario['Id'] . "', "
                         . "IdSucursal = '" . $data['sucursal'] . "', "
                         . "IdUbicacion = '" . $data['ubicacion'] . "', "
@@ -191,7 +191,7 @@ class Modelo_Salas4D extends Modelo_Base {
                                             ')'
                                     ) as Nombre
 
-                                    from t_elementos_salas4D tes inner join cat_v3_x4d_elementos cxe
+                                    from t_elementos_salas4d tes inner join cat_v3_x4d_elementos cxe
                                     on tes.IdElemento = cxe.Id
                                     where tes.Id in (" . $ids . ") and tes.Flag = 1;");
         return $consulta;
@@ -202,20 +202,18 @@ class Modelo_Salas4D extends Modelo_Base {
                                     cxs.Id,
                                     concat(cxs.Nombre,' - ',(select Nombre from cat_v3_x4d_marcas where Id = cxs.IdMarca)) as Nombre
                                     from cat_v3_x4d_subelementos cxs 
-                                    where IdElemento = (select IdElemento from t_elementos_salas4D where Id = '" . $idRegistro . "');");
+                                    where IdElemento = (select IdElemento from t_elementos_salas4d where Id = '" . $idRegistro . "');");
         return $consulta;
     }
 
     public function getSubelementosByRegistro($idRegistro = '') {
         $consulta = $this->consulta("select 
                                     tss.Id,
-                                    concat(cxs.Nombre,' - ',(select Nombre from cat_v3_x4d_marcas where Id = cxs.IdMarca)) as Subelemento,
+                                    subelementoSucursal(tss.Id) as Subelemento,
                                     tss.Serie,
                                     tss.ClaveCinemex,
                                     tss.Imagen
                                     from t_subelementos_salas4D tss 
-                                    inner join cat_v3_x4d_subelementos cxs on tss.IdSubelemento = cxs.Id
-
                                     where tss.IdRegistroElemento = '" . $idRegistro . "' and tss.Flag = 1
                                     ORDER BY tss.FechaCaptura desc; ");
         return $consulta;
@@ -234,7 +232,7 @@ class Modelo_Salas4D extends Modelo_Base {
                                         ) as Nombre from cat_v3_x4d_elementos cxe
                                         where cxe.Id = tes.IdElemento
                                     ) as Elemento                                    
-                                    from t_elementos_salas4D  tes
+                                    from t_elementos_salas4d  tes
                                     where tes.Id = '" . $idRegistro . "';");
         return $consulta;
     }
@@ -286,7 +284,7 @@ class Modelo_Salas4D extends Modelo_Base {
     public function eliminarElemento($idRegistro = '') {
         $fecha = $this->consulta("select now() as Fecha;");
         if (!$this->connectDBPrueba()->simple_query(""
-                        . "update t_elementos_salas4D "
+                        . "update t_elementos_salas4d "
                         . "set Flag = 0, "
                         . "FechaElimina = '" . $fecha[0]['Fecha'] . "', "
                         . "UsuarioElimina = '" . $this->usuario['Id'] . "'"
@@ -300,7 +298,7 @@ class Modelo_Salas4D extends Modelo_Base {
     public function actualizaImagenesElemento($elemento, $imagenes) {
         $fecha = $this->consulta("select now() as Fecha;");
         if (!$this->connectDBPrueba()->simple_query(""
-                        . "update t_elementos_salas4D "
+                        . "update t_elementos_salas4d "
                         . "set IdUsuario = '" . $this->usuario['Id'] . "', "
                         . "FechaCaptura = '" . $fecha[0]['Fecha'] . "', "
                         . "Imagen = '" . $imagenes . "' "
@@ -1002,7 +1000,7 @@ class Modelo_Salas4D extends Modelo_Base {
                 );
 
                 if ($arrayDatos['IdElemento'] !== '' && $arrayDatos['IdSubelemento'] === '') {
-                    $this->insertar("t_elementos_salas4D", array(
+                    $this->insertar("t_elementos_salas4d", array(
                         "IdUsuario" => $arrayDatos['IdUsuario'],
                         "IdSucursal" => $arrayDatos['IdSucursal'],
                         "IdUbicacion" => $arrayDatos['IdUbicacion'],
@@ -1014,7 +1012,7 @@ class Modelo_Salas4D extends Modelo_Base {
                             )
                     );
 
-                    $this->actualizar('t_elementos_salas4D', array(
+                    $this->actualizar('t_elementos_salas4d', array(
                         'Flag' => '0',
                         'UsuarioElimina' => $arrayDatos['IdUsuario'],
                         'FechaElimina' => $arrayDatos['Fecha']
@@ -1022,7 +1020,7 @@ class Modelo_Salas4D extends Modelo_Base {
 
                     $consultaElementosSalas = $this->consulta("SELECT 
                                                         *
-                                                    FROM t_elementos_salas4D
+                                                    FROM t_elementos_salas4d
                                                     WHERE Id = '" . $arrayDatos['IdElemento'] . "'");
 
                     $this->insertar("t_inventario", array(
@@ -1070,7 +1068,7 @@ class Modelo_Salas4D extends Modelo_Base {
                             )
                     );
                 } else if ($arrayDatos['IdElemento'] !== '' && $arrayDatos['IdSubelemento'] !== '') {
-                    $this->insertar("t_subelementos_salas4D", array(
+                    $this->insertar("t_subelementos_salas4d", array(
                         "IdUsuario" => $arrayDatos['IdUsuario'],
                         "IdRegistroElemento" => $arrayDatos['IdElemento'],
                         "IdSubelemento" => $consultaInventario[0]['IdProducto'],
@@ -1080,7 +1078,7 @@ class Modelo_Salas4D extends Modelo_Base {
                             )
                     );
 
-                    $this->actualizar('t_subelementos_salas4D', array(
+                    $this->actualizar('t_subelementos_salas4d', array(
                         'Flag' => '0',
                         'UsuarioElimina' => $arrayDatos['IdUsuario'],
                         'FechaElimina' => $arrayDatos['Fecha']
@@ -1088,7 +1086,7 @@ class Modelo_Salas4D extends Modelo_Base {
 
                     $consultaSubelementosSalas = $this->consulta("SELECT 
                                                         *
-                                                    FROM t_subelementos_salas4D
+                                                    FROM t_subelementos_salas4d
                                                     WHERE Id = '" . $arrayDatos['IdSubelemento'] . "'");
 
                     $this->insertar("t_inventario", array(
@@ -1146,8 +1144,8 @@ class Modelo_Salas4D extends Modelo_Base {
             return TRUE;
         }
     }
-        
-     /*
+
+    /*
      * Encargado de unir tablas para mostrar los datos
      * 
      * @return array regresa todos los datos de una o varias tablas
@@ -1157,8 +1155,8 @@ class Modelo_Salas4D extends Modelo_Base {
         $consulta = $this->consulta($sentencia);
         return $consulta;
     }
-    
-    public function getInformeActividades(int $datos,int $servicio) {
+
+    public function getInformeActividades(int $datos, int $servicio) {
         $consulta = $this->consulta("SELECT 
                                             tsma.Id,
                                             tsma.IdServicio,
@@ -1170,17 +1168,17 @@ class Modelo_Salas4D extends Modelo_Base {
                                     FROM t_salas4d_mantto_actividades_avances tsmaa
                                     INNER JOIN t_salas4d_mantto_actividades tsma
                                     ON tsmaa.IdActividad = tsma.Id
-                                    LEFT JOIN t_elementos_salas4D tes
+                                    LEFT JOIN t_elementos_salas4d tes
                                     ON tes.Id = tsmaa.IdRegistroElemento
-                                    LEFT JOIN t_subelementos_salas4D tss
+                                    LEFT JOIN t_subelementos_salas4d tss
                                     ON tss.Id = tsmaa.IdRegistroSubelemento
                                     WHERE tsma.IdActividad = '" . $datos . "'
                                     and tsma.IdServicio = '" . $servicio . "'
                                     ORDER BY tsmaa.Fecha DESC");
         return $consulta;
     }
-    
-    public function getProductosInforme(int $dato){
+
+    public function getProductosInforme(int $dato) {
         $consulta = $this->consulta("SELECT 
                                             tsmaap.Id,
                                             (SELECT Nombre FROM cat_v3_tipos_producto_inventario WHERE Id = ti.IdTipoProducto) TipoProducto,
@@ -1197,20 +1195,21 @@ class Modelo_Salas4D extends Modelo_Base {
                                     WHERE IdRegistroAvance = '" . $dato . "'");
         return $consulta;
     }
+
     public function concluirServicio(array $dato) {
-        
+
         $this->actualizar('t_servicios_ticket', array(
-                        'IdEstatus' => $dato['Estatus'],
-                        'FechaConclusion' => $dato['FechaConclusion'],
-                        'Firma' => $dato['Firma'],
-                        'NombreFirma' => $dato['NombreFirma'],
-                        'CorreoCopiaFirma' => $dato['CorreoCopiaFirma'],
-                        'FechaFirma' => $dato['FechaFirma']
-                        ), array('Id' => $dato['servicio']));
-        
+            'IdEstatus' => $dato['Estatus'],
+            'FechaConclusion' => $dato['FechaConclusion'],
+            'Firma' => $dato['Firma'],
+            'NombreFirma' => $dato['NombreFirma'],
+            'CorreoCopiaFirma' => $dato['CorreoCopiaFirma'],
+            'FechaFirma' => $dato['FechaFirma']
+                ), array('Id' => $dato['servicio']));
+
         return $this->consulta("SELECT * FROM t_servicios_ticket where Id = '" . $dato['servicio'] . "'");
     }
-    
+
     public function getInformacionServicio(string $servicio) {
         $sentencia = ""
                 . "select ts.Id as Solicitud, "
@@ -1246,10 +1245,10 @@ class Modelo_Salas4D extends Modelo_Base {
                 . "end as TiempoServicio "
                 . "from t_servicios_ticket tst INNER JOIN t_solicitudes ts "
                 . "on tst.IdSolicitud = ts.Id "
-                . "where tst.Id = '" . $servicio . "';";
+                . "where tst.Id = '" . $servicio . "'";
         return $this->consultaGeneral($sentencia);
     }
-    
+
     public function getGeneralesSolicitudServicio(string $servicio) {
         $sentencia = ""
                 . "select ts.Id as Solicitud, "
@@ -1341,7 +1340,7 @@ class Modelo_Salas4D extends Modelo_Base {
         }
         return $arrayReturn;
     }
-    
+
     public function getGeneralesSinClasificar(string $servicio) {
         $sentencia = ""
                 . "select "
@@ -1352,16 +1351,16 @@ class Modelo_Salas4D extends Modelo_Base {
                 . "where IdServicio = '" . $servicio . "'";
         return $this->consultaGeneral($sentencia);
     }
-    
-    public function getNombreServicio(string $servicio){
+
+    public function getNombreServicio(string $servicio) {
         $consulta = $this->consulta("select
                                             tipoServicio(tst.IdTipoServicio) as nombreServicio
                                     from t_servicios_ticket tst
-                                    where Id = '".$servicio."'");
+                                    where Id = '" . $servicio . "'");
         return $consulta;
     }
-    
-    public function getAvancesPDF(int $datos,int $servicio) {
+
+    public function getAvancesPDF(int $datos, int $servicio) {
         $consulta = $this->consulta("SELECT 
                                             tsma.Id,
                                             tsma.IdServicio,
@@ -1373,17 +1372,17 @@ class Modelo_Salas4D extends Modelo_Base {
                                     FROM t_salas4d_mantto_actividades_avances tsmaa
                                     INNER JOIN t_salas4d_mantto_actividades tsma
                                     ON tsmaa.IdActividad = tsma.Id
-                                    LEFT JOIN t_elementos_salas4D tes
+                                    LEFT JOIN t_elementos_salas4d tes
                                     ON tes.Id = tsmaa.IdRegistroElemento
-                                    LEFT JOIN t_subelementos_salas4D tss
+                                    LEFT JOIN t_subelementos_salas4d tss
                                     ON tss.Id = tsmaa.IdRegistroSubelemento
                                     WHERE tsma.Id = '" . $datos . "'
                                     and tsma.IdServicio = '" . $servicio . "'
                                     ORDER BY tsmaa.Fecha DESC");
         return $consulta;
     }
-    
-    public function getProductosServicio(int $servicio){
+
+    public function getProductosServicio(int $servicio) {
         $consulta = $this->consulta("select 
                                         (select Nombre from cat_v3_tipos_producto_inventario where Id = ti.IdTipoProducto) as TipoProducto,
                                         CASE ti.IdTipoProducto
@@ -1431,4 +1430,756 @@ class Modelo_Salas4D extends Modelo_Base {
                                     GROUP BY ti.IdProducto;");
         return $consulta;
     }
+
+    public function insertarMantenimientoCorrectivo(array $arrayCorrectivo) {
+        $arreglo = [
+            "IdServicio" => $arrayCorrectivo['IdServicio'],
+            "IdTipoFalla" => $arrayCorrectivo['IdTipoFalla'],
+            "IdRegistroInventario" => $arrayCorrectivo['IdRegistroInventario']
+        ];
+        return $this->insertar("t_salas4d_correctivos_generales", $arreglo);
+    }
+
+    public function getTipoFalla() {
+        $consulta = $this->consulta("SELECT * FROM cat_v3_salas4d_correctivo_tipos_falla where flag = 1");
+        return $consulta;
+    }
+    
+    public function getTipoSolucion() {
+        $consulta = $this->consulta("SELECT Id as id, Nombre as text, Flag FROM cat_v3_salas4d_correctivo_tipos_solucion WHERE flag = 1");
+        return $consulta;
+    }
+    
+    public function registroServicio(array $datos) {
+        $consulta = $this->consulta("SELECT IdSucursal FROM t_servicios_ticket tst WHERE Id = '" . $datos['servicio'] . "'");
+        return $consulta;
+    }
+
+    public function getCorrectivosGenerales(array $servicio) {
+        $consulta = $this->consulta("SELECT * FROM t_salas4d_correctivos_generales where IdServicio ='" . $servicio['servicio'] . "'");
+
+        if ($consulta) {
+            $data['IdServicio'] = $consulta[0]['IdServicio'];
+            $data['tipoFalla'] = $consulta[0]['IdTipoFalla'];
+            $data['elementoRadio'] = $consulta[0]['IdRegistroInventario'];
+            return $data;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function editarMantenimientoCorrectivo(array $datos) {
+        $editar = $this->actualizar('t_salas4d_correctivos_generales', array(
+            'IdServicio' => $datos['IdServicio'],
+            'IdTipoFalla' => $datos['IdTipoFalla'],
+            'IdRegistroInventario' => $datos['IdRegistroInventario']
+                ), array('IdServicio' => $datos['IdServicio'])
+        );
+        return $editar;
+    }
+
+    public function insertaMantenimientoCorrectivo(array $arrayDatos) {
+        $this->iniciaTransaccion();
+
+        $datosInsertar = array(
+                "IdServicio" => $arrayDatos['IdServicio'],
+                "IdTipoSolucion" => $arrayDatos['IdTipoSolucion'],
+                "Observaciones" => $arrayDatos['Observaciones'],
+                "Archivos" => $arrayDatos['evidencias'],
+                "Fecha" => $arrayDatos['Fecha']);
+        
+        if ($arrayDatos['IdTipoSolucion'] === "1") {//Sin Equipo
+            $this->insertar("t_salas4d_correctivos_soluciones",$datosInsertar);
+            
+        } else if ($arrayDatos['IdTipoSolucion'] === "2") {//con Elemento
+            $this->insertar("t_salas4d_correctivos_soluciones",$datosInsertar);
+            $ultimaIdSoluciones = $this->ultimoId();
+            
+            $this->insertar("t_salas4d_correctivos_elementos", array(
+                "IdRegistroSolucion" => $ultimaIdSoluciones,
+                "IdRegistroInventario" => $arrayDatos['elementoUtilizado']
+                    )
+            );
+        } else if ($arrayDatos['IdTipoSolucion'] === "3") {//con Subelemento
+            $this->insertar("t_salas4d_correctivos_soluciones", $datosInsertar);
+            
+            if (!empty($arrayDatos['DatosProductos'])) {
+                $ultimaIdSoluciones = $this->ultimoId();
+                foreach ($arrayDatos['DatosProductos'] as $key => $value) {
+                    $this->insertar("t_salas4d_correctivos_subelementos", array(
+                        "IdRegistroSolucion" => $ultimaIdSoluciones,
+                        "IdSubelementoDañado" => $value['IdDanado'],
+                        "IdSubelementoInventario" => $value['IdUtilizado']
+                            )
+                    );
+                }
+            }
+        }
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+        } else {
+            $this->terminaTransaccion();
+            return TRUE;
+        }
+    }
+
+    public function todosSubelementosMiAlmacen(int $usuario, int $servicio) {
+
+        $subelementosUtilizadosServicio = array();
+        $datos = array();
+        $datosSubelementos = "SELECT 
+                                    tscsub.IdSubelementoInventario,
+                                    tscsub.IdSubelementoDañado
+                            FROM t_salas4d_correctivos_soluciones as tscs 
+                            inner join t_salas4d_correctivos_subelementos as tscsub
+                            on tscs.Id = tscsub.IdRegistroSolucion
+                            WHERE tscsub.IdRegistroSolucion = (SELECT Max(Id) FROM t_salas4d_correctivos_soluciones WHERE IdServicio = " . $servicio . ")";
+        $consulta = $this->consulta($datosSubelementos);
+
+        foreach ($consulta as $value) {
+            array_push($subelementosUtilizadosServicio, array('inventario' => $value['IdSubelementoInventario'], 'danado' => $value['IdSubelementoDañado']));
+        }
+        
+        $datosInventario = "SELECT 
+                                tin.Id,                                
+                                tin.IdTipoProducto,
+                                (SUBELEMENTOSALAS4D(tin.IdProducto)) as Producto,
+                                tin.Serie
+                            FROM t_inventario as tin 
+                            WHERE tin.IdTipoProducto = 4 
+                            and tin.Cantidad > 0
+                            and tin.IdEstatus = 17
+                            and tin.IdAlmacen = (SELECT Id FROM cat_v3_almacenes_virtuales WHERE IdTipoAlmacen = 1 and IdReferenciaAlmacen = " . $usuario . ")";
+        $inventarioDisponible = $this->consulta($datosInventario);
+        
+        $datosSubelementosOcupados = "SELECT 
+                                            IdSubelementoInventario 
+                                      FROM t_salas4d_correctivos_subelementos 
+                                      WHERE IdRegistroSolucion IN (SELECT Max(Id) FROM t_salas4d_correctivos_soluciones GROUP BY IdServicio)";
+        
+        $subelementosUtilizados =  $this->consulta($datosSubelementosOcupados);
+        
+        foreach ($inventarioDisponible as $value) {
+            $flag = 0;
+            $idDanado = 0;
+            $SubElementOcupado = false;
+            
+            foreach ($subelementosUtilizadosServicio as $valor) {
+                if ($valor['inventario'] == $value['Id']) {
+                    $flag = 1;
+                    $idDanado = $valor['danado'];                    
+                }
+            }     
+            
+            foreach ($subelementosUtilizados as $valor) {
+                if ($valor['IdSubelementoInventario'] == $value['Id'] && $flag == 0) {
+                    $SubElementOcupado = true;
+                }
+            }
+            
+            if(!$SubElementOcupado) {
+                array_push($datos, array(
+                    'id' => $value['Id'],
+                    'text' => $value['Producto'] . " " . $value['Serie'],
+                    'idTipoProducto' => $value['IdTipoProducto'],
+                    'idDanado' => $idDanado,
+                    'flag' => $flag
+                ));
+            }
+        }
+        
+        return $datos;
+    }
+
+    public function subelmentoDanadoCorrectivo($servicio) {
+        $consulta = $this->consulta("SELECT * FROM t_salas4d_correctivos_generales WHERE IdServicio = '" . $servicio['servicio'] . "'");
+        $condicion = '';
+        if (!empty($consulta)) {
+            $datos = $consulta[0];
+            if ($datos['IdTipoFalla'] == 2) {
+                $condicion = " AND tscs.IdSubelementoDañado = '" . $datos['IdRegistroInventario'] . "' ";
+            }
+        }
+        $consultaSubelementosDanado = "SELECT tscs.IdSubelementoDañado,
+                                            subelementoSucursal(tscs.IdSubelementoDañado) as SubelementoDanado,
+                                            tscs.IdSubelementoInventario,
+                                            subelementoInventario(tscs.IdSubelementoInventario) as SubelementoInventario
+                                       FROM t_salas4d_correctivos_subelementos tscs
+                                        INNER JOIN t_salas4d_correctivos_soluciones tscsol on tscsol.Id = tscs.IdRegistroSolucion 
+                                        AND tscsol.Id = (SELECT MAX(Id) FROM t_salas4d_correctivos_soluciones WHERE IdServicio = '" . $servicio['servicio'] . "')
+                                       WHERE tscsol.IdServicio = '" . $servicio['servicio'] . "' " . $condicion;
+        $consulta2 = $this->consulta($consultaSubelementosDanado);
+        return $consulta2;
+    }
+
+    public function getSolucionByServicio($servicio) {
+        $consultaSolucionServicio = "SELECT *
+                                     FROM t_salas4d_correctivos_soluciones
+                                     WHERE Id = (SELECT MAX(Id) FROM t_salas4d_correctivos_soluciones WHERE IdServicio = '" . $servicio['servicio'] . "')";
+        $consulta = $this->consulta($consultaSolucionServicio);
+        return $consulta;
+    }
+
+    public function actualizarEvidencia($evidencia, $soloEliminar) {
+
+        $update = $this->actualizar('t_salas4d_correctivos_soluciones', array(
+            "Archivos" => $evidencia
+                ), array('IdServicio' => $soloEliminar));
+        return $update;
+    }
+
+    public function elementoUtil($servicio) {
+        $correctivoElementos = $this->consulta("SELECT * FROM t_salas4d_correctivos_elementos WHERE IdRegistroSolucion = (SELECT MAX(Id) FROM t_salas4d_correctivos_soluciones WHERE IdServicio = '" . $servicio . "')");
+        if (!empty($correctivoElementos)) {
+            $elementoSalas4D = $this->consulta("SELECT concat(elementoSalas4D(inven.IdProducto),'-',inven.Serie) as Nombre FROM t_inventario inven WHERE Id = '" . $correctivoElementos[0]['IdRegistroInventario'] . "'");
+            return $elementoSalas4D;
+        } else {
+            return false;
+        }
+    }
+
+    public function actualizarSoloElemento(array $datos) {
+        $this->iniciaTransaccion();
+        $fecha = $this->consulta("SELECT now() as Fecha;");
+        $servicioTicket = $this->consulta("SELECT * FROM t_servicios_ticket WHERE Id = '" . $datos['servicio'] . "'");
+        $almacenVirtual = $this->consulta("SELECT * FROM cat_v3_almacenes_virtuales WHERE IdTipoAlmacen = 1 and IdReferenciaAlmacen = '" . $datos['idUsuario'] . "'");
+        $almacenSucursal = $this->consulta("SELECT * FROM cat_v3_almacenes_virtuales WHERE IdTipoAlmacen = 3 and IdReferenciaAlmacen = '" . $servicioTicket[0]['IdSucursal'] . "'");
+
+        $this->actualizar('t_elementos_salas4d', array(
+            'Flag' => 0,
+                ), array('Id' => $datos['elementoDanado'], 'IdUsuario' => $datos['idUsuario'])
+        );
+        $consultaElemento = $this->consulta("select * from t_elementos_salas4d
+                                                WHERE  IdUsuario = '" . $datos['idUsuario'] . "'
+                                                AND Id = '" . $datos['elementoDanado'] . "'");
+
+        $this->insertar("t_inventario", array(
+            "IdAlmacen" => $almacenVirtual[0]['Id'],
+            "IdTipoProducto" => 3,
+            "IdProducto" => $consultaElemento[0]['IdElemento'],
+            "IdEstatus" => 22,
+            "Cantidad" => 1
+                )
+        );
+
+        $this->insertar("t_movimientos_inventario", array(
+            "IdTipoMovimiento" => 4,
+            "IdServicio" => $datos['servicio'],
+            "IdAlmacen" => $almacenSucursal[0]['Id'],
+            "IdTipoProducto" => 3,
+            "IdProducto" => $consultaElemento[0]['IdElemento'],
+            "IdEstatus" => 22,
+            "IdUsuario" => $datos['idUsuario'],
+            "Cantidad" => 1,
+            "Serie" => $consultaElemento[0]['Serie'],
+            "Fecha" => $fecha[0]['Fecha']
+                )
+        );
+
+        $ultimaIdMovimiento = $this->ultimoId();
+        $ultimoMovimientoInven = $this->consulta("SELECT * FROM t_movimientos_inventario WHERE Id = '" . $ultimaIdMovimiento . "'");
+
+        $this->insertar("t_movimientos_inventario", array(
+            "IdMovimientoEnlazado" => $ultimoMovimientoInven[0]['Id'],
+            "IdTipoMovimiento" => 5,
+            "IdServicio" => $datos['servicio'],
+            "IdAlmacen" => $almacenVirtual[0]['Id'],
+            "IdTipoProducto" => $ultimoMovimientoInven[0]['IdTipoProducto'],
+            "IdProducto" => $ultimoMovimientoInven[0]['IdProducto'],
+            "IdEstatus" => $ultimoMovimientoInven[0]['IdEstatus'],
+            "IdUsuario" => $ultimoMovimientoInven[0]['IdUsuario'],
+            "Cantidad" => $ultimoMovimientoInven[0]['Cantidad'],
+            "Serie" => $ultimoMovimientoInven[0]['Serie'],
+            "Fecha" => $ultimoMovimientoInven[0]['Fecha']
+                )
+        );
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+        } else {
+            $this->terminaTransaccion();
+            return TRUE;
+        }
+    }
+
+    public function actualizarSoloSubelemento(array $datos) {
+        $this->iniciaTransaccion();
+        $fecha = $this->consulta("SELECT now() as Fecha;");
+        $servicioTicket = $this->consulta("SELECT * FROM t_servicios_ticket WHERE Id = '" . $datos['servicio'] . "'");
+        $almacenVirtual = $this->consulta("SELECT * FROM cat_v3_almacenes_virtuales WHERE IdTipoAlmacen = 1 and IdReferenciaAlmacen = '" . $datos['idUsuario'] . "'");
+        $almacenSucursal = $this->consulta("SELECT * FROM cat_v3_almacenes_virtuales WHERE IdTipoAlmacen = 3 and IdReferenciaAlmacen = '" . $servicioTicket[0]['IdSucursal'] . "'");
+
+
+        $this->actualizar('t_subelementos_salas4d', array(
+            'Flag' => 0,
+                ), array('Id' => $datos['elementoDanado'], 'IdUsuario' => $datos['idUsuario'])
+        );
+
+        $consultaSubElemento = $this->consulta("SELECT * FROM t_subelementos_salas4d WHERE  IdUsuario = '" . $datos['idUsuario'] . "' AND Id = '" . $datos['elementoDanado'] . "'");
+
+        $this->insertar("t_inventario", array(
+            "IdAlmacen" => $almacenVirtual[0]['Id'],
+            "IdTipoProducto" => 4,
+            "IdProducto" => $consultaSubElemento[0]['IdSubelemento'],
+            "IdEstatus" => 22,
+            "Cantidad" => 1
+                )
+        );
+
+        $this->insertar("t_movimientos_inventario", array(
+            "IdTipoMovimiento" => 4,
+            "IdServicio" => $datos['servicio'],
+            "IdAlmacen" => $almacenSucursal[0]['Id'],
+            "IdTipoProducto" => 4,
+            "IdProducto" => $consultaSubElemento[0]['IdSubelemento'],
+            "IdEstatus" => 22,
+            "IdUsuario" => $datos['idUsuario'],
+            "Cantidad" => 1,
+            "Serie" => $consultaSubElemento[0]['Serie'],
+            "Fecha" => $fecha[0]['Fecha']
+                )
+        );
+
+        $ultimaIdSoluciones = $this->ultimoId();
+        $ultimoMovimientoInven = $this->consulta("SELECT * FROM t_movimientos_inventario WHERE Id = '" . $ultimaIdSoluciones . "'");
+
+        $this->insertar("t_movimientos_inventario", array(
+            "IdMovimientoEnlazado" => $ultimoMovimientoInven[0]['Id'],
+            "IdTipoMovimiento" => 5,
+            "IdServicio" => $ultimoMovimientoInven[0]['IdServicio'],
+            "IdAlmacen" => $almacenVirtual[0]['Id'],
+            "IdTipoProducto" => $ultimoMovimientoInven[0]['IdTipoProducto'],
+            "IdProducto" => $ultimoMovimientoInven[0]['IdProducto'],
+            "IdEstatus" => $ultimoMovimientoInven[0]['IdEstatus'],
+            "IdUsuario" => $ultimoMovimientoInven[0]['IdUsuario'],
+            "Cantidad" => $ultimoMovimientoInven[0]['Cantidad'],
+            "Serie" => $ultimoMovimientoInven[0]['Serie'],
+            "Fecha" => $ultimoMovimientoInven[0]['Fecha']
+                )
+        );
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+        } else {
+            $this->terminaTransaccion();
+            return TRUE;
+        }
+    }
+
+    public function actualizarElementoDanado(array $datos) {
+        $this->iniciaTransaccion();
+        $fecha = $this->consulta("select now() as Fecha;");
+        $servicioTicket = $this->consulta("select * from t_servicios_ticket where Id = '" . $datos['servicio'] . "'");
+        $almacenVirtual = $this->consulta("select * from cat_v3_almacenes_virtuales where IdTipoAlmacen = 1 and IdReferenciaAlmacen = '" . $datos['idUsuario'] . "'");
+        $almacenSucursal = $this->consulta("select * from cat_v3_almacenes_virtuales where IdTipoAlmacen = 3 and IdReferenciaAlmacen = '" . $servicioTicket[0]['IdSucursal'] . "'");
+
+        $this->actualizar('t_elementos_salas4d', array(
+            'Flag' => 0,
+                ), array('Id' => $datos['elementoDanado'], 'IdUsuario' => $datos['idUsuario'])
+        );
+        $consultaElemento = $this->consulta("select * from t_elementos_salas4d
+                                                WHERE  IdUsuario = '" . $datos['idUsuario'] . "'
+                                                AND Id = '" . $datos['elementoDanado'] . "'");
+
+        $this->insertar("t_inventario", array(
+            "IdAlmacen" => $almacenVirtual[0]['Id'],
+            "IdTipoProducto" => 3,
+            "IdProducto" => $consultaElemento[0]['IdElemento'],
+            "IdEstatus" => 22,
+            "Cantidad" => 1
+                )
+        );
+
+        $this->insertar("t_movimientos_inventario", array(
+            "IdTipoMovimiento" => 4,
+            "IdServicio" => $datos['servicio'],
+            "IdAlmacen" => $almacenSucursal[0]['Id'],
+            "IdTipoProducto" => 3,
+            "IdProducto" => $consultaElemento[0]['IdElemento'],
+            "IdEstatus" => 22,
+            "IdUsuario" => $datos['idUsuario'],
+            "Cantidad" => 1,
+            "Serie" => $consultaElemento[0]['Serie'],
+            "Fecha" => $fecha[0]['Fecha']
+                )
+        );
+
+        $ultimaIdMovimiento = $this->ultimoId();
+        $ultimoMovimientoInven = $this->consulta("select * from t_movimientos_inventario where Id = '" . $ultimaIdMovimiento . "'");
+
+        $this->insertar("t_movimientos_inventario", array(
+            "IdMovimientoEnlazado" => $ultimoMovimientoInven[0]['Id'],
+            "IdTipoMovimiento" => 5,
+            "IdServicio" => $datos['servicio'],
+            "IdAlmacen" => $almacenVirtual[0]['Id'],
+            "IdTipoProducto" => $ultimoMovimientoInven[0]['IdTipoProducto'],
+            "IdProducto" => $ultimoMovimientoInven[0]['IdProducto'],
+            "IdEstatus" => $ultimoMovimientoInven[0]['IdEstatus'],
+            "IdUsuario" => $ultimoMovimientoInven[0]['IdUsuario'],
+            "Cantidad" => $ultimoMovimientoInven[0]['Cantidad'],
+            "Serie" => $ultimoMovimientoInven[0]['Serie'],
+            "Fecha" => $ultimoMovimientoInven[0]['Fecha']
+                )
+        );
+
+        $idSolucion = $datos['solucion'][0]['Id'];
+        $correctivoElemento = $this->consulta("select * from t_salas4d_correctivos_elementos where IdRegistroSolucion = '" . $idSolucion . "'");
+        $elementoUtilizado = $correctivoElemento[0]['IdRegistroInventario'];
+        $consultaInventario = $this->consulta("SELECT * FROM t_inventario WHERE Id = '" . $elementoUtilizado . "'");
+
+        $idelementoUtil = $consultaInventario[0]['Id'];
+        $cantidad = $consultaInventario[0]['Cantidad'];
+        $cantidadResultado = $cantidad - 1;
+
+        $this->actualizar('t_inventario', array(
+            'Cantidad' => $cantidadResultado,
+                ), array('Id' => $idelementoUtil)
+        );
+
+        $consultaInventario2 = $this->consulta("SELECT * FROM t_inventario WHERE Id = '" . $elementoUtilizado . "'");
+
+        $this->insertar("t_elementos_salas4d", array(
+            "IdUsuario" => $datos['idUsuario'],
+            "IdSucursal" => $consultaElemento[0]['IdSucursal'],
+            "IdUbicacion" => $consultaElemento[0]['IdUbicacion'],
+            "IdSistema" => $consultaElemento[0]['IdSistema'],
+            "IdElemento" => $consultaInventario2[0]['IdProducto'],
+            "Serie" => $consultaInventario2[0]['Serie'],
+            "FechaCaptura" => $fecha[0]['Fecha'],
+            "Flag" => 1
+                )
+        );
+
+        $this->insertar("t_movimientos_inventario", array(
+            "IdTipoMovimiento" => 4,
+            "IdServicio" => $datos['servicio'],
+            "IdAlmacen" => $consultaInventario2[0]['IdAlmacen'],
+            "IdTipoProducto" => $consultaInventario2[0]['IdTipoProducto'],
+            "IdProducto" => $consultaInventario2[0]['IdProducto'],
+            "IdEstatus" => $consultaInventario2[0]['IdEstatus'],
+            "IdUsuario" => $datos['idUsuario'],
+            "Cantidad" => 1,
+            "Serie" => $consultaInventario2[0]['Serie'],
+            "Fecha" => $fecha[0]['Fecha']
+                )
+        );
+
+        $ultimaIdMovi = $this->ultimoId();
+        $ultimoMovimiento = $this->consulta("select * from t_movimientos_inventario where Id = '" . $ultimaIdMovi . "'");
+
+        $this->insertar("t_movimientos_inventario", array(
+            "IdMovimientoEnlazado" => $ultimoMovimiento[0]['Id'],
+            "IdTipoMovimiento" => 5,
+            "IdServicio" => $ultimoMovimiento[0]['IdServicio'],
+            "IdAlmacen" => $almacenSucursal[0]['Id'],
+            "IdTipoProducto" => $ultimoMovimiento[0]['IdTipoProducto'],
+            "IdProducto" => $ultimoMovimiento[0]['IdProducto'],
+            "IdEstatus" => $ultimoMovimiento[0]['IdEstatus'],
+            "IdUsuario" => $ultimoMovimiento[0]['IdUsuario'],
+            "Cantidad" => $ultimoMovimiento[0]['Cantidad'],
+            "Serie" => $ultimoMovimiento[0]['Serie'],
+            "Fecha" => $ultimoMovimiento[0]['Fecha']
+                )
+        );
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+        } else {
+            $this->terminaTransaccion();
+            return TRUE;
+        }
+    }
+
+    public function masSubelementoSolucion(array $datos) {
+        $this->iniciaTransaccion();
+        $fecha = $this->consulta("select now() as Fecha;");
+        $servicioTicket = $this->consulta("select * from t_servicios_ticket where Id = '" . $datos['servicio'] . "'");
+        $almacenVirtual = $this->consulta("select * from cat_v3_almacenes_virtuales where IdTipoAlmacen = 1 and IdReferenciaAlmacen = '" . $datos['idUsuario'] . "'");
+        $almacenSucursal = $this->consulta("select * from cat_v3_almacenes_virtuales where IdTipoAlmacen = 3 and IdReferenciaAlmacen = '" . $servicioTicket[0]['IdSucursal'] . "'");
+        $masSubelementos = $this->subelmentoDanadoCorrectivo(array('servicio' => $datos['servicio']));
+
+        foreach ($masSubelementos as $value) {
+
+            $this->actualizar('t_subelementos_salas4d', array(
+                'Flag' => 0,
+                    ), array('Id' => $value['IdSubelementoDañado'], 'IdUsuario' => $datos['idUsuario'])
+            );
+
+            $consultaSubElemento = $this->consulta("select * from t_subelementos_salas4d
+                                                    WHERE  IdUsuario = '" . $datos['idUsuario'] . "'
+                                                    AND Id = '" . $value['IdSubelementoDañado'] . "'");
+
+            $this->insertar("t_inventario", array(
+                "IdAlmacen" => $almacenVirtual[0]['Id'],
+                "IdTipoProducto" => 4,
+                "IdProducto" => $consultaSubElemento[0]['IdSubelemento'],
+                "IdEstatus" => 22,
+                "Cantidad" => 1
+                    )
+            );
+
+            $this->insertar("t_movimientos_inventario", array(
+                "IdTipoMovimiento" => 4,
+                "IdServicio" => $datos['servicio'],
+                "IdAlmacen" => $almacenSucursal[0]['Id'],
+                "IdTipoProducto" => 4,
+                "IdProducto" => $consultaSubElemento[0]['IdSubelemento'],
+                "IdEstatus" => 22,
+                "IdUsuario" => $datos['idUsuario'],
+                "Cantidad" => 1,
+                "Serie" => $consultaSubElemento[0]['Serie'],
+                "Fecha" => $fecha[0]['Fecha']
+                    )
+            );
+
+            $ultimaIdSoluciones = $this->ultimoId();
+            $ultimoMovimientoInven = $this->consulta("select * from t_movimientos_inventario where Id = '" . $ultimaIdSoluciones . "'");
+
+            $this->insertar("t_movimientos_inventario", array(
+                "IdMovimientoEnlazado" => $ultimoMovimientoInven[0]['Id'],
+                "IdTipoMovimiento" => 5,
+                "IdServicio" => $ultimoMovimientoInven[0]['IdServicio'],
+                "IdAlmacen" => $almacenVirtual[0]['Id'],
+                "IdTipoProducto" => $ultimoMovimientoInven[0]['IdTipoProducto'],
+                "IdProducto" => $ultimoMovimientoInven[0]['IdProducto'],
+                "IdEstatus" => $ultimoMovimientoInven[0]['IdEstatus'],
+                "IdUsuario" => $ultimoMovimientoInven[0]['IdUsuario'],
+                "Cantidad" => $ultimoMovimientoInven[0]['Cantidad'],
+                "Serie" => $ultimoMovimientoInven[0]['Serie'],
+                "Fecha" => $ultimoMovimientoInven[0]['Fecha']
+                    )
+            );
+
+            $consultaInventario = $this->consulta("SELECT * FROM t_inventario WHERE Id = '" . $value['IdSubelementoInventario'] . "'");
+
+            $idSubelementoUtil = $consultaInventario[0]['Id'];
+            $cantidad = $consultaInventario[0]['Cantidad'];
+            $cantidadResultado = $cantidad - 1;
+
+            $this->actualizar('t_inventario', array(
+                'Cantidad' => $cantidadResultado,
+                    ), array('Id' => $idSubelementoUtil)
+            );
+            $consultaInventario2 = $this->consulta("SELECT * FROM t_inventario WHERE Id = '" . $value['IdSubelementoInventario'] . "'");
+
+            $this->insertar("t_subelementos_salas4d", array(
+                "IdUsuario" => $datos['idUsuario'],
+                "IdRegistroElemento" => $consultaSubElemento[0]['IdRegistroElemento'],
+                "IdSubelemento" => $consultaInventario2[0]['IdProducto'],
+                "Serie" => $consultaInventario2[0]['Serie'],
+                "FechaCaptura" => $fecha[0]['Fecha'],
+                "Flag" => 1
+                    )
+            );
+
+            $this->insertar("t_movimientos_inventario", array(
+                "IdTipoMovimiento" => 4,
+                "IdServicio" => $datos['servicio'],
+                "IdAlmacen" => $consultaInventario2[0]['IdAlmacen'],
+                "IdTipoProducto" => $consultaInventario2[0]['IdTipoProducto'],
+                "IdProducto" => $consultaInventario2[0]['IdProducto'],
+                "IdEstatus" => $consultaInventario2[0]['IdEstatus'],
+                "IdUsuario" => $datos['idUsuario'],
+                "Cantidad" => 1,
+                "Serie" => $consultaInventario2[0]['Serie'],
+                "Fecha" => $fecha[0]['Fecha']
+                    )
+            );
+
+            $ultimaIdMovi = $this->ultimoId();
+            $ultimoMovimiento = $this->consulta("select * from t_movimientos_inventario where Id = '" . $ultimaIdMovi . "'");
+
+            $this->insertar("t_movimientos_inventario", array(
+                "IdMovimientoEnlazado" => $ultimoMovimiento[0]['Id'],
+                "IdTipoMovimiento" => 5,
+                "IdServicio" => $ultimoMovimiento[0]['IdServicio'],
+                "IdAlmacen" => $almacenSucursal[0]['Id'],
+                "IdTipoProducto" => $ultimoMovimiento[0]['IdTipoProducto'],
+                "IdProducto" => $ultimoMovimiento[0]['IdProducto'],
+                "IdEstatus" => $ultimoMovimiento[0]['IdEstatus'],
+                "IdUsuario" => $ultimoMovimiento[0]['IdUsuario'],
+                "Cantidad" => $ultimoMovimiento[0]['Cantidad'],
+                "Serie" => $ultimoMovimiento[0]['Serie'],
+                "Fecha" => $ultimoMovimiento[0]['Fecha']
+                    )
+            );
+        }
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+        } else {
+            $this->terminaTransaccion();
+            return TRUE;
+        }
+    }
+
+    public function elementoConSubelemento(array $datos) {
+        $this->iniciaTransaccion();
+        $fecha = $this->consulta("select now() as Fecha;");
+        $servicioTicket = $this->consulta("select * from t_servicios_ticket where Id = '" . $datos['servicio'] . "'");
+        $almacenVirtual = $this->consulta("select * from cat_v3_almacenes_virtuales where IdTipoAlmacen = 1 and IdReferenciaAlmacen = '" . $datos['idUsuario'] . "'");
+        $almacenSucursal = $this->consulta("select * from cat_v3_almacenes_virtuales where IdTipoAlmacen = 3 and IdReferenciaAlmacen = '" . $servicioTicket[0]['IdSucursal'] . "'");
+        $masSubelementos = $this->subelmentoDanadoCorrectivo(array('servicio' => $datos['servicio']));
+
+        foreach ($masSubelementos as $value) {
+
+            $this->actualizar('t_subelementos_salas4d', array(
+                'Flag' => 0,
+                    ), array('Id' => $value['IdSubelementoDañado'], 'IdUsuario' => $datos['idUsuario'])
+            );
+
+            $consultaSubElemento = $this->consulta("select * from t_subelementos_salas4d
+                                                    WHERE  IdUsuario = '" . $datos['idUsuario'] . "'
+                                                    AND Id = '" . $value['IdSubelementoDañado'] . "'");
+
+            $this->insertar("t_inventario", array(
+                "IdAlmacen" => $almacenVirtual[0]['Id'],
+                "IdTipoProducto" => 4,
+                "IdProducto" => $consultaSubElemento[0]['IdSubelemento'],
+                "IdEstatus" => 22,
+                "Cantidad" => 1
+                    )
+            );
+
+            $this->insertar("t_movimientos_inventario", array(
+                "IdTipoMovimiento" => 4,
+                "IdServicio" => $datos['servicio'],
+                "IdAlmacen" => $almacenSucursal[0]['Id'],
+                "IdTipoProducto" => 4,
+                "IdProducto" => $consultaSubElemento[0]['IdSubelemento'],
+                "IdEstatus" => 22,
+                "IdUsuario" => $datos['idUsuario'],
+                "Cantidad" => 1,
+                "Serie" => $consultaSubElemento[0]['Serie'],
+                "Fecha" => $fecha[0]['Fecha']
+                    )
+            );
+
+            $ultimaIdSoluciones = $this->ultimoId();
+            $ultimoMovimientoInven = $this->consulta("select * from t_movimientos_inventario where Id = '" . $ultimaIdSoluciones . "'");
+
+            $this->insertar("t_movimientos_inventario", array(
+                "IdMovimientoEnlazado" => $ultimoMovimientoInven[0]['Id'],
+                "IdTipoMovimiento" => 5,
+                "IdServicio" => $ultimoMovimientoInven[0]['IdServicio'],
+                "IdAlmacen" => $almacenVirtual[0]['Id'],
+                "IdTipoProducto" => $ultimoMovimientoInven[0]['IdTipoProducto'],
+                "IdProducto" => $ultimoMovimientoInven[0]['IdProducto'],
+                "IdEstatus" => $ultimoMovimientoInven[0]['IdEstatus'],
+                "IdUsuario" => $ultimoMovimientoInven[0]['IdUsuario'],
+                "Cantidad" => $ultimoMovimientoInven[0]['Cantidad'],
+                "Serie" => $ultimoMovimientoInven[0]['Serie'],
+                "Fecha" => $ultimoMovimientoInven[0]['Fecha']
+                    )
+            );
+
+            $consultaInventario = $this->consulta("SELECT * FROM t_inventario WHERE Id = '" . $value['IdSubelementoInventario'] . "'");
+
+            $idSubelementoUtil = $consultaInventario[0]['Id'];
+            $cantidad = $consultaInventario[0]['Cantidad'];
+            $cantidadResultado = $cantidad - 1;
+
+            $this->actualizar('t_inventario', array(
+                'Cantidad' => $cantidadResultado,
+                    ), array('Id' => $idSubelementoUtil)
+            );
+
+            $this->insertar("t_subelementos_salas4d", array(
+                "IdUsuario" => $datos['idUsuario'],
+                "IdRegistroElemento" => $consultaSubElemento[0]['IdRegistroElemento'],
+                "IdSubelemento" => $consultaInventario[0]['IdProducto'],
+                "Serie" => $consultaInventario[0]['Serie'],
+                "FechaCaptura" => $fecha[0]['Fecha'],
+                "Flag" => 1
+                    )
+            );
+
+            $this->insertar("t_movimientos_inventario", array(
+                "IdTipoMovimiento" => 4,
+                "IdServicio" => $datos['servicio'],
+                "IdAlmacen" => $consultaInventario[0]['IdAlmacen'],
+                "IdTipoProducto" => $consultaInventario[0]['IdTipoProducto'],
+                "IdProducto" => $consultaInventario[0]['IdProducto'],
+                "IdEstatus" => $consultaInventario[0]['IdEstatus'],
+                "IdUsuario" => $datos['idUsuario'],
+                "Cantidad" => 1,
+                "Serie" => $consultaInventario[0]['Serie'],
+                "Fecha" => $fecha[0]['Fecha']
+                    )
+            );
+
+            $ultimaIdMovi = $this->ultimoId();
+            $ultimoMovimiento = $this->consulta("select * from t_movimientos_inventario where Id = '" . $ultimaIdMovi . "'");
+
+            $this->insertar("t_movimientos_inventario", array(
+                "IdMovimientoEnlazado" => $ultimoMovimiento[0]['Id'],
+                "IdTipoMovimiento" => 5,
+                "IdServicio" => $ultimoMovimiento[0]['IdServicio'],
+                "IdAlmacen" => $almacenSucursal[0]['Id'],
+                "IdTipoProducto" => $ultimoMovimiento[0]['IdTipoProducto'],
+                "IdProducto" => $ultimoMovimiento[0]['IdProducto'],
+                "IdEstatus" => $ultimoMovimiento[0]['IdEstatus'],
+                "IdUsuario" => $ultimoMovimiento[0]['IdUsuario'],
+                "Cantidad" => $ultimoMovimiento[0]['Cantidad'],
+                "Serie" => $ultimoMovimiento[0]['Serie'],
+                "Fecha" => $ultimoMovimiento[0]['Fecha']
+                    )
+            );
+        }
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+        } else {
+            $this->terminaTransaccion();
+            return TRUE;
+        }
+    }
+
+    public function concluirSolitud($servicio, $ticket) {
+        $fecha = $this->consulta("select now() as Fecha;");
+        $servicioTicket = $this->consulta("SELECT *
+                                FROM t_servicios_ticket
+                                WHERE IdEstatus NOT IN (4,6)
+                                AND Ticket = '" . $ticket . "'
+                                AND Id <> '" . $servicio . "'");
+        $IdSolicitud = $servicioTicket[0]['IdSolicitud'];
+        if (empty($servicioTicket)) {
+            $this->actualizar('t_solicitudes', array(
+                'IdEstatus' => 4,
+                'FechaConclusion' => $fecha[0]['Fecha']
+                    ), array('Id' => $IdSolicitud)
+            );
+        }
+    }
+    
+    public function elementoDisponiblesServicio(int $usuario,$condicion){
+        $elementosDisponibles = "SELECT 
+                                    Id as id,
+                                    inve.Cantidad,
+                                    inve.Serie,
+                                    CASE inve.IdtipoProducto
+                                        WHEN 3 THEN CONCAT(ELEMENTOSALAS4D(inve.IdProducto),' - ', inve.Serie)
+                                    END AS text,
+                                    inve.IdtipoProducto
+                                FROM
+                                    t_inventario inve
+                                WHERE
+                                    inve.IdTipoProducto IN (3)
+                                        AND inve.IdAlmacen IN (SELECT 
+                                            Id
+                                        FROM
+                                            cat_v3_almacenes_virtuales
+                                        WHERE
+                                        IdTipoAlmacen = 1
+                                        AND IdReferenciaAlmacen = " . $usuario . ")
+                                        AND inve.IdEstatus = 17
+                                        AND inve.Cantidad > 0
+                                        AND inve.Id not in (
+                                            SELECT IdRegistroInventario
+                                            FROM t_salas4d_correctivos_elementos
+                                            WHERE IdRegistroSolucion IN (
+                                                SELECT MAX(Id) FROM t_salas4d_correctivos_soluciones GROUP BY IdServicio
+                                            )
+                                            $condicion
+                                        )";
+    
+        return $this->consulta($elementosDisponibles);
+    }
+
 }
