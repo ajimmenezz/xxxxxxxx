@@ -1,0 +1,20 @@
+.thumbnail-pic {
+    position: relative;
+    display: inline-block;
+    -webkit-box-shadow: 4px 4px 8px 0px rgba(77,77,77,0.5);
+    -moz-box-shadow: 4px 4px 8px 0px rgba(77,77,77,0.5);
+    box-shadow: 4px 4px 8px 0px rgba(77,77,77,0.5);
+}
+
+.thumbnail-pic:hover .edit {
+    display: block;
+}
+
+.edit {
+    padding-top: 9px;	
+    padding-right: 9px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: none;
+}

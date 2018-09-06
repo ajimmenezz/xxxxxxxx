@@ -1,0 +1,28 @@
+/*Empezando contenedor de notas */
+
+.contenedor-notas{
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.estatusNota span{
+    display: inline-block;
+}
+.estatusNota span:nth-child(2){
+    padding-left: 10px; 
+}
+/*Finalizando contenedor de notas */
+
+
+
+/* empieza media queries */
+@media all and (max-width: 767px) {
+    .estatusNota span:nth-child(2){
+        width: 100%;
+        padding-left: 0; 
+    }
+}
+
+/* termina media queries */
+

@@ -1,0 +1,751 @@
+<?php
+
+namespace Librerias\Generales;
+
+use Controladores\Controller_Datos_Usuario as General;
+
+class Busqueda extends General {
+
+    private $DBB;
+    private $DBS;
+    private $servicio;
+    private $notas;
+    private $fechas;
+    private $Excel;
+
+    public function __construct() {
+        parent::__construct();
+        $this->DBB = \Modelos\Modelo_Busqueda::factory();
+        $this->DBS = \Modelos\Modelo_EditarSolicitud::factory();
+        $this->servicio = \Librerias\Generales\Servicio::factory();
+        $this->notas = \Librerias\Generales\Notas::factory();
+        $this->fechas = \Librerias\Generales\Dashboard::factory();
+        $this->Excel = new \Librerias\Generales\CExcel();
+        parent::getCI()->load->helper('date');
+    }
+
+    public function busquedaReporte(array $parametros) {
+        if ($parametros['columnas'] == '') {
+            $query = 'select 
+            ts.Id as IdSolicitud,
+            tst.Id as IdServicio,
+            ts.Ticket,
+            ts.Folio,
+            sucursal(tst.IdSucursal) as Sucursal,
+            estatus(ts.IdEstatus) as EstatusSolicitud,
+            departamento(ts.IdDepartamento) as DepartamentoSolicitud,
+            prioridad(ts.IdPrioridad) as PriodidadSolicitud,
+            ts.FechaCreacion as FechaSolicitud,
+            ts.FechaRevision as FechaRevisionSolicitud,
+            ts.FechaConclusion as FechaCierreSolicitud,
+            nombreUsuario(ts.Solicita) as Solicita,
+            tsi.Asunto as AsuntoSolicitud,
+            tsi.Descripcion as DescripcionSolicitud,            
+            tipoServicio(tst.IdTipoServicio) as TipoServicio,
+            estatus(tst.IdEstatus) as EstatusServicio,
+            nombreUsuario(tst.Solicita) as GeneraServicio,
+            nombreUsuario(tst.Atiende) as AtiendeServicio,
+            tst.FechaCreacion as FechaServicio,
+            tst.FechaInicio as FechaInicioServicio,
+            tst.FechaConclusion as FechaConclusionServicio,
+            tst.Descripcion as Servicio 
+            from 
+            t_solicitudes ts 
+            left join t_solicitudes_internas tsi on ts.Id = tsi.IdSolicitud
+            LEFT JOIN t_servicios_ticket tst on ts.Id = tst.IdSolicitud where 1 = 1 ';
+
+            $htmlColumnas = ''
+                    . '<th class="all">Solicitud</th>'
+                    . '<th class="never">IdServicio</th>'
+                    . '<th class="all">Ticket</th>'
+                    . '<th class="all">Folio</th>'
+                    . '<th class="all">Sucursal</th>'
+                    . '<th class="all">Estatus de Solicitud</th>'
+                    . '<th class="all">Departamento de Solicitud</th>'
+                    . '<th class="all">Prioridad de Solicitud</th>'
+                    . '<th class="all">Fecha de Solicitud</th>'
+                    . '<th class="all">Fecha de Revisión de Solicitud</th>'
+                    . '<th class="all">Fecha de Cierre de Solicitud</th>'
+                    . '<th class="all">Solicita</th>'
+                    . '<th class="all">Asunto de Solicitud</th>'
+                    . '<th class="all">Descripcion de Solicitud</th>'
+                    . '<th class="all">Tipo de Servicio</th>'
+                    . '<th class="all">Estatus del Servicio</th>'
+                    . '<th class="all">Personal que Genera el Servicio</th>'
+                    . '<th class="all">Atiende el Servicio</th>'
+                    . '<th class="all">Fecha del Servicio</th>'
+                    . '<th class="all">Fecha de Inicio del Servicio</th>'
+                    . '<th class="all">Fecha de Cierre del Servicio</th>'
+                    . '<th class="all">Descripción del Servicio</th>';
+        } else {
+            $htmlColumnas = '';
+            $query = 'select ';
+            $query .= 'ts.Id as IdSolicitud, ';
+            $htmlColumnas .= '<th class="all">Solicitud</th>';
+            $query .= 'tst.Id as IdServicio, ';
+            $htmlColumnas .= '<th class="never">IdServicio</th>';
+            $query .= (in_array("ts.Ticket", $parametros['columnas'])) ? 'ts.Ticket, ' : '';
+            $htmlColumnas .= (in_array("ts.Ticket", $parametros['columnas'])) ? '<th class="all">Ticket</th>' : '';
+            $query .= (in_array("ts.Folio", $parametros['columnas'])) ? 'ts.Folio, ' : '';
+            $htmlColumnas .= (in_array("ts.Folio", $parametros['columnas'])) ? '<th class="all">Folio</th>' : '';
+            $query .= (in_array("tst.IdSucursal", $parametros['columnas'])) ? 'sucursal(tst.IdSucursal) as Sucursal, ' : '';
+            $htmlColumnas .= (in_array("tst.IdSucursal", $parametros['columnas'])) ? '<th class="all">Sucursal</th>' : '';
+            $query .= (in_array("ts.IdEstatus", $parametros['columnas'])) ? 'estatus(ts.IdEstatus) as EstatusSolicitud, ' : '';
+            $htmlColumnas .= (in_array("ts.IdEstatus", $parametros['columnas'])) ? '<th class="all">Estatus de Solicitud</th>' : '';
+            $query .= (in_array("ts.IdDepartamento", $parametros['columnas'])) ? 'departamento(ts.IdDepartamento) as DepartamentoSolicitud, ' : '';
+            $htmlColumnas .= (in_array("ts.IdDepartamento", $parametros['columnas'])) ? '<th class="all">Departamento de Solicitud</th>' : '';
+            $query .= (in_array("ts.IdPrioridad", $parametros['columnas'])) ? 'prioridad(ts.IdPrioridad) as PriodidadSolicitud, ' : '';
+            $htmlColumnas .= (in_array("ts.IdPrioridad", $parametros['columnas'])) ? '<th class="all">Prioridad de Solicitud</th>' : '';
+            $query .= (in_array("ts.FechaCreacion", $parametros['columnas'])) ? 'ts.FechaCreacion as FechaSolicitud, ' : '';
+            $htmlColumnas .= (in_array("ts.FechaCreacion", $parametros['columnas'])) ? '<th class="all">Fecha de Solicitud</th>' : '';
+            $query .= (in_array("ts.FechaRevision", $parametros['columnas'])) ? 'ts.FechaRevision as FechaRevisionSolicitud, ' : '';
+            $htmlColumnas .= (in_array("ts.FechaRevision", $parametros['columnas'])) ? '<th class="all">Fecha de Revisión de Solicitud</th>' : '';
+            $query .= (in_array("ts.FechaConclusion", $parametros['columnas'])) ? 'ts.FechaConclusion as FechaCierreSolicitud, ' : '';
+            $htmlColumnas .= (in_array("ts.FechaConclusion", $parametros['columnas'])) ? '<th class="all">Fecha de Cierre de Solicitud</th>' : '';
+            $query .= (in_array("ts.Solicita", $parametros['columnas'])) ? 'nombreUsuario(ts.Solicita) as Solicita, ' : '';
+            $htmlColumnas .= (in_array("ts.Solicita", $parametros['columnas'])) ? '<th class="all">Solicita</th>' : '';
+            $query .= (in_array("tsi.Asunto", $parametros['columnas'])) ? 'tsi.Asunto as AsuntoSolicitud, ' : '';
+            $htmlColumnas .= (in_array("tsi.Asunto", $parametros['columnas'])) ? '<th class="all">Asunto de Solicitud</th>' : '';
+            $query .= (in_array("tsi.Descripcion", $parametros['columnas'])) ? 'tsi.Descripcion as DescripcionSolicitud, ' : '';
+            $htmlColumnas .= (in_array("tsi.Descripcion", $parametros['columnas'])) ? '<th class="all">Descripcion de Solicitud</th>' : '';
+            $query .= (in_array("tst.IdTipoServicio", $parametros['columnas'])) ? 'tipoServicio(tst.IdTipoServicio) as TipoServicio, ' : '';
+            $htmlColumnas .= (in_array("tst.IdTipoServicio", $parametros['columnas'])) ? '<th class="all">Tipo de Servicio</th>' : '';
+            $query .= (in_array("tst.IdEstatus", $parametros['columnas'])) ? 'estatus(tst.IdEstatus) as EstatusServicio, ' : '';
+            $htmlColumnas .= (in_array("tst.IdEstatus", $parametros['columnas'])) ? '<th class="all">Estatus del Servicio</th>' : '';
+            $query .= (in_array("tst.Solicita", $parametros['columnas'])) ? 'nombreUsuario(tst.Solicita) as GeneraServicio, ' : '';
+            $htmlColumnas .= (in_array("tst.Solicita", $parametros['columnas'])) ? '<th class="all">Personal que Genera el Servicio</th>' : '';
+            $query .= (in_array("tst.Atiende", $parametros['columnas'])) ? 'nombreUsuario(tst.Atiende) as AtiendeServicio, ' : '';
+            $htmlColumnas .= (in_array("tst.Atiende", $parametros['columnas'])) ? '<th class="all">Atiende el Servicio</th>' : '';
+            $query .= (in_array("tst.FechaCreacion", $parametros['columnas'])) ? 'tst.FechaCreacion as FechaServicio, ' : '';
+            $htmlColumnas .= (in_array("tst.FechaCreacion", $parametros['columnas'])) ? '<th class="all">Fecha del Servicio</th>' : '';
+            $query .= (in_array("tst.FechaInicio", $parametros['columnas'])) ? 'tst.FechaInicio as FechaInicioServicio, ' : '';
+            $htmlColumnas .= (in_array("tst.FechaInicio", $parametros['columnas'])) ? '<th class="all">Fecha de Inicio del Servicio</th>' : '';
+            $query .= (in_array("tst.FechaConclusion", $parametros['columnas'])) ? 'tst.FechaConclusion as FechaConclusionServicio, ' : '';
+            $htmlColumnas .= (in_array("tst.FechaConclusion", $parametros['columnas'])) ? '<th class="all">Fecha de Cierre del Servicio</th>' : '';
+            $query .= (in_array("tst.Descripcion", $parametros['columnas'])) ? 'tst.Descripcion as Servicio, ' : '';
+            $htmlColumnas .= (in_array("tst.Descripcion", $parametros['columnas'])) ? '<th class="all">Descripción del Servicio</th>' : '';
+
+            $query = substr($query, 0, -2);
+            $query .= ' from 
+            t_solicitudes ts 
+            left join t_solicitudes_internas tsi on ts.Id = tsi.IdSolicitud
+            LEFT JOIN t_servicios_ticket tst on ts.Id = tst.IdSolicitud where 1 = 1 ';
+        }
+
+        if ($parametros['filtroFecha'] !== '') {
+            if ($parametros['tipoFiltroFecha'] == 'rango') {
+                if ($parametros['desde'] !== '' && $parametros['hasta'] !== '') {
+                    $query .= " and " . $parametros['filtroFecha'] . " between '" . $parametros['desde'] . " 00:00:00' and '" . $parametros['hasta'] . " 23:59:59' ";
+                }
+            } else {
+                $fechas = $this->fechas->getFiltrosFecha(['id' => $parametros['durante']])[0];
+                $desde = substr($fechas['Inicio'], 6, 4) . '-' . substr($fechas['Inicio'], 3, 2) . '-' . substr($fechas['Inicio'], 0, 2);
+                $hasta = substr($fechas['Fin'], 6, 4) . '-' . substr($fechas['Fin'], 3, 2) . '-' . substr($fechas['Fin'], 0, 2);
+                $query .= " and " . $parametros['filtroFecha'] . " between '" . $desde . " 00:00:00' and '" . $hasta . " 23:59:59' ";
+            }
+        }
+
+        if (isset($parametros['avanzados'])) {
+            foreach ($parametros['avanzados'] as $key => $value) {
+                $operador = "";
+                switch ($value['criterio']) {
+                    case 'es':
+                        $operador = " in ";
+                        break;
+                    case 'noes':
+                        $operador = " not in ";
+                        break;
+                    case 'contiene':
+                        $operador = " like ";
+                        break;
+                }
+
+                switch ($value['tipoCampo']) {
+                    case 'tag':
+                        $query .= " and " . $value['campo'] . $operador . "('" . implode("','", $value['valor']) . "') ";
+                        break;
+                    case 'cat':
+                        $query .= " and " . $value['campo'] . $operador . "('" . implode("','", $value['valor']) . "') ";
+                        break;
+                    case 'text':
+                        $query .= " and " . $value['campo'] . $operador . "'%" . $value['valor'] . "%' ";
+                        break;
+                }
+            }
+        }
+
+        $resultado = $this->DBB->busquedaReporte($query);
+        $htmlReturn = ''
+                . '<table '
+                . ' id="data-table-busqueda-reporte" '
+                . ' class="table table-hover table-striped table-bordered no-wrap" '
+                . ' style="cursor:pointer; width" '
+                . ' >'
+                . ' <thead>'
+                . ' ' . $htmlColumnas . ''
+                . ' </thead>'
+                . ' <tbody>';
+
+        foreach ($resultado as $key => $value) {
+            $htmlReturn .= '<tr>';
+            if ($parametros['columnas'] == '') {
+                $htmlReturn .= '<td>' . $value['IdSolicitud'] . '</td>';
+                $htmlReturn .= '<td>' . $value['IdServicio'] . '</td>';
+                $htmlReturn .= '<td>' . $value['Ticket'] . '</td>';
+                $htmlReturn .= '<td>' . $value['Folio'] . '</td>';
+                $htmlReturn .= '<td>' . $value['Sucursal'] . '</td>';
+                $htmlReturn .= '<td>' . $value['EstatusSolicitud'] . '</td>';
+                $htmlReturn .= '<td>' . $value['DepartamentoSolicitud'] . '</td>';
+                $htmlReturn .= '<td>' . $value['PriodidadSolicitud'] . '</td>';
+                $htmlReturn .= '<td>' . $value['FechaSolicitud'] . '</td>';
+                $htmlReturn .= '<td>' . $value['FechaRevisionSolicitud'] . '</td>';
+                $htmlReturn .= '<td>' . $value['FechaCierreSolicitud'] . '</td>';
+                $htmlReturn .= '<td>' . $value['Solicita'] . '</td>';
+                $htmlReturn .= '<td>' . $value['AsuntoSolicitud'] . '</td>';
+                $htmlReturn .= '<td>' . $value['DescripcionSolicitud'] . '</td>';
+                $htmlReturn .= '<td>' . $value['TipoServicio'] . '</td>';
+                $htmlReturn .= '<td>' . $value['EstatusServicio'] . '</td>';
+                $htmlReturn .= '<td>' . $value['GeneraServicio'] . '</td>';
+                $htmlReturn .= '<td>' . $value['AtiendeServicio'] . '</td>';
+                $htmlReturn .= '<td>' . $value['FechaServicio'] . '</td>';
+                $htmlReturn .= '<td>' . $value['FechaInicioServicio'] . '</td>';
+                $htmlReturn .= '<td>' . $value['FechaConclusionServicio'] . '</td>';
+                $htmlReturn .= '<td>' . $value['Servicio'] . '</td>';
+            } else {
+                $htmlReturn .= '<td>' . $value['IdSolicitud'] . '</td>';
+                $htmlReturn .= '<td>' . $value['IdServicio'] . '</td>';
+                $htmlReturn .= (in_array("ts.Ticket", $parametros['columnas'])) ? '<td>' . $value['Ticket'] . '</td>' : '';
+                $htmlReturn .= (in_array("ts.Folio", $parametros['columnas'])) ? '<td>' . $value['Folio'] . '</td>' : '';
+                $htmlReturn .= (in_array("tst.IdSucursal", $parametros['columnas'])) ? '<td>' . $value['Sucursal'] . '</td>' : '';
+                $htmlReturn .= (in_array("ts.IdEstatus", $parametros['columnas'])) ? '<td>' . $value['EstatusSolicitud'] . '</td>' : '';
+                $htmlReturn .= (in_array("ts.IdDepartamento", $parametros['columnas'])) ? '<td>' . $value['DepartamentoSolicitud'] . '</td>' : '';
+                $htmlReturn .= (in_array("ts.IdPrioridad", $parametros['columnas'])) ? '<td>' . $value['PriodidadSolicitud'] . '</td>' : '';
+                $htmlReturn .= (in_array("ts.FechaCreacion", $parametros['columnas'])) ? '<td>' . $value['FechaSolicitud'] . '</td>' : '';
+                $htmlReturn .= (in_array("ts.FechaRevision", $parametros['columnas'])) ? '<td>' . $value['FechaRevisionSolicitud'] . '</td>' : '';
+                $htmlReturn .= (in_array("ts.FechaConclusion", $parametros['columnas'])) ? '<td>' . $value['FechaCierreSolicitud'] . '</td>' : '';
+                $htmlReturn .= (in_array("ts.Solicita", $parametros['columnas'])) ? '<td>' . $value['Solicita'] . '</td>' : '';
+                $htmlReturn .= (in_array("tsi.Asunto", $parametros['columnas'])) ? '<td>' . $value['AsuntoSolicitud'] . '</td>' : '';
+                $htmlReturn .= (in_array("tsi.Descripcion", $parametros['columnas'])) ? '<td>' . $value['DescripcionSolicitud'] . '</td>' : '';
+                $htmlReturn .= (in_array("tst.IdTipoServicio", $parametros['columnas'])) ? '<td>' . $value['TipoServicio'] . '</td>' : '';
+                $htmlReturn .= (in_array("tst.IdEstatus", $parametros['columnas'])) ? '<td>' . $value['EstatusServicio'] . '</td>' : '';
+                $htmlReturn .= (in_array("tst.Solicita", $parametros['columnas'])) ? '<td>' . $value['GeneraServicio'] . '</td>' : '';
+                $htmlReturn .= (in_array("tst.Atiende", $parametros['columnas'])) ? '<td>' . $value['AtiendeServicio'] . '</td>' : '';
+                $htmlReturn .= (in_array("tst.FechaCreacion", $parametros['columnas'])) ? '<td>' . $value['FechaServicio'] . '</td>' : '';
+                $htmlReturn .= (in_array("tst.FechaInicio", $parametros['columnas'])) ? '<td>' . $value['FechaInicioServicio'] . '</td>' : '';
+                $htmlReturn .= (in_array("tst.FechaConclusion", $parametros['columnas'])) ? '<td>' . $value['FechaConclusionServicio'] . '</td>' : '';
+                $htmlReturn .= (in_array("tst.Descripcion", $parametros['columnas'])) ? '<td>' . $value['Servicio'] . '</td>' : '';
+            }
+            $htmlReturn .= '</tr>';
+        }
+        $htmlReturn .= '</tbody></table>';
+
+        return ['tabla' => $htmlReturn];
+    }
+
+    public function exportarExcel(array $datos = null) {
+        ini_set('memory_limit', '2048M');
+        set_time_limit('1200');
+        if ($datos['columnas'] == '') {
+            $arrayTitulos = [
+                'Solicitud',
+                'Id Servicio',
+                'Ticket',
+                'Folio',
+                'Sucursal',
+                'Estatus de Solicitud',
+                'Departamento de Solicitud',
+                'Prioridad de Solicitud',
+                'Fecha de Solicitud',
+                'Fecha de Revisión de Solicitud',
+                'Fecha de Cierre de Solicitud',
+                'Solicita',
+                'Asunto de Solicitud',
+                'Descripcion de Solicitud',
+                'Tipo de Servicio',
+                'Estatus del Servicio',
+                'Personal que Genera el Servicio',
+                'Atiende el Servicio',
+                'Fecha del Servicio',
+                'Fecha de Inicio del Servicio',
+                'Fecha de Cierre del Servicio',
+                'Descripción del Servicio',];
+            $arrayWidth = [15, 15, 15, 15, 35, 20, 35, 15, 20, 20, 20, 35, 35, 65, 35, 20, 35, 35, 20, 20, 20, 65];
+            $arrayAlign = ['center', 'center', 'center', 'center', '', '', '', '', 'center', 'center', 'center', '', '', 'justify', '', '', '', '', 'center', 'center', 'center', 'justify'];
+        } else {
+            $arrayTitulos = [];
+            $arrayWidth = [];
+            $arrayAlign = [];
+            array_push($arrayTitulos, 'Solicitud');
+            array_push($arrayWidth, 15);
+            array_push($arrayAlign, 'center');
+
+            array_push($arrayTitulos, 'Id Servicio');
+            array_push($arrayWidth, 15);
+            array_push($arrayAlign, 'center');
+
+            if (in_array("ts.Ticket", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Ticket');
+                array_push($arrayWidth, 15);
+                array_push($arrayAlign, 'center');
+            }
+            if (in_array("ts.Folio", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Folio');
+                array_push($arrayWidth, 15);
+                array_push($arrayAlign, 'center');
+            }
+            if (in_array("tst.IdSucursal", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Sucursal');
+                array_push($arrayWidth, 35);
+                array_push($arrayAlign, '');
+            }
+            if (in_array("ts.IdEstatus", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Estatus de Solicitud');
+                array_push($arrayWidth, 20);
+                array_push($arrayAlign, '');
+            }
+            if (in_array("ts.IdDepartamento", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Departamento de Solicitud');
+                array_push($arrayWidth, 35);
+                array_push($arrayAlign, '');
+            }
+            if (in_array("ts.IdPrioridad", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Prioridad de Solicitud');
+                array_push($arrayAlign, '');
+            }
+            if (in_array("ts.FechaCreacion", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Fecha de Solicitud');
+                array_push($arrayWidth, 20);
+                array_push($arrayAlign, 'center');
+            }
+            if (in_array("ts.FechaRevision", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Fecha de Revisión de Solicitud');
+                array_push($arrayWidth, 20);
+                array_push($arrayAlign, 'center');
+            }
+            if (in_array("ts.FechaConclusion", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Fecha de Cierre de Solicitud');
+                array_push($arrayWidth, 20);
+                array_push($arrayAlign, 'center');
+            }
+            if (in_array("ts.Solicita", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Solicita');
+                array_push($arrayWidth, 35);
+                array_push($arrayAlign, '');
+            }
+            if (in_array("tsi.Asunto", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Asunto de Solicitud');
+                array_push($arrayWidth, 35);
+                array_push($arrayAlign, '');
+            }
+            if (in_array("tsi.Descripcion", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Descripcion de Solicitud');
+                array_push($arrayWidth, 65);
+                array_push($arrayAlign, 'justify');
+            }
+            if (in_array("tst.IdTipoServicio", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Tipo de Servicio');
+                array_push($arrayWidth, 35);
+                array_push($arrayAlign, '');
+            }
+            if (in_array("tst.IdEstatus", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Estatus del Servicio');
+                array_push($arrayWidth, 20);
+                array_push($arrayAlign, '');
+            }
+            if (in_array("tst.Solicita", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Personal que Genera el Servicio');
+                array_push($arrayWidth, 35);
+                array_push($arrayAlign, '');
+            }
+            if (in_array("tst.Atiende", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Atiende el Servicio');
+                array_push($arrayWidth, 35);
+                array_push($arrayAlign, '');
+            }
+            if (in_array("tst.FechaCreacion", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Fecha del Servicio');
+                array_push($arrayWidth, 20);
+                array_push($arrayAlign, 'center');
+            }
+            if (in_array("tst.FechaInicio", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Fecha de Inicio del Servicio');
+                array_push($arrayWidth, 20);
+                array_push($arrayAlign, 'center');
+            }
+            if (in_array("tst.FechaConclusion", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Fecha de Cierre del Servicio');
+                array_push($arrayWidth, 20);
+                array_push($arrayAlign, 'center');
+            }
+            if (in_array("tst.Descripcion", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Descripción del Servicio');
+                array_push($arrayWidth, 65);
+                array_push($arrayAlign, 'justify');
+            }
+        }
+        $info = $datos['info'];
+
+        /* Begin Hoja 1 */
+        //Crea una hoja en la posición 0 y la nombra.
+        $this->Excel->createSheet('Inventario', 0);
+        //Selecciona la hoja creada y la marca como activa. Todas las modificaciones se harán en está hoja.
+        $this->Excel->setActiveSheet(0);
+        //Arreglo de los subtitulos de la tabla. LA posición es de izquierda a derecha.
+        //$arrayTitulos
+        //Envía el arreglo de los subtitulos a la hoja activa.
+        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
+        //Arreglo con el ancho por columna. 
+//        $arrayWidth = [20, 35, 20, 15, 15];
+        //Envía y setea los anchos de las columnas definidos en el arreglo de los anchos por columna.
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        //Setea el titulo de la tabla. Envía la celda de inicio y la final para que se combinen.
+        $this->Excel->setTableTitle("A1", "F1", "Resultado de Búsqueda", array('titulo'));
+        //Arreglo de alineación por columna.
+        //$arrayAlign = ['', '', '', '', 'center'];
+        //Envía:
+        //La letra donde comienza la tabla
+        //El número de fila donde comenzará la tabla -1
+        //El contenido en forma de arreglo
+        //Boleano que define si la tabla llevará autofiltros o no
+        //Arreglo con la alineación de las columnas.
+        $this->Excel->setTableContent('A', 2, $info, true, $arrayAlign);
+        /* End Hoja 1 */
+
+        $time = date("ymd_H_i_s");
+        $nombreArchivo = 'Busqueda_' . $time . '.xlsx';
+        $nombreArchivo = trim($nombreArchivo);
+        $ruta = 'storage/Archivos/SAEReports/' . $nombreArchivo;
+
+        //Guarda la hoja envíandole la ruta y el nombre del archivo que se va a guardar.
+        $this->Excel->saveFile($ruta);
+
+        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
+    }
+
+    public function detalles(array $datos = null) {
+        $datosSolicitud = $this->DBB->getGeneralesSolicitud($datos['datos'][0]);
+        if ($datos['datos'][1] !== '') {
+            $datosConversacion = $this->servicio->getNotasByServicio($datos['datos'][1]);
+            $datosHistorial = $this->servicio->getHistorialServicio($datos['datos'][1]);
+        } else {
+            $datosConversacion = "";
+            $datosHistorial = "";
+        }
+
+        $data = [
+            'detalles' => $this->DBS->getDetalleSolicitud($datosSolicitud[0]['Id'])[0],
+            'datos' => $datosSolicitud[0]
+        ];
+
+        $arrayReturn = [
+            'solicitud' => parent::getCI()->load->view("Generales/Modal/detallesSolicitud", $data, TRUE),
+            'servicio' => $this->detallesServicio($datos['datos'][1]),
+            'conversacion' => parent::getCI()->load->view("Generales/Modal/conversacionServicio", ['datos' => $datosConversacion], TRUE),
+            'historial' => parent::getCI()->load->view("Generales/Modal/historialServicio", ['datos' => $datosHistorial], TRUE)
+        ];
+        return $arrayReturn;
+    }
+
+    public function getHistorialServicio(string $servicio = '') {
+        $datosHistorial = $this->servicio->getHistorialServicio($servicio);
+        return parent::getCI()->load->view("Generales/Modal/historialServicio", ['datos' => $datosHistorial], TRUE);
+    }
+
+    public function getConversacionServicio(string $servicio = '') {
+        $datosConversacion = $this->servicio->getNotasByServicio($servicio);
+        return parent::getCI()->load->view("Generales/Modal/conversacionServicio", ['datos' => $datosConversacion], TRUE);
+    }
+
+    public function detallesServicio(string $servicio = null) {
+        $tipoServicio = ($servicio === null) ? ['Tipo' => 0, 'Seguimiento' => 0] : $this->getTipoServicio($servicio);
+        if (in_array($tipoServicio['Seguimiento'], [0, '0'])) {
+            $datosServicio = $this->DBB->getGeneralesServicioGeneral($servicio);
+            if (count($datosServicio) > 0) {
+                return parent::getCI()->load->view("Generales/Modal/detallesServicio", ['datos' => $datosServicio[0]], TRUE);
+            } else {
+                return '<div class="row"><div class="col-md-12 col-sm-12 col-xs-12"><pre>Al parecer esta solicitud no tiene servicios registrados.</pre></div></div>';
+            }
+        } else {
+            switch ($tipoServicio['Tipo']) {
+                /* Mantenimientos Preventivos de Póliza */
+                case '12': case 12:
+                    $data = [
+                        /* Datos generales del mantenimiento */
+                        'datos' => $this->DBB->getGeneralesServicio12($servicio)[0],
+                        /* Antes y después del mantenimiento */
+                        'ad' => $this->DBB->getAntesDespues12($servicio),
+                        /* Problemas por equipo del mantenimiento */
+                        'pe' => $this->DBB->getProblemasEquipo12($servicio),
+                        /* Equipo Faltante por mantenimiento */
+                        'ef' => $this->DBB->getEquipoFaltante12($servicio),
+                        /* Problemas adicionales del mantenimiento */
+                        'pa' => $this->DBB->getProblemasAdicionales12($servicio)
+                    ];
+                    return parent::getCI()->load->view("Generales/Modal/detallesServicio_12", $data, TRUE);
+                    break;
+                case '11': case 11:
+                    $data = [
+                        /* Datos generales del censo */
+                        'datos' => $this->DBB->getGeneralesServicio11($servicio)[0],
+                        /* Detalles del censo */
+                        'detalles' => $this->DBB->getDetalllesServicio11($servicio)
+                    ];
+                    return parent::getCI()->load->view("Generales/Modal/detallesServicio_11", $data, TRUE);
+                    break;
+                case '20': case 20:
+                    $data = [
+                        /* Datos generales del servicio */
+                        'datos' => $this->DBB->getGeneralesServicioGeneralCompleto($servicio)[0],
+                        /* Datos generales del correctivo */
+                        'datosCorrectivo' => $this->DBB->getGeneralesServicio20($servicio)[0],
+                        /* Diagnostico del Equipo */
+                        'diagnosticoEquipo' => $this->DBB->getDiagnosticoEquipo20($servicio),
+                        /* Tipos de Problema del correctivo */
+                        'tipoProblema' => $this->DBB->getTipoProblema20($servicio)[0]['IdTipoProblema'],
+                        /* Problemas del servicio del correctivo */
+                        'problemasServicio' => $this->DBB->getProblemaServicio20($servicio),
+                        /* Dato para saber si entrega o equipo */
+                        'verificarEnvioEntrega' => $this->DBB->getVerificarEnvioEntrega20($servicio),
+                        /* Datos entrega o equipo */
+                        'envioEntrega' => $this->DBB->consultaEntregaEnvio($servicio),
+                        /* Datos solciones del servicio correctivo */
+                        'correctivoSoluciones' => $this->DBB->getCorrectivosSoluciones($servicio),
+                    ];
+                    return parent::getCI()->load->view("Generales/Modal/detallesServicio_20", $data, TRUE);
+                    break;
+                case '5': case 5:
+                    $datosTrafico = $this->DBB->getGeneralesServicio5($servicio)[0];
+
+                    $data = [
+                        /* Datos generales del tráfico */
+                        'datos' => $datosTrafico,
+                        /* Detalles de items del tráfico */
+                        'items' => $this->DBB->getItemsServicio5($servicio),
+                        /* Detalles del envío. En caso de no ser envío, este parámetro no retorna nada */
+                        'envio' => $this->DBB->getEnvioServicio5($servicio)[0],
+                        'htmlDocumentacion' => $this->getEvidenciasTrafico($datosTrafico['IdTipoTrafico'], $servicio)
+                    ];
+
+                    return parent::getCI()->load->view("Generales/Modal/detallesServicio_5", $data, TRUE);
+                    break;
+            }
+        }
+    }
+
+    public function getEvidenciasTrafico(string $tipoTrafico, string $servicio) {
+        $htmlDocumentacion = '';
+        switch ($tipoTrafico) {
+            case 1:
+                $documentacion = $this->servicio->getDocumentacionEnvio($servicio);
+                $htmlArchivos = '';
+                $fechaEnvio = $fechaEntrega = $recibe = $comentariosEntrega = 'Sin Información';
+                if (array_key_exists(0, $documentacion)) {
+                    $fechaEnvio = ($documentacion[0]['FechaEnvio'] !== '') ? strftime('%A %e de %B, %G ', strtotime($documentacion[0]['FechaEnvio'])) . date("h:ma", strtotime($documentacion[0]['FechaEnvio'])) : 'Sin información';
+                    $fechaEntrega = ($documentacion[0]['FechaEntrega'] !== '') ? strftime('%A %e de %B, %G ', strtotime($documentacion[0]['FechaEntrega'])) . date("h:ma", strtotime($documentacion[0]['FechaEntrega'])) : 'Sin información';
+                    $recibe = ($documentacion[0]['Recibe'] !== '') ? $documentacion[0]['Recibe'] : 'Sin Información';
+                    $comentariosEntrega = ($documentacion[0]['ComentariosEntrega'] !== '') ? $documentacion[0]['ComentariosEntrega'] : 'Sin Información';
+
+                    if ($documentacion[0]['EvidenciaEntrega'] !== '' && $documentacion[0]['EvidenciaEntrega'] !== NULL) {
+                        $htmlArchivos .= '';
+                        $archivos = explode(",", $documentacion[0]['EvidenciaEntrega']);
+                        foreach ($archivos as $k => $v) {
+                            $pathInfo = pathinfo($v);
+                            $src = $this->servicio->getSrcByPath($pathInfo, $v);
+                            $htmlArchivos .= ''
+                                    . '<div class="evidencia">'
+                                    . ' <a class="m-l-5 m-r-5" href="' . $v . '" data-lightbox="image-entrega-' . $servicio . '" data-title="' . $pathInfo['basename'] . '">'
+                                    . '     <img src="' . $src . '" style="max-height:115px !important;" alt="' . $pathInfo['basename'] . '"  />'
+                                    . '     <p class="m-t-0">' . $pathInfo['basename'] . '</p>'
+                                    . ' </a>'
+                                    . '</div>';
+                        }
+                    }
+
+                    $htmlDocumentacion .= '
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <h5 class="f-w-700">Fecha y Hora de Envío</h5>
+                                    <pre>' . $fechaEnvio . '</pre>
+                                </div>
+                            </div>';
+
+                    if (in_array($documentacion[0]['IdTipoEnvio'], [2, 3, '2', '3'])) {
+                        $paqueteria = ($documentacion[0]['Paqueteria'] !== '') ? $documentacion[0]['Paqueteria'] : 'Sin Información';
+                        $guia = ($documentacion[0]['Guia'] !== '') ? $documentacion[0]['Guia'] : 'Sin Información';
+                        $comentariosEnvio = ($documentacion[0]['ComentariosEnvio'] !== '') ? $documentacion[0]['ComentariosEnvio'] : 'Sin Información';
+                        $htmlArchivosE = '';
+                        if ($documentacion[0]['EvidenciaEnvio'] !== '' && $documentacion[0]['EvidenciaEnvio'] !== NULL) {
+                            $htmlArchivos .= '';
+                            $archivos = explode(",", $documentacion[0]['EvidenciaEnvio']);
+                            foreach ($archivos as $k => $v) {
+                                $pathInfo = pathinfo($v);
+                                $src = $this->getSrcByPath($pathInfo, $v);
+                                $htmlArchivosE .= ''
+                                        . '<div class="evidencia">'
+                                        . ' <a class="m-l-5 m-r-5" href="' . $v . '" data-lightbox="image-envio-' . $servicio . '" data-title="' . $pathInfo['basename'] . '">'
+                                        . '     <img src="' . $src . '" style="max-height:115px !important;" alt="' . $pathInfo['basename'] . '"  />'
+                                        . '     <p class="m-t-0">' . $pathInfo['basename'] . '</p>'
+                                        . ' </a>'
+                                        . '</div>';
+                            }
+                        } else {
+                            $htmlArchivosE .= ''
+                                    . '<h5>Sin Información</h5>';
+                        }
+                        $htmlDocumentacion .= ''
+                                . '<div class="row m-t-20">'
+                                . '     <div class="col-md-12 col-xs-12">'
+                                . '         <fieldset>'
+                                . '             <legend class="pull-left width-full f-s-17">Información de Paqueteria y Consolidado.</legend>'
+                                . '         </fieldset>'
+                                . '     </div>'
+                                . '</div>'
+                                . '</div>'
+                                . '<div class="row">'
+                                . ' <div class="col-md-6 col-xs-12">'
+                                . '     <h5 class="f-w-700">Paquetería</h5>'
+                                . '     <h5>' . $paqueteria . '</h5>'
+                                . ' </div>'
+                                . ' <div class="col-md-6 col-xs-12">'
+                                . '     <h5 class="f-w-700">Guía o Referencia</h5>'
+                                . '     <pre>' . $guia . '</pre>'
+                                . ' </div>'
+                                . '</div>'
+                                . '<div class="row">'
+                                . ' <div class="col-md-6 col-xs-12">'
+                                . '     <h5 class="f-w-700">Comentarios de Envío</h5>'
+                                . '     <pre>' . $comentariosEnvio . '</pre>'
+                                . ' </div>'
+                                . '</div>'
+                                . '<div class="row m-t-20">'
+                                . ' <div class="col-md-6 col-xs-12">'
+                                . '     <fieldset>'
+                                . '         <legend class="pull-left width-full f-s-17">Evidencia de Envío.</legend>'
+                                . '     </fieldset>'
+                                . '     ' . $htmlArchivosE
+                                . ' </div>'
+                                . '</div>';
+                    }
+                }
+                $htmlDocumentacion .= ''
+                        . '<div class="row m-t-20">'
+                        . '     <div class="col-md-12 col-xs-12">'
+                        . '         <fieldset>'
+                        . '             <legend class="pull-left width-full f-s-17">Información de Entrega.</legend>'
+                        . '         </fieldset>'
+                        . '     </div>'
+                        . '</div>'
+                        . '<div class="row">'
+                        . ' <div class="col-md-6 col-xs-12">'
+                        . '     <h5 class="f-w-700">Fecha y Hora de Entrega</h5>'
+                        . '     <pre>' . $fechaEntrega . '</pre>'
+                        . ' </div>'
+                        . ' <div class="col-md-6 col-xs-12">'
+                        . '     <h5 class="f-w-700">¿Quién Recibe?</h5>'
+                        . '     <pre>' . $recibe . '</pre>'
+                        . ' </div>'
+                        . '</div>'
+                        . '<div class="row">'
+                        . ' <div class="col-md-6 col-xs-12">'
+                        . '     <h5 class="f-w-700">Comentarios de Entrega</h5>'
+                        . '     <pre>' . $comentariosEntrega . '</pre>'
+                        . ' </div>'
+                        . '</div>'
+                        . '<div class="row m-t-20">'
+                        . ' <div class="col-md-6 col-xs-12">'
+                        . '     <fieldset>'
+                        . '         <legend class="pull-left width-full f-s-17">Evidencia de Entrega.</legend>'
+                        . '     </fieldset>'
+                        . '     ' . $htmlArchivos
+                        . ' </div>'
+                        . '</div>';
+                break;
+            case 2:
+                $documentacion = $this->getDocumentacionRecoleccionTrafico($servicio);
+                $htmlArchivos = '';
+                $fecha = $entrega = $comentariosRecoleccion = 'Sin Información';
+                if (array_key_exists(0, $documentacion)) {
+                    $fecha = ($documentacion[0]['Fecha'] !== '') ? strftime('%A %e de %B, %G ', strtotime($documentacion[0]['Fecha'])) . date("h:ma", strtotime($documentacion[0]['Fecha'])) : 'Sin información';
+                    $entrega = ($documentacion[0]['Entrega'] !== '') ? $documentacion[0]['Entrega'] : 'Sin Información';
+                    $comentariosRecoleccion = ($documentacion[0]['ComentariosRecoleccion'] !== '') ? $documentacion[0]['ComentariosRecoleccion'] : 'Sin Información';
+
+                    if ($documentacion[0]['Recoleccion'] !== '' && $documentacion[0]['Recoleccion'] !== NULL) {
+                        $htmlArchivos .= '';
+                        $archivos = explode(",", $documentacion[0]['Recoleccion']);
+                        foreach ($archivos as $k => $v) {
+                            $pathInfo = pathinfo($v);
+                            $src = $this->getSrcByPath($pathInfo, $v);
+                            $htmlArchivos .= ''
+                                    . '<div class="evidencia">'
+                                    . ' <a class="m-l-5 m-r-5" href="' . $v . '" data-lightbox="image-envio-' . $servicio . '" data-title="' . $pathInfo['basename'] . '">'
+                                    . '     <img src="' . $src . '" style="max-height:115px !important;" alt="' . $pathInfo['basename'] . '"  />'
+                                    . '     <p class="m-t-0">' . $pathInfo['basename'] . '</p>'
+                                    . ' </a>'
+                                    . '</div>';
+                        }
+                    } else {
+                        $htmlArchivos .= ''
+                                . '<h5>Sin Información</h5>';
+                    }
+                }
+                $htmlDocumentacion .= ''
+                        . '<div class="row">'
+                        . ' <div class="col-md-6 col-xs-12">'
+                        . '     <h5 class="f-w-700">Fecha y Hora de Entrega</h5>'
+                        . '     <pre>' . $fecha . '</pre>'
+                        . ' </div>'
+                        . ' <div class="col-md-6 col-xs-12">'
+                        . '     <h5 class="f-w-700">¿Quién Entrega?</h5>'
+                        . '     <pre>' . $entrega . '</pre>'
+                        . ' </div>'
+                        . '</div>'
+                        . '<div class="row">'
+                        . ' <div class="col-md-6 col-xs-12">'
+                        . '     <h5 class="f-w-700">Comentarios de Entrega</h5>'
+                        . '     <pre>' . $comentariosRecoleccion . '</pre>'
+                        . ' </div>'
+                        . '</div>'
+                        . '<div class="row m-t-20">'
+                        . ' <div class="col-md-6 col-xs-12">'
+                        . '     <fieldset>'
+                        . '         <legend class="pull-left width-full f-s-17">Evidencia de Entrega.</legend>'
+                        . '     </fieldset>'
+                        . '     ' . $htmlArchivos
+                        . ' </div>'
+                        . '</div>';
+                break;
+        }
+        return $htmlDocumentacion;
+    }
+
+    public function getTipoServicio(string $servicio) {
+        $tipo = $this->DBB->getTipoServicio($servicio);
+        if (count($tipo) > 0) {
+            return $tipo[0];
+        } else {
+            return ['Tipo' => 0, 'Seguimiento' => 0];
+        }
+    }
+
+    public function listaServicios(string $solicitud) {
+        $listaServicios = $this->DBB->busquedaReporte('select                
+                                                            tst.Id,								
+                                                            tst.Ticket,
+                                                            estatus(tst.IdEstatus)as NombreEstatus,
+                                                            tipoServicio(tst.IdTipoServicio) as TipoServicio,
+                                                            sucursal(tst.IdSucursal) Sucursal,
+                                                            tst.FechaCreacion,
+                                                            nombreUsuario(tst.Atiende) Atiende,
+                                                            tst.Descripcion,
+                                                            tst.IdSolicitud
+                                                        from t_servicios_ticket tst
+                                                        where tst.IdEstatus in (1,2,3,10,12)
+                                                        AND tst.IdSolicitud = "' . $solicitud . '"
+                                                        GROUP BY tst.Id ASC');
+        $data = [
+            'listaServicios' => $listaServicios
+        ];
+        return parent::getCI()->load->view("Generales/Modal/tablaServicios", $data, TRUE);
+    }
+
+}

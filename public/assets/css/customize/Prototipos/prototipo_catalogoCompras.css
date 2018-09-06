@@ -1,0 +1,25 @@
+textarea{
+    resize: none;
+}
+
+.datepicker {
+    z-index: 1200 !important;
+}
+.modal-message{
+    padding: 0 !important;
+}
+
+@media all and (max-width: 767px) {
+    #hideMenu {
+        display: none;
+    }
+
+    .modal-dialog{        
+        margin: 0 !important;
+    }
+
+    .modal-body, .modal-footer, .modal-header {
+        width: 80% !important;
+    }    
+
+}

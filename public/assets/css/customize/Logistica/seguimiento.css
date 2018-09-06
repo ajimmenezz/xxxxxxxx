@@ -1,0 +1,77 @@
+.subtitulo-contenido{
+    overflow: hidden;
+}
+
+.subtitulo-contenido .elemento-1{
+    width: 80%;
+    float: left;    
+}
+
+.subtitulo-contenido .elemento-2{
+    width: 20%;    
+    float: left;
+}
+
+.subtitulo-contenido .elemento-2 a{
+    display: inline-block;
+}
+
+
+/* Empieza a definirse las evidencias del formulario de modal para solicitudes internas*/
+.evidenciasNotas{
+    border: 1px solid #ccd0d4;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.evidencia{
+    display: inline-block;
+    width: 80px;
+    height: 100px;
+    margin: 10px;
+    padding: 10px;
+    box-shadow: 3px 3px 0.5em;
+}
+
+.evidencia img{    
+    width: 100%;
+    height: 80%;
+}
+
+.evidencia p{
+    overflow: hidden;
+    width: 100%;
+    height: 20%;
+    margin-top: 7px;
+    text-align: center;
+    text-overflow: ellipsis;
+    font-size: .8em;
+    font-weight: bold;
+    color: #000;
+}
+
+/* Finalizando las evidencias del formulario de modal para solicitudes internas*/
+
+/* Empezando botones para la seccion material equipo sobre la descarga de formato excel y subida de archivo*/
+.subtitulo-contenido .elemento-1.subtitulo{
+    width: 50%;
+    float: left;    
+}
+
+.subtitulo-contenido .elemento-2.botones{
+    margin-top: 10px;    
+    width: 50%;    
+    float: left;
+    text-align: right;
+}
+/* Finalizando botones para material equipo*/
+
+
+/* empieza media queries */
+@media all and (max-width: 767px) {
+    .subtitulo-contenido .elemento-2.botones .textoBtn{
+        display: none
+    }
+}
+
+/* termina media queries */

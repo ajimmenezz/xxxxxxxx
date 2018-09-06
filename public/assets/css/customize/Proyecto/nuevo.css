@@ -1,0 +1,43 @@
+#ayuda-complejo-xs{
+    display: none;
+}
+
+.prev-button{
+    opacity: 0 !important; 
+}
+
+.nombre-proyecto{
+    text-transform: uppercase;
+}
+
+/* ------------------------- Media queries ----------------------------*/
+
+/* Estilos para titulos de pestañas de formularios de proyectos nuevo */
+
+@media all and (max-width: 992px){
+
+
+    #ayuda-complejo-md{
+        display: none;
+    }
+
+    #ayuda-complejo-xs{
+        display: inline;
+    }
+
+    .next-button{
+        opacity: 1 !important; 
+    }
+
+}
+
+@media all and (max-width: 767px){
+    .titulo-pestaña{
+        font-size: 1em;
+    }
+
+    .texto-btn-cabecera-formulario-proyecto{
+        display: none;
+    }
+
+}

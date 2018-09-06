@@ -1,0 +1,44 @@
+<!-- Empezando #contenido -->
+<div id="content" class="content">
+    <!-- Empezando titulo de la pagina -->
+    <h1 class="page-header">Videos <small> de capacitación</small></h1>
+    <!-- Finalizando titulo de la pagina -->
+
+    <!-- Empezando panel Servicios asignados y abiertos-->
+    <div id="panelVideosCapacitacion" class="panel panel-inverse">
+        <!--Empezando cabecera del panel-->
+        <div class="panel-heading">
+            <div class="panel-heading-btn">
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>                            
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
+            </div>
+            <h4 class="panel-title">Videos de Capacitación</h4>
+        </div>
+        <!--Finalizando cabecera del panel-->
+        <!--Empezando cuerpo del panel-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6 col-xs-12">                    
+                    <div class="form-group">
+                        <label class="control-label f-w-600 m-l-3">Cursos y Capacitaciones</label>
+                        <select class="form-control" id="selectCapacitaciones">
+                            <option value="">Seleccionar . . .</option>
+                            <?php
+                            foreach ($datos['ListaCapacitaciones'] as $key => $value) {
+                                echo '<option value="'.$value['Id'].'">'.$value['Nombre'].'</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-xs-12" id="divListaReproduccion"></div>
+            </div>
+        </div>
+        <!--Finalizando cuerpo del panel-->
+    </div>
+    <!-- Finalizando panel Servicios asignados y abiertos -->   
+
+</div>
+<!-- Finalizando #contenido -->

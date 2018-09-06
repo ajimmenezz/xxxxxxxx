@@ -1,0 +1,34 @@
+/* Empieza a definirse las evidencias del formulario de modal para solicitudes internas*/
+.evidenciasSolicitud{
+    border: 1px solid #ccd0d4;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.evidencia{
+    display: inline-block;
+    width: 130px;
+    height: 164px;
+    margin: 10px;
+    padding: 10px;
+    box-shadow: 3px 3px 0.5em;
+}
+
+.evidencia img{    
+    width: 100%;
+    height: 80%;
+}
+
+.evidencia p{
+    overflow: hidden;
+    width: 100%;
+    height: 20%;
+    margin-top: 7px;
+    text-align: center;
+    text-overflow: ellipsis;
+    font-size: .8em;
+    font-weight: bold;
+    color: #000;
+}
+
+/* Finalizando las evidencias del formulario de modal para solicitudes internas*/

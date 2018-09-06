@@ -1,0 +1,197 @@
+textarea{
+    resize: none;
+}
+
+.datepicker {
+    z-index: 1200 !important;
+}
+
+/* Propiedades para definir el modal de forma general*/
+#modal-dialogo .modal-dialog{
+    margin-right: 0 !important;
+    margin-left: 0 !important;    
+}
+
+#modal-dialogo{
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+/* Terrmina propiedades del modal*/
+
+
+/*colores background adicionales*/
+
+.bg-cabecera-subpanel{
+    background-color: #949494 !important;
+}
+
+.bg-cabecera-subpanel h3{    
+    color: #fff;
+}
+
+.borde-sombra{
+    box-shadow: 1px 1px 5px #A1A1A1;
+
+}
+/*colores background adicionales*/
+
+/*Inicia modal loadign*/
+.modal-loading {
+    position: relative;
+}
+.modal-loader {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #fff;
+    opacity: 0.8;
+    filter: alpha(opacity=90);
+    animation: fadeIn .2s;
+    -webkit-animation: fadeIn .2s;
+    z-index: 1020;
+    -webkit-border-radius: 0 0 4px 4px;
+    -moz-border-radius: 0 0 4px 4px;
+    border-radius: 0 0 4px 4px;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@-webkit-keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+/*Termina modal loading*/
+
+/* Empezando Seccion de ayuda*/
+
+#seccion-ayuda{
+    position: fixed;
+    right: -100%;
+    top: 50px;
+    z-index: 1020;
+    background: #fff;
+    padding: 15px;
+    box-shadow: 0 0 2px rgba(0,0,0,0.4);
+    -webkit-box-shadow: 0 0 2px rgba(0,0,0,0.4);
+    -moz-box-shadow: 0 0 2px rgba(0,0,0,0.4);
+    width: 100%;
+    height: 100%;
+    -webkit-transition: right .2s linear;
+    -moz-transition: right .2s linear;
+    transition: right .2s linear;
+}
+
+#seccion-ayuda .ayuda-titulo{
+    height: 5%;
+}
+
+#seccion-ayuda #ayuda-contenido{
+    height: 100% !important;
+}
+
+#seccion-ayuda .ayuda-boton{
+    height: 10%;
+}
+
+#seccion-ayuda.active {
+    right: 0;
+}
+
+.imgen-ayuda-proyectos{
+    width: 150px;
+    height: 150px;
+    margin-right: 10px;
+}
+
+/* Finalizando seccion de adyuda*/
+
+/* Clases para los botones de zoom del file upload*/
+.botonCerraZomm{
+    background: #fff;
+    border: 0;
+}
+/*Finaliza los botones de zoom del file upload*/
+
+/* Clases para cambiar el color a las pestañas*/
+.nav>li>a{
+    color: #fff;
+}
+
+.nav-pills>li>a {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    color: #6e7179;
+}
+
+/*Finaliza cambiar el color a las pestañas*/
+
+.tile_count {
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+.tile_count .tile_stats_count {
+    border-bottom: 1px solid #d9dee4;
+    padding: 0 10px 0 20px;
+    position: relative;
+}
+.tile_count .tile_stats_count::before {
+    border-left: 2px solid #adb2b5;
+    content: "";
+    height: 65px;
+    left: 0;
+    margin-top: 10px;
+    position: absolute;
+}
+/* empieza media queries */
+@media all and (max-width: 767px) {
+    #hideMenu {
+        display: none;
+    }
+
+    #modal-dialogo .modal-dialog{      
+        margin-right: 0 !important;
+        margin-left: 0 !important;   
+    }
+
+    #modal-dialogo{
+        padding-top: 30px !important;
+        padding-right: 0 !important;
+    }
+
+    #modal-dialogo .modal-body,#modal-dialogo .modal-footer,#modal-dialogo .modal-header {
+        width: 80% !important;
+    }
+
+    #seccion-ayuda{
+        position: fixed;
+        right: -100%;
+        height: 100%;
+        top: 0px;
+        z-index: 1020;
+        background: #fff;
+        padding: 15px;
+        box-shadow: 0 0 2px rgba(0,0,0,0.4);
+        -webkit-box-shadow: 0 0 2px rgba(0,0,0,0.4);
+        -moz-box-shadow: 0 0 2px rgba(0,0,0,0.4);
+        width: 100%;
+        -webkit-transition: right .2s linear;
+        -moz-transition: right .2s linear;
+        transition: right .2s linear;
+    }
+
+}
+
+.align-vertical-center{    
+    vertical-align: middle !important;
+}
+
+.dropdown-menu-right{
+    right: 0 !important;
+}
+
+/* termina media queries */
+
