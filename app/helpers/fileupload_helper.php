@@ -81,6 +81,7 @@ if (!function_exists('setMultiplesArchivos')) {
                         } else {
                             if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                                 try {
+                                    $src = '.' . $_image;
                                     if ($bucket !== 'storagesolutions') {
                                         $_image = str_replace('/storage', '', $_image);
                                     }
@@ -89,7 +90,7 @@ if (!function_exists('setMultiplesArchivos')) {
                                         'Bucket' => $bucket,
                                         'Key' => substr($_image, 1),
                                         'ACL' => 'public-read',
-                                        'SourceFile' => "." . $_image
+                                        'SourceFile' => $src
                                     ));
                                     $url = $respuesta->get('ObjectURL');
 //                                    array_pop($archivos);
@@ -104,6 +105,7 @@ if (!function_exists('setMultiplesArchivos')) {
                     } else {
                         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                             try {
+                                $src = '.' . $_image;
                                 if ($bucket !== 'storagesolutions') {
                                     $_image = str_replace('/storage', '', $_image);
                                 }
@@ -111,7 +113,7 @@ if (!function_exists('setMultiplesArchivos')) {
                                     'Bucket' => $bucket,
                                     'Key' => substr($_image, 1),
                                     'ACL' => 'public-read',
-                                    'SourceFile' => "." . $_image
+                                    'SourceFile' => $src
                                 ));
                                 $url = $respuesta->get('ObjectURL');
 //                                array_pop($archivos);
