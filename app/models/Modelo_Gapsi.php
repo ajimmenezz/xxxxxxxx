@@ -97,21 +97,23 @@ class Modelo_Gapsi extends Modelo_Base {
         $registros = [];
         $conceptos = json_decode($datos['Conceptos'], true);
 
-        foreach ($conceptos as $key => $value) {
-            $query = "insert into "
-            . "db_DetalleGasto "
-            . "(Gasto, Categoria, SubCategoria, Concepto, Monto) "
-            . "VALUES "
-            . "('" . $ultimo . "', '" . $value['categoria'] . "', '" . $value['subcategoria'] . "', '" . $value['concepto'] . "', '" . $value['monto'] . "')";
-            parent::connectDBGapsi()->query($query);
-            $ultimoDetalle = parent::connectDBGapsi()->insert_id();
-            array_push($registros, $ultimoDetalle);
+        if (isset($conceptos) && count($conceptos) > 0) {
+            foreach ($conceptos as $key => $value) {
+                $query = "insert into "
+                        . "db_DetalleGasto "
+                        . "(Gasto, Categoria, SubCategoria, Concepto, Monto) "
+                        . "VALUES "
+                        . "('" . $ultimo . "', '" . $value['categoria'] . "', '" . $value['subcategoria'] . "', '" . $value['concepto'] . "', '" . $value['monto'] . "')";
+                parent::connectDBGapsi()->query($query);
+                $ultimoDetalle = parent::connectDBGapsi()->insert_id();
+                array_push($registros, $ultimoDetalle);
+            }
         }
 
         if (parent::connectDBGapsi()->trans_status() === FALSE) {
             parent::connectDBGapsi()->trans_rollback();
             return ['code' => 400];
-        } else {            
+        } else {
             parent::connectDBGapsi()->trans_commit();
             return ['code' => 200, 'last' => $ultimo];
         }

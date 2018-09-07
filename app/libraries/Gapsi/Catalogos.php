@@ -8,11 +8,13 @@ class Catalogos extends General {
 
     private $DB;
     private $Correo;
+    private $usuario;
 
     public function __construct() {
         parent::__construct();
         $this->DB = \Modelos\Modelo_Gapsi::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
+        $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
     }
 
     public function getClientes() {
@@ -76,18 +78,18 @@ class Catalogos extends General {
     }
 
     public function solicitarGasto(array $datos) {
+        $resultado = $this->DB->solicitarGasto($datos);
+        $last = ($resultado['code'] == 200) ? $resultado['last'] . '/' : '';
+
         $archivos = $result = null;
         $CI = parent::getCI();
-        $carpeta = 'Gapsi/Gastos/';
+        $carpeta = './storage/Gastos/' . $last . 'PRE/';
         $archivos = "";
         if (!empty($_FILES)) {
-            $archivos = setMultiplesArchivos($CI, 'fotosGasto', $carpeta);
+            $archivos = setMultiplesArchivos($CI, 'fotosGasto', $carpeta, 'gapsi');
             if ($archivos) {
                 $archivos = implode(',', $archivos);
             }
-            $resultado = $this->DB->solicitarGasto($datos);
-        } else {
-            $resultado = $this->DB->solicitarGasto($datos);
         }
 
 //        $resultado = $this->DB->solicitarGasto($datos);
@@ -116,34 +118,36 @@ class Catalogos extends General {
 
             $conceptos = json_decode($datos['Conceptos'], true);
 
-            foreach ($conceptos as $key => $value) {
-                $bodyMail .= ''
-                        . '<tr>'
-                        . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                        . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                        . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                        . '         ' . $value['categoria']
-                        . '         </span></p>'
-                        . ' </td>'
-                        . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                        . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                        . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                        . '         ' . $value['subcategoria']
-                        . '         </span></p>'
-                        . ' </td>'
-                        . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                        . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                        . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                        . '         ' . $value['concepto']
-                        . '         </span></p>'
-                        . ' </td>'
-                        . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                        . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                        . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                        . '         ' . number_format($value['monto'], 2, '.', ",")
-                        . '         </span></p>'
-                        . ' </td>'
-                        . '</tr>';
+            if (isset($conceptos) && count($conceptos) > 0) {
+                foreach ($conceptos as $key => $value) {
+                    $bodyMail .= ''
+                            . '<tr>'
+                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
+                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
+                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
+                            . '         ' . $value['categoria']
+                            . '         </span></p>'
+                            . ' </td>'
+                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
+                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
+                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
+                            . '         ' . $value['subcategoria']
+                            . '         </span></p>'
+                            . ' </td>'
+                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
+                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
+                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
+                            . '         ' . $value['concepto']
+                            . '         </span></p>'
+                            . ' </td>'
+                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
+                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
+                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
+                            . '         ' . number_format($value['monto'], 2, '.', ",")
+                            . '         </span></p>'
+                            . ' </td>'
+                            . '</tr>';
+                }
             }
 
             $adjuntos = '';
@@ -172,9 +176,8 @@ class Catalogos extends General {
             $titulo = "Autorización Requerida";
             $this->Correo->enviarCorreo('gastos@siccob.solutions', array('ajimenez@siccob.com.mx', 'jdiaz@siccob.com.mx'), $titulo, $bodyMail, explode(",", $archivos));
 
-            if ($archivos != "") {
-                $this->DB->insertar("t_archivos_gastos_gapsi", ['IdGasto' => $resultado['last'], 'Archivos' => $archivos]);
-            }
+            $this->DB->insertar("t_archivos_gastos_gapsi", ['IdGasto' => $resultado['last'], 'Archivos' => $archivos, 'Email' => $this->usuario['EmailCorporativo']]);
+
             return $resultado;
         } else {
             return $resultado;

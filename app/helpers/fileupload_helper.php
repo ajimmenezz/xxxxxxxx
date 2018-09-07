@@ -15,12 +15,14 @@ if (!function_exists('setMultiplesArchivos')) {
      * @param	mixed
      * @return	mixed	depends on what the array contains
      */
-    function setMultiplesArchivos(&$CI, string $name, string $carpeta) {
+    function setMultiplesArchivos(&$CI, string $name, string $carpeta, string $bucket = 'storagesolutions') {
         $host = $_SERVER['SERVER_NAME'];
         $CI->load->helper(array('conversionpalabra'));
         $archivos = array();
         $posicionExtencion = null;
-        $carpeta = './storage/Archivos/' . $carpeta;
+        if ($bucket === 'storagesolutions') {
+            $carpeta = './storage/Archivos/' . $carpeta;
+        }
 
         $files = $_FILES;
         if (!file_exists($carpeta)) {
@@ -79,8 +81,12 @@ if (!function_exists('setMultiplesArchivos')) {
                         } else {
                             if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                                 try {
+                                    if ($bucket !== 'storagesolutions') {
+                                        $_image = str_replace('/storage', '', $_image);
+                                    }
+
                                     $respuesta = $S3->putObject(array(
-                                        'Bucket' => 'storagesolutions',
+                                        'Bucket' => $bucket,
                                         'Key' => substr($_image, 1),
                                         'ACL' => 'public-read',
                                         'SourceFile' => "." . $_image
@@ -98,8 +104,11 @@ if (!function_exists('setMultiplesArchivos')) {
                     } else {
                         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                             try {
+                                if ($bucket !== 'storagesolutions') {
+                                    $_image = str_replace('/storage', '', $_image);
+                                }
                                 $respuesta = $S3->putObject(array(
-                                    'Bucket' => 'storagesolutions',
+                                    'Bucket' => $bucket,
                                     'Key' => substr($_image, 1),
                                     'ACL' => 'public-read',
                                     'SourceFile' => "." . $_image
