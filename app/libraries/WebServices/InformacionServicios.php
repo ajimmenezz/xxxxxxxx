@@ -12,21 +12,21 @@ use Controladores\Controller_Datos_Usuario as General;
 class InformacionServicios extends General {
 
     private $DBS;
-    private $DBP;
     private $Phantom;
     private $Correo;
     private $ServiceDesk;
     private $MSP;
+    private $MSD;
 
     public function __construct() {
         parent::__construct();
         ini_set('max_execution_time', 300);
         $this->DBS = \Modelos\Modelo_Loguistica_Seguimiento::factory();
-        $this->DBP = \Modelos\Modelo_Poliza::factory();
         $this->Phantom = \Librerias\Generales\Phantom::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
         $this->ServiceDesk = \Librerias\WebServices\ServiceDesk::factory();
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
+        $this->MSD = \Modelos\Modelo_ServiceDesk::factory();
     }
 
     public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key) {
@@ -98,9 +98,16 @@ class InformacionServicios extends General {
 
             $html .= $this->avancesProblemasServicio($folio);
 
+            $atiende = $this->DBS->consultaGeneralSeguimiento('SELECT 
+                                                                tso.Atiende
+                                                                FROM t_servicios_ticket tst
+                                                                INNER JOIN t_solicitudes tso
+                                                                ON tst.IdSolicitud = tso.Id
+                                                                WHERE tst.Id = "' . $servicio . '"');
+
             $resultadoSD = $this->cambiarEstatusSD(array(
                 'Folio' => $folio,
-                'Atiende' => $serviciosConcluidos[0]['Atiende'],
+                'Atiende' => $atiende[0]['Atiende'],
                 'Servicio' => $servicio,
                 'ServicioConcluir' => $servicioConcluir));
 
@@ -141,6 +148,7 @@ class InformacionServicios extends General {
                                                                 ON tst.Atiende = cvu.Id
                                                                 WHERE tst.Id = "' . $datos['Servicio'] . '"');
 
+
             if ($servicioLaboratorio[0]['IdDepartamento'] === '10') {
                 $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($SDkey, 'En Atención', $datos['Folio']);
             } else {
@@ -157,6 +165,8 @@ class InformacionServicios extends General {
                 }
             }
         } else {
+            $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'Servicio del folio:' . $datos['Folio'], $servicios);
+
             if (!empty($servicios)) {
                 foreach ($servicios as $key => $value) {
                     if ($value['IdEstatus'] === '3') {
@@ -169,8 +179,25 @@ class InformacionServicios extends General {
                 $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($SDkey, 'Completado', $datos['Folio']);
             }
         }
+        
+        $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'SD Folio:' . $datos['Folio'], 'Resultado SD: ' . $resultadoSD->operation->result->status . '<br>Key:' . $SDkey . '<br>Menesaje: ' . $resultadoSD->operation->result->message . '<br>Atiende: ' . $datos['Atiende']);
+        $this->guardarLogSD($resultadoSD, $datos['Folio']);
 
         return $resultadoSD;
+    }
+
+    public function guardarLogSD($resultadoSD, string $folio) {
+        if ($resultadoSD->operation->result->status === 'Failed') {
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+            $datosEstatusServiceDesk = array(
+                'Folio' => $folio,
+                'MensajeSD' => $resultadoSD->operation->result->message,
+                'Fecha' => $fecha,
+                'Flag' => '0'
+            );
+            $this->MSD->guardarLogSD($datosEstatusServiceDesk);
+        }
     }
 
     public function sinClasificar($datos) {
@@ -239,7 +266,7 @@ class InformacionServicios extends General {
                 $linkImagenesDiagnostico .= "<a href='http://" . $host . $value . "'>Archivo" . $contDiagnostico . "</a> &nbsp";
             }
 
-            $correctivoSoluciones = $this->DBP->consultaCorrectivosSolucionesServicio($datos['servicio']);
+            $correctivoSoluciones = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_soluciones WHERE IdServicio = "' . $datos['servicio'] . '" ORDER BY Id DESC LIMIT 1');
             $informacionProblema = $this->consultaCorrectivoProblema($datos['servicio'], $informacionSolicitud['folio'], $key);
 
             if (!empty($correctivoSoluciones)) {
@@ -296,7 +323,7 @@ class InformacionServicios extends General {
             } else {
                 if ($informacionDiagnostico[0]['IdTipoDiagnostico'] === '1' || $informacionDiagnostico[0]['IdTipoDiagnostico'] === '5') {
                     if ($informacionDiagnostico[0]['IdTipoDiagnostico'] === '5') {
-                        $this->asignarMultimedia($linkPdf, $informacionSolicitud['folio'], $key);
+                        $this->asignarMultimedia($linkPdf, $informacionSolicitud['folio'], $key, $datos['servicio']);
                     }
                 }
             }
@@ -316,13 +343,13 @@ class InformacionServicios extends General {
         }
     }
 
-    public function asignarMultimedia(string $linkPdf, string $folio, string $key) {
+    public function asignarMultimedia(string $linkPdf, string $folio, string $key, string $servicio = null) {
         $usuario = $this->Usuario->getDatosUsuario();
         $linkPDF = '<br>Ver PDF Resumen General <a href="' . $linkPdf . '" target="_blank">Aquí</a>';
         $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $folio);
         $textoMultimedia = '<p><strong>Multimedia,</strong> el técnico <strong>' . $usuario['Nombre'] . '</strong> le ha reasignado la solicitud <strong>' . $folio . '</strong>.</p>' . $linkPDF;
-        $this->enviarCorreoConcluido(array('ajimenez@siccob.com.mx'), 'Reasignación de Solicitud', $textoMultimedia);
-        $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'Reasignación de Solicitud', $textoMultimedia);
+        $sucursal = $this->sucursalServicio($servicio);
+        $this->enviarCorreoConcluido(array('ajimenez@siccob.com.mx'), 'Reasignación de Solicitud' . $sucursal, $textoMultimedia);
 
         $this->ServiceDesk->reasignarFolioSD($folio, '9304', $key);
     }
@@ -759,6 +786,8 @@ class InformacionServicios extends General {
 
                 if ($resultadoSD !== TRUE) {
                     return $resultadoSD;
+                } else {
+                    return $resultadoSD;
                 }
             } else {
                 return 'noTieneFolio';
@@ -842,6 +871,22 @@ class InformacionServicios extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $catalogoUsuariosSD = json_decode($this->ServiceDesk->getTecnicosSD($usuario['SDKey']));
         return $catalogoUsuariosSD->operation->details;
+    }
+
+    public function sucursalServicio(string $servicio = null) {
+        $sucursal = '';
+
+        if ($servicio !== null) {
+            $dataSucursal = $this->DBS->consultaGeneralSeguimiento('SELECT 
+                                                            sucursal(IdSucursal) Sucursal
+                                                        FROM t_servicios_ticket
+                                                        WHERE Id = "' . $servicio . '"');
+            if ($dataSucursal !== null) {
+                $sucursal = ' - ' . $dataSucursal[0]['Sucursal'];
+            }
+        }
+
+        return $sucursal;
     }
 
 }
