@@ -62,14 +62,14 @@
                         <div class="row m-t-10"> 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="inputPrimerVueltaMonto">Monto Primer Vuelta + IVA *</label>
+                                    <label for="inputPrimerVueltaMonto">Monto Primer Vuelta (sin IVA) *</label>
                                     <?php (empty($datos['MontosOutsourcing'][0]['Monto'])) ? $primerMonto = '' : $primerMonto = $datos['MontosOutsourcing'][0]['Monto']; ?>
                                     <input type="number" step="0.01" class="form-control" id="inputPrimerVueltaMonto" placeholder="Ingresa la cantidad de la primer vuelta"  value="<?php echo $primerMonto ?>" style="width: 100%" />                            
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="inputAdicionalesMonto">Monto Vueltas Adicionales + IVA *</label>
+                                    <label for="inputAdicionalesMonto">Monto Vueltas Adicionales (sin IVA) *</label>
                                     <?php (empty($datos['MontosOutsourcing'][1]['Monto'])) ? $adicionalMonto = '' : $adicionalMonto = $datos['MontosOutsourcing'][1]['Monto']; ?>
                                     <input type="number" step="0.01" class="form-control" id="inputAdicionalesMonto" placeholder="Ingresa la cantidad de las vueltas adicionales" value="<?php echo $adicionalMonto ?>" style="width: 100%" />                            
                                 </div>
