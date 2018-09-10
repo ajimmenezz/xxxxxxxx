@@ -1848,13 +1848,13 @@ class Servicio extends General {
                                            INNER JOIN t_solicitudes_internas tsi
                                            ON tsi.IdSolicitud = tst.IdSolicitud
                                            WHERE tst.Id = "' . $datos['servicio'] . '"');
-            
-            if($folio !== FALSE){
+
+            if ($folio !== FALSE) {
                 $textoFolio = '<br>Folio: <strong>' . $folio . '</strong>';
-            }else{
+            } else {
                 $textoFolio = '';
             }
-            
+
             $descripcionConclusion = '<br><br>Solicitud: <strong>' . $datosDescripcionConclusion[0]['IdSolicitud'] . '</strong>
                 <br>Asunto de la Solicitud: <strong>' . $datosDescripcionConclusion[0]['AsuntoSolicitud'] . '</strong>
                 <br>Descripcion de la Solcitud: <strong>' . $datosDescripcionConclusion[0]['AsuntoSolicitud'] . '</strong>
@@ -1903,7 +1903,7 @@ class Servicio extends General {
                     $this->enviarCorreoConcluido(array($value['EmailCorporativo']), $titulo, $textoCoordinadorPoliza);
                 }
             }
-            
+
             if (isset($datos['correo'])) {
                 $textoCorreo = '<p>Estimado(a) <strong>' . $datos['recibe'] . ',</strong> se le he mandado el documento que ha firmado de la conclusión del servicio(s) a solicitado.</p>' . $linkPDF . $linkDetallesServicio . $linkExtraEquiposFaltante;
                 $this->enviarCorreoConcluido($datos['correo'], $titulo, $textoCorreo);
@@ -2023,10 +2023,13 @@ class Servicio extends General {
                                                         WHERE Ticket =  "' . $datos['ticket'] . '"');
 
         if (!$verificarEstatusTicket) {
-            $this->DBS->actualizarServicio('t_solicitudes', array(
-                'IdEstatus' => '4',
-                'FechaConclusion' => $fecha
-                    ), array('Id' => $verificarSolicitud[0]['Id']));
+            foreach ($verificarSolicitud as $key => $value) {
+                $this->DBS->actualizarServicio('t_solicitudes', array(
+                    'IdEstatus' => '4',
+                    'FechaConclusion' => $fecha
+                        ), array('Id' => $value['Id']));
+            }
+            
             $this->DBS->concluirTicketAdist2(array(
                 'Estatus' => 'CONCLUIDO',
                 'Flag' => '1',
