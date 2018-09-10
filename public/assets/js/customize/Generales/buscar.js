@@ -277,16 +277,22 @@ $(function () {
                     'servicio': $(this).attr("data-id-servicio")
                 }
                 evento.enviarEvento('/Generales/ServiceDesk/ValidarServicio', data, '#seccion-detalles', function (respuesta) {
-                    if (respuesta == null) {
-                        var html = `<p class="f-s-20">Su información fué agregada a ServiceDesk.</p>`;
+                    if (respuesta === true) {
+                        var html = `<p class="f-s-20 text-center">Su información fué agregada a ServiceDesk.</p>`;
                         evento.mostrarModal("Informcación SD", html);
+                        $('#btnModalConfirmar').addClass('hidden');
+                        $('#btnModalAbortar').empty().append('Cerrar');
                     } else {
                         var html = `<p class="f-s-20">Ocurrió un error al subir la información. Intente de nuevo o contacte al administrador.</p>
                                     <p class="f-s-20">(` + respuesta + `)</p>`;
                         evento.mostrarModal("ERROR SD", html);
+                        $('#btnModalConfirmar').addClass('hidden');
+                        $('#btnModalAbortar').empty().append('Cerrar');
+
                     }
                 });
             });
+
 
             $("#btnExportarPdf").off("click");
             $("#btnExportarPdf").on("click", function () {
