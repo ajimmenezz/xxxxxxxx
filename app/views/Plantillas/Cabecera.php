@@ -31,6 +31,8 @@
         $personalCss = null;
         $pluginsJs = null;
         $personalJs = null;
+        $rand = rand(0, 32767);
+
 
         foreach ($menu['Menu'] as $elemntos) {
             foreach ($elemntos as $key => $modulo) {
@@ -39,22 +41,22 @@
                         if ($pagina == $librerias) {
                             if (!empty($datosLibrerias['pluginsCss'])) {
                                 foreach ($datosLibrerias['pluginsCss'] as $plugin) {
-                                    $pluginsCss .= '<link href="/assets/plugins/' . $plugin . '.css" rel="stylesheet"/>';
+                                    $pluginsCss .= '<link href="/assets/plugins/' . $plugin . '.css?r=' . $rand . '" rel="stylesheet"/>';
                                 }
                             }
                             if (!empty($datosLibrerias['css'])) {
                                 foreach ($datosLibrerias['css'] as $css) {
-                                    $personalCss .= '<link href="/assets/css/customize/' . $css . '.css" rel="stylesheet"/>';
+                                    $personalCss .= '<link href="/assets/css/customize/' . $css . '.css?r=' . $rand . '" rel="stylesheet"/>';
                                 }
                             }
                             if (!empty($datosLibrerias['pluginsJs'])) {
                                 foreach ($datosLibrerias['pluginsJs'] as $pluginJs) {
-                                    $pluginsJs .= '<script src="/assets/plugins/' . $pluginJs . '.js"></script>';
+                                    $pluginsJs .= '<script src="/assets/plugins/' . $pluginJs . '.js?r=' . $rand . '"></script>';
                                 }
                             }
                             if (!empty($datosLibrerias['js'])) {
                                 foreach ($datosLibrerias['js'] as $js) {
-                                    $personalJs .= '<script src="/assets/js/customize/' . $js . '.js"></script>';
+                                    $personalJs .= '<script src="/assets/js/customize/' . $js . '.js?r=' . $rand . '"></script>';
                                 }
                             }
                         }
@@ -245,7 +247,7 @@
                 <!-- Finalizando contenedor-fluido -->
             </div>
             <!-- Finalizando cabezera -->
-            
+
             <?php
             $permisosCompletosTodosServicios = FALSE;
             if (in_array('209', $usuario['PermisosAdicionales'])) {
@@ -256,22 +258,22 @@
 
             if ($permisosCompletosTodosServicios) {
                 ?>
-            <div id="menuAdministrarSD" class="hidden">
-                <!-- begin theme-panel -->
-                <div class="theme-panel">
-                    <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn"><i class="fa fa-cog"></i></a>
-                    <div class="theme-panel-content">
-                        <h5 class="m-t-0">Panel Administrador SD</h5>
-                        <div class="divider"></div>
+                <div id="menuAdministrarSD" class="hidden">
+                    <!-- begin theme-panel -->
+                    <div class="theme-panel">
+                        <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn"><i class="fa fa-cog"></i></a>
+                        <div class="theme-panel-content">
+                            <h5 class="m-t-0">Panel Administrador SD</h5>
+                            <div class="divider"></div>
 
-                        <div class="row m-t-10">
-                            <div class="col-md-12">
-                                <a id="btnInformacionSD" href="javascript:;" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-cloud-upload m-r-3"></i> Información SD</a>
+                            <div class="row m-t-10">
+                                <div class="col-md-12">
+                                    <a id="btnInformacionSD" href="javascript:;" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-cloud-upload m-r-3"></i> Información SD</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- end theme-panel -->
+                    <!-- end theme-panel -->
                 </div>
             <?php } ?>
 
