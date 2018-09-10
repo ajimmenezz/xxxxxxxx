@@ -104,7 +104,7 @@ class Modelo_Salas4D extends Modelo_Base {
         foreach ($data['data'] as $key => $value) {
             $fecha = $this->consulta("select now() as Fecha;");
 
-            $this->insertar("t_elementos_salas4d", [
+            $this->insertar("t_elementos_salas4D", [
                 "IdUsuario" => $this->usuario['Id'],
                 "IdSucursal" => $data['sucursal'],
                 "IdUbicacion" => $value['ubicacion'],
@@ -157,7 +157,7 @@ class Modelo_Salas4D extends Modelo_Base {
     public function guardaCambiosElemento($data, $imagenes = '') {
         $fecha = $this->consulta("select now() as Fecha;");
         if (!$this->connectDBPrueba()->simple_query(""
-                        . "update t_elementos_salas4d "
+                        . "update t_elementos_salas4D "
                         . "set IdUsuario = '" . $this->usuario['Id'] . "', "
                         . "IdSucursal = '" . $data['sucursal'] . "', "
                         . "IdUbicacion = '" . $data['ubicacion'] . "', "
@@ -191,7 +191,7 @@ class Modelo_Salas4D extends Modelo_Base {
                                             ')'
                                     ) as Nombre
 
-                                    from t_elementos_salas4d tes inner join cat_v3_x4d_elementos cxe
+                                    from t_elementos_salas4D tes inner join cat_v3_x4d_elementos cxe
                                     on tes.IdElemento = cxe.Id
                                     where tes.Id in (" . $ids . ") and tes.Flag = 1;");
         return $consulta;
@@ -202,7 +202,7 @@ class Modelo_Salas4D extends Modelo_Base {
                                     cxs.Id,
                                     concat(cxs.Nombre,' - ',(select Nombre from cat_v3_x4d_marcas where Id = cxs.IdMarca)) as Nombre
                                     from cat_v3_x4d_subelementos cxs 
-                                    where IdElemento = (select IdElemento from t_elementos_salas4d where Id = '" . $idRegistro . "');");
+                                    where IdElemento = (select IdElemento from t_elementos_salas4D where Id = '" . $idRegistro . "');");
         return $consulta;
     }
 
@@ -232,7 +232,7 @@ class Modelo_Salas4D extends Modelo_Base {
                                         ) as Nombre from cat_v3_x4d_elementos cxe
                                         where cxe.Id = tes.IdElemento
                                     ) as Elemento                                    
-                                    from t_elementos_salas4d  tes
+                                    from t_elementos_salas4D  tes
                                     where tes.Id = '" . $idRegistro . "';");
         return $consulta;
     }
@@ -284,7 +284,7 @@ class Modelo_Salas4D extends Modelo_Base {
     public function eliminarElemento($idRegistro = '') {
         $fecha = $this->consulta("select now() as Fecha;");
         if (!$this->connectDBPrueba()->simple_query(""
-                        . "update t_elementos_salas4d "
+                        . "update t_elementos_salas4D "
                         . "set Flag = 0, "
                         . "FechaElimina = '" . $fecha[0]['Fecha'] . "', "
                         . "UsuarioElimina = '" . $this->usuario['Id'] . "'"
@@ -298,7 +298,7 @@ class Modelo_Salas4D extends Modelo_Base {
     public function actualizaImagenesElemento($elemento, $imagenes) {
         $fecha = $this->consulta("select now() as Fecha;");
         if (!$this->connectDBPrueba()->simple_query(""
-                        . "update t_elementos_salas4d "
+                        . "update t_elementos_salas4D "
                         . "set IdUsuario = '" . $this->usuario['Id'] . "', "
                         . "FechaCaptura = '" . $fecha[0]['Fecha'] . "', "
                         . "Imagen = '" . $imagenes . "' "
@@ -1000,7 +1000,7 @@ class Modelo_Salas4D extends Modelo_Base {
                 );
 
                 if ($arrayDatos['IdElemento'] !== '' && $arrayDatos['IdSubelemento'] === '') {
-                    $this->insertar("t_elementos_salas4d", array(
+                    $this->insertar("t_elementos_salas4D", array(
                         "IdUsuario" => $arrayDatos['IdUsuario'],
                         "IdSucursal" => $arrayDatos['IdSucursal'],
                         "IdUbicacion" => $arrayDatos['IdUbicacion'],
@@ -1012,7 +1012,7 @@ class Modelo_Salas4D extends Modelo_Base {
                             )
                     );
 
-                    $this->actualizar('t_elementos_salas4d', array(
+                    $this->actualizar('t_elementos_salas4D', array(
                         'Flag' => '0',
                         'UsuarioElimina' => $arrayDatos['IdUsuario'],
                         'FechaElimina' => $arrayDatos['Fecha']
@@ -1020,7 +1020,7 @@ class Modelo_Salas4D extends Modelo_Base {
 
                     $consultaElementosSalas = $this->consulta("SELECT 
                                                         *
-                                                    FROM t_elementos_salas4d
+                                                    FROM t_elementos_salas4D
                                                     WHERE Id = '" . $arrayDatos['IdElemento'] . "'");
 
                     $this->insertar("t_inventario", array(
@@ -1068,7 +1068,7 @@ class Modelo_Salas4D extends Modelo_Base {
                             )
                     );
                 } else if ($arrayDatos['IdElemento'] !== '' && $arrayDatos['IdSubelemento'] !== '') {
-                    $this->insertar("t_subelementos_salas4d", array(
+                    $this->insertar("t_subelementos_salas4D", array(
                         "IdUsuario" => $arrayDatos['IdUsuario'],
                         "IdRegistroElemento" => $arrayDatos['IdElemento'],
                         "IdSubelemento" => $consultaInventario[0]['IdProducto'],
@@ -1078,7 +1078,7 @@ class Modelo_Salas4D extends Modelo_Base {
                             )
                     );
 
-                    $this->actualizar('t_subelementos_salas4d', array(
+                    $this->actualizar('t_subelementos_salas4D', array(
                         'Flag' => '0',
                         'UsuarioElimina' => $arrayDatos['IdUsuario'],
                         'FechaElimina' => $arrayDatos['Fecha']
@@ -1086,7 +1086,7 @@ class Modelo_Salas4D extends Modelo_Base {
 
                     $consultaSubelementosSalas = $this->consulta("SELECT 
                                                         *
-                                                    FROM t_subelementos_salas4d
+                                                    FROM t_subelementos_salas4D
                                                     WHERE Id = '" . $arrayDatos['IdSubelemento'] . "'");
 
                     $this->insertar("t_inventario", array(
@@ -1168,9 +1168,9 @@ class Modelo_Salas4D extends Modelo_Base {
                                     FROM t_salas4d_mantto_actividades_avances tsmaa
                                     INNER JOIN t_salas4d_mantto_actividades tsma
                                     ON tsmaa.IdActividad = tsma.Id
-                                    LEFT JOIN t_elementos_salas4d tes
+                                    LEFT JOIN t_elementos_salas4D tes
                                     ON tes.Id = tsmaa.IdRegistroElemento
-                                    LEFT JOIN t_subelementos_salas4d tss
+                                    LEFT JOIN t_subelementos_salas4D tss
                                     ON tss.Id = tsmaa.IdRegistroSubelemento
                                     WHERE tsma.IdActividad = '" . $datos . "'
                                     and tsma.IdServicio = '" . $servicio . "'
@@ -1372,9 +1372,9 @@ class Modelo_Salas4D extends Modelo_Base {
                                     FROM t_salas4d_mantto_actividades_avances tsmaa
                                     INNER JOIN t_salas4d_mantto_actividades tsma
                                     ON tsmaa.IdActividad = tsma.Id
-                                    LEFT JOIN t_elementos_salas4d tes
+                                    LEFT JOIN t_elementos_salas4D tes
                                     ON tes.Id = tsmaa.IdRegistroElemento
-                                    LEFT JOIN t_subelementos_salas4d tss
+                                    LEFT JOIN t_subelementos_salas4D tss
                                     ON tss.Id = tsmaa.IdRegistroSubelemento
                                     WHERE tsma.Id = '" . $datos . "'
                                     and tsma.IdServicio = '" . $servicio . "'
@@ -1645,11 +1645,11 @@ class Modelo_Salas4D extends Modelo_Base {
         $almacenVirtual = $this->consulta("SELECT * FROM cat_v3_almacenes_virtuales WHERE IdTipoAlmacen = 1 and IdReferenciaAlmacen = '" . $datos['idUsuario'] . "'");
         $almacenSucursal = $this->consulta("SELECT * FROM cat_v3_almacenes_virtuales WHERE IdTipoAlmacen = 3 and IdReferenciaAlmacen = '" . $servicioTicket[0]['IdSucursal'] . "'");
 
-        $this->actualizar('t_elementos_salas4d', array(
+        $this->actualizar('t_elementos_salas4D', array(
             'Flag' => 0,
                 ), array('Id' => $datos['elementoDanado'], 'IdUsuario' => $datos['idUsuario'])
         );
-        $consultaElemento = $this->consulta("select * from t_elementos_salas4d
+        $consultaElemento = $this->consulta("select * from t_elementos_salas4D
                                                 WHERE  IdUsuario = '" . $datos['idUsuario'] . "'
                                                 AND Id = '" . $datos['elementoDanado'] . "'");
 
@@ -1709,12 +1709,12 @@ class Modelo_Salas4D extends Modelo_Base {
         $almacenSucursal = $this->consulta("SELECT * FROM cat_v3_almacenes_virtuales WHERE IdTipoAlmacen = 3 and IdReferenciaAlmacen = '" . $servicioTicket[0]['IdSucursal'] . "'");
 
 
-        $this->actualizar('t_subelementos_salas4d', array(
+        $this->actualizar('t_subelementos_salas4D', array(
             'Flag' => 0,
                 ), array('Id' => $datos['elementoDanado'], 'IdUsuario' => $datos['idUsuario'])
         );
 
-        $consultaSubElemento = $this->consulta("SELECT * FROM t_subelementos_salas4d WHERE  IdUsuario = '" . $datos['idUsuario'] . "' AND Id = '" . $datos['elementoDanado'] . "'");
+        $consultaSubElemento = $this->consulta("SELECT * FROM t_subelementos_salas4D WHERE  IdUsuario = '" . $datos['idUsuario'] . "' AND Id = '" . $datos['elementoDanado'] . "'");
 
         $this->insertar("t_inventario", array(
             "IdAlmacen" => $almacenVirtual[0]['Id'],
@@ -1771,11 +1771,11 @@ class Modelo_Salas4D extends Modelo_Base {
         $almacenVirtual = $this->consulta("select * from cat_v3_almacenes_virtuales where IdTipoAlmacen = 1 and IdReferenciaAlmacen = '" . $datos['idUsuario'] . "'");
         $almacenSucursal = $this->consulta("select * from cat_v3_almacenes_virtuales where IdTipoAlmacen = 3 and IdReferenciaAlmacen = '" . $servicioTicket[0]['IdSucursal'] . "'");
 
-        $this->actualizar('t_elementos_salas4d', array(
+        $this->actualizar('t_elementos_salas4D', array(
             'Flag' => 0,
                 ), array('Id' => $datos['elementoDanado'], 'IdUsuario' => $datos['idUsuario'])
         );
-        $consultaElemento = $this->consulta("select * from t_elementos_salas4d
+        $consultaElemento = $this->consulta("select * from t_elementos_salas4D
                                                 WHERE  IdUsuario = '" . $datos['idUsuario'] . "'
                                                 AND Id = '" . $datos['elementoDanado'] . "'");
 
@@ -1836,7 +1836,7 @@ class Modelo_Salas4D extends Modelo_Base {
 
         $consultaInventario2 = $this->consulta("SELECT * FROM t_inventario WHERE Id = '" . $elementoUtilizado . "'");
 
-        $this->insertar("t_elementos_salas4d", array(
+        $this->insertar("t_elementos_salas4D", array(
             "IdUsuario" => $datos['idUsuario'],
             "IdSucursal" => $consultaElemento[0]['IdSucursal'],
             "IdUbicacion" => $consultaElemento[0]['IdUbicacion'],
@@ -1898,12 +1898,12 @@ class Modelo_Salas4D extends Modelo_Base {
 
         foreach ($masSubelementos as $value) {
 
-            $this->actualizar('t_subelementos_salas4d', array(
+            $this->actualizar('t_subelementos_salas4D', array(
                 'Flag' => 0,
                     ), array('Id' => $value['IdSubelementoDañado'], 'IdUsuario' => $datos['idUsuario'])
             );
 
-            $consultaSubElemento = $this->consulta("select * from t_subelementos_salas4d
+            $consultaSubElemento = $this->consulta("select * from t_subelementos_salas4D
                                                     WHERE  IdUsuario = '" . $datos['idUsuario'] . "'
                                                     AND Id = '" . $value['IdSubelementoDañado'] . "'");
 
@@ -1960,7 +1960,7 @@ class Modelo_Salas4D extends Modelo_Base {
             );
             $consultaInventario2 = $this->consulta("SELECT * FROM t_inventario WHERE Id = '" . $value['IdSubelementoInventario'] . "'");
 
-            $this->insertar("t_subelementos_salas4d", array(
+            $this->insertar("t_subelementos_salas4D", array(
                 "IdUsuario" => $datos['idUsuario'],
                 "IdRegistroElemento" => $consultaSubElemento[0]['IdRegistroElemento'],
                 "IdSubelemento" => $consultaInventario2[0]['IdProducto'],
@@ -2020,12 +2020,12 @@ class Modelo_Salas4D extends Modelo_Base {
 
         foreach ($masSubelementos as $value) {
 
-            $this->actualizar('t_subelementos_salas4d', array(
+            $this->actualizar('t_subelementos_salas4D', array(
                 'Flag' => 0,
                     ), array('Id' => $value['IdSubelementoDañado'], 'IdUsuario' => $datos['idUsuario'])
             );
 
-            $consultaSubElemento = $this->consulta("select * from t_subelementos_salas4d
+            $consultaSubElemento = $this->consulta("select * from t_subelementos_salas4D
                                                     WHERE  IdUsuario = '" . $datos['idUsuario'] . "'
                                                     AND Id = '" . $value['IdSubelementoDañado'] . "'");
 
@@ -2081,7 +2081,7 @@ class Modelo_Salas4D extends Modelo_Base {
                     ), array('Id' => $idSubelementoUtil)
             );
 
-            $this->insertar("t_subelementos_salas4d", array(
+            $this->insertar("t_subelementos_salas4D", array(
                 "IdUsuario" => $datos['idUsuario'],
                 "IdRegistroElemento" => $consultaSubElemento[0]['IdRegistroElemento'],
                 "IdSubelemento" => $consultaInventario[0]['IdProducto'],
