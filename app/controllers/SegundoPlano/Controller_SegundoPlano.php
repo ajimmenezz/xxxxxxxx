@@ -421,8 +421,8 @@ class Controller_SegundoPlano extends \CI_Controller {
     }
 
     public function getUbicaphoneGeofenceActivations() {
-        $from = strtotime("2018-08-21 00:00:00");
-        $to = strtotime("2018-08-21 23:59:59");
+        $from = strtotime("2018-09-07 00:00:00");
+        $to = strtotime("2018-09-11 23:59:59");
         $data = [
             'imei' => '351515080889951',
             'from' => $from,

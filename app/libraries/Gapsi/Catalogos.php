@@ -171,7 +171,8 @@ class Catalogos extends General {
 //                    . ' </tfoot>'
                     . '</table>'
                     . '<br />' . $adjuntos
-                    . '<p>Para aprobarlo de click en el siguiente link <a href="http://187.162.74.124:88/ApruebaGasto?ID=' . $resultado['last'] . '" target="_blank">Aprobar >></a></p>';
+                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra en las oficinas de SICCOB <a href="http://192.168.0.30/GAPSI/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p><br/><br/>'
+                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://187.162.74.124:88/GAPSI/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>';
 
             $titulo = "Autorización Requerida";
             $this->Correo->enviarCorreo('gastos@siccob.solutions', array('ajimenez@siccob.com.mx', 'jdiaz@siccob.com.mx'), $titulo, $bodyMail, explode(",", $archivos));
