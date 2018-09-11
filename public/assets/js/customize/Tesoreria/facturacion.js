@@ -272,19 +272,16 @@ $(function () {
         var monto = $('#inputMontoValidarVuelta').val();
         var viatico = $('#inputViaticosValidarVuelta').val();
         var observaciones = $('#inputObservacionesValidarVuelta').val();
+        var data = {id: id, monto: monto, viatico: viatico, observaciones: observaciones};
+        
+        evento.enviarEvento('Facturacion/guardarValidacionVuelta', data, '#panelFacturacionTesoreria', function (respuesta) {
+            if (respuesta === true) {
+                evento.mensajeConfirmacion('Se valido con exito', 'Correcto');
+            } else {
+                evento.mostrarMensaje('#erroValidarVuelta', false, 'Hubo algún problema con la validación de la vuelta.', 3000);
+            }
+        });
 
-        if (viatico > 0) {
-            var data = {id: id, monto: monto, viatico: viatico, observaciones: observaciones};
-            evento.enviarEvento('Facturacion/guardarValidacionVuelta', data, '#panelFacturacionTesoreria', function (respuesta) {
-                if (respuesta === true) {
-                    evento.mensajeConfirmacion('Se valido con exito', 'Correcto');
-                } else {
-                    evento.mostrarMensaje('#erroValidarVuelta', false, 'Hubo algún problema con la validación de la vuelta.', 3000);
-                }
-            });
-        } else {
-            evento.mostrarMensaje('#erroValidarVuelta', false, 'El monto debe ser mayor a cero.', 3000);
-        }
     }
 
     var rechazarVuelta = function () {

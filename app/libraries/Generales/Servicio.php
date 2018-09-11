@@ -2580,7 +2580,8 @@ class Servicio extends General {
         $host = $_SERVER['SERVER_NAME'];
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
+            $infoServicio = $this->getInformacionServicio($datos['servicio']);
+            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }
@@ -2628,24 +2629,6 @@ class Servicio extends General {
             return FALSE;
         }
     }
-
-//    public function envioPDFVuelta() {
-//        $img = $datos['img'];
-//        $img = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $img));
-//        $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
-//
-//        $imagenFirmaGerente = base64_decode($img);
-//        $direccionFirma = '/storage/Archivos/imagenesFirmas/Asociados/' . str_replace(' ', '_', 'Firma_' . $folio[0]['Folio']) . $fechaAsociado . '.png';
-//        file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $imagenFirmaGerente);
-//
-//        $imgFirmaTecnico = $datos['imgFirmaTecnico'];
-//        $imgFirmaTecnico = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirmaTecnico));
-//        $imagenFirmaTecnico = base64_decode($imgFirmaTecnico);
-//        $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/Asociados/' . str_replace(' ', '_', 'FirmaTecnico_' . $folio[0]['Folio']) . $fechaAsociado . '.png';
-//        file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $imagenFirmaTecnico);
-//        
-//        $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio[0]['Folio']);
-//    }
 
     public function pdfAsocicadoVueltas(array $servicio, string $nombreExtra = NULL) {
         $usuario = $this->Usuario->getDatosUsuario();
