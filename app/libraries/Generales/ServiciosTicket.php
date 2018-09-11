@@ -247,7 +247,7 @@ class ServiciosTicket extends General {
         $data['notas'] = $this->Notas->getNotasByServicio($datos['servicio'], $idSolicitud);
         $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $datosServicio['Ticket'] . '"');
         $data['idPerfil'] = $usuario['IdPerfil'];
-        
+
         if ($datosServicio['tieneSeguimiento'] !== '0') {
 
             //No eliminar se ocupara despues
@@ -335,7 +335,7 @@ class ServiciosTicket extends General {
                         $data['formulario'] = parent::getCI()->load->view('Salas4D/Modal/FormularioSeguimientoMantenimientoCorrectivo', $data, TRUE);
                         break;
                 }
-            }else if ($datosServicio['IdTipoServicio'] === '10') {
+            } else if ($datosServicio['IdTipoServicio'] === '10') {
                 /* Aqui comienzan las lineas de seguimiento de los servicios de Uber */
                 switch ($datos['operacion']) {
                     /* Inicia el servicio de Uber */
@@ -933,75 +933,82 @@ class ServiciosTicket extends General {
         if ($data['servicioConcluido']) {
             $consulta = $this->DBST->actualizarServicio('t_servicios_ticket', array('IdEstatus' => '5', 'FechaConclusion' => $fecha), array('Id' => $servicio));
             $equipos = $this->DBST->getDatosTrafico($servicio);
-            if (!empty($datosServicio['Folio'])) {
-                $html = '<div><h3>Servicio de Trafico</h3></div>';
-                $html .= '<div>Origen: ' . $Origen . '</div><div>Destino: ' . $Destino . '</div><div>Equipos : </div>';
-                foreach ($equipos['Material'] as $value) {
-                    $html .= '<div>'
-                            . '&nbsp;&nbsp;&nbsp;&nbsp;Tipo: ' . $value['Tipo'] . '&nbsp;&nbsp;&nbsp;&nbsp;'
-                            . '&nbsp;&nbsp;&nbsp;&nbsp;Modelo: ' . $value['Nombre'] . '&nbsp;&nbsp;&nbsp;&nbsp;'
-                            . '&nbsp;&nbsp;&nbsp;&nbsp;Serie: ' . $value['Serie'] . '&nbsp;&nbsp;&nbsp;&nbsp;'
-                            . '&nbsp;&nbsp;&nbsp;&nbsp;Cantidad: ' . $value['Cantidad'] . ''
-                            . '</div>';
-                }
 
-                if ($tipoTrafico === '1') {
+            if ($equipos['Material'] !== NULL) {
+                if (!empty($datosServicio['Folio'])) {
+                    $html = '<div><h3>Servicio de Trafico</h3></div>';
+                    $html .= '<div>Origen: ' . $Origen . '</div><div>Destino: ' . $Destino . '</div><div>Equipos : </div>';
 
-                    foreach ($envio as $key => $value) {
-                        if ($value['IdTipoEnvio'] === '1') {
-                            $html .= '<div>Información de la Entrega del Envio : </div>';
-                            $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Fecha y Hora : ' . $value['FechaEnvio'] . '</div>';
-                            $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Quien Recibe : ' . $value['NombreRecibe'] . '</div>';
-                            $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Comentarios : ' . $value['ComentariosEntrega'] . '</div>';
-                            $evidencias = explode(',', $value['UrlEntrega']);
-                            foreach ($evidencias as $key => $url) {
-                                $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
-                                $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
+                    foreach ($equipos['Material'] as $value) {
+                        $html .= '<div>'
+                                . '&nbsp;&nbsp;&nbsp;&nbsp;Tipo: ' . $value['Tipo'] . '&nbsp;&nbsp;&nbsp;&nbsp;'
+                                . '&nbsp;&nbsp;&nbsp;&nbsp;Modelo: ' . $value['Nombre'] . '&nbsp;&nbsp;&nbsp;&nbsp;'
+                                . '&nbsp;&nbsp;&nbsp;&nbsp;Serie: ' . $value['Serie'] . '&nbsp;&nbsp;&nbsp;&nbsp;'
+                                . '&nbsp;&nbsp;&nbsp;&nbsp;Cantidad: ' . $value['Cantidad'] . ''
+                                . '</div>';
+                    }
+
+                    if ($tipoTrafico === '1') {
+
+                        foreach ($envio as $key => $value) {
+                            if ($value['IdTipoEnvio'] === '1') {
+                                $html .= '<div>Información de la Entrega del Envio : </div>';
+                                $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Fecha y Hora : ' . $value['FechaEnvio'] . '</div>';
+                                $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Quien Recibe : ' . $value['NombreRecibe'] . '</div>';
+                                $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Comentarios : ' . $value['ComentariosEntrega'] . '</div>';
+                                $evidencias = explode(',', $value['UrlEntrega']);
+                                foreach ($evidencias as $key => $url) {
+                                    $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
+                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
+                                }
+                            } else if ($value['IdTipoEnvio'] === '2' || $value['IdTipoEnvio'] === '3') {
+
+                                $html .= '<div>Información del Envio : </div>';
+                                $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Fecha y Hora de Envio: ' . $value['FechaEnvio'] . '</div>';
+                                $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Paqueteria : ' . $value['NombrePaqueteria'] . '</div>';
+                                $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Guia : ' . $value['Guia'] . '</div>';
+                                $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Comentarios : ' . $value['ComentariosEntrega'] . '</div>';
+                                $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Evidencias :</div>';
+                                $evidencias = explode(',', $value['UrlEnvio']);
+                                foreach ($evidencias as $key => $url) {
+                                    $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
+                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
+                                }
+                                $html .= '<div>Información de la Entrega : </div>';
+                                $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Fecha y Hora Entrega: ' . $value['FechaEnvio'] . '</div>';
+                                $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Quien Recibe : ' . $value['NombreRecibe'] . '</div>';
+                                $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Comentarios : ' . $value['ComentariosEntrega'] . '</div>';
+                                $evidenciasEntrega = explode(',', $value['UrlEntrega']);
+                                foreach ($evidenciasEntrega as $key => $url) {
+                                    $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
+                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
+                                }
                             }
-                        } else if ($value['IdTipoEnvio'] === '2' || $value['IdTipoEnvio'] === '3') {
-
-                            $html .= '<div>Información del Envio : </div>';
-                            $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Fecha y Hora de Envio: ' . $value['FechaEnvio'] . '</div>';
-                            $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Paqueteria : ' . $value['NombrePaqueteria'] . '</div>';
-                            $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Guia : ' . $value['Guia'] . '</div>';
-                            $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Comentarios : ' . $value['ComentariosEntrega'] . '</div>';
-                            $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Evidencias :</div>';
-                            $evidencias = explode(',', $value['UrlEnvio']);
+                        }
+                    } else if ($tipoTrafico === '2') {
+                        $html .= '<div>Información de la Recolección : </div>';
+                        foreach ($recoleccion as $value) {
+                            $html .= '<div> Fecha y Hora : ' . $value['Fecha'] . '</div>';
+                            $html .= '<div> Quien Entrega : ' . $value['NombreEntrega'] . '</div>';
+                            $html .= '<div> Comentarios : ' . $value['ComentariosRecoleccion'] . '</div>';
+                            $evidencias = explode(',', $value['UrlRecoleccion']);
                             foreach ($evidencias as $key => $url) {
-                                $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
-                                $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
-                            }
-                            $html .= '<div>Información de la Entrega : </div>';
-                            $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Fecha y Hora Entrega: ' . $value['FechaEnvio'] . '</div>';
-                            $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Quien Recibe : ' . $value['NombreRecibe'] . '</div>';
-                            $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Comentarios : ' . $value['ComentariosEntrega'] . '</div>';
-                            $evidenciasEntrega = explode(',', $value['UrlEntrega']);
-                            foreach ($evidenciasEntrega as $key => $url) {
                                 $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
                                 $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
                             }
                         }
                     }
-                } else if ($tipoTrafico === '2') {
-                    $html .= '<div>Información de la Recolección : </div>';
-                    foreach ($recoleccion as $value) {
-                        $html .= '<div> Fecha y Hora : ' . $value['Fecha'] . '</div>';
-                        $html .= '<div> Quien Entrega : ' . $value['NombreEntrega'] . '</div>';
-                        $html .= '<div> Comentarios : ' . $value['ComentariosRecoleccion'] . '</div>';
-                        $evidencias = explode(',', $value['UrlRecoleccion']);
-                        foreach ($evidencias as $key => $url) {
-                            $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
-                            $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
-                        }
-                    }
+                    $resolucionVieja = json_decode($this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $datosServicio['Folio']));
+                    $html = $html . '<br><br>' . $resolucionVieja->operation->Details->RESOLUTION;
+                    $respuesta = $this->ServiceDesk->resolucionFolioSD($datosServicio['Folio'], '', $usuario['SDKey'], $html);
                 }
-                $resolucionVieja = json_decode($this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $datosServicio['Folio']));
-                $html = $html . '<br><br>' . $resolucionVieja->operation->Details->RESOLUTION;
-                $respuesta = $this->ServiceDesk->resolucionFolioSD($datosServicio['Folio'], '', $usuario['SDKey'], $html);
+                $data['tituloMensaje'] = 'Servicio Concluido';
+                $data['mensaje'] = 'Se concluyó el servicio con éxito.';
+            } else {
+                $data['mensaje'] = 'Falta Equipos.';
             }
-            $data['tituloMensaje'] = 'Servicio Concluido';
-            $data['mensaje'] = 'Se concluyó el servicio con éxito.';
         }
+
 
         $data['mensaje'] = '<div class="row">
                                 <div class="col-md-12 text-center">
@@ -1205,7 +1212,7 @@ class ServiciosTicket extends General {
                                                             WHERE Id = "' . $servicio . '"');
         $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $data['datosServicio']['Ticket'] . '"');
         $data['idPerfil'] = $usuario['IdPerfil'];
-        
+
         if ($usuario['IdPerfil'] === '83' || $usuario['IdDepartamento'] === '19') {
             $data['botonAgregarVuelta'] = '<li id="btnAgregarVuelta"><a href="#"><i class="fa fa-plus"></i> Agregar Vuelta</a></li>';
         } else {
