@@ -87,9 +87,20 @@ class Tesoreria extends General {
             $data['tablaVueltas'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaSupervisoresPoliza", $data, TRUE);
         }
 
-        if ($usuario['IdDepartamento'] === '20') {
+        if (in_array('281', $usuario['PermisosAdicionales']) || in_array('281', $usuario['Permisos'])) {
             $data['facturasTesoreriaPago'] = $this->DBT->facturasTesoreriaPago();
             $data['tablaTesoreria'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaTesoreriaPagos", $data, TRUE);
+        } else {
+            $html = '<div class="row m-t-20">
+                        <div class="col-md-12">
+                            <h3 class="m-t-10">No tiene los permisos para visualizar las Facturas</h3>
+                        </div>
+                        <!--Empezando Separador-->
+                        <div class="col-md-12">
+                            <div class="underline m-b-15 m-t-15"></div>
+                        </div>
+                    </div>';
+            $data['tablaTesoreria'] = $html;
         }
 
         $data['titulo'] = $htmlTitulo;
@@ -109,8 +120,8 @@ class Tesoreria extends General {
         $data['detallesFactura'] = $this->DBT->consultaDetallesFactura($datos['xml']);
         return array('formulario' => parent::getCI()->load->view('/Tesoreria/Formularios/TablaDetallesFactura', $data, TRUE), 'datos' => $data);
     }
-    
-    public function observacionesFactura(array $datos){
+
+    public function observacionesFactura(array $datos) {
         $consulta = $this->DBT->consultaObservacionesFactura($datos['id']);
         return $consulta;
     }
