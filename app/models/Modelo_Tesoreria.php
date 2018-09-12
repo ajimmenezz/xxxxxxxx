@@ -253,7 +253,9 @@ class Modelo_Tesoreria extends Modelo_Base {
                 'Fecha' => $datos['fecha'],
                 'XML' => $rutaXML,
                 'PDF' => $rutaPDF,
-                'MontoFactura' => $datos['total']));
+                'MontoFactura' => $datos['total'],
+                'Folio' => $datos['folio'],
+                'Serie' => $datos['serie']));
 
             $this->actualizar('t_facturacion_outsourcing', [
                 'IdEstatus' => '14',
