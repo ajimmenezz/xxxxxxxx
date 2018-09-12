@@ -45,7 +45,7 @@ class Registro_Usuario extends General {
         var_dump('pumas0');
         var_dump($usuario);
         if (empty($usuario)) {
-            var_dump($usuario);
+//            var_dump($usuario);
             return array('resultado' => FALSE, 'logueo' => NULL);
         } else {
             $logueo = $this->DBRU->buscarRegistroLogueo($usuario['Id']);
