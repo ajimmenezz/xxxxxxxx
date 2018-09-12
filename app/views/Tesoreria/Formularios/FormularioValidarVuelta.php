@@ -79,13 +79,13 @@
     <div class="row"> 
         <div class="col-md-6">
             <div class="form-group">
-                <label for="inputMontoValidarVuelta">Monto + IVA *</label>
+                <label for="inputMontoValidarVuelta">Monto (sin IVA) *</label>
                 <input type="number" class="form-control" id="inputMontoValidarVuelta" style="width: 100%" value="<?php echo $monto; ?>" data-parsley-required="true" disabled/>                            
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                <label for="inputViaticosValidarVuelta">Viatico + IVA *</label>
+                <label for="inputViaticosValidarVuelta">Viatico (sin IVA) *</label>
                 <input type="number" class="form-control" id="inputViaticosValidarVuelta" style="width: 100%" value="<?php echo $viatico; ?>" data-parsley-required="true"/>                            
             </div>
         </div>
