@@ -90,17 +90,6 @@ class Tesoreria extends General {
         if (in_array('281', $usuario['PermisosAdicionales']) || in_array('281', $usuario['Permisos'])) {
             $data['facturasTesoreriaPago'] = $this->DBT->facturasTesoreriaPago();
             $data['tablaTesoreria'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaTesoreriaPagos", $data, TRUE);
-        } else {
-            $html = '<div class="row m-t-20">
-                        <div class="col-md-12">
-                            <h3 class="m-t-10">No tiene los permisos para visualizar las Facturas</h3>
-                        </div>
-                        <!--Empezando Separador-->
-                        <div class="col-md-12">
-                            <div class="underline m-b-15 m-t-15"></div>
-                        </div>
-                    </div>';
-            $data['tablaTesoreria'] = $html;
         }
 
         $data['titulo'] = $htmlTitulo;
@@ -278,7 +267,7 @@ class Tesoreria extends General {
 
                     $arrayReceptor = (array) $xml->xpath('//cfdi:Receptor');
                     $arrayReceptor = (array) $arrayReceptor[0];
-                    $resultadoCFDI = $this->validarXMLCFDI($arrayReceptor);
+                    $resultadoReceptor = $this->validarXMLReceptor($arrayReceptor);
 
                     $arrayConcepto = (array) $xml->xpath('//cfdi:Concepto');
                     $resultadoConcepto = $this->validarXMLConcepto($arrayConcepto, $datos['tickets']);
@@ -290,7 +279,7 @@ class Tesoreria extends General {
             $nombreExtencion = $extencion;
         }
 
-        if ($resultadoComprobante === TRUE && $resultadoCFDI === TRUE && $resultadoConcepto === TRUE) {
+        if ($resultadoComprobante === TRUE && $resultadoReceptor === TRUE && $resultadoConcepto === TRUE) {
             $arrayDocumentacion = array(
                 'datosFacturasOutsourcing' => $datosFacturasOutsourcing,
                 'tickets' => $datos['tickets'],
@@ -318,8 +307,8 @@ class Tesoreria extends General {
 
             if ($resultadoComprobante !== TRUE) {
                 return $resultadoComprobante;
-            } else if ($resultadoCFDI !== TRUE) {
-                return $resultadoCFDI;
+            } else if ($resultadoReceptor !== TRUE) {
+                return $resultadoReceptor;
             } else if ($resultadoConcepto !== TRUE) {
                 return $resultadoConcepto;
             }
@@ -381,20 +370,30 @@ class Tesoreria extends General {
         return $resultadoComprobante;
     }
 
-    public function validarXMLCFDI(array $datos) {
-        $resultadoCFDI = TRUE;
+    public function validarXMLReceptor(array $datos) {
+        $resultadoReceptor = TRUE;
         foreach ($datos as $k => $nodoReceptor) {
             if (isset($nodoReceptor['UsoCFDI'])) {
                 if ($nodoReceptor['UsoCFDI'] === 'P01' || $nodoReceptor['UsoCFDI'] === 'Por definir') {
-                    $resultadoCFDI = TRUE;
+                    $resultadoReceptor = TRUE;
                 } else {
                     return 'El Uso CFDI es incorrecto';
                 }
             } else {
                 return 'La etiqueta Uso CFDI no existe';
             }
+            
+            if (isset($nodoReceptor['Rfc'])) {
+                if ($nodoReceptor['Rfc'] === 'SSO0101179Z7') {
+                    $resultadoReceptor = TRUE;
+                } else {
+                    return 'El Rfc del Receptor es incorrecto';
+                }
+            } else {
+                return 'La etiqueta Rfc del Receptor no existe';
+            }
         }
-        return $resultadoCFDI;
+        return $resultadoReceptor;
     }
 
     public function validarXMLConcepto(array $datos, string $tickets) {

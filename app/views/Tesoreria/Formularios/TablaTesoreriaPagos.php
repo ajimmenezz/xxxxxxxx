@@ -11,7 +11,7 @@
     <table id="data-table-facturas-tesoreria" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
         <thead>
             <tr>
-                <th class="never">Id</th>
+                <th class="all">Id</th>
                 <th class="all">Técnico</th>
                 <th class="all">Autorizado por</th>
                 <th class="all">Fecha</th>

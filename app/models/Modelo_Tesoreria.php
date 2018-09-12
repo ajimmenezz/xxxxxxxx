@@ -233,27 +233,26 @@ class Modelo_Tesoreria extends Modelo_Base {
         $rutaActual = getcwd();
 
         foreach ($datos['datosFacturasOutsourcing'] as $k => $v) {
-            $arrayArchivos = array();
             foreach ($datos['archivos'] as $key => $value) {
                 $extencion = pathinfo($value, PATHINFO_EXTENSION);
                 if ($extencion === 'pdf') {
                     $nombreNuevo = $rutaActual . "/storage/Archivos/" . $datos['carpeta'] . "Tickets_" . $datos['tickets'] . "_Total_" . $datos['total'] . ".pdf";
                     $rutaBD = "/storage/Archivos/" . $datos['carpeta'] . "Tickets_" . $datos['tickets'] . "_Total_" . $datos['total'] . ".pdf";
-                    array_push($arrayArchivos, $rutaBD);
+                    $rutaPDF = $rutaBD;
                 } else {
                     $nombreNuevo = $rutaActual . "/storage/Archivos/" . $datos['carpeta'] . "Tickets_" . $datos['tickets'] . "_Total_" . $datos['total'] . ".xml";
                     $rutaBD = "/storage/Archivos/" . $datos['carpeta'] . "Tickets_" . $datos['tickets'] . "_Total_" . $datos['total'] . ".xml";
-                    array_push($arrayArchivos, $rutaBD);
+                    $rutaXML = $rutaBD;
                 }
                 copy($rutaActual . $value, $nombreNuevo);
             }
-
+            
             $this->insertar('t_facturacion_outsourcing_documentacion', array(
                 'IdVuelta' => $v['Id'],
                 'IdUsuario' => $datos['usuario'],
                 'Fecha' => $datos['fecha'],
-                'XML' => $arrayArchivos[1],
-                'PDF' => $arrayArchivos[0],
+                'XML' => $rutaXML,
+                'PDF' => $rutaPDF,
                 'MontoFactura' => $datos['total']));
 
             $this->actualizar('t_facturacion_outsourcing', [
@@ -272,15 +271,17 @@ class Modelo_Tesoreria extends Modelo_Base {
     public function guardarEvidenciaPagoFactura(array $datos) {
         $this->iniciaTransaccion();
         $facturasDocumentacion = $this->consultaFacturasOutsourcingDocumantacionXML($datos['xml']);
+
         foreach ($facturasDocumentacion as $key => $value) {
+
             $this->actualizar('t_facturacion_outsourcing_documentacion', [
                 'IdUsuarioPaga' => $datos['usuarioPaga'],
                 'FechaPago' => $datos['fecha'],
-                'ArchivoPago' => $datos['evidencias']], ['IdVuelta' => $value['Id']]);
+                'ArchivoPago' => $datos['evidencias']], ['IdVuelta' => $value['IdVuelta']]);
 
             $this->actualizar('t_facturacion_outsourcing', [
                 'IdEstatus' => '15',
-                'FechaEstatus' => $datos['fecha']], ['Id' => $value['Id']]);
+                'FechaEstatus' => $datos['fecha']], ['Id' => $value['IdVuelta']]);
         }
 
         if ($this->estatusTransaccion() === FALSE) {

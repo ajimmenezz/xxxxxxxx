@@ -17,7 +17,7 @@ $(function () {
     evento.cerrarSesion();
 
     //Creando tabla de resumen minuta
-    tabla.generaTablaPersonal('#data-table-facturas-tesoreria', null, null, true, true, [[0, 'desc']]);
+    tabla.generaTablaPersonal('#data-table-facturas-tesoreria', null, null, true, true, [[0, 'asc']]);
     tabla.generaTablaPersonal('#data-table-facturas-poliza', null, null, true, true);
 
     //Evento para mostrar la ayuda del sistema
@@ -353,7 +353,7 @@ $(function () {
 
         tabla.limpiarTabla('#data-table-facturas-tesoreria');
         $.each(respuesta, function (key, valor) {
-            tabla.agregarFila('#data-table-facturas-poliza', [valor.Id, valor.Tecnico, valor.Autoriza, valor.Fecha, valor.MontoFactura], true);
+            tabla.agregarFila('#data-table-facturas-tesoreria', [valor.Id, valor.Tecnico, valor.Autoriza, valor.Fecha, valor.MontoFactura], true);
         });
     };
 
