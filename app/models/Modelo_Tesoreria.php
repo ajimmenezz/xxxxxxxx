@@ -111,7 +111,9 @@ class Modelo_Tesoreria extends Modelo_Base {
                                                 Id = tfo.IdServicio) Sucursal,
                                             nombreUsuario(tfo.IdUsuario) Tecnico,
                                             tfo.Fecha,
-                                            tfo.Archivo
+                                            tfo.Archivo,
+                                            tfo.Monto,
+                                            tfo.Viatico
                                     FROM
                                         t_facturacion_outsourcing_documentacion tfoc
                                             INNER JOIN

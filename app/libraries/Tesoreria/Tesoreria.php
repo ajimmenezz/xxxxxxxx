@@ -149,7 +149,10 @@ class Tesoreria extends General {
         $data['emisor'] = $arrayEmisor["@attributes"]['Nombre'];
         $arrayComprobante = (array) $xml->xpath('//cfdi:Comprobante');
         $arrayComprobante = (array) $arrayComprobante[0];
+        $arrayFolioSerie = $this->folioSerieFactura($arrayComprobante);
+
         $data['totalPago'] = $arrayComprobante["@attributes"]['Total'];
+        $data['folioSerie'] = $arrayFolioSerie['serie'] . $arrayFolioSerie['folio'];
 
         return array('formulario' => parent::getCI()->load->view('/Tesoreria/Formularios/FormularioPago', $data, TRUE), 'datos' => $data);
     }

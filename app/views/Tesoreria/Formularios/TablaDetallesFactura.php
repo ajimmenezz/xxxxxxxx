@@ -8,6 +8,8 @@
                 <th class="all">Número de Vuelta</th>
                 <th class="all">Sucursal</th>
                 <th class="all">Tecnico</th>
+                <th class="all">Monto</th>
+                <th class="all">Viatico</th>
                 <th class="all">Fecha</th>
                 <th class="all">Archivo</th>
             </tr>
@@ -23,6 +25,8 @@
                     echo '<td>' . $value['Vuelta'] . '</td>';
                     echo '<td>' . $value['Sucursal'] . '</td>';
                     echo '<td>' . $value['Tecnico'] . '</td>';
+                    echo '<td>' . $value['Monto'] . '</td>';
+                    echo '<td>' . $value['Viatico'] . '</td>';
                     echo '<td>' . $value['Fecha'] . '</td>';
                     echo '<td><a href="' . $value['Archivo'] . '" target="_blank" class="btn btn-danger btn-xs "><i class="fa fa-file-pdf-o"></i> PDF</a></td>';
                     echo '</tr>';
