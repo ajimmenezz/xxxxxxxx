@@ -21,7 +21,7 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
-    file.crearUpload('#fotosGasto', 'Gasto/SolicitarGasto', ['jpg', 'bmp', 'jpeg', 'gif', 'png']);
+    file.crearUpload('#fotosGasto', 'Gasto/SolicitarGasto', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml']);
 
     $("#listClientes").on("change", function () {
         $("#listProyectos").empty().append('<option value="">Selecciona . . .</option>');
