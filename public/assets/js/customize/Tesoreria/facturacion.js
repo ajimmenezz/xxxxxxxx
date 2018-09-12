@@ -39,37 +39,42 @@ $(function () {
 
     $('#data-table-facturas-poliza tbody').on('click', 'tr', function () {
         var datosTabla = $('#data-table-facturas-poliza').DataTable().row(this).data();
-        var estatusVuelta = datosTabla[8];
-        var idVuelta = datosTabla[0];
 
-        if (estatusVuelta === "SIN AUTORIZACIÓN") {
-            var data = {datosTabla: datosTabla};
-            evento.enviarEvento('Facturacion/mostrarFormularioValidarVuelta', data, '#panelFacturacionTesoreria', function (respuesta) {
-                if (respuesta.datos.arregloUsuario.Permisos.indexOf("276") !== -1 || respuesta.datos.arregloUsuario.PermisosAdicionales.indexOf("276") !== -1) {
-                    cargarSeccionFacturacion(respuesta);
-                    eventosFormularioValidarVuelta(respuesta);
-                    botonRegresarFacturacion();
-                }
-            });
-        } else if (estatusVuelta === 'PAGADO') {
-            var data = {idVuelta: idVuelta};
-            evento.enviarEvento('Facturacion/mostrarEvidenciaPagoFactura', data, '#panelFacturacionTesoreria', function (respuesta) {
-                window.open(respuesta, '_blank');
-            });
-        } else if (estatusVuelta === 'RECHAZADO') {
-            observacionesRechazo(idVuelta);
+        if (datosTabla !== undefined) {
+            var estatusVuelta = datosTabla[8];
+            var idVuelta = datosTabla[0];
+            if (estatusVuelta === "SIN AUTORIZACIÓN") {
+                var data = {datosTabla: datosTabla};
+                evento.enviarEvento('Facturacion/mostrarFormularioValidarVuelta', data, '#panelFacturacionTesoreria', function (respuesta) {
+                    if (respuesta.datos.arregloUsuario.Permisos.indexOf("276") !== -1 || respuesta.datos.arregloUsuario.PermisosAdicionales.indexOf("276") !== -1) {
+                        cargarSeccionFacturacion(respuesta);
+                        eventosFormularioValidarVuelta(respuesta);
+                        botonRegresarFacturacion();
+                    }
+                });
+            } else if (estatusVuelta === 'PAGADO') {
+                var data = {idVuelta: idVuelta};
+                evento.enviarEvento('Facturacion/mostrarEvidenciaPagoFactura', data, '#panelFacturacionTesoreria', function (respuesta) {
+                    window.open(respuesta, '_blank');
+                });
+            } else if (estatusVuelta === 'RECHAZADO') {
+                observacionesRechazo(idVuelta);
+            }
         }
     });
 
     $('#data-table-facturas-tesoreria tbody').on('click', 'tr', function () {
         var datosTablaTesoreria = $('#data-table-facturas-tesoreria').DataTable().row(this).data();
-        var data = {id: datosTablaTesoreria[0]};
-        evento.enviarEvento('Facturacion/mostrarFormularioPago', data, '#panelFacturacionTesoreria', function (respuesta) {
-            cargarSeccionFacturacion(respuesta);
-            cargarElementosFormularioPago();
-            eventosFormularioSubirPago(respuesta);
-            botonRegresarFacturacion();
-        });
+
+        if (datosTablaTesoreria !== undefined) {
+            var data = {id: datosTablaTesoreria[0]};
+            evento.enviarEvento('Facturacion/mostrarFormularioPago', data, '#panelFacturacionTesoreria', function (respuesta) {
+                cargarSeccionFacturacion(respuesta);
+                cargarElementosFormularioPago();
+                eventosFormularioSubirPago(respuesta);
+                botonRegresarFacturacion();
+            });
+        }
     });
 
     var cargarSeccionFacturacion = function () {
@@ -273,7 +278,7 @@ $(function () {
         var viatico = $('#inputViaticosValidarVuelta').val();
         var observaciones = $('#inputObservacionesValidarVuelta').val();
         var data = {id: id, monto: monto, viatico: viatico, observaciones: observaciones};
-        
+
         evento.enviarEvento('Facturacion/guardarValidacionVuelta', data, '#panelFacturacionTesoreria', function (respuesta) {
             if (respuesta === true) {
                 evento.mensajeConfirmacion('Se valido con exito', 'Correcto');
