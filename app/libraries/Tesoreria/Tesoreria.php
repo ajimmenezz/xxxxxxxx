@@ -149,7 +149,10 @@ class Tesoreria extends General {
         $data['emisor'] = $arrayEmisor["@attributes"]['Nombre'];
         $arrayComprobante = (array) $xml->xpath('//cfdi:Comprobante');
         $arrayComprobante = (array) $arrayComprobante[0];
+        $arrayFolioSerie = $this->folioSerieFactura($arrayComprobante);
+
         $data['totalPago'] = $arrayComprobante["@attributes"]['Total'];
+        $data['folioSerie'] = $arrayFolioSerie['serie'] . $arrayFolioSerie['folio'];
 
         return array('formulario' => parent::getCI()->load->view('/Tesoreria/Formularios/FormularioPago', $data, TRUE), 'datos' => $data);
     }
@@ -264,6 +267,7 @@ class Tesoreria extends General {
                     $arrayComprobante = (array) $arrayComprobante[0];
 
                     $resultadoComprobante = $this->validarXMLComprobante($arrayComprobante, $totalFactura);
+                    $arrayFolioSerie = $this->folioSerieFactura($arrayComprobante);
 
                     $arrayReceptor = (array) $xml->xpath('//cfdi:Receptor');
                     $arrayReceptor = (array) $arrayReceptor[0];
@@ -287,7 +291,9 @@ class Tesoreria extends General {
                 'carpeta' => $carpeta,
                 'usuario' => $usuario['Id'],
                 'fecha' => $fecha,
-                'total' => $totalFactura);
+                'total' => $totalFactura,
+                'folio' => $arrayFolioSerie['folio'],
+                'serie' => $arrayFolioSerie['serie']);
 
             $facturasGuardadas = $this->DBT->guardarFacturaOutsourcingDocumentacion($arrayDocumentacion);
 
@@ -382,7 +388,7 @@ class Tesoreria extends General {
             } else {
                 return 'La etiqueta Uso CFDI no existe';
             }
-            
+
             if (isset($nodoReceptor['Rfc'])) {
                 if ($nodoReceptor['Rfc'] === 'SSO0101179Z7') {
                     $resultadoReceptor = TRUE;
@@ -394,6 +400,22 @@ class Tesoreria extends General {
             }
         }
         return $resultadoReceptor;
+    }
+
+    public function folioSerieFactura(array $datos) {
+        foreach ($datos as $k => $nodoComprobante) {
+            if (isset($nodoComprobante['Serie'])) {
+                $serie = $nodoComprobante['Serie'];
+            } else {
+                $serie = '';
+            }
+            
+            $folio = $nodoComprobante['Folio'];
+        }
+
+        return array(
+            'serie' => $serie,
+            'folio' => $folio);
     }
 
     public function validarXMLConcepto(array $datos, string $tickets) {
