@@ -34,73 +34,72 @@ class Tesoreria extends General {
         $data['tablaTesoreria'] = '';
         $data['vueltas'] = $this->poliza->resumenVueltasAsociadosFolio();
         $htmlTitulo = '';
+        $titulo = '';
+        $lineaSeparacion = '';
 
         if (in_array('275', $usuario['PermisosAdicionales']) || in_array('275', $usuario['Permisos'])) {
-            $htmlTitulo = '<div class="row">
-                                <div class="col-md-12">
-                                    <h3 class="m-t-10">Resumen de Vueltas</h3>
-                                </div>
-                                <!--Empezando Separador-->
-                                <div class="col-md-12">
-                                    <div class="underline m-b-15 m-t-15"></div>
-                                </div>
-                            </div>';
+            $titulo = 'Resumen de Vueltas';
+            $lineaSeparacion = $this->lineaSeparacionHTML();
             $data['tablaVueltas'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaSupervisoresPoliza", $data, TRUE);
             $data['tablaTesoreria'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaTesoreriaPagos", $data, TRUE);
         } else if (in_array('229', $usuario['PermisosAdicionales']) || in_array('229', $usuario['Permisos'])) {
+            $titulo = 'Resumen de Vueltas';
+            $lineaSeparacion = $this->lineaSeparacionHTML();
+            $data['tablaVueltas'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaSupervisoresPoliza", $data, TRUE);
+        } else if (in_array('228', $usuario['PermisosAdicionales']) || in_array('228', $usuario['Permisos'])) {
+            $titulo = 'Vueltas Pendientes por Autorizar';
+            $lineaSeparacion = $this->lineaSeparacionHTML();
+            $data['tablaVueltas'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaSupervisoresPoliza", $data, TRUE);
+        } else if (in_array('227', $usuario['PermisosAdicionales']) || in_array('227', $usuario['Permisos'])) {
+            $titulo = 'Resumen de Vueltas';
+            $lineaSeparacion = $this->lineaSeparacionHTML();
+            $data['tablaVueltas'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaSupervisoresPoliza", $data, TRUE);
+        }
+
+        if (in_array('282', $usuario['PermisosAdicionales']) || in_array('282', $usuario['Permisos'])) {
             $htmlTitulo = '<div class="row">
                                 <div class="col-md-6">
-                                    <h3 class="m-t-10">Resumen de Vueltas</h3>
+                                    <h3 class="m-t-10">' . $titulo . '</h3>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group text-right">
                                         <a href="javascript:;" class="btn btn-success btn-lg " id="btnSubirFactura"><i class="fa fa-cloud-upload"></i> Subir Factura</a>
                                     </div>
                                 </div>
-                                <!--Empezando Separador-->
-                                <div class="col-md-12">
-                                    <div class="underline m-b-15 m-t-15"></div>
-                                </div>
                             </div>';
-            $data['tablaVueltas'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaSupervisoresPoliza", $data, TRUE);
-        } else if (in_array('228', $usuario['PermisosAdicionales']) || in_array('228', $usuario['Permisos'])) {
+        } else {
             $htmlTitulo = '<div class="row">
                                 <div class="col-md-12">
-                                    <h3 class="m-t-10">Vueltas Pendientes por Autorizar</h3>
-                                </div>
-                                <!--Empezando Separador-->
-                                <div class="col-md-12">
-                                    <div class="underline m-b-15 m-t-15"></div>
+                                    <h3 class="m-t-10">' . $titulo . '</h3>
                                 </div>
                             </div>';
-            $data['tablaVueltas'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaSupervisoresPoliza", $data, TRUE);
-        } else if (in_array('227', $usuario['PermisosAdicionales']) || in_array('227', $usuario['Permisos'])) {
-            $htmlTitulo = '<div class="row">
-                                <div class="col-md-12">
-                                    <h3 class="m-t-10">Resumen de Vueltas</h3>
-                                </div>
-                                <!--Empezando Separador-->
-                                <div class="col-md-12">
-                                    <div class="underline m-b-15 m-t-15"></div>
-                                </div>
-                            </div>';
-            $data['tablaVueltas'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaSupervisoresPoliza", $data, TRUE);
         }
 
         if (in_array('281', $usuario['PermisosAdicionales']) || in_array('281', $usuario['Permisos'])) {
             $data['facturasTesoreriaPago'] = $this->DBT->facturasTesoreriaPago();
             $data['tablaTesoreria'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaTesoreriaPagos", $data, TRUE);
         }
-
-        $data['titulo'] = $htmlTitulo;
+        $data['titulo'] = $htmlTitulo . $lineaSeparacion;
 
         return array('formulario' => parent::getCI()->load->view('/Tesoreria/Facturacion', $data, TRUE), 'datos' => $data);
+    }
+    
+    public function lineaSeparacionHTML(){
+        $html = '<div class="row">
+                    <div class="col-md-12">
+                        <div class="underline m-b-15 m-t-15"></div>
+                    </div>
+                </div>';
+        return $html;
     }
 
     public function formularioSubirFactura() {
         $data = array();
         $usuario = $this->Usuario->getDatosUsuario();
-        $data['tablaFacturacionOutsourcingAutorizado'] = $this->DBT->tablaFacturacionOutsourcingAutorizado(array('usuario' => $usuario['Id']));
+        $data['tablaFacturacionOutsourcingAutorizado'] = $this->DBT->tablaFacturacionOutsourcingAutorizado(array(
+            'usuario' => $usuario['Id'],
+            'permisosAdicionales' => $usuario['PermisosAdicionales'],
+            'permisos' => $usuario['Permisos']));
         return array('formulario' => parent::getCI()->load->view('/Tesoreria/Formularios/FormularioSubirFactura', $data, TRUE), 'datos' => $data);
     }
 
@@ -409,7 +408,7 @@ class Tesoreria extends General {
             } else {
                 $serie = '';
             }
-            
+
             $folio = $nodoComprobante['Folio'];
         }
 

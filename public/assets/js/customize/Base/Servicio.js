@@ -341,7 +341,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
                 nombreControlador + '/Servicio_Cancelar'
                 );
     });
-    
+
     _this.file.crearUpload('#evidenciaSinClasificar',
             '/Generales/Servicio/Concluir_SinClasificar',
             null,
@@ -1114,7 +1114,7 @@ Servicio.prototype.formConcluirServicio = function () {
                     <div class="panel-body">\n\
                         <form class="margin-bottom-0" id="formConcluirServicioFirma" data-parsley-validate="true">';
 
-            html += '<div class="row m-t-10">\n\
+    html += '<div class="row m-t-10">\n\
                                     <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
                                         <div class="form-group">\n\
                                             <label for="nombre-personal">Nombre personal que Recibe *</label>\n\
@@ -1122,7 +1122,7 @@ Servicio.prototype.formConcluirServicio = function () {
                                         </div>\n\
                                     </div>\n\
                                 </div>';
-            html += '<div class="row m-t-10">\n\
+    html += '<div class="row m-t-10">\n\
                                     <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
                                         <div class="form-group">\n\
                                             <label id="inputCorreo">Correo(s) *</label>\n\
@@ -1130,7 +1130,7 @@ Servicio.prototype.formConcluirServicio = function () {
                                         </div>\n\
                                     </div>\n\
                                 </div>';
-            html += '<div class="row m-t-10">\n\
+    html += '<div class="row m-t-10">\n\
                                     <div class="col-md-12 text-center">\n\
                                         <div id="campoFirma"></div>\n\
                                     </div>\n\
@@ -1141,13 +1141,13 @@ Servicio.prototype.formConcluirServicio = function () {
                                         <label>Firma de conformidad del Gerente o TI *</label><br>\n\
                                     </div>\n\
                                 </div>';
-            html += '               <div class="row m-t-20">\n\
+    html += '               <div class="row m-t-20">\n\
                                         <div class="col-md-12 text-center">\n\
                                             <br>\n\
                                             <label><input type="checkbox" id="terminos" value="first_checkbox"> He leído y acepto los <a href="">Términos de Uso</a> y <a href="">Declaración de Privacidad</a> para SICCOB</label><br>\n\
                                         </div>\n\
                                     </div>';
-            html += '           <div class="row m-t-10">\n\
+    html += '           <div class="row m-t-10">\n\
                                     <div class="col-md-12">\n\
                                         <div class="errorConcluirServicio"></div>\n\
                                     </div>\n\
@@ -1158,7 +1158,7 @@ Servicio.prototype.formConcluirServicio = function () {
                                     </div>\n\
                                 </div>';
 
-            html += '       </form>\n\
+    html += '       </form>\n\
                             </div>\n\
                          </div>';
     return html;
@@ -1859,11 +1859,9 @@ Servicio.prototype.botonAgregarVuelta = function () {
     var data = {servicio: dataServicio.servicio};
     $('#btnAgregarVuelta').off('click');
     $('#btnAgregarVuelta').on('click', function () {
-        _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, panel, function (respuesta) {
+        _this.enviarEvento('/Generales/Servicio/VerificarVueltaAsociado', data, panel, function (respuesta) {
             if (respuesta === true) {
-                _this.enviarEvento('/Generales/Servicio/VerificarVueltaAsociado', data, '#modal-dialogo', function (respuesta) {
-                    if (respuesta === true) {
-                        var html = '<div class="row" m-t-10">\n\
+                var html = '<div class="row" m-t-10">\n\
                                         <div id="col-md-12 text-center">\n\
                                             <div id="campoLapizTecnico"></div>\n\
                                         </div>\n\
@@ -1875,30 +1873,28 @@ Servicio.prototype.botonAgregarVuelta = function () {
                                         </div>\n\
                                     </div>\n\
                                     <br>';
-                        _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
+                _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
 
-                        $('#btnModalConfirmar').addClass('hidden');
-                        $('#btnModalConfirmar').off('click');
-                        $('#campoCorreo').empty().html('Correo(s)');
+                $('#btnModalConfirmar').addClass('hidden');
+                $('#btnModalConfirmar').off('click');
+                $('#campoCorreo').empty().html('Correo(s)');
 
-                        var myBoard = _this.campoLapiz('campoLapiz');
-                        var myBoardTecnico = _this.campoLapiz('campoLapizTecnico');
+                var myBoard = _this.campoLapiz('campoLapiz');
+                var myBoardTecnico = _this.campoLapiz('campoLapizTecnico');
 
-                        _this.validarCamposFirmaAgregarVuelta(myBoard, myBoardTecnico, dataServicio);
-                    } else {
-                        if (respuesta === 'sinSucural') {
-                            _this.mensajeModal('No cuenta con sucursal guardada.', 'Advertencia', true);
-                        } else if (respuesta === 'noEstaProblema') {
-                            _this.mensajeModal('El servicio debe estar en Problema para agregar una vuelta.', 'Advertencia', true);
-                        } else if (respuesta === 'yaTieneVueltas') {
-                            _this.mensajeModal('No puede agregar otra vuelta a esta Folio hasta dentro de 14 horas.', 'Advertencia', true);
-                        } else if (respuesta === 'noHaySolucion') {
-                            _this.mensajeModal('No puede agregar otra vuelta si no tiene solución el servicio.', 'Advertencia', true);
-                        }
-                    }
-                });
+                _this.validarCamposFirmaAgregarVuelta(myBoard, myBoardTecnico, dataServicio);
             } else {
-                _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
+                if (respuesta === 'sinSucural') {
+                    _this.mensajeModal('No cuenta con sucursal guardada.', 'Advertencia', true);
+                } else if (respuesta === 'noEstaProblema') {
+                    _this.mensajeModal('El servicio debe estar en Problema para agregar una vuelta.', 'Advertencia', true);
+                } else if (respuesta === 'yaTieneVueltas') {
+                    _this.mensajeModal('No puede agregar otra vuelta a esta Folio hasta dentro de 14 horas.', 'Advertencia', true);
+                } else if (respuesta === 'noHaySolucion') {
+                    _this.mensajeModal('No puede agregar otra vuelta si no tiene solución el servicio.', 'Advertencia', true);
+                } else if (respuesta === 'noTieneFolio') {
+                    _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
+                }
             }
         });
     });

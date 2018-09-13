@@ -1918,9 +1918,18 @@ class Servicio extends General {
     }
 
     public function agregarVueltaAsociado(string $folio, array $datos) {
-        $vueltasAnteriores = $this->DBT->vueltasAnteriores($folio);
+        $dataServicios = $this->DBS->getServicios('SELECT
+                                                        IdSucursal,
+                                                        (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio,
+                                                        IdEstatus,
+                                                        sucursal(IdSucursal) Sucursal
+                                                    FROM t_servicios_ticket
+                                                    WHERE Id = "' . $datos['servicio'] . '"');
 
-        if (empty($vueltasAnteriores)) {
+        $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
+        $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
+        $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
+        if ($sucursalVuelta !== $nombreSucursal) {
             $this->guardarVueltaAsociados(array(
                 'servicio' => $datos['servicio'],
                 'img' => $datos['img'],
@@ -2029,7 +2038,7 @@ class Servicio extends General {
                     'FechaConclusion' => $fecha
                         ), array('Id' => $value['Id']));
             }
-            
+
             $this->DBS->concluirTicketAdist2(array(
                 'Estatus' => 'CONCLUIDO',
                 'Flag' => '1',
@@ -2749,24 +2758,30 @@ class Servicio extends General {
         $dataServicios = $this->DBS->getServicios('SELECT
                                                         IdSucursal,
                                                         (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio,
-                                                        IdEstatus
+                                                        IdEstatus,
+                                                        sucursal(IdSucursal) Sucursal
                                                     FROM t_servicios_ticket
                                                     WHERE Id = "' . $datos['servicio'] . '"');
 
-        $vueltasAnteriores = $this->DBT->vueltasAnteriores($dataServicios[0]['Folio']);
-
-        if (!empty($dataServicios[0]['IdSucursal'])) {
-            if ($dataServicios[0]['IdEstatus'] === '3') {
-                if (empty($vueltasAnteriores)) {
-                    return TRUE;
+        if ($dataServicios[0]['Folio'] && $dataServicios[0]['Folio'] !== '0') {
+            if (!empty($dataServicios[0]['IdSucursal'])) {
+                if ($dataServicios[0]['IdEstatus'] === '3') {
+                    $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
+                    $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
+                    $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
+                    if ($sucursalVuelta !== $nombreSucursal) {
+                        return TRUE;
+                    } else {
+                        return 'yaTieneVueltas';
+                    }
                 } else {
-                    return 'yaTieneVueltas';
+                    return 'noEstaProblema';
                 }
             } else {
-                return 'noEstaProblema';
+                return 'sinSucural';
             }
         } else {
-            return 'sinSucural';
+            return 'noTieneFolio';
         }
     }
 
