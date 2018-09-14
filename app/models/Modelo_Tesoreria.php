@@ -11,6 +11,12 @@ class Modelo_Tesoreria extends Modelo_Base {
     }
 
     public function tablaFacturacionOutsourcingAutorizado(array $data) {
+        if (in_array('283', $data['permisosAdicionales']) || in_array('283', $data['permisos'])) {
+            $idUsuario = '';
+        }else{
+            $idUsuario = 'AND tfo.IdUsuario = "' . $data['usuario'] . '"';
+        }
+        
         $consulta = $this->consulta('SELECT 
                                             tfo.Id,
                                             tfo.IdServicio,
@@ -30,7 +36,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                                                 INNER JOIN
                                             t_servicios_ticket tst ON tst.Id = tfo.IdServicio
                                         WHERE tfo.IdEstatus = 7
-                                        AND tfo.IdUsuario = "' . $data['usuario'] . '"
+                                        ' . $idUsuario . '
                                         ORDER BY tfo.Folio ASC');
         return $consulta;
     }
@@ -168,14 +174,19 @@ class Modelo_Tesoreria extends Modelo_Base {
                                         WHERE Id = "' . $id . '"');
         return $consulta[0]['Observaciones'];
     }
-
-    public function vueltasAnteriores(string $folio) {
+    
+    public function vueltasAnteriores(array $datos) {
         $ultimaFechaVuelta = mdate("%Y-%m-%d %H:%i:%s", strtotime("-14 hour"));
 
-        $consulta = $this->consulta('SELECT 
-                                        Fecha 
-                                    FROM t_facturacion_outsourcing
-                                    WHERE Folio = "' . $folio . '"
+        $consulta = $this->consulta('SELECT
+                                        tfo.Fecha, cvs.Nombre
+                                    FROM
+                                        t_facturacion_outsourcing tfo
+                                            INNER JOIN
+                                        t_servicios_ticket tst ON tfo.IdServicio = tst.Id
+                                            INNER JOIN
+                                        cat_v3_sucursales cvs ON tst.IdSucursal = cvs.Id
+                                    WHERE Folio = "' . $datos['folio'] . '"
                                     AND Fecha >= "' . $ultimaFechaVuelta . '"
                                     ORDER BY Fecha DESC LIMIT 1');
         return $consulta;
