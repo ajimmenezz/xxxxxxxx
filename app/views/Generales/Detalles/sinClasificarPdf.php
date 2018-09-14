@@ -110,7 +110,7 @@
         ?>
         <div class="row m-t-10">
             <div class="col-md-12 col-xs-12">
-                <h6 class="f-w-700">Resolución del Servicio</h6>
+                <h6 class="f-w-700">Resolución del Servicio <?php echo $tipoServicio; ?></h6>
                 <h5><?php echo $generales['descripcion']; ?></h5>
             </div>  
         </div>
