@@ -34,6 +34,7 @@ class Controller_Phantom extends Base {
         $verificarSeguimiento = $this->Servicio->verificarServiciosDepartamento($tipo[0]['IdTipoServicio']);
         $contenido = '';
         $titulo = '';
+        $tipoServicio = $this->Servicio->getTipoByServicio($servicio);
         if ($verificarSeguimiento[0]['Seguimiento'] === '0') {
             $titulo = 'Resumen de Servicio';
             $contenido = $this->Servicio->getDetallesSinClasificar($servicio, true);

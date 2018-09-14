@@ -1067,7 +1067,7 @@ class Servicio extends General {
         return $detallesSolicitud;
     }
 
-    public function getDetallesSinClasificar(string $servicio, bool $esPdf = false, string $idSolicitud = null) {
+    public function getDetallesSinClasificar(string $servicio, bool $esPdf = false, string $idSolicitud = null, $_tipoServicio = '') {
         $generalesSolicitud = $this->getGeneralesSolicitudServicio($servicio);
         $generales = $this->getGeneralesSinClasificar($servicio, $esPdf);
         $idSolicitud = $this->DBS->consultaGeneral('SELECT IdSolicitud FROM t_servicios_ticket WHERE Id = "' . $servicio . '"');
@@ -1084,7 +1084,8 @@ class Servicio extends General {
             'notasPdf' => $notasPdf,
             'listaNotas' => $listaNotas,
             'avanceServicio' => $avanceServicio,
-            'sumaTipoDiagnostico' => $sumaTipoDiagnostico
+            'sumaTipoDiagnostico' => $sumaTipoDiagnostico,
+            'tipoServicio' => $_tipoServicio
         ];
 
         if (!$esPdf) {

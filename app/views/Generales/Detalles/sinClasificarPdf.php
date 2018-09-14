@@ -92,7 +92,22 @@
                     <h6 class='f-w-700 text-center'><?php echo $solicitud['fechaFirma'] ?></h6>               
                 </div>
             </div>
-        <?php } ?>
+            <?php
+        }
+        if ($tipoServicio == '7') {
+            ?>
+        </div>
+        <div style="page-break-after:always;">
+            <div class="row m-t-10">
+                <div class="col-md-12 col-xs-12">
+                    <h6 class="f-w-700">Resolución del Servicio</h6>
+                    <h5><?php echo $generales['descripcion']; ?></h5>
+                </div>  
+            </div>
+        </div>
+        <?php
+    } else {
+        ?>
         <div class="row m-t-10">
             <div class="col-md-12 col-xs-12">
                 <h6 class="f-w-700">Resolución del Servicio</h6>
@@ -100,171 +115,174 @@
             </div>  
         </div>
     </div>
-
     <?php
-    if (!empty($generales['archivos']['htmlArchivos'])) {
-        ?>
-        <div style="page-break-after:always;">
-            <div class="row">
-                <div class="col-md-12">                            
-                    <fieldset>
-                        <legend class="pull-left width-full f-s-17">Archivos del servicio.</legend>
-                    </fieldset>  
-                </div>
+}
+?>
+
+<?php
+if (!empty($generales['archivos']['htmlArchivos'])) {
+    ?>
+    <div style="page-break-after:always;">
+        <div class="row">
+            <div class="col-md-12">                            
+                <fieldset>
+                    <legend class="pull-left width-full f-s-17">Archivos del servicio.</legend>
+                </fieldset>  
             </div>
-            <?php
-            echo $generales['archivos']['htmlArchivos'];
-            ?>
         </div>
         <?php
-    }
-
-    if (count($avanceServicio) > 0) {
+        echo $generales['archivos']['htmlArchivos'];
         ?>
-        <div style="page-break-after:always;">
+    </div>
+    <?php
+}
+
+if (count($avanceServicio) > 0) {
+    ?>
+    <div style="page-break-after:always;">
+        <div class="row">
+            <div class="col-md-12">                            
+                <fieldset>
+                    <legend class="pull-left width-full f-s-17">Historial.</legend>
+                </fieldset>  
+            </div>
+        </div>
+
+        <?php
+        foreach ($avanceServicio as $key => $value) {
+            $fecha = strftime('%A %e de %B, %G ', strtotime($value['Fecha'])) . date("h:ma", strtotime($value['Fecha']));
+            ?>
             <div class="row">
-                <div class="col-md-12">                            
-                    <fieldset>
-                        <legend class="pull-left width-full f-s-17">Historial.</legend>
-                    </fieldset>  
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <p class="f-w-600 pull-left"><?php echo $value['TipoAvance']; ?></p>            
                 </div>
             </div>
-
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <p class="f-w-600 pull-left"><?php echo $value['Usuario']; ?></p>            
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <p class="f-w-600 pull-right"><?php echo $fecha; ?></p>            
+                </div>
+            </div>
             <?php
-            foreach ($avanceServicio as $key => $value) {
-                $fecha = strftime('%A %e de %B, %G ', strtotime($value['Fecha'])) . date("h:ma", strtotime($value['Fecha']));
+            if ($value['Descripcion'] != '') {
                 ?>
-                <div class="row">
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <p class="f-w-600 pull-left"><?php echo $value['TipoAvance']; ?></p>            
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <p class="f-w-600 pull-left"><?php echo $value['Usuario']; ?></p>            
-                    </div>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <p class="f-w-600 pull-right"><?php echo $fecha; ?></p>            
-                    </div>
-                </div>
+                <pre><?php echo $value['Descripcion']; ?></pre>
                 <?php
-                if ($value['Descripcion'] != '') {
+            }
+            if ($value['Archivos'] != '') {
+                $archivos = explode(",", $value['Archivos']);
+                foreach ($archivos as $k => $v) {
                     ?>
-                    <pre><?php echo $value['Descripcion']; ?></pre>
-                    <?php
-                }
-                if ($value['Archivos'] != '') {
-                    $archivos = explode(",", $value['Archivos']);
-                    foreach ($archivos as $k => $v) {
-                        ?>
-                        <div style="display:inline-block; width: 180px; height: 180px; font-size:10px;" >
-                            <a href="<?php echo $v; ?>" target="_blank" >
-                                <img class="img-thumbnail img-responsive" style="width:100% !important; height: 100% !important;" src="<?php echo $v; ?>" />
-                            </a>
-                        </div>
-                        <?php
-                    }
-                }
-                $contadorTabla = $value[0]['tablaEquipos'];
-                if (count($contadorTabla) > 0) {
-                    ?>
-                    <div class="timeline-footer">
-                        <br>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h4 class="m-t-10">Lista de Equipos o Materiales</h4>
-                            </div>
-                        </div>
-
-                        <!--Empezando Separador-->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="underline m-b-15 m-t-15"></div>
-                            </div>
-                        </div>
-                        <!--Finalizando Separador-->
-
-                        <table class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%" height="3px">
-                            <thead>
-                                <tr>
-                                    <th class="never">Tipo Item</th>
-                                    <th class="all">Descripción</th>
-                                    <th class="all">Serie</th>
-                                    <th class="all">Cantidad</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                foreach ($contadorTabla as $key => $valor) {
-                                    switch ($valor['IdItem']) {
-                                        case '1':
-                                            $tipoItem = 'Equipo';
-                                            break;
-                                        case '2':
-                                            $tipoItem = 'Material';
-                                            break;
-                                        case '3':
-                                            $tipoItem = 'Refacción';
-                                    }
-                                    echo '<tr>';
-                                    echo '<td>' . $tipoItem . '</td>';
-                                    echo '<td>' . $valor['EquipoMaterial'] . '</td>';
-                                    echo '<td>' . $valor['Serie'] . '</td>';
-                                    echo '<td>' . $valor['Cantidad'] . '</td>';
-                                    echo '</tr>';
-                                }
-                                ?>                                        
-                            </tbody>
-                        </table>
+                    <div style="display:inline-block; width: 140px; height: 140px; font-size:10px;" >
+                        <a href="<?php echo $v; ?>" target="_blank" >
+                            <img class="img-thumbnail img-responsive" style="width:100% !important; height: 100% !important;" src="<?php echo $v; ?>" />
+                        </a>
                     </div>
                     <?php
                 }
             }
-            ?>
-        </div>
-        <?php
-    }
-    if ($sumaTipoDiagnostico !== FALSE) {
-        ?>
-        <div style="page-break-after:always;">
-            <div class="row">
-                <div class="col-md-12">                            
-                    <fieldset>
-                        <legend class="pull-left width-full f-s-17">Tipos de Fallas.</legend>
-                    </fieldset>  
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
+            $contadorTabla = $value[0]['tablaEquipos'];
+            if (count($contadorTabla) > 0) {
+                ?>
+                <div class="timeline-footer">
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4 class="m-t-10">Lista de Equipos o Materiales</h4>
+                        </div>
+                    </div>
+
+                    <!--Empezando Separador-->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="underline m-b-15 m-t-15"></div>
+                        </div>
+                    </div>
+                    <!--Finalizando Separador-->
+
                     <table class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%" height="3px">
                         <thead>
                             <tr>
-                                <th>Tipo</th>
-                                <th>Nombre</th>
-                                <th>Cantidad</th>
-                                <th>Tipo Falla</th>
+                                <th class="never">Tipo Item</th>
+                                <th class="all">Descripción</th>
+                                <th class="all">Serie</th>
+                                <th class="all">Cantidad</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
-                            foreach ($sumaTipoDiagnostico as $key => $valor) {
-                                (empty($valor['TipoDiagnostico'])) ? $tipoDiagnostico = 'Sin Tipo de Falla' : $tipoDiagnostico = $valor['TipoDiagnostico'];
+                            foreach ($contadorTabla as $key => $valor) {
+                                switch ($valor['IdItem']) {
+                                    case '1':
+                                        $tipoItem = 'Equipo';
+                                        break;
+                                    case '2':
+                                        $tipoItem = 'Material';
+                                        break;
+                                    case '3':
+                                        $tipoItem = 'Refacción';
+                                }
                                 echo '<tr>';
-                                echo '<td>' . $valor['Tipo'] . '</td>';
+                                echo '<td>' . $tipoItem . '</td>';
                                 echo '<td>' . $valor['EquipoMaterial'] . '</td>';
+                                echo '<td>' . $valor['Serie'] . '</td>';
                                 echo '<td>' . $valor['Cantidad'] . '</td>';
-                                echo '<td>' . $tipoDiagnostico . '</td>';
                                 echo '</tr>';
                             }
                             ?>                                        
                         </tbody>
                     </table>
                 </div>
+                <?php
+            }
+        }
+        ?>
+    </div>
+    <?php
+}
+if ($sumaTipoDiagnostico !== FALSE) {
+    ?>
+    <div style="page-break-after:always;">
+        <div class="row">
+            <div class="col-md-12">                            
+                <fieldset>
+                    <legend class="pull-left width-full f-s-17">Tipos de Fallas.</legend>
+                </fieldset>  
             </div>
-            <?php
-            ?>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%" height="3px">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Nombre</th>
+                            <th>Cantidad</th>
+                            <th>Tipo Falla</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($sumaTipoDiagnostico as $key => $valor) {
+                            (empty($valor['TipoDiagnostico'])) ? $tipoDiagnostico = 'Sin Tipo de Falla' : $tipoDiagnostico = $valor['TipoDiagnostico'];
+                            echo '<tr>';
+                            echo '<td>' . $valor['Tipo'] . '</td>';
+                            echo '<td>' . $valor['EquipoMaterial'] . '</td>';
+                            echo '<td>' . $valor['Cantidad'] . '</td>';
+                            echo '<td>' . $tipoDiagnostico . '</td>';
+                            echo '</tr>';
+                        }
+                        ?>                                        
+                    </tbody>
+                </table>
+            </div>
         </div>
         <?php
-    }
-    ?>
+        ?>
+    </div>
+    <?php
+}
+?>
 </div>
