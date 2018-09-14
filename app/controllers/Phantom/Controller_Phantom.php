@@ -34,69 +34,71 @@ class Controller_Phantom extends Base {
         $verificarSeguimiento = $this->Servicio->verificarServiciosDepartamento($tipo[0]['IdTipoServicio']);
         $contenido = '';
         $titulo = '';
-        switch ($tipo[0]['IdTipoServicio']) {
-            case '5': case 5:
-                $contenido = $this->Servicio->getTraficoHtmlToPdf($servicio);
-                $titulo = 'Resumen de Servicio - Tráfico';
-                break;
-            case '6': case 6:
-                $nombreServicio = $this->Servicio4D->getNombreServicio($servicio);
-                $titulo = 'Resumen de Servicio - '.$nombreServicio;
-                $contenido = $this->Servicio4D->getDetallesServicio4D($servicio, true);
-                break;
-            case '7': case 7:
-                $nombreServicio = $this->Servicio4D->getNombreServicio($servicio);
-                $titulo = 'Resumen de Servicio - '.$nombreServicio;
-                $contenido = $this->Servicio4D->getDetallesServicioCorrectivo4D($servicio, true);
-                break;
-            case '10': case 10:
-                $contenido = $this->Servicio->getDetallesUber($servicio, true);
-                $titulo = 'Resumen de Servicio - Uber';
-                break;
-            case '9': case 9:
-                $titulo = 'Resumen de Servicio - Sin Clasificar';
-                $contenido = $this->Servicio->getDetallesSinClasificar($servicio, true);
-                break;
-            case '11': case 11:
-                $titulo = 'Resumen de Servicio - Censo';
-                $contenido = $this->Servicio->getDetallesCenso($servicio);
-                $data = ['html' => $contenido, 'titulo' => $titulo];
-                $this->load->view('Phantom/ServicioV2', $data);
-                return false;
-                break;
-            case '12': case 12:
-                $titulo = 'Resumen de Servicio - Mantenimiento General';
-                if (is_null($datosExtra)) {
-                    $contenido = $this->Servicio->getDetallesMantenimientoPoliza($servicio);
-                    $data = ['html' => $contenido, 'titulo' => $titulo];
-                    $this->load->view('Phantom/ServicioV2', $data);
-                    return false;
-                } else {
-                    $contenido = $this->Servicio->getDetallesMantenimientoPoliza($servicio, $datosExtra);
-                }
-                break;
-            case '20': case 20:
-                if (is_null($datosExtra)) {
-                    $titulo = 'Resumen de Servicio - Correctivo';
-                    $contenido = $this->Servicio->getDetallesCorrectivo($servicio);
-                } else {
-                    if ($datosExtra === 'Impericia') {
-                        $titulo = 'Reporte Firmado - Correctivo';
-                        $contenido = $this->Servicio->getDetallesImpericiaCorrectivo($servicio);
-                    } elseif ($datosExtra === 'RetiroGarantiaRespaldo') {
-                        $titulo = 'Retiro a Garantía con Respaldo - Correctivo';
-                        $contenido = $this->Servicio->getDetallesRetiroGarantiaRespaldoCorrectivoPdf($servicio);
-                    } else {
-                        $titulo = 'Acuse de Entrega - Correctivo';
-                        $contenido = $this->Servicio->getDetallesEntregaEquipoPdf($servicio);
-                    }
-                }
-                break;
-        }
         if ($verificarSeguimiento[0]['Seguimiento'] === '0') {
             $titulo = 'Resumen de Servicio';
             $contenido = $this->Servicio->getDetallesSinClasificar($servicio, true);
+        } else {
+            switch ($tipo[0]['IdTipoServicio']) {
+                case '5': case 5:
+                    $contenido = $this->Servicio->getTraficoHtmlToPdf($servicio);
+                    $titulo = 'Resumen de Servicio - Tráfico';
+                    break;
+                case '6': case 6:
+                    $nombreServicio = $this->Servicio4D->getNombreServicio($servicio);
+                    $titulo = 'Resumen de Servicio - ' . $nombreServicio;
+                    $contenido = $this->Servicio4D->getDetallesServicio4D($servicio, true);
+                    break;
+                case '7': case 7:
+                    $nombreServicio = $this->Servicio4D->getNombreServicio($servicio);
+                    $titulo = 'Resumen de Servicio - ' . $nombreServicio;
+                    $contenido = $this->Servicio4D->getDetallesServicioCorrectivo4D($servicio, true);
+                    break;
+                case '10': case 10:
+                    $contenido = $this->Servicio->getDetallesUber($servicio, true);
+                    $titulo = 'Resumen de Servicio - Uber';
+                    break;
+                case '9': case 9:
+                    $titulo = 'Resumen de Servicio - Sin Clasificar';
+                    $contenido = $this->Servicio->getDetallesSinClasificar($servicio, true);
+                    break;
+                case '11': case 11:
+                    $titulo = 'Resumen de Servicio - Censo';
+                    $contenido = $this->Servicio->getDetallesCenso($servicio);
+                    $data = ['html' => $contenido, 'titulo' => $titulo];
+                    $this->load->view('Phantom/ServicioV2', $data);
+                    return false;
+                    break;
+                case '12': case 12:
+                    $titulo = 'Resumen de Servicio - Mantenimiento General';
+                    if (is_null($datosExtra)) {
+                        $contenido = $this->Servicio->getDetallesMantenimientoPoliza($servicio);
+                        $data = ['html' => $contenido, 'titulo' => $titulo];
+                        $this->load->view('Phantom/ServicioV2', $data);
+                        return false;
+                    } else {
+                        $contenido = $this->Servicio->getDetallesMantenimientoPoliza($servicio, $datosExtra);
+                    }
+                    break;
+                case '20': case 20:
+                    if (is_null($datosExtra)) {
+                        $titulo = 'Resumen de Servicio - Correctivo';
+                        $contenido = $this->Servicio->getDetallesCorrectivo($servicio);
+                    } else {
+                        if ($datosExtra === 'Impericia') {
+                            $titulo = 'Reporte Firmado - Correctivo';
+                            $contenido = $this->Servicio->getDetallesImpericiaCorrectivo($servicio);
+                        } elseif ($datosExtra === 'RetiroGarantiaRespaldo') {
+                            $titulo = 'Retiro a Garantía con Respaldo - Correctivo';
+                            $contenido = $this->Servicio->getDetallesRetiroGarantiaRespaldoCorrectivoPdf($servicio);
+                        } else {
+                            $titulo = 'Acuse de Entrega - Correctivo';
+                            $contenido = $this->Servicio->getDetallesEntregaEquipoPdf($servicio);
+                        }
+                    }
+                    break;
+            }
         }
+
         $data = ['html' => $contenido, 'titulo' => $titulo];
         $this->load->view('Phantom/ServicioV2', $data);
     }

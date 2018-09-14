@@ -157,7 +157,7 @@
                     $archivos = explode(",", $value['Archivos']);
                     foreach ($archivos as $k => $v) {
                         ?>
-                        <div style="display:inline-block; max-width: 180px; max-height: 250px; font-size:10px;" >
+                        <div style="display:inline-block; width: 180px; height: 180px; font-size:10px;" >
                             <a href="<?php echo $v; ?>" target="_blank" >
                                 <img class="img-thumbnail img-responsive" src="<?php echo $v; ?>" />
                             </a>
