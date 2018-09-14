@@ -94,8 +94,7 @@
             </div>
             <?php
         }
-        echo "AAAA  $tipoServicio  BBB";
-        
+
         if (in_array($tipoServicio, ['6', '7', 6, 7])) {
             ?>
         </div>
