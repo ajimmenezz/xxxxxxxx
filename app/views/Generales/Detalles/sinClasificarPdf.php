@@ -159,7 +159,7 @@
                         ?>
                         <div style="display:inline-block; width: 180px; height: 180px; font-size:10px;" >
                             <a href="<?php echo $v; ?>" target="_blank" >
-                                <img class="img-thumbnail img-responsive" src="<?php echo $v; ?>" />
+                                <img class="img-thumbnail img-responsive" style="max-width:100% !important; max-height: 100% !important;" src="<?php echo $v; ?>" />
                             </a>
                         </div>
                         <?php
