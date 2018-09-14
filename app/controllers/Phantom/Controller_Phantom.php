@@ -37,7 +37,7 @@ class Controller_Phantom extends Base {
         $tipoServicio = $this->Servicio->getTipoByServicio($servicio);
         if ($verificarSeguimiento[0]['Seguimiento'] === '0') {
             $titulo = 'Resumen de Servicio';
-            $contenido = $this->Servicio->getDetallesSinClasificar($servicio, true);
+            $contenido = $this->Servicio->getDetallesSinClasificar($servicio, true, null, $tipoServicio);
         } else {
             switch ($tipo[0]['IdTipoServicio']) {
                 case '5': case 5:
