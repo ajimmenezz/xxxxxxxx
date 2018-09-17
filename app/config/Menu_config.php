@@ -922,6 +922,29 @@ $config['Poliza'] = array(
             'masked-input/masked-input.min'
         ),
         'Permiso' => 'VPRVA'
+    ),
+    'Catalogo-Checklist' => array(
+        'liga' => 'Catalogo Checklist',
+        'icono' => '',
+        'Url' => '/Poliza/Catalogo_Checklist',
+        'css' => array('Poliza/Catalogo_Checklist'),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'jquery-tag-it/css/jquery.tagit',
+            'parsley/src/parsley'
+        ),
+        'js' => array('Base/Base', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla','Poliza/catalogo_checklist'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
+            'jquery-tag-it/js/tag-it.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'select2/dist/js/select2.min'
+        ),
+        'Permiso' => 'VCCHECK'
     )
 );
 
