@@ -42,10 +42,8 @@ class Registro_Usuario extends General {
         $password = md5(parent::getCI()->security->xss_clean(strip_tags($password)));
         $datos = array('Usuario' => parent::getCI()->security->xss_clean(strip_tags($user)), 'Password' => $password);
         $usuario = $this->DBRU->buscarUsuario($datos);
-        var_dump('pumas0');
-        var_dump($usuario);
+
         if (empty($usuario)) {
-//            var_dump($usuario);
             return array('resultado' => FALSE, 'logueo' => NULL);
         } else {
             $logueo = $this->DBRU->buscarRegistroLogueo($usuario['Id']);
@@ -55,13 +53,11 @@ class Registro_Usuario extends General {
             $registroLogueo = $this->DBRU->generarRegistroLogueo(array('IdUsuario' => parent::getCI()->session->Id, 'FechaIngreso' => $fechaIngreso, 'DireccionIp' => $ip));
             parent::getCI()->session->set_userdata('Logueo', (string) $registroLogueo);
             $url = $this->getUrlPerfil($usuario['Permisos'], $usuario['IdPerfil']);
-//            var_dump($logueo);
+
             if (empty($logueo)) {
-                var_dump('pumas1');
                 $usuarioAcceso = parent::getCI()->security->xss_clean(strip_tags($user));
                 return array('resultado' => TRUE, 'logueo' => NULL, 'url' => $url, 'acceso' => $acceso, 'id' => parent::getCI()->session->Id, 'usuario' => $usuarioAcceso);
             } else {
-                var_dump('pumas2');
                 return array('resultado' => FALSE, 'logueo' => $logueo['id'], 'url' => $url);
             }
         }

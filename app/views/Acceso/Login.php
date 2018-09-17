@@ -98,7 +98,14 @@
                             <div class="form-group m-b-15">
                                 <input id="inputPassword" type="password" class="form-control input-lg" placeholder="Password" data-parsley-required="true"/>
                             </div>
-                            <div class="login-buttons">                               
+                            <div class="row m-t-10">
+                                <!--Empezando error--> 
+                                <div class="col-md-12">
+                                    <div class="login-buttons"></div>
+                                </div>
+                                <!--Finalizando Error-->
+                            </div>  
+                            <div>                               
                                 <button id="btnIngresar" type="button" class="btn btn-success btn-block btn-lg" >Entrar</button>
                             </div>
                             <div class="m-t-20 m-b-40 p-b-40">

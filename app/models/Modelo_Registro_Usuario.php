@@ -36,22 +36,16 @@ class Modelo_Registro_Usuario extends Modelo_Base {
     public function buscarUsuario(array $data) {
         $consulta = $this->encontrar('cat_v3_usuarios', $data);
         if (!empty($consulta)) {
-            var_dump('pumas1');
             return $this->datosSession($consulta);
         } else {
-            var_dump('pumas2');
             $consulta = $this->encontrar('cat_v3_usuarios', array('Email' => $data['Usuario'], 'Password' => $data['Password']));
             if (!empty($consulta)) {
-                var_dump('pumas2.1');
                 return $this->datosSession($consulta);
             } else {
-                var_dump('pumas2.2');
                 $consulta = $this->encontrar('cat_v3_usuarios', array('EmailCorporativo' => $data['Usuario'], 'Password' => $data['Password']));
                 if (!empty($consulta)) {
-                    var_dump('pumas2.2.1');
                     return $this->datosSession($consulta);
                 } else {
-                    var_dump('pumas2.2.2');
                     return $consulta;
                 }
             }
