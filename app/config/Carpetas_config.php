@@ -88,7 +88,8 @@ $config['Secciones'] = array(
         'Catalogo-Soluciones-Equipo' => 'Catalogo_Soluciones_Equipo',
         'Catalogo-Cinemex-Validaciones' => 'Cinemex_Validaciones',
         'Servicios-Correctivos-Sin-Firma' => 'Servicios_Sin_Firma',
-        'Resumen-Vueltas-Asocidaos' => 'Resumen_Vueltas_Asociados'
+        'Resumen-Vueltas-Asocidaos' => 'Resumen_Vueltas_Asociados',
+        'Catalogo-Checklist' => 'Catalogo_Checklist'
     ),
     'Redes' => array(
         'Dashboard-Redes' => 'Dashboard',

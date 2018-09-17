@@ -330,4 +330,129 @@ class Poliza extends General {
                                                     ORDER BY tfo.Folio ASC');
     }
 
+    public function mostrarCategorias(){
+        $categorias = $this->DBP->consultaCategorias();
+        return $categorias;
+}
+    public function mostrarListaPreguntas(){
+        $preguntas = $this->DBP->consultaListaPreguntas();
+        return $preguntas;
+    }
+    
+    public function agregarCategoria(array $datos){
+        $consulta = $this->DBP->consultaCategorias();
+        $arrayCartegoria = array();
+        $nuevaCategoria = mb_strtoupper($datos['nuevaCategoria']); 
+        
+        foreach ($consulta as $categoria) {
+            array_push($arrayCartegoria, $categoria['Nombre']);
+        }
+                       
+        if (in_array($nuevaCategoria, $arrayCartegoria)) {
+            return [
+                    'code' => 500,
+                    'error' => "El nombre de la categoria ya se encuentra registrada"
+                ];
+        }else{
+            $insertar = $this->DBP->agregarCategoria(mb_strtoupper($datos['nuevaCategoria']));
+                return [
+                    'id' => $insertar['Id'],
+                    'categoria' => mb_strtoupper($datos['nuevaCategoria']),
+                    'code' => 200,
+                    'succes' => "Se agrego nueva categoria"
+                ];
+        }
+    }
+    public function actulizarCategoria(array $idCategoria){
+        if (isset($idCategoria['idCategoria'])) {
+            $consultaCategoria = $this->DBP->consultaCategorias($idCategoria['idCategoria']);            
+            return ['modal' => parent::getCI()->load->view('Poliza/Modal/EditarCategoria.php', ['data' => $consultaCategoria[0]], TRUE)];
+        }
+    }
+    
+    public function editarCategoria(array $datosCategoria){
+        $editar = $this->DBP->editarCategoria($datosCategoria);
+        return $editar['categoria'][0];
+    }
+    
+    public function modalPregunta(){
+        $arrayCategoria = Array();
+        
+        $selectCategoria = $this->DBP->consultaCategorias();        
+        foreach ($selectCategoria as $value) {           
+                array_push($arrayCategoria, array('id' => $value['Id'],'text' => $value['Nombre']));
+        }
+        
+        $data = [
+            'categoria' => $arrayCategoria,
+            'areaAtencion' => $this->DBP->consultaAreasAtencion()
+        ];
+        
+        return ['modal' => parent::getCI()->load->view('Poliza/Modal/AgregarPregunta.php', $data, TRUE),
+                'categoria' => $data['categoria'],
+                'areaAtencion' => $data['areaAtencion']];
+    }
+    
+    public function guardarPregunta(array $datos) {
+        
+        $areaAtencion = implode(',', $datos['areaAtencion']);
+        $datosPregunta = array(
+                                'IdCategoria' => $datos['categoria'],
+                                'Concepto' => $datos['concepto'],
+                                'Etiqueta' => $datos['etiqueta'],
+                                'AreasAtencion' => $areaAtencion
+                         );
+        $insertar = $this->DBP->insertarPregunta($datosPregunta);
+        
+        $consulta = $this->DBP->consultaListaPreguntas($insertar['Id']);
+        
+        foreach ($consulta as $valor) {
+            return [
+                'succes' => "La pregunta ya se encuentra registrada",
+                'Id' => $valor['Id'],
+                'NombreCategoria' => $valor['NombreCategoria'],
+                'Concepto' => $valor['Concepto'],
+                'Etiqueta' => $valor['Etiqueta'],
+                'Estatus' => $valor['Estatus']
+            ];
+        }
+    }
+    
+    public function editarPregunta(array $datosPregunta){
+        
+        $areaAtencion = implode(',', $datosPregunta['areaAtencion']);
+        $arrayPregunta = array( 'Id' => $datosPregunta['Id'],
+                                'IdCategoria' => $datosPregunta['categoria'],
+                                'Concepto' => $datosPregunta['concepto'],
+                                'Etiqueta' => $datosPregunta['etiqueta'],
+                                'AreasAtencion' => $areaAtencion,
+                                'Flag' => $datosPregunta['estatus']
+                                );
+        
+        return $this->DBP->editarPregunta($arrayPregunta); 
+    }
+    
+    public function mostrarPregunta($idPregunta){
+        if (isset($idPregunta['idPregunta'])) {
+            
+            $arrayCategoria = Array();
+        
+            $selectCategoria = $this->DBP->consultaCategorias();        
+            foreach ($selectCategoria as $value) {           
+                    array_push($arrayCategoria, array('id' => $value['Id'],'text' => $value['Nombre']));
+            }
+            
+            $consultaPregunta = $this->DBP->consultaListaPreguntas($idPregunta['idPregunta']);
+
+            $data = [
+                'categoria' => $arrayCategoria,
+                'areaAtencion' => $this->DBP->consultaAreasAtencion()
+            ];
+                       
+            return ['modal' => parent::getCI()->load->view('Poliza/Modal/EditarPregunta.php', ['data' => $consultaPregunta[0]], TRUE),
+                    'categoria' => $data['categoria'],
+                    'areaAtencion' => $data['areaAtencion'],
+                    'consultaPregunta' => $this->DBP->consultaListaPreguntas($idPregunta['idPregunta'])];
+        }
+    }
 }
