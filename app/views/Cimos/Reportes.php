@@ -43,6 +43,10 @@
                                     <td>1</td>
                                     <td>Suscripciones Activas</td>
                                 </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Gastos CIMOS & EVocal</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

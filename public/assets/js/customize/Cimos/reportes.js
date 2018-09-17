@@ -48,10 +48,12 @@ $(function () {
         var idReporte = arguments[0];
         tabla.generaTablaPersonal("#data-table-detalles", null, null, true, true, [[1, 'asc']]);
 
-        $('#data-table-detalles tbody').on('click', 'tr', function () {
-            var datos = $('#data-table-detalles').DataTable().row(this).data();
-            makeContractPdf(datos);
-        });
+        if (idReporte == 1) {
+            $('#data-table-detalles tbody').on('click', 'tr', function () {
+                var datos = $('#data-table-detalles').DataTable().row(this).data();
+                makeContractPdf(datos);
+            });
+        }
 
 
 
