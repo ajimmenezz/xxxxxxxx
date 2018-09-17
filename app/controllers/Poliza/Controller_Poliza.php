@@ -63,6 +63,27 @@ class Controller_Poliza extends Base {
             case 'DatosServicioSinFirma':
                 $resultado = $this->poliza->datosServicioSinFirma($this->input->post());
                 break;
+            case 'AgregarCategoria':
+                $resultado = $this->poliza->agregarCategoria($this->input->post());
+                break;
+            case 'ActulizarCategoria':
+                $resultado = $this->poliza->actulizarCategoria($this->input->post());
+                break;
+            case 'EditarCategoria':
+                $resultado = $this->poliza->editarCategoria($this->input->post());
+                break;
+            case 'ModalPregunta':
+                $resultado = $this->poliza->modalPregunta($this->input->post());
+                break;
+            case 'GuardarPregunta':
+                $resultado = $this->poliza->guardarPregunta($this->input->post());
+                break;
+            case 'EditarPregunta':
+                $resultado = $this->poliza->editarPregunta($this->input->post());
+                break;
+            case 'MostrarPregunta':
+                $resultado = $this->poliza->mostrarPregunta($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

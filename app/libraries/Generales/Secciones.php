@@ -415,6 +415,10 @@ class Secciones extends General {
                 $usuario = $this->Usuario->getDatosUsuario();
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados($usuario['IdDepartamento']);
                 break;
+            case 'Poliza/Catalogo_Checklist':
+                $datos['Categorias'] = $this->Poliza->mostrarCategorias();
+                $datos['ListaPreguntas'] = $this->Poliza->mostrarListaPreguntas();
+                break;
             default:
                 break;
         }

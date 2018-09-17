@@ -398,4 +398,76 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
+    public function consultaCategorias(int $idCategoria = null){
+        $condicion = (!is_null($idCategoria)) ? " where Id = '" . $idCategoria . "'" : '';
+        $consulta = $this->consulta("SELECT 
+                                        Id,
+                                        Nombre,
+                                        if(Flag = 1, 'Activo', 'Inactivo') as Estatus,
+                                        Flag
+                                    FROM cat_v3_checklist_poliza_categorias" . $condicion);
+        return $consulta;
+}
+        
+    public function agregarCategoria(string $categoria) {
+        $insertar = $this->insertar("cat_v3_checklist_poliza_categorias", array('Nombre' => mb_strtoupper($categoria)));
+        if(!is_null($insertar)){
+            return ['Id' => $this->ultimoId()];
+        }else{
+            return ['Id' => null, 'error' => $this->tipoError()];
+        }
+    }
+    
+    public function editarCategoria(array $datosCategoria){
+        $editar = $this->actualizar('cat_v3_checklist_poliza_categorias', array('Nombre' => $datosCategoria['Nombre'],'Flag' => $datosCategoria['Flag']),array('Id' => $datosCategoria['Id']));
+        
+        if(!is_null($editar)){
+            return ['categoria' => $this->consultaCategorias($datosCategoria['Id'])];
+        }
+    }
+    
+    public function consultaListaPreguntas(int $idPregunta = null) {
+        $condicion = (!is_null($idPregunta)) ? " where Id = '" . $idPregunta . "'" : '';
+        $consulta = $this->consulta("SELECT cvcf.Id,
+                                        cvcf.IdCategoria,
+                                        (SELECT cvcpc.Nombre FROM cat_v3_checklist_poliza_categorias cvcpc WHERE cvcpc.Id = cvcf.IdCategoria)as NombreCategoria,
+                                        cvcf.Concepto,
+                                        cvcf.Etiqueta,
+                                        cvcf.AreasAtencion,
+                                        (select GROUP_CONCAT(Nombre SEPARATOR '<br/>') as Areas from cat_v3_areas_atencion cvaa where concat('\"',cvaa.Id,'\"') REGEXP concat('\"',replace(cvcf.AreasAtencion,',','\"|\"'),'\"')) as Areas,
+                                        if(Flag = 1, 'Activo', 'Inactivo') as Estatus,		
+                                        cvcf.Flag
+                                    FROM cat_v3_checklist_conceptos_fisicos cvcf" . $condicion);
+        return $consulta;
+    }
+    
+    public function consultaAreasAtencion(){
+        $arrayAreaAtencion = Array();
+        
+        $consulta = $this->consulta("SELECT * FROM cat_v3_areas_atencion WHERE Flag = 1 ");
+        foreach ($consulta as $value) {           
+                array_push($arrayAreaAtencion, array('id' => $value['Id'],'text' => $value['Nombre']));
+        }
+        return $arrayAreaAtencion;
+    }
+    
+    public function insertarPregunta(array $datos) {
+       $insertar = $this->insertar('cat_v3_checklist_conceptos_fisicos', $datos); 
+       if(!is_null($insertar)){
+            return ['Id' => $this->ultimoId()];
+        }else{
+            return ['Id' => null, 'error' => $this->tipoError()];
+        }
+    }
+    
+    public function editarPregunta(array $datosPregunta){
+        
+        $editar = $this->actualizar('cat_v3_checklist_conceptos_fisicos', $datosPregunta ,array('Id' => $datosPregunta['Id']));
+        $consultaPregunta = $this->consultaListaPreguntas($datosPregunta['Id']);
+        
+        if(!is_null($editar)){
+            return ['pregunta' => $consultaPregunta[0]];
+        }
+    }
+
 }
