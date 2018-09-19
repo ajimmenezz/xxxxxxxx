@@ -242,3 +242,6 @@ $route['Reportes/PEV2/(:any)'] = 'Reportes/Controller_ProyectosEspecialesV2/mane
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
 $route['Error/(:any)'] = 'Controller_Error/$1';
+
+//$route['Perfil/(:any)'] = 'Perfil/Controller_Perfil/manejarEvento/$1';
+

@@ -228,5 +228,4 @@ class Usuario extends General {
 
         $this->Solicitud->solicitudNueva($datos);
     }
-
 }

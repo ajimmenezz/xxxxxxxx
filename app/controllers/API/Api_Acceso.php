@@ -20,7 +20,6 @@ class Api_Acceso extends Base {
     }
 
     public function index() {
-
         if ($this->input->post('respuestaRegistroLogueo') === "false") {
             $this->registroUsuario->registroSalida($this->input->post('logueo'));
         }

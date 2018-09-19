@@ -12,6 +12,7 @@ abstract class Controller_Base extends CI_Controller {
 
     protected $SECCIONES;
     protected $usuario;
+    protected $DBU;
 
     public function __construct() {
         parent::__construct();
@@ -24,6 +25,7 @@ abstract class Controller_Base extends CI_Controller {
         $this->output->set_header('Pragma: no-cache');
         $this->SECCIONES = \Librerias\Generales\Secciones::factory();
         $this->usuario = \Librerias\Generales\Registro_Usuario::factory();
+        $this->DBU = \Modelos\Modelo_Usuario::factory();
         $this->load->helper('url');
         $this->config->load('Carpetas_config');
     }
@@ -66,6 +68,7 @@ abstract class Controller_Base extends CI_Controller {
                                 $data['usuario'] = $usuario;
                                 $data['fechaServidor'] = $this->getFecha();
                                 $data['horaServidor'] = $this->getHora();
+                                $data['datosUsuario'] = $this->DBU->consultaTRHPersonal(array('IdUsuario' => $usuario['Id']));
                                 $this->load->view('Plantillas/Cabecera', $data);
                                 $this->load->view('Plantillas/Menu', $data);                                
                                 $this->load->view($carpeta, $data);

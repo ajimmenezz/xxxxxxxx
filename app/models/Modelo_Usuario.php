@@ -86,5 +86,10 @@ class Modelo_Usuario extends Modelo_Base {
         $consulta = $this->consulta($sentencia);
         return $consulta;
     }
+    
+    public function consultaTRHPersonal(array $data){
+        $consulta = $this->encontrar('t_rh_personal', $data);
+        return $consulta[0];
+    }
 
 }

@@ -226,6 +226,7 @@
                             <ul class="dropdown-menu animated fadeInLeft">
                                 <li class="arrow"></li>
                                 <li><a href="/Configuracion/Perfil">Editar Perfil</a></li>
+                                <!--<li><a href="javascript:;" id="editarPerfil">Editar Perfil</a></li>-->
                                 <li><a href="javascript:;">Reportar Sistemas</a></li>
                                 <li class="divider"></li>
                                 <li><a href="javascript:;" id="cerrar-sesion" >Cerrar Sesión</a></li>
