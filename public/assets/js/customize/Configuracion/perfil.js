@@ -47,21 +47,26 @@ $(function () {
                     validarInput = $('#select' + campo).val();
                 }
 
-                switch (nombreInput) {
+                switch (campo) {
                     case 'Email':
                         var expresion = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
                         validarExpresion = expresion.test(validarInput);
                         mensajeError = 'Incluye un "@" en tu dirección de correo electrónico.';
                         break;
-                    case 'Tel.1':
+                    case 'Tel1':
                         var expresion = /^([0-9]{3})+(-)+([0-9]{10})$/;
                         validarExpresion = expresion.test(validarInput);
                         mensajeError = 'El formato del número que escribio es incorrecto.';
                         break;
-                    case 'Tel.2':
+                    case 'Tel2':
                         var expresion = /^([0-9]{2})+(-)+([0-9]{3})+(-)+([0-9]{7})$/;
                         validarExpresion = expresion.test(validarInput);
                         mensajeError = 'El formato del número que escribio es incorrecto.';
+                        break;
+                    case 'CP':
+                        var expresion = /^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/;
+                        validarExpresion = expresion.test(validarInput);
+                        mensajeError = 'Deben ser solo números.';
                         break;
                     default:
                         expresion = /^$/;
