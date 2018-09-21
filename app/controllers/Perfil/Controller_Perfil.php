@@ -10,6 +10,7 @@ use Controladores\Controller_Base as Base;
 class Controller_Perfil extends Base {
 
     private $perfil;
+
 //    private $ServiciosTicket;
 
     public function __construct() {
@@ -25,7 +26,7 @@ class Controller_Perfil extends Base {
      */
 
     public function index() {
-
+        
     }
 
     /*
@@ -37,6 +38,12 @@ class Controller_Perfil extends Base {
 
     public function manejarEvento(string $evento = null) {
         switch ($evento) {
+            case 'MostrarFormularioPerfilUsuario':
+                $resultado = $this->perfil->mostrarFormularioPerfilUsuario($this->input->post());
+                break;
+            case 'ActualizarPerfilUsuario':
+                $resultado = $this->perfil->actualizarPerfilUsuario($this->input->post());
+                break;
 //            case 'Ingresar':
 //                $resultado = $this->usuario->validarUsuario(trim($this->input->post('usuario')), trim($this->input->post('password')), $this->input->ip_address());
 //                break;
@@ -58,5 +65,5 @@ class Controller_Perfil extends Base {
         }
         echo json_encode($resultado);
     }
-    
+
 }

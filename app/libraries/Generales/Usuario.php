@@ -228,4 +228,69 @@ class Usuario extends General {
 
         $this->Solicitud->solicitudNueva($datos);
     }
+
+    public function mostrarFormularioPerfilUsuario(array $datos) {
+        $data = array();
+
+        $data['campo'] = $datos['campo'];
+        $data['input'] = $datos['input'];
+        $data['nombreInput'] = $datos['nombreInput'];
+
+
+        switch ($data['campo']) {
+            case 'Tel1':
+                $data['placeholder'] = '044-5555555555';
+                break;
+            case 'Tel2':
+                $data['placeholder'] = '01-555-5555555';
+                break;
+            default:
+                $data['placeholder'] = '';
+        }
+
+        if ($data['campo'] !== 'IdSexo') {
+            return ['modal' => parent::getCI()->load->view('Configuracion/Modal/EditarPerfilUsuario.php', $data, TRUE)];
+        } else {
+            $html = '<div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label class="f-w-600">Genero:</label>
+                                <select id="selectPerfilGenero" class="form-control" style="width: 100% !important;">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="1">Femenino</option>
+                                    <option value="2">Masculino</option>
+                                </select>        
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-t-10">
+                        <div class="col-md-12">
+                            <div class="errorPerfilUsuario"></div>
+                        </div>
+                    </div>';
+            return ['modal' => $html];
+        }
+    }
+
+    public function actualizarPerfilUsuario(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $datosActualizar = array(
+            'inputNuevo' => $datos['inputNuevo'],
+            'campo' => $datos['campo'],
+            'id' => $usuario['Id']
+        );
+
+        if ($datos['tabla'] === 'personal') {
+            $consulta = $this->DBU->actualizarCampoTRHPersonal($datosActualizar);
+        } else {
+            $consulta = $this->DBU->actualizarCampoUsuario($datosActualizar);
+        }
+
+        if (!empty($consulta)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
 }

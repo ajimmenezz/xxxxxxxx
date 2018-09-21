@@ -86,10 +86,27 @@ class Modelo_Usuario extends Modelo_Base {
         $consulta = $this->consulta($sentencia);
         return $consulta;
     }
-    
-    public function consultaTRHPersonal(array $data){
-        $consulta = $this->encontrar('t_rh_personal', $data);
+
+    public function consultaTRHPersonal(array $data) {
+        $consulta = $this->consulta('SELECT 
+                                        *,
+                                        (SELECT Nombre FROM cat_rh_sexo WHERE Id = IdSexo) Genero,
+                                        (SELECT Email FROM cat_v3_usuarios WHERE Id = IdUsuario) Email
+                                    FROM t_rh_personal 
+                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
         return $consulta[0];
+    }
+
+    public function actualizarCampoTRHPersonal(array $datos) {
+        $consulta = $this->actualizar('t_rh_personal', [
+            $datos['campo'] => $datos['inputNuevo']], ['IdUsuario' => $datos['id']]);
+        return $consulta;
+    }
+    
+    public function actualizarCampoUsuario(array $datos) {
+        $consulta = $this->actualizar('cat_v3_usuarios', [
+            $datos['campo'] => $datos['inputNuevo']], ['Id' => $datos['id']]);
+        return $consulta;
     }
 
 }
