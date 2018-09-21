@@ -148,7 +148,7 @@
                             <label class="f-w-600 f-s-13">Monto:*</label>    
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
-                                <input type="number" id="txtMonto" class="form-control"> 
+                                <input type="number" step="any" id="txtMonto" class="form-control"> 
                                 <div class="input-group-btn m-l-10">
                                     <a id="btnAddConcepto" class="btn btn-success"><i class="fa fa-plus"></i></a>
                                 </div>
