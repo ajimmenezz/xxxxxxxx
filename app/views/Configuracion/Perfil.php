@@ -1,9 +1,17 @@
 <!-- Empezando #contenido -->
 <div id="content" class="content">
-    <!-- Empezando titulo de la pagina -->
-    <h1 class="page-header">Configuración Perfil Usuario</h1>
-    <!-- Finalizando titulo de la pagina -->
-
+    <div class="row">
+        <div class="col-md-6 col-xs-6">
+            <!-- Empezando titulo de la pagina -->
+            <h1 class="page-header">Configuración Perfil Usuario</h1>
+            <!-- Finalizando titulo de la pagina -->
+        </div>
+        <div class="col-md-6 col-xs-6 text-right">
+            <label id="btnActualizarContraseñaUsuario" class="btn btn-success">
+                <i class="fa fa-pencil"></i> Actualizar Contraseña
+            </label>  
+        </div>
+    </div>
     <!-- Empezando perfil contenedor -->
     <div class="profile-container">
         <!-- Empezando perfil-seccion 1 -->
@@ -15,6 +23,7 @@
                 <div class="profile-image">
                     <?php (empty($datosUsuario['UrlFoto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $datosUsuario['UrlFoto']; ?>
                     <img src="<?php echo $foto; ?>" alt="" />
+                    <input type="hidden" value="<?php echo $usuario['Usuario']; ?>" id="usuario"/>
                     <i class="fa fa-user hide"></i>
                 </div>
                 <!-- Finalizando perfil-image -->
@@ -22,7 +31,7 @@
                     <a id="btnSubirFotoUsuario" href="javascript:;" class="btn btn-warning btn-block btn-sm">Cambiar Foto</a>
                 </div>
             </div>
-            
+
             <!-- Empezando perfil-right -->
             <div class="profile-right">
                 <!-- Empezando perfil-info -->

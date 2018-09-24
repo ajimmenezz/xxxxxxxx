@@ -72,6 +72,7 @@ class Modelo_Registro_Usuario extends Modelo_Base {
                                     WHERE Id = ' . $value['Id']
             );
             $datos['Id'] = $value['Id'];
+            $datos['Usuario'] = $value['Usuario'];
             $datos['Email'] = $value['Email'];
             $datos['EmailCorporativo'] = $value['EmailCorporativo'];
             $datos['Nombre'] = $nombre[0]['Nombre'];
@@ -105,9 +106,9 @@ class Modelo_Registro_Usuario extends Modelo_Base {
         foreach ($foto as $value) {
             $datos['Foto'] = $value['UrlFoto'];
         }
-        
+
         $datos['PermisosString'] = array();
-        
+
         foreach ($datos['Permisos'] as $value2) {
             $permiso = $this->consulta('SELECT Permiso FROM cat_v3_permisos WHERE Id = "' . $value2 . '"');
             array_push($datos['PermisosString'], $permiso[0]['Permiso']);
@@ -222,7 +223,10 @@ class Modelo_Registro_Usuario extends Modelo_Base {
 
     public function actualizarPassword(array $data) {
         $fila = $this->actualizar('cat_v3_usuarios', array('Password' => $data['password']), array('Usuario' => $data['usuario']));
-        $respuesta = $this->actualizar('t_recuperacion_password', array('Flag' => 0), array('Id' => $data['id']));
+
+        if (!empty($data['id'])) {
+            $respuesta = $this->actualizar('t_recuperacion_password', array('Flag' => 0), array('Id' => $data['id']));
+        }
         return $fila;
     }
 

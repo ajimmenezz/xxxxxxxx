@@ -332,4 +332,53 @@ class Usuario extends General {
         }
     }
 
+    public function mostrarFormularioActualizarPasswordUsuario(array $datos) {
+        $data = array();
+
+        $html = '<form class="margin-bottom-0" id="formActualizarPassword" data-parsley-validate="true">
+                    <div class="checkbox m-b-15"></div>
+                    <div class="row m-b-15">
+                        <div class="col-md-12">
+                            <label id="divArchivos">Nuevo Password *</label>
+                            <input type="password" class="form-control" placeholder="Nuevo Password" id="inputNuevoPsw" data-parsley-required="true" data-parsley-minlength="8" data-parsley-maxlength="15"/>
+                        </div>
+                    </div>
+                    <div class="row m-b-15">
+                        <div class="col-md-12">
+                            <label id="divArchivos">Confirmar Password *</label>
+                            <input type="password" class="form-control" placeholder="Confirmar Password" id="inputConfirmaNuevoPsw" data-parsley-required="true" data-parsley-equalto="#inputNuevoPsw"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="checkbox" id="alertRecuperar">
+                                <!--muestra el mensaje de error para recuperar contraseña-->
+                                <label class="alert hidden" role="alert"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Empezando mensaje-->
+                    <div class="row">
+                        <div class="col-md-120">
+                            <div class="alert alert-warning fade in m-b-15">                            
+                                Para definir password debe complir con los siguientes puntos:
+                                <ul>
+                                    <li>una mayuscula</li>
+                                    <li>una minuscula</li>
+                                    <li>un numero</li>
+                                    <li>la longitud minuma 8 y maxima 15</li>
+                                </ul>                          
+                            </div>                        
+                        </div>
+                    </div>
+                    <!--Finalizando mensaje-->
+                </form>
+                <div class="row m-t-10">
+                    <div class="col-md-12">
+                        <div id="errorPasswordUsuario"></div>
+                    </div>
+                </div>';
+        return ['modal' => $html];
+    }
+
 }

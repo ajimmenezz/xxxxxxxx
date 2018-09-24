@@ -113,12 +113,8 @@ $(function () {
                 if (foto !== '') {
                     var datos = {};
                     file.enviarArchivos('#fotoUsuario', 'PerfilUsuario/ActualizarFotoUsuario', '#modalEdit', datos, function (resultado) {
-                        if (resultado) {
-                            evento.terminarModal('#modalEdit');
-                            evento.mensajeConfirmacion('Se actualizo la información correctamente.', 'Correcto');
-                        } else {
-//                            evento.mostrarMensaje(".errorPerfilUsuario", false, "El campo " + nombreInput + " es el mismo que el anterior.", 4000);
-                        }
+                        evento.terminarModal('#modalEdit');
+                        evento.mensajeConfirmacion('Se actualizo la información correctamente.', 'Correcto');
                     });
                 } else {
                     evento.mostrarMensaje("#errorFotoUsuario", false, "Favor de seleccionar una foto.", 4000);
@@ -126,4 +122,66 @@ $(function () {
             });
         });
     });
+
+    $('#btnActualizarContraseñaUsuario').off("click");
+    $('#btnActualizarContraseñaUsuario').on('click', function () {
+        evento.enviarEvento('PerfilUsuario/MostrarFormularioActualizarPasswordUsuario', {}, '#configuracionPerfilUsuario', function (respuesta) {
+            evento.iniciarModal('#modalEdit', 'Editar Perfil Usuario', respuesta.modal);
+            $('#btnGuardarCambios').off('click');
+            $('#btnGuardarCambios').on('click', function () {
+                var nuevo = $('#inputNuevoPsw').val();
+                var confirmacion = $('#inputConfirmaNuevoPsw').val();
+                if (nuevo !== '') {
+                    if (confirmacion !== '') {
+                        if (nuevo === confirmacion) {
+                            var mensaje = validarPassword(nuevo);
+                            if (mensaje === null) {
+                                var data = {nuevo: nuevo, usuario: $('#usuario').val()};
+                                evento.enviarEvento('/Acceso/Modificar_Password', data, '#modalEdit', function (respuesta) {
+                                    if (respuesta) {
+                                        evento.terminarModal('#modalEdit');
+                                        evento.mensajeConfirmacion('Se actualizo la contraseña correctamente.', 'Correcto');
+                                    } else {
+                                        evento.mostrarMensaje("#errorPasswordUsuario", false, 'La nueva contraseña es igual que la actual.', 5000);
+                                    }
+                                });
+                            } else {
+                                $('#inputNuevoPsw').val('');
+                                $('#inputConfirmaNuevoPsw').val('');
+                                evento.mostrarMensaje("#errorPasswordUsuario", false, mensaje, 5000);
+                            }
+                        } else {
+                            $('#inputNuevoPsw').val('');
+                            $('#inputConfirmaNuevoPsw').val('');
+                            evento.mostrarMensaje("#errorPasswordUsuario", false, "Los contraseñas no coinciden.", 4000);
+                        }
+                    } else {
+                        evento.mostrarMensaje("#errorPasswordUsuario", false, "El campo Confirmar Password esta vacío.", 4000);
+                    }
+                } else {
+                    evento.mostrarMensaje("#errorPasswordUsuario", false, "El campo Nuevo Password esta vacío.", 4000);
+                }
+            });
+        });
+    });
+
+    var validarPassword = function (password) {
+        var expresiones = {
+            '^(?=.*[A-Z])': 'Te falta agregar una mayuscula',
+            '(?=.*[0-9])': 'Te falta agregar al menos un numero',
+            '(?=.*[a-z])': 'Te falta agregar al menos una minuscula',
+            '(.{8,15})$': 'La longitud minima es 8 y maxima es 15'
+        }
+        var mensaje = null;
+        $.each(expresiones, function (key, value) {
+            var expre = new RegExp(key);
+            if (expre.test(password)) {
+                expre = undefined;
+            } else {
+                mensaje = value;
+                return false;
+            }
+        });
+        return mensaje;
+    };
 });

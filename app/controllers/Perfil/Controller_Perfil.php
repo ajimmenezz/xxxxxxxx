@@ -50,6 +50,9 @@ class Controller_Perfil extends Base {
             case 'MostrarFormularioCambiarFoto':
                 $resultado = $this->perfil->mostrarFormularioCambiarFoto($this->input->post());
                 break;
+            case 'MostrarFormularioActualizarPasswordUsuario':
+                $resultado = $this->perfil->mostrarFormularioActualizarPasswordUsuario($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
