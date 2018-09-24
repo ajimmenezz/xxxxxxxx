@@ -91,7 +91,7 @@ class Usuario extends General {
                 $archivos = setMultiplesArchivos($CI, 'fotoPersonal', $carpeta);
                 if ($archivos) {
                     $archivos = implode(',', $archivos);
-                    $this->DBU->insertarFoto('t_rh_personal', array(
+                    $this->DBU->insertarFoto(array(
                         'UrlFoto' => $archivos
                             ), array('Id' => $idPersonal)
                     );
@@ -138,7 +138,7 @@ class Usuario extends General {
                         $archivos = setMultiplesArchivos($CI, 'fotoActualizarPersonal', $carpeta);
                         if ($archivos) {
                             $archivos = implode(',', $archivos);
-                            $this->DBU->insertarFoto('t_rh_personal', array(
+                            $this->DBU->insertarFoto(array(
                                 'UrlFoto' => $archivos
                                     ), array('Id' => $datos['id'])
                             );
@@ -287,6 +287,45 @@ class Usuario extends General {
         }
 
         if (!empty($consulta)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function mostrarFormularioCambiarFoto(array $datos) {
+        $data = array();
+
+        $html = '<div class="row">
+                    <div class="col-md-12">                                    
+                        <div class="form-group">
+                            <label id="divArchivos">Foto *</label>
+                            <input id="fotoUsuario"  name="fotoUsuario[]" type="file" multiple/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row m-t-10">
+                        <div class="col-md-12">
+                            <div id="errorFotoUsuario"></div>
+                        </div>
+                </div>';
+        return ['modal' => $html];
+    }
+
+    public function actualizarFotoUsuario(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $archivos = null;
+        $CI = parent::getCI();
+        $carpeta = 'fotoPersonal/' . $usuario['Id'] . '/';
+        $archivos = setMultiplesArchivos($CI, 'fotoUsuario', $carpeta);
+
+        if ($archivos) {
+            $archivos = implode(',', $archivos);
+            $this->DBU->insertarFoto(array(
+                'UrlFoto' => $archivos
+                    ), array('Id' => $usuario['Id'])
+            );
+
             return TRUE;
         } else {
             return FALSE;

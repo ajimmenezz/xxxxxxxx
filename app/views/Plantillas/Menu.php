@@ -7,7 +7,7 @@
         <ul class="nav">
             <li class="nav-profile">
                 <div class="image">
-                    <?php (empty($usuario['Foto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $usuario['Foto']; ?>
+                    <?php (empty($datosUsuario['UrlFoto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $datosUsuario['UrlFoto']; ?>
                     <a href="javascript:;"><img src="<?php echo $foto; ?>" alt="" /></a>
                 </div>
                 <div class="info">
@@ -35,7 +35,7 @@
             foreach ($notificaciones as $key => $value) {
                 if (array_key_exists('cantidad', $value)) {
                     $cantidadNotificaciones = $value['cantidad'];
-                }                
+                }
             }
             foreach ($menu['Menu'] as $elementos) {
                 foreach ($elementos as $modulo => $secciones) {
@@ -75,8 +75,8 @@
                             $menuPrincipal .= '</ul></li>';
                         } else if ($modulo === 'Generales') {
                             $identificadroNotificaion = null;
-                            if(!empty($cantidadNotificaciones)){
-                                $identificadroNotificaion = '<span id="notificaciones-menu" class="badge pull-right">'.$cantidadNotificaciones.'</span>';
+                            if (!empty($cantidadNotificaciones)) {
+                                $identificadroNotificaion = '<span id="notificaciones-menu" class="badge pull-right">' . $cantidadNotificaciones . '</span>';
                             }
                             foreach ($secciones as $indice) {
                                 foreach ($indice as $pagina => $datos) {
@@ -91,7 +91,7 @@
                                         } else {
                                             $generales .= '<li class="has-sub active">
                                                 <a href="' . $datos['Url'] . '">
-                                                    '.$identificadroNotificaion.'
+                                                    ' . $identificadroNotificaion . '
                                                     <i class="' . $datos['icono'] . '"></i>
                                                     <span>' . $datos['liga'] . '</span>
                                                 </a>
@@ -108,7 +108,7 @@
                                         } else {
                                             $generales .= '<li class="has-sub">
                                                 <a href="' . $datos['Url'] . '">
-                                                    '.$identificadroNotificaion.'
+                                                    ' . $identificadroNotificaion . '
                                                     <i class="' . $datos['icono'] . '"></i>
                                                     <span>' . $datos['liga'] . '</span>
                                                 </a>

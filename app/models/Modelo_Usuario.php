@@ -67,8 +67,17 @@ class Modelo_Usuario extends Modelo_Base {
      *  $where = id que necesitamos para saber que campos se modificaran
      */
 
-    public function insertarFoto(string $tabla, array $datos, array $where) {
-        $consulta = $this->actualizar($tabla, $datos, $where);
+    public function insertarFoto(array $datos, array $where) {
+        $fotoAnterior = $this->consultaTRHPersonal(array('IdUsuario' => $where['Id']));
+        $archivosAnteriores = explode(',', $fotoAnterior['UrlFoto']);
+        
+        if (!empty($archivosAnteriores[0])) {
+            foreach ($archivosAnteriores as $key => $value) {
+                eliminarArchivo($value);
+            }
+        }
+
+        $consulta = $this->actualizar('t_rh_personal', $datos, $where);
         if (isset($consulta)) {
             return true;
         } else {
@@ -102,7 +111,7 @@ class Modelo_Usuario extends Modelo_Base {
             $datos['campo'] => $datos['inputNuevo']], ['IdUsuario' => $datos['id']]);
         return $consulta;
     }
-    
+
     public function actualizarCampoUsuario(array $datos) {
         $consulta = $this->actualizar('cat_v3_usuarios', [
             $datos['campo'] => $datos['inputNuevo']], ['Id' => $datos['id']]);

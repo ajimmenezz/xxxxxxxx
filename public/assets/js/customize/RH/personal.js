@@ -30,7 +30,7 @@ $(function () {
             if (url[0] === null) {
                 url[0] = '';
             }
-            console.log(respuesta);
+
             $('#formularioPersonal').removeClass('hidden').empty().append(respuesta.formulario);
             $('#resumenPersonal').addClass('hidden');
             $('#nuevo').addClass('hidden');

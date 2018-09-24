@@ -38,27 +38,18 @@ class Controller_Perfil extends Base {
 
     public function manejarEvento(string $evento = null) {
         switch ($evento) {
-            case 'MostrarFormularioPerfilUsuario':
-                $resultado = $this->perfil->mostrarFormularioPerfilUsuario($this->input->post());
-                break;
             case 'ActualizarPerfilUsuario':
                 $resultado = $this->perfil->actualizarPerfilUsuario($this->input->post());
                 break;
-//            case 'Ingresar':
-//                $resultado = $this->usuario->validarUsuario(trim($this->input->post('usuario')), trim($this->input->post('password')), $this->input->ip_address());
-//                break;
-//            case "Actualizar_Logueo":
-//                $resultado = $this->usuario->registroSalida(trim($this->input->post('logueo')));
-//                break;
-//            case "Recuperar_Acceso":
-//                $resultado = $this->correo->validarCorreo(trim($this->input->post('email')));
-//                break;
-//            case "Modificar_Password":
-//                $resultado = $this->usuario->actualizaPassword(array('password' => trim($this->input->post('nuevo')), 'usuario' => trim($this->input->post('usuario')), 'id' => trim($this->input->post('id'))));
-//                break;
-//            case "MostrarPerfil":
-//                $resultado = $this->perfil->Perfil($this->input->post());
-//                break;
+            case 'ActualizarFotoUsuario':
+                $resultado = $this->perfil->actualizarFotoUsuario($this->input->post());
+                break;
+            case 'MostrarFormularioPerfilUsuario':
+                $resultado = $this->perfil->mostrarFormularioPerfilUsuario($this->input->post());
+                break;
+            case 'MostrarFormularioCambiarFoto':
+                $resultado = $this->perfil->mostrarFormularioCambiarFoto($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

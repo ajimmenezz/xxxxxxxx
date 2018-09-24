@@ -2,7 +2,7 @@ $(function () {
     //Objetos
     var evento = new Base();
     var websocket = new Socket();
-
+    var file = new Upload();
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();
 
@@ -88,6 +88,40 @@ $(function () {
                     }
                 } else {
                     evento.mostrarMensaje(".errorPerfilUsuario", false, "El campo " + nombreInput + " esta vacío.", 4000);
+                }
+            });
+        });
+    });
+
+    $('#btnSubirFotoUsuario').off("click");
+    $('#btnSubirFotoUsuario').on('click', function () {
+        evento.enviarEvento('PerfilUsuario/MostrarFormularioCambiarFoto', {}, '#configuracionPerfilUsuario', function (respuesta) {
+            evento.iniciarModal('#modalEdit', 'Editar Perfil Usuario', respuesta.modal);
+            file.crearUpload('#fotoUsuario',
+                    'PerfilUsuario/ActualizarFotoUsuario',
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    1);
+
+            $('#btnGuardarCambios').off('click');
+            $('#btnGuardarCambios').on('click', function () {
+                var foto = $('#fotoUsuario').val();
+                if (foto !== '') {
+                    var datos = {};
+                    file.enviarArchivos('#fotoUsuario', 'PerfilUsuario/ActualizarFotoUsuario', '#modalEdit', datos, function (resultado) {
+                        if (resultado) {
+                            evento.terminarModal('#modalEdit');
+                            evento.mensajeConfirmacion('Se actualizo la información correctamente.', 'Correcto');
+                        } else {
+//                            evento.mostrarMensaje(".errorPerfilUsuario", false, "El campo " + nombreInput + " es el mismo que el anterior.", 4000);
+                        }
+                    });
+                } else {
+                    evento.mostrarMensaje("#errorFotoUsuario", false, "Favor de seleccionar una foto.", 4000);
                 }
             });
         });

@@ -13,17 +13,16 @@
             <div class="profile-left">
                 <!-- Empezando perfil-image -->
                 <div class="profile-image">
-                    <?php (empty($usuario['Foto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $usuario['Foto']; ?>
+                    <?php (empty($datosUsuario['UrlFoto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $datosUsuario['UrlFoto']; ?>
                     <img src="<?php echo $foto; ?>" alt="" />
                     <i class="fa fa-user hide"></i>
                 </div>
                 <!-- Finalizando perfil-image -->
                 <div class="m-b-10">
-                    <a href="#" class="btn btn-warning btn-block btn-sm">Cambiar Foto</a>
+                    <a id="btnSubirFotoUsuario" href="javascript:;" class="btn btn-warning btn-block btn-sm">Cambiar Foto</a>
                 </div>
             </div>
-            <!-- Finalizando perfil-left -->
-
+            
             <!-- Empezando perfil-right -->
             <div class="profile-right">
                 <!-- Empezando perfil-info -->
@@ -707,3 +706,12 @@
         </div>
     </div>
 </div>
+
+<!-- ================== EMPEZANDO ARCHIVOS CSS DE LA PAGINA================== -->
+<link href="/assets/plugins/jquery-fileUpload/css/fileinput.min.css" rel="stylesheet" />
+
+<!-- ================== EMPEZANDO ARCHIVOS JS DE LA PAGINA================== -->
+<script src="/assets/plugins/jquery-fileUpload/js/fileinput.js"></script>
+<script src="/assets/plugins/jquery-fileUpload/js/es.js"></script>
+<script src="/assets/js/customize/Base/fileUpload.js"></script>
+
