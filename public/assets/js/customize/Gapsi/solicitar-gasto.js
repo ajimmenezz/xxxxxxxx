@@ -137,6 +137,16 @@ $(function () {
 
     $("#btnAddConcepto").off("click");
     $("#btnAddConcepto").on("click", function () {
+        addConcepto();
+    });
+
+    $("#txtMonto").on('keyup', function (e) {
+        if (e.keyCode == 13) {
+            addConcepto();
+        }
+    });
+
+    function addConcepto() {
         var datos = {
             'idCat': $("#listCategoria").val(),
             'cat': $("#listCategoria option:selected").text(),
@@ -166,7 +176,7 @@ $(function () {
             actualizaTotal();
             actionsRemove();
         }
-    });
+    }
 
     function actualizaTotal() {
         var total = 0;
