@@ -239,10 +239,10 @@ class Usuario extends General {
 
         switch ($data['campo']) {
             case 'Tel1':
-                $data['placeholder'] = '044-5555555555';
+                $data['placeholder'] = '0445555555555';
                 break;
             case 'Tel2':
-                $data['placeholder'] = '01-555-5555555';
+                $data['placeholder'] = '015555555555';
                 break;
             default:
                 $data['placeholder'] = '';

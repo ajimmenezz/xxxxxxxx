@@ -165,8 +165,6 @@ class InformacionServicios extends General {
                 }
             }
         } else {
-            $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'Servicio del folio:' . $datos['Folio'], $servicios);
-
             if (!empty($servicios)) {
                 foreach ($servicios as $key => $value) {
                     if ($value['IdEstatus'] === '3') {

@@ -2368,7 +2368,6 @@ class Seguimientos extends General {
         $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $folio);
         $textoMultimedia = '<p><strong>Multimedia,</strong> el técnico <strong>' . $usuario['Nombre'] . '</strong> le ha reasignado la solicitud <strong>' . $folio . '</strong>.</p>' . $linkPDF;
         $this->enviarCorreoConcluido(array('ajimenez@siccob.com.mx'), 'Reasignación de Solicitud', $textoMultimedia);
-        $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'Reasignación de Solicitud', $textoMultimedia);
 
         $this->ServiceDesk->reasignarFolioSD($folio, '9304', $key);
     }
