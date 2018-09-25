@@ -1098,7 +1098,6 @@ class Seguimientos extends General {
                             $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
                             $textoTI = '<p>El técnico <strong>' . $usuario['Nombre'] . ' </strong> le ha reasignado la solicitud para solicitar una Refacción.<br>Número de Solicitud: <strong>' . $verificarFolio[0]['Folio'] . '</strong>.</p><br><a href="' . $linkPDF . '">Documento PDF</a><br><p>Favor de verificar en Service Desk</p>';
                             $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud', $textoTI);
-                            $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'Reasignación de Solicitud', $textoTI);
 
                             return $this->consultaCorrectivosSolicitudRefaccion($datos['servicio']);
                         } else {

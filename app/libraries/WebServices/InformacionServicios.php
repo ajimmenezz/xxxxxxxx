@@ -178,7 +178,6 @@ class InformacionServicios extends General {
             }
         }
         
-        $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'SD Folio:' . $datos['Folio'], 'Resultado SD: ' . $resultadoSD->operation->result->status . '<br>Key:' . $SDkey . '<br>Menesaje: ' . $resultadoSD->operation->result->message . '<br>Atiende: ' . $datos['Atiende']);
         $this->guardarLogSD($resultadoSD, $datos['Folio']);
 
         return $resultadoSD;
