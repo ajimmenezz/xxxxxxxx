@@ -92,7 +92,6 @@ class Catalogos extends General {
             }
         }
 
-//        $resultado = $this->DB->solicitarGasto($datos);
         if ($resultado['code'] == 200) {
             $bodyMail = ''
                     . '<div style="font-size: 80%;">'
@@ -172,13 +171,13 @@ class Catalogos extends General {
                     . '</table>'
                     . '<br />' . $adjuntos
                     . '<p>Para aplicarlo de click en el siguiente link Si se encuentra en las oficinas de SICCOB <a href="http://192.168.0.30/GAPSI/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p><br/><br/>'
-                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://187.162.74.124:88/GAPSI/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>';
+                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://gapsi.dyndns.org/GAPSI/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>';
 
             $titulo = "Autorización Requerida";
-            $this->Correo->enviarCorreo('gastos@siccob.solutions', array('ajimenez@siccob.com.mx', 'jdiaz@siccob.com.mx', 'pruebasiccob@ioitconsulting.com'), $titulo, $bodyMail, explode(",", $archivos));
+            $this->Correo->enviarCorreo('gastos@siccob.solutions', array('jdiaz@siccob.com.mx', 'mrodriguez@siccob.com.mx', 'pruebasiccob@ioitconsulting.com', 'ajimenez@siccob.com.mx'), $titulo, $bodyMail, explode(",", $archivos));
 
             $this->DB->insertar("t_archivos_gastos_gapsi", ['IdGasto' => $resultado['last'], 'Archivos' => $archivos, 'Email' => $this->usuario['EmailCorporativo']]);
-
+            
             return $resultado;
         } else {
             return $resultado;
