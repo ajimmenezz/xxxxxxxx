@@ -14,6 +14,11 @@
     </div>
     <!-- Empezando perfil contenedor -->
     <div class="profile-container">
+        <div id="cargando" class="text-center hidden">
+            <img
+                width="200"
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif" />
+        </div>
         <!-- Empezando perfil-seccion 1 -->
         <div id="configuracionPerfilUsuario" class="profile-section">
 
@@ -96,7 +101,7 @@
                                     <td>
                                         <div class="col-xs-12">
                                             <i class="fa fa-mobile fa-lg m-r-5"></i><?php echo $datosUsuario['Tel1']; ?>
-                                            <a class="editarPerfil m-l-5" data-campo="Tel1" data-input="<?php echo $datosUsuario['Tel1']; ?>" data-nombreInput="Teléfono Fijo" data-tabla="personal" href="javascript:;">Editar</a>
+                                            <a class="editarPerfil m-l-5" data-campo="Tel1" data-input="<?php echo $datosUsuario['Tel1']; ?>" data-nombreInput="Teléfono Móvil" data-tabla="personal" href="javascript:;">Editar</a>
                                         </div>
                                     </td>
                                 </tr>
@@ -105,7 +110,7 @@
                                     <td>
                                         <div class="col-xs-12">
                                             <i class="fa fa-phone fa-lg m-r-5"></i><?php echo $datosUsuario['Tel2']; ?>
-                                            <a class="editarPerfil m-l-5" data-campo="Tel2" data-input="<?php echo $datosUsuario['Tel2']; ?>" data-nombreInput="Telefono Móvil" data-tabla="personal" href="javascript:;">Editar</a>
+                                            <a class="editarPerfil m-l-5" data-campo="Tel2" data-input="<?php echo $datosUsuario['Tel2']; ?>" data-nombreInput="Teléfono Fijo" data-tabla="personal" href="javascript:;">Editar</a>
                                         </div>
                                     </td>
 
@@ -709,7 +714,7 @@
             <div class="modal-body"></div>
             <div class="modal-footer">
                 <div id="error-in-modal"></div>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" id="btnCerrarCambios" class="btn btn-secondary">Cerrar</button>
                 <button type="button" id="btnGuardarCambios" class="btn btn-primary">Guardar</button>
             </div>
         </div>

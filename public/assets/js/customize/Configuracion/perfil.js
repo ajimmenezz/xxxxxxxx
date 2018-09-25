@@ -20,6 +20,7 @@ $(function () {
 
     $('.editarPerfil').off("click");
     $('.editarPerfil').on('click', function () {
+        mostrarCargaPagina();
         var campo = $(this).attr('data-campo');
         var input = $(this).attr('data-input');
         var nombreInput = $(this).attr('data-nombreInput');
@@ -29,7 +30,7 @@ $(function () {
         var validarExpresion = true;
         var mensajeError = '';
 
-        evento.enviarEvento('PerfilUsuario/MostrarFormularioPerfilUsuario', data, '#configuracionPerfilUsuario', function (respuesta) {
+        evento.enviarEvento('PerfilUsuario/MostrarFormularioPerfilUsuario', data, '', function (respuesta) {
             evento.iniciarModal('#modalEdit', 'Editar Perfil Usuario', respuesta.modal);
             if (campo === 'IdSexo') {
                 if (input === 'Femenino') {
@@ -54,12 +55,12 @@ $(function () {
                         mensajeError = 'Incluye un "@" en tu dirección de correo electrónico.';
                         break;
                     case 'Tel1':
-                        var expresion = /^([0-9]{3})+(-)+([0-9]{10})$/;
+                        var expresion = /^([0-9]{13})$/;
                         validarExpresion = expresion.test(validarInput);
                         mensajeError = 'El formato del número que escribio es incorrecto.';
                         break;
                     case 'Tel2':
-                        var expresion = /^([0-9]{2})+(-)+([0-9]{3})+(-)+([0-9]{7})$/;
+                        var expresion = /^([0-9]{12})$/;
                         validarExpresion = expresion.test(validarInput);
                         mensajeError = 'El formato del número que escribio es incorrecto.';
                         break;
@@ -77,8 +78,7 @@ $(function () {
                         var datos = {'inputNuevo': validarInput, 'campo': campo, 'tabla': tabla};
                         evento.enviarEvento('PerfilUsuario/ActualizarPerfilUsuario', datos, '#modalEdit', function (resultado) {
                             if (resultado) {
-                                evento.terminarModal('#modalEdit');
-                                evento.mensajeConfirmacion('Se actualizo la información correctamente.', 'Correcto');
+                                recargarPagina();
                             } else {
                                 evento.mostrarMensaje(".errorPerfilUsuario", false, "El campo " + nombreInput + " es el mismo que el anterior.", 4000);
                             }
@@ -90,12 +90,15 @@ $(function () {
                     evento.mostrarMensaje(".errorPerfilUsuario", false, "El campo " + nombreInput + " esta vacío.", 4000);
                 }
             });
+
+            cerrarModalCambios();
         });
     });
 
     $('#btnSubirFotoUsuario').off("click");
     $('#btnSubirFotoUsuario').on('click', function () {
-        evento.enviarEvento('PerfilUsuario/MostrarFormularioCambiarFoto', {}, '#configuracionPerfilUsuario', function (respuesta) {
+        mostrarCargaPagina();
+        evento.enviarEvento('PerfilUsuario/MostrarFormularioCambiarFoto', {}, '', function (respuesta) {
             evento.iniciarModal('#modalEdit', 'Editar Perfil Usuario', respuesta.modal);
             file.crearUpload('#fotoUsuario',
                     'PerfilUsuario/ActualizarFotoUsuario',
@@ -113,19 +116,21 @@ $(function () {
                 if (foto !== '') {
                     var datos = {};
                     file.enviarArchivos('#fotoUsuario', 'PerfilUsuario/ActualizarFotoUsuario', '#modalEdit', datos, function (resultado) {
-                        evento.terminarModal('#modalEdit');
-                        evento.mensajeConfirmacion('Se actualizo la información correctamente.', 'Correcto');
+                        recargarPagina();
                     });
                 } else {
                     evento.mostrarMensaje("#errorFotoUsuario", false, "Favor de seleccionar una foto.", 4000);
                 }
             });
+
+            cerrarModalCambios();
         });
     });
 
     $('#btnActualizarContraseñaUsuario').off("click");
     $('#btnActualizarContraseñaUsuario').on('click', function () {
-        evento.enviarEvento('PerfilUsuario/MostrarFormularioActualizarPasswordUsuario', {}, '#configuracionPerfilUsuario', function (respuesta) {
+        mostrarCargaPagina();
+        evento.enviarEvento('PerfilUsuario/MostrarFormularioActualizarPasswordUsuario', {}, '', function (respuesta) {
             evento.iniciarModal('#modalEdit', 'Editar Perfil Usuario', respuesta.modal);
             $('#btnGuardarCambios').off('click');
             $('#btnGuardarCambios').on('click', function () {
@@ -139,8 +144,7 @@ $(function () {
                                 var data = {nuevo: nuevo, usuario: $('#usuario').val()};
                                 evento.enviarEvento('/Acceso/Modificar_Password', data, '#modalEdit', function (respuesta) {
                                     if (respuesta) {
-                                        evento.terminarModal('#modalEdit');
-                                        evento.mensajeConfirmacion('Se actualizo la contraseña correctamente.', 'Correcto');
+                                        recargarPagina();
                                     } else {
                                         evento.mostrarMensaje("#errorPasswordUsuario", false, 'La nueva contraseña es igual que la actual.', 5000);
                                     }
@@ -162,8 +166,29 @@ $(function () {
                     evento.mostrarMensaje("#errorPasswordUsuario", false, "El campo Nuevo Password esta vacío.", 4000);
                 }
             });
+
+            cerrarModalCambios();
         });
     });
+
+    var cerrarModalCambios = function () {
+        $('#btnCerrarCambios').off('click');
+        $('#btnCerrarCambios').on('click', function () {
+            evento.terminarModal('#modalEdit');
+            $('#cargando').addClass('hidden');
+            $('#configuracionPerfilUsuario').removeClass('hidden');
+        });
+    }
+
+    var mostrarCargaPagina = function () {
+        $('#cargando').removeClass('hidden');
+        $('#configuracionPerfilUsuario').addClass('hidden');
+    }
+
+    var recargarPagina = function () {
+        evento.terminarModal('#modalEdit');
+        location.reload();
+    }
 
     var validarPassword = function (password) {
         var expresiones = {
