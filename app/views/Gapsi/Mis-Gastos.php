@@ -33,6 +33,7 @@
                                 <tr>
                                     <th class="never">Id</th>
                                     <th class="<?php echo $clase; ?>">Usuario</th>
+                                    <th class="all">OC</th>
                                     <th class="all">Fecha</th>
                                     <th class="all">Beneficiario</th>
                                     <th class="all">Proyecto</th>
@@ -51,6 +52,7 @@
                                         . '<tr>'
                                         . '  <td class="f-s-10">' . $value['ID'] . '</td>'
                                         . '  <td>' . $datos['Gastos']['usuarios'][$value['ID']]['usuario'] . '</td>'
+                                        . '  <td>' . $value['OrdenCompra'] . '</td>'
                                         . '  <td>' . substr($value['FechaSolicitud'], 0, 16) . '</td>'
                                         . '  <td>' . $value['Beneficiario'] . '</td>'
                                         . '  <td>' . $value['NameProyecto'] . '</td>'
