@@ -1,25 +1,30 @@
+<!-- Empezando titulo de la pagina -->
+<div class="row">
+    <div class="col-md-6 col-xs-6">
+        <h1 class="page-header">Seguimiento Logística</h1>
+    </div>
+    <div class="col-md-6 col-xs-6 text-right">
+        <div class="btn-group">
+            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Acciones <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li id="btnCancelarServicioSeguimiento"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
+                <li id="btnGeneraPdfServicio"><a href="#"><i class="fa fa-file-pdf-o"></i> Generar Pdf</a></li>
+                <li id="btnNuevoServicioSeguimiento"><a href="#"><i class="fa fa-plus"></i> Nuevo Servicio</a></li>
+                <li id="btnNuevaSolicitud"><a href="#"><i class="fa fa-puzzle-piece"></i> Solicitar apoyo</a></li>
+            </ul>
+        </div> 
+        <label id="btnRegresarSeguimientoLogistica" class="btn btn-success">
+            <i class="fa fa fa-reply"></i> Regresar
+        </label>  
+    </div>
+</div>
+<!-- Finalizando titulo de la pagina -->
+
 <div id="seccion-datos-logistica" class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
     <!--Empezando Pestañas para definir el servicio-->
     <div class="panel-heading p-0">
-        <div class="btn-group pull-right" data-toggle="buttons"></div>
-        <div class="panel-heading-btn m-r-10 m-t-10">
-            <!-- Single button -->
-            <div class="btn-group">
-                <button type="button" class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Acciones <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li id="btnCancelarServicioSeguimiento"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
-                    <li id="btnGeneraPdfServicio"><a href="#"><i class="fa fa-file-pdf-o"></i> Generar Pdf</a></li>
-                    <li id="btnNuevoServicioSeguimiento"><a href="#"><i class="fa fa-plus"></i> Nuevo Servicio</a></li>
-                    <li id="btnNuevaSolicitud"><a href="#"><i class="fa fa-puzzle-piece"></i> Solicitar apoyo</a></li>
-                </ul>
-            </div>
-            <label id="btnRegresarSeguimientoLogistica" class="btn btn-success btn-xs">
-                <i class="fa fa fa-reply"></i> Regresar
-            </label>                                    
-            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-expand"><i class="fa fa-expand"></i></a>
-        </div>
         <!-- begin nav-tabs -->
         <div class="tab-overflow">
             <ul class="nav nav-tabs nav-tabs-inverse">
@@ -249,7 +254,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-8">
                             <div class="form-group">
                                 <label for="seguimientoLogistica">Ruta</label>
                                 <div class="input-group">
@@ -283,7 +288,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div id="seleccionTipoOrigen" class="hidden">                 
+                        <div id="seleccionTipoOrigen" class="col-md-8 hidden">                 
                             <div id="tipoOrigen">
                             </div>
                         </div>
@@ -302,7 +307,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div id="seleccionTipoDestino" class="hidden">                 
+                        <div id="seleccionTipoDestino" class="col-md-8 hidden">                 
                             <div id="tipoDestino">
                             </div>
                         </div>
