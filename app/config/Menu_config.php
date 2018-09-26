@@ -2511,6 +2511,36 @@ $config['Gapsi'] = array(
             'parsley/src/i18n/es',
         ),
         'Permiso' => 'VSGGAP'
+    ),
+    'Mis-Gastos' => array(
+        'liga' => 'Mis Gastos',
+        'icono' => '',
+        'Url' => '/Gapsi/Mis-Gastos',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'jquery-fileUpload/css/fileinput.min',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'parsley/src/parsley'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'Gapsi/mis-gastos'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+        ),
+        'Permiso' => 'VSGGAP'
     )
 );
 

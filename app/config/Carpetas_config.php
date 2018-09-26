@@ -154,7 +154,8 @@ $config['Secciones'] = array(
         'Seguimiento-Facturacion-Cobranza' => 'Seguimiento',
     ),
     'Gapsi' => array(
-        'Solicitud-Gasto' => 'Solicitar-Gasto'
+        'Solicitud-Gasto' => 'Solicitar-Gasto',
+        'Mis-Gastos' => 'Mis-Gastos'
     ),
     'Proveedores' => array(
         'Seguimiento-Proveedores' => 'Seguimiento'

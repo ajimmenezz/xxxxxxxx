@@ -6,8 +6,11 @@ use Librerias\Modelos\Base as Modelo_Base;
 
 class Modelo_Gapsi extends Modelo_Base {
 
+    private $usuario;
+
     public function __construct() {
         parent::__construct();
+        $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
     }
 
     public function getClientes() {
@@ -117,6 +120,42 @@ class Modelo_Gapsi extends Modelo_Base {
             parent::connectDBGapsi()->trans_commit();
             return ['code' => 200, 'last' => $ultimo];
         }
+    }
+
+    public function getMisGastos() {
+        $condicion = '';
+        $todos = true;
+        if (!in_array(284, $this->usuario['Permisos'])) {
+            $condicion = " where IdUsuario = '" . $this->usuario['Id'] . "' ";
+            $todos = false;
+        }
+
+        $ids = $this->consulta("select group_concat(IdGasto) as Ids from t_archivos_gastos_gapsi " . $condicion)[0]['Ids'];
+
+        $consulta = $this->consulta("select IdGasto, nombreUsuario(IdUsuario) as Usuario, IdUsuario, Email from t_archivos_gastos_gapsi " . $condicion);
+        $usuarios = [];
+        foreach ($consulta as $key => $value) {
+            $usuarios[$value['IdGasto']] = [
+                'idUsuario' => $value['IdUsuario'],
+                'usuario' => $value['Usuario'],
+                'email' => $value['Email']
+            ];
+        }
+
+
+        $query = "select "
+                . "registro.*, "
+                . "(select Descripcion from db_Proyectos where ID = registro.Proyecto) as NameProyecto "
+                . "from db_Registro registro "
+                . "where ID in (''," . $ids . ")";
+        $consulta = parent::connectDBGapsi()->query($query);
+        $gastos = $consulta->result_array();
+
+        return [
+            'gastos' => $gastos,
+            'usuarios' => $usuarios,
+            'permiso' => $todos
+        ];
     }
 
 }

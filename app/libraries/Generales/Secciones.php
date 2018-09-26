@@ -408,6 +408,9 @@ class Secciones extends General {
                 $datos['TiposBeneficiario'] = $this->Gapsi->getTiposBeneficiario();
                 $datos['TiposTransferencia'] = $this->Gapsi->getTiposTransferencia();
                 break;
+            case 'Gapsi/Mis-Gastos':
+                $datos['Gastos'] = $this->Gapsi->misGastos();
+                break;
             case 'Reportes/Proyectos-Especiales':
                 $datos['proyectos'] = $this->PEV2->getProyectosespeciales();
                 break;

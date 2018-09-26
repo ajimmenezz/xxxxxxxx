@@ -176,12 +176,17 @@ class Catalogos extends General {
             $titulo = "Autorización Requerida";
             $this->Correo->enviarCorreo('gastos@siccob.solutions', array('jdiaz@siccob.com.mx', 'mrodriguez@siccob.com.mx', 'pruebasiccob@ioitconsulting.com', 'ajimenez@siccob.com.mx'), $titulo, $bodyMail, explode(",", $archivos));
 
-            $this->DB->insertar("t_archivos_gastos_gapsi", ['IdGasto' => $resultado['last'], 'Archivos' => $archivos, 'Email' => $this->usuario['EmailCorporativo']]);
-            
+            $this->DB->insertar("t_archivos_gastos_gapsi", ['IdGasto' => $resultado['last'], 'Archivos' => $archivos, 'Email' => $this->usuario['EmailCorporativo'], 'IdUsuario' => $this->usuario['Id']]);
+
             return $resultado;
         } else {
             return $resultado;
         }
+    }
+
+    public function misGastos() {
+        $gastos = $this->DB->getMisGastos();
+        return $gastos;
     }
 
 }
