@@ -23,9 +23,9 @@
     </div>
     <div class="panel-body">
         <?php
-        echo "<pre>";
-        var_dump($Gasto);
-        echo "</pre>";
+//        echo "<pre>";
+//        var_dump($Gasto);
+//        echo "</pre>";
 //        echo "<pre>";
 //        var_dump($Proyectos);
 //        echo "</pre>";
