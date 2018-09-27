@@ -68,7 +68,7 @@ $(function () {
                         evento.cerrarModal();
                         data = {servicio: servicio, operacion: '2'};
                         cargarFormularioSeguimiento(data, datos, '#panelSeguimientoLogistica');
-                        recargandoTablaLogistica(respuesta);
+                        recargandoTablaLogistica(respuesta.serviciosAsignados);
                     });
                 });
 
@@ -119,16 +119,16 @@ $(function () {
                 materialDeServicioTrafico = respuesta.informacion.datosTrafico.Material;
                 mostrarSeccionSeguimientoLogistica(formulario);
                 calcularEquiposQueFaltanDistribuir(materialDeServicioTrafico, respuesta.informacion.equiposFaltantesDistribuciones);
+                cargarDatoEnInputTipoEnvioSeccionPuntoAPunto(respuesta);
                 iniciarElementosPaginaSeguimientoLogistica(respuesta, datosTabla);
                 mostrarInputsCompletosOrigenDestino(respuesta);
-                cargarDatoEnInputTipoEnvioSeccionPuntoAPunto(respuesta);
                 desabilitarFormularioSeccionGenerales(datosDelServicio);
                 mostrarPestañaPorElDeTipoTrafico(datosDelServicio, informacionServicio);
                 eventosParaSeccionSeguimientoLogistica(respuesta, datosTabla);
                 mostrarBotonEmpezarRuta(respuesta.informacion.datosTrafico.Ruta, respuesta.datosServicio.IdEstatus);
 
                 if (panel === '#seccion-datos-logistica') {
-                    recargandoTablaLogistica(respuesta);
+                    recargandoTablaLogistica(respuesta.serviciosAsignados);
                     evento.mostrarMensaje('.errorGeneralesLogistica', true, 'Datos actualizados Correctamente', 3000);
                 }
             }
@@ -137,8 +137,12 @@ $(function () {
 
     var recargandoTablaLogistica = function (informacionServicio) {
         tabla.limpiarTabla('#data-table-logistica');
-        $.each(informacionServicio.informacion.serviciosAsignados, function (key, item) {
-            tabla.agregarFila('#data-table-logistica', [item.Id, item.Ticket, item.Servicio, item.FechaCreacion, item.Descripcion, item.Solicita, item.NombreEstatus, item.IdEstatus, item.IdSolicitud, item.Folio]);
+        $.each(informacionServicio, function (key, item) {
+            var folio = '';
+            if (item.Folio !== null) {
+                folio = item.Folio
+            }
+            tabla.agregarFila('#data-table-logistica', [item.Id, item.Ticket, item.Servicio, item.FechaCreacion, item.Descripcion, item.Solicita, item.NombreEstatus, item.IdEstatus, item.IdSolicitud, folio]);
         });
     };
 
@@ -183,8 +187,7 @@ $(function () {
         select.cambiarOpcion('#selectRutaLogistica', informacionServicio.datosTrafico.Ruta);
         select.cargaDatos('#selectMaterialDistribuir', materialFaltanteDistribucion);
         select.crearSelectMultiple('#selectSerieMaterialDistribucion', 'Seleccionar');
-        $('#selectListaTipoEnvio').val(informacionServicio.datosEnvio.Paqueteria).trigger('change');
-        $('#selectListaTipoEnvio').val(informacionServicio.datosEnvio.Guia);
+        select.cambiarOpcion('#selectListaTipoEnvio', informacionServicio.datosEnvio.Paqueteria);
 
         $('#fechaEnvio').datetimepicker({
             format: 'YYYY-MM-DD HH:mm:ss'
@@ -591,11 +594,7 @@ $(function () {
                     $('#btnModalAbortar').empty().append('Cerrar');
                     $('#btnModalAbortar').on('click', function () {
                         if (respuesta.informacion.servicioConcluido) {
-                            tabla.limpiarTabla('#data-table-logistica');
-                            $.each(respuesta.informacion.serviciosAsignados, function (key, item) {
-                                tabla.agregarFila('#data-table-logistica', [item.Id, item.Ticket, item.Servicio, item.FechaCreacion, item.Descripcion, item.Solicita, item.NombreEstatus, item.IdEstatus, item.IdSolicitud]);
-                            });
-
+                            recargandoTablaLogistica(respuesta.informacion.serviciosAsignados);
                             $('#seccionSeguimientoServicioLogistica').empty().addClass('hidden');
                             $('#listaLogistica').removeClass('hidden');
                             evento.cerrarModal();
@@ -1012,43 +1011,37 @@ $(function () {
         }
         switch (tipo) {
             case('1'):
-                var html = '<div class="col-md-4">';
-                html += '       <div class="form-group">';
-                html += '           <label for="logistica">' + label + ' *</label>';
-                html += '           <select id="' + id + '" class="form-control generales" style="width: 100%" data-parsley-required="true" ' + habilitado + '>';
-                html += '               <option value="">Seleccionar</option>';
+                var html = '<div class="form-group">';
+                html += '       <label for="logistica">' + label + ' *</label>';
+                html += '       <select id="' + id + '" class="form-control generales" style="width: 100%" data-parsley-required="true" ' + habilitado + '>';
+                html += '           <option value="">Seleccionar</option>';
                 $.each(respuesta.informacion.sucursales, function (key, valor) {
-                    html += '  <option value="' + valor.Id + '">' + valor.Nombre + ' (' + valor.Cliente + ')</option>';
+                    html += '       <option value="' + valor.Id + '">' + valor.Nombre + ' (' + valor.Cliente + ')</option>';
                 });
-                html += '           < /select>';
-                html += '       </div>';
+                html += '       < /select>';
                 html += '   </div>';
                 html += '';
                 $('#' + idTipo + '').html(html);
                 select.crearSelect('#' + id + '');
                 break;
             case('2'):
-                var html = '<div class="col-md-4">';
-                html += '       <div class="form-group">';
-                html += '           <label for="logistica">' + label + ' *</label>';
-                html += '           <select id="' + id + '" class="form-control generales" style="width: 100%" data-parsley-required="true" ' + habilitado + '>';
-                html += '               <option value="">Seleccionar</option>';
+                var html = '<div class="form-group">';
+                html += '       <label for="logistica">' + label + ' *</label>';
+                html += '       <select id="' + id + '" class="form-control generales" style="width: 100%" data-parsley-required="true" ' + habilitado + '>';
+                html += '           <option value="">Seleccionar</option>';
                 $.each(respuesta.informacion.probedores, function (key, valor) {
-                    html += '  <option value="' + valor.Id + '">' + valor.Nombre + '</option>';
+                    html += '       <option value="' + valor.Id + '">' + valor.Nombre + '</option>';
                 });
-                html += '           < /select>';
-                html += '       </div>';
+                html += '       < /select>';
                 html += '   </div>';
                 html += '';
                 $('#' + idTipo + '').html(html);
                 select.crearSelect('#' + id + '');
                 break;
             case('3'):
-                var html = '<div class="col-md-8">';
-                html += '       <div class="form-group">';
-                html += '           <label for="logistica">' + label + ' *</label>';
-                html += '           <input type="text" class="form-control generales" id="' + id + '" placeholder="Ingresa la Dirección" style="width: 100%" data-parsley-required="true" ' + habilitado + '/>';
-                html += '       </div>';
+                var html = '<div class="form-group">';
+                html += '       <label for="logistica">' + label + ' *</label>';
+                html += '       <input type="text" class="form-control generales" id="' + id + '" placeholder="Ingresa la Dirección" style="width: 100%" data-parsley-required="true" ' + habilitado + '/>';
                 html += '   </div>';
                 html += '';
                 $('#' + idTipo + '').html(html);
@@ -1069,7 +1062,6 @@ $(function () {
     };
 
     var muestraOpcionesDeEnvio = function () {
-
         var seccion = (arguments[0] === 'PuntoAPunto') ? '' : arguments[0];
         var informacionServicio = arguments[1];
         var opcionSeleccionada = arguments[2];
@@ -1120,7 +1112,6 @@ $(function () {
     };
 
     var renombrarPestaña = function () {
-
         var pestaña = arguments[0];
         var nombre = arguments[1];
 
@@ -1128,7 +1119,6 @@ $(function () {
     };
 
     var ocultarFormularios = function () {
-
         var seccion = arguments[0];
         var pestañaConsolidadoPaqueteria = $('[href=#ConsolidadoPaqueteria' + seccion + ']').parent('li');
         var pestañaEntrega = $('[href=#EntregaMaterial' + seccion + ']').parent('li');
@@ -1158,7 +1148,6 @@ $(function () {
     };
 
     var mostrarTitulo = function () {
-
         var tituloFormularios = arguments[0];
 
         if (tituloFormularios.hasClass('hidden')) {
@@ -1173,7 +1162,6 @@ $(function () {
     };
 
     var ocultarMostarContenedorPestañasEnvioDistribucion = function () {
-
         var accion = arguments[0];
         var contenedor = $('#contenedorPestañasEnvioDistribucion');
 
@@ -1189,7 +1177,6 @@ $(function () {
     };
 
     var ocultarMostrarPestaña = function () {
-
         var pestaña = arguments[0];
         var formulario = arguments[1];
         var evento = arguments[2];
@@ -1216,7 +1203,6 @@ $(function () {
     };
 
     var activarDesactivarPestaña = function () {
-
         var pestaña = arguments[0];
         var formulario = arguments[1];
         var evento = arguments[2];
@@ -1244,7 +1230,6 @@ $(function () {
     };
 
     var cargarLista = function () {
-
         var lista = [];
         var elementoSelect = arguments[0];
         var informacionServicio = arguments[1];
@@ -1366,7 +1351,6 @@ $(function () {
     };
 
     var mostrarSeccionParaGenerarDestinoDistribucion = function () {
-
         var seccionFormularioRecoleccion = $('#seccionFormularioRecoleccion');
         var seccionformularioDestinoDistribucion = $('#seccionFormularioGenerarDestino');
 
@@ -1383,7 +1367,6 @@ $(function () {
     };
 
     var mostrarSeccionRecoleccionEquipos = function () {
-
         var formularioParaRecoleccion = $('#seccionFormularioRecoleccion');
 
         formularioParaRecoleccion.removeClass('hidden');
@@ -1399,7 +1382,6 @@ $(function () {
     };
 
     var mostrarOcultarBotonRegresarTablaDestinos = function () {
-
         var evento = arguments[0];
         var boton = $('#btnRegresarTablaDestinos');
 
@@ -1411,7 +1393,6 @@ $(function () {
     };
 
     var mostrarOcultarBotonAgregarDestino = function () {
-
         var evento = arguments[0];
         var boton = $('#btnGenerarDestinoDistribucion');
 
@@ -1423,7 +1404,6 @@ $(function () {
     };
 
     var mostrarOcultarTablaDestinosDistribucion = function () {
-
         var evento = arguments[0];
         var seccion = $('#seccionTablaDestinosDistribucion');
 
@@ -1479,7 +1459,6 @@ $(function () {
     };
 
     var mostrarOcultarFormulariosDestinoDistribucion = function () {
-
         var evento = arguments[0];
         var seccionFormulariosNuevoDestino = $('#seccionFormularioGenerarDestino');
         var formularioMaterial = $('#seccionDefinirMaterial');
@@ -1519,7 +1498,6 @@ $(function () {
     };
 
     var limpiarFormulariosDestinoDistribucion = function () {
-
         var selectTipoDestino = $('#selectDestinoDistribucion');
         var inputCantidadMaterial = $('#cantidadMaterial');
 
@@ -1536,26 +1514,9 @@ $(function () {
         }
     };
 
-//    var limpiarFormularioDestinolDistribucion = function () {
-//
-//        evento.limpiarFormulario('#formDestinoDistribucion');
-//
-//        if ($('#selectDestinoDistribucion').attr('disabled')) {
-//            $('#selectDestinoDistribucion').removeAttr('disabled');
-//            $('#distribucion').removeAttr('disabled');
-//        }
-//    };
-
     var limpiarFormularioMaterialDestinoDistribucion = function () {
         evento.limpiarFormulario('#formMaterialDestinoDistribucion');
     };
-
-//    var ocultarSeccionMaterialDistribucion = function () {
-//        $('#btnGuardarDestinoDistribucion').removeClass('hidden');
-//        $('#btnAgregarMaterialDistribucion').addClass('hidden');
-//        $('#seccionDefinirMaterial').addClass('hidden');
-//        $('#secctionTablaMaterialDestino').addClass('hidden');
-//    };
 
     var ocultarBotonesGuardarYDescargarEquipos = function () {
         $('#btnGuardarMaterialTrafico').addClass('hidden');
@@ -1582,7 +1543,6 @@ $(function () {
     };
 
     var validarFormulario = function () {
-
         var objetoSelectMaterial = arguments[0];
         var inputCantidad = arguments[1];
         var modeloEquipo = $(objetoSelectMaterial).val();
@@ -1596,7 +1556,6 @@ $(function () {
     };
 
     var validarMaterialEnTabla = function () {
-
         var filas = $('#data-table-servicio-materiales').DataTable().rows().data();
         var nombreMaterial = $.trim($(arguments[0].concat(' option:selected')).text());
         var repetido = false;
@@ -1617,7 +1576,6 @@ $(function () {
     };
 
     var agregandoEquipo = function () {
-
         var cantidad = $('#inputCantidadEquipo').val();
         var modeloEquipo = $('#selectEquipo').val();
         var nombreEquipo = $('#selectEquipo option:selected').text();
@@ -1648,7 +1606,6 @@ $(function () {
     };
 
     var agregandoMaterialYOtros = function () {
-
         var objetoTipoMaterial = arguments[0];
         var objetoCantidadMaterial = arguments[1];
         var modeloEquipo = $(objetoTipoMaterial).val();
@@ -1664,7 +1621,6 @@ $(function () {
     };
 
     var limpiarFormularioMaterial = function () {
-
         select.cambiarOpcion('#selectEquipo', '');
         select.cambiarOpcion('#selectMaterial', '');
         $('#inputOtro').val('');
@@ -1678,7 +1634,6 @@ $(function () {
     };
 
     var confirmacionParaGuardarRecoleccionDistribucion = function () {
-
         var respuesta = arguments[0];
         var datos = arguments[1];
         var mensaje = '<div class="row">\n\
@@ -1698,11 +1653,9 @@ $(function () {
         $('#btnModalConfirmar').addClass('hidden');
         $('#btnModalAbortar').addClass('hidden');
 
-
         $('#btnAceptarGuardarRecoleccionDistribucion').on('click', function () {
             guardarRecoleccionDistribucion(respuesta, datos);
         });
-
 
         $('#btnCancelarGuardarRecoleccionDistribucion').on('click', function () {
             evento.cerrarModal();
@@ -1710,7 +1663,6 @@ $(function () {
     };
 
     var guardarRecoleccionDistribucion = function () {
-
         var respuesta = arguments[0];
         var datos = arguments[1];
 
@@ -1729,7 +1681,6 @@ $(function () {
     };
 
     var mensajeExito = function () {
-
         var mensaje = '<div class="row">\n\
                             <div class="col-md-12 text-center">\n\
                                 <p>Se guardo con exito la información.</p>\n\
@@ -1741,7 +1692,6 @@ $(function () {
     };
 
     var calcularEquiposQueFaltanDistribuir = function () {
-
         var material = arguments[0];
         var materialFaltante = arguments[1];
         var ultimoIndex = null;
@@ -1760,7 +1710,6 @@ $(function () {
     };
 
     var agregandoMaterialAVaribleGlobal = function () {
-
         var materiales = arguments[0];
         var contador = 0;
 
@@ -1783,7 +1732,6 @@ $(function () {
     };
 
     var agregandoEquiposAVaribleGlobal = function () {
-
         var materiales = arguments[0];
         var ultimoIndex = arguments[1];
         var nombreEquipos = [];
@@ -1832,7 +1780,6 @@ $(function () {
     };
 
     var obtenerDatosDeMaterial = function () {
-
         var materialSeleccionado = arguments[0];
         var indice = null;
 
@@ -1846,7 +1793,6 @@ $(function () {
     };
 
     var crearNuevoDestino = function () {
-
         var servicio = arguments[0];
         var datos = {servicio: servicio, tipoDestino: $('#selectDestinoDistribucion').val(), destino: $('#distribucion').val()};
 
@@ -1864,8 +1810,6 @@ $(function () {
         } else {
             evento.mostrarMensaje('#errorAgregarMaterialDistribucion', false, 'No se puede crear un nuevo destino ya que todo el material ya fue asignado.', 3000);
         }
-
-
     };
 
     var bloquearFormalarioDestino = function () {
@@ -1875,7 +1819,6 @@ $(function () {
     };
 
     var actualizarTablaDestinosDistribuciones = function () {
-
         var listaDestinos = arguments[0];
         tabla.limpiarTabla('#data-table-distribucion');
         $.each(listaDestinos, function (key, value) {
@@ -1891,7 +1834,6 @@ $(function () {
     };
 
     var obtenerTipoMaterialParaAgregar = function () {
-
         var datosMaterial = arguments[0];
         var contenedorSelectSerieMaterial = $('#contenedorSeriesDistribucion');
         var cantidad = $('#cantidadMaterial').val();
@@ -1949,7 +1891,6 @@ $(function () {
     };
 
     var actualizarMaterialFaltanteDistribucion = function () {
-
         var material = arguments[0];
         var tipo = arguments[1];
         var materialSeleccionado = arguments[2];
@@ -1966,7 +1907,6 @@ $(function () {
     };
 
     var obtenerIndice = function () {
-
         var materialSeleccionado = arguments[0];
         var indice = null;
 
@@ -1982,7 +1922,6 @@ $(function () {
     };
 
     var actulizarListaEquipos = function () {
-
         var equipos = arguments[0];
         var indice = arguments[1];
         var seriesEquipos = $('#selectSerieMaterialDistribucion option:selected');
@@ -2004,7 +1943,6 @@ $(function () {
     };
 
     var eliminarMaterialDeLista = function () {
-
         var cantidadMaterialDisponible = arguments[0];
         var indice = arguments[1];
 
@@ -2020,7 +1958,6 @@ $(function () {
     };
 
     var guardarMaterialFaltanteListaVieja = function () {
-
         $.each(materialFaltanteDistribucion, function (key, value) {
             if (typeof value.Cantidad !== 'undefined') {
                 materialFaltanteDistribucionListaVieja.push({
@@ -2048,7 +1985,6 @@ $(function () {
     };
 
     var restablecerMaterialFaltanteDistribucion = function () {
-
         materialFaltanteDistribucion = [];
 
         $.each(materialFaltanteDistribucionListaVieja, function (key, value) {
@@ -2074,7 +2010,6 @@ $(function () {
     };
 
     var guardarMaterialParaDestinoDistribucion = function () {
-
         var servicio = arguments[0];
         var filas = $('#data-table-equipos-distribucion').DataTable().rows().data();
         var datos = null;
@@ -2096,7 +2031,6 @@ $(function () {
                 $('#btnModalConfirmar').off('click');
                 $('#btnModalAbortar').off('click');
 
-
                 $('#btnModalAbortar').on('click', function () {
                     cambiarTituloSeccionDistribucion('Destinos');
                     mostrarOcultarBotonRegresarTablaDestinos('ocultar');
@@ -2115,7 +2049,6 @@ $(function () {
     };
 
     var regresarMaterialAVariableMaterialFaltante = function () {
-
         var datosFilaSeleccionada = arguments[0];
         var datosParaOperacion = {};
 
@@ -2127,7 +2060,6 @@ $(function () {
         datosParaOperacion.materialListaVieja = obtenerMaterialDeLaListaVieja(datosParaOperacion);
         datosParaOperacion.materialListaFaltante = validarMaterialEnListaFaltante(datosParaOperacion);
 
-
         if (datosParaOperacion.materialListaFaltante.existe) {
             restablecerMaterialExistenteAListaFaltante(datosParaOperacion);
         } else {
@@ -2136,7 +2068,6 @@ $(function () {
     };
 
     var obtenerMaterialDeLaListaVieja = function () {
-
         var datoMaterialSeleccionado = arguments[0];
         var material = {};
 
@@ -2155,7 +2086,6 @@ $(function () {
     };
 
     var validarMaterialEnListaFaltante = function () {
-
         var datoMaterialSeleccionado = arguments[0];
         var material = {};
 
@@ -2172,7 +2102,6 @@ $(function () {
     };
 
     var restablecerMaterialExistenteAListaFaltante = function () {
-
         var material = {};
         var datoMaterialSeleccionado = arguments[0];
 
@@ -2191,7 +2120,6 @@ $(function () {
     };
 
     var agregarMaterialAListaFaltante = function () {
-
         var material = [];
         var datoMaterialSeleccionado = arguments[0];
 
@@ -2216,7 +2144,6 @@ $(function () {
     };
 
     var generarListaMaterialParaDestino = function () {
-
         var material = arguments[0];
         var lista = [];
 
@@ -2243,7 +2170,6 @@ $(function () {
     };
 
     var limpiarFormularioEnvioDistribucion = function () {
-
         $('#fechaEnvioDistribucion').val();
         $('#selectTipoEnvioDistribucion').val('').trigger('change');
         $('#selectListaTipoEnvioDistribucion').val('').trigger('change');
@@ -2289,7 +2215,6 @@ $(function () {
     };
 
     var filtrarListaDeSelect = function () {
-
         var hijosSelect = $(arguments[0]).children('option');
         var valorABuscar = arguments[1].toUpperCase();
 
@@ -2304,7 +2229,6 @@ $(function () {
     };
 
     var agregarPropiedadHidden = function () {
-
         var hijoOption = arguments[0];
         var dato = arguments[1];
 
@@ -2316,7 +2240,6 @@ $(function () {
     };
 
     var removerPropiedadHidden = function () {
-
         var elemento = arguments[0];
 
         if (elemento.hasClass('hidden')) {
@@ -2325,7 +2248,6 @@ $(function () {
     };
 
     var generarDatosEnvioParaGuardarCambios = function () {
-
         var servicio = arguments[0];
         var seccion = (typeof arguments[1] !== 'undefined') ? arguments[1] : '';
         var tipoEnvio = $('#selectTipoEnvio' + seccion).val();
@@ -2365,7 +2287,6 @@ $(function () {
     };
 
     var guardarCambiosRecoleccion = function () {
-
         var servicio = arguments[0];
         var datosRecoleccion = null;
 
@@ -2385,7 +2306,6 @@ $(function () {
     };
 
     var verificarDatosCambiosRecoleccion = function () {
-
         var servicio = arguments[0];
         var tipoValidacion = arguments[1];
         var fechaRecoleccion = $('#fechaRecoleccion').val();
@@ -2409,7 +2329,6 @@ $(function () {
     };
 
     var cargarInformacionDelDestino = function () {
-
         var informacionDestino = arguments[0];
 
         $('#fechaEnvioDistribucion').val(informacionDestino.fechaEnvio);
@@ -2424,7 +2343,6 @@ $(function () {
     };
 
     var iniciarFileUploadEnFormularioEnvioDistribucion = function () {
-
         var dataExtra = arguments[0];
         var informacionDestino = arguments[1];
 
@@ -2457,7 +2375,6 @@ $(function () {
     };
 
     var concluirDestino = function () {
-
         var datos = arguments[0];
         var html = null;
 
@@ -2486,7 +2403,6 @@ $(function () {
     };
 
     var habilitarBloquearFormularioEnvioDistribucion = function () {
-
         var evento = arguments[0];
 
         if (evento === 'habilitar') {
@@ -2526,7 +2442,6 @@ $(function () {
     };
 
     var cancelarDestinto = function () {
-
         var datos = arguments[0];
         var html = null;
 
@@ -2545,7 +2460,6 @@ $(function () {
     };
 
     var actualizarDestino = function () {
-
         var datos = arguments[0];
         evento.enviarEvento('Seguimiento/Cancelar_Destino_Distribucion', datos, '#modal-dialogo', function (respuesta) {
             actualizarTablaDestinosDistribuciones(respuesta.listaDestinos);
@@ -2562,7 +2476,6 @@ $(function () {
     };
 
     var mostrarBotonEmpezarRuta = function () {
-
         var ruta = arguments[0];
         var idEstatus = arguments[1];
 
@@ -2574,14 +2487,13 @@ $(function () {
     };
 
     var empezarRuta = function () {
-
         var idRuta = arguments[0];
         var datosTabla = arguments[1];
         var dataRuta = {Ruta: idRuta};
         var html = '<div id="seccionEmpezarRutaSeguimiento" > \
                         <div class="row">\n\
                             <div id="mensaje-modal" class="col-md-12 text-center">\n\
-                                <h3>"¿Realmente quieres empezar la Ruta?"</h3>\n\
+                                <h3>¿Realmente quieres empezar la Ruta?</h3>\n\
                             </div>\n\
                       </div>';
         html += '<div class="row m-t-20">\n\
@@ -2593,12 +2505,12 @@ $(function () {
                 </div>';
         $('#btnModalConfirmar').addClass('hidden');
         $('#btnModalAbortar').addClass('hidden');
-        evento.mostrarModal('"Advertencia"', html);
+        evento.mostrarModal('Advertencia', html);
         $('#btnModalConfirmar').empty().append('Eliminar');
         $('#btnModalConfirmar').off('click');
         $('#btnAceptarConcluir').on('click', function () {
             $('#btnCancelarConcluir').attr('disabled', 'disabled');
-            evento.enviarEvento('Seguimiento/EmpezarRuta', dataRuta, '#seccionEmpezarRutaSeguimiento', function (respuesta) {
+            evento.enviarEvento('Seguimiento/EmpezarRuta', dataRuta, '#modal-dialogo', function (respuesta) {
                 if (respuesta instanceof Array) {
                     evento.cerrarModal();
                     var data = {servicio: datosTabla[0], operacion: '2'};

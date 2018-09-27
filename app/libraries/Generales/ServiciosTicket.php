@@ -2007,10 +2007,12 @@ class ServiciosTicket extends General {
         $sucursal = $this->DBTO->getServicioTicket($ticket);
         return $this->DBST->consultaGeneral('SELECT 
                                                 Id,
-                                                sucursalCliente(Id) Nombre  
+                                                sucursalCliente(Id) Nombre,
+                                                cliente(IdCliente) Cliente
                                             FROM cat_v3_sucursales
                                             WHERE Flag = 1
-                                            AND IdCliente = "' . $sucursal[0]['Cliente'] . '"');
+                                            AND IdCliente = "' . $sucursal[0]['Cliente'] . '"
+                                            ORDER BY Nombre ASC');
     }
 
     public function consultaSucursalesXSalas4D() {
