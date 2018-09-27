@@ -23,130 +23,228 @@ $(function () {
 
     tabla.generaTablaPersonal("#data-table-gastos", null, null, true, true, [[0, 'asc']]);
 
-    file.crearUpload('#fotosGasto', 'Gasto/SolicitarGasto', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml']);
 
-    $("#listClientes").on("change", function () {
-        $("#listProyectos").empty().append('<option value="">Selecciona . . .</option>');
-        if ($(this).val() !== '') {
-            var datos = {
-                'id': $(this).val()
-            }
-            evento.enviarEvento('Gasto/ProyectosByCliente', datos, '#panelFormularioGasto', function (respuesta) {
-                $.each(respuesta.proyectos, function (k, v) {
-                    $("#listProyectos").append('<option data-tipo="' + v.Tipo + '" value="' + v.ID + '">' + v.Nombre + '</option>')
-                });
-                $("#listProyectos").removeAttr("disabled");
+    $('#data-table-gastos tbody').on('click', 'tr', function () {
+        var datos = $('#data-table-gastos').DataTable().row(this).data();
+        if (datos !== undefined) {
+            var idGasto = datos[0];
+
+            evento.enviarEvento('Gasto/CargaGasto', {id: idGasto}, '#panelListaGastos', function (respuesta) {
+                $("#divFormularioGasto").empty().append(respuesta.html);
+                evento.cambiarDiv("#divListaGastos", "#divFormularioGasto", initFormulario());
             });
-            select.cambiarOpcion("#listProyectos", '');
-        } else {
-            $("#listProyectos").attr("disabled", "disabled");
-            select.cambiarOpcion("#listProyectos", '');
         }
     });
 
-    $("#listProyectos").on("change", function () {
-        $("#listSucursales").empty().append('<option value="">Selecciona . . .</option>');
-        if ($(this).val() !== '') {
-            var datos = {
-                'id': $(this).val()
-            }
-            evento.enviarEvento('Gasto/SucursalesByProyecto', datos, '#panelFormularioGasto', function (respuesta) {
-                $.each(respuesta.sucursales, function (k, v) {
-                    $("#listSucursales").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
-                });
-                $("#listSucursales").removeAttr("disabled");
-            });
-            select.cambiarOpcion("#listSucursales", '');
-        } else {
-            $("#listSucursales").attr("disabled", "disabled");
-            select.cambiarOpcion("#listSucursales", '');
-        }
-    });
 
-    $("#listTipoBeneficiario").on("change", function () {
-        $("#listBeneficiarios").empty().append('<option value="">Selecciona . . .</option>');
-        if ($(this).val() !== '') {
-            var datos = {
-                'id': $(this).val()
-            }
-            evento.enviarEvento('Gasto/BeneficiarioByTipo', datos, '#panelFormularioGasto', function (respuesta) {
-                $.each(respuesta.beneficiarios, function (k, v) {
-                    $("#listBeneficiarios").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
+    function initFormulario() {
+        file.crearUpload('#fotosGasto', 'Gasto/SolicitarGasto', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml']);
+        $("#listClientes").on("change", function () {
+            $("#listProyectos").empty().append('<option value="">Selecciona . . .</option>');
+            if ($(this).val() !== '') {
+                var datos = {
+                    'id': $(this).val()
+                }
+                evento.enviarEvento('Gasto/ProyectosByCliente', datos, '#panelFormularioGasto', function (respuesta) {
+                    $.each(respuesta.proyectos, function (k, v) {
+                        $("#listProyectos").append('<option data-tipo="' + v.Tipo + '" value="' + v.ID + '">' + v.Nombre + '</option>')
+                    });
+                    $("#listProyectos").removeAttr("disabled");
                 });
-                $("#listBeneficiarios").removeAttr("disabled");
-            });
-        } else {
-            $("#listBeneficiarios").attr("disabled", "disabled");
-        }
-    });
+                select.cambiarOpcion("#listProyectos", '');
+            } else {
+                $("#listProyectos").attr("disabled", "disabled");
+                select.cambiarOpcion("#listProyectos", '');
+            }
+        });
 
-    $("#listTipoTrasnferencia").on("change", function () {
-        $("#listCategoria").empty().append('<option value="">Selecciona . . .</option>');
-        select.cambiarOpcion("#listCategoria", '');
-        if ($(this).val() !== '') {
-            var datos = {
-                'id': $(this).val()
-            }
-            evento.enviarEvento('Gasto/CategoriasByTipoTrans', datos, '#panelFormularioGasto', function (respuesta) {
-                $.each(respuesta.categorias, function (k, v) {
-                    $("#listCategoria").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
+        $("#listProyectos").on("change", function () {
+            $("#listSucursales").empty().append('<option value="">Selecciona . . .</option>');
+            if ($(this).val() !== '') {
+                var datos = {
+                    'id': $(this).val()
+                }
+                evento.enviarEvento('Gasto/SucursalesByProyecto', datos, '#panelFormularioGasto', function (respuesta) {
+                    $.each(respuesta.sucursales, function (k, v) {
+                        $("#listSucursales").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
+                    });
+                    $("#listSucursales").removeAttr("disabled");
                 });
-                $("#listCategoria").removeAttr("disabled");
-            });
-        } else {
-            $("#listCategoria").attr("disabled", "disabled");
+                select.cambiarOpcion("#listSucursales", '');
+            } else {
+                $("#listSucursales").attr("disabled", "disabled");
+                select.cambiarOpcion("#listSucursales", '');
+            }
+        });
+
+        $("#listTipoBeneficiario").on("change", function () {
+            $("#listBeneficiarios").empty().append('<option value="">Selecciona . . .</option>');
+            if ($(this).val() !== '') {
+                var datos = {
+                    'id': $(this).val()
+                }
+                evento.enviarEvento('Gasto/BeneficiarioByTipo', datos, '#panelFormularioGasto', function (respuesta) {
+                    $.each(respuesta.beneficiarios, function (k, v) {
+                        $("#listBeneficiarios").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
+                    });
+                    $("#listBeneficiarios").removeAttr("disabled");
+                });
+            } else {
+                $("#listBeneficiarios").attr("disabled", "disabled");
+            }
+        });
+
+        $("#listTipoTrasnferencia").on("change", function () {
+            $("#listCategoria").empty().append('<option value="">Selecciona . . .</option>');
             select.cambiarOpcion("#listCategoria", '');
-        }
-    });
-
-    $("#listCategoria").on("change", function () {
-        $("#listSubcategoria").empty().append('<option value="">Selecciona . . .</option>');
-        select.cambiarOpcion("#listSubcategoria", '');
-        if ($(this).val() !== '') {
-            var datos = {
-                'id': $(this).val()
-            }
-            evento.enviarEvento('Gasto/SubcategoriasByCategoria', datos, '#panelFormularioGasto', function (respuesta) {
-                $.each(respuesta.subcategorias, function (k, v) {
-                    $("#listSubcategoria").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
+            if ($(this).val() !== '') {
+                var datos = {
+                    'id': $(this).val()
+                }
+                evento.enviarEvento('Gasto/CategoriasByTipoTrans', datos, '#panelFormularioGasto', function (respuesta) {
+                    $.each(respuesta.categorias, function (k, v) {
+                        $("#listCategoria").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
+                    });
+                    $("#listCategoria").removeAttr("disabled");
                 });
-                $("#listSubcategoria").removeAttr("disabled");
-            });
-        } else {
-            $("#listSubcategoria").attr("disabled", "disabled");
+            } else {
+                $("#listCategoria").attr("disabled", "disabled");
+                select.cambiarOpcion("#listCategoria", '');
+            }
+        });
+
+        $("#listCategoria").on("change", function () {
+            $("#listSubcategoria").empty().append('<option value="">Selecciona . . .</option>');
             select.cambiarOpcion("#listSubcategoria", '');
-        }
-    });
-
-    $("#listSubcategoria").on("change", function () {
-        $("#listConceptos").empty().append('<option value="">Selecciona . . .</option>');
-        select.cambiarOpcion("#listConceptos", '');
-        if ($(this).val() !== '') {
-            var datos = {
-                'id': $(this).val()
-            }
-            evento.enviarEvento('Gasto/ConceptosBySubcategoria', datos, '#panelFormularioGasto', function (respuesta) {
-                $.each(respuesta.conceptos, function (k, v) {
-                    $("#listConceptos").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
+            if ($(this).val() !== '') {
+                var datos = {
+                    'id': $(this).val()
+                }
+                evento.enviarEvento('Gasto/SubcategoriasByCategoria', datos, '#panelFormularioGasto', function (respuesta) {
+                    $.each(respuesta.subcategorias, function (k, v) {
+                        $("#listSubcategoria").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
+                    });
+                    $("#listSubcategoria").removeAttr("disabled");
                 });
-                $("#listConceptos").removeAttr("disabled");
-            });
-        } else {
-            $("#listConceptos").attr("disabled", "disabled");
+            } else {
+                $("#listSubcategoria").attr("disabled", "disabled");
+                select.cambiarOpcion("#listSubcategoria", '');
+            }
+        });
+
+        $("#listSubcategoria").on("change", function () {
+            $("#listConceptos").empty().append('<option value="">Selecciona . . .</option>');
             select.cambiarOpcion("#listConceptos", '');
-        }
-    });
+            if ($(this).val() !== '') {
+                var datos = {
+                    'id': $(this).val()
+                }
+                evento.enviarEvento('Gasto/ConceptosBySubcategoria', datos, '#panelFormularioGasto', function (respuesta) {
+                    $.each(respuesta.conceptos, function (k, v) {
+                        $("#listConceptos").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
+                    });
+                    $("#listConceptos").removeAttr("disabled");
+                });
+            } else {
+                $("#listConceptos").attr("disabled", "disabled");
+                select.cambiarOpcion("#listConceptos", '');
+            }
+        });
 
-    $("#btnAddConcepto").off("click");
-    $("#btnAddConcepto").on("click", function () {
-        addConcepto();
-    });
-
-    $("#txtMonto").on('keyup', function (e) {
-        if (e.keyCode == 13) {
+        $("#btnAddConcepto").off("click");
+        $("#btnAddConcepto").on("click", function () {
             addConcepto();
-        }
-    });
+        });
+
+        $("#txtMonto").on('keyup', function (e) {
+            if (e.keyCode == 13) {
+                addConcepto();
+            }
+        });
+
+        $("#btnLimpiarFormulario").off("click");
+        $("#btnLimpiarFormulario").on("click", function () {
+            limpiarFormulario();
+        });
+
+        $("#btnSolicitarGasto").off("click");
+        $("#btnSolicitarGasto").on("click", function () {
+            if (evento.validarFormulario('#formGasto')) {
+                var _conceptos = '[';
+                var total = 0;
+                var count = 0;
+
+                $('#table-conceptos-gasto tbody tr').each(function () {
+                    _conceptos += '{"categoria":"' + $(this).find('.value-categoria').val() + '"';
+                    _conceptos += ',"subcategoria":"' + $(this).find('.value-subcategoria').val() + '"';
+                    _conceptos += ',"concepto":"' + $(this).find('.value-concepto').val() + '"';
+                    _conceptos += ',"monto":"' + $(this).find('.value-monto').val() + '"},';
+//
+//                _conceptos[count] = [];
+//                _conceptos[count]['categoria'] = $(this).find('.value-categoria').val();
+//                _conceptos[count]['subcategoria'] = $(this).find('.value-subcategoria').val();
+//                _conceptos[count]['concepto'] = $(this).find('.value-concepto').val();
+//                _conceptos[count]['monto'] = $(this).find('.value-monto').val();
+
+                    total = parseFloat(total) + parseFloat($(this).find('.value-monto').val());
+                });
+
+                _conceptos = _conceptos.slice(0, -1);
+                _conceptos += ']';
+
+                total = parseFloat(Math.round(total * 100) / 100).toFixed(2);
+
+                if (total <= 0 && _conceptos.length <= 0) {
+                    evento.mostrarMensaje("#errorFormulario", false, "Se debe introducir al menos un concepto del Gasto.", 4000);
+                } else {
+                    var datos = {
+                        'Beneficiario': $("#listBeneficiarios option:selected").text(),
+                        'IDBeneficiario': $("#listBeneficiarios").val(),
+                        'Tipo': $("#listProyectos option:selected").attr("data-tipo"),
+                        'TipoTrans': $("#listTipoTrasnferencia option:selected").text(),
+                        'TipoServicio': $("#listTiposServicio option:selected").text(),
+                        'Descripcion': $("#txtDescripcion").val(),
+                        'Importe': total,
+                        'Observaciones': $("#txtObservaciones").val(),
+                        'Proyecto': $("#listProyectos").val(),
+                        'ProyectoString': $("#listProyectos option:selected").text(),
+                        'Cliente': $("#listClientes option:selected").text(),
+                        'Sucursal': $("#listSucursales").val(),
+                        'SucursalString': $("#listSucursales option:selected").text(),
+                        'Moneda': $("#listMonedas").val(),
+                        'Conceptos': _conceptos
+                    };
+
+                    file.enviarArchivos('#fotosGasto', 'Gasto/SolicitarGasto', '#panelFormularioGasto', datos, function (respuesta) {
+                        if (respuesta.code == 200) {
+                            evento.mostrarMensaje("#errorFormulario", true, "Se ha solicitado la autorización del Gasto. Por favor espere a que sea autorizado", 6000);
+                            limpiarFormulario();
+                            $("#formGasto").parsley().reset();
+                            file.limpiar('#fotosGasto');
+                        } else {
+                            evento.mostrarMensaje("#errorFormulario", false, "Ocurrió un error al solicitar el gasto. Por favor recargue su página y vuelva a intentarlo.", 4000);
+                        }
+                    });
+
+//                evento.enviarEvento('Gasto/SolicitarGasto', datos, '#panelFormularioGasto', function (respuesta) {
+//                    if (respuesta.code == 200) {
+//                        evento.mostrarMensaje("#errorFormulario", true, "Se ha solicitado la autorización del Gasto. Por favor espere a que sea autorizado", 6000);
+//                        limpiarFormulario();
+//                        $("#formGasto").parsley().reset();
+//                    } else {
+//                        evento.mostrarMensaje("#errorFormulario", false, "Ocurrió un error al solicitar el gasto. Por favor recargue su página y vuelva a intentarlo.", 4000);
+//                    }
+//                });
+
+                }
+            } else {
+                evento.mostrarMensaje("#errorFormulario", false, "Todos los campos marcados son obligatorios. Por favor revise el formulario e intente de nuevo.", 4000);
+            }
+        });
+
+        actualizaTotal();
+        actionsRemove();
+    }
 
     function addConcepto() {
         var datos = {
@@ -210,85 +308,5 @@ $(function () {
         $('#table-conceptos-gasto tbody').empty();
         actualizaTotal();
     }
-
-    $("#btnLimpiarFormulario").off("click");
-    $("#btnLimpiarFormulario").on("click", function () {
-        limpiarFormulario();
-    });
-
-    $("#btnSolicitarGasto").off("click");
-    $("#btnSolicitarGasto").on("click", function () {
-        if (evento.validarFormulario('#formGasto')) {
-            var _conceptos = '[';
-            var total = 0;
-            var count = 0;
-
-            $('#table-conceptos-gasto tbody tr').each(function () {
-                _conceptos += '{"categoria":"' + $(this).find('.value-categoria').val() + '"';
-                _conceptos += ',"subcategoria":"' + $(this).find('.value-subcategoria').val() + '"';
-                _conceptos += ',"concepto":"' + $(this).find('.value-concepto').val() + '"';
-                _conceptos += ',"monto":"' + $(this).find('.value-monto').val() + '"},';
-//
-//                _conceptos[count] = [];
-//                _conceptos[count]['categoria'] = $(this).find('.value-categoria').val();
-//                _conceptos[count]['subcategoria'] = $(this).find('.value-subcategoria').val();
-//                _conceptos[count]['concepto'] = $(this).find('.value-concepto').val();
-//                _conceptos[count]['monto'] = $(this).find('.value-monto').val();
-
-                total = parseFloat(total) + parseFloat($(this).find('.value-monto').val());
-            });
-
-            _conceptos = _conceptos.slice(0, -1);
-            _conceptos += ']';
-
-            total = parseFloat(Math.round(total * 100) / 100).toFixed(2);
-
-            if (total <= 0 && _conceptos.length <= 0) {
-                evento.mostrarMensaje("#errorFormulario", false, "Se debe introducir al menos un concepto del Gasto.", 4000);
-            } else {
-                var datos = {
-                    'Beneficiario': $("#listBeneficiarios option:selected").text(),
-                    'IDBeneficiario': $("#listBeneficiarios").val(),
-                    'Tipo': $("#listProyectos option:selected").attr("data-tipo"),
-                    'TipoTrans': $("#listTipoTrasnferencia option:selected").text(),
-                    'TipoServicio': $("#listTiposServicio option:selected").text(),
-                    'Descripcion': $("#txtDescripcion").val(),
-                    'Importe': total,
-                    'Observaciones': $("#txtObservaciones").val(),
-                    'Proyecto': $("#listProyectos").val(),
-                    'ProyectoString': $("#listProyectos option:selected").text(),
-                    'Cliente': $("#listClientes option:selected").text(),
-                    'Sucursal': $("#listSucursales").val(),
-                    'SucursalString': $("#listSucursales option:selected").text(),
-                    'Moneda': $("#listMonedas").val(),
-                    'Conceptos': _conceptos
-                };
-
-                file.enviarArchivos('#fotosGasto', 'Gasto/SolicitarGasto', '#panelFormularioGasto', datos, function (respuesta) {
-                    if (respuesta.code == 200) {
-                        evento.mostrarMensaje("#errorFormulario", true, "Se ha solicitado la autorización del Gasto. Por favor espere a que sea autorizado", 6000);
-                        limpiarFormulario();
-                        $("#formGasto").parsley().reset();
-                        file.limpiar('#fotosGasto');
-                    } else {
-                        evento.mostrarMensaje("#errorFormulario", false, "Ocurrió un error al solicitar el gasto. Por favor recargue su página y vuelva a intentarlo.", 4000);
-                    }
-                });
-
-//                evento.enviarEvento('Gasto/SolicitarGasto', datos, '#panelFormularioGasto', function (respuesta) {
-//                    if (respuesta.code == 200) {
-//                        evento.mostrarMensaje("#errorFormulario", true, "Se ha solicitado la autorización del Gasto. Por favor espere a que sea autorizado", 6000);
-//                        limpiarFormulario();
-//                        $("#formGasto").parsley().reset();
-//                    } else {
-//                        evento.mostrarMensaje("#errorFormulario", false, "Ocurrió un error al solicitar el gasto. Por favor recargue su página y vuelva a intentarlo.", 4000);
-//                    }
-//                });
-
-            }
-        } else {
-            evento.mostrarMensaje("#errorFormulario", false, "Todos los campos marcados son obligatorios. Por favor revise el formulario e intente de nuevo.", 4000);
-        }
-    });
 
 });

@@ -2516,7 +2516,7 @@ $config['Gapsi'] = array(
         'liga' => 'Mis Gastos',
         'icono' => '',
         'Url' => '/Gapsi/Mis-Gastos',
-        'css' => array(),
+        'css' => array('Generales/imageWithDelete'),
         'pluginsCss' => array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',

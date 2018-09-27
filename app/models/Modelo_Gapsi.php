@@ -90,9 +90,9 @@ class Modelo_Gapsi extends Modelo_Base {
         parent::connectDBGapsi()->trans_begin();
         $query = "insert into "
                 . "db_Registro "
-                . "(Beneficiario, IDBeneficiario, Tipo, TipoTrans, TipoServicio, Descripcion, FCaptura, Importe, Observaciones, Proyecto, GastoFrecuente, Sucursal, Status, UsuarioSolicitud, FechaSolicitud, Fecha, Moneda) "
+                . "(Beneficiario, IDBeneficiario, Tipo, TipoTrans, TipoServicio, Descripcion, FCaptura, Importe, Observaciones, Proyecto, GastoFrecuente, Sucursal, Status, UsuarioSolicitud, FechaSolicitud, Fecha, Moneda, OrdenCompra) "
                 . "VALUES "
-                . "('" . $datos['Beneficiario'] . "', '" . $datos['IDBeneficiario'] . "', '" . $datos['Tipo'] . "', '" . $datos['TipoTrans'] . "', '" . $datos['TipoServicio'] . "', '" . $datos['Descripcion'] . "', GETDATE(), '" . $datos['Importe'] . "', '" . $datos['Observaciones'] . "', '" . $datos['Proyecto'] . "', '', '" . $datos['Sucursal'] . "', 'Solicitado', null, GETDATE(), GETDATE(), '" . $datos['Moneda'] . "')";
+                . "('" . $datos['Beneficiario'] . "', '" . $datos['IDBeneficiario'] . "', '" . $datos['Tipo'] . "', '" . $datos['TipoTrans'] . "', '" . $datos['TipoServicio'] . "', '" . $datos['Descripcion'] . "', GETDATE(), '" . $datos['Importe'] . "', '" . $datos['Observaciones'] . "', '" . $datos['Proyecto'] . "', '', '" . $datos['Sucursal'] . "', 'Solicitado', null, GETDATE(), GETDATE(), '" . $datos['Moneda'] . "', '" . $datos['OC'] . "')";
 
         parent::connectDBGapsi()->query($query);
         $ultimo = parent::connectDBGapsi()->insert_id();
@@ -155,6 +155,31 @@ class Modelo_Gapsi extends Modelo_Base {
             'gastos' => $gastos,
             'usuarios' => $usuarios,
             'permiso' => $todos
+        ];
+    }
+
+    public function detallesGasto($id) {
+        $query = "select 
+                gasto.*, 
+                proyecto.Cliente,
+                (select Tipo from db_Beneficiarios where Nombre = gasto.Beneficiario) as TipoBeneficiario
+                from db_Registro gasto
+                inner join db_Proyectos proyecto on gasto.Proyecto = proyecto.ID
+                where gasto.ID = '" . $id . "'";
+        $consulta = parent::connectDBGapsi()->query($query);
+        $gasto = $consulta->result_array();
+
+        $query = "select * from db_DetalleGasto where Gasto = '" . $id . "'";
+        $consulta = parent::connectDBGapsi()->query($query);
+        $conceptos = $consulta->result_array();
+
+        $archivosGasto = $this->consulta("select Archivos from t_archivos_gastos_gapsi where IdGasto = '" . $id . "'");
+        $archivosGasto = (count($archivosGasto) > 0) ? $archivosGasto[0]['Archivos'] : '';
+
+        return [
+            'gasto' => $gasto[0],
+            'conceptos' => $conceptos,
+            'archivosGasto' => $archivosGasto
         ];
     }
 

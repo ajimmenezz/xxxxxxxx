@@ -1,6 +1,6 @@
 <div id="divListaGastos" class="content">    
     <h1 class="page-header">Mis Gastos</h1>
-    <div id="panelFormularioGasto" class="panel panel-inverse">        
+    <div id="panelListaGastos" class="panel panel-inverse">        
         <div class="panel-heading">    
             <h4 class="panel-title">Lista de Solicitudes de Gasto</h4>
         </div>
@@ -75,5 +75,5 @@
 </div>    
 
 <!--Empezando seccion para la captura del inventario por sala-->
-<div id="capturePageInventario" class="content" style="display:none"></div>
+<div id="divFormularioGasto" class="content" style="display:none"></div>
 <!--Finalizando seccion para la captura del inventario por sala-->

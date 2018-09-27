@@ -106,6 +106,12 @@
                             </select>
                         </div>
                     </div>
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="f-w-600 f-s-13">Orden de Compra:</label>
+                            <input type="text" class="form-control" id="txtOC" placeholder="OCXXXX"  data-parsley-required="false"/>
+                        </div>
+                    </div>
                 </div>            
                 <div class="row m-t-10">
                     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -190,7 +196,7 @@
                     <div class="col-md-8 col-sm-8 col-xs-12">
                         <div class="form-group">
                             <label class="f-w-600 f-s-13">Descripción:*</label>
-                            <input type="text" class="form-control" id="txtDescripcion" placeholder="Breve Descripción del Gasto"  data-parsley-required="true" data-parsley-required="true"/>
+                            <input type="text" class="form-control" id="txtDescripcion" placeholder="Breve Descripción del Gasto"  data-parsley-required="true"/>
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12">

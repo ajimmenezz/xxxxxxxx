@@ -250,6 +250,7 @@ $(function () {
                     'Tipo': $("#listProyectos option:selected").attr("data-tipo"),
                     'TipoTrans': $("#listTipoTrasnferencia option:selected").text(),
                     'TipoServicio': $("#listTiposServicio option:selected").text(),
+                    'OC': $.trim($("#txtOC").val()),
                     'Descripcion': $("#txtDescripcion").val(),
                     'Importe': total,
                     'Observaciones': $("#txtObservaciones").val(),

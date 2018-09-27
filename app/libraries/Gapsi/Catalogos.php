@@ -103,7 +103,7 @@ class Catalogos extends General {
                     . '<h2 style="background:#ededed;margin-right: 0cm;margin-left: 11.25pt;font-size: 11.5pt;font-family: \'Tahoma\',sans-serif;letter-spacing: .6pt;font-weight: normal;">Descripción: ' . $datos['Descripcion'] . '</h2>'
                     . '<br />'
                     . '</div>'
-                    . '<p>Se ha solicitado su aprobación para el siguiente gasto:</p>'
+                    . '<p>El usuario: "' . $this->usuario['Nombre'] . '"  ha solicitado su aprobación para el siguiente gasto:</p>'
                     . '<table class="m_4241017372003712731MsoNormalTable" border="0" cellspacing="0" cellpadding="0" width="90%" style="width:90.0%;margin-left:11.25pt;border-collapse:collapse">'
                     . ' <thead>'
                     . '     <tr>'
@@ -174,7 +174,7 @@ class Catalogos extends General {
                     . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://gapsi.dyndns.org/GAPSI/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>';
 
             $titulo = "Autorización Requerida";
-            $this->Correo->enviarCorreo('gastos@siccob.solutions', array('jdiaz@siccob.com.mx', 'mrodriguez@siccob.com.mx', 'pruebasiccob@ioitconsulting.com', 'ajimenez@siccob.com.mx'), $titulo, $bodyMail, explode(",", $archivos));
+            $this->Correo->enviarCorreo('gastos@siccob.solutions', array('jdiaz@siccob.com.mx', 'mrodriguez@siccob.com.mx', 'pruebasiccob@ioitconsulting.com', 'ajimenez@siccob.com.mx', $this->usuario['EmailCorporativo']), $titulo, $bodyMail, explode(",", $archivos));
 
             $this->DB->insertar("t_archivos_gastos_gapsi", ['IdGasto' => $resultado['last'], 'Archivos' => $archivos, 'Email' => $this->usuario['EmailCorporativo'], 'IdUsuario' => $this->usuario['Id']]);
 
@@ -187,6 +187,29 @@ class Catalogos extends General {
     public function misGastos() {
         $gastos = $this->DB->getMisGastos();
         return $gastos;
+    }
+
+    public function cargaGasto(array $data) {
+        $gasto = $this->detallesGasto($data['id']);
+
+        $datos = [
+            'Clientes' => $this->getClientes(),
+            'TiposServicio' => $this->getTiposServicio(),
+            'TiposBeneficiario' => $this->getTiposBeneficiario(),
+            'TiposTransferencia' => $this->getTiposTransferencia(),
+            'Proyectos' => $this->proyectosByCliente(['id' => $gasto['gasto']['Cliente']]),
+            'Sucursales' => $this->sucursalesByProyecto(['id' => $gasto['gasto']['Proyecto']]),
+            'Beneficiarios' => $this->beneficiarioByTipo(['id' => $gasto['gasto']['TipoBeneficiario']]),
+            'Gasto' => $gasto
+        ];
+        return [
+            'html' => parent::getCI()->load->view('Gapsi/DetallesGasto', $datos, TRUE)
+        ];
+    }
+
+    public function detallesGasto(int $id) {
+        $gasto = $this->DB->detallesGasto($id);
+        return $gasto;
     }
 
 }

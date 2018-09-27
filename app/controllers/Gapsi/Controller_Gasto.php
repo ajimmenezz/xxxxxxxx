@@ -44,6 +44,9 @@ class Controller_Gasto extends Base {
             case 'MisGastos':
                 $resultado = $this->catalogo->misGastos();
                 break;
+            case 'CargaGasto':
+                $resultado = $this->catalogo->cargaGasto($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
