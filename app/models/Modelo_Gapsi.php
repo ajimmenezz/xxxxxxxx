@@ -131,6 +131,7 @@ class Modelo_Gapsi extends Modelo_Base {
         }
 
         $ids = $this->consulta("select group_concat(IdGasto) as Ids from t_archivos_gastos_gapsi " . $condicion)[0]['Ids'];
+        $ids = ($ids !== '') ? ',' . $ids : '';
 
         $consulta = $this->consulta("select IdGasto, nombreUsuario(IdUsuario) as Usuario, IdUsuario, Email from t_archivos_gastos_gapsi " . $condicion);
         $usuarios = [];
@@ -147,7 +148,7 @@ class Modelo_Gapsi extends Modelo_Base {
                 . "registro.*, "
                 . "(select Descripcion from db_Proyectos where ID = registro.Proyecto) as NameProyecto "
                 . "from db_Registro registro "
-                . "where ID in (''," . $ids . ")";
+                . "where ID in (''" . $ids . ")";
         $consulta = parent::connectDBGapsi()->query($query);
         $gastos = $consulta->result_array();
 
@@ -176,11 +177,61 @@ class Modelo_Gapsi extends Modelo_Base {
         $archivosGasto = $this->consulta("select Archivos from t_archivos_gastos_gapsi where IdGasto = '" . $id . "'");
         $archivosGasto = (count($archivosGasto) > 0) ? $archivosGasto[0]['Archivos'] : '';
 
+        $usuarioSolicita = $this->consulta("select IdUsuario from t_archivos_gastos_gapsi where IdGasto = '" . $id . "'")[0]['IdUsuario'];
+
         return [
             'gasto' => $gasto[0],
             'conceptos' => $conceptos,
-            'archivosGasto' => $archivosGasto
+            'archivosGasto' => $archivosGasto,
+            'usuario' => $usuarioSolicita
         ];
+    }
+
+    public function guardarCambiosGasto(array $datos) {
+        parent::connectDBGapsi()->trans_begin();
+        $query = "update "
+                . "db_Registro "
+                . "set Beneficiario = '" . $datos['Beneficiario'] . "', "
+                . "IDBeneficiario = '" . $datos['IDBeneficiario'] . "', "
+                . "Tipo = '" . $datos['Tipo'] . "', "
+                . "TipoTrans = '" . $datos['TipoTrans'] . "', "
+                . "TipoServicio = '" . $datos['TipoServicio'] . "', "
+                . "Descripcion = '" . $datos['Descripcion'] . "', "
+                . "Importe = '" . $datos['Importe'] . "', "
+                . "Observaciones = '" . $datos['Observaciones'] . "', "
+                . "Proyecto = '" . $datos['Proyecto'] . "', "
+                . "Sucursal = '" . $datos['Sucursal'] . "', "
+                . "Moneda = '" . $datos['Moneda'] . "', "
+                . "OrdenCompra = '" . $datos['OC'] . "' "
+                . "where ID = '" . $datos['ID'] . "'";
+
+        parent::connectDBGapsi()->query($query);
+
+        parent::connectDBGapsi()->query("delete from db_DetalleGasto where Gasto = '" . $datos['ID'] . "'");
+
+        $registros = [];
+        $conceptos = json_decode($datos['Conceptos'], true);
+
+        if (isset($conceptos) && count($conceptos) > 0) {
+            foreach ($conceptos as $key => $value) {
+                $query = "insert into "
+                        . "db_DetalleGasto "
+                        . "(Gasto, Categoria, SubCategoria, Concepto, Monto) "
+                        . "VALUES "
+                        . "('" . $datos['ID'] . "', '" . $value['categoria'] . "', '" . $value['subcategoria'] . "', '" . $value['concepto'] . "', '" . $value['monto'] . "')";
+                parent::connectDBGapsi()->query($query);
+                $ultimoDetalle = parent::connectDBGapsi()->insert_id();
+                array_push($registros, $ultimoDetalle);
+            }
+        }
+
+        if (parent::connectDBGapsi()->trans_status() === FALSE) {
+            parent::connectDBGapsi()->trans_rollback();
+            return ['code' => 400];
+        } else {
+            parent::connectDBGapsi()->trans_commit();
+            return ['code' => 200];
+        }
     }
 
 }

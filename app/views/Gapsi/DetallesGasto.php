@@ -24,10 +24,7 @@
     <div class="panel-body">
         <?php
 //        echo "<pre>";
-//        var_dump($Gasto);
-//        echo "</pre>";
-//        echo "<pre>";
-//        var_dump($Proyectos);
+//        var_dump($Gasto['gasto']['Status']);
 //        echo "</pre>";
 
         $_cliente = $Gasto['gasto']['Cliente'];
@@ -39,10 +36,19 @@
         $__proyecto = $Gasto['gasto']['Proyecto'];
         $__sucursal = $Gasto['gasto']['Sucursal'];
         $__beneficiario = $Gasto['gasto']['IDBeneficiario'];
+        $__disable = ($Editable) ? '' : 'disabled="disabled"';
         ?>
         <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <h4>Detalles del gasto <?php echo $Gasto['gasto']['ID']; ?></h4>
+                <input type="hidden" id="IDGasto" value="<?php echo $Gasto['gasto']['ID']; ?>" />                
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <h4 class="text-danger f-w-600 pull-right"><?php echo $Gasto['gasto']['Status']; ?></h4>               
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-                <h4>Detalles del gasto</h4>
                 <div class="underline m-b-10"></div>
             </div>
         </div>
@@ -51,7 +57,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Cliente:*</label>
-                        <select id="listClientes" class="form-control" style="width: 100%" data-parsley-required="true">
+                        <select id="listClientes" class="form-control" style="width: 100%" data-parsley-required="true" <?php echo $__disable; ?>>
                             <option value="">Selecciona . . .</option>
                             <?php
                             if (isset($Clientes) && count($Clientes) > 0) {
@@ -67,13 +73,13 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Proyecto:*</label>
-                        <select id="listProyectos" class="form-control" style="width: 100%" data-parsley-required="true">
+                        <select id="listProyectos" class="form-control" style="width: 100%" data-parsley-required="true" <?php echo $__disable; ?>>
                             <option value="">Selecciona . . .</option>
                             <?php
                             if (isset($Proyectos['proyectos']) && count($Proyectos['proyectos']) > 0) {
                                 foreach ($Proyectos['proyectos'] as $key => $value) {
                                     $selected = ($value['ID'] == $__proyecto) ? 'selected' : '';
-                                    echo '<option value="' . $value['ID'] . '" ' . $selected . '>' . $value['Nombre'] . '</option>';
+                                    echo '<option data-tipo="' . $value['Tipo'] . '" value="' . $value['ID'] . '" ' . $selected . '>' . $value['Nombre'] . '</option>';
                                 }
                             }
                             ?>
@@ -83,7 +89,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Sucursal:*</label>
-                        <select id="listSucursales" class="form-control" style="width: 100%" data-parsley-required="true">
+                        <select id="listSucursales" class="form-control" style="width: 100%" data-parsley-required="true" <?php echo $__disable; ?>>
                             <option value="">Selecciona . . .</option>
                             <?php
                             if (isset($Sucursales['sucursales']) && count($Sucursales['sucursales']) > 0) {
@@ -101,7 +107,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Tipo de Servicio:*</label>
-                        <select id="listTiposServicio" class="form-control" style="width: 100%" data-parsley-required="true">
+                        <select id="listTiposServicio" class="form-control" style="width: 100%" data-parsley-required="true" <?php echo $__disable; ?>>
                             <option value="">Selecciona . . .</option>
                             <?php
                             if (isset($TiposServicio) && count($TiposServicio) > 0) {
@@ -117,7 +123,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Tipo de Beneficiario:*</label>
-                        <select id="listTipoBeneficiario" class="form-control" style="width: 100%" data-parsley-required="true">
+                        <select id="listTipoBeneficiario" class="form-control" style="width: 100%" data-parsley-required="true" <?php echo $__disable; ?>>
                             <option value="">Selecciona . . .</option>
                             <?php
                             if (isset($TiposBeneficiario) && count($TiposBeneficiario) > 0) {
@@ -133,7 +139,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Beneficiario:*</label>
-                        <select id="listBeneficiarios" class="form-control" style="width: 100%" data-parsley-required="true">
+                        <select id="listBeneficiarios" class="form-control" style="width: 100%" data-parsley-required="true" <?php echo $__disable; ?>>
                             <option value="">Selecciona . . .</option>
                             <?php
                             if (isset($Beneficiarios['beneficiarios']) && count($Beneficiarios['beneficiarios']) > 0) {
@@ -151,7 +157,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Tipo de Transferencia:*</label>
-                        <select id="listTipoTrasnferencia" class="form-control" style="width: 100%">
+                        <select id="listTipoTrasnferencia" class="form-control" style="width: 100%" <?php echo $__disable; ?>>
                             <option value="">Selecciona . . .</option>
                             <?php
                             if (isset($TiposTransferencia) && count($TiposTransferencia) > 0) {
@@ -167,7 +173,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Orden de Compra:</label>
-                        <input type="text" class="form-control" id="txtOC" placeholder="OCXXXX" value="<?php echo $_oc; ?>"  data-parsley-required="false"/>
+                        <input type="text" class="form-control" id="txtOC" placeholder="" value="<?php echo $_oc; ?>"  data-parsley-required="false" <?php echo $__disable; ?>/>
                     </div>
                 </div>
             </div>            
@@ -182,44 +188,46 @@
                     <div id="errorConceptoGasto"></div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="form-group">
-                        <label class="f-w-600 f-s-13">Categoría:*</label>
-                        <select id="listCategoria" class="form-control" style="width: 100%" disabled="">
-                            <option value="">Selecciona . . .</option>                            
-                        </select>
+            <?php if ($Editable) { ?>
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="f-w-600 f-s-13">Categoría:*</label>
+                            <select id="listCategoria" class="form-control" style="width: 100%" disabled="">
+                                <option value="">Selecciona . . .</option>                            
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="form-group">
-                        <label class="f-w-600 f-s-13">Subcategoría:*</label>
-                        <select id="listSubcategoria" class="form-control" style="width: 100%" disabled="">
-                            <option value="">Selecciona . . .</option>
-                        </select>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="f-w-600 f-s-13">Subcategoría:*</label>
+                            <select id="listSubcategoria" class="form-control" style="width: 100%" disabled="">
+                                <option value="">Selecciona . . .</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="form-group">
-                        <label class="f-w-600 f-s-13">Concepto:*</label>
-                        <select id="listConceptos" class="form-control" style="width: 100%" disabled="">
-                            <option value="">Selecciona . . .</option>
-                        </select>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="f-w-600 f-s-13">Concepto:*</label>
+                            <select id="listConceptos" class="form-control" style="width: 100%" disabled="">
+                                <option value="">Selecciona . . .</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="form-group">
-                        <label class="f-w-600 f-s-13">Monto:*</label>    
-                        <div class="input-group">
-                            <span class="input-group-addon">$</span>
-                            <input type="number" step="any" id="txtMonto" class="form-control"> 
-                            <div class="input-group-btn m-l-10">
-                                <a id="btnAddConcepto" class="btn btn-success"><i class="fa fa-plus"></i></a>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="f-w-600 f-s-13">Monto:*</label>    
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
+                                <input type="number" step="any" id="txtMonto" class="form-control"> 
+                                <div class="input-group-btn m-l-10">
+                                    <a id="btnAddConcepto" class="btn btn-success"><i class="fa fa-plus"></i></a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            <?php } ?>
             <div class="row m-t-10">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="table-responsive">
@@ -242,9 +250,14 @@
                                                 <td>' . $value['Categoria'] . '<input type="hidden" class="value-categoria" value="' . $value['Categoria'] . '" /></td>
                                                 <td>' . $value['SubCategoria'] . '<input type="hidden" class="value-subcategoria" value="' . $value['SubCategoria'] . '" /></td>
                                                 <td>' . $value['Concepto'] . '<input type="hidden" class="value-concepto" value="' . $value['Concepto'] . '" /></td>
-                                                <td>$' . (float) $value['Monto'] . '<input type="hidden" class="value-monto" value="' . $value['Monto'] . '" /></td>
-                                                <td><button class="btn btn-danger btnRemoveConcepto"><i class="fa fa-trash"></i></button></td>
-                                            </tr>';
+                                                <td>$' . (float) $value['Monto'] . '<input type="hidden" class="value-monto" value="' . $value['Monto'] . '" /></td>';
+
+                                        if ($Editable) {
+                                            echo '<td><button class="btn btn-danger btnRemoveConcepto"><i class="fa fa-trash"></i></button></td>';
+                                        } else {
+                                            echo '<td></td>';
+                                        }
+                                        echo '</tr>';
                                     }
                                 }
                                 ?>
@@ -269,13 +282,13 @@
                 <div class="col-md-8 col-sm-8 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Descripción:*</label>
-                        <input type="text" class="form-control" id="txtDescripcion" value="<?php echo $Gasto['gasto']['Descripcion']; ?>" placeholder="Breve Descripción del Gasto"  data-parsley-required="true"/>
+                        <input type="text" class="form-control" id="txtDescripcion" value="<?php echo $Gasto['gasto']['Descripcion']; ?>" placeholder="Breve Descripción del Gasto"  data-parsley-required="true" <?php echo $__disable; ?>/>
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Moneda:*</label>
-                        <select class="form-control" id="listMonedas"  data-parsley-required="true">
+                        <select class="form-control" id="listMonedas" data-parsley-required="true" <?php echo $__disable; ?>>
                             <option value="" selected="">Selecciona . . .</option>
                             <option value="MN" <?php echo ($Gasto['gasto']['Moneda'] == 'MN') ? 'selected' : ''; ?>>MN (Peso Mexicano)</option>
                             <option value="USD" <?php echo ($Gasto['gasto']['Moneda'] == 'USD') ? 'selected' : ''; ?>>USD (Dolar Americano)</option>
@@ -283,10 +296,9 @@
                     </div>
                 </div>
             </div>
-            <?php            
+            <?php
             if (isset($Gasto['archivosGasto']) && $Gasto['archivosGasto'] != '') {
                 $archivosGasto = explode(",", $Gasto['archivosGasto']);
-                
                 ?>
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12 m-t-20">
@@ -299,20 +311,23 @@
                 </div>
                 <?php
             }
-            ?>
-            <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                    <div class="form-group">
-                        <label class="f-w-600 f-s-13">Archivos Adicionales</label>
-                        <input id="fotosGasto" name="fotosGasto[]" type="file" multiple=""/>    
+
+            if ($Editable) {
+                ?>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="f-w-600 f-s-13">Archivos Adicionales</label>
+                            <input id="fotosGasto" name="fotosGasto[]" type="file" multiple=""/>    
+                        </div>
                     </div>
                 </div>
-            </div>
+            <?php } ?>
             <div class="row">
                 <div class="col-md-6 col-sm-9 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Observaciones:</label>
-                        <textarea class="form-control" id="txtObservaciones" rows="5" placeholder="Observaciones adicionales de la solicitud de gasto."><?php echo $Gasto['gasto']['Observaciones']; ?></textarea>
+                        <textarea class="form-control" id="txtObservaciones" rows="5" placeholder="Observaciones adicionales de la solicitud de gasto." <?php echo $__disable; ?>><?php echo $Gasto['gasto']['Observaciones']; ?></textarea>
                     </div>
                 </div>
             </div>
@@ -322,10 +337,15 @@
                 <div id="errorFormulario"></div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-                <a id="btnSolicitarGastooooo" class="btn btn-info m-t-10 m-r-10 f-w-600 f-s-15">Guardar Gasto</a>                
+        <?php
+        if ($Editable) {
+            ?>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+                    <a id="btnGuardarGasto" class="btn btn-info m-t-10 m-r-10 f-w-600 f-s-15">Guardar Gasto</a>                
+                </div>
             </div>
-        </div>
+        <?php } ?>
+
     </div>        
 </div>        

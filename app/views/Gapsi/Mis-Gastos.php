@@ -31,7 +31,7 @@
                         <table id="data-table-gastos" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                             <thead>
                                 <tr>
-                                    <th class="never">Id</th>
+                                    <th class="all">Id</th>
                                     <th class="<?php echo $clase; ?>">Usuario</th>
                                     <th class="all">OC</th>
                                     <th class="all">Fecha</th>

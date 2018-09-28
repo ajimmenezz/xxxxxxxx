@@ -25,20 +25,22 @@ $(function () {
 
 
     $('#data-table-gastos tbody').on('click', 'tr', function () {
+        var _fila = $(this);
         var datos = $('#data-table-gastos').DataTable().row(this).data();
         if (datos !== undefined) {
             var idGasto = datos[0];
 
             evento.enviarEvento('Gasto/CargaGasto', {id: idGasto}, '#panelListaGastos', function (respuesta) {
                 $("#divFormularioGasto").empty().append(respuesta.html);
-                evento.cambiarDiv("#divListaGastos", "#divFormularioGasto", initFormulario());
+                evento.cambiarDiv("#divListaGastos", "#divFormularioGasto", initFormulario(_fila));
             });
         }
     });
 
 
     function initFormulario() {
-        file.crearUpload('#fotosGasto', 'Gasto/SolicitarGasto', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml']);
+        _fila = arguments[0];
+        file.crearUpload('#fotosGasto', 'Gasto/GuardarCambiosGasto', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml']);
         $("#listClientes").on("change", function () {
             $("#listProyectos").empty().append('<option value="">Selecciona . . .</option>');
             if ($(this).val() !== '') {
@@ -162,13 +164,8 @@ $(function () {
             }
         });
 
-        $("#btnLimpiarFormulario").off("click");
-        $("#btnLimpiarFormulario").on("click", function () {
-            limpiarFormulario();
-        });
-
-        $("#btnSolicitarGasto").off("click");
-        $("#btnSolicitarGasto").on("click", function () {
+        $("#btnGuardarGasto").off("click");
+        $("#btnGuardarGasto").on("click", function () {
             if (evento.validarFormulario('#formGasto')) {
                 var _conceptos = '[';
                 var total = 0;
@@ -179,13 +176,6 @@ $(function () {
                     _conceptos += ',"subcategoria":"' + $(this).find('.value-subcategoria').val() + '"';
                     _conceptos += ',"concepto":"' + $(this).find('.value-concepto').val() + '"';
                     _conceptos += ',"monto":"' + $(this).find('.value-monto').val() + '"},';
-//
-//                _conceptos[count] = [];
-//                _conceptos[count]['categoria'] = $(this).find('.value-categoria').val();
-//                _conceptos[count]['subcategoria'] = $(this).find('.value-subcategoria').val();
-//                _conceptos[count]['concepto'] = $(this).find('.value-concepto').val();
-//                _conceptos[count]['monto'] = $(this).find('.value-monto').val();
-
                     total = parseFloat(total) + parseFloat($(this).find('.value-monto').val());
                 });
 
@@ -197,12 +187,20 @@ $(function () {
                 if (total <= 0 && _conceptos.length <= 0) {
                     evento.mostrarMensaje("#errorFormulario", false, "Se debe introducir al menos un concepto del Gasto.", 4000);
                 } else {
+
+                    var _evidenciasAntes = '';
+                    $('.imagenesSolicitud').each(function () {
+                        _evidenciasAntes += ',' + $(this).attr("href");
+                    });
+
                     var datos = {
+                        'ID': $("#IDGasto").val(),
                         'Beneficiario': $("#listBeneficiarios option:selected").text(),
                         'IDBeneficiario': $("#listBeneficiarios").val(),
                         'Tipo': $("#listProyectos option:selected").attr("data-tipo"),
                         'TipoTrans': $("#listTipoTrasnferencia option:selected").text(),
                         'TipoServicio': $("#listTiposServicio option:selected").text(),
+                        'OC': $.trim($("#txtOC").val()),
                         'Descripcion': $("#txtDescripcion").val(),
                         'Importe': total,
                         'Observaciones': $("#txtObservaciones").val(),
@@ -212,29 +210,17 @@ $(function () {
                         'Sucursal': $("#listSucursales").val(),
                         'SucursalString': $("#listSucursales option:selected").text(),
                         'Moneda': $("#listMonedas").val(),
+                        'EvidenciasAntes': _evidenciasAntes,
                         'Conceptos': _conceptos
                     };
 
-                    file.enviarArchivos('#fotosGasto', 'Gasto/SolicitarGasto', '#panelFormularioGasto', datos, function (respuesta) {
+                    file.enviarArchivos('#fotosGasto', 'Gasto/GuardarCambiosGasto', '#panelFormularioGasto', datos, function (respuesta) {
                         if (respuesta.code == 200) {
-                            evento.mostrarMensaje("#errorFormulario", true, "Se ha solicitado la autorización del Gasto. Por favor espere a que sea autorizado", 6000);
-                            limpiarFormulario();
-                            $("#formGasto").parsley().reset();
-                            file.limpiar('#fotosGasto');
+                            _fila.click();
                         } else {
-                            evento.mostrarMensaje("#errorFormulario", false, "Ocurrió un error al solicitar el gasto. Por favor recargue su página y vuelva a intentarlo.", 4000);
+                            evento.mostrarMensaje("#errorFormulario", false, "Ocurrió un error al guardar los cambios del gasto. Por favor recargue su página y vuelva a intentarlo.", 4000);
                         }
                     });
-
-//                evento.enviarEvento('Gasto/SolicitarGasto', datos, '#panelFormularioGasto', function (respuesta) {
-//                    if (respuesta.code == 200) {
-//                        evento.mostrarMensaje("#errorFormulario", true, "Se ha solicitado la autorización del Gasto. Por favor espere a que sea autorizado", 6000);
-//                        limpiarFormulario();
-//                        $("#formGasto").parsley().reset();
-//                    } else {
-//                        evento.mostrarMensaje("#errorFormulario", false, "Ocurrió un error al solicitar el gasto. Por favor recargue su página y vuelva a intentarlo.", 4000);
-//                    }
-//                });
 
                 }
             } else {

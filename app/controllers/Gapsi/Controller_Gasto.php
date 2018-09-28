@@ -47,6 +47,9 @@ class Controller_Gasto extends Base {
             case 'CargaGasto':
                 $resultado = $this->catalogo->cargaGasto($this->input->post());
                 break;
+            case 'GuardarCambiosGasto':
+                $resultado = $this->catalogo->guardarCambiosGasto($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
