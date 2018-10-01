@@ -83,8 +83,8 @@ class Tesoreria extends General {
 
         return array('formulario' => parent::getCI()->load->view('/Tesoreria/Facturacion', $data, TRUE), 'datos' => $data);
     }
-    
-    public function lineaSeparacionHTML(){
+
+    public function lineaSeparacionHTML() {
         $html = '<div class="row">
                     <div class="col-md-12">
                         <div class="underline m-b-15 m-t-15"></div>
@@ -409,7 +409,7 @@ class Tesoreria extends General {
                 $serie = '';
             }
 
-            $folio = $nodoComprobante['Folio'];
+            $folio = (isset($nodoComprobante['Folio'])) ? $nodoComprobante['Folio'] : '';
         }
 
         return array(
