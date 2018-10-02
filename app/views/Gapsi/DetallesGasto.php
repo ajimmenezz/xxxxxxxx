@@ -24,7 +24,7 @@
     <div class="panel-body">
         <?php
 //        echo "<pre>";
-//        var_dump($Gasto['gasto']['Status']);
+//        var_dump($Pagos);
 //        echo "</pre>";
 
         $_cliente = $Gasto['gasto']['Cliente'];
@@ -304,7 +304,26 @@
                     <div class="col-md-12 col-sm-12 col-xs-12 m-t-20">
                         <?php
                         foreach ($archivosGasto as $key => $value) {
-                            echo '<div class="thumbnail-pic m-5 p-5"><a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="' . $value . '" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia"></a></div>';
+                            echo '<div class="thumbnail-pic m-5 p-5">';
+                            $ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
+                            switch ($ext) {
+                                case 'png': case 'jpeg': case 'jpg': case 'gif':
+                                    echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="' . $value . '" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                    break;
+                                case 'xls': case 'xlsx':
+                                    echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/excel_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                    break;
+                                case 'doc': case 'docx':
+                                    echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/word_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                    break;
+                                case 'pdf':
+                                    echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/pdf_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                    break;
+                                default :
+                                    echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/no-thumbnail.jpg" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                    break;
+                            }
+                            echo '</div>';                           
                         }
                         ?>
                     </div>
@@ -345,7 +364,48 @@
                     <a id="btnGuardarGasto" class="btn btn-info m-t-10 m-r-10 f-w-600 f-s-15">Guardar Gasto</a>                
                 </div>
             </div>
-        <?php } ?>
+            <?php
+        }
 
+
+        if (isset($Pagos) && count($Pagos) > 0) {
+            ?>
+            <div class="row m-t-10">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <h4>Comprobantes de Pago</h4>
+                    <div class="underline m-b-10"></div>
+                </div>
+            </div>            
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 m-t-20">
+                    <?php
+                    foreach ($Pagos as $key => $value) {
+                        echo '<div class="thumbnail-pic m-5 p-5">';
+                        $ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
+                        switch ($ext) {
+                            case 'png': case 'jpeg': case 'jpg': case 'gif':
+                                echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="' . $value . '" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                break;
+                            case 'xls': case 'xlsx':
+                                echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/excel_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                break;
+                            case 'doc': case 'docx':
+                                echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/word_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                break;
+                            case 'pdf':
+                                echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/pdf_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                break;
+                            default :
+                                echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/no-thumbnail.jpg" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                break;
+                        }
+                        echo '</div>';
+                    }
+                    ?>
+                </div>
+            </div>
+            <?php
+        }
+        ?>
     </div>        
 </div>        

@@ -3,18 +3,28 @@
 namespace Librerias\Gapsi;
 
 use Controladores\Controller_Base_General as General;
+use Aws\S3\S3Client;
 
 class Catalogos extends General {
 
     private $DB;
     private $Correo;
     private $usuario;
+    private $S3;
 
     public function __construct() {
         parent::__construct();
         $this->DB = \Modelos\Modelo_Gapsi::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
         $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
+        $this->S3 = new S3Client([
+            'version' => 'latest',
+            'region' => 'us-west-2',
+            'credentials' => [
+                'key' => 'AKIAJS7DH4TPDSKDHXSA',
+                'secret' => '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'
+            ]
+        ]);
     }
 
     public function getClientes() {
@@ -192,6 +202,25 @@ class Catalogos extends General {
     public function cargaGasto(array $data) {
         $gasto = $this->detallesGasto($data['id']);
 
+        $prefix = 'Gastos/' . $data['id'] . '/PAG/';
+
+        $pagosArray = [];
+
+        $pagos = $this->S3->listObjects([
+            'Bucket' => 'gapsi',
+            'Prefix' => $prefix
+        ]);
+
+        $pagos = $pagos->toArray();
+
+        $pagos = (isset($pagos['Contents'])) ? $pagos['Contents'] : [];
+
+        foreach ($pagos as $key => $value) {
+            if ($value['Key'] != $prefix) {
+                array_push($pagosArray, 'https://s3-us-west-2.amazonaws.com/gapsi/' . $value['Key']);
+            }
+        }
+
         $editable = ($gasto['usuario'] == $this->usuario['Id'] && in_array($gasto['gasto']['Status'], ['Requiere Autorizacion', 'Solicitado'])) ? true : false;
 
         $datos = [
@@ -203,7 +232,8 @@ class Catalogos extends General {
             'Sucursales' => $this->sucursalesByProyecto(['id' => $gasto['gasto']['Proyecto']]),
             'Beneficiarios' => $this->beneficiarioByTipo(['id' => $gasto['gasto']['TipoBeneficiario']]),
             'Gasto' => $gasto,
-            'Editable' => $editable
+            'Editable' => $editable,
+            'Pagos' => $pagosArray
         ];
         return [
             'html' => parent::getCI()->load->view('Gapsi/DetallesGasto', $datos, TRUE)
