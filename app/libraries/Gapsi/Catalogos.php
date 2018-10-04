@@ -102,28 +102,137 @@ class Catalogos extends General {
             }
         }
 
+        $style = ''
+                . '<style>
+                        table{
+                        font-size: 16px;
+                            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                            border-collapse: collapse;
+                            border-spacing: 0;
+                            width: 90%;
+                                    border: none;
+                                        display:table;
+                                        margin-top:15px;
+                                        margin-left:15px;
+                                        margin-right:30px;
+                                            box-sizing: border-box;
+                        }
+                        td{
+                        border: 1px solid #ddd;
+                            text-align: left;
+                            padding: 8px;
+                                    display: table-cell;
+                            vertical-align: inherit;
+                        }
+                        tr{
+                            display: table-row;
+                            vertical-align: inherit;
+                            border-color: inherit;
+                                }
+                                tr.alt{background-color: #f2f2f2;
+                                }
+                        th{
+
+                            display: table-cell;
+                            vertical-align: inherit;
+                            font-size: 16px;
+                            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                            border-collapse: collapse;
+                                    padding-top: 11px;
+                            padding-bottom: 11px;
+                            background-color: #3FB4A8;
+                            color: white;
+                                    border: 1px solid #ddd;
+                            text-align: left;
+                            padding: 8px;
+                        }
+                        .encabezado{
+                            background-color: #4d94ff;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+                        height:50px;
+
+                        }
+                        h1 {
+                        margin-left:15px;
+                        margin-top:10px;
+                        padding-top:15px;
+                        letter-spacing:0.8px;
+                                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                                font-size: 24px;
+                                font-style: normal;
+                                font-variant: normal;
+                                font-weight: 500;
+                                line-height: 26.4px;
+                        }
+                        h2 {
+                        margin-left:15px;
+
+                        letter-spacing:0.8px;
+                                font-family: "Tahoma", "Geneva", sans-serif;
+                                font-size: 15px;
+                                font-style: bold;
+                                font-variant: normal;
+                                font-weight: 200;
+                                line-height: 10px;
+                        }
+                        p {
+                        margin: 20px 20px 0 15px;
+                        letter-spacing:0.5px;
+                                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                                font-size: 14px;
+                                font-style: normal;
+                                font-variant: normal;
+                                font-weight: 400;
+                                line-height: 20px;
+                        }
+                        .Titulo{
+                        height:120px; margin-top:10px; padding-top:2px; padding-bottom:10px; background-color:#EDEDED;
+                        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+                        }
+                        .boton{
+                            background-color:#33CCFF;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+                            text-decor:none;
+                            display:inline-box;
+                            margin-left:15px;
+                            margin-top:5px;
+                            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                            font-size: 14px;
+                            font-style: normal;
+                            font-variant: normal;
+                            letter-spacing:1px;
+                            font-weight: 600;
+                            line-height: 20px;
+                            margin: 20px 20px 0 30px;
+                            padding-left:15px;
+                            padding-top:15px;
+                            padding-right:15px;
+                            padding-bottom:15px;
+                            color:white;
+                        }
+                        </style>';
+
         if ($resultado['code'] == 200) {
             $bodyMail = ''
-                    . '<div style="font-size: 80%;">'
-                    . '<h1 style="background:#305cac"><span style="color:white">AUTORIZACION DE GASTOS - GAPSI</span></h1>'
-                    . '<h2 style="background:#ededed;margin-right: 0cm;margin-left: 11.25pt;font-size: 11.5pt;font-family: \'Tahoma\',sans-serif;letter-spacing: .6pt;font-weight: normal;">Proyecto: ' . $datos['ProyectoString'] . '</h2>'
-                    . '<h2 style="background:#ededed;margin-right: 0cm;margin-left: 11.25pt;font-size: 11.5pt;font-family: \'Tahoma\',sans-serif;letter-spacing: .6pt;font-weight: normal;">Cliente: ' . $datos['Cliente'] . '</h2>'
-                    . '<h2 style="background:#ededed;margin-right: 0cm;margin-left: 11.25pt;font-size: 11.5pt;font-family: \'Tahoma\',sans-serif;letter-spacing: .6pt;font-weight: normal;">Sucursal: ' . $datos['SucursalString'] . '</h2>'
-                    . '<h2 style="background:#ededed;margin-right: 0cm;margin-left: 11.25pt;font-size: 11.5pt;font-family: \'Tahoma\',sans-serif;letter-spacing: .6pt;font-weight: normal;">Monto total: $' . number_format($datos['Importe'], 2, '.', ",") . '</h2>'
-                    . '<h2 style="background:#ededed;margin-right: 0cm;margin-left: 11.25pt;font-size: 11.5pt;font-family: \'Tahoma\',sans-serif;letter-spacing: .6pt;font-weight: normal;">Descripción: ' . $datos['Descripcion'] . '</h2>'
-                    . '<br />'
-                    . '</div>'
-                    . '<p>El usuario: "' . $this->usuario['Nombre'] . '"  ha solicitado su aprobación para el siguiente gasto:</p>'
-                    . '<table class="m_4241017372003712731MsoNormalTable" border="0" cellspacing="0" cellpadding="0" width="90%" style="width:90.0%;margin-left:11.25pt;border-collapse:collapse">'
-                    . ' <thead>'
-                    . '     <tr>'
-                    . '         <th style="border: solid #dddddd 1.0pt;background: #3fb4a8;padding: 6.0pt 6.0pt 6.0pt 6.0pt; color:white;">Categoría</th>'
-                    . '         <th style="border: solid #dddddd 1.0pt;background: #3fb4a8;padding: 6.0pt 6.0pt 6.0pt 6.0pt; color:white;">Subcategoría</th>'
-                    . '         <th style="border: solid #dddddd 1.0pt;background: #3fb4a8;padding: 6.0pt 6.0pt 6.0pt 6.0pt; color:white;">Concepto</th>'
-                    . '         <th style="border: solid #dddddd 1.0pt;background: #3fb4a8;padding: 6.0pt 6.0pt 6.0pt 6.0pt; color:white;">Monto</th>'
-                    . '     </tr>'
-                    . ' </thead>'
-                    . ' <tbody>';
+                    . ' <div class="encabezado" style="width:100%;  color:white;" >
+                            <h1>SOLICITUD DE GASTOS  -   GAPSI</h1>   
+                        </div>
+                        <div class="Titulo" ><h2>Proyecto: ' . $datos['ProyectoString'] . '</h2>
+                            <h2>Cliente: ' . $datos['Cliente'] . '</h2>
+                            <h2>Sucursal: ' . $datos['SucursalString'] . '</h2>
+                            <h2>Monto total: $' . number_format($datos['Importe'], 2, '.', ",") . '</h2>
+                            <h2>Descripcion: ' . $datos['Descripcion'] . '</h2>
+                        </div>
+                        <p>El usuario: "' . $this->usuario['Nombre'] . '"  ha solicitado su aprobación para el siguiente gasto:</p>
+                        <div style ="width:100%; background-color:white; margin-top:10px;">
+                            <p>Se requiere que aplique el siguiente gasto:</p>
+                        <table>
+                            <tr>
+                                <th >Categoria</th>
+                                <th>Subcategoria</th>
+                                <th>Concepto</th>
+                                <th >Monto</th>   
+                            </tr>';
 
             $conceptos = json_decode($datos['Conceptos'], true);
 
@@ -131,29 +240,25 @@ class Catalogos extends General {
                 foreach ($conceptos as $key => $value) {
                     $bodyMail .= ''
                             . '<tr>'
-                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                            . '         ' . $value['categoria']
-                            . '         </span></p>'
+                            . ' <td>'
+                            . '     <p>'
+                            . '     ' . $value['categoria']
+                            . '     </p>'
                             . ' </td>'
-                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                            . '         ' . $value['subcategoria']
-                            . '         </span></p>'
+                            . ' <td>'
+                            . '     <p>'
+                            . '     ' . $value['subcategoria']
+                            . '     </p>'
                             . ' </td>'
-                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                            . '         ' . $value['concepto']
-                            . '         </span></p>'
+                            . ' <td>'
+                            . '     <p>'
+                            . '     ' . $value['concepto']
+                            . '     </p>'
                             . ' </td>'
-                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                            . '         ' . number_format($value['monto'], 2, '.', ",")
-                            . '         </span></p>'
+                            . ' <td>'
+                            . '     <p>'
+                            . '     ' . number_format($value['monto'], 2, '.', ",")
+                            . '     </p>'
                             . ' </td>'
                             . '</tr>';
                 }
@@ -171,20 +276,13 @@ class Catalogos extends General {
             }
 
             $bodyMail .= ''
-                    . ' </tbody>'
-//                    . ' <tfoot>'
-//                    . '     <tr>'
-//                    . '         <th colspan="3" style="text-align:right; padding:10px">TOTAL</th>'
-//                    . '         <th style="padding:10px">$' . number_format($datos['Importe'], 2, '.', ",") . '</th>'
-//                    . '     </tr>'
-//                    . ' </tfoot>'
                     . '</table>'
-                    . '<br />' . $adjuntos
                     . '<p>Para aplicarlo de click en el siguiente link Si se encuentra en las oficinas de SICCOB <a href="http://192.168.0.30/GAPSI/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p><br/><br/>'
-                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://gapsi.dyndns.org/GAPSI/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>';
+                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://gapsi.dyndns.org/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>'
+                    . '<br />' . $adjuntos;
 
-            $titulo = "Autorización Requerida";
-            $this->Correo->enviarCorreo('gastos@siccob.solutions', array('jdiaz@siccob.com.mx', 'mrodriguez@siccob.com.mx', 'pruebasiccob@ioitconsulting.com', 'ajimenez@siccob.com.mx', $this->usuario['EmailCorporativo']), $titulo, $bodyMail, explode(",", $archivos));
+            $titulo = "Solicitud de Gasto";
+            $this->Correo->enviarCorreo('gastos@siccob.solutions', array('mrodriguez@siccob.com.mx', 'pruebasiccob@ioitconsulting.com', 'ajimenez@siccob.com.mx', $this->usuario['EmailCorporativo']), $titulo, $bodyMail, explode(",", $archivos), $style);
 
             $this->DB->insertar("t_archivos_gastos_gapsi", ['IdGasto' => $resultado['last'], 'Archivos' => $archivos, 'Email' => $this->usuario['EmailCorporativo'], 'IdUsuario' => $this->usuario['Id']]);
 
@@ -268,28 +366,137 @@ class Catalogos extends General {
             }
         }
 
+        $style = ''
+                . '<style>
+                        table{
+                        font-size: 16px;
+                            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                            border-collapse: collapse;
+                            border-spacing: 0;
+                            width: 90%;
+                                    border: none;
+                                        display:table;
+                                        margin-top:15px;
+                                        margin-left:15px;
+                                        margin-right:30px;
+                                            box-sizing: border-box;
+                        }
+                        td{
+                        border: 1px solid #ddd;
+                            text-align: left;
+                            padding: 8px;
+                                    display: table-cell;
+                            vertical-align: inherit;
+                        }
+                        tr{
+                            display: table-row;
+                            vertical-align: inherit;
+                            border-color: inherit;
+                                }
+                                tr.alt{background-color: #f2f2f2;
+                                }
+                        th{
+
+                            display: table-cell;
+                            vertical-align: inherit;
+                            font-size: 16px;
+                            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                            border-collapse: collapse;
+                                    padding-top: 11px;
+                            padding-bottom: 11px;
+                            background-color: #3FB4A8;
+                            color: white;
+                                    border: 1px solid #ddd;
+                            text-align: left;
+                            padding: 8px;
+                        }
+                        .encabezado{
+                            background-color: #4d94ff;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+                        height:50px;
+
+                        }
+                        h1 {
+                        margin-left:15px;
+                        margin-top:10px;
+                        padding-top:15px;
+                        letter-spacing:0.8px;
+                                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                                font-size: 24px;
+                                font-style: normal;
+                                font-variant: normal;
+                                font-weight: 500;
+                                line-height: 26.4px;
+                        }
+                        h2 {
+                        margin-left:15px;
+
+                        letter-spacing:0.8px;
+                                font-family: "Tahoma", "Geneva", sans-serif;
+                                font-size: 15px;
+                                font-style: bold;
+                                font-variant: normal;
+                                font-weight: 200;
+                                line-height: 10px;
+                        }
+                        p {
+                        margin: 20px 20px 0 15px;
+                        letter-spacing:0.5px;
+                                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                                font-size: 14px;
+                                font-style: normal;
+                                font-variant: normal;
+                                font-weight: 400;
+                                line-height: 20px;
+                        }
+                        .Titulo{
+                        height:120px; margin-top:10px; padding-top:2px; padding-bottom:10px; background-color:#EDEDED;
+                        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+                        }
+                        .boton{
+                            background-color:#33CCFF;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+                            text-decor:none;
+                            display:inline-box;
+                            margin-left:15px;
+                            margin-top:5px;
+                            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                            font-size: 14px;
+                            font-style: normal;
+                            font-variant: normal;
+                            letter-spacing:1px;
+                            font-weight: 600;
+                            line-height: 20px;
+                            margin: 20px 20px 0 30px;
+                            padding-left:15px;
+                            padding-top:15px;
+                            padding-right:15px;
+                            padding-bottom:15px;
+                            color:white;
+                        }
+                        </style>';
+
         if ($resultado['code'] == 200) {
             $bodyMail = ''
-                    . '<div style="font-size: 80%;">'
-                    . '<h1 style="background:#305cac"><span style="color:white">AUTORIZACION DE GASTOS - GAPSI</span></h1>'
-                    . '<h2 style="background:#ededed;margin-right: 0cm;margin-left: 11.25pt;font-size: 11.5pt;font-family: \'Tahoma\',sans-serif;letter-spacing: .6pt;font-weight: normal;">Proyecto: ' . $datos['ProyectoString'] . '</h2>'
-                    . '<h2 style="background:#ededed;margin-right: 0cm;margin-left: 11.25pt;font-size: 11.5pt;font-family: \'Tahoma\',sans-serif;letter-spacing: .6pt;font-weight: normal;">Cliente: ' . $datos['Cliente'] . '</h2>'
-                    . '<h2 style="background:#ededed;margin-right: 0cm;margin-left: 11.25pt;font-size: 11.5pt;font-family: \'Tahoma\',sans-serif;letter-spacing: .6pt;font-weight: normal;">Sucursal: ' . $datos['SucursalString'] . '</h2>'
-                    . '<h2 style="background:#ededed;margin-right: 0cm;margin-left: 11.25pt;font-size: 11.5pt;font-family: \'Tahoma\',sans-serif;letter-spacing: .6pt;font-weight: normal;">Monto total: $' . number_format($datos['Importe'], 2, '.', ",") . '</h2>'
-                    . '<h2 style="background:#ededed;margin-right: 0cm;margin-left: 11.25pt;font-size: 11.5pt;font-family: \'Tahoma\',sans-serif;letter-spacing: .6pt;font-weight: normal;">Descripción: ' . $datos['Descripcion'] . '</h2>'
-                    . '<br />'
-                    . '</div>'
-                    . '<p>El usuario: "' . $this->usuario['Nombre'] . '"  ha modificado la solicitud de gasto. Los detalles son los siguientes:</p>'
-                    . '<table class="m_4241017372003712731MsoNormalTable" border="0" cellspacing="0" cellpadding="0" width="90%" style="width:90.0%;margin-left:11.25pt;border-collapse:collapse">'
-                    . ' <thead>'
-                    . '     <tr>'
-                    . '         <th style="border: solid #dddddd 1.0pt;background: #3fb4a8;padding: 6.0pt 6.0pt 6.0pt 6.0pt; color:white;">Categoría</th>'
-                    . '         <th style="border: solid #dddddd 1.0pt;background: #3fb4a8;padding: 6.0pt 6.0pt 6.0pt 6.0pt; color:white;">Subcategoría</th>'
-                    . '         <th style="border: solid #dddddd 1.0pt;background: #3fb4a8;padding: 6.0pt 6.0pt 6.0pt 6.0pt; color:white;">Concepto</th>'
-                    . '         <th style="border: solid #dddddd 1.0pt;background: #3fb4a8;padding: 6.0pt 6.0pt 6.0pt 6.0pt; color:white;">Monto</th>'
-                    . '     </tr>'
-                    . ' </thead>'
-                    . ' <tbody>';
+                    . ' <div class="encabezado" style="width:100%;  color:white;" >
+                            <h1>SOLICITUD DE GASTOS  -   GAPSI</h1>   
+                        </div>
+                        <div class="Titulo" ><h2>Proyecto: ' . $datos['ProyectoString'] . '</h2>
+                            <h2>Cliente: ' . $datos['Cliente'] . '</h2>
+                            <h2>Sucursal: ' . $datos['SucursalString'] . '</h2>
+                            <h2>Monto total: $' . number_format($datos['Importe'], 2, '.', ",") . '</h2>
+                            <h2>Descripcion: ' . $datos['Descripcion'] . '</h2>
+                        </div>
+                        <p>El usuario: "' . $this->usuario['Nombre'] . '"  ha solicitado su aprobación para el siguiente gasto:</p>
+                        <div style ="width:100%; background-color:white; margin-top:10px;">
+                            <p>Se requiere que aplique el siguiente gasto:</p>
+                        <table>
+                            <tr>
+                                <th >Categoria</th>
+                                <th>Subcategoria</th>
+                                <th>Concepto</th>
+                                <th >Monto</th>   
+                            </tr>';
 
             $conceptos = json_decode($datos['Conceptos'], true);
 
@@ -297,29 +504,25 @@ class Catalogos extends General {
                 foreach ($conceptos as $key => $value) {
                     $bodyMail .= ''
                             . '<tr>'
-                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                            . '         ' . $value['categoria']
-                            . '         </span></p>'
+                            . ' <td>'
+                            . '     <p>'
+                            . '     ' . $value['categoria']
+                            . '     </p>'
                             . ' </td>'
-                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                            . '         ' . $value['subcategoria']
-                            . '         </span></p>'
+                            . ' <td>'
+                            . '     <p>'
+                            . '     ' . $value['subcategoria']
+                            . '     </p>'
                             . ' </td>'
-                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                            . '         ' . $value['concepto']
-                            . '         </span></p>'
+                            . ' <td>'
+                            . '     <p>'
+                            . '     ' . $value['concepto']
+                            . '     </p>'
                             . ' </td>'
-                            . ' <td style="border:solid #dddddd 1.0pt;border-top:none;padding:6.0pt 6.0pt 6.0pt 6.0pt">'
-                            . '     <p class="MsoNormal" style="margin-top:11.25pt">'
-                            . '         <span style="font-family:&quot;Trebuchet MS&quot;,sans-serif">'
-                            . '         ' . number_format($value['monto'], 2, '.', ",")
-                            . '         </span></p>'
+                            . ' <td>'
+                            . '     <p>'
+                            . '     ' . number_format($value['monto'], 2, '.', ",")
+                            . '     </p>'
                             . ' </td>'
                             . '</tr>';
                 }
@@ -337,21 +540,14 @@ class Catalogos extends General {
             }
 
             $bodyMail .= ''
-                    . ' </tbody>'
-//                    . ' <tfoot>'
-//                    . '     <tr>'
-//                    . '         <th colspan="3" style="text-align:right; padding:10px">TOTAL</th>'
-//                    . '         <th style="padding:10px">$' . number_format($datos['Importe'], 2, '.', ",") . '</th>'
-//                    . '     </tr>'
-//                    . ' </tfoot>'
                     . '</table>'
-                    . '<br />' . $adjuntos
-                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra en las oficinas de SICCOB <a href="http://192.168.0.30/GAPSI/AplicaGastoSolic?ID=' . $datos['ID'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p><br/><br/>'
-                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://gapsi.dyndns.org/GAPSI/AplicaGastoSolic?ID=' . $datos['ID'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>';
+                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra en las oficinas de SICCOB <a href="http://192.168.0.30/GAPSI/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p><br/><br/>'
+                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://gapsi.dyndns.org/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>'
+                    . '<br />' . $adjuntos;
 
-            $titulo = "Autorización Requerida - Cambios en la solicitud";
-            $this->Correo->enviarCorreo('gastos@siccob.solutions', array('jdiaz@siccob.com.mx', 'mrodriguez@siccob.com.mx', 'pruebasiccob@ioitconsulting.com', 'ajimenez@siccob.com.mx', $this->usuario['EmailCorporativo']), $titulo, $bodyMail, explode(",", $archivos));
-
+            $titulo = "Solicitud de Gasto";
+            $this->Correo->enviarCorreo('gastos@siccob.solutions', array('mrodriguez@siccob.com.mx', 'pruebasiccob@ioitconsulting.com', 'ajimenez@siccob.com.mx', $this->usuario['EmailCorporativo']), $titulo, $bodyMail, explode(",", $archivos), $style);
+            
             $this->DB->actualizar("t_archivos_gastos_gapsi", ['Archivos' => $archivos, 'Email' => $this->usuario['EmailCorporativo'], 'IdUsuario' => $this->usuario['Id']], ['IdGasto' => $datos['ID']]);
 
             return $resultado;

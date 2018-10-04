@@ -68,16 +68,20 @@ class Correo extends General {
      * @param string $mensaje recibe el mensaje que lleva el correo
      */
 
-    public function enviarCorreo(string $remitente, array $destinatario, string $asunto, string $mensaje, array $archivoAdjunto = []) {
+    public function enviarCorreo(string $remitente, array $destinatario, string $asunto, string $mensaje, array $archivoAdjunto = [], string $style = '') {
+        if ($style == '') {
+            $style = ''
+                    . '<style>
+                        .table-striped>tbody>tr:nth-of-type(odd) {
+                            background-color: #f9f9f9;
+}                       }
+                    </style>';
+        }
         $contenido = '  <html>
                             <head>
                                 <title>' . $asunto . '</title>
                                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-                                <style>
-                                    .table-striped>tbody>tr:nth-of-type(odd) {
-                                        background-color: #f9f9f9;
-}                                   }
-                                </style>
+                                ' . $style . '
                             </head>
                             <body>
                             ' . $mensaje . '
