@@ -2769,11 +2769,15 @@ class Servicio extends General {
                 if ($dataServicios[0]['IdEstatus'] === '3') {
                     $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
                     $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
-                    $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
-                    if ($sucursalVuelta !== $nombreSucursal) {
+                    if (!empty($vultasAnteriores)) {
+                        $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
+                        if ($sucursalVuelta !== $nombreSucursal) {
+                            return TRUE;
+                        } else {
+                            return 'yaTieneVueltas';
+                        }
+                    }else{
                         return TRUE;
-                    } else {
-                        return 'yaTieneVueltas';
                     }
                 } else {
                     return 'noEstaProblema';
