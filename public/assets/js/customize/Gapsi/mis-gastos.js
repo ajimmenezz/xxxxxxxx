@@ -228,6 +228,37 @@ $(function () {
             }
         });
 
+        $(".deleteButton").off("click");
+        $(".deleteButton").on("click", function () {
+            var _thisButton = $(this);
+            var _thisSource = $(this).attr("data-src");
+            var filename = _thisSource.split('/').pop();
+
+            var _htmlModal = `<p class="text-center f-s-20 text-danger f-w-600">¿Estás seguro de eliminar el Archivo ` + filename + `?</p>`;
+
+            evento.mostrarModal("Warning", _htmlModal);
+
+            $("#btnModalConfirmar").off("click");
+            $("#btnModalConfirmar").on("click", function () {
+                var datos = {
+                    'Id': $("#IDGasto").val(),
+                    'Source': _thisSource
+                };
+
+                evento.enviarEvento('Gasto/EliminarArchivo', datos, '#panelFormularioGasto', function (respuesta) {
+                    if (respuesta.code == 200) {
+                        evento.cerrarModal();
+                        _thisButton.closest("div.thumbnail-pic").remove();
+                        evento.mostrarMensaje("#errorDeleteImages", true, 'El archivo se eliminó correctamente', 4000);
+                    } else {
+                        evento.cerrarModal();
+                        evento.mostrarMensaje("#errorDeleteImages", false, 'No se pudo eliminar el archivo. Intente de nuevo o contacte al administrador', 4000);
+                    }
+                });
+            });
+
+        });
+
         actualizaTotal();
         actionsRemove();
     }

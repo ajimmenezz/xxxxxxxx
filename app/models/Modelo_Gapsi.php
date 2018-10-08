@@ -234,4 +234,33 @@ class Modelo_Gapsi extends Modelo_Base {
         }
     }
 
+    public function eliminarArchivo(array $datos) {
+        $this->iniciaTransaccion();
+
+        $this->queryBolean("
+            update 
+            t_archivos_gastos_gapsi
+            set Archivos = replace(concat(',',Archivos,','),'," . $datos['Source'] . ",','')
+            where IdGasto = '" . $datos['Id'] . "'");
+
+
+        $first = $this->consulta("select SUBSTR(Archivos,1,1) as FirstL from t_archivos_gastos_gapsi where IdGasto = '" . $datos['Id'] . "'")[0]['FirstL'];
+        if ($first == ',') {
+            $this->queryBolean("
+            update 
+            t_archivos_gastos_gapsi
+            set Archivos = SUBSTR(Archivos,2)
+            where IdGasto = '" . $datos['Id'] . "'");
+        }
+
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
 }

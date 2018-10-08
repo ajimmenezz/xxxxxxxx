@@ -547,13 +547,27 @@ class Catalogos extends General {
 
             $titulo = "Solicitud de Gasto";
             $this->Correo->enviarCorreo('gastos@siccob.solutions', array('mrodriguez@siccob.com.mx', 'pruebasiccob@ioitconsulting.com', 'ajimenez@siccob.com.mx', $this->usuario['EmailCorporativo']), $titulo, $bodyMail, explode(",", $archivos), $style);
-            
+
             $this->DB->actualizar("t_archivos_gastos_gapsi", ['Archivos' => $archivos, 'Email' => $this->usuario['EmailCorporativo'], 'IdUsuario' => $this->usuario['Id']], ['IdGasto' => $datos['ID']]);
 
             return $resultado;
         } else {
             return $resultado;
         }
+    }
+
+    public function eliminarArchivo(array $datos) {
+        $return = $this->DB->eliminarArchivo($datos);
+        if ($return['code'] == 200) {
+            $s3Result = $this->S3->deleteObject([
+                'Bucket' => 'gapsi',
+                'Key' => str_replace("/storage/", "", $datos['Source'])
+            ]);
+            if (file_exists("." . $datos['Source'])) {
+                unlink("." . $datos['Source']);
+            }
+        }
+        return $return;
     }
 
 }

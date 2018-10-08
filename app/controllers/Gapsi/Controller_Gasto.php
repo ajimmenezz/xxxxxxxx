@@ -50,6 +50,9 @@ class Controller_Gasto extends Base {
             case 'GuardarCambiosGasto':
                 $resultado = $this->catalogo->guardarCambiosGasto($this->input->post());
                 break;
+            case 'EliminarArchivo':
+                $resultado = $this->catalogo->eliminarArchivo($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

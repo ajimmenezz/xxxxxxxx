@@ -305,6 +305,7 @@
                         <?php
                         foreach ($archivosGasto as $key => $value) {
                             echo '<div class="thumbnail-pic m-5 p-5">';
+                            echo '<span role="button" class="edit deleteButton" data-src="' . $value . '"><i class="fa fa-2x fa-minus-circle text-danger" aria-hidden="true"></i></span>';
                             $ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
                             switch ($ext) {
                                 case 'png': case 'jpeg': case 'jpg': case 'gif':
@@ -323,9 +324,14 @@
                                     echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/no-thumbnail.jpg" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
                                     break;
                             }
-                            echo '</div>';                           
+                            echo '</div>';
                         }
                         ?>
+                    </div>
+                </div>
+                <div class="row m-t-10">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div id="errorDeleteImages"></div>
                     </div>
                 </div>
                 <?php
