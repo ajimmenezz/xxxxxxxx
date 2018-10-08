@@ -8,8 +8,8 @@
                 Acciones <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">                
-<!--                <li id="btnDocumentoInicial"><a href="#"><i class="fa fa-file"></i> Imprimir Inicio de Proyecto</a></li>
-                <li id="btnSolicitudMaterial"><a href="#"><i class="fa fa-file"></i> Imprimir Solicitud de Material</a></li>
+                <li id="btnMarcarLeido"><a href="#"><i class="fa fa-envelope-open" aria-hidden="true"></i> Marcar como leído</a></li>
+<!--                <li id="btnSolicitudMaterial"><a href="#"><i class="fa fa-file"></i> Imprimir Solicitud de Material</a></li>
                 <li id="btnSolicitudMaterialFaltante"><a href="#"><i class="fa fa-file"></i> Imprimir Material Faltante</a></li>-->
         </div>
         <label id="btnRegresar" class="btn btn-success">
@@ -38,6 +38,11 @@
         $__beneficiario = $Gasto['gasto']['IDBeneficiario'];
         $__disable = ($Editable) ? '' : 'disabled="disabled"';
         ?>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div id="errorTop"></div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <h4>Detalles del gasto <?php echo $Gasto['gasto']['ID']; ?></h4>

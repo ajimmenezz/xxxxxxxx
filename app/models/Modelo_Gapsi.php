@@ -126,21 +126,36 @@ class Modelo_Gapsi extends Modelo_Base {
         $condicion = '';
         $todos = true;
         if (!in_array(284, $this->usuario['Permisos'])) {
-            $condicion = " where IdUsuario = '" . $this->usuario['Id'] . "' ";
+            $condicion = " and IdUsuario = '" . $this->usuario['Id'] . "' ";
             $todos = false;
         }
 
-        $ids = $this->consulta("select group_concat(IdGasto) as Ids from t_archivos_gastos_gapsi " . $condicion)[0]['Ids'];
+        $ids = $this->consulta(""
+                        . "select "
+                        . "group_concat(IdGasto) as Ids "
+                        . "from t_archivos_gastos_gapsi "
+                        . "where 1 = 1 "
+                        . " " . $condicion . " "
+                        . "and if((CONCAT(',',Leido,',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) = 0")[0]['Ids'];
         $ids = ($ids !== '') ? ',' . $ids : '';
 
-        $consulta = $this->consulta("select IdGasto, nombreUsuario(IdUsuario) as Usuario, IdUsuario, Email from t_archivos_gastos_gapsi " . $condicion);
+        $consulta = $this->consulta("select "
+                . "IdGasto, "
+                . "nombreUsuario(IdUsuario) as Usuario, "
+                . "IdUsuario, "
+                . "Email, "
+                . "if((CONCAT(',',Leido,',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) as Leido "
+                . "from t_archivos_gastos_gapsi "
+                . "where 1 = 1 " . $condicion);
         $usuarios = [];
         foreach ($consulta as $key => $value) {
-            $usuarios[$value['IdGasto']] = [
-                'idUsuario' => $value['IdUsuario'],
-                'usuario' => $value['Usuario'],
-                'email' => $value['Email']
-            ];
+            if ($value['Leido'] != 1) {
+                $usuarios[$value['IdGasto']] = [
+                    'idUsuario' => $value['IdUsuario'],
+                    'usuario' => $value['Usuario'],
+                    'email' => $value['Email']
+                ];
+            }
         }
 
 
@@ -253,6 +268,31 @@ class Modelo_Gapsi extends Modelo_Base {
             where IdGasto = '" . $datos['Id'] . "'");
         }
 
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function marcarLeido(array $datos) {
+        $this->iniciaTransaccion();
+
+        $leidos = $this->consulta("select Leido from t_archivos_gastos_gapsi where IdGasto = '" . $datos['Id'] . "'")[0]['Leido'];
+        if ($leidos != '') {
+            $leidos .= ',' . $this->usuario['Id'];
+        } else {
+            $leidos = $this->usuario['Id'];
+        }
+
+        $this->queryBolean("
+            update 
+            t_archivos_gastos_gapsi
+            set Leido = '" . $leidos . "'
+            where IdGasto = '" . $datos['Id'] . "'");
 
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();

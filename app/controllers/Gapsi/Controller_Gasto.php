@@ -53,6 +53,9 @@ class Controller_Gasto extends Base {
             case 'EliminarArchivo':
                 $resultado = $this->catalogo->eliminarArchivo($this->input->post());
                 break;
+            case 'MarcarLeido':
+                $resultado = $this->catalogo->marcarLeido($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

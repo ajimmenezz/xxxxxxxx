@@ -259,6 +259,22 @@ $(function () {
 
         });
 
+
+        $("#btnMarcarLeido").off("click");
+        $("#btnMarcarLeido").on("click", function () {
+            var datos = {
+                'Id': $("#IDGasto").val()                
+            };
+            evento.enviarEvento('Gasto/MarcarLeido', datos, '#panelFormularioGasto', function (respuesta) {
+                if (respuesta.code == 200) {
+                    evento.empezarCargando('#panelFormularioGasto');
+                    location.reload();
+                } else {
+                    evento.mostrarMensaje("#errorTop", false, 'No se pudo marcar como leído. Intente de nuevo o contacte al administrador', 4000);
+                }
+            });
+        });
+
         actualizaTotal();
         actionsRemove();
     }

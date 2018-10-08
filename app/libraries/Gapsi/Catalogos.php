@@ -569,5 +569,10 @@ class Catalogos extends General {
         }
         return $return;
     }
+    
+    public function marcarLeido(array $datos) {
+        $return = $this->DB->marcarLeido($datos);
+        return $return;
+    }
 
 }
