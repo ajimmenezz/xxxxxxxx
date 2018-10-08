@@ -305,7 +305,9 @@
                         <?php
                         foreach ($archivosGasto as $key => $value) {
                             echo '<div class="thumbnail-pic m-5 p-5">';
-                            echo '<span role="button" class="edit deleteButton" data-src="' . $value . '"><i class="fa fa-2x fa-minus-circle text-danger" aria-hidden="true"></i></span>';
+                            if ($Editable) {
+                                echo '<span role="button" class="edit deleteButton" data-src="' . $value . '"><i class="fa fa-2x fa-minus-circle text-danger" aria-hidden="true"></i></span>';
+                            }
                             $ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
                             switch ($ext) {
                                 case 'png': case 'jpeg': case 'jpg': case 'gif':
