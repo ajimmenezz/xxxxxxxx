@@ -2584,7 +2584,7 @@ class Servicio extends General {
                 )
         );
 
-        $linkPdf = $this->pdfAsocicadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
+        $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
         $host = $_SERVER['SERVER_NAME'];
@@ -2640,7 +2640,7 @@ class Servicio extends General {
         }
     }
 
-    public function pdfAsocicadoVueltas(array $servicio, string $nombreExtra = NULL) {
+    public function pdfAsociadoVueltas(array $servicio, string $nombreExtra = NULL) {
         $usuario = $this->Usuario->getDatosUsuario();
         $infoServicio = $this->getInformacionServicio($servicio['servicio']);
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);

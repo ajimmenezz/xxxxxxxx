@@ -158,7 +158,7 @@ $(function () {
             $('#data-table-servicios-relacionados tbody').on('click', 'tr', function () {
                 var datos = $('#data-table-servicios-relacionados').DataTable().row(this).data();
                 var data = {'servicio': datos[0], solicitud: solicitud};
-                evento.enviarEvento('Servicio/Servicio_Detalles', data, '#informacionSolicitud', function (respuesta) {
+                evento.enviarEvento('Servicio/Servicio_Detalles', data, '#modal-dialogo', function (respuesta) {
                     if (respuesta.ids.IdEstatus === '5') {
                         $('#btnValidarServicio').removeClass('hidden');
                         $('#btnRechazarServicio').removeClass('hidden');
@@ -189,7 +189,7 @@ $(function () {
                             var modalMensaje = mensajeConfirmacion("¿Realmente quiere Rechazar el Servicio?");
                             $('#btnModalConfirmar').addClass('hidden');
                             $('#btnModalAbortar').addClass('hidden');
-                            evento.mostrarModal('"Advertencia"', modalMensaje);
+                            evento.mostrarModal('Advertencia', modalMensaje);
                             $('#btnModalConfirmar').off('click');
                             $('#btnAceptarConcluirServicio').on('click', function () {
                                 var formularioRechazarServicio = modalRecharServicio();
