@@ -148,7 +148,7 @@ class Documentacion extends General {
 
             $this->pdf->Image('.' . $datos['direccionFirma'], 90, 100, 40, 0, 'PNG');
 
-            $this->pdf->SetXY(12, 120);
+            $this->pdf->SetXY(12, 130);
             $this->pdf->SetFont("helvetica", "B", 12);
             $this->pdf->Cell(0, 0, utf8_decode($datos['nombreTecnico']), 0, 0, 'C');
 
