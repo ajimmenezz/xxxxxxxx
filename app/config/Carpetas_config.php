@@ -159,5 +159,8 @@ $config['Secciones'] = array(
     ),
     'Proveedores' => array(
         'Seguimiento-Proveedores' => 'Seguimiento'
+    ),
+    'Documentacion' => array(
+        'Carta-Responsiva' => 'Carta_Responsiva'
     )
 );
