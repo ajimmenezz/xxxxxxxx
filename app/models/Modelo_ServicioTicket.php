@@ -60,7 +60,7 @@ class Modelo_ServicioTicket extends Modelo_Base {
             foreach ($consulta as $value) {
                 $datos['IdUsuario'] = $usuario;
                 $datos['Nombre'] = $value['Nombre'];
-                $datos['Perfil'] = $value['IdPerfil'];
+                $datos['IdPerfil'] = $value['IdPerfil'];
                 $datos['EmailCorporativo'] = $value['EmailCorporativo'];
             }
             $perfil = $this->consulta('
@@ -69,7 +69,7 @@ class Modelo_ServicioTicket extends Modelo_Base {
                 cvds.IdArea 
                 FROM cat_perfiles cp INNER JOIN cat_v3_departamentos_siccob cvds 
                 ON cp.IdDepartamento = cvds.Id 
-                WHERE cp.Id = ' . $datos['Perfil']
+                WHERE cp.Id = ' . $datos['IdPerfil']
             );
 
             foreach ($perfil as $value) {
@@ -125,7 +125,10 @@ class Modelo_ServicioTicket extends Modelo_Base {
                 tst.FechaInicio,
                 tst.Descripcion as DescripcionServicio,
                 (select SDKey from cat_v3_usuarios where Id = tst.Atiende) as SDKeyAtiende,
-                IF(tst.IdSucursal != NULL, tst.IdSucursal, ts.IdSucursal) AS IdSucursal
+                IF(ts.IdSucursal != NULL || ts.IdSucursal = 0, tst.IdSucursal, ts.IdSucursal) AS IdSucursal,
+                tst.NombreFirma,
+                tst.Firma,
+                sucursal(tst.IdSucursal) AS Sucursal
             from t_servicios_ticket tst inner join t_solicitudes ts
             on tst.IdSolicitud = ts.Id where tst.Id = ' . $servicio);
         if (!empty($consulta)) {
@@ -154,6 +157,9 @@ class Modelo_ServicioTicket extends Modelo_Base {
                 $datos['SDKeyAtiende'] = $value['SDKeyAtiende'];
                 $datos['IdServicio'] = $value['Id'];
                 $datos['IdSucursal'] = $value['IdSucursal'];
+                $datos['NombreFirma'] = $value['NombreFirma'];
+                $datos['Firma'] = $value['Firma'];
+                $datos['Sucursal'] = $value['Sucursal'];
             }
 
             $consultaNotas = $this->consulta('
@@ -764,20 +770,79 @@ class Modelo_ServicioTicket extends Modelo_Base {
     }
 
     public function consultaFolio(string $servicio) {
-
         $consulta = $this->consulta('SELECT 
                                         ts.Folio
                                     FROM t_servicios_ticket tst
                                     INNER JOIN t_solicitudes ts
                                     ON tst.IdSolicitud = ts.Id
-                                    WHERE tst.Id =  "' . $servicio. '"');
+                                    WHERE tst.Id =  "' . $servicio . '"');
 
         if (!empty($consulta)) {
             return $consulta[0]['Folio'];
-        }else{
+        } else {
             return FALSE;
         }
+    }
 
+    public function totalAreaPuntos(array $datos) {
+        $consulta = $this->consulta('select 
+                                        Area, count(*) as Puntos
+                                    from
+                                        (select 
+                                            areaAtencion(IdArea) as Area, Punto
+                                        from
+                                            t_censos
+                                        where
+                                            IdServicio = (select 
+                                                    MAX(Id)
+                                                from
+                                                    t_servicios_ticket
+                                                where
+                                                    IdSucursal = (select 
+                                                            IdSucursal
+                                                        from
+                                                            t_servicios_ticket
+                                                        where
+                                                            Id = "' . $datos['servicio'] . '")
+                                                        and IdTipoServicio = 11
+                                                        and IdEstatus = 4)
+                                        group by IdArea , Punto) as tf
+                                    group by Area');
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function totalLineasCenso(array $datos) {
+        $consulta = $this->consulta('select 
+                                        cap_first(strSplit(modelo(IdModelo), " - ", 1)) as Linea,
+                                        count(*) as Total
+                                    from
+                                        t_censos
+                                    where
+                                        IdServicio = (select 
+                                                MAX(Id)
+                                            from
+                                                t_servicios_ticket
+                                            where
+                                                IdSucursal = (select 
+                                                        IdSucursal
+                                                    from
+                                                        t_servicios_ticket
+                                                    where
+                                                        Id = "' . $datos['servicio'] . '")
+                                                    and IdTipoServicio = 11
+                                                    and IdEstatus = 4)
+                                    group by Linea');
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
     }
 
 }
