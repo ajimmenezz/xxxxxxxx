@@ -150,7 +150,7 @@ class Documentacion extends General {
 
             $this->pdf->SetXY(12, 120);
             $this->pdf->SetFont("helvetica", "B", 12);
-            $this->pdf->Cell(0, 0, $datos['nombreTecnico'], 0, 0, 'C');
+            $this->pdf->Cell(0, 0, utf8_decode($datos['nombreTecnico']), 0, 0, 'C');
 
             $carpeta = $this->pdf->definirArchivo('Usuarios/Usuario-' . $usuario['Id'], 'Carta_Responsiva_Usuario_' . $usuario['Id']);
             $this->pdf->Output('F', $carpeta, true);
