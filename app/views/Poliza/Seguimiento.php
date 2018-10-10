@@ -38,14 +38,14 @@
                 <table id="data-table-poliza" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                     <thead>
                         <tr>
-                            <th class="never">Id</th>
+                            <th class="all">Id</th>
                             <th class="all">Ticket</th>
                             <th class="all">Solicitud </th>
                             <th class="all">Servicio</th>
                             <th class="all">Fecha de Creación</th>
                             <th class="all">Descripcion</th>
                             <th class="all">Estatus</th>
-                            <th class="never">IdEstatus</th>
+                            <th class="all">IdEstatus</th>
                             <th class="all">Folio</th>
                         </tr>
                     </thead>
