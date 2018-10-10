@@ -99,7 +99,8 @@ class Solicitud extends General {
                 ts.FechaCreacion as Fecha, 
                 estatus(ts.IdEstatus) as Estatus,
                 nombreUsuario(ts.Solicita) as Solicita, 
-                tsi.Asunto
+                tsi.Asunto,
+                sucursal(ts.IdSucursal) Sucursal
             from t_solicitudes ts 
             left join t_solicitudes_internas tsi
             on ts.Id = tsi.IdSolicitud
