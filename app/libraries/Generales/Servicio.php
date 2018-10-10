@@ -2773,7 +2773,7 @@ class Servicio extends General {
                     if (!empty($vultasAnteriores)) {
                         $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
                     }else{
-                        $sucursal = '';
+                        $sucursalVuelta = '';
                     }
                     
                     if ($sucursalVuelta === $nombreSucursal) {
