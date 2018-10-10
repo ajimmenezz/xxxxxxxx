@@ -124,5 +124,4 @@ class Controller_Phantom extends Base {
         $data = ['html' => $contenido, 'titulo' => $titulo];
         $this->load->view('Phantom/ServicioV2', $data);
     }
-
 }

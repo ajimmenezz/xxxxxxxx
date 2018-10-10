@@ -136,7 +136,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="personal">Jefe *</label>
-                                <select id="selectJefe"  style="width: 100%" >
+                                <select id="selectJefe"  style="width: 100%" data-parsley-required="true">
                                     <option value="">Seleccionar</option>
                                     <?php
                                     foreach ($infocatV3Usuarios as $item) {

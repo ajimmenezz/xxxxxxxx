@@ -107,6 +107,7 @@ $route['Proyectos/Tareas/(:any)'] = 'Proyectos/Controller_TareasTecnico/manejarE
 
 /* Routers para el manejo de secciones Configuracion */
 $route['Configuracion/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
+$route['Configuracion/PerfilUsuario/(:any)'] = 'Perfil/Controller_Perfil/manejarEvento/$1';
 
 /* Routers para el manejo de secciones generales */
 $route['Generales/(:any)'] = 'Generales/Controller_Notificaciones/desplegarPantalla/$1';
@@ -165,6 +166,10 @@ $route['Compras/Seguimiento/(:any)'] = 'Compras/Controller_Seguimiento/manejarEv
 /* Routers para el manejo de Contabilidad */
 $route['Contabilidad/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Contabilidad/Seguimiento/(:any)'] = 'Contabilidad/Controller_Seguimiento/manejarEvento/$1';
+
+/* Routers para el manejo de Contabilidad */
+$route['Documentacion/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
+$route['Documentacion/Documentacion/(:any)'] = 'Documentacion/Controller_Documentacion/manejarEvento/$1';
 
 /* Routers para el manejo de Laboratorio */
 $route['Laboratorio/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';

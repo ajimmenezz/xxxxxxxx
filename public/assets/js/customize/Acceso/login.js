@@ -101,6 +101,7 @@ $(function () {
                             acceso.enviarPagina(url);
                         });
                     } else {
+                        $('#inputPassword').val('');
                         acceso.mostrarMensaje('.login-buttons', false, ' Usuario y Password incorrectos.', 2000);
                         $(_this).removeAttr('disabled');
                     }

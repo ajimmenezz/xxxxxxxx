@@ -137,6 +137,16 @@ $(function () {
 
     $("#btnAddConcepto").off("click");
     $("#btnAddConcepto").on("click", function () {
+        addConcepto();
+    });
+
+    $("#txtMonto").on('keyup', function (e) {
+        if (e.keyCode == 13) {
+            addConcepto();
+        }
+    });
+
+    function addConcepto() {
         var datos = {
             'idCat': $("#listCategoria").val(),
             'cat': $("#listCategoria option:selected").text(),
@@ -166,7 +176,7 @@ $(function () {
             actualizaTotal();
             actionsRemove();
         }
-    });
+    }
 
     function actualizaTotal() {
         var total = 0;
@@ -240,6 +250,7 @@ $(function () {
                     'Tipo': $("#listProyectos option:selected").attr("data-tipo"),
                     'TipoTrans': $("#listTipoTrasnferencia option:selected").text(),
                     'TipoServicio': $("#listTiposServicio option:selected").text(),
+                    'OC': $.trim($("#txtOC").val()),
                     'Descripcion': $("#txtDescripcion").val(),
                     'Importe': total,
                     'Observaciones': $("#txtObservaciones").val(),

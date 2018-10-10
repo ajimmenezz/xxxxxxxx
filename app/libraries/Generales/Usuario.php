@@ -91,7 +91,7 @@ class Usuario extends General {
                 $archivos = setMultiplesArchivos($CI, 'fotoPersonal', $carpeta);
                 if ($archivos) {
                     $archivos = implode(',', $archivos);
-                    $this->DBU->insertarFoto('t_rh_personal', array(
+                    $this->DBU->insertarFoto(array(
                         'UrlFoto' => $archivos
                             ), array('Id' => $idPersonal)
                     );
@@ -138,7 +138,7 @@ class Usuario extends General {
                         $archivos = setMultiplesArchivos($CI, 'fotoActualizarPersonal', $carpeta);
                         if ($archivos) {
                             $archivos = implode(',', $archivos);
-                            $this->DBU->insertarFoto('t_rh_personal', array(
+                            $this->DBU->insertarFoto(array(
                                 'UrlFoto' => $archivos
                                     ), array('Id' => $datos['id'])
                             );
@@ -227,6 +227,158 @@ class Usuario extends General {
         $datos['asunto'] = $nombre . ' es miembro de SICCOB por lo cual se solicita creación de un su correo corporativo.';
 
         $this->Solicitud->solicitudNueva($datos);
+    }
+
+    public function mostrarFormularioPerfilUsuario(array $datos) {
+        $data = array();
+
+        $data['campo'] = $datos['campo'];
+        $data['input'] = $datos['input'];
+        $data['nombreInput'] = $datos['nombreInput'];
+
+
+        switch ($data['campo']) {
+            case 'Tel1':
+                $data['placeholder'] = '0445555555555';
+                break;
+            case 'Tel2':
+                $data['placeholder'] = '015555555555';
+                break;
+            default:
+                $data['placeholder'] = '';
+        }
+
+        if ($data['campo'] !== 'IdSexo') {
+            return ['modal' => parent::getCI()->load->view('Configuracion/Modal/EditarPerfilUsuario.php', $data, TRUE)];
+        } else {
+            $html = '<div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label class="f-w-600">Genero:</label>
+                                <select id="selectPerfilGenero" class="form-control" style="width: 100% !important;">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="1">Femenino</option>
+                                    <option value="2">Masculino</option>
+                                </select>        
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-t-10">
+                        <div class="col-md-12">
+                            <div class="errorPerfilUsuario"></div>
+                        </div>
+                    </div>';
+            return ['modal' => $html];
+        }
+    }
+
+    public function actualizarPerfilUsuario(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $datosActualizar = array(
+            'inputNuevo' => $datos['inputNuevo'],
+            'campo' => $datos['campo'],
+            'id' => $usuario['Id']
+        );
+
+        if ($datos['tabla'] === 'personal') {
+            $consulta = $this->DBU->actualizarCampoTRHPersonal($datosActualizar);
+        } else {
+            $consulta = $this->DBU->actualizarCampoUsuario($datosActualizar);
+        }
+
+        if (!empty($consulta)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function mostrarFormularioCambiarFoto(array $datos) {
+        $data = array();
+
+        $html = '<div class="row">
+                    <div class="col-md-12">                                    
+                        <div class="form-group">
+                            <label id="divArchivos">Foto *</label>
+                            <input id="fotoUsuario"  name="fotoUsuario[]" type="file" multiple/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row m-t-10">
+                        <div class="col-md-12">
+                            <div id="errorFotoUsuario"></div>
+                        </div>
+                </div>';
+        return ['modal' => $html];
+    }
+
+    public function actualizarFotoUsuario(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $archivos = null;
+        $CI = parent::getCI();
+        $carpeta = 'fotoPersonal/' . $usuario['Id'] . '/';
+        $archivos = setMultiplesArchivos($CI, 'fotoUsuario', $carpeta);
+
+        if ($archivos) {
+            $archivos = implode(',', $archivos);
+            $this->DBU->insertarFoto(array(
+                'UrlFoto' => $archivos
+                    ), array('Id' => $usuario['Id'])
+            );
+
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function mostrarFormularioActualizarPasswordUsuario(array $datos) {
+        $data = array();
+
+        $html = '<form class="margin-bottom-0" id="formActualizarPassword" data-parsley-validate="true">
+                    <div class="checkbox m-b-15"></div>
+                    <div class="row m-b-15">
+                        <div class="col-md-12">
+                            <label id="divArchivos">Nuevo Password *</label>
+                            <input type="password" class="form-control" placeholder="Nuevo Password" id="inputNuevoPsw" data-parsley-required="true" data-parsley-minlength="8" data-parsley-maxlength="15"/>
+                        </div>
+                    </div>
+                    <div class="row m-b-15">
+                        <div class="col-md-12">
+                            <label id="divArchivos">Confirmar Password *</label>
+                            <input type="password" class="form-control" placeholder="Confirmar Password" id="inputConfirmaNuevoPsw" data-parsley-required="true" data-parsley-equalto="#inputNuevoPsw"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="checkbox" id="alertRecuperar">
+                                <!--muestra el mensaje de error para recuperar contraseña-->
+                                <label class="alert hidden" role="alert"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Empezando mensaje-->
+                    <div class="row">
+                        <div class="col-md-120">
+                            <div class="alert alert-warning fade in m-b-15">                            
+                                Para definir password debe complir con los siguientes puntos:
+                                <ul>
+                                    <li>una mayuscula</li>
+                                    <li>una minuscula</li>
+                                    <li>un numero</li>
+                                    <li>la longitud minuma 8 y maxima 15</li>
+                                </ul>                          
+                            </div>                        
+                        </div>
+                    </div>
+                    <!--Finalizando mensaje-->
+                </form>
+                <div class="row m-t-10">
+                    <div class="col-md-12">
+                        <div id="errorPasswordUsuario"></div>
+                    </div>
+                </div>';
+        return ['modal' => $html];
     }
 
 }

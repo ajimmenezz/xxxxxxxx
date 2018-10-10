@@ -3,6 +3,7 @@
 namespace Librerias\Generales;
 
 use Controladores\Controller_Datos_Usuario as General;
+use Librerias\Generales\PDF as PDF;
 
 /**
  * Description of ServiciosTicket
@@ -26,6 +27,7 @@ class ServiciosTicket extends General {
     private $Correo;
     private $InformacionServicios;
     private $MSP;
+    private $pdf;
 
     public function __construct() {
         parent::__construct();
@@ -45,7 +47,8 @@ class ServiciosTicket extends General {
         $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
         $this->DBTO = \Modelos\Modelo_TicketsOld::factory();
-
+        $this->DBT = \Modelos\Modelo_Tesoreria::factory();
+        $this->pdf = new PDFAux();
 
         parent::getCI()->load->helper(array('date'));
     }
@@ -1373,8 +1376,6 @@ class ServiciosTicket extends General {
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }
-
-
         if (empty($serviciosTicket)) {
             $this->concluirSolicitud($fecha, $datos['idSolicitud']);
             $this->concluirTicket($datos['ticket']);
@@ -1419,6 +1420,10 @@ class ServiciosTicket extends General {
             if ($datosDescripcionConclusion[0]['Folio'] !== NULL) {
                 if ($datosDescripcionConclusion[0]['Folio'] !== '') {
                     if ($datosDescripcionConclusion[0]['Folio'] !== '0') {
+                        $this->agregarVueltaAsociadoMantenimiento(array(
+                            'servicio' => $datos['servicio'],
+                            'folio' => $datosDescripcionConclusion[0]['Folio']));
+
                         $solicitudesConcluidas = $this->DBST->consultaGeneral('SELECT 
                                                                                 tso.IdEstatus                                                                        
                                                                             FROM t_solicitudes tso 
@@ -1443,6 +1448,293 @@ class ServiciosTicket extends General {
         } else {
             return TRUE;
         }
+    }
+
+    public function agregarVueltaAsociadoMantenimiento(array $datos) {
+        $arrayDatosServicio = $this->DBST->getDatosServicio($datos['servicio']);
+        if ($arrayDatosServicio['IdTipoServicio'] === '12') {
+            $arrayDatosAtiende = $this->DBST->getDatosAtiende($arrayDatosServicio['Atiende']);
+            if ($arrayDatosAtiende['IdPerfil'] === '83') {
+                $vueltasAnterioresFolio = $this->DBT->vueltasFacturasOutsourcing($datos['folio']);
+                if (empty($vueltasAnterioresFolio)) {
+                    $this->guardarVueltaAsociadoMantenimiento(array(
+                        'servicio' => $datos['servicio'],
+                        'folio' => $datos['folio'],
+                        'atiende' => $arrayDatosServicio['Atiende'],
+                        'nombreAtiende' => $arrayDatosServicio['NombreAtiende'],
+                        'nombreFirma' => $arrayDatosServicio['NombreFirma'],
+                        'firma' => $arrayDatosServicio['Firma'],
+                        'ticket' => $arrayDatosServicio['Ticket'],
+                        'idSucursal' => $arrayDatosServicio['IdSucursal']
+                    ));
+                }
+            }
+        }
+    }
+
+    public function guardarVueltaAsociadoMantenimiento(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $fechaVuelta = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
+
+        $idFacturacionOutSourcing = $this->DBT->guardarVueltaOutsourcing(array(
+            'IdServicio' => $datos['servicio'],
+            'Vuelta' => '1',
+            'Folio' => $datos['folio'],
+            'Fecha' => $fecha,
+            'IdUsuario' => $datos['atiende'],
+            'Gerente' => $datos['nombreFirma'],
+            'FirmaGerente' => $datos['firma'],
+            'IdEstatus' => '8',
+            'FechaEstatus' => $fecha
+        ));
+
+        $pdf = $this->pfdAsociadoVueltaServicioMantenimiento($datos);
+
+        $host = $_SERVER['SERVER_NAME'];
+
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaVuelta . '.pdf';
+        } else {
+            $path = 'http://' . $host . $pdf;
+        }
+
+        $consulta = $this->DBST->actualizarServicio('t_facturacion_outsourcing', array(
+            'Archivo' => $path,
+                ), array('Id' => $idFacturacionOutSourcing)
+        );
+
+        if ($consulta) {
+            $key = $this->MSP->getApiKeyByUser($datos['atiende']);
+            $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $datos['folio']);
+
+            if (isset($informacionSD->SHORTDESCRIPTION)) {
+                $detallesSD = $informacionSD->SHORTDESCRIPTION;
+            } else {
+                $detallesSD = '';
+            }
+
+            $titulo = 'Documentación de Vuelta';
+            $linkPDF = '<br>Ver PDF Resumen Vuelta <a href="' . $path . '" target="_blank">Aquí</a>';
+
+            $descripcionVuelta = '<br><br>Folio: <strong>' . $datos['folio'] . '</strong>
+                <br>Descripción de Service Desk: <strong>' . $detallesSD . '</strong>';
+
+            $correoAtiende = $this->DBT->consultaCorreoUsuario($datos['atiende']);
+            $textoUsuario = '<p>Estimado(a) <strong>' . $datos['nombreAtiende'] . ',</strong> se le ha mandado el documento de la vuelta que realizo.</p>' . $linkPDF . $descripcionVuelta;
+            $this->enviarCorreoConcluido(array($correoAtiende), $titulo, $textoUsuario);
+
+            $correoSupervisorZona = $this->DBST->consultaGeneral('SELECT 
+                                                        (SELECT IdResponsableInterno FROM cat_v3_regiones_cliente WHERE Id = IdRegionCliente)SupervisorZona,
+                                                        (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = SupervisorZona)CorreoSupervisorZona
+                                                    FROM cat_v3_sucursales
+                                                    WHERE Id = "' . $datos['idSucursal'] . '"');
+
+            $textoSupervisorZona = '<p><strong>Supervisor,</strong> se le ha mandado el documento de la vuelta que realizo el técnico <strong>' . $usuario['Nombre'] . '</strong>.</p>' . $linkPDF . $descripcionVuelta;
+            $this->enviarCorreoConcluido(array($correoSupervisorZona[0]['CorreoSupervisorZona']), $titulo, $textoSupervisorZona);
+        }
+    }
+
+    public function pfdAsociadoVueltaServicioMantenimiento(array $datos) {
+        $fechaVuelta = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
+        $datosServicio = $this->DBST->getDatosServicio($datos['servicio']);
+        $totalAreaPuntos = $this->DBST->totalAreaPuntos($datos);
+        $totalLineas = $this->DBST->totalLineasCenso($datos);
+        $pline1 = 9;
+        $pline2 = 201;
+
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $this->pdf->AddPage();
+        $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+
+        $this->pdf->SetXY(0, 8);
+        $this->pdf->SetFont("helvetica", "", 9);
+        $this->pdf->Cell(0, 0, "Sucursal:" . $datosServicio['Sucursal'] . "-Folio:" . $datos['folio'], 0, 0, 'R');
+
+        $this->pdf->SetXY(0, 27);
+        $this->pdf->SetFont("helvetica", "", 11);
+        $this->pdf->Cell(0, 0, "Resumen de Vuelta", 0, 0, 'R');
+
+        $this->pdf->Ln('10');
+        $this->pdf->SetFont("helvetica", "B", 11);
+        $this->pdf->Cell(0, 0, utf8_decode("Información General del Folio"), 0, 0, 'L');
+        $y = $this->pdf->GetY() + 4;
+        $this->pdf->Line($pline1, $y, $pline2, $y);
+
+        $this->pdf->SetXY(8, 48);
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->Cell(15, 0, "Folio");
+
+        $this->pdf->SetXY(8, 54);
+        $this->pdf->SetFont("helvetica", "", 10);
+        $this->pdf->Cell(180, 0, $datos['folio']);
+
+        $this->pdf->SetXY(65, 48);
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->Cell(15, 0, "Ticket");
+
+        $this->pdf->SetXY(65, 54);
+        $this->pdf->SetFont("helvetica", "", 10);
+        $this->pdf->Cell(180, 0, $datos['ticket']);
+
+        $this->pdf->SetXY(110, 48);
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->Cell(15, 0, "Vuelta");
+
+        $this->pdf->SetXY(110, 54);
+        $this->pdf->SetFont("helvetica", "", 10);
+        $this->pdf->Cell(180, 0, '1');
+
+        $this->pdf->SetXY(158, 48);
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->Cell(15, 0, "Fecha de Vuelta");
+
+        $this->pdf->SetXY(158, 54);
+        $this->pdf->SetFont("helvetica", "", 10);
+        $this->pdf->Cell(180, 0, $fecha);
+
+        $this->pdf->SetXY(8, 62);
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->Cell(15, 0, "Tipo Servicio");
+
+        $this->pdf->SetXY(8, 68);
+        $this->pdf->SetFont("helvetica", "", 10);
+        $this->pdf->Cell(180, 0, $datosServicio['TipoServicio']);
+
+        $this->pdf->SetXY(65, 62);
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->Cell(15, 0, "Sucursal");
+
+        $this->pdf->SetXY(65, 68);
+        $this->pdf->SetFont("helvetica", "", 10);
+        $this->pdf->Cell(180, 0, $datosServicio['Sucursal']);
+
+        $this->pdf->SetXY(110, 62);
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->Cell(15, 0, "No. Servicio");
+
+        $this->pdf->SetXY(110, 68);
+        $this->pdf->SetFont("helvetica", "", 10);
+        $this->pdf->Cell(180, 0, $datos['servicio']);
+
+        $this->pdf->SetXY(158, 62);
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->Cell(15, 0, "Atiende");
+
+        $this->pdf->SetXY(158, 68);
+        $this->pdf->SetFont("helvetica", "", 10);
+        $this->pdf->Cell(180, 0, $datosServicio['NombreAtiende']);
+
+        $this->pdf->Image('.' . $datosServicio['Firma'], 80, 80, 50, 0, 'PNG');
+
+        $this->pdf->SetXY(90, 105);
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->Cell(15, 0, "Firma Gerente");
+
+        $this->pdf->SetXY(8, 120);
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->Cell(15, 0, utf8_decode("Descripción"));
+
+        $this->pdf->SetXY(8, 126);
+        $this->pdf->SetFont("helvetica", "", 10);
+        $this->pdf->Cell(180, 0, utf8_decode($datosServicio['DescripcionServicio']));
+
+        $this->pdf->AddPage();
+        $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+
+        $this->pdf->SetXY(0, 8);
+        $this->pdf->SetFont("helvetica", "", 9);
+        $this->pdf->Cell(0, 0, "Sucursal:" . $datosServicio['Sucursal'] . "-Folio:" . $datos['folio'], 0, 0, 'R');
+
+        $this->pdf->Ln('30');
+        $this->pdf->SetFont("helvetica", "B", 11);
+        $this->pdf->Cell(0, 0, utf8_decode("Resumen del Servicio"), 0, 0, 'L');
+        $y = $this->pdf->GetY() + 4;
+        $this->pdf->Line($pline1, $y, $pline2, $y);
+
+        $this->pdf->SetXY(8, 48);
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->Cell(15, 0, utf8_decode("Total de Puntos"));
+
+        $this->pdf->SetFillColor(226, 231, 235);
+        $this->pdf->Ln('3');
+
+        $headers = ['Área', 'Puntos'];
+        $widths = [45, 45];
+
+        $this->pdf->SetX('9');
+        $x = $this->pdf->GetX();
+        $y = $this->pdf->GetY();
+        $push_right = 0;
+
+        $this->pdf->SetFont('helvetica', 'B', 10);
+        foreach ($headers as $key => $value) {
+            $w = (isset($widths[$key])) ? $widths[$key] : $widthStandar;
+            $this->pdf->MultiCell($w, 6, utf8_decode($value), 1, 'C', true);
+            $push_right += $w;
+            $this->pdf->SetXY($x + $push_right, $y);
+        }
+
+        $this->pdf->Ln();
+        $fill = false;
+
+        $this->pdf->SetFont('helvetica', '', 8);
+        $height = 6;
+        $sumaPuntos = array_sum(array_column($totalAreaPuntos, 'Puntos'));
+        array_push($totalAreaPuntos, array('Area' => 'TOTAL', 'Puntos' => $sumaPuntos));
+
+        foreach ($totalAreaPuntos as $key => $value) {
+            $this->pdf->SetX('9');
+            $this->pdf->MultiCell(45, $height, $value['Area'], 1, 'L', $fill);
+            $this->pdf->SetXY(54, $this->pdf->GetY() - 6);
+            $this->pdf->MultiCell(45, $height, $value['Puntos'], 1, 'C', $fill);
+            $fill = !$fill;
+        }
+
+        $this->pdf->SetXY(110, 48);
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->Cell(15, 0, utf8_decode("Total de Equipos"));
+
+        $this->pdf->SetFillColor(226, 231, 235);
+
+        $headers = ['Linea', 'Total'];
+        $widths = [45, 45];
+
+        $this->pdf->SetXY('111', '51');
+        $x = $this->pdf->GetX();
+        $y = $this->pdf->GetY();
+        $push_right = 0;
+
+        $this->pdf->SetFont('helvetica', 'B', 10);
+        foreach ($headers as $key => $value) {
+            $w = (isset($widths[$key])) ? $widths[$key] : $widthStandar;
+            $this->pdf->MultiCell($w, 6, utf8_decode($value), 1, 'C', true);
+            $push_right += $w;
+            $this->pdf->SetXY($x + $push_right, $y);
+        }
+
+        $this->pdf->Ln();
+        $fill = false;
+
+        $this->pdf->SetFont('helvetica', '', 8);
+
+        foreach ($totalLineas as $key => $value) {
+            $this->pdf->SetX('111');
+            $this->pdf->MultiCell(45, $height, $value['Linea'], 1, 'L', $fill);
+            $this->pdf->SetXY(156, $this->pdf->GetY() - 6);
+            $this->pdf->MultiCell(45, $height, $value['Total'], 1, 'C', $fill);
+            $fill = !$fill;
+        }
+
+        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados', 'Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaVuelta);
+        $this->pdf->Output('F', $carpeta, true);
+        $carpeta = substr($carpeta, 1);
+        return $carpeta;
+    }
+
+    public function enviarCorreoConcluido(array $correo, string $titulo, string $texto) {
+        $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $correo, $titulo, $mensaje);
     }
 
     public function concluirSolicitud(string $fecha, string $idSolicitud) {
@@ -2023,10 +2315,12 @@ class ServiciosTicket extends General {
         $sucursal = $this->DBTO->getServicioTicket($ticket);
         return $this->DBST->consultaGeneral('SELECT 
                                                 Id,
-                                                sucursalCliente(Id) Nombre  
+                                                sucursalCliente(Id) Nombre,
+                                                cliente(IdCliente) Cliente
                                             FROM cat_v3_sucursales
                                             WHERE Flag = 1
-                                            AND IdCliente = "' . $sucursal[0]['Cliente'] . '"');
+                                            AND IdCliente = "' . $sucursal[0]['Cliente'] . '"
+                                            ORDER BY Nombre ASC');
     }
 
     public function consultaSucursalesXSalas4D() {
@@ -2038,4 +2332,19 @@ class ServiciosTicket extends General {
                                             AND Salas4D = 1');
     }
     
+}
+
+class PDFAux extends PDF {
+
+    function Footer() {
+        $fecha = date('d/m/Y');
+        // Go to 1.5 cm from bottom
+        $this->SetY(-15);
+        // Select Arial italic 8
+        $this->SetFont('Helvetica', 'I', 10);
+        // Print centered page number
+        $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
+        $this->Cell(68, 10, utf8_decode('Página ') . $this->PageNo(), 0, 0, 'R');
+    }
+
 }

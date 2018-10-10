@@ -21,6 +21,7 @@
         <link href="/assets/css/style.min.css" rel="stylesheet" />
         <link href="/assets/css/style-responsive.min.css" rel="stylesheet" />
         <link href="/assets/css/theme/default.css" rel="stylesheet" id="theme" />
+
         <!-- ================== FINALIZA BASE DE ESTILOS CSS ================== -->
 
         <!-- ================== EMPEZANDO ARCHIVOS CSS DE LA PAGINA================== -->
@@ -219,7 +220,7 @@
                         <!--Empezando Seccion del usuario-->
                         <li class="dropdown navbar-user">
                             <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-                                <?php (empty($usuario['Foto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $usuario['Foto']; ?>
+                                <?php (empty($datosUsuario['UrlFoto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $datosUsuario['UrlFoto']; ?>
                                 <img src="<?php echo $foto; ?>" alt="" />
                                 <span class="hidden-xs"><?php echo $usuario['Nombre']; ?></span> <b class="caret"></b>
                             </a>
@@ -276,7 +277,6 @@
                     <!-- end theme-panel -->
                 </div>
             <?php } ?>
-
 
 
 

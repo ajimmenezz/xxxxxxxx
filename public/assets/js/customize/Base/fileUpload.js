@@ -17,7 +17,7 @@ function Upload() {
     this.getNombreImagen = function (arreglo, solicitud, extraData = {}) {
         var imagenes = [];
         var extimagenes = ['jpg', 'bmp', 'jpeg', 'gif', 'png'];
-        var extdocumentos = ['doc', 'docx', 'xls', 'xlsx', 'xml'];
+        var extdocumentos = ['doc', 'docx', 'xls', 'xlsx', 'xml', 'csv'];
         $.each(arreglo, function (key, value) {
             var extencion = value.substring(value.lastIndexOf('.') + 1);
             extencion.toLowerCase();
@@ -62,7 +62,7 @@ Upload.prototype.crearUpload = function () {
     var botonosDescargas = [];
     var objeto = arguments[0];
     var url = arguments[1] || '#';
-    var tiposArchivos = arguments[2] || ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx'];
+    var tiposArchivos = arguments[2] || ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml', 'csv'];
     var inhabilitar = arguments[3] || false;
     var imgenesInciales = arguments[4] || [];
     var urlBorrar = arguments[5] || '';

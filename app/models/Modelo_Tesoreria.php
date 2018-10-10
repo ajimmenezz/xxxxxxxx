@@ -13,10 +13,10 @@ class Modelo_Tesoreria extends Modelo_Base {
     public function tablaFacturacionOutsourcingAutorizado(array $data) {
         if (in_array('283', $data['permisosAdicionales']) || in_array('283', $data['permisos'])) {
             $idUsuario = '';
-        }else{
+        } else {
             $idUsuario = 'AND tfo.IdUsuario = "' . $data['usuario'] . '"';
         }
-        
+
         $consulta = $this->consulta('SELECT 
                                             tfo.Id,
                                             tfo.IdServicio,
@@ -144,7 +144,7 @@ class Modelo_Tesoreria extends Modelo_Base {
 
         if (!empty($consulta)) {
             return $consulta[0]['ArchivoPago'];
-        }else{
+        } else {
             return FALSE;
         }
     }
@@ -174,7 +174,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                                         WHERE Id = "' . $id . '"');
         return $consulta[0]['Observaciones'];
     }
-    
+
     public function vueltasAnteriores(array $datos) {
         $ultimaFechaVuelta = mdate("%Y-%m-%d %H:%i:%s", strtotime("-14 hour"));
 
@@ -259,7 +259,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                 }
                 copy($rutaActual . $value, $nombreNuevo);
             }
-            
+
             $this->insertar('t_facturacion_outsourcing_documentacion', array(
                 'IdVuelta' => $v['Id'],
                 'IdUsuario' => $datos['usuario'],
@@ -280,6 +280,16 @@ class Modelo_Tesoreria extends Modelo_Base {
         } else {
             $this->terminaTransaccion();
             return TRUE;
+        }
+    }
+
+    public function guardarVueltaOutsourcing(array $datos) {
+        $consulta = $this->insertar('t_facturacion_outsourcing', $datos);
+        
+        if (!empty($consulta)) {
+            return parent::connectDBPrueba()->insert_id();
+        } else {
+            return FALSE;
         }
     }
 

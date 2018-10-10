@@ -15,12 +15,14 @@ class Cimos extends General {
     private $Url;
     private $Excel;
     private $pdf;
+    private $DB;
 
     public function __construct() {
         parent::__construct();
         ini_set('max_execution_time', 300);
         $this->Excel = new \Librerias\Generales\CExcel();
         $this->pdf = new PDF();
+        $this->DB = new \Modelos\Modelo_CIMOS();
     }
 
     /*
@@ -34,6 +36,9 @@ class Cimos extends General {
                 case 1:
                     return $this->getReporteSuscripciones();
                     break;
+                case 2:
+                    return $this->getReporteGastos();
+                    break;
                 default:
                     break;
             }
@@ -45,6 +50,9 @@ class Cimos extends General {
             switch ($data['id']) {
                 case 1:
                     return $this->getReporteSuscripcionesExcel();
+                    break;
+                case 2:
+                    return $this->getReporteGastosExcel();
                     break;
                 default:
                     break;
@@ -60,6 +68,15 @@ class Cimos extends General {
         ];
         return array(
             'html' => parent::getCI()->load->view('Cimos/Modal/ReporteSuscripcionesActivas', $data, TRUE)
+        );
+    }
+
+    private function getReporteGastos() {
+        $data = [
+            'gastos' => $this->DB->getGastosCimosEvocal()
+        ];
+        return array(
+            'html' => parent::getCI()->load->view('Cimos/Modal/ReporteGastosCimosEvocal', $data, TRUE)
         );
     }
 
@@ -188,8 +205,71 @@ class Cimos extends General {
         return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
     }
 
+    public function getReporteGastosExcel() {
+//        ini_set('memory_limit', '2048M');
+//        set_time_limit('1200');        
+
+        $gastos = $this->DB->getGastosCimosEvocal();
+
+
+        /* Begin Hoja 1 */
+        //Crea una hoja en la posición 0 y la nombra.
+        $this->Excel->createSheet('Suscripciones', 0);
+        //Selecciona la hoja creada y la marca como activa. Todas las modificaciones se harán en está hoja.
+        $this->Excel->setActiveSheet(0);
+        //Arreglo de los subtitulos de la tabla. LA posición es de izquierda a derecha.
+        $arrayTitulos = [
+            'Folio',
+            'Fecha',
+            'Fecha Captura',
+            'Tipo',
+            'Tipo Servicio',
+            'Proyecto',
+            'Sucursal',
+            'Cliente',
+            'Beneficiario',
+            'Tipo Trans',
+            'Descripción',
+            'Importe',
+            'Moneda',
+            'Banco',
+            'Ref. Bancaria',
+            'Empresa',
+            'Orden de Compra',
+            'Ticket',
+            'Autorización'];
+        //Envía el arreglo de los subtitulos a la hoja activa.
+        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
+        //Arreglo con el ancho por columna. 
+        $arrayWidth = [15, 20, 20, 20, 25, 30, 30, 20, 30, 20, 50, 20, 15, 20, 15, 15, 15, 15, 30];
+        //Envía y setea los anchos de las columnas definidos en el arreglo de los anchos por columna.
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        //Setea el titulo de la tabla. Envía la celda de inicio y la final para que se combinen.
+        $this->Excel->setTableTitle("A1", "L1", "Gastos Cimos - EVocal", array('titulo'));
+        //Arreglo de alineación por columna.
+        $arrayAlign = ['center', 'center', 'center', '', '', '', '', '', '', '', 'justify', 'center', 'center', '', 'center', '', 'center', 'center', ''];
+        //Envía:
+        //La letra donde comienza la tabla
+        //El número de fila donde comenzará la tabla -1
+        //El contenido en forma de arreglo
+        //Boleano que define si la tabla llevará autofiltros o no
+        //Arreglo con la alineación de las columnas.
+        $this->Excel->setTableContent('A', 2, $gastos, true, $arrayAlign);
+        /* End Hoja 1 */
+
+        $time = date("ymd_H_i_s");
+        $nombreArchivo = 'Reporte_Gastos_CIMOS_Evocal_' . $time . '.xlsx';
+        $nombreArchivo = trim($nombreArchivo);
+        $ruta = 'storage/Archivos/CIMOS/Reportes/Gastos/' . $nombreArchivo;
+
+        //Guarda la hoja envíandole la ruta y el nombre del archivo que se va a guardar.
+        $this->Excel->saveFile($ruta);
+
+        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
+    }
+
     public function makeContractPdf(array $datos) {
-        $clientes = $this->getFullClientes();        
+        $clientes = $this->getFullClientes();
         $this->pdf->AddPage();
         $this->pdf->Image('https://cimos.com.mx/wp-content/uploads/2018/04/CIMOS1-3.png', 10, 15, 45, 0, 'PNG');
         $this->pdf->SetFont("helvetica", "B", 14);

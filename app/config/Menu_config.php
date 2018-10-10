@@ -18,6 +18,7 @@ $config['Modulos'] = array(
     'CIMOS' => array('icono' => 'fa fa-leaf'),
     'Compras' => array('icono' => 'fa fa-barcode'),
     'Contabilidad' => array('icono' => 'fa fa-book'),
+    'Documentacion' => array('icono' => 'fa fa-folder'),
     'Facturación y Cobranza' => array('icono' => 'fa fa-book'),
     'Gapsi' => array('icono' => 'fa fa-money'),
     'Laboratorio' => array('icono' => 'fa fa-wrench'),
@@ -2015,6 +2016,45 @@ $config['Contabilidad'] = array(
     )
 );
 
+$config['Documentacion'] = array(
+    'Carta-Responsiva' => array(
+        'liga' => 'Carta Responsiva',
+        'icono' => 'fa fa-eye',
+        'Url' => '/Documentacion/Carta_Responsiva',
+        'css' => array('Generales/servicios'),
+        'pluginsCss' => array(
+            'bootstrap-datepicker/css/datepicker',
+            'bootstrap-datepicker/css/datepicker3',
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'jquery-tag-it/css/jquery.tagit',
+            'parsley/src/parsley',
+            'jquery-fileUpload/css/fileinput.min',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'DrawingBoard/css/drawingboard.min',
+            'jquery-tag-it/css/jquery.tagit'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Tabla', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Documentacion/carta_responsiva', 'Base/Nota'),
+        'pluginsJs' => array(
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'jquery-tag-it/js/tag-it.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'moment/moment-locales.min',
+            'moment/es',
+            'select2/dist/js/select2.min',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'DrawingBoard/js/drawingboard.min',
+        ),
+        'Permiso' => 'VCR'
+    )
+);
+
 $config['Mesa de Ayuda'] = array(
     'Seguimiento-Mesa' => array(
         'liga' => 'Seguimiento',
@@ -2496,6 +2536,36 @@ $config['Gapsi'] = array(
             'parsley/src/parsley'
         ),
         'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'Gapsi/solicitar-gasto'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+        ),
+        'Permiso' => 'VSGGAP'
+    ),
+    'Mis-Gastos' => array(
+        'liga' => 'Mis Gastos',
+        'icono' => '',
+        'Url' => '/Gapsi/Mis-Gastos',
+        'css' => array('Generales/imageWithDelete'),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'jquery-fileUpload/css/fileinput.min',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'parsley/src/parsley'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'Gapsi/mis-gastos'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',

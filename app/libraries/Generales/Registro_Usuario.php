@@ -53,6 +53,7 @@ class Registro_Usuario extends General {
             $registroLogueo = $this->DBRU->generarRegistroLogueo(array('IdUsuario' => parent::getCI()->session->Id, 'FechaIngreso' => $fechaIngreso, 'DireccionIp' => $ip));
             parent::getCI()->session->set_userdata('Logueo', (string) $registroLogueo);
             $url = $this->getUrlPerfil($usuario['Permisos'], $usuario['IdPerfil']);
+
             if (empty($logueo)) {
                 $usuarioAcceso = parent::getCI()->security->xss_clean(strip_tags($user));
                 return array('resultado' => TRUE, 'logueo' => NULL, 'url' => $url, 'acceso' => $acceso, 'id' => parent::getCI()->session->Id, 'usuario' => $usuarioAcceso);

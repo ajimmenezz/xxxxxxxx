@@ -2584,7 +2584,7 @@ class Servicio extends General {
                 )
         );
 
-        $linkPdf = $this->pdfAsocicadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
+        $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
         $host = $_SERVER['SERVER_NAME'];
@@ -2640,7 +2640,7 @@ class Servicio extends General {
         }
     }
 
-    public function pdfAsocicadoVueltas(array $servicio, string $nombreExtra = NULL) {
+    public function pdfAsociadoVueltas(array $servicio, string $nombreExtra = NULL) {
         $usuario = $this->Usuario->getDatosUsuario();
         $infoServicio = $this->getInformacionServicio($servicio['servicio']);
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
@@ -2769,11 +2769,15 @@ class Servicio extends General {
                 if ($dataServicios[0]['IdEstatus'] === '3') {
                     $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
                     $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
-                    $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
-                    if ($sucursalVuelta !== $nombreSucursal) {
+                    if (!empty($vultasAnteriores)) {
+                        $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
+                        if ($sucursalVuelta !== $nombreSucursal) {
+                            return TRUE;
+                        } else {
+                            return 'yaTieneVueltas';
+                        }
+                    }else{
                         return TRUE;
-                    } else {
-                        return 'yaTieneVueltas';
                     }
                 } else {
                     return 'noEstaProblema';

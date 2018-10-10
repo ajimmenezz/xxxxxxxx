@@ -41,6 +41,21 @@ class Controller_Gasto extends Base {
             case 'SolicitarGasto':
                 $resultado = $this->catalogo->solicitarGasto($this->input->post());
                 break;
+            case 'MisGastos':
+                $resultado = $this->catalogo->misGastos();
+                break;
+            case 'CargaGasto':
+                $resultado = $this->catalogo->cargaGasto($this->input->post());
+                break;
+            case 'GuardarCambiosGasto':
+                $resultado = $this->catalogo->guardarCambiosGasto($this->input->post());
+                break;
+            case 'EliminarArchivo':
+                $resultado = $this->catalogo->eliminarArchivo($this->input->post());
+                break;
+            case 'MarcarLeido':
+                $resultado = $this->catalogo->marcarLeido($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

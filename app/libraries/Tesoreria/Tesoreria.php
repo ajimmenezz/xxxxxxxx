@@ -83,8 +83,8 @@ class Tesoreria extends General {
 
         return array('formulario' => parent::getCI()->load->view('/Tesoreria/Facturacion', $data, TRUE), 'datos' => $data);
     }
-    
-    public function lineaSeparacionHTML(){
+
+    public function lineaSeparacionHTML() {
         $html = '<div class="row">
                     <div class="col-md-12">
                         <div class="underline m-b-15 m-t-15"></div>
@@ -118,17 +118,23 @@ class Tesoreria extends General {
         $data = array();
         $usuario = $this->Usuario->getDatosUsuario();
         $data['datosTablaVueltas'] = $datos['datosTabla'];
-        $montosVueltasOutsourcing = $this->DBST->consultaGeneral('SELECT * FROM t_montos_x_vuelta_outsourcing');
         $viaticoSucursalOutsourcing = $this->DBST->consultaGeneral('SELECT
+                                                                    tst.IdTipoServicio,
                                                                     (SELECT Monto FROM cat_v3_viaticos_outsourcing WHERE IdSucursal = tst.IdSucursal) Monto
                                                                     FROM t_servicios_ticket tst
                                                                     WHERE Id = "' . $datos['datosTabla'][1] . '"');
         $archivoVueltaOutsourcing = $this->DBST->consultaGeneral('SELECT Archivo FROM t_facturacion_outsourcing WHERE Id = "' . $datos['datosTabla'][0] . '"');
 
-        if ($datos['datosTabla'][4] === '1') {
-            $monto = $montosVueltasOutsourcing[0]['Monto'];
-        } else {
-            $monto = $montosVueltasOutsourcing[1]['Monto'];
+        if ($viaticoSucursalOutsourcing[0]['IdTipoServicio'] !== '12') {
+            $montosVueltasOutsourcing = $this->DBST->consultaGeneral('SELECT * FROM t_montos_x_vuelta_outsourcing');
+
+            if ($datos['datosTabla'][4] === '1') {
+                $monto = $montosVueltasOutsourcing[0]['Monto'];
+            } else {
+                $monto = $montosVueltasOutsourcing[1]['Monto'];
+            }
+        }else{
+            $monto = '180.00';
         }
 
         $data['monto'] = $monto;
@@ -409,7 +415,7 @@ class Tesoreria extends General {
                 $serie = '';
             }
 
-            $folio = $nodoComprobante['Folio'];
+            $folio = (isset($nodoComprobante['Folio'])) ? $nodoComprobante['Folio'] : '';
         }
 
         return array(
