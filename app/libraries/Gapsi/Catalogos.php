@@ -541,8 +541,8 @@ class Catalogos extends General {
 
             $bodyMail .= ''
                     . '</table>'
-                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra en las oficinas de SICCOB <a href="http://192.168.0.30/GAPSI/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p><br/><br/>'
-                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://gapsi.dyndns.org/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>'
+                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra en las oficinas de SICCOB <a href="http://192.168.0.30/GAPSI/AplicaGastoSolic?ID=' . $last . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p><br/><br/>'
+                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://gapsi.dyndns.org/AplicaGastoSolic?ID=' . $last . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>'
                     . '<br />' . $adjuntos;
 
             $titulo = "Solicitud de Gasto";
