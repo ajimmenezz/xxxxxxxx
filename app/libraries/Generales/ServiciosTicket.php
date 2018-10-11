@@ -2095,7 +2095,7 @@ class ServiciosTicket extends General {
             $data['idCliente'] = NULL;
         }
 
-        if ($usuario['IdPerfil'] === '83' || $usuario['IdDepartamento'] === '19') {
+        if ($usuario['IdPerfil'] === '83' || $usuario['IdDepartamento'] === '19' || $usuario['IdDepartamento'] === '11') {
             $data['botonAgregarVuelta'] = '<li id="btnAgregarVuelta"><a href="#"><i class="fa fa-plus"></i> Agregar Vuelta</a></li>';
         } else {
             $data['botonAgregarVuelta'] = '';
