@@ -58,7 +58,7 @@ class Catalogos extends General {
     }
 
     public function beneficiarioByTipo(array $datos = []) {
-        $beneficiarios = $this->DB->getBeneficiarioByTipo($datos['id']);
+        $beneficiarios = $this->DB->getBeneficiarioByTipo($datos);
         return ['beneficiarios' => $beneficiarios];
     }
 

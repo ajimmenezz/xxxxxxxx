@@ -69,7 +69,7 @@
                     <div class="col-md-4 col-sm-6 col-xs-12">
                         <div class="form-group">
                             <label class="f-w-600 f-s-13">Tipo de Beneficiario:*</label>
-                            <select id="listTipoBeneficiario" class="form-control" style="width: 100%" data-parsley-required="true">
+                            <select id="listTipoBeneficiario" class="form-control" style="width: 100%" disabled="" data-parsley-required="true">
                                 <option value="">Selecciona . . .</option>
                                 <?php
                                 if (isset($datos['TiposBeneficiario']) && count($datos['TiposBeneficiario']) > 0) {

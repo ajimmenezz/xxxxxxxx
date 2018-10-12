@@ -39,6 +39,7 @@ $(function () {
 
 
     function initFormulario() {
+        select.crearSelect("select");
         _fila = arguments[0];
         file.crearUpload('#fotosGasto', 'Gasto/GuardarCambiosGasto', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml']);
         $("#listClientes").on("change", function () {
@@ -73,9 +74,13 @@ $(function () {
                     $("#listSucursales").removeAttr("disabled");
                 });
                 select.cambiarOpcion("#listSucursales", '');
+                $("#listTipoBeneficiario").removeAttr("disabled");
+                select.cambiarOpcion("#listTipoBeneficiario", '');
             } else {
                 $("#listSucursales").attr("disabled", "disabled");
                 select.cambiarOpcion("#listSucursales", '');
+                $("#listTipoBeneficiario").attr("disabled", "disabled");
+                select.cambiarOpcion("#listTipoBeneficiario", '');
             }
         });
 
@@ -83,7 +88,8 @@ $(function () {
             $("#listBeneficiarios").empty().append('<option value="">Selecciona . . .</option>');
             if ($(this).val() !== '') {
                 var datos = {
-                    'id': $(this).val()
+                    'id': $(this).val(),
+                    'proyecto' : $("#listProyectos").val()
                 }
                 evento.enviarEvento('Gasto/BeneficiarioByTipo', datos, '#panelFormularioGasto', function (respuesta) {
                     $.each(respuesta.beneficiarios, function (k, v) {
@@ -263,7 +269,7 @@ $(function () {
         $("#btnMarcarLeido").off("click");
         $("#btnMarcarLeido").on("click", function () {
             var datos = {
-                'Id': $("#IDGasto").val()                
+                'Id': $("#IDGasto").val()
             };
             evento.enviarEvento('Gasto/MarcarLeido', datos, '#panelFormularioGasto', function (respuesta) {
                 if (respuesta.code == 200) {
@@ -275,6 +281,7 @@ $(function () {
             });
         });
 
+        select.cambiarOpcion("#listTipoTrasnferencia", $("#listTipoTrasnferencia").val());
         actualizaTotal();
         actionsRemove();
     }

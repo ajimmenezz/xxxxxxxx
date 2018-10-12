@@ -55,9 +55,13 @@ $(function () {
                 $("#listSucursales").removeAttr("disabled");
             });
             select.cambiarOpcion("#listSucursales", '');
+            $("#listTipoBeneficiario").removeAttr("disabled");
+            select.cambiarOpcion("#listTipoBeneficiario", '');
         } else {
             $("#listSucursales").attr("disabled", "disabled");
             select.cambiarOpcion("#listSucursales", '');
+            $("#listTipoBeneficiario").attr("disabled", "disabled");
+            select.cambiarOpcion("#listTipoBeneficiario", '');
         }
     });
 
@@ -65,7 +69,8 @@ $(function () {
         $("#listBeneficiarios").empty().append('<option value="">Selecciona . . .</option>');
         if ($(this).val() !== '') {
             var datos = {
-                'id': $(this).val()
+                'id': $(this).val(),
+                'proyecto' : $("#listProyectos").val()
             }
             evento.enviarEvento('Gasto/BeneficiarioByTipo', datos, '#panelFormularioGasto', function (respuesta) {
                 $.each(respuesta.beneficiarios, function (k, v) {

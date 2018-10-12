@@ -37,8 +37,20 @@ class Modelo_Gapsi extends Modelo_Base {
         return $consulta->result_array();
     }
 
-    public function getBeneficiarioByTipo(int $id) {
-        $query = "select ID, Nombre from db_Beneficiarios where Tipo = '" . $id . "' and Nombre <> '' order by Nombre";
+    public function getBeneficiarioByTipo(array $datos) {
+        if($datos['id'] == 1){
+        $query = "select 
+                    db.ID, 
+                    db.Nombre 
+                    from db_Beneficiarios db 
+                    inner join db_BenProy dbp on db.ID = dbp.Beneficiario
+                    where db.Tipo = '" . $datos['id'] . "' 
+                    and db.Nombre <> '' 
+                    and dbp.Proyecto = '" . $datos['proyecto'] . "'
+                    order by db.Nombre";
+        }else{
+            $query = "select ID, Nombre from db_Beneficiarios where Tipo = '" . $datos['id'] . "' and Nombre <> '' order by Nombre";
+        }
         $consulta = parent::connectDBGapsi()->query($query);
         return $consulta->result_array();
     }
