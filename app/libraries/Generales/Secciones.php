@@ -30,6 +30,7 @@ class Secciones extends General {
     private $Proyectos2;
     private $Gapsi;
     private $PEV2;
+    private $Documentacion;
 
     public function __construct() {
         parent::__construct();
@@ -62,6 +63,7 @@ class Secciones extends General {
         $this->Gapsi = \Librerias\Gapsi\Catalogos::factory();
         $this->PEV2 = \Librerias\Reportes\PEV2::factory();
         $this->DBP2 = \Modelos\Modelo_Proyectos2::factory();
+        $this->Documentacion = \Librerias\Documentacion\Documentacion::factory();
     }
 
     /*
@@ -421,6 +423,9 @@ class Secciones extends General {
             case 'Poliza/Catalogo_Checklist':
                 $datos['Categorias'] = $this->Poliza->mostrarCategorias();
                 $datos['ListaPreguntas'] = $this->Poliza->mostrarListaPreguntas();
+                break;
+            case 'Documentacion/Carta_Responsiva':
+                $datos['tecnicosCartaResponsiva'] = $this->Documentacion->mostrarTecnicosCartaResponsiva();
                 break;
             default:
                 break;

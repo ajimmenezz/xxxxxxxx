@@ -26,6 +26,7 @@
                             <th class="all">Asunto</th>
                             <th class="all">Tipo</th>
                             <th class="all">Ticket</th>
+                            <th class="all">Sucursal</th>
                             <th class="all">Solicita</th>
                             <th class="all">Asunto SD</th>
                             <th class="all">Fecha</th>
@@ -40,6 +41,7 @@
                             echo '<td>' . $value['Asunto'] . '</td>';
                             echo '<td>' . $value['Tipo'] . '</td>';
                             echo '<td>' . $value['Ticket'] . '</td>';
+                            echo '<td>' . $value['Sucursal'] . '</td>';
                             if (!empty($datos['solicitudesAsignadas']['SolicitudesSD'])) {
                                 foreach ($datos['solicitudesAsignadas']['SolicitudesSD'] as $folioSD) {
                                     if (((string) $folioSD['solicitud']) === $value['Numero']) {

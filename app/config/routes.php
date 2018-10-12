@@ -167,6 +167,10 @@ $route['Compras/Seguimiento/(:any)'] = 'Compras/Controller_Seguimiento/manejarEv
 $route['Contabilidad/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Contabilidad/Seguimiento/(:any)'] = 'Contabilidad/Controller_Seguimiento/manejarEvento/$1';
 
+/* Routers para el manejo de Contabilidad */
+$route['Documentacion/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
+$route['Documentacion/Documentacion/(:any)'] = 'Documentacion/Controller_Documentacion/manejarEvento/$1';
+
 /* Routers para el manejo de Laboratorio */
 $route['Laboratorio/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Laboratorio/Seguimiento/(:any)'] = 'Laboratorio/Controller_Seguimiento/manejarEvento/$1';

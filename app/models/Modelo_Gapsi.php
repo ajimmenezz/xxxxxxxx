@@ -170,15 +170,19 @@ class Modelo_Gapsi extends Modelo_Base {
             }
         }
 
-
         $query = "select "
                 . "registro.*, "
                 . "(select Descripcion from db_Proyectos where ID = registro.Proyecto) as NameProyecto "
                 . "from db_Registro registro "
                 . "where ID in (''" . $ids . ")";
-        $consulta = parent::connectDBGapsi()->query($query);
-        $gastos = $consulta->result_array();
-
+        
+        if ($ids !== ',') {
+            $consulta = parent::connectDBGapsi()->query($query);
+            $gastos = $consulta->result_array();
+        }else{
+            $gastos = array();
+        }
+        
         return [
             'gastos' => $gastos,
             'usuarios' => $usuarios,

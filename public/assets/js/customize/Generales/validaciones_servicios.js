@@ -59,13 +59,13 @@ $(function () {
             var modalMensaje = evento.mensajeValidar("¿Realmente quiere Concluir el Servicio?");
             $('#btnModalConfirmar').addClass('hidden');
             $('#btnModalAbortar').addClass('hidden');
-            evento.mostrarModal('"Advertencia"', modalMensaje);
+            evento.mostrarModal('Advertencia', modalMensaje);
             $('#btnModalConfirmar').off('click');
             $('#btnAceptarConfirmacion').on('click', function () {
                 $('#btnAceptarConfirmacion').attr('disabled', 'disabled');
                 $('#btnCancelarConfirmacion').attr('disabled', 'disabled');
                 var data = {'servicio': datosTablaServicios[1], ticket: datosTablaServicios[2], idSolicitud: datosTablaServicios[0]};
-                evento.enviarEvento('Servicio/Verificar_Servicio', data, '#seccionConfirmacion', function (respuesta) {
+                evento.enviarEvento('Servicio/Verificar_Servicio', data, '#modal-dialogo', function (respuesta) {
                     if (respuesta === true) {
                         evento.mensajeConfirmacion('Se Valido con Exito', 'Correcto');
                     } else {
