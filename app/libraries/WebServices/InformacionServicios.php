@@ -138,7 +138,8 @@ class InformacionServicios extends General {
                 'AND (tse.IdEstatus in (1,2,3,10,12) 
                                                             OR(tse.IdTipoServicio = 20 
                                                                     AND tse.IdEstatus = 4
-                                                                    AND(tse.Firma IS NULL OR tse.Firma = "")))');
+                                                                    AND(tse.Firma IS NULL OR tse.Firma = "")))
+                                                                    AND tse.IdTipoServicio != 21');
 
         if (isset($datos['Servicio'])) {
             $servicioLaboratorio = $this->DBS->consultaGeneralSeguimiento('SELECT
@@ -177,7 +178,7 @@ class InformacionServicios extends General {
                 $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($SDkey, 'Completado', $datos['Folio']);
             }
         }
-        
+
         $this->guardarLogSD($resultadoSD, $datos['Folio']);
 
         return $resultadoSD;

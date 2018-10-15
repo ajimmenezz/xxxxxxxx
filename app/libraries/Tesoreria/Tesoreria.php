@@ -134,7 +134,9 @@ class Tesoreria extends General {
                 $monto = $montosVueltasOutsourcing[1]['Monto'];
             }
         }else{
-            $monto = '180.00';
+            $totalAreaPuntos = $this->DBST->totalAreaPuntos(array('servicio' => $datos['datosTabla'][1]));
+            $sumaPuntos = array_sum(array_column($totalAreaPuntos, 'Puntos'));
+            $monto = $sumaPuntos * 180;
         }
 
         $data['monto'] = $monto;
