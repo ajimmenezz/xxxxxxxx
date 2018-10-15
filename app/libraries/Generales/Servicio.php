@@ -1936,6 +1936,7 @@ class Servicio extends General {
                 'img' => $datos['img'],
                 'imgFirmaTecnico' => $datos['imgFirmaTecnico'],
                 'recibe' => $datos['recibe'],
+                'vueltaAutomatica' => [TRUE]
             ));
         }
     }
@@ -2533,7 +2534,9 @@ class Servicio extends General {
 
     public function guardarVueltaAsociados(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-        $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'Vuelta-' . $datos['servicio'], 'Se creo la vuelta del servicio:' . $datos['servicio']);
+        if (!isset($datos['vueltaAutomatica'])) {
+            $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'Vuelta-' . $datos['servicio'], 'Se creo la vuelta del servicio:' . $datos['servicio']);
+        }
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
         $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
@@ -2771,14 +2774,14 @@ class Servicio extends General {
                     $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
                     $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
                     
-                    if (!empty($vultasAnteriores)) {
-                        $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
-                    }else{
+                    if (empty($vueltasAnteriores)) {
                         $sucursalVuelta = '';
+                    } else {
+                        $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
                     }
-                    
+
                     if ($sucursalVuelta === $nombreSucursal) {
-                        if (!empty($vultasAnteriores)) {
+                        if (empty($vueltasAnteriores)) {
                             return TRUE;
                         } else {
                             return 'yaTieneVueltas';
