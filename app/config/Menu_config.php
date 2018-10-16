@@ -514,7 +514,7 @@ $config['Proyectos'] = array(
             'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
         ),
         'Permiso' => 'VPN'
-    ),   
+    ),
     'Almacen-Proyectos' => array(
         'liga' => 'Almacén',
         'icono' => '',
@@ -545,7 +545,7 @@ $config['Proyectos'] = array(
             'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
         ),
         'Permiso' => 'VAP'
-    ), 
+    ),
     'Seguimiento-Tareas' => array(
         'liga' => 'Seguimiento Tareas',
         'icono' => '',
@@ -579,7 +579,7 @@ $config['Proyectos'] = array(
             'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
         ),
         'Permiso' => 'VSTP'
-    ), 
+    ),
     'Seguimiento-Proyectos' => array(
         'liga' => 'Seguimiento',
         'icono' => 'fa fa-eye',
@@ -935,7 +935,7 @@ $config['Poliza'] = array(
             'jquery-tag-it/css/jquery.tagit',
             'parsley/src/parsley'
         ),
-        'js' => array('Base/Base', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla','Poliza/catalogo_checklist'),
+        'js' => array('Base/Base', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla', 'Poliza/catalogo_checklist'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
@@ -1939,6 +1939,82 @@ $config['Compras'] = array(
         'liga' => 'Seguimiento',
         'icono' => 'fa fa-eye',
         'Url' => '/Compras/Seguimiento',
+        'css' => array('Generales/notas', 'Generales/servicios'),
+        'pluginsCss' => array(
+            'bootstrap-datepicker/css/datepicker',
+            'bootstrap-datepicker/css/datepicker3',
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'jquery-tag-it/css/jquery.tagit',
+            'parsley/src/parsley',
+            'jquery-fileUpload/css/fileinput.min',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'DrawingBoard/css/drawingboard.min',
+            'jquery-tag-it/css/jquery.tagit'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla', 'Base/Botones', 'Compras/seguimiento', 'Base/Nota'),
+        'pluginsJs' => array(
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'jquery-tag-it/js/tag-it.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'moment/moment-locales.min',
+            'moment/es',
+            'select2/dist/js/select2.min',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'DrawingBoard/js/drawingboard.min',
+            'masked-input/masked-input.min',
+            'jquery-tag-it/js/tag-it.min'
+        ),
+        'Permiso' => 'VCOMSE'
+    ),
+    'Ordenes-Compras' => array(
+        'liga' => 'Ordenes de Compra',
+        'icono' => 'fa fa-eye',
+        'Url' => '/Compras/Ordenes_Compra',
+        'css' => array('Generales/notas', 'Generales/servicios'),
+        'pluginsCss' => array(
+            'bootstrap-datepicker/css/datepicker',
+            'bootstrap-datepicker/css/datepicker3',
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'jquery-tag-it/css/jquery.tagit',
+            'parsley/src/parsley',
+            'jquery-fileUpload/css/fileinput.min',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'DrawingBoard/css/drawingboard.min',
+            'jquery-tag-it/css/jquery.tagit'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla', 'Base/Botones', 'Compras/seguimiento', 'Base/Nota'),
+        'pluginsJs' => array(
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'jquery-tag-it/js/tag-it.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'moment/moment-locales.min',
+            'moment/es',
+            'select2/dist/js/select2.min',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'DrawingBoard/js/drawingboard.min',
+            'masked-input/masked-input.min',
+            'jquery-tag-it/js/tag-it.min'
+        ),
+        'Permiso' => 'VCOMSE'
+    ),
+    'Facturas-OC' => array(
+        'liga' => 'Facturas por O.C.',
+        'icono' => 'fa fa-eye',
+        'Url' => '/Compras/Facturacion_OC',
         'css' => array('Generales/notas', 'Generales/servicios'),
         'pluginsCss' => array(
             'bootstrap-datepicker/css/datepicker',
