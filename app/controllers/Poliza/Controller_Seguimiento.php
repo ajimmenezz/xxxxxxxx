@@ -218,8 +218,11 @@ class Controller_Seguimiento extends Base {
             case 'MostrarPreguntas':
                 $resultado = $this->Poliza->obtenerPreguntaPorCategoria($this->input->post());
                 break;
-            case 'GuardarRevisionPunto':
+            case 'GuardarRevisionPunto':                
                 $resultado = $this->Poliza->guardarPuntoRevision($this->input->post());
+                break;
+            case 'EliminarEvidenciaChecklist':                
+                $resultado = $this->Poliza->eliminarEvidenciaChecklist($this->input->post());
                 break;
             case 'ConsultarRevisionPunto':
                 $resultado = $this->Poliza->consultarRevisionPunto($this->input->post());
@@ -248,8 +251,14 @@ class Controller_Seguimiento extends Base {
             case 'EditarRevisionTecnicaChecklist':
                 $resultado = $this->Poliza->editarRevisionTecnicaChecklist($this->input->post());
                 break;
+            case 'MostrarDatosServicio':
+                $resultado = $this->Poliza->mostrarDatosServicio($this->input->post());
+                break;
+            case 'GuardarConclusionChecklist':
+                $resultado = $this->Poliza->guardarConclusionChecklist($this->input->post());
+                break;            
             case 'PDFPrueba':               
-                $resultado = $this->Poliza->pruebaPDF();
+                $resultado = $this->Poliza->pdfServicioChecklist($this->input->post());
                 break;
             default:
                 $resultado = FALSE;

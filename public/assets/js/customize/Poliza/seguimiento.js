@@ -160,10 +160,82 @@ $(function () {
         });
 
         $('#btnPrueba').on('click', function () {
-            evento.enviarEvento('Seguimiento/PDFPrueba', null, '', function (respuesta) {
+            var servicio = $('#hiddenServicio').val();
+            evento.enviarEvento('Seguimiento/PDFPrueba', {'servicio': servicio}, '', function (respuesta) {
                 console.log(respuesta);
                 window.open(respuesta, '_blank');
             });
+//            var datosServicio = {'servicio' : servicio};
+//             evento.enviarEvento('Seguimiento/MostrarDatosServicio', datosServicio, '', function (respuesta) {
+////                
+//            });
+//            concluirServicioChecklist(servicio,datosTabla,sucursal);
+
+        });
+    };
+
+    var concluirServicioChecklist = function () {
+        var servicio = arguments[0];
+        var datosTabla = arguments[1];
+        var sucursal = arguments[2];
+        var ticket = datosTabla[1];
+
+        servicios.mostrarModal('Firma', servicios.formConcluirServicio());
+        $('#btnModalConfirmar').addClass('hidden');
+        var myBoardFirma = new DrawingBoard.Board('campoFirma', {
+            background: "#fff",
+            color: "#000",
+            size: 1,
+            controlsPosition: "right",
+            controls: [
+                {Navigation: {
+                        back: false,
+                        forward: false
+                    }
+                }
+            ],
+            webStorage: false
+        });
+        $("#tagCorreo").tagit({
+            allowSpaces: false
+        });
+        myBoardFirma.ev.trigger('board:reset', 'what', 'up');
+
+        $('#btnConcluirServicio').off('click');
+        $('#btnConcluirServicio').on('click', function () {
+            var img = myBoardFirma.getImg();
+            var imgInput = (myBoardFirma.blankCanvas == img) ? '' : img;
+            if (evento.validarFormulario('#formConcluirServicioFirma')) {
+                var personaRecibe = $('#inputPersonaRecibe').val();
+                var correo = $("#tagCorreo").tagit("assignedTags");
+                if (correo.length > 0) {
+                    if (servicios.validarCorreoArray(correo)) {
+                        if (imgInput !== '') {
+                            if ($('#terminos').attr('checked')) {
+                                var dataInsertar = {'ticket': ticket, 'servicio': servicio, 'img': img, 'correo': correo, 'nombreFirma': personaRecibe, 'sucursal': sucursal};
+
+                                evento.enviarEvento('Seguimiento/GuardarConclusionChecklist', dataInsertar, '#modal-dialogo', function (respuesta) {
+                                    console.log(respuesta);
+//                                    if (respuesta) {
+//                                        servicios.mensajeModal('Servicio concluido.', 'Correcto');
+//                                    } else {
+//                                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Tienes informacion sin concluir', 3000);
+//                                    }
+                                });
+                            } else {
+                                evento.mostrarMensaje('.errorConcluirServicio', false, 'Debes aceptar terminos', 3000);
+                            }
+                        } else {
+                            evento.mostrarMensaje('.errorConcluirServicio', false, 'Debes llenar el campo Firma de conformidad.', 3000);
+                        }
+                    } else {
+                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Algun Correo no es correcto.', 3000);
+
+                    }
+                } else {
+                    evento.mostrarMensaje('.errorConcluirServicio', false, 'Debe insertar al menos un correo.', 3000);
+                }
+            }
         });
     };
 
@@ -567,91 +639,154 @@ $(function () {
     var mostrarPuntoPorCategoria = function (dataCategoria, sucursal, respuesta, datosTabla) {
         var servicio = $('#hiddenServicio').val();
         var datos = {'servicio': servicio, 'sucursal': sucursal, 'categoria': dataCategoria};
+        evento.enviarEvento('Seguimiento/MostrarPuntoRevision', datos, '', function (datosPuntos) {
+                mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);            
+        });
+    };
 
-        evento.enviarEvento('Seguimiento/MostrarPuntoRevision', datos, '', function (resultado) {
-            var p = null;
-            var valorPunto;
+    var mostrarInformacionPuntos = function (datosPuntos, categoria, servicio) {
+        var puntos = null;
+        var html = '';
+        var idArea = null;
 
-            $(".area").empty();
-            $(".punto").empty();
+        $(".area").empty();
+        $(".punto").empty();
+        $.each(datosPuntos.pushArea, function (area, pregunta) {
+            idArea = area.replace(/\s/g, "-");
+            puntos = imprimirAreaPregunta(area, pregunta, html);
+            html = imprimirPuntos(puntos[0], puntos[1], idArea, datosPuntos.pushChecklist, categoria, servicio, area);
+        });
+        $(".area").append(html);
+        agregarNuevaImagen(dataCategoria, servicio);
+        elimininarEvidenciaPunto(dataCategoria,servicio);
+        eliminarDatos(servicio);
+    };
 
-            $.each(resultado.pushArea, function (area, valor) {
-                var cadena = area;
-                var nuevaCadena = cadena.replace(/\s/g, "-");
-                var idRevision;
+    var imprimirAreaPregunta = function (area, pregunta, html) {
+        var puntos = null;
+        $.each(pregunta, function (etiqueta, listaPuntos) {
+            html += '<div class="m-t-30"><p>' + area + '</p><div class="underline m-b-15"></div><p>' + etiqueta + '</p>';
+            puntos = listaPuntos;
+        });
+        return [puntos, html];
+    };
 
+    var imprimirPuntos = function (puntos, html, idArea, checkList, categoria, servicio, area) {
+        
+        $.each(puntos, function (key, punto) {
+            var checked = '';
+            $.each(checkList,function(key, valor){
+                if(area === valor.Area && punto === valor.Punto){
+                    checked = 'checked';
+                }
+            });
+            
+            html += `<div  class="row area-${idArea}">
+                        <div class="col-md-12 m-t-15">
+                            <input class="punto checkPunto" data-datos="${servicio + '-' + categoria + '-' + area + '-' + punto}"  type="checkbox" name="punto" style="width: 17px; height: 15px; margin: 0;" value="" ${checked}/> Punto ${punto}
+                            <a href="javascript:;" class="btn btn-success btn-xs m-l-10 nuevaImagenPunto" data-idpunto="${servicio + '-' + categoria + '-' + area + '-' + punto}">
+                                <i class="fa fa-plus"></i> Imagen
+                            </a>
+                        </div>
+                        <div class="col-md-12 m-t-10 imagen-punto-${punto}">
+                            ${cargarEvidencias(checkList, idArea, categoria, punto, servicio, area)}
+                        </div>
+                     </div>`;
+        });
+        html += `</div>`;
+        return html;
+    };
 
-                $.each(valor, function (etiqueta, valor2) {
-                    $(".area").append('<p>' + area + '</p><div class="underline m-b-15 m-t-15"></div><p>' + etiqueta + '</p>');
-                    p = valor2;
-                });
+    var cargarEvidencias = function (checkList, idArea, categoria, punto, servicio, area) {
+        var html = '';
+        $.each(checkList, function (index, checked) {
+            var area = checked.Area.replace(/\s/g, "-");
+            var idImagen = area + '-' + punto;
+            if (area === idArea && checked.IdCategoria === `${categoria}` && checked.Punto === punto && checked.Evidencia !== '') {
+                html += obtenerHtmlEvidencias(checked.Evidencia, idImagen, punto, servicio, checked.Area, categoria);
+            }
+            
+        });
+        return html;
+    };
 
-                $.each(resultado.pushRevision, function (indice, valor) {
-                    if (area === valor.area) {
-                        idRevision = valor.idRevisionArea;
-                    }
-                });
+    var obtenerHtmlEvidencias = function (evidencias, idImagen, punto, servicio, area, categoria) {
+        var html = '';
+        
+        var listaEvidencias = evidencias.split(',');
+        $.each(listaEvidencias, function (index, evidencia) {
+            html += `<div class = "evidencia">
+                        <a href="${evidencia}" data-lightbox="${idImagen}" ><img src="${evidencia}" alt="" /></a>
+                        <a href="javascript:;" class="btn btn-danger btn-xs eliminarImagenPunto" data-evidencia="${evidencia}" data-ideliminar="${servicio + '-' + categoria + '-' + area + '-' + punto}">
+                            <i class="fa fa-trash-o"></i>
+                        </a>
+                    </div>`;
+        });
+        return html;
+    };
 
-                $.each(p, function (key, punto) {
-                    var checked = '';
-                    var muestraInputEvidencia = '';
-                    var dataChecklist = {};
-                    var uncheck = false;
+    var agregarNuevaImagen = function (dataCategoria, servicio) {
+        var datos = null;
+        var evidenciaHtml = `<div class="row">
+                                <div class="col-md-12">
+                                   <p>Agrega la evidencia para el punto:</p>
+                                </div>
+                                <div class="col-md-12">
+                                   <input id="evidenciaPunto" data-area="" class="inputArchivoPunto" name="inputArchivoPunto[]" type="file" multiple/>
+                                </div>
+                            </div>`;
 
-                    $.each(resultado.pushChecklist, function (key, valorChecklist) {
-                        var checklistArea = valorChecklist.Area.replace(/\s/g, "-");
-                        var evidencia = valorChecklist.Evidencia;
-                        var evidenciaSplit = evidencia.split(',');
+        $('.nuevaImagenPunto').off('click');
+        $('.nuevaImagenPunto').on('click', function () {
+            evento.mostrarModal('Agregar evidencia', evidenciaHtml);
+            file.crearUpload('#evidenciaPunto', 'Seguimiento/GuardarRevisionPunto', null, null, null, null, null, 'inputArchivoPunto');
+            datos = $(this).attr('data-idpunto');
+            datos = datos.split('-');
+            datos = {servicio: datos[0], idCategoria: datos[1], idRevisionArea: datos[2], punto: datos[3]};
+        });
 
-                        if (dataCategoria == valorChecklist.IdCategoria && valorChecklist.Area === area && valorChecklist.Punto === punto) {
-                            var quitahidden = true;
-                            muestraInputEvidencia = true;
-                            checked = 'checked';
-                            uncheck = true;
-                            dataChecklist = {'checklistPunto': valorChecklist.Punto, 'quitahidden': quitahidden, 'checklistArea': checklistArea, 'evidencia': evidenciaSplit};
-                            return true;
-                        }
-                        return true;
-                    });
-
-                    $(".area").append('<div class="row ' + nuevaCadena + "-" + punto + '">\n\
-                                            <div class="col-md-2 col-xs-12 m-t-15">\n\
-                                                <input class="punto" type="checkbox" name="punto" style="width: 17px; height: 15px; margin: 0;" value="' + punto + '" ' + checked + ' /> Punto ' + punto + '\
-                                            </div>\n\
-                                            <div class="col-md-8 col-xs-12 m-t-10 ' + nuevaCadena + "-" + punto + ' hidden">\n\
-                                                <input data-punto="' + nuevaCadena + "-" + punto + '" class="inputArchivoPunto" name="inputArchivoPunto[]" type="file" multiple/>\n\
-                                            </div>\n\
-                                      </div><br/>');
-
-                    if (muestraInputEvidencia) {
-                        mostrarChecklist(servicio, dataChecklist.checklistPunto, idRevision, dataCategoria, dataChecklist.quitahidden, dataChecklist.checklistArea, dataChecklist.checklistPunto, dataChecklist.evidencia);
-                    }
-
-//                    $('.inputArchivoPunto').on('click', function () {
-//                        var data_punto = $(this).data('punto');
-//                        var punto = $('.area .' + data_punto + ' :input:checkbox').val();
-//                        if ($('.area .' + data_punto + ' :input:checkbox').is(':checked')) {
-//                            mostrarChecklist(servicio, punto, idRevision, dataCategoria);
-//                            return true;
-//                        }
-//                    });
-
-                    $('.area .' + nuevaCadena + "-" + punto + ' :input:checkbox').on('click', function () {
-                        valorPunto = $(this).val();
-                        if ($(this).is(':checked')) {
-                            mostrarChecklist(servicio, valorPunto, idRevision, dataCategoria, false, null, null, null);
-                            $('.area div .' + nuevaCadena + "-" + punto).removeClass('hidden');
-                        } else {
-                            if (uncheck === true) {
-                                actualizarFlagRegistroPunto(servicio, valorPunto, idRevision, dataCategoria);
-                            }
-                            $('.area div .' + nuevaCadena + "-" + punto).addClass('hidden');
-                        }
-                    });
-                });
-
+        $('#btnModalConfirmar').off('click');
+        $('#btnModalConfirmar').on('click', function () {
+            file.enviarArchivos('#evidenciaPunto', 'Seguimiento/GuardarRevisionPunto', '#modal-dialog', datos, function (datosPuntos) {
+                mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
+                evento.cerrarModal();
             });
         });
+    };
+    
+    var elimininarEvidenciaPunto = function (dataCategoria, servicio){
+        var urlEvidencia = null;
+        var datos = null;
+        
+        $('.eliminarImagenPunto').off('click');
+        $('.eliminarImagenPunto').on('click', function () {
+            urlEvidencia = $(this).attr('data-evidencia');
+            datos = $(this).attr('data-ideliminar');
+            datos = datos.split('-');
+            datos = {servicio: datos[0], idCategoria: datos[1], idRevisionArea: datos[2], punto: datos[3], url : urlEvidencia};
+            evento.enviarEvento('Seguimiento/EliminarEvidenciaChecklist', datos, '', function (datosPuntos) {
+                mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
+            });          
+        });
+        
+    };
+
+    var eliminarDatos = function(servicio){
+        var datos = null;
+        
+        $('.checkPunto').on('click', function(){
+            datos = $(this).attr('data-datos');
+            datos = datos.split('-');
+            datos = {servicio: datos[0], idCategoria: datos[1], idRevisionArea: datos[2], punto: datos[3]};
+            
+            evento.enviarEvento('Seguimiento/ActualizarRevisionPunto', datos, '', function (respuesta) {
+                if (respuesta) {
+                    evento.mostrarMensaje('#errorRevisionPunto', true, 'Punto deshabilitado', 3000);
+                }
+            });
+//            console.log(datos);
+        });
+        
     };
 
     var mostrarChecklist = function () {
@@ -672,7 +807,7 @@ $(function () {
             'idCategoria': dataCategoria,
             'idRevisionArea': idRevision,
             'punto': valorPunto};
-//        console.log(guardarDatos);
+
         file.crearUpload('.inputArchivoPunto',
                 'Seguimiento/GuardarRevisionPunto',
                 null,

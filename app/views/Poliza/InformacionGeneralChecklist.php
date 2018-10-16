@@ -236,7 +236,7 @@
                         <div class="col-md-6">
                             <div class="form-group text-center">
                                 <br>
-                                <a id="btnPrueba" href="javascript:;" class="btn btn-primary m-r-5 "><i class="fa fa-bell"></i> Prueba pdf</a>
+                                <!--<a id="btnPrueba" href="javascript:;" class="btn btn-primary m-r-5 "><i class="fa fa-bell"></i> Prueba pdf</a>-->
                             </div>
                         </div>    
                     </div>

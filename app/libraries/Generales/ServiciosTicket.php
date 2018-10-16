@@ -445,6 +445,7 @@ class ServiciosTicket extends General {
                     case '2':
                         $data['informacion'] = $this->getServicioMantenimientoSalas(array('ticket' => $datosServicio['Ticket'], 'servicio' => $datos['servicio']));
                         $data['catalogoCategorias'] = $this->DBMP->consultaCategorias();
+                        $data['categoriasRevisionPunto'] = $this->DBMP->mostrarCategoriaRevisionPunto();
                         $data['revisionArea'] = $this->DBMP->mostrarRevisionArea(array('servicio' => $datos['servicio']));
                         $data['formulario'] = parent::getCI()->load->view('Poliza/InformacionGeneralChecklist', $data, TRUE);
                         break;
