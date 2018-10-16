@@ -155,7 +155,7 @@ $(function () {
             $('#editarEstatus').on('click', function(){
                 estatusPregunta = $('#editarEstatus').val();
                 
-                if(estatusPregunta === '1'){
+                if(estatusPregunta == 1){
                     estatusPregunta = 0;
                     $('#editarEstatus').removeClass('btn-primary');
                     $('#editarEstatus').addClass('btn-danger');
@@ -179,7 +179,7 @@ $(function () {
         });
     });
     
-    var guardarPregunta = function(IdPregunta,btnEstatus,_this){
+    var guardarPregunta = function(IdPregunta,estatusPregunta,_this){
       
         var concepto = $('#txtPreguntaCategoria').val();
         var etiqueta = $('#txtEtiqueta').val();
@@ -187,7 +187,7 @@ $(function () {
         var areaAtencion = $('#areaAtencion').val();
 
         if (evento.validarFormulario('#formAgregarPregunta')) {
-            var data = {'Id': IdPregunta, 'concepto': concepto, 'etiqueta': etiqueta, 'categoria': categoria, 'areaAtencion': areaAtencion, 'estatus' : btnEstatus};
+            var data = {'Id': IdPregunta, 'concepto': concepto, 'etiqueta': etiqueta, 'categoria': categoria, 'areaAtencion': areaAtencion, 'estatus' : estatusPregunta};
             evento.enviarEvento('EventoCatalogoRevisionFisica/EditarPregunta', data, '', function (datosPregunta) {
 
                 if (datosPregunta) {

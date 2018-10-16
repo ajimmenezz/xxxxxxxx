@@ -354,6 +354,21 @@ class Seguimientos extends General {
             return FALSE;
         }
     }
+    public function consultaFallasRefacionXTipoFallaChecklist(array $datos) {
+        $consulta = $this->DBS->consultaGeneralSeguimiento('SELECT 
+                                                                Id,
+                                                                Nombre
+                                                            FROM 
+                                                                cat_v3_fallas_refaccion
+                                                            WHERE IdTipoFalla = "' . $datos['tipoFalla'] . '"
+                                                            AND IdRefaccion = "' . $datos['componente'] . '"
+                                                            AND Flag = 1');
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
 
     public function consultaRefacionXEquipo(array $datos) {
         $consulta = $this->DBS->consultaGeneralSeguimiento('SELECT 

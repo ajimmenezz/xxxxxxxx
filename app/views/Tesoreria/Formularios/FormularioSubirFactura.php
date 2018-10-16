@@ -31,7 +31,7 @@
                 foreach ($tablaFacturacionOutsourcingAutorizado as $key => $value) {
                     echo '<tr>';
                     echo '<td><div class="custom-control custom-checkbox">
-                                <input id="checkbox-' . $value['Id'] . '" type="checkbox" class="custom-control-input" data-checkbox="' . $value['Ticket'] . '">
+                                <input type="checkbox" class="custom-control-input editor-active" data-checkbox="' . $value['Ticket'] . '" data-id="' . $value['Id'] . '">
                             </div></td>';
                     echo '<td>' . $value['Id'] . '</td>';
                     echo '<td>' . $value['IdServicio'] . '</td>';

@@ -1,5 +1,5 @@
 <div id="panel-catalogo-checklist" class="content">
-    <h1 class="page-header">Catálogo de Revicion Fisica Checklist</h1>
+    <h1 class="page-header">Catálogo de Revisión Fisica Checklist</h1>
     <div id="seccion-agregar-usuario" class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
         <div class="panel-heading p-0">
             <div class="panel-heading-btn m-r-10 m-t-10">                                 
