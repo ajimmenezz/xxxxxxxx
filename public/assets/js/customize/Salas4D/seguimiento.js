@@ -9,7 +9,7 @@ $(function () {
     var nota = new Nota();
     var _padre = [];
     var actualizoInformeGeneral = false;
-    var bloqueraSolucion = false;
+    var bloquearSolucion = false;
     var solucionGuardada = false;
     var SubelementosDanado;
     var SubelementosUtilizados;
@@ -272,7 +272,7 @@ $(function () {
             if(actualizoInformeGeneral){
                 limpiarFormulario(resultado);
             }
-            if(bloqueraSolucion === true){
+            if(bloquearSolucion === true){
                 select.cambiarOpcion('#tipoSolucion', "");
                 $('#tipoSolucion').attr('disabled','disabled');
             }
@@ -411,7 +411,7 @@ $(function () {
         $('#sucursalesCorrectivo').on('change', function () {
             var _this = $(this);
             var datos = {'sucursales': _this.val(), 'tipoFalla': '0'};
-            bloqueraSolucion = true;
+            bloquearSolucion = true;
             tabla.limpiarTabla('#tabla-Elementos');
             if (datos.sucursales !== "") {
                 evento.enviarEvento('Seguimiento/MostrarElementosSucursal', datos, '#formServicioPreventivoSalas4xd', function (resultado) {
@@ -437,7 +437,7 @@ $(function () {
             var falla = $('#selectFalla').val();
             var dato = {'sucursales': $('#sucursalesCorrectivo').val(), 'tipoFalla': $('#selectFalla').val()};
             actualizoInformeGeneral = true;
-            bloqueraSolucion = true;
+            bloquearSolucion = true;
             
             if($('#selectFalla').val() === ""){
                 tabla.limpiarTabla('#tabla-Elementos');
@@ -497,7 +497,7 @@ $(function () {
                             evento.mostrarMensaje('#errorElementos', true, 'Datos guardados Correctamente.', 3000);
                             $('#btnGuardarMantenimientoCorrectivo').addClass('hidden');
                             $('#btnEditarMantenimientoCorrectivo').removeClass('hidden');
-                            bloqueraSolucion = false;
+                            bloquearSolucion = false;
                             editarServicioCorrectivo(datosTabla);
                         }
                     });
@@ -525,7 +525,7 @@ $(function () {
                     evento.enviarEvento('Seguimiento/EditarServicioCorrectivo', datos, '#seccion-servicio-mantto-correctivo', function (resultado) {
                         if (resultado) {
                             actualizoInformeGeneral = true;
-                            bloqueraSolucion = false;
+                            bloquearSolucion = false;
                             evento.mostrarMensaje('#errorElementos', true, 'Datos guardados Correctamente.', 3000);
                         }
                     });

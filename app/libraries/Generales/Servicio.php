@@ -2811,5 +2811,10 @@ class Servicio extends General {
             return FALSE;
         }
     }
+    
+    public function getGeneralesByServicio(int $servicio) {
+        $generales = $this->DBS->consulta("SELECT * FROM t_servicios_ticket WHERE Id = '". $servicio ."'")[0];
+        return $generales;
+    }
 
 }

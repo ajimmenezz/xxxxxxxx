@@ -8,6 +8,7 @@ $(function () {
     var select = new Select();
     var servicios = new Servicio();
     var nota = new Nota();
+    var dataCategoria;
     eventoAuxiliar = new Base();
     tablaAuxiliar = new Tabla();
     servicioAuxiliar = new Servicio();
@@ -130,9 +131,850 @@ $(function () {
                         eventosParaSeccionSeguimientoCorrectivo(datosTabla, respuesta);
                         personalizarDependiendoSucursalCorrectivo(respuesta);
                         break;
+                    case '27':
+                        iniciarVistaChecklist(data, datosTabla, respuesta);
+                        eventosChecklist(datosTabla, respuesta);
+                        break;
                 }
             }
         });
+    };
+
+    var iniciarVistaChecklist = function (data, datosTabla, respuesta) {
+        var sucursal = respuesta.informacion.sucursal;
+        $('#listaPoliza').addClass('hidden');
+        $('#seccionSeguimientoServicio').removeClass('hidden').empty().append(respuesta.formulario);
+        tabla.generaTablaPersonal('#tabla-categorias', null, null, true, true, [], true, 'lfrtip', false);
+
+        if (sucursal !== "0" || sucursal !== null) {
+            mostrarTabla(sucursal, respuesta, datosTabla);
+        }
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            switch (target) {
+                case "#revisionTecnica":
+                    iniciarRevisionTecnica();
+                    break;
+            }
+        });
+
+        $('#btnPrueba').on('click', function () {
+            var servicio = $('#hiddenServicio').val();
+            evento.enviarEvento('Seguimiento/PDFPrueba', {'servicio': servicio}, '', function (respuesta) {
+                console.log(respuesta);
+                window.open(respuesta, '_blank');
+            });
+//            var datosServicio = {'servicio' : servicio};
+//             evento.enviarEvento('Seguimiento/MostrarDatosServicio', datosServicio, '', function (respuesta) {
+////                
+//            });
+//            concluirServicioChecklist(servicio,datosTabla,sucursal);
+
+        });
+    };
+
+    var concluirServicioChecklist = function () {
+        var servicio = arguments[0];
+        var datosTabla = arguments[1];
+        var sucursal = arguments[2];
+        var ticket = datosTabla[1];
+
+        servicios.mostrarModal('Firma', servicios.formConcluirServicio());
+        $('#btnModalConfirmar').addClass('hidden');
+        var myBoardFirma = new DrawingBoard.Board('campoFirma', {
+            background: "#fff",
+            color: "#000",
+            size: 1,
+            controlsPosition: "right",
+            controls: [
+                {Navigation: {
+                        back: false,
+                        forward: false
+                    }
+                }
+            ],
+            webStorage: false
+        });
+        $("#tagCorreo").tagit({
+            allowSpaces: false
+        });
+        myBoardFirma.ev.trigger('board:reset', 'what', 'up');
+
+        $('#btnConcluirServicio').off('click');
+        $('#btnConcluirServicio').on('click', function () {
+            var img = myBoardFirma.getImg();
+            var imgInput = (myBoardFirma.blankCanvas == img) ? '' : img;
+            if (evento.validarFormulario('#formConcluirServicioFirma')) {
+                var personaRecibe = $('#inputPersonaRecibe').val();
+                var correo = $("#tagCorreo").tagit("assignedTags");
+                if (correo.length > 0) {
+                    if (servicios.validarCorreoArray(correo)) {
+                        if (imgInput !== '') {
+                            if ($('#terminos').attr('checked')) {
+                                var dataInsertar = {'ticket': ticket, 'servicio': servicio, 'img': img, 'correo': correo, 'nombreFirma': personaRecibe, 'sucursal': sucursal};
+
+                                evento.enviarEvento('Seguimiento/GuardarConclusionChecklist', dataInsertar, '#modal-dialogo', function (respuesta) {
+                                    console.log(respuesta);
+//                                    if (respuesta) {
+//                                        servicios.mensajeModal('Servicio concluido.', 'Correcto');
+//                                    } else {
+//                                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Tienes informacion sin concluir', 3000);
+//                                    }
+                                });
+                            } else {
+                                evento.mostrarMensaje('.errorConcluirServicio', false, 'Debes aceptar terminos', 3000);
+                            }
+                        } else {
+                            evento.mostrarMensaje('.errorConcluirServicio', false, 'Debes llenar el campo Firma de conformidad.', 3000);
+                        }
+                    } else {
+                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Algun Correo no es correcto.', 3000);
+
+                    }
+                } else {
+                    evento.mostrarMensaje('.errorConcluirServicio', false, 'Debe insertar al menos un correo.', 3000);
+                }
+            }
+        });
+    };
+
+    var mostrarTabla = function (sucursal, respuesta, datosTabla) {
+        $('#tab-checklist > li').removeClass('disabled');
+        $('#tab-checklist > li > a[href="#revisionArea"]').attr('data-toggle', 'tab');
+        $('[id*=categoria-]').off('click');
+        $('[id*=categoria-]').on('click', function () {
+
+            $('#listaPregunta').removeClass('hidden');
+            $('#guardarListaPregunta').removeClass('hidden');
+            dataCategoria = $(this).data('id-categoria');
+            mostrarPreguntaPorCategoria(dataCategoria, sucursal, respuesta);
+        });
+
+        $('#tab-checklist > li > a[href="#revisionPunto"]').attr('data-toggle', 'tab');
+        $('[id*=categoriaPunto-]').off('click');
+        $('[id*=categoriaPunto-]').on('click', function () {
+
+            $('#listaPregunta').removeClass('hidden');
+            $('#guardarListaPregunta').removeClass('hidden');
+            dataCategoria = $(this).data('id-categoria-punto');
+            mostrarPuntoPorCategoria(dataCategoria, sucursal, respuesta, datosTabla);
+        });
+
+        $('#tab-checklist > li > a[href="#revisionTecnica"]').attr('data-toggle', 'tab');
+    };
+
+    var iniciarRevisionTecnica = function () {
+        var servicio = $('#hiddenServicio').val();
+        evento.enviarEvento('Seguimiento/RevisionTecnica', {'servicio': servicio}, '#seguimiento-checklist', function (respuesta) {
+            $('#revisionTecnica').empty().append(respuesta.html);
+            var _sucursal = respuesta.sucursal;
+            var _tipoDiagnostico;
+
+            select.crearSelect('#selectAreaPunto');
+            select.crearSelect('#selectEquipo');
+            select.crearSelect('#selectImpericiaTipoFallaEquipoCorrectivo');
+            select.crearSelect('#selectTipoFallaEquipoCorrectivo');
+            select.crearSelect('#selectComponenteDiagnosticoCorrectivo');
+            select.crearSelect('#selectImpericiaFallaDiagnosticoCorrectivo');
+            select.crearSelect('#selectFallaDiagnosticoCorrectivo');
+            select.crearSelect('#selectTipoFallaComponenteCorrectivo');
+            file.crearUpload('#evidenciasImpericiaCorrectivo', 'Seguimiento/GuardarRevisionTecnicaChecklist', null, null, null, null, 'evidenciasImpericiaCorrectivo');
+            file.crearUpload('#evidenciasFallaEquipoCorrectivo', 'Seguimiento/GuardarRevisionTecnicaChecklist', null, null, null, null, 'evidenciasFallaEquipoCorrectivo');
+            file.crearUpload('#evidenciasFallaComponenteCorrectivo', 'Seguimiento/GuardarRevisionTecnicaChecklist', null, null, null, 'evidenciasFallaComponenteCorrectivo');
+            file.crearUpload('#evidenciasReporteMultimediaCorrectivo', 'Seguimiento/GuardarRevisionTecnicaChecklist', null, null, null, 'evidenciasReporteMultimediaCorrectivo');
+            tabla.generaTablaPersonal('#tablaFallasTecnicas', null, null, true, true, [], true, 'lfrtip', false);
+
+            $('#selectAreaPunto').on('change', function () {
+                var _this = $('#selectAreaPunto option:selected');
+                var _value = _this.val();
+
+                $('#selectEquipo').empty().append('<option value="">Seleccionar</option>');
+                if (_value !== '') {
+
+                    var datos = {'sucursal': _sucursal, 'area': _this.attr('data-area'), 'punto': _this.attr('data-punto')};
+
+                    evento.enviarEvento('Seguimiento/ConsultaEquipoXAreaPuntoUltimoCenso', datos, '#seguimiento-checklist', function (respuesta) {
+
+                        $.each(respuesta, function (k, v) {
+                            $('#selectEquipo').append('<option data-terminal="' + v.Extra + '"  data-serie="' + v.Serie + '" data-modelo="' + v.IdModelo + '" value="1">' + v.Equipo + ' (' + v.Serie + ')</option>');
+                        });
+                    });
+                    $('#selectEquipo').removeAttr('disabled');
+                } else {
+                    $('#selectEquipo').attr('disabled', 'disabled');
+                    select.cambiarOpcion('#selectEquipo', '');
+
+                }
+            });
+
+            $('#clasificacionesFalla li a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var target = $(e.target).attr("href");
+                initDiagnosticoEquipo(target, servicio);
+            });
+
+            $('#selectEquipo').on('change', function () {
+                var _this = $('#selectEquipo option:selected');
+                var _value = _this.val();
+
+                if (_value !== '') {
+                    $('#clasificacionesFalla li').each(function () {
+                        $(this).removeClass('active');
+                    });
+                    $('#contentClasificacionesFalla .tab-pane').each(function () {
+                        $(this).removeClass('active in');
+                    });
+                    evento.mostraDiv('#divDiagnosticoEquipo');
+                } else {
+                    evento.ocultarDiv('#divDiagnosticoEquipo');
+                }
+            });
+
+            $('#selectImpericiaTipoFallaEquipoCorrectivo').on('change', function () {
+                var _modelo = $('#selectEquipo option:selected').attr('data-modelo');
+                var tipoFalla = $(this).val();
+                var datos = {'tipoFalla': tipoFalla, 'equipo': _modelo};
+
+                $('#selectImpericiaFallaDiagnosticoCorrectivo').empty().append('<option value="">Seleccionar</option>').attr('disabled', 'disabled');
+                select.cambiarOpcion('#selectImpericiaFallaDiagnosticoCorrectivo', '');
+
+                evento.enviarEvento('Seguimiento/ConsultaFallasEquiposXTipoFallaYEquipo', datos, '#seguimiento-checklist', function (respuesta) {
+                    $.each(respuesta, function (k, v) {
+                        $('#selectImpericiaFallaDiagnosticoCorrectivo').append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                    });
+                    if (respuesta.length > 0) {
+                        $('#selectImpericiaFallaDiagnosticoCorrectivo').removeAttr('disabled');
+                    }
+                });
+            });
+
+            $('#selectTipoFallaEquipoCorrectivo').on('change', function () {
+                var _modelo = $('#selectEquipo option:selected').attr('data-modelo');
+                var tipoFalla = $(this).val();
+                var datos = {'tipoFalla': tipoFalla, 'equipo': _modelo};
+
+                $('#selectFallaDiagnosticoCorrectivo').empty().append('<option value="">Seleccionar</option>').attr('disabled', 'disabled');
+                select.cambiarOpcion('#selectFallaDiagnosticoCorrectivo', '');
+
+                evento.enviarEvento('Seguimiento/ConsultaFallasEquiposXTipoFallaYEquipo', datos, '#seguimiento-checklist', function (respuesta) {
+                    $.each(respuesta, function (k, v) {
+                        $('#selectFallaDiagnosticoCorrectivo').append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                    });
+                    if (respuesta.length > 0) {
+                        $('#selectFallaDiagnosticoCorrectivo').removeAttr('disabled');
+                    }
+
+                });
+            });
+
+            $('#selectComponenteDiagnosticoCorrectivo').on('change', function () {
+                var _componente = $(this).val();
+                var _modelo = $('#selectEquipo option:selected').attr('data-modelo');
+                var datos = {'equipo': _modelo};
+
+                $('#selectTipoFallaComponenteCorrectivo').empty().append('<option value="">Seleccionar</option>').attr('disabled', 'disabled');
+                select.cambiarOpcion('#selectTipoFallaComponenteCorrectivo', '');
+
+                if (_componente !== '') {
+                    evento.enviarEvento('Seguimiento/ConsultaTiposFallasEquipos', datos, '#seguimiento-checklist', function (respuesta) {
+                        $.each(respuesta, function (k, v) {
+                            $('#selectTipoFallaComponenteCorrectivo').append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                        });
+                        if (respuesta.length > 0) {
+                            $('#selectTipoFallaComponenteCorrectivo').removeAttr('disabled');
+                        }
+                    });
+                }
+            });
+
+            $('#selectTipoFallaComponenteCorrectivo').on('change', function () {
+                var _componente = $('#selectComponenteDiagnosticoCorrectivo').val();
+                var tipoFalla = $(this).val();
+                var datos = {'tipoFalla': tipoFalla, 'componente': _componente};
+
+                $('#selectFallaComponenteDiagnosticoCorrectivo').empty().append('<option value="">Seleccionar</option>').attr('disabled', 'disabled');
+                select.cambiarOpcion('#selectFallaComponenteDiagnosticoCorrectivo', '');
+
+                evento.enviarEvento('Seguimiento/ConsultaFallasRefacionXTipoFallaChecklist', datos, '#seguimiento-checklist', function (respuesta) {
+                    $.each(respuesta, function (k, v) {
+                        $('#selectFallaComponenteDiagnosticoCorrectivo').append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                    });
+                    if (respuesta.length > 0) {
+                        $('#selectFallaComponenteDiagnosticoCorrectivo').removeAttr('disabled');
+                    }
+                });
+
+            });
+
+            $('#btnGuardarImpericiaChecklist').on('click');
+            $('#btnGuardarImpericiaChecklist').on('click', function () {
+                var tipoFalla = $('#selectImpericiaTipoFallaEquipoCorrectivo option:selected').val();
+                var idFalla = $('#selectImpericiaFallaDiagnosticoCorrectivo option:selected').val();
+                guardarRevisionTecnicaChecklist(2, null, tipoFalla, idFalla, 'evidenciasImpericiaCorrectivo');
+            });
+
+            $('#btnGuardarFallaEquipoChecklist').on('click');
+            $('#btnGuardarFallaEquipoChecklist').on('click', function () {
+
+                var tipoFalla = $('#selectTipoFallaEquipoCorrectivo option:selected').val();
+                var idFalla = $('#selectFallaDiagnosticoCorrectivo option:selected').val();
+                guardarRevisionTecnicaChecklist(3, null, tipoFalla, idFalla, 'evidenciasFallaEquipoCorrectivo');
+
+            });
+
+            $('#btnGuardarFallaComponenteChecklist').on('click', function () {
+                var componente = $('#selectComponenteDiagnosticoCorrectivo option:selected').val();
+                var tipoFalla = $('#selectTipoFallaComponenteCorrectivo option:selected').val();
+                var idFalla = $('#selectFallaComponenteDiagnosticoCorrectivo option:selected').val();
+                guardarRevisionTecnicaChecklist(4, componente, tipoFalla, idFalla, 'evidenciasFallaComponenteCorrectivo');
+            });
+
+            $('#btnGuardarReporteMultimediaChecklist').on('click', function () {
+                guardarRevisionTecnicaChecklist(5, null, null, null, 'evidenciasReporteMultimediaCorrectivo');
+            });
+
+            evento.enviarEvento('Seguimiento/MostrarFallasTecnicasChecklist', {'servicio': servicio}, '#seguimiento-checklist', function (listaFallas) {
+                tabla.limpiarTabla("#tablaFallasTecnicas");
+                $.each(listaFallas, function (key, value) {
+                    tabla.agregarFila("#tablaFallasTecnicas", [value.Id, value.AreaPunto, value.Equipo, value.Serie, value.Componente, value.TipoDiagnostico, value.Falla, value.Fecha]);
+                });
+            });
+
+            $('#tablaFallasTecnicas tbody').on('click', 'tr', function () {
+                let _this = this;
+                var datosTabla = $('#tablaFallasTecnicas').DataTable().row(_this).data();
+                var dato = {'idRevision': datosTabla[0], 'servicio': servicio};
+//                console.log(dato);
+                evento.enviarEvento('Seguimiento/ActualizarRevisionTecnica', dato, '#panel-catalogo-checklist', function (respuestaRevision) {
+                    evento.iniciarModal('#modalEditRevisionChecklist', 'Editar Revisión Tecnica', respuestaRevision.modal);
+
+                    $('#editarEstatus').off('click');
+                    $('#editarEstatus').on('click', function () {
+                        var estatusRevision = $('#editarEstatus').val();
+
+                        if (estatusRevision == 1) {
+                            estatusRevision = 0;
+                            $('#editarEstatus').removeClass('btn-primary');
+                            $('#editarEstatus').addClass('btn-danger');
+                            $('#editarEstatus').text('Inhabiliatado');
+                        } else {
+                            estatusRevision = 1;
+                            $('#editarEstatus').removeClass('btn-danger');
+                            $('#editarEstatus').addClass('btn-primary');
+                            $('#editarEstatus').text('Activado');
+                        }
+                        editarRevisionTecnicaChecklist(dato.idRevision, dato.servicio, estatusRevision, _this);
+
+                    });
+
+                });
+
+            });
+
+        });
+    };
+
+    var initDiagnosticoEquipo = function () {
+        var _tab = arguments[0];
+        var _servicio = arguments[1];
+        var _modelo = $('#selectEquipo option:selected').attr('data-modelo');
+        var metodo = '';
+        var enviar = true;
+        var datos = {'equipo': _modelo};
+
+        $('#selectImpericiaTipoFallaEquipoCorrectivo').empty().append('<option value="">Seleccionar</option>').attr('disabled', 'disabled');
+        $('#selectTipoFallaEquipoCorrectivo').empty().append('<option value="">Seleccionar</option>').attr('disabled', 'disabled');
+        $('#selectComponenteDiagnosticoCorrectivo').empty().append('<option value="">Seleccionar</option>').attr('disabled', 'disabled');
+
+        switch (_tab) {
+            case '#impericia':
+                metodo = 'ConsultaTiposFallasEquiposImpericia';
+                break;
+            case '#falla-equipo':
+                metodo = 'ConsultaTiposFallasEquipos';
+                break;
+            case '#falla-componente':
+                metodo = 'ConsultaRefacionXEquipo';
+                break;
+            case '#reporte-multimedia':
+                enviar = false;
+                break;
+            default:
+                enviar = false;
+                break;
+        }
+
+        if (enviar) {
+
+            evento.enviarEvento('Seguimiento/' + metodo, datos, '#seguimiento-checklist', function (respuesta) {
+                switch (_tab) {
+                    case '#impericia':
+
+                        $.each(respuesta, function (k, v) {
+                            $('#selectImpericiaTipoFallaEquipoCorrectivo').append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                        });
+                        $('#selectImpericiaTipoFallaEquipoCorrectivo').removeAttr('disabled');
+
+                        break;
+                    case '#falla-equipo':
+                        metodo = 'ConsultaTiposFallasEquipos';
+
+                        $.each(respuesta, function (k, v) {
+                            $('#selectTipoFallaEquipoCorrectivo').append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                        });
+                        $('#selectTipoFallaEquipoCorrectivo').removeAttr('disabled');
+
+                        break;
+                    case '#falla-componente':
+                        metodo = 'ConsultaRefacionXEquipo';
+
+                        $.each(respuesta, function (k, v) {
+                            $('#selectComponenteDiagnosticoCorrectivo').append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                        });
+                        $('#selectComponenteDiagnosticoCorrectivo').removeAttr('disabled');
+
+                        break;
+                }
+            });
+        }
+    };
+
+    var guardarRevisionTecnicaChecklist = function () {
+        var _servicio = $('#hiddenServicio').val();
+        var _tipoDiagnostico = arguments[0];
+        var _componente = arguments[1] || null;
+        var _tipoFalla = arguments[2];
+        var _idFalla = arguments[3];
+        var _fileInput = arguments[4];
+        var areaPunto = $('#selectAreaPunto option:selected');
+        var equipo = $('#selectEquipo option:selected');
+
+        var datos = {'servicio': _servicio,
+            'area': areaPunto.attr('data-area'),
+            'punto': areaPunto.attr('data-punto'),
+            'modelo': equipo.attr('data-modelo'),
+            'serie': equipo.attr('data-serie'),
+            'terminal': equipo.attr('data-terminal'),
+            'tipoDiagnostico': _tipoDiagnostico,
+            'componente': _componente,
+            'tipoFalla': _tipoFalla,
+            'idFalla': _idFalla,
+            'fileInput': _fileInput
+        };
+
+        file.enviarArchivos('#' + _fileInput, 'Seguimiento/GuardarRevisionTecnicaChecklist', '#seguimiento-checklist', datos, function (respuesta) {
+            if (respuesta.code == 200) {
+                tabla.limpiarTabla("#tablaFallasTecnicas");
+                $.each(respuesta.listaFallas, function (key, value) {
+                    tabla.agregarFila("#tablaFallasTecnicas", [value.Id, value.AreaPunto, value.Equipo, value.Serie, value.Componente, value.TipoDiagnostico, value.Falla, value.Fecha]);
+                });
+            } else {
+                evento.mostrarMensaje('#errorRevisionTecnica', false, "No se a podido guardar la información. Intente de nuevo o contacte al administrador", 3000);
+            }
+        });
+
+    };
+
+    var editarRevisionTecnicaChecklist = function () {
+        var idRevision = arguments[0];
+        var servicio = arguments[1];
+        var estatusRevision = arguments[2];
+        var _this = arguments[3];
+        var datos = {'idRevision': idRevision, 'servicio': servicio, 'estatusRevision': estatusRevision};
+
+        evento.enviarEvento('Seguimiento/EditarRevisionTecnicaChecklist', datos, '', function (consultaRevision) {
+            console.log(consultaRevision);
+            if (consultaRevision) {
+                evento.terminarModal('#modalEditRevisionChecklist');
+                evento.mostrarMensaje("#errorRevisionTecnica", true, "Datos modificados", 4000);
+
+                $.each(consultaRevision, function (key, value) {
+//                    tabla.agregarFila("#tablaFallasTecnicas", [value.Id,value.AreaPunto,value.Equipo,value.Serie,value.Componente,value.TipoDiagnostico,value.Falla,value.Fecha]);
+//                
+                    $('#tabla-preguntas').DataTable().row(_this).data([value.Id,
+                        value.AreaPunto,
+                        value.Equipo,
+                        value.Serie,
+                        value.Componente,
+                        value.TipoDiagnostico,
+                        value.Falla,
+                        value.Fecha
+                    ]);
+
+                    tabla.reordenarTabla('#tabla-categorias', [1, 'asc']);
+                    $('#tabla-preguntas').DataTable().page.jumpToData(value.Id, 0);
+                });
+            }
+        });
+    };
+
+    var mostrarPreguntaPorCategoria = function (dataCategoria, sucursal, respuesta) {
+        var datos = {'IdCategoria': dataCategoria, 'sucursal': sucursal};
+
+        evento.enviarEvento('Seguimiento/MostrarPreguntas', datos, '', function (preguntasCategoria) {
+            var lista = preguntasCategoria[0];
+            tabla.limpiarTabla('#tabla-categorias');
+
+            if (!preguntasCategoria) {
+                evento.mostrarMensaje('#errorRevisionFisica', false, preguntasCategoria.error, 3000);
+            }
+
+            $.each(lista, function (clave, valor) {
+
+                if (valor.IdArea) {
+                    var decicionUno = '<form><fieldset id="group-' + valor.IdArea + '"><input type="radio" id="uno" name="desicion-' + valor.IdArea + '" value="1" style="height: 16px;width: 20px;margin: 0px 5px 0px 5px;"/><spam style="margin: 0 11px 0 0px;">Si</spam> <input type="radio" name="desicion-' + valor.IdArea + '" id="cero" value="0" style="height: 15px;width: 17px;margin: 0px 5px 0px 5px;"/><spam style="margin: 0 11px 0 0px;">No</spam> </fieldset></form>';
+                    tabla.agregarFila('#tabla-categorias', [
+                        valor.Id,
+                        valor.Nombre,
+                        valor.IdArea,
+                        valor.Concepto,
+                        decicionUno
+                    ]);
+                }
+            });
+            iniciarElementosChecklist(respuesta);
+        });
+    };
+
+    var mostrarPuntoPorCategoria = function (dataCategoria, sucursal, respuesta, datosTabla) {
+        var servicio = $('#hiddenServicio').val();
+        var datos = {'servicio': servicio, 'sucursal': sucursal, 'categoria': dataCategoria};
+        evento.enviarEvento('Seguimiento/MostrarPuntoRevision', datos, '', function (datosPuntos) {
+                mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);            
+        });
+    };
+
+    var mostrarInformacionPuntos = function (datosPuntos, categoria, servicio) {
+        var puntos = null;
+        var html = '';
+        var idArea = null;
+
+        $(".area").empty();
+        $(".punto").empty();
+        $.each(datosPuntos.pushArea, function (area, pregunta) {
+            idArea = area.replace(/\s/g, "-");
+            puntos = imprimirAreaPregunta(area, pregunta, html);
+            html = imprimirPuntos(puntos[0], puntos[1], idArea, datosPuntos.pushChecklist, categoria, servicio, area);
+        });
+        $(".area").append(html);
+        agregarNuevaImagen(dataCategoria, servicio);
+        elimininarEvidenciaPunto(dataCategoria,servicio);
+        eliminarDatos(servicio);
+    };
+
+    var imprimirAreaPregunta = function (area, pregunta, html) {
+        var puntos = null;
+        $.each(pregunta, function (etiqueta, listaPuntos) {
+            html += '<div class="m-t-30"><p>' + area + '</p><div class="underline m-b-15"></div><p>' + etiqueta + '</p>';
+            puntos = listaPuntos;
+        });
+        return [puntos, html];
+    };
+
+    var imprimirPuntos = function (puntos, html, idArea, checkList, categoria, servicio, area) {
+        
+        $.each(puntos, function (key, punto) {
+            var checked = '';
+            $.each(checkList,function(key, valor){
+                if(area === valor.Area && punto === valor.Punto){
+                    checked = 'checked';
+                }
+            });
+            
+            html += `<div  class="row area-${idArea}">
+                        <div class="col-md-12 m-t-15">
+                            <input class="punto checkPunto" data-datos="${servicio + '-' + categoria + '-' + area + '-' + punto}"  type="checkbox" name="punto" style="width: 17px; height: 15px; margin: 0;" value="" ${checked}/> Punto ${punto}
+                            <a href="javascript:;" class="btn btn-success btn-xs m-l-10 nuevaImagenPunto" data-idpunto="${servicio + '-' + categoria + '-' + area + '-' + punto}">
+                                <i class="fa fa-plus"></i> Imagen
+                            </a>
+                        </div>
+                        <div class="col-md-12 m-t-10 imagen-punto-${punto}">
+                            ${cargarEvidencias(checkList, idArea, categoria, punto, servicio, area)}
+                        </div>
+                     </div>`;
+        });
+        html += `</div>`;
+        return html;
+    };
+
+    var cargarEvidencias = function (checkList, idArea, categoria, punto, servicio, area) {
+        var html = '';
+        $.each(checkList, function (index, checked) {
+            var area = checked.Area.replace(/\s/g, "-");
+            var idImagen = area + '-' + punto;
+            if (area === idArea && checked.IdCategoria === `${categoria}` && checked.Punto === punto && checked.Evidencia !== '') {
+                html += obtenerHtmlEvidencias(checked.Evidencia, idImagen, punto, servicio, checked.Area, categoria);
+            }
+            
+        });
+        return html;
+    };
+
+    var obtenerHtmlEvidencias = function (evidencias, idImagen, punto, servicio, area, categoria) {
+        var html = '';
+        
+        var listaEvidencias = evidencias.split(',');
+        $.each(listaEvidencias, function (index, evidencia) {
+            html += `<div class = "evidencia">
+                        <a href="${evidencia}" data-lightbox="${idImagen}" ><img src="${evidencia}" alt="" /></a>
+                        <a href="javascript:;" class="btn btn-danger btn-xs eliminarImagenPunto" data-evidencia="${evidencia}" data-ideliminar="${servicio + '-' + categoria + '-' + area + '-' + punto}">
+                            <i class="fa fa-trash-o"></i>
+                        </a>
+                    </div>`;
+        });
+        return html;
+    };
+
+    var agregarNuevaImagen = function (dataCategoria, servicio) {
+        var datos = null;
+        var evidenciaHtml = `<div class="row">
+                                <div class="col-md-12">
+                                   <p>Agrega la evidencia para el punto:</p>
+                                </div>
+                                <div class="col-md-12">
+                                   <input id="evidenciaPunto" data-area="" class="inputArchivoPunto" name="inputArchivoPunto[]" type="file" multiple/>
+                                </div>
+                            </div>`;
+
+        $('.nuevaImagenPunto').off('click');
+        $('.nuevaImagenPunto').on('click', function () {
+            evento.mostrarModal('Agregar evidencia', evidenciaHtml);
+            file.crearUpload('#evidenciaPunto', 'Seguimiento/GuardarRevisionPunto', null, null, null, null, null, 'inputArchivoPunto');
+            datos = $(this).attr('data-idpunto');
+            datos = datos.split('-');
+            datos = {servicio: datos[0], idCategoria: datos[1], idRevisionArea: datos[2], punto: datos[3]};
+        });
+
+        $('#btnModalConfirmar').off('click');
+        $('#btnModalConfirmar').on('click', function () {
+            file.enviarArchivos('#evidenciaPunto', 'Seguimiento/GuardarRevisionPunto', '#modal-dialog', datos, function (datosPuntos) {
+                mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
+                evento.cerrarModal();
+            });
+        });
+    };
+    
+    var elimininarEvidenciaPunto = function (dataCategoria, servicio){
+        var urlEvidencia = null;
+        var datos = null;
+        
+        $('.eliminarImagenPunto').off('click');
+        $('.eliminarImagenPunto').on('click', function () {
+            urlEvidencia = $(this).attr('data-evidencia');
+            datos = $(this).attr('data-ideliminar');
+            datos = datos.split('-');
+            datos = {servicio: datos[0], idCategoria: datos[1], idRevisionArea: datos[2], punto: datos[3], url : urlEvidencia};
+            evento.enviarEvento('Seguimiento/EliminarEvidenciaChecklist', datos, '', function (datosPuntos) {
+                mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
+            });          
+        });
+        
+    };
+
+    var eliminarDatos = function(servicio){
+        var datos = null;
+        
+        $('.checkPunto').on('click', function(){
+            datos = $(this).attr('data-datos');
+            datos = datos.split('-');
+            datos = {servicio: datos[0], idCategoria: datos[1], idRevisionArea: datos[2], punto: datos[3]};
+            
+            evento.enviarEvento('Seguimiento/ActualizarRevisionPunto', datos, '', function (respuesta) {
+                if (respuesta) {
+                    evento.mostrarMensaje('#errorRevisionPunto', true, 'Punto deshabilitado', 3000);
+                }
+            });
+//            console.log(datos);
+        });
+        
+    };
+
+    var mostrarChecklist = function () {
+        var servicio = arguments[0];
+        var valorPunto = arguments[1];
+        var idRevision = arguments[2];
+        var dataCategoria = arguments[3];
+        var quitahidden = arguments[4] || false;
+        var valorChecklistArea = arguments[5] || null;
+        var valorChecklistPunto = arguments[6] || null;
+        var evidencia = arguments[7] || null;
+
+        if (quitahidden === true) {
+            $('.area div .' + valorChecklistArea + '-' + valorChecklistPunto).removeClass('hidden');
+        }
+
+        var guardarDatos = {'servicio': servicio,
+            'idCategoria': dataCategoria,
+            'idRevisionArea': idRevision,
+            'punto': valorPunto};
+
+        file.crearUpload('.inputArchivoPunto',
+                'Seguimiento/GuardarRevisionPunto',
+                null,
+                null,
+                evidencia,
+                'Seguimiento/EliminarEvidenciaRevicion',
+                'inputArchivoPunto',
+                null,
+                null,
+                null,
+                true,
+                guardarDatos);
+
+    };
+
+    var actualizarFlagRegistroPunto = function () {
+        var datos = {'servicio': arguments[0], 'punto': arguments[1], 'idRevisionArea': arguments[2], 'idCategoria': arguments[3]};
+
+        evento.enviarEvento('Seguimiento/ActualizarRevisionPunto', datos, '', function (respuesta) {
+
+            if (respuesta) {
+                evento.mostrarMensaje('#errorRevisionPunto', true, 'Punto deshabilitado', 3000);
+            }
+        });
+    };
+
+    var iniciarElementosChecklist = function (respuesta) {
+
+        var array = [];
+        $.each(respuesta.revisionArea, function (key, valor) {
+            if (dataCategoria == valor.IdCategoria) {
+                if (valor.Flag == 1) {
+                    var $radios = $('#group-' + valor.IdAreaAtencion + ' input:radio[id=uno]');
+                    $radios.filter('[value=1]').attr('checked', true);
+                } else {
+                    var $radios = $('#group-' + valor.IdAreaAtencion + ' input:radio[id=cero]');
+                    $radios.filter('[value=0]').attr('checked', true);
+                }
+            }
+
+        });
+    };
+
+    var guardarInformacionChecklist = function (datos) {
+
+        evento.enviarEvento('Seguimiento/GuardarInformacionChecklist', datos, '#informacionRevision', function (respuesta) {
+            if (respuesta) {
+                var sucursalSelect = $('#selectSucursales option:selected').val();
+                mostrarTabla(sucursalSelect);
+                evento.mostrarMensaje('#errorInformacionGeneral', true, 'Información guardada', 3000);
+            } else {
+                evento.mostrarMensaje('#errorInformacionGeneral', false, respuesta.error, 3000);
+            }
+        });
+    };
+
+    var guardarRevisionArea = function (servicio) {
+        var listaConceptos = $('#tabla-categorias').DataTable().rows().data();
+
+        var IdCategoria = dataCategoria;
+        var servicio = servicio;
+
+        var datosConcepto = "[";
+        for (var i = 0; i < listaConceptos.length; i++) {
+            var desicion = $("fieldset[id*=group-" + listaConceptos[i][2] + "] input[name*='desicion-" + listaConceptos[i][2] + "']:checked").val();
+            datosConcepto += '{"IdConceptoFisico" : "' + listaConceptos[i][0] + '", "IdAreaAtencion" : "' + listaConceptos[i][2] + '", "Flag" : ' + desicion + '},';
+        }
+        datosConcepto = datosConcepto.slice(0, -1);
+        datosConcepto += "]";
+
+        var datos = {'servicio': servicio, 'datosTabla': datosConcepto, 'idCategoria': IdCategoria, 'guardarTipo': 2};
+
+        evento.enviarEvento('Seguimiento/GuardarInformacionChecklist', datos, '#panel-catalogo-checklist', function (respuesta) {
+            if (respuesta.code === 200) {
+                evento.mostrarMensaje('#errorRevisionFisica', true, respuesta.succes, 3000);
+            } else if (respuesta.code === 500) {
+                evento.mostrarMensaje('#errorRevisionFisica', false, respuesta.error, 3000);
+            }
+        });
+
+    };
+
+    var eventosChecklist = function () {
+        var datosTabla = arguments[0];
+        var respuesta = arguments[1];
+        var servicio = datosTabla[0];
+
+        $('#guardarRevisionFisicaArea').off('click');
+        $('#guardarRevisionFisicaArea').on('click', function () {
+            guardarRevisionArea(servicio);
+        });
+
+        $('#selectSucursales').on('change', function () {
+            $('#listaPregunta').addClass('hidden');
+            $('#guardarListaPregunta').addClass('hidden');
+        });
+
+        $('#guardarSucursalChecklist').off('click');
+        $('#guardarSucursalChecklist').on('click', function () {
+            var datos = {'sucursal': $('#selectSucursales').val(), 'servicio': servicio, 'guardarTipo': 1};
+            guardarInformacionChecklist(datos);
+        });
+
+        $('#detallesServicioChecklist').off('click');
+        $('#detallesServicioChecklist').on('click', function (e) {
+            if ($('#masDetalles').hasClass('hidden')) {
+                $('#masDetalles').removeClass('hidden');
+                $('#detallesServicioChecklist').empty().html('<a>- Detalles</a>');
+            } else {
+                $('#masDetalles').addClass('hidden');
+                $('#detallesServicioChecklist').empty().html('<a>+ Detalles</a>');
+            }
+        });
+
+        //Evento que vuelve a mostrar la lista de servicios de Poliza
+        $('#btnRegresarSeguimientoCenso').off('click');
+        $('#btnRegresarSeguimientoCenso').on('click', function () {
+            $('#seccionSeguimientoServicio').empty().addClass('hidden');
+            $('#listaPoliza').removeClass('hidden');
+        });
+
+        //Encargado de crear un nuevo servicio
+        $('#btnNuevoServicio').off('click');
+        $('#btnNuevoServicio').on('click', function () {
+            var data = {servicio: servicio};
+            servicios.nuevoServicio(
+                    data,
+                    respuesta.datosServicio.Ticket,
+                    respuesta.datosServicio.IdSolicitud,
+                    'Seguimiento/Servicio_Nuevo_Modal',
+                    '#seccion-servicio-censo',
+                    'Seguimiento/Servicio_Nuevo'
+                    );
+        });
+
+        //Encargado de cancelar servicio
+        $('#btnCancelarServicio').off('click');
+        $('#btnCancelarServicio').on('click', function () {
+            var data = {servicio: servicio, ticket: respuesta.datosServicio.Ticket};
+            servicios.cancelarServicio(
+                    data,
+                    'Seguimiento/Servicio_Cancelar_Modal',
+                    '#seccion-servicio-censo',
+                    'Seguimiento/Servicio_Cancelar'
+                    );
+        });
+
+        //Encargado de generar el archivo Pdf
+        $('#btnGeneraPdfServicio').off('click');
+        $('#btnGeneraPdfServicio').on('click', function () {
+            var data = {servicio: datosTabla[0]};
+            evento.enviarEvento('Seguimiento/Servicio_ToPdf', data, '#seccion-servicio-censo', function (respuesta) {
+                window.open('/' + respuesta.link);
+            });
+        });
+
+        $('#btnRegresarSeguimiento').off('click');
+        $('#btnRegresarSeguimiento').on('click', function () {
+            $('#seccionSeguimientoServicio').empty().addClass('hidden');
+            $('#listaPoliza').removeClass('hidden');
+        });
+
+//        servicios.initBotonReasignarServicio(servicio, datosTabla[1], '#seccion-servicio-censo');
+        //evento para crear nueva solicitud
+//        servicios.initBotonNuevaSolicitud(datosTabla[1], '#seccion-servicio-censo');
+        servicios.eventosFolio(datosTabla[0], '#informacionRevision', servicio);
+
     };
 
     var recargandoTablaPoliza = function (informacionServicio) {
@@ -610,7 +1452,7 @@ $(function () {
         $('#divGuardarDatosMatenimiento').addClass('hidden');
         $('#divReporteFirmado').removeClass('hidden');
         $('#divConcluirServicioMantenimiento').removeClass('hidden');
-    }
+    };
 
     var validarFormularioProblemasAdicionales = function () {
         var areaAtencion = $('#selectAreasAtencionProblemasAdicionales').val();
@@ -719,7 +1561,7 @@ $(function () {
                 }}
         ];
         return columnas;
-    }
+    };
 
     var mostrarFormularioAntesYDespues = function () {
         var datosTablaPuntosCensados = arguments[0];
@@ -3716,7 +4558,7 @@ $(function () {
             });
         }
 
-    }
+    };
 
     var formularioAsignacionSolicitud = function () {
         var mensajeConfirmacion = '<div id="confirmarSolicitud"\n\
@@ -4065,7 +4907,9 @@ $(function () {
         $('#btnCancelarGuardarCambios').on('click', function () {
             evento.cerrarModal();
         });
+
     };
+
 });
 
 var eventoAuxiliar;
@@ -4134,7 +4978,7 @@ var datosNuevosTablaProblemasAdicionales = function () {
             }}
     ];
     return columnas;
-}
+};
 
 var recargandoTablaProblemasAdicionales = function () {
     var respuesta = arguments[0];
@@ -4217,4 +5061,4 @@ var datosNuevosTablaFallasEquipo = function () {
         {data: 'IdServicio'}
     ];
     return columnas;
-}
+};

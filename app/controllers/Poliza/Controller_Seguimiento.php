@@ -17,6 +17,7 @@ class Controller_Seguimiento extends Base {
         $this->notas = \Librerias\Generales\Notas::factory();
         $this->ServiciosGeneral = \Librerias\Generales\Servicio::factory();
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();
+        $this->Poliza = \Librerias\Poliza\Poliza::factory();
     }
 
     /*
@@ -207,6 +208,60 @@ class Controller_Seguimiento extends Base {
                 break;
             case 'CambiarEstatus':
                 $resultado = $this->Seguimientos->cambiarEstatus($this->input->post());
+                break;
+            case 'GuardarInformacionChecklist':
+                $resultado = $this->Poliza->guardarInformacionGeneral($this->input->post());
+                break;  
+            case 'MostrarPuntoRevision':
+                $resultado = $this->Poliza->mostrarPuntoRevision($this->input->post());
+                break;
+            case 'MostrarPreguntas':
+                $resultado = $this->Poliza->obtenerPreguntaPorCategoria($this->input->post());
+                break;
+            case 'GuardarRevisionPunto':                
+                $resultado = $this->Poliza->guardarPuntoRevision($this->input->post());
+                break;
+            case 'EliminarEvidenciaChecklist':                
+                $resultado = $this->Poliza->eliminarEvidenciaChecklist($this->input->post());
+                break;
+            case 'ConsultarRevisionPunto':
+                $resultado = $this->Poliza->consultarRevisionPunto($this->input->post());
+                break;
+            case 'ActualizarRevisionPunto':
+                $resultado = $this->Poliza->actualizarRevisionPunto($this->input->post());
+                break;
+            case 'EliminarEvidenciaRevicion':
+                $resultado = $this->Poliza->eliminarEvidenciaRevisionPunto($this->input->post());
+                break;
+            case 'RevisionTecnica':
+                $resultado = $this->Poliza->revisionTecnica($this->input->post());
+                break;
+            case 'ConsultaFallasRefacionXTipoFallaChecklist':
+                $resultado = $this->Seguimientos->consultaFallasRefacionXTipoFallaChecklist($this->input->post());
+                break;
+            case 'GuardarRevisionTecnicaChecklist':
+                $resultado = $this->Poliza->guardarRevisionTecnicaChecklist($this->input->post());
+                break;
+            case 'MostrarFallasTecnicasChecklist':
+                $resultado = $this->Poliza->mostrarFallasTecnicasCheclist($this->input->post());
+                break;
+            case 'ActualizarRevisionTecnica':
+                $resultado = $this->Poliza->actualizarRevisionTecnica($this->input->post());
+                break;
+            case 'EditarRevisionTecnicaChecklist':
+                $resultado = $this->Poliza->editarRevisionTecnicaChecklist($this->input->post());
+                break;
+            case 'MostrarDatosServicio':
+                $resultado = $this->Poliza->mostrarDatosServicio($this->input->post());
+                break;
+            case 'GuardarConclusionChecklist':
+                $resultado = $this->Poliza->guardarConclusionChecklist($this->input->post());
+                break;            
+            case 'PDFPrueba':               
+                $resultado = $this->Poliza->pdfServicioChecklist($this->input->post());
+                break;
+            default:
+                $resultado = FALSE;
                 break;
         }
         echo json_encode($resultado);

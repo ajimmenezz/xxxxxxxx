@@ -35,6 +35,7 @@ class ServiciosTicket extends General {
         $this->DBS = \Modelos\Modelo_Solicitud::factory();
         $this->DBB = \Modelos\Modelo_Busqueda::factory();
         $this->DBCS = \Modelos\Modelo_Salas4D::factory();
+        $this->DBMP = \Modelos\Modelo_Poliza::factory();
         $this->Notificacion = \Librerias\Generales\Notificacion::factory();
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();
         $this->ServiceDesk = \Librerias\WebServices\ServiceDesk::factory();
@@ -431,6 +432,22 @@ class ServiciosTicket extends General {
                     case '3':
                         $this->verificarServicio($datos);
                         $data['informacionServicio']['serviciosAsignados'] = $this->getServiciosAsignados('11');
+                        break;
+                }
+            } else if ($datosServicio['IdTipoServicio'] === '27') {
+                
+                switch ($datos['operacion']) {
+                    case '1':
+                        $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '2', '4');
+                        $data['informacion']['serviciosAsignados'] = $this->getServiciosAsignados('11');
+                        $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $datosServicio['Ticket'] . '"');
+                        break;
+                    case '2':
+                        $data['informacion'] = $this->getServicioMantenimientoSalas(array('ticket' => $datosServicio['Ticket'], 'servicio' => $datos['servicio']));
+                        $data['catalogoCategorias'] = $this->DBMP->consultaCategorias();
+                        $data['categoriasRevisionPunto'] = $this->DBMP->mostrarCategoriaRevisionPunto();
+                        $data['revisionArea'] = $this->DBMP->mostrarRevisionArea(array('servicio' => $datos['servicio']));
+                        $data['formulario'] = parent::getCI()->load->view('Poliza/InformacionGeneralChecklist', $data, TRUE);
                         break;
                 }
             }
@@ -2315,7 +2332,7 @@ class ServiciosTicket extends General {
                                             WHERE Flag = 1
                                             AND Salas4D = 1');
     }
-
+    
 }
 
 class PDFAux extends PDF {
