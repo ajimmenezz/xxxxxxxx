@@ -240,9 +240,13 @@ $route['Gapsi/Gasto/(:any)'] = 'Gapsi/Controller_Gasto/manejarEvento/$1';
 $route['Proveedores/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Proveedores/Seguimiento/(:any)'] = 'Proveedores/Controller_Seguimiento/manejarEvento/$1';
 
-/* Routers para el manejo de Gapsi */
+/* Routers para el manejo de Reporte de Proyectos Especiales */
 $route['Reportes/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Reportes/PEV2/(:any)'] = 'Reportes/Controller_ProyectosEspecialesV2/manejarEvento/$1';
+
+/* Routers para el manejo de Comprobaciones */
+$route['Comprobacion/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
+$route['Comprobacion/Catalogos/(:any)'] = 'Comprobacion/Controller_Catalogos/manejarEvento/$1';
 
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 

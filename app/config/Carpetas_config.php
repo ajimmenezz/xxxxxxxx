@@ -162,5 +162,8 @@ $config['Secciones'] = array(
     ),
     'Documentacion' => array(
         'Carta-Responsiva' => 'Carta_Responsiva'
-    )
+    ),
+    'Comprobacion' => array(
+        'Catalogos-Comprobacion' => 'Catalogos'        
+    ),
 );
