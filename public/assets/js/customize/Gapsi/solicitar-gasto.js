@@ -21,7 +21,7 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
-    file.crearUpload('#fotosGasto', 'Gasto/SolicitarGasto', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml']);
+    file.crearUpload('#fotosGasto', 'Gasto/SolicitarGasto', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml', 'msg']);
 
     $("#listClientes").on("change", function () {
         $("#listProyectos").empty().append('<option value="">Selecciona . . .</option>');
@@ -70,7 +70,7 @@ $(function () {
         if ($(this).val() !== '') {
             var datos = {
                 'id': $(this).val(),
-                'proyecto' : $("#listProyectos").val()
+                'proyecto': $("#listProyectos").val()
             }
             evento.enviarEvento('Gasto/BeneficiarioByTipo', datos, '#panelFormularioGasto', function (respuesta) {
                 $.each(respuesta.beneficiarios, function (k, v) {

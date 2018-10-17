@@ -41,7 +41,7 @@ $(function () {
     function initFormulario() {
         select.crearSelect("select");
         _fila = arguments[0];
-        file.crearUpload('#fotosGasto', 'Gasto/GuardarCambiosGasto', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml']);
+        file.crearUpload('#fotosGasto', 'Gasto/GuardarCambiosGasto', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml', 'msg']);
         $("#listClientes").on("change", function () {
             $("#listProyectos").empty().append('<option value="">Selecciona . . .</option>');
             if ($(this).val() !== '') {
@@ -89,7 +89,7 @@ $(function () {
             if ($(this).val() !== '') {
                 var datos = {
                     'id': $(this).val(),
-                    'proyecto' : $("#listProyectos").val()
+                    'proyecto': $("#listProyectos").val()
                 }
                 evento.enviarEvento('Gasto/BeneficiarioByTipo', datos, '#panelFormularioGasto', function (respuesta) {
                     $.each(respuesta.beneficiarios, function (k, v) {

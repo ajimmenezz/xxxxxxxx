@@ -894,6 +894,8 @@ $(function () {
         var datosTabla = arguments[0];
         var respuesta = arguments[1];
         var servicio = datosTabla[0];
+        
+        select.crearSelect("#selectSucursales");
 
         $('#guardarRevisionFisicaArea').off('click');
         $('#guardarRevisionFisicaArea').on('click', function () {
