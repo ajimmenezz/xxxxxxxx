@@ -124,4 +124,27 @@ class Modelo_SAE7 extends Modelo_Base {
         return $consulta->result_array();
     }
 
+    public function consultaProveedoresSAE() {
+        $query = "select 
+                    CLAVE,
+                    NOMBRE,
+                    concat(CALLE, ' ', NUMEXT, ' ', COLONIA, ' CP ', CODIGO) AS DIRECCION
+                from PROV03
+                where STATUS = 'A'
+                order by NOMBRE asc";
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta->result_array();
+    }
+    
+    public function consultaAlmacenesSAE() {
+        $query = "select 
+                    CVE_ALM,
+                    DESCR,
+                    DIRECCION
+                  from ALMACENES03
+                  where STATUS = 'A'";
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta->result_array();
+    }
+
 }

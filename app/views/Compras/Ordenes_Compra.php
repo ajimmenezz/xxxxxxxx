@@ -89,6 +89,6 @@
 </div>
 <!-- Finalizando #contenido -->
 
-<!--Empezando seccion para el seguimiento de un servicio sin clasificar->-->
-<!--<div id="seccionSeguimientoServicio" class="content hidden"></div>-->
-<!-- Finalizando seccion para el seguimiento de un servicio sin clasificar 
+<!--Empezando seccion para el formulario orden de compra -->
+<div id="seccionFormularioOrdenCompra" class="content hidden"></div>
+<!-- Finalizando seccion para el formulario orden de compra -->
