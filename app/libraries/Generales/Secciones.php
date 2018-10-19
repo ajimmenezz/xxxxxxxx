@@ -31,6 +31,7 @@ class Secciones extends General {
     private $Gapsi;
     private $PEV2;
     private $Documentacion;
+    private $ModeloComprobacion;
 
     public function __construct() {
         parent::__construct();
@@ -64,6 +65,7 @@ class Secciones extends General {
         $this->PEV2 = \Librerias\Reportes\PEV2::factory();
         $this->DBP2 = \Modelos\Modelo_Proyectos2::factory();
         $this->Documentacion = \Librerias\Documentacion\Documentacion::factory();
+        $this->ModeloComprobacion = \Modelos\Modelo_Comprobacion::factory();
     }
 
     /*
@@ -427,6 +429,10 @@ class Secciones extends General {
             case 'Documentacion/Carta_Responsiva':
                 $datos['tecnicosCartaResponsiva'] = $this->Documentacion->mostrarTecnicosCartaResponsiva();
                 break;
+            case 'Comprobacion/Catalogos':
+                $datos['Conceptos'] = $this->ModeloComprobacion->getConceptos();
+                $datos['FondoFijoXUsuario'] = $this->ModeloComprobacion->getFondosFijos();                
+                break;            
             default:
                 break;
         }

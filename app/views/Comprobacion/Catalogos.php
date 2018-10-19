@@ -17,7 +17,7 @@
                 <ul class="nav nav-tabs nav-tabs-inverse">
                     <li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>
                     <li class="active"><a href="#ConceptosFF" data-toggle="tab">Conceptos Fondo Fijo</a></li>
-                    <li class=""><a href="#FFxTecnico" data-toggle="tab">Fondo Fijo x Técnico</a></li>
+                    <li class=""><a href="#FFxUsuario" data-toggle="tab">Fondo Fijo x Usuario</a></li>
                     <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
                 </ul>
             </div>
@@ -66,13 +66,16 @@
                                     </thead>
                                     <tbody>
                                         <?php
-                                        if (isset($datos['Sistemas']) && !empty($datos['Sistemas'])) {
-                                            foreach ($datos['Sistemas'] as $key => $value) {
+                                        if (isset($datos['Conceptos']) && !empty($datos['Conceptos'])) {
+                                            foreach ($datos['Conceptos'] as $key => $value) {
                                                 echo ""
                                                 . "<tr>"
                                                 . " <td>" . $value['Id'] . "</td>"
-                                                . " <td>" . $value['Flag'] . "</td>"
                                                 . " <td>" . $value['Nombre'] . "</td>"
+                                                . " <td>" . $value['Comprobante'] . "</td>"
+                                                . " <td>" . $value['Extraordinario'] . "</td>"
+                                                . " <td>$" . $value['Monto'] . "</td>"
+                                                . " <td>" . $value['Alternativos'] . "</td>"
                                                 . " <td>" . $value['Estatus'] . "</td>"
                                                 . "</tr>";
                                             }
@@ -88,43 +91,40 @@
             <!--Empezando la seccion Conceptos Fondo Fijo-->
 
             <!--Empezando la seccion Fondo Fijo x Tecnico-->
-            <div class="tab-pane fade" id="FFxTecnico">
+            <div class="tab-pane fade" id="FFxUsuario">
                 <div class="panel-body">                                        
                     <div class="row">
-                        <div class="col-md-6 col-md-offset-6 col-sm-offset-6 col-sm-6 col-xs-offset-0 col-xs-12">
-                            <div class="input-group">
-                                <input type="text" id="txtNuevoTipo" class="form-control" placeholder="Nuevo Tipo de Proyecto">
-                                <span role="button" id="btnAddTipo" class="input-group-addon bg-aqua"><i class="fa fa-plus text-white"></i></span>
-                            </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <h4>Lista de Usuarios y Fondo Fijo</h4>                            
                         </div>
-                    </div>
-                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-12 pull-right">                            
+                            <button class="btn btn-success pull-right" id="btnAddFFxUsuario"><i class="fa fa-plus text-white"></i></button>                                        
+                        </div>
                         <div class="col-md-12 col-sm-12 col-xs-12">
-                            <h4>Lista de Tipos de Proyecto</h4>
                             <div class="underline m-b-10"></div>
                         </div>
-                    </div>
+                    </div>  
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="table-responsive">
-                                <table id="table-tipos" class="table table-bordered table-striped table-condensed">
+                                <table id="table-usuarios-ff" class="table table-bordered table-striped table-condensed">
                                     <thead>
                                         <tr>
-                                            <th class="none">Id</th>
-                                            <th class="none">Flag</th>
-                                            <th class="all">Tipo de Proyecto</th>
-                                            <th class="all" style="width: 25%">Estatus</th>
+                                            <th class="none">Id</th>                                            
+                                            <th class="all">Usuario</th>
+                                            <th class="all">Monto del Fondo Fijo</th>
+                                            <th class="all">Estatus</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        if (isset($datos['Tipos']) && !empty($datos['Tipos'])) {
-                                            foreach ($datos['Tipos'] as $key => $value) {
+                                        if (isset($datos['FondoFijoXUsuario']) && !empty($datos['FondoFijoXUsuario'])) {
+                                            foreach ($datos['FondoFijoXUsuario'] as $key => $value) {
                                                 echo ""
                                                 . "<tr>"
                                                 . " <td>" . $value['Id'] . "</td>"
-                                                . " <td>" . $value['Flag'] . "</td>"
-                                                . " <td>" . $value['Nombre'] . "</td>"
+                                                . " <td>" . $value['Usuario'] . "</td>"
+                                                . " <td>$" . number_format((float) $value['Monto'], 2, '.', '') . "</td>"
                                                 . " <td>" . $value['Estatus'] . "</td>"
                                                 . "</tr>";
                                             }

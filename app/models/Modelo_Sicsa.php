@@ -19,7 +19,7 @@ class Modelo_Sicsa extends Modelo_Base {
                 . "db_Cotizacion "
                 . "(Cliente, Fecha, SubtotalUSD, IVAUSD, TotalUSD, SubtotalMXN, IVAMXN, TotalMXN, NombreCliente, Observaciones, Complejo, ServiceDesk, Status) "
                 . "VALUES "
-                . "('1', getdate(), '0', '0', '0', '0', '0', '0', 'OPERADORA DE CINEMAS, S.A. DE C.V.', '" . $datos['Observaciones'] . "', '" . $datos['Complejo'] . "', '" . $datos['SD'] . "', 'Capturada')";
+                . "('         1', getdate(), '0', '0', '0', '0', '0', '0', 'OPERADORA DE CINEMAS, S.A. DE C.V.', '" . $datos['Observaciones'] . "', '" . $datos['Complejo'] . "', '" . $datos['SD'] . "', 'Capturada')";
 
         parent::connectDBSicsa()->query($query);
         $ultimo = parent::connectDBSicsa()->insert_id();

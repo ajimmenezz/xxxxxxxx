@@ -13,6 +13,190 @@ class Modelo_Comprobacion extends Modelo_Base {
         $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
     }
 
+    public function getTiposComprobante() {
+        $consulta = $this->consulta("select * from cat_v3_tipos_comprobante where Flag = 1");
+        return $consulta;
+    }
+
+    public function getUsuarios() {
+        $consulta = $this->consulta("select Id, nombreUsuario(Id) as Nombre from cat_v3_usuarios where Flag = 1 and nombreUsuario(Id) <> '' order by Nombre");
+        return $consulta;
+    }
+
+    public function getSucursales() {
+        $consulta = $this->consulta("select Id, sucursalCliente(Id) as Nombre from cat_v3_sucursales where Flag = 1 order by Nombre");
+        return $consulta;
+    }
+
+    public function guardarConcepto(array $datos) {
+        $this->iniciaTransaccion();
+
+        if ($datos['id'] == 0) {
+            $this->insertar("cat_V3_comprobacion_conceptos", [
+                'Nombre' => $datos['concepto'],
+                'Monto' => $datos['monto'],
+                'Extraordinario' => $datos['extraordinario'],
+                'TiposComprobante' => implode(",", $datos['comprobantes'])
+            ]);
+
+
+            $id = $this->ultimoId();
+        } else {
+            $this->actualizar("cat_v3_comprobacion_conceptos", [
+                'Nombre' => $datos['concepto'],
+                'Monto' => $datos['monto'],
+                'Extraordinario' => $datos['extraordinario'],
+                'TiposComprobante' => implode(",", $datos['comprobantes'])
+                    ], ['Id' => $datos['id']]);
+
+            $id = $datos['id'];
+
+            $this->actualizar('cat_v3_comprobacion_conceptos_alternativas', ['Flag' => 0], ['IdConcepto' => $id]);
+        }
+
+        if (isset($datos['alternativos']) && count($datos['alternativos']) > 0) {
+            foreach ($datos['alternativos'] as $key => $value) {
+                $this->insertar("cat_v3_comprobacion_conceptos_alternativas", [
+                    'IdConcepto' => $id,
+                    'IdUsuario' => $value['usuario'],
+                    'IdSucursal' => $value['sucursal'],
+                    'Monto' => $value['monto'],
+                    'IdUsuarioAlta' => $this->usuario['Id'],
+                    'Fecha' => $this->getFecha()
+                ]);
+            }
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200, 'fila' => $this->getConceptos($id)[0]];
+        }
+    }
+
+    public function getConceptos(int $id = null) {
+        $condicion = '';
+        if (!is_null($id)) {
+            $condicion = "where conc.Id = '" . $id . "'";
+        }
+
+        $consulta = $this->consulta("select 
+                                    conc.Id,
+                                    conc.Nombre,
+                                    conc.TiposComprobante,
+                                    (select GROUP_CONCAT(Nombre SEPARATOR '<br />') from cat_v3_tipos_comprobante where concat(',',conc.TiposComprobante,',') REGEXP(concat(',',Id,','))) as Comprobante,
+                                    if(conc.Extraordinario = 1, 'Si', 'No') as Extraordinario,
+                                    conc.Monto,
+                                    (select count(*) from cat_v3_comprobacion_conceptos_alternativas where IdConcepto = conc.Id and Flag = 1) as Alternativos,
+                                    if(conc.Flag = 1, 'Activo', 'Inactivo') as Estatus
+                                    from cat_v3_comprobacion_conceptos conc " . $condicion . " order by Nombre");
+
+        return $consulta;
+    }
+
+    public function getAlternativasByConcepto(int $id) {
+        $consulta = $this->consulta("select 
+                                    alt.Id,
+                                    alt.IdUsuario,
+                                    alt.IdSucursal,
+                                    alt.Monto,
+                                    nombreUsuario(alt.IdUsuario) as Usuario,
+                                    sucursalCliente(alt.IdSucursal) as Sucursal,
+                                    alt.Monto
+
+                                    from cat_v3_comprobacion_conceptos_alternativas alt
+                                    where alt.IdConcepto = '" . $id . "' 
+                                    and alt.Flag = 1");
+        return $consulta;
+    }
+
+    public function guardarFondoFijo(array $datos) {
+        $this->iniciaTransaccion();
+        $existe = $this->consulta("select count(*) as Total from cat_v3_fondo_fijo_usuarios where IdUsuario = '" . $datos['usuario'] . "'")[0]['Total'];
+
+        if ($existe > 0) {
+            $this->actualizar("cat_v3_fondo_fijo_usuarios", ['Monto' => $datos['monto'], 'Flag' => 1], ['IdUsuario' => $datos['usuario']]);
+            $id = $this->consulta("select Id from cat_v3_fondo_fijo_usuarios where IdUsuario = '" . $datos['usuario'] . "'")[0]['Id'];
+            $bool = 1;
+        } else {
+            $this->insertar("cat_v3_fondo_fijo_usuarios", ['IdUsuario' => $datos['usuario'], 'Monto' => $datos['monto']]);
+            $id = $this->ultimoId();
+            $bool = 0;
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200, 'fila' => $this->getFondosFijos($id)[0], 'existe' => $bool, 'id' => $id];
+        }
+    }
+
+    public function habInhabFF(array $datos, int $flag) {
+        $this->iniciaTransaccion();
+
+        $this->actualizar("cat_v3_fondo_fijo_usuarios", ['Flag' => $flag], ['Id' => $datos['id']]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200, 'fila' => $this->getFondosFijos($datos['id'])[0]];
+        }
+    }
+    
+    public function habInhabConcepto(array $datos, int $flag) {
+        $this->iniciaTransaccion();
+
+        $this->actualizar("cat_v3_comprobacion_conceptos", ['Flag' => $flag], ['Id' => $datos['id']]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200, 'fila' => $this->getConceptos($datos['id'])[0]];
+        }
+    }
+
+    public function getFondosFijos(int $id = null) {
+        $condicion = '';
+        if (!is_null($id)) {
+            $condicion = "where ff.Id = '" . $id . "'";
+        }
+
+        $consulta = $this->consulta("select 
+                                    ff.Id,
+                                    ff.IdUsuario,
+                                    nombreUsuario(ff.IdUSuario) as Usuario,
+                                    ff.Monto,
+                                    if(ff.Flag = 1, 'Activo', 'Inactivo') as Estatus
+                                    from cat_v3_fondo_fijo_usuarios ff " . $condicion . " order by Usuario");
+
+        return $consulta;
+    }
+
+    /* AQUI COMIENZA EL CÖDIGO COPIADO */
+    /* AQUI COMIENZA EL CÖDIGO COPIADO */
+    /* AQUI COMIENZA EL CÖDIGO COPIADO */
+    /* AQUI COMIENZA EL CÖDIGO COPIADO */
+
     public function getSistemas(int $sistema = null) {
         $condicion = (!is_null($sistema)) ? " where Id = '" . $sistema . "'" : '';
         $consulta = $this->consulta("select  
@@ -91,21 +275,6 @@ class Modelo_Comprobacion extends Modelo_Base {
                 'error' => $this->tipoError()
             ];
         }
-    }
-
-    public function getConceptos(int $concepto = null) {
-        $condicion = (!is_null($concepto)) ? " where c.Id = '" . $concepto . "'" : '';
-        $consulta = $this->consulta("select 
-                                    c.Id,
-                                    c.Nombre,
-                                    s.Id as IdSistema,
-                                    s.Nombre as Sistema,
-                                    if(c.Flag = 1, 'Activo', 'Inactivo') as Estatus,
-                                    c.Flag
-                                    from cat_v3_conceptos_proyecto c
-                                    inner join cat_v3_sistemas_proyecto s on c.IdSistema = s.Id " . $condicion . "
-                                    order by Nombre;");
-        return $consulta;
     }
 
     public function agregarConcepto(array $datos) {

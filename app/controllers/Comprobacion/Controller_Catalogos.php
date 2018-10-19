@@ -20,9 +20,30 @@ class Controller_Catalogos extends Base {
 
     public function manejarEvento(string $evento = null) {
         switch ($evento) {
+            case 'FormularioAgregarConcepto':
+                $resultado = $this->catalogo->formularioAgregarConcepto($this->input->post());
+                break;
             case 'AgregarConcepto':
                 $resultado = $this->catalogo->agregarConcepto($this->input->post());
+                break;                                  
+            case 'FormularioAgregarFondoFijo':
+                $resultado = $this->catalogo->formularioAgregarFondoFijo($this->input->post());
                 break;
+            case 'AgregarFondoFijo':
+                $resultado = $this->catalogo->agregarFondoFijo($this->input->post());
+                break;  
+            case 'InhabilitarFF':
+                $resultado = $this->catalogo->inhabilitarFF($this->input->post());
+                break;    
+            case 'HabilitarFF':
+                $resultado = $this->catalogo->habilitarFF($this->input->post());
+                break;
+            case 'InhabilitarConcepto':
+                $resultado = $this->catalogo->inhabilitarConcepto($this->input->post());
+                break;  
+            case 'HabilitarConcepto':
+                $resultado = $this->catalogo->habilitarConcepto($this->input->post());
+                break;  
             default:
                 $resultado = FALSE;
                 break;
