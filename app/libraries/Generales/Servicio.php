@@ -1645,7 +1645,8 @@ class Servicio extends General {
         $consulta = $this->DBS->consultaGeneral('SELECT Id, Archivos FROM t_servicios_generales WHERE IdServicio =' . $datos['servicio']);
 
         $verificarServicioSinClaficar = $this->DBS->consultaGeneral('SELECT 
-                                                                        (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tst.IdTipoServicio) AS Seguimiento
+                                                                        (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tst.IdTipoServicio) AS Seguimiento,
+                                                                        tst.IdTipoServicio
                                                                     FROM t_servicios_ticket tst WHERE tst.Id = "' . $datos['servicio'] . '"');
 
         if (!empty($datos['sucursal'])) {
@@ -1723,9 +1724,15 @@ class Servicio extends General {
                 } else {
                     $datosConcluir = array($datos['datosConcluir']);
                 }
-                $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, $datosConcluir, '5');
+
+                if ($verificarServicioSinClaficar[0]['IdTipoServicio'] === '41') {
+                    $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
+                } else {
+                    $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '5');
+                }
             } else {
                 $this->crearImangenFirma($datos, $datos['datosConcluir']);
+
                 if (isset($datos['datosConcluir']['estatus'])) {
                     $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
                 } else {
@@ -1855,7 +1862,6 @@ class Servicio extends General {
             } else {
                 $textoFolio = '';
             }
-
             $descripcionConclusion = '<br><br>Solicitud: <strong>' . $datosDescripcionConclusion[0]['IdSolicitud'] . '</strong>
                 <br>Asunto de la Solicitud: <strong>' . $datosDescripcionConclusion[0]['AsuntoSolicitud'] . '</strong>
                 <br>Descripcion de la Solcitud: <strong>' . $datosDescripcionConclusion[0]['AsuntoSolicitud'] . '</strong>
@@ -1877,7 +1883,6 @@ class Servicio extends General {
             } else {
                 $linkExtraEquiposFaltante = '';
             }
-
             $textoUsuario = '<p><strong>Estimado(a) ' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la conclusión del servicio que realizo.</p>' . $linkPDF . $linkDetallesServicio . $descripcionConclusion;
             $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), $titulo, $textoUsuario);
 
@@ -2127,6 +2132,9 @@ class Servicio extends General {
         }
         if ($resultadoEnviarConclusion === TRUE) {
             if (!empty($cambiarEstatus)) {
+                if ($status === '4') {
+                    $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
+                }
                 return TRUE;
             } else {
                 return 'errorConcluir';
@@ -2773,7 +2781,7 @@ class Servicio extends General {
                 if ($dataServicios[0]['IdEstatus'] === '3') {
                     $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
                     $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
-                    
+
                     if (empty($vueltasAnteriores)) {
                         $sucursalVuelta = '';
                     } else {
