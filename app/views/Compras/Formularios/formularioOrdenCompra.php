@@ -137,10 +137,58 @@
                 </div>
             </div>
             <div class="row"> 
-                <div class="col-md-12">                        
-                    <div class="form-group">
+                <div class="form-group">
+                    <!--<h3 class="m-t-10">Partidas de la O.C.</h3>-->
+                    <div class="col-md-6">
                         <h3 class="m-t-10">Partidas de la O.C.</h3>
-                        <div class="underline m-b-15 m-t-15"></div>
+                    </div>
+                    <div class="col-md-6 col-xs-6">
+                        <div class="form-group text-right">
+                            <a href="javascript:;" class="btn btn-success btn-lg " id="btnAgregarPartidaFila"><i class="fa fa-plus"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="underline m-t-5"></div>
+
+            <div class="row m-t-15">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="table-responsive">
+                        <table id="data-table-partidas-oc" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                            <thead>
+                                <tr>                
+                                    <th class="all">Clave</th>                    
+                                    <th class="all">Producto</th>                    
+                                    <th class="all" style="max-width: 150px !important;">Unidad</th>
+                                    <th class="all" style="max-width: 150px !important;">Cantidad</th>
+                                    <th class="all" style="max-width: 150px !important;">Descuento</th>
+                                    <th class="all" style="max-width: 150px !important;">Costo por Unidad</th>
+                                    <th class="all" style="max-width: 150px !important;">Subtotal por partida</th>
+                                </tr>
+                            </thead>
+                            <tbody>        
+                                <tr>
+                                    <td>PD-PURGAMO4BU-CG</td>
+                                    <td>Cable UTP Cat 6A Pares Azul</td>
+                                    <td class="text-center">
+                                        <input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
