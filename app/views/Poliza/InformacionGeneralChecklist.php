@@ -236,7 +236,7 @@
                         <div class="col-md-6">
                             <div class="form-group text-center">
                                 <br>
-                                <!--<a id="btnPrueba" href="javascript:;" class="btn btn-primary m-r-5 "><i class="fa fa-bell"></i> Prueba pdf</a>-->
+                                <a id="btnPrueba" href="javascript:;" class="btn btn-primary m-r-5 "><i class="fa fa-bell"></i> Prueba pdf</a>
                             </div>
                         </div>    
                     </div>
@@ -245,7 +245,7 @@
             </div>
             <div class="tab-pane fade panel-body " id="revisionArea">
                 <div class="row panel panel-inverse" data-sortable-id="form-stuff-3">
-                    <ul class="nav nav-pills">
+                    <ul id="" class="nav nav-pills categoriaRevisionArea">
                         <?php
                         foreach ($catalogoCategorias as $value) {
                             if ($value['Flag'] == 1) {
@@ -254,30 +254,28 @@
                         }
                         ?>
                     </ul>
-                    <div id="errorRevisionFisica"></div>
-                    <div class="row">
-                        <div id="listaPregunta" class="table-responsive hidden">
-                            <table id="tabla-categorias" class="table table-striped table-bordered table-condensed" style="cursor:pointer" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th class="all">Id</th>
-                                        <th class="all">Área Atención</th>
-                                        <th class="all">Id área atencion</th>
-                                        <th class="all">Concepto o Pregunta</th>
-                                        <th class="all"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div id="errorRevisionArea" class="row"></div>
+                    <div id="listaPregunta" class="table-responsive hidden">
+                        <table id="tabla-categorias" class="table table-striped table-bordered table-condensed" style="cursor:pointer" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="all">Id</th>
+                                    <th class="all">Área Atención</th>
+                                    <th class="all">Id área atencion</th>
+                                    <th class="all">Concepto o Pregunta</th>
+                                    <th class="all"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div id="guardarListaPregunta" class="row m-t-15 hidden">
                         <div class="col-md-6 col-xs-6 text-right">
@@ -290,7 +288,7 @@
             </div>
             <div class="tab-pane fade panel-body " id="revisionPunto">
                 <div class="row panel panel-inverse" data-sortable-id="form-stuff-3">
-                    <ul class="nav nav-pills">
+                    <ul  class="nav nav-pills categoriaRevisionPunto">
                         <?php
                         foreach ($catalogoCategorias as $value) {
                             if ($value['Flag'] == 1) {
@@ -300,11 +298,11 @@
                         ?>
                     </ul>
                     <div id="errorRevisionPunto"></div>
-                    <div class="row">
-                        <div class="col-md-12" id="checklistRevisionPunto">
-                            <div class="area"></div><br/>
-                        </div>
+                    <!--<div class="row">-->
+                    <div class="row col-md-12 hidden" id="checklistRevisionPunto">
+                        <div class="area"></div><br/>
                     </div>
+                    <!--</div>-->
                 </div>
             </div>
             <div class="tab-pane fade panel-body " id="revisionTecnica">

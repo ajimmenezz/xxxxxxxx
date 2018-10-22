@@ -144,6 +144,7 @@ $(function () {
         var sucursal = respuesta.informacion.sucursal;
         $('#listaPoliza').addClass('hidden');
         $('#seccionSeguimientoServicio').removeClass('hidden').empty().append(respuesta.formulario);
+        select.crearSelect('#selectSucursales');
         tabla.generaTablaPersonal('#tabla-categorias', null, null, true, true, [], true, 'lfrtip', false);
 
         if (sucursal !== "0" || sucursal !== null) {
@@ -155,6 +156,18 @@ $(function () {
             switch (target) {
                 case "#revisionTecnica":
                     iniciarRevisionTecnica();
+                    limpiarRevisionArea();
+                    limpiarRevisionPunto();
+                    break;
+                case "#informacionRevision":
+                    limpiarRevisionArea();
+                    limpiarRevisionPunto();
+                    break;
+                case "#revisionPunto":
+                    limpiarRevisionArea();
+                    break;
+                case "#revisionArea":
+                    limpiarRevisionPunto();
                     break;
             }
         });
@@ -162,7 +175,7 @@ $(function () {
         $('#btnPrueba').on('click', function () {
             var servicio = $('#hiddenServicio').val();
             evento.enviarEvento('Seguimiento/PDFPrueba', {'servicio': servicio}, '', function (respuesta) {
-                console.log(respuesta);
+//                console.log(respuesta);
                 window.open(respuesta, '_blank');
             });
 //            var datosServicio = {'servicio' : servicio};
@@ -172,6 +185,23 @@ $(function () {
 //            concluirServicioChecklist(servicio,datosTabla,sucursal);
 
         });
+    };
+
+    var limpiarRevisionArea = function () {
+
+        $('.categoriaRevisionArea li').each(function () {
+            $(this).removeClass('active');
+        });
+        $('.categoriaRevisionArea li').parent().siblings('#guardarListaPregunta').addClass('hidden');
+        $('.categoriaRevisionArea li').parent().siblings('#listaPregunta').addClass('hidden');
+    };
+
+    var limpiarRevisionPunto = function () {
+        $('.categoriaRevisionPunto li').each(function () {
+            $(this).removeClass('active');
+        });
+        $('.categoriaRevisionPunto li').parent().siblings('#checklistRevisionPunto').addClass('hidden');
+
     };
 
     var concluirServicioChecklist = function () {
@@ -215,12 +245,12 @@ $(function () {
                                 var dataInsertar = {'ticket': ticket, 'servicio': servicio, 'img': img, 'correo': correo, 'nombreFirma': personaRecibe, 'sucursal': sucursal};
 
                                 evento.enviarEvento('Seguimiento/GuardarConclusionChecklist', dataInsertar, '#modal-dialogo', function (respuesta) {
-                                    console.log(respuesta);
-//                                    if (respuesta) {
-//                                        servicios.mensajeModal('Servicio concluido.', 'Correcto');
-//                                    } else {
-//                                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Tienes informacion sin concluir', 3000);
-//                                    }
+//                                    console.log(respuesta);
+                                    if (respuesta) {
+                                        servicios.mensajeModal('Servicio concluido.', 'Correcto');
+                                    } else {
+                                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Tienes informacion sin concluir', 3000);
+                                    }
                                 });
                             } else {
                                 evento.mostrarMensaje('.errorConcluirServicio', false, 'Debes aceptar terminos', 3000);
@@ -255,8 +285,7 @@ $(function () {
         $('[id*=categoriaPunto-]').off('click');
         $('[id*=categoriaPunto-]').on('click', function () {
 
-            $('#listaPregunta').removeClass('hidden');
-            $('#guardarListaPregunta').removeClass('hidden');
+            $('#checklistRevisionPunto').removeClass('hidden');
             dataCategoria = $(this).data('id-categoria-punto');
             mostrarPuntoPorCategoria(dataCategoria, sucursal, respuesta, datosTabla);
         });
@@ -288,6 +317,8 @@ $(function () {
             $('#selectAreaPunto').on('change', function () {
                 var _this = $('#selectAreaPunto option:selected');
                 var _value = _this.val();
+                console.log(_this.text());
+                console.log(_value);
 
                 $('#selectEquipo').empty().append('<option value="">Seleccionar</option>');
                 if (_value !== '') {
@@ -304,7 +335,6 @@ $(function () {
                 } else {
                     $('#selectEquipo').attr('disabled', 'disabled');
                     select.cambiarOpcion('#selectEquipo', '');
-
                 }
             });
 
@@ -327,6 +357,9 @@ $(function () {
                     evento.mostraDiv('#divDiagnosticoEquipo');
                 } else {
                     evento.ocultarDiv('#divDiagnosticoEquipo');
+                    select.cambiarOpcion('#selectImpericiaTipoFallaEquipoCorrectivo', '');
+                    select.cambiarOpcion('#selectTipoFallaEquipoCorrectivo', '');
+                    select.cambiarOpcion('#selectComponenteDiagnosticoCorrectivo', '');
                 }
             });
 
@@ -408,29 +441,35 @@ $(function () {
 
             $('#btnGuardarImpericiaChecklist').on('click');
             $('#btnGuardarImpericiaChecklist').on('click', function () {
+
                 var tipoFalla = $('#selectImpericiaTipoFallaEquipoCorrectivo option:selected').val();
                 var idFalla = $('#selectImpericiaFallaDiagnosticoCorrectivo option:selected').val();
-                guardarRevisionTecnicaChecklist(2, null, tipoFalla, idFalla, 'evidenciasImpericiaCorrectivo');
+
+                var evidencia = $('#evidenciasImpericiaCorrectivo').val();
+                guardarRevisionTecnicaChecklist(2, null, tipoFalla, idFalla, 'evidenciasImpericiaCorrectivo', evidencia);
             });
 
             $('#btnGuardarFallaEquipoChecklist').on('click');
             $('#btnGuardarFallaEquipoChecklist').on('click', function () {
-
                 var tipoFalla = $('#selectTipoFallaEquipoCorrectivo option:selected').val();
                 var idFalla = $('#selectFallaDiagnosticoCorrectivo option:selected').val();
-                guardarRevisionTecnicaChecklist(3, null, tipoFalla, idFalla, 'evidenciasFallaEquipoCorrectivo');
-
+                var evidencia = $('#evidenciasFallaEquipoCorrectivo').val();
+                guardarRevisionTecnicaChecklist(3, null, tipoFalla, idFalla, 'evidenciasFallaEquipoCorrectivo', evidencia);
             });
 
+            $('#btnGuardarFallaComponenteChecklist').off('click');
             $('#btnGuardarFallaComponenteChecklist').on('click', function () {
                 var componente = $('#selectComponenteDiagnosticoCorrectivo option:selected').val();
                 var tipoFalla = $('#selectTipoFallaComponenteCorrectivo option:selected').val();
                 var idFalla = $('#selectFallaComponenteDiagnosticoCorrectivo option:selected').val();
-                guardarRevisionTecnicaChecklist(4, componente, tipoFalla, idFalla, 'evidenciasFallaComponenteCorrectivo');
+                var evidencia = $('#evidenciasFallaComponenteCorrectivo').val();
+                guardarRevisionTecnicaChecklist(4, componente, tipoFalla, idFalla, 'evidenciasFallaComponenteCorrectivo', evidencia);
             });
 
+            $('#btnGuardarReporteMultimediaChecklist').off('click');
             $('#btnGuardarReporteMultimediaChecklist').on('click', function () {
-                guardarRevisionTecnicaChecklist(5, null, null, null, 'evidenciasReporteMultimediaCorrectivo');
+                var evidencia = $('#evidenciasReporteMultimediaCorrectivo').val();
+                guardarRevisionTecnicaChecklist(5, null, null, null, 'evidenciasReporteMultimediaCorrectivo', evidencia);
             });
 
             evento.enviarEvento('Seguimiento/MostrarFallasTecnicasChecklist', {'servicio': servicio}, '#seguimiento-checklist', function (listaFallas) {
@@ -443,8 +482,7 @@ $(function () {
             $('#tablaFallasTecnicas tbody').on('click', 'tr', function () {
                 let _this = this;
                 var datosTabla = $('#tablaFallasTecnicas').DataTable().row(_this).data();
-                var dato = {'idRevision': datosTabla[0], 'servicio': servicio};
-//                console.log(dato);
+                var dato = {'idRevisionTecnica': datosTabla[0], 'servicio': servicio};
                 evento.enviarEvento('Seguimiento/ActualizarRevisionTecnica', dato, '#panel-catalogo-checklist', function (respuestaRevision) {
                     evento.iniciarModal('#modalEditRevisionChecklist', 'Editar Revisión Tecnica', respuestaRevision.modal);
 
@@ -452,19 +490,21 @@ $(function () {
                     $('#editarEstatus').on('click', function () {
                         var estatusRevision = $('#editarEstatus').val();
 
-                        if (estatusRevision == 1) {
+                        if (estatusRevision === `1`) {
                             estatusRevision = 0;
-                            $('#editarEstatus').removeClass('btn-primary');
                             $('#editarEstatus').addClass('btn-danger');
                             $('#editarEstatus').text('Inhabiliatado');
-                        } else {
-                            estatusRevision = 1;
-                            $('#editarEstatus').removeClass('btn-danger');
-                            $('#editarEstatus').addClass('btn-primary');
-                            $('#editarEstatus').text('Activado');
                         }
-                        editarRevisionTecnicaChecklist(dato.idRevision, dato.servicio, estatusRevision, _this);
 
+                        var datos = {'idRevisionTecnica': dato.idRevisionTecnica, 'servicio': servicio, 'estatusRevision': estatusRevision};
+
+                        evento.enviarEvento('Seguimiento/EditarRevisionTecnicaChecklist', datos, '', function (consultaRevision) {
+                            if (consultaRevision) {
+                                evento.terminarModal('#modalEditRevisionChecklist');
+                                evento.mostrarMensaje("#mensajeRevisionTecnica", true, "Datos modificados", 4000);
+                                tabla.eliminarFila('#tablaFallasTecnicas', _this);
+                            }
+                        });
                     });
 
                 });
@@ -503,6 +543,7 @@ $(function () {
                 enviar = false;
                 break;
         }
+        limpiarRevisionTecnica(false, _tab);
 
         if (enviar) {
 
@@ -546,6 +587,7 @@ $(function () {
         var _tipoFalla = arguments[2];
         var _idFalla = arguments[3];
         var _fileInput = arguments[4];
+        var _evidencia = arguments[5];
         var areaPunto = $('#selectAreaPunto option:selected');
         var equipo = $('#selectEquipo option:selected');
 
@@ -559,53 +601,91 @@ $(function () {
             'componente': _componente,
             'tipoFalla': _tipoFalla,
             'idFalla': _idFalla,
-            'fileInput': _fileInput
+            'fileInput': _fileInput,
+            'equipo': equipo.val()
         };
 
-        file.enviarArchivos('#' + _fileInput, 'Seguimiento/GuardarRevisionTecnicaChecklist', '#seguimiento-checklist', datos, function (respuesta) {
-            if (respuesta.code == 200) {
-                tabla.limpiarTabla("#tablaFallasTecnicas");
-                $.each(respuesta.listaFallas, function (key, value) {
-                    tabla.agregarFila("#tablaFallasTecnicas", [value.Id, value.AreaPunto, value.Equipo, value.Serie, value.Componente, value.TipoDiagnostico, value.Falla, value.Fecha]);
-                });
-            } else {
-                evento.mostrarMensaje('#errorRevisionTecnica', false, "No se a podido guardar la información. Intente de nuevo o contacte al administrador", 3000);
-            }
-        });
+        if (datos.idFalla !== '' && datos.tipoFalla && _evidencia !== '') {
+            console.log(datos);
+            file.enviarArchivos('#' + _fileInput, 'Seguimiento/GuardarRevisionTecnicaChecklist', '#seguimiento-checklist', datos, function (respuesta) {
+                if (respuesta.code === 200) {
+                    tabla.limpiarTabla("#tablaFallasTecnicas");
+                    $.each(respuesta.listaFallas, function (key, value) {
+                        tabla.agregarFila("#tablaFallasTecnicas", [value.Id, value.AreaPunto, value.Equipo, value.Serie, value.Componente, value.TipoDiagnostico, value.Falla, value.Fecha]);
+                        limpiarRevisionTecnica(true, '');
+                        evento.mostrarMensaje('#mensajeRevisionTecnica', true, "Información guardada correctamente", 3000);
+                    });
+                }
+            });
+        } else if (datos.fileInput === 'evidenciasReporteMultimediaCorrectivo') {
+            file.enviarArchivos('#' + _fileInput, 'Seguimiento/GuardarRevisionTecnicaChecklist', '#seguimiento-checklist', datos, function (respuesta) {
+                if (respuesta.code === 200) {
+                    tabla.limpiarTabla("#tablaFallasTecnicas");
+                    $.each(respuesta.listaFallas, function (key, value) {
+                        tabla.agregarFila("#tablaFallasTecnicas", [value.Id, value.AreaPunto, value.Equipo, value.Serie, value.Componente, value.TipoDiagnostico, value.Falla, value.Fecha]);
+                        limpiarRevisionTecnica(true, '');
+                    });
+                    evento.mostrarMensaje('#mensajeRevisionTecnica', true, "Información guardada correctamente", 3000);
+                }
+            });
+        } else {
+            evento.mostrarMensaje('#errorRevisionTecnica', false, "No se a podido guardar la información. Intente de nuevo o contacte al administrador", 3000);
+        }
 
     };
 
-    var editarRevisionTecnicaChecklist = function () {
-        var idRevision = arguments[0];
-        var servicio = arguments[1];
-        var estatusRevision = arguments[2];
-        var _this = arguments[3];
-        var datos = {'idRevision': idRevision, 'servicio': servicio, 'estatusRevision': estatusRevision};
+    var limpiarRevisionTecnica = function (limpiarFormulario, tipoDiagnostico) {
 
-        evento.enviarEvento('Seguimiento/EditarRevisionTecnicaChecklist', datos, '', function (consultaRevision) {
-            console.log(consultaRevision);
-            if (consultaRevision) {
-                evento.terminarModal('#modalEditRevisionChecklist');
-                evento.mostrarMensaje("#errorRevisionTecnica", true, "Datos modificados", 4000);
+        if (limpiarFormulario) {
+            select.cambiarOpcion('#selectAreaPunto', '');
+            select.cambiarOpcion('#selectEquipo', '');
+            select.cambiarOpcion('#selectImpericiaTipoFallaEquipoCorrectivo', '');
+            select.cambiarOpcion('#selectImpericiaFallaDiagnosticoCorrectivo', '');
+            file.limpiar('#evidenciasImpericiaCorrectivo');
+            select.cambiarOpcion('#selectTipoFallaEquipoCorrectivo', '');
+            select.cambiarOpcion('#selectFallaDiagnosticoCorrectivo', '');
+            file.limpiar('#evidenciasFallaEquipoCorrectivo');
+            select.cambiarOpcion('#selectComponenteDiagnosticoCorrectivo', '');
+            select.cambiarOpcion('#selectTipoFallaComponenteCorrectivo', '');
+            select.cambiarOpcion('#selectFallaComponenteDiagnosticoCorrectivo', '');
+            file.limpiar('#evidenciasFallaComponenteCorrectivo');
+            file.limpiar('#evidenciasReporteMultimediaCorrectivo');
+        }
 
-                $.each(consultaRevision, function (key, value) {
-//                    tabla.agregarFila("#tablaFallasTecnicas", [value.Id,value.AreaPunto,value.Equipo,value.Serie,value.Componente,value.TipoDiagnostico,value.Falla,value.Fecha]);
-//                
-                    $('#tabla-preguntas').DataTable().row(_this).data([value.Id,
-                        value.AreaPunto,
-                        value.Equipo,
-                        value.Serie,
-                        value.Componente,
-                        value.TipoDiagnostico,
-                        value.Falla,
-                        value.Fecha
-                    ]);
+        switch (tipoDiagnostico) {
+            case '#impericia':
+                select.cambiarOpcion('#selectTipoFallaEquipoCorrectivo', '');
+                select.cambiarOpcion('#selectComponenteDiagnosticoCorrectivo', '');
+                file.limpiar('#evidenciasFallaEquipoCorrectivo');
+                file.limpiar('#evidenciasFallaComponenteCorrectivo');
+                file.limpiar('#evidenciasReporteMultimediaCorrectivo');
+                break;
+            case '#falla-equipo':
+                select.cambiarOpcion('#selectImpericiaTipoFallaEquipoCorrectivo', '');
+                select.cambiarOpcion('#selectComponenteDiagnosticoCorrectivo', '');
+                file.limpiar('#evidenciasImpericiaCorrectivo');
+                file.limpiar('#evidenciasFallaComponenteCorrectivo');
+                file.limpiar('#evidenciasReporteMultimediaCorrectivo');
+                break;
+            case '#falla-componente':
+                select.cambiarOpcion('#selectTipoFallaEquipoCorrectivo', '');
+                select.cambiarOpcion('#selectImpericiaTipoFallaEquipoCorrectivo', '');
+                file.limpiar('#evidenciasImpericiaCorrectivo');
+                file.limpiar('#evidenciasFallaEquipoCorrectivo');
+                file.limpiar('#evidenciasReporteMultimediaCorrectivo');
+                break;
+            case '#reporte-multimedia':
+                select.cambiarOpcion('#selectTipoFallaEquipoCorrectivo', '');
+                select.cambiarOpcion('#selectComponenteDiagnosticoCorrectivo', '');
+                select.cambiarOpcion('#selectImpericiaTipoFallaEquipoCorrectivo', '');
+                file.limpiar('#evidenciasImpericiaCorrectivo');
+                file.limpiar('#evidenciasFallaEquipoCorrectivo');
+                file.limpiar('#evidenciasFallaComponenteCorrectivo');
+                break;
 
-                    tabla.reordenarTabla('#tabla-categorias', [1, 'asc']);
-                    $('#tabla-preguntas').DataTable().page.jumpToData(value.Id, 0);
-                });
-            }
-        });
+            default:
+                break;
+        }
     };
 
     var mostrarPreguntaPorCategoria = function (dataCategoria, sucursal, respuesta) {
@@ -617,22 +697,22 @@ $(function () {
 
             if (!preguntasCategoria) {
                 evento.mostrarMensaje('#errorRevisionFisica', false, preguntasCategoria.error, 3000);
+            } else {
+                $.each(lista, function (clave, valor) {
+
+                    if (valor.IdArea) {
+                        var decicionUno = '<form><fieldset id="group-' + valor.IdArea + '"><input type="radio" id="uno" name="desicion-' + valor.IdArea + '" value="1" style="height: 16px;width: 20px;margin: 0px 5px 0px 5px;"/><spam style="margin: 0 11px 0 0px;">Si</spam> <input type="radio" name="desicion-' + valor.IdArea + '" id="cero" value="0" style="height: 15px;width: 17px;margin: 0px 5px 0px 5px;"/><spam style="margin: 0 11px 0 0px;">No</spam> </fieldset></form>';
+                        tabla.agregarFila('#tabla-categorias', [
+                            valor.Id,
+                            valor.Nombre,
+                            valor.IdArea,
+                            valor.Concepto,
+                            decicionUno
+                        ]);
+                    }
+                });
+                iniciarElementosChecklist(respuesta);
             }
-
-            $.each(lista, function (clave, valor) {
-
-                if (valor.IdArea) {
-                    var decicionUno = '<form><fieldset id="group-' + valor.IdArea + '"><input type="radio" id="uno" name="desicion-' + valor.IdArea + '" value="1" style="height: 16px;width: 20px;margin: 0px 5px 0px 5px;"/><spam style="margin: 0 11px 0 0px;">Si</spam> <input type="radio" name="desicion-' + valor.IdArea + '" id="cero" value="0" style="height: 15px;width: 17px;margin: 0px 5px 0px 5px;"/><spam style="margin: 0 11px 0 0px;">No</spam> </fieldset></form>';
-                    tabla.agregarFila('#tabla-categorias', [
-                        valor.Id,
-                        valor.Nombre,
-                        valor.IdArea,
-                        valor.Concepto,
-                        decicionUno
-                    ]);
-                }
-            });
-            iniciarElementosChecklist(respuesta);
         });
     };
 
@@ -640,7 +720,7 @@ $(function () {
         var servicio = $('#hiddenServicio').val();
         var datos = {'servicio': servicio, 'sucursal': sucursal, 'categoria': dataCategoria};
         evento.enviarEvento('Seguimiento/MostrarPuntoRevision', datos, '', function (datosPuntos) {
-                mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);            
+            mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
         });
     };
 
@@ -658,8 +738,8 @@ $(function () {
         });
         $(".area").append(html);
         agregarNuevaImagen(dataCategoria, servicio);
-        elimininarEvidenciaPunto(dataCategoria,servicio);
-        eliminarDatos(servicio);
+        elimininarEvidenciaPunto(dataCategoria, servicio);
+        eventoChecklist(servicio);
     };
 
     var imprimirAreaPregunta = function (area, pregunta, html) {
@@ -672,15 +752,15 @@ $(function () {
     };
 
     var imprimirPuntos = function (puntos, html, idArea, checkList, categoria, servicio, area) {
-        
+
         $.each(puntos, function (key, punto) {
             var checked = '';
-            $.each(checkList,function(key, valor){
-                if(area === valor.Area && punto === valor.Punto){
+            $.each(checkList, function (key, valor) {
+                if (area === valor.Area && punto === valor.Punto) {
                     checked = 'checked';
                 }
             });
-            
+
             html += `<div  class="row area-${idArea}">
                         <div class="col-md-12 m-t-15">
                             <input class="punto checkPunto" data-datos="${servicio + '-' + categoria + '-' + area + '-' + punto}"  type="checkbox" name="punto" style="width: 17px; height: 15px; margin: 0;" value="" ${checked}/> Punto ${punto}
@@ -705,14 +785,14 @@ $(function () {
             if (area === idArea && checked.IdCategoria === `${categoria}` && checked.Punto === punto && checked.Evidencia !== '') {
                 html += obtenerHtmlEvidencias(checked.Evidencia, idImagen, punto, servicio, checked.Area, categoria);
             }
-            
+
         });
         return html;
     };
 
     var obtenerHtmlEvidencias = function (evidencias, idImagen, punto, servicio, area, categoria) {
         var html = '';
-        
+
         var listaEvidencias = evidencias.split(',');
         $.each(listaEvidencias, function (index, evidencia) {
             html += `<div class = "evidencia">
@@ -747,107 +827,96 @@ $(function () {
 
         $('#btnModalConfirmar').off('click');
         $('#btnModalConfirmar').on('click', function () {
+            console.log(datos);
             file.enviarArchivos('#evidenciaPunto', 'Seguimiento/GuardarRevisionPunto', '#modal-dialog', datos, function (datosPuntos) {
                 mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
                 evento.cerrarModal();
             });
         });
     };
-    
-    var elimininarEvidenciaPunto = function (dataCategoria, servicio){
+
+    var elimininarEvidenciaPunto = function (dataCategoria, servicio) {
         var urlEvidencia = null;
         var datos = null;
-        
+
         $('.eliminarImagenPunto').off('click');
         $('.eliminarImagenPunto').on('click', function () {
             urlEvidencia = $(this).attr('data-evidencia');
             datos = $(this).attr('data-ideliminar');
             datos = datos.split('-');
-            datos = {servicio: datos[0], idCategoria: datos[1], idRevisionArea: datos[2], punto: datos[3], url : urlEvidencia};
+            datos = {servicio: datos[0], idCategoria: datos[1], idRevisionArea: datos[2], punto: datos[3], url: urlEvidencia};
             evento.enviarEvento('Seguimiento/EliminarEvidenciaChecklist', datos, '', function (datosPuntos) {
                 mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
-            });          
+            });
         });
-        
+
     };
 
-    var eliminarDatos = function(servicio){
+    var eventoChecklist = function (servicio) {
         var datos = null;
-        
-        $('.checkPunto').on('click', function(){
+        var evidenciaHtml = `<div class="row">
+                                <div class="col-md-12">
+                                   <p>Agrega la evidencia para el punto:</p>
+                                </div>
+                                <div class="col-md-12">
+                                   <input id="evidenciaPunto" data-area="" class="inputArchivoPunto" name="inputArchivoPunto[]" type="file" multiple/>
+                                </div>
+                            </div>`;
+
+        $('.checkPunto').off('click');
+        $('.checkPunto').on('click', function () {
+            var _this = $(this);
             datos = $(this).attr('data-datos');
             datos = datos.split('-');
             datos = {servicio: datos[0], idCategoria: datos[1], idRevisionArea: datos[2], punto: datos[3]};
-            
-            evento.enviarEvento('Seguimiento/ActualizarRevisionPunto', datos, '', function (respuesta) {
-                if (respuesta) {
-                    evento.mostrarMensaje('#errorRevisionPunto', true, 'Punto deshabilitado', 3000);
-                }
-            });
-//            console.log(datos);
-        });
-        
-    };
 
-    var mostrarChecklist = function () {
-        var servicio = arguments[0];
-        var valorPunto = arguments[1];
-        var idRevision = arguments[2];
-        var dataCategoria = arguments[3];
-        var quitahidden = arguments[4] || false;
-        var valorChecklistArea = arguments[5] || null;
-        var valorChecklistPunto = arguments[6] || null;
-        var evidencia = arguments[7] || null;
+            if ($(this).is(':checked')) {
 
-        if (quitahidden === true) {
-            $('.area div .' + valorChecklistArea + '-' + valorChecklistPunto).removeClass('hidden');
-        }
+                evento.mostrarModal('Agregar evidencia', evidenciaHtml);
+                file.crearUpload('#evidenciaPunto', 'Seguimiento/GuardarRevisionPunto', null, null, null, null, null, 'inputArchivoPunto');
+                datos = $(this).attr('data-datos');
+                datos = datos.split('-');
+                datos = {servicio: datos[0], idCategoria: datos[1], idRevisionArea: datos[2], punto: datos[3]};
 
-        var guardarDatos = {'servicio': servicio,
-            'idCategoria': dataCategoria,
-            'idRevisionArea': idRevision,
-            'punto': valorPunto};
+                $('#btnModalConfirmar').off('click');
+                $('#btnModalConfirmar').on('click', function () {
+                    file.enviarArchivos('#evidenciaPunto', 'Seguimiento/GuardarRevisionPunto', '#modal-dialog', datos, function (datosPuntos) {
+                        mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
+                        evento.cerrarModal();
+                    });
+                });
 
-        file.crearUpload('.inputArchivoPunto',
-                'Seguimiento/GuardarRevisionPunto',
-                null,
-                null,
-                evidencia,
-                'Seguimiento/EliminarEvidenciaRevicion',
-                'inputArchivoPunto',
-                null,
-                null,
-                null,
-                true,
-                guardarDatos);
+            } else {
+                var area = datos.idRevisionArea.replace(/\s/g, "-");
 
-    };
+                evento.enviarEvento('Seguimiento/ActualizarRevisionPunto', datos, '', function (respuesta) {
+                    if (respuesta) {
+                        $(_this.parents('.area-' + area)).find('.imagen-punto-' + datos.punto).empty();
 
-    var actualizarFlagRegistroPunto = function () {
-        var datos = {'servicio': arguments[0], 'punto': arguments[1], 'idRevisionArea': arguments[2], 'idCategoria': arguments[3]};
-
-        evento.enviarEvento('Seguimiento/ActualizarRevisionPunto', datos, '', function (respuesta) {
-
-            if (respuesta) {
-                evento.mostrarMensaje('#errorRevisionPunto', true, 'Punto deshabilitado', 3000);
+                        evento.mostrarMensaje('#errorRevisionPunto', true, 'Punto deshabilitado', 3000);
+                    }
+                });
             }
         });
+
     };
 
     var iniciarElementosChecklist = function (respuesta) {
+        var servicio = $('#hiddenServicio').val();
+        var datos = {'servicio': servicio, 'idCategoria': dataCategoria};
 
-        var array = [];
-        $.each(respuesta.revisionArea, function (key, valor) {
-            if (dataCategoria == valor.IdCategoria) {
-                if (valor.Flag == 1) {
-                    var $radios = $('#group-' + valor.IdAreaAtencion + ' input:radio[id=uno]');
-                    $radios.filter('[value=1]').attr('checked', true);
-                } else {
-                    var $radios = $('#group-' + valor.IdAreaAtencion + ' input:radio[id=cero]');
-                    $radios.filter('[value=0]').attr('checked', true);
+        evento.enviarEvento('Seguimiento/ConsultarRevisonArea', datos, '', function (respuesta) {
+            $.each(respuesta, function (key, valor) {
+                if (dataCategoria == valor.IdCategoria) {
+                    if (valor.Flag === `1`) {
+                        var $radios = $('#group-' + valor.IdAreaAtencion + ' input:radio[id=uno]');
+                        $radios.filter('[value=1]').attr('checked', true);
+                    } else {
+                        var $radios = $('#group-' + valor.IdAreaAtencion + ' input:radio[id=cero]');
+                        $radios.filter('[value=0]').attr('checked', true);
+                    }
                 }
-            }
-
+            });
         });
     };
 
@@ -862,32 +931,6 @@ $(function () {
                 evento.mostrarMensaje('#errorInformacionGeneral', false, respuesta.error, 3000);
             }
         });
-    };
-
-    var guardarRevisionArea = function (servicio) {
-        var listaConceptos = $('#tabla-categorias').DataTable().rows().data();
-
-        var IdCategoria = dataCategoria;
-        var servicio = servicio;
-
-        var datosConcepto = "[";
-        for (var i = 0; i < listaConceptos.length; i++) {
-            var desicion = $("fieldset[id*=group-" + listaConceptos[i][2] + "] input[name*='desicion-" + listaConceptos[i][2] + "']:checked").val();
-            datosConcepto += '{"IdConceptoFisico" : "' + listaConceptos[i][0] + '", "IdAreaAtencion" : "' + listaConceptos[i][2] + '", "Flag" : ' + desicion + '},';
-        }
-        datosConcepto = datosConcepto.slice(0, -1);
-        datosConcepto += "]";
-
-        var datos = {'servicio': servicio, 'datosTabla': datosConcepto, 'idCategoria': IdCategoria, 'guardarTipo': 2};
-
-        evento.enviarEvento('Seguimiento/GuardarInformacionChecklist', datos, '#panel-catalogo-checklist', function (respuesta) {
-            if (respuesta.code === 200) {
-                evento.mostrarMensaje('#errorRevisionFisica', true, respuesta.succes, 3000);
-            } else if (respuesta.code === 500) {
-                evento.mostrarMensaje('#errorRevisionFisica', false, respuesta.error, 3000);
-            }
-        });
-
     };
 
     var eventosChecklist = function () {
@@ -974,6 +1017,34 @@ $(function () {
         //evento para crear nueva solicitud
 //        servicios.initBotonNuevaSolicitud(datosTabla[1], '#seccion-servicio-censo');
         servicios.eventosFolio(datosTabla[0], '#informacionRevision', servicio);
+
+    };
+    
+    var guardarRevisionArea = function (servicio) {
+        var listaConceptos = $('#tabla-categorias').DataTable().rows().data();
+
+        var IdCategoria = dataCategoria;
+        var servicio = servicio;
+
+        var datosConcepto = "[";
+        for (var i = 0; i < listaConceptos.length; i++) {
+            var desicion = $("fieldset[id*=group-" + listaConceptos[i][2] + "] input[name*='desicion-" + listaConceptos[i][2] + "']:checked").val();
+            datosConcepto += '{"IdConceptoFisico" : "' + listaConceptos[i][0] + '", "IdAreaAtencion" : "' + listaConceptos[i][2] + '", "Flag" : ' + desicion + '},';
+        }
+        datosConcepto = datosConcepto.slice(0, -1);
+        datosConcepto += "]";
+
+        var datos = {'servicio': servicio, 'datosTabla': datosConcepto, 'idCategoria': IdCategoria, 'guardarTipo': 2};
+
+        evento.enviarEvento('Seguimiento/GuardarInformacionChecklist', datos, '#revisionArea', function (respuesta){
+//            console.log(respuesta);
+            if (respuesta) {
+//                console.log("entro ff");
+                evento.mostrarMensaje('.errorRevisionArea', true, "Información guardada correctamente", 3000);
+            } else {
+                evento.mostrarMensaje('.errorRevisionArea', false, "Información incorrecta", 3000);
+            }
+        });
 
     };
 

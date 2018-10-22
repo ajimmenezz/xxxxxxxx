@@ -485,8 +485,13 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function mostrarRevisionArea(array $datos) {
-        $consulta = $this->consulta("SELECT * FROM t_checklist_revision_area WHERE IdServicio = " . $datos['servicio']);
+//    public function mostrarRevisionArea(array $datos) {
+//        $consulta = $this->consulta("SELECT * FROM t_checklist_revision_area WHERE IdServicio = " . $datos['servicio']);
+//        return $consulta;
+//    }
+    
+    public function cconsultarRevisionArea(array $datos) {
+        $consulta = $this->consulta("SELECT * FROM t_checklist_revision_area WHERE IdServicio = '" . $datos['servicio'] ."' AND IdCategoria = '".$datos['idCategoria']."'");
         return $consulta;
     }
 
@@ -504,7 +509,7 @@ class Modelo_Poliza extends Modelo_Base {
                                         tc.Punto
                                         FROM t_checklist_revision_area tcra 
                                         inner join t_censos tc on tc.IdServicio = (select vucc.IdServicio from v_ultimo_censo_complejo vucc where vucc.IdSucursal = (select IdSucursal from t_servicios_ticket where Id = tcra.IdServicio)) and tc.IdArea = tcra.IdareaAtencion
-                                        WHERE tcra.Flag = 1
+                                        WHERE tcra.Flag = 0
                                         AND tcra.IdCategoria = '" . $datos['categoria'] . "'
                                         AND tcra.IdServicio = '" . $datos['servicio'] . "'
                                         group by Areas, Punto");
@@ -579,7 +584,8 @@ class Modelo_Poliza extends Modelo_Base {
                                     from cat_v3_areas_atencion cvaa
                                     inner join t_checklist_revision_area tcra
                                     on cvaa.Id = tcra.IdAreaAtencion
-                                    where Nombre = '".$datos['idRevisionArea']."'");              
+                                    where Nombre = '".$datos['idRevisionArea']."'
+                                    AND tcra.IdCategoria = '". $datos['idCategoria'] ."'");              
         if(!empty($consulta)){
             foreach ($consulta as $value) {                
                 return $value['Id'];
@@ -680,7 +686,7 @@ class Modelo_Poliza extends Modelo_Base {
                                 tcrt.Serie,
                                 (select Nombre from cat_v3_componentes_equipo where Id = tcrt.IdComponente) as Componente,
                                 (select Nombre from cat_v3_tipos_diagnostico_correctivo where Id = tcrt.IdTipoDiagnostico) as TipoDiagnostico,
-                                CASE tcrt.IdTipoDiagnostico	
+                                CASE	
                                 when tcrt.IdTipoDiagnostico in (2,3) then (select Nombre from cat_v3_fallas_equipo where Id = tcrt.IdFalla)	
                                 when tcrt.IdTipoDiagnostico = 4 then (select Nombre from cat_v3_fallas_refaccion where Id = tcrt.IdFalla)
                                 else ''
@@ -696,7 +702,7 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function guardarRevisionTecnicaChecklist(array $datos) {
+    public function guardarRevisionTecnicaCheck(array $datos) {
 
         $this->iniciaTransaccion();
 
@@ -712,8 +718,7 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function actualizaFallasTecnicas(array $datos) {
-
-        $actualizar = $this->actualizar("t_checklist_revision_tecnica", array('Flag' => $datos['estatusRevision']), array('Id' => $datos['idRevision'], 'IdServicio' => $datos['servicio']));
+        $actualizar = $this->actualizar("t_checklist_revision_tecnica", array('Flag' => $datos['estatusRevision']), array('Id' => $datos['idRevisionTecnica'], 'IdServicio' => $datos['servicio']));
         return $actualizar;
     }
 

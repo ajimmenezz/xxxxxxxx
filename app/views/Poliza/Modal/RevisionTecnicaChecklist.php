@@ -1,10 +1,10 @@
-<div id="errorRevisionTecnica"></div>
 <div class="row">
     <div class="col-md-6 col-sm-6 col-xs-12">
         <h4>Selección de equipo</h4>
     </div>
     <div class="col-md-12 col-sm-12 col-xs-12 underline m-b-10"></div>
 </div>
+<div id="errorRevisionTecnica"></div>
 <div class="row">
     <div class="col-md-6 col-sm-6 col-xs-12 form-group">
 
@@ -290,6 +290,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12 underline m-b-10"></div>
 </div>
 <div class="row m-t-15">
+<div class="row" id="mensajeRevisionTecnica"></div>
     <div class="table-responsive">
         <table id="tablaFallasTecnicas" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
             <thead>

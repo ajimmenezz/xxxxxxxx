@@ -260,6 +260,9 @@ class Controller_Seguimiento extends Base {
             case 'PDFPrueba':               
                 $resultado = $this->Poliza->pdfServicioChecklist($this->input->post());
                 break;
+            case 'ConsultarRevisonArea':               
+                $resultado = $this->Poliza->consultarRevisonArea($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
