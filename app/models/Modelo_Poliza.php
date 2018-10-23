@@ -484,13 +484,8 @@ class Modelo_Poliza extends Modelo_Base {
             return ['pregunta' => $consultaPregunta[0]];
         }
     }
-
-//    public function mostrarRevisionArea(array $datos) {
-//        $consulta = $this->consulta("SELECT * FROM t_checklist_revision_area WHERE IdServicio = " . $datos['servicio']);
-//        return $consulta;
-//    }
     
-    public function cconsultarRevisionArea(array $datos) {
+    public function consultarRevisionArea(array $datos) {
         $consulta = $this->consulta("SELECT * FROM t_checklist_revision_area WHERE IdServicio = '" . $datos['servicio'] ."' AND IdCategoria = '".$datos['idCategoria']."'");
         return $consulta;
     }

@@ -483,6 +483,7 @@ $(function () {
                 let _this = this;
                 var datosTabla = $('#tablaFallasTecnicas').DataTable().row(_this).data();
                 var dato = {'idRevisionTecnica': datosTabla[0], 'servicio': servicio};
+                    console.log(dato);
                 evento.enviarEvento('Seguimiento/ActualizarRevisionTecnica', dato, '#panel-catalogo-checklist', function (respuestaRevision) {
                     evento.iniciarModal('#modalEditRevisionChecklist', 'Editar Revisión Tecnica', respuestaRevision.modal);
 
