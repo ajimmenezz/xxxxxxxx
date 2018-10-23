@@ -1,4 +1,5 @@
 <?php
+
 namespace Librerias\Poliza;
 
 use Controladores\Controller_Base_General as General;
@@ -530,10 +531,9 @@ class Poliza extends General {
             return ['code' => 500, 'error' => "Selecciona la informacion"];
         }
     }
-    
+
     public function ConsultarRevisonArea(array $datos) {
         return $this->DBP->consultarRevisionArea($datos);
-        
     }
 
     public function mostrarPuntoRevision(array $datos) {
@@ -783,8 +783,7 @@ class Poliza extends General {
         $revisionFisica = $this->DBP->consultaRevisionPunotPDF($datos['servicio']);
         $revisionTecnica = $this->DBP->mostrarFallasTecnicas($datos['servicio']);
         $this->pdf = new PDFAux("Sucursal: " . $datosServicio['Sucursal'] . " \n Resumen de Servicio - Checklist");
-        $this->pdf->SetAutoPageBreak(false);
-        
+        //$this->pdf->SetAutoPageBreak(false);
 //        $this->paginaInformacionGeneral($datosServicio,$datos);
 //        $this->paginaRevisionTecnica($revisionTecnica);
         $this->revisionArea($revisionFisica);
@@ -797,7 +796,7 @@ class Poliza extends General {
         return $carpeta;
     }
 
-    private function paginaInformacionGeneral($datosServicio,$datos) {
+    private function paginaInformacionGeneral($datosServicio, $datos) {
         $this->pdf->subTitulo('Información General del Servicio');
 
         $this->pdf->BasicTable(array('Numero Ticket'), array(
@@ -809,64 +808,57 @@ class Poliza extends General {
         ));
 
         $this->pdf->subTitulo('Documentación del servicio');
-        
+
         $this->pdf->BasicTable(array('Estatus del Servicio', 'Fecha de Creación', 'Fecha de inico', 'Fecha conclución'), array(
             array($datosServicio['Estatus'], $datosServicio['FechaCreacion'], $datosServicio['FechaInicio'], $datosServicio['FechaConclusion'])
         ));
-        
+
         $this->pdf->multiceldaConTitulo("Descripción", $datosServicio['DescripcionServicio']);
         $y = $this->pdf->GetY() + 18;
-        $this->pdf->imagenConTiuloYSubtitulo($datosServicio['Firma'],"Firma Cierre", $datosServicio['NombreFirma'],$y);
+        $this->pdf->imagenConTiuloYSubtitulo($datosServicio['Firma'], "Firma Cierre", $datosServicio['NombreFirma'], $y);
     }
-    
+
     private function revisionArea($revisionFisica) {
         $this->pdf->AddPage();
         $this->pdf->subTitulo('Revisión Fisica');
         foreach ($revisionFisica as $revision) {
             $inicio = $this->pdf->GetY();
-            $this->pdf->Ln();
-            $this->pdf->Cell(0, 10, $inicio, 1);
-            $this->pdf->Ln();
             $listaEvidencia = explode(",", $revision['Evidencia']);
-            $total = count($listaEvidencia);
-                $this->pdf->BasicTable(array('Categoria', 'Area', ''), array(
-                    array($revision['Categoria'], $revision['Areas'], ''),
-                    array($revision['Etiqueta'], '', ''),
-                    array($revision['Punto'], '', '')));
-
+            $this->pdf->BasicTable(array('Categoria', 'Area', ''), array(
+                array($revision['Categoria'], $revision['Areas'], ''),
+                array($revision['Etiqueta'], '', ''),
+                array($revision['Punto'], '', '')));
 //                $this->pdf->Ln(10);
-                $this->pdf->tablaImagenes($listaEvidencia,$inicio);
+            $this->pdf->tablaImagenes($listaEvidencia, $inicio);
 //                $this->pdf->Ln(20);
-            
         }
     }
-    
+
     private function paginaRevisionTecnica($revisionTecnica) {
         $this->pdf->AddPage();
-        
+
         foreach ($revisionTecnica as $clave => $valor) {
             $this->pdf->subTitulo('Revisión Tecnica ' . $valor['AreaPunto']);
-            
+
             $this->pdf->BasicTable(array('Equipo', 'Serie'), array(
                 array($valor['Equipo'], $valor['Serie'])
             ));
 //            $this->pdf->Ln();
-            if(!empty($valor['Componente'])){                
+            if (!empty($valor['Componente'])) {
                 $componente = $valor['Componente'];
-            }else{
+            } else {
                 $componente = "N/A";
             }
-            
-            if(!empty($valor['Falla'])){
+
+            if (!empty($valor['Falla'])) {
                 $falla = $valor['Falla'];
-            }else{
+            } else {
                 $falla = "N/A";
             }
-            $this->pdf->BasicTable(array('Componente', 'Tipo Diágnostico','Falla'), array(
-                array($componente, $valor['TipoDiagnostico'],$falla)
+            $this->pdf->BasicTable(array('Componente', 'Tipo Diágnostico', 'Falla'), array(
+                array($componente, $valor['TipoDiagnostico'], $falla)
             ));
         }
-        
     }
 
 }
@@ -882,7 +874,7 @@ class PDFAux extends PDF {
 
     public function Header() {
         $this->SetFont('Helvetica', '', 8.4);
-        $this->Image('./assets/img/siccob-logo.png', 12, 8, 15, 19, 'PNG');
+        $this->Image('./assets/img/siccob-logo.png', 13, 8, 13, 15, 'PNG');
         $this->SetXY(25, 12);
         $this->MultiCell(0, 5, $this->contenidoHeader, 0, 'R');
     }
@@ -936,8 +928,8 @@ class PDFAux extends PDF {
             $this->Ln();
         }
     }
-    
-    public function multiceldaConTitulo($titulo,$txt){
+
+    public function multiceldaConTitulo($titulo, $txt) {
         $this->Ln();
         $this->SetFont("Helvetica", "B", 9);
         $this->Cell(0, 7, utf8_decode($titulo));
@@ -945,17 +937,17 @@ class PDFAux extends PDF {
         $this->SetFont("Helvetica", "", 10);
         $this->MultiCell(0, 7, utf8_decode($txt));
     }
-    
-    public function imagenConTiuloYSubtitulo($url,$titulo,$subtitulo,$y) {
+
+    public function imagenConTiuloYSubtitulo($url, $titulo, $subtitulo, $y) {
         $this->Ln();
         $this->SetFont("Helvetica", "B", 9);
         $this->Cell(0, 7, $titulo, 0, 0, 'C');
         $this->Ln(4);
-        $x = ($this->GetPageWidth()-54)/2;
-        $this->Image(".".$url, $x, $y, 60, 0);
-        $y = $this->GetY()+40;
+        $x = ($this->GetPageWidth() - 54) / 2;
+        $this->Image("." . $url, $x, $y, 60, 0);
+        $y = $this->GetY() + 40;
         $this->SetY($y);
-         $this->SetFont("Helvetica", "", 10);
+        $this->SetFont("Helvetica", "", 10);
         $this->Cell(0, 7, $subtitulo, 0, 0, 'C');
     }
 
@@ -968,49 +960,57 @@ class PDFAux extends PDF {
 
         for ($j = 0; $j < $countFilas; $j++) {
 
-            foreach ($imagenes as $imagen) {
+            foreach ($imagenes as $key => $imagen) {
                 if ($columna < 4) {
                     array_push($tempImagenes, $imagen);
                     $columna += 1;
+                    unset($imagenes[$key]);
                 }
             }
             array_push($listaImagenes, $tempImagenes);
-
-            for ($i = 0; $i < 4; $i++) {
-                unset($imagenes[$i]);
-            }
+//            echo '<pre>';
+//            print_r($listaImagenes);
+//            for ($i = 0; $i < 4; $i++) {
+//                unset($imagenes[$i]);
+//            }
             $tempImagenes = array();
             $columna = 0;
         }
 
+        //insertar imagenes
         $ancho = $this->GetPageWidth() - 20;
-        $y = $this->GetY(); //86
+        $y = $this->GetY();
         $x = 10;
-        foreach ($listaImagenes as $row) {
-            foreach ($row as $col) {
+        foreach ($listaImagenes as $imagenes) {
+            foreach ($imagenes as $imagen) {
                 if ($x < $ancho) {
-//                    $this->Cell(0, 10, $y . " - " . $x, 1);
-//                    $this->Cell(0, 10, $x, 1);
-//                    $this->Ln();
-//                    $this->Image('.' . $col, $x, $y, 40, 35);
+//                    $this->Cell(0, 10, $imagen, 1);
+//                    $this->Ln();                    
+                    $this->Image('.' . $imagen, $x, $y, 40, 35);
                     $x += 50;
-                }                                 
+                }
             }
-            $x = 20;
-            $y = $this->GetY() + 30;
-            
-         $finY = $this->GetY($y);
-         $alturalTotal = $this->GetPageHeight();
-//            $this->Ln();
-            $this->Cell(0, 10, $inicioY . " inicio", 1);
-//            $this->Ln();
-//            $this->CheckPageBreak($fin);
-           if($inicioY >= 140){
-               $this->AddPage();
-               $this->SetY(30);
-           }
+            $x = 10;
+            $y = $this->GetY() + 40;
+            $this->SetY($y);
         }
-       
+        $finY = $this->GetY($y + 45);
+        $this->Cell(0, 10, $finY . "fin ---------------", 1);
+        $this->Ln(7);
+
+//        $totalArrays = count($listaImagenes);
+//        if ($totalArrays > 1) {
+////            $this->Cell(0, 10, $totalArrays . " num arrays", 1);
+////            $this->Ln(7);
+//            $this->SetY($y + 45);
+//        } else {
+//            $this->SetY($y);
+//        }
+//          $finY = $this->GetY($y + 45);
+//        if ($finY > 200) {
+//            $this->AddPage();
+//            $x = $this->SetX(43);
+//        }
     }
 
 }
