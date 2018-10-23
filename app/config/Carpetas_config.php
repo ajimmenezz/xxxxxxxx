@@ -132,6 +132,7 @@ $config['Secciones'] = array(
         'Dashboard-Tesoreria' => 'Dashboard',
         'Seguimiento-Tesoreria' => 'Seguimiento',
         'Facturacion-Tesoreria' => 'Facturacion',
+        'FondoFijo-Tesoreria' => 'Fondo_Fijo',
         'Outsorcing' => 'Catalogo_Outsorcing'
     ),
     'Mercadotecnia' => array(

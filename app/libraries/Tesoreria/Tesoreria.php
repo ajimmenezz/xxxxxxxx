@@ -498,6 +498,6 @@ class Tesoreria extends General {
         $evidenciaPago = $this->DBT->evidenciaPagoFactura($datos['idVuelta']);
 
         return $evidenciaPago;
-    }
+    }        
 
 }

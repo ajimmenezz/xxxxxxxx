@@ -203,6 +203,7 @@ $route['Tesoreria/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Tesoreria/Seguimiento/(:any)'] = 'Tesoreria/Controller_Seguimiento/manejarEvento/$1';
 $route['Tesoreria/Facturacion/(:any)'] = 'Tesoreria/Controller_Tesoreria/manejarEvento/$1';
 $route['Tesoreria/EventoCatalogos/(:any)'] = 'Tesoreria/Controller_Catalogos/manejarEvento/$1';
+$route['Tesoreria/Fondo_Fijo/(:any)'] = 'Tesoreria/Controller_FondoFijo/manejarEvento/$1';
 
 /* Routers para el manejo de Mercadotecnia */
 $route['Mercadotecnia/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';

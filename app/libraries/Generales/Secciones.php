@@ -32,6 +32,7 @@ class Secciones extends General {
     private $PEV2;
     private $Documentacion;
     private $ModeloComprobacion;
+    private $FondoFijo;
 
     public function __construct() {
         parent::__construct();
@@ -66,6 +67,7 @@ class Secciones extends General {
         $this->DBP2 = \Modelos\Modelo_Proyectos2::factory();
         $this->Documentacion = \Librerias\Documentacion\Documentacion::factory();
         $this->ModeloComprobacion = \Modelos\Modelo_Comprobacion::factory();
+        $this->FondoFijo = \Librerias\Tesoreria\FondoFijo::factory();
     }
 
     /*
@@ -349,6 +351,9 @@ class Secciones extends General {
                 break;
             case 'Tesoreria/Facturacion':
                 $datos['TablaFacturacion'] = $this->Tesoreria->mostrarTablaDependiendoUsuario();
+                break;
+            case 'Tesoreria/Fondo_Fijo':
+                $datos['FondosFijos'] = $this->FondoFijo->getFondosFijos();
                 break;
             case 'Poliza/Regiones_Cliente':
                 $datos['ListaRegionesCliente'] = $this->Catalogo->catRegionesCliente("3");

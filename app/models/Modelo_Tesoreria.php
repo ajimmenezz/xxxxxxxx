@@ -6,8 +6,11 @@ use Librerias\Modelos\Base as Modelo_Base;
 
 class Modelo_Tesoreria extends Modelo_Base {
 
+    private $usuario;
+
     public function __construct() {
         parent::__construct();
+        $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
     }
 
     public function tablaFacturacionOutsourcingAutorizado(array $data) {
@@ -285,7 +288,7 @@ class Modelo_Tesoreria extends Modelo_Base {
 
     public function guardarVueltaOutsourcing(array $datos) {
         $consulta = $this->insertar('t_facturacion_outsourcing', $datos);
-        
+
         if (!empty($consulta)) {
             return parent::connectDBPrueba()->insert_id();
         } else {
@@ -315,6 +318,125 @@ class Modelo_Tesoreria extends Modelo_Base {
             $this->terminaTransaccion();
             return $facturasDocumentacion[0]['IdUsuario'];
         }
+    }
+
+    public function getFondosFijos(int $id = null) {
+        $condicion = '';
+        if (!is_null($id)) {
+            $condicion = " where cffu.IdUsuario = '" . $id . "'";
+        }
+
+        $consulta = $this->consulta("SELECT
+                                    cffu.IdUsuario,
+                                    nombreUsuario(cffu.IdUsuario) as Usuario,
+                                    cffu.Monto as MontoUsuario,
+                                    tcff.FechaMovimiento as Fecha,
+                                    tcff.Monto,
+                                    tcff.Saldo,
+                                    tcff.FechaAutorizacion as FechaSaldo,
+                                    cffu.Flag
+                                    from cat_v3_fondo_fijo_usuarios cffu
+                                    LEFT JOIN t_comprobacion_fondo_fijo tcff on tcff.Id = (
+                                                                                    select 
+                                                                                    Id 
+                                                                                    from t_comprobacion_fondo_fijo 
+                                                                                    where IdUsuario = cffu.IdUsuario 
+                                                                                    and IdEstatus = 7 
+                                                                                    order by FechaAutorizacion desc 
+                                                                                    limit 1)
+                                    " . $condicion);
+        return $consulta;
+    }
+
+    public function getDetallesFondoFijoXUsuario(int $id) {
+        $consulta = $this->consulta("select 
+                                    tcff.Id,
+                                    tcff.FechaAutorizacion as Fecha,
+                                    tcff.FechaMovimiento,
+                                    if(tcff.IdTipoComprobante = 2, 'Depósito', ccc.Nombre) as Nombre,
+                                    if(ccc.Extraordinario = 1, 'SI', 'NO') as Extraordinario,
+                                    tcff.Monto,
+                                    tcff.Saldo,
+                                    ticketByServicio(tcff.IdServicio) as Ticket,
+                                    (select Nombre from cat_v3_tipos_comprobante where Id = tcff.IdTipoComprobante) as TipoComprobante,
+                                    estatus(tcff.IdEstatus) as Estatus,
+                                    tcff.IdEstatus
+
+                                    from
+                                    t_comprobacion_fondo_fijo tcff
+                                    left join cat_v3_comprobacion_conceptos ccc on tcff.IdConcepto = ccc.Id
+                                    where tcff.IdUsuarioFF = '" . $id . "'
+                                    order by tcff.FechaAutorizacion desc
+                                    limit 50;");
+        return $consulta;
+    }
+
+    public function getNombreUsuarioById(int $id) {
+        $consulta = $this->consulta("select nombreUsuario('" . $id . "') as Usuario");
+        return $consulta[0]['Usuario'];
+    }
+
+    public function registrarDeposito(array $datos) {
+        $this->iniciaTransaccion();
+
+        $saldo = $this->getSaldoByUsuario($datos['id']);        
+
+        $this->insertar("t_comprobacion_fondo_fijo", [
+            "IdUsuario" => $this->usuario['Id'],
+            "Fecha" => $this->getFecha(),
+            "IdUsuarioFF" => $datos['id'],
+            "IdTipoMovimiento" => 1,
+            "IdTipoComprobante" => 2,
+            "IdEstatus" => 7,
+            "Monto" => $datos['monto'],
+            "Saldo" => ((float) $saldo + (float) $datos['monto']),
+            "FechaMovimiento" => str_replace("T", " ", $datos['fecha']),
+            "Observaciones" => $datos["observaciones"],
+            "Archivos" => $datos["archivos"],
+            "FechaAutorizacion" => $this->getFecha(),
+            "IdUsuarioAutoriza" => $this->usuario['Id']
+        ]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function getSaldoByUsuario(int $id) {
+        $saldo = $this->consulta(""
+                . "select "
+                . "Saldo "
+                . "from t_comprobacion_fondo_fijo "
+                . "where Id = (select Id from t_comprobacion_fondo_fijo where IdUsuarioFF = '" . $id . "' and IdEstatus = 7 order by FechaAutorizacion desc limit 1)");
+        if (!empty($saldo)) {
+            $saldo = $saldo[0]['Saldo'];
+        } else {
+            $saldo = 0;
+        }
+
+        return $saldo;
+    }
+    
+    public function getSaldoXAutorizarByUsuario(int $id) {
+        $saldo = $this->consulta(""
+                . "select "
+                . "sum(Monto) as Saldo "
+                . "from t_comprobacion_fondo_fijo "
+                . "where IdUsuarioFF = '" . $id . "' and IdEstatus = 8");
+        if (!empty($saldo)) {
+            $saldo = $saldo[0]['Saldo'];
+        } else {
+            $saldo = 0;
+        }
+
+        return $saldo;
     }
 
 }

@@ -473,17 +473,26 @@ Base.prototype.plasmarInformacionSD = function () {
 Base.prototype.cambiarDiv = function () {
     var _div1 = arguments[0];
     var _div2 = arguments[1];
+    var _div3 = arguments[2] || "";
     $(_div1).fadeOut(400, function () {
         $(_div2).fadeIn(400, arguments[2]);
     });
 
     $(_div2 + " #btnRegresar").off("click");
     $(_div2 + " #btnRegresar").on("click", function () {
-        $(_div2).fadeOut(400, function () {
-            $(_div1).fadeIn(400, function () {
-                $(_div2).empty();
+        if (_div3 === "") {
+            $(_div2).fadeOut(400, function () {
+                $(_div1).fadeIn(400, function () {
+                    $(_div2).empty();
+                });
             });
-        });
+        } else {
+            $(_div2).fadeOut(400, function () {
+                $(_div3).fadeIn(400, function () {
+                    $(_div2).empty();
+                });
+            });
+        }
     });
 }
 
