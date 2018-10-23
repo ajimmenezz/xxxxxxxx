@@ -149,7 +149,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="underline m-t-5"></div>
 
             <div class="row m-t-15">
@@ -170,7 +170,16 @@
                             <tbody>        
                                 <tr>
                                     <td>PD-PURGAMO4BU-CG</td>
-                                    <td>Cable UTP Cat 6A Pares Azul</td>
+                                    <td>
+                                        <select id="selectAlmacenOrdenCompra" class="form-control" style="width: 100%" data-parsley-required="true">
+                                            <option value="">Seleccionar...</option>
+                                            <?php
+                                            foreach ($almacenes as $item) {
+                                                echo '<option data-direccion="' . $item['DIRECCION'] . '"value="' . $item['CVE_ALM'] . '">' . $item['DESCR'] . '</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </td>
                                     <td class="text-center">
                                         <input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"/>
                                     </td>

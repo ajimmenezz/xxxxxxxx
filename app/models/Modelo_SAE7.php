@@ -146,5 +146,16 @@ class Modelo_SAE7 extends Modelo_Base {
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta->result_array();
     }
+    
+    public function consultaProductosSAE() {
+        $query = "select 
+                    CVE_ALM,
+                    DESCR,
+                    DIRECCION
+                  from ALMACENES03
+                  where STATUS = 'A'";
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta->result_array();
+    }
 
 }

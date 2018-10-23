@@ -68,21 +68,8 @@ $(function () {
         mostrarDireccionSelect('#selectProveedorOrdenCompra', '#iconoInformacionProveedor', 'Dirección del proveedor ...');
         mostrarDireccionSelect('#selectAlmacenOrdenCompra', '#iconoInformacionAlmacen', 'Dirección de almacen ...');
 
-        $('#btnAgregarPartidaFila').off('click');
         $('#btnAgregarPartidaFila').on('click', function () {
-            var columnas = datosNuevaPartida();
-            console.log(columnas);
-            tabla.agregarFila(
-                    '#data-table-partidas-oc',
-                    ['pumas',
-                        'pumas',
-                        '<input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"',
-                        '<input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"',
-                        '<input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"',
-                        '<input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"',
-                        '<input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"']);
-//            tabla.generaTablaPersonal('#data-table-partidas-oc', {}, columnas, true, null, [[0, 'desc']]);
-
+            $("#data-table-partidas-oc").append(datosNuevaPartida());
         });
 
     }
@@ -109,30 +96,25 @@ $(function () {
         });
     }
     var datosNuevaPartida = function () {
-        var columnas = [
-            {data: 'Clave'},
-            {data: 'Producto'},
-            {data: null,
-                sClass: 'Unidad',
-                render: function (data, type, row, meta) {
-                    return '<input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"';
-                }},
-            {data: null,
-                sClass: 'Cantidad',
-                render: function (data, type, row, meta) {
-                    return '<input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"';
-                }},
-            {data: null,
-                sClass: 'Descuento',
-                render: function (data, type, row, meta) {
-                    return '<input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"';
-                }},
-            {data: null,
-                sClass: 'Subtotal',
-                render: function (data, type, row, meta) {
-                    return '<input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"';
-                }},
-        ];
-        return columnas;
+        var nuevaFila = "<tr>";
+        nuevaFila += '<td>PD-PURGAMO4BU-CG</td>\n\
+                        <td>Cable UTP Cat 6A Pares Azul</td>\n\
+                        <td class="text-center">\n\
+                            <input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"/>\n\
+                        </td>\n\
+                        <td class="text-center">\n\
+                            <input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"/>\n\
+                        </td>\n\
+                        <td class="text-center">\n\
+                            <input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"/>\n\
+                        </td>\n\
+                        <td class="text-center">\n\
+                            <input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"/>\n\
+                        </td>\n\
+                        <td class="text-center">\n\
+                            <input type="number" class="form-control cantidad-viaticos-outsourcing" value="0.0000" min="0"/>\n\
+                        </td>';
+        nuevaFila += "</tr>";
+        return nuevaFila;
     }
 });
