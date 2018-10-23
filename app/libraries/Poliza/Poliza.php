@@ -783,11 +783,14 @@ class Poliza extends General {
         $revisionFisica = $this->DBP->consultaRevisionPunotPDF($datos['servicio']);
         $revisionTecnica = $this->DBP->mostrarFallasTecnicas($datos['servicio']);
         $this->pdf = new PDFAux("Sucursal: " . $datosServicio['Sucursal'] . " \n Resumen de Servicio - Checklist");
-        //$this->pdf->SetAutoPageBreak(false);
-//        $this->paginaInformacionGeneral($datosServicio,$datos);
-//        $this->paginaRevisionTecnica($revisionTecnica);
+        $this->paginaInformacionGeneral($datosServicio, $datos);
+        //$this->paginaRevisionTecnica($revisionTecnica);
         $this->revisionArea($revisionFisica);
 
+//        $this->pdf->AddPage();
+//        $alturaPagina = $this->pdf->GetPageHeight() - 40;               
+//        $this->pdf->Cell(0,10,$alturaPagina);
+//        $this->pdf->Ln();
 
 
         $carpeta = $this->pdf->definirArchivo('PruebaPDF', 'PruebaPDF');
@@ -797,6 +800,7 @@ class Poliza extends General {
     }
 
     private function paginaInformacionGeneral($datosServicio, $datos) {
+        $this->pdf->AddPage();
         $this->pdf->subTitulo('Información General del Servicio');
 
         $this->pdf->BasicTable(array('Numero Ticket'), array(
@@ -821,16 +825,26 @@ class Poliza extends General {
     private function revisionArea($revisionFisica) {
         $this->pdf->AddPage();
         $this->pdf->subTitulo('Revisión Fisica');
+        $altura = 0;
         foreach ($revisionFisica as $revision) {
             $inicio = $this->pdf->GetY();
             $listaEvidencia = explode(",", $revision['Evidencia']);
+//            $countFilas = ((count($listaEvidencia) / 4) < 0.5) ? round(count($listaEvidencia) / 4, 0, PHP_ROUND_HALF_UP) + 1 : round(count($listaEvidencia) / 4, 0, PHP_ROUND_HALF_UP);
+//            $altura += ($countFilas * 40) + 28;
+//            if ($altura > ($this->pdf->GetPageHeight() - 75)) {
+//                $this->pdf->AddPage();
+//                $altura = ($countFilas * 40) + 28;
+//                $this->pdf->Cell(0, 7, "Nueva pagina -- " . $altura);
+//                $this->pdf->Ln();
+//            } //else {
+//                $this->pdf->Cell(0, 7, $countFilas . " -- " . (($countFilas * 40) + 28) . "--" . $altura . "--" . ($this->pdf->GetPageHeight() - 15));
+//                $this->pdf->Ln();
+//            }
             $this->pdf->BasicTable(array('Categoria', 'Area', ''), array(
                 array($revision['Categoria'], $revision['Areas'], ''),
                 array($revision['Etiqueta'], '', ''),
                 array($revision['Punto'], '', '')));
-//                $this->pdf->Ln(10);
             $this->pdf->tablaImagenes($listaEvidencia, $inicio);
-//                $this->pdf->Ln(20);
         }
     }
 
@@ -968,11 +982,6 @@ class PDFAux extends PDF {
                 }
             }
             array_push($listaImagenes, $tempImagenes);
-//            echo '<pre>';
-//            print_r($listaImagenes);
-//            for ($i = 0; $i < 4; $i++) {
-//                unset($imagenes[$i]);
-//            }
             $tempImagenes = array();
             $columna = 0;
         }
@@ -984,33 +993,21 @@ class PDFAux extends PDF {
         foreach ($listaImagenes as $imagenes) {
             foreach ($imagenes as $imagen) {
                 if ($x < $ancho) {
-//                    $this->Cell(0, 10, $imagen, 1);
-//                    $this->Ln();                    
                     $this->Image('.' . $imagen, $x, $y, 40, 35);
                     $x += 50;
                 }
             }
             $x = 10;
-            $y = $this->GetY() + 40;
-            $this->SetY($y);
+            $y += 40;
+            $altura = $y + 40;
+//            $this->Cell(0, 7, "-- " . ($this->GetPageHeight() - 75));
+//            $this->Ln();
+            if ($altura > ($this->GetPageHeight() - 75)) {
+                $this->AddPage();
+                $y = 40;
+            }
         }
-        $finY = $this->GetY($y + 45);
-        $this->Cell(0, 10, $finY . "fin ---------------", 1);
-        $this->Ln(7);
-
-//        $totalArrays = count($listaImagenes);
-//        if ($totalArrays > 1) {
-////            $this->Cell(0, 10, $totalArrays . " num arrays", 1);
-////            $this->Ln(7);
-//            $this->SetY($y + 45);
-//        } else {
-//            $this->SetY($y);
-//        }
-//          $finY = $this->GetY($y + 45);
-//        if ($finY > 200) {
-//            $this->AddPage();
-//            $x = $this->SetX(43);
-//        }
+        $this->SetY($y);
     }
 
 }
