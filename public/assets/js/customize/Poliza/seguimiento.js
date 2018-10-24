@@ -300,7 +300,7 @@ $(function () {
             var _sucursal = respuesta.sucursal;
             var _tipoDiagnostico;
 
-            select.crearSelect('#selectAreaPunto');
+//            select.crearSelect('#selectAreaPunto');
             select.crearSelect('#selectEquipo');
             select.crearSelect('#selectImpericiaTipoFallaEquipoCorrectivo');
             select.crearSelect('#selectTipoFallaEquipoCorrectivo');
@@ -317,8 +317,6 @@ $(function () {
             $('#selectAreaPunto').on('change', function () {
                 var _this = $('#selectAreaPunto option:selected');
                 var _value = _this.val();
-                console.log(_this.text());
-                console.log(_value);
 
                 $('#selectEquipo').empty().append('<option value="">Seleccionar</option>');
                 if (_value !== '') {
@@ -828,7 +826,7 @@ $(function () {
 
         $('#btnModalConfirmar').off('click');
         $('#btnModalConfirmar').on('click', function () {
-            console.log(datos);
+//            console.log(datos);
             file.enviarArchivos('#evidenciaPunto', 'Seguimiento/GuardarRevisionPunto', '#modal-dialog', datos, function (datosPuntos) {
                 mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
                 evento.cerrarModal();

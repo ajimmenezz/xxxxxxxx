@@ -575,7 +575,7 @@ class Poliza extends General {
     public function guardarPuntoRevision(array $datos) {
         $CI = parent::getCI();
         $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/';
-        $archivos = implode(',', setMultiplesArchivos($CI, 'inputArchivoPunto', $carpeta));
+        $archivos = implode(',', setMultiplesArchivos($CI, 'inputArchivoPunto', $carpeta));        
         $idRevisionArea = $this->DBP->obtenerIdRevicionArea($datos);
         $datos['idRevisionArea'] = $idRevisionArea;
         $evidencia = $this->DBP->obtenerEvidenciasPuntosCheckList($datos);
@@ -784,16 +784,10 @@ class Poliza extends General {
         $revisionTecnica = $this->DBP->mostrarFallasTecnicas($datos['servicio']);
         $this->pdf = new PDFAux("Sucursal: " . $datosServicio['Sucursal'] . " \n Resumen de Servicio - Checklist");
         $this->paginaInformacionGeneral($datosServicio, $datos);
-        //$this->paginaRevisionTecnica($revisionTecnica);
         $this->revisionArea($revisionFisica);
+        $this->paginaRevisionTecnica($revisionTecnica);
 
-//        $this->pdf->AddPage();
-//        $alturaPagina = $this->pdf->GetPageHeight() - 40;               
-//        $this->pdf->Cell(0,10,$alturaPagina);
-//        $this->pdf->Ln();
-
-
-        $carpeta = $this->pdf->definirArchivo('PruebaPDF', 'PruebaPDF');
+        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/PDF/', 'Servicio-Checklist-' . $datos['servicio']);
         $this->pdf->Output('F', $carpeta, true);
         $carpeta = substr($carpeta, 1);
         return $carpeta;
@@ -825,21 +819,10 @@ class Poliza extends General {
     private function revisionArea($revisionFisica) {
         $this->pdf->AddPage();
         $this->pdf->subTitulo('Revisión Fisica');
-        $altura = 0;
         foreach ($revisionFisica as $revision) {
             $inicio = $this->pdf->GetY();
             $listaEvidencia = explode(",", $revision['Evidencia']);
-//            $countFilas = ((count($listaEvidencia) / 4) < 0.5) ? round(count($listaEvidencia) / 4, 0, PHP_ROUND_HALF_UP) + 1 : round(count($listaEvidencia) / 4, 0, PHP_ROUND_HALF_UP);
-//            $altura += ($countFilas * 40) + 28;
-//            if ($altura > ($this->pdf->GetPageHeight() - 75)) {
-//                $this->pdf->AddPage();
-//                $altura = ($countFilas * 40) + 28;
-//                $this->pdf->Cell(0, 7, "Nueva pagina -- " . $altura);
-//                $this->pdf->Ln();
-//            } //else {
-//                $this->pdf->Cell(0, 7, $countFilas . " -- " . (($countFilas * 40) + 28) . "--" . $altura . "--" . ($this->pdf->GetPageHeight() - 15));
-//                $this->pdf->Ln();
-//            }
+
             $this->pdf->BasicTable(array('Categoria', 'Area', ''), array(
                 array($revision['Categoria'], $revision['Areas'], ''),
                 array($revision['Etiqueta'], '', ''),
@@ -857,7 +840,7 @@ class Poliza extends General {
             $this->pdf->BasicTable(array('Equipo', 'Serie'), array(
                 array($valor['Equipo'], $valor['Serie'])
             ));
-//            $this->pdf->Ln();
+            
             if (!empty($valor['Componente'])) {
                 $componente = $valor['Componente'];
             } else {
@@ -965,9 +948,9 @@ class PDFAux extends PDF {
         $this->Cell(0, 7, $subtitulo, 0, 0, 'C');
     }
 
-    public function tablaImagenes(array $imagenes, $inicioY) {
+    public function tablaImagenes(array $imagenes) {
         $this->Ln(7);
-        $countFilas = ((count($imagenes) / 4) < 0.5) ? round(count($imagenes) / 4, 0, PHP_ROUND_HALF_UP) + 1 : round(count($imagenes) / 4, 0, PHP_ROUND_HALF_UP);
+        $countFilas = ((count($imagenes) / 4) < 0.5) ? round(count($imagenes) / 4, 0, PHP_ROUND_HALF_UP) + 1 : ceil(count($imagenes) / 4);
         $columna = 0;
         $listaImagenes = array();
         $tempImagenes = array();
@@ -999,12 +982,10 @@ class PDFAux extends PDF {
             }
             $x = 10;
             $y += 40;
-            $altura = $y + 40;
-//            $this->Cell(0, 7, "-- " . ($this->GetPageHeight() - 75));
-//            $this->Ln();
-            if ($altura > ($this->GetPageHeight() - 75)) {
+            $altura = $y + 35;
+            if ($altura > ($this->GetPageHeight() - 35)) {
                 $this->AddPage();
-                $y = 40;
+                $y = 25;
             }
         }
         $this->SetY($y);
