@@ -12,10 +12,7 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li id="btnCancelarServicio"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
-                    <li id="btnDocumentacionFirma"><a href="#"><i class="fa fa-pencil-square-o"></i> Firmar Servicio</a></li>
-                    <li id="btnGeneraPdfServicio"><a href="#"><i class="fa fa-file-pdf-o"></i> Generar Pdf</a></li>
                     <li id="btnNuevoServicio"><a href="#"><i class="fa fa-plus"></i> Nuevo Servicio</a></li>
-                    <!--<li id="btnReasignarServicio"><a href="#"><i class="fa fa-mail-reply-all"></i> Reasignar Servicio</a></li>-->
                     <li id="btnNuevaSolicitud"><a href="#"><i class="fa fa-puzzle-piece"></i> Solicitar Apoyo</a></li>
                 </ul>
             </div>
@@ -215,8 +212,8 @@
                                 <select id="selectSucursales" class="form-control" style="width: 100%" data-parsley-required="true">
                                     <option value="">Seleccionar</option>
                                     <?php
-                                    foreach ($informacion['sucursales'] as $item) {
-                                        $select = ($informacion['sucursal'] == $item['Id']) ? 'selected' : '';
+                                    foreach ($informacion['sucursalesXSolicitudCliente'] as $item) {
+                                        $select = ($informacion['sucursalesXSolicitudCliente'] == $item['Id']) ? 'selected' : '';
                                         echo '<option value="' . $item['Id'] . '" ' . $select . '>' . $item['Nombre'] . '</option>';
                                     }
                                     ?>
@@ -254,7 +251,6 @@
                         }
                         ?>
                     </ul>
-                    <div id="errorRevisionArea" class="row"></div>
                     <div id="listaPregunta" class="table-responsive hidden">
                         <table id="tabla-categorias" class="table table-striped table-bordered table-condensed" style="cursor:pointer" width="100%">
                             <thead>
@@ -277,6 +273,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <div id="errorRevisionArea" class="row">sdf</div>
                     <div id="guardarListaPregunta" class="row m-t-15 hidden">
                         <div class="col-md-6 col-xs-6 text-right">
                             <label id="guardarRevisionFisicaArea" class="btn btn-success">

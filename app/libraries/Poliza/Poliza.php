@@ -526,9 +526,9 @@ class Poliza extends General {
         }
 
         if ($insertar) {
-            return ['code' => 200, 'succes' => "informacion guardada"];
+            return true;
         } else {
-            return ['code' => 500, 'error' => "Selecciona la informacion"];
+            return false;;
         }
     }
 
@@ -615,6 +615,10 @@ class Poliza extends General {
         $actualizarEvidencia = implode(",", $evidencia);
         $datosActualizar = Array('Evidencia' => $actualizarEvidencia, 'Id' => $evidencias['Id']);
         $this->DBP->actualizarEvidencia($datosActualizar);
+        if (empty($evidencia)) {
+            $datosActualizae = Array('Flag' => 0, 'Id' => $evidencias['Id'], 'tipoActualizar' => 2);
+            $this->DBP->actulaizarRevisionPunto($datosActualizae);
+        }
 
         return $this->mostrarPuntoRevision(array('servicio' => $datos['servicio'], 'categoria' => $datos['idCategoria']));
     }
@@ -635,7 +639,7 @@ class Poliza extends General {
             $evidenciaImplode = implode(',', $eivedenciasExplote);
             $datosActualizar = Array('Id' => $consultaPunto[0]['Id'], 'evidencia' => $evidenciaImplode, 'tipoActualizar' => 1);
 
-            $actualizarEvidencia = $this->DBP->actulaizarRevisionPunto($datosActualizar);
+            $this->DBP->actulaizarRevisionPunto($datosActualizar);
         }
         return true;
     }
@@ -732,7 +736,7 @@ class Poliza extends General {
 //                echo '<pre>';
 //                print_r($consultaRevisiones);
                 return ['sucursal' => $consultaServicio[0]['IdSucursal']];
-            }else{
+            } else {
                 return false;
             }
         } else {
@@ -741,7 +745,7 @@ class Poliza extends General {
     }
 
     public function guardarConclusionChecklist(array $datos) {
-        
+
         $usuario = $this->usuario->getDatosUsuario();
 
         $correo = implode(",", $datos['correo']);

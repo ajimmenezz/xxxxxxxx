@@ -580,7 +580,8 @@ class Modelo_Poliza extends Modelo_Base {
                                     inner join t_checklist_revision_area tcra
                                     on cvaa.Id = tcra.IdAreaAtencion
                                     where Nombre = '".$datos['idRevisionArea']."'
-                                    AND tcra.IdCategoria = '". $datos['idCategoria'] ."'");              
+                                    AND tcra.IdCategoria = '". $datos['idCategoria'] ."'              
+                                    AND tcra.IdServicio = '". $datos['servicio'] ."'");              
         if(!empty($consulta)){
             foreach ($consulta as $value) {                
                 return $value['Id'];
@@ -658,7 +659,7 @@ class Modelo_Poliza extends Modelo_Base {
         $tabla = "t_checklist_revision_punto";
 
         if ($datos['tipoActualizar'] == 1) {
-            // actualiza eidencias
+            // actualiza evidencias
             $actualizar = $this->actualizar($tabla, array('Evidencia' => $datos['evidencia']), array('Id' => $datos['Id']));
         } else if ($datos['tipoActualizar'] == 2) {
             // actualiza flag

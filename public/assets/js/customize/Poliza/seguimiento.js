@@ -1014,10 +1014,7 @@ $(function () {
             $('#seccionSeguimientoServicio').empty().addClass('hidden');
             $('#listaPoliza').removeClass('hidden');
         });
-
-//        servicios.initBotonReasignarServicio(servicio, datosTabla[1], '#seccion-servicio-censo');
-        //evento para crear nueva solicitud
-//        servicios.initBotonNuevaSolicitud(datosTabla[1], '#seccion-servicio-censo');
+        
         servicios.eventosFolio(datosTabla[0], '#informacionRevision', servicio);
 
     };
@@ -1037,15 +1034,15 @@ $(function () {
         datosConcepto += "]";
 
         var datos = {'servicio': servicio, 'datosTabla': datosConcepto, 'idCategoria': IdCategoria, 'guardarTipo': 2};
-
+//        console.log(datos);
         evento.enviarEvento('Seguimiento/GuardarInformacionChecklist', datos, '#revisionArea', function (respuesta) {
-//            console.log(respuesta);
-            if (respuesta) {
-//                console.log("entro ff");
-                evento.mostrarMensaje('.errorRevisionArea', true, "Información guardada correctamente", 3000);
-            } else {
-                evento.mostrarMensaje('.errorRevisionArea', false, "Información incorrecta", 3000);
-            }
+            console.log(respuesta);
+//            if (respuesta) {
+////                console.log("entro ff");
+//                evento.mostrarMensaje('#errorRevisionArea', true, "Información guardada correctamente", 3000);
+//            } else {
+//                evento.mostrarMensaje('#errorRevisionArea', false, "Información incorrecta", 3000);
+//            }
         });
 
     };
