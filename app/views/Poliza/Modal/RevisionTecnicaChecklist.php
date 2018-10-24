@@ -14,7 +14,7 @@
             <?php
             if (isset($areaPunto) && count($areaPunto) > 0) {
                 foreach ($areaPunto as $key => $value) {
-                    echo '<option value="1" data-area ="' . $value['IdArea'] . '" data-punto="' . $value['Punto'] . '">' . $value['Area'] . ' ' . $value['Punto'] . '</option>';
+                    echo '<option value="'. $value['IdArea'] . $value['Punto'] .'" data-area ="' . $value['IdArea'] . '" data-punto="' . $value['Punto'] . '">' . $value['Area'] . ' ' . $value['Punto'] . '</option>';
                 }
             }
             ?>

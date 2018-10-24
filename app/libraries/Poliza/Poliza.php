@@ -575,7 +575,7 @@ class Poliza extends General {
     public function guardarPuntoRevision(array $datos) {
         $CI = parent::getCI();
         $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/';
-        $archivos = implode(',', setMultiplesArchivos($CI, 'inputArchivoPunto', $carpeta));        
+        $archivos = implode(',', setMultiplesArchivos($CI, 'inputArchivoPunto', $carpeta));
         $idRevisionArea = $this->DBP->obtenerIdRevicionArea($datos);
         $datos['idRevisionArea'] = $idRevisionArea;
         $evidencia = $this->DBP->obtenerEvidenciasPuntosCheckList($datos);
@@ -724,7 +724,24 @@ class Poliza extends General {
         return $consultaRevisionTecnica;
     }
 
+    public function mostrarDatosServicio(array $datos) {
+        $consultaServicio = $this->DBP->mostrarServicio($datos['servicio']);
+        if (!empty($consultaServicio)) {
+            $consultaRevisiones = $this->DBP->consultaRevisionPunotPDF($datos['servicio']);
+            if (!empty($consultaRevisiones)) {
+//                echo '<pre>';
+//                print_r($consultaRevisiones);
+                return ['sucursal' => $consultaServicio[0]['IdSucursal']];
+            }else{
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     public function guardarConclusionChecklist(array $datos) {
+        
         $usuario = $this->usuario->getDatosUsuario();
 
         $correo = implode(",", $datos['correo']);
@@ -741,7 +758,7 @@ class Poliza extends General {
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $dataFirma);
 
         $arrayServicio = array(
-//            'Estatus' => '4',
+            'Estatus' => '4',
             'FechaConclusion' => $fecha,
             'Firma' => $direccionFirma,
             'NombreFirma' => $datos['nombreFirma'],
@@ -750,10 +767,10 @@ class Poliza extends General {
             'servicio' => $datos['servicio'],
         );
 
-        $pdf = $this->pdfServicioChecklist($datos['servicio']);
+        $pdf = $this->pdfServicioChecklist(array('servicio' => $datos['servicio']));
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $usuario['Id'] . '/Pdf/Ticket_' . $datos['Ticket'] . '_Servicio_' . $usuario['Id'] . '_' . $nombreServ . '.pdf';
+            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $usuario['Id'] . '/Pdf/Ticket_' . $datos['Ticket'] . '_Servicio_' . $usuario['Id'] . '_Servicio_Checklist.pdf';
         } else {
             $path = 'http://' . $host . '/' . $pdf;
         }
@@ -840,7 +857,7 @@ class Poliza extends General {
             $this->pdf->BasicTable(array('Equipo', 'Serie'), array(
                 array($valor['Equipo'], $valor['Serie'])
             ));
-            
+
             if (!empty($valor['Componente'])) {
                 $componente = $valor['Componente'];
             } else {
@@ -913,14 +930,14 @@ class PDFAux extends PDF {
         // Cabecera
         foreach ($header as $col) {
             $this->SetFont("Helvetica", "B", 9);
-            $this->Cell($ancho, 7, utf8_decode($col), 1);
+            $this->Cell($ancho, 7, utf8_decode($col), 0);
         }
         $this->Ln();
         // Datos
         foreach ($data as $row) {
             foreach ($row as $col) {
                 $this->SetFont("Helvetica", "", 10);
-                $this->Cell($ancho, 6, utf8_decode($col), 1);
+                $this->Cell($ancho, 6, utf8_decode($col), 0);
             }
             $this->Ln();
         }
@@ -983,7 +1000,7 @@ class PDFAux extends PDF {
             $x = 10;
             $y += 40;
             $altura = $y + 35;
-            if ($altura > ($this->GetPageHeight() - 35)) {
+            if ($altura > ($this->GetPageHeight() - 40)) {
                 $this->AddPage();
                 $y = 25;
             }

@@ -172,18 +172,22 @@ $(function () {
             }
         });
 
-        $('#btnPrueba').on('click', function () {
+        $('#concluirServicioChecklist').on('click', function () {
             var servicio = $('#hiddenServicio').val();
-            evento.enviarEvento('Seguimiento/PDFPrueba', {'servicio': servicio}, '', function (respuesta) {
-//                console.log(respuesta);
-                window.open(respuesta, '_blank');
-            });
-//            var datosServicio = {'servicio' : servicio};
-//             evento.enviarEvento('Seguimiento/MostrarDatosServicio', datosServicio, '', function (respuesta) {
-////                
-//            });
-//            concluirServicioChecklist(servicio,datosTabla,sucursal);
+            var sucursal = $('#selectSucursales option:selected').val();
 
+            if (sucursal !== '') {
+                var datosServicio = {'servicio': servicio};
+                evento.enviarEvento('Seguimiento/MostrarDatosServicio', datosServicio, '', function (respuesta) {
+                    if (respuesta.sucursal) {
+                        concluirServicioChecklist(servicio, datosTabla, sucursal);
+                    } else {
+                        evento.mostrarMensaje('#errorInformacionGeneral', false, 'Tienes informacion incompleta', 3000);
+                    }
+                });
+            } else {
+                evento.mostrarMensaje('#errorInformacionGeneral', false, 'Agrega la sucursal', 3000);
+            }
         });
     };
 
@@ -243,9 +247,7 @@ $(function () {
                         if (imgInput !== '') {
                             if ($('#terminos').attr('checked')) {
                                 var dataInsertar = {'ticket': ticket, 'servicio': servicio, 'img': img, 'correo': correo, 'nombreFirma': personaRecibe, 'sucursal': sucursal};
-
                                 evento.enviarEvento('Seguimiento/GuardarConclusionChecklist', dataInsertar, '#modal-dialogo', function (respuesta) {
-//                                    console.log(respuesta);
                                     if (respuesta) {
                                         servicios.mensajeModal('Servicio concluido.', 'Correcto');
                                     } else {
@@ -300,7 +302,7 @@ $(function () {
             var _sucursal = respuesta.sucursal;
             var _tipoDiagnostico;
 
-//            select.crearSelect('#selectAreaPunto');
+            select.crearSelect('#selectAreaPunto');
             select.crearSelect('#selectEquipo');
             select.crearSelect('#selectImpericiaTipoFallaEquipoCorrectivo');
             select.crearSelect('#selectTipoFallaEquipoCorrectivo');
@@ -326,7 +328,7 @@ $(function () {
                     evento.enviarEvento('Seguimiento/ConsultaEquipoXAreaPuntoUltimoCenso', datos, '#seguimiento-checklist', function (respuesta) {
 
                         $.each(respuesta, function (k, v) {
-                            $('#selectEquipo').append('<option data-terminal="' + v.Extra + '"  data-serie="' + v.Serie + '" data-modelo="' + v.IdModelo + '" value="1">' + v.Equipo + ' (' + v.Serie + ')</option>');
+                            $('#selectEquipo').append('<option data-terminal="' + v.Extra + '"  data-serie="' + v.Serie + '" data-modelo="' + v.IdModelo + '" value="' + v.Serie + '">' + v.Equipo + ' (' + v.Serie + ')</option>');
                         });
                     });
                     $('#selectEquipo').removeAttr('disabled');
@@ -481,7 +483,7 @@ $(function () {
                 let _this = this;
                 var datosTabla = $('#tablaFallasTecnicas').DataTable().row(_this).data();
                 var dato = {'idRevisionTecnica': datosTabla[0], 'servicio': servicio};
-                    console.log(dato);
+                console.log(dato);
                 evento.enviarEvento('Seguimiento/ActualizarRevisionTecnica', dato, '#panel-catalogo-checklist', function (respuestaRevision) {
                     evento.iniciarModal('#modalEditRevisionChecklist', 'Editar Revisión Tecnica', respuestaRevision.modal);
 
@@ -826,7 +828,8 @@ $(function () {
 
         $('#btnModalConfirmar').off('click');
         $('#btnModalConfirmar').on('click', function () {
-//            console.log(datos);
+            datos.evidencia = $('#evidenciaPunto').val();
+
             file.enviarArchivos('#evidenciaPunto', 'Seguimiento/GuardarRevisionPunto', '#modal-dialog', datos, function (datosPuntos) {
                 mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
                 evento.cerrarModal();
@@ -1018,7 +1021,7 @@ $(function () {
         servicios.eventosFolio(datosTabla[0], '#informacionRevision', servicio);
 
     };
-    
+
     var guardarRevisionArea = function (servicio) {
         var listaConceptos = $('#tabla-categorias').DataTable().rows().data();
 
@@ -1035,7 +1038,7 @@ $(function () {
 
         var datos = {'servicio': servicio, 'datosTabla': datosConcepto, 'idCategoria': IdCategoria, 'guardarTipo': 2};
 
-        evento.enviarEvento('Seguimiento/GuardarInformacionChecklist', datos, '#revisionArea', function (respuesta){
+        evento.enviarEvento('Seguimiento/GuardarInformacionChecklist', datos, '#revisionArea', function (respuesta) {
 //            console.log(respuesta);
             if (respuesta) {
 //                console.log("entro ff");

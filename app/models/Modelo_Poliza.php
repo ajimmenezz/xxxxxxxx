@@ -740,7 +740,7 @@ class Modelo_Poliza extends Modelo_Base {
     public function concluirServicio(array $dato) {
 
         $this->actualizar('t_servicios_ticket', array(
-//            'IdEstatus' => $dato['Estatus'],
+            'IdEstatus' => $dato['Estatus'],
             'FechaConclusion' => $dato['FechaConclusion'],
             'Firma' => $dato['Firma'],
             'NombreFirma' => $dato['NombreFirma'],
@@ -758,6 +758,11 @@ class Modelo_Poliza extends Modelo_Base {
                                     from t_servicios_ticket tst
                                     where Id = '" . $servicio . "'");
         return $consulta[0];
+    }
+    
+    public function mostrarServicio($servicio) {
+        $consulta = $this->consulta("select * from t_servicios_ticket where Id = '" . $servicio ."'");
+        return $consulta;
     }
 
 }
