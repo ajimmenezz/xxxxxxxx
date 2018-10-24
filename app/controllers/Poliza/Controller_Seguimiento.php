@@ -211,17 +211,17 @@ class Controller_Seguimiento extends Base {
                 break;
             case 'GuardarInformacionChecklist':
                 $resultado = $this->Poliza->guardarInformacionGeneral($this->input->post());
-                break;  
+                break;
             case 'MostrarPuntoRevision':
                 $resultado = $this->Poliza->mostrarPuntoRevision($this->input->post());
                 break;
             case 'MostrarPreguntas':
                 $resultado = $this->Poliza->obtenerPreguntaPorCategoria($this->input->post());
                 break;
-            case 'GuardarRevisionPunto':                
+            case 'GuardarRevisionPunto':
                 $resultado = $this->Poliza->guardarPuntoRevision($this->input->post());
                 break;
-            case 'EliminarEvidenciaChecklist':                
+            case 'EliminarEvidenciaChecklist':
                 $resultado = $this->Poliza->eliminarEvidenciaChecklist($this->input->post());
                 break;
             case 'ConsultarRevisionPunto':
@@ -256,17 +256,18 @@ class Controller_Seguimiento extends Base {
                 break;
             case 'GuardarConclusionChecklist':
                 $resultado = $this->Poliza->guardarConclusionChecklist($this->input->post());
-                break;            
-            case 'PDFPrueba':               
+                break;
+            case 'PDFPrueba':
                 $resultado = $this->Poliza->pdfServicioChecklist($this->input->post());
                 break;
-            case 'ConsultarRevisonArea':               
+            case 'ConsultarRevisonArea':
                 $resultado = $this->Poliza->consultarRevisonArea($this->input->post());
                 break;
             default:
                 $resultado = FALSE;
                 break;
         }
+
         echo json_encode($resultado);
     }
 

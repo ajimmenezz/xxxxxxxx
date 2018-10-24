@@ -524,11 +524,10 @@ class Poliza extends General {
 
             $insertar = $this->DBP->insertarRevisionAreas($datosInsertar);
         }
-
         if ($insertar) {
-            return true;
+            return TRUE;
         } else {
-            return false;;
+            return false;
         }
     }
 

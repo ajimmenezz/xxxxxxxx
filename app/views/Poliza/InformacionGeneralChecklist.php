@@ -251,6 +251,7 @@
                         }
                         ?>
                     </ul>
+                    <div id="errorRevisionArea" class="row"></div>
                     <div id="listaPregunta" class="table-responsive hidden">
                         <table id="tabla-categorias" class="table table-striped table-bordered table-condensed" style="cursor:pointer" width="100%">
                             <thead>
@@ -273,7 +274,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <div id="errorRevisionArea" class="row">sdf</div>
                     <div id="guardarListaPregunta" class="row m-t-15 hidden">
                         <div class="col-md-6 col-xs-6 text-right">
                             <label id="guardarRevisionFisicaArea" class="btn btn-success">

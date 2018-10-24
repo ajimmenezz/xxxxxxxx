@@ -538,7 +538,6 @@ class Modelo_Poliza extends Modelo_Base {
 
     public function insertarRevisionAreas($datos) {
         if (isset($datos['DatosTabla'])) {
-            echo '<pre>';
             
             foreach ($datos['DatosTabla'] as $value) {
                 
