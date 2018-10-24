@@ -248,6 +248,7 @@ $route['Reportes/PEV2/(:any)'] = 'Reportes/Controller_ProyectosEspecialesV2/mane
 /* Routers para el manejo de Comprobaciones */
 $route['Comprobacion/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Comprobacion/Catalogos/(:any)'] = 'Comprobacion/Controller_Catalogos/manejarEvento/$1';
+$route['Comprobacion/Fondo_Fijo/(:any)'] = 'Tesoreria/Controller_FondoFijo/manejarEvento/$1';
 
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 

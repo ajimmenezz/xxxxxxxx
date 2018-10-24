@@ -4,6 +4,8 @@ $(function () {
     var websocket = new Socket();
     var select = new Select();
     var tabla = new Tabla();
+    var file = new Upload();
+
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();
     //Muestra la hora en el sistema
@@ -15,8 +17,196 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
-    //Creando tabla de sistemas especiales
-    tabla.generaTablaPersonal('#table-conceptos', null, null, true);
+    tabla.generaTablaPersonal("#table-comprobaciones-fondo-fijo", null, null, true);
+
+    $("#btnRegistrarComprobante").off("click");
+    $("#btnRegistrarComprobante").on("click", function () {
+        evento.enviarEvento('Fondo_Fijo/FormularioRegistrarComprobante', {}, '#panelDetallesFondoFijo', function (respuesta) {
+            $("#seccionRegistrarDeposito").empty().append(respuesta.html);
+            evento.cambiarDiv("#seccionDetallesFondoFijo", "#seccionRegistrarDeposito");
+            select.crearSelect("select");
+            file.crearUpload('#fotosDeposito', 'Fondo_Fijo/RegistrarComprobante', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf']);
+
+            $("#listConceptos").on("change", function () {
+                cargaMontoMaximo();
+            });           
+
+            $("#txtMonto").on("change", function () {
+                var _monto = $(this).val();
+                var _maximo = $(this).attr("data-monto");
+                if ($.isNumeric(_monto)) {
+                    if (parseFloat(_monto) <= parseFloat(_maximo)) {
+                        $("#warningMontos").addClass("hidden");
+                    } else {
+                        $("#warningMontos").removeClass("hidden");
+                        $("#warningMontoMaximo").empty().append("$" + _maximo);
+                    }
+                } else {
+                    $("#warningMontos").addClass("hidden");
+                    $("#txtMonto").val("");
+                }
+            });
+
+            $("#listTickets").on("change", function () {
+                var _ticket = $(this).val();
+                evento.enviarEvento('Fondo_Fijo/CargaServiciosTicket', {'ticket': _ticket}, '#panelRegistrarComprobante', function (respuesta) {
+                    $("#listServicios").empty().append('<option value="">Seleccionar . . .</option>');
+                    select.cambiarOpcion("#listServicios", "");
+                    $("#listServicios").attr("disabled", "disabled");
+                    if (respuesta.length > 0) {
+                        $.each(respuesta, function (k, v) {
+                            $("#listServicios").append('<option value="' + v.Id + '">' + v.Id + ' - ' + v.Tipo + ' - ' + v.Descripcion + '</option>');
+                        });
+                        $("#listServicios").removeAttr("disabled");
+                    }
+                });
+            });
+
+            $("#listOrigenes").on("change", function () {
+                var _origen = $(this).val();
+                if (_origen == 'o') {
+                    $("#divOtroOrigen").removeClass("hidden");
+                } else {
+                    $("#divOtroOrigen").addClass("hidden");
+                    $("#textOrigen").val("");
+                }
+            });
+
+            $("#listDestinos").on("change", function () {
+                var _destino = $(this).val();
+                if (_destino == 'o') {
+                    $("#divOtroDestino").removeClass("hidden");
+                } else {
+                    $("#divOtroDestino").addClass("hidden");
+                    $("#textDestino").val("");
+                }
+                cargaMontoMaximo();
+            });
+
+            $("#btnGuardarComprobante").off("click");
+            $("#btnGuardarComprobante").on("click", function () {
+                if (evento.validarFormulario('#form-registrar-comprobante')) {
+                    var _datos = {
+                        'fecha': $("#txtDate").val(),
+                        'monto': $.trim($("#txtMonto").val()),
+                        'concepto' : $("#listConceptos").val(),
+                        'ticket' : $("#listTickets").val(),
+                        'servicio' : $("#listServicios").val(),
+                        'origen': $("#listOrigenes").val(),
+                        'stringOrigen': $.trim($("#txtOrigen").val()),
+                        'destino': $("#listDestinos").val(),
+                        'stringDestino': $.trim($("#txtDestino").val()),
+                        'observaciones': $.trim($("#textObservaciones").val()),
+                        'evidencias': $("#fotosDeposito").val()
+                    }                                        
+                    
+                    console.log(_datos);
+//                    if (_datos.evidencias != "") {
+//                        file.enviarArchivos('#fotosDeposito', 'Fondo_Fijo/RegistrarDeposito', '#panelRegistrarDeposito', _datos, function (respuesta) {
+//                            if (respuesta.code == 200) {
+//                                cargaDetallesFondoFijo(datos, "#panelRegistrarDeposito", "#seccionRegistrarDeposito", "#listaFondosFijos");
+//                            } else {
+//                                evento.mostrarMensaje("#errorMessageComprobante", false, "Ocurrió un error al guardar el depósito. Por favor recargue su página y vuelva a intentarlo.", 4000);
+//                            }
+//                        });
+//                    } else {
+//                        evento.mostrarMensaje("#errorMessageComprobante", false, "Las evidencias del depósito son obligatorias.", 4000);
+//                    }
+
+
+                }
+            });
+        });
+
+    });
+
+    function cargaMontoMaximo() {
+        var _concepto = $("#listConceptos").val();
+        if (_concepto == "") {
+            $("#txtMonto").val("");
+            $("#txtMonto").removeAttr("data-monto");
+            $("#txtMonto").attr("disabled", "disabled");
+            $("#txtMonto").trigger("change");
+        } else {
+            $("#txtMonto").removeAttr("disabled");
+            var datos = {
+                'concepto': _concepto,
+                'destino': $("#listDestinos").val()
+            }
+            evento.enviarEvento('Fondo_Fijo/CargaMontoMaximoConcepto', datos, '#panelRegistrarComprobante', function (respuesta) {
+                $("#txtMonto").attr("data-monto", respuesta.monto);
+                $("#txtMonto").trigger("change");
+            });
+        }
+    }
+
+
+    /* AQUI COMIENZA EL CÖDIGO COPIADO */
+    /* AQUI COMIENZA EL CÖDIGO COPIADO */
+    /* AQUI COMIENZA EL CÖDIGO COPIADO */
+    /* AQUI COMIENZA EL CÖDIGO COPIADO */
+    /* AQUI COMIENZA EL CÖDIGO COPIADO */
+
+
+    $('#table-fondos-fijos tbody').on('click', 'tr', function () {
+        var datos = $('#table-fondos-fijos').DataTable().row(this).data();
+        cargaDetallesFondoFijo(datos);
+    });
+
+    function cargaDetallesFondoFijo() {
+        var datos = arguments[0];
+        var panelLoading = arguments[1] || '#panelFondosFijos';
+        var divToHide = arguments[2] || "#listaFondosFijos";
+        var divToBack = arguments[3] || "";
+        evento.enviarEvento('Fondo_Fijo/DetallesFondoFijoXUsuario', {'id': datos[0]}, panelLoading, function (respuesta) {
+            $("#seccionDetallesFondoFijo").empty().append(respuesta.html);
+            evento.cambiarDiv(divToHide, "#seccionDetallesFondoFijo", divToBack);
+            tabla.generaTablaPersonal("#table-comprobaciones-fondo-fijo", null, null, true);
+
+            $("#btnRegistrarDeposito").off("click");
+            $("#btnRegistrarDeposito").on("click", function () {
+                evento.enviarEvento('Fondo_Fijo/FormularioRegistrarDeposito', {'id': datos[0]}, '#panelDetallesFondoFijo', function (respuesta) {
+                    $("#seccionRegistrarDeposito").empty().append(respuesta.html);
+                    evento.cambiarDiv("#seccionDetallesFondoFijo", "#seccionRegistrarDeposito");
+                    file.crearUpload('#fotosDeposito', 'Fondo_Fijo/RegistrarDeposito', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf']);
+
+                    $("#btnGuardarDeposito").off("click");
+                    $("#btnGuardarDeposito").on("click", function () {
+                        if (evento.validarFormulario('#form-registrar-deposito')) {
+                            var _datos = {
+                                'id': datos[0],
+                                'fecha': $("#txtDate").val(),
+                                'monto': $.trim($("#txtMonto").val()),
+                                'observaciones': $.trim($("#textObservaciones").val()),
+                                'evidencias': $("#fotosDeposito").val()
+                            }
+                            if (_datos.evidencias != "") {
+                                file.enviarArchivos('#fotosDeposito', 'Fondo_Fijo/RegistrarDeposito', '#panelRegistrarDeposito', _datos, function (respuesta) {
+                                    if (respuesta.code == 200) {
+                                        cargaDetallesFondoFijo(datos, "#panelRegistrarDeposito", "#seccionRegistrarDeposito", "#listaFondosFijos");
+                                    } else {
+                                        evento.mostrarMensaje("#errorMessageDeposito", false, "Ocurrió un error al guardar el depósito. Por favor recargue su página y vuelva a intentarlo.", 4000);
+                                    }
+                                });
+                            } else {
+                                evento.mostrarMensaje("#errorMessageDeposito", false, "Las evidencias del depósito son obligatorias.", 4000);
+                            }
+
+
+                        }
+                    });
+                });
+
+            });
+
+        });
+    }
+
+
+
+
+
+
     tabla.generaTablaPersonal('#table-usuarios-ff', null, null, true);
 
     //Evento que genera un nuevo concepto de fondo fijo
@@ -184,22 +374,22 @@ $(function () {
                         if (typeof _datosFila !== 'undefined') {
 
                             if (_datos.usuario != "" && _datos.sucursal == "") {
-                                if (_datos.usuario == _datosFila[1] && (_datosFila[2] == "" || _datosFila[2] == "0")) {
+                                if (_datos.usuario == _datosFila[1] && $.inArray(_datosFila[2], ["", 0, "0"])) {
                                     insertar = false;
                                     return true;
                                 }
                             }
 
                             if (_datos.usuario == "" && _datos.sucursal != "") {
-                                if (_datos.sucursal == _datosFila[2] && (_datosFila[1] == "" || _datosFila[1] == "0")) {
-                                    insertar = false;                                    
+                                if (_datos.sucursal == _datosFila[2] && $.inArray(_datosFila[1], ["", 0, "0"])) {
+                                    insertar = false;
                                     return true;
                                 }
                             }
 
                             if (_datos.usuario != "" && _datos.sucursal != "") {
                                 if (_datos.usuario == _datosFila[1] && _datos.sucursal == _datosFila[2]) {
-                                    insertar = false;                                   
+                                    insertar = false;
                                     return true;
                                 }
                             }
@@ -208,7 +398,6 @@ $(function () {
                     });
                     if (!insertar) {
                         evento.mostrarMensaje('#errorMessageAlternativas', false, 'Ya existe una alternativa similar a la que desea agregar. Por favor revise la información.', 3000);
-                        console.log(_where);
                     } else {
                         _datos.usuarioString = (_datos.usuario != "") ? _datos.usuarioString : '';
                         _datos.sucursalString = (_datos.sucursal != "") ? _datos.sucursalString : '';
@@ -365,14 +554,6 @@ $(function () {
             tabla.eliminarFila("#table-alternativas", $(this).closest("tr"));
         });
     }
-
-
-
-    /* AQUI COMIENZA EL CÖDIGO COPIADO */
-    /* AQUI COMIENZA EL CÖDIGO COPIADO */
-    /* AQUI COMIENZA EL CÖDIGO COPIADO */
-    /* AQUI COMIENZA EL CÖDIGO COPIADO */
-    /* AQUI COMIENZA EL CÖDIGO COPIADO */
 
     $('#table-conceptos-99 tbody').on('click', 'tr', function () {
         var datos = $('#table-conceptos.99').DataTable().row(this).data();

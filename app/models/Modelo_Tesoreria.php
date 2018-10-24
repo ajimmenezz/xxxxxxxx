@@ -379,7 +379,7 @@ class Modelo_Tesoreria extends Modelo_Base {
     public function registrarDeposito(array $datos) {
         $this->iniciaTransaccion();
 
-        $saldo = $this->getSaldoByUsuario($datos['id']);        
+        $saldo = $this->getSaldoByUsuario($datos['id']);
 
         $this->insertar("t_comprobacion_fondo_fijo", [
             "IdUsuario" => $this->usuario['Id'],
@@ -423,7 +423,7 @@ class Modelo_Tesoreria extends Modelo_Base {
 
         return $saldo;
     }
-    
+
     public function getSaldoXAutorizarByUsuario(int $id) {
         $saldo = $this->consulta(""
                 . "select "
@@ -437,6 +437,100 @@ class Modelo_Tesoreria extends Modelo_Base {
         }
 
         return $saldo;
+    }
+
+    public function getTicketsByUsuario(int $id) {
+        $consulta = $this->consulta("select 
+                                    Ticket 
+                                    from (
+                                        select 
+                                        Ticket
+                                        from t_servicios_ticket tst
+                                        where Atiende = '" . $id . "'
+                                        and IdEstatus in (1,2,3,5)
+
+                                        UNION
+
+                                        select 
+                                        Ticket
+                                        from t_servicios_ticket tst
+                                        where Atiende = '" . $id . "'
+                                        and IdEstatus = 4
+                                        and tst.FechaConclusion >= NOW() - INTERVAL 15 DAY
+                                    ) as tf group by tf.Ticket;");
+        return $consulta;
+    }
+
+    public function getSucursales() {
+        $consulta = $this->consulta("select Id, sucursalCliente(Id) as Nombre from cat_v3_sucursales where Flag = 1 order by Nombre");
+        return $consulta;
+    }
+
+    public function cargaMontoMaximoConcepto(array $datos) {
+        $datos['destino'] = (!isset($datos['destino']) || in_array($datos['destino'], ['', 'o'])) ? '99999999999' : $datos['destino'];
+
+        $comb = '';
+        $query = "select "
+                . "Monto "
+                . "from cat_v3_comprobacion_conceptos_alternativas "
+                . "where IdUsuario = '" . $datos['usuario'] . "' "
+                . "and IdSucursal = '" . $datos['destino'] . "' "
+                . "and IdConcepto = '" . $datos['concepto'] . "' "
+                . "and Flag = 1";
+        $consulta = $this->consulta($query);
+
+        if (!empty($consulta)) {
+            $monto = $consulta[0]['Monto'];
+            $comb = 'CST';
+        } else {
+            $query = "select "
+                    . "Monto "
+                    . "from cat_v3_comprobacion_conceptos_alternativas "
+                    . "where IdUsuario = 0 "
+                    . "and IdSucursal = '" . $datos['destino'] . "' "
+                    . "and IdConcepto = '" . $datos['concepto'] . "' "
+                    . "and Flag = 1";
+            $consulta = $this->consulta($query);
+            if (!empty($consulta)) {
+                $monto = $consulta[0]['Monto'];
+                $comb = 'CS';
+            } else {
+                $query = "select "
+                        . "Monto "
+                        . "from cat_v3_comprobacion_conceptos_alternativas "
+                        . "where IdUsuario = '" . $datos['usuario'] . "' "
+                        . "and IdSucursal = 0 "
+                        . "and IdConcepto = '" . $datos['concepto'] . "' "
+                        . "and Flag = 1";
+                $consulta = $this->consulta($query);
+                if (!empty($consulta)) {
+                    $monto = $consulta[0]['Monto'];
+                    $comb = 'CT';
+                } else {
+                    $query = "select "
+                            . "Monto "
+                            . "from cat_v3_comprobacion_conceptos "
+                            . "where Id = '" . $datos['concepto'] . "' "
+                            . "and Flag = 1";
+                    $consulta = $this->consulta($query);
+                    $monto = $consulta[0]['Monto'];
+                    $comb = 'C';
+                }
+            }
+        }
+
+        return ['monto' => $monto];
+    }
+
+    public function cargaServiciosTicket(array $datos) {
+        $consulta = $this->consulta("select 
+                                    Id,
+                                    tipoServicio(tst.IdTipoServicio) as Tipo,
+                                    tst.Descripcion
+                                    from t_servicios_ticket tst 
+                                    where Ticket = '" . $datos['ticket'] . "'
+                                    and tst.Atiende = '" . $datos['usuario'] . "'");
+        return $consulta;
     }
 
 }

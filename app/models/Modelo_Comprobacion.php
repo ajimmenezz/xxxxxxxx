@@ -93,7 +93,8 @@ class Modelo_Comprobacion extends Modelo_Base {
                                     if(conc.Extraordinario = 1, 'Si', 'No') as Extraordinario,
                                     conc.Monto,
                                     (select count(*) from cat_v3_comprobacion_conceptos_alternativas where IdConcepto = conc.Id and Flag = 1) as Alternativos,
-                                    if(conc.Flag = 1, 'Activo', 'Inactivo') as Estatus
+                                    if(conc.Flag = 1, 'Activo', 'Inactivo') as Estatus,
+                                    conc.Flag
                                     from cat_v3_comprobacion_conceptos conc " . $condicion . " order by Nombre");
 
         return $consulta;

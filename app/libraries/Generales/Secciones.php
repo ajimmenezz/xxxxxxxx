@@ -33,6 +33,7 @@ class Secciones extends General {
     private $Documentacion;
     private $ModeloComprobacion;
     private $FondoFijo;
+    private $ModeloTesoreria;
 
     public function __construct() {
         parent::__construct();
@@ -68,6 +69,7 @@ class Secciones extends General {
         $this->Documentacion = \Librerias\Documentacion\Documentacion::factory();
         $this->ModeloComprobacion = \Modelos\Modelo_Comprobacion::factory();
         $this->FondoFijo = \Librerias\Tesoreria\FondoFijo::factory();
+        $this->ModeloTesoreria = \Modelos\Modelo_Tesoreria::factory();
     }
 
     /*
@@ -436,8 +438,15 @@ class Secciones extends General {
                 break;
             case 'Comprobacion/Catalogos':
                 $datos['Conceptos'] = $this->ModeloComprobacion->getConceptos();
-                $datos['FondoFijoXUsuario'] = $this->ModeloComprobacion->getFondosFijos();                
-                break;            
+                $datos['FondoFijoXUsuario'] = $this->ModeloComprobacion->getFondosFijos();
+                break;
+            case 'Comprobacion/Fondo_Fijo':
+                $usuario = $this->Usuario->getDatosUsuario();
+                $datos['listaComprobaciones'] = $this->ModeloTesoreria->getDetallesFondoFijoXUsuario($usuario['Id']);
+                $datos['usuario'] = $this->ModeloTesoreria->getNombreUsuarioById($usuario['Id']);
+                $datos['saldo'] = $this->ModeloTesoreria->getSaldoByUsuario($usuario['Id']);
+                $datos['xautorizar'] = $this->ModeloTesoreria->getSaldoXAutorizarByUsuario($usuario['Id']);
+                break;
             default:
                 break;
         }

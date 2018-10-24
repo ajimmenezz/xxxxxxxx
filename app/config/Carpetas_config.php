@@ -165,6 +165,7 @@ $config['Secciones'] = array(
         'Carta-Responsiva' => 'Carta_Responsiva'
     ),
     'Comprobacion' => array(
-        'Catalogos-Comprobacion' => 'Catalogos'        
+        'Catalogos-Comprobacion' => 'Catalogos',
+        'FondoFijo-Comprobacion' => 'Fondo_Fijo',
     ),
 );

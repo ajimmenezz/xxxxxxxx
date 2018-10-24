@@ -25,9 +25,18 @@ class Controller_FondoFijo extends Base {
                 break;
             case 'FormularioRegistrarDeposito':
                 $resultado = $this->fondo_fijo->formularioRegistrarDeposito($this->input->post());
-                break;
+                break;            
             case 'RegistrarDeposito':
                 $resultado = $this->fondo_fijo->registrarDeposito($this->input->post());
+                break;
+            case 'FormularioRegistrarComprobante':
+                $resultado = $this->fondo_fijo->formularioRegistrarComprobante($this->input->post());
+                break;
+            case 'CargaMontoMaximoConcepto':
+                $resultado = $this->fondo_fijo->cargaMontoMaximoConcepto($this->input->post());
+                break;
+            case 'CargaServiciosTicket':
+                $resultado = $this->fondo_fijo->cargaServiciosTicket($this->input->post());
                 break;
             default:
                 $resultado = FALSE;
