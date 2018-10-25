@@ -19,13 +19,13 @@ class Controller_FondoFijo extends Base {
      */
 
     public function manejarEvento(string $evento = null) {
-        switch ($evento) {            
+        switch ($evento) {
             case 'DetallesFondoFijoXUsuario':
                 $resultado = $this->fondo_fijo->detallesFondoFijoXUsuario($this->input->post());
                 break;
             case 'FormularioRegistrarDeposito':
                 $resultado = $this->fondo_fijo->formularioRegistrarDeposito($this->input->post());
-                break;            
+                break;
             case 'RegistrarDeposito':
                 $resultado = $this->fondo_fijo->registrarDeposito($this->input->post());
                 break;
@@ -37,6 +37,12 @@ class Controller_FondoFijo extends Base {
                 break;
             case 'CargaServiciosTicket':
                 $resultado = $this->fondo_fijo->cargaServiciosTicket($this->input->post());
+                break;
+            case 'RegistrarComprobante':
+                $resultado = $this->fondo_fijo->registrarComprobante($this->input->post());
+                break;
+            case 'FormularioDetallesMovimiento':
+                $resultado = $this->fondo_fijo->formularioDetallesMovimiento($this->input->post());
                 break;
             default:
                 $resultado = FALSE;

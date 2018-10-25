@@ -72,7 +72,8 @@
                                 <th class="all">Fecha Autorización</th>
                                 <th class="all">Fecha Movimiento</th>
                                 <th class="all">Concepto</th>
-                                <th class="all">¿Extraordinario?</th>
+                                <th class="all">¿Extraordinario?</th>                                
+                                <th class="all">¿Dentro de presupuesto?</th>                                
                                 <th class="all">Monto</th>
                                 <th class="all">Saldo</th>
                                 <th class="all">Ticket</th>
@@ -95,6 +96,7 @@
                                     . '<td class="text-center">' . $value['FechaMovimiento'] . '</td>'
                                     . '<td class="f-w-700 f-s-14 ' . $classMonto . '">' . $value['Nombre'] . '</td>'
                                     . '<td class="text-center">' . $value['Extraordinario'] . '</td>'
+                                    . '<td class="text-center">' . $value['EnPresupuesto'] . '</td>'
                                     . '<td class="text-center f-w-700 f-s-14 ' . $classMonto . '">$' . $value['Monto'] . '</td>'
                                     . '<td class="text-center f-w-700 f-s-14 ' . $classSaldo . '">' . $saldoFila . '</td>'
                                     . '<td class="text-center">' . $value['Ticket'] . '</td>'

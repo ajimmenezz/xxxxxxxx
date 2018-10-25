@@ -328,10 +328,23 @@ class Modelo_Tesoreria extends Modelo_Base {
 
         $consulta = $this->consulta("SELECT
                                     cffu.IdUsuario,
-                                    nombreUsuario(cffu.IdUsuario) as Usuario,
+                                    nombreUsuario(cffu.IdUsuario) as Usuario,                                    
                                     cffu.Monto as MontoUsuario,
-                                    tcff.FechaMovimiento as Fecha,
-                                    tcff.Monto,
+                                    (select 
+                                        FechaMovimiento 
+                                        from t_comprobacion_fondo_fijo 
+                                        where IdUsuarioFF = cffu.IdUsuario 
+                                        and IdTipoMovimiento = 1 
+                                        and IdEstatus = 7 
+                                        order by FechaAutorizacion desc limit 1) as Fecha,
+                                    /*tcff.FechaMovimiento as Fecha,*/
+                                    (select 
+                                        Monto
+                                        from t_comprobacion_fondo_fijo 
+                                        where IdUsuarioFF = cffu.IdUsuario 
+                                        and IdTipoMovimiento = 1 
+                                        and IdEstatus = 7 
+                                        order by FechaAutorizacion desc limit 1) as Monto,
                                     tcff.Saldo,
                                     tcff.FechaAutorizacion as FechaSaldo,
                                     cffu.Flag
@@ -340,7 +353,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                                                                                     select 
                                                                                     Id 
                                                                                     from t_comprobacion_fondo_fijo 
-                                                                                    where IdUsuario = cffu.IdUsuario 
+                                                                                    where IdUsuarioFF = cffu.IdUsuario 
                                                                                     and IdEstatus = 7 
                                                                                     order by FechaAutorizacion desc 
                                                                                     limit 1)
@@ -353,14 +366,15 @@ class Modelo_Tesoreria extends Modelo_Base {
                                     tcff.Id,
                                     tcff.FechaAutorizacion as Fecha,
                                     tcff.FechaMovimiento,
-                                    if(tcff.IdTipoComprobante = 2, 'Depósito', ccc.Nombre) as Nombre,
+                                    if(tcff.IdTipoMovimiento = 1, 'Depósito', ccc.Nombre) as Nombre,
                                     if(ccc.Extraordinario = 1, 'SI', 'NO') as Extraordinario,
+                                    if(tcff.EnPresupuesto = 1, 'SI', 'NO') as EnPresupuesto,
                                     tcff.Monto,
                                     tcff.Saldo,
                                     ticketByServicio(tcff.IdServicio) as Ticket,
                                     (select Nombre from cat_v3_tipos_comprobante where Id = tcff.IdTipoComprobante) as TipoComprobante,
                                     estatus(tcff.IdEstatus) as Estatus,
-                                    tcff.IdEstatus
+                                    tcff.IdEstatus                                    
 
                                     from
                                     t_comprobacion_fondo_fijo tcff
@@ -533,4 +547,45 @@ class Modelo_Tesoreria extends Modelo_Base {
         return $consulta;
     }
 
+    public function registrarComprobante(array $datos) {
+        $this->iniciaTransaccion();
+
+        $saldo = $this->getSaldoByUsuario($this->usuario['Id']);
+
+        $this->insertar("t_comprobacion_fondo_fijo", [
+            "IdUsuario" => $this->usuario['Id'],
+            "Fecha" => $this->getFecha(),
+            "IdUsuarioFF" => $this->usuario['Id'],
+            "IdTipoMovimiento" => 2,
+            "IdConcepto" => $datos['concepto'],
+            "IdTipoComprobante" => $datos['tipoComprobante'],
+            "IdEstatus" => ($datos['enPresupuesto'] == 1) ? 7 : 8,
+            "Monto" => $datos['monto'],
+            "Saldo" => ($datos['enPresupuesto'] == 1) ? ((float) $saldo + (float) $datos['monto']) : null,
+            "FechaMovimiento" => str_replace("T", " ", $datos['fecha']),
+            "IdServicio" => $datos['servicio'],
+            "IdOrigen" => $datos['origen'],
+            "IdDestino" => $datos['destino'],
+            "OrigenOtro" => $datos['stringOrigen'],
+            "DestinoOtro" => $datos['stringDestino'],
+            "Observaciones" => $datos["observaciones"],
+            "Archivos" => $datos["archivos"],
+            "FechaAutorizacion" => ($datos['enPresupuesto'] == 1) ? $this->getFecha() : null,
+            "IdUsuarioAutoriza" => ($datos['enPresupuesto'] == 1) ? $this->usuario['Id'] : null,
+            "EnPresupuesto" => $datos['enPresupuesto'],
+            "XML" => $datos['xml'],
+            "PDF" => $datos['pdf']
+        ]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'errorBack' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
 }

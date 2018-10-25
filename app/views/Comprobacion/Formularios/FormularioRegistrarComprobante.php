@@ -46,7 +46,7 @@
                             if (isset($conceptos) && count($conceptos) > 0) {
                                 foreach ($conceptos as $key => $value) {
                                     if ($value['Flag'] == 1) {
-                                        echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+                                        echo '<option data-comprobante="' . $value['TiposComprobante'] . '" value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
                                     }
                                 }
                             }
@@ -117,7 +117,7 @@
                 <div id="divOtroOrigen" class="col-md-6 col-sm-6 col-xs-12 hidden">
                     <div class="form-group">
                         <label class="f-s-15 f-w-600">Describe "Otro" del campo "Origen":</label>
-                        <input type="text" id="textOrigen" class="form-control" value="" placeholder="Insurgentes Sur 1647, 03900, CDMX" />
+                        <input type="text" id="txtOrigen" class="form-control" value="" placeholder="Insurgentes Sur 1647, 03900, CDMX" />
                     </div>
                 </div>
             </div>
@@ -141,7 +141,7 @@
                 <div id="divOtroDestino" class="col-md-6 col-sm-6 col-xs-12 hidden">
                     <div class="form-group">
                         <label class="f-s-15 f-w-600">Describe "Otro" del campo "destino":</label>
-                        <input type="text" id="textDestino" class="form-control" value="" placeholder="Insurgentes Sur 1647, 03900, CDMX" />
+                        <input type="text" id="txtDestino" class="form-control" value="" placeholder="Insurgentes Sur 1647, 03900, CDMX" />
                     </div>
                 </div>
             </div>

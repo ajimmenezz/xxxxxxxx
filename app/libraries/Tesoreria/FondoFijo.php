@@ -109,10 +109,177 @@ class FondoFijo extends General {
         $monto = $this->DB->cargaMontoMaximoConcepto(array_merge($datos, ['usuario' => $this->usuario['Id']]));
         return $monto;
     }
-    
+
     public function cargaServiciosTicket(array $datos) {
         $servicios = $this->DB->cargaServiciosTicket(array_merge($datos, ['usuario' => $this->usuario['Id']]));
         return $servicios;
+    }
+
+    public function registrarComprobante(array $datos) {
+        $date = date('Ymd');
+        $datos['tipoComprobante'] = 3;
+        $datos['xml'] = '';
+        $datos['pdf'] = '';
+
+        $archivos = null;
+        $CI = parent::getCI();
+        $carpeta = 'comprobaciones/fondo_fijo/' . $date . '/';
+
+        $archivos = '';
+        if (!empty($_FILES)) {
+            $archivos = setMultiplesArchivos($CI, 'fotosDeposito', $carpeta);
+            $archivosFact = $archivos;
+
+            $countXML = 0;
+            $countPdf = 0;
+            foreach ($archivos as $key => $value) {
+                $extension = pathinfo($value, PATHINFO_EXTENSION);
+                if ($extension === 'pdf') {
+                    $datos['pdf'] = $value;
+                    unset($archivosFact[$key]);
+                    $countPdf++;
+                    if ($countPdf > 1) {
+                        $this->eliminaArchivos($archivos);
+                        return ['code' => 500, 'errorBack' => 'Se seleccionaron más de 1 PDF. Por favor verifique sus archivos.'];
+                    }
+                }
+
+                if ($extension === 'xml') {
+                    $datos['xml'] = $value;
+                    unset($archivosFact[$key]);
+                    $countXML++;
+                    if ($countXML > 1) {
+                        $this->eliminaArchivos($archivos);
+                        return ['code' => 500, 'errorBack' => 'Se seleccionaron más de 1 XML. Por favor verifique sus archivos.'];
+                    }
+
+                    $xml = simplexml_load_file(getcwd() . $value);
+
+                    $arrayComprobante = (array) $xml->xpath('//cfdi:Comprobante');
+                    $arrayComprobante = (array) $arrayComprobante[0];
+                    $resultadoComprobante = $this->validarTotalXML($arrayComprobante, $datos['monto']);
+                    if ($resultadoComprobante['code'] != 200) {
+                        $this->eliminaArchivos($archivos);
+                        return ['code' => 500, 'errorBack' => $resultadoComprobante['error']];
+                    }
+
+                    $arrayReceptor = (array) $xml->xpath('//cfdi:Receptor');
+                    $arrayReceptor = (array) $arrayReceptor[0];
+                    $resultadoReceptor = $this->validarReceptorXML($arrayReceptor);
+                    if ($resultadoReceptor['code'] != 200) {
+                        $this->eliminaArchivos($archivos);
+                        return ['code' => 500, 'errorBack' => $resultadoReceptor['error']];
+                    }
+                }
+            }
+
+            if ($datos['tiposComprobante'] == 1) {
+                if ($countXML <= 0) {
+                    $this->eliminaArchivos($archivos);
+                    return ['code' => 500, 'errorBack' => 'Es necesario el archivo XML para comprobar este tipo de gastos.'];
+                } else if ($countPdf <= 0) {
+                    $this->eliminaArchivos($archivos);
+                    return ['code' => 500, 'errorBack' => 'Es necesario el archivo PDF para comprobar este tipo de gastos.'];
+                }
+            }
+
+            if ($countXML > 0 && $countPdf <= 0) {
+                $this->eliminaArchivos($archivos);
+                return ['code' => 500, 'errorBack' => 'Falta el archivo PDF de la factura.'];
+            }
+
+            if ($countXML == 1 && $countPdf == 1) {
+                $datos['tipoComprobante'] = 1;
+                $archivos = implode(',', $archivosFact);
+            } else {
+                $datos['tipoComprobante'] = 2;
+                $archivos = implode(',', $archivos);
+            }
+        }
+
+        $datos = array_merge($datos, ['archivos' => $archivos]);
+
+        $registrar = $this->DB->registrarComprobante($datos);
+        return $registrar;
+    }
+
+    public function validarTotalXML(array $datos, float $total) {
+        $arrayReturn = [
+            'code' => 200,
+            'error' => ''
+        ];
+
+        $total = abs($total);
+
+        foreach ($datos as $k => $nodoComprobante) {
+            if (isset($nodoComprobante['Version'])) {
+                if ($nodoComprobante['Version'] === '3.3' || $nodoComprobante['Version'] === 'V3.3' || $nodoComprobante['Version'] === 'V 3.3') {
+                    $resultadoComprobante = TRUE;
+                } else {
+                    $arrayReturn['code'] = 400;
+                    $arrayReturn['error'] = 'La Version de XML es incorrecta. Es necesario que el CFDI tenga la versión 3.3';
+                }
+            } else {
+                $arrayReturn['code'] = 400;
+                $arrayReturn['error'] = 'La etiqueta de versión del CFDI no existe. Verifique su archivo';
+            }
+
+            if (isset($nodoComprobante['Total'])) {
+                $totalFloat = (float) $nodoComprobante['Total'];
+                if ($totalFloat >= ((float) $total - 0.99) && $totalFloat <= ((float) $total) + 0.99) {
+                    
+                } else {
+                    $arrayReturn['code'] = 400;
+                    $arrayReturn['error'] = 'El total de la factura no corresponde al capturado para comprobacion. Factura:$' . $totalFloat . ' y Monto:$' . $total;
+                }
+            } else {
+                $arrayReturn['code'] = 400;
+                $arrayReturn['error'] = 'La etiqueta Total del CFDI no existe. Verifique su archivo';
+            }
+        }
+
+        return $arrayReturn;
+    }
+
+    public function validarReceptorXML(array $datos) {
+        $arrayReturn = [
+            'code' => 200,
+            'error' => ''
+        ];
+
+        foreach ($datos as $k => $nodoReceptor) {
+            if (isset($nodoReceptor['Rfc'])) {
+                if ($nodoReceptor['Rfc'] === 'SSO0101179Z7') {
+                    
+                } else {
+                    $arrayReturn['code'] = 400;
+                    $arrayReturn['error'] = 'El receptor (RFC) no coincide con SSO0101179Z7. Verifique su archivo';
+                }
+            } else {
+                return 'La etiqueta RFC del Receptor no existe. Verifique su archivo';
+            }
+        }
+
+        return $arrayReturn;
+    }
+
+    public function eliminaArchivos(array $archivos) {
+        foreach ($archivos as $k => $v) {
+            try {
+                unlink('.' . $v);
+            } catch (Exception $ex) {
+                
+            }
+        }
+    }
+
+    public function formularioDetallesMovimiento(array $datos) {
+        $datos = [
+        ];
+
+        return [
+            'html' => parent::getCI()->load->view('Comprobacion/Formularios/FormularioDetallesMovimiento', $datos, TRUE)
+        ];
     }
 
 }
