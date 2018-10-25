@@ -32,7 +32,7 @@ class Modelo_Comprobacion extends Modelo_Base {
         $this->iniciaTransaccion();
 
         if ($datos['id'] == 0) {
-            $this->insertar("cat_V3_comprobacion_conceptos", [
+            $this->insertar("cat_v3_comprobacion_conceptos", [
                 'Nombre' => $datos['concepto'],
                 'Monto' => $datos['monto'],
                 'Extraordinario' => $datos['extraordinario'],
@@ -225,7 +225,7 @@ class Modelo_Comprobacion extends Modelo_Base {
     }
 
     public function editarSistema(array $datos) {
-        $edit = $this->actualizar("cat_V3_sistemas_proyecto", ['Nombre' => mb_strtoupper($datos['sistema']), 'Flag' => $datos['estatus']], ['Id' => $datos['id']]);
+        $edit = $this->actualizar("cat_v3_sistemas_proyecto", ['Nombre' => mb_strtoupper($datos['sistema']), 'Flag' => $datos['estatus']], ['Id' => $datos['id']]);
         if (!is_null($edit)) {
             return [
                 'datos' => $this->getSistemas($datos['id'])
