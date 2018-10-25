@@ -86,12 +86,11 @@ class FondoFijo extends General {
                     . ' Se ha registrado un nuevo depósito por la cantidad de <strong>$' . number_format($datos['monto'], 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifica la información mencionada ingresando al sistema'
                     . '</p>';
             $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
-//            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['Email'], $generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
-            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array('ajimenez@siccob.com.mx'), $titulo, $mensaje);
+            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
         }
 
         return $registrar;
-    }
+    }    
 
     public function formularioRegistrarComprobante(array $datos) {
         $datos = [
@@ -173,7 +172,9 @@ class FondoFijo extends General {
                 }
             }
 
-            if ($datos['tiposComprobante'] == 1) {
+            $tiposComprobante = explode(",", $datos['tiposComprobante']);
+            
+            if ($tiposComprobante[0] == 1 && count($tiposComprobante) == 1) {
                 if ($countXML <= 0) {
                     $this->eliminaArchivos($archivos);
                     return ['code' => 500, 'errorBack' => 'Es necesario el archivo XML para comprobar este tipo de gastos.'];
@@ -275,10 +276,67 @@ class FondoFijo extends General {
 
     public function formularioDetallesMovimiento(array $datos) {
         $datos = [
+            'generales' => $this->DB->getDetallesFondoFijoXId($datos['id'])[0]
         ];
 
         return [
             'html' => parent::getCI()->load->view('Comprobacion/Formularios/FormularioDetallesMovimiento', $datos, TRUE)
+        ];
+    }        
+    
+    public function cancelarMovimiento(array $datos) {
+        $cancelar = $this->DB->cancelarMovimiento($datos);
+        return $cancelar;
+    }
+    
+    public function rechazarMovimiento(array $datos) {
+        $rechazar = $this->DB->rechazarMovimiento($datos);
+        
+        if ($rechazar['code'] == 200) {
+            $generalesUsuario = $this->DB->getGeneralInfoByUserID($rechazar['id']);
+            $generalesUsuarioRechaza = $this->DB->getGeneralInfoByUserID($this->usuario['Id']);
+            $generalesMovimiento = $this->DB->getDetallesFondoFijoXId($datos['id'])[0];
+            
+            $titulo = 'Comprobante Rechazado - Fondo Fijo';
+            $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
+                    . '<p>'
+                    . ' El usuario '.$generalesUsuarioRechaza['Nombre'].' ha  rechazado su comprobante por concepto de "'.$generalesMovimiento['Nombre'].'" por el total de $' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifique la información mencionada ingresando al sistema o comuniquese con el usuario que rechazó el comprobante.'
+                    . '</p>';
+            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
+        }
+        
+        return $rechazar;
+        
+    }
+    public function autorizarMovimiento(array $datos) {
+        $autorizar = $this->DB->autorizarMovimiento($datos);
+        
+        if ($autorizar['code'] == 200) {
+            $generalesUsuario = $this->DB->getGeneralInfoByUserID($autorizar['id']);
+            $generalesUsuarioRechaza = $this->DB->getGeneralInfoByUserID($this->usuario['Id']);
+            $generalesMovimiento = $this->DB->getDetallesFondoFijoXId($datos['id'])[0];
+            
+            $titulo = 'Comprobante Autorizado - Fondo Fijo';
+            $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
+                    . '<p>'
+                    . ' El usuario '.$generalesUsuarioRechaza['Nombre'].' ha autorizado su comprobante por concepto de "'.$generalesMovimiento['Nombre'].'" por el total de $' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifique la información mencionada ingresando al sistema.'
+                    . '</p>';
+            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
+        }
+        
+        return $autorizar;
+        
+    }
+    
+    public function formularioDetallesMovimientoAutorizar(array $datos) {
+        $datos = [
+            'generales' => $this->DB->getDetallesFondoFijoXId($datos['id'])[0]
+        ];
+
+        return [
+            'html' => parent::getCI()->load->view('Comprobacion/Formularios/FormularioDetallesMovimientoAutorizar', $datos, TRUE)
         ];
     }
 

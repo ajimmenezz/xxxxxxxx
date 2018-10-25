@@ -366,7 +366,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                                     tcff.Id,
                                     tcff.FechaAutorizacion as Fecha,
                                     tcff.FechaMovimiento,
-                                    if(tcff.IdTipoMovimiento = 1, 'Depósito', ccc.Nombre) as Nombre,
+                                    if(tcff.IdTipoMovimiento = 1, 'Depósito', if(tcff.IdTipoMovimiento = 3 ,'Reembolso por Cancelación' , ccc.Nombre)) as Nombre,
                                     if(ccc.Extraordinario = 1, 'SI', 'NO') as Extraordinario,
                                     if(tcff.EnPresupuesto = 1, 'SI', 'NO') as EnPresupuesto,
                                     tcff.Monto,
@@ -382,6 +382,38 @@ class Modelo_Tesoreria extends Modelo_Base {
                                     where tcff.IdUsuarioFF = '" . $id . "'
                                     order by tcff.FechaAutorizacion desc
                                     limit 50;");
+        return $consulta;
+    }
+
+    public function getDetallesFondoFijoXId(int $id) {
+        $consulta = $this->consulta("select 
+                                    tcff.Id,
+                                    tcff.FechaAutorizacion as Fecha,
+                                    tcff.FechaMovimiento,
+                                    tcff.IdTipoMovimiento,
+                                    tcff.IdUsuarioFF,
+                                    (select Nombre from cat_v3_comprobacion_tipos_movimiento where Id = tcff.IdTipoMovimiento) as TipoMovimiento,
+                                    if(tcff.IdTipoMovimiento = 1, 'Depósito', if(tcff.IdTipoMovimiento = 3 ,'Reembolso por Cancelación' , ccc.Nombre)) as Nombre,
+                                    if(ccc.Extraordinario = 1, 'SI', 'NO') as Extraordinario,
+                                    if(tcff.EnPresupuesto = 1, 'SI', 'NO') as EnPresupuesto,
+                                    tcff.Monto,
+                                    tcff.Saldo,
+                                    ticketByServicio(tcff.IdServicio) as Ticket,
+                                    (select Nombre from cat_v3_tipos_comprobante where Id = tcff.IdTipoComprobante) as TipoComprobante,
+                                    estatus(tcff.IdEstatus) as Estatus,
+                                    tcff.IdEstatus,
+                                    nombreUsuario(tcff.IdUsuarioAutoriza) as Autoriza,
+                                    if(IdOrigen <> 0, sucursalCliente(tcff.IdOrigen), tcff.OrigenOtro) as Origen,
+                                    if(IdDestino <> 0, sucursalCliente(tcff.IdDestino), tcff.DestinoOtro) as Destino,
+                                    tcff.Observaciones,
+                                    tcff.Archivos, 
+                                    tcff.XML,
+                                    tcff.PDF
+
+                                    from
+                                    t_comprobacion_fondo_fijo tcff
+                                    left join cat_v3_comprobacion_conceptos ccc on tcff.IdConcepto = ccc.Id
+                                    where tcff.Id = '" . $id . "'");
         return $consulta;
     }
 
@@ -559,9 +591,9 @@ class Modelo_Tesoreria extends Modelo_Base {
             "IdTipoMovimiento" => 2,
             "IdConcepto" => $datos['concepto'],
             "IdTipoComprobante" => $datos['tipoComprobante'],
-            "IdEstatus" => ($datos['enPresupuesto'] == 1) ? 7 : 8,
+            "IdEstatus" => ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? 7 : 8,
             "Monto" => $datos['monto'],
-            "Saldo" => ($datos['enPresupuesto'] == 1) ? ((float) $saldo + (float) $datos['monto']) : null,
+            "Saldo" => ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? ((float) $saldo + (float) $datos['monto']) : null,
             "FechaMovimiento" => str_replace("T", " ", $datos['fecha']),
             "IdServicio" => $datos['servicio'],
             "IdOrigen" => $datos['origen'],
@@ -570,8 +602,8 @@ class Modelo_Tesoreria extends Modelo_Base {
             "DestinoOtro" => $datos['stringDestino'],
             "Observaciones" => $datos["observaciones"],
             "Archivos" => $datos["archivos"],
-            "FechaAutorizacion" => ($datos['enPresupuesto'] == 1) ? $this->getFecha() : null,
-            "IdUsuarioAutoriza" => ($datos['enPresupuesto'] == 1) ? $this->usuario['Id'] : null,
+            "FechaAutorizacion" => ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? $this->getFecha() : null,
+            "IdUsuarioAutoriza" => ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? $this->usuario['Id'] : null,
             "EnPresupuesto" => $datos['enPresupuesto'],
             "XML" => $datos['xml'],
             "PDF" => $datos['pdf']
@@ -588,4 +620,149 @@ class Modelo_Tesoreria extends Modelo_Base {
             return ['code' => 200];
         }
     }
+
+    public function cancelarMovimiento(array $datos) {
+        $this->iniciaTransaccion();
+
+        $generales = $this->getDetallesFondoFijoXId($datos['id'])[0];
+        $this->actualizar("t_comprobacion_fondo_fijo", [
+            "IdEstatus" => 6,
+            "IdUsuarioAutoriza" => $this->usuario['Id'],
+            "FechaAutorizacion" => $this->getFecha()
+                ], ["Id" => $datos['id']]);
+
+        if ($generales['IdEstatus'] == 7) {
+            $saldo = $this->getSaldoByUsuario($generales['IdUsuarioFF']);
+
+            $this->insertar("t_comprobacion_fondo_fijo", [
+                "IdUsuario" => $this->usuario['Id'],
+                "Fecha" => $this->getFecha(),
+                "IdUsuarioFF" => $this->usuario['Id'],
+                "IdTipoMovimiento" => 3,
+                "IdTipoComprobante" => 3,
+                "IdEstatus" => 7,
+                "Monto" => abs($generales['Monto']),
+                "Saldo" => ((float) $saldo + (float) abs($generales['Monto'])),
+                "FechaMovimiento" => $this->getFecha(),
+                "Observaciones" => "Reembolso por cancelación del movimiento " . $datos['id'],
+                "Archivos" => "",
+                "FechaAutorizacion" => $this->getFecha(),
+                "IdUsuarioAutoriza" => $this->usuario['Id']
+            ]);
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200
+            ];
+        }
+    }    
+    
+    public function rechazarMovimiento(array $datos) {
+        $this->iniciaTransaccion();
+
+        $generales = $this->getDetallesFondoFijoXId($datos['id'])[0];
+        $this->actualizar("t_comprobacion_fondo_fijo", [
+            "IdEstatus" => 10,
+            "IdUsuarioAutoriza" => $this->usuario['Id'],
+            "FechaAutorizacion" => $this->getFecha()
+                ], ["Id" => $datos['id']]);
+        
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'id' => $generales['IdUsuarioFF']
+            ];
+        }
+    }
+    
+    public function autorizarMovimiento(array $datos) {
+        $this->iniciaTransaccion();
+
+        $generales = $this->getDetallesFondoFijoXId($datos['id'])[0];        
+        $saldo = $this->getSaldoByUsuario($generales['IdUsuarioFF']);        
+        
+        $this->actualizar("t_comprobacion_fondo_fijo", [
+            "IdEstatus" => 7,
+            "Saldo" => ((float) $saldo + (float) $generales['Monto']),
+            "IdUsuarioAutoriza" => $this->usuario['Id'],
+            "FechaAutorizacion" => $this->getFecha()
+                ], ["Id" => $datos['id']]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'id' => $generales['IdUsuarioFF']
+            ];
+        }
+    }
+
+    public function getEmpleadosByIdJefe(int $id) {
+        $arrayUsuarios = [$id];
+        $arrayUsuariosTemp = $arrayUsuarios;
+
+        while (!empty($arrayUsuariosTemp)) {
+            $ids = implode(",", $arrayUsuariosTemp);
+            $consulta = $this->consulta("select Id from cat_v3_usuarios where IdJefe in (" . $ids . ")");
+            $arrayUsuariosTemp = [];
+            if (!empty($consulta)) {
+                foreach ($consulta as $key => $value) {
+                    if (!in_array($value['Id'], $arrayUsuarios)) {
+                        array_push($arrayUsuarios, $value['Id']);
+                        array_push($arrayUsuariosTemp, $value['Id']);
+                    }
+                }
+            }
+        }
+
+        return $arrayUsuarios;
+    }
+
+    public function getComprobacionesXAutorizar(int $id) {
+        $empleados = $this->getEmpleadosByIdJefe($id);
+        $ids = implode(",", $empleados);
+
+        $consulta = $this->consulta("select 
+                                    tcff.Id,
+                                    nombreUsuario(tcff.IdUsuarioFF) as Usuario,
+                                    tcff.Fecha,
+                                    tcff.FechaMovimiento,
+                                    if(tcff.IdTipoMovimiento = 1, 'Depósito', if(tcff.IdTipoMovimiento = 3 ,'Reembolso por Cancelación' , ccc.Nombre)) as Nombre,
+                                    if(ccc.Extraordinario = 1, 'SI', 'NO') as Extraordinario,
+                                    if(tcff.EnPresupuesto = 1, 'SI', 'NO') as EnPresupuesto,
+                                    tcff.Monto,                                    
+                                    ticketByServicio(tcff.IdServicio) as Ticket,
+                                    (select Nombre from cat_v3_tipos_comprobante where Id = tcff.IdTipoComprobante) as TipoComprobante                                    
+                                    from
+                                    t_comprobacion_fondo_fijo tcff
+                                    left join cat_v3_comprobacion_conceptos ccc on tcff.IdConcepto = ccc.Id
+                                    where tcff.IdUsuarioFF in (" . $ids . ")
+                                    and tcff.IdEstatus = 8
+                                    order by tcff.Fecha");
+        
+        return $consulta;
+    }
+
 }

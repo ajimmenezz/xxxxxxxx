@@ -167,5 +167,6 @@ $config['Secciones'] = array(
     'Comprobacion' => array(
         'Catalogos-Comprobacion' => 'Catalogos',
         'FondoFijo-Comprobacion' => 'Fondo_Fijo',
+        'FondoFijo-Autorizacion' => 'Autorizar_Fondo_Fijo',
     ),
 );

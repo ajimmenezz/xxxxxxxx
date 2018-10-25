@@ -166,15 +166,13 @@
     }
     ?>
 </div>
-<?php
-if ($generales['IdTipoMovimiento'] == 2 && !in_array($generales['IdEstatus'], [6, 10, '6', '10'])) {
-    ?>
-    <div class="row m-t-10">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-            <a id="btnCancelarMovimiento" class="btn btn-danger btn-block">Cancelar Movimiento</a>
-        </div>
+<div class="row m-t-20">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <a id="btnRechazarMovimiento" class="btn btn-danger btn-block">Rechazar Movimiento</a>
     </div>
-
-    <?php
-}
-?>
+</div>
+<div class="row m-t-20">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <a id="btnAutorizarMovimiento" class="btn btn-success btn-block">Autorizar Movimiento</a>
+    </div>
+</div>

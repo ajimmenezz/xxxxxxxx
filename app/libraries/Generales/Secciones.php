@@ -447,6 +447,10 @@ class Secciones extends General {
                 $datos['saldo'] = $this->ModeloTesoreria->getSaldoByUsuario($usuario['Id']);
                 $datos['xautorizar'] = $this->ModeloTesoreria->getSaldoXAutorizarByUsuario($usuario['Id']);
                 break;
+            case 'Comprobacion/Autorizar_Fondo_Fijo':
+                $usuario = $this->Usuario->getDatosUsuario();
+                $datos['listaComprobaciones'] = $this->ModeloTesoreria->getComprobacionesXAutorizar($usuario['Id']);    
+                break;
             default:
                 break;
         }
