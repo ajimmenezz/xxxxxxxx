@@ -175,6 +175,10 @@ $(function () {
         $('#concluirServicioChecklist').on('click', function () {
             var servicio = $('#hiddenServicio').val();
             var sucursal = $('#selectSucursales option:selected').val();
+            
+//            evento.enviarEvento('Seguimiento/nuevosServiciosDesdeChecklist', {}, '', function(){
+//                
+//            });
 
             if (sucursal !== '') {
                 var datosServicio = {'servicio': servicio};
@@ -247,13 +251,14 @@ $(function () {
                         if (imgInput !== '') {
                             if ($('#terminos').attr('checked')) {
                                 var dataInsertar = {'ticket': ticket, 'servicio': servicio, 'img': img, 'correo': correo, 'nombreFirma': personaRecibe, 'sucursal': sucursal};
-                                evento.enviarEvento('Seguimiento/GuardarConclusionChecklist', dataInsertar, '#modal-dialogo', function (respuesta) {
-                                    if (respuesta) {
-                                        servicios.mensajeModal('Servicio concluido.', 'Correcto');
-                                    } else {
-                                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Tienes informacion sin concluir', 3000);
-                                    }
-                                });
+
+//                                evento.enviarEvento('Seguimiento/GuardarConclusionChecklist', dataInsertar, '#modal-dialogo', function (respuesta) {
+//                                    if (respuesta) {
+//                                        servicios.mensajeModal('Servicio concluido.', 'Correcto');
+//                                    } else {
+//                                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Tienes informacion sin concluir', 3000);
+//                                    }
+//                                });
                             } else {
                                 evento.mostrarMensaje('.errorConcluirServicio', false, 'Debes aceptar terminos', 3000);
                             }
@@ -924,7 +929,7 @@ $(function () {
 
     var guardarInformacionChecklist = function (datos) {
 
-        evento.enviarEvento('Seguimiento/GuardarInformacionChecklist', datos, '#informacionRevision', function (respuesta) {
+        evento.enviarEvento('Seguimiento/GuardarInformacionChecklist', datos, '#seguimiento-checklist', function (respuesta) {
             if (respuesta) {
                 var sucursalSelect = $('#selectSucursales option:selected').val();
                 mostrarTabla(sucursalSelect);

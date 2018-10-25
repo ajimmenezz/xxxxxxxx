@@ -732,8 +732,6 @@ class Poliza extends General {
         if (!empty($consultaServicio)) {
             $consultaRevisiones = $this->DBP->consultaRevisionPunotPDF($datos['servicio']);
             if (!empty($consultaRevisiones)) {
-//                echo '<pre>';
-//                print_r($consultaRevisiones);
                 return ['sucursal' => $consultaServicio[0]['IdSucursal']];
             } else {
                 return false;
@@ -749,7 +747,7 @@ class Poliza extends General {
 
         $correo = implode(",", $datos['correo']);
         $datosServicio = $this->DBST->getDatosServicio($datos['servicio']);
-        $titulo = 'Se concluyo el servicio';
+        $titulo = 'Se concluyo el Servicio Checklist';
 
         $host = $_SERVER['SERVER_NAME'];
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
@@ -761,7 +759,7 @@ class Poliza extends General {
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $dataFirma);
 
         $arrayServicio = array(
-            'Estatus' => '4',
+//            'Estatus' => '4',
             'FechaConclusion' => $fecha,
             'Firma' => $direccionFirma,
             'NombreFirma' => $datos['nombreFirma'],
@@ -770,6 +768,7 @@ class Poliza extends General {
             'servicio' => $datos['servicio'],
         );
 
+        $actualizarServicio = $this->DBP->concluirServicio($arrayServicio);
         $pdf = $this->pdfServicioChecklist(array('servicio' => $datos['servicio']));
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
@@ -778,14 +777,13 @@ class Poliza extends General {
             $path = 'http://' . $host . '/' . $pdf;
         }
 
-        $actualizarServicio = $this->DBP->concluirServicio($arrayServicio);
-
         if ($actualizarServicio) {
             $linkPDF = '<br>Para descargar el archivo PDF de conclusión <a href="' . $path . '" target="_blank">dar click aqui</a>';
             $textoCorreo = '<p>Se notifica que el servicio de ' . $datosServicio['TipoServicio'] . ' con numero de ticket ' . $datos['ticket'] . ' se a concluido por ' . $usuario['Nombre'] . '<br>' . $linkPDF . '</p>';
-
+            
+            $this->nuevosServiciosDesdeChecklist($actualizarServicio);
             foreach ($actualizarServicio as $key => $value) {
-                $this->enviarCorreoConcluido(array($value['CorreoCopiaFirma']), $titulo, $textoCorreo);
+                $this->enviarCorreoConcluido(array($value['CorreoCopiaFirma']), $titulo, $textoCorreo);                
                 return TRUE;
             }
         }
@@ -805,7 +803,9 @@ class Poliza extends General {
         $this->pdf = new PDFAux("Sucursal: " . $datosServicio['Sucursal'] . " \n Resumen de Servicio - Checklist");
         $this->paginaInformacionGeneral($datosServicio, $datos);
         $this->revisionArea($revisionFisica);
-        $this->paginaRevisionTecnica($revisionTecnica);
+        if(!empty($revisionTecnica)) {
+            $this->paginaRevisionTecnica($revisionTecnica);
+        }
 
         $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/PDF/', 'Servicio-Checklist-' . $datos['servicio']);
         $this->pdf->Output('F', $carpeta, true);
@@ -813,7 +813,7 @@ class Poliza extends General {
         return $carpeta;
     }
 
-    private function paginaInformacionGeneral($datosServicio, $datos) {
+    public function paginaInformacionGeneral($datosServicio, $datos) {
         $this->pdf->AddPage();
         $this->pdf->subTitulo('Información General del Servicio');
 
@@ -836,7 +836,7 @@ class Poliza extends General {
         $this->pdf->imagenConTiuloYSubtitulo($datosServicio['Firma'], "Firma Cierre", $datosServicio['NombreFirma'], $y);
     }
 
-    private function revisionArea($revisionFisica) {
+    public function revisionArea($revisionFisica) {
         $this->pdf->AddPage();
         $this->pdf->subTitulo('Revisión Fisica');
         foreach ($revisionFisica as $revision) {
@@ -851,7 +851,7 @@ class Poliza extends General {
         }
     }
 
-    private function paginaRevisionTecnica($revisionTecnica) {
+    public function paginaRevisionTecnica($revisionTecnica) {
         $this->pdf->AddPage();
 
         foreach ($revisionTecnica as $clave => $valor) {
@@ -878,6 +878,17 @@ class Poliza extends General {
         }
     }
 
+    // empieza creacion de servicio correctivo
+    public function nuevosServiciosDesdeChecklist(array $datos) {
+        $datosTicket = array();
+        foreach ($datos as $value) {
+            $datosTicket = array('IdServicio' => $value['Id'], 'Ticket' => $value['Ticket'], 'IdSolicitud' => $value['IdSolicitud'], 'IdSucursal' => $value['IdSucursal']);
+        }
+        $insertarTicket = $this->DBP->insertarNuevoServicioCorrectivo($datosTicket);
+        
+        return $insertarTicket;
+    }
+
 }
 
 class PDFAux extends PDF {
@@ -902,10 +913,6 @@ class PDFAux extends PDF {
         $this->Cell(0, 10, utf8_decode($titulo));
         $this->Ln();
         $this->Line($this->GetX(), $this->GetY(), $this->GetPageWidth() - 10, $this->GetY());
-    }
-
-    public function body() {
-        $this->AddPage();
     }
 
     public function Footer() {
@@ -961,7 +968,7 @@ class PDFAux extends PDF {
         $this->Cell(0, 7, $titulo, 0, 0, 'C');
         $this->Ln(4);
         $x = ($this->GetPageWidth() - 54) / 2;
-        $this->Image("." . $url, $x, $y, 60, 0);
+        $this->Image("." . $url, $x, $y, 60, 0, 'PNG');
         $y = $this->GetY() + 40;
         $this->SetY($y);
         $this->SetFont("Helvetica", "", 10);
@@ -996,7 +1003,7 @@ class PDFAux extends PDF {
         foreach ($listaImagenes as $imagenes) {
             foreach ($imagenes as $imagen) {
                 if ($x < $ancho) {
-                    $this->Image('.' . $imagen, $x, $y, 40, 35);
+                    $this->Image('.' . $imagen, $x, $y, 40, 35, 'JPG');
                     $x += 50;
                 }
             }

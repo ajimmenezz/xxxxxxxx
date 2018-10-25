@@ -411,15 +411,14 @@ class Modelo_Poliza extends Modelo_Base {
                                     FROM cat_v3_checklist_poliza_categorias" . $condicion);
         return $consulta;
     }
-    
+
     public function mostrarCategoriaRevisionPunto() {
         $consulta = $this->consulta("SELECT * 
                                     FROM t_checklist_revision_area tcra
                                     INNER JOIN cat_v3_checklist_poliza_categorias cvcpc on tcra.IdCategoria = cvcpc.Id
                                     GROUP BY tcra.IdCategoria");
-        
+
         return $consulta;
-        
     }
 
     public function agregarCategoria(string $categoria) {
@@ -484,9 +483,9 @@ class Modelo_Poliza extends Modelo_Base {
             return ['pregunta' => $consultaPregunta[0]];
         }
     }
-    
+
     public function consultarRevisionArea(array $datos) {
-        $consulta = $this->consulta("SELECT * FROM t_checklist_revision_area WHERE IdServicio = '" . $datos['servicio'] ."' AND IdCategoria = '".$datos['idCategoria']."'");
+        $consulta = $this->consulta("SELECT * FROM t_checklist_revision_area WHERE IdServicio = '" . $datos['servicio'] . "' AND IdCategoria = '" . $datos['idCategoria'] . "'");
         return $consulta;
     }
 
@@ -538,9 +537,9 @@ class Modelo_Poliza extends Modelo_Base {
 
     public function insertarRevisionAreas($datos) {
         if (isset($datos['DatosTabla'])) {
-            
+
             foreach ($datos['DatosTabla'] as $value) {
-                
+
                 $datosInsertar = array(
                     'IdServicio' => $datos['IdServicio'],
                     'IdConceptoFisico' => $value['IdConceptoFisico'],
@@ -548,18 +547,18 @@ class Modelo_Poliza extends Modelo_Base {
                     'IdAreaAtencion' => $value['IdAreaAtencion'],
                     'Flag' => $value['Flag']
                 );
-                
+
                 $consulta = $this->consulta("SELECT * 
                                             FROM t_checklist_revision_area
                                             WHERE Id = (SELECT MAX(Id) FROM t_checklist_revision_area 
-                                                        WHERE IdServicio = '".$datosInsertar['IdServicio']."'
-                                                        AND IdCategoria = '".$datosInsertar['IdCategoria']."'
-                                                        AND IdAreaAtencion = '".$datosInsertar['IdAreaAtencion']."' 
-                                                        AND IdConceptoFisico = '".$datosInsertar['IdConceptoFisico']."')");
-                
-                if(!empty($consulta)){
+                                                        WHERE IdServicio = '" . $datosInsertar['IdServicio'] . "'
+                                                        AND IdCategoria = '" . $datosInsertar['IdCategoria'] . "'
+                                                        AND IdAreaAtencion = '" . $datosInsertar['IdAreaAtencion'] . "' 
+                                                        AND IdConceptoFisico = '" . $datosInsertar['IdConceptoFisico'] . "')");
+
+                if (!empty($consulta)) {
                     $registro = $this->actualizar("t_checklist_revision_area", array('Flag' => $datosInsertar['Flag']), array('Id' => $consulta[0]['Id']));
-                }else{
+                } else {
                     $registro = $this->insertar('t_checklist_revision_area', $datosInsertar);
                 }
             }
@@ -578,18 +577,18 @@ class Modelo_Poliza extends Modelo_Base {
                                     from cat_v3_areas_atencion cvaa
                                     inner join t_checklist_revision_area tcra
                                     on cvaa.Id = tcra.IdAreaAtencion
-                                    where Nombre = '".$datos['idRevisionArea']."'
-                                    AND tcra.IdCategoria = '". $datos['idCategoria'] ."'              
-                                    AND tcra.IdServicio = '". $datos['servicio'] ."'");              
-        if(!empty($consulta)){
-            foreach ($consulta as $value) {                
+                                    where Nombre = '" . $datos['idRevisionArea'] . "'
+                                    AND tcra.IdCategoria = '" . $datos['idCategoria'] . "'              
+                                    AND tcra.IdServicio = '" . $datos['servicio'] . "'");
+        if (!empty($consulta)) {
+            foreach ($consulta as $value) {
                 return $value['Id'];
-            }            
+            }
         } else {
             return null;
         }
     }
-    
+
     public function obtenerEvidenciasPuntosCheckList(array $datos) {
         $consulta = $this->consulta('SELECT 
                                         Id,
@@ -597,24 +596,24 @@ class Modelo_Poliza extends Modelo_Base {
                                     FROM
                                         t_checklist_revision_punto
                                     WHERE
-                                        IdServicio = '.$datos['servicio'].' AND IdCategoria = '.$datos['idCategoria'].'
-                                            AND IdRevisionArea = '.$datos['idRevisionArea'].'
-                                            AND Punto = '.$datos['punto'].'
+                                        IdServicio = ' . $datos['servicio'] . ' AND IdCategoria = ' . $datos['idCategoria'] . '
+                                            AND IdRevisionArea = ' . $datos['idRevisionArea'] . '
+                                            AND Punto = ' . $datos['punto'] . '
                                             AND Flag = 1');
-        if(!empty($consulta)){
-            foreach ($consulta as $value) {                
+        if (!empty($consulta)) {
+            foreach ($consulta as $value) {
                 return array('Id' => $value['Id'], 'Evidencia' => $value['Evidencia']);
             }
-        }else{
+        } else {
             return null;
         }
     }
-    
+
     public function actualizarEvidencia(array $datos) {
         $consulta = $this->actualizar('t_checklist_revision_punto', array('Evidencia' => $datos['Evidencia']), array('Id' => $datos['Id']));
-        if(!empty($consulta)){
+        if (!empty($consulta)) {
             return true;
-        }else{
+        } else {
             return NULL;
         }
     }
@@ -636,7 +635,7 @@ class Modelo_Poliza extends Modelo_Base {
                                     AND IdServicio = '" . $datos['servicio'] . "'
                                     AND IdRevisionArea = '" . $datos['idRevisionArea'] . "'
                                     AND Punto = '" . $datos['punto'] . "'");
-               
+
         if (!is_null($consulta)) {
             return $consulta;
         } else {
@@ -676,6 +675,15 @@ class Modelo_Poliza extends Modelo_Base {
         $condicion = (!is_null($idRevision)) ? " AND Id = '" . $idRevision . "'" : '';
         $consultaFallas = "SELECT 
                                 tcrt.Id,
+                                tcrt.IdArea,
+                                tcrt.Punto,
+                                tcrt.IdModelo,
+                                tcrt.Terminal,
+                                tcrt.IdTipoDiagnostico,
+                                tcrt.IdComponente,
+                                tcrt.IdTipoFalla,
+                                tcrt.Evidencias,
+                                tcrt.IdFalla,
                                 concat(areaAtencion(tcrt.IdArea),' ',tcrt.Punto) as AreaPunto,
                                 modelo(tcrt.IdModelo) as Equipo,
                                 tcrt.Serie,
@@ -687,7 +695,7 @@ class Modelo_Poliza extends Modelo_Base {
                                 else ''
                                 END as Falla,
                                 DATE_FORMAT(tcrt.Fecha,'%d/%m/%Y') as Fecha,
-                                tcrt.Flag
+                                tcrt.Flag                                
                             FROM 
                             t_checklist_revision_tecnica tcrt
                             where tcrt.IdServicio = '" . $servicio . "'
@@ -740,7 +748,7 @@ class Modelo_Poliza extends Modelo_Base {
     public function concluirServicio(array $dato) {
 
         $this->actualizar('t_servicios_ticket', array(
-            'IdEstatus' => $dato['Estatus'],
+//            'IdEstatus' => $dato['Estatus'],
             'FechaConclusion' => $dato['FechaConclusion'],
             'Firma' => $dato['Firma'],
             'NombreFirma' => $dato['NombreFirma'],
@@ -759,10 +767,102 @@ class Modelo_Poliza extends Modelo_Base {
                                     where Id = '" . $servicio . "'");
         return $consulta[0];
     }
-    
+
     public function mostrarServicio($servicio) {
-        $consulta = $this->consulta("select * from t_servicios_ticket where Id = '" . $servicio ."'");
+        $consulta = $this->consulta("select * from t_servicios_ticket where Id = '" . $servicio . "'");
         return $consulta;
+    }
+
+    public function insertarNuevoServicioCorrectivo(array $datos) {
+
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $consultaChecklistRevisionTecnica = $this->mostrarFallasTecnicas($datos['IdServicio']);
+        
+        foreach ($consultaChecklistRevisionTecnica as $falla) {
+//            echo '<pre>';
+//            print_r($falla);
+//            return false;
+            
+            $this->iniciaTransaccion();
+            $descripcionCorrectivo = "Seguimiento de Diagnostico en checklist para el equipo " . $falla['Equipo'] . " con la Serie " . $falla['Serie'] . " por falla " . $falla['Falla'];
+
+            // insertando en t_servicios_ticket
+            $datosInsertarTicket = array('Ticket' => $datos['Ticket'],
+                'IdSolicitud' => $datos['IdSolicitud'],
+                'IdTipoServicio' => 20,
+                'IdSucursal' => $datos['IdSucursal'],
+                'IdEstatus' => 2,
+                'Solicita' => $this->usuario['Id'],
+                'Atiende' => $this->usuario['Id'],
+                'FechaCreacion' => $fecha,
+                'FechaInicio' => $fecha,
+                'Descripcion' => $descripcionCorrectivo,
+                'IdServicioOrigen' => $datos['IdServicio']
+            );
+
+            $insertarTicket = $this->insertar('t_servicios_ticket', $datosInsertarTicket);
+
+            if (!empty($insertarTicket)) {
+                $insertoTicket = "t_servicios_ticket ok";
+                $ultimaIdServicioTicket = $this->ultimoId();
+            } else {
+                $insertoTicket = "t_servicios_ticket error";
+            }
+
+            // insertando en t_correctivos_generales            
+            $datosInsertarCorrectivos = array('IdServicio' => $ultimaIdServicioTicket,
+                'IdArea' => $falla['IdArea'],
+                'Punto' => $falla['Punto'],
+                'IdModelo' => $falla['IdModelo'],
+                'Serie' => $falla['Serie'],
+                'Terminal' => $falla['Terminal'],
+            );
+
+            $insertarCorrectivos = $this->insertar('t_correctivos_generales', $datosInsertarCorrectivos);
+
+            if (!empty($insertarCorrectivos)) {
+                $insertarCorrectivosGenerales = "t_correctivos_generales ok";
+                $ultimoIdCorrectivosGenerales = $this->ultimoId();
+            } else {
+                $insertarCorrectivosGenerales = "t_correctivos_generales error";
+            }
+
+            // insertando en t_correctivos_diagnostico            
+            $consultaCorrectivosGenerales = $this->consulta("SELECT * FROM t_correctivos_generales WHERE Id = '" . $ultimoIdCorrectivosGenerales . "'");
+
+            $datosInsertarCorrectivosDiagnostico = array('IdServicio' => $consultaCorrectivosGenerales[0]['IdServicio'],
+                'IdTipoDiagnostico' => $falla['IdTipoDiagnostico'],
+                'IdUsuario' => $this->usuario['Id'],
+                'IdComponente' => $falla['IdComponente'],
+                'IdTipoFalla' => $falla['IdTipoFalla'],
+                'IdFalla' => $falla['IdFalla'],
+                'FechaCaptura' => $fecha,
+                'Evidencias' => $falla['Evidencias']
+            );
+
+            $insertarCorrectivosDiagnostico = $this->insertar('t_correctivos_diagnostico', $datosInsertarCorrectivosDiagnostico);
+
+            if (!empty($insertarCorrectivosDiagnostico)) {
+                $insertarCorrectivosDiagnostico = "t_correctivos_diagnostico ok";
+            } else {
+                $insertarCorrectivosDiagnostico = "t_correctivos_diagnostico error";
+            }
+
+            if ($this->estatusTransaccion() === FALSE) {
+                $this->roolbackTransaccion();
+                    $respuesta = FALSE;
+//                $return_array['inserto'] = "no paso";
+//                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
+            } else {
+                $this->commitTransaccion();
+                $actualizar = $this->actualizar("t_checklist_revision_tecnica", array('FlagInsert' => 1),array('Id' => $falla['Id']));
+                $respuesta = $actualizar;
+//                $return_array['code'] = $datos;
+//                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
+            }
+        }
+        
+        return $respuesta;
     }
 
 }

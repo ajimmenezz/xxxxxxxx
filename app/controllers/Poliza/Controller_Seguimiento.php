@@ -263,6 +263,9 @@ class Controller_Seguimiento extends Base {
             case 'ConsultarRevisonArea':
                 $resultado = $this->Poliza->consultarRevisonArea($this->input->post());
                 break;
+            case 'nuevosServiciosDesdeChecklist':
+                $resultado = $this->Poliza->nuevosServiciosDesdeChecklist($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

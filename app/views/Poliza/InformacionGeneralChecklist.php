@@ -213,7 +213,7 @@
                                     <option value="">Seleccionar</option>
                                     <?php
                                     foreach ($informacion['sucursalesXSolicitudCliente'] as $item) {
-                                        $select = ($informacion['sucursalesXSolicitudCliente'] == $item['Id']) ? 'selected' : '';
+                                        $select = ($informacion['sucursal'] == $item['Id']) ? 'selected' : '';
                                         echo '<option value="' . $item['Id'] . '" ' . $select . '>' . $item['Nombre'] . '</option>';
                                     }
                                     ?>
