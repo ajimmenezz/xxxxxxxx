@@ -131,6 +131,7 @@ $(function () {
                         eventosParaSeccionSeguimientoCorrectivo(datosTabla, respuesta);
                         personalizarDependiendoSucursalCorrectivo(respuesta);
                         break;
+                        //Servicio Checklist
                     case '27':
                         iniciarVistaChecklist(data, datosTabla, respuesta);
                         eventosChecklist(datosTabla, respuesta);
@@ -140,6 +141,7 @@ $(function () {
         });
     };
 
+    // inicia servicio Checklist
     var iniciarVistaChecklist = function (data, datosTabla, respuesta) {
         var sucursal = respuesta.informacion.sucursal;
         $('#listaPoliza').addClass('hidden');
@@ -175,14 +177,10 @@ $(function () {
         $('#concluirServicioChecklist').on('click', function () {
             var servicio = $('#hiddenServicio').val();
             var sucursal = $('#selectSucursales option:selected').val();
-            
-//            evento.enviarEvento('Seguimiento/nuevosServiciosDesdeChecklist', {}, '', function(){
-//                
-//            });
 
             if (sucursal !== '') {
                 var datosServicio = {'servicio': servicio};
-                evento.enviarEvento('Seguimiento/MostrarDatosServicio', datosServicio, '', function (respuesta) {
+                evento.enviarEvento('Seguimiento/MostrarDatosServicio', datosServicio, '#seguimiento-checklist', function (respuesta) {
                     if (respuesta.sucursal) {
                         concluirServicioChecklist(servicio, datosTabla, sucursal);
                     } else {
@@ -252,13 +250,13 @@ $(function () {
                             if ($('#terminos').attr('checked')) {
                                 var dataInsertar = {'ticket': ticket, 'servicio': servicio, 'img': img, 'correo': correo, 'nombreFirma': personaRecibe, 'sucursal': sucursal};
 
-//                                evento.enviarEvento('Seguimiento/GuardarConclusionChecklist', dataInsertar, '#modal-dialogo', function (respuesta) {
-//                                    if (respuesta) {
-//                                        servicios.mensajeModal('Servicio concluido.', 'Correcto');
-//                                    } else {
-//                                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Tienes informacion sin concluir', 3000);
-//                                    }
-//                                });
+                                evento.enviarEvento('Seguimiento/GuardarConclusionChecklist', dataInsertar, '#modal-dialogo', function (respuesta) {
+                                    if (respuesta) {
+                                        servicios.mensajeModal('Servicio concluido.', 'Correcto');
+                                    } else {
+                                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Tienes informacion sin concluir', 3000);
+                                    }
+                                });
                             } else {
                                 evento.mostrarMensaje('.errorConcluirServicio', false, 'Debes aceptar terminos', 3000);
                             }
@@ -488,7 +486,6 @@ $(function () {
                 let _this = this;
                 var datosTabla = $('#tablaFallasTecnicas').DataTable().row(_this).data();
                 var dato = {'idRevisionTecnica': datosTabla[0], 'servicio': servicio};
-                console.log(dato);
                 evento.enviarEvento('Seguimiento/ActualizarRevisionTecnica', dato, '#panel-catalogo-checklist', function (respuestaRevision) {
                     evento.iniciarModal('#modalEditRevisionChecklist', 'Editar Revisión Tecnica', respuestaRevision.modal);
 
@@ -612,7 +609,6 @@ $(function () {
         };
 
         if (datos.idFalla !== '' && datos.tipoFalla && _evidencia !== '') {
-            console.log(datos);
             file.enviarArchivos('#' + _fileInput, 'Seguimiento/GuardarRevisionTecnicaChecklist', '#seguimiento-checklist', datos, function (respuesta) {
                 if (respuesta.code === 200) {
                     tabla.limpiarTabla("#tablaFallasTecnicas");
@@ -697,7 +693,7 @@ $(function () {
     var mostrarPreguntaPorCategoria = function (dataCategoria, sucursal, respuesta) {
         var datos = {'IdCategoria': dataCategoria, 'sucursal': sucursal};
 
-        evento.enviarEvento('Seguimiento/MostrarPreguntas', datos, '', function (preguntasCategoria) {
+        evento.enviarEvento('Seguimiento/MostrarPreguntas', datos, '#seguimiento-checklist', function (preguntasCategoria) {
             var lista = preguntasCategoria[0];
             tabla.limpiarTabla('#tabla-categorias');
 
@@ -725,7 +721,7 @@ $(function () {
     var mostrarPuntoPorCategoria = function (dataCategoria, sucursal, respuesta, datosTabla) {
         var servicio = $('#hiddenServicio').val();
         var datos = {'servicio': servicio, 'sucursal': sucursal, 'categoria': dataCategoria};
-        evento.enviarEvento('Seguimiento/MostrarPuntoRevision', datos, '', function (datosPuntos) {
+        evento.enviarEvento('Seguimiento/MostrarPuntoRevision', datos, '#seguimiento-checklist', function (datosPuntos) {
             mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
         });
     };
@@ -852,7 +848,7 @@ $(function () {
             datos = $(this).attr('data-ideliminar');
             datos = datos.split('-');
             datos = {servicio: datos[0], idCategoria: datos[1], idRevisionArea: datos[2], punto: datos[3], url: urlEvidencia};
-            evento.enviarEvento('Seguimiento/EliminarEvidenciaChecklist', datos, '', function (datosPuntos) {
+            evento.enviarEvento('Seguimiento/EliminarEvidenciaChecklist', datos, '#seguimiento-checklist', function (datosPuntos) {
                 mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
             });
         });
@@ -912,7 +908,7 @@ $(function () {
         var servicio = $('#hiddenServicio').val();
         var datos = {'servicio': servicio, 'idCategoria': dataCategoria};
 
-        evento.enviarEvento('Seguimiento/ConsultarRevisonArea', datos, '', function (respuesta) {
+        evento.enviarEvento('Seguimiento/ConsultarRevisonArea', datos, '#seguimiento-checklist', function (respuesta) {
             $.each(respuesta, function (key, valor) {
                 if (dataCategoria == valor.IdCategoria) {
                     if (valor.Flag === `1`) {
@@ -944,6 +940,7 @@ $(function () {
         var datosTabla = arguments[0];
         var respuesta = arguments[1];
         var servicio = datosTabla[0];
+        var ticket = datosTabla[1];
 
         $('#guardarRevisionFisicaArea').off('click');
         $('#guardarRevisionFisicaArea').on('click', function () {
@@ -994,13 +991,13 @@ $(function () {
         });
 
         //Encargado de cancelar servicio
-        $('#btnCancelarServicio').off('click');
-        $('#btnCancelarServicio').on('click', function () {
+        $('#btnCancelarServicioChecklist').off('click');
+        $('#btnCancelarServicioChecklist').on('click', function () {
             var data = {servicio: servicio, ticket: respuesta.datosServicio.Ticket};
             servicios.cancelarServicio(
                     data,
                     'Seguimiento/Servicio_Cancelar_Modal',
-                    '#seccion-servicio-censo',
+                    '#seguimiento-checklist',
                     'Seguimiento/Servicio_Cancelar'
                     );
         });
@@ -1008,9 +1005,9 @@ $(function () {
         //Encargado de generar el archivo Pdf
         $('#btnGeneraPdfServicio').off('click');
         $('#btnGeneraPdfServicio').on('click', function () {
-            var data = {servicio: datosTabla[0]};
-            evento.enviarEvento('Seguimiento/Servicio_ToPdf', data, '#seccion-servicio-censo', function (respuesta) {
-                window.open('/' + respuesta.link);
+            var data = {'servicio': datosTabla[0], 'ticket' : ticket, 'generarPDF' : true};
+            evento.enviarEvento('Seguimiento/GenerarPDF', data, '', function (respuesta) {
+                window.open(respuesta, '_blank');
             });
         });
 
@@ -1020,7 +1017,7 @@ $(function () {
             $('#listaPoliza').removeClass('hidden');
         });
         
-        servicios.eventosFolio(datosTabla[0], '#informacionRevision', servicio);
+        servicios.eventosFolio(datosTabla[2], '#informacionRevision', servicio);
 
     };
 

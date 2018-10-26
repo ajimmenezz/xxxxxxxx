@@ -748,7 +748,7 @@ class Modelo_Poliza extends Modelo_Base {
     public function concluirServicio(array $dato) {
 
         $this->actualizar('t_servicios_ticket', array(
-//            'IdEstatus' => $dato['Estatus'],
+            'IdEstatus' => $dato['Estatus'],
             'FechaConclusion' => $dato['FechaConclusion'],
             'Firma' => $dato['Firma'],
             'NombreFirma' => $dato['NombreFirma'],
@@ -774,17 +774,15 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function insertarNuevoServicioCorrectivo(array $datos) {
-
+        $respuesta = null;
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $consultaChecklistRevisionTecnica = $this->mostrarFallasTecnicas($datos['IdServicio']);
         
         foreach ($consultaChecklistRevisionTecnica as $falla) {
-//            echo '<pre>';
-//            print_r($falla);
-//            return false;
+
             
             $this->iniciaTransaccion();
-            $descripcionCorrectivo = "Seguimiento de Diagnostico en checklist para el equipo " . $falla['Equipo'] . " con la Serie " . $falla['Serie'] . " por falla " . $falla['Falla'];
+            $descripcionCorrectivo = "Seguimiento de Diagnostico en Checklist para el equipo " . $falla['Equipo'] . " con la Serie " . $falla['Serie'] . " por falla " . $falla['Falla'];
 
             // insertando en t_servicios_ticket
             $datosInsertarTicket = array('Ticket' => $datos['Ticket'],
@@ -850,18 +848,21 @@ class Modelo_Poliza extends Modelo_Base {
 
             if ($this->estatusTransaccion() === FALSE) {
                 $this->roolbackTransaccion();
-                    $respuesta = FALSE;
+                  $respuesta = 0;
 //                $return_array['inserto'] = "no paso";
 //                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
             } else {
                 $this->commitTransaccion();
-                $actualizar = $this->actualizar("t_checklist_revision_tecnica", array('FlagInsert' => 1),array('Id' => $falla['Id']));
-                $respuesta = $actualizar;
+                $this->actualizar("t_checklist_revision_tecnica", array('FlagInsert' => 1),array('Id' => $falla['Id']));
+                $respuesta = 1;
 //                $return_array['code'] = $datos;
 //                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
             }
         }
         
+//                    echo '<pre>';
+//            print_r($respuesta);
+//            return false;
         return $respuesta;
     }
 

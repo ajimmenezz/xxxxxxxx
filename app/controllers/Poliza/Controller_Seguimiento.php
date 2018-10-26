@@ -257,7 +257,7 @@ class Controller_Seguimiento extends Base {
             case 'GuardarConclusionChecklist':
                 $resultado = $this->Poliza->guardarConclusionChecklist($this->input->post());
                 break;
-            case 'PDFPrueba':
+            case 'GenerarPDF':
                 $resultado = $this->Poliza->pdfServicioChecklist($this->input->post());
                 break;
             case 'ConsultarRevisonArea':

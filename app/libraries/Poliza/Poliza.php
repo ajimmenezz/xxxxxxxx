@@ -15,6 +15,7 @@ class Poliza extends General {
     private $seguimiento;
     private $Correo;
     private $pdf;
+    private $InformacionServicios;
 
     public function __construct() {
         parent::__construct();
@@ -25,6 +26,7 @@ class Poliza extends General {
         $this->servicio = \Librerias\Generales\Servicio::factory();
         $this->seguimiento = \Librerias\Poliza\Seguimientos::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
+        $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         parent::getCI()->load->helper(array('FileUpload', 'date'));
     }
 
@@ -759,7 +761,7 @@ class Poliza extends General {
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $dataFirma);
 
         $arrayServicio = array(
-//            'Estatus' => '4',
+            'Estatus' => '4',
             'FechaConclusion' => $fecha,
             'Firma' => $direccionFirma,
             'NombreFirma' => $datos['nombreFirma'],
@@ -769,21 +771,22 @@ class Poliza extends General {
         );
 
         $actualizarServicio = $this->DBP->concluirServicio($arrayServicio);
-        $pdf = $this->pdfServicioChecklist(array('servicio' => $datos['servicio']));
+        $pdf = $this->pdfServicioChecklist(array('servicio' => $datos['servicio'], 'ticket' => $datos['ticket']));
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $usuario['Id'] . '/Pdf/Ticket_' . $datos['Ticket'] . '_Servicio_' . $usuario['Id'] . '_Servicio_Checklist.pdf';
+            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist.pdf';
         } else {
             $path = 'http://' . $host . '/' . $pdf;
         }
-
+        
+        $linkPDF = '<br>Para descargar el archivo PDF de conclusión <a href="' . $path . '" target="_blank">dar click aqui</a>';
+        $textoCorreo = '<p>Se notifica que el servicio de ' . $datosServicio['TipoServicio'] . ' con numero de ticket ' . $datos['ticket'] . ' se a concluido por ' . $usuario['Nombre'] . '<br>' . $linkPDF . '</p>';
+        
         if ($actualizarServicio) {
-            $linkPDF = '<br>Para descargar el archivo PDF de conclusión <a href="' . $path . '" target="_blank">dar click aqui</a>';
-            $textoCorreo = '<p>Se notifica que el servicio de ' . $datosServicio['TipoServicio'] . ' con numero de ticket ' . $datos['ticket'] . ' se a concluido por ' . $usuario['Nombre'] . '<br>' . $linkPDF . '</p>';
-            
             $this->nuevosServiciosDesdeChecklist($actualizarServicio);
             foreach ($actualizarServicio as $key => $value) {
-                $this->enviarCorreoConcluido(array($value['CorreoCopiaFirma']), $titulo, $textoCorreo);                
+                $this->enviarCorreoConcluido(array($value['CorreoCopiaFirma']), $titulo, $textoCorreo);
+                $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
                 return TRUE;
             }
         }
@@ -801,19 +804,26 @@ class Poliza extends General {
         $revisionFisica = $this->DBP->consultaRevisionPunotPDF($datos['servicio']);
         $revisionTecnica = $this->DBP->mostrarFallasTecnicas($datos['servicio']);
         $this->pdf = new PDFAux("Sucursal: " . $datosServicio['Sucursal'] . " \n Resumen de Servicio - Checklist");
-        $this->paginaInformacionGeneral($datosServicio, $datos);
+        
+        if ($datos['generarPDF']) {
+            $generarPDF = true;
+        }else{
+            $generarPDF = false;
+        }
+        $this->paginaInformacionGeneral($datosServicio, $datos, $generarPDF);
         $this->revisionArea($revisionFisica);
-        if(!empty($revisionTecnica)) {
+        if (!empty($revisionTecnica)) {
             $this->paginaRevisionTecnica($revisionTecnica);
         }
 
-        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/PDF/', 'Servicio-Checklist-' . $datos['servicio']);
+        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', 'Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist');
+
         $this->pdf->Output('F', $carpeta, true);
         $carpeta = substr($carpeta, 1);
         return $carpeta;
     }
 
-    public function paginaInformacionGeneral($datosServicio, $datos) {
+    public function paginaInformacionGeneral($datosServicio, $datos, $generarPDF = FALSE) {
         $this->pdf->AddPage();
         $this->pdf->subTitulo('Información General del Servicio');
 
@@ -833,7 +843,9 @@ class Poliza extends General {
 
         $this->pdf->multiceldaConTitulo("Descripción", $datosServicio['DescripcionServicio']);
         $y = $this->pdf->GetY() + 18;
-        $this->pdf->imagenConTiuloYSubtitulo($datosServicio['Firma'], "Firma Cierre", $datosServicio['NombreFirma'], $y);
+        if($generarPDF == FALSE){
+            $this->pdf->imagenConTiuloYSubtitulo($datosServicio['Firma'], "Firma Cierre", $datosServicio['NombreFirma'], $y);
+        }
     }
 
     public function revisionArea($revisionFisica) {
@@ -880,13 +892,22 @@ class Poliza extends General {
 
     // empieza creacion de servicio correctivo
     public function nuevosServiciosDesdeChecklist(array $datos) {
+
         $datosTicket = array();
         foreach ($datos as $value) {
             $datosTicket = array('IdServicio' => $value['Id'], 'Ticket' => $value['Ticket'], 'IdSolicitud' => $value['IdSolicitud'], 'IdSucursal' => $value['IdSucursal']);
         }
         $insertarTicket = $this->DBP->insertarNuevoServicioCorrectivo($datosTicket);
+
+        $titulo = "Servicio Checklist";
+        $textoCorreo = "Ocurrio un error al insertar en el servicio " . $datosTicket['IdServicio'];
+
+        if ($insertarTicket == 0) {
+            $this->DBP->insertarNuevoServicioCorrectivo($datosTicket);
+            $this->enviarCorreoConcluido(array('correo' => 'yarzola@siccob.com.mx'), $titulo, $textoCorreo);
+        }
         
-        return $insertarTicket;
+        return true;
     }
 
 }
