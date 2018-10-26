@@ -15,6 +15,7 @@ class Poliza extends General {
     private $seguimiento;
     private $Correo;
     private $pdf;
+    private $InformacionServicios;
 
     public function __construct() {
         parent::__construct();
@@ -25,6 +26,7 @@ class Poliza extends General {
         $this->servicio = \Librerias\Generales\Servicio::factory();
         $this->seguimiento = \Librerias\Poliza\Seguimientos::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
+        $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         parent::getCI()->load->helper(array('FileUpload', 'date'));
     }
 
@@ -524,12 +526,15 @@ class Poliza extends General {
 
             $insertar = $this->DBP->insertarRevisionAreas($datosInsertar);
         }
-
         if ($insertar) {
-            return ['code' => 200, 'succes' => "informacion guardada"];
+            return TRUE;
         } else {
-            return ['code' => 500, 'error' => "Selecciona la informacion"];
+            return false;
         }
+    }
+
+    public function ConsultarRevisonArea(array $datos) {
+        return $this->DBP->consultarRevisionArea($datos);
     }
 
     public function mostrarPuntoRevision(array $datos) {
@@ -611,6 +616,10 @@ class Poliza extends General {
         $actualizarEvidencia = implode(",", $evidencia);
         $datosActualizar = Array('Evidencia' => $actualizarEvidencia, 'Id' => $evidencias['Id']);
         $this->DBP->actualizarEvidencia($datosActualizar);
+        if (empty($evidencia)) {
+            $datosActualizae = Array('Flag' => 0, 'Id' => $evidencias['Id'], 'tipoActualizar' => 2);
+            $this->DBP->actulaizarRevisionPunto($datosActualizae);
+        }
 
         return $this->mostrarPuntoRevision(array('servicio' => $datos['servicio'], 'categoria' => $datos['idCategoria']));
     }
@@ -631,7 +640,7 @@ class Poliza extends General {
             $evidenciaImplode = implode(',', $eivedenciasExplote);
             $datosActualizar = Array('Id' => $consultaPunto[0]['Id'], 'evidencia' => $evidenciaImplode, 'tipoActualizar' => 1);
 
-            $actualizarEvidencia = $this->DBP->actulaizarRevisionPunto($datosActualizar);
+            $this->DBP->actulaizarRevisionPunto($datosActualizar);
         }
         return true;
     }
@@ -684,7 +693,7 @@ class Poliza extends General {
             'Evidencias' => $archivosImplode
         );
 
-        $insertar = $this->DBP->guardarRevisionTecnicaChecklist($datosInsertar);
+        $insertar = $this->DBP->guardarRevisionTecnicaCheck($datosInsertar);
         $lista = $this->mostrarFallasTecnicasCheclist(['servicio' => $datos['servicio']]);
         return array_merge($insertar, ['listaFallas' => $lista]);
     }
@@ -695,8 +704,8 @@ class Poliza extends General {
     }
 
     public function actualizarRevisionTecnica(array $datos) {
-        if (isset($datos['idRevision'])) {
-            $consultaRevision = $this->DBP->mostrarFallasTecnicas($datos['servicio'], $datos['idRevision']);
+        if (isset($datos['idRevisionTecnica'])) {
+            $consultaRevision = $this->DBP->mostrarFallasTecnicas($datos['servicio'], $datos['idRevisionTecnica']);
             return ['modal' => parent::getCI()->load->view('Poliza/Modal/FormularioRevisionTecnicaChecklist.php', ['data' => $consultaRevision[0]], TRUE)];
         }
     }
@@ -720,12 +729,27 @@ class Poliza extends General {
         return $consultaRevisionTecnica;
     }
 
+    public function mostrarDatosServicio(array $datos) {
+        $consultaServicio = $this->DBP->mostrarServicio($datos['servicio']);
+        if (!empty($consultaServicio)) {
+            $consultaRevisiones = $this->DBP->consultaRevisionPunotPDF($datos['servicio']);
+            if (!empty($consultaRevisiones)) {
+                return ['sucursal' => $consultaServicio[0]['IdSucursal']];
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     public function guardarConclusionChecklist(array $datos) {
+
         $usuario = $this->usuario->getDatosUsuario();
 
         $correo = implode(",", $datos['correo']);
         $datosServicio = $this->DBST->getDatosServicio($datos['servicio']);
-        $titulo = 'Se concluyo el servicio';
+        $titulo = 'Se concluyo el Servicio Checklist';
 
         $host = $_SERVER['SERVER_NAME'];
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
@@ -737,7 +761,7 @@ class Poliza extends General {
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $dataFirma);
 
         $arrayServicio = array(
-//            'Estatus' => '4',
+            'Estatus' => '4',
             'FechaConclusion' => $fecha,
             'Firma' => $direccionFirma,
             'NombreFirma' => $datos['nombreFirma'],
@@ -746,22 +770,23 @@ class Poliza extends General {
             'servicio' => $datos['servicio'],
         );
 
-        $pdf = $this->pdfServicioChecklist($datos['servicio']);
+        $actualizarServicio = $this->DBP->concluirServicio($arrayServicio);
+        $pdf = $this->pdfServicioChecklist(array('servicio' => $datos['servicio'], 'ticket' => $datos['ticket']));
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $usuario['Id'] . '/Pdf/Ticket_' . $datos['Ticket'] . '_Servicio_' . $usuario['Id'] . '_' . $nombreServ . '.pdf';
+            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist.pdf';
         } else {
             $path = 'http://' . $host . '/' . $pdf;
         }
-
-        $actualizarServicio = $this->DBP->concluirServicio($arrayServicio);
-
+        
+        $linkPDF = '<br>Para descargar el archivo PDF de conclusión <a href="' . $path . '" target="_blank">dar click aqui</a>';
+        $textoCorreo = '<p>Se notifica que el servicio de ' . $datosServicio['TipoServicio'] . ' con numero de ticket ' . $datos['ticket'] . ' se a concluido por ' . $usuario['Nombre'] . '<br>' . $linkPDF . '</p>';
+        
         if ($actualizarServicio) {
-            $linkPDF = '<br>Para descargar el archivo PDF de conclusión <a href="' . $path . '" target="_blank">dar click aqui</a>';
-            $textoCorreo = '<p>Se notifica que el servicio de ' . $datosServicio['TipoServicio'] . ' con numero de ticket ' . $datos['ticket'] . ' se a concluido por ' . $usuario['Nombre'] . '<br>' . $linkPDF . '</p>';
-
+            $this->nuevosServiciosDesdeChecklist($actualizarServicio);
             foreach ($actualizarServicio as $key => $value) {
                 $this->enviarCorreoConcluido(array($value['CorreoCopiaFirma']), $titulo, $textoCorreo);
+                $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
                 return TRUE;
             }
         }
@@ -778,275 +803,28 @@ class Poliza extends General {
         $datosServicio = $this->DBST->getDatosServicio($datos['servicio']);
         $revisionFisica = $this->DBP->consultaRevisionPunotPDF($datos['servicio']);
         $revisionTecnica = $this->DBP->mostrarFallasTecnicas($datos['servicio']);
-//        $pline1 = 9;
-//        $pline2 = 201;
         $this->pdf = new PDFAux("Sucursal: " . $datosServicio['Sucursal'] . " \n Resumen de Servicio - Checklist");
-        $this->pdf->body();
-
-        $this->pdf->subTitulo('Revisión Fisica');
-        foreach ($revisionFisica as $revision) {
-
-            $listaEvidencia = explode(",", $revision['Evidencia']);
-            $total = count($listaEvidencia);
-            if ($total == 7) {
-                $this->pdf->BasicTable(array('Categoria', 'Area', ''), array(
-                    array($revision['Categoria'], $revision['Areas'], ''),
-                    array($revision['Etiqueta'], '', ''),
-                    array($revision['Punto'], '', '')
-                ));
-
-                $this->pdf->Ln(10);
-                $this->pdf->tablaImagenes($listaEvidencia);
-                $this->pdf->Ln(20);
-            }
+        
+        if ($datos['generarPDF']) {
+            $generarPDF = true;
+        }else{
+            $generarPDF = false;
+        }
+        $this->paginaInformacionGeneral($datosServicio, $datos, $generarPDF);
+        $this->revisionArea($revisionFisica);
+        if (!empty($revisionTecnica)) {
+            $this->paginaRevisionTecnica($revisionTecnica);
         }
 
+        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', 'Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist');
 
-//        $title = '20000 Leguas de Viaje Submarino';
-//        $this->pdf->SetTitle($title);
-//        $this->pdf->SetAuthor('Julio Verne');
-//        $this->pdf->PrintChapter(1, 'UN RIZO DE HUIDA', '20k_c1.txt');
-//        $this->pdf->PrintChapter(2, 'LOS PROS Y LOS CONTRAS', '20k_c2.txt');
-//        
-//        
-//        $this->pdf->SetAutoPageBreak(false);
-//        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-//        $this->pdf->AddPage();
-//        $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
-//
-//        $this->pdf->SetXY(0, 8);
-//        $this->pdf->SetFont("helvetica", "", 8);
-//        $this->pdf->Cell(0, 0, "Sucursal: " . $datosServicio['Sucursal'], 0, 0, 'R');
-//
-//        $this->pdf->SetXY(0, 27);
-//        $this->pdf->SetFont("helvetica", "", 9);
-//        $this->pdf->Cell(0, 0, "Resumen de Servicio - Checklist", 0, 0, 'R');
-//
-//        $this->pdf->Ln('10');
-//        $this->pdf->SetFont("helvetica", "", 9);
-//        $this->pdf->Cell(0, 0, utf8_decode("Información General del Servicio"), 0, 0, 'L');
-//        $y = $this->pdf->GetY() + 4;
-//        $this->pdf->Line($pline1, $y, $pline2, $y);
-//
-//        $this->pdf->SetXY(8, 48);
-//        $this->pdf->SetFont("helvetica", "B", 10);
-//        $this->pdf->Cell(15, 0, utf8_decode("Número de Ticket"));
-//        $this->pdf->SetXY(8, 54);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(180, 0, $datosServicio['Ticket']);
-//
-//        $this->pdf->SetXY(8, 65);
-//        $this->pdf->SetFont("helvetica", "B", 10);
-//        $this->pdf->Cell(15, 0, "Tipo de Servicio");
-//        $this->pdf->SetXY(8, 71);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(180, 0, $datosServicio['TipoServicio']);
-//
-//        $this->pdf->SetXY(65, 65);
-//        $this->pdf->SetFont("helvetica", "B", 10);
-//        $this->pdf->Cell(15, 0, "Sucursal");
-//        $this->pdf->SetXY(65, 71);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(180, 0, $datosServicio['Sucursal']);
-//
-//        $this->pdf->SetXY(110, 65);
-//        $this->pdf->SetFont("helvetica", "B", 10);
-//        $this->pdf->Cell(15, 0, "No. Servicio");
-//        $this->pdf->SetXY(110, 71);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(180, 0, $datos['servicio']);
-//
-//        $this->pdf->SetXY(158, 65);
-//        $this->pdf->SetFont("helvetica", "B", 10);
-//        $this->pdf->Cell(15, 0, "Personal que Atiende");
-//        $this->pdf->SetXY(158, 71);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(180, 0, $datosServicio['NombreAtiende']);
-//
-//        $this->pdf->Ln('12');
-//        $this->pdf->SetFont("helvetica", "", 9);
-//        $this->pdf->Cell(0, 0, utf8_decode("Documentación del servicio"), 0, 0, 'L');
-//        $y = $this->pdf->GetY() + 4;
-//        $this->pdf->Line($pline1, $y, $pline2, $y);
-//
-//        $this->pdf->SetXY(8, 95);
-//        $this->pdf->SetFont("helvetica", "B", 10);
-//        $this->pdf->Cell(15, 0, "Estatus Servicio");
-//        $this->pdf->SetXY(8, 102);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(180, 0, utf8_decode($datosServicio['Estatus']));
-//
-//        $this->pdf->SetXY(65, 95);
-//        $this->pdf->SetFont("helvetica", "B", 10);
-//        $this->pdf->Cell(15, 0, utf8_decode("Fecha Creación"));
-//        $this->pdf->SetXY(65, 102);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(180, 0, $datosServicio['FechaCreacion']);
-//
-//        $this->pdf->SetXY(110, 95);
-//        $this->pdf->SetFont("helvetica", "B", 10);
-//        $this->pdf->Cell(15, 0, utf8_decode("Fecha Inicio"));
-//        $this->pdf->SetXY(110, 102);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(180, 0, $datosServicio['FechaInicio']);
-//
-//        $this->pdf->SetXY(158, 95);
-//        $this->pdf->SetFont("helvetica", "B", 10);
-//        $this->pdf->Cell(15, 0, utf8_decode("Fecha Conclusión"));
-//        $this->pdf->SetXY(158, 102);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(180, 0, $datosServicio['FechaConclusion']);
-//
-//        $this->pdf->SetXY(8, 115);
-//        $this->pdf->SetFont("helvetica", "B", 10);
-//        $this->pdf->Cell(15, 0, utf8_decode("Descripción del Servicio"));
-//        $this->pdf->SetXY(8, 119);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(180, 0, utf8_decode($datosServicio['DescripcionServicio']));
-//
-//        $this->pdf->SetXY(8, 130);
-//        $this->pdf->SetFont("helvetica", "B", 10);
-//        $this->pdf->Cell(0, 0, utf8_decode("Firma Cierre"), 0, 0, 'C');
-//        $this->pdf->Image('.' . $datosServicio['Firma'], 80, 140, 50, 0, 'PNG');
-//
-//        $this->pdf->SetXY(8, 174);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(0, 0, utf8_decode($datosServicio['NombreFirma']), 0, 0, 'C');
-//        $this->pdf->SetXY(8, 179);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(0, 0, $fecha, 0, 0, 'C');
-//
-//        $this->pdf->AddPage();
-//        $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
-//
-//        $this->pdf->SetXY(0, 27);
-//        $this->pdf->Ln('10');
-//        $this->pdf->SetFont("helvetica", "", 11);
-//        $this->pdf->Cell(0, 0, utf8_decode("Revisión Fisica"), 0, 0, 'L');
-//        $y = $this->pdf->GetY() + 4;
-//        $this->pdf->Line($pline1, $y, $pline2, $y);
-//        
-//        foreach ($revisionFisica as $revision) {
-//            
-//            $y = $this->pdf->GetY() + 15; //48
-//            $this->pdf->SetXY(8, $y);
-//            $this->pdf->Cell(15, 0, utf8_decode("Categoria"));
-//            $this->pdf->SetXY(65, $y);
-//            $this->pdf->Cell(15, 0, utf8_decode("Área"));
-//
-//            $y = $this->pdf->GetY() + 6; //54
-//            $this->pdf->SetXY(8, $y);
-//            $this->pdf->Cell(52, 0, $revision['Categoria']);
-//            $this->pdf->SetXY(65, $y);
-//            $this->pdf->Cell(100, 0, $revision['Areas']);
-//            
-//            $y = $this->pdf->GetY() + 9; //71
-//            $this->pdf->SetXY(8, $y);
-//            $this->pdf->Cell(180, 0, utf8_decode($revision['Etiqueta']));
-//
-//            $y = $this->pdf->GetY() + 7; //78
-//            $this->pdf->SetXY(8, $y);
-//            $this->pdf->Cell(15, 0, $revision['Punto']);
-//
-////            $evidencias = $revision['Evidencia'];
-////            $evidenciaExplode = explode(",", $evidencias);
-////            $y = $this->pdf->GetY() + 8; //86
-////            $x = 8;
-////            $contador = 0;
-////            $this->pdf->SetXY($x, $y);
-////            foreach ($evidenciaExplode as $value2) {
-////                $this->pdf->Image('.' . $value2, $x, $y, 40, 35);
-////                $x += 65;
-////                $contador++;
-////                if($contador == 1){
-////                    $this->pdf->SetY($this->pdf->GetY()+45);
-////                }
-////                if($contador == 3){
-////                    $x = 8;
-////                    $y += 45;
-////                    $this->pdf->SetY($y);
-////                    $contador = 0;
-////                    $this->pdf->CheckPageBreak($y);
-////
-////                }     
-////            }    
-////            $y = $this->pdf->GetY();
-////            $this->pdf->SetY($y);
-//        }
-//            $this->pdf->CheckPageBreak($y);
-//        
-//        $this->pdf->AddPage();
-//        $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
-//        $this->pdf->SetXY(0, 27);
-//
-//        foreach ($revisionTecnica as $key => $valor) {
-//            $this->pdf->Ln('10');
-//            $this->pdf->SetFont("helvetica", "", 11);
-//            $this->pdf->Cell(0, 0, utf8_decode("Revisión Tecnica " . $valor['AreaPunto']), 0, 0, 'L');
-//            $y = $this->pdf->GetY() + 4;
-//            $this->pdf->Line($pline1, $y, $pline2, $y);
-//
-//            $y = $this->pdf->GetY() + 15; //42
-//            $this->pdf->SetFont("helvetica", "B", 10);
-//            $this->pdf->SetXY(8, $y);
-//            $this->pdf->Cell(15, 0, utf8_decode("Área y Punto"));
-//
-//            $this->pdf->SetXY(65, $y);
-//            $this->pdf->Cell(15, 0, "Equipo");
-//
-//            $this->pdf->SetXY(158, $y);
-//            $this->pdf->Cell(15, 0, "Serie");
-//
-//            $y = $this->pdf->GetY() + 6; //48
-//            $this->pdf->SetFont("helvetica", "", 10);
-//            $this->pdf->SetXY(8, $y);
-//            $this->pdf->Cell(180, 0, $valor['AreaPunto']);
-//
-//            $this->pdf->SetXY(65, $y);
-//            $this->pdf->Cell(180, 0, $valor['Equipo']);
-//
-//            $this->pdf->SetXY(158, $y);
-//            $this->pdf->Cell(180, 0, $valor['Serie']);
-//
-//            $y = $this->pdf->GetY() + 11; //59
-//            $this->pdf->SetFont("helvetica", "B", 10);
-//            $this->pdf->SetXY(8, $y);
-//            $this->pdf->Cell(180, 0, "Componente");
-//
-//            $this->pdf->SetXY(65, $y);
-//            $this->pdf->Cell(15, 0, utf8_decode("Tipo de diagnostico"));
-//
-//            $this->pdf->SetXY(120, $y);
-//            $this->pdf->Cell(15, 0, "Falla");
-//
-//            $this->pdf->SetXY(158, $y);
-//            $this->pdf->Cell(15, 0, "Fecha");
-//
-//            $y = $this->pdf->GetY() + 6; //65
-//            $this->pdf->SetFont("helvetica", "", 10);
-//            $this->pdf->SetXY(8, $y);
-//            $this->pdf->Cell(180, 0, utf8_decode($valor['Componente']));
-//
-//            $this->pdf->SetXY(65, $y);
-//            $this->pdf->Cell(180, 0, $valor['TipoDiagnostico']);
-//
-//            $this->pdf->SetXY(120, $y);
-//            $this->pdf->Cell(180, 0, $valor['Falla']);
-//
-//            $this->pdf->SetXY(158, $y);
-//            $this->pdf->Cell(180, 0, $valor['Fecha']);
-//            
-//            
-//        }
-//        $this->pdf->SetY($y);
-//        $this->pdf->CheckPageBreak($y);
-        $carpeta = $this->pdf->definirArchivo('PruebaPDF', 'PruebaPDF');
         $this->pdf->Output('F', $carpeta, true);
         $carpeta = substr($carpeta, 1);
         return $carpeta;
     }
 
-    function paginaInformacionGeneral() {
+    public function paginaInformacionGeneral($datosServicio, $datos, $generarPDF = FALSE) {
+        $this->pdf->AddPage();
         $this->pdf->subTitulo('Información General del Servicio');
 
         $this->pdf->BasicTable(array('Numero Ticket'), array(
@@ -1058,6 +836,78 @@ class Poliza extends General {
         ));
 
         $this->pdf->subTitulo('Documentación del servicio');
+
+        $this->pdf->BasicTable(array('Estatus del Servicio', 'Fecha de Creación', 'Fecha de inico', 'Fecha conclución'), array(
+            array($datosServicio['Estatus'], $datosServicio['FechaCreacion'], $datosServicio['FechaInicio'], $datosServicio['FechaConclusion'])
+        ));
+
+        $this->pdf->multiceldaConTitulo("Descripción", $datosServicio['DescripcionServicio']);
+        $y = $this->pdf->GetY() + 18;
+        if($generarPDF == FALSE){
+            $this->pdf->imagenConTiuloYSubtitulo($datosServicio['Firma'], "Firma Cierre", $datosServicio['NombreFirma'], $y);
+        }
+    }
+
+    public function revisionArea($revisionFisica) {
+        $this->pdf->AddPage();
+        $this->pdf->subTitulo('Revisión Fisica');
+        foreach ($revisionFisica as $revision) {
+            $inicio = $this->pdf->GetY();
+            $listaEvidencia = explode(",", $revision['Evidencia']);
+
+            $this->pdf->BasicTable(array('Categoria', 'Area', ''), array(
+                array($revision['Categoria'], $revision['Areas'], ''),
+                array($revision['Etiqueta'], '', ''),
+                array($revision['Punto'], '', '')));
+            $this->pdf->tablaImagenes($listaEvidencia, $inicio);
+        }
+    }
+
+    public function paginaRevisionTecnica($revisionTecnica) {
+        $this->pdf->AddPage();
+
+        foreach ($revisionTecnica as $clave => $valor) {
+            $this->pdf->subTitulo('Revisión Tecnica ' . $valor['AreaPunto']);
+
+            $this->pdf->BasicTable(array('Equipo', 'Serie'), array(
+                array($valor['Equipo'], $valor['Serie'])
+            ));
+
+            if (!empty($valor['Componente'])) {
+                $componente = $valor['Componente'];
+            } else {
+                $componente = "N/A";
+            }
+
+            if (!empty($valor['Falla'])) {
+                $falla = $valor['Falla'];
+            } else {
+                $falla = "N/A";
+            }
+            $this->pdf->BasicTable(array('Componente', 'Tipo Diágnostico', 'Falla'), array(
+                array($componente, $valor['TipoDiagnostico'], $falla)
+            ));
+        }
+    }
+
+    // empieza creacion de servicio correctivo
+    public function nuevosServiciosDesdeChecklist(array $datos) {
+
+        $datosTicket = array();
+        foreach ($datos as $value) {
+            $datosTicket = array('IdServicio' => $value['Id'], 'Ticket' => $value['Ticket'], 'IdSolicitud' => $value['IdSolicitud'], 'IdSucursal' => $value['IdSucursal']);
+        }
+        $insertarTicket = $this->DBP->insertarNuevoServicioCorrectivo($datosTicket);
+
+        $titulo = "Servicio Checklist";
+        $textoCorreo = "Ocurrio un error al insertar en el servicio " . $datosTicket['IdServicio'];
+
+        if ($insertarTicket == 0) {
+            $this->DBP->insertarNuevoServicioCorrectivo($datosTicket);
+            $this->enviarCorreoConcluido(array('correo' => 'yarzola@siccob.com.mx'), $titulo, $textoCorreo);
+        }
+        
+        return true;
     }
 
 }
@@ -1071,14 +921,14 @@ class PDFAux extends PDF {
         $this->contenidoHeader = $contenido;
     }
 
-    function Header() {
-        $this->SetFont('Helvetica', 'I', 10);
-        $this->Image('./assets/img/siccob-logo.png', 10, 5, 10, 15, 'PNG');
-        $this->SetXY(25, 5);
-        $this->MultiCell(0, 7, $this->contenidoHeader, 0, 'R');
+    public function Header() {
+        $this->SetFont('Helvetica', '', 8.4);
+        $this->Image('./assets/img/siccob-logo.png', 13, 8, 13, 15, 'PNG');
+        $this->SetXY(25, 12);
+        $this->MultiCell(0, 5, $this->contenidoHeader, 0, 'R');
     }
 
-    function subTitulo(string $titulo) {
+    public function subTitulo(string $titulo) {
         $this->Ln();
         $this->SetFont("helvetica", "", 9);
         $this->Cell(0, 10, utf8_decode($titulo));
@@ -1086,11 +936,7 @@ class PDFAux extends PDF {
         $this->Line($this->GetX(), $this->GetY(), $this->GetPageWidth() - 10, $this->GetY());
     }
 
-    function body() {
-        $this->AddPage();
-    }
-
-    function Footer() {
+    public function Footer() {
         $fecha = date('d/m/Y');
         // Go to 1.5 cm from bottom
         $this->SetY(-15);
@@ -1101,7 +947,7 @@ class PDFAux extends PDF {
         $this->Cell(68, 10, utf8_decode('Página ') . $this->PageNo(), 0, 0, 'R');
     }
 
-    function CheckPageBreak($h) {
+    public function CheckPageBreak($h) {
         //If the height h would cause an overflow, add a new page immediately
         if ($this->GetY() + $h > $this->PageBreakTrigger) {
             $this->AddPage($this->CurOrientation);
@@ -1109,60 +955,88 @@ class PDFAux extends PDF {
     }
 
     // Tabla simple
-    function BasicTable($header, $data) {
-        $this->Ln();
+    public function BasicTable($header, $data) {
+        $this->Ln(3);
         $ancho = ($this->GetPageWidth() - 20) / count($header);
         // Cabecera
         foreach ($header as $col) {
-            $this->Cell($ancho, 7, $col, 1);
+            $this->SetFont("Helvetica", "B", 9);
+            $this->Cell($ancho, 7, utf8_decode($col), 0);
         }
         $this->Ln();
         // Datos
         foreach ($data as $row) {
             foreach ($row as $col) {
-                $this->Cell($ancho, 6, $col, 1);
+                $this->SetFont("Helvetica", "", 10);
+                $this->Cell($ancho, 6, utf8_decode($col), 0);
             }
             $this->Ln();
         }
     }
 
-    function tablaImagenes(array $imagenes) {
-        $countFilas = ((count($imagenes) / 4) < 0.5) ? round(count($imagenes) / 4, 0, PHP_ROUND_HALF_UP) + 1 : round(count($imagenes) / 4, 0, PHP_ROUND_HALF_UP);
+    public function multiceldaConTitulo($titulo, $txt) {
+        $this->Ln();
+        $this->SetFont("Helvetica", "B", 9);
+        $this->Cell(0, 7, utf8_decode($titulo));
+        $this->Ln(4);
+        $this->SetFont("Helvetica", "", 10);
+        $this->MultiCell(0, 7, utf8_decode($txt));
+    }
+
+    public function imagenConTiuloYSubtitulo($url, $titulo, $subtitulo, $y) {
+        $this->Ln();
+        $this->SetFont("Helvetica", "B", 9);
+        $this->Cell(0, 7, $titulo, 0, 0, 'C');
+        $this->Ln(4);
+        $x = ($this->GetPageWidth() - 54) / 2;
+        $this->Image("." . $url, $x, $y, 60, 0, 'PNG');
+        $y = $this->GetY() + 40;
+        $this->SetY($y);
+        $this->SetFont("Helvetica", "", 10);
+        $this->Cell(0, 7, $subtitulo, 0, 0, 'C');
+    }
+
+    public function tablaImagenes(array $imagenes) {
+        $this->Ln(7);
+        $countFilas = ((count($imagenes) / 4) < 0.5) ? round(count($imagenes) / 4, 0, PHP_ROUND_HALF_UP) + 1 : ceil(count($imagenes) / 4);
         $columna = 0;
         $listaImagenes = array();
         $tempImagenes = array();
 
         for ($j = 0; $j < $countFilas; $j++) {
 
-            foreach ($imagenes as $imagen) {
+            foreach ($imagenes as $key => $imagen) {
                 if ($columna < 4) {
                     array_push($tempImagenes, $imagen);
                     $columna += 1;
+                    unset($imagenes[$key]);
                 }
             }
             array_push($listaImagenes, $tempImagenes);
-
-            for ($i = 0; $i < 4; $i++) {
-                unset($imagenes[$i]);
-            }
             $tempImagenes = array();
             $columna = 0;
         }
 
+        //insertar imagenes
         $ancho = $this->GetPageWidth() - 20;
-        $y = $this->GetY(); //86
-        $x = 20;
-        foreach ($listaImagenes as $row) {
-            foreach ($row as $col) {
+        $y = $this->GetY();
+        $x = 10;
+        foreach ($listaImagenes as $imagenes) {
+            foreach ($imagenes as $imagen) {
                 if ($x < $ancho) {
-                    $this->Cell(0, 10, $y . " - " . $x, 1);
-                    $this->Image('.' . $col, $x, $y, 40, 35);
-                    $x += 35;
-                }                                 
+                    $this->Image('.' . $imagen, $x, $y, 40, 35, 'JPG');
+                    $x += 50;
+                }
             }
-            $x = 20;
-            $y = $this->GetY() + 30;
+            $x = 10;
+            $y += 40;
+            $altura = $y + 35;
+            if ($altura > ($this->GetPageHeight() - 40)) {
+                $this->AddPage();
+                $y = 25;
+            }
         }
+        $this->SetY($y);
     }
 
 }

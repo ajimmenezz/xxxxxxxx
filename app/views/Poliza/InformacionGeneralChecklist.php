@@ -3,7 +3,6 @@
         <div class="col-md-6 col-xs-6">
             <h1 class="page-header">Seguimiento Checklist</h1>
             <input type="hidden" value="<?php echo $datosServicio['IdServicio'] ?>" id="hiddenServicio" />
-            <?php echo $datosServicio['IdServicio']; ?>
         </div>
         <div class="col-md-6 col-xs-6 text-right">
             <div class="btn-group">
@@ -11,11 +10,9 @@
                     Acciones <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li id="btnCancelarServicio"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
-                    <li id="btnDocumentacionFirma"><a href="#"><i class="fa fa-pencil-square-o"></i> Firmar Servicio</a></li>
+                    <li id="btnCancelarServicioChecklist"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
                     <li id="btnGeneraPdfServicio"><a href="#"><i class="fa fa-file-pdf-o"></i> Generar Pdf</a></li>
                     <li id="btnNuevoServicio"><a href="#"><i class="fa fa-plus"></i> Nuevo Servicio</a></li>
-                    <!--<li id="btnReasignarServicio"><a href="#"><i class="fa fa-mail-reply-all"></i> Reasignar Servicio</a></li>-->
                     <li id="btnNuevaSolicitud"><a href="#"><i class="fa fa-puzzle-piece"></i> Solicitar Apoyo</a></li>
                 </ul>
             </div>
@@ -159,19 +156,21 @@
                             <div class="col-md-6">
                                 <h3 class="m-t-10"><div id="tituloFolio"><?php echo $tituloFolio; ?></div></h3>
                             </div>
-
+                            <!--Empezando Separador-->
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="underline m-b-15 m-t-15"></div>
                                 </div>
                             </div>
-
+                            <!--Finalizando Separador--> 
                         </div>
 
                         <div class="row">
+                            <!--Empezando error--> 
                             <div class="col-md-12">
                                 <div class="errorFolioSolicitudSinClasificar"></div>
                             </div>
+                            <!--Finalizando Error-->
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Folio</label>
@@ -187,12 +186,21 @@
                                 <div class="form-group text-left m-t-5">
                                     <a id="btnActualizarFolioServicioSinClasificar" href="javascript:;" class="btn btn-success <?php echo $mostrarActulizarEliminarFolio; ?>"><i class="fa fa-pencil"></i> Actualizar</a>                            
                                     <a id="btnEliminarFolioServicioSinClasificar" href="javascript:;" class="btn btn-danger <?php echo $mostrarActulizarEliminarFolio; ?>"><i class="fa fa-eraser"></i> Eliminar</a>                            
+                                    <a id="btnReasignarFolioServicioSinClasificar" href="javascript:;" class="btn btn-primary <?php echo $mostrarActulizarEliminarFolio; ?>"><i class="fa fa-external-link"></i> Reasignar SD</a>
                                 </div>
                             </div> 
                         </div>
                     </form>
 
+                    <div id="cargando" class="text-center hidden">
+                        <img
+                            width="200"
+                            src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif" />
+                    </div>
+
+                    <!-- Empezando informacion de Service Desk -->
                     <div id="seccionSD" class="alert alert-warning hidden"></div>  
+                    <!-- Finalizando informacion de Service Desk -->
 
                 </div>
                 <form class="margin-bottom-0" id="formServicioPreventivoSalas4xd" data-parsley-validate="true">
@@ -215,7 +223,7 @@
                                 <select id="selectSucursales" class="form-control" style="width: 100%" data-parsley-required="true">
                                     <option value="">Seleccionar</option>
                                     <?php
-                                    foreach ($informacion['sucursales'] as $item) {
+                                    foreach ($informacion['sucursalesXSolicitudCliente'] as $item) {
                                         $select = ($informacion['sucursal'] == $item['Id']) ? 'selected' : '';
                                         echo '<option value="' . $item['Id'] . '" ' . $select . '>' . $item['Nombre'] . '</option>';
                                     }
@@ -236,7 +244,7 @@
                         <div class="col-md-6">
                             <div class="form-group text-center">
                                 <br>
-                                <!--<a id="btnPrueba" href="javascript:;" class="btn btn-primary m-r-5 "><i class="fa fa-bell"></i> Prueba pdf</a>-->
+                                <a id="concluirServicioChecklist" href="javascript:;" class="btn btn-danger m-r-5 "><i class="fa fa-unlock-alt"></i> Concluir Servicio</a>
                             </div>
                         </div>    
                     </div>
@@ -245,7 +253,7 @@
             </div>
             <div class="tab-pane fade panel-body " id="revisionArea">
                 <div class="row panel panel-inverse" data-sortable-id="form-stuff-3">
-                    <ul class="nav nav-pills">
+                    <ul id="" class="nav nav-pills categoriaRevisionArea">
                         <?php
                         foreach ($catalogoCategorias as $value) {
                             if ($value['Flag'] == 1) {
@@ -254,30 +262,28 @@
                         }
                         ?>
                     </ul>
-                    <div id="errorRevisionFisica"></div>
-                    <div class="row">
-                        <div id="listaPregunta" class="table-responsive hidden">
-                            <table id="tabla-categorias" class="table table-striped table-bordered table-condensed" style="cursor:pointer" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th class="all">Id</th>
-                                        <th class="all">Área Atención</th>
-                                        <th class="all">Id área atencion</th>
-                                        <th class="all">Concepto o Pregunta</th>
-                                        <th class="all"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div id="errorRevisionArea" class="row"></div>
+                    <div id="listaPregunta" class="table-responsive hidden">
+                        <table id="tabla-categorias" class="table table-striped table-bordered table-condensed" style="cursor:pointer" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="never">Id</th>
+                                    <th class="all">Área Atención</th>
+                                    <th class="never">Id área atencion</th>
+                                    <th class="all">Concepto o Pregunta</th>
+                                    <th class="all"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div id="guardarListaPregunta" class="row m-t-15 hidden">
                         <div class="col-md-6 col-xs-6 text-right">
@@ -290,7 +296,7 @@
             </div>
             <div class="tab-pane fade panel-body " id="revisionPunto">
                 <div class="row panel panel-inverse" data-sortable-id="form-stuff-3">
-                    <ul class="nav nav-pills">
+                    <ul  class="nav nav-pills categoriaRevisionPunto">
                         <?php
                         foreach ($catalogoCategorias as $value) {
                             if ($value['Flag'] == 1) {
@@ -300,11 +306,11 @@
                         ?>
                     </ul>
                     <div id="errorRevisionPunto"></div>
-                    <div class="row">
-                        <div class="col-md-12" id="checklistRevisionPunto">
-                            <div class="area"></div><br/>
-                        </div>
+                    <!--<div class="row">-->
+                    <div class="row col-md-12 hidden" id="checklistRevisionPunto">
+                        <div class="area"></div><br/>
                     </div>
+                    <!--</div>-->
                 </div>
             </div>
             <div class="tab-pane fade panel-body " id="revisionTecnica">

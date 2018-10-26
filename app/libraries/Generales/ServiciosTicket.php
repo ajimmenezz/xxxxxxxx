@@ -446,7 +446,6 @@ class ServiciosTicket extends General {
                         $data['informacion'] = $this->getServicioChecklist(array('ticket' => $datosServicio['Ticket'], 'servicio' => $datos['servicio']));
                         $data['catalogoCategorias'] = $this->DBMP->consultaCategorias();
                         $data['categoriasRevisionPunto'] = $this->DBMP->mostrarCategoriaRevisionPunto();
-                        $data['revisionArea'] = $this->DBMP->mostrarRevisionArea(array('servicio' => $datos['servicio']));
                         $data['formulario'] = parent::getCI()->load->view('Poliza/InformacionGeneralChecklist', $data, TRUE);
                         break;
                 }
@@ -1958,6 +1957,7 @@ class ServiciosTicket extends General {
                                            from cat_v3_usuarios 
                                            where IdPerfil in (select Id from cat_perfiles where IdDepartamento = 7)');
         $data['sucursales'] = $this->consultaSucursalesXSalas4D();
+        $data['sucursalesXSolicitudCliente'] = $this->consultaSucursalesXSolicitudCliente($datos['ticket']);
         $sucursal = $this->DBST->consultaGeneral('SELECT IdSucursal FROM t_servicios_ticket WHERE Id = "' . $datos['servicio'] . '"');
         $data['sucursal'] = $sucursal[0]['IdSucursal'];
         $data['permisoActividades'] = $permisoActividades;
