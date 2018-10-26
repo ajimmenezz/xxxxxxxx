@@ -771,7 +771,7 @@ class Poliza extends General {
         );
 
         $actualizarServicio = $this->DBP->concluirServicio($arrayServicio);
-        $pdf = $this->pdfServicioChecklist(array('servicio' => $datos['servicio'], 'ticket' => $datos['ticket']));
+        $pdf = $this->pdfServicioChecklist(array('servicio' => $datos['servicio'], 'ticket' => $datos['ticket'], 'generarPDF' => false));
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist.pdf';

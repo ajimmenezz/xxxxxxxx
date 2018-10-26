@@ -2355,6 +2355,7 @@ class ServiciosTicket extends General {
                                            where IdPerfil in (select Id from cat_perfiles where IdDepartamento = 7)');
         $data['sucursales'] = $this->consultaSucursalesXSolicitudCliente($datos['ticket']);
         $sucursal = $this->DBST->consultaGeneral('SELECT IdSucursal FROM t_servicios_ticket WHERE Id = "' . $datos['servicio'] . '"');
+        $data['sucursalesXSolicitudCliente'] = $this->consultaSucursalesXSolicitudCliente($datos['ticket']);
         $data['sucursal'] = $sucursal[0]['IdSucursal'];
         $data['permisoActividades'] = $permisoActividades;
 
