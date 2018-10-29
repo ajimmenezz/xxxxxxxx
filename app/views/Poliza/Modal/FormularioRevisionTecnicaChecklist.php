@@ -41,9 +41,6 @@
             if($data['Flag'] == 1){
                 $classbtn = 'btn-danger';
                 $flag = 'Inhabilitar';
-            }else{
-                $classbtn = 'btn-primary';
-                $flag = 'Activar';
             }
         ?>
         <button type="button" id="editarEstatus" class="btn btn-block <?php echo $classbtn ?>" value="<?php echo $data['Flag'];?>"><?php echo $flag;?></button>

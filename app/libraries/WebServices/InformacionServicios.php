@@ -83,6 +83,9 @@ class InformacionServicios extends General {
 
                 if ($value['Seguimiento'] === '1') {
                     switch ($value['IdTipoServicio']) {
+                        case '27':
+                            $html .= $this->checklist($datos);
+                            break;
                         case '20':
                             $html .= $this->correctivo($datos);
                             break;
@@ -222,6 +225,7 @@ class InformacionServicios extends General {
                     $linkImagenesSolucion .= "<a href='http://" . $host . $value . "'>Archivo" . $contSolucion . "</a> &nbsp ";
                 }
             }
+
             $path = $this->cargarPDF($datos);
             $descripcionConclusionSD = '<div>Descripción: ' . $datosDescripcionConclusion[0]['DescripcionServicio'] . '</div>';
             $descripcion = $datosDescripcionConclusion[0]['Sucursal'] . ' ' . $infoServicio[0]['TipoServicio'] . ' se concluyo con exito';
@@ -240,6 +244,7 @@ class InformacionServicios extends General {
         $refaccion = '';
         $descripcion = '';
         $solucionDiv = '';
+
         $linkPdf = $this->cargarPDF($datos);
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->MSP->getApiKeyByUser($usuario['Id']);
@@ -885,6 +890,29 @@ class InformacionServicios extends General {
         }
 
         return $sucursal;
+    }
+    
+    public function checklist(array $datos) {
+        $linkPdf = $this->rutaPDF($datos);
+        $descripcion = "<div>Ha concluido el Servicio Checklist</div><br/>
+                        <a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a>";
+        
+        return $descripcion;
+    }
+    
+    public function rutaPDF(array $datos) {
+        $host = $_SERVER['SERVER_NAME'];
+        $infoServicio = $this->getInformacionServicio($datos['servicio']);
+        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+        $ruta = '/storage/Archivos//Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+        } else {
+            $path = 'http://' . $host . '/' . $ruta;
+        }
+
+        return $path;
     }
 
 }
