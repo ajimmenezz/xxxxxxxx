@@ -23,14 +23,9 @@
         <!--Empezando cuerpo del panel-->
         <div class="panel-body">
             <div class="row"> 
-                <!--Empezando error--> 
-                <div class="col-md-12">
-                    <div class="errorListaOrdenesCompra"></div>
-                </div>
-                <!--Finalizando Error-->
                 <div class="col-md-12">  
                     <div class="form-group">
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-xs-6">
                             <h3 class="m-t-10">Lista de Ordenes de Compra</h3>
                         </div>
                         <div class="col-md-6 col-xs-6">
@@ -38,12 +33,13 @@
                                 <a href="javascript:;" class="btn btn-success btn-lg " id="btnAgregarOrdenCompra"><i class="fa fa-plus"></i> Agregar</a>
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            <div class="underline m-b-15 m-t-15"></div>
-                        </div>
-                        <!--Finalizando Separador-->
                     </div>    
                 </div> 
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="underline m-b-15 m-t-15"></div>
+                </div>
             </div>
             <div class="table-responsive">
                 <table id="data-table-ordenes-compra" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
@@ -63,18 +59,19 @@
                     </thead>
                     <tbody>
                         <?php
-                        if (!empty($datos['Servicios'])) {
-                            foreach ($datos['Servicios'] as $key => $value) {
+                        if (!empty($datos['ListaOrdenesCompra'])) {
+                            foreach ($datos['ListaOrdenesCompra'] as $key => $value) {
                                 echo '<tr>';
-                                echo '<td>' . $value['Id'] . '</td>';
-                                echo '<td>' . $value['Ticket'] . '</td>';
-                                echo '<td>' . $value['Servicio'] . '</td>';
-                                echo '<td>' . $value['FechaCreacion'] . '</td>';
-                                echo '<td>' . $value['Descripcion'] . '</td>';
-                                echo '<td>' . $value['NombreEstatus'] . '</td>';
-                                echo '<td>' . $value['IdEstatus'] . '</td>';
-                                ($value['Folio'] === '0') ? $folio = '' : $folio = $value['Folio'];
-                                echo '<td>' . $folio . '</td>';
+                                echo '<td>' . $value['CVE_DOC'] . '</td>';
+                                echo '<td>' . $value['NOMBRE'] . '</td>';
+                                echo '<td>' . $value['STATUS'] . '</td>';
+                                echo '<td>' . $value['SU_REFER'] . '</td>';
+                                echo '<td>' . $value['FECHA_DOC'] . '</td>';
+                                echo '<td>' . $value['FECHA_REC'] . '</td>';
+                                echo '<td>' . $value['SERIE'] . '</td>';
+                                echo '<td>' . $value['FOLIO'] . '</td>';
+                                echo '<td>' . $value['IMPORTE'] . '</td>';
+                                echo '<td>' . $value['TOTALDOCTO'] . '</td>';
                                 echo '</tr>';
                             }
                         }

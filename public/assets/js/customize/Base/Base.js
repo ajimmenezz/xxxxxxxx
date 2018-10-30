@@ -504,3 +504,34 @@ Base.prototype.ocultarDiv = function () {
         $(_div).fadeOut(400);
     }
 }
+
+Base.prototype.validarCampo = function () {
+    var _this = this;
+    var arrayCampos = arguments[0];
+    var divError = arguments[1];
+    var objeto = arrayCampos.objeto;
+    var mensajeError = arrayCampos.mensajeError;
+    var campoValidar = $(objeto).val();
+
+    if (campoValidar !== '') {
+        return true;
+    } else {
+        _this.mostrarMensaje(divError, false, mensajeError, 3000);
+        return false;
+    }
+}
+
+Base.prototype.validarCamposObjetos = function () {
+    var _this = this;
+    var arrayCampos = arguments[0];
+    var divError = arguments[1];
+    var resultado = true;
+    $.each(arrayCampos, function (k, v) {
+        if (resultado) {
+            if (!_this.validarCampo(v, divError)) {
+                resultado = false;
+            }
+        }
+    });
+    return resultado;
+}

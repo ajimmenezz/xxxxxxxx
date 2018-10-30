@@ -64,6 +64,7 @@ class Secciones extends General {
         $this->PEV2 = \Librerias\Reportes\PEV2::factory();
         $this->DBP2 = \Modelos\Modelo_Proyectos2::factory();
         $this->Documentacion = \Librerias\Documentacion\Documentacion::factory();
+        $this->Compras = \Librerias\Compras\Compras::factory();
     }
 
     /*
@@ -305,6 +306,9 @@ class Secciones extends General {
                 break;
             case 'Compras/Seguimiento':
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('15');
+                break;
+            case 'Compras/Ordenes_Compra':
+                $datos['ListaOrdenesCompra'] = $this->Compras->consultaListaOrdenesCompra();
                 break;
             case 'Contabilidad/Seguimiento':
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('22');
