@@ -2119,11 +2119,11 @@ class ServiciosTicket extends General {
         }
 
         if (in_array('291', $usuario['PermisosAdicionales'])) {
-            $data['campoObservaciones'] = TRUE;
+            $data['campoObservaciones'] = '';
         } else if (in_array('291', $usuario['Permisos'])) {
-            $data['campoObservaciones'] = TRUE;
+            $data['campoObservaciones'] = '';
         } else {
-            $data['campoObservaciones'] = FALSE;
+            $data['campoObservaciones'] = 'hidden';
         }
         return $data;
     }

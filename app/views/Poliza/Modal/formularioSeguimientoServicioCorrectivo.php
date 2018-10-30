@@ -390,18 +390,17 @@
                             </div>
                             <!--Finalizando-->
 
-                            <?php if ($informacion['campoObservaciones']) { ?>
-                                <!--Empezando Obervaciones Reporte en Falso-->
-                                <div class="row">
-                                    <div class="col-md-12">                                    
-                                        <div class="form-group">
-                                            <label for="inputObservacionesReporteFalsoCorrectivo">Observaciones del Servicio *</label>
-                                            <textarea id="inputObservacionesReporteFalsoCorrectivo" class="form-control " placeholder="Observaciones del diagnóstico de reporte en falso." rows="3" ></textarea>
-                                        </div>
+
+                            <!--Empezando Obervaciones Reporte en Falso-->
+                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
+                                <div class="col-md-12">                                    
+                                    <div class="form-group">
+                                        <label for="inputObservacionesReporteFalsoCorrectivo">Observaciones del Servicio *</label>
+                                        <textarea id="inputObservacionesReporteFalsoCorrectivo" class="form-control " placeholder="Observaciones del diagnóstico de reporte en falso." rows="3" ></textarea>
                                     </div>
                                 </div>
-                                <!--Finalizando-->
-                            <?php } ?>
+                            </div>
+                            <!--Finalizando-->
 
                             <div class="row m-t-10">
                                 <!--Empezando error--> 
@@ -470,18 +469,16 @@
                             </div>
                             <!--Finalizando-->
 
-                            <?php if ($informacion['campoObservaciones']) { ?>
-                                <!--Empezando Observaciones Imepericia-->
-                                <div class="row">
-                                    <div class="col-md-12">                                    
-                                        <div class="form-group">
-                                            <label for="inputObservacionesImpericiaCorrectivo">Observaciones del Servicio *</label>
-                                            <textarea id="inputObservacionesImpericiaCorrectivo" class="form-control " placeholder="Observaciones del diagnóstico de impericia." rows="3" ></textarea>
-                                        </div>
+                            <!--Empezando Observaciones Imepericia-->
+                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
+                                <div class="col-md-12">                                    
+                                    <div class="form-group">
+                                        <label for="inputObservacionesImpericiaCorrectivo">Observaciones del Servicio *</label>
+                                        <textarea id="inputObservacionesImpericiaCorrectivo" class="form-control " placeholder="Observaciones del diagnóstico de impericia." rows="3" ></textarea>
                                     </div>
                                 </div>
-                                <!--Finalizando-->
-                            <?php } ?>
+                            </div>
+                            <!--Finalizando-->
 
                             <div class="row m-t-10">
                                 <!--Empezando error--> 
@@ -551,18 +548,16 @@
                             </div>
                             <!--Finalizando-->
 
-                            <?php if ($informacion['campoObservaciones']) { ?>
-                                <!--Empezando Evidencias Fallas de Equipo-->
-                                <div class="row">
-                                    <div class="col-md-12">                                    
-                                        <div class="form-group">
-                                            <label for="inputObservacionesFallaEquipoCorrectivo">Observaciones del Servicio *</label>
-                                            <textarea id="inputObservacionesFallaEquipoCorrectivo" class="form-control " placeholder="Observaciones del diagnóstico de falla." rows="3" ></textarea>
-                                        </div>
+                            <!--Empezando Evidencias Fallas de Equipo-->
+                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
+                                <div class="col-md-12">                                    
+                                    <div class="form-group">
+                                        <label for="inputObservacionesFallaEquipoCorrectivo">Observaciones del Servicio *</label>
+                                        <textarea id="inputObservacionesFallaEquipoCorrectivo" class="form-control " placeholder="Observaciones del diagnóstico de falla." rows="3" ></textarea>
                                     </div>
                                 </div>
-                                <!--Finalizando-->
-                            <?php } ?>
+                            </div>
+                            <!--Finalizando-->
 
                             <div class="row m-t-10">
                                 <!--Empezando error--> 
@@ -639,18 +634,16 @@
                             </div>
                             <!-- Finalizando -->
 
-                            <?php if ($informacion['campoObservaciones']) { ?>
-                                <!-- Empezando Observaciones Falla de Componente -->
-                                <div class="row">
-                                    <div class="col-md-12">                                    
-                                        <div class="form-group">
-                                            <label for="inputObservacionesFallaComponenteCorrectivo">Observaciones del Servicio *</label>
-                                            <textarea id="inputObservacionesFallaComponenteCorrectivo" class="form-control " placeholder="Observaciones del diagnóstico de falla." rows="3" ></textarea>
-                                        </div>
+                            <!-- Empezando Observaciones Falla de Componente -->
+                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
+                                <div class="col-md-12">                                    
+                                    <div class="form-group">
+                                        <label for="inputObservacionesFallaComponenteCorrectivo">Observaciones del Servicio *</label>
+                                        <textarea id="inputObservacionesFallaComponenteCorrectivo" class="form-control " placeholder="Observaciones del diagnóstico de falla." rows="3" ></textarea>
                                     </div>
                                 </div>
-                                <!--Finalizando-->
-                            <?php } ?>
+                            </div>
+                            <!--Finalizando-->
 
                             <div class="row m-t-10">
                                 <!--Empezando error--> 
@@ -681,18 +674,16 @@
                             </div>
                             <!--Finalizando-->
 
-                            <?php if ($informacion['campoObservaciones']) { ?>
-                                <!--Empezando Obervaciones Reporte Mutlimedia-->
-                                <div class="row">
-                                    <div class="col-md-12">                                    
-                                        <div class="form-group">
-                                            <label for="inputObservacionesReporteMultimediaCorrectivo">Observaciones del Servicio *</label>
-                                            <textarea id="inputObservacionesReporteMultimediaCorrectivo" class="form-control " placeholder="Observaciones del diagnóstico de reporte para multimedia." rows="3" ></textarea>
-                                        </div>
+                            <!--Empezando Obervaciones Reporte Mutlimedia-->
+                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
+                                <div class="col-md-12">                                    
+                                    <div class="form-group">
+                                        <label for="inputObservacionesReporteMultimediaCorrectivo">Observaciones del Servicio *</label>
+                                        <textarea id="inputObservacionesReporteMultimediaCorrectivo" class="form-control " placeholder="Observaciones del diagnóstico de reporte para multimedia." rows="3" ></textarea>
                                     </div>
                                 </div>
-                                <!--Finalizando-->
-                            <?php } ?>
+                            </div>
+                            <!--Finalizando-->
 
                             <div class="row m-t-10">
                                 <!--Empezando error--> 
@@ -1589,18 +1580,16 @@
                             </div>
                             <!--Finalizando-->
 
-                            <?php if ($informacion['campoObservaciones']) { ?>
-                                <!--Empezando Obervaciones Solucion-->
-                                <div class="row">
-                                    <div class="col-md-12">                                    
-                                        <div class="form-group">
-                                            <label for="inputObservacionesSolucion">Observaciones de la Solución *</label>
-                                            <textarea id="inputObservacionesSolucionReparacionSinEquipo" class="form-control " placeholder="Observaciones de la solución." rows="3" ></textarea>
-                                        </div>
+                            <!--Empezando Obervaciones Solucion-->
+                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
+                                <div class="col-md-12">                                    
+                                    <div class="form-group">
+                                        <label for="inputObservacionesSolucion">Observaciones de la Solución *</label>
+                                        <textarea id="inputObservacionesSolucionReparacionSinEquipo" class="form-control " placeholder="Observaciones de la solución." rows="3" ></textarea>
                                     </div>
                                 </div>
-                                <!--Finalizando-->
-                            <?php } ?>
+                            </div>
+                            <!--Finalizando-->
 
                             <!--Empezando error--> 
                             <div class="row m-t-10">
@@ -1706,18 +1695,16 @@
                             </div>
                             <!--Finalizando-->
 
-                            <?php if ($informacion['campoObservaciones']) { ?>
-                                <!--Empezando Observaciones Solucion-->
-                                <div class="row m-t-20">
-                                    <div class="col-md-12">                                    
-                                        <div class="form-group">
-                                            <label for="inputObservacionesSolucionReparacionConRefaccion">Observaciones de la Solución *</label>
-                                            <textarea id="inputObservacionesSolucionReparacionConRefaccion" class="form-control " placeholder="Observaciones de la solución." rows="3" ></textarea>
-                                        </div>
+                            <!--Empezando Observaciones Solucion-->
+                            <div class="row m-t-20 <?php echo $informacion['campoObservaciones'] ?>">
+                                <div class="col-md-12">                                    
+                                    <div class="form-group">
+                                        <label for="inputObservacionesSolucionReparacionConRefaccion">Observaciones de la Solución *</label>
+                                        <textarea id="inputObservacionesSolucionReparacionConRefaccion" class="form-control " placeholder="Observaciones de la solución." rows="3" ></textarea>
                                     </div>
                                 </div>
-                                <!--Finalizando-->
-                            <?php } ?>
+                            </div>
+                            <!--Finalizando-->
 
                             <div class="row m-t-10">
                                 <!--Empezando error--> 
@@ -1782,18 +1769,16 @@
                             </div>
                             <!--Finalizando-->
 
-                            <?php if ($informacion['campoObservaciones']) { ?>
-                                <!--Empezando Evidencias Solucion-->
-                                <div class="row m-t-20">
-                                    <div class="col-md-12">                                    
-                                        <div class="form-group">
-                                            <label for="inputObservacionesSolucionCambioEquipo">Observaciones de la Solución *</label>
-                                            <textarea id="inputObservacionesSolucionCambioEquipo" class="form-control " placeholder="Observaciones de la solución." rows="3" ></textarea>
-                                        </div>
+                            <!--Empezando Evidencias Solucion-->
+                            <div class="row m-t-20 <?php echo $informacion['campoObservaciones'] ?>">
+                                <div class="col-md-12">                                    
+                                    <div class="form-group">
+                                        <label for="inputObservacionesSolucionCambioEquipo">Observaciones de la Solución *</label>
+                                        <textarea id="inputObservacionesSolucionCambioEquipo" class="form-control " placeholder="Observaciones de la solución." rows="3" ></textarea>
                                     </div>
                                 </div>
-                                <!--Finalizando-->
-                            <?php } ?>
+                            </div>
+                            <!--Finalizando-->
 
                             <!--Empezando error--> 
                             <div class="row m-t-10">
