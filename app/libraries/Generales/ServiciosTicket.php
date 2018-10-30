@@ -2100,6 +2100,14 @@ class ServiciosTicket extends General {
         } else {
             $data['botonAgregarVuelta'] = '';
         }
+
+        if (in_array('291', $usuario['PermisosAdicionales'])) {
+            $data['campoObservaciones'] = TRUE;
+        } else if (in_array('291', $usuario['Permisos'])) {
+            $data['campoObservaciones'] = TRUE;
+        } else {
+            $data['campoObservaciones'] = FALSE;
+        }
         return $data;
     }
 
