@@ -274,7 +274,12 @@
                             </div>
                             <div class="row m-t-10">
                                 <div class="col-md-12">
-                                    <a id="btnAgregarVueltaMantenimiento" href="javascript:;" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-cloud-upload m-r-3"></i> Subir Vuelta Mantenimiento</a>
+                                    <a id="btnAgregarVueltaMantenimiento" href="javascript:;" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-cloud-upload m-r-3"></i> Agregar Vuelta Mantenimiento</a>
+                                </div>
+                            </div>
+                            <div class="row m-t-10">
+                                <div class="col-md-12">
+                                    <a id="btnCrearPDFVueltaMantenimiento" href="javascript:;" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-cloud-upload m-r-3"></i> Crear PDF Vuelta Mantenimiento</a>
                                 </div>
                             </div>
                         </div>
