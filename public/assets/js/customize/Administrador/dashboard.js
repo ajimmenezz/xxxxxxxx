@@ -17,6 +17,8 @@ $(function () {
 
     evento.plasmarInformacionSD();
 
+    evento.agregarVueltaMantenimiento();
+
     //Inicializa funciones de la plantilla
     App.init();
 
