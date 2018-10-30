@@ -99,6 +99,9 @@ class Controller_Servicios extends Base {
             case 'AgregarVueltaAsociadoMantenimiento':
                 $resultado = $this->ServicioTicket->agregarVueltaAsociadoMantenimiento($this->input->post());
                 break;
+            case 'CrearPDFVueltaAsociadoMantenimiento':
+                $resultado = $this->ServicioTicket->pfdAsociadoVueltaServicioMantenimiento($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
