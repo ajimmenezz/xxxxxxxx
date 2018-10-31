@@ -198,57 +198,77 @@ class Modelo_SAE7 extends Modelo_Base {
     public function guardarOrdenCompra(array $datos, array $arraySubtotal) {
         $this->iniciaTransaccion();
 
-//        $ultimaClaveTBLCONTROLTabla32 = $this->consultaUltimaClaveTBLCONTROL('32');
-//        $nuevaClaveTabla32 = $ultimaClaveTBLCONTROLTabla32[0]['ULT_CVE'] + 1;
-//        $this->actualizarUltimaClaveTBLCONTROL(array(
-//            'nuevaClave' => $nuevaClaveTabla32,
-//            'claveAnterior' => $ultimaClaveTBLCONTROLTabla32[0]['ULT_CVE'],
-//            'numeroTabla' => '32'));
-//        $ultimoDocumento = $this->consultaUltimoNumeroDocumento();
-//        $this->actualizarUltimoDocumento($ultimoDocumento[0]['ULT_DOC'] + 1);
-//        $ultimaClaveTBLCONTROLTabla57 = $this->consultaUltimaClaveTBLCONTROL('57');
-//        $nuevaClaveTabla57 = $ultimaClaveTBLCONTROLTabla57[0]['ULT_CVE'] + 1;
-//
-//        $this->actualizarUltimaClaveTBLCONTROL(array(
-//            'nuevaClave' => $nuevaClaveTabla57,
-//            'claveAnterior' => $ultimaClaveTBLCONTROLTabla57[0]['ULT_CVE'],
-//            'numeroTabla' => '57'));
-//
-//        $this->insertarObservacionesDocumento(array(
-//            'claveObservaciones' => $nuevaClaveTabla57,
-//            'observaciones' => $datos['observaciones']
-//        ));
-//
-//        $mesCorriendo = $this->consultaACOMPMes();
-//
-//        $this->actualizarCantidadesACOMP(array(
-//            'subtotal' => $arraySubtotal['subtotal'],
-//            'iva' => $arraySubtotal['iva'],
-//            'descuento' => $datos['descuento'],
-//            'descuentoFinanciero' => $datos['descuentoFinanciero'],
-//            'fechaMes' => $mesCorriendo[0]['PER_ACUM']));
-//
-//        $this->insertarCOMPO(array(
-//            'claveDocumento' => $datos['claveNuevaDocumentacion'],
-//            'claveProvedor' => $datos['proveedor'],
-//            'fechaDoc' => $datos['fecha'],
-//            'fechaRec' => $datos['fechaRec'],
-//            'cantidadTotal' => $arraySubtotal['subtotal'],
-//            'iva' => $arraySubtotal['iva'],
-//            'descuentoTotal' => $datos['descuento'],
-//            'descuentoFinanciero' => $datos['descuentoFinanciero'],
-//            'observacionesCond' => $datos['entregaA'],
-//            'claveObservaciones' => $nuevaClaveTabla57,
-//            'folio' => $ultimoDocumento[0]['ULT_DOC'],
-//            'importe' => $arraySubtotal['subtotal'] + $arraySubtotal['iva']
-//        ));
-//        
-//        $this->insertCOMPO_CLIB($datos['claveNuevaDocumentacion']);
+        $ultimaClaveTBLCONTROLTabla32 = $this->consultaUltimaClaveTBLCONTROL('32');
+        $nuevaClaveTabla32 = $ultimaClaveTBLCONTROLTabla32[0]['ULT_CVE'] + 1;
+        
+        $this->actualizarUltimaClaveTBLCONTROL(array(
+            'nuevaClave' => $nuevaClaveTabla32,
+            'claveAnterior' => $ultimaClaveTBLCONTROLTabla32[0]['ULT_CVE'],
+            'numeroTabla' => '32'));
+        
+        $ultimoDocumento = $this->consultaUltimoNumeroDocumento();
+        
+        $this->actualizarUltimoDocumento($ultimoDocumento[0]['ULT_DOC'] + 1, $datos['fecha']);
+        
+        $ultimaClaveTBLCONTROLTabla57 = $this->consultaUltimaClaveTBLCONTROL('57');
+        $nuevaClaveTabla57 = $ultimaClaveTBLCONTROLTabla57[0]['ULT_CVE'] + 1;
+
+        $this->actualizarUltimaClaveTBLCONTROL(array(
+            'nuevaClave' => $nuevaClaveTabla57,
+            'claveAnterior' => $ultimaClaveTBLCONTROLTabla57[0]['ULT_CVE'],
+            'numeroTabla' => '57'));
+
+        $this->insertarObservacionesDocumento(array(
+            'claveObservaciones' => $nuevaClaveTabla57,
+            'observaciones' => $datos['observaciones']
+        ));
+
+        $diaPrimeroMes = $this->consultaACOMPMes($datos['fecha']);
+
+        $this->actualizarCantidadesACOMP(array(
+            'subtotal' => $arraySubtotal['subtotal'],
+            'iva' => $arraySubtotal['iva'],
+            'descuento' => $datos['descuento'],
+            'descuentoFinanciero' => $datos['descuentoFinanciero'],
+            'fechaMes' => $diaPrimeroMes[0]['PER_ACUM']));
+
+        $this->insertarCOMPO(array(
+            'claveDocumento' => $datos['claveNuevaDocumentacion'],
+            'claveProvedor' => $datos['proveedor'],
+            'referencia' => $datos['referencia'],
+            'fechaDoc' => $datos['fecha'],
+            'fechaRec' => $datos['fechaRec'],
+            'cantidadTotal' => $arraySubtotal['subtotal'],
+            'iva' => $arraySubtotal['iva'],
+            'descuentoTotal' => $datos['descuento'],
+            'descuentoFinanciero' => $datos['descuentoFinanciero'],
+            'observacionesCond' => $datos['entregaA'],
+            'claveObservaciones' => $nuevaClaveTabla57,
+            'folio' => $datos['claveNuevaDocumentacion'],
+            'importe' => $arraySubtotal['subtotal'] + $arraySubtotal['iva']
+        ));
+
+        $this->insertCOMPO_CLIB($datos['claveNuevaDocumentacion']);
+
 
         foreach ($datos['datosTabla'] as $key => $value) {
             $this->actualizarINVE(array(
                 'claveArticulo' => $value['producto'],
                 'cantidad' => $value['cantidad']
+            ));
+            $this->insertPARCOMPO(array(
+                'claveDocumento' => $datos['claveNuevaDocumentacion'],
+                'numeroPartida' => $key + 1,
+                'claveArticulo' => $value['producto'],
+                'cantidad' => $value['cantidad'],
+                'precio' => $value['costoUnidad'],
+                'iva' => $iva = number_format($value['subtotalPartida'] * 16 / 100, 2, ".", ""),
+                'unidad' => $value['subtotalPartida'],
+                'importe' => $value['costoUnidad']
+            ));
+            $this->insertPAR_COMPO_CLIB(array(
+                'claveDocumento' => $datos['claveNuevaDocumentacion'],
+                'numeroPartida' => $key + 1
             ));
         }
         var_dump('pumas');
@@ -287,30 +307,42 @@ class Modelo_SAE7 extends Modelo_Base {
         return $consulta->result_array();
     }
 
-    public function consultaACOMPMes() {
-        $consulta = parent::connectDBSAE7()->query("SELECT PER_ACUM FROM ACOMP01 WHERE  PER_ACUM = DATEADD(MONTH, -1, DATEADD(DAY, 1, EOMONTH(GETDATE())))");
+    public function consultaACOMPMes(string $diaPrimeroMes) {
+        $consulta = parent::connectDBSAE7()->query("SELECT PER_ACUM FROM ACOMP01 WHERE  PER_ACUM = DATEADD(MONTH, -1, DATEADD(DAY, 1, EOMONTH('" . $diaPrimeroMes . "')))");
         return $consulta->result_array();
     }
 
     public function actualizarUltimaClaveTBLCONTROL(array $datos) {
+        var_dump("update TBLCONTROL01
+                set ULT_CVE = '" . $datos['nuevaClave'] . "'
+                where ID_TABLA = '" . $datos['numeroTabla'] . "'
+                AND ULT_CVE = '" . $datos['claveAnterior'] . "'");
         parent::connectDBSAE7()->query("update TBLCONTROL01
                 set ULT_CVE = '" . $datos['nuevaClave'] . "'
                 where ID_TABLA = '" . $datos['numeroTabla'] . "'
                 AND ULT_CVE = '" . $datos['claveAnterior'] . "'");
     }
 
-    public function actualizarUltimoDocumento(string $nuevoUltimoDocumento) {
+    public function actualizarUltimoDocumento(string $nuevoUltimoDocumento, string $fechaDocumento) {
         $query = "UPDATE FOLIOSC01 
                     SET ULT_DOC=(CASE WHEN ULT_DOC < '" . $nuevoUltimoDocumento . "' THEN '" . $nuevoUltimoDocumento . "' ELSE ULT_DOC END),                      
-                    FECH_ULT_DOC= GETDATE() 
+                    FECH_ULT_DOC= '" . $fechaDocumento . "'
                 WHERE TIP_DOC = N'o'  
                 AND SERIE = N'STAND.'                    
                 AND FOLIODESDE=1";
+        var_dump($query);
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }
 
     public function actualizarCantidadesACOMP(array $datos) {
+        var_dump("UPDATE ACOMP01 
+                    SET 
+                    OVTA_COM =OVTA_COM +  " . $datos['subtotal'] . ",
+                    ODESCTO =ODESCTO +  " . (float) $datos['descuento'] . ",
+                    ODES_FIN =ODES_FIN +  " . (float) $datos['descuentoFinanciero'] . ",
+                    OIMP =OIMP + " . (float) $datos['iva'] . "   
+                    WHERE PER_ACUM =  '" . $datos['fechaMes'] . "'");
         $query = "UPDATE ACOMP01 
                     SET 
                     OVTA_COM =OVTA_COM +  " . $datos['subtotal'] . ",
@@ -329,11 +361,15 @@ class Modelo_SAE7 extends Modelo_Base {
             WHEN COMP_X_REC +  " . $datos['cantidad'] . "  >= 0 THEN COMP_X_REC +  " . $datos['cantidad'] . "                                        
             ELSE 0 END)                      
             WHERE CVE_ART = N' " . $datos['claveArticulo'] . "'";
+        var_dump($query);
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }
 
     public function insertarObservacionesDocumento(array $datos) {
+        var_dump("INSERT INTO OBS_DOCC01 
+                    (CVE_OBS,STR_OBS) 
+                    VALUES('" . $datos['claveObservaciones'] . "', '" . $datos['observaciones'] . "')");
         $query = "INSERT INTO OBS_DOCC01 
                     (CVE_OBS,STR_OBS) 
                     VALUES('" . $datos['claveObservaciones'] . "', '" . $datos['observaciones'] . "')";
@@ -418,6 +454,7 @@ class Modelo_SAE7 extends Modelo_Base {
                     '" . $datos['importe'] . "',
                     '',
                     '')";
+        var_dump($query);
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }
@@ -427,23 +464,66 @@ class Modelo_SAE7 extends Modelo_Base {
                     (CLAVE_DOC)
                   values
                   ('" . str_replace('&nbsp;', ' ', $claveDocumento) . "')";
+        var_dump($query);
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }
 
-    public function insertPARCOMPO(string $claveDocumento) {
+    public function insertPARCOMPO(array $datos) {
         $query = "insert into PAR_COMPO01
-  (CVE_DOC, NUM_PAR, CVE_ART, CANT, PXR, PREC, COST, IMPU1, IMPU2, IMPU3, IMPU4, IMP1APLA, IMP2APLA, IMP3APLA, IMP4APLA, TOTIMP1, TOTIMP2, TOTIMP3, TOTIMP4, DESCU, ACT_INV, NUM_ALM, TIP_CAM, UNI_VENTA, TIPO_PROD, TIPO_ELEM, CVE_OBS, REG_SERIE, E_LTPD, FACTCONV, MINDIRECTO, NUM_MOV, TOT_PARTIDA, MAN_IEPS, APL_MAN_IMP, CUOTA_IEPS, APL_MAN_IEPS, MTO_PORC, MTO_CUOTA, CVE_ESQ)
-values
-  (N'" . str_replace('&nbsp;', ' ', $claveDocumento) . "',
-                1,
+                (CVE_DOC, NUM_PAR, CVE_ART, CANT, PXR, PREC, COST, IMPU1, IMPU2, IMPU3, IMPU4, IMP1APLA, IMP2APLA, IMP3APLA, IMP4APLA, TOTIMP1, TOTIMP2, TOTIMP3, TOTIMP4, DESCU, ACT_INV, NUM_ALM, TIP_CAM, UNI_VENTA, TIPO_PROD, TIPO_ELEM, CVE_OBS, REG_SERIE, E_LTPD, FACTCONV, MINDIRECTO, NUM_MOV, TOT_PARTIDA, MAN_IEPS, APL_MAN_IMP, CUOTA_IEPS, APL_MAN_IEPS, MTO_PORC, MTO_CUOTA, CVE_ESQ)
+              values
+                (N'" . str_replace('&nbsp;', ' ', $datos['claveDocumento']) . "',
+                " . $datos['numeroPartida'] . ",
                 '" . $datos['claveArticulo'] . "',
                 " . $datos['cantidad'] . ",
                 " . $datos['cantidad'] . ",
                 0,
-                88,
+                " . $datos['precio'] . ",
                 0,
-                0,0,16,6,6,6,0,0,0,0,211.19999999999999,0,'N',1,1,'PZA','P','N',0,0,0,1,0,0,1320,'N',1,0,'C',0,0,1)";
+                0,
+                0,
+                16,
+                6,
+                6,
+                6,
+                0,
+                0,
+                0,
+                0,
+                " . $datos['iva'] . ",
+                0,
+                'N',
+                1,
+                1,
+                '" . $datos['unidad'] . "',
+                'P',
+                'N',
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                '" . $datos['importe'] . "',
+                'N',
+                1,
+                0,
+                'C',
+                0,
+                0,
+                1)";
+        var_dump($query);
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta;
+    }
+
+    public function insertPAR_COMPO_CLIB(array $datos) {
+        $query = "insert into PAR_COMPO_CLIB01
+                    (CLAVE_DOC, NUM_PART)
+                  values
+                    ('" . str_replace('&nbsp;', ' ', $datos['claveDocumento']) . "'," . $datos['numeroPartida'] . ")";
+        var_dump($query);
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }

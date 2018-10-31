@@ -270,7 +270,6 @@ $(function () {
         var descuento = $('#descuento' + numeroFila).val();
         var costoUnidad = (cantidad * costoUnidadAnterior) - descuento;
 
-        $('#costoUnidad' + numeroFila).val(costoUnidad);
         $('#subtotalPartida' + numeroFila).val(costoUnidad);
     }
 
@@ -281,7 +280,6 @@ $(function () {
         var cantidad = $('#cantidad' + numeroFila).val();
         var costoUnidad = (cantidad * costoUnidadAnterior) - descuento;
 
-        $('#costoUnidad' + numeroFila).val(costoUnidad);
         $('#subtotalPartida' + numeroFila).val(costoUnidad);
     }
 
