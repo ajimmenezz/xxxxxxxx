@@ -253,3 +253,8 @@ $route['Comprobacion/Fondo_Fijo/(:any)'] = 'Tesoreria/Controller_FondoFijo/manej
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
 $route['Error/(:any)'] = 'Controller_Error/$1';
+
+/*prueba calendario*/
+//$route['Calendar/(:any)'] = 'Poliza/Controller_Poliza/desplegarPantalla/$1';
+$route['Calendar/(:any)'] = 'Calendar/Controller_Calendar/desplegarPantalla/$1';
+$route['Calendar/EventoCatalogoCalendar/(:any)'] = 'Calendar/Controller_Calendar/manejarEvento/$1';
