@@ -328,7 +328,7 @@ class Catalogos extends General {
             'TiposTransferencia' => $this->getTiposTransferencia(),
             'Proyectos' => $this->proyectosByCliente(['id' => $gasto['gasto']['Cliente']]),
             'Sucursales' => $this->sucursalesByProyecto(['id' => $gasto['gasto']['Proyecto']]),
-            'Beneficiarios' => $this->beneficiarioByTipo(['id' => $gasto['gasto']['TipoBeneficiario']]),
+            'Beneficiarios' => $this->beneficiarioByTipo(['id' => $gasto['gasto']['TipoBeneficiario'], 'proyecto' => $gasto['gasto']['Proyecto']]),
             'Gasto' => $gasto,
             'Editable' => $editable,
             'Pagos' => $pagosArray

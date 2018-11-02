@@ -134,6 +134,7 @@ $config['Secciones'] = array(
         'Dashboard-Tesoreria' => 'Dashboard',
         'Seguimiento-Tesoreria' => 'Seguimiento',
         'Facturacion-Tesoreria' => 'Facturacion',
+        'FondoFijo-Tesoreria' => 'Fondo_Fijo',
         'Outsorcing' => 'Catalogo_Outsorcing'
     ),
     'Mercadotecnia' => array(
@@ -164,5 +165,10 @@ $config['Secciones'] = array(
     ),
     'Documentacion' => array(
         'Carta-Responsiva' => 'Carta_Responsiva'
-    )
+    ),
+    'Comprobacion' => array(
+        'Catalogos-Comprobacion' => 'Catalogos',
+        'FondoFijo-Comprobacion' => 'Fondo_Fijo',
+        'FondoFijo-Autorizacion' => 'Autorizar_Fondo_Fijo',
+    ),
 );

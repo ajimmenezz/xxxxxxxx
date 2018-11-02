@@ -249,3 +249,25 @@ $db['Gapsi'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+$db['Sicsa'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.0.30, 50742',
+	'username' => 'sa',
+	'password' => 'S1cc0b',
+	'database' => 'DB_SICSA',
+	'dbdriver' => 'sqlsrv',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);

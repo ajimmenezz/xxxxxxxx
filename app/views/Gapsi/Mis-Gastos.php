@@ -35,6 +35,7 @@
                                     <th class="<?php echo $clase; ?>">Usuario</th>
                                     <th class="all">OC</th>
                                     <th class="all">Fecha</th>
+                                    <th class="all">Fecha Autorización</th>
                                     <th class="all">Beneficiario</th>
                                     <th class="all">Proyecto</th>
                                     <th class="all">Tipo</th>
@@ -48,12 +49,14 @@
                                 <?php
                                 if (isset($datos['Gastos']['gastos']) && count($datos['Gastos']['gastos']) > 0) {
                                     foreach ($datos['Gastos']['gastos'] as $key => $value) {
+                                        $usuario = isset($datos['Gastos']['usuarios'][$value['ID']]) ? $datos['Gastos']['usuarios'][$value['ID']]['usuario'] : '';
                                         echo ''
                                         . '<tr>'
                                         . '  <td class="f-s-10">' . $value['ID'] . '</td>'
-                                        . '  <td>' . $datos['Gastos']['usuarios'][$value['ID']]['usuario'] . '</td>'
+                                        . '  <td>' . $usuario . '</td>'
                                         . '  <td>' . $value['OrdenCompra'] . '</td>'
                                         . '  <td>' . substr($value['FechaSolicitud'], 0, 16) . '</td>'
+                                        . '  <td>' . substr($value['FechaAutorizacion'], 0, 16) . '</td>'
                                         . '  <td>' . $value['Beneficiario'] . '</td>'
                                         . '  <td>' . $value['NameProyecto'] . '</td>'
                                         . '  <td>' . $value['TipoTrans'] . '</td>'

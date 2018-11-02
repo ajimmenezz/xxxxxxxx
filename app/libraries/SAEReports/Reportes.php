@@ -5,11 +5,13 @@ namespace Librerias\SAEReports;
 ini_set('max_execution_time', 3600);
 
 use Controladores\Controller_Datos_Usuario as General;
+use Librerias\Generales\PDF as PDF;
 
 class Reportes extends General {
 
     private $DBSAE;
     private $Excel;
+    private $pdf;
 
     public function __construct() {
         parent::__construct();
@@ -133,7 +135,7 @@ class Reportes extends General {
         $arrayAlignExistencias = ['center', '', '', 'center'];
         $this->Excel->setTableContent('A', 1, $existencias, true, $arrayAlignExistencias);
         /* End Hoja 2 */
-        
+
         /* Begin Hoja 3 */
         $this->Excel->createSheet('Movimientos', 2);
         $this->Excel->setActiveSheet(2);
@@ -248,6 +250,458 @@ class Reportes extends General {
                                                         and movimientos.CVE_ART in (" . $stringListaProductos . ")
                                                         order by Numero_Movimiento");
         return array('formulario' => parent::getCI()->load->view('ReportesSAE/Modal/ReporteComprasSAE', $data, TRUE), 'datos' => $data);
+    }
+
+    public function generaOC(array $datos) {
+        $datos['id'] = 1;
+        $datos['documento'] = 'OC0000001645';
+        $_SESSION['datosOC'] = $datos;
+
+        $proveedor = $this->DBSAE->consultaBDSAE("select 
+                                                NOMBRE,
+                                                CALLE,
+                                                NUMEXT,
+                                                NUMINT,
+                                                COLONIA,
+                                                CODIGO,
+                                                MUNICIPIO,
+                                                ESTADO,
+                                                RFC
+                                                from PROV03 where CLAVE = (select CVE_CLPV from COMPO03 where CVE_DOC = '" . $datos['documento'] . "')")[0];
+
+        $generales = $this->DBSAE->consultaBDSAE("select 
+                                                CONVERT(varchar(10),orden.FECHA_DOC,103) as Fecha,
+                                                (select DESCR from ALMACENES03 where CVE_ALM = orden.NUM_ALMA) as Almacen,
+                                                orden.OBS_COND as EntregarA,
+                                                campos.CAMPLIB1 as Proyecto,
+                                                campos.CAMPLIB2 as LugarEntrega,
+                                                (select STR_OBS from OBS_DOCC03 where CVE_OBS = orden.CVE_OBS) as Observaciones,
+                                                orden.CAN_TOT as Subtotal,
+                                                orden.DES_TOT as Descuento,
+                                                orden.DES_FIN as DescFin,
+                                                orden.IMP_TOT1 as IEPS1,
+                                                orden.IMP_TOT2 as IEPS2,
+                                                orden.IMP_TOT3 as IEPS3,
+                                                orden.IMP_TOT4 as IVA,
+                                                orden.IMPORTE as Total
+                                                from COMPO03 orden 
+                                                inner join COMPO_CLIB03 campos on orden.CVE_DOC = campos.CLAVE_DOC
+                                                where CVE_DOC = '" . $datos['documento'] . "'")[0];
+
+        $partidas = $this->DBSAE->consultaBDSAE("select 
+                                                partida.CANT as Cantidad,
+                                                partida.CVE_ART as Producto,
+                                                producto.DESCR as Descripcion,
+                                                partida.DESCU as Descuento,
+                                                partida.COST as Costo,
+                                                partida.TOT_PARTIDA as Importe,
+                                                (select STR_OBS from OBS_DOCC03 where CVE_OBS = partida.CVE_OBS) as Observaciones
+                                                from PAR_COMPO03 partida
+                                                inner join INVE03 producto on partida.CVE_ART = producto.CVE_ART
+                                                where CVE_DOC = '" . $datos['documento'] . "'");
+
+        $this->pdf = new PDFOC();
+        $this->pdf->addPage();
+
+        $this->pdf->SetFont('Arial', 'B', 8);
+        $this->pdf->Text(10, 40, 'Proveedor:');
+
+        $this->pdf->SetFont('Arial', '', 8);
+        $this->pdf->Text(10, 43.5, $proveedor['NOMBRE']);
+        $this->pdf->Text(10, 47, $proveedor['CALLE'] . ' NO. ' . $proveedor['NUMEXT'] . ', COL. ' . $proveedor['COLONIA'] . ', CP ' . $proveedor['CODIGO'] . '');
+        $this->pdf->Text(10, 50.5, $proveedor['MUNICIPIO'] . ', ' . $proveedor['ESTADO'] . '.');
+        $this->pdf->Text(10, 54, 'RFC: ' . $proveedor['RFC']);
+
+        $this->pdf->SetFont('Arial', 'B', 8);
+        $this->pdf->Text(10, 60, 'Lugar de entrega:');
+        $this->pdf->SetFont('Arial', '', 8);
+        $this->pdf->Text(10, 63.5, $generales['LugarEntrega']);
+
+
+        $this->pdf->SetFont('Arial', 'B', 8);
+        $this->pdf->Text(130, 40, 'ORDEN No. ' . $datos['documento']);
+        $this->pdf->Text(130, 43.5, 'Fecha: ');
+        $this->pdf->SetFont('Arial', '', 8);
+        $this->pdf->Text(140, 43.5, $generales['Fecha']);
+
+        $this->pdf->SetFont('Arial', 'B', 8);
+        $this->pdf->Text(130, 47, utf8_decode('Almacén: '));
+        $this->pdf->SetFont('Arial', '', 8);
+        $this->pdf->Text(144, 47, $generales['Almacen']);
+
+        $this->pdf->SetFont('Arial', 'B', 8);
+        $this->pdf->Text(130, 50.5, 'Entregar a: ');
+        $this->pdf->SetFont('Arial', '', 8);
+        $this->pdf->Text(146, 50.5, $generales['EntregarA']);
+
+        $this->pdf->SetFont('Arial', 'B', 8);
+        $this->pdf->Text(130, 54, 'Proyecto: ');
+        $this->pdf->SetFont('Arial', '', 8);
+        $this->pdf->Text(144, 54, $generales['Proyecto']);
+
+        $this->pdf->SetXY(10, 70);
+        $this->pdf->SetFillColor(100, 100, 100);
+        $this->pdf->SetFont('Arial', 'B', 8);
+        $this->pdf->SetTextColor(255, 255, 255);
+        $this->pdf->Cell(20, 6, "Cantidad", 1, 0, 'C', true);
+        $this->pdf->Cell(30, 6, "Producto", 1, 0, 'C', true);
+        $this->pdf->Cell(70, 6, utf8_decode("Descripción"), 1, 0, 'C', true);
+        $this->pdf->Cell(15, 6, "% Desc", 1, 0, 'C', true);
+        $this->pdf->Cell(25, 6, "Costo Unitario", 1, 0, 'C', true);
+        $this->pdf->Cell(25, 6, "Importe", 1, 0, 'C', true);
+
+        foreach ($partidas as $key => $value) {
+            $this->pdf->Ln();
+            $break = $this->pdf->CheckPageBreak(9);
+            if ($break == 1) {
+                $this->pdf->SetFillColor(100, 100, 100);
+                $this->pdf->SetFont('Arial', 'B', 8);
+                $this->pdf->SetTextColor(255, 255, 255);
+                $this->pdf->Cell(20, 6, "Cantidad", 1, 0, 'C', true);
+                $this->pdf->Cell(30, 6, "Producto", 1, 0, 'C', true);
+                $this->pdf->Cell(70, 6, utf8_decode("Descripción"), 1, 0, 'C', true);
+                $this->pdf->Cell(15, 6, "% Desc", 1, 0, 'C', true);
+                $this->pdf->Cell(25, 6, "Costo Unitario", 1, 0, 'C', true);
+                $this->pdf->Cell(25, 6, "Importe", 1, 0, 'C', true);
+                $this->pdf->Ln();
+            }
+            $this->pdf->SetFillColor(200, 200, 200);
+            $this->pdf->SetFont('Arial', '', 8);
+            $this->pdf->SetTextColor(0, 0, 0);
+            $this->pdf->Cell(20, 6, number_format($value['Cantidad'], 2, '.', ','), 1, 0, 'C', true);
+            $this->pdf->Cell(30, 6, $value['Producto'], 1, 0, 'C', true);
+            $this->pdf->Cell(70, 6, utf8_decode($value['Descripcion']), 1, 0, 'J', true);
+            $this->pdf->Cell(15, 6, number_format($value['Descuento'], 2, '.', ','), 1, 0, 'C', true);
+            $this->pdf->Cell(25, 6, number_format($value['Costo'], 3, '.', ','), 1, 0, 'C', true);
+            $this->pdf->Cell(25, 6, number_format($value['Importe'], 3, '.', ','), 1, 0, 'C', true);
+            $heigh = ($value['Observaciones'] != '') ? 6 : 2;
+            $this->pdf->Ln();
+            $this->pdf->SetFillColor(235, 235, 235);
+            $this->pdf->Cell(185, $heigh, $value['Observaciones'], 1, 0, 'J', true);
+        }
+
+        $break = $this->pdf->CheckPageBreak(50);
+
+        $this->pdf->SetFillColor(255, 255, 255);
+        $this->pdf->SetXY(130, 190);
+        $this->pdf->SetFont('Arial', 'B', 10);
+        $this->pdf->Cell(20, 6, 'Subtotal', 0, 0, 'L', false);
+        $this->pdf->Cell(50, 6, number_format($generales['Subtotal'], 2, '.', ','), 0, 0, 'R', false);
+        $this->pdf->Ln();
+        $this->pdf->SetX(130);
+        $this->pdf->Cell(20, 6, 'Descuento', 0, 0, 'L', false);
+        $this->pdf->Cell(50, 6, number_format($generales['Descuento'], 2, '.', ','), 0, 0, 'R', false);
+        $this->pdf->Ln();
+        $this->pdf->SetX(130);
+        $this->pdf->Cell(20, 6, 'Desc. Fin.', 0, 0, 'L', false);
+        $this->pdf->Cell(50, 6, number_format($generales['DescFin'], 2, '.', ','), 0, 0, 'R', false);
+        $this->pdf->Ln();
+        $this->pdf->SetX(130);
+        $this->pdf->Cell(20, 6, 'I.E.P.S.', 0, 0, 'L', false);
+        $this->pdf->Cell(50, 6, number_format($generales['IEPS1'], 2, '.', ','), 0, 0, 'R', false);
+        $this->pdf->Ln();
+        $this->pdf->SetX(150);
+        $this->pdf->Cell(50, 6, number_format($generales['IEPS2'], 2, '.', ','), 0, 0, 'R', false);
+        $this->pdf->Ln();
+        $this->pdf->SetX(150);
+        $this->pdf->Cell(50, 6, number_format($generales['IEPS3'], 2, '.', ','), 0, 0, 'R', false);
+        $this->pdf->Ln();
+        $this->pdf->SetX(130);
+        $this->pdf->Cell(20, 6, 'I.V.A.', 0, 0, 'L', false);
+        $this->pdf->Cell(50, 6, number_format($generales['IVA'], 2, '.', ','), 0, 0, 'R', false);
+        $this->pdf->Ln();
+        $this->pdf->Ln();
+        $this->pdf->SetX(130);
+        $this->pdf->Cell(20, 6, 'Total', 0, 0, 'L', false);
+        $this->pdf->Cell(50, 6, number_format($generales['Total'], 2, '.', ','), 0, 0, 'R', false);
+
+
+        $this->pdf->Ln();
+        $this->pdf->Ln();
+        $totales = explode(".", number_format($generales['Total'], 2, '.', ''));
+        $letra = NumeroALetras::convertir($totales[0], 'PESOS');
+        $this->pdf->Cell(200, 6, $letra . ' ' . $totales[1] . '/100 M.N.', 0, 0, 'L', false);
+
+        $this->pdf->SetXY(10, 215);
+        $this->pdf->SetFont('Arial', '', 10);
+        $this->pdf->MultiCell(115, 6, utf8_decode($generales['Observaciones']), 0, 'J', false);
+
+        $carpeta = './storage/Gastos/9999999999/PRE/OC.pdf';
+
+        $this->pdf->Output('F', $carpeta, true);
+        $carpeta = substr($carpeta, 1);
+        return $carpeta;
+    }
+
+}
+
+class PDFOC extends PDF {
+
+    private $contenidoHeader;
+
+    public function __construct($contenido = '', $orientation = 'P', $unit = 'mm', $size = 'Letter') {
+        parent::__construct($orientation, $unit, $size);
+        $this->contenidoHeader = $contenido;
+    }
+
+    public function Header($datos = []) {
+        $this->SetFont('Helvetica', '', 8.4);
+        $this->Image('./assets/img/siccob-logo.png', 10, 10, 21, 21, 'PNG');
+        $this->SetXY(25, 12);
+        $this->MultiCell(0, 5, $this->contenidoHeader, 0, 'R');
+        $this->SetFont('Arial', '', 15);
+        $this->Text(73.5, 15, "SICCOB SOLUTIONS, S.A. DE C.V.");
+
+        $this->SetFont('Arial', 'B', 8);
+        $this->Text(33, 19.5, 'Domicilio Fiscal');
+
+        $this->SetFont('Arial', '', 8);
+        $this->Text(33, 23.5, 'Calle: INSURGENTES SUR No. 1647 Int: 215, Col. SAN JOSE INSURGENTES, CP: 03900, BENITO JUAREZ, CIUDAD');
+        $this->Text(33, 27, 'DE MEXICO. RFC: SSO0101179Z7');
+
+
+        switch ($_SESSION['datosOC']['id']) {
+            case 1:
+                $this->Text(33, 31, 'Sucursal:  INSURGENTES  SUR  1647 Int 215, Col. SAN  JOSE  INSURGENTES, CP 03900, BENITO  JUAREZ, CDMX');
+                break;
+        }
+
+        $this->SetXY(10, 40);
+    }
+
+    public function subTitulo(string $titulo) {
+        $this->Ln();
+        $this->SetFont("helvetica", "", 9);
+        $this->Cell(0, 10, utf8_decode($titulo));
+        $this->Ln();
+        $this->Line($this->GetX(), $this->GetY(), $this->GetPageWidth() - 10, $this->GetY());
+    }
+
+    public function Footer() {
+        $fecha = date('d/m/Y');
+        // Go to 1.5 cm from bottom
+        $this->SetY(-15);
+        // Select Arial italic 8
+        $this->SetFont('Helvetica', 'I', 10);
+        // Print centered page number
+        $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
+        $this->Cell(68, 10, utf8_decode('Página ') . $this->PageNo(), 0, 0, 'R');
+    }
+
+    public function CheckPageBreak($h) {
+        //If the height h would cause an overflow, add a new page immediately
+        if ($this->GetY() + $h > $this->PageBreakTrigger) {
+            $this->AddPage($this->CurOrientation);
+            return 1;
+        }
+        return 0;
+    }
+
+    // Tabla simple
+    public function BasicTable($header, $data) {
+        $this->Ln(3);
+        $ancho = ($this->GetPageWidth() - 20) / count($header);
+        // Cabecera
+        foreach ($header as $col) {
+            $this->SetFont("Helvetica", "B", 9);
+            $this->Cell($ancho, 7, utf8_decode($col), 0);
+        }
+        $this->Ln();
+        // Datos
+        foreach ($data as $row) {
+            foreach ($row as $col) {
+                $this->SetFont("Helvetica", "", 10);
+                $this->Cell($ancho, 6, utf8_decode($col), 0);
+            }
+            $this->Ln();
+        }
+    }
+
+    public function multiceldaConTitulo($titulo, $txt) {
+        $this->Ln();
+        $this->SetFont("Helvetica", "B", 9);
+        $this->Cell(0, 7, utf8_decode($titulo));
+        $this->Ln(4);
+        $this->SetFont("Helvetica", "", 10);
+        $this->MultiCell(0, 7, utf8_decode($txt));
+    }
+
+    public function imagenConTiuloYSubtitulo($url, $titulo, $subtitulo, $y) {
+        $this->Ln();
+        $this->SetFont("Helvetica", "B", 9);
+        $this->Cell(0, 7, $titulo, 0, 0, 'C');
+        $this->Ln(4);
+        $x = ($this->GetPageWidth() - 54) / 2;
+        $this->Image("." . $url, $x, $y, 60, 0, 'PNG');
+        $y = $this->GetY() + 40;
+        $this->SetY($y);
+        $this->SetFont("Helvetica", "", 10);
+        $this->Cell(0, 7, $subtitulo, 0, 0, 'C');
+    }
+
+    public function tablaImagenes(array $imagenes) {
+        $this->Ln(7);
+        $countFilas = ((count($imagenes) / 4) < 0.5) ? round(count($imagenes) / 4, 0, PHP_ROUND_HALF_UP) + 1 : ceil(count($imagenes) / 4);
+        $columna = 0;
+        $listaImagenes = array();
+        $tempImagenes = array();
+
+        for ($j = 0; $j < $countFilas; $j++) {
+
+            foreach ($imagenes as $key => $imagen) {
+                if ($columna < 4) {
+                    array_push($tempImagenes, $imagen);
+                    $columna += 1;
+                    unset($imagenes[$key]);
+                }
+            }
+            array_push($listaImagenes, $tempImagenes);
+            $tempImagenes = array();
+            $columna = 0;
+        }
+
+        //insertar imagenes
+        $ancho = $this->GetPageWidth() - 20;
+        $y = $this->GetY();
+        $x = 10;
+        foreach ($listaImagenes as $imagenes) {
+            foreach ($imagenes as $imagen) {
+                if ($x < $ancho) {
+                    $this->Image('.' . $imagen, $x, $y, 40, 35, 'JPG');
+                    $x += 50;
+                }
+            }
+            $x = 10;
+            $y += 40;
+            $altura = $y + 35;
+            if ($altura > ($this->GetPageHeight() - 40)) {
+                $this->AddPage();
+                $y = 25;
+            }
+        }
+        $this->SetY($y);
+    }
+
+}
+
+class NumeroALetras {
+
+    private static $UNIDADES = [
+        '',
+        'UN ',
+        'DOS ',
+        'TRES ',
+        'CUATRO ',
+        'CINCO ',
+        'SEIS ',
+        'SIETE ',
+        'OCHO ',
+        'NUEVE ',
+        'DIEZ ',
+        'ONCE ',
+        'DOCE ',
+        'TRECE ',
+        'CATORCE ',
+        'QUINCE ',
+        'DIECISEIS ',
+        'DIECISIETE ',
+        'DIECIOCHO ',
+        'DIECINUEVE ',
+        'VEINTE '
+    ];
+    private static $DECENAS = [
+        'VENTI',
+        'TREINTA ',
+        'CUARENTA ',
+        'CINCUENTA ',
+        'SESENTA ',
+        'SETENTA ',
+        'OCHENTA ',
+        'NOVENTA ',
+        'CIEN '
+    ];
+    private static $CENTENAS = [
+        'CIENTO ',
+        'DOSCIENTOS ',
+        'TRESCIENTOS ',
+        'CUATROCIENTOS ',
+        'QUINIENTOS ',
+        'SEISCIENTOS ',
+        'SETECIENTOS ',
+        'OCHOCIENTOS ',
+        'NOVECIENTOS '
+    ];
+
+    public static function convertir($number, $moneda = '', $centimos = '', $forzarCentimos = false) {
+        $converted = '';
+        $decimales = '';
+        if (($number < 0) || ($number > 999999999)) {
+            return 'No es posible convertir el numero a letras';
+        }
+        $div_decimales = explode('.', $number);
+        if (count($div_decimales) > 1) {
+            $number = $div_decimales[0];
+            $decNumberStr = (string) $div_decimales[1];
+            if (strlen($decNumberStr) == 2) {
+                $decNumberStrFill = str_pad($decNumberStr, 9, '0', STR_PAD_LEFT);
+                $decCientos = substr($decNumberStrFill, 6);
+                $decimales = self::convertGroup($decCientos);
+            }
+        } else if (count($div_decimales) == 1 && $forzarCentimos) {
+            $decimales = 'CERO ';
+        }
+        $numberStr = (string) $number;
+        $numberStrFill = str_pad($numberStr, 9, '0', STR_PAD_LEFT);
+        $millones = substr($numberStrFill, 0, 3);
+        $miles = substr($numberStrFill, 3, 3);
+        $cientos = substr($numberStrFill, 6);
+        if (intval($millones) > 0) {
+            if ($millones == '001') {
+                $converted .= 'UN MILLON ';
+            } else if (intval($millones) > 0) {
+                $converted .= sprintf('%sMILLONES ', self::convertGroup($millones));
+            }
+        }
+        if (intval($miles) > 0) {
+            if ($miles == '001') {
+                $converted .= 'MIL ';
+            } else if (intval($miles) > 0) {
+                $converted .= sprintf('%sMIL ', self::convertGroup($miles));
+            }
+        }
+        if (intval($cientos) > 0) {
+            if ($cientos == '001') {
+                $converted .= 'UN ';
+            } else if (intval($cientos) > 0) {
+                $converted .= sprintf('%s ', self::convertGroup($cientos));
+            }
+        }
+        if (empty($decimales)) {
+            $valor_convertido = $converted . strtoupper($moneda);
+        } else {
+            $valor_convertido = $converted . strtoupper($moneda) . ' CON ' . $decimales . ' ' . strtoupper($centimos);
+        }
+        return $valor_convertido;
+    }
+
+    private static function convertGroup($n) {
+        $output = '';
+        if ($n == '100') {
+            $output = "CIEN ";
+        } else if ($n[0] !== '0') {
+            $output = self::$CENTENAS[$n[0] - 1];
+        }
+        $k = intval(substr($n, 1));
+        if ($k <= 20) {
+            $output .= self::$UNIDADES[$k];
+        } else {
+            if (($k > 30) && ($n[2] !== '0')) {
+                $output .= sprintf('%sY %s', self::$DECENAS[intval($n[1]) - 2], self::$UNIDADES[intval($n[2])]);
+            } else {
+                $output .= sprintf('%s%s', self::$DECENAS[intval($n[1]) - 2], self::$UNIDADES[intval($n[2])]);
+            }
+        }
+        return $output;
     }
 
 }

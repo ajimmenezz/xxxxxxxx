@@ -11,6 +11,7 @@ class Base {
     static $DB_SAE;
     static $DB_SAE7;
     static $DB_Gapsi;
+    static $DB_Sicsa;
     private $consulta;
 
     public function __construct() {
@@ -100,6 +101,13 @@ class Base {
             self::$DB_Gapsi = get_instance()->load->database('Gapsi', TRUE);
         }
         return self::$DB_Gapsi;
+    }
+
+    static public function connectDBSicsa() {
+        if (empty(self::$DB_Sicsa)) {
+            self::$DB_Sicsa = get_instance()->load->database('Sicsa', TRUE);
+        }
+        return self::$DB_Sicsa;
     }
 
     /*
@@ -238,9 +246,21 @@ class Base {
         return self::connectDBPrueba()->insert_id();
     }
 
-    public function getFecha(){
+    public function getFecha() {
         $this->consulta = self::connectDBPrueba()->query("select NOW() as Fecha");
         $data = $this->consulta->result_array();
-        return $data[0]['Fecha'];        
+        return $data[0]['Fecha'];
     }
+
+    public function getGeneralInfoByUserID(int $id) {
+        $this->consulta = self::connectDBPrueba()->query("select 
+                                                            nombreUsuario(Id) as Nombre,
+                                                            Email,
+                                                            EmailCorporativo
+                                                            from cat_v3_usuarios 
+                                                            where Id = '" . $id . "'");
+        $data = $this->consulta->result_array();
+        return $data[0];
+    }
+
 }

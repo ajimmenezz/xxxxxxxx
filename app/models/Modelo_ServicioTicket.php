@@ -123,6 +123,7 @@ class Modelo_ServicioTicket extends Modelo_Base {
                 tst.Atiende,
                 tst.FechaCreacion,
                 tst.FechaInicio,
+                tst.FechaConclusion,
                 tst.Descripcion as DescripcionServicio,
                 (select SDKey from cat_v3_usuarios where Id = tst.Atiende) as SDKeyAtiende,
                 IF(ts.IdSucursal != NULL || ts.IdSucursal = 0, tst.IdSucursal, ts.IdSucursal) AS IdSucursal,
@@ -153,6 +154,7 @@ class Modelo_ServicioTicket extends Modelo_Base {
                 $datos['Atiende'] = $value['Atiende'];
                 $datos['FechaCreacion'] = $value['FechaCreacion'];
                 $datos['FechaInicio'] = $value['FechaInicio'];
+                $datos['FechaConclusion'] = $value['FechaConclusion'];
                 $datos['DescripcionServicio'] = $value['DescripcionServicio'];
                 $datos['SDKeyAtiende'] = $value['SDKeyAtiende'];
                 $datos['IdServicio'] = $value['Id'];

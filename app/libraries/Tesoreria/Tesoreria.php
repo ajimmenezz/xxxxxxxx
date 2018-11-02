@@ -133,7 +133,7 @@ class Tesoreria extends General {
             } else {
                 $monto = $montosVueltasOutsourcing[1]['Monto'];
             }
-        }else{
+        } else {
             $totalAreaPuntos = $this->DBST->totalAreaPuntos(array('servicio' => $datos['datosTabla'][1]));
             $sumaPuntos = array_sum(array_column($totalAreaPuntos, 'Puntos'));
             $monto = $sumaPuntos * 180;
@@ -370,8 +370,7 @@ class Tesoreria extends General {
 
             if (isset($nodoComprobante['Total'])) {
                 $totalFloat = (float) $nodoComprobante['Total'];
-
-                if (round($totalFloat) === $total || round($totalFloat) === $total + 1) {
+                if ($totalFloat >= round($total) - 1 && $totalFloat <= $total + 1) {
                     $resultadoComprobante = TRUE;
                 } else {
                     return 'El Total de la factura es incorrecto';
@@ -498,6 +497,6 @@ class Tesoreria extends General {
         $evidenciaPago = $this->DBT->evidenciaPagoFactura($datos['idVuelta']);
 
         return $evidenciaPago;
-    }
+    }        
 
 }

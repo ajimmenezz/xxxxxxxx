@@ -32,7 +32,7 @@ $(function () {
         evento.enviarEvento('Facturacion/mostrarFormularioSubirFactura', data, '#panelFacturacionTesoreria', function (respuesta) {
             cargarSeccionFacturacion(respuesta);
             cargarElementosFormularioSubirFactura();
-            eventosFormularioSubirFactura(respuesta);
+            eventosFormularioSubirFactura();
             botonRegresarFacturacion();
         });
     });
@@ -112,25 +112,23 @@ $(function () {
     }
 
     var eventosFormularioSubirFactura = function () {
-        var respuesta = arguments[0];
         var listaTickets = [];
         var listaIds = [];
 
-        $.each(respuesta.datos.tablaFacturacionOutsourcingAutorizado, function (key, value) {
-            $('#checkbox-' + value.Id).change(function () {
-                var dataCheckbox = $('#checkbox-' + value.Id).attr("data-checkbox");
+        $('#data-table-subir-facturas').on('change', 'input.editor-active', function () {
+            var dataCheckbox = $(this).attr('data-checkbox');
+            var dataId = $(this).attr('data-id');
                 if ($(this).is(":checked")) {
                     listaTickets.push(dataCheckbox);
-                    listaIds.push(value.Id);
+                    listaIds.push(dataId);
                 } else {
                     listaTickets.splice($.inArray(dataCheckbox, listaTickets), 1);
-                    listaIds.splice($.inArray(value.Id, listaIds), 1);
+                    listaIds.splice($.inArray(dataId, listaIds), 1);
                 }
 
                 var listaTicketsFiltrada = listaTickets.unique();
                 var stringListaTickets = listaTicketsFiltrada.join(",");
                 $('#inputTicketsFacturaTesoreria').val(stringListaTickets);
-            });
         });
 
         $('#btnGuardarSubirArchivos').off('click');

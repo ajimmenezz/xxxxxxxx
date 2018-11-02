@@ -2086,7 +2086,7 @@ class Catalogo extends General {
                         . 'FROM cat_v3_tipos_falla '
                         . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
                         . 'AND Id <> "' . $datos['id'] . ' "AND IdClasificacion = "' . $datos['clasificacion'] . '"');
-                if (empty($verificarExistente)) {
+                if (empty($verificarExistente) || $datos['estatus'] == 0) {
                     $consulta = $this->DBC->actualizarUnicoDato('cat_v3_tipos_falla', array(
                         'IdClasificacion' => $datos['clasificacion'],
                         'Nombre' => strtoupper($datos['nombre']),
@@ -2155,8 +2155,10 @@ class Catalogo extends General {
                         . 'Id '
                         . 'FROM cat_v3_fallas_equipo '
                         . 'WHERE Nombre = "' . strtoupper($datos['falla']) . '" '
-                        . 'AND Id <> "' . $datos['id'] . ' "AND IdTipoFalla = "' . $datos['tipoFalla'] . '" AND IdModeloEquipo = "' . $datos['equipo'] . '"');
-                if (empty($verificarExistente)) {
+                        . 'AND Id <> "' . $datos['id'] . ' " '
+                        . 'AND IdTipoFalla = "' . $datos['tipoFalla'] . '" '
+                        . 'AND IdModeloEquipo = "' . $datos['equipo'] . '"');
+                if (empty($verificarExistente) || $datos['estatus'] == 0) {
                     $consulta = $this->DBC->actualizarUnicoDato('cat_v3_fallas_equipo', array(
                         'IdTipoFalla' => $datos['tipoFalla'],
                         'IdModeloEquipo' => $datos['equipo'],

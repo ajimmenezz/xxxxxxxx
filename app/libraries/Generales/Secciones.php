@@ -31,6 +31,9 @@ class Secciones extends General {
     private $Gapsi;
     private $PEV2;
     private $Documentacion;
+    private $ModeloComprobacion;
+    private $FondoFijo;
+    private $ModeloTesoreria;
 
     public function __construct() {
         parent::__construct();
@@ -64,6 +67,9 @@ class Secciones extends General {
         $this->PEV2 = \Librerias\Reportes\PEV2::factory();
         $this->DBP2 = \Modelos\Modelo_Proyectos2::factory();
         $this->Documentacion = \Librerias\Documentacion\Documentacion::factory();
+        $this->ModeloComprobacion = \Modelos\Modelo_Comprobacion::factory();
+        $this->FondoFijo = \Librerias\Tesoreria\FondoFijo::factory();
+        $this->ModeloTesoreria = \Modelos\Modelo_Tesoreria::factory();
         $this->Compras = \Librerias\Compras\Compras::factory();
     }
 
@@ -352,6 +358,9 @@ class Secciones extends General {
             case 'Tesoreria/Facturacion':
                 $datos['TablaFacturacion'] = $this->Tesoreria->mostrarTablaDependiendoUsuario();
                 break;
+            case 'Tesoreria/Fondo_Fijo':
+                $datos['FondosFijos'] = $this->FondoFijo->getFondosFijos();
+                break;
             case 'Poliza/Regiones_Cliente':
                 $datos['ListaRegionesCliente'] = $this->Catalogo->catRegionesCliente("3");
                 break;
@@ -430,6 +439,21 @@ class Secciones extends General {
                 break;
             case 'Documentacion/Carta_Responsiva':
                 $datos['tecnicosCartaResponsiva'] = $this->Documentacion->mostrarTecnicosCartaResponsiva();
+                break;
+            case 'Comprobacion/Catalogos':
+                $datos['Conceptos'] = $this->ModeloComprobacion->getConceptos();
+                $datos['FondoFijoXUsuario'] = $this->ModeloComprobacion->getFondosFijos();
+                break;
+            case 'Comprobacion/Fondo_Fijo':
+                $usuario = $this->Usuario->getDatosUsuario();
+                $datos['listaComprobaciones'] = $this->ModeloTesoreria->getDetallesFondoFijoXUsuario($usuario['Id']);
+                $datos['usuario'] = $this->ModeloTesoreria->getNombreUsuarioById($usuario['Id']);
+                $datos['saldo'] = $this->ModeloTesoreria->getSaldoByUsuario($usuario['Id']);
+                $datos['xautorizar'] = $this->ModeloTesoreria->getSaldoXAutorizarByUsuario($usuario['Id']);
+                break;
+            case 'Comprobacion/Autorizar_Fondo_Fijo':
+                $usuario = $this->Usuario->getDatosUsuario();
+                $datos['listaComprobaciones'] = $this->ModeloTesoreria->getComprobacionesXAutorizar($usuario['Id']);    
                 break;
             default:
                 break;

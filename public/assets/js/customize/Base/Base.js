@@ -470,20 +470,122 @@ Base.prototype.plasmarInformacionSD = function () {
     });
 };
 
+Base.prototype.eventosVueltasMantenimiento = function () {
+    var _this = this;
+    //mostrando la seccion para modificar SD
+
+    $('#btnAgregarVueltaMantenimiento').off("click");
+    $('#btnAgregarVueltaMantenimiento').on('click', function () {
+        var html = '<div class="row">\n\
+                        <div class="col-md-12">\n\
+                                <div class="form-group">\n\
+                                    <label>Servicio *</label>\n\
+                                    <input id="inputServicioVueltaMantenimiento" type="text" class="form-control" data-parsley-type="number"/>\n\
+                                </div>\n\
+                            </div>\n\
+                      </div>\n\
+                      <div class="row">\n\
+                        <div class="col-md-12">\n\
+                                <div class="form-group">\n\
+                                    <label>Folio *</label>\n\
+                                    <input id="inputFolioVueltaMantenimiento" type="text" class="form-control" data-parsley-type="number"/>\n\
+                                </div>\n\
+                            </div>\n\
+                      </div>\n\
+                        <div class="row m-t-10">\n\
+                            <div class="col-md-12">\n\
+                                <div id="errorServicioAgregarVueltaMantemiento"></div>\n\
+                            </div>\n\
+                        </div>';
+        _this.mostrarModal('Agregar vuelta mantenimiento', html);
+        $('#btnModalConfirmar').on('click', function () {
+            var servicio = $('#inputServicioVueltaMantenimiento').val();
+            var folio = $('#inputFolioVueltaMantenimiento').val();
+
+            if (servicio !== '') {
+                var data = {servicio: servicio, folio: folio};
+                _this.enviarEvento('/Generales/Servicio/AgregarVueltaAsociadoMantenimiento', data, '#modal-dialogo', function (respuesta) {
+                    _this.mensajeConfirmacion('Se agrego la vuelta correctamente.', 'Correcto');
+                });
+            } else {
+                _this.mostrarMensaje('#errorServicioAgregarVueltaMantemiento', false, 'Debes colocar el servicio.', 3000);
+
+            }
+        });
+    });
+
+    $('#btnCrearPDFVueltaMantenimiento').off("click");
+    $('#btnCrearPDFVueltaMantenimiento').on('click', function () {
+        var html = '<div class="row">\n\
+                        <div class="col-md-12">\n\
+                                <div class="form-group">\n\
+                                    <label>Servicio *</label>\n\
+                                    <input id="inputServicioVueltaMantenimiento" type="text" class="form-control" data-parsley-type="number"/>\n\
+                                </div>\n\
+                            </div>\n\
+                      </div>\n\
+                      <div class="row">\n\
+                        <div class="col-md-12">\n\
+                                <div class="form-group">\n\
+                                    <label>Folio *</label>\n\
+                                    <input id="inputFolioVueltaMantenimiento" type="text" class="form-control" data-parsley-type="number"/>\n\
+                                </div>\n\
+                            </div>\n\
+                      </div>\n\
+                      <div class="row">\n\
+                        <div class="col-md-12">\n\
+                                <div class="form-group">\n\
+                                    <label>Ticket *</label>\n\
+                                    <input id="inputTicketVueltaMantenimiento" type="text" class="form-control" data-parsley-type="number"/>\n\
+                                </div>\n\
+                            </div>\n\
+                      </div>\n\
+                        <div class="row m-t-10">\n\
+                            <div class="col-md-12">\n\
+                                <div id="errorServicioAgregarVueltaMantemiento"></div>\n\
+                            </div>\n\
+                        </div>';
+        _this.mostrarModal('Crear PDF vuelta mantenimiento', html);
+        $('#btnModalConfirmar').on('click', function () {
+            var servicio = $('#inputServicioVueltaMantenimiento').val();
+            var folio = $('#inputFolioVueltaMantenimiento').val();
+            var ticket = $('#inputTicketVueltaMantenimiento').val();
+
+            if (servicio !== '') {
+                var data = {servicio: servicio, folio: folio, ticket: ticket};
+                _this.enviarEvento('/Generales/Servicio/CrearPDFVueltaAsociadoMantenimiento', data, '#modal-dialogo', function (respuesta) {
+                    _this.mensajeConfirmacion('Se creo el archivo correctamente.', 'Correcto');
+                });
+            } else {
+                _this.mostrarMensaje('#errorServicioAgregarVueltaMantemiento', false, 'Debes colocar el servicio.', 3000);
+            }
+        });
+    });
+};
+
 Base.prototype.cambiarDiv = function () {
     var _div1 = arguments[0];
     var _div2 = arguments[1];
+    var _div3 = arguments[2] || "";
     $(_div1).fadeOut(400, function () {
         $(_div2).fadeIn(400, arguments[2]);
     });
 
     $(_div2 + " #btnRegresar").off("click");
     $(_div2 + " #btnRegresar").on("click", function () {
-        $(_div2).fadeOut(400, function () {
-            $(_div1).fadeIn(400, function () {
-                $(_div2).empty();
+        if (_div3 === "") {
+            $(_div2).fadeOut(400, function () {
+                $(_div1).fadeIn(400, function () {
+                    $(_div2).empty();
+                });
             });
-        });
+        } else {
+            $(_div2).fadeOut(400, function () {
+                $(_div3).fadeIn(400, function () {
+                    $(_div2).empty();
+                });
+            });
+        }
     });
 }
 

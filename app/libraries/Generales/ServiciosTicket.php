@@ -35,6 +35,7 @@ class ServiciosTicket extends General {
         $this->DBS = \Modelos\Modelo_Solicitud::factory();
         $this->DBB = \Modelos\Modelo_Busqueda::factory();
         $this->DBCS = \Modelos\Modelo_Salas4D::factory();
+        $this->DBMP = \Modelos\Modelo_Poliza::factory();
         $this->Notificacion = \Librerias\Generales\Notificacion::factory();
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();
         $this->ServiceDesk = \Librerias\WebServices\ServiceDesk::factory();
@@ -431,6 +432,21 @@ class ServiciosTicket extends General {
                     case '3':
                         $this->verificarServicio($datos);
                         $data['informacionServicio']['serviciosAsignados'] = $this->getServiciosAsignados('11');
+                        break;
+                }
+            } else if ($datosServicio['IdTipoServicio'] === '27') {
+                
+                switch ($datos['operacion']) {
+                    case '1':
+                        $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '2', '4');
+                        $data['informacion']['serviciosAsignados'] = $this->getServiciosAsignados('11');
+                        $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $datosServicio['Ticket'] . '"');
+                        break;
+                    case '2':
+                        $data['informacion'] = $this->getServicioChecklist(array('ticket' => $datosServicio['Ticket'], 'servicio' => $datos['servicio']));
+                        $data['catalogoCategorias'] = $this->DBMP->consultaCategorias();
+                        $data['categoriasRevisionPunto'] = $this->DBMP->mostrarCategoriaRevisionPunto();
+                        $data['formulario'] = parent::getCI()->load->view('Poliza/InformacionGeneralChecklist', $data, TRUE);
                         break;
                 }
             }
@@ -1941,6 +1957,7 @@ class ServiciosTicket extends General {
                                            from cat_v3_usuarios 
                                            where IdPerfil in (select Id from cat_perfiles where IdDepartamento = 7)');
         $data['sucursales'] = $this->consultaSucursalesXSalas4D();
+        $data['sucursalesXSolicitudCliente'] = $this->consultaSucursalesXSolicitudCliente($datos['ticket']);
         $sucursal = $this->DBST->consultaGeneral('SELECT IdSucursal FROM t_servicios_ticket WHERE Id = "' . $datos['servicio'] . '"');
         $data['sucursal'] = $sucursal[0]['IdSucursal'];
         $data['permisoActividades'] = $permisoActividades;
@@ -2099,6 +2116,14 @@ class ServiciosTicket extends General {
             $data['botonAgregarVuelta'] = '<li id="btnAgregarVuelta"><a href="#"><i class="fa fa-plus"></i> Agregar Vuelta</a></li>';
         } else {
             $data['botonAgregarVuelta'] = '';
+        }
+
+        if (in_array('291', $usuario['PermisosAdicionales'])) {
+            $data['campoObservaciones'] = '';
+        } else if (in_array('291', $usuario['Permisos'])) {
+            $data['campoObservaciones'] = '';
+        } else {
+            $data['campoObservaciones'] = 'hidden';
         }
         return $data;
     }
@@ -2315,7 +2340,44 @@ class ServiciosTicket extends General {
                                             WHERE Flag = 1
                                             AND Salas4D = 1');
     }
+    
+    private function getServicioChecklist(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $permisoActividades = FALSE;
 
+        if (in_array('220', $usuario['PermisosAdicionales'])) {
+            $permisoActividades = TRUE;
+        } else if (in_array('220', $usuario['Permisos'])) {
+            $permisoActividades = TRUE;
+        }
+
+        $data = array();
+        $data['consultaInfoMantenimiento'] = $this->Catalogo->catX4DActividadesMantenimiento('3', array('Flag' => '1'));
+        $data['consultaSistemasMantenimiento'] = $this->Catalogo->catX4DTiposSistemas('3', array('Flag' => '1'));
+        $data['usuario'] = $this->Usuario->getDatosUsuario();
+        $data['actividaesAutorizadas'] = $this->DBST->consultaGeneral('SELECT * FROM t_actividades_autorizadas_salas4d');
+        $data['usuariosDepto'] = $this->DBST->consultaGeneral('select 
+                                                                   Id,
+                                           nombreUsuario(Id) as Nombre
+                                           from cat_v3_usuarios 
+                                           where IdPerfil in (select Id from cat_perfiles where IdDepartamento = 7)');
+        $data['sucursales'] = $this->consultaSucursalesXSolicitudCliente($datos['ticket']);
+        $sucursal = $this->DBST->consultaGeneral('SELECT IdSucursal FROM t_servicios_ticket WHERE Id = "' . $datos['servicio'] . '"');
+        $data['sucursalesXSolicitudCliente'] = $this->consultaSucursalesXSolicitudCliente($datos['ticket']);
+        $data['sucursal'] = $sucursal[0]['IdSucursal'];
+        $data['permisoActividades'] = $permisoActividades;
+
+        if (in_array('223', $usuario['PermisosAdicionales'])) {
+            $data['actividades'] = $this->DBCS->getActividadesSeguimientoActividadesSalas4($datos['servicio']);
+        } else if (in_array('223', $usuario['Permisos'])) {
+            $data['actividades'] = $this->DBCS->getActividadesSeguimientoActividadesSalas4($datos['servicio']);
+        } else {
+            $data['actividades'] = $this->DBCS->getActividadesSeguimientoActividadesSalas4Usuario($datos['servicio'], $usuario['Id']);
+        }
+
+        return $data;
+    }
+    
 }
 
 class PDFAux extends PDF {

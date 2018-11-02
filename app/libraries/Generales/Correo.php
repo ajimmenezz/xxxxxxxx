@@ -227,6 +227,6 @@ class Correo extends General {
         } else {
             return $clave;
         }
-    }
+    }   
 
 }
