@@ -1,5 +1,5 @@
 <h1 class="page-header">Nueva Orden de Compra</h1>
-<div id="panelOrdenesDeCompra" class="panel panel-inverse">
+<div id="panelFormularioOrdenesDeCompra" class="panel panel-inverse">
     <div class="panel-heading">
         <div class="panel-heading-btn">
             <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>                            
@@ -28,7 +28,6 @@
                             <select id="selectOrdenOrdenCompra" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <option value="Directa">Directa</option>
-                                <option value="Requisicion">Requisición</option>
                             </select>
                         </div>
                     </div>
@@ -123,20 +122,29 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="inputDireccionEntregaOrdenCompra">Dirección de entrega *</label>
+                            <input type="text" class="form-control" id="inputDireccionEntregaOrdenCompra" style="width: 100%" data-parsley-required="true"/>                            
+                        </div>
+                    </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="selectMonedaOrdenCompra">Moneda *</label>
                             <select id="selectMonedaOrdenCompra" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
-                                <option value="Dolares">Dolares</option>
-                                <option value="Pesos">Pesos</option>
+                                <?php
+                                foreach ($tiposMonedas as $item) {
+                                    echo '<option data-tipo-cambio="' . $item['TCAMBIO'] . '" value="' . $item['NUM_MONED'] . '">' . $item['DESCR'] . '</option>';
+                                }
+                                ?>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="inputTipoCambioOrdenCompra">Tipo de cambio *</label>
-                            <input type="number" class="form-control" id="inputTipoCambioOrdenCompra" style="width: 100%" data-parsley-required="true"/>                            
+                            <input type="text" class="form-control" id="inputTipoCambioOrdenCompra" style="width: 100%" data-parsley-required="true" disabled/>                            
                         </div>
                     </div>
                 </div>
@@ -178,6 +186,8 @@
                                         <th class="all" style="max-width: 150px !important;">Descuento</th>
                                         <th class="all" style="max-width: 150px !important;">Costo por Unidad</th>
                                         <th class="all" style="max-width: 150px !important;">Subtotal por partida</th>
+                                        <th class="none">Observaciones</th>
+                                        <th class="none"></th>
                                     </tr>
                                 </thead>
                                 <tbody>        
@@ -209,6 +219,14 @@
                                         </td>
                                         <td class="text-center">
                                             <input id="subtotalPartida0" type="number" class="form-control" value="0.00" min="0" disabled/>
+                                        </td>
+                                        <td class="text-center">
+                                            <textarea id="textAreaObservacionesPartida0" class="form-control"  rows="3" ></textarea>    
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="alert alert-warning fade in m-b-15">                            
+                                                Para guardar las Observaciones de la fila debe estar visible el campo.                            
+                                            </div>                                          
                                         </td>
                                     </tr>
                                 </tbody>
@@ -284,6 +302,12 @@
                             <select id="selectBeneficiarioOrdenCompra" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
                                 <option value="">Seleccionar...</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="f-w-600 f-s-13">Orden de Compra</label>
+                            <input type="text" class="form-control" id="inputClaveOrdenCompra" data-ultimo-documento="<?php echo $ultimoDocumento ?>" value="<?php echo $claveGAPSI ?>"  data-parsley-required="false" disabled/>
                         </div>
                     </div>
                 </div>

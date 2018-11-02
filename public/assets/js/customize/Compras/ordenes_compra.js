@@ -69,11 +69,12 @@ $(function () {
                 null,
                 null,
                 true,
-                true,
+                false,
                 null,
                 null,
                 null,
                 false);
+        select.cambiarOpcion('#selectOrdenOrdenCompra', 'Directa');
     }
 
     var eventosFormulario = function () {
@@ -101,7 +102,7 @@ $(function () {
                 var datos = {
                     'id': $(this).val()
                 }
-                evento.enviarEvento('/Gapsi/Gasto/ProyectosByCliente', datos, '#panelOrdenesDeCompra', function (respuesta) {
+                evento.enviarEvento('/Gapsi/Gasto/ProyectosByCliente', datos, '#panelFormularioOrdenesDeCompra', function (respuesta) {
                     $.each(respuesta.proyectos, function (k, v) {
                         $("#selectProyectoOrdenCompra").append('<option data-tipo="' + v.Tipo + '" value="' + v.ID + '">' + v.Nombre + '</option>')
                     });
@@ -120,7 +121,7 @@ $(function () {
                 var datos = {
                     'id': $(this).val()
                 }
-                evento.enviarEvento('Compras/MostrarDatosSucursalesBeneficiarios', datos, '#panelOrdenesDeCompra', function (respuesta) {
+                evento.enviarEvento('Compras/MostrarDatosSucursalesBeneficiarios', datos, '#panelFormularioOrdenesDeCompra', function (respuesta) {
                     $.each(respuesta.sucursales.sucursales, function (k, v) {
                         $("#selectSucursalOrdenCompra").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
                     });
@@ -159,11 +160,16 @@ $(function () {
 
             if (camposTablaValidados && camposFormularioValidados) {
                 var data = valorCamposFormulario(respuesta.datos.claveNuevaDocumentacion);
-                evento.enviarEvento('Compras/GuardarOrdenCompra', data, '#panelOrdenesDeCompra', function (respuesta) {
+                console.log(data);
+                evento.enviarEvento('Compras/GuardarOrdenCompra', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
                     console.log(respuesta);
                 });
             }
+        });
 
+        $('#selectMonedaOrdenCompra').on("change", function () {
+            var tipoCambio = $('#selectMonedaOrdenCompra option:selected').data('tipo-cambio');
+            $('#inputTipoCambioOrdenCompra').val(tipoCambio);
         });
 
     }
@@ -212,6 +218,14 @@ $(function () {
                         </td>\n\
                         <td class="text-center">\n\
                             <input id="subtotalPartida' + numeroFila + '" type="number" class="form-control" value="0.00" min="0" disabled/>\n\
+                        </td>\n\
+                        <td class="text-center">\n\
+                            <textarea id="textAreaObservacionesPartida' + numeroFila + '" class="form-control"  rows="3" ></textarea>\n\
+                        </td>\n\
+                        <td class="text-center">\n\
+                            <div class="alert alert-warning fade in m-b-15">\n\
+                                Para guardar las Observaciones de la fila debe estar visible el campo.\n\
+                            </div>\n\
                         </td>';
         nuevaFila += "</tr>";
         return nuevaFila;
@@ -230,10 +244,6 @@ $(function () {
             eventoCantidadPartida(numeroFila, cantidad);
         });
 
-        $('#descuento' + numeroFila).on("change", function () {
-            var descuento = $(this).val();
-            eventoDescuentoPartida(numeroFila, descuento);
-        });
     }
 
     var eventoProductoPartida = function () {
@@ -244,15 +254,17 @@ $(function () {
             var costoUnidad = $('#selectProductoPartida' + numeroFila + ' option:selected').data('costo-unidad');
             var unidad1 = $('#selectProductoPartida' + numeroFila + ' option:selected').data('unidad1');
             var unidad2 = $('#selectProductoPartida' + numeroFila + ' option:selected').data('unidad2');
+            var cantidad = $('#inputDescuentoOrdenCompra').val();
 
             $('#partidaClave' + numeroFila).empty().html(clave);
             $('#selectUnidadPartida' + numeroFila).empty().append('<option value="">Seleccionar...</option>');
             select.cambiarOpcion('#selectUnidadPartida' + numeroFila, '0');
-            $("#selectUnidadPartida" + numeroFila).append('<option value="uni_med">' + unidad1 + '</option>');
-            $("#selectUnidadPartida" + numeroFila).append('<option value="uni_alt">' + unidad2 + '</option>');
+            $("#selectUnidadPartida" + numeroFila).append('<option value="' + unidad1 + '">' + unidad1 + '</option>');
+            $("#selectUnidadPartida" + numeroFila).append('<option value="' + unidad1 + '">' + unidad2 + '</option>');
             $('#cantidad' + numeroFila).val(1);
             $('#costoUnidad' + numeroFila).val(costoUnidad);
             $('#subtotalPartida' + numeroFila).val(costoUnidad);
+            $('#descuento' + numeroFila).val(cantidad);
         } else {
             $('#partidaClave' + numeroFila).empty().html('');
             $('#selectUnidadPartida' + numeroFila).empty().append('<option value="">Seleccionar...</option>');
@@ -260,6 +272,7 @@ $(function () {
             $('#cantidad' + numeroFila).val(0);
             $('#costoUnidad' + numeroFila).val(0.000000);
             $('#subtotalPartida' + numeroFila).val(0.00);
+            $('#descuento' + numeroFila).val(0.0000);
         }
     }
 
@@ -267,18 +280,7 @@ $(function () {
         var numeroFila = arguments[0];
         var cantidad = arguments[1];
         var costoUnidadAnterior = $('#selectProductoPartida' + numeroFila + ' option:selected').data('costo-unidad');
-        var descuento = $('#descuento' + numeroFila).val();
-        var costoUnidad = (cantidad * costoUnidadAnterior) - descuento;
-
-        $('#subtotalPartida' + numeroFila).val(costoUnidad);
-    }
-
-    var eventoDescuentoPartida = function () {
-        var numeroFila = arguments[0];
-        var descuento = arguments[1];
-        var costoUnidadAnterior = $('#selectProductoPartida' + numeroFila + ' option:selected').data('costo-unidad');
-        var cantidad = $('#cantidad' + numeroFila).val();
-        var costoUnidad = (cantidad * costoUnidadAnterior) - descuento;
+        var costoUnidad = (cantidad * costoUnidadAnterior);
 
         $('#subtotalPartida' + numeroFila).val(costoUnidad);
     }
@@ -294,6 +296,7 @@ $(function () {
             {'objeto': '#inputDescuentoOrdenCompra', 'mensajeError': 'Falta escribir el campo Descuento.'},
             {'objeto': '#inputDescuentoFinancieroOrdenCompra', 'mensajeError': 'Falta escribir el campo Descuento Financiero.'},
             {'objeto': '#inputEntregaAOrdenCompra', 'mensajeError': 'Falta escribir el campo Entrega a.'},
+            {'objeto': '#inputDireccionEntregaOrdenCompra', 'mensajeError': 'Falta escribir el campo Dirección de entrega.'},
             {'objeto': '#selectAlmacenOrdenCompra', 'mensajeError': 'Falta seleccionar el campo Almacén.'},
             {'objeto': '#selectMonedaOrdenCompra', 'mensajeError': 'Falta seleccionar el campo Moneda.'},
             {'objeto': '#inputTipoCambioOrdenCompra', 'mensajeError': 'Falta escribir el campo Tipo de cambio.'},
@@ -331,6 +334,7 @@ $(function () {
         var descuento = $('#inputDescuentoOrdenCompra').val();
         var descuentoFinanciero = $('#inputDescuentoFinancieroOrdenCompra').val();
         var entregaA = $('#inputEntregaAOrdenCompra').val();
+        var direccionEntrega = $('#inputDireccionEntregaOrdenCompra').val();
         var almacen = $('#selectAlmacenOrdenCompra').val();
         var moneda = $('#selectMonedaOrdenCompra').val();
         var tipoCambio = $('#inputTipoCambioOrdenCompra').val();
@@ -340,8 +344,14 @@ $(function () {
         var sucursal = $('#selectSucursalOrdenCompra').val();
         var tipoServicio = $('#selectTipoServicioOrdenCompra').val();
         var beneficiario = $('#selectBeneficiarioOrdenCompra').val();
+        var claveOrdenCompra = $('#inputClaveOrdenCompra').val();
         var datosTablaPartidasOC = arrayValoresCamposTabla();
         var claveNuevaDocumentacion = arguments[0];
+        var folio = $('#inputClaveOrdenCompra').data('ultimo-documento');
+        var textoProyectoGapsi = $('#selectProyectoOrdenCompra option:selected').text();
+        var textoBeneficiario = $('#selectBeneficiarioOrdenCompra option:selected').text();
+        var textoTipoServicio = $("#selectTipoServicioOrdenCompra option:selected").text();
+        var tipo = $("#selectProyectoOrdenCompra option:selected").attr("data-tipo");
 
         var data = {
             'claveNuevaDocumentacion': claveNuevaDocumentacion,
@@ -354,6 +364,7 @@ $(function () {
             'descuento': descuento,
             'descuentoFinanciero': descuentoFinanciero,
             'entregaA': entregaA,
+            'direccionEntrega': direccionEntrega,
             'almacen': almacen,
             'moneda': moneda,
             'tipoCambio': tipoCambio,
@@ -363,7 +374,13 @@ $(function () {
             'sucursal': sucursal,
             'tipoServicio': tipoServicio,
             'beneficiario': beneficiario,
-            'datosTabla': datosTablaPartidasOC
+            'claveOrdenCompra': claveOrdenCompra,
+            'folio': folio,
+            'datosTabla': datosTablaPartidasOC,
+            'textoProyectoGapsi': textoProyectoGapsi,
+            'textoBeneficiario': textoBeneficiario,
+            'tipo': tipo,
+            'textoTipoServicio': textoTipoServicio
         }
 
         return data;
@@ -378,8 +395,10 @@ $(function () {
                 'producto': $('#selectProductoPartida' + k).val(),
                 'unidad': $('#selectUnidadPartida' + k).val(),
                 'cantidad': $('#cantidad' + k).val(),
+                'descuento': $('#descuento' + k).val(),
                 'costoUnidad': $('#costoUnidad' + k).val(),
-                'subtotalPartida': $('#subtotalPartida' + k).val()
+                'subtotalPartida': $('#subtotalPartida' + k).val(),
+                'observacionesPartida': $('#textAreaObservacionesPartida' + k).val()
             });
         });
 
