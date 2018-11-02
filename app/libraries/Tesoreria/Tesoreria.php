@@ -370,7 +370,7 @@ class Tesoreria extends General {
 
             if (isset($nodoComprobante['Total'])) {
                 $totalFloat = (float) $nodoComprobante['Total'];
-                if ($totalFloat >= round($total) && $totalFloat <= $total + 1) {
+                if ($totalFloat >= round($total) - 1 && $totalFloat <= $total + 1) {
                     $resultadoComprobante = TRUE;
                 } else {
                     return 'El Total de la factura es incorrecto';
