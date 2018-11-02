@@ -421,14 +421,18 @@ class Controller_SegundoPlano extends \CI_Controller {
     }
 
     public function getUbicaphoneGeofenceActivations() {
-        $from = strtotime("2018-09-07 00:00:00");
-        $to = strtotime("2018-09-11 23:59:59");
+        $from = strtotime("2018-10-30 00:00:00");
+        $to = strtotime("2018-10-30 23:59:59");
         $data = [
-            'imei' => '351515080889951',
+            'imei' => '351515080890249',
             'from' => $from,
             'to' => $to
         ];
         $result = $this->ubicaphone->getGeofenceActivations($data);
+        
+//        echo "<pre>";
+//        var_dump($result);
+//        echo "</pre>";
 
         $array = [];
         $origins = '19.3625308,-99.1851497';
@@ -449,6 +453,7 @@ class Controller_SegundoPlano extends \CI_Controller {
 
                     $resultado = $this->Url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" . $origins . "&destinations=" . $value['lat'] . "," . $value['lng'] . "&key=AIzaSyD3ELeFOp0xTOMrj2GDa9xNyzRuSbI-C3s";
                     $json = json_decode(@file_get_contents($resultado));
+                    var_dump($json);
 
                     array_push($array, [
                         'imei' => $value['deviceImei'],
