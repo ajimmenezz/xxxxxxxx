@@ -11,11 +11,13 @@ class Controller_Calendar extends Base {
 
     private $catalogo;
     private $catalogosPoliza;
+    private $catalogosCalendar;
 
     public function __construct() {
         parent::__construct();
         $this->catalogo = \Librerias\Generales\Catalogo::factory();
         $this->catalogosPoliza = \Librerias\Poliza\Catalogos::factory();
+        $this->catalogosCalendar = \Librerias\Calendar\Calendar::factory();
     }
 
     /*
@@ -28,8 +30,8 @@ class Controller_Calendar extends Base {
     public function manejarEvento(string $evento = null) {
         switch ($evento) {
             case 'Mostrar':
-//                $resultado = $this->catalogosPoliza->mostrarFormularioClasificacionFalla($this->input->post());
-                $resultado = "nada";
+                $resultado = $this->catalogosCalendar->mostrar($this->input->post());
+//                $resultado = "nada";
                 break;
         }
         echo json_encode($resultado);
