@@ -267,10 +267,10 @@ class Modelo_SAE7 extends Modelo_Base {
         $consultaCampoClib = $this->consultaCOMPO_CLIB($datos['claveNuevaDocumentacion']);
 
         $arrayCampoClib = array(
-            'camplib1' => substr($datos['textoProyectoGapsi'], 0,15),
+            'camplib1' => substr($datos['textoProyectoGapsi'], 0, 15),
             'camplib2' => $datos['direccionEntrega']
         );
-        
+
         if (empty($consultaCampoClib)) {
             $this->insertCOMPO_CLIB($datos['claveNuevaDocumentacion'], $arrayCampoClib);
         } else {
@@ -313,15 +313,15 @@ class Modelo_SAE7 extends Modelo_Base {
                 'importe' => $value['costoUnidad'],
                 'almacen' => $datos['almacen'],
                 'tipoCambio' => $datos['tipoCambio'],
-                'claveObservaciones' => $nuevaClaveTabla57Partida
+                'claveObservaciones' => $nuevaClaveTabla57Partida,
+                'descuento' => $value['descuento']
             ));
             $this->insertPAR_COMPO_CLIB(array(
                 'claveDocumento' => $datos['claveNuevaDocumentacion'],
                 'numeroPartida' => $key + 1
             ));
         }
-        var_dump('pumas');
-//        return $ultimaClaveTBLCONTROL->result_array();
+
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();
         } else {
@@ -374,10 +374,6 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function actualizarUltimaClaveTBLCONTROL(array $datos) {
-        var_dump("update TBLCONTROL01
-                set ULT_CVE = '" . $datos['nuevaClave'] . "'
-                where ID_TABLA = '" . $datos['numeroTabla'] . "'
-                AND ULT_CVE = '" . $datos['claveAnterior'] . "'");
         parent::connectDBSAE7()->query("update TBLCONTROL01
                 set ULT_CVE = '" . $datos['nuevaClave'] . "'
                 where ID_TABLA = '" . $datos['numeroTabla'] . "'
@@ -390,19 +386,11 @@ class Modelo_SAE7 extends Modelo_Base {
                     FECH_ULT_DOC= '" . $fechaDocumento . "'
                 WHERE TIP_DOC = N'o'  
                 AND SERIE = N'OC'";
-        var_dump($query);
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }
 
     public function actualizarCantidadesACOMP(array $datos) {
-        var_dump("UPDATE ACOMP01 
-                    SET 
-                    OVTA_COM =OVTA_COM +  " . $datos['subtotal'] . ",
-                    ODESCTO =ODESCTO +  " . (float) $datos['descuento'] . ",
-                    ODES_FIN =ODES_FIN +  " . (float) $datos['descuentoFinanciero'] . ",
-                    OIMP =OIMP + " . (float) $datos['iva'] . "   
-                    WHERE PER_ACUM =  '" . $datos['fechaMes'] . "'");
         $query = "UPDATE ACOMP01 
                     SET 
                     OVTA_COM =OVTA_COM +  " . $datos['subtotal'] . ",
@@ -421,7 +409,6 @@ class Modelo_SAE7 extends Modelo_Base {
             WHEN COMP_X_REC + FAC_CONV  >= 0 THEN COMP_X_REC + FAC_CONV                                        
             ELSE 0 END)                      
             WHERE CVE_ART = N' " . $datos['claveArticulo'] . "'";
-        var_dump($query);
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }
@@ -432,15 +419,11 @@ class Modelo_SAE7 extends Modelo_Base {
                     CAMPLIB1 = '" . $arrayCampos['camplib1'] . "',
                     CAMPLIB2 = '" . $arrayCampos['camplib2'] . "'             
                 WHERE CLAVE_DOC = '" . $claveDocumento . "'";
-        var_dump($query);
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }
 
     public function insertarObservacionesDocumento(array $datos) {
-        var_dump("INSERT INTO OBS_DOCC01 
-                    (CVE_OBS,STR_OBS) 
-                    VALUES('" . $datos['claveObservaciones'] . "', '" . $datos['observaciones'] . "')");
         $query = "INSERT INTO OBS_DOCC01 
                     (CVE_OBS,STR_OBS) 
                     VALUES('" . $datos['claveObservaciones'] . "', '" . $datos['observaciones'] . "')";
@@ -449,7 +432,6 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function insertarCOMPO(array $datos) {
-        var_dump($datos);
         $query = "insert into COMPO01
                     (TIP_DOC,
                      CVE_DOC, 
@@ -526,7 +508,6 @@ class Modelo_SAE7 extends Modelo_Base {
                     " . $datos['importe'] . ",
                     '',
                     '')";
-        var_dump($query);
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }
@@ -538,7 +519,6 @@ class Modelo_SAE7 extends Modelo_Base {
                   ('" . $claveDocumento . "',
                    '" . $arrayCampos['camplib1'] . "',
                    '" . $arrayCampos['camplib2'] . "')";
-        var_dump($query);
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }
@@ -566,7 +546,7 @@ class Modelo_SAE7 extends Modelo_Base {
                 0,
                 0,
                 " . $datos['iva'] . ",
-                0,
+                " . $datos['descuento'] . ",
                 'N',
                 " . $datos['almacen'] . ",
                 " . $datos['tipoCambio'] . ",
@@ -587,7 +567,6 @@ class Modelo_SAE7 extends Modelo_Base {
                 0,
                 0,
                 1)";
-        var_dump($query);
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }
@@ -597,7 +576,6 @@ class Modelo_SAE7 extends Modelo_Base {
                     (CLAVE_DOC, NUM_PART)
                   values
                     ('" . $datos['claveDocumento'] . "'," . $datos['numeroPartida'] . ")";
-        var_dump($query);
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }

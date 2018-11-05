@@ -1976,7 +1976,7 @@ $config['Compras'] = array(
     ),
     'Ordenes-Compras' => array(
         'liga' => 'Ordenes de Compra',
-        'icono' => 'fa fa-eye',
+        'icono' => 'fa fa-cc-visa',
         'Url' => '/Compras/Ordenes_Compra',
         'css' => array('Generales/notas', 'Generales/servicios'),
         'pluginsCss' => array(
@@ -2010,7 +2010,7 @@ $config['Compras'] = array(
             'masked-input/masked-input.min',
             'jquery-tag-it/js/tag-it.min'
         ),
-        'Permiso' => 'VCOMSE'
+        'Permiso' => 'VCOC'
     ),
     'Facturas-OC' => array(
         'liga' => 'Facturas por O.C.',

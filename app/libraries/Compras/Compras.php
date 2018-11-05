@@ -8,6 +8,7 @@ class Compras extends General {
 
     private $catalogo;
     private $gapsi;
+    private $reportes;
     private $DBSAE;
     private $DBG;
 
@@ -15,6 +16,7 @@ class Compras extends General {
         parent::__construct();
         $this->catalogo = \Librerias\Generales\Catalogo::factory();
         $this->gapsi = \Librerias\Gapsi\Catalogos::factory();
+        $this->reportes = \Librerias\SAEReports\Reportes::factory();
         $this->DBSAE = \Modelos\Modelo_SAE7::factory();
         $this->DBG = \Modelos\Modelo_Gapsi::factory();
         parent::getCI()->load->helper('date');
@@ -35,17 +37,6 @@ class Compras extends General {
         $data['tiposServicio'] = $this->gapsi->getTiposServicio();
 
         return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
-    }
-
-    //Obtiene datos para mandar al modal Actualizar Usuario 
-    public function mostrarFormularioUsuarios(array $datos) {
-        $data = array();
-        $data['perfiles'] = $this->catalogo->catPerfiles('3');
-        $data['permisos'] = $this->catalogo->catPermisos('3');
-        $data['idPerfil'] = $this->catalogo->catConsultaGeneral('SELECT IdPerfil FROM cat_v3_usuarios WHERE Id = \'' . $datos[0] . '\'');
-        $data['permiso'] = $this->catalogo->catConsultaGeneral('SELECT PermisosAdicionales FROM cat_v3_usuarios WHERE Id = \'' . $datos[0] . '\'');
-        $data['flag'] = $this->catalogo->catConsultaGeneral('SELECT Flag FROM cat_v3_usuarios WHERE Id = \'' . $datos[0] . '\'');
-        return array('formulario' => parent::getCI()->load->view('Administrador/Modal/ActualizarUsuario', $data, TRUE), 'datos' => $data);
     }
 
     public function mostrarDatosProyectosBeneficiarios(array $datos) {
@@ -69,32 +60,50 @@ class Compras extends General {
     }
 
     public function guardarOrdenCompra(array $datos) {
-//        var_dump($datos);
         $arraySubtotal = $this->subtotalTablaPartidas($datos['datosTabla'], $datos['esquema'], $datos['descuentoFinanciero']);
-//        var_dump($arraySubtotal);
-//        $consulta = $this->DBSAE->guardarOrdenCompra($datos, $arraySubtotal);
-        if($datos['moneda'] === '1'){
-            $moneda = 'MN';
-        }else{
-            $moneda = 'USD';
+        $consulta = $this->DBSAE->guardarOrdenCompra($datos, $arraySubtotal);
+
+        if ($consulta) {
+            if ($datos['moneda'] === '1') {
+                $moneda = 'MN';
+            } else {
+                $moneda = 'USD';
+            }
+            $arrayGapsiOrdenCompra = array(
+                'Beneficiario' => $datos['textoBeneficiario'],
+                'IDBeneficiario' => $datos['beneficiario'],
+                'Tipo' => $datos['tipo'],
+                'TipoTrans' => 'COMPRA',
+                'TipoServicio' => $datos['textoTipoServicio'],
+                'Descripcion' => $datos['observaciones'],
+                'Importe' => $arraySubtotal['total'],
+                'Observaciones' => $datos['observaciones'],
+                'Proyecto' => $datos['proyecto'],
+                'Sucursal' => $datos['sucursal'],
+                'Moneda' => $moneda,
+                'OC' => $datos['claveOrdenCompra']
+            );
+
+            $idGapsi = $this->DBG->ordenCompra($arrayGapsiOrdenCompra);
+            if (!empty($idGapsi)) {
+                $carpeta = './storage/Gastos/' . $idGapsi['last'] . '/PRE';
+
+                if (!file_exists($carpeta)) {
+                    mkdir($carpeta, 0777, true);
+                }
+
+                $this->reportes->generaOC(array(
+                    'id' => '1',
+                    'documento' => $datos['claveNuevaDocumentacion'],
+                    'idGapsi' => $idGapsi['last']));
+
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        } else {
+            return FALSE;
         }
-        
-        $arrayGapsiOrdenCompra = array(
-            'Beneficiario' => $datos['textoBeneficiario'],
-            'IDBeneficiario' => $datos['beneficiario'],
-            'Tipo' => $datos['tipo'],
-            'TipoTrans' => 'COMPRA',
-            'TipoServicio' => $datos['textoTipoServicio'],
-            'Descripcion' => $datos['observaciones'],
-            'Importe' => $arraySubtotal['total'], 
-            'Observaciones' => $datos['observaciones'],
-            'Proyecto' => $datos['proyecto'], 
-            'Sucursal' => $datos['sucursal'], 
-            'Moneda' => $moneda,
-            'OC' => $datos['claveOrdenCompra']
-        );
-        
-//        $resultado = $this->DBG->ordenCompra($arrayGapsiOrdenCompra);
     }
 
     public function subtotalTablaPartidas(array $datos, string $esquema, string $descuentoFinanciero) {
@@ -107,7 +116,7 @@ class Compras extends General {
         }
 
         $subtotal = number_format($subtotal, 2, ".", "");
-        $iva = number_format($subtotal * (int)$esquema / 100, 2, ".", "");
+        $iva = number_format($subtotal * (int) $esquema / 100, 2, ".", "");
         $total = ($subtotal + $iva) - $descuento - $descuentoFinanciero;
 
         return array('subtotal' => $subtotal, 'iva' => $iva, 'descuento' => $descuento, 'total' => $total);

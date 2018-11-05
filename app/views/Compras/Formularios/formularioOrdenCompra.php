@@ -1,4 +1,13 @@
-<h1 class="page-header">Nueva Orden de Compra</h1>
+<div class="row">
+    <div class="col-md-6 col-xs-6">
+        <h1 class="page-header">Nueva Orden de Compra</h1>
+    </div>
+    <div class="col-md-6 col-xs-6 text-right">
+        <label id="btnRegresarOrdenesCompra" class="btn btn-success">
+            <i class="fa fa fa-reply"></i> Regresar
+        </label>  
+    </div>
+</div>
 <div id="panelFormularioOrdenesDeCompra" class="panel panel-inverse">
     <div class="panel-heading">
         <div class="panel-heading-btn">
@@ -187,7 +196,7 @@
                                         <th class="all" style="max-width: 150px !important;">Costo por Unidad</th>
                                         <th class="all" style="max-width: 150px !important;">Subtotal por partida</th>
                                         <th class="none">Observaciones</th>
-                                        <th class="none"></th>
+                                        <th class="none">Advertencia</th>
                                     </tr>
                                 </thead>
                                 <tbody>        
@@ -225,12 +234,20 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="alert alert-warning fade in m-b-15">                            
-                                                Para guardar las Observaciones de la fila debe estar visible el campo.                            
+                                                Para guardar las Observaciones de la fila debe estar el campo visible.                            
                                             </div>                                          
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mensajeEliminarFila" class="row hidden">
+                    <div class="col-md-12 m-t-5">
+                        <div class="alert alert-warning fade in m-b-15">                            
+                            Para eliminar una fila manten presionado el botón derecho del mause.                            
                         </div>
                     </div>
                 </div>

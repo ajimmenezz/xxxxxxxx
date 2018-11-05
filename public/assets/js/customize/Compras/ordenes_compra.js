@@ -29,7 +29,6 @@ $(function () {
     $('#btnAgregarOrdenCompra').off('click');
     $('#btnAgregarOrdenCompra').on('click', function () {
         evento.enviarEvento('Compras/MostrarFormularioOrdenCompra', {}, '#panelOrdenesDeCompra', function (respuesta) {
-            console.log(respuesta);
             cargarSeccionOrdenCompra(respuesta);
             cargarObjetosFormulario();
             eventosFormulario(respuesta);
@@ -45,8 +44,6 @@ $(function () {
         var respuesta = arguments[0];
         $('#listaCompras').addClass('hidden');
         $('#seccionFormularioOrdenCompra').removeClass('hidden').empty().append(respuesta.formulario);
-//        $('#btnRegresarFacturacionTesoreria').removeClass('hidden');
-
     }
 
     var cargarObjetosFormulario = function () {
@@ -80,6 +77,7 @@ $(function () {
     var eventosFormulario = function () {
         var respuesta = arguments[0];
         var productos = respuesta.datos.productos;
+        var timer;
 
         mostrarDireccionSelect('#selectProveedorOrdenCompra', '#iconoInformacionProveedor', 'Dirección del proveedor ...');
         mostrarDireccionSelect('#selectAlmacenOrdenCompra', '#iconoInformacionAlmacen', 'Dirección de almacen ...');
@@ -91,6 +89,7 @@ $(function () {
             tabla.agregarFilaHtml('#data-table-partidas-oc', datosNuevaPartida(productos, numeroFila));
             select.crearSelect('#selectProductoPartida' + numeroFila);
             select.crearSelect('#selectUnidadPartida' + numeroFila);
+            $('#mensajeEliminarFila').removeClass('hidden');
             eventosTablaPartida(numeroFila);
         });
 
@@ -141,17 +140,27 @@ $(function () {
             }
         });
 
-        $('#data-table-partidas-oc').on('dblclick', 'tr', function () {
-            var datosTablaPartidasOC = $('#data-table-partidas-oc').DataTable().rows().data();
-            var numeroFila = datosTablaPartidasOC.length;
+        $('#data-table-partidas-oc').on("mousedown", "tr", function () {
+            var _this = this;
+            timer = setTimeout(function () {
+                var datosTablaPartidasOC = $('#data-table-partidas-oc').DataTable().rows().data();
+                var numeroFila = datosTablaPartidasOC.length;
+                if (numeroFila > 1) {
+                    if (tabla.validarClickRenglon('#data-table-partidas-oc')) {
+                        tabla.eliminarFila('#data-table-partidas-oc', _this);
+                        var datosTablaPartidasOC2 = $('#data-table-partidas-oc').DataTable().rows().data();
+                        var numeroFila2 = datosTablaPartidasOC2.length;
 
-            if (numeroFila > 1) {
-                if (tabla.validarClickRenglon('#data-table-partidas-oc')) {
-                    tabla.eliminarFila('#data-table-partidas-oc', this);
+                        if (numeroFila2 === 1) {
+                            $('#mensajeEliminarFila').addClass('hidden');
+                        }
+                    }
+                } else {
+                    evento.mostrarMensaje('.errorTablaPartida', false, 'Debe de haber por lo menos una fila.', 4000);
                 }
-            } else {
-                evento.mostrarMensaje('.errorTablaPartida', false, 'Debe de haber por lo menos una fila.', 5000);
-            }
+            }, 2 * 1000);
+        }).on("mouseup mouseleave", function () {
+            clearTimeout(timer);
         });
 
         $('#btnGuardarOC').on('click', function () {
@@ -160,10 +169,17 @@ $(function () {
 
             if (camposTablaValidados && camposFormularioValidados) {
                 var data = valorCamposFormulario(respuesta.datos.claveNuevaDocumentacion);
-                console.log(data);
-                evento.enviarEvento('Compras/GuardarOrdenCompra', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
-                    console.log(respuesta);
-                });
+                var fecha = $('#inputFechaOrdenCompra').val();
+                var fechaRec = $('#inputFechaRecOrdenCompra').val();
+                if (fecha <= fechaRec) {
+                    evento.enviarEvento('Compras/GuardarOrdenCompra', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
+                        if (respuesta) {
+                            evento.mensajeConfirmacion('Se genero correctamente la Orden de Compra', 'Correcto');
+                        }
+                    });
+                } else {
+                    evento.mostrarMensaje('#errorGuardarOC', false, 'El campo fecha de recolección debe ser mayor o igual al campo fecha.', 5000);
+                }
             }
         });
 
@@ -172,6 +188,9 @@ $(function () {
             $('#inputTipoCambioOrdenCompra').val(tipoCambio);
         });
 
+        $('#btnRegresarOrdenesCompra').on('click', function () {
+            mostrarResumenOrdenesCompra();
+        });
     }
 
     var mostrarDireccionSelect = function () {
@@ -224,7 +243,7 @@ $(function () {
                         </td>\n\
                         <td class="text-center">\n\
                             <div class="alert alert-warning fade in m-b-15">\n\
-                                Para guardar las Observaciones de la fila debe estar visible el campo.\n\
+                               Para guardar las Observaciones de la fila debe estar el campo visible.\n\
                             </div>\n\
                         </td>';
         nuevaFila += "</tr>";
@@ -242,6 +261,11 @@ $(function () {
         $('#cantidad' + numeroFila).on("change", function () {
             var cantidad = $(this).val();
             eventoCantidadPartida(numeroFila, cantidad);
+        });
+
+        $('#costoUnidad' + numeroFila).on("change", function () {
+            var costoUnidad = $(this).val();
+            eventoCostoUnidadPartida(numeroFila, costoUnidad);
         });
 
     }
@@ -282,7 +306,17 @@ $(function () {
         var costoUnidadAnterior = $('#selectProductoPartida' + numeroFila + ' option:selected').data('costo-unidad');
         var costoUnidad = (cantidad * costoUnidadAnterior);
 
+        $('#costoUnidad' + numeroFila).val(costoUnidadAnterior);
         $('#subtotalPartida' + numeroFila).val(costoUnidad);
+    }
+
+    var eventoCostoUnidadPartida = function () {
+        var numeroFila = arguments[0];
+        var costoUnidad = arguments[1];
+        var cantidad = $('#cantidad' + numeroFila).val();
+        var subtotal = (costoUnidad * cantidad);
+
+        $('#subtotalPartida' + numeroFila).val(subtotal);
     }
 
     var arrayCamposFormulario = function () {
@@ -404,4 +438,10 @@ $(function () {
 
         return arrayValoresCamposTabla;
     }
+
+    var mostrarResumenOrdenesCompra = function () {
+        $('#listaCompras').removeClass('hidden');
+        $('#seccionFormularioOrdenCompra').addClass('hidden');
+    }
+
 });
