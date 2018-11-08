@@ -201,6 +201,11 @@ $(function () {
                                 htmlSelect += '<option value="' + v.Id + '">' + v.Nombre + '</option>';
                             });
                             break;
+                        case 'cs.IdRegionCliente':
+                            $.each(catalogos.regiones, function (k, v) {
+                                htmlSelect += '<option value="' + v.Id + '">' + v.Nombre + '</option>';
+                            });
+                            break;
                     }
                     $("#valorFiltro").empty().append(htmlSelect);
                     select.crearSelectMultiple("#selectValor", "Seleccionar");
