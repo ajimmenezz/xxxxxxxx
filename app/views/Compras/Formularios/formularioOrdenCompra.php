@@ -211,8 +211,6 @@
                                         <th class="all" style="max-width: 150px !important;">Descuento</th>
                                         <th class="all" style="max-width: 150px !important;">Costo por Unidad</th>
                                         <th class="all" style="max-width: 150px !important;">Subtotal por partida</th>
-<!--                                        <th class="none">Observaciones</th>
-                                        <th class="none">Advertencia</th>-->
                                         <th class="never">NumeroPartida</th>
                                     </tr>
                                 </thead>
@@ -253,14 +251,6 @@
                                         <td class="text-center">
                                             <input id="subtotalPartida0" type="number" class="form-control" value="0.00" min="0" disabled/>
                                         </td>
-<!--                                        <td class="text-center">
-                                            <textarea id="textAreaObservacionesPartida0" class="form-control"  rows="3" ></textarea>    
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="alert alert-warning fade in m-b-15">                            
-                                                Para guardar las Observaciones de la fila debe estar el campo visible.                            
-                                            </div>                                          
-                                        </td>-->
                                         <td>
                                             0
                                         </td>

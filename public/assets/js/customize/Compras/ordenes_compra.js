@@ -25,7 +25,7 @@ $(function () {
 
     //Inicializa funciones de la plantilla
     App.init();
-    
+
     var arrayObservacionesPartida = [];
 
     $('#data-table-ordenes-compra tbody').on('click', 'tr', function () {
@@ -92,11 +92,14 @@ $(function () {
 
         $('#btnAgregarPartidaFila').on('click', function () {
             var datosTablaPartidasOC = $('#data-table-partidas-oc').DataTable().rows().data();
-            var numeroFila = datosTablaPartidasOC.length;
-
-            tabla.agregarFilaHtml('#data-table-partidas-oc', datosNuevaPartida(productos, numeroFila, numeroFila));
-            cargarObjetosTabla(numeroFila);
-            eventosTablaPartida(numeroFila);
+            var ultimoIndiceTabla = 0;
+            $.each(datosTablaPartidasOC, function (k, v) {
+                ultimoIndiceTabla = v[7];
+            });
+            ultimoIndiceTabla = parseInt(ultimoIndiceTabla) + 1;
+            tabla.agregarFilaHtml('#data-table-partidas-oc', datosNuevaPartida(productos, ultimoIndiceTabla, ultimoIndiceTabla));
+            cargarObjetosTabla(ultimoIndiceTabla);
+            eventosTablaPartida(ultimoIndiceTabla);
             $('#mensajeEliminarFila').removeClass('hidden');
         });
 
@@ -196,22 +199,19 @@ $(function () {
         $('#btnGuardarOC').on('click', function () {
             var camposFormularioValidados = evento.validarCamposObjetos(arrayCamposFormulario(), '#errorGuardarOC');
             var camposTablaValidados = evento.validarCamposObjetos(arrayCamposTablaPartidas(), '#errorGuardarOC');
-//            if (camposTablaValidados && camposFormularioValidados) {
-
-            console.log($('#textAreaObservacionesPartida0').val());
-            var data = valorCamposFormulario(respuesta.datos.claveNuevaDocumentacion);
-            console.log(data);
-//                var fecha = $('#inputFechaOrdenCompra').val();
-//                var fechaRec = $('#inputFechaRecOrdenCompra').val();
-//                if (fecha <= fechaRec) {
-//                    evento.enviarEvento('Compras/GuardarOrdenCompra', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
-//                        window.open('/' + respuesta);
-//                        evento.mensajeConfirmacion('Se genero correctamente la Orden de Compra', 'Correcto');
-//                    });
-//                } else {
-//                    evento.mostrarMensaje('#errorGuardarOC', false, 'El campo fecha de recolección debe ser mayor o igual al campo fecha.', 5000);
-//                }
-//            }
+            if (camposTablaValidados && camposFormularioValidados) {
+                var data = valorCamposFormulario(respuesta.datos.claveNuevaDocumentacion);
+                var fecha = $('#inputFechaOrdenCompra').val();
+                var fechaRec = $('#inputFechaRecOrdenCompra').val();
+                if (fecha <= fechaRec) {
+                    evento.enviarEvento('Compras/GuardarOrdenCompra', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
+                        window.open('/' + respuesta);
+                        evento.mensajeConfirmacion('Se genero correctamente la Orden de Compra', 'Correcto');
+                    });
+                } else {
+                    evento.mostrarMensaje('#errorGuardarOC', false, 'El campo fecha de recolección debe ser mayor o igual al campo fecha.', 5000);
+                }
+            }
         });
 
         $('#selectMonedaOrdenCompra').on("change", function () {
@@ -244,7 +244,13 @@ $(function () {
         var numeroFila = arguments[1];
         var partidaRequisicion = arguments[2];
         var nuevaFila = '<tr role="row">';
-        nuevaFila += '<td><div id="partidaClave' + numeroFila + '" data-partida-requisicion="' + partidaRequisicion + '"></td>\n\
+        nuevaFila += '<td>\n\
+                        <div id="partidaClave' + numeroFila + '" data-partida-requisicion="' + partidaRequisicion + '">\n\
+                            <span id="botonAgregarObservaciones' + numeroFila + '" class="fa-stack text-success">\n\
+                                <i class="fa fa-circle fa-stack-2x"></i>\n\
+                                <i class="fa fa-plus fa-stack-1x fa-inverse"></i>\n\
+                            </span>\n\
+                        </td>\n\
                         <td>\n\
                             <select id="selectProductoPartida' + numeroFila + '" class="form-control" style="width: 100%" data-parsley-required="true">\n\
                                 <option value="">Seleccionar...</option>';
@@ -269,14 +275,6 @@ $(function () {
                         </td>\n\
                         <td class="text-center">\n\
                             <input id="subtotalPartida' + numeroFila + '" type="number" class="form-control" value="0.00" min="0" disabled/>\n\
-                        </td>\n\
-                        <td class="text-center">\n\
-                            <textarea id="textAreaObservacionesPartida' + numeroFila + '" class="form-control"  rows="3" ></textarea>\n\
-                        </td>\n\
-                        <td class="text-center">\n\
-                            <div class="alert alert-warning fade in m-b-15">\n\
-                               Para guardar las Observaciones de la fila debe estar el campo visible.\n\
-                            </div>\n\
                         </td>\n\
                         <td class="text-center">' + numeroFila + '</td>';
         nuevaFila += "</tr>";
@@ -321,7 +319,7 @@ $(function () {
             var unidad2 = $('#selectProductoPartida' + numeroFila + ' option:selected').data('unidad2');
             var cantidad = $('#inputDescuentoOrdenCompra').val();
 
-            $('#partidaClave' + numeroFila).empty().html('<span id="botonAgregarObservaciones0" class="fa-stack text-success">\n\
+            $('#partidaClave' + numeroFila).empty().html('<span id="botonAgregarObservaciones' + numeroFila + '" class="fa-stack text-success">\n\
                                                     <i class="fa fa-circle fa-stack-2x"></i>\n\
                                                     <i class="fa fa-plus fa-stack-1x fa-inverse"></i>\n\
                                                 </span>' + clave);
@@ -365,24 +363,41 @@ $(function () {
     }
 
     var eventoBotonObservacionesPartida = function () {
-        var numeroFila = arguments[0]
+        var numeroFila = arguments[0];
         $('#botonAgregarObservaciones' + numeroFila).on('click', function () {
             var textAreaObservaciones = '';
-            if(arrayObservacionesPartida[numeroFila] !== undefined){
+            var html = '';
+
+            if (arrayObservacionesPartida[numeroFila] !== undefined) {
                 textAreaObservaciones = arrayObservacionesPartida[numeroFila];
             }
-            var html = '<div class="row">\n\
-                                    <div class="col-md-12 text-center">\n\
-                                        <textarea id="textAreaObservacionesPartida' + numeroFila + '" class="form-control" rows="3" >' +  + '</textarea>\n\
-                                    </div>\n\
-                            </div>';
+
+            html = '<div class="row">\n\
+                        <div class="col-md-12 text-center">\n\
+                            <textarea id="textAreaObservacionesPartida' + numeroFila + '" class="form-control" rows="3" >' + textAreaObservaciones + '</textarea>\n\
+                        </div>\n\
+                    </div>\n\
+                        <div class="row m-t-15">\n\
+                            <div class="col-md-12">\n\
+                                <div class="errorTextAreaObservacionesPartida"></div>\n\
+                            </div>\n\
+                        </div>\n\
+                    </div>';
+
             evento.mostrarModal('Observaciones por Partida', html);
+
+            $('#btnModalConfirmar').empty().append('Guardar');
             $('#btnModalConfirmar').off('click');
             $('#btnModalConfirmar').on('click', function () {
                 var observacionesPartida = $('#textAreaObservacionesPartida' + numeroFila).val();
-                arrayObservacionesPartida[numeroFila] = observacionesPartida;
-                console.log(arrayObservacionesPartida);
-            })
+
+                if (observacionesPartida !== '') {
+                    arrayObservacionesPartida[numeroFila] = observacionesPartida;
+                    evento.cerrarModal();
+                } else {
+                    evento.mostrarMensaje('.errorTextAreaObservacionesPartida', false, 'Falta llenar el campo de observaciones.', 3000);
+                }
+            });
         });
     }
 
@@ -493,7 +508,7 @@ $(function () {
         var datosTablaPartidasOC = $('#data-table-partidas-oc').DataTable().rows().data();
         var arrayValoresCamposTabla = [];
         $.each(datosTablaPartidasOC, function (k, v) {
-            var numeroFila = v[9];
+            var numeroFila = v[7];
             arrayValoresCamposTabla[k] = ({
                 'producto': $('#selectProductoPartida' + numeroFila).val(),
                 'unidad': $('#selectUnidadPartida' + numeroFila).val(),
@@ -501,7 +516,7 @@ $(function () {
                 'descuento': $('#descuento' + numeroFila).val(),
                 'costoUnidad': $('#costoUnidad' + numeroFila).val(),
                 'subtotalPartida': $('#subtotalPartida' + numeroFila).val(),
-                'observacionesPartida': $('#textAreaObservacionesPartida' + numeroFila).val(),
+                'observacionesPartida': arrayObservacionesPartida[numeroFila],
                 'partidaRequisicion': $('#partidaClave' + numeroFila).data('partida-requisicion')
             });
         });
