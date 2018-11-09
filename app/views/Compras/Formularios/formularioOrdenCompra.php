@@ -37,6 +37,7 @@
                             <select id="selectOrdenOrdenCompra" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <option value="Directa">Directa</option>
+                                <option value="Requisicion">Requisición</option>
                             </select>
                         </div>
                     </div>
@@ -73,6 +74,21 @@
                     </div>
                     <div class="col-md-1 col-xs-1">
                         <a href="javascript:;" id="iconoInformacionProveedor" data-toggle="tooltip" data-container="body" data-title="Dirección del proveedor ..." class="btn btn-inverse btn-icon btn-circle btn-lg m-t-20"><i class="fa fa-info"></i></a>
+                    </div>
+                </div>
+                <div id="divRequisiciones" class="row hidden">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="selectRequisicionesOrdenCompra">Requisiciones *</label>
+                            <select id="selectRequisicionesOrdenCompra" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($requisiciones as $item) {
+                                    echo '<option value="' . $item['CVE_DOC'] . '">' . $item['CVE_DOC'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -153,7 +169,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="inputTipoCambioOrdenCompra">Tipo de cambio *</label>
-                            <input type="text" class="form-control" id="inputTipoCambioOrdenCompra" style="width: 100%" data-parsley-required="true" disabled/>                            
+                            <input type="text" class="form-control" id="inputTipoCambioOrdenCompra" style="width: 100%" data-parsley-required="true" />                            
                         </div>
                     </div>
                 </div>
@@ -195,13 +211,21 @@
                                         <th class="all" style="max-width: 150px !important;">Descuento</th>
                                         <th class="all" style="max-width: 150px !important;">Costo por Unidad</th>
                                         <th class="all" style="max-width: 150px !important;">Subtotal por partida</th>
-                                        <th class="none">Observaciones</th>
-                                        <th class="none">Advertencia</th>
+<!--                                        <th class="none">Observaciones</th>
+                                        <th class="none">Advertencia</th>-->
+                                        <th class="never">NumeroPartida</th>
                                     </tr>
                                 </thead>
                                 <tbody>        
                                     <tr>
-                                        <td><div id="partidaClave0"></div></td>
+                                        <td>
+                                            <div id="partidaClave0" data-partida-requisicion="0">
+                                                <span id="botonAgregarObservaciones0" class="fa-stack text-success">
+                                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                                    <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
+                                                </span>
+                                            </div>
+                                        </td>
                                         <td>
                                             <select id="selectProductoPartida0" class="form-control" style="width: 100%" data-numero-fila="0" data-parsley-required="true">
                                                 <option value="">Seleccionar...</option>
@@ -229,13 +253,16 @@
                                         <td class="text-center">
                                             <input id="subtotalPartida0" type="number" class="form-control" value="0.00" min="0" disabled/>
                                         </td>
-                                        <td class="text-center">
+<!--                                        <td class="text-center">
                                             <textarea id="textAreaObservacionesPartida0" class="form-control"  rows="3" ></textarea>    
                                         </td>
                                         <td class="text-center">
                                             <div class="alert alert-warning fade in m-b-15">                            
                                                 Para guardar las Observaciones de la fila debe estar el campo visible.                            
                                             </div>                                          
+                                        </td>-->
+                                        <td>
+                                            0
                                         </td>
                                     </tr>
                                 </tbody>

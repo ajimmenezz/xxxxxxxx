@@ -36,6 +36,12 @@ class Controller_Compras extends Base {
             case 'GuardarOrdenCompra':
                 $resultado = $this->compras->guardarOrdenCompra($this->input->post());
                 break;
+            case 'ConsultaListaRequisiciones':
+                $resultado = $this->compras->consultaListaRequisiciones($this->input->post());
+                break;
+            case 'CrearPDFGastoOrdenCompra':
+                $resultado = $this->compras->crearPDFGastoOrdenCompra($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

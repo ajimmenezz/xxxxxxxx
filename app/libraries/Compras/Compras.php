@@ -35,6 +35,7 @@ class Compras extends General {
         $data['productos'] = $this->DBSAE->consultaProductosSAE();
         $data['clientes'] = $this->gapsi->getClientes();
         $data['tiposServicio'] = $this->gapsi->getTiposServicio();
+        $data['requisiciones'] = $this->DBSAE->consultaRequisiciones();
 
         return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
     }
@@ -48,6 +49,11 @@ class Compras extends General {
 
     public function consultaListaOrdenesCompra() {
         $consulta = $this->DBSAE->consultaListaOrdenesCompra();
+        return $consulta;
+    }
+
+    public function consultaListaRequisiciones(array $datos) {
+        $consulta = $this->DBSAE->consultaListaRequisiciones($datos['claveDocumento']);
         return $consulta;
     }
 
@@ -92,12 +98,12 @@ class Compras extends General {
                     mkdir($carpeta, 0777, true);
                 }
 
-                $this->reportes->generaOC(array(
+                $gastoPDF = $this->reportes->generaOC(array(
                     'id' => '1',
                     'documento' => $datos['claveNuevaDocumentacion'],
                     'idGapsi' => $idGapsi['last']));
 
-                return TRUE;
+                return '.' . $gastoPDF;
             } else {
                 return FALSE;
             }
@@ -120,6 +126,31 @@ class Compras extends General {
         $total = ($subtotal + $iva) - $descuento - $descuentoFinanciero;
 
         return array('subtotal' => $subtotal, 'iva' => $iva, 'descuento' => $descuento, 'total' => $total);
+    }
+
+    public function crearPDFGastoOrdenCompra(array $datos) {
+        $ordenCompra = str_replace(0, '', $datos['ordenCompra']);
+
+        $idGapsi = $this->DBG->consultaIdOrdenCompra(array(
+            'ordenCompra' => $ordenCompra
+        ));
+
+        if (!empty($idGapsi)) {
+            $carpeta = './storage/Gastos/' . $idGapsi[0]['ID'] . '/PRE';
+
+            if (!file_exists($carpeta)) {
+                mkdir($carpeta, 0777, true);
+            }
+
+            $gastoPDF = $this->reportes->generaOC(array(
+                'id' => '1',
+                'documento' => $datos['ordenCompra'],
+                'idGapsi' => $idGapsi[0]['ID']));
+
+            return '.' . $gastoPDF;
+        } else {
+            return FALSE;
+        }
     }
 
 }

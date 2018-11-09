@@ -339,4 +339,14 @@ class Modelo_Gapsi extends Modelo_Base {
         }
     }
 
+    public function consultaIdOrdenCompra(array $datos) {
+        $query = "select 
+                ID
+                from db_Registro
+                where OrdenCompra = '" . $datos['ordenCompra']. "'";
+        $consulta = parent::connectDBGapsi()->query($query);
+        $gasto = $consulta->result_array();
+        return $gasto;
+    }
+
 }
