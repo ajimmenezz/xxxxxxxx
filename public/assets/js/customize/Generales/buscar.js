@@ -333,10 +333,10 @@ $(function () {
                 });
             });
 
-            if (datos[15] === "CONCLUIDO") {
+            if (datos[16] === "CONCLUIDO") {
                 $("#btnRechazarServicioConcluido").removeClass("hidden");
-                $("#btnRechazarServicioConcluido").off("click");
 
+                $("#btnRechazarServicioConcluido").off("click");
                 $("#btnRechazarServicioConcluido").on("click", function () {
                     var modalMensaje = evento.mensajeValidar("¿Realmente quiere Reabrir el Servicio?");
                     evento.mostrarModal('"Advertencia"', modalMensaje);
