@@ -34,6 +34,7 @@ class Secciones extends General {
     private $ModeloComprobacion;
     private $FondoFijo;
     private $ModeloTesoreria;
+    private $ubicaphone;
 
     public function __construct() {
         parent::__construct();
@@ -70,6 +71,7 @@ class Secciones extends General {
         $this->ModeloComprobacion = \Modelos\Modelo_Comprobacion::factory();
         $this->FondoFijo = \Librerias\Tesoreria\FondoFijo::factory();
         $this->ModeloTesoreria = \Modelos\Modelo_Tesoreria::factory();
+        $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
     }
 
     /*
@@ -450,6 +452,9 @@ class Secciones extends General {
             case 'Comprobacion/Autorizar_Fondo_Fijo':
                 $usuario = $this->Usuario->getDatosUsuario();
                 $datos['listaComprobaciones'] = $this->ModeloTesoreria->getComprobacionesXAutorizar($usuario['Id']);    
+                break;
+            case 'Localizacion/Dispositivos':                
+                $datos['dispositivos'] = $this->ubicaphone->cargaDispositivosGlobal();
                 break;
             default:
                 break;

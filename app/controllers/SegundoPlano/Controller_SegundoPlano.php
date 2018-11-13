@@ -429,7 +429,7 @@ class Controller_SegundoPlano extends \CI_Controller {
             'to' => $to
         ];
         $result = $this->ubicaphone->getGeofenceActivations($data);
-        
+
 //        echo "<pre>";
 //        var_dump($result);
 //        echo "</pre>";
@@ -475,6 +475,6 @@ class Controller_SegundoPlano extends \CI_Controller {
         echo "<pre>";
         var_dump($array);
         echo "</pre>";
-    }
+    }   
 
 }

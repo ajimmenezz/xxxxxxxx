@@ -169,4 +169,7 @@ $config['Secciones'] = array(
         'FondoFijo-Comprobacion' => 'Fondo_Fijo',
         'FondoFijo-Autorizacion' => 'Autorizar_Fondo_Fijo',
     ),
+    'Localizacion' => array(
+        'Localizacion-Dispositivos' => 'Dispositivos'
+    )
 );
