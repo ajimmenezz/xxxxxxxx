@@ -1025,6 +1025,64 @@ class Modelo_Proyectos2 extends Modelo_Base {
         $consulta = $this->consulta($query);
         return $consulta;
     }
+    
+    public function cargaMaterialProyectadoToPDF(int $proyecto) {
+        $generales = $this->getGeneralesProyecto($proyecto);
+
+        $query = "select 
+                concat(cap.Nombre,' - ',sae.Nombre) as Material,
+                sae.Clave,
+                tptm.Cantidad as Total,
+                sae.Unidad
+                from t_proyectos_tarea_material tptm
+                inner join t_proyectos_tareas tpt on tptm.IdTarea = tpt.Id
+                inner join cat_v3_equipos_sae sae on tptm.IdMaterial = sae.Id
+                inner join cat_v3_accesorios_proyecto cap on tptm.IdAccesorio = cap.Id
+                where tpt.IdProyecto = '" . $proyecto . "'
+                and tpt.Flag = 1
+                and tptm.Flag = 1";
+
+        if ($generales['IdSistema'] == 1) {
+            $query = "SELECT
+                                    Material,
+                                    Clave,
+                                    sum(Total) as Total,
+                                    Unidad
+                                    from (
+                                        select                                     
+                                        concat(cap.Nombre,' - ',sae.Nombre) as Material,
+                                        sae.Clave,
+                                        if(sae.Clave in ('PD-PUC6004BUY','PD-PUC6004BUY P'), tnap.Cantidad / 305, tnap.Cantidad) as Total,
+                                        sae.Unidad
+                                        from t_nodos_alcance_proyecto tnap
+                                        inner join t_alcance_proyecto tap on tap.Id = tnap.IdAlcance
+                                        inner join cat_v3_equipos_sae sae on tnap.IdMaterial = sae.Id
+                                        inner join cat_v3_accesorios_proyecto cap on tnap.IdAccesorio = cap.Id
+                                        where tap.IdProyecto = '" . $proyecto . "'
+                                        and tap.Flag = 1
+                                        and tnap.Flag = 1
+
+                                        union all
+
+                                        select 
+                                        concat(cap.Nombre,' - ',sae.Nombre) as Material,
+                                        sae.Clave,
+                                        if(sae.Clave in ('PD-PUC6004BUY','PD-PUC6004BUY P'), tnap.Cantidad / 305, tnap.Cantidad) as Total,
+                                        sae.Unidad
+                                        from t_proyectos_tarea_material tptm
+                                        inner join t_proyectos_tareas tpt on tptm.IdTarea = tpt.Id
+                                        inner join cat_v3_equipos_sae sae on tptm.IdMaterial = sae.Id
+                                        inner join cat_v3_accesorios_proyecto cap on tptm.IdAccesorio = cap.Id
+                                        where tpt.IdProyecto = '" . $proyecto . "'
+                                        and tpt.Flag = 1
+                                        and tptm.Flag = 1
+                                    ) as tf
+                                    group by Clave order by Material";
+        }
+
+        $consulta = $this->consulta($query);
+        return $consulta;
+    }
 
     public function cargaMaterialAsignadoSAE(int $almacen) {
         $query = "select 

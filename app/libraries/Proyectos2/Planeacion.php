@@ -682,7 +682,7 @@ class Planeacion extends General {
         } else {
 
             $infoHeader = $this->DB->getInfoHeaderInicioProyecto($datos['id'])[0];
-            $material = $this->DB->cargaMaterialProyectado($datos['id']);
+            $material = $this->DB->cargaMaterialProyectadoToPDF($datos['id']);
             $pline1 = 9;
             $pline2 = 201;
 
