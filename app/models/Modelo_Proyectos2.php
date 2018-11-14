@@ -1052,7 +1052,7 @@ class Modelo_Proyectos2 extends Modelo_Base {
                                         select                                     
                                         concat(cap.Nombre,' - ',sae.Nombre) as Material,
                                         sae.Clave,
-                                        if(sae.Clave in ('PD-PUC6004BUY','PD-PUC6004BUY P'), tnap.Cantidad / 305, tnap.Cantidad) as Total,
+                                        if(sae.Clave in ('PD-PUC6004BUY','PD-PUC6004BUY P'),tnap.Cantidad / 305, tnap.Cantidad) as Total,
                                         sae.Unidad
                                         from t_nodos_alcance_proyecto tnap
                                         inner join t_alcance_proyecto tap on tap.Id = tnap.IdAlcance
@@ -1067,7 +1067,7 @@ class Modelo_Proyectos2 extends Modelo_Base {
                                         select 
                                         concat(cap.Nombre,' - ',sae.Nombre) as Material,
                                         sae.Clave,
-                                        if(sae.Clave in ('PD-PUC6004BUY','PD-PUC6004BUY P'), tnap.Cantidad / 305, tnap.Cantidad) as Total,
+                                        if(sae.Clave in ('PD-PUC6004BUY','PD-PUC6004BUY P'),tptm.Cantidad / 305, tptm.Cantidad) as Total,                                        
                                         sae.Unidad
                                         from t_proyectos_tarea_material tptm
                                         inner join t_proyectos_tareas tpt on tptm.IdTarea = tpt.Id
