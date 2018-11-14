@@ -621,7 +621,8 @@ class Modelo_Tesoreria extends Modelo_Base {
             "IdUsuarioAutoriza" => ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? $this->usuario['Id'] : null,
             "EnPresupuesto" => $datos['enPresupuesto'],
             "XML" => $datos['xml'],
-            "PDF" => $datos['pdf']
+            "PDF" => $datos['pdf'],
+            "MontoConcepto" => $datos['montoMaximo']
         ]);
 
         if ($this->estatusTransaccion() === FALSE) {
