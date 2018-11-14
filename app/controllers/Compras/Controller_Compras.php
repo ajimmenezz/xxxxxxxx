@@ -27,8 +27,11 @@ class Controller_Compras extends Base {
 
     public function manejarEvento(string $evento = null) {
         switch ($evento) {
-            case 'MostrarDatosSucursalesBeneficiarios':
-                $resultado = $this->compras->mostrarDatosProyectosBeneficiarios($this->input->post());
+            case 'MostrarDatosSucursales':
+                $resultado = $this->compras->mostrarDatosProyectos($this->input->post());
+                break;
+            case 'MostrarDatosBeneficiarios':
+                $resultado = $this->compras->mostrarDatosBeneficiarios($this->input->post());
                 break;
             case 'MostrarFormularioOrdenCompra':
                 $resultado = $this->compras->mostrarFormularioOrdenCompra($this->input->post());
@@ -41,6 +44,9 @@ class Controller_Compras extends Base {
                 break;
             case 'CrearPDFGastoOrdenCompra':
                 $resultado = $this->compras->crearPDFGastoOrdenCompra($this->input->post());
+                break;
+            case 'ConsultaListaOrdenesCompra':
+                $resultado = $this->compras->consultaListaOrdenesCompra($this->input->post());
                 break;
             default:
                 $resultado = FALSE;

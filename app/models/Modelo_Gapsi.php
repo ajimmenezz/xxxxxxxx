@@ -348,5 +348,4 @@ class Modelo_Gapsi extends Modelo_Base {
         $gasto = $consulta->result_array();
         return $gasto;
     }
-
 }

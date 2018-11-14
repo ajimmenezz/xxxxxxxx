@@ -27,6 +27,15 @@ $(function () {
     App.init();
 
     var arrayObservacionesPartida = [];
+    select.crearSelect('#selectBuscarFechaOrdenesCompra');
+
+    $("#selectBuscarFechaOrdenesCompra").on("change", function () {
+        var fecha = $(this).val();
+        var data = {fecha: fecha};
+        evento.enviarEvento('Compras/ConsultaListaOrdenesCompra', data, '#panelOrdenesDeCompra', function (respuesta) {
+            recargandoListaTablaOrdenesCompra(respuesta);
+        });
+    });
 
     $('#data-table-ordenes-compra tbody').on('click', 'tr', function () {
         var datos = $('#data-table-ordenes-compra').DataTable().row(this).data();
@@ -47,6 +56,11 @@ $(function () {
         });
     });
 
+//    $('.btnPDFOrdenCompra').off('click');
+//    $('.btnPDFOrdenCompra').on('click', function () {
+//        console.log('pumas');
+//    });
+
     var cargarSeccionOrdenCompra = function () {
         var respuesta = arguments[0];
         $('#listaCompras').addClass('hidden');
@@ -63,6 +77,7 @@ $(function () {
         select.crearSelect('#selectProyectoOrdenCompra');
         select.crearSelect('#selectSucursalOrdenCompra');
         select.crearSelect('#selectTipoServicioOrdenCompra');
+        select.crearSelect('#selectTipoBeneficiarioOrdenCompra');
         select.crearSelect('#selectBeneficiarioOrdenCompra');
         select.crearSelect('#selectRequisicionesOrdenCompra');
         select.crearSelect('#selectProductoPartida0');
@@ -87,20 +102,18 @@ $(function () {
         var productos = respuesta.datos.productos;
         var timer;
 
+        window.addEventListener("keypress", function (event) {
+            if (event.keyCode == 13) { //Enter
+                event.preventDefault();
+            }
+        }, false);
+
         mostrarDireccionSelect('#selectProveedorOrdenCompra', '#iconoInformacionProveedor', 'Dirección del proveedor ...');
+        mostrarDireccionSelect('#selectAlmacenOrdenCompra', '#iconoInformacionAlmacen', 'Dirección de almacen ...');
         mostrarDireccionSelect('#selectAlmacenOrdenCompra', '#iconoInformacionAlmacen', 'Dirección de almacen ...');
 
         $('#btnAgregarPartidaFila').on('click', function () {
-            var datosTablaPartidasOC = $('#data-table-partidas-oc').DataTable().rows().data();
-            var ultimoIndiceTabla = 0;
-            $.each(datosTablaPartidasOC, function (k, v) {
-                ultimoIndiceTabla = v[7];
-            });
-            ultimoIndiceTabla = parseInt(ultimoIndiceTabla) + 1;
-            tabla.agregarFilaHtml('#data-table-partidas-oc', datosNuevaPartida(productos, ultimoIndiceTabla, ultimoIndiceTabla));
-            cargarObjetosTabla(ultimoIndiceTabla);
-            eventosTablaPartida(ultimoIndiceTabla);
-            $('#mensajeEliminarFila').removeClass('hidden');
+            agregarPartidaTabla(productos);
         });
 
         eventosTablaPartida('0');
@@ -128,9 +141,9 @@ $(function () {
             var ordenCompra = $(this).val();
 
             if (ordenCompra === 'Requisicion') {
-                $('#divRequisiciones').removeClass('hidden');
+                $('#divRequisicion').removeClass('hidden');
             } else {
-                $('#divRequisiciones').addClass('hidden');
+                $('#divRequisicion').addClass('hidden');
                 select.cambiarOpcion('#selectRequisicionesOrdenCompra', '');
                 tabla.limpiarTabla('#data-table-partidas-oc');
                 tabla.agregarFilaHtml('#data-table-partidas-oc', datosNuevaPartida(productos, 0, 0));
@@ -141,9 +154,11 @@ $(function () {
 
         $("#selectRequisicionesOrdenCompra").on("change", function () {
             var requisicion = $(this).val();
+            var fechaRequisicion = $('#selectRequisicionesOrdenCompra option:selected').data('fecha-requisicion');
             var data = {'claveDocumento': requisicion};
+
             evento.enviarEvento('Compras/ConsultaListaRequisiciones', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
-                agregarTablaRequisiciones(respuesta, productos);
+                agregarTablaRequisiciones(respuesta, productos, fechaRequisicion);
             });
         });
 
@@ -153,23 +168,42 @@ $(function () {
                 var datos = {
                     'id': $(this).val()
                 }
-                evento.enviarEvento('Compras/MostrarDatosSucursalesBeneficiarios', datos, '#panelFormularioOrdenesDeCompra', function (respuesta) {
+                evento.enviarEvento('Compras/MostrarDatosSucursales', datos, '#panelFormularioOrdenesDeCompra', function (respuesta) {
                     $.each(respuesta.sucursales.sucursales, function (k, v) {
                         $("#selectSucursalOrdenCompra").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
                     });
                     $("#selectSucursalOrdenCompra").removeAttr("disabled");
-                    $.each(respuesta.beneficiarios.beneficiarios, function (k, v) {
-                        $("#selectBeneficiarioOrdenCompra").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
-                    });
-                    $("#selectBeneficiarioOrdenCompra").removeAttr("disabled");
+                    $("#selectTipoBeneficiarioOrdenCompra").removeAttr("disabled");
                 });
                 select.cambiarOpcion("#selectSucursalOrdenCompra", '');
+                select.cambiarOpcion("#selectTipoBeneficiarioOrdenCompra", '');
                 select.cambiarOpcion("#selectBeneficiarioOrdenCompra", '');
             } else {
                 $("#selectSucursalOrdenCompra").attr("disabled", "disabled");
-                select.cambiarOpcion("#selectSucursalOrdenCompra", '');
+                $("#selectTipoBeneficiarioOrdenCompra").attr("disabled", "disabled");
                 $("#selectBeneficiarioOrdenCompra").attr("disabled", "disabled");
+                select.cambiarOpcion("#selectSucursalOrdenCompra", '');
+                select.cambiarOpcion("#selectTipoBeneficiarioOrdenCompra", '');
                 select.cambiarOpcion("#selectBeneficiarioOrdenCompra", '');
+            }
+        });
+
+        $("#selectTipoBeneficiarioOrdenCompra").on("change", function () {
+            $("#selectBeneficiarioOrdenCompra").empty().append('<option value="">Seleccionar...</option>');
+            var tipoBeneficiario = $(this).val();
+            var proyecto = $("#selectProyectoOrdenCompra").val();
+            if (tipoBeneficiario !== '') {
+                var data = {id: tipoBeneficiario, proyecto: proyecto};
+                evento.enviarEvento('Compras/MostrarDatosBeneficiarios', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
+                    $.each(respuesta.beneficiarios.beneficiarios, function (k, v) {
+                        $("#selectBeneficiarioOrdenCompra").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
+                    });
+                    select.cambiarOpcion("#selectBeneficiarioOrdenCompra", '');
+                    $("#selectBeneficiarioOrdenCompra").removeAttr("disabled");
+                });
+            } else {
+                select.cambiarOpcion("#selectBeneficiarioOrdenCompra", '');
+                $("#selectBeneficiarioOrdenCompra").attr("disabled", "disabled");
             }
         });
 
@@ -197,21 +231,30 @@ $(function () {
         });
 
         $('#btnGuardarOC').on('click', function () {
+            var proveedor = $('#selectProveedorOrdenCompra option:selected').text();
+            var beneficiario = $('#selectBeneficiarioOrdenCompra option:selected').text();
             var camposFormularioValidados = evento.validarCamposObjetos(arrayCamposFormulario(), '#errorGuardarOC');
             var camposTablaValidados = evento.validarCamposObjetos(arrayCamposTablaPartidas(), '#errorGuardarOC');
+            var fecha = $('#inputFechaOrdenCompra').val();
+            var fechaRec = $('#inputFechaRecOrdenCompra').val();
+
             if (camposTablaValidados && camposFormularioValidados) {
-                var data = valorCamposFormulario(respuesta.datos.claveNuevaDocumentacion);
-                var fecha = $('#inputFechaOrdenCompra').val();
-                var fechaRec = $('#inputFechaRecOrdenCompra').val();
                 if (fecha <= fechaRec) {
-                    evento.enviarEvento('Compras/GuardarOrdenCompra', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
-                        window.open('/' + respuesta);
-                        evento.mensajeConfirmacion('Se genero correctamente la Orden de Compra', 'Correcto');
-                    });
+                    if (quitaAcentos(proveedor) !== quitaAcentos(beneficiario)) {
+                        evento.mostrarModal('Advertencia', validarProvedorBeneficiario());
+
+                        $('#btnModalConfirmar').off('click');
+                        $('#btnModalConfirmar').on('click', function () {
+                            guardarFormularioOrdenCompra(respuesta);
+                        });
+                    } else {
+                        guardarFormularioOrdenCompra(respuesta);
+                    }
                 } else {
                     evento.mostrarMensaje('#errorGuardarOC', false, 'El campo fecha de recolección debe ser mayor o igual al campo fecha.', 5000);
                 }
             }
+
         });
 
         $('#selectMonedaOrdenCompra').on("change", function () {
@@ -222,6 +265,40 @@ $(function () {
         $('#btnRegresarOrdenesCompra').on('click', function () {
             mostrarResumenOrdenesCompra();
         });
+
+        $(document).on('keydown', 'body', function (event) {
+            if (event.keyCode == 112) { //F1
+                agregarPartidaTabla(productos);
+                event.preventDefault();
+            }
+        });
+    }
+
+    var guardarFormularioOrdenCompra = function () {
+        var respuesta = arguments[0];
+        var data = valorCamposFormulario(respuesta.datos.claveNuevaDocumentacion);
+
+        evento.enviarEvento('Compras/GuardarOrdenCompra', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
+            window.open('/' + respuesta);
+            evento.mensajeConfirmacion('Se genero correctamente la Orden de Compra', 'Correcto');
+        });
+
+    }
+
+    var agregarPartidaTabla = function () {
+        var productos = arguments[0];
+        var datosTablaPartidasOC = $('#data-table-partidas-oc').DataTable().rows().data();
+        var ultimoIndiceTabla = 0;
+
+        $.each(datosTablaPartidasOC, function (k, v) {
+            ultimoIndiceTabla = v[7];
+        });
+
+        ultimoIndiceTabla = parseInt(ultimoIndiceTabla) + 1;
+        tabla.agregarFilaHtml('#data-table-partidas-oc', datosNuevaPartida(productos, ultimoIndiceTabla, ultimoIndiceTabla));
+        cargarObjetosTabla(ultimoIndiceTabla);
+        eventosTablaPartida(ultimoIndiceTabla);
+        $('#mensajeEliminarFila').removeClass('hidden');
     }
 
     var mostrarDireccionSelect = function () {
@@ -255,7 +332,7 @@ $(function () {
                             <select id="selectProductoPartida' + numeroFila + '" class="form-control" style="width: 100%" data-parsley-required="true">\n\
                                 <option value="">Seleccionar...</option>';
         $.each(productos, function (index, value) {
-            nuevaFila += '<option data-costo-unidad="' + value.COSTO_UNIDAD + '" data-unidad1="' + value.UNI_MED + '" data-unidad2="' + value.UNI_ALT + '" value="' + value.CVE_ART + '">' + value.DESCR + '</option>';
+            nuevaFila += '<option data-costo-unidad="' + value.COSTO_UNIDAD + '" data-unidad1="' + value.UNI_MED + '" data-unidad2="' + value.UNI_ALT + '" value="' + value.CVE_ART + '">' + value.DESCR + ' (' + $.trim(value.CVE_ART) + ')</option>';
         });
         nuevaFila += '</select>\n\
                         </td>\n\
@@ -326,7 +403,7 @@ $(function () {
             $('#selectUnidadPartida' + numeroFila).empty().append('<option value="">Seleccionar...</option>');
             select.cambiarOpcion('#selectUnidadPartida' + numeroFila, '0');
             $("#selectUnidadPartida" + numeroFila).append('<option value="' + unidad1 + '">' + unidad1 + '</option>');
-            $("#selectUnidadPartida" + numeroFila).append('<option value="' + unidad1 + '">' + unidad2 + '</option>');
+            $("#selectUnidadPartida" + numeroFila).append('<option value="' + unidad2 + '">' + unidad2 + '</option>');
             $('#cantidad' + numeroFila).val(1);
             $('#costoUnidad' + numeroFila).val(costoUnidad);
             $('#subtotalPartida' + numeroFila).val(costoUnidad);
@@ -532,6 +609,7 @@ $(function () {
     var agregarTablaRequisiciones = function () {
         var requisiciones = arguments[0];
         var productos = arguments[1];
+        var fechaRequisicion = arguments[2];
 
         tabla.limpiarTabla('#data-table-partidas-oc');
         if (requisiciones.length !== 0) {
@@ -548,13 +626,49 @@ $(function () {
             if (requisiciones.length < 1) {
                 $('#mensajeEliminarFila').removeClass('hidden');
             }
+            $('#iconoInformacionRequisicion').attr('data-original-title', fechaRequisicion);
         } else {
             tabla.agregarFilaHtml('#data-table-partidas-oc', datosNuevaPartida(productos, 0, 0));
             cargarObjetosTabla(0);
             eventosTablaPartida(0);
             $('#mensajeEliminarFila').addClass('hidden');
+            $('#iconoInformacionRequisicion').attr('data-original-title', 'Fecha de la requisición ...');
         }
 
     }
 
+    var recargandoListaTablaOrdenesCompra = function () {
+        var respuestaOrdenesCompra = arguments[0];
+        tabla.limpiarTabla('#data-table-ordenes-compra');
+        $.each(respuestaOrdenesCompra, function (key, item) {
+            var archivoPDF = '<a href="" class="btn btn-danger btn-xs btnPDFOrdenCompra"><i class="fa fa-file-pdf-o" data-boton-pdf="' + item.CVE_DOC + '"></i> PDF</a>';
+            tabla.agregarFila('#data-table-ordenes-compra', [item.CVE_DOC, item.NOMBRE, item.STATUS, item.SU_REFER, item.FECHA_DOC, item.FECHA_REC, item.SERIE, item.FOLIO, item.IMPORTE, item.TOTALDOCTO, archivoPDF]);
+        });
+    };
+
+    var validarProvedorBeneficiario = function () {
+        var mensajeConfirmacion = '<div class="row">\n\
+                            <div class="col-md-12 text-center">\n\
+                                <p>¿Estas seguro de que el Proveedor y el Beneficiario sean diferentes?</p>\n\
+                            </div>\n\
+                        </div> ';
+        return mensajeConfirmacion
+
+    }
+
+    var quitaAcentos = function () {
+        var palabra = arguments[0];
+        var r = palabra.toLowerCase();
+        r = r.replace(new RegExp(/\s/g), "");
+        r = r.replace(new RegExp(/[àáâãäå]/g), "a");
+        r = r.replace(new RegExp(/[èéêë]/g), "e");
+        r = r.replace(new RegExp(/[ìíîï]/g), "i");
+        r = r.replace(new RegExp(/ñ/g), "n");
+        r = r.replace(new RegExp(/[òóôõö]/g), "o");
+        r = r.replace(new RegExp(/[ùúûü]/g), "u");
+        r = r.replace(new RegExp(/,/g), "");
+        r = r.replace(new RegExp(/./g), "");
+
+        return r;
+    }
 });

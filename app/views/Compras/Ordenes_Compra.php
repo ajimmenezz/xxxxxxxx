@@ -41,6 +41,22 @@
                     <div class="underline m-b-15 m-t-15"></div>
                 </div>
             </div>
+
+            <div id="divRequisiciones" class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="selectBuscarFechaOrdenesCompra">Filtrar</label>
+                        <select id="selectBuscarFechaOrdenesCompra" class="form-control" style="width: 100%" data-parsley-required="true">
+                            <option value="">Seleccionar...</option>
+                            <option value="hoy">Hoy</option>
+                            <option value="esteMes">De este mes</option>
+                            <option value="mesAnterior">Mes anterior</option>
+                            <option value="todas">Todas</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <div class="table-responsive">
                 <table id="data-table-ordenes-compra" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                     <thead>
@@ -55,6 +71,7 @@
                             <th class="all">Folio</th>
                             <th class="all">Importe</th>
                             <th class="all">Total de doc</th>
+                            <th class="all">Archivo</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,6 +89,7 @@
                                 echo '<td>' . $value['FOLIO'] . '</td>';
                                 echo '<td>' . $value['IMPORTE'] . '</td>';
                                 echo '<td>' . $value['TOTALDOCTO'] . '</td>';
+                                echo '<td><a href="" target="_blank" class="btn btn-danger btn-xs "><i class="fa fa-file-pdf-o"></i> PDF</a></td>';
                                 echo '</tr>';
                             }
                         }

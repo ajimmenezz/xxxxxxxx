@@ -34,6 +34,7 @@ class Secciones extends General {
     private $ModeloComprobacion;
     private $FondoFijo;
     private $ModeloTesoreria;
+    private $Compras;
 
     public function __construct() {
         parent::__construct();

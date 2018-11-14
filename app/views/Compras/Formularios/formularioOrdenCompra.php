@@ -76,19 +76,22 @@
                         <a href="javascript:;" id="iconoInformacionProveedor" data-toggle="tooltip" data-container="body" data-title="Dirección del proveedor ..." class="btn btn-inverse btn-icon btn-circle btn-lg m-t-20"><i class="fa fa-info"></i></a>
                     </div>
                 </div>
-                <div id="divRequisiciones" class="row hidden">
-                    <div class="col-md-6">
+                <div id="divRequisicion" class="row hidden">
+                    <div class="col-md-5 col-xs-11">
                         <div class="form-group">
                             <label for="selectRequisicionesOrdenCompra">Requisiciones *</label>
                             <select id="selectRequisicionesOrdenCompra" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
                                 foreach ($requisiciones as $item) {
-                                    echo '<option value="' . $item['CVE_DOC'] . '">' . $item['CVE_DOC'] . '</option>';
+                                    echo '<option data-fecha-requisicion="' . $item['FECHA_DOC'] . '" value="' . $item['CVE_DOC'] . '">' . $item['CVE_DOC'] . '</option>';
                                 }
                                 ?>
                             </select>
                         </div>
+                    </div>
+                    <div class="col-md-1 col-xs-1">
+                        <a href="javascript:;" id="iconoInformacionRequisicion" data-toggle="tooltip" data-container="body" data-title="Fecha de la requisición ..." class="btn btn-inverse btn-icon btn-circle btn-lg m-t-20"><i class="fa fa-info"></i></a>
                     </div>
                 </div>
                 <div class="row">
@@ -185,13 +188,8 @@
 
                 <div class="row"> 
                     <div class="form-group">
-                        <div class="col-md-6 col-xs-6">
+                        <div class="col-md-12">
                             <h3 class="m-t-10">Partidas de la O.C.</h3>
-                        </div>
-                        <div class="col-md-6 col-xs-6">
-                            <div class="form-group text-right">
-                                <a href="javascript:;" class="btn btn-success btn-lg " id="btnAgregarPartidaFila"><i class="fa fa-plus"></i></a>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -229,7 +227,7 @@
                                                 <option value="">Seleccionar...</option>
                                                 <?php
                                                 foreach ($productos as $item) {
-                                                    echo '<option data-costo-unidad="' . $item['COSTO_UNIDAD'] . '" data-unidad1="' . $item['UNI_MED'] . '" data-unidad2="' . $item['UNI_ALT'] . '" value="' . $item['CVE_ART'] . '">' . $item['DESCR'] . '</option>';
+                                                    echo '<option data-costo-unidad="' . $item['COSTO_UNIDAD'] . '" data-unidad1="' . $item['UNI_MED'] . '" data-unidad2="' . $item['UNI_ALT'] . '" value="' . $item['CVE_ART'] . '">' . $item['DESCR'] . ' (' . trim($item['CVE_ART']) .')</option>';
                                                 }
                                                 ?>
                                             </select>
@@ -264,11 +262,18 @@
                 <div id="mensajeEliminarFila" class="row hidden">
                     <div class="col-md-12 m-t-5">
                         <div class="alert alert-warning fade in m-b-15">                            
-                            Para eliminar una fila manten presionado el botón derecho del mause.                            
+                            Para eliminar una fila manten presionado el botón izquiedo del mause.                            
                         </div>
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group text-right">
+                            <a href="javascript:;" class="btn btn-success btn-lg " id="btnAgregarPartidaFila"><i class="fa fa-plus"></i></a>
+                        </div>
+                    </div>
+                </div>
                 <div class="row m-t-15">
                     <div class="col-md-12">
                         <div class="errorTablaPartida"></div>
@@ -332,12 +337,27 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
+                            <label for="selectTipoBeneficiarioOrdenCompra">Tipo de Beneficiario *</label>
+                            <select id="selectTipoBeneficiarioOrdenCompra" class="form-control" style="width: 100%" disabled="" data-parsley-required="true">
+                                <option value="">Selecciona...</option>
+                                <?php
+                                foreach ($tiposBeneficiario as $key => $value) {
+                                    echo '<option value="' . $value['ID'] . '">' . $value['Nombre'] . '</option>';
+                                }
+                                ?>                                
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
                             <label for="selectBeneficiarioOrdenCompra">Beneficiario *</label>
                             <select id="selectBeneficiarioOrdenCompra" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
                                 <option value="">Seleccionar...</option>
                             </select>
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="f-w-600 f-s-13">Orden de Compra</label>

@@ -164,7 +164,7 @@ class Modelo_SAE7 extends Modelo_Base {
         return $consulta->result_array();
     }
 
-    public function consultaListaOrdenesCompra() {
+    public function consultaListaOrdenesCompra(string $whereFecha) {
         $query = "SELECT 
                     COMP.CVE_DOC,
                     PROV.NOMBRE,
@@ -178,13 +178,15 @@ class Modelo_SAE7 extends Modelo_Base {
                     CASE COMP.STATUS
                             WHEN 'E' THEN 'Emitida'
                             WHEN 'O' THEN 'Original'
-                            WHEN 'C' THEN 'Canelado'
+                            WHEN 'C' THEN 'Comprada'
                         END as STATUS
                 FROM COMPO01 COMP                                  
                 LEFT JOIN COMPO_CLIB01 COMPCLIB 
                 ON (COMP.CVE_DOC = COMPCLIB.CLAVE_DOC) 
                 LEFT JOIN PROV01 PROV 
-                ON PROV.CLAVE = COMP.CVE_CLPV";
+                ON PROV.CLAVE = COMP.CVE_CLPV "
+                . $whereFecha;
+
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta->result_array();
     }
@@ -238,6 +240,7 @@ class Modelo_SAE7 extends Modelo_Base {
                 from PAR_COMPQ01 partida
                 left join INVE01 producto on partida.CVE_ART = producto.CVE_ART
                 where partida.CVE_DOC = '" . $claveDocumento . "'
+                and partida.PXR > 0
                 order by partida.NUM_PAR asc";
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta->result_array();
@@ -368,7 +371,8 @@ class Modelo_SAE7 extends Modelo_Base {
                 $this->actualizarPAR_COMPQ(array(
                     'cantidad' => $value['cantidad'],
                     'claveArticulo' => $value['producto'],
-                    'claveDocumento' => $datos['claveNuevaDocumentacion']
+                    'claveDocumento' => $datos['requisicion'],
+                    'partidaRequisicion' => $value['partidaRequisicion']
                 ));
 
                 $this->actualizarMult(array(
@@ -503,7 +507,8 @@ class Modelo_SAE7 extends Modelo_Base {
                         ELSE PXR - " . $datos['cantidad'] . " /*Cantidad de partida*/ 
                         END) 
                 WHERE CVE_DOC = '" . $datos['claveDocumento'] . "'   
-                AND NUM_PAR = 8   AND CVE_ART= '" . $datos['claveArticulo'] . "'";
+                AND NUM_PAR = " . $datos['partidaRequisicion'] . "
+                AND CVE_ART = '" . $datos['claveArticulo'] . "'";
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }

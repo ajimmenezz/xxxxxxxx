@@ -35,20 +35,49 @@ class Compras extends General {
         $data['productos'] = $this->DBSAE->consultaProductosSAE();
         $data['clientes'] = $this->gapsi->getClientes();
         $data['tiposServicio'] = $this->gapsi->getTiposServicio();
+        $data['tiposBeneficiario'] = $this->gapsi->getTiposBeneficiario();
         $data['requisiciones'] = $this->DBSAE->consultaRequisiciones();
 
         return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
     }
 
-    public function mostrarDatosProyectosBeneficiarios(array $datos) {
+    public function mostrarDatosProyectos(array $datos) {
         $data = array();
         $data['sucursales'] = $this->gapsi->sucursalesByProyecto(array('id' => $datos['id']));
-        $data['beneficiarios'] = $this->gapsi->beneficiarioByTipo(array('id' => '2', 'proyecto' => $datos['id']));
         return $data;
     }
 
-    public function consultaListaOrdenesCompra() {
-        $consulta = $this->DBSAE->consultaListaOrdenesCompra();
+    public function mostrarDatosBeneficiarios(array $datos) {
+        $data = array();
+        $data['beneficiarios'] = $this->gapsi->beneficiarioByTipo($datos);
+        return $data;
+    }
+
+    public function consultaListaOrdenesCompra(array $datos = null) {
+        $fecha = mdate('%Y-%m-%d', now('America/Mexico_City'));
+        if (empty($datos)) {
+            $whereFecha = "WHERE FECHA_DOC = '" . $fecha . "'";
+        } else {
+            switch ($datos['fecha']) {
+                case 'hoy':
+                    $whereFecha = "WHERE FECHA_DOC = '" . $fecha . "'";
+                    break;
+                case 'esteMes':
+                    $whereFecha = "WHERE FECHA_DOC >= DATEADD(mm,DATEDIFF(mm,0,GETDATE()),0)";
+                    break;
+                case 'mesAnterior':
+                    $whereFecha = "WHERE FECHA_DOC >= DATEADD(mm,-1,DATEADD(mm,DATEDIFF(mm,0,GETDATE()),0)) 
+				AND FECHA_DOC < DATEADD(ms,-3,DATEADD(mm,0,DATEADD(mm,DATEDIFF(mm,0,GETDATE()),0)))";
+                    break;
+                case 'todas':
+                    $whereFecha = "";
+                    break;
+                default:
+                    $whereFecha = "WHERE FECHA_DOC = '" . $fecha . "'";
+            }
+        }
+
+        $consulta = $this->DBSAE->consultaListaOrdenesCompra($whereFecha);
         return $consulta;
     }
 
@@ -129,12 +158,13 @@ class Compras extends General {
     }
 
     public function crearPDFGastoOrdenCompra(array $datos) {
-        $ordenCompra = str_replace(0, '', $datos['ordenCompra']);
+        $ordenCompra = str_replace('OC', '', $datos['ordenCompra']);
+        $ordenCompra = preg_replace('/^0+/', '', $ordenCompra); 
+        $ordenCompra = 'OC' . $ordenCompra;
 
         $idGapsi = $this->DBG->consultaIdOrdenCompra(array(
             'ordenCompra' => $ordenCompra
         ));
-
         if (!empty($idGapsi)) {
             $carpeta = './storage/Gastos/' . $idGapsi[0]['ID'] . '/PRE';
 
