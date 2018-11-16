@@ -89,7 +89,7 @@
                                 echo '<td>' . $value['FOLIO'] . '</td>';
                                 echo '<td>' . $value['IMPORTE'] . '</td>';
                                 echo '<td>' . $value['TOTALDOCTO'] . '</td>';
-                                echo '<td><a href="" target="_blank" class="btn btn-danger btn-xs "><i class="fa fa-file-pdf-o"></i> PDF</a></td>';
+                                echo '<td><a href="javascript:;" target="_blank" class="btn btn-danger btn-xs btnPDFOrdenCompra" data-boton-pdf="' . $value['CVE_DOC'] . '"><i class="fa fa-file-pdf-o"></i> PDF</a></td>';
                                 echo '</tr>';
                             }
                         }
