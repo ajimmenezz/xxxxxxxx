@@ -34,6 +34,7 @@ class Secciones extends General {
     private $ModeloComprobacion;
     private $FondoFijo;
     private $ModeloTesoreria;
+    private $Compras;
     private $ubicaphone;
 
     public function __construct() {
@@ -71,6 +72,7 @@ class Secciones extends General {
         $this->ModeloComprobacion = \Modelos\Modelo_Comprobacion::factory();
         $this->FondoFijo = \Librerias\Tesoreria\FondoFijo::factory();
         $this->ModeloTesoreria = \Modelos\Modelo_Tesoreria::factory();
+        $this->Compras = \Librerias\Compras\Compras::factory();
         $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
     }
 
@@ -313,6 +315,9 @@ class Secciones extends General {
                 break;
             case 'Compras/Seguimiento':
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('15');
+                break;
+            case 'Compras/Ordenes_Compra':
+                $datos['ListaOrdenesCompra'] = $this->Compras->consultaListaOrdenesCompra();
                 break;
             case 'Contabilidad/Seguimiento':
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('22');
