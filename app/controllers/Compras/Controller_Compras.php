@@ -36,6 +36,9 @@ class Controller_Compras extends Base {
             case 'MostrarFormularioOrdenCompra':
                 $resultado = $this->compras->mostrarFormularioOrdenCompra($this->input->post());
                 break;
+            case 'MostrarEditarOrdenCompra':
+                $resultado = $this->compras->mostrarEditarOrdenCompra($this->input->post());
+                break;
             case 'GuardarOrdenCompra':
                 $resultado = $this->compras->guardarOrdenCompra($this->input->post());
                 break;

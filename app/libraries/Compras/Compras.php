@@ -26,9 +26,30 @@ class Compras extends General {
         $data = array();
         $ultimaClaveDocumentacion = $this->DBSAE->consultaUltimaClaveDocumentacion();
 
-        $data['claveNuevaDocumentacion'] = $ultimaClaveDocumentacion[0]['CVE_DOC'];
+        $data = $this->datosFormularioOrdenCompra();
+        $data['claveDocumentacion'] = $ultimaClaveDocumentacion[0]['CVE_DOC'];
         $data['claveGAPSI'] = $ultimaClaveDocumentacion[0]['CVE_GAPSI'];
         $data['ultimoDocumento'] = $ultimaClaveDocumentacion[0]['ULT_DOC'];
+        
+        return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
+    }
+
+    public function mostrarEditarOrdenCompra(array $datos) {
+        $data = array();
+        $ultimaClaveDocumentacion = $this->DBSAE->consultaUltimaClaveDocumentacion();
+
+        $data = $this->datosFormularioOrdenCompra();
+        $data['claveDocumentacion'] = $datos['ordenCompra'];
+        $data['claveGAPSI'] = $ultimaClaveDocumentacion[0]['CVE_GAPSI'];
+        $data['ultimoDocumento'] = $ultimaClaveDocumentacion[0]['ULT_DOC'];
+
+
+        return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
+    }
+
+    private function datosFormularioOrdenCompra() {
+        $data = array();
+        
         $data['proveedores'] = $this->DBSAE->consultaProveedoresSAE();
         $data['almacenes'] = $this->DBSAE->consultaAlmacenesSAE();
         $data['tiposMonedas'] = $this->DBSAE->consultaTipoMoneda();
@@ -37,8 +58,8 @@ class Compras extends General {
         $data['tiposServicio'] = $this->gapsi->getTiposServicio();
         $data['tiposBeneficiario'] = $this->gapsi->getTiposBeneficiario();
         $data['requisiciones'] = $this->DBSAE->consultaRequisiciones();
-
-        return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
+        
+        return $data;
     }
 
     public function mostrarDatosProyectos(array $datos) {
@@ -159,7 +180,7 @@ class Compras extends General {
 
     public function crearPDFGastoOrdenCompra(array $datos) {
         $ordenCompra = str_replace('OC', '', $datos['ordenCompra']);
-        $ordenCompra = preg_replace('/^0+/', '', $ordenCompra); 
+        $ordenCompra = preg_replace('/^0+/', '', $ordenCompra);
         $ordenCompra = 'OC' . $ordenCompra;
 
         $idGapsi = $this->DBG->consultaIdOrdenCompra(array(

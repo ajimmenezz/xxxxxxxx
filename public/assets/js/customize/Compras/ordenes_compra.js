@@ -32,20 +32,32 @@ $(function () {
         var data = {fecha: fecha};
         evento.enviarEvento('Compras/ConsultaListaOrdenesCompra', data, '#panelOrdenesDeCompra', function (respuesta) {
             recargandoListaTablaOrdenesCompra(respuesta);
-            
+
             $('.btnPDFOrdenCompra').off('click');
             $('.btnPDFOrdenCompra').on('click', function () {
                 var ordenCompra = $(this).data('boton-pdf');
-                eventosListaOrdendesCompra(ordenCompra);
+                eventoCrearPDF(ordenCompra);
             });
-            
+
+            $('.btnEditarOrdenCompra').off('click');
+            $('.btnEditarOrdenCompra').on('click', function () {
+                var ordenCompra = $(this).data('boton-editar');
+                eventoEditarOrdenCompra(ordenCompra);
+            });
+
         });
     });
 
     $('.btnPDFOrdenCompra').off('click');
     $('.btnPDFOrdenCompra').on('click', function () {
         var ordenCompra = $(this).data('boton-pdf');
-        eventosListaOrdendesCompra(ordenCompra);
+        eventoCrearPDF(ordenCompra);
+    });
+
+    $('.btnEditarOrdenCompra').off('click');
+    $('.btnEditarOrdenCompra').on('click', function () {
+        var ordenCompra = $(this).data('boton-editar');
+        eventoEditarOrdenCompra(ordenCompra);
     });
 
     $('#btnAgregarOrdenCompra').off('click');
@@ -57,7 +69,7 @@ $(function () {
         });
     });
 
-    var eventosListaOrdendesCompra = function () {
+    var eventoCrearPDF = function () {
         var ordenCompra = arguments[0];
         var data = {'ordenCompra': ordenCompra};
 
@@ -65,6 +77,19 @@ $(function () {
             if (respuesta !== false) {
                 window.open('/' + respuesta);
             }
+        });
+    }
+
+    var eventoEditarOrdenCompra = function () {
+        var ordenCompra = arguments[0];
+        var data = {'ordenCompra': ordenCompra};
+        console.log(data);
+        evento.enviarEvento('Compras/MostrarEditarOrdenCompra', data, '#panelOrdenesDeCompra', function (respuesta) {
+            cargarSeccionOrdenCompra(respuesta);
+            console.log(respuesta);
+//            if (respuesta !== false) {
+//                window.open('/' + respuesta);
+//            }
         });
     }
 
@@ -649,7 +674,8 @@ $(function () {
         tabla.limpiarTabla('#data-table-ordenes-compra');
         $.each(respuestaOrdenesCompra, function (key, item) {
             var archivoPDF = '<a href="javascript:;" class="btn btn-danger btn-xs btnPDFOrdenCompra" data-boton-pdf="' + item.CVE_DOC + '"><i class="fa fa-file-pdf-o"></i> PDF</a>';
-            tabla.agregarFila('#data-table-ordenes-compra', [item.CVE_DOC, item.NOMBRE, item.STATUS, item.SU_REFER, item.FECHA_DOC, item.FECHA_REC, item.SERIE, item.FOLIO, item.IMPORTE, item.TOTALDOCTO, archivoPDF]);
+            var acciones = '<a href="javascript:;" class="btn btn-success btn-xs btnEditarOrdenCompra" data-boton-editar="' + item.CVE_DOC + '"><i class="fa fa-pencil"></i> Editar</a>';
+            tabla.agregarFila('#data-table-ordenes-compra', [item.CVE_DOC, item.NOMBRE, item.STATUS, item.SU_REFER, item.FECHA_DOC, item.FECHA_REC, item.SERIE, item.FOLIO, item.IMPORTE, item.TOTALDOCTO, archivoPDF, acciones]);
         });
     };
 

@@ -22,7 +22,7 @@
                 <h3>Información para O.C.</h3>
             </div>
             <div class="col-md-6 col-xs-6 text-right">
-                <h2 id="claveNuevaDocumentacion" style="color:red;"><?php echo $claveNuevaDocumentacion ?></h2>
+                <h2 id="claveNuevaDocumentacion" style="color:red;"><?php echo $claveDocumentacion ?></h2>
             </div>
         </div>
 
