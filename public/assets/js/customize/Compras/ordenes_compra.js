@@ -83,13 +83,10 @@ $(function () {
     var eventoEditarOrdenCompra = function () {
         var ordenCompra = arguments[0];
         var data = {'ordenCompra': ordenCompra};
-        console.log(data);
         evento.enviarEvento('Compras/MostrarEditarOrdenCompra', data, '#panelOrdenesDeCompra', function (respuesta) {
             cargarSeccionOrdenCompra(respuesta);
-            console.log(respuesta);
-//            if (respuesta !== false) {
-//                window.open('/' + respuesta);
-//            }
+            cargarObjetosFormulario();
+            eventosFormulario(respuesta);
         });
     }
 
@@ -165,7 +162,7 @@ $(function () {
                 select.cambiarOpcion("#selectProyectoOrdenCompra", '');
             } else {
                 $("#selectProyectoOrdenCompra").attr("disabled", "disabled");
-                select.cambiarOpcion("#selectProyectoOrdenCompra", '');
+                select.cambiarOpcion("w#selectProyectoOrdenCompra", '');
             }
         });
 
