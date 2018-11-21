@@ -162,6 +162,7 @@ $route['translate_uri_dashes'] = FALSE;
 /* Routers para el manejo de Compras */
 $route['Compras/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Compras/Seguimiento/(:any)'] = 'Compras/Controller_Seguimiento/manejarEvento/$1';
+$route['Compras/Compras/(:any)'] = 'Compras/Controller_Compras/manejarEvento/$1';
 
 /* Routers para el manejo de Contabilidad */
 $route['Contabilidad/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';

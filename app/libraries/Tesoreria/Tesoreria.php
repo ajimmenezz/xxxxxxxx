@@ -483,13 +483,14 @@ class Tesoreria extends General {
 
         foreach ($datos as $k => $v) {
             $montoIvaVuelta = number_format($v['Monto'] * 16 / 100, 2);
-            $totalIvaMontoVuelta = $v['Monto'] + $montoIvaVuelta;
+            $montoIvaVuelta = str_replace(',', '', $montoIvaVuelta);
+            $totalIvaMontoVuelta = $v['Monto'] + (float)$montoIvaVuelta;
             $viaticoIvaVuelta = number_format($v['Viatico'] * 16 / 100, 2);
-            $totalIvaViaticoVuelta = $v['Viatico'] + $viaticoIvaVuelta;
+            $viaticoIvaVuelta = str_replace(',', '', $viaticoIvaVuelta);
+            $totalIvaViaticoVuelta = $v['Viatico'] + (float)$viaticoIvaVuelta;
             $sumaMontoViatico = $totalIvaMontoVuelta + $totalIvaViaticoVuelta;
             $totalFactura = $totalFactura + $sumaMontoViatico;
         }
-
         return (float) $totalFactura;
     }
 
