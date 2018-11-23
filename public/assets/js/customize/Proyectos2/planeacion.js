@@ -345,6 +345,16 @@ $(function () {
                 window.open(respuesta, '_blank');
             });
         });
+        
+        $("#btnNodosPdf").off("click");
+        $("#btnNodosPdf").on("click", function () {
+            var datos = {
+                'id': $("#IdProyecto").val()                
+            }
+            evento.enviarEvento('Planeacion/GeneraDocumentoNodos', datos, '#panelFormDetallesProyecto', function (respuesta) {
+                window.open(respuesta, '_blank');
+            });
+        });
 
     }
 

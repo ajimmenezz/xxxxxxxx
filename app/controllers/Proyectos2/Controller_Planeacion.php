@@ -122,6 +122,9 @@ class Controller_Planeacion extends Base {
             case 'GeneraDocumentoMaterialNodos':
                 $resultado = $this->planeacion->generaDocumentoMaterialNodos($this->input->post());
                 break;
+            case 'GeneraDocumentoNodos':
+                $resultado = $this->planeacion->generaDocumentoNodos($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

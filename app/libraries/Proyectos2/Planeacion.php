@@ -824,7 +824,7 @@ class Planeacion extends General {
             $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
             $this->pdf->SetXY(0, 18);
             $this->pdf->SetFont("helvetica", "B", 18);
-            $this->pdf->Cell(0, 0, "Solicitud de Material", 0, 0, 'C');
+            $this->pdf->Cell(0, 0, "Resumen de Material y Nodos", 0, 0, 'C');
 
             $this->pdf->SetXY(0, 27);
             $this->pdf->SetFont("helvetica", "", 9);
@@ -961,15 +961,101 @@ class Planeacion extends General {
             $this->pdf->SetXY(107, $this->pdf->GetY() - 6);
             $this->pdf->MultiCell(25, $height, $totalNodos, 1, 'C', $fill);            
 
+            $this->pdf->SetFont('helvetica', '', 8);
 
+
+            $text = utf8_decode("Sin más quedo a sus ordenes, indicándoles que el proyecto está levantado en el sistema AdIST V3 y BaseCamp. Solicitó su seguimiento y participación en el mismo. Gracias.");
+            $this->pdf->Ln('5');
+            $this->pdf->MultiCell(190, 4, $text);
+
+            $this->pdf->SetFont("helvetica", "BI", 13);
+            $text = utf8_decode("Ing. Victor Ricardo Mojica Leines");
             $this->pdf->Ln('10');
+            $this->pdf->MultiCell(190, 4, $text, 0, 'C');
+            $text = utf8_decode("Gerente de Operaciones Siccob Solutions");
+            $this->pdf->Ln('3');
+            $this->pdf->MultiCell(190, 4, $text, 0, 'C');
+
+            $carpeta = $this->pdf->definirArchivo('Proyectos/Proyecto_' . $datos['id'], 'Material_Nodos');
+            $this->pdf->Output('F', $carpeta, true);
+            $carpeta = substr($carpeta, 1);
+            return $carpeta;
+        }
+    }
+    
+    public function generaDocumentoNodos(array $datos) {
+        if (!isset($datos)) {
+            return [
+                'code' => 500,
+                'error' => 'No se ha recibido la información del proyecto.'
+            ];
+        } else {
+
+            $infoHeader = $this->DB->getInfoHeaderInicioProyecto($datos['id'])[0];            
+            $nodos = $this->DB->getNodosActivosForPdf($datos['id']);            
+            $pline1 = 9;
+            $pline2 = 201;
+
+            $fecha = date('d/m/Y');
+
+            $this->pdf->AddPage();
+            $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+            $this->pdf->SetXY(0, 18);
+            $this->pdf->SetFont("helvetica", "B", 18);
+            $this->pdf->Cell(0, 0, "Nodos del Proyecto", 0, 0, 'C');
+
+            $this->pdf->SetXY(0, 27);
+            $this->pdf->SetFont("helvetica", "", 9);
+            $this->pdf->Cell(0, 0, "Soluciones Integrales para empresas Integrales", 0, 0, 'R');
+
+            $this->pdf->Line(5, 32, 205, 32);
+            $this->pdf->SetXY(7, 40);
+            $this->pdf->SetFont("helvetica", "B", 10);
+            $this->pdf->Cell(15, 0, "Cliente:");
+            $this->pdf->SetFont("helvetica", "", 10);
+            $this->pdf->Cell(180, 0, utf8_decode(ucwords(mb_strtolower($infoHeader['Cliente']))));
+
+            $this->pdf->SetXY(7, 45);
+            $this->pdf->SetFont("helvetica", "B", 10);
+            $this->pdf->Cell(13, 0, "Plaza:");
+            $this->pdf->SetFont("helvetica", "", 10);
+            $this->pdf->Cell(180, 0, utf8_decode(ucwords(mb_strtolower($infoHeader['Sucursal']))));
+
+            $this->pdf->SetXY(7, 50);
+            $this->pdf->SetFont("helvetica", "B", 10);
+            $this->pdf->Cell(20, 0, utf8_decode("Dirección:"));
+            $this->pdf->SetFont("helvetica", "", 10);
+            $this->pdf->Cell(180, 0, utf8_decode(ucwords(mb_strtolower($infoHeader['Direccion']))));
+
+            $this->pdf->SetXY(7, 55);
+            $this->pdf->SetFont("helvetica", "B", 10);
+            $this->pdf->Cell(17, 0, utf8_decode("Sistema:"));
+            $this->pdf->SetFont("helvetica", "", 10);
+            $this->pdf->Cell(180, 0, utf8_decode(ucwords(mb_strtolower($infoHeader['Sistema']))));
+
+            $this->pdf->SetXY(7, 60);
+            $this->pdf->SetFont("helvetica", "B", 10);
+            $this->pdf->Cell(11, 0, utf8_decode("Tipo:"));
+            $this->pdf->SetFont("helvetica", "", 10);
+            $this->pdf->Cell(180, 0, utf8_decode(ucwords(mb_strtolower($infoHeader['Tipo']))));
+
+            $this->pdf->SetXY(7, 65);
+            $this->pdf->SetFont("helvetica", "B", 10);
+            $this->pdf->Cell(12, 0, utf8_decode("Inicio:"));
+            $this->pdf->SetFont("helvetica", "", 10);
+            $this->pdf->Cell(30, 0, utf8_decode(ucwords(mb_strtolower($infoHeader['Inicio']))));
+            $this->pdf->SetFont("helvetica", "B", 10);
+            $this->pdf->Cell(17, 0, utf8_decode("Termino:"));
+            $this->pdf->SetFont("helvetica", "", 10);
+            $this->pdf->Cell(18, 0, utf8_decode(ucwords(mb_strtolower($infoHeader['Fin']))));
+
+            $this->pdf->SetFillColor(226, 231, 235);
+            
             $this->pdf->Ln('10');
             $this->pdf->SetFont("helvetica", "B", 15);
             $this->pdf->Cell(0, 0, "Nodos del Proyecto", 0, 0, 'L');
             $y = $this->pdf->GetY() + 4;
             $this->pdf->Line($pline1, $y, $pline2, $y);
-
-
 
             $this->pdf->Ln('10');
 
@@ -1028,7 +1114,7 @@ class Planeacion extends General {
             $this->pdf->Ln('3');
             $this->pdf->MultiCell(190, 4, $text, 0, 'C');
 
-            $carpeta = $this->pdf->definirArchivo('Proyectos/Proyecto_' . $datos['id'], 'Material_Nodos');
+            $carpeta = $this->pdf->definirArchivo('Proyectos/Proyecto_' . $datos['id'], 'Nodos del Proyecto');
             $this->pdf->Output('F', $carpeta, true);
             $carpeta = substr($carpeta, 1);
             return $carpeta;
