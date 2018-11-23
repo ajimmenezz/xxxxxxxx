@@ -45,25 +45,34 @@ $config['Modulos'] = array(
 
 //Menu por secciones
 $config['Generales'] = array(
-    'Dashboard-Administrador' => array(
-        'liga' => 'Dashboard',
+    'Dashboard-Siccob' => array(
+        'liga' => 'Dashboard General',
         'icono' => 'fa fa-line-chart',
-        'Url' => '/Administrador/Dashboard',
-        'css' => array(),
-        'pluginsCss' => array(),
-        'js' => array('Base/Base', 'Base/Socket', 'Administrador/dashboard'),
-        'pluginsJs' => array(),
-        'Permiso' => 'VGDA'
-    ),
-    'Dashboard-Proyecto' => array(
-        'liga' => 'Dashboard',
-        'icono' => 'fa fa-dashboard',
-        'Url' => '/Proyectos/Dashboard',
-        'css' => array(),
-        'pluginsCss' => array(),
-        'js' => array('Base/Base', 'Base/Socket', 'Proyectos/dashboard'),
-        'pluginsJs' => array(),
-        'Permiso' => 'VGDP'
+        'Url' => '/Generales/Dashboard',
+        'css' => array(
+            'Dashboard/Dashboard'
+        ),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'jquery-fileUpload/css/fileinput.min',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Generales/dashboard', 'Base/Tabla', 'Base/Charts'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+        ),
+        'Permiso' => 'VGDASH'
     ),
     'Dashboard-Salas4D' => array(
         'liga' => 'Dashboard Salas 4D',
@@ -122,36 +131,6 @@ $config['Generales'] = array(
             'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
         ),
         'Permiso' => 'VGDLS'
-    ),
-    'Dashboard-Poliza' => array(
-        'liga' => 'Dashboard',
-        'icono' => 'fa fa-dashboard',
-        'Url' => 'Dashboard-Poliza',
-        'css' => array(),
-        'pluginsCss' => array(),
-        'js' => array('Base/Base', 'Base/Socket', 'Poliza/dashboard'),
-        'pluginsJs' => array(),
-        'Permiso' => 'VGDPO'
-    ),
-    'Dashboard-Proyectos' => array(
-        'liga' => 'Dashboard',
-        'icono' => 'fa fa-dashboard',
-        'Url' => 'Dashboard-Proyectos',
-        'css' => array(),
-        'pluginsCss' => array(),
-        'js' => array('Base/Base', 'Base/Socket', 'Proyectos/dashboard'),
-        'pluginsJs' => array(),
-        'Permiso' => 'VGDPRO'
-    ),
-    'Dashboard-RH' => array(
-        'liga' => 'Dashboard',
-        'icono' => 'fa fa-dashboard',
-        'Url' => '/RH/Dashboard',
-        'css' => array(),
-        'pluginsCss' => array(),
-        'js' => array('Base/Base', 'Base/Socket', 'RH/dashboard'),
-        'pluginsJs' => array(),
-        'Permiso' => 'VGDRH'
     ),
     'Disp-Moviles' => array(
         'liga' => 'Disp. Móviles',

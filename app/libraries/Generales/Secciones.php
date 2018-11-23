@@ -36,6 +36,7 @@ class Secciones extends General {
     private $ModeloTesoreria;
     private $Compras;
     private $ubicaphone;
+    private $ModeloDashboard;
 
     public function __construct() {
         parent::__construct();
@@ -74,6 +75,7 @@ class Secciones extends General {
         $this->ModeloTesoreria = \Modelos\Modelo_Tesoreria::factory();
         $this->Compras = \Librerias\Compras\Compras::factory();
         $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
+        $this->ModeloDashboard = \Modelos\Modelo_Dashboard::factory();
     }
 
     /*
@@ -330,6 +332,12 @@ class Secciones extends General {
                 $datos['Estatus'] = $this->ModeloSalas4D->getGroupEstatus();
                 $datos['Prioridades'] = $this->ModeloSalas4D->getGroupPrioridades();
                 $datos['Tipos'] = $this->ModeloSalas4D->getGroupTipos();
+                break;
+            case 'Generales/Dashboard':
+                $datos['Fechas'] = $this->ModeloDashboard->getFechasInicialesDashboard();
+                $datos['Estatus'] = $this->ModeloDashboard->getGroupEstatus();
+                $datos['Prioridades'] = $this->ModeloDashboard->getGroupPrioridades();
+                $datos['Tipos'] = $this->ModeloDashboard->getGroupTipos();
                 break;
             case 'Salas4D/Seguimiento':
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('7');

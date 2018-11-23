@@ -4,7 +4,7 @@
     </div>
     <div class="col-md-3 col-sm-6 col-xs-12 text-right">
         <label id="btnRegresar" class="btn btn-success">
-            <i class="fa fa fa-reply"></i> Regresar
+            <i class="fa fa-reply"></i> Regresar
         </label>  
     </div>
 </div>    
@@ -127,42 +127,78 @@
             </div>
             <?php if (isset($generales['IdSistema']) && $generales['IdSistema'] == 1) { ?>
                 <div class="tab-pane fade" id="nodosTarea">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-8 col-xs-12">
-                            <h4>Asignar nodos a la Tarea</h4>                                                
+                    <div id="divNodosProyectoParaTareas">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <h4>Nodos del Proyecto</h4>                                                
+                            </div>                                       
                         </div>
-                        <div class="col-md-6 col-sm-8 col-xs-12">
-                            <a class="btn btn-success pull-right btnGuardarNodosTarea"><i class="fa fa-save"> </i>Guardar Nodos</a>
-                        </div>                    
+                        <div class="row">
+                            <div class="underline m-b-10"></div>
+                        </div>
+                        <div class="row m-t-10">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="table-responsive">
+                                    <table id="table-nodos-tarea-agrupados" class="table table-striped table-bordered no-wrap" style="cursor:pointer">
+                                        <thead>
+                                            <tr>                                                
+                                                <th class="never">IdConcepto</th>
+                                                <th class="never">IdArea</th>
+                                                <th class="never">IdUbicacion</th>
+                                                <th class="never">IdTipoNodo</th>
+                                                <th class="all">Tipo de Nodo</th>
+                                                <th class="all">Nodo</th>
+                                                <th class="all">Concepto</th>
+                                                <th class="all">Área</th>
+                                                <th class="all">Ubicación</th>
+                                                <th class="all">Material</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>  
                     </div>
-                    <div class="row">
-                        <div class="underline m-b-10"></div>
-                    </div>
-                    <div class="row m-t-10">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div class="table-responsive">
-                                <table id="table-nodos-tarea" class="table table-striped table-bordered no-wrap" style="cursor:pointer">
-                                    <thead>
-                                        <tr>                                                
-                                            <th class="never">Id</th>
-                                            <th class="all">Tipo de Nodo</th>
-                                            <th class="all">Nodo</th>
-                                            <th class="all">Concepto</th>
-                                            <th class="all">Área</th>
-                                            <th class="all">Ubicación</th>
-                                            <th class="all">Material</th>
-                                            <th class="all"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
+                    <div id="divMaterialesPorNodoParaTareas" style="display:none">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-8 col-xs-12">
+                                <h4>Asignar nodos a la Tarea</h4>                                                
+                            </div>
+                            <div class="col-md-6 col-sm-8 col-xs-12">
+                                <a id="btnRegresarANodosTarea" class="btn btn-warning pull-right"><i class="fa fa-reply"> </i> Ver Nodos de Proyecto</a>
+                            </div>                    
+                        </div>
+                        <div class="row">
+                            <div class="underline m-b-10"></div>
+                        </div>
+                        <div class="row m-t-10">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="table-responsive">
+                                    <table id="table-nodos-tarea" class="table table-striped table-bordered no-wrap" style="cursor:pointer">
+                                        <thead>
+                                            <tr>                                                
+                                                <th class="never">Id</th>
+                                                <th class="all">Tipo de Nodo</th>
+                                                <th class="all">Nodo</th>
+                                                <th class="all">Concepto</th>
+                                                <th class="all">Área</th>
+                                                <th class="all">Ubicación</th>
+                                                <th class="all">Material</th>
+                                                <th class="all"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row m-t-10">
-                        <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-                            <a class="btn btn-success btnGuardarNodosTarea"><i class="fa fa-save"> </i>Guardar Nodos</a>
+                        <div class="row m-t-10">
+                            <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+                                <a class="btn btn-success btnGuardarNodosTarea"><i class="fa fa-save"> </i>Guardar Nodos</a>
+                            </div>
                         </div>
                     </div>
                 </div>
