@@ -151,6 +151,7 @@ $(function () {
                         evento.enviarEvento('Solicitud/Generar_Ticket', data, '#modal-dialogo', function (respuesta) {
                             var fila = [];
                             if (typeof respuesta === 'object') {
+                                eventoCalendario();
                                 evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12 text-center">\n\
                                                                     <div class="form-group">\n\
@@ -179,6 +180,43 @@ $(function () {
                     evento.mostrarMensaje('#errorGenerarTicket', false, 'Debes definir el cliente para el servicio.', 3000);
                 }
             });
+            
+            //crear un evento en calendario
+            var eventoCalendario = function () {
+            var atiende = $('#selectAtiendeServicio option:selected').text();
+            var tipoServicio = $('#selectServicioDepartamento option:selected').text();
+            var emailCorporativo = $('#selectAtiendeServicio option:selected').attr('data');
+            
+            let d = new Date();
+            let fechaInicio = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+
+            resource = {
+                "summary": "Nueva solicitud",
+                "description": "Nueva solicitud atendido por " + atiende + ", tipo de servicio " + tipoServicio,
+                "location": "Ciudad de México, CDMX",
+                "timeZone": "America/Mexico_City",
+                "start": {
+                    "date": fechaInicio
+                },
+                "end": {
+                    "date": fechaInicio
+                },
+                "attendees": [
+                    {
+                        "email": emailCorporativo,
+                        "displayName": atiende,
+                        "organizer": false,
+                        "self": false,
+                        "resource": false,
+                        "optional": false,
+                        "responseStatus": "accepted"
+
+                    }],
+                "colorId" : "1"
+
+            };
+            handleClientLoad(resource);
+        };
 
             //Evento de select personal para seleccionar su area y departamento
             $('#selectReasignarParsonal').on('change', function () {

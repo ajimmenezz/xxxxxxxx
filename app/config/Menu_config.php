@@ -2851,7 +2851,8 @@ $config['Calendar'] = array(
             'jquery-tag-it/js/tag-it.min',
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
-            'select2/dist/js/select2.min'
+            'select2/dist/js/select2.min',
+            'Calendario/api'
         ),
         'Permiso' => 'CLR'
     )

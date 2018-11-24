@@ -44,8 +44,10 @@ Servicio.prototype.nuevoServicio = function () {
                 var atiende = $('#selectAtiendeServicio').val();
                 var descripcion = $('#inputDescripcionServicio').val();
                 var dataServicio = {Ticket: ticket, IdSolicitud: idSolicitud, IdTipoServicio: tipoServicio, Atiende: atiende, Descripcion: descripcion, servicio: data['servicio']};
+
                 evento.enviarEvento(eventoServicioNuevo, dataServicio, '#modal-dialogo', function (respuesta) {
                     if (respuesta instanceof Array) {
+                        eventoCalendario();
                         _this.mensajeModal('Se creo correctamente el nuevo servicio', 'Correcto');
                     } else {
                         var html = '<div class="row">\n\
@@ -60,6 +62,40 @@ Servicio.prototype.nuevoServicio = function () {
                 });
             }
         });
+
+        var eventoCalendario = function () {
+            var nombreServicio = $('#selectTipoServicio option:selected').text();
+            var atiende = $('#selectAtiendeServicio option:selected').text();
+            var emailCorporativo = $('#selectAtiendeServicio option:selected').attr('data');
+            var d = new Date();
+            var fechaInicio = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+
+            resource = {
+                "summary": "Servicio (" + nombreServicio + ")",
+                "description": "Nuevo servicio (" + nombreServicio + ") atendido por " + atiende,
+                "location": "Ciudad de México, CDMX",
+                "timeZone": "America/Mexico_City",
+                "start": {
+                    "date": fechaInicio
+                },
+                "end": {
+                    "date": fechaInicio
+                },
+                "attendees": [
+                    {
+                        "email": emailCorporativo,
+                        "displayName": atiende,
+                        "organizer": false,
+                        "self": false,
+                        "resource": false,
+                        "optional": false,
+                        "responseStatus": "accepted"
+
+                    }]
+
+            };
+            handleClientLoad(resource);
+        };
 
         $('#btnCancelarServicio').on('click', function () {
             evento.cerrarModal();

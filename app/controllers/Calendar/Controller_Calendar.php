@@ -29,8 +29,8 @@ class Controller_Calendar extends Base {
 
     public function manejarEvento(string $evento = null) {
         switch ($evento) {
-            case 'Mostrar':
-                $resultado = $this->catalogosCalendar->mostrar($this->input->post());
+            case 'MostrarDetallesServicio':
+                $resultado = $this->catalogosCalendar->mostrarDetallesServicio($this->input->post());
 //                $resultado = "nada";
                 break;
         }
