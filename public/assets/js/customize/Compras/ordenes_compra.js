@@ -44,7 +44,6 @@ $(function () {
                 var ordenCompra = $(this).data('boton-editar');
                 eventoEditarOrdenCompra(ordenCompra);
             });
-
         });
     });
 
@@ -87,6 +86,8 @@ $(function () {
             cargarSeccionOrdenCompra(respuesta);
             cargarObjetosFormulario();
             eventosFormulario(respuesta);
+            cargarInformacionFormularioEditar(respuesta);
+
         });
     }
 
@@ -130,6 +131,12 @@ $(function () {
         var respuesta = arguments[0];
         var productos = respuesta.datos.productos;
         var timer;
+        console.log(respuesta);
+        if (respuesta.datos.editarOrdenCompraGapsi !== undefined) {
+            var editarOrdenComprarGapsi = respuesta.datos.editarOrdenCompraGapsi[0];
+        } else {
+            var editarOrdenComprarGapsi = null;
+        }
 
         window.addEventListener("keypress", function (event) {
             if (event.keyCode == 13) { //Enter
@@ -158,11 +165,16 @@ $(function () {
                         $("#selectProyectoOrdenCompra").append('<option data-tipo="' + v.Tipo + '" value="' + v.ID + '">' + v.Nombre + '</option>')
                     });
                     $("#selectProyectoOrdenCompra").removeAttr("disabled");
+
+                    if (editarOrdenComprarGapsi !== null) {
+                        select.cambiarOpcion('#selectProyectoOrdenCompra', editarOrdenComprarGapsi.Proyecto);
+                    } else {
+                        select.cambiarOpcion("#selectProyectoOrdenCompra", '');
+                    }
                 });
-                select.cambiarOpcion("#selectProyectoOrdenCompra", '');
             } else {
                 $("#selectProyectoOrdenCompra").attr("disabled", "disabled");
-                select.cambiarOpcion("w#selectProyectoOrdenCompra", '');
+                select.cambiarOpcion("#selectProyectoOrdenCompra", '');
             }
         });
 
@@ -181,15 +193,16 @@ $(function () {
             }
         });
 
-        $("#selectRequisicionesOrdenCompra").on("change", function () {
-            var requisicion = $(this).val();
-            var fechaRequisicion = $('#selectRequisicionesOrdenCompra option:selected').data('fecha-requisicion');
-            var data = {'claveDocumento': requisicion};
-
-            evento.enviarEvento('Compras/ConsultaListaRequisiciones', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
-                agregarTablaRequisiciones(respuesta, productos, fechaRequisicion);
+        if (respuesta.datos.compo === undefined) {
+            $("#selectRequisicionesOrdenCompra").on("change", function () {
+                var requisicion = $(this).val();
+                var fechaRequisicion = $('#selectRequisicionesOrdenCompra option:selected').data('fecha-requisicion');
+                var data = {'claveDocumento': requisicion};
+                evento.enviarEvento('Compras/ConsultaListaRequisiciones', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
+                    agregarTablaRequisiciones(respuesta, productos, fechaRequisicion);
+                });
             });
-        });
+        }
 
         $("#selectProyectoOrdenCompra").on("change", function () {
             $("#selectSucursalOrdenCompra").empty().append('<option value="">Seleccionar...</option>');
@@ -203,10 +216,16 @@ $(function () {
                     });
                     $("#selectSucursalOrdenCompra").removeAttr("disabled");
                     $("#selectTipoBeneficiarioOrdenCompra").removeAttr("disabled");
+
+                    if (editarOrdenComprarGapsi !== null) {
+                        select.cambiarOpcion('#selectSucursalOrdenCompra', editarOrdenComprarGapsi.Sucursal);
+                        select.cambiarOpcion('#selectTipoBeneficiarioOrdenCompra', editarOrdenComprarGapsi.TipoBeneficiario);
+                    } else {
+                        select.cambiarOpcion("#selectSucursalOrdenCompra", '');
+                        select.cambiarOpcion("#selectTipoBeneficiarioOrdenCompra", '');
+                        select.cambiarOpcion("#selectBeneficiarioOrdenCompra", '');
+                    }
                 });
-                select.cambiarOpcion("#selectSucursalOrdenCompra", '');
-                select.cambiarOpcion("#selectTipoBeneficiarioOrdenCompra", '');
-                select.cambiarOpcion("#selectBeneficiarioOrdenCompra", '');
             } else {
                 $("#selectSucursalOrdenCompra").attr("disabled", "disabled");
                 $("#selectTipoBeneficiarioOrdenCompra").attr("disabled", "disabled");
@@ -227,8 +246,12 @@ $(function () {
                     $.each(respuesta.beneficiarios.beneficiarios, function (k, v) {
                         $("#selectBeneficiarioOrdenCompra").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
                     });
-                    select.cambiarOpcion("#selectBeneficiarioOrdenCompra", '');
                     $("#selectBeneficiarioOrdenCompra").removeAttr("disabled");
+                    if (editarOrdenComprarGapsi !== null) {
+                        select.cambiarOpcion('#selectBeneficiarioOrdenCompra', editarOrdenComprarGapsi.IDBeneficiario);
+                    } else {
+                        select.cambiarOpcion("#selectBeneficiarioOrdenCompra", '');
+                    }
                 });
             } else {
                 select.cambiarOpcion("#selectBeneficiarioOrdenCompra", '');
@@ -312,6 +335,37 @@ $(function () {
             evento.mensajeConfirmacion('Se genero correctamente la Orden de Compra', 'Correcto');
         });
 
+    }
+
+    var cargarInformacionFormularioEditar = function () {
+        var respuesta = arguments[0];
+        console.log(respuesta);
+        if (respuesta.datos.compo.TIP_DOC_E === 'q') {
+            select.cambiarOpcion('#selectOrdenOrdenCompra', 'Requisicion');
+            select.cambiarOpcion('#selectRequisicionesOrdenCompra', respuesta.datos.compo.DOC_ANT);
+            var fechaRequisicion = $('#selectRequisicionesOrdenCompra option:selected').data('fecha-requisicion');
+            agregarTablaRequisiciones(respuesta.datos.partidasEditar, respuesta.datos.productos, fechaRequisicion);
+        } else {
+            agregarTablaRequisiciones(respuesta.datos.parCompo, respuesta.datos.productos);
+        }
+
+        select.cambiarOpcion('#selectProveedorOrdenCompra', respuesta.datos.compo.CVE_CLPV);
+//        select.cambiarOpcion('#selectEsquemaOrdenCompra', respuesta.datos.parCompo.IMPU4);
+        select.cambiarOpcion('#selectAlmacenOrdenCompra', respuesta.datos.compo.NUM_ALMA);
+        select.cambiarOpcion('#selectMonedaOrdenCompra', respuesta.datos.compo.NUM_MONED);
+        select.cambiarOpcion('#selectClienteOrdenCompra', respuesta.datos.editarOrdenCompraGapsi[0].Cliente);
+        select.cambiarOpcion('#selectTipoServicioOrdenCompra', respuesta.datos.editarOrdenCompraGapsi[0].TipoServicio);
+
+        $('#selectProyectoOrdenCompra').val('90').trigger('change');
+        $('#inputFechaOrdenCompra').val(respuesta.datos.compo.FECHA_DOC);
+        $('#inputFechaRecOrdenCompra').val(respuesta.datos.compo.FECHA_REC);
+        $('#inputReferenciaOrdenCompra').val(respuesta.datos.compo.SU_REFER);
+        $('#inputDescuentoOrdenCompra').val(respuesta.datos.compo.DES_TOT_PORC);
+        $('#inputDescuentoFinancieroOrdenCompra').val(respuesta.datos.compo.DES_FIN);
+        $('#inputEntregaAOrdenCompra').val(respuesta.datos.compo.OBS_COND);
+        $('#inputDireccionEntregaOrdenCompra').val(respuesta.datos.compoClib.CAMPLIB1);
+        $('#inputTipoCambioOrdenCompra').val(respuesta.datos.compo.TIPCAMB);
+        $('#textAreaObservacionesOrdenCompra').val(respuesta.datos.obsDocc.STR_OBS);
     }
 
     var agregarPartidaTabla = function () {
@@ -638,7 +692,7 @@ $(function () {
     var agregarTablaRequisiciones = function () {
         var requisiciones = arguments[0];
         var productos = arguments[1];
-        var fechaRequisicion = arguments[2];
+        var fechaRequisicion = arguments[2] || '';
 
         tabla.limpiarTabla('#data-table-partidas-oc');
         if (requisiciones.length !== 0) {

@@ -30,6 +30,7 @@ class Compras extends General {
         $data['claveDocumentacion'] = $ultimaClaveDocumentacion[0]['CVE_DOC'];
         $data['claveGAPSI'] = $ultimaClaveDocumentacion[0]['CVE_GAPSI'];
         $data['ultimoDocumento'] = $ultimaClaveDocumentacion[0]['ULT_DOC'];
+//        $data['compo'] = NULL;
 
         return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
     }
@@ -42,7 +43,30 @@ class Compras extends General {
         $data['claveGAPSI'] = $this->ordenCompraGapsi($datos['ordenCompra']);
         $data['ultimoDocumento'] = $this->quitarCeros($datos['ordenCompra']);
 
+        $tablaCOMPO = $this->DBSAE->consultaCOMPO($datos['ordenCompra']);
+        $tablaPARCOMPO = $this->DBSAE->consultaPAR_COMPO($datos['ordenCompra']);
+        $tablaCOMPOCLIB = $this->DBSAE->consultaCOMPO_CLIB($datos['ordenCompra']);
+        $tablaOBSDOCC = $this->DBSAE->consultaOBS_DOCC($tablaCOMPO[0]['CVE_OBS']);
+        $data['compo'] = $tablaCOMPO[0];
+        $data['parCompo'] = $tablaPARCOMPO;
+        $data['compoClib'] = $tablaCOMPOCLIB[0];
+        $data['obsDocc'] = $tablaOBSDOCC[0];
 
+        if ($tablaCOMPO[0]['TIP_DOC_E'] === 'q') {
+            $tablaPartidasEditar = $this->DBSAE->consultaPartidasEditar($datos['ordenCompra']);
+            $data['partidasEditar'] = $tablaPartidasEditar;
+        } 
+
+        $ordenCompra = $this->ordenCompraGapsi($datos['ordenCompra']);
+//        $editarOrdenCompraGapsi = $this->DBG->consultaIdOrdenCompra(array(
+//            'ordenCompra' => $ordenCompra
+//        ));
+        $editarOrdenCompraGapsi = $this->DBG->consultaDatosGasto(array(
+            'ordenCompra' => $ordenCompra
+        ));
+//        var_dump($editarOrdenCompraGapsi);
+
+        $data['editarOrdenCompraGapsi'] = $editarOrdenCompraGapsi;
         return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
     }
 

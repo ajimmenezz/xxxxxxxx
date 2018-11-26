@@ -341,11 +341,28 @@ class Modelo_Gapsi extends Modelo_Base {
 
     public function consultaIdOrdenCompra(array $datos) {
         $query = "select 
-                ID
+                *
                 from db_Registro
-                where OrdenCompra = '" . $datos['ordenCompra']. "'";
+                where OrdenCompra = '" . $datos['ordenCompra'] . "'";
         $consulta = parent::connectDBGapsi()->query($query);
         $gasto = $consulta->result_array();
         return $gasto;
     }
+
+    public function consultaDatosGasto(array $datos) {
+        $query = "select 
+                *,
+                (SELECT Cliente FROM db_Proyectos WHERE ID = Proyecto) Cliente,
+                (SELECT ID FROM db_TipoServicio WHERE Nombre = TipoServicio) TipoServicio,
+                (SELECT Tipo FROM db_Beneficiarios WHERE ID = IDBeneficiario) TipoBeneficiario
+                from db_Registro
+                where OrdenCompra = '" . $datos['ordenCompra'] . "'";
+//            $query = "select * from db_Beneficiarios";
+
+        $consulta = parent::connectDBGapsi()->query($query);
+        $gasto = $consulta->result_array();
+//        var_dump($gasto);
+        return $gasto;
+    }
+
 }
