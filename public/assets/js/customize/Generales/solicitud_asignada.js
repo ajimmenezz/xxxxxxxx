@@ -147,11 +147,12 @@ $(function () {
                         for (var i = 0; i < datosTabla.length; i++) {
                             servicios.push({servicio: datosTabla[i][4], sucursal: datosTabla[i][5], atiende: datosTabla[i][6], descripcion: datosTabla[i][3], nombreServicio: datosTabla[i][0], nombreSucursal: datosTabla[i][1]});
                         }
-                        var data = {solicitud: datos[0], ticket: datos[3], servicios: servicios, cliente: cliente, descripcion: descripcionSolicitud};
+                        var data = {solicitud: datos[0], ticket: datos[3], servicios: servicios, cliente: cliente, descripcion: descripcionSolicitud}
                         evento.enviarEvento('Solicitud/Generar_Ticket', data, '#modal-dialogo', function (respuesta) {
                             var fila = [];
                             if (typeof respuesta === 'object') {
-                                eventoCalendario();
+                                var numeroTicket = respuesta.ticket;
+                                eventoCalendario(numeroTicket);
                                 evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12 text-center">\n\
                                                                     <div class="form-group">\n\
@@ -182,24 +183,26 @@ $(function () {
             });
             
             //crear un evento en calendario
-            var eventoCalendario = function () {
-            var atiende = $('#selectAtiendeServicio option:selected').text();
-            var tipoServicio = $('#selectServicioDepartamento option:selected').text();
-            var emailCorporativo = $('#selectAtiendeServicio option:selected').attr('data');
-            
-            let d = new Date();
-            let fechaInicio = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+        var eventoCalendario = function () {
+                var ticketCalendario = arguments[0];
+                var atiende = $('#selectAtiendeServicio option:selected').text();
+                var tipoServicio = $('#selectServicioDepartamento option:selected').text();
+                var sucursal = $('#selectSucursal option:selected').text();
+                var emailCorporativo = $('#selectAtiendeServicio option:selected').attr('data');
+                var descripcion = $('#inputDescripcionServicio').val();
+                var now = new Date();
+                today = now.toISOString();
 
             resource = {
-                "summary": "Nueva solicitud",
-                "description": "Nueva solicitud atendido por " + atiende + ", tipo de servicio " + tipoServicio,
-                "location": "Ciudad de México, CDMX",
+                "summary": "Atención a ticket",
+                "description": "Nuevo servicio. Se a agregado para su atención del ticket "+ ticketCalendario +" con la siguiente descripcion " + descripcion,
+                "location": sucursal,
                 "timeZone": "America/Mexico_City",
                 "start": {
-                    "date": fechaInicio
+                    "dateTime": now
                 },
                 "end": {
-                    "date": fechaInicio
+                    "dateTime": now
                 },
                 "attendees": [
                     {
@@ -210,11 +213,11 @@ $(function () {
                         "resource": false,
                         "optional": false,
                         "responseStatus": "accepted"
-
                     }],
-                "colorId" : "1"
+                "colorId" : "4"
 
             };
+//            console.log(resource);
             handleClientLoad(resource);
         };
 

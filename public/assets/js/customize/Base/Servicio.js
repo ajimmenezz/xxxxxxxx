@@ -47,7 +47,7 @@ Servicio.prototype.nuevoServicio = function () {
 
                 evento.enviarEvento(eventoServicioNuevo, dataServicio, '#modal-dialogo', function (respuesta) {
                     if (respuesta instanceof Array) {
-                        eventoCalendario();
+                        eventoCalendario(dataServicio);
                         _this.mensajeModal('Se creo correctamente el nuevo servicio', 'Correcto');
                     } else {
                         var html = '<div class="row">\n\
@@ -64,22 +64,24 @@ Servicio.prototype.nuevoServicio = function () {
         });
 
         var eventoCalendario = function () {
+            var ticketCalendario = arguments[0];
             var nombreServicio = $('#selectTipoServicio option:selected').text();
             var atiende = $('#selectAtiendeServicio option:selected').text();
             var emailCorporativo = $('#selectAtiendeServicio option:selected').attr('data');
-            var d = new Date();
-            var fechaInicio = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
-
+            var descripcion = $('#inputDescripcionServicio').val();
+            var now = new Date();
+            var fecha = moment(now).format();
+            
             resource = {
-                "summary": "Servicio (" + nombreServicio + ")",
-                "description": "Nuevo servicio (" + nombreServicio + ") atendido por " + atiende,
+                "summary": "Atención a ticket",
+                "description": "Nuevo servicio.Se a agregado para su atención del ticket "+ ticketCalendario.Ticket +" con la siguiente descripcion " + descripcion,
                 "location": "Ciudad de México, CDMX",
                 "timeZone": "America/Mexico_City",
                 "start": {
-                    "date": fechaInicio
+                    "dateTime": now
                 },
                 "end": {
-                    "date": fechaInicio
+                    "dateTime": now
                 },
                 "attendees": [
                     {
@@ -91,9 +93,10 @@ Servicio.prototype.nuevoServicio = function () {
                         "optional": false,
                         "responseStatus": "accepted"
 
-                    }]
-
+                    }],
+                "colorId" : "9"
             };
+//            console.log(resource);
             handleClientLoad(resource);
         };
 

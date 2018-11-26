@@ -33,7 +33,7 @@ function initClient() {
     }).then(function () {
         gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
         updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get(),recurso);
-        console.log(recurso);
+//        console.log(recurso);
 //        updateSigninStatus(recurso);
         handleAuthClick();
     });
@@ -43,13 +43,13 @@ function updateSigninStatus(isSignedIn,recurso = null) {
     if (isSignedIn) {
         makeRequest(recurso);
     } else {
-        console.log("no esta logeado " + isSignedIn);
+//        console.log("no esta logeado " + isSignedIn);
     }
 }
 
 function handleAuthClick(event) {
     gapi.auth2.getAuthInstance().signIn();
-    console.log("Entraste");
+//    console.log("Entraste");
 }
 
 function makeRequest() {
@@ -60,7 +60,7 @@ function makeRequest() {
         'body': recurso
     }).then(
 //        writeResponse(resp.result);
-        result => console.log(result),
-        e => console.log(`Error capturado:  ${e}`)
+//        result => console.log(result),
+//        e => console.log(`Error capturado:  ${e}`)
     );
 }

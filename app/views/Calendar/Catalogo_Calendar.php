@@ -20,19 +20,19 @@
                     <div class="table-responsive">
                         <p>Google Calendar API Quickstart</p>
 
-                        <!--Add buttons to initiate auth sequence and sign out-->
+<!--                        Add buttons to initiate auth sequence and sign out
                         <button id="authorize-button" style="display: none;">Authorize</button>
                         <button id="rest" onclick="makeRequest();">Make Request</button>
-                        <!--<button id="signout-button" style="display: none;">Sign Out</button>-->
+                        <button id="signout-button" style="display: none;">Sign Out</button>
                         <div id="content"></div>
-                        <div id="info"></div>
+                        <div id="info"></div>-->
                     </div>
                 </div>
             </div>
             <div class="tab-pane fade panel-body " id="listaPreguntas">
                 <div class="row panel panel-inverse" data-sortable-id="form-stuff-3">
                     <div class="row">
-                        <iframe id="frameCalendario" src="https://calendar.google.com/calendar/embed?src=abarcenas%40siccob.com.mx&ctz=America%2FMexico_City" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+                        <!--<iframe id="frameCalendario" src="https://calendar.google.com/calendar/embed?src=abarcenas%40siccob.com.mx&ctz=America%2FMexico_City" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>-->
                     </div>
                 </div>
             </div>

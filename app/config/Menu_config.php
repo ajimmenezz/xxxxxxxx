@@ -2843,7 +2843,7 @@ $config['Calendar'] = array(
             'jquery-tag-it/css/jquery.tagit',
             'parsley/src/parsley'
         ),
-        'js' => array('Base/Base', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla', 'Calendar/catalogo_calendar'),
+        'js' => array('Base/Base', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla', 'Calendar/catalogo_vista_calendario'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
@@ -2851,8 +2851,7 @@ $config['Calendar'] = array(
             'jquery-tag-it/js/tag-it.min',
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
-            'select2/dist/js/select2.min',
-            'Calendario/api'
+            'select2/dist/js/select2.min'
         ),
         'Permiso' => 'CLR'
     )
