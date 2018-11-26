@@ -259,11 +259,3 @@ $route['Localizacion/Seguimiento/(:any)'] = 'Localizacion/Controller_Localizacio
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
 $route['Error/(:any)'] = 'Controller_Error/$1';
-<<<<<<< HEAD
-
-/*prueba calendario*/
-//$route['Calendar/(:any)'] = 'Poliza/Controller_Poliza/desplegarPantalla/$1';
-$route['Calendar/(:any)'] = 'Calendar/Controller_Calendar/desplegarPantalla/$1';
-$route['Calendar/EventoCatalogoCalendar/(:any)'] = 'Calendar/Controller_Calendar/manejarEvento/$1';
-=======
->>>>>>> adist/master
