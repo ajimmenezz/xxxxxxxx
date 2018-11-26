@@ -58,6 +58,7 @@
                     <div class="form-group">
                         <label class="f-s-15 f-w-600">Monto Gastado: *</label>
                         <div class="input-group">
+                            <input type="hidden" id="txtMontoMaximo" value="0" />
                             <span class="input-group-addon">$</span>
                             <input type="text" id="txtMonto" class="form-control" placeholder="59.90" value="" data-parsley-type="number" required disabled="">
                         </div>

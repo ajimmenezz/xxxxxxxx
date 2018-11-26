@@ -11,6 +11,8 @@
                 <li id="btnDocumentoInicial"><a href="#"><i class="fa fa-file"></i> Imprimir Inicio de Proyecto</a></li>
                 <li id="btnSolicitudMaterial"><a href="#"><i class="fa fa-file"></i> Imprimir Solicitud de Material</a></li>
                 <li id="btnSolicitudMaterialFaltante"><a href="#"><i class="fa fa-file"></i> Imprimir Material Faltante</a></li>
+                <li id="btnMaterialNodosPdf"><a href="#"><i class="fa fa-file"></i> Imprimir Material y Nodos</a></li>
+                <li id="btnNodosPdf"><a href="#"><i class="fa fa-file"></i> Imprimir Nodos del Proyecto</a></li>
         </div>
         <label id="btnRegresar" class="btn btn-success">
             <i class="fa fa fa-reply"></i> Regresar

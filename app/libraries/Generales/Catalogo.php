@@ -1974,7 +1974,7 @@ class Catalogo extends General {
                                                         *, 
                                                         cliente(IdCliente) AS Cliente, 
                                                         nombreUsuario(IdResponsableInterno) AS ResponsableInterno 
-                                                    FROM cat_v3_regiones_cliente ' . $flag);
+                                                    FROM cat_v3_regiones_cliente ' . $flag . ' order by Nombre');
                 break;
             default:
                 break;

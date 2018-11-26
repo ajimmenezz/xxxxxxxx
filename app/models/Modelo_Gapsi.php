@@ -38,8 +38,8 @@ class Modelo_Gapsi extends Modelo_Base {
     }
 
     public function getBeneficiarioByTipo(array $datos) {
-        if($datos['id'] == 1){
-        $query = "select 
+        if ($datos['id'] == 1) {
+            $query = "select 
                     db.ID, 
                     db.Nombre 
                     from db_Beneficiarios db 
@@ -48,7 +48,7 @@ class Modelo_Gapsi extends Modelo_Base {
                     and db.Nombre <> '' 
                     and dbp.Proyecto = '" . $datos['proyecto'] . "'
                     order by db.Nombre";
-        }else{
+        } else {
             $query = "select ID, Nombre from db_Beneficiarios where Tipo = '" . $datos['id'] . "' and Nombre <> '' order by Nombre";
         }
         $consulta = parent::connectDBGapsi()->query($query);
@@ -175,14 +175,14 @@ class Modelo_Gapsi extends Modelo_Base {
                 . "(select Descripcion from db_Proyectos where ID = registro.Proyecto) as NameProyecto "
                 . "from db_Registro registro "
                 . "where ID in (''" . $ids . ")";
-        
+
         if ($ids !== ',') {
             $consulta = parent::connectDBGapsi()->query($query);
             $gastos = $consulta->result_array();
-        }else{
+        } else {
             $gastos = array();
         }
-        
+
         return [
             'gastos' => $gastos,
             'usuarios' => $usuarios,
@@ -319,4 +319,33 @@ class Modelo_Gapsi extends Modelo_Base {
         }
     }
 
+    public function ordenCompra(array $datos) {
+        parent::connectDBGapsi()->trans_begin();
+        $query = "insert into "
+                . "db_Registro "
+                . "(Beneficiario, IDBeneficiario, Tipo, TipoTrans, TipoServicio, Descripcion, FCaptura, Importe, Observaciones, Proyecto, GastoFrecuente, Sucursal, Status, UsuarioSolicitud, FechaSolicitud, Fecha, Moneda, OrdenCompra) "
+                . "VALUES "
+                . "('" . $datos['Beneficiario'] . "', '" . $datos['IDBeneficiario'] . "', '" . $datos['Tipo'] . "', '" . $datos['TipoTrans'] . "', '" . $datos['TipoServicio'] . "', '" . $datos['Descripcion'] . "', GETDATE(), '" . $datos['Importe'] . "', '" . $datos['Observaciones'] . "', '" . $datos['Proyecto'] . "', '', '" . $datos['Sucursal'] . "', 'Solicitado', null, GETDATE(), GETDATE(), '" . $datos['Moneda'] . "', '" . $datos['OC'] . "')";
+
+        parent::connectDBGapsi()->query($query);
+        $ultimo = parent::connectDBGapsi()->insert_id();
+
+        if (parent::connectDBGapsi()->trans_status() === FALSE) {
+            parent::connectDBGapsi()->trans_rollback();
+            return ['code' => 400];
+        } else {
+            parent::connectDBGapsi()->trans_commit();
+            return ['code' => 200, 'last' => $ultimo];
+        }
+    }
+
+    public function consultaIdOrdenCompra(array $datos) {
+        $query = "select 
+                ID
+                from db_Registro
+                where OrdenCompra = '" . $datos['ordenCompra']. "'";
+        $consulta = parent::connectDBGapsi()->query($query);
+        $gasto = $consulta->result_array();
+        return $gasto;
+    }
 }

@@ -24,6 +24,7 @@ class Controller_Buscar extends Base{
             case 'Catalogos':
                 $resultado = [
                     'status' => $this->catalogo->catStatus('5'),
+                    'regiones' => $this->catalogo->catRegionesCliente('3'),
                     'sucursales' => $this->catalogo->catSucursales('3'),
                     'departamentos' => $this->catalogo->catDepartamentos('5'),
                     'prioridades' => $this->catalogo->catPrioridades('3'),

@@ -994,7 +994,7 @@ class Modelo_Proyectos2 extends Modelo_Base {
                                         select                                     
                                         concat(cap.Nombre,' - ',sae.Nombre) as Material,
                                         sae.Clave,
-                                        tnap.Cantidad as Total,
+                                        if(sae.Clave in ('PD-PUC6004BUY','PD-PUC6004BUY P'),tnap.Cantidad / 305, tnap.Cantidad) as Total,
                                         sae.Unidad
                                         from t_nodos_alcance_proyecto tnap
                                         inner join t_alcance_proyecto tap on tap.Id = tnap.IdAlcance
@@ -1009,7 +1009,7 @@ class Modelo_Proyectos2 extends Modelo_Base {
                                         select 
                                         concat(cap.Nombre,' - ',sae.Nombre) as Material,
                                         sae.Clave,
-                                        tptm.Cantidad as Total,
+                                        if(sae.Clave in ('PD-PUC6004BUY','PD-PUC6004BUY P'),tptm.Cantidad / 305, tptm.Cantidad) as Total,                                        
                                         sae.Unidad
                                         from t_proyectos_tarea_material tptm
                                         inner join t_proyectos_tareas tpt on tptm.IdTarea = tpt.Id
@@ -1240,11 +1240,27 @@ class Modelo_Proyectos2 extends Modelo_Base {
                                     tpt.IdLider,
                                     nombreUsuario(tpt.IdLider) as Lider,
                                     (select GROUP_CONCAT(IdTecnico) from t_proyectos_tarea_asistentes where IdTarea = tpt.Id) as IdTecnicos,
-                                    (select GROUP_CONCAT(nombreUsuario(IdTecnico)) as Tecnicos from t_proyectos_tarea_asistentes where IdTarea = tpt.Id) as Tecnicos,
-                                    (select count(*) from t_proyectos_tarea_nodos where IdTarea = tpt.Id and Flag = 1) as Nodos,
+                                    (select GROUP_CONCAT(nombreUsuario(IdTecnico)) as Tecnicos from t_proyectos_tarea_asistentes where IdTarea = tpt.Id) as Tecnicos,                                    
                                     (select count(*) from t_proyectos_tarea_material  where IdTarea = tpt.Id and Flag = 1) as RM
                                     from t_proyectos_tareas tpt
                                     where tpt.IdProyecto = '" . $idProyecto . "' " . $condicion . " and tpt.Flag = 1");
+
+        foreach ($consulta as $key => $value) {
+            $consultaNodos = $this->consulta("select count(*) as Total from (
+                                            select 
+                                            count(*)
+                                            from t_proyectos_tarea_nodos tptn 
+                                            inner join t_nodos_alcance_proyecto tnap on tptn.IdNodo = tnap.Id 
+                                            where tptn.IdTarea = '" . $value['Id'] . "'
+                                            and tptn.Flag = 1 
+                                            group by tnap.Nombre) as tf");
+            if (!empty($consultaNodos)) {
+                $consulta[$key]['Nodos'] = $consultaNodos[0]['Total'];
+            } else {
+                $consulta[$key]['Nodos'] = 0;
+            }
+        }
+
         return $consulta;
     }
 
@@ -1265,7 +1281,7 @@ class Modelo_Proyectos2 extends Modelo_Base {
         return $tareas;
     }
 
-    public function getNodosActivosProyecto(int $idProyecto, int $idTarea) {
+    public function getNodosActivosProyecto(int $idProyecto, int $idTarea, array $nodo) {
         $consulta = $this->consulta("select 
                                     tnap.Id,
                                     (select Nombre from cat_v3_conceptos_proyecto where Id = tap.IdConcepto) as Concepto,
@@ -1283,6 +1299,11 @@ class Modelo_Proyectos2 extends Modelo_Base {
                                     where tap.IdProyecto = '" . $idProyecto . "'
                                     and tap.Flag = 1
                                     and tnap.Flag = 1
+                                    and tap.IdConcepto = '" . $nodo['IdConcepto'] . "'
+                                    and tap.IdArea = '" . $nodo['IdArea'] . "'
+                                    and tap.IdUbicacion = '" . $nodo['IdUbicacion'] . "'
+                                    and tnap.IdTipoNodo = '" . $nodo['IdTipoNodo'] . "'
+                                    and tnap.Nombre = '" . $nodo['Nodo'] . "'
                                     and tnap.Id not in (
                                     select IdNodo
                                     from t_proyectos_tareas tpt 
@@ -1291,6 +1312,75 @@ class Modelo_Proyectos2 extends Modelo_Base {
                                     and tpt.Id <> '" . $idTarea . "' 
                                     and tptn.Flag = 1 
                                     and tpt.Flag = 1);");
+        return $consulta;
+    }
+
+    public function getTotalesNodosConceptoTipoForPdf(int $proyecto) {
+        $consulta = $this->consulta("SELECT
+                                    Concepto,
+                                    TipoNodo,
+                                    count(*) as Total
+                                    from (
+                                            SELECT
+                                            (select Nombre from cat_v3_tipos_nodo_proyectos where Id = tnap.IdTipoNodo) as TipoNodo,
+                                            (select Nombre from cat_v3_conceptos_proyecto where Id = tap.IdConcepto) as Concepto
+                                            from t_alcance_proyecto tap
+                                            inner join t_nodos_alcance_proyecto tnap on tap.Id = tnap.IdAlcance
+
+                                            where tap.Flag = 1 
+                                            and tnap.Flag = 1
+                                            and tap.IdProyecto = '" . $proyecto . "'
+                                            group by tap.IdConcepto, tap.IdArea, tap.IdUbicacion, tnap.IdTipoNodo, tnap.Nombre
+                                    ) as tf group by Concepto, TipoNodo");
+        return $consulta;
+    }
+
+    public function getNodosActivosForPdf(int $proyecto) {
+        $consulta = $this->consulta("SELECT
+                                    tnap.Nombre,
+                                    (select Nombre from cat_v3_tipos_nodo_proyectos where Id = tnap.IdTipoNodo) as TipoNodo,
+                                    (select Nombre from cat_v3_conceptos_proyecto where Id = tap.IdConcepto) as Concepto,
+                                    (select Nombre from cat_v3_areas_proyectos where Id = tap.IdArea) as Area,
+                                    (select Nombre from cat_v3_ubicaciones_proyectos where Id = tap.IdUbicacion) as Ubicacion
+                                    from t_alcance_proyecto tap
+                                    inner join t_nodos_alcance_proyecto tnap on tap.Id = tnap.IdAlcance
+
+                                    where tap.Flag = 1 
+                                    and tnap.Flag = 1
+                                    and tap.IdProyecto = '" . $proyecto . "'
+                                    group by tap.IdConcepto, tap.IdArea, tap.IdUbicacion, tnap.IdTipoNodo, tnap.Nombre
+                                    order by tnap.Nombre");
+        return $consulta;
+    }
+
+    public function getNodosActivosProyectoAgrupados(int $idProyecto, int $idTarea) {
+        $consulta = $this->consulta("select 
+                                    tap.IdConcepto,
+                                    tap.IdArea,
+                                    tap.IdUbicacion,
+                                    tnap.IdTipoNodo,
+                                    (select Nombre from cat_v3_conceptos_proyecto where Id = tap.IdConcepto) as Concepto,
+                                    (select Nombre from cat_v3_areas_proyectos where Id = tap.IdArea) as Area,
+                                    (select Nombre from cat_v3_ubicaciones_proyectos where Id = tap.IdUbicacion) as Ubicacion,
+                                    (select Nombre from cat_v3_tipos_nodo_proyectos where Id = tnap.IdTipoNodo) as TipoNodo,
+                                    tnap.Nombre,
+                                    count(*) as Total,
+                                    sum(if((select count(*) from t_proyectos_tarea_nodos where IdTarea = '" . $idTarea . "' and IdNodo = tnap.Id and Flag = 1) > 0, 1, 0)) as MaterialesSeleccionados
+                                    from t_alcance_proyecto tap
+                                    inner join t_nodos_alcance_proyecto tnap on tap.Id = tnap.IdAlcance
+                                    where tap.IdProyecto = '" . $idProyecto . "'
+                                    and tap.Flag = 1
+                                    and tnap.Flag = 1
+                                    and tnap.Id not in (
+                                    select IdNodo
+                                    from t_proyectos_tareas tpt 
+                                    inner join t_proyectos_tarea_nodos tptn on tpt.Id = tptn.IdTarea
+                                    where tpt.IdProyecto = '" . $idProyecto . "'
+                                    and tpt.Id <> '" . $idTarea . "' 
+                                    and tptn.Flag = 1 
+                                    and tpt.Flag = 1)
+                                    group by Concepto, Area, Ubicacion, TipoNodo, Nombre
+                                    order by Nombre");
         return $consulta;
     }
 
@@ -1321,7 +1411,20 @@ class Modelo_Proyectos2 extends Modelo_Base {
     public function guardarNodosTarea(array $datos) {
         $this->iniciaTransaccion();
 
-        $this->actualizar("t_proyectos_tarea_nodos", ['Flag' => 0], ['IdTarea' => $datos['tarea']]);
+        $nodos = $this->consulta("select tnap.Id
+                                from t_alcance_proyecto tap 
+                                inner join t_nodos_alcance_proyecto tnap on tap.Id = tnap.IdAlcance
+                                where tap.IdConcepto = '" . $datos['nodo']['IdConcepto'] . "'
+                                and tap.IdArea = '" . $datos['nodo']['IdArea'] . "'
+                                and tap.IdUbicacion = '" . $datos['nodo']['IdUbicacion'] . "'
+                                and tnap.IdTipoNodo = '" . $datos['nodo']['IdTipoNodo'] . "'
+                                and tnap.Nombre = '" . $datos['nodo']['Nodo'] . "'");
+
+        if (!empty($nodos)) {
+            foreach ($nodos as $key => $value) {
+                $this->actualizar("t_proyectos_tarea_nodos", ['Flag' => 0], ['IdTarea' => $datos['tarea'], 'IdNodo' => $value['Id']]);
+            }
+        }
 
         foreach ($datos['nodos'] as $key => $value) {
             $consulta = $this->consulta("select "
