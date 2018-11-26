@@ -2821,3 +2821,29 @@ $config['Localizacion'] = array(
         'Permiso' => 'VGDM'
     )
 );
+
+$config['Calendar'] = array(
+    'Catalogo-Calendar' => array(
+        'liga' => 'Catalogo Calendar',
+        'icono' => '',
+        'Url' => '/Calendar/Catalogo_Calendar',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'jquery-tag-it/css/jquery.tagit',
+            'parsley/src/parsley'
+        ),
+        'js' => array('Base/Base', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla', 'Calendar/catalogo_vista_calendario'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
+            'jquery-tag-it/js/tag-it.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'select2/dist/js/select2.min'
+        ),
+        'Permiso' => 'CLR'
+    )
+);
