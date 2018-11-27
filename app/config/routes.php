@@ -122,6 +122,7 @@ $route['Generales/Archivos/(:any)'] = 'Generales/Controller_Archivos/manejarEven
 $route['Generales/Buscar/(:any)'] = 'Generales/Controller_Buscar/manejarEvento/$1';
 $route['Generales/ServiceDesk/(:any)'] = 'Generales/Controller_ServiceDesk/manejarEvento/$1';
 $route['Generales/Dispositivos/(:any)'] = 'Generales/Controller_Dispositivos/manejarEvento/$1';
+$route['Generales/Dashboard/(:any)'] = 'Generales/Controller_Dashboard/manejarEvento/$1';
 
 /* Routers para el manejo de páginas de PhantomJS */
 $route['Phantom/Servicio/(:any)'] = 'Phantom/Controller_Phantom/servicioPhantom/$1';
@@ -162,6 +163,7 @@ $route['translate_uri_dashes'] = FALSE;
 /* Routers para el manejo de Compras */
 $route['Compras/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Compras/Seguimiento/(:any)'] = 'Compras/Controller_Seguimiento/manejarEvento/$1';
+$route['Compras/Compras/(:any)'] = 'Compras/Controller_Compras/manejarEvento/$1';
 
 /* Routers para el manejo de Contabilidad */
 $route['Contabilidad/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
@@ -250,11 +252,10 @@ $route['Comprobacion/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Comprobacion/Catalogos/(:any)'] = 'Comprobacion/Controller_Catalogos/manejarEvento/$1';
 $route['Comprobacion/Fondo_Fijo/(:any)'] = 'Tesoreria/Controller_FondoFijo/manejarEvento/$1';
 
+/* Routers para el manejo de Localizacion */
+$route['Localizacion/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
+$route['Localizacion/Seguimiento/(:any)'] = 'Localizacion/Controller_Localizacion/manejarEvento/$1';
+
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
 $route['Error/(:any)'] = 'Controller_Error/$1';
-
-/*prueba calendario*/
-//$route['Calendar/(:any)'] = 'Poliza/Controller_Poliza/desplegarPantalla/$1';
-$route['Calendar/(:any)'] = 'Calendar/Controller_Calendar/desplegarPantalla/$1';
-$route['Calendar/EventoCatalogoCalendar/(:any)'] = 'Calendar/Controller_Calendar/manejarEvento/$1';

@@ -43,6 +43,7 @@
                                         <option value="ts.Id">Solicitud</option>
                                         <option value="ts.Ticket">Ticket</option>
                                         <option value="ts.Folio">Folio</option>
+                                        <option value="cs.IdRegionCliente">Zona / Región</option>
                                         <option value="tst.IdSucursal">Sucursal</option>
                                         <option value="ts.IdEstatus">Estatus de Solicitud</option>
                                         <option value="ts.IdDepartamento">Departamento de Solicitud</option>
@@ -154,6 +155,7 @@
                                                         <option value="ts.Id" data-tipo="tag">Solicitud</option>
                                                         <option value="ts.Ticket" data-tipo="tag">Ticket</option>
                                                         <option value="ts.Folio" data-tipo="tag">Folio</option>
+                                                        <option value="cs.IdRegionCliente" data-tipo="cat">Zona / Región</option>
                                                         <option value="tst.IdSucursal" data-tipo="cat">Sucursal</option>
                                                         <option value="ts.IdEstatus" data-tipo="cat">Estatus de Solicitud</option>
                                                         <option value="ts.IdDepartamento" data-tipo="cat">Departamento de Solicitud</option>
@@ -291,8 +293,13 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li id="btnExportarPdf" data-id-servicio=""><a href="#"><i class="fa fa-file-pdf-o"></i> Exportar Pdf</a></li>
-                        <li id="btnRechazarServicioConcluido" class="hidden" data-id-servicio=""><a href="#"><i class="fa fa-mail-reply-all"></i> Reabrir Servicio</a></li>                        
                         <?php
+                        if (in_array('177', $usuario['PermisosAdicionales']) || in_array('177', $usuario['Permisos']) ||
+                                in_array('182', $usuario['PermisosAdicionales']) || in_array('182', $usuario['Permisos'])) {
+                            ?>
+                            <li id="btnRechazarServicioConcluido" class="hidden" data-id-servicio=""><a href="#"><i class="fa fa-mail-reply-all"></i> Reabrir Servicio</a></li>                        
+                            <?php
+                        }
                         if (in_array('217', $usuario['Permisos'])) {
                             echo '<li id="btnSubirInfoSD" data-id-servicio=""><a href="#"><i class="fa fa-cloud-upload"></i> Subir Información SD</a></li>';
                         }

@@ -390,8 +390,9 @@
                             </div>
                             <!--Finalizando-->
 
+
                             <!--Empezando Obervaciones Reporte en Falso-->
-                            <div class="row">
+                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesReporteFalsoCorrectivo">Observaciones del Servicio *</label>
@@ -469,7 +470,7 @@
                             <!--Finalizando-->
 
                             <!--Empezando Observaciones Imepericia-->
-                            <div class="row">
+                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesImpericiaCorrectivo">Observaciones del Servicio *</label>
@@ -548,7 +549,7 @@
                             <!--Finalizando-->
 
                             <!--Empezando Evidencias Fallas de Equipo-->
-                            <div class="row">
+                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesFallaEquipoCorrectivo">Observaciones del Servicio *</label>
@@ -634,7 +635,7 @@
                             <!-- Finalizando -->
 
                             <!-- Empezando Observaciones Falla de Componente -->
-                            <div class="row">
+                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesFallaComponenteCorrectivo">Observaciones del Servicio *</label>
@@ -674,7 +675,7 @@
                             <!--Finalizando-->
 
                             <!--Empezando Obervaciones Reporte Mutlimedia-->
-                            <div class="row">
+                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesReporteMultimediaCorrectivo">Observaciones del Servicio *</label>
@@ -1580,7 +1581,7 @@
                             <!--Finalizando-->
 
                             <!--Empezando Obervaciones Solucion-->
-                            <div class="row">
+                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesSolucion">Observaciones de la Solución *</label>
@@ -1695,7 +1696,7 @@
                             <!--Finalizando-->
 
                             <!--Empezando Observaciones Solucion-->
-                            <div class="row m-t-20">
+                            <div class="row m-t-20 <?php echo $informacion['campoObservaciones'] ?>">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesSolucionReparacionConRefaccion">Observaciones de la Solución *</label>
@@ -1769,7 +1770,7 @@
                             <!--Finalizando-->
 
                             <!--Empezando Evidencias Solucion-->
-                            <div class="row m-t-20">
+                            <div class="row m-t-20 <?php echo $informacion['campoObservaciones'] ?>">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesSolucionCambioEquipo">Observaciones de la Solución *</label>

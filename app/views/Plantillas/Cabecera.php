@@ -268,12 +268,22 @@
                     <div class="theme-panel">
                         <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn"><i class="fa fa-cog"></i></a>
                         <div class="theme-panel-content">
-                            <h5 class="m-t-0">Panel Administrador SD</h5>
+                            <h5 class="m-t-0">Panel Administrador</h5>
                             <div class="divider"></div>
 
                             <div class="row m-t-10">
                                 <div class="col-md-12">
                                     <a id="btnInformacionSD" href="javascript:;" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-cloud-upload m-r-3"></i> Información SD</a>
+                                </div>
+                            </div>
+                            <div class="row m-t-10">
+                                <div class="col-md-12">
+                                    <a id="btnAgregarVueltaMantenimiento" href="javascript:;" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-cloud-upload m-r-3"></i> Agregar Vuelta Mantenimiento</a>
+                                </div>
+                            </div>
+                            <div class="row m-t-10">
+                                <div class="col-md-12">
+                                    <a id="btnCrearPDFVueltaMantenimiento" href="javascript:;" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-cloud-upload m-r-3"></i> Crear PDF Vuelta Mantenimiento</a>
                                 </div>
                             </div>
                         </div>

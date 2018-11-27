@@ -354,6 +354,7 @@ class Seguimientos extends General {
             return FALSE;
         }
     }
+
     public function consultaFallasRefacionXTipoFallaChecklist(array $datos) {
         $consulta = $this->DBS->consultaGeneralSeguimiento('SELECT 
                                                                 Id,
@@ -966,7 +967,7 @@ class Seguimientos extends General {
                                                         tst.IdSucursal,
                                                         sucursalByServicio('" . $datos['servicio'] . "') as Sucursal,
                                                         folioByServicio('" . $datos['servicio'] . "') as Folio,
-                                                        (select Nombre from cat_v3_tipos_falla where Id = tcd.IdTipoFalla) as TipoFalla,
+                                                        (select concat((select Nombre from cat_v3_clasificaciones_falla where Id = IdClasificacion),' - ', Nombre) from cat_v3_tipos_falla where Id = tcd.IdTipoFalla) as TipoFalla,
                                                         (select Nombre from cat_v3_fallas_equipo where Id = tcd.IdFalla) as Falla,
                                                         tcd.Observaciones
                                                         from t_correctivos_diagnostico tcd 
@@ -981,9 +982,12 @@ class Seguimientos extends General {
                             $arrayDatosCotizacion = [
                                 'SD' => $otherData[0]['Folio'],
                                 'Complejo' => $otherData[0]['Sucursal'],
-                                'Observaciones' => 'Falla: ' . $otherData[0]['Falla'] . '.  ' . $otherData[0]['Observaciones'],
+                                'Observaciones' => '',
                                 'CVE' => $cve_art,
-                                'Articulo' => $articulo
+                                'Articulo' => $articulo,
+                                'Categoria' => $otherData[0]['TipoFalla'],
+                                'Falla' => $otherData[0]['Falla'],
+                                'Link' => 'http://siccob.solutions/Detalles/Servicio/' . $datos['servicio']
                             ];
 
                             $insertSicsa = $this->MSicsa->insertaCotizacion($arrayDatosCotizacion);

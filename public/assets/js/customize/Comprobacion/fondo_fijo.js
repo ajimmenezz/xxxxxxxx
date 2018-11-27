@@ -112,6 +112,7 @@ $(function () {
                     var _datos = {
                         'fecha': $("#txtDate").val(),
                         'monto': "-" + $.trim($("#txtMonto").val()),
+                        'montoMaximo': $.trim($("#txtMontoMaximo").val()),
                         'enPresupuesto': $("#txtMonto").attr("data-presupuesto"),
                         'concepto': $("#listConceptos").val(),
                         'tiposComprobante': ($("#listConceptos option:selected").attr("data-comprobante")).split(","),
@@ -187,6 +188,7 @@ $(function () {
             $("#txtMonto").removeAttr("data-monto");
             $("#txtMonto").attr("disabled", "disabled");
             $("#txtMonto").trigger("change");
+            $("#txtMontoMaximo").val('0');
         } else {
             $("#txtMonto").removeAttr("disabled");
             var datos = {
@@ -196,6 +198,7 @@ $(function () {
             evento.enviarEvento('Fondo_Fijo/CargaMontoMaximoConcepto', datos, '#panelRegistrarComprobante', function (respuesta) {
                 $("#txtMonto").attr("data-monto", respuesta.monto);
                 $("#txtMonto").trigger("change");
+                $("#txtMontoMaximo").val(respuesta.monto);
             });
         }
     }

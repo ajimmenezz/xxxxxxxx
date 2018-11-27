@@ -362,6 +362,11 @@ class Modelo_Tesoreria extends Modelo_Base {
     }
 
     public function getDetallesFondoFijoXUsuario(int $id) {
+        $fechas = $this->consulta("select 
+                                   DATE_SUB(CONCAT(DATE_FORMAT(now(),'%Y-%m'),'-01'), INTERVAL 2 DAY) as FechaIni,
+                                   CONCAT(DATE_FORMAT(now(),'%Y-%m'),'-31') as FechaFin");
+        
+        
         $consulta = $this->consulta("select 
                                     tcff.Id,
                                     tcff.FechaAutorizacion as Fecha,
@@ -380,8 +385,8 @@ class Modelo_Tesoreria extends Modelo_Base {
                                     t_comprobacion_fondo_fijo tcff
                                     left join cat_v3_comprobacion_conceptos ccc on tcff.IdConcepto = ccc.Id
                                     where tcff.IdUsuarioFF = '" . $id . "'
-                                    order by tcff.FechaAutorizacion desc
-                                    limit 50;");
+                                    and tcff.Fecha >= DATE_FORMAT(DATE_SUB(now(),INTERVAL 2 MONTH),'%Y-%m-%d')
+                                    order by tcff.FechaAutorizacion desc");
         return $consulta;
     }
 
@@ -470,6 +475,21 @@ class Modelo_Tesoreria extends Modelo_Base {
         return $saldo;
     }
 
+    public function getUltimoMovimientoSaldo(int $id) {
+        $ultimo = $this->consulta(""
+                . "select "
+                . "Id "
+                . "from t_comprobacion_fondo_fijo "
+                . "where Id = (select Id from t_comprobacion_fondo_fijo where IdUsuarioFF = '" . $id . "' and IdEstatus = 7 order by FechaAutorizacion desc limit 1)");
+        if (!empty($ultimo)) {
+            $ultimo = $ultimo[0]['Id'];
+        } else {
+            $ultimo = '';
+        }
+
+        return $ultimo;
+    }
+
     public function getSaldoXAutorizarByUsuario(int $id) {
         $saldo = $this->consulta(""
                 . "select "
@@ -502,7 +522,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                                         from t_servicios_ticket tst
                                         where Atiende = '" . $id . "'
                                         and IdEstatus = 4
-                                        and tst.FechaConclusion >= NOW() - INTERVAL 15 DAY
+                                        and tst.FechaConclusion >= '2018-10-05 00:00:00'
                                     ) as tf group by tf.Ticket;");
         return $consulta;
     }
@@ -606,7 +626,8 @@ class Modelo_Tesoreria extends Modelo_Base {
             "IdUsuarioAutoriza" => ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? $this->usuario['Id'] : null,
             "EnPresupuesto" => $datos['enPresupuesto'],
             "XML" => $datos['xml'],
-            "PDF" => $datos['pdf']
+            "PDF" => $datos['pdf'],
+            "MontoConcepto" => $datos['montoMaximo']
         ]);
 
         if ($this->estatusTransaccion() === FALSE) {
@@ -633,6 +654,9 @@ class Modelo_Tesoreria extends Modelo_Base {
 
         if ($generales['IdEstatus'] == 7) {
             $saldo = $this->getSaldoByUsuario($generales['IdUsuarioFF']);
+            $ultimo = $this->getUltimoMovimientoSaldo($generales['IdUsuarioFF']);
+
+            $saldoNuevo = ($ultimo < $datos['id']) ? (float) $saldo : ((float) $saldo + (float) abs($generales['Monto']));
 
             $this->insertar("t_comprobacion_fondo_fijo", [
                 "IdUsuario" => $this->usuario['Id'],
@@ -642,7 +666,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                 "IdTipoComprobante" => 3,
                 "IdEstatus" => 7,
                 "Monto" => abs($generales['Monto']),
-                "Saldo" => ((float) $saldo + (float) abs($generales['Monto'])),
+                "Saldo" => $saldoNuevo,
                 "FechaMovimiento" => $this->getFecha(),
                 "Observaciones" => "Reembolso por cancelación del movimiento " . $datos['id'],
                 "Archivos" => "",
@@ -663,8 +687,8 @@ class Modelo_Tesoreria extends Modelo_Base {
                 'code' => 200
             ];
         }
-    }    
-    
+    }
+
     public function rechazarMovimiento(array $datos) {
         $this->iniciaTransaccion();
 
@@ -674,7 +698,7 @@ class Modelo_Tesoreria extends Modelo_Base {
             "IdUsuarioAutoriza" => $this->usuario['Id'],
             "FechaAutorizacion" => $this->getFecha()
                 ], ["Id" => $datos['id']]);
-        
+
 
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();
@@ -690,13 +714,13 @@ class Modelo_Tesoreria extends Modelo_Base {
             ];
         }
     }
-    
+
     public function autorizarMovimiento(array $datos) {
         $this->iniciaTransaccion();
 
-        $generales = $this->getDetallesFondoFijoXId($datos['id'])[0];        
-        $saldo = $this->getSaldoByUsuario($generales['IdUsuarioFF']);        
-        
+        $generales = $this->getDetallesFondoFijoXId($datos['id'])[0];
+        $saldo = $this->getSaldoByUsuario($generales['IdUsuarioFF']);
+
         $this->actualizar("t_comprobacion_fondo_fijo", [
             "IdEstatus" => 7,
             "Saldo" => ((float) $saldo + (float) $generales['Monto']),
@@ -761,7 +785,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                                     where tcff.IdUsuarioFF in (" . $ids . ")
                                     and tcff.IdEstatus = 8
                                     order by tcff.Fecha");
-        
+
         return $consulta;
     }
 

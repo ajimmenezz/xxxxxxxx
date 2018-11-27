@@ -204,7 +204,7 @@ $(function () {
                     cargaTareasProyecto();
                     break;
                 case "#nodosTarea":
-                    cargaNodosTarea();
+                    cargaNodosTareaAgrupados();
                     break;
             }
         });
@@ -332,6 +332,26 @@ $(function () {
                 'almacen': $.trim($("#IdAlmacenSAE").val())
             }
             evento.enviarEvento('Planeacion/GeneraSolicitudMaterialFaltante', datos, '#panelFormDetallesProyecto', function (respuesta) {
+                window.open(respuesta, '_blank');
+            });
+        });
+        
+        $("#btnMaterialNodosPdf").off("click");
+        $("#btnMaterialNodosPdf").on("click", function () {
+            var datos = {
+                'id': $("#IdProyecto").val()                
+            }
+            evento.enviarEvento('Planeacion/GeneraDocumentoMaterialNodos', datos, '#panelFormDetallesProyecto', function (respuesta) {
+                window.open(respuesta, '_blank');
+            });
+        });
+        
+        $("#btnNodosPdf").off("click");
+        $("#btnNodosPdf").on("click", function () {
+            var datos = {
+                'id': $("#IdProyecto").val()                
+            }
+            evento.enviarEvento('Planeacion/GeneraDocumentoNodos', datos, '#panelFormDetallesProyecto', function (respuesta) {
                 window.open(respuesta, '_blank');
             });
         });
@@ -836,7 +856,7 @@ $(function () {
             var target = $(e.target).attr("href");
             switch (target) {
                 case "#nodosTarea":
-                    cargaNodosTarea();
+                    cargaNodosTareaAgrupados();
                     break;
                 case "#materialTarea":
                     cargaMaterialTarea();
@@ -1027,6 +1047,7 @@ $(function () {
                 evento.enviarEvento('Planeacion/DetallesTarea', datos, '#panelFormDetallesProyecto', function (respuesta) {
                     if (respuesta.code == 200) {
                         $("#divDetallesTarea").empty().append(respuesta.formulario);
+                        tabla.generaTablaPersonal('#table-nodos-tarea-agrupados', null, null, true, false, [[1, 'asc']], null, null, false);
                         tabla.generaTablaPersonal('#table-nodos-tarea', null, null, true, false, [[1, 'asc']], null, null, false);
                         evento.cambiarDiv("#divDetallesProyecto", "#divDetallesTarea", initFormularioNuevaTarea());
                     } else {
@@ -1037,8 +1058,49 @@ $(function () {
         });
     }
 
+    function cargaNodosTareaAgrupados() {
+        evento.enviarEvento('Planeacion/CargaNodosTareaAgrupados', {'id': $.trim($("#IdProyecto").val()), 'tarea': $.trim($("#IdTarea").val())}, '#panelFormEditarTarea', function (respuesta) {
+            tabla.limpiarTabla("#table-nodos-tarea-agrupados");
+            $.each(respuesta, function (k, v) {
+                var html = `
+                            <tr>
+                                <td>` + v.IdConcepto + `</td>
+                                <td>` + v.IdArea + `</td>
+                                <td>` + v.IdUbicacion + `</td>
+                                <td>` + v.IdTipoNodo + `</td>
+                                <td>` + v.TipoNodo + `</td>
+                                <td>` + v.Nombre + `</td>
+                                <td>` + v.Concepto + `</td>
+                                <td>` + v.Area + `</td>
+                                <td>` + v.Ubicacion + `</td>                                
+                                <td>` + v.MaterialesSeleccionados + ` / ` + v.Total + `</td>                                
+                            </tr>`;
+                tabla.agregarFilaHtml("#table-nodos-tarea-agrupados", html);
+            });
+
+            tabla.reordenarTabla("#table-nodos-tarea-agrupados", [[5, "asc"]]);
+
+            $('#table-nodos-tarea-agrupados tbody').off('click', 'tr');
+            $('#table-nodos-tarea-agrupados tbody').on('click', 'tr', function () {
+                var datosTabla = $('#table-nodos-tarea-agrupados').DataTable().row(this).data();
+                var datos = {
+                    'IdConcepto': datosTabla[0],
+                    'IdArea': datosTabla[1],
+                    'IdUbicacion': datosTabla[2],
+                    'IdTipoNodo': datosTabla[3],
+                    'Nodo': datosTabla[5]
+                };
+                cargaNodosTarea(datos);
+            });
+        });
+    }
+
     function cargaNodosTarea() {
-        evento.enviarEvento('Planeacion/CargaNodosTarea', {'id': $.trim($("#IdProyecto").val()), 'tarea': $.trim($("#IdTarea").val())}, '#panelFormEditarTarea', function (respuesta) {
+        var nodo = arguments[0];
+        evento.enviarEvento('Planeacion/CargaNodosTarea', {'id': $.trim($("#IdProyecto").val()), 'tarea': $.trim($("#IdTarea").val()), 'nodo': nodo}, '#panelFormEditarTarea', function (respuesta) {
+            evento.ocultarDiv("#divNodosProyectoParaTareas", function () {
+                $("#divMaterialesPorNodoParaTareas").fadeIn(400);
+            });
             tabla.limpiarTabla("#table-nodos-tarea");
             $.each(respuesta, function (k, v) {
                 var checked = (v.Existe > 0) ? 'checked' : '';
@@ -1067,6 +1129,15 @@ $(function () {
                 checkBox.attr("checked", !checkBox.attr("checked"));
             });
 
+            $("#btnRegresarANodosTarea").off("click");
+            $("#btnRegresarANodosTarea").on("click", function () {
+                evento.ocultarDiv("#divMaterialesPorNodoParaTareas", function () {
+                    $("#divNodosProyectoParaTareas").fadeIn(400);
+                });
+                tabla.limpiarTabla("#table-nodos-tarea");
+                cargaNodosTareaAgrupados();
+            });
+
             $(".btnGuardarNodosTarea").off("click");
             $(".btnGuardarNodosTarea").on("click", function () {
                 var nodos = [];
@@ -1078,36 +1149,18 @@ $(function () {
 
                 var datos = {
                     'tarea': $.trim($("#IdTarea").val()),
+                    'nodo': nodo,
                     'nodos': nodos
                 };
 
                 evento.enviarEvento('Planeacion/GuardarNodosTarea', datos, '#panelFormEditarTarea', function (respuesta) {
                     if (respuesta.code == 200) {
-                        cargaNodosTarea();
+                        cargaNodosTarea(nodo);
                     } else {
                         evento.mostrarMensaje("#divErrorTarea", false, respuesta.error, 4000);
                     }
                 });
             });
-
-
-
-//            $('#table-tareas tbody').on('click', 'tr', function () {
-//                let _thisFila = this;
-//                var datosTabla = $('#table-tareas').DataTable().row(_thisFila).data();
-//                var datos = {
-//                    'id': $.trim($("#IdProyecto").val()),
-//                    'tarea': datosTabla[0]
-//                };
-//                evento.enviarEvento('Planeacion/DetallesTarea', datos, '#panelFormDetallesProyecto', function (respuesta) {
-//                    if (respuesta.code == 200) {
-//                        $("#divDetallesTarea").empty().append(respuesta.formulario);
-//                        evento.cambiarDiv("#divDetallesProyecto", "#divDetallesTarea", initFormularioNuevaTarea());
-//                    } else {
-//                        evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-//                    }
-//                });
-//            });
         });
     }
 

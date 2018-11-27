@@ -167,7 +167,7 @@
     ?>
 </div>
 <?php
-if ($generales['IdTipoMovimiento'] == 2 && !in_array($generales['IdEstatus'], [6, 10, '6', '10'])) {
+if ($generales['IdTipoMovimiento'] == 2 && !in_array($generales['IdEstatus'], [6, 10, '6', '10']) && $rol != 1) {
     ?>
     <div class="row m-t-10">
         <div class="col-md-12 col-sm-12 col-xs-12">

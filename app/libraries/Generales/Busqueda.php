@@ -31,6 +31,7 @@ class Busqueda extends General {
             tst.Id as IdServicio,
             ts.Ticket,
             ts.Folio,
+            regionCliente(cs.IdRegionCliente) as Region,
             sucursal(tst.IdSucursal) as Sucursal,
             estatus(ts.IdEstatus) as EstatusSolicitud,
             departamento(ts.IdDepartamento) as DepartamentoSolicitud,
@@ -52,13 +53,15 @@ class Busqueda extends General {
             from 
             t_solicitudes ts 
             left join t_solicitudes_internas tsi on ts.Id = tsi.IdSolicitud
-            LEFT JOIN t_servicios_ticket tst on ts.Id = tst.IdSolicitud where 1 = 1 ';
+            LEFT JOIN t_servicios_ticket tst on ts.Id = tst.IdSolicitud  
+            left join cat_v3_sucursales cs on tst.IdSucursal = cs.Id where 1 = 1 ';
 
             $htmlColumnas = ''
                     . '<th class="all">Solicitud</th>'
                     . '<th class="never">IdServicio</th>'
                     . '<th class="all">Ticket</th>'
                     . '<th class="all">Folio</th>'
+                    . '<th class="all">Zona / Región</th>'
                     . '<th class="all">Sucursal</th>'
                     . '<th class="all">Estatus de Solicitud</th>'
                     . '<th class="all">Departamento de Solicitud</th>'
@@ -88,6 +91,8 @@ class Busqueda extends General {
             $htmlColumnas .= (in_array("ts.Ticket", $parametros['columnas'])) ? '<th class="all">Ticket</th>' : '';
             $query .= (in_array("ts.Folio", $parametros['columnas'])) ? 'ts.Folio, ' : '';
             $htmlColumnas .= (in_array("ts.Folio", $parametros['columnas'])) ? '<th class="all">Folio</th>' : '';
+            $query .= (in_array("cs.IdRegionCliente", $parametros['columnas'])) ? 'regionCliente(cs.IdRegionCliente) as Region, ' : '';
+            $htmlColumnas .= (in_array("cs.IdRegionCliente", $parametros['columnas'])) ? '<th class="all">Zona / Región</th>' : '';
             $query .= (in_array("tst.IdSucursal", $parametros['columnas'])) ? 'sucursal(tst.IdSucursal) as Sucursal, ' : '';
             $htmlColumnas .= (in_array("tst.IdSucursal", $parametros['columnas'])) ? '<th class="all">Sucursal</th>' : '';
             $query .= (in_array("ts.IdEstatus", $parametros['columnas'])) ? 'estatus(ts.IdEstatus) as EstatusSolicitud, ' : '';
@@ -129,7 +134,8 @@ class Busqueda extends General {
             $query .= ' from 
             t_solicitudes ts 
             left join t_solicitudes_internas tsi on ts.Id = tsi.IdSolicitud
-            LEFT JOIN t_servicios_ticket tst on ts.Id = tst.IdSolicitud where 1 = 1 ';
+            LEFT JOIN t_servicios_ticket tst on ts.Id = tst.IdSolicitud
+            left join cat_v3_sucursales cs on tst.IdSucursal = cs.Id where 1 = 1 ';
         }
 
         if ($parametros['filtroFecha'] !== '') {
@@ -193,6 +199,7 @@ class Busqueda extends General {
                 $htmlReturn .= '<td>' . $value['IdServicio'] . '</td>';
                 $htmlReturn .= '<td>' . $value['Ticket'] . '</td>';
                 $htmlReturn .= '<td>' . $value['Folio'] . '</td>';
+                $htmlReturn .= '<td>' . $value['Region'] . '</td>';
                 $htmlReturn .= '<td>' . $value['Sucursal'] . '</td>';
                 $htmlReturn .= '<td>' . $value['EstatusSolicitud'] . '</td>';
                 $htmlReturn .= '<td>' . $value['DepartamentoSolicitud'] . '</td>';
@@ -216,6 +223,7 @@ class Busqueda extends General {
                 $htmlReturn .= '<td>' . $value['IdServicio'] . '</td>';
                 $htmlReturn .= (in_array("ts.Ticket", $parametros['columnas'])) ? '<td>' . $value['Ticket'] . '</td>' : '';
                 $htmlReturn .= (in_array("ts.Folio", $parametros['columnas'])) ? '<td>' . $value['Folio'] . '</td>' : '';
+                $htmlReturn .= (in_array("cs.IdRegionCliente", $parametros['columnas'])) ? '<td>' . $value['Region'] . '</td>' : '';
                 $htmlReturn .= (in_array("tst.IdSucursal", $parametros['columnas'])) ? '<td>' . $value['Sucursal'] . '</td>' : '';
                 $htmlReturn .= (in_array("ts.IdEstatus", $parametros['columnas'])) ? '<td>' . $value['EstatusSolicitud'] . '</td>' : '';
                 $htmlReturn .= (in_array("ts.IdDepartamento", $parametros['columnas'])) ? '<td>' . $value['DepartamentoSolicitud'] . '</td>' : '';
@@ -251,6 +259,7 @@ class Busqueda extends General {
                 'Id Servicio',
                 'Ticket',
                 'Folio',
+                'Region',
                 'Sucursal',
                 'Estatus de Solicitud',
                 'Departamento de Solicitud',
@@ -269,8 +278,8 @@ class Busqueda extends General {
                 'Fecha de Inicio del Servicio',
                 'Fecha de Cierre del Servicio',
                 'Descripción del Servicio',];
-            $arrayWidth = [15, 15, 15, 15, 35, 20, 35, 15, 20, 20, 20, 35, 35, 65, 35, 20, 35, 35, 20, 20, 20, 65];
-            $arrayAlign = ['center', 'center', 'center', 'center', '', '', '', '', 'center', 'center', 'center', '', '', 'justify', '', '', '', '', 'center', 'center', 'center', 'justify'];
+            $arrayWidth = [15, 15, 15, 15, 35, 35, 20, 35, 15, 20, 20, 20, 35, 35, 65, 35, 20, 35, 35, 20, 20, 20, 65];
+            $arrayAlign = ['center', 'center', 'center', 'center', '', '', '', '', '', 'center', 'center', 'center', '', '', 'justify', '', '', '', '', 'center', 'center', 'center', 'justify'];
         } else {
             $arrayTitulos = [];
             $arrayWidth = [];
@@ -292,6 +301,11 @@ class Busqueda extends General {
                 array_push($arrayTitulos, 'Folio');
                 array_push($arrayWidth, 15);
                 array_push($arrayAlign, 'center');
+            }
+            if (in_array("cs.IdRegionCliente", $datos['columnas'])) {
+                array_push($arrayTitulos, 'Region');
+                array_push($arrayWidth, 35);
+                array_push($arrayAlign, '');
             }
             if (in_array("tst.IdSucursal", $datos['columnas'])) {
                 array_push($arrayTitulos, 'Sucursal');

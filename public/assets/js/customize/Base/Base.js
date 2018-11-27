@@ -470,6 +470,99 @@ Base.prototype.plasmarInformacionSD = function () {
     });
 };
 
+Base.prototype.eventosVueltasMantenimiento = function () {
+    var _this = this;
+    //mostrando la seccion para modificar SD
+
+    $('#btnAgregarVueltaMantenimiento').off("click");
+    $('#btnAgregarVueltaMantenimiento').on('click', function () {
+        var html = '<div class="row">\n\
+                        <div class="col-md-12">\n\
+                                <div class="form-group">\n\
+                                    <label>Servicio *</label>\n\
+                                    <input id="inputServicioVueltaMantenimiento" type="text" class="form-control" data-parsley-type="number"/>\n\
+                                </div>\n\
+                            </div>\n\
+                      </div>\n\
+                      <div class="row">\n\
+                        <div class="col-md-12">\n\
+                                <div class="form-group">\n\
+                                    <label>Folio *</label>\n\
+                                    <input id="inputFolioVueltaMantenimiento" type="text" class="form-control" data-parsley-type="number"/>\n\
+                                </div>\n\
+                            </div>\n\
+                      </div>\n\
+                        <div class="row m-t-10">\n\
+                            <div class="col-md-12">\n\
+                                <div id="errorServicioAgregarVueltaMantemiento"></div>\n\
+                            </div>\n\
+                        </div>';
+        _this.mostrarModal('Agregar vuelta mantenimiento', html);
+        $('#btnModalConfirmar').on('click', function () {
+            var servicio = $('#inputServicioVueltaMantenimiento').val();
+            var folio = $('#inputFolioVueltaMantenimiento').val();
+
+            if (servicio !== '') {
+                var data = {servicio: servicio, folio: folio};
+                _this.enviarEvento('/Generales/Servicio/AgregarVueltaAsociadoMantenimiento', data, '#modal-dialogo', function (respuesta) {
+                    _this.mensajeConfirmacion('Se agrego la vuelta correctamente.', 'Correcto');
+                });
+            } else {
+                _this.mostrarMensaje('#errorServicioAgregarVueltaMantemiento', false, 'Debes colocar el servicio.', 3000);
+
+            }
+        });
+    });
+
+    $('#btnCrearPDFVueltaMantenimiento').off("click");
+    $('#btnCrearPDFVueltaMantenimiento').on('click', function () {
+        var html = '<div class="row">\n\
+                        <div class="col-md-12">\n\
+                                <div class="form-group">\n\
+                                    <label>Servicio *</label>\n\
+                                    <input id="inputServicioVueltaMantenimiento" type="text" class="form-control" data-parsley-type="number"/>\n\
+                                </div>\n\
+                            </div>\n\
+                      </div>\n\
+                      <div class="row">\n\
+                        <div class="col-md-12">\n\
+                                <div class="form-group">\n\
+                                    <label>Folio *</label>\n\
+                                    <input id="inputFolioVueltaMantenimiento" type="text" class="form-control" data-parsley-type="number"/>\n\
+                                </div>\n\
+                            </div>\n\
+                      </div>\n\
+                      <div class="row">\n\
+                        <div class="col-md-12">\n\
+                                <div class="form-group">\n\
+                                    <label>Ticket *</label>\n\
+                                    <input id="inputTicketVueltaMantenimiento" type="text" class="form-control" data-parsley-type="number"/>\n\
+                                </div>\n\
+                            </div>\n\
+                      </div>\n\
+                        <div class="row m-t-10">\n\
+                            <div class="col-md-12">\n\
+                                <div id="errorServicioAgregarVueltaMantemiento"></div>\n\
+                            </div>\n\
+                        </div>';
+        _this.mostrarModal('Crear PDF vuelta mantenimiento', html);
+        $('#btnModalConfirmar').on('click', function () {
+            var servicio = $('#inputServicioVueltaMantenimiento').val();
+            var folio = $('#inputFolioVueltaMantenimiento').val();
+            var ticket = $('#inputTicketVueltaMantenimiento').val();
+
+            if (servicio !== '') {
+                var data = {servicio: servicio, folio: folio, ticket: ticket};
+                _this.enviarEvento('/Generales/Servicio/CrearPDFVueltaAsociadoMantenimiento', data, '#modal-dialogo', function (respuesta) {
+                    _this.mensajeConfirmacion('Se creo el archivo correctamente.', 'Correcto');
+                });
+            } else {
+                _this.mostrarMensaje('#errorServicioAgregarVueltaMantemiento', false, 'Debes colocar el servicio.', 3000);
+            }
+        });
+    });
+};
+
 Base.prototype.cambiarDiv = function () {
     var _div1 = arguments[0];
     var _div2 = arguments[1];
@@ -512,4 +605,35 @@ Base.prototype.ocultarDiv = function () {
     } else {
         $(_div).fadeOut(400);
     }
+}
+
+Base.prototype.validarCampo = function () {
+    var _this = this;
+    var arrayCampos = arguments[0];
+    var divError = arguments[1];
+    var objeto = arrayCampos.objeto;
+    var mensajeError = arrayCampos.mensajeError;
+    var campoValidar = $(objeto).val();
+
+    if (campoValidar !== '') {
+        return true;
+    } else {
+        _this.mostrarMensaje(divError, false, mensajeError, 3000);
+        return false;
+    }
+}
+
+Base.prototype.validarCamposObjetos = function () {
+    var _this = this;
+    var arrayCampos = arguments[0];
+    var divError = arguments[1];
+    var resultado = true;
+    $.each(arrayCampos, function (k, v) {
+        if (resultado) {
+            if (!_this.validarCampo(v, divError)) {
+                resultado = false;
+            }
+        }
+    });
+    return resultado;
 }

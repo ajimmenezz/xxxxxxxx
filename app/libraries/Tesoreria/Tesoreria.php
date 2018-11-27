@@ -370,7 +370,7 @@ class Tesoreria extends General {
 
             if (isset($nodoComprobante['Total'])) {
                 $totalFloat = (float) $nodoComprobante['Total'];
-                if ($totalFloat >= round($total) && $totalFloat <= $total + 1) {
+                if ($totalFloat >= round($total) - 1 && $totalFloat <= $total + 1) {
                     $resultadoComprobante = TRUE;
                 } else {
                     return 'El Total de la factura es incorrecto';
@@ -483,13 +483,14 @@ class Tesoreria extends General {
 
         foreach ($datos as $k => $v) {
             $montoIvaVuelta = number_format($v['Monto'] * 16 / 100, 2);
-            $totalIvaMontoVuelta = $v['Monto'] + $montoIvaVuelta;
+            $montoIvaVuelta = str_replace(',', '', $montoIvaVuelta);
+            $totalIvaMontoVuelta = $v['Monto'] + (float)$montoIvaVuelta;
             $viaticoIvaVuelta = number_format($v['Viatico'] * 16 / 100, 2);
-            $totalIvaViaticoVuelta = $v['Viatico'] + $viaticoIvaVuelta;
+            $viaticoIvaVuelta = str_replace(',', '', $viaticoIvaVuelta);
+            $totalIvaViaticoVuelta = $v['Viatico'] + (float)$viaticoIvaVuelta;
             $sumaMontoViatico = $totalIvaMontoVuelta + $totalIvaViaticoVuelta;
             $totalFactura = $totalFactura + $sumaMontoViatico;
         }
-
         return (float) $totalFactura;
     }
 

@@ -12,6 +12,7 @@ $config['Secciones'] = array(
     'Acceso' => array('Login', 'Recuperar_Acceso', 'Nuevo_Password'),
     'Configuracion' => array('Perfil-Configuracion' => 'Perfil'),
     'Generales' => array(
+        'Dashboard-Siccob' => 'Dashboard',
         'Disp-Moviles' => 'Dispositivos-Moviles',
         'Notificaciones' => 'Notificaciones',
         'Buscar' => 'Buscar',
@@ -112,7 +113,9 @@ $config['Secciones'] = array(
     ),
     'Compras' => array(
         'Dashboard-Co' => 'Dashboard',
-        'Seguimiento-Compras' => 'Seguimiento'
+        'Seguimiento-Compras' => 'Seguimiento',
+        'Ordenes-Compras' => 'Ordenes_Compra',
+        'Facturas-OC' => 'Facturacion_OC'
     ),
     'MesaDeAyuda' => array(
         'Dashboard-Mesa' => 'Dashboard',
@@ -169,7 +172,7 @@ $config['Secciones'] = array(
         'FondoFijo-Comprobacion' => 'Fondo_Fijo',
         'FondoFijo-Autorizacion' => 'Autorizar_Fondo_Fijo',
     ),
-    'Calendar' => array(
-        'Catalogo-Calendar' => 'Catalogo_Calendar'
+    'Localizacion' => array(
+        'Localizacion-Dispositivos' => 'Dispositivos'
     )
 );
