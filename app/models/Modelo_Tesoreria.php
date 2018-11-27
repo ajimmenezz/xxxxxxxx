@@ -522,7 +522,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                                         from t_servicios_ticket tst
                                         where Atiende = '" . $id . "'
                                         and IdEstatus = 4
-                                        and tst.FechaConclusion >= NOW() - INTERVAL 15 DAY
+                                        and tst.FechaConclusion >= '2018-10-05 00:00:00'
                                     ) as tf group by tf.Ticket;");
         return $consulta;
     }
