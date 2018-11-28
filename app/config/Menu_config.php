@@ -2493,6 +2493,31 @@ $config['Reportes SAE'] = array(
             'jquery-tag-it/js/tag-it.min'
         ),
         'Permiso' => 'VRSAEC'
+    ),
+    'Compras Proyecto' => array(
+        'liga' => 'Compras Proyecto',
+        'icono' => 'fa fa-search',
+        'Url' => '/ReportesSAE/Compras_Proyecto',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'jquery-tag-it/css/jquery.tagit'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Tabla', 'Base/Select', 'Base/Fecha', 'ReportesSAE/comprasproyecto'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'jquery-tag-it/js/tag-it.min'
+        ),
+        'Permiso' => 'VRSAEC'
     )
 );
 

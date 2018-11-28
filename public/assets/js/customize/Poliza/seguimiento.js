@@ -4751,8 +4751,7 @@ $(function () {
 
         $('#btnModalAbortar').removeClass('hidden');
 
-        var html = ' <div id="campo_firma_poliza">\n\
-                        <div class="panel-body">';
+        var html = ' <div id="campo_firma_poliza">';
         html += textoExtra;
         html += '        <form class="margin-bottom-0" id="formFirmaPoliza" data-parsley-validate="true">\n\
                             <div class="row m-t-10">\n\
@@ -4793,7 +4792,6 @@ $(function () {
                                 <button id="btnGuardarFirma" type="button" class="btn btn-sm btn-primary"><i class="fa fa-save"></i> Guardar</button>\n\
                             </div>\n\
                         </div>\n\
-                    </div>\n\
                 </div>';
         return html;
 

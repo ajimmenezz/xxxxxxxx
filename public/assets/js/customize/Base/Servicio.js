@@ -914,7 +914,6 @@ Servicio.prototype.modalCampoFirma = function () {
     }
 
     var html = ' <div id="campo_firma">\n\
-                    <div class="panel-body">\n\
                         <form class="margin-bottom-0" id="formFirmaSinClasificar" data-parsley-validate="true">\n\
                             <div class="row m-t-10">\n\
                                 <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
@@ -954,7 +953,6 @@ Servicio.prototype.modalCampoFirma = function () {
                                 <button id="btnGuardarConcluir" type="button" class="btn btn-sm btn-primary"><i class="fa fa-save"></i>' + textoBoton + '</button>\n\
                             </div>\n\
                         </div>\n\
-                    </div>\n\
                 </div>';
 
     _this.mostrarModal('Firma', html);
@@ -1089,8 +1087,8 @@ Servicio.prototype.modalCampoFirmaExtra = function () {
 
     $('#btnModalAbortar').removeClass('hidden');
 
-    var html = ' <div id="campo_firma_extra">\n\
-                    <div class="panel-body">';
+    var html = ' <div id="campo_firma_extra">';
+
     html += '           <form class="margin-bottom-0" id="formFirmaExtra" data-parsley-validate="true">\n\
                             <div class="row m-t-10">\n\
                                 <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
@@ -1137,7 +1135,6 @@ Servicio.prototype.modalCampoFirmaExtra = function () {
                                 </div>\n\
                             </div>\n\
                         </form>\n\
-                    </div>\n\
                 </div>';
     return html;
 
