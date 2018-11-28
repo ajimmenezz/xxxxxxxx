@@ -42,7 +42,7 @@ function initClient() {
 
 function updateSigninStatus(isSignedIn,recurso = null) {
     if (isSignedIn) {
-        console.log("sesion true");
+//        console.log("sesion true");
         makeRequest(recurso);
     } else {
         handleAuthClick(recurso);
