@@ -3,6 +3,7 @@
 namespace Librerias\SAEReports;
 
 ini_set('max_execution_time', 3600);
+ini_set('max_execution_time', 1000000);
 
 use Controladores\Controller_Datos_Usuario as General;
 use Librerias\Generales\PDF as PDF;
@@ -52,7 +53,7 @@ class Reportes extends General {
             'Costo'];
         //Envía el arreglo de los subtitulos a la hoja activa.
         $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
-        //Arreglo con el ancho por columna. 
+        //Arreglo con el ancho por columna.
         $arrayWidth = [20, 35, 20, 15, 15, 20];
         //Envía y setea los anchos de las columnas definidos en el arreglo de los anchos por columna.
         $this->Excel->setColumnsWidth('A', $arrayWidth);
@@ -80,10 +81,8 @@ class Reportes extends General {
         return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
     }
 
-    public function exportaReporteComprasSAE(array $datos = null) {
+    public function exportaReporteComprasSAEProyecto(array $datos = null) {
         $compras = $datos['compras'];
-        $existencias = $datos['existencias'];
-        $movimientos = $datos['movimientos'];
 
         /* Begin Hoja 1 */
         //Crea una hoja en la posición 0 y la nombra.
@@ -92,26 +91,34 @@ class Reportes extends General {
         $this->Excel->setActiveSheet(0);
         //Arreglo de los subtitulos de la tabla. La posición es de izquierda a derecha.
         $arrayTitulosCompras = [
-            'Empresa',
+            'OC',
+            'Proveedor',
             'Referencia',
+            'Fecha Documento',
+            'Fecha Cancelación',
+            'Fecha Elaboración',
+            'Total Compra',
+            'Impuesto',
+            'Descuento',
+            'Importe',
             'Proyecto',
-            'Observaciones',
-            'Oc',
-            'Fecha',
+            'Campo Libre',
+            '# Partida',
             'Clave Artículo',
             'Artículo',
-            'Línea',
             'Cantidad',
-            'Precio',
-            'Total'];
+            'Precio Unitario',
+            'Moneda',
+            'Tipo Cambio',
+            'Total Partida'];
         //Envía el arreglo de los subtitulos a la hoja activa.
         $this->Excel->setTableSubtitles('A', 1, $arrayTitulosCompras);
-        //Arreglo con el ancho por columna. 
-        $arrayWidthCompras = [12.86, 20.14, 16.14, 18.29, 14.86, 21.14, 17.43, 33.71, 10, 13.10, 11, 10];
+        //Arreglo con el ancho por columna.
+        $arrayWidthCompras = [20, 35, 25, 30, 30, 30, 15, 15, 15, 15, 25, 25, 10, 20, 35, 10, 15, 15, 15, 15];
         //Envía y setea los anchos de las columnas definidos en el arreglo de los anchos por columna.
         $this->Excel->setColumnsWidth('A', $arrayWidthCompras);
         //Arreglo de alineación por columna.
-        $arrayAlignCompras = ['', '', '', '', '', 'center', '', '', '', 'center', 'center', 'center'];
+        $arrayAlignCompras = ['', '', '', '', '', '', 'center', 'center', 'center', 'center', '', '', 'center', 'center', '', 'center', 'center'];
         //Envía:
         //La letra donde comienza la tabla
         //El número de fila donde comenzará la tabla -1
@@ -121,50 +128,8 @@ class Reportes extends General {
         $this->Excel->setTableContent('A', 1, $compras, true, $arrayAlignCompras);
         /* End Hoja 1 */
 
-        /* Begin Hoja 2 */
-        $this->Excel->createSheet('Existencias', 1);
-        $this->Excel->setActiveSheet(1);
-        $arrayTitulosExistencias = [
-            'Clave Artículo',
-            'Artículo',
-            'Almacén Virtual',
-            'Existencias'];
-        $this->Excel->setTableSubtitles('A', 1, $arrayTitulosExistencias);
-        $arrayWidthExistencias = [18, 33.71, 34.14, 15];
-        $this->Excel->setColumnsWidth('A', $arrayWidthExistencias);
-        $arrayAlignExistencias = ['center', '', '', 'center'];
-        $this->Excel->setTableContent('A', 1, $existencias, true, $arrayAlignExistencias);
-        /* End Hoja 2 */
-
-        /* Begin Hoja 3 */
-        $this->Excel->createSheet('Movimientos', 2);
-        $this->Excel->setActiveSheet(2);
-        $arrayTitulosMovimientos = [
-            'Número Movimiento',
-            'Folio',
-            'Clave Artículo',
-            'Artículo',
-            'Almacén',
-            'Concepto',
-            'Movimiento',
-            'Referencia',
-            'Cantidad',
-            'Costo',
-            'Costo Promo Inicial',
-            'Costo Promo Final',
-            'Unidad Venta',
-            'Existencia',
-            'Fecha',
-            'Movimiento Enlazado'];
-        $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
-        $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
-        $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
-        $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', 'center', 'center', 'center', '', 'center', 'center', 'center'];
-        $this->Excel->setTableContent('A', 1, $movimientos, true, $arrayAlignMovimientos);
-        /* End Hoja 3 */
-
         $time = date("ymd_H_i_s");
-        $nombreArchivo = 'Reportes_Compras_' . $time . '.xlsx';
+        $nombreArchivo = 'Reportes_Compras_Proyecto' . $time . '.xlsx';
         $nombreArchivo = trim($nombreArchivo);
         $ruta = 'storage/Archivos/SAEReports/' . $nombreArchivo;
 
@@ -175,11 +140,11 @@ class Reportes extends General {
     }
 
     public function getBuscarProductosCompras(array $datos = null) {
-        $consulta = $this->DBSAE->consultaBDSAE("SELECT CVE_ART as Clave, DESCR as Nombre 
-                                                FROM SAE7EMPRESA3.dbo.INVE03 as Productos 
-                                                WHERE Productos.CVE_ART LIKE '%" . strtoupper($datos['producto']) . "%' 
+        $consulta = $this->DBSAE->consultaBDSAE("SELECT CVE_ART as Clave, DESCR as Nombre
+                                                FROM SAE7EMPRESA3.dbo.INVE03 as Productos
+                                                WHERE Productos.CVE_ART LIKE '%" . strtoupper($datos['producto']) . "%'
                                                 OR Productos.DESCR LIKE '%" . strtoupper($datos['producto']) . "%'
-                                                OR Productos.CVE_ART LIKE '%" . $datos['producto'] . "%' 
+                                                OR Productos.CVE_ART LIKE '%" . $datos['producto'] . "%'
                                                 OR Productos.DESCR LIKE '%" . $datos['producto'] . "%'");
         return $consulta;
     }
@@ -192,41 +157,41 @@ class Reportes extends General {
             array_push($nuevoListaProductos, "'" . $value . "'");
         }
         $stringListaProductos = implode(",", $nuevoListaProductos);
-        $data['compras'] = $this->DBSAE->consultaBDSAE("select 
+        $data['compras'] = $this->DBSAE->consultaBDSAE("select
                                                             'Empresa 3' as Empresa,
                                                             ordenes.SU_REFER as Referencia,
                                                             adicionales.CAMPLIB1 as Proyecto,
                                                             ordenes.OBS_COND as Observaciones,
                                                             partidas.CVE_DOC as OC,
                                                             ordenes.FECHAELAB as Fecha,
-                                                            inventario.CVE_ART as Clave,  
-                                                            inventario.DESCR as Articulo,  
-                                                            inventario.LIN_PROD as Linea, 
+                                                            inventario.CVE_ART as Clave,
+                                                            inventario.DESCR as Articulo,
+                                                            inventario.LIN_PROD as Linea,
                                                             partidas.CANT as Cantidad,
                                                             ROUND(partidas.COST,2) as Precio,
                                                             ROUND(partidas.TOT_PARTIDA,2) as Total
-                                                        from 
+                                                        from
                                                         SAE7EMPRESA3.dbo.COMPO03 ordenes inner join SAE7EMPRESA3.dbo.PAR_COMPO03 partidas
                                                             ON ordenes.CVE_DOC = partidas.CVE_DOC
                                                         INNER JOIN SAE7EMPRESA3.dbo.INVE03 inventario
                                                             ON partidas.CVE_ART = inventario.CVE_ART
                                                         INNER JOIN SAE7EMPRESA3.dbo.COMPO_CLIB03 adicionales
                                                             ON ordenes.CVE_DOC = adicionales.CLAVE_DOC
-                                                        where ordenes.FECHAELAB BETWEEN '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 23:59:59' 
+                                                        where ordenes.FECHAELAB BETWEEN '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 23:59:59'
                                                         and ordenes.FECHA_CANCELA is null and inventario.CVE_ART IN (" . $stringListaProductos . ")");
-        $data['existencias'] = $this->DBSAE->consultaBDSAE("SELECT 
+        $data['existencias'] = $this->DBSAE->consultaBDSAE("SELECT
                                                             inventario.CVE_ART as Clave,
                                                             productos.DESCR as Articulo,
                                                             almacenes.DESCR as Almacen,
                                                             inventario.EXIST as Existencias
-                                                        FROM SAE7EMPRESA3.dbo.MULT03 as inventario 
-                                                        inner join SAE7EMPRESA3.dbo.INVE03 as productos 
+                                                        FROM SAE7EMPRESA3.dbo.MULT03 as inventario
+                                                        inner join SAE7EMPRESA3.dbo.INVE03 as productos
                                                             on inventario.CVE_ART = productos.CVE_ART
-                                                        inner join SAE7EMPRESA3.dbo.ALMACENES03 as almacenes 
+                                                        inner join SAE7EMPRESA3.dbo.ALMACENES03 as almacenes
                                                             on almacenes.CVE_ALM = inventario.CVE_ALM
-                                                        WHERE inventario.CVE_ART in (" . $stringListaProductos . ") 
+                                                        WHERE inventario.CVE_ART in (" . $stringListaProductos . ")
                                                         and inventario.EXIST > 0");
-        $data['movimientos'] = $this->DBSAE->consultaBDSAE("select 
+        $data['movimientos'] = $this->DBSAE->consultaBDSAE("select
                                                             NUM_MOV as Numero_Movimiento,
                                                             movimientos.CVE_FOLIO as Folio,
                                                             productos.CVE_ART as Clave_Producto,
@@ -243,19 +208,67 @@ class Reportes extends General {
                                                             movimientos.EXISTENCIA as Existencia,
                                                             movimientos.FECHAELAB as Fecha,
                                                             movimientos.MOV_ENLAZADO
-                                                        from MINVE03 movimientos 
-                                                        inner join INVE03 productos 
+                                                        from MINVE03 movimientos
+                                                        inner join INVE03 productos
                                                             on movimientos.CVE_ART = productos.CVE_ART
-                                                        where FECHAELAB BETWEEN '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 23:59:59' 
+                                                        where FECHAELAB BETWEEN '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 23:59:59'
                                                         and movimientos.CVE_ART in (" . $stringListaProductos . ")
                                                         order by Numero_Movimiento");
         return array('formulario' => parent::getCI()->load->view('ReportesSAE/Modal/ReporteComprasSAE', $data, TRUE), 'datos' => $data);
     }
 
+    public function mostrarReporteComprasSAEProyecto(array $datos) {
+        $claves = explode(",", $datos['claves']);
+
+        $condicion = " where compras.FECHAELAB between '".$datos['desde']." 00:00:00' and '".$datos['hasta']." 00:00:00' and (1 <> 1";
+
+        foreach ($claves as $key => $value) {
+          $condicion .= " or compras.SU_REFER like '%".$value."%'
+          or libres.CAMPLIB1 like '%".$value."%'
+          or compras.SU_REFER like '%".strtoupper($value)."%'
+          or libres.CAMPLIB1 like '%".strtoupper($value)."%'";
+        }
+
+        $condicion .= ")";
+
+        $data['query'] = $query = "select
+                                                        compras.CVE_DOC as OC,
+                                                        proveedores.NOMBRE as Proveedor,
+                                                        compras.SU_REFER as Referencia,
+                                                        compras.FECHA_DOC as FechaDocumento,
+                                                        compras.FECHA_CANCELA as FechaCancelacion,
+                                                        compras.FECHAELAB as FechaElaboracion,
+                                                        cast(compras.CAN_TOT as float) as TotalCompra,
+                                                        CAST(compras.IMP_TOT4 as float) as Impuesto,
+                                                        CAST(compras.DES_TOT as float) as Descuento,
+                                                        CAST(compras.IMPORTE as float) as Importe,
+                                                        libres.CAMPLIB1 as Proyecto,
+                                                        libres.CAMPLIB2,
+                                                        partidas.NUM_PAR as NumeroPartida,
+                                                        partidas.CVE_ART as ClaveArticulo,
+                                                        productos.DESCR as Articulo,
+                                                        partidas.CANT as Cantidad,
+                                                        CAST((partidas.TOT_PARTIDA / partidas.CANT)  as float) as PrecioUnitario,
+                                                        moneda.DESCR as Moneda,
+                                                        compras.TIPCAMB as TipoCambio,
+                                                        CAST(partidas.TOT_PARTIDA as float) as TotalPartida,
+                                                        partidas.TOT_PARTIDA * compras.TIPCAMB  as TotalPesos
+                                                        from COMPO03 compras
+                                                        inner join COMPO_CLIB03 libres on compras.CVE_DOC = libres.CLAVE_DOC
+                                                        inner join PAR_COMPO03 partidas on compras.CVE_DOC = partidas.CVE_DOC
+                                                        inner join INVE03 productos on partidas.CVE_ART = productos.CVE_ART
+                                                        inner join PROV03 proveedores on compras.CVE_CLPV = proveedores.CLAVE
+                                                        inner join MONED03 moneda on compras.NUM_MONED = moneda.NUM_MONED ".$condicion;
+
+        $data['compras'] = $this->DBSAE->consultaBDSAE($query);
+
+        return array('formulario' => parent::getCI()->load->view('ReportesSAE/Modal/ReporteComprasSAEProyecto', $data, TRUE), 'datos' => $data);
+    }
+
     public function generaOC(array $datos) {
         $_SESSION['datosOC'] = $datos;
 
-        $proveedor = $this->DBSAE->consultaBDSAE("select 
+        $proveedor = $this->DBSAE->consultaBDSAE("select
                                                 NOMBRE,
                                                 CALLE,
                                                 NUMEXT,
@@ -267,7 +280,7 @@ class Reportes extends General {
                                                 RFC
                                                 from PROV01 where CLAVE = (select CVE_CLPV from COMPO01 where CVE_DOC = '" . $datos['documento'] . "')")[0];
 
-        $generales = $this->DBSAE->consultaBDSAE("select 
+        $generales = $this->DBSAE->consultaBDSAE("select
                                                 CONVERT(varchar(10),orden.FECHA_DOC,103) as Fecha,
                                                 (select DESCR from ALMACENES01 where CVE_ALM = orden.NUM_ALMA) as Almacen,
                                                 orden.OBS_COND as EntregarA,
@@ -282,11 +295,11 @@ class Reportes extends General {
                                                 orden.IMP_TOT3 as IEPS3,
                                                 orden.IMP_TOT4 as IVA,
                                                 orden.IMPORTE as Total
-                                                from COMPO01 orden 
+                                                from COMPO01 orden
                                                 inner join COMPO_CLIB01 campos on orden.CVE_DOC = campos.CLAVE_DOC
                                                 where CVE_DOC = '" . $datos['documento'] . "'")[0];
 
-        $partidas = $this->DBSAE->consultaBDSAE("select 
+        $partidas = $this->DBSAE->consultaBDSAE("select
                                                 partida.CANT as Cantidad,
                                                 partida.CVE_ART as Producto,
                                                 producto.DESCR as Descripcion,

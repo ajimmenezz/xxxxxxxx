@@ -3,9 +3,9 @@
 /*
  * Esta variable es utilizada para poder obtener los datos del archibo Menu_config.
  * La varible config['secciones'] esta asignada a un array el cual debe de indicarse la key del arreglo como el nombre de la carpeta.
- * Cada uno de estos valores del array contiene un array donde el valor del array debera definirse igual al nombre que aparece en el 
- * archivo Menu_Config y su valor es el nombre de la pagina (tal cual esta definida en las vistas). 
- * 
+ * Cada uno de estos valores del array contiene un array donde el valor del array debera definirse igual al nombre que aparece en el
+ * archivo Menu_Config y su valor es el nombre de la pagina (tal cual esta definida en las vistas).
+ *
  */
 
 $config['Secciones'] = array(
@@ -146,7 +146,8 @@ $config['Secciones'] = array(
         'Reportes-Cimos' => 'Reportes',
     ),
     'ReportesSAE' => array(
-        'Compras' => 'Compras'
+        'Compras' => 'Compras',
+        'Compras Proyecto' => 'Compras_Proyecto'
     ),
     'ReportesPoliza' => array(
         'Problemas-Faltantes-Mantts' => 'Problemas_Faltantes_Manttos'
