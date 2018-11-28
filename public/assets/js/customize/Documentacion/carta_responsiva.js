@@ -43,7 +43,6 @@ $(function () {
     var campoFirma = function () {
         var nombreTecnico = arguments[0];
         var html = ' <div id="campo_firma">\n\
-                                    <div class="panel-body">\n\
                                         <div class="row">\n\
                                             <div class="col-md-12 text-center">\n\
                                                 <div class="form-group">\n\
@@ -61,7 +60,6 @@ $(function () {
                                                 <div class="errorFirma"></div>\n\
                                             </div>\n\
                                         </div>\n\
-                                    </div>\n\
                                 </div>';
 
         evento.mostrarModal('Carta Responsiva', html);
