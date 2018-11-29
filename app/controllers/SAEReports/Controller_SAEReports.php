@@ -47,6 +47,13 @@ class Controller_SAEReports extends Base {
             case 'GeneraOC':
                 $resultado = $this->SAEReports->generaOC($this->input->post());
                 break;
+            case 'mostrarReporteRemisiones':
+                $resultado = $this->SAEReports->mostrarReporteRemisiones($this->input->post());
+                break;
+            case 'exportaReporteRemisiones':
+                $resultado = $this->SAEReports->exportaReporteRemisiones($this->input->post());
+                break;
+
         }
         echo json_encode($resultado);
     }

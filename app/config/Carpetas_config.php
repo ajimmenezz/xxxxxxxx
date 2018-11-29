@@ -147,7 +147,8 @@ $config['Secciones'] = array(
     ),
     'ReportesSAE' => array(
         'Compras' => 'Compras',
-        'Compras Proyecto' => 'Compras_Proyecto'
+        'Compras Proyecto' => 'Compras_Proyecto',
+        'Remisiones' => 'Remisiones'
     ),
     'ReportesPoliza' => array(
         'Problemas-Faltantes-Mantts' => 'Problemas_Faltantes_Manttos'

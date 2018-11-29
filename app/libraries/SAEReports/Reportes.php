@@ -3,7 +3,6 @@
 namespace Librerias\SAEReports;
 
 ini_set('max_execution_time', 3600);
-ini_set('max_execution_time', 1000000);
 
 use Controladores\Controller_Datos_Usuario as General;
 use Librerias\Generales\PDF as PDF;
@@ -139,6 +138,59 @@ class Reportes extends General {
         return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
     }
 
+    public function exportaReporteRemisiones(array $datos = null) {
+        $compras = $datos['compras'];
+
+        /* Begin Hoja 1 */
+        //Crea una hoja en la posición 0 y la nombra.
+        $this->Excel->createSheet('Compras', 0);
+        //Selecciona la hoja creada y la marca como activa. Todas las modificaciones se harán en está hoja.
+        $this->Excel->setActiveSheet(0);
+        //Arreglo de los subtitulos de la tabla. La posición es de izquierda a derecha.
+        $arrayTitulosCompras = [
+            'Remision',
+            'Fecha Elaboración',
+            'Tipo Documento Anterior',
+            'Documento Anterior',
+            'Producto',
+            'Clave',
+            'Serie',
+            'Observacione Partida',
+            'Observaciones Remisión',
+            'Pedido',
+            'Req',
+            'Fecha Documento',
+            'Fecha Entrada',
+            'Fecha Venta',
+            'Fecha Cancelación'];
+        //Envía el arreglo de los subtitulos a la hoja activa.
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulosCompras);
+        //Arreglo con el ancho por columna.
+        $arrayWidthCompras = [20, 25, 20, 20, 35, 20, 20, 30, 30, 15, 20, 25, 25, 25, 25];
+        //Envía y setea los anchos de las columnas definidos en el arreglo de los anchos por columna.
+        $this->Excel->setColumnsWidth('A', $arrayWidthCompras);
+        //Arreglo de alineación por columna.
+        $arrayAlignCompras = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+        //Envía:
+        //La letra donde comienza la tabla
+        //El número de fila donde comenzará la tabla -1
+        //El contenido en forma de arreglo
+        //Boleano que define si la tabla llevará autofiltros o no
+        //Arreglo con la alineación de las columnas.
+        $this->Excel->setTableContent('A', 1, $compras, true, $arrayAlignCompras);
+        /* End Hoja 1 */
+
+        $time = date("ymd_H_i_s");
+        $nombreArchivo = 'Reporte Remisiones_' . $time . '.xlsx';
+        $nombreArchivo = trim($nombreArchivo);
+        $ruta = 'storage/Archivos/SAEReports/' . $nombreArchivo;
+
+        //Guarda la hoja envíandole la ruta y el nombre del archivo que se va a guardar.
+        $this->Excel->saveFile($ruta);
+
+        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
+    }
+
     public function getBuscarProductosCompras(array $datos = null) {
         $consulta = $this->DBSAE->consultaBDSAE("SELECT CVE_ART as Clave, DESCR as Nombre
                                                 FROM SAE7EMPRESA3.dbo.INVE03 as Productos
@@ -231,38 +283,70 @@ class Reportes extends General {
 
         $condicion .= ")";
 
-        $data['query'] = $query = "select
-                                                        compras.CVE_DOC as OC,
-                                                        proveedores.NOMBRE as Proveedor,
-                                                        compras.SU_REFER as Referencia,
-                                                        compras.FECHA_DOC as FechaDocumento,
-                                                        compras.FECHA_CANCELA as FechaCancelacion,
-                                                        compras.FECHAELAB as FechaElaboracion,
-                                                        cast(compras.CAN_TOT as float) as TotalCompra,
-                                                        CAST(compras.IMP_TOT4 as float) as Impuesto,
-                                                        CAST(compras.DES_TOT as float) as Descuento,
-                                                        CAST(compras.IMPORTE as float) as Importe,
-                                                        libres.CAMPLIB1 as Proyecto,
-                                                        libres.CAMPLIB2,
-                                                        partidas.NUM_PAR as NumeroPartida,
-                                                        partidas.CVE_ART as ClaveArticulo,
-                                                        productos.DESCR as Articulo,
-                                                        partidas.CANT as Cantidad,
-                                                        CAST((partidas.TOT_PARTIDA / partidas.CANT)  as float) as PrecioUnitario,
-                                                        moneda.DESCR as Moneda,
-                                                        compras.TIPCAMB as TipoCambio,
-                                                        CAST(partidas.TOT_PARTIDA as float) as TotalPartida,
-                                                        partidas.TOT_PARTIDA * compras.TIPCAMB  as TotalPesos
-                                                        from COMPO03 compras
-                                                        inner join COMPO_CLIB03 libres on compras.CVE_DOC = libres.CLAVE_DOC
-                                                        inner join PAR_COMPO03 partidas on compras.CVE_DOC = partidas.CVE_DOC
-                                                        inner join INVE03 productos on partidas.CVE_ART = productos.CVE_ART
-                                                        inner join PROV03 proveedores on compras.CVE_CLPV = proveedores.CLAVE
-                                                        inner join MONED03 moneda on compras.NUM_MONED = moneda.NUM_MONED ".$condicion;
+        $query = "select
+                  compras.CVE_DOC as OC,
+                  proveedores.NOMBRE as Proveedor,
+                  compras.SU_REFER as Referencia,
+                  compras.FECHA_DOC as FechaDocumento,
+                  compras.FECHA_CANCELA as FechaCancelacion,
+                  compras.FECHAELAB as FechaElaboracion,
+                  cast(compras.CAN_TOT as float) as TotalCompra,
+                  CAST(compras.IMP_TOT4 as float) as Impuesto,
+                  CAST(compras.DES_TOT as float) as Descuento,
+                  CAST(compras.IMPORTE as float) as Importe,
+                  libres.CAMPLIB1 as Proyecto,
+                  libres.CAMPLIB2,
+                  partidas.NUM_PAR as NumeroPartida,
+                  partidas.CVE_ART as ClaveArticulo,
+                  productos.DESCR as Articulo,
+                  partidas.CANT as Cantidad,
+                  CAST((partidas.TOT_PARTIDA / partidas.CANT)  as float) as PrecioUnitario,
+                  moneda.DESCR as Moneda,
+                  compras.TIPCAMB as TipoCambio,
+                  CAST(partidas.TOT_PARTIDA as float) as TotalPartida,
+                  partidas.TOT_PARTIDA * compras.TIPCAMB  as TotalPesos
+                  from COMPO03 compras
+                  inner join COMPO_CLIB03 libres on compras.CVE_DOC = libres.CLAVE_DOC
+                  inner join PAR_COMPO03 partidas on compras.CVE_DOC = partidas.CVE_DOC
+                  inner join INVE03 productos on partidas.CVE_ART = productos.CVE_ART
+                  inner join PROV03 proveedores on compras.CVE_CLPV = proveedores.CLAVE
+                  inner join MONED03 moneda on compras.NUM_MONED = moneda.NUM_MONED ".$condicion;
 
         $data['compras'] = $this->DBSAE->consultaBDSAE($query);
 
         return array('formulario' => parent::getCI()->load->view('ReportesSAE/Modal/ReporteComprasSAEProyecto', $data, TRUE), 'datos' => $data);
+    }
+
+    public function mostrarReporteRemisiones(array $datos) {
+        $condicion = " where remision.FECHAELAB between '".$datos['desde']." 00:00:00' and '".$datos['hasta']." 23:59:59' ";
+
+        $query = "select
+                remision.CVE_DOC as Remision,
+                remision.FECHAELAB as FechaElaboracion,
+                case remision.TIP_DOC_ANT
+                	when 'P' then 'PEDIDO'
+                	when 'C' then 'COTIZACION'
+                	else 'OTRO'
+                end as TipoDocumentoAnterior,
+                remision.DOC_ANT as DocumentoAnterior,
+                productos.DESCR as Producto,
+                productos.CVE_ART as Modelo,
+                hist_series.NUM_SER as Serie,
+                (select STR_OBS from OBS_DOCF03 obs1 where obs1.CVE_OBS = partidas.CVE_OBS) as Observaciones_Partida,
+                (select STR_OBS from OBS_DOCF03 obs1 where obs1.CVE_OBS = remision.CVE_OBS) as Observaciones_Remision,
+                libres.CAMPLIB1 as Pedido, libres.CAMPLIB4 as Req,remision.FECHA_DOC, remision.FECHA_ENT,
+                remision.FECHA_VEN,
+                remision.FECHA_CANCELA
+                from
+                FACTR03 remision
+                inner join PAR_FACTR03 partidas on remision.CVE_DOC = partidas.CVE_DOC
+                inner join INVE03 productos on partidas.CVE_ART = productos.CVE_ART
+                left join HNUMSER03 hist_series on partidas.REG_SERIE = hist_series.REG_SERIE
+                left join FACTR_CLIB03 libres on remision.CVE_DOC = libres.CLAVE_DOC ".$condicion;
+
+        $data['compras'] = $this->DBSAE->consultaBDSAE($query);
+
+        return array('formulario' => parent::getCI()->load->view('ReportesSAE/Modal/ReporteRemisiones', $data, TRUE), 'datos' => $data);
     }
 
     public function generaOC(array $datos) {
