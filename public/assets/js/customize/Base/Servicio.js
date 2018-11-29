@@ -1116,7 +1116,7 @@ Servicio.prototype.ajusteCanvasMedidas = function () {
 
     if (ancho < 767 && ancho > 480) {
         anchoCanvas = ancho - 117;
-        altoCanvas = alto - 125;
+        altoCanvas = alto - 90;
     } else if (ancho <= 480) {
         anchoCanvas = ancho - 115;
         altoCanvas = alto - 517;
