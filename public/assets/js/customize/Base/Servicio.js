@@ -44,8 +44,10 @@ Servicio.prototype.nuevoServicio = function () {
                 var atiende = $('#selectAtiendeServicio').val();
                 var descripcion = $('#inputDescripcionServicio').val();
                 var dataServicio = {Ticket: ticket, IdSolicitud: idSolicitud, IdTipoServicio: tipoServicio, Atiende: atiende, Descripcion: descripcion, servicio: data['servicio']};
+
                 evento.enviarEvento(eventoServicioNuevo, dataServicio, '#modal-dialogo', function (respuesta) {
                     if (respuesta instanceof Array) {
+                        eventoCalendario(dataServicio);
                         _this.mensajeModal('Se creo correctamente el nuevo servicio', 'Correcto');
                     } else {
                         var html = '<div class="row">\n\
@@ -60,6 +62,39 @@ Servicio.prototype.nuevoServicio = function () {
                 });
             }
         });
+
+        var eventoCalendario = function () {
+            var ticketCalendario = arguments[0];
+            var nombreServicio = $('#selectTipoServicio option:selected').text();
+            var atiende = $('#selectAtiendeServicio option:selected').text();
+            var emailCorporativo = $('#selectAtiendeServicio option:selected').attr('data');
+            var descripcion = $('#inputDescripcionServicio').val();
+            var now = new Date();
+            var fecha = moment(now).format();
+            
+            resource = {
+                "summary": "Atención a ticket",
+                "description": "Nuevo servicio.Se a agregado para su atención del ticket "+ ticketCalendario.Ticket +" con la siguiente descripcion " + descripcion,
+                "location": "Ciudad de México, CDMX",
+                "start": {
+                    "dateTime": now,
+                    "timeZone": "America/Mexico_City"
+                },
+                "end": {
+                    "dateTime": now,
+                    "timeZone": "America/Mexico_City"
+                },
+                "attendees": [
+                    {
+                        "email": emailCorporativo,
+                        "displayName": atiende,
+                        "responseStatus": "accepted"
+
+                    }]
+            };
+//            console.log(resource);
+            handleClientLoad(resource,true);
+        };
 
         $('#btnCancelarServicio').on('click', function () {
             evento.cerrarModal();
@@ -879,7 +914,6 @@ Servicio.prototype.modalCampoFirma = function () {
     }
 
     var html = ' <div id="campo_firma">\n\
-                    <div class="panel-body">\n\
                         <form class="margin-bottom-0" id="formFirmaSinClasificar" data-parsley-validate="true">\n\
                             <div class="row m-t-10">\n\
                                 <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
@@ -899,7 +933,7 @@ Servicio.prototype.modalCampoFirma = function () {
                             </div>\n\
                         </div>\n\
                         <div class="row">\n\
-                                <div id="col-md-12 text-center">\n\
+                                <div id="divcampoLapiz" class="col-md-12 text-center">\n\
                                     <div id="campoLapiz"></div>\n\
                                 </div>\n\
                         </div>';
@@ -919,12 +953,23 @@ Servicio.prototype.modalCampoFirma = function () {
                                 <button id="btnGuardarConcluir" type="button" class="btn btn-sm btn-primary"><i class="fa fa-save"></i>' + textoBoton + '</button>\n\
                             </div>\n\
                         </div>\n\
-                    </div>\n\
                 </div>';
 
     _this.mostrarModal('Firma', html);
+    var myBoard = null;
+    var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    var alto = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
-    var myBoard = _this.campoLapiz('campoLapiz');
+    $(window).resize(function () {
+        _this.ajusteCanvasFirma('campoLapiz');
+        myBoard = _this.campoLapiz('campoLapiz');
+    });
+
+    var arrayMedidas = _this.ajusteCanvasMedidas(ancho, alto);
+
+    $('#campoLapiz').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
+
+    myBoard = _this.campoLapiz('campoLapiz');
 
     $('#btnModalConfirmar').addClass('hidden');
     $('#btnModalConfirmar').off('click');
@@ -1049,13 +1094,50 @@ Servicio.prototype.modalCampoFirma = function () {
     });
 };
 
+Servicio.prototype.ajusteCanvasFirma = function () {
+    var _this = this;
+    var objeto = arguments[0];
+    var alto = $(window).height();
+    var ancho = $(window).width();
+    var arrayMedidas = _this.ajusteCanvasMedidas(ancho, alto);
+
+    $('#' + objeto).remove();
+    $('#div' + objeto).html('<div id="' + objeto + '"></div>');
+    $('#' + objeto).css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
+
+}
+
+Servicio.prototype.ajusteCanvasMedidas = function () {
+    var ancho = arguments[0];
+    var alto = arguments[1];
+    var arrayMedidas = [];
+    var anchoCanvas = 0;
+    var altoCanvas = 0;
+
+    if (ancho < 767 && ancho > 480) {
+        anchoCanvas = ancho - 117;
+        altoCanvas = alto - 40;
+    } else if (ancho <= 480) {
+        anchoCanvas = ancho - 115;
+        altoCanvas = alto - 517;
+    } else {
+        anchoCanvas = 400;
+        altoCanvas = 200;
+    }
+
+    arrayMedidas[0] = anchoCanvas;
+    arrayMedidas[1] = altoCanvas;
+
+    return arrayMedidas;
+}
+
 Servicio.prototype.modalCampoFirmaExtra = function () {
     var textoExtra = arguments[0];
 
     $('#btnModalAbortar').removeClass('hidden');
 
-    var html = ' <div id="campo_firma_extra">\n\
-                    <div class="panel-body">';
+    var html = ' <div id="campo_firma_extra">';
+
     html += '           <form class="margin-bottom-0" id="formFirmaExtra" data-parsley-validate="true">\n\
                             <div class="row m-t-10">\n\
                                 <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
@@ -1066,7 +1148,7 @@ Servicio.prototype.modalCampoFirmaExtra = function () {
                                 </div>\n\
                             </div>\n\
                             <div class="row m-t-10"">\n\
-                                <div id="col-md-12 text-center">\n\
+                                <div id="divcampoLapiz" class="col-md-12 text-center">\n\
                                     <div id="campoLapiz"></div>\n\
                                 </div>\n\
                             </div>\n\
@@ -1102,12 +1184,10 @@ Servicio.prototype.modalCampoFirmaExtra = function () {
                                 </div>\n\
                             </div>\n\
                         </form>\n\
-                    </div>\n\
                 </div>';
     return html;
 
 };
-
 
 Servicio.prototype.formConcluirServicio = function () {
     var html = ' <div id="modal-concluir-servicio">\n\
@@ -1131,7 +1211,7 @@ Servicio.prototype.formConcluirServicio = function () {
                                     </div>\n\
                                 </div>';
     html += '<div class="row m-t-10">\n\
-                                    <div class="col-md-12 text-center">\n\
+                                    <div id="divcampoFirma" class="col-md-12 text-center">\n\
                                         <div id="campoFirma"></div>\n\
                                     </div>\n\
                                 </div>\n\
@@ -1172,13 +1252,31 @@ Servicio.prototype.validarCamposFirma = function () {
     var campoFirmaTecnico = arguments[2] || false;
     var concluirServicio = arguments[3] || false;
     var estatus = arguments[4] || false;
+    var myBoard = null;
+    var myBoardTecnico = null;
+    var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    var alto = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    var arrayMedidas = _this.ajusteCanvasMedidas(ancho, alto);
 
-    var myBoard = _this.campoLapiz('campoLapiz');
+    $(window).resize(function () {
+        _this.ajusteCanvasFirma('campoLapiz');
+        myBoard = _this.campoLapiz('campoLapiz');
+
+        if (campoFirmaTecnico) {
+            _this.ajusteCanvasFirma('campoLapizTecnico');
+            myBoardTecnico = _this.campoLapiz('campoLapizTecnico');
+        }
+    });
+
+    $('#campoLapiz').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
+
+    myBoard = _this.campoLapiz('campoLapiz');
 
     //si es verdadero se creara el campo de la firma del tecnico
     if (campoFirmaTecnico) {
-        var myBoardTecnico = _this.campoLapiz('campoLapizTecnico');
+        $('#campoLapizTecnico').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
 
+        myBoardTecnico = _this.campoLapiz('campoLapizTecnico');
     }
 
     $('#btnGuardarFirma').off('click');
@@ -1861,8 +1959,14 @@ Servicio.prototype.botonAgregarVuelta = function () {
     $('#btnAgregarVuelta').on('click', function () {
         _this.enviarEvento('/Generales/Servicio/VerificarVueltaAsociado', data, panel, function (respuesta) {
             if (respuesta === true) {
+                var myBoard = null;
+                var myBoardTecnico = null;
+                var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+                var alto = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+                var arrayMedidas = _this.ajusteCanvasMedidas(ancho, alto);
+
                 var html = '<div class="row" m-t-10">\n\
-                                        <div id="col-md-12 text-center">\n\
+                                        <div id="divcampoLapizTecnico" class="col-md-12 text-center">\n\
                                             <div id="campoLapizTecnico"></div>\n\
                                         </div>\n\
                                     </div>\n\
@@ -1879,8 +1983,18 @@ Servicio.prototype.botonAgregarVuelta = function () {
                 $('#btnModalConfirmar').off('click');
                 $('#campoCorreo').empty().html('Correo(s)');
 
-                var myBoard = _this.campoLapiz('campoLapiz');
-                var myBoardTecnico = _this.campoLapiz('campoLapizTecnico');
+                $(window).resize(function () {
+                    _this.ajusteCanvasFirma('campoLapiz');
+                    myBoard = _this.campoLapiz('campoLapiz');
+                    _this.ajusteCanvasFirma('campoLapizTecnico');
+                    myBoardTecnico = _this.campoLapiz('campoLapizTecnico');
+                });
+
+                $('#campoLapiz').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
+                $('#campoLapizTecnico').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
+
+                myBoard = _this.campoLapiz('campoLapiz');
+                myBoardTecnico = _this.campoLapiz('campoLapizTecnico');
 
                 _this.validarCamposFirmaAgregarVuelta(myBoard, myBoardTecnico, dataServicio);
             } else {

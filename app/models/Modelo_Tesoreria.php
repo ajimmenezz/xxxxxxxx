@@ -362,6 +362,11 @@ class Modelo_Tesoreria extends Modelo_Base {
     }
 
     public function getDetallesFondoFijoXUsuario(int $id) {
+        $fechas = $this->consulta("select 
+                                   DATE_SUB(CONCAT(DATE_FORMAT(now(),'%Y-%m'),'-01'), INTERVAL 2 DAY) as FechaIni,
+                                   CONCAT(DATE_FORMAT(now(),'%Y-%m'),'-31') as FechaFin");
+        
+        
         $consulta = $this->consulta("select 
                                     tcff.Id,
                                     tcff.FechaAutorizacion as Fecha,
@@ -380,8 +385,8 @@ class Modelo_Tesoreria extends Modelo_Base {
                                     t_comprobacion_fondo_fijo tcff
                                     left join cat_v3_comprobacion_conceptos ccc on tcff.IdConcepto = ccc.Id
                                     where tcff.IdUsuarioFF = '" . $id . "'
-                                    order by tcff.FechaAutorizacion desc
-                                    limit 50;");
+                                    and tcff.Fecha >= DATE_FORMAT(DATE_SUB(now(),INTERVAL 2 MONTH),'%Y-%m-%d')
+                                    order by tcff.FechaAutorizacion desc");
         return $consulta;
     }
 
@@ -517,7 +522,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                                         from t_servicios_ticket tst
                                         where Atiende = '" . $id . "'
                                         and IdEstatus = 4
-                                        and tst.FechaConclusion >= NOW() - INTERVAL 15 DAY
+                                        and tst.FechaConclusion >= '2018-10-05 00:00:00'
                                     ) as tf group by tf.Ticket;");
         return $consulta;
     }

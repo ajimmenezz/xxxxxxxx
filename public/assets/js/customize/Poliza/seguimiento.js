@@ -215,27 +215,22 @@ $(function () {
         var datosTabla = arguments[1];
         var sucursal = arguments[2];
         var ticket = datosTabla[1];
+        var myBoardFirma = null;
+        var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        var alto = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        var arrayMedidas = servicios.ajusteCanvasMedidas(ancho, alto);
 
         servicios.mostrarModal('Firma', servicios.formConcluirServicio());
         $('#btnModalConfirmar').addClass('hidden');
-        var myBoardFirma = new DrawingBoard.Board('campoFirma', {
-            background: "#fff",
-            color: "#000",
-            size: 1,
-            controlsPosition: "right",
-            controls: [
-                {Navigation: {
-                        back: false,
-                        forward: false
-                    }
-                }
-            ],
-            webStorage: false
+
+        $(window).resize(function () {
+            servicios.ajusteCanvasFirma('campoFirma');
+            myBoardFirma = servicios.campoLapiz('campoFirma');
         });
-        $("#tagCorreo").tagit({
-            allowSpaces: false
-        });
-        myBoardFirma.ev.trigger('board:reset', 'what', 'up');
+
+        $('#campoFirma').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
+
+        myBoardFirma = servicios.campoLapiz('campoFirma');
 
         $('#btnConcluirServicio').off('click');
         $('#btnConcluirServicio').on('click', function () {
@@ -1005,7 +1000,7 @@ $(function () {
         //Encargado de generar el archivo Pdf
         $('#btnGeneraPdfServicio').off('click');
         $('#btnGeneraPdfServicio').on('click', function () {
-            var data = {'servicio': datosTabla[0], 'ticket' : ticket, 'generarPDF' : true};
+            var data = {'servicio': datosTabla[0], 'ticket': ticket, 'generarPDF': true};
             evento.enviarEvento('Seguimiento/GenerarPDF', data, '', function (respuesta) {
                 window.open(respuesta, '_blank');
             });
@@ -1016,7 +1011,7 @@ $(function () {
             $('#seccionSeguimientoServicio').empty().addClass('hidden');
             $('#listaPoliza').removeClass('hidden');
         });
-        
+
         servicios.eventosFolio(datosTabla[2], '#informacionRevision', servicio);
 
     };
@@ -2519,6 +2514,8 @@ $(function () {
     };
 
     var eventosParaSeccionSeguimientoCorrectivo = function () {
+
+
         var datosTabla = arguments[0];
         var respuesta = arguments[1];
         var servicio = datosTabla[0];
@@ -4531,7 +4528,7 @@ $(function () {
         var concluirServicio = arguments[5] || false;
         var estatus = arguments[6] || false;
         var html = '<div class="row" m-t-10">\n\
-                        <div id="col-md-12 text-center">\n\
+                        <div id="divcampoLapizTecnico" class="col-md-12 text-center">\n\
                             <div id="campoLapizTecnico"></div>\n\
                         </div>\n\
                     </div>\n\
@@ -4751,8 +4748,7 @@ $(function () {
 
         $('#btnModalAbortar').removeClass('hidden');
 
-        var html = ' <div id="campo_firma_poliza">\n\
-                        <div class="panel-body">';
+        var html = ' <div id="campo_firma_poliza">';
         html += textoExtra;
         html += '        <form class="margin-bottom-0" id="formFirmaPoliza" data-parsley-validate="true">\n\
                             <div class="row m-t-10">\n\
@@ -4793,7 +4789,6 @@ $(function () {
                                 <button id="btnGuardarFirma" type="button" class="btn btn-sm btn-primary"><i class="fa fa-save"></i> Guardar</button>\n\
                             </div>\n\
                         </div>\n\
-                    </div>\n\
                 </div>';
         return html;
 
@@ -4801,26 +4796,41 @@ $(function () {
 
     var validarCamposFirma = function () {
         var data = arguments[0];
-        var myBoard = new DrawingBoard.Board('campoLapiz', {
-            background: "#fff",
-            color: "#000",
-            size: 1,
-            controlsPosition: "right",
-            controls: [
-                {Navigation: {
-                        back: false,
-                        forward: false
-                    }
-                }
-            ],
-            webStorage: false
+        var myBoard = null;
+        var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        var alto = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+//        var myBoard = new DrawingBoard.Board('campoLapiz', {
+//            background: "#fff",
+//            color: "#000",
+//            size: 1,
+//            controlsPosition: "right",
+//            controls: [
+//                {Navigation: {
+//                        back: false,
+//                        forward: false
+//                    }
+//                }
+//            ],
+//            webStorage: false
+//        });
+//
+//        $("#tagValor").tagit({
+//            allowSpaces: false
+//        });
+//
+//        myBoard.ev.trigger('board:reset', 'what', 'up');
+
+        $(window).resize(function () {
+            servicios.ajusteCanvasFirma()
+            myBoard = servicios.campoLapiz('campoLapiz');
         });
 
-        $("#tagValor").tagit({
-            allowSpaces: false
-        });
+        var arrayMedidas = servicios.ajusteCanvasMedidas(ancho, alto);
 
-        myBoard.ev.trigger('board:reset', 'what', 'up');
+        $('#campoLapiz').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
+
+        myBoard = servicios.campoLapiz('campoLapiz');
+
         $('#btnGuardarFirma').on('click', function () {
             var img = myBoard.getImg();
             var imgInput = (myBoard.blankCanvas == img) ? '' : img;

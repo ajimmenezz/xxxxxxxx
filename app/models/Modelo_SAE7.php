@@ -21,7 +21,7 @@ class Modelo_SAE7 extends Modelo_Base {
             WHEN STATUS = 'A' THEN 'Activo'
             WHEN STATUS <> 'A' THEN 'Inactivo'
         END as Estatus
-        from ALMACENES01
+        from ALMACENES03
         order by Almacen;";
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta->result_array();
@@ -38,9 +38,9 @@ class Modelo_SAE7 extends Modelo_Base {
         multi.EXIST as Existencia,
         producto.COMP_X_REC,
         producto.ULT_COSTO as Costo
-        from MULT01 multi inner join INVE01 producto
+        from MULT03 multi inner join INVE03 producto
         on multi.CVE_ART = producto.CVE_ART
-        LEFT JOIN CLIN01 linea
+        LEFT JOIN CLIN03 linea
         on producto.LIN_PROD = linea.CVE_LIN
         where multi.CVE_ALM = '" . $almacen . "' and multi.EXIST > 0;";
         $consulta = parent::connectDBSAE7()->query($query);
@@ -130,7 +130,7 @@ class Modelo_SAE7 extends Modelo_Base {
                     CLAVE,
                     NOMBRE,
                     concat(CALLE, ' ', NUMEXT, ' ', COLONIA, ' CP ', CODIGO) AS DIRECCION
-                from PROV01
+                from PROV03
                 where STATUS = 'A'
                 order by NOMBRE asc";
         $consulta = parent::connectDBSAE7()->query($query);
@@ -142,7 +142,7 @@ class Modelo_SAE7 extends Modelo_Base {
                     CVE_ALM,
                     DESCR,
                     DIRECCION
-                  from ALMACENES01
+                  from ALMACENES03
                   where STATUS = 'A'";
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta->result_array();
@@ -158,7 +158,7 @@ class Modelo_SAE7 extends Modelo_Base {
                     producto.ULT_COSTO,
                     producto.FAC_CONV,
                     (producto.ULT_COSTO*producto.FAC_CONV) as COSTO_UNIDAD
-                    from INVE01 producto
+                    from INVE03 producto
                     where producto.STATUS = 'A'";
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta->result_array();
@@ -180,10 +180,10 @@ class Modelo_SAE7 extends Modelo_Base {
                             WHEN 'O' THEN 'Original'
                             WHEN 'C' THEN 'Comprada'
                         END as STATUS
-                FROM COMPO01 COMP                                  
-                LEFT JOIN COMPO_CLIB01 COMPCLIB 
+                FROM COMPO03 COMP                                  
+                LEFT JOIN COMPO_CLIB03 COMPCLIB 
                 ON (COMP.CVE_DOC = COMPCLIB.CLAVE_DOC) 
-                LEFT JOIN PROV01 PROV 
+                LEFT JOIN PROV03 PROV 
                 ON PROV.CLAVE = COMP.CVE_CLPV "
                 . $whereFecha;
 
@@ -197,7 +197,7 @@ class Modelo_SAE7 extends Modelo_Base {
                     CONCAT(CONVERT(date, GETDATE()),' 00:00:00.000') as FECH_ULT_DOC,
                     CONCAT(SERIE, REPLICATE('0',10-LEN(ULT_DOC)), ULT_DOC + 1) as CVE_DOC,
                     CONCAT(SERIE, ULT_DOC + 1) as CVE_GAPSI
-                from FOLIOSC01 
+                from FOLIOSC03 
                 where TIP_DOC = 'o' 
                 and SERIE = 'OC'";
         $consulta = parent::connectDBSAE7()->query($query);
@@ -209,7 +209,7 @@ class Modelo_SAE7 extends Modelo_Base {
                     NUM_MONED,
                     DESCR,
                     TCAMBIO
-                FROM MONED01
+                FROM MONED03
                 WHERE NUM_MONED IN(1,2)";
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta->result_array();
@@ -218,7 +218,7 @@ class Modelo_SAE7 extends Modelo_Base {
     public function consultaRequisiciones() {
         $query = "SELECT 
                     CVE_DOC,CVE_CLPV,FECHA_DOC,CAN_TOT,IMPORTE 
-                    FROM COMPQ01  
+                    FROM COMPQ03  
                     WHERE (TIP_DOC= 'q'  AND BLOQ <>  'S'  AND STATUS <>  'C'  AND ENLAZADO <>  'T' )";
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta->result_array();
@@ -237,8 +237,8 @@ class Modelo_SAE7 extends Modelo_Base {
                     producto.ULT_COSTO,
                     partida.CANT * producto.ULT_COSTO as Subtotal,
                     partida.NUM_PAR
-                from PAR_COMPQ01 partida
-                left join INVE01 producto on partida.CVE_ART = producto.CVE_ART
+                from PAR_COMPQ03 partida
+                left join INVE03 producto on partida.CVE_ART = producto.CVE_ART
                 where partida.CVE_DOC = '" . $claveDocumento . "'
                 and partida.PXR > 0
                 order by partida.NUM_PAR asc";
@@ -420,7 +420,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function consultaUltimaClaveTBLCONTROL(string $numeroTabla) {
-        $consulta = parent::connectDBSAE7()->query("SELECT ULT_CVE FROM TBLCONTROL01 WHERE ID_TABLA = '" . $numeroTabla . "'");
+        $consulta = parent::connectDBSAE7()->query("SELECT ULT_CVE FROM TBLCONTROL03 WHERE ID_TABLA = '" . $numeroTabla . "'");
         return $consulta->result_array();
     }
 
@@ -432,7 +432,7 @@ class Modelo_SAE7 extends Modelo_Base {
                     FOLIOHASTA,
                     ULT_DOC, 
                     FECH_ULT_DOC                  
-                FROM FOLIOSC01                  
+                FROM FOLIOSC03                  
                 WHERE TIP_DOC = 'o'                   
                 AND SERIE = 'STAND.'								 
                 GROUP BY 
@@ -446,13 +446,13 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function consultaACOMPMes(string $diaPrimeroMes) {
-        $consulta = parent::connectDBSAE7()->query("SELECT PER_ACUM FROM ACOMP01 WHERE  PER_ACUM = DATEADD(MONTH, -1, DATEADD(DAY, 1, EOMONTH('" . $diaPrimeroMes . "')))");
+        $consulta = parent::connectDBSAE7()->query("SELECT PER_ACUM FROM ACOMP03 WHERE  PER_ACUM = DATEADD(MONTH, -1, DATEADD(DAY, 1, EOMONTH('" . $diaPrimeroMes . "')))");
         return $consulta->result_array();
     }
 
     public function consultaFAC_CONV_INVE(string $producto) {
         $consulta = parent::connectDBSAE7()->query("SELECT INVE.FAC_CONV
-                                                    FROM INVE01 INVE
+                                                    FROM INVE03 INVE
                                                     WHERE INVE.CVE_ART = '" . $producto . "'");
         return $consulta->result_array();
     }
@@ -502,14 +502,14 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function actualizarUltimaClaveTBLCONTROL(array $datos) {
-        parent::connectDBSAE7()->query("update TBLCONTROL01
+        parent::connectDBSAE7()->query("update TBLCONTROL03
                 set ULT_CVE = '" . $datos['nuevaClave'] . "'
                 where ID_TABLA = '" . $datos['numeroTabla'] . "'
                 AND ULT_CVE = '" . $datos['claveAnterior'] . "'");
     }
 
     public function actualizarUltimoDocumento(string $nuevoUltimoDocumento, string $fechaDocumento) {
-        $query = "UPDATE FOLIOSC01 
+        $query = "UPDATE FOLIOSC03 
                     SET ULT_DOC=(CASE WHEN ULT_DOC < '" . $nuevoUltimoDocumento . "' THEN '" . $nuevoUltimoDocumento . "' ELSE ULT_DOC END),                      
                     FECH_ULT_DOC= '" . $fechaDocumento . "'
                 WHERE TIP_DOC = N'o'  
@@ -519,7 +519,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function actualizarCantidadesACOMP(array $datos) {
-        $query = "UPDATE ACOMP01 
+        $query = "UPDATE ACOMP03 
                     SET 
                     OVTA_COM =OVTA_COM +  " . $datos['subtotal'] . ",
                     ODESCTO =ODESCTO +  " . (float) $datos['descuento'] . ",
@@ -531,7 +531,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function actualizarINVE(array $datos) {
-        $query = "UPDATE INVE01                      
+        $query = "UPDATE INVE03                      
             SET COMP_X_REC = 
             (CASE WHEN COMP_X_REC + " . $datos['cantidad'] . "  < 0 THEN 0                                       
             WHEN COMP_X_REC + " . $datos['cantidad'] . "  >= 0 THEN COMP_X_REC + " . $datos['cantidad'] . "                                        
@@ -542,7 +542,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function actualizarCAMPO_CLIB(string $claveDocumento, array $arrayCampos) {
-        $query = "UPDATE COMPO_CLIB01                      
+        $query = "UPDATE COMPO_CLIB03                      
                 SET 
                     CAMPLIB1 = '" . $arrayCampos['camplib1'] . "',
                     CAMPLIB2 = '" . $arrayCampos['camplib2'] . "'             
@@ -552,7 +552,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function actualizarPAR_COMPQ(array $datos) {
-        $query = "UPDATE PAR_COMPQ01  
+        $query = "UPDATE PAR_COMPQ03  
                     SET PXR = (CASE 
                         WHEN PXR < " . $datos['cantidad'] . " /*Cantidad de partida*/ 
                                 THEN 0                 
@@ -566,7 +566,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function actualizarMult(array $datos) {
-        $query = "UPDATE MULT01                  
+        $query = "UPDATE MULT03                  
                     SET COMP_X_REC = COMP_X_REC + " . $datos['cantidad'] . " /*Cantidad den partida*/                     
                     WHERE CVE_ART = '" . $datos['claveArticulo'] . "'   
                     AND CVE_ALM = " . $datos['almacen'] . " /*Almacén seleccionado en formulario*/";
@@ -576,33 +576,33 @@ class Modelo_SAE7 extends Modelo_Base {
 
     public function actualizarCOMPQPartida(array $datos) {
         $query = "UPDATE 
-                COMPQ01                  
+                COMPQ03                  
                 SET TIP_DOC_E =  'o', 
                 ENLAZADO = (
                     CASE 
                             WHEN (
                                     SELECT 
                                     SUM(P.PXR) 
-                                    FROM PAR_COMPQ01 P 
+                                    FROM PAR_COMPQ03 P 
                                     WHERE P.CVE_DOC= '" . $datos['requisicion'] . "' /*Requisición*/ 
-                                    AND COMPQ01.CVE_DOC = P.CVE_DOC)=0 
+                                    AND COMPQ03.CVE_DOC = P.CVE_DOC)=0 
                             THEN 'T'                     
                             WHEN (
                                     SELECT 
                                     SUM(P.PXR) 
-                                    FROM PAR_COMPQ01 P 
+                                    FROM PAR_COMPQ03 P 
                                     WHERE P.CVE_DOC= '" . $datos['requisicion'] . "' /*Requisición*/
-                    AND COMPQ01.CVE_DOC = P.CVE_DOC)>0 
+                    AND COMPQ03.CVE_DOC = P.CVE_DOC)>0 
                                     THEN 'P'                     
                                     ELSE ENLAZADO 
                             END)                     
-                WHERE COMPQ01.CVE_DOC =  '" . $datos['requisicion'] . "' /*Requisición*/";
+                WHERE COMPQ03.CVE_DOC =  '" . $datos['requisicion'] . "' /*Requisición*/";
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }
 
     public function actualizarCOMPQ(array $datos) {
-        $query = "UPDATE COMPQ01                    
+        $query = "UPDATE COMPQ03                    
                     SET DOC_SIG =  '" . $datos['claveDocumento'] . "', 
                     TIP_DOC_SIG =  'o'                       
                     WHERE CVE_DOC =  '" . $datos['requisicion'] . "'";
@@ -611,7 +611,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function insertarObservacionesDocumento(array $datos) {
-        $query = "INSERT INTO OBS_DOCC01 
+        $query = "INSERT INTO OBS_DOCC03 
                     (CVE_OBS,STR_OBS) 
                     VALUES('" . $datos['claveObservaciones'] . "', '" . $datos['observaciones'] . "')";
         $consulta = parent::connectDBSAE7()->query($query);
@@ -619,7 +619,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function insertarCOMPO(array $datos) {
-        $query = "insert into COMPO01
+        $query = "insert into COMPO03
                     (TIP_DOC,
                      CVE_DOC, 
                      CVE_CLPV, 
@@ -700,7 +700,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function insertCOMPO_CLIB(string $claveDocumento, array $arrayCampos) {
-        $query = "insert into COMPO_CLIB01
+        $query = "insert into COMPO_CLIB03
                     (CLAVE_DOC,CAMPLIB1,CAMPLIB2)
                   values
                   ('" . $claveDocumento . "',
@@ -711,7 +711,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function insertPARCOMPO(array $datos) {
-        $query = "insert into PAR_COMPO01
+        $query = "insert into PAR_COMPO3
                 (CVE_DOC, NUM_PAR, CVE_ART, CANT, PXR, PREC, COST, IMPU1, IMPU2, IMPU3, IMPU4, IMP1APLA, IMP2APLA, IMP3APLA, IMP4APLA, TOTIMP1, TOTIMP2, TOTIMP3, TOTIMP4, DESCU, ACT_INV, NUM_ALM, TIP_CAM, UNI_VENTA, TIPO_PROD, TIPO_ELEM, CVE_OBS, REG_SERIE, E_LTPD, FACTCONV, MINDIRECTO, NUM_MOV, TOT_PARTIDA, MAN_IEPS, APL_MAN_IMP, CUOTA_IEPS, APL_MAN_IEPS, MTO_PORC, MTO_CUOTA, CVE_ESQ)
               values
                 (N'" . $datos['claveDocumento'] . "',
@@ -759,7 +759,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function insertPAR_COMPO_CLIB(array $datos) {
-        $query = "insert into PAR_COMPO_CLIB01
+        $query = "insert into PAR_COMPO_CLIB03
                     (CLAVE_DOC, NUM_PART)
                   values
                     ('" . $datos['claveDocumento'] . "'," . $datos['numeroPartida'] . ")";
@@ -768,7 +768,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function insertDOCTOSIGC1(array $datos) {
-        $query = "INSERT INTO DOCTOSIGC01
+        $query = "INSERT INTO DOCTOSIGC03
                 (TIP_DOC,CVE_DOC,ANT_SIG,TIP_DOC_E,CVE_DOC_E, PARTIDA, PART_E, CANT_E)                     
                 VALUES(
                 'q' , 
@@ -784,7 +784,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function insertDOCTOSIGC2(array $datos) {
-        $query = "INSERT INTO DOCTOSIGC01 
+        $query = "INSERT INTO DOCTOSIGC03 
                     (TIP_DOC,CVE_DOC,ANT_SIG,TIP_DOC_E,CVE_DOC_E, PARTIDA, PART_E, CANT_E)                     
                     VALUES(
                     'o' , 

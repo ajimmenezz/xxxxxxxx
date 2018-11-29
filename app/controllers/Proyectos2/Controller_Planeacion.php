@@ -95,6 +95,9 @@ class Controller_Planeacion extends Base {
             case 'CargaNodosTarea':
                 $resultado = $this->planeacion->cargaNodosTarea($this->input->post());
                 break;
+            case 'CargaNodosTareaAgrupados':
+                $resultado = $this->planeacion->cargaNodosTareaAgrupados($this->input->post());
+                break;
             case 'GuardarNodosTarea':
                 $resultado = $this->planeacion->guardarNodosTarea($this->input->post());
                 break;
@@ -115,6 +118,12 @@ class Controller_Planeacion extends Base {
                 break;
             case 'GeneraSolicitudMaterialFaltante':
                 $resultado = $this->planeacion->generaSolicitudMaterialFaltante($this->input->post());
+                break;
+            case 'GeneraDocumentoMaterialNodos':
+                $resultado = $this->planeacion->generaDocumentoMaterialNodos($this->input->post());
+                break;
+            case 'GeneraDocumentoNodos':
+                $resultado = $this->planeacion->generaDocumentoNodos($this->input->post());
                 break;
             default:
                 $resultado = FALSE;

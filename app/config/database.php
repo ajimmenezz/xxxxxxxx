@@ -184,33 +184,11 @@ $db['SAE'] = array(
         'port' => 1433
 );
 
-//$db['SAE7'] = array(
-//	'dsn'	=> '',
-//	'hostname' => '192.168.0.7, 49161',
-//	'username' => 'msoteno',
-//	'password' => 'RopeMaple.49',
-//	'database' => 'SAE7EMPRESA3',
-//	'dbdriver' => 'sqlsrv',
-//	'dbprefix' => '',
-//	'pconnect' => FALSE,
-//	'db_debug' => (ENVIRONMENT !== 'production'),
-//	'cache_on' => FALSE,
-//	'cachedir' => '',
-//	'char_set' => 'utf8',
-//	'dbcollat' => 'utf8_general_ci',
-//	'swap_pre' => '',
-//	'encrypt' => FALSE,
-//	'compress' => FALSE,
-//	'stricton' => FALSE,
-//	'failover' => array(),
-//	'save_queries' => TRUE
-//);
-
 $db['SAE7'] = array(
 	'dsn'	=> '',
-	'hostname' => 'DESKTOP-0AJI7SU\SQLEXPRESS',
-	'username' => 'sa',
-	'password' => 'S1cc0bS.',
+	'hostname' => '192.168.0.7, 49161',
+	'username' => 'msoteno',
+	'password' => 'RopeMaple.49',
 	'database' => 'SAE7EMPRESA3',
 	'dbdriver' => 'sqlsrv',
 	'dbprefix' => '',
@@ -227,6 +205,28 @@ $db['SAE7'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+//$db['SAE7'] = array(
+//	'dsn'	=> '',
+//	'hostname' => 'DESKTOP-0AJI7SU\SQLEXPRESS',
+//	'username' => 'sa',
+//	'password' => 'S1cc0bS.',
+//	'database' => 'SAE7EMPRESA3',
+//	'dbdriver' => 'sqlsrv',
+//	'dbprefix' => '',
+//	'pconnect' => FALSE,
+//	'db_debug' => (ENVIRONMENT !== 'production'),
+//	'cache_on' => FALSE,
+//	'cachedir' => '',
+//	'char_set' => 'utf8',
+//	'dbcollat' => 'utf8_general_ci',
+//	'swap_pre' => '',
+//	'encrypt' => FALSE,
+//	'compress' => FALSE,
+//	'stricton' => FALSE,
+//	'failover' => array(),
+//	'save_queries' => TRUE
+//);
 
 $db['Gapsi'] = array(
 	'dsn'	=> '',

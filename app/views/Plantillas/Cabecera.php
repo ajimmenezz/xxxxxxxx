@@ -72,7 +72,10 @@
         echo $personalCss;
         ?>
         <!-- ================== FINALIZANDO ARCHIVOS CSS DE LA PAGINA ================== -->
-
+        
+        <script src="/assets/js/customize/Calendar/catalogo_calendar.js"></script>
+        <script src="https://apis.google.com/js/api.js"></script>
+        
         <!-- ================== EMPEZANDO Google Charts ================= -->
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <!-- ================== FINALIZANDO Google Charts ================= -->
@@ -129,8 +132,9 @@
 //            smartlook('init', 'b2ff341c34242150ed3e8ffe2249aa6c666dcc4b');
         </script>
 
-        <!-- ================== FINALIZANDO SMART LOOK ================== -->                
-
+        <!-- ================== FINALIZANDO SMART LOOK ================== -->  
+        
+        
     </head>
 
     <body class="pace-top">

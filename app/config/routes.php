@@ -122,6 +122,7 @@ $route['Generales/Archivos/(:any)'] = 'Generales/Controller_Archivos/manejarEven
 $route['Generales/Buscar/(:any)'] = 'Generales/Controller_Buscar/manejarEvento/$1';
 $route['Generales/ServiceDesk/(:any)'] = 'Generales/Controller_ServiceDesk/manejarEvento/$1';
 $route['Generales/Dispositivos/(:any)'] = 'Generales/Controller_Dispositivos/manejarEvento/$1';
+$route['Generales/Dashboard/(:any)'] = 'Generales/Controller_Dashboard/manejarEvento/$1';
 
 /* Routers para el manejo de páginas de PhantomJS */
 $route['Phantom/Servicio/(:any)'] = 'Phantom/Controller_Phantom/servicioPhantom/$1';

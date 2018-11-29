@@ -42,8 +42,10 @@ $(function () {
 
     var campoFirma = function () {
         var nombreTecnico = arguments[0];
+        var myBoard = null;
+        var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        var alto = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
         var html = ' <div id="campo_firma">\n\
-                                    <div class="panel-body">\n\
                                         <div class="row">\n\
                                             <div class="col-md-12 text-center">\n\
                                                 <div class="form-group">\n\
@@ -52,7 +54,7 @@ $(function () {
                                             </div>\n\
                                         </div>\n\
                                         <div class="row">\n\
-                                                <div id="col-md-12 text-center">\n\
+                                                <div id="divcampoLapiz" class="col-md-12 text-center">\n\
                                                     <div id="campoLapiz"></div>\n\
                                                 </div>\n\
                                         </div>\n\
@@ -61,12 +63,20 @@ $(function () {
                                                 <div class="errorFirma"></div>\n\
                                             </div>\n\
                                         </div>\n\
-                                    </div>\n\
                                 </div>';
 
         evento.mostrarModal('Carta Responsiva', html);
 
-        var myBoard = servicios.campoLapiz('campoLapiz');
+        $(window).resize(function () {
+            servicios.ajusteCanvasFirma('campoLapiz');
+            myBoard = servicios.campoLapiz('campoLapiz');
+        });
+
+        var arrayMedidas = servicios.ajusteCanvasMedidas(ancho, alto);
+
+        $('#campoLapiz').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
+
+        myBoard = servicios.campoLapiz('campoLapiz');
 
         $('#btnModalConfirmar').off('click');
         $('#btnModalConfirmar').on('click', function () {
