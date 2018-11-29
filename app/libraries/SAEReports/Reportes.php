@@ -60,6 +60,37 @@ class Reportes extends General {
                                                         order by Numero_Movimiento");
         return $data;
     }
+    
+    public function getMovimientosAlmacenesSAE(array $datos = null) {
+        if (!isset($datos['desde'])) {
+            $condicion = " where FECHAELAB BETWEEN DATEADD(week, -1, GETDATE()) and GETDATE() ";
+        } else {
+            $condicion = " where FECHAELAB BETWEEN '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 23:59:59' ";
+        }
+
+        $data['movimientos'] = $this->DBSAE->consultaBDSAE("select
+                                                            NUM_MOV as Numero_Movimiento,
+                                                            movimientos.CVE_FOLIO as Folio,
+                                                            productos.CVE_ART as Clave_Producto,
+                                                            productos.DESCR as Articulo,
+                                                            (select DESCR from ALMACENES03 almacenes where almacenes.CVE_ALM = movimientos.ALMACEN) as Almacen,
+                                                            (select DESCR from CONM03 conceptos where conceptos.CVE_CPTO = movimientos.CVE_CPTO) as Concepto,
+                                                            case movimientos.TIPO_DOC when 'M' then 'Traspaso' when 'r' then 'Compra/Remisión' end as Movimiento,
+                                                            movimientos.REFER as Referencia,
+                                                            movimientos.CANT as Cantidad,
+                                                            CAST(movimientos.COSTO as CHAR) as Costo,
+                                                            CAST(movimientos.COSTO_PROM_INI as CHAR) as Costo_Promo_Inicial,
+                                                            CAST(movimientos.COSTO_PROM_FIN as CHAR) as Costo_Promo_Final,
+                                                            movimientos.UNI_VENTA as Unidad_Venta,
+                                                            movimientos.EXISTENCIA as Existencia,
+                                                            movimientos.FECHAELAB as Fecha,
+                                                            movimientos.MOV_ENLAZADO
+                                                        from MINVE03 movimientos
+                                                        inner join INVE03 productos
+                                                            on movimientos.CVE_ART = productos.CVE_ART " . $condicion . "                                                        
+                                                        order by Numero_Movimiento");
+        return $data;
+    }
 
     public function exportaInventarioAlamacenSAE(array $datos = null) {
         $info = $datos['info'];
@@ -127,6 +158,48 @@ class Reportes extends General {
         
         $time = date("ymd_H_i_s");
         $nombreArchivo = 'Inventario_' . $datos['almacen'] . '_' . $time . '.xlsx';
+        $nombreArchivo = trim($nombreArchivo);
+        $ruta = 'storage/Archivos/SAEReports/' . $nombreArchivo;
+
+        //Guarda la hoja envíandole la ruta y el nombre del archivo que se va a guardar.
+        $this->Excel->saveFile($ruta);
+
+        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
+    }
+    
+    public function exportaMovimientosAlmacenesSAE(array $datos = null) {        
+        $movimientos = $datos['movimientos'];
+
+        /* Begin Hoja 2 */
+        $this->Excel->createSheet('Movimientos', 0);
+        $this->Excel->setActiveSheet(0);
+        $arrayTitulosMovimientos = [
+            'Número Movimiento',
+            'Folio',
+            'Clave Artículo',
+            'Artículo',
+            'Almacén',
+            'Concepto',
+            'Movimiento',
+            'Referencia',
+            'Cantidad',
+            'Costo',
+            'Costo Promo Inicial',
+            'Costo Promo Final',
+            'Unidad Venta',
+            'Existencia',
+            'Fecha',
+            'Movimiento Enlazado'];
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
+        $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
+        $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
+        $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', 'center', 'center', 'center', '', 'center', 'center', 'center'];
+        $this->Excel->setTableContent('A', 1, $movimientos, true, $arrayAlignMovimientos);
+        /* End Hoja 2 */
+        
+        
+        $time = date("ymd_H_i_s");
+        $nombreArchivo = 'Movimientos_Inventario_' . $time . '.xlsx';
         $nombreArchivo = trim($nombreArchivo);
         $ruta = 'storage/Archivos/SAEReports/' . $nombreArchivo;
 
