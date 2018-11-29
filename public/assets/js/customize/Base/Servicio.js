@@ -76,28 +76,24 @@ Servicio.prototype.nuevoServicio = function () {
                 "summary": "Atención a ticket",
                 "description": "Nuevo servicio.Se a agregado para su atención del ticket "+ ticketCalendario.Ticket +" con la siguiente descripcion " + descripcion,
                 "location": "Ciudad de México, CDMX",
-                "timeZone": "America/Mexico_City",
                 "start": {
-                    "dateTime": now
+                    "dateTime": now,
+                    "timeZone": "America/Mexico_City"
                 },
                 "end": {
-                    "dateTime": now
+                    "dateTime": now,
+                    "timeZone": "America/Mexico_City"
                 },
                 "attendees": [
                     {
                         "email": emailCorporativo,
                         "displayName": atiende,
-                        "organizer": false,
-                        "self": false,
-                        "resource": false,
-                        "optional": false,
                         "responseStatus": "accepted"
 
-                    }],
-                "colorId" : "9"
+                    }]
             };
 //            console.log(resource);
-            handleClientLoad(resource);
+            handleClientLoad(resource,true);
         };
 
         $('#btnCancelarServicio').on('click', function () {

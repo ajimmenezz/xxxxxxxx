@@ -5,11 +5,16 @@ var scope = 'https://www.googleapis.com/auth/calendar';
 
 function handleClientLoad() {
     var recurso = arguments[0];
+    var clickBoton = arguments[1];
 
     gapi.load('client:auth2', {
         callback: function () {
             // inicialización gapi.client.
-            initClient(recurso);
+            if(clickBoton){
+                initClient(recurso);
+            }else{
+                console.log("NA");
+            }
         },
         onerror: function () {
             // Error de carga.
@@ -31,25 +36,27 @@ function initClient() {
         discoveryDocs: discoveryDocs,
         scope: scope
     }).then(function () {
-        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
         updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get(),recurso);
-//        console.log(recurso);
-//        updateSigninStatus(recurso);
-        handleAuthClick();
     });
 }
 
 function updateSigninStatus(isSignedIn,recurso = null) {
     if (isSignedIn) {
+//        console.log("sesion true");
         makeRequest(recurso);
     } else {
+        handleAuthClick(recurso);
+        console.log("sesion false");
 //        console.log("no esta logeado " + isSignedIn);
     }
 }
 
 function handleAuthClick(event) {
-    gapi.auth2.getAuthInstance().signIn();
-//    console.log("Entraste");
+    var recurso = arguments[0];
+    gapi.auth2.getAuthInstance().signIn().then(
+                result => makeRequest(recurso),
+                e => console.log(`Cerro pop antes de dar permiso o iniciar sesion`)
+            );
 }
 
 function makeRequest() {
@@ -60,7 +67,7 @@ function makeRequest() {
         'body': recurso
     }).then(
 //        writeResponse(resp.result);
-//        result => console.log(result),
-//        e => console.log(`Error capturado:  ${e}`)
+        result => console.log(),
+        e => console.log(`No registro evento`)
     );
 }

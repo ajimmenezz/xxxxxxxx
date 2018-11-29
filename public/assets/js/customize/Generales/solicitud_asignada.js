@@ -218,7 +218,7 @@ $(function () {
 
             };
 //            console.log(resource);
-            handleClientLoad(resource);
+            handleClientLoad(resource,true);
         };
 
             //Evento de select personal para seleccionar su area y departamento
