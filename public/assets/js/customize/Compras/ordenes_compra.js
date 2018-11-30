@@ -125,6 +125,7 @@ $(function () {
                 null,
                 false);
         select.cambiarOpcion('#selectOrdenOrdenCompra', 'Directa');
+
     }
 
     var eventosFormulario = function () {
@@ -306,7 +307,6 @@ $(function () {
                     evento.mostrarMensaje('#errorGuardarOC', false, 'El campo fecha de recolección debe ser mayor o igual al campo fecha.', 5000);
                 }
             }
-
         });
 
         $('#selectMonedaOrdenCompra').on("change", function () {
@@ -324,6 +324,32 @@ $(function () {
                 event.preventDefault();
             }
         });
+
+        $('#btnActualizarOC').on('click', function () {
+            var proveedor = $('#selectProveedorOrdenCompra option:selected').text();
+            var beneficiario = $('#selectBeneficiarioOrdenCompra option:selected').text();
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCamposFormulario(), '#errorGuardarOC');
+            var camposTablaValidados = evento.validarCamposObjetos(arrayCamposTablaPartidas(), '#errorGuardarOC');
+            var fecha = $('#inputFechaOrdenCompra').val();
+            var fechaRec = $('#inputFechaRecOrdenCompra').val();
+
+            if (camposTablaValidados && camposFormularioValidados) {
+                if (fecha <= fechaRec) {
+                    if (quitaAcentos(proveedor) !== quitaAcentos(beneficiario)) {
+                        evento.mostrarModal('Advertencia', validarProvedorBeneficiario());
+
+                        $('#btnModalConfirmar').off('click');
+                        $('#btnModalConfirmar').on('click', function () {
+                            actualizarFormularioOrdenCompra(respuesta);
+                        });
+                    } else {
+                        actualizarFormularioOrdenCompra(respuesta);
+                    }
+                } else {
+                    evento.mostrarMensaje('#errorGuardarOC', false, 'El campo fecha de recolección debe ser mayor o igual al campo fecha.', 5000);
+                }
+            }
+        });
     }
 
     var guardarFormularioOrdenCompra = function () {
@@ -334,12 +360,25 @@ $(function () {
             window.open('/' + respuesta);
             evento.mensajeConfirmacion('Se genero correctamente la Orden de Compra', 'Correcto');
         });
+    }
 
+    var actualizarFormularioOrdenCompra = function () {
+        var respuesta = arguments[0];
+        var data = valorCamposFormulario(respuesta.datos.claveDocumentacion);
+        console.log(data);
+        evento.enviarEvento('Compras/ActulizarOrdenCompra', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
+            console.log(respuesta);
+            window.open('/' + respuesta);
+            evento.mensajeConfirmacion('Se actualizo correctamente la Orden de Compra', 'Correcto');
+        })
     }
 
     var cargarInformacionFormularioEditar = function () {
         var respuesta = arguments[0];
-        console.log(respuesta);
+
+        $('#divBtnGuardarOC').addClass('hidden');
+        $('#divBtnActualizarOC').removeClass('hidden');
+
         if (respuesta.datos.compo.TIP_DOC_E === 'q') {
             select.cambiarOpcion('#selectOrdenOrdenCompra', 'Requisicion');
             select.cambiarOpcion('#selectRequisicionesOrdenCompra', respuesta.datos.compo.DOC_ANT);
@@ -350,7 +389,7 @@ $(function () {
         }
 
         select.cambiarOpcion('#selectProveedorOrdenCompra', respuesta.datos.compo.CVE_CLPV);
-//        select.cambiarOpcion('#selectEsquemaOrdenCompra', respuesta.datos.parCompo.IMPU4);
+        select.cambiarOpcion('#selectEsquemaOrdenCompra', respuesta.datos.parCompo[0].IMPU4);
         select.cambiarOpcion('#selectAlmacenOrdenCompra', respuesta.datos.compo.NUM_ALMA);
         select.cambiarOpcion('#selectMonedaOrdenCompra', respuesta.datos.compo.NUM_MONED);
         select.cambiarOpcion('#selectClienteOrdenCompra', respuesta.datos.editarOrdenCompraGapsi[0].Cliente);

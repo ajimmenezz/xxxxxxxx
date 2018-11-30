@@ -372,11 +372,17 @@
                         <div id="errorGuardarOC"></div>
                     </div>
                 </div>
-
                 <!--Finalizando Error-->
-                <div class="row">
+
+                <div id="divBtnGuardarOC" class="row">
                     <div class="col-md-12 m-t-10 text-center">
-                        <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarOC"><i class="fa fa-save"></i> GUARDAR O.C</a>
+                        <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarOC"><i class="fa fa-save"></i> Guardar O.C</a>
+                    </div>
+                </div>
+                
+                <div id="divBtnActualizarOC" class="row hidden">
+                    <div class="col-md-12 m-t-10 text-center">
+                        <a href="javascript:;" class="btn btn-success m-r-5 " id="btnActualizarOC"><i class="fa fa-pencil"></i> Actualizar O.C</a>
                     </div>
                 </div>
 
