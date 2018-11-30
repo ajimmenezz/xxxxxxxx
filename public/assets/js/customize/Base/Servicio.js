@@ -1206,7 +1206,7 @@ Servicio.prototype.formConcluirServicio = function () {
                                     <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
                                         <div class="form-group">\n\
                                             <label id="inputCorreo">Correo(s) *</label>\n\
-                                            <ul id="tagCorreo" class="inverse"></ul>\n\
+                                            <ul id="tagValor" class="inverse"></ul>\n\
                                         </div>\n\
                                     </div>\n\
                                 </div>';

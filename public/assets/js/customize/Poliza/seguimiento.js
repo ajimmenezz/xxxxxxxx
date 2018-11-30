@@ -238,7 +238,7 @@ $(function () {
             var imgInput = (myBoardFirma.blankCanvas == img) ? '' : img;
             if (evento.validarFormulario('#formConcluirServicioFirma')) {
                 var personaRecibe = $('#inputPersonaRecibe').val();
-                var correo = $("#tagCorreo").tagit("assignedTags");
+                var correo = $("#tagValor").tagit("assignedTags");
                 if (correo.length > 0) {
                     if (servicios.validarCorreoArray(correo)) {
                         if (imgInput !== '') {
