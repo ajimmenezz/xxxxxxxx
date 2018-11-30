@@ -215,22 +215,30 @@ $(function () {
         var datosTabla = arguments[1];
         var sucursal = arguments[2];
         var ticket = datosTabla[1];
-        var myBoardFirma = null;
-        var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-        var alto = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-        var arrayMedidas = servicios.ajusteCanvasMedidas(ancho, alto);
 
         servicios.mostrarModal('Firma', servicios.formConcluirServicio());
         $('#btnModalConfirmar').addClass('hidden');
 
-        $(window).resize(function () {
-            servicios.ajusteCanvasFirma('campoFirma');
-            myBoardFirma = servicios.campoLapiz('campoFirma');
+        var myBoardFirma = new DrawingBoard.Board('campoFirma', {
+            background: "#fff",
+            color: "#000",
+            size: 1,
+            controlsPosition: "right",
+            controls: [
+                {Navigation: {
+                        back: false,
+                        forward: false
+                    }
+                }
+            ],
+            webStorage: false
         });
-
-        $('#campoFirma').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
-
-        myBoardFirma = servicios.campoLapiz('campoFirma');
+        
+        $("#tagCorreo").tagit({
+            allowSpaces: false
+        });
+        
+        myBoardFirma.ev.trigger('board:reset', 'what', 'up');
 
         $('#btnConcluirServicio').off('click');
         $('#btnConcluirServicio').on('click', function () {
@@ -4796,40 +4804,40 @@ $(function () {
 
     var validarCamposFirma = function () {
         var data = arguments[0];
-        var myBoard = null;
-        var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-        var alto = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-//        var myBoard = new DrawingBoard.Board('campoLapiz', {
-//            background: "#fff",
-//            color: "#000",
-//            size: 1,
-//            controlsPosition: "right",
-//            controls: [
-//                {Navigation: {
-//                        back: false,
-//                        forward: false
-//                    }
-//                }
-//            ],
-//            webStorage: false
-//        });
-//
-//        $("#tagValor").tagit({
-//            allowSpaces: false
-//        });
-//
-//        myBoard.ev.trigger('board:reset', 'what', 'up');
-
-        $(window).resize(function () {
-            servicios.ajusteCanvasFirma()
-            myBoard = servicios.campoLapiz('campoLapiz');
+//        var myBoard = null;
+//        var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+//        var alto = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        var myBoard = new DrawingBoard.Board('campoLapiz', {
+            background: "#fff",
+            color: "#000",
+            size: 1,
+            controlsPosition: "right",
+            controls: [
+                {Navigation: {
+                        back: false,
+                        forward: false
+                    }
+                }
+            ],
+            webStorage: false
         });
 
-        var arrayMedidas = servicios.ajusteCanvasMedidas(ancho, alto);
+        $("#tagValor").tagit({
+            allowSpaces: false
+        });
 
-        $('#campoLapiz').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
+        myBoard.ev.trigger('board:reset', 'what', 'up');
 
-        myBoard = servicios.campoLapiz('campoLapiz');
+//        $(window).resize(function () {
+//            servicios.ajusteCanvasFirma()
+//            myBoard = servicios.campoLapiz('campoLapiz');
+//        });
+//
+//        var arrayMedidas = servicios.ajusteCanvasMedidas(ancho, alto);
+//
+//        $('#campoLapiz').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
+//
+//        myBoard = servicios.campoLapiz('campoLapiz');
 
         $('#btnGuardarFirma').on('click', function () {
             var img = myBoard.getImg();
