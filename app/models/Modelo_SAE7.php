@@ -224,6 +224,40 @@ class Modelo_SAE7 extends Modelo_Base {
         return $consulta->result_array();
     }
 
+    public function consultaRequisicionesOrdenCompra(string $ordenCompra) {
+        $query = "SELECT 
+                    CVE_DOC,CVE_CLPV,FECHA_DOC,CAN_TOT,IMPORTE 
+                    FROM COMPQ01  
+                    WHERE (TIP_DOC= 'q'  AND BLOQ <>  'S'  AND STATUS <>  'C'  AND ENLAZADO <>  'T' )
+                    OR DOC_SIG = '" . $ordenCompra . "'";
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta->result_array();
+    }
+
+    public function consultaPartidasOrdenCompraAnteriores(string $ordenCompra) {
+        $query = "SELECT 
+                    partida.CANT,
+                    partida.CVE_ART,
+                    partida.UNI_VENTA,
+                    partida.DESCU,
+                    partida.IMPU1,
+                    partida.IMPU2,
+                    partida.IMPU3,
+                    partida.IMPU4 as IVA,
+                    producto.ULT_COSTO,
+                    partida.CANT * producto.ULT_COSTO as Subtotal,
+                    partida.NUM_PAR
+                  FROM DOCTOSIGC01 doctos
+                  INNER JOIN PAR_COMPQ01 partida
+                  ON doctos.PARTIDA = partida.CVE_DOC
+                  left join INVE01 producto 
+                  on partida.CVE_ART = producto.CVE_ART
+                  WHERE doctos.CVE_DOC = '" . $ordenCompra . "'
+                  order by partida.NUM_PAR asc";
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta->result_array();
+    }
+
     public function consultaListaRequisiciones(string $claveDocumento) {
         $query = "select
                     partida.CANT,
@@ -501,6 +535,12 @@ class Modelo_SAE7 extends Modelo_Base {
             ));
         }
 
+        $this->eliminarPAR_COMPO_CLIB(array(
+            'claveDocumento' => $datos['claveNuevaDocumentacion']));
+
+        $this->eliminarPARCOMPO(array(
+            'claveDocumento' => $datos['claveNuevaDocumentacion']));
+
         foreach ($datos['datosTabla'] as $key => $value) {
             $facConv = $this->consultaFAC_CONV_INVE($value['producto']);
             $this->actualizarINVE(array(
@@ -525,7 +565,7 @@ class Modelo_SAE7 extends Modelo_Base {
                 $nuevaClaveTabla57Partida = 0;
             }
 
-            $this->actualizarPARCOMPO(array(
+            $this->insertPARCOMPO(array(
                 'claveDocumento' => $datos['claveNuevaDocumentacion'],
                 'numeroPartida' => $key + 1,
                 'claveArticulo' => $value['producto'],
@@ -573,8 +613,14 @@ class Modelo_SAE7 extends Modelo_Base {
                     'cantidad' => $value['cantidad']
                 );
 
-                $this->actualizarDOCTOSIGC1($arrayDOCTOSIGC);
-                $this->actualizarDOCTOSIGC2($arrayDOCTOSIGC);
+                $this->eliminarDOCTOSIGC1(array(
+                    'claveDocumento' => $datos['claveNuevaDocumentacion']));
+
+                $this->eliminarDOCTOSIGC2(array(
+                    'claveDocumento' => $datos['claveNuevaDocumentacion']));
+
+                $this->insertDOCTOSIGC1($arrayDOCTOSIGC);
+                $this->insertDOCTOSIGC2($arrayDOCTOSIGC);
             }
         }
 
@@ -658,7 +704,6 @@ class Modelo_SAE7 extends Modelo_Base {
                                                         partidas.IMPU2,
                                                         partidas.IMPU3,
                                                         partidas.IMPU4 as IVA,
-                                                        producto.ULT_COSTO,
                                                         partidas.TOT_PARTIDA as Subtotal,
                                                         partidas.NUM_PAR
                                                 FROM COMPQ01 requis
@@ -803,52 +848,6 @@ class Modelo_SAE7 extends Modelo_Base {
                     DOC_ANT = '" . $datos['DOC_ANT'] . "', 
                     TIP_DOC_ANT = '" . $datos['TIP_DOC_ANT'] . "'
                  where CVE_DOC =  '" . $datos['claveDocumento'] . "'";
-        $consulta = parent::connectDBSAE7()->query($query);
-        return $consulta;
-    }
-
-    public function actualizarPARCOMPO(array $datos) {
-        $query = "update PAR_COMPO01 set
-                    NUM_PAR = " . $datos['numeroPartida'] . ",
-                    CVE_ART = '" . $datos['claveArticulo'] . "',
-                    CANT = " . $datos['cantidad'] . ", 
-                    PXR = " . $datos['facConv'] . ",
-                    COST = " . $datos['precio'] . ", 
-                    IMPU4 = " . $datos['esquema'] . ",
-                    TOTIMP4 = " . $datos['iva'] . ",
-                    DESCU = " . $datos['descuento'] . ",
-                    NUM_ALM = " . $datos['almacen'] . ",
-                    TIP_CAM = " . $datos['tipoCambio'] . ",
-                    UNI_VENTA = '" . $datos['unidad'] . "',
-                    CVE_OBS = " . $datos['claveObservaciones'] . ",
-                    FACTCONV = " . $datos['facConv'] . ",
-                    TOT_PARTIDA = '" . $datos['importe'] . "',
-                  where CVE_DOC =  '" . $datos['claveDocumento'] . "'";
-
-        $consulta = parent::connectDBSAE7()->query($query);
-        return $consulta;
-    }
-
-    public function actualizarDOCTOSIGC1(array $datos) {
-        $query = "update DOCTOSIGC01 set
-                    CVE_DOC_E = '" . $datos['claveDocumento'] . "' /*OC*/,
-                    PARTIDA = " . $datos['numeroPartida'] . " /*Numero de Partida de la OC*/,
-                    PART_E = " . $datos['partidaRequisicion'] . " /*Numero de partida de la Requisición*/ , 
-                    CANT_E = " . $datos['cantidad'] . " /*Cantidad de la partida*/
-                where CVE_DOC =  '" . $datos['requisicion'] . "' /*Requisición*/";
-
-        $consulta = parent::connectDBSAE7()->query($query);
-        return $consulta;
-    }
-
-    public function actualizarDOCTOSIGC2(array $datos) {
-        $query = "update DOCTOSIGC01 set
-                    CVE_DOC = '" . $datos['claveDocumento'] . "' /*OC*/,
-                    CVE_DOC_E = '" . $datos['requisicion'] . "' /*Requisicióon*/,
-                    PARTIDA = " . $datos['partidaRequisicion'] . " /*Numero de partida de la Requisición*/,
-                    PART_E = " . $datos['numeroPartida'] . " /*Numero de Partida de la OC*/,
-                    CANT_E = " . $datos['cantidad'] . " /*Cantidad de la partida*/
-                where CVE_DOC =  '" . $datos['claveDocumento'] . "' /*OC*/,";
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }
@@ -1038,6 +1037,30 @@ class Modelo_SAE7 extends Modelo_Base {
                     " . $datos['partidaRequisicion'] . " /*Numero de partida de la Requisición*/ , 
                     " . $datos['numeroPartida'] . " /*Numero de Partida de la OC*/ , 
                     " . $datos['cantidad'] . " /*Cantidad de la partida*/)";
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta;
+    }
+
+    public function eliminarPARCOMPO(array $datos) {
+        $query = "DELETE FROM PAR_COMPO01 WHERE CVE_DOC = '" . $datos['claveDocumento'] . "'";
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta;
+    }
+
+    public function eliminarPAR_COMPO_CLIB(array $datos) {
+        $query = "DELETE FROM PAR_COMPO_CLIB01 WHERE CLAVE_DOC = '" . $datos['claveDocumento'] . "'";
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta;
+    }
+
+    public function eliminarDOCTOSIGC1(array $datos) {
+        $query = "DELETE FROM DOCTOSIGC01 WHERE CVE_DOC = '" . $datos['claveDocumento'] . "'";
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta;
+    }
+
+    public function eliminarDOCTOSIGC2(array $datos) {
+        $query = "DELETE FROM DOCTOSIGC01 WHERE CVE_DOC_E = '" . $datos['claveDocumento'] . "'";
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }

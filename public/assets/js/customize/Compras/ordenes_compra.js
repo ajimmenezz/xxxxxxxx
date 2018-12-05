@@ -132,6 +132,7 @@ $(function () {
         var respuesta = arguments[0];
         var productos = respuesta.datos.productos;
         var timer;
+
         console.log(respuesta);
         if (respuesta.datos.editarOrdenCompraGapsi !== undefined) {
             var editarOrdenComprarGapsi = respuesta.datos.editarOrdenCompraGapsi[0];
@@ -194,16 +195,25 @@ $(function () {
             }
         });
 
-        if (respuesta.datos.compo === undefined) {
-            $("#selectRequisicionesOrdenCompra").on("change", function () {
-                var requisicion = $(this).val();
+        $("#selectRequisicionesOrdenCompra").on("change", function () {
+            var data = {ordenCompra: respuesta.datos.claveDocumentacion};
+            evento.enviarEvento('Compras/VerificarExisteOrdenCompra', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
                 var fechaRequisicion = $('#selectRequisicionesOrdenCompra option:selected').data('fecha-requisicion');
-                var data = {'claveDocumento': requisicion};
-                evento.enviarEvento('Compras/ConsultaListaRequisiciones', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
-                    agregarTablaRequisiciones(respuesta, productos, fechaRequisicion);
-                });
+                var requisicion = $("#selectRequisicionesOrdenCompra").val();
+
+                if (respuesta.length <= 0) {
+                    cargarSelectRequisiciones(requisicion, productos, fechaRequisicion)
+                } else {
+                    if (requisicion !== respuesta[0].DOC_ANT) {
+                        cargarSelectRequisiciones(requisicion, productos, fechaRequisicion)
+                    } else {
+                        evento.enviarEvento('Compras/ConsultaPartidasOrdenCompraAnteriores', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
+                            agregarTablaRequisiciones(respuesta, productos, fechaRequisicion);
+                        });
+                    }
+                }
             });
-        }
+        });
 
         $("#selectProyectoOrdenCompra").on("change", function () {
             $("#selectSucursalOrdenCompra").empty().append('<option value="">Seleccionar...</option>');
@@ -337,7 +347,6 @@ $(function () {
                 if (fecha <= fechaRec) {
                     if (quitaAcentos(proveedor) !== quitaAcentos(beneficiario)) {
                         evento.mostrarModal('Advertencia', validarProvedorBeneficiario());
-
                         $('#btnModalConfirmar').off('click');
                         $('#btnModalConfirmar').on('click', function () {
                             actualizarFormularioOrdenCompra(respuesta);
@@ -354,7 +363,7 @@ $(function () {
 
     var guardarFormularioOrdenCompra = function () {
         var respuesta = arguments[0];
-        var data = valorCamposFormulario(respuesta.datos.claveNuevaDocumentacion);
+        var data = valorCamposFormulario(respuesta.datos.claveDocumentacion);
 
         evento.enviarEvento('Compras/GuardarOrdenCompra', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
             window.open('/' + respuesta);
@@ -370,20 +379,26 @@ $(function () {
             console.log(respuesta);
             window.open('/' + respuesta);
             evento.mensajeConfirmacion('Se actualizo correctamente la Orden de Compra', 'Correcto');
-        })
+        });
     }
 
     var cargarInformacionFormularioEditar = function () {
         var respuesta = arguments[0];
+        var requisicionAnterior = respuesta.datos.compo.DOC_ANT;
 
         $('#divBtnGuardarOC').addClass('hidden');
         $('#divBtnActualizarOC').removeClass('hidden');
-
         if (respuesta.datos.compo.TIP_DOC_E === 'q') {
             select.cambiarOpcion('#selectOrdenOrdenCompra', 'Requisicion');
-            select.cambiarOpcion('#selectRequisicionesOrdenCompra', respuesta.datos.compo.DOC_ANT);
-            var fechaRequisicion = $('#selectRequisicionesOrdenCompra option:selected').data('fecha-requisicion');
-            agregarTablaRequisiciones(respuesta.datos.partidasEditar, respuesta.datos.productos, fechaRequisicion);
+
+            $("#selectRequisicionesOrdenCompra").empty().append('<option value="">Seleccionar...</option>');
+            var data = {ordenCompra: respuesta.datos.claveDocumentacion};
+            evento.enviarEvento('Compras/ConsultaRequisicionesOrdenCompra', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
+                $.each(respuesta, function (k, v) {
+                    $("#selectRequisicionesOrdenCompra").append('<option data-fecha-requisicion="' + v.FECHA_DOC + '" value="' + v.CVE_DOC + '">' + v.CVE_DOC + '</option>')
+                });
+                select.cambiarOpcion('#selectRequisicionesOrdenCompra', requisicionAnterior);
+            });
         } else {
             agregarTablaRequisiciones(respuesta.datos.parCompo, respuesta.datos.productos);
         }
@@ -405,6 +420,17 @@ $(function () {
         $('#inputDireccionEntregaOrdenCompra').val(respuesta.datos.compoClib.CAMPLIB1);
         $('#inputTipoCambioOrdenCompra').val(respuesta.datos.compo.TIPCAMB);
         $('#textAreaObservacionesOrdenCompra').val(respuesta.datos.obsDocc.STR_OBS);
+    }
+
+    var cargarSelectRequisiciones = function () {
+        var requisicion = arguments[0];
+        var productos = arguments[1];
+        var fechaRequisicion = arguments[2];
+        var dataRequisicion = {'claveDocumento': requisicion};
+
+        evento.enviarEvento('Compras/ConsultaListaRequisiciones', dataRequisicion, '#panelFormularioOrdenesDeCompra', function (respuesta) {
+            agregarTablaRequisiciones(respuesta, productos, fechaRequisicion);
+        });
     }
 
     var agregarPartidaTabla = function () {

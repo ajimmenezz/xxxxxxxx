@@ -30,7 +30,6 @@ class Compras extends General {
         $data['claveDocumentacion'] = $ultimaClaveDocumentacion[0]['CVE_DOC'];
         $data['claveGAPSI'] = $ultimaClaveDocumentacion[0]['CVE_GAPSI'];
         $data['ultimoDocumento'] = $ultimaClaveDocumentacion[0]['ULT_DOC'];
-//        $data['compo'] = NULL;
 
         return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
     }
@@ -55,7 +54,7 @@ class Compras extends General {
         if ($tablaCOMPO[0]['TIP_DOC_E'] === 'q') {
             $tablaPartidasEditar = $this->DBSAE->consultaPartidasEditar($datos['ordenCompra']);
             $data['partidasEditar'] = $tablaPartidasEditar;
-        } 
+        }
 
         $ordenCompra = $this->ordenCompraGapsi($datos['ordenCompra']);
 
@@ -127,6 +126,16 @@ class Compras extends General {
         return $consulta;
     }
 
+    public function consultaPartidasOrdenCompraAnteriores(array $datos) {
+        $consulta = $this->DBSAE->consultaPartidasOrdenCompraAnteriores($datos['ordenCompra']);
+        return $consulta;
+    }
+
+    public function consultaRequisicionesOrdenCompra(array $datos) {
+        $consulta = $this->DBSAE->consultaRequisicionesOrdenCompra($datos['ordenCompra']);
+        return $consulta;
+    }
+
     public function guardarOrdenCompra(array $datos) {
         $arraySubtotal = $this->subtotalTablaPartidas($datos['datosTabla'], $datos['esquema'], $datos['descuentoFinanciero']);
         $consulta = $this->DBSAE->guardarOrdenCompra($datos, $arraySubtotal);
@@ -173,52 +182,44 @@ class Compras extends General {
             return FALSE;
         }
     }
+
     public function actualizarOrdenCompra(array $datos) {
-//        var_dump($datos);
         $arraySubtotal = $this->subtotalTablaPartidas($datos['datosTabla'], $datos['esquema'], $datos['descuentoFinanciero']);
         $consulta = $this->DBSAE->actualizarOrdenCompra($datos, $arraySubtotal);
-//
-//        if ($consulta) {
-//            if ($datos['moneda'] === '1') {
-//                $moneda = 'MN';
-//            } else {
-//                $moneda = 'USD';
-//            }
-//            $arrayGapsiOrdenCompra = array(
-//                'Beneficiario' => $datos['textoBeneficiario'],
-//                'IDBeneficiario' => $datos['beneficiario'],
-//                'Tipo' => $datos['tipo'],
-//                'TipoTrans' => 'COMPRA',
-//                'TipoServicio' => $datos['textoTipoServicio'],
-//                'Descripcion' => $datos['observaciones'],
-//                'Importe' => $arraySubtotal['total'],
-//                'Observaciones' => $datos['observaciones'],
-//                'Proyecto' => $datos['proyecto'],
-//                'Sucursal' => $datos['sucursal'],
-//                'Moneda' => $moneda,
-//                'OC' => $datos['claveOrdenCompra']
-//            );
-//
-//            $idGapsi = $this->DBG->ordenCompra($arrayGapsiOrdenCompra);
-//            if (!empty($idGapsi)) {
-//                $carpeta = './storage/Gastos/' . $idGapsi['last'] . '/PRE';
-//
-//                if (!file_exists($carpeta)) {
-//                    mkdir($carpeta, 0777, true);
-//                }
-//
-//                $gastoPDF = $this->reportes->generaOC(array(
-//                    'id' => '1',
-//                    'documento' => $datos['claveNuevaDocumentacion'],
-//                    'idGapsi' => $idGapsi['last']));
-//
-//                return '.' . $gastoPDF;
-//            } else {
-//                return FALSE;
-//            }
-//        } else {
-//            return FALSE;
-//        }
+
+        if ($consulta) {
+            if ($datos['moneda'] === '1') {
+                $moneda = 'MN';
+            } else {
+                $moneda = 'USD';
+            }
+
+            $arrayGapsiOrdenCompra = array(
+                'Beneficiario' => $datos['textoBeneficiario'],
+                'IDBeneficiario' => $datos['beneficiario'],
+                'Tipo' => $datos['tipo'],
+                'TipoTrans' => 'COMPRA',
+                'TipoServicio' => $datos['textoTipoServicio'],
+                'Descripcion' => $datos['observaciones'],
+                'Importe' => $arraySubtotal['total'],
+                'Observaciones' => $datos['observaciones'],
+                'Proyecto' => $datos['proyecto'],
+                'Sucursal' => $datos['sucursal'],
+                'Moneda' => $moneda,
+                'OC' => $datos['claveOrdenCompra']
+            );
+
+            $resultadoOrdenCompra = $this->DBG->actualizarOrdenCompra($arrayGapsiOrdenCompra);
+
+            if ($resultadoOrdenCompra) {
+                $gastoPDF = $this->crearPDFGastoOrdenCompra(array('ordenCompra' => $datos['claveNuevaDocumentacion']));
+                return $gastoPDF;
+            } else {
+                return FALSE;
+            }
+        } else {
+            return FALSE;
+        }
     }
 
     public function subtotalTablaPartidas(array $datos, string $esquema, string $descuentoFinanciero) {
@@ -239,10 +240,10 @@ class Compras extends General {
 
     public function crearPDFGastoOrdenCompra(array $datos) {
         $ordenCompra = $this->ordenCompraGapsi($datos['ordenCompra']);
-
         $idGapsi = $this->DBG->consultaIdOrdenCompra(array(
             'ordenCompra' => $ordenCompra
         ));
+
         if (!empty($idGapsi)) {
             $carpeta = './storage/Gastos/' . $idGapsi[0]['ID'] . '/PRE';
 
@@ -259,6 +260,11 @@ class Compras extends General {
         } else {
             return FALSE;
         }
+    }
+
+    public function verificarExisteOrdenCompra(array $datos) {
+        $consulta = $this->DBSAE->consultaCOMPO($datos['ordenCompra']);
+        return $consulta;
     }
 
     private function ordenCompraGapsi(string $ordenCompra) {
