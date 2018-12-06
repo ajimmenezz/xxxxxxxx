@@ -181,9 +181,9 @@ $(function () {
                     evento.mostrarMensaje('#errorGenerarTicket', false, 'Debes definir el cliente para el servicio.', 3000);
                 }
             });
-            
+
             //crear un evento en calendario
-        var eventoCalendario = function () {
+            var eventoCalendario = function () {
                 var ticketCalendario = arguments[0];
                 var atiende = $('#selectAtiendeServicio option:selected').text();
                 var tipoServicio = $('#selectServicioDepartamento option:selected').text();
@@ -193,33 +193,32 @@ $(function () {
                 var now = new Date();
                 today = now.toISOString();
 
-            resource = {
-                "summary": "Atención a ticket",
-                "description": "Nuevo servicio. Se a agregado para su atención del ticket "+ ticketCalendario +" con la siguiente descripcion " + descripcion,
-                "location": sucursal,
-                "timeZone": "America/Mexico_City",
-                "start": {
-                    "dateTime": now
-                },
-                "end": {
-                    "dateTime": now
-                },
-                "attendees": [
-                    {
-                        "email": emailCorporativo,
-                        "displayName": atiende,
-                        "organizer": false,
-                        "self": false,
-                        "resource": false,
-                        "optional": false,
-                        "responseStatus": "accepted"
-                    }],
-                "colorId" : "4"
+                resource = {
+                    "summary": "Atención a ticket",
+                    "description": "Nuevo servicio. Se a agregado para su atención del ticket " + ticketCalendario + " con la siguiente descripcion " + descripcion,
+                    "location": sucursal,
+                    "timeZone": "America/Mexico_City",
+                    "start": {
+                        "dateTime": now
+                    },
+                    "end": {
+                        "dateTime": now
+                    },
+                    "attendees": [
+                        {
+                            "email": emailCorporativo,
+                            "displayName": atiende,
+                            "organizer": false,
+                            "self": false,
+                            "resource": false,
+                            "optional": false,
+                            "responseStatus": "accepted"
+                        }],
+                    "colorId": "4"
 
+                };
+                handleClientLoad(resource, true);
             };
-//            console.log(resource);
-            handleClientLoad(resource,true);
-        };
 
             //Evento de select personal para seleccionar su area y departamento
             $('#selectReasignarParsonal').on('change', function () {
@@ -303,7 +302,7 @@ $(function () {
 
             //Muestra la seccion de solicitud rechazada
             $('#btnRechazarSolicitud').on('click', function () {
-                if (datos[1] === 'SERVICE DESK') {
+                if (datos[2] === 'SERVICE DESK') {
                     var data = {solicitud: datos[0], operacion: '3'};
                     evento.enviarEvento('Solicitud/Datos_SistemaExterno', data, '#modal-dialogo', function (respuesta) {
                         var data = [];
@@ -330,7 +329,7 @@ $(function () {
             //Se confirma el rechazo de la solicitud
             $('#btnConfirmarRechazo').on('click', function () {
                 if (evento.validarFormulario('#formRechazarSolicitud')) {
-                    if (datos[3] === 'SERVICE DESK') {
+                    if (datos[2] === 'SERVICE DESK') {
                         var data = {solicitud: datos[0], operacion: '4', tecnicoSD: $('#selectTecnicosSD').val(), descripcion: $('#textareaDescripcionRechazada').val()};
                         var mensajeExito = 'Se a reasignado el folio con exito.';
                         var mensajeError = 'No se pudo reasignar el folio Service Desk por favor de volver a intentarlo.';
@@ -358,6 +357,7 @@ $(function () {
                                     fila.push(item.Asunto);
                                     fila.push(item.Tipo);
                                     fila.push(item.Ticket);
+                                    fila.push(item.Sucursal);
                                     if (respuesta.solicitudes.SolicitudesSD.length > 0) {
                                         $.each(respuesta.solicitudes.SolicitudesSD, function (key, value) {
                                             if (value.solicitud === item.Numero) {
