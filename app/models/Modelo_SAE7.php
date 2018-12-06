@@ -249,7 +249,7 @@ class Modelo_SAE7 extends Modelo_Base {
                     partida.NUM_PAR
                   FROM DOCTOSIGC01 doctos
                   INNER JOIN PAR_COMPQ01 partida
-                  ON doctos.PARTIDA = partida.CVE_DOC
+                  ON doctos.CVE_DOC_E = partida.CVE_DOC AND doctos.PARTIDA = partida.NUM_PAR
                   left join INVE01 producto 
                   on partida.CVE_ART = producto.CVE_ART
                   WHERE doctos.CVE_DOC = '" . $ordenCompra . "'
@@ -456,6 +456,33 @@ class Modelo_SAE7 extends Modelo_Base {
     public function actualizarOrdenCompra(array $datos, array $arraySubtotal) {
         $this->iniciaTransaccion();
 
+        if ($datos['orden'] === 'Requisicion') {
+            $orden = 'q';
+            $TIP_DOC_ANT = 'q';
+            $DOC_ANT = $datos['requisicion'];
+            $datosOrdenCompra = $this->consultaCOMPO($datos['claveNuevaDocumentacion']);
+
+            $this->actualizarCOMPQPartidaEnlazado(array(
+                'requisicion' => $datosOrdenCompra[0]['DOC_ANT']
+            ));
+
+
+            $datosDOCTO = $this->consultaDOCTOSIG_CVE_ART($datos['claveNuevaDocumentacion']);
+
+            foreach ($datosDOCTO as $key => $value) {
+                $this->actualizarPAR_COMPQPXR(array(
+                    'cantidad' => $value['CANT_E'],
+                    'claveArticulo' => $value['CVE_ART'],
+                    'claveDocumento' => $value['CVE_DOC'],
+                    'partidaRequisicion' => $value['PARTIDA']
+                ));
+            }
+        } else {
+            $orden = 'O';
+            $TIP_DOC_ANT = '';
+            $DOC_ANT = '';
+        }
+
         $ultimaClaveTBLCONTROLTabla32 = $this->consultaUltimaClaveTBLCONTROL('32');
         $nuevaClaveTabla32 = $ultimaClaveTBLCONTROLTabla32[0]['ULT_CVE'] + 1;
 
@@ -487,16 +514,6 @@ class Modelo_SAE7 extends Modelo_Base {
             'descuento' => $arraySubtotal['descuento'],
             'descuentoFinanciero' => $datos['descuentoFinanciero'],
             'fechaMes' => $diaPrimeroMes[0]['PER_ACUM']));
-
-        if ($datos['orden'] === 'Requisicion') {
-            $orden = 'q';
-            $TIP_DOC_ANT = 'q';
-            $DOC_ANT = $datos['requisicion'];
-        } else {
-            $orden = 'O';
-            $TIP_DOC_ANT = '';
-            $DOC_ANT = '';
-        }
 
         $this->actualizarCOMPO(array(
             'claveDocumento' => $datos['claveNuevaDocumentacion'],
@@ -684,6 +701,18 @@ class Modelo_SAE7 extends Modelo_Base {
         return $consulta->result_array();
     }
 
+    public function consultaDOCTOSIG_CVE_ART(string $claveDocumento) {
+        $consulta = parent::connectDBSAE7()->query("select 
+                                                        (select CVE_ART from PAR_COMPO01 where CVE_DOC = '" . $claveDocumento . "' and NUM_PAR = docto.PART_E) CVE_ART,
+                                                        docto.CANT_E,
+                                                        docto.CVE_DOC_E,
+                                                        docto.PARTIDA,
+                                                        docto.CVE_DOC
+                                                    from DOCTOSIGC01 docto
+                                                    where CVE_DOC = '" . $claveDocumento . "'");
+        return $consulta->result_array();
+    }
+
     public function consultaCOMPO_CLIB(string $claveDocumento) {
         $consulta = parent::connectDBSAE7()->query("select * from COMPO_CLIB01 where CLAVE_DOC = '" . $claveDocumento . "'");
         return $consulta->result_array();
@@ -777,6 +806,16 @@ class Modelo_SAE7 extends Modelo_Base {
         return $consulta;
     }
 
+    public function actualizarPAR_COMPQPXR(array $datos) {
+        $query = "UPDATE PAR_COMPQ01  
+                    SET PXR = " . $datos['cantidad'] . "
+                WHERE CVE_DOC = '" . $datos['claveDocumento'] . "'   
+                AND NUM_PAR = " . $datos['partidaRequisicion'] . "
+                AND CVE_ART = '" . $datos['claveArticulo'] . "'";
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta;
+    }
+
     public function actualizarMult(array $datos) {
         $query = "UPDATE MULT01                  
                     SET COMP_X_REC = COMP_X_REC + " . $datos['cantidad'] . " /*Cantidad den partida*/                     
@@ -809,6 +848,15 @@ class Modelo_SAE7 extends Modelo_Base {
                                     ELSE ENLAZADO 
                             END)                     
                 WHERE COMPQ01.CVE_DOC =  '" . $datos['requisicion'] . "' /*Requisición*/";
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta;
+    }
+
+    public function actualizarCOMPQPartidaEnlazado(array $datos) {
+        $query = "UPDATE 
+                COMPQ01                 
+                SET ENLAZADO = 'P'                          
+                WHERE CVE_DOC =  '" . $datos['requisicion'] . "' /*Requisición*/";
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta;
     }

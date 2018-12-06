@@ -45,7 +45,7 @@
                         <div class="form-group">
                             <label for="inputFechaOrdenCompra">Fecha *</label>
                             <div id="inputFecha" class="input-group date calendario" >
-                                <input id="inputFechaOrdenCompra" type="text" class="form-control" />
+                                <input id="inputFechaOrdenCompra" type="text" class="form-control" disabled/>
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
@@ -54,7 +54,7 @@
                         <div class="form-group">
                             <label for="inputFechaRecOrdenCompra">Fecha Rec *</label>
                             <div id="inputFechaRec" class="input-group date calendario" >
-                                <input id="inputFechaRecOrdenCompra" type="text" class="form-control"  />
+                                <input id="inputFechaRecOrdenCompra" type="text" class="form-control" />
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
