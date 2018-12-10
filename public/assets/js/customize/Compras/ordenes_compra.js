@@ -98,6 +98,10 @@ $(function () {
     }
 
     var cargarObjetosFormulario = function () {
+        var fechaActual = new Date();
+        var date = formatDateToString(fechaActual);
+        var fechaMilisegundos = date + " " + fechaActual.getHours() + ":" + fechaActual.getMinutes() + ":" + fechaActual.getSeconds() + ":" + fechaActual.getMilliseconds() + "." + fechaActual.getMilliseconds();
+        
         select.crearSelect('#selectOrdenOrdenCompra');
         select.crearSelect('#selectProveedorOrdenCompra');
         select.crearSelect('#selectEsquemaOrdenCompra');
@@ -127,7 +131,10 @@ $(function () {
                 horizontal: 'right',
                 vertical: 'bottom'
             }
-        }).datepicker("setDate", "19/09/2016");;
+        });
+
+        $('#inputFechaOrdenCompra').val(fechaMilisegundos);
+        $('#inputFechaRecOrdenCompra').val(fechaMilisegundos);
 
         $('[data-toggle="tooltip"]').tooltip();
         tabla.generaTablaPersonal(
@@ -141,12 +148,7 @@ $(function () {
                 null,
                 false);
         select.cambiarOpcion('#selectOrdenOrdenCompra', 'Directa');
-        var fechaActual = new Date();
-        var date = new Date().toISOString().substr(0, 19).replace('T', ' ');
-//        console.log(date);
-//        console.log(fecha.getHours() + ":" + fecha.getMinutes() + ":" + fecha.getSeconds() + "." + fechaActual.getMilliseconds());
-        var fechaMilisegundos = date + "." + fechaActual.getMilliseconds();
-        cons
+
     }
 
     var eventosFormulario = function () {
@@ -154,7 +156,6 @@ $(function () {
         var productos = respuesta.datos.productos;
         var timer;
 
-        console.log(respuesta);
         if (respuesta.datos.editarOrdenCompraGapsi !== undefined) {
             var editarOrdenComprarGapsi = respuesta.datos.editarOrdenCompraGapsi[0];
         } else {
@@ -395,9 +396,8 @@ $(function () {
     var actualizarFormularioOrdenCompra = function () {
         var respuesta = arguments[0];
         var data = valorCamposFormulario(respuesta.datos.claveDocumentacion);
-        console.log(data);
+
         evento.enviarEvento('Compras/ActulizarOrdenCompra', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
-            console.log(respuesta);
             window.open('/' + respuesta);
             evento.mensajeConfirmacion('Se actualizo correctamente la Orden de Compra', 'Correcto');
         });
@@ -450,7 +450,6 @@ $(function () {
         var dataRequisicion = {'claveDocumento': requisicion};
 
         evento.enviarEvento('Compras/ConsultaListaRequisiciones', dataRequisicion, '#panelFormularioOrdenesDeCompra', function (respuesta) {
-            console.log(respuesta);
             agregarTablaRequisiciones(respuesta, productos, fechaRequisicion);
         });
     }
@@ -841,5 +840,17 @@ $(function () {
         r = r.replace(new RegExp(/./g), "");
 
         return r;
+    }
+
+    var formatDateToString = function (date) {
+        // 01, 02, 03, ... 29, 30, 31
+        var dd = (date.getDate() < 10 ? '0' : '') + date.getDate();
+        // 01, 02, 03, ... 10, 11, 12
+        var MM = ((date.getMonth() + 1) < 10 ? '0' : '') + (date.getMonth() + 1);
+        // 1970, 1971, ... 2015, 2016, ...
+        var yyyy = date.getFullYear();
+
+        // create the format you want
+        return (yyyy + "-" + MM + "-" + dd);
     }
 });
