@@ -189,6 +189,63 @@ class Modelo_Gapsi extends Modelo_Base {
             'permiso' => $todos
         ];
     }
+    
+    public function getComprobarGastos() {
+        $condicion = '';
+        $todos = false;
+
+        $ids = $this->consulta(""
+                        . "select "
+                        . "group_concat(IdGasto) as Ids "
+                        . "from t_archivos_gastos_gapsi "
+                        . "where 1 = 1 "
+                        . "and Comprobado = 0"
+                        . " and IdUsuario = '" . $this->usuario['Id'] . "' "
+                        . "and if((CONCAT(',',Leido,',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) = 0")[0]['Ids'];
+        $ids = ($ids !== '') ? ',' . $ids : '';
+
+        $consulta = $this->consulta("select "
+                . "IdGasto, "
+                . "nombreUsuario(IdUsuario) as Usuario, "
+                . "IdUsuario, "
+                . "Email, "
+                . "if((CONCAT(',',Leido,',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) as Leido "
+                . "from t_archivos_gastos_gapsi "
+                . "where 1 = 1 "
+                . " and IdUsuario = '" . $this->usuario['Id'] . "' ");
+        $usuarios = [];
+        foreach ($consulta as $key => $value) {
+            if ($value['Leido'] != 1) {
+                $usuarios[$value['IdGasto']] = [
+                    'idUsuario' => $value['IdUsuario'],
+                    'usuario' => $value['Usuario'],
+                    'email' => $value['Email']
+                ];
+            }
+        }
+
+        $query = "select "
+                . "registro.*, "
+                . "(select Descripcion from db_Proyectos where ID = registro.Proyecto) as NameProyecto "
+                . "from db_Registro registro "
+                . "where ID in (''" . $ids . ")"
+                . "and AplicaComprobacion = 1";
+
+        if ($ids !== ',') {
+            $consulta = parent::connectDBGapsi()->query($query);
+            $gastos = $consulta->result_array();
+        } else {
+            $gastos = array();
+        }
+
+        $datos = ['Gastos' => [
+            'gastos' => $gastos,
+            'usuarios' => $usuarios,
+            'permiso' => $todos
+        ]];
+        
+        return $datos;
+    }
 
     public function detallesGasto($id) {
         $query = "select 

@@ -160,7 +160,8 @@ $config['Secciones'] = array(
     ),
     'Gapsi' => array(
         'Solicitud-Gasto' => 'Solicitar-Gasto',
-        'Mis-Gastos' => 'Mis-Gastos'
+        'Mis-Gastos' => 'Mis-Gastos',
+        'Comprobar-Gastos' => 'Comprobar-Gastos'
     ),
     'Proveedores' => array(
         'Seguimiento-Proveedores' => 'Seguimiento'
