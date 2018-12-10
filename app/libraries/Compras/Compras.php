@@ -26,9 +26,49 @@ class Compras extends General {
         $data = array();
         $ultimaClaveDocumentacion = $this->DBSAE->consultaUltimaClaveDocumentacion();
 
-        $data['claveNuevaDocumentacion'] = $ultimaClaveDocumentacion[0]['CVE_DOC'];
+        $data = $this->datosFormularioOrdenCompra();
+        $data['claveDocumentacion'] = $ultimaClaveDocumentacion[0]['CVE_DOC'];
         $data['claveGAPSI'] = $ultimaClaveDocumentacion[0]['CVE_GAPSI'];
         $data['ultimoDocumento'] = $ultimaClaveDocumentacion[0]['ULT_DOC'];
+
+        return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
+    }
+
+    public function mostrarEditarOrdenCompra(array $datos) {
+        $data = array();
+
+        $data = $this->datosFormularioOrdenCompra();
+        $data['claveDocumentacion'] = $datos['ordenCompra'];
+        $data['claveGAPSI'] = $this->ordenCompraGapsi($datos['ordenCompra']);
+        $data['ultimoDocumento'] = $this->quitarCeros($datos['ordenCompra']);
+
+        $tablaCOMPO = $this->DBSAE->consultaCOMPO($datos['ordenCompra']);
+        $tablaPARCOMPO = $this->DBSAE->consultaPAR_COMPO($datos['ordenCompra']);
+        $tablaCOMPOCLIB = $this->DBSAE->consultaCOMPO_CLIB($datos['ordenCompra']);
+        $tablaOBSDOCC = $this->DBSAE->consultaOBS_DOCC($tablaCOMPO[0]['CVE_OBS']);
+        $data['compo'] = $tablaCOMPO[0];
+        $data['parCompo'] = $tablaPARCOMPO;
+        $data['compoClib'] = $tablaCOMPOCLIB[0];
+        $data['obsDocc'] = $tablaOBSDOCC[0];
+
+        if ($tablaCOMPO[0]['TIP_DOC_E'] === 'q') {
+            $tablaPartidasEditar = $this->DBSAE->consultaPartidasEditar($datos['ordenCompra']);
+            $data['partidasEditar'] = $tablaPartidasEditar;
+        }
+
+        $ordenCompra = $this->ordenCompraGapsi($datos['ordenCompra']);
+
+        $editarOrdenCompraGapsi = $this->DBG->consultaDatosGasto(array(
+            'ordenCompra' => $ordenCompra
+        ));
+
+        $data['editarOrdenCompraGapsi'] = $editarOrdenCompraGapsi;
+        return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
+    }
+
+    private function datosFormularioOrdenCompra() {
+        $data = array();
+
         $data['proveedores'] = $this->DBSAE->consultaProveedoresSAE();
         $data['almacenes'] = $this->DBSAE->consultaAlmacenesSAE();
         $data['tiposMonedas'] = $this->DBSAE->consultaTipoMoneda();
@@ -38,7 +78,7 @@ class Compras extends General {
         $data['tiposBeneficiario'] = $this->gapsi->getTiposBeneficiario();
         $data['requisiciones'] = $this->DBSAE->consultaRequisiciones();
 
-        return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
+        return $data;
     }
 
     public function mostrarDatosProyectos(array $datos) {
@@ -86,12 +126,14 @@ class Compras extends General {
         return $consulta;
     }
 
-    public function ceros($cadena) {
-        if (preg_match("/0([^0])/", $cadena, $match)) {
-            return strpos($cadena, $match[1]);
-        } else {
-            return 0;
-        }
+    public function consultaPartidasOrdenCompraAnteriores(array $datos) {
+        $consulta = $this->DBSAE->consultaPartidasOrdenCompraAnteriores($datos['ordenCompra']);
+        return $consulta;
+    }
+
+    public function consultaRequisicionesOrdenCompra(array $datos) {
+        $consulta = $this->DBSAE->consultaRequisicionesOrdenCompra($datos['ordenCompra']);
+        return $consulta;
     }
 
     public function guardarOrdenCompra(array $datos) {
@@ -141,6 +183,45 @@ class Compras extends General {
         }
     }
 
+    public function actualizarOrdenCompra(array $datos) {
+        $arraySubtotal = $this->subtotalTablaPartidas($datos['datosTabla'], $datos['esquema'], $datos['descuentoFinanciero']);
+        $consulta = $this->DBSAE->actualizarOrdenCompra($datos, $arraySubtotal);
+
+        if ($consulta) {
+            if ($datos['moneda'] === '1') {
+                $moneda = 'MN';
+            } else {
+                $moneda = 'USD';
+            }
+
+            $arrayGapsiOrdenCompra = array(
+                'Beneficiario' => $datos['textoBeneficiario'],
+                'IDBeneficiario' => $datos['beneficiario'],
+                'Tipo' => $datos['tipo'],
+                'TipoTrans' => 'COMPRA',
+                'TipoServicio' => $datos['textoTipoServicio'],
+                'Descripcion' => $datos['observaciones'],
+                'Importe' => $arraySubtotal['total'],
+                'Observaciones' => $datos['observaciones'],
+                'Proyecto' => $datos['proyecto'],
+                'Sucursal' => $datos['sucursal'],
+                'Moneda' => $moneda,
+                'OC' => $datos['claveOrdenCompra']
+            );
+
+            $resultadoOrdenCompra = $this->DBG->actualizarOrdenCompra($arrayGapsiOrdenCompra);
+
+            if ($resultadoOrdenCompra) {
+                $gastoPDF = $this->crearPDFGastoOrdenCompra(array('ordenCompra' => $datos['claveNuevaDocumentacion']));
+                return $gastoPDF;
+            } else {
+                return FALSE;
+            }
+        } else {
+            return FALSE;
+        }
+    }
+
     public function subtotalTablaPartidas(array $datos, string $esquema, string $descuentoFinanciero) {
         $subtotal = '0.00';
         $descuento = '0.00';
@@ -158,13 +239,11 @@ class Compras extends General {
     }
 
     public function crearPDFGastoOrdenCompra(array $datos) {
-        $ordenCompra = str_replace('OC', '', $datos['ordenCompra']);
-        $ordenCompra = preg_replace('/^0+/', '', $ordenCompra); 
-        $ordenCompra = 'OC' . $ordenCompra;
-
+        $ordenCompra = $this->ordenCompraGapsi($datos['ordenCompra']);
         $idGapsi = $this->DBG->consultaIdOrdenCompra(array(
             'ordenCompra' => $ordenCompra
         ));
+
         if (!empty($idGapsi)) {
             $carpeta = './storage/Gastos/' . $idGapsi[0]['ID'] . '/PRE';
 
@@ -181,6 +260,25 @@ class Compras extends General {
         } else {
             return FALSE;
         }
+    }
+
+    public function verificarExisteOrdenCompra(array $datos) {
+        $consulta = $this->DBSAE->consultaCOMPO($datos['ordenCompra']);
+        return $consulta;
+    }
+
+    private function ordenCompraGapsi(string $ordenCompra) {
+        $ordenCompraResultado = $this->quitarCeros($ordenCompra);
+        $ordenCompraResultado = 'OC' . $ordenCompraResultado;
+
+        return $ordenCompraResultado;
+    }
+
+    private function quitarCeros(string $ordenCompra) {
+        $ordenCompraResultado = str_replace('OC', '', $ordenCompra);
+        $ordenCompraResultado = preg_replace('/^0+/', '', $ordenCompraResultado);
+
+        return $ordenCompraResultado;
     }
 
 }
