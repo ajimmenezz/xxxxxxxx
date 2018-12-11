@@ -385,7 +385,18 @@ class Usuario extends General {
         $usuario = $this->Usuario->getDatosUsuario();
 
         $token = bin2hex(random_bytes(64));
-        var_dump($token);
+
+        $consulta = $this->DBU->actualizarCampoUsuario(array(
+            'campo' => 'Token',
+            'inputNuevo' => $token,
+            'id' => $usuario['Id']
+        ));
+        
+        if(!empty($consulta)){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
     }
 
 }
