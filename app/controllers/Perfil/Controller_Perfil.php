@@ -44,6 +44,9 @@ class Controller_Perfil extends Base {
             case 'ActualizarFotoUsuario':
                 $resultado = $this->perfil->actualizarFotoUsuario($this->input->post());
                 break;
+            case 'ActualizarTokenUsuario':
+                $resultado = $this->perfil->actualizarTokenUsuario($this->input->post());
+                break;
             case 'MostrarFormularioPerfilUsuario':
                 $resultado = $this->perfil->mostrarFormularioPerfilUsuario($this->input->post());
                 break;

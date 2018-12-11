@@ -381,4 +381,11 @@ class Usuario extends General {
         return ['modal' => $html];
     }
 
+    public function actualizarTokenUsuario(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+
+        $token = bin2hex(random_bytes(64));
+        var_dump($token);
+    }
+
 }

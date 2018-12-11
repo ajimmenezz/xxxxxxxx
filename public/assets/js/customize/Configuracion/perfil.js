@@ -171,6 +171,19 @@ $(function () {
         });
     });
 
+    $('#inputToken').off("click");
+    $('#inputToken').on('click', function () {
+        var data = {};
+        evento.enviarEvento('PerfilUsuario/ActualizarTokenUsuario', data, '#configuracionPerfilUsuario', function (respuesta) {
+            console.log(respuesta);
+//            if (respuesta) {
+//                recargarPagina();
+//            } else {
+//                evento.mostrarMensaje("#errorPasswordUsuario", false, 'La nueva contraseña es igual que la actual.', 5000);
+//            }
+        });
+    });
+
     var cerrarModalCambios = function () {
         $('#btnCerrarCambios').off('click');
         $('#btnCerrarCambios').on('click', function () {

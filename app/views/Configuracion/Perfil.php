@@ -155,6 +155,15 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td class="field">Token</td>
+                                    <td>
+                                        <div class="col-xs-12">
+                                            <?php echo $datosUsuario['Genero'] ?>
+                                            <a id="inputToken" class="m-l-5" href="javascript:;">Editar</a>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
