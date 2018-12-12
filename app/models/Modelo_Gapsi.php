@@ -141,6 +141,8 @@ class Modelo_Gapsi extends Modelo_Base {
             $condicion = " and IdUsuario = '" . $this->usuario['Id'] . "' ";
             $todos = false;
         }
+        
+        $this->queryBolean("SET SESSION group_concat_max_len = 1000000");
 
         $ids = $this->consulta(""
                         . "select "
