@@ -36,8 +36,14 @@ class Controller_Compras extends Base {
             case 'MostrarFormularioOrdenCompra':
                 $resultado = $this->compras->mostrarFormularioOrdenCompra($this->input->post());
                 break;
+            case 'MostrarEditarOrdenCompra':
+                $resultado = $this->compras->mostrarEditarOrdenCompra($this->input->post());
+                break;
             case 'GuardarOrdenCompra':
                 $resultado = $this->compras->guardarOrdenCompra($this->input->post());
+                break;
+            case 'ActulizarOrdenCompra':
+                $resultado = $this->compras->actualizarOrdenCompra($this->input->post());
                 break;
             case 'ConsultaListaRequisiciones':
                 $resultado = $this->compras->consultaListaRequisiciones($this->input->post());
@@ -47,6 +53,15 @@ class Controller_Compras extends Base {
                 break;
             case 'ConsultaListaOrdenesCompra':
                 $resultado = $this->compras->consultaListaOrdenesCompra($this->input->post());
+                break;
+            case 'ConsultaRequisicionesOrdenCompra':
+                $resultado = $this->compras->consultaRequisicionesOrdenCompra($this->input->post());
+                break;
+            case 'ConsultaPartidasOrdenCompraAnteriores':
+                $resultado = $this->compras->consultaPartidasOrdenCompraAnteriores($this->input->post());
+                break;
+            case 'VerificarExisteOrdenCompra':
+                $resultado = $this->compras->verificarExisteOrdenCompra($this->input->post());
                 break;
             default:
                 $resultado = FALSE;

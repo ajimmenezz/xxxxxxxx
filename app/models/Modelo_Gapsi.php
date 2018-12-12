@@ -341,13 +341,61 @@ class Modelo_Gapsi extends Modelo_Base {
         }
     }
 
+    public function actualizarOrdenCompra(array $datos) {
+        parent::connectDBGapsi()->trans_begin();
+        $query = "update db_Registro set
+                    Beneficiario = '" . $datos['Beneficiario'] . "',
+                    IDBeneficiario = '" . $datos['IDBeneficiario'] . "',
+                    Tipo = '" . $datos['Tipo'] . "',
+                    TipoTrans = '" . $datos['TipoTrans'] . "',
+                    TipoServicio = '" . $datos['TipoServicio'] . "',
+                    Descripcion = '" . $datos['Descripcion'] . "',
+                    FCaptura = GETDATE(),
+                    Importe = '" . $datos['Importe'] . "',
+                    Observaciones = '" . $datos['Observaciones'] . "',
+                    Proyecto = '" . $datos['Proyecto'] . "',
+                    Sucursal = '" . $datos['Sucursal'] . "',
+                    FechaSolicitud = GETDATE(),
+                    Fecha = GETDATE(),
+                    Moneda = '" . $datos['Moneda'] . "'
+                WHERE OrdenCompra = '" . $datos['OC'] . "'";
+
+        parent::connectDBGapsi()->query($query);
+        $ultimo = parent::connectDBGapsi()->insert_id();
+
+        if (parent::connectDBGapsi()->trans_status() === FALSE) {
+            parent::connectDBGapsi()->trans_rollback();
+            return ['code' => 400];
+        } else {
+            parent::connectDBGapsi()->trans_commit();
+            return ['code' => 200, 'last' => $ultimo];
+        }
+    }
+
     public function consultaIdOrdenCompra(array $datos) {
         $query = "select 
-                ID
+                *
                 from db_Registro
-                where OrdenCompra = '" . $datos['ordenCompra']. "'";
+                where OrdenCompra = '" . $datos['ordenCompra'] . "'";
         $consulta = parent::connectDBGapsi()->query($query);
         $gasto = $consulta->result_array();
         return $gasto;
     }
+
+    public function consultaDatosGasto(array $datos) {
+        $query = "select 
+                *,
+                (SELECT Cliente FROM db_Proyectos WHERE ID = Proyecto) Cliente,
+                (SELECT ID FROM db_TipoServicio WHERE Nombre = TipoServicio) TipoServicio,
+                (SELECT Tipo FROM db_Beneficiarios WHERE ID = IDBeneficiario) TipoBeneficiario
+                from db_Registro
+                where OrdenCompra = '" . $datos['ordenCompra'] . "'";
+//            $query = "select * from db_Beneficiarios";
+
+        $consulta = parent::connectDBGapsi()->query($query);
+        $gasto = $consulta->result_array();
+//        var_dump($gasto);
+        return $gasto;
+    }
+
 }

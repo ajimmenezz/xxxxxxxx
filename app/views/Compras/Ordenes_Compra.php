@@ -72,6 +72,7 @@
                             <th class="all">Importe</th>
                             <th class="all">Total de doc</th>
                             <th class="all">Archivo</th>
+                            <th class="all">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,6 +91,7 @@
                                 echo '<td>' . $value['IMPORTE'] . '</td>';
                                 echo '<td>' . $value['TOTALDOCTO'] . '</td>';
                                 echo '<td><a href="javascript:;" target="_blank" class="btn btn-danger btn-xs btnPDFOrdenCompra" data-boton-pdf="' . $value['CVE_DOC'] . '"><i class="fa fa-file-pdf-o"></i> PDF</a></td>';
+                                echo '<td><a href="javascript:;" class="btn btn-success btn-xs btnEditarOrdenCompra" data-boton-editar="' . $value['CVE_DOC'] . '"><i class="fa fa-pencil"></i> Editar</a>';
                                 echo '</tr>';
                             }
                         }

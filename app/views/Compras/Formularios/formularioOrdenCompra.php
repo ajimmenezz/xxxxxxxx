@@ -22,7 +22,7 @@
                 <h3>Información para O.C.</h3>
             </div>
             <div class="col-md-6 col-xs-6 text-right">
-                <h2 id="claveNuevaDocumentacion" style="color:red;"><?php echo $claveNuevaDocumentacion ?></h2>
+                <h2 id="claveNuevaDocumentacion" style="color:red;"><?php echo $claveDocumentacion ?></h2>
             </div>
         </div>
 
@@ -45,7 +45,7 @@
                         <div class="form-group">
                             <label for="inputFechaOrdenCompra">Fecha *</label>
                             <div id="inputFecha" class="input-group date calendario" >
-                                <input id="inputFechaOrdenCompra" type="text" class="form-control" />
+                                <input id="inputFechaOrdenCompra" type="text" class="form-control" disabled/>
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
@@ -54,7 +54,7 @@
                         <div class="form-group">
                             <label for="inputFechaRecOrdenCompra">Fecha Rec *</label>
                             <div id="inputFechaRec" class="input-group date calendario" >
-                                <input id="inputFechaRecOrdenCompra" type="text" class="form-control"  />
+                                <input id="inputFechaRecOrdenCompra" type="text" class="form-control" />
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
@@ -372,11 +372,17 @@
                         <div id="errorGuardarOC"></div>
                     </div>
                 </div>
-
                 <!--Finalizando Error-->
-                <div class="row">
+
+                <div id="divBtnGuardarOC" class="row">
                     <div class="col-md-12 m-t-10 text-center">
-                        <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarOC"><i class="fa fa-save"></i> GUARDAR O.C</a>
+                        <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarOC"><i class="fa fa-save"></i> Guardar O.C</a>
+                    </div>
+                </div>
+                
+                <div id="divBtnActualizarOC" class="row hidden">
+                    <div class="col-md-12 m-t-10 text-center">
+                        <a href="javascript:;" class="btn btn-success m-r-5 " id="btnActualizarOC"><i class="fa fa-pencil"></i> Actualizar O.C</a>
                     </div>
                 </div>
 
