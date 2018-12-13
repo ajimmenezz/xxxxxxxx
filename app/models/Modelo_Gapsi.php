@@ -189,7 +189,7 @@ class Modelo_Gapsi extends Modelo_Base {
             'permiso' => $todos
         ];
     }
-    
+
     public function getComprobarGastos() {
         $condicion = '';
         $todos = false;
@@ -239,11 +239,11 @@ class Modelo_Gapsi extends Modelo_Base {
         }
 
         $datos = ['Gastos' => [
-            'gastos' => $gastos,
-            'usuarios' => $usuarios,
-            'permiso' => $todos
+                'gastos' => $gastos,
+                'usuarios' => $usuarios,
+                'permiso' => $todos
         ]];
-        
+
         return $datos;
     }
 
@@ -405,4 +405,68 @@ class Modelo_Gapsi extends Modelo_Base {
         $gasto = $consulta->result_array();
         return $gasto;
     }
+    
+    public function registrarSinXML($datos) {
+        
+        parent::connectDBGapsi()->trans_begin();
+        $query = "insert into "
+                . "db_ComprobacionRegistro"
+                . "(Registro, Monto, Comentario, Status, UUID) "
+                . "VALUES "
+                . "('" . $datos['idGasto'] . "', '" . $datos['monto'] . "', null, 'Enviado', null)";
+        
+        parent::connectDBGapsi()->query($query);
+        $ultimo = parent::connectDBGapsi()->insert_id();
+
+        if (parent::connectDBGapsi()->trans_status() === FALSE) {
+            parent::connectDBGapsi()->trans_rollback();
+            return ['code' => 400];
+        } else {
+            parent::connectDBGapsi()->trans_commit();
+            $this->marcarComprobado($datos);
+            return ['code' => 200, 'last' => $ultimo];
+        }
+    }
+    
+    public function marcarComprobado($datos) {
+        $this->iniciaTransaccion();
+        
+        $this->queryBolean("
+            update 
+            t_archivos_gastos_gapsi
+            set Comprobado = '1'
+            where IdGasto = '" . $datos['idGasto'] . "'");
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200,'idGasto' => $datos['idGasto']];
+        }
+    }
+
+    public function registrarComprobante(array $datos) {
+//        parent::connectDBGapsi()->trans_begin();
+
+        
+//        $query = "insert into "
+//                . "db_ComprobacionRegistro "
+//                . "(Registro, Monto, Comentario, Status, UUID) "
+//                . "VALUES "
+//                . "('" . $datos['IdRegistro'] . "', '" . $datos['monto'] . "', '" . $datos['null'] . "', '"enviado"', '" . $datos['TipoServicio'] . "')";
+
+        parent::connectDBGapsi()->query($query);
+        $ultimo = parent::connectDBGapsi()->insert_id();
+
+
+//        if (parent::connectDBGapsi()->trans_status() === FALSE) {
+//            parent::connectDBGapsi()->trans_rollback();
+//            return ['code' => 400];
+//        } else {
+//            parent::connectDBGapsi()->trans_commit();
+//            return ['code' => 200];
+//        }
+    }
+
 }

@@ -59,14 +59,16 @@ $(function () {
         var idGasto = $('#IDGasto').val();
         var inputArchivo = $('#inputArchivoComprobante').val();
         var datosGastos = {'idGasto': idGasto,
-                            'monto': parseFloat(Math.round($("#txtMonto").val() * 100) / 100).toFixed(2)};
+            'monto': parseFloat(Math.round($("#txtMonto").val() * 100) / 100).toFixed(2)};
 
         if (inputArchivo === "") {
             evento.mostrarMensaje("#errorComprobarGasto", false, 'Todos los campos son obligatorios', 4000);
-        } else if (datosGastos.monto == "" || datosGastos.monto <= 0) {
+        } else if (datosGastos.monto === "" || datosGastos.monto <= 0) {
             evento.mostrarMensaje("#errorComprobarGasto", false, 'El monto debe ser mayor a 0.00', 4000);
         } else {
             file.enviarArchivos('#inputArchivoComprobante', 'Gasto/ComprobacionRegistro', '#divDetalleGastos', datosGastos, function (respuesta) {
+                file.limpiar('#inputArchivoComprobante');
+                $('#txtMonto').val('');
                 console.log(respuesta);
             });
         }
@@ -74,7 +76,11 @@ $(function () {
 
     $('#btnTerminaComprobacion').off('click');
     $('#btnTerminaComprobacion').on('click', function () {
-        console.log("hola");
+        var idGasto = parseInt($('#IDGasto').val());
+//        console.log(typeof(idGasto));
+        evento.enviarEvento('Gasto/ActualizarCampoComprobado', {id: idGasto}, '#panelListaGastos', function (respuesta) {
+            console.log(respuesta);
+        });
     });
 
 });

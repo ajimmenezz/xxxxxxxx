@@ -62,6 +62,9 @@ class Controller_Gasto extends Base {
             case 'ComprobacionRegistro':
                 $resultado = $this->catalogo->comprobacionRegistro($this->input->post());
                 break;
+            case 'ActualizarCampoComprobado':
+                $resultado = $this->catalogo->actualizarCampoComprobado($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
