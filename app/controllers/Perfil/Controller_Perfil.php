@@ -11,13 +11,9 @@ class Controller_Perfil extends Base {
 
     private $perfil;
 
-//    private $ServiciosTicket;
-
     public function __construct() {
         parent::__construct();
-//        $this->correo = \Librerias\Generales\Correo::factory();
         $this->perfil = \Librerias\Generales\Usuario::factory();
-//        $this->load->library('session');
     }
 
     /*

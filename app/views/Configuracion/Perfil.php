@@ -159,7 +159,7 @@
                                     <td class="field">Token</td>
                                     <td>
                                         <div class="col-xs-12">
-                                            <?php echo $datosUsuario['Genero'] ?>
+                                            <?php echo $datosUsuario['Token'] ?>
                                             <a id="inputToken" class="m-l-5" href="javascript:;">Editar</a>
                                         </div>
                                     </td>

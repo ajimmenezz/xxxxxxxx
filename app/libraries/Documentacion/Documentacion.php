@@ -46,17 +46,38 @@ class Documentacion extends General {
 
     public function validarCartaResponsiva(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
+        $direccionSiccob = $this->DBS->getServicios('SELECT 
+                                                        CONCAT(
+                                                                Calle, 
+                                                                " #", NoExt,
+                                                                " Col. ", (SELECT Nombre FROM cat_v3_colonias WHERE Id = IdColonia),
+                                                                ", ", (SELECT Nombre FROM cat_v3_estados WHERE Id = IdEstado), ".") Direccion
+                                                    FROM cat_v3_sucursales
+                                                    WHERE Id = "194"');
 
         if ($usuario['IdPerfil'] === '57' || $usuario['IdPerfil'] === '64') {
             $cartaResponsiva = $this->DBS->getServicios('SELECT Archivo FROM t_responsiva_fondo_fijo WHERE IdUsuario = "' . $usuario['Id'] . '"');
             if (empty($cartaResponsiva)) {
-                return TRUE;
+                return array(
+                    'resultado' => TRUE,
+                    'direccionSiccob' => $direccionSiccob[0]['Direccion']
+                );
             } else {
-                return $cartaResponsiva[0]['Archivo'];
+                return array(
+                    'cartaResponsiva' => $cartaResponsiva[0]['Archivo'],
+                );
             }
         } else {
             $cartaResponsiva = $this->DBS->getServicios('SELECT Archivo FROM t_responsiva_fondo_fijo WHERE IdUsuario = "' . $datos['idUsuario'] . '"');
-            return $cartaResponsiva[0]['Archivo'];
+            if (!empty($cartaResponsiva)) {
+                return array(
+                    'cartaResponsiva' => $cartaResponsiva[0]['Archivo'],
+                );
+            } else {
+                return array(
+                    'resultado' => FALSE
+                );
+            }
         }
     }
 

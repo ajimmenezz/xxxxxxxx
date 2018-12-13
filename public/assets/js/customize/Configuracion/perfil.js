@@ -173,14 +173,12 @@ $(function () {
 
     $('#inputToken').off("click");
     $('#inputToken').on('click', function () {
+        mostrarCargaPagina();
         var data = {};
-        evento.enviarEvento('PerfilUsuario/ActualizarTokenUsuario', data, '#configuracionPerfilUsuario', function (respuesta) {
-            console.log(respuesta);
-//            if (respuesta) {
-//                recargarPagina();
-//            } else {
-//                evento.mostrarMensaje("#errorPasswordUsuario", false, 'La nueva contraseña es igual que la actual.', 5000);
-//            }
+        evento.enviarEvento('PerfilUsuario/ActualizarTokenUsuario', data, '', function (respuesta) {
+            if (respuesta) {
+                recargarPagina();
+            }
         });
     });
 

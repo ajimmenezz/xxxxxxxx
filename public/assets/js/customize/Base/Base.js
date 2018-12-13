@@ -183,6 +183,7 @@ Base.prototype.mostrarMensaje = function (objeto, tipo, mensaje, duración) {
 Base.prototype.mostrarModal = function () {
     var titulo = arguments[0] || 'Titulo Modal';
     var contenido = arguments[1] || 'Contenido del modal';
+    var ajustarTexto = arguments[2] || 'text-center';
     //Inicia modal
     $('#modal-dialogo').modal({
         backdrop: 'static',
@@ -190,11 +191,11 @@ Base.prototype.mostrarModal = function () {
     });
 
     //Ingresa datos de modal
-    if (arguments.length >= 1 && arguments.length < 3) {
-        $('#modal-dialogo .modal-title').empty().append(titulo).addClass('text-center');
+    if (arguments.length >= 1 && arguments.length < 4) {
+        $('#modal-dialogo .modal-title').empty().append(titulo).addClass(ajustarTexto);
         $('#modal-dialogo .modal-body').empty().append(contenido);
-    } else if (arguments.length === 0 || arguments.length >= 3) {
-        $('#modal-dialogo .modal-title').empty().append('Titulo Modal').addClass('text-center');
+    } else if (arguments.length === 0 || arguments.length >= 4) {
+        $('#modal-dialogo .modal-title').empty().append('Titulo Modal').addClass(ajustarTexto);
         $('#modal-dialogo .modal-body').empty().append('Contenido del modal');
     }
 
