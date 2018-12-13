@@ -74,7 +74,7 @@ class Secciones extends General {
         $this->FondoFijo = \Librerias\Tesoreria\FondoFijo::factory();
         $this->ModeloTesoreria = \Modelos\Modelo_Tesoreria::factory();
         $this->Compras = \Librerias\Compras\Compras::factory();
-        $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
+//        $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
         $this->ModeloDashboard = \Modelos\Modelo_Dashboard::factory();
     }
 
