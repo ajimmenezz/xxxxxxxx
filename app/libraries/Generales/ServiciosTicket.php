@@ -435,7 +435,7 @@ class ServiciosTicket extends General {
                         break;
                 }
             } else if ($datosServicio['IdTipoServicio'] === '27') {
-                
+
                 switch ($datos['operacion']) {
                     case '1':
                         $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '2', '4');
@@ -2129,13 +2129,17 @@ class ServiciosTicket extends General {
     }
 
     public function concluirServicioSolicitudTicket() {
-        $cuerentayochoMenos = mdate("%Y-%m-%d %H:%i:%s", strtotime("-48 hour"));
-        $serviciosTicket = $this->DBST->consultaGeneral('SELECT * FROM t_servicios_ticket WHERE FechaConclusion <= "' . $cuerentayochoMenos . '" AND IdEstatus = 5');
-        foreach ($serviciosTicket as $value) {
-            $censoMantenimiento = $this->DBST->consultaGeneral('SELECT IdTipoServicio FROM adist3_prod.t_servicios_ticket WHERE Id = "' . $value['Id'] . '"');
-            if ($censoMantenimiento[0]['IdTipoServicio'] !== '11') {
-                if ($censoMantenimiento[0]['IdTipoServicio'] !== '12') {
-                    $this->verificarServicio(array('servicio' => $value['Id'], 'ticket' => $value['Ticket'], 'idSolicitud' => $value['IdSolicitud']));
+        $host = $_SERVER['SERVER_NAME'];
+
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $cuerentayochoMenos = mdate("%Y-%m-%d %H:%i:%s", strtotime("-48 hour"));
+            $serviciosTicket = $this->DBST->consultaGeneral('SELECT * FROM t_servicios_ticket WHERE FechaConclusion <= "' . $cuerentayochoMenos . '" AND IdEstatus = 5');
+            foreach ($serviciosTicket as $value) {
+                $censoMantenimiento = $this->DBST->consultaGeneral('SELECT IdTipoServicio FROM adist3_prod.t_servicios_ticket WHERE Id = "' . $value['Id'] . '"');
+                if ($censoMantenimiento[0]['IdTipoServicio'] !== '11') {
+                    if ($censoMantenimiento[0]['IdTipoServicio'] !== '12') {
+                        $this->verificarServicio(array('servicio' => $value['Id'], 'ticket' => $value['Ticket'], 'idSolicitud' => $value['IdSolicitud']));
+                    }
                 }
             }
         }
@@ -2340,7 +2344,7 @@ class ServiciosTicket extends General {
                                             WHERE Flag = 1
                                             AND Salas4D = 1');
     }
-    
+
     private function getServicioChecklist(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $permisoActividades = FALSE;
@@ -2377,7 +2381,7 @@ class ServiciosTicket extends General {
 
         return $data;
     }
-    
+
 }
 
 class PDFAux extends PDF {
