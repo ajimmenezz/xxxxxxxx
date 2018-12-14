@@ -46,25 +46,28 @@ class Documentacion extends General {
 
     public function validarCartaResponsiva(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-        $direccionSiccob = $this->DBS->getServicios('SELECT 
-                                                        CONCAT(
-                                                                Calle, 
-                                                                " #", NoExt,
-                                                                " Col. ", (SELECT Nombre FROM cat_v3_colonias WHERE Id = IdColonia),
-                                                                ", ", (SELECT Nombre FROM cat_v3_estados WHERE Id = IdEstado), ".") Direccion
-                                                    FROM cat_v3_sucursales
-                                                    WHERE Id = "194"');
 
         if ($usuario['IdPerfil'] === '57' || $usuario['IdPerfil'] === '64') {
-            $cartaResponsiva = $this->DBS->getServicios('SELECT Archivo FROM t_responsiva_fondo_fijo WHERE IdUsuario = "' . $usuario['Id'] . '"');
-            if (empty($cartaResponsiva)) {
-                return array(
-                    'resultado' => TRUE,
-                    'direccionSiccob' => $direccionSiccob[0]['Direccion']
-                );
+            $montoFijo = $this->DBS->getServicios('SELECT * FROM cat_v3_fondo_fijo_usuarios WHERE IdUsuario = "' . $usuario['Id'] . '"');
+            if (!empty($montoFijo)) {
+                $direccionSiccob = $this->direccionSiccob();
+                $cartaResponsiva = $this->DBS->getServicios('SELECT Archivo FROM t_responsiva_fondo_fijo WHERE IdUsuario = "' . $usuario['Id'] . '"');
+                if (empty($cartaResponsiva)) {
+                    return array(
+                        'resultado' => TRUE,
+                        'direccionSiccob' => $direccionSiccob,
+                        'nombreUsuario' => $usuario['Nombre'],
+                        'montoFijo' => $montoFijo[0]['Monto']
+                    );
+                } else {
+                    return array(
+                        'cartaResponsiva' => $cartaResponsiva[0]['Archivo'],
+                        'resultado' => 'existePDF'
+                    );
+                }
             } else {
                 return array(
-                    'cartaResponsiva' => $cartaResponsiva[0]['Archivo'],
+                    'resultado' => 'faltaMonto'
                 );
             }
         } else {
@@ -72,10 +75,11 @@ class Documentacion extends General {
             if (!empty($cartaResponsiva)) {
                 return array(
                     'cartaResponsiva' => $cartaResponsiva[0]['Archivo'],
+                    'resultado' => 'existePDF'
                 );
             } else {
                 return array(
-                    'resultado' => FALSE
+                    'resultado' => 'noExistePDF'
                 );
             }
         }
@@ -135,6 +139,11 @@ class Documentacion extends General {
 
     public function pdfCartaResponsiva(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
+        $direccionSiccob = $this->direccionSiccob();
+        $dias = array("Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sábado");
+        $meses = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
+        $fechaCompleta = date('d') . " de " . $meses[date('n') - 1] . " del " . date('Y');
+        $montoFijo = $this->DBS->getServicios('SELECT * FROM cat_v3_fondo_fijo_usuarios WHERE IdUsuario = "' . $usuario['Id'] . '"');
 
         if (!isset($datos)) {
             return [
@@ -151,26 +160,47 @@ class Documentacion extends General {
             $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
             $this->pdf->SetXY(0, 18);
             $this->pdf->SetFont("helvetica", "B", 18);
-            $this->pdf->Cell(0, 0, "Carta Responsiva", 0, 0, 'C');
+            $this->pdf->Cell(0, 0, "CARTA RESPONSIVA", 0, 0, 'R');
             $this->pdf->SetXY(0, 10);
             $this->pdf->SetFont("helvetica", "", 10);
-            $this->pdf->Cell(0, 0, $fecha, 0, 0, 'R');
+            $this->pdf->Cell(0, 0, $fechaCompleta, 0, 0, 'R');
 
             $this->pdf->SetFont('helvetica', '', 12);
             $height = 6;
 
-            $text = utf8_decode("A través de la presente carta responsiva hago constar que el motivo de la carta es por la responsiva del FONDO FIJO Sirva éste como comprobante de entrega del fondo fijo, para uso exclusivo de atención de reportes asignados para el desempeño de mis actividades laborales. Conozco los montos pre-autorizados por cada concepto y debo entregar las comprobaciones correspondientes en las fechas establecidas.");
+            $text = utf8_decode("SICCOB SOLUTIONS S.A. DE C.V.");
             $this->pdf->Ln('30');
             $this->pdf->MultiCell(190, 4, $text);
 
-            $text = utf8_decode("Sin mas por el momento, quedo a sus ordenes.");
+            $text = utf8_decode($direccionSiccob);
+            $this->pdf->Ln('1');
+            $this->pdf->SetFont("helvetica", "", 10);
+            $this->pdf->MultiCell(110, 4, $text);
+
+            $text = utf8_decode("Ciudad de México a " . $fechaCompleta);
+            $this->pdf->Ln('10');
+            $this->pdf->MultiCell(190, 4, $text, 0, 'R');
+
+            $text = utf8_decode("Recibo en este momento la cantidad, de:");
             $this->pdf->Ln('15');
             $this->pdf->MultiCell(190, 4, $text);
 
-            $this->pdf->Image('.' . $datos['direccionFirma'], 90, 100, 40, 0, 'PNG');
+            $text = utf8_decode('$' . $montoFijo[0]['Monto'] . ' propiedad de SICCOB SOLUTIOS S.A. DE C.V.  Para la Creación de un Fondo Fijo "Revolvente", para Gastos Menores, de placas y tenencia. Mismo que recibo en Custodia, para su buen Uso, siendo Responsable del correcto manejo de él, y me comprometo a Devolverlo, en el instante que me sea requerido.');
+            $this->pdf->Ln('1');
+            $this->pdf->MultiCell(190, 4, $text);
 
-            $this->pdf->SetXY(12, 130);
+            $text = utf8_decode('Hago constar, que he leído, y comprendido, el Procedimiento de Control Interno de la "Caja y fondo fijo" formulando por la Gerencia Administrativa Corporativa, el cual seguiré cabalmente.');
+            $this->pdf->Ln('10');
+            $this->pdf->MultiCell(190, 4, $text);
+
+            $this->pdf->SetXY(12, 140);
             $this->pdf->SetFont("helvetica", "B", 12);
+            $this->pdf->Cell(0, 0, 'RECIBO DE CONFORMIDAD', 0, 0, 'C');
+
+            $this->pdf->Image('.' . $datos['direccionFirma'], 85, 155, 40, 0, 'PNG');
+
+            $this->pdf->SetXY(12, 180);
+            $this->pdf->SetFont("helvetica", "", 10);
             $this->pdf->Cell(0, 0, utf8_decode($datos['nombreTecnico']), 0, 0, 'C');
 
             $carpeta = $this->pdf->definirArchivo('Usuarios/Usuario-' . $usuario['Id'], 'Carta_Responsiva_Usuario_' . $usuario['Id']);
@@ -183,6 +213,19 @@ class Documentacion extends General {
     public function enviarCorreoConcluido(array $correo, string $titulo, string $texto) {
         $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $correo, $titulo, $mensaje);
+    }
+
+    public function direccionSiccob() {
+        $direccionSiccob = $this->DBS->getServicios('SELECT 
+                                                        CONCAT(
+                                                                Calle, 
+                                                                " #", NoExt,
+                                                                " Col. ", (SELECT Nombre FROM cat_v3_colonias WHERE Id = IdColonia),
+                                                                ", ", (SELECT Nombre FROM cat_v3_estados WHERE Id = IdEstado), ".") Direccion
+                                                    FROM cat_v3_sucursales
+                                                    WHERE Id = "194"');
+
+        return $direccionSiccob[0]['Direccion'];
     }
 
 }

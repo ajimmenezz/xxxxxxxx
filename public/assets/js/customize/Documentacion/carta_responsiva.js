@@ -30,11 +30,15 @@ $(function () {
             var data = {idUsuario: datosTablaCartaResponsiva[0]};
             if (datosTablaCartaResponsiva !== undefined) {
                 evento.enviarEvento('Documentacion/ValidarCartaResponsiva', data, '#panelCartaResponsiva', function (respuesta) {
-                    console.log(respuesta);
                     if (respuesta.resultado === true) {
-                        campoFirma(datosTablaCartaResponsiva[1], respuesta.direccionSiccob);
-                    } else if (respuesta.resultado !== false) {
-                        mostrarPDFCartaResponsiva(respuesta);
+                        campoFirma(datosTablaCartaResponsiva[1], respuesta.direccionSiccob, respuesta.nombreUsuario, respuesta.montoFijo);
+                    } else if (respuesta.resultado === 'existePDF') {
+                        mostrarPDFCartaResponsiva(respuesta.cartaResponsiva);
+                    } else if (respuesta.resultado === 'faltaMonto') {
+                        servicios.mensajeModal(
+                                'No tienes asignado un Monto Fijo (Favor de comunicarse con su supervisor para se lo asigne).',
+                                'Advertencia',
+                                true);
                     }
                 });
             }
@@ -44,6 +48,8 @@ $(function () {
     var campoFirma = function () {
         var nombreTecnico = arguments[0];
         var direccionSiccob = arguments[1];
+        var nombreUsuario = arguments[2];
+        var montoFijo = arguments[3];
         var fecha = new Date();
         var options = {year: 'numeric', month: 'long', day: 'numeric'};
 
@@ -68,7 +74,7 @@ $(function () {
                                             <div class="col-md-12">\n\
                                                 <div class="form-group">\n\
                                                     <p>Recibo en este momento la cantidad, de:<br>\n\
-                                                        $dinero propiedad de SICCOB SOLUTIOS S.A. DE C.V.  Para la Creación de un Fondo Fijo “Revolvente”, para Gastos Menores, de placas y tenencia. Mismo que recibo en Custodia, para su buen Uso, siendo Responsable del correcto manejo de él, y me comprometo a Devolverlo, en el instante que me sea requerido.\n\
+                                                        $' + montoFijo + ' propiedad de SICCOB SOLUTIOS S.A. DE C.V.  Para la Creación de un Fondo Fijo “Revolvente”, para Gastos Menores, de placas y tenencia. Mismo que recibo en Custodia, para su buen Uso, siendo Responsable del correcto manejo de él, y me comprometo a Devolverlo, en el instante que me sea requerido.\n\
                                                     </p>\n\
                                                     <p>\n\
                                                         Hago constar, que he leído, y comprendido, el Procedimiento de Control Interno de la “Caja y fondo fijo” formulando por la Gerencia Administrativa Corporativa, el cual seguiré cabalmente.\n\
@@ -77,9 +83,23 @@ $(function () {
                                             </div>\n\
                                         </div>\n\
                                         <div class="row">\n\
+                                            <div class="col-md-12 text-center">\n\
+                                                <div class="form-group">\n\
+                                                  <h4>RECIBO DE CONFORMIDAD</h4>\n\
+                                                </div>\n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div class="row">\n\
                                                 <div id="col-md-12 text-center">\n\
                                                     <div id="campoLapiz"></div>\n\
                                                 </div>\n\
+                                        </div>\n\
+                                       <div class="row m-t-35"">\n\
+                                            <div class="col-md-12 text-center">\n\
+                                                <div class="form-group">\n\
+                                                    <p>' + nombreUsuario + '</p>\n\
+                                                </div>\n\
+                                            </div>\n\
                                         </div>\n\
                                         <div class="row m-t-35">\n\
                                             <div class="col-md-12">\n\
