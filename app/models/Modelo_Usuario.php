@@ -70,7 +70,7 @@ class Modelo_Usuario extends Modelo_Base {
     public function insertarFoto(array $datos, array $where) {
         $fotoAnterior = $this->consultaTRHPersonal(array('IdUsuario' => $where['Id']));
         $archivosAnteriores = explode(',', $fotoAnterior['UrlFoto']);
-        
+
         if (!empty($archivosAnteriores[0])) {
             foreach ($archivosAnteriores as $key => $value) {
                 eliminarArchivo($value);
@@ -100,7 +100,8 @@ class Modelo_Usuario extends Modelo_Base {
         $consulta = $this->consulta('SELECT 
                                         *,
                                         (SELECT Nombre FROM cat_rh_sexo WHERE Id = IdSexo) Genero,
-                                        (SELECT Email FROM cat_v3_usuarios WHERE Id = IdUsuario) Email
+                                        (SELECT Email FROM cat_v3_usuarios WHERE Id = IdUsuario) Email,
+                                        (SELECT Token FROM cat_v3_usuarios WHERE Id = IdUsuario) Token
                                     FROM t_rh_personal 
                                     WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
         return $consulta[0];
@@ -115,6 +116,14 @@ class Modelo_Usuario extends Modelo_Base {
     public function actualizarCampoUsuario(array $datos) {
         $consulta = $this->actualizar('cat_v3_usuarios', [
             $datos['campo'] => $datos['inputNuevo']], ['Id' => $datos['id']]);
+        return $consulta;
+    }
+
+    public function consultaTokenUsuarios(array $datos) {
+        $consulta = $this->consulta('SELECT
+                                        Token 
+                                    FROM cat_v3_usuarios
+                                    WHERE Token = "' . $datos['token'] . '"');
         return $consulta;
     }
 

@@ -11,13 +11,9 @@ class Controller_Perfil extends Base {
 
     private $perfil;
 
-//    private $ServiciosTicket;
-
     public function __construct() {
         parent::__construct();
-//        $this->correo = \Librerias\Generales\Correo::factory();
         $this->perfil = \Librerias\Generales\Usuario::factory();
-//        $this->load->library('session');
     }
 
     /*
@@ -43,6 +39,9 @@ class Controller_Perfil extends Base {
                 break;
             case 'ActualizarFotoUsuario':
                 $resultado = $this->perfil->actualizarFotoUsuario($this->input->post());
+                break;
+            case 'ActualizarTokenUsuario':
+                $resultado = $this->perfil->actualizarTokenUsuario($this->input->post());
                 break;
             case 'MostrarFormularioPerfilUsuario':
                 $resultado = $this->perfil->mostrarFormularioPerfilUsuario($this->input->post());

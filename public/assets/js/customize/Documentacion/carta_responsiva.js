@@ -30,10 +30,15 @@ $(function () {
             var data = {idUsuario: datosTablaCartaResponsiva[0]};
             if (datosTablaCartaResponsiva !== undefined) {
                 evento.enviarEvento('Documentacion/ValidarCartaResponsiva', data, '#panelCartaResponsiva', function (respuesta) {
-                    if (respuesta === true) {
-                        campoFirma(datosTablaCartaResponsiva[1]);
-                    } else if (respuesta !== false) {
-                        mostrarPDFCartaResponsiva(respuesta);
+                    if (respuesta.resultado === true) {
+                        campoFirma(datosTablaCartaResponsiva[1], respuesta.direccionSiccob, respuesta.nombreUsuario, respuesta.montoFijo);
+                    } else if (respuesta.resultado === 'existePDF') {
+                        mostrarPDFCartaResponsiva(respuesta.cartaResponsiva);
+                    } else if (respuesta.resultado === 'faltaMonto') {
+                        servicios.mensajeModal(
+                                'No tienes asignado un Monto Fijo (Favor de comunicarse con su supervisor para se lo asigne).',
+                                'Advertencia',
+                                true);
                     }
                 });
             }
@@ -42,41 +47,71 @@ $(function () {
 
     var campoFirma = function () {
         var nombreTecnico = arguments[0];
-        var myBoard = null;
-        var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-        var alto = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        var direccionSiccob = arguments[1];
+        var nombreUsuario = arguments[2];
+        var montoFijo = arguments[3];
+        var fecha = new Date();
+        var options = {year: 'numeric', month: 'long', day: 'numeric'};
+
         var html = ' <div id="campo_firma">\n\
+                                    <div class="panel-body">\n\
                                         <div class="row">\n\
-                                            <div class="col-md-12 text-center">\n\
+                                            <div class="col-md-12">\n\
                                                 <div class="form-group">\n\
-                                                    <p>A través de la presente carta responsiva hago constar que el motivo de la carta es por la responsiva del FONDO FIJO Sirva éste como comprobante de entrega del fondo fijo, para uso exclusivo de atención de reportes asignados para el desempeño de mis actividades laborales. Conozco los montos pre-autorizados por cada concepto y debo entregar las comprobaciones correspondientes en las fechas establecidas.</p>\n\
+                                                  <h4>SICCOB SOLUTIONS S.A. DE C.V.</h4>\n\
+                                                  <p>' + direccionSiccob + '</p>\n\
+                                                </div>\n\
+                                            </div>\n\
+                                        </div>\n\
+                                       <div class="row">\n\
+                                            <div class="col-md-12 text-right">\n\
+                                                <div class="form-group">\n\
+                                                    <p>Ciudad de México a ' + fecha.toLocaleDateString("es-ES", options) + '</p>\n\
                                                 </div>\n\
                                             </div>\n\
                                         </div>\n\
                                         <div class="row">\n\
-                                                <div id="divcampoLapiz" class="col-md-12 text-center">\n\
+                                            <div class="col-md-12">\n\
+                                                <div class="form-group">\n\
+                                                    <p>Recibo en este momento la cantidad, de:<br>\n\
+                                                        $' + montoFijo + ' propiedad de SICCOB SOLUTIOS S.A. DE C.V.  Para la Creación de un Fondo Fijo “Revolvente”, para Gastos Menores, de placas y tenencia. Mismo que recibo en Custodia, para su buen Uso, siendo Responsable del correcto manejo de él, y me comprometo a Devolverlo, en el instante que me sea requerido.\n\
+                                                    </p>\n\
+                                                    <p>\n\
+                                                        Hago constar, que he leído, y comprendido, el Procedimiento de Control Interno de la “Caja y fondo fijo” formulando por la Gerencia Administrativa Corporativa, el cual seguiré cabalmente.\n\
+                                                    </p>\n\
+                                                </div>\n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div class="row">\n\
+                                            <div class="col-md-12 text-center">\n\
+                                                <div class="form-group">\n\
+                                                  <h4>RECIBO DE CONFORMIDAD</h4>\n\
+                                                </div>\n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div class="row">\n\
+                                                <div id="col-md-12 text-center">\n\
                                                     <div id="campoLapiz"></div>\n\
                                                 </div>\n\
+                                        </div>\n\
+                                       <div class="row m-t-35"">\n\
+                                            <div class="col-md-12 text-center">\n\
+                                                <div class="form-group">\n\
+                                                    <p>' + nombreUsuario + '</p>\n\
+                                                </div>\n\
+                                            </div>\n\
                                         </div>\n\
                                         <div class="row m-t-35">\n\
                                             <div class="col-md-12">\n\
                                                 <div class="errorFirma"></div>\n\
                                             </div>\n\
                                         </div>\n\
+                                    </div>\n\
                                 </div>';
 
-        evento.mostrarModal('Carta Responsiva', html);
+        evento.mostrarModal('CARTA RESPONSIVA', html, 'text-right');
 
-        $(window).resize(function () {
-            servicios.ajusteCanvasFirma('campoLapiz');
-            myBoard = servicios.campoLapiz('campoLapiz');
-        });
-
-        var arrayMedidas = servicios.ajusteCanvasMedidas(ancho, alto);
-
-        $('#campoLapiz').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
-
-        myBoard = servicios.campoLapiz('campoLapiz');
+        var myBoard = servicios.campoLapiz('campoLapiz');
 
         $('#btnModalConfirmar').off('click');
         $('#btnModalConfirmar').on('click', function () {
