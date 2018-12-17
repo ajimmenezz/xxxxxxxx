@@ -142,7 +142,7 @@ class InformacionServicios extends General {
                                                             OR(tse.IdTipoServicio = 20 
                                                                     AND tse.IdEstatus = 4
                                                                     AND(tse.Firma IS NULL OR tse.Firma = "")))
-                                                                    AND tse.IdTipoServicio != 21');
+                                                                    AND tse.IdTipoServicio not in (21,41)');
 
         if (isset($datos['Servicio'])) {
             $servicioLaboratorio = $this->DBS->consultaGeneralSeguimiento('SELECT
