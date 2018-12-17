@@ -34,7 +34,7 @@
                     </div>
                     <div class="col-md-3 col-xs-6 m-t-25">
                         <div class="form-group">
-                            <label id="btnTerminaComprobacion" class="btn btn-success">Termina Comprobación</label>
+                            <label id="btnTerminaComprobacion" class="btn btn-success" disabled>Termina Comprobación</label>
                         </div>
                     </div>
                 </div>

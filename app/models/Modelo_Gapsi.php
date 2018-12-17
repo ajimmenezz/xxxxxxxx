@@ -141,7 +141,7 @@ class Modelo_Gapsi extends Modelo_Base {
             $condicion = " and IdUsuario = '" . $this->usuario['Id'] . "' ";
             $todos = false;
         }
-        
+
         $this->queryBolean("SET SESSION group_concat_max_len = 1000000");
 
         $ids = $this->consulta(""
@@ -453,16 +453,17 @@ class Modelo_Gapsi extends Modelo_Base {
         $gasto = $consulta->result_array();
 //        var_dump($gasto);
         return $gasto;
-    
+    }
+
     public function registrarSinXML($datos) {
-        
+
         parent::connectDBGapsi()->trans_begin();
         $query = "insert into "
                 . "db_ComprobacionRegistro"
                 . "(Registro, Monto, Comentario, Status, UUID) "
                 . "VALUES "
                 . "('" . $datos['idGasto'] . "', '" . $datos['monto'] . "', null, 'Enviado', null)";
-        
+
         parent::connectDBGapsi()->query($query);
         $ultimo = parent::connectDBGapsi()->insert_id();
 
@@ -471,14 +472,34 @@ class Modelo_Gapsi extends Modelo_Base {
             return ['code' => 400];
         } else {
             parent::connectDBGapsi()->trans_commit();
-            $this->marcarComprobado($datos);
             return ['code' => 200, 'last' => $ultimo];
         }
     }
-    
+
+    public function insertarComprobanteGapsi($datos) {
+        parent::connectDBGapsi()->trans_begin();
+
+        $query = "insert into "
+                . "db_ComprobacionRegistro"
+                . "(Registro, Monto, Comentario, Status, UUID) "
+                . "VALUES "
+                . "('" . $datos['idGasto'] . "', '" . $datos['Monto'] . "','null','" . $datos['Status'] . "','" . $datos['UUID'] . "')";
+
+        parent::connectDBGapsi()->query($query);
+        $ultimo = parent::connectDBGapsi()->insert_id();
+
+        if (parent::connectDBGapsi()->trans_status() === FALSE) {
+            parent::connectDBGapsi()->trans_rollback();
+            return ['code' => 500, 'errorBack' => "No se registro comprobante"];
+        } else {
+            parent::connectDBGapsi()->trans_commit();
+            return ['code' => 200, 'errorBack' => "Nuevo registro agregado"];
+        }
+    }
+
     public function marcarComprobado($datos) {
         $this->iniciaTransaccion();
-        
+
         $this->queryBolean("
             update 
             t_archivos_gastos_gapsi
@@ -490,31 +511,58 @@ class Modelo_Gapsi extends Modelo_Base {
             return ['code' => 400];
         } else {
             $this->commitTransaccion();
-            return ['code' => 200,'idGasto' => $datos['idGasto']];
+            return ['code' => 200, 'idGasto' => $datos['idGasto']];
         }
     }
 
-    public function registrarComprobante(array $datos) {
-//        parent::connectDBGapsi()->trans_begin();
-
+    public function consultaRegistro($datos) {
+        $consultaComprobante = "select Monto from db_ComprobacionRegistro where Registro = '" . $datos['idGasto'] . "'";
+        $consulta = parent::connectDBGapsi()->query($consultaComprobante);
+        $montoComprobante = $consulta->result_array();
         
-//        $query = "insert into "
-//                . "db_ComprobacionRegistro "
-//                . "(Registro, Monto, Comentario, Status, UUID) "
-//                . "VALUES "
-//                . "('" . $datos['IdRegistro'] . "', '" . $datos['monto'] . "', '" . $datos['null'] . "', '"enviado"', '" . $datos['TipoServicio'] . "')";
+        $consultaRegistro = "select Importe from db_Registro where ID = '" . $datos['idGasto'] . "'";
+        $registro = parent::connectDBGapsi()->query($consultaRegistro);
+        $montoRegistro = $registro->result_array();
+        
+        if($montoComprobante >= $montoRegistro){
+            return true;
+        } else {
+            return false;
+        }
+        
+//        if ($monto > 0) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+    }
+
+    public function actualizarMontoComprobado($datos) {
+        parent::connectDBGapsi()->trans_begin();
+
+        $consultaMontoCR = "select SUM(Monto) as monto from db_ComprobacionRegistro where Registro = '" . $datos['idGasto'] . "'";
+        $consulta = parent::connectDBGapsi()->query($consultaMontoCR);
+        $monto = $consulta->result_array();
+
+        $consultaMontoR = "select MontoComprobado from db_Registro where ID = '" . $datos['idGasto'] . "'";
+        $consultaRegistro = parent::connectDBGapsi()->query($consultaMontoR);
+        $montoRegistro = $consultaRegistro->result_array();
+
+        $total = $monto[0]['monto'] + $montoRegistro[0]['MontoComprobado'];
+
+        $query = "update db_Registro set
+                 MontoComprobado = '" . $total . "'
+                 WHERE ID = '" . $datos['idGasto'] . "'";
 
         parent::connectDBGapsi()->query($query);
-        $ultimo = parent::connectDBGapsi()->insert_id();
 
-
-//        if (parent::connectDBGapsi()->trans_status() === FALSE) {
-//            parent::connectDBGapsi()->trans_rollback();
-//            return ['code' => 400];
-//        } else {
-//            parent::connectDBGapsi()->trans_commit();
-//            return ['code' => 200];
-//        }
+        if (parent::connectDBGapsi()->trans_status() === FALSE) {
+            parent::connectDBGapsi()->trans_rollback();
+            return ['code' => 400];
+        } else {
+            parent::connectDBGapsi()->trans_commit();
+            return ['code' => 200, 'last' => "OK"];
+        }
     }
 
 }

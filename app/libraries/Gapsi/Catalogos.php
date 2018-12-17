@@ -587,24 +587,23 @@ class Catalogos extends General {
         $typeFiles = null;
         $CI = parent::getCI();
         $carpeta = './storage/Gastos/' . $idRegistro . '/FACT/';
-        $valorUUID = null;
+//        $carpeta = 'Gastos/' . $idRegistro . '/FACT/';
 
         if (!empty($_FILES)) {
             $typeFiles = $_FILES['inputArchivoComprobante']['type'];
         }
-        $archivos = setMultiplesArchivos($CI, 'inputArchivoComprobante', $carpeta, 'gapsi');
 
-        // Si es XML
         if (in_array('text/xml', $typeFiles)) {
             $archivosComprobantes = $_FILES;
             $respuesta = $this->comprobarXML($archivosComprobantes);
             if ($respuesta === true) {
-                $respuesta = $this->validarComprobanteGastos($idRegistro, $monto, $CI, $archivos, $carpeta);
-                
+                $archivos = setMultiplesArchivos($CI, 'inputArchivoComprobante', $carpeta, 'gapsi');
+                $respuesta = $this->validarComprobanteGastos($monto, $archivos, $datos);                
             }
         } else {
-        // Si solo son PDF's o Imagenes
-            $respuesta = $this->DB->registrarSinXML($datos);
+            $archivos = setMultiplesArchivos($CI, 'inputArchivoComprobante', $carpeta,'gapsi');
+            return $this->cambiarNombre($archivos, $idRegistro);
+//            $respuesta = $this->DB->registrarSinXML($datos);
         }
         return $respuesta;
     }
@@ -656,7 +655,7 @@ class Catalogos extends General {
     }
 
     //Obtener UUID y validar monto y version de XML
-    public function validarComprobanteGastos($monto, $archivos) {
+    public function validarComprobanteGastos($monto, $archivos, $datos) {
 
         foreach ($archivos as $key => $value) {
             $extension = pathinfo($value, PATHINFO_EXTENSION);
@@ -676,13 +675,19 @@ class Catalogos extends General {
                     $this->eliminaArchivos($archivos);
                     return ['code' => 500, 'errorBack' => $resultadoComprobante['error']];
                 }
-                
+
                 $cfdi = new LeerCFDI();
                 $cfdi->cargaXml(getcwd() . $value);
                 $valorUUID = $cfdi->uuid();
-                if(isset($valorUUID)){
-                    return $cfdi->uuid();
-                }else{
+                if (isset($valorUUID)) {
+                    $datos = ['idGasto' => $datos['idGasto'],
+                        'Monto' => $datos['monto'],
+                        'Comentario' => null,
+                        'Status' => 'Enviado',
+                        'UUID' => $valorUUID];
+
+                    return $this->DB->insertarComprobanteGapsi($datos);
+                } else {
                     return ['code' => 500, 'errorBack' => "No se encuentra UUID"];
                 }
             }
@@ -759,6 +764,58 @@ class Catalogos extends General {
         }
 
         return $arrayReturn;
+    }
+
+    public function cambiarNombre($archivos, $idRegistro) {
+
+        $nuevoNombre = "./storage/Gastos/" . $idRegistro . "/FACT/" . $idRegistro;
+        $contador = 0;
+
+        foreach ($archivos as $key => $ruta) {
+            
+            $rutaArchivo = "." . $ruta;
+            if (file_exists($rutaArchivo)) {
+                $extension = explode(".", $ruta);
+                $nuevoNombre1 = $nuevoNombre . "." . $extension[1];
+                if (file_exists($nuevoNombre1)) {
+                    $contador++;
+                    $nuevoNombre2 = $nuevoNombre . "(" . $contador . ")." . $extension[1];
+                    rename($rutaArchivo, $nuevoNombre2);
+                    $respuestaArchivo = ['code' => 200, 'errorBack' => 'Comprobante de pago Registrado'];
+                } else {
+                    if (rename($rutaArchivo, $nuevoNombre1)) {
+                        $respuestaArchivo = ['code' => 200, 'errorBack' => 'Comprobante de pago Registrado'];
+                    } else {
+                        $respuestaArchivo =  ['code' => 500, 'errorBack' => 'El comprobante no se ha registrado correctamente'];
+                    }
+                }
+            } else {
+                $respuestaArchivo = ['code' => 500, 'errorBack' => 'La ruta no es correcta'];
+            }
+        }
+        return $respuestaArchivo;
+    }
+    
+    public function actualizarComprobacion($datos) {
+
+        $consulta = $this->DB->consultaRegistro($datos);
+        if ($consulta) {
+            $this->DB->marcarComprobado($datos);
+            $this->DB->actualizarMontoComprobado($datos);
+            return ['code' => 200, "error" => "ok"];
+        } else {
+            return ['code' => 500, "error" => "Necesitas registrar comprobantes"];
+        }
+    }
+    
+    public function terminarComprobante($datos) {
+        $consulta = $this->DB->consultaRegistro($datos);
+        
+        if($consulta){
+            return ['code' => 200, "error" => true];
+        }else{
+            return ['code' => 500, "error" => "No es posible teminar comprobacion"];
+        }
     }
 
 }

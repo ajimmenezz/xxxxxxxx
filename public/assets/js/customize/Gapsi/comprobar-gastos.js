@@ -1,9 +1,11 @@
 $(function () {
 
     var evento = new Base();
+    var servicios = new Servicio();
     var tabla = new Tabla();
     var select = new Select();
     var file = new Upload();
+    var nota = new Nota();
 
     //Muestra la hora en el sistema
     evento.horaServidor($('#horaServidor').val());
@@ -35,7 +37,7 @@ $(function () {
                     $("#divFormularioGasto").empty().append(respuesta.html);
                     evento.cambiarDiv("#divListaGastos", "#divFormularioGasto");
                     evento.cambiarDiv("#divListaGastos", "#divFileComprobarGasto");
-
+                    etiqueta();
                     $("#btnRegresar").off("click");
                     $("#btnRegresar").on("click", function () {
                         $("#divFileComprobarGasto").fadeOut(400, function () {
@@ -69,18 +71,34 @@ $(function () {
             file.enviarArchivos('#inputArchivoComprobante', 'Gasto/ComprobacionRegistro', '#divDetalleGastos', datosGastos, function (respuesta) {
                 file.limpiar('#inputArchivoComprobante');
                 $('#txtMonto').val('');
-                console.log(respuesta);
+                if (respuesta.code === 500) {
+                    evento.mostrarMensaje("#errorComprobarGasto", false, respuesta.errorBack, 4000);
+                } else {
+                    evento.mostrarMensaje("#errorComprobarGasto", true, respuesta.errorBack, 4000);
+                }
+//                console.log(respuesta);
             });
         }
     });
 
-    $('#btnTerminaComprobacion').off('click');
-    $('#btnTerminaComprobacion').on('click', function () {
-        var idGasto = parseInt($('#IDGasto').val());
-//        console.log(typeof(idGasto));
-        evento.enviarEvento('Gasto/ActualizarCampoComprobado', {id: idGasto}, '#panelListaGastos', function (respuesta) {
-            console.log(respuesta);
+    var etiqueta = function () {
+        var idGasto = $('#IDGasto').val();
+        evento.enviarEvento('Gasto/TerminarComprobante', {idGasto: idGasto}, '', function (respuesta) {
+            if (respuesta.error) {
+                $('#btnTerminaComprobacion').attr('disabled', false);
+                $('#btnTerminaComprobacion').off('click');
+                $('#btnTerminaComprobacion').on('click', function () {
+                    var idGasto = $('#IDGasto').val();
+                    evento.enviarEvento('Gasto/ActualizarCampoComprobado', {idGasto: idGasto}, '#panelListaGastos', function (respuesta) {
+                        if (respuesta.code === 500) {
+                            evento.mostrarMensaje("#errorComprobarGasto", false, respuesta.error, 4000);
+                        } else {
+                            servicios.mensajeModal("Has concluido el comprobante", "Terminar Comprobacion");
+                        }
+                    });
+                });
+            }
         });
-    });
+    };
 
 });

@@ -2759,7 +2759,7 @@ $config['Gapsi'] = array(
             'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
             'parsley/src/parsley'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload','Gapsi/comprobar-gastos'),
+        'js' => array('Base/Base','Base/Servicio', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload','Base/Nota','Gapsi/comprobar-gastos'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
