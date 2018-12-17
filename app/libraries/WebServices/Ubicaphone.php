@@ -38,9 +38,13 @@ class Ubicaphone extends General {
         );
 
         $context = stream_context_create($opts);
-        $result = json_decode(file_get_contents($this->Url, false, $context), true);
-
-        return $result['data'][0]['token'];
+        
+        if (stristr($this->Url, 'HTTP request failed!') === FALSE) {
+            $result = json_decode(file_get_contents($this->Url, false, $context), true);
+            return $result['data'][0]['token'];
+        } else {
+            return '';
+        }
     }
 
     public function getAllDevices() {
@@ -161,7 +165,7 @@ class Ubicaphone extends General {
     public function detallesDispositivo(array $datos) {
         $data = [
             'url' => $this->getRoutebyUniversal(['imei' => $datos['imei']])
-        ];        
+        ];
         return [
             'html' => parent::getCI()->load->view('Localizacion/DetallesDispositivo', $data, TRUE)
         ];

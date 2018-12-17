@@ -26,8 +26,14 @@ class Controller_SAEReports extends Base {
             case 'getInventarioAlmacen':
                 $resultado = $this->SAEReports->getInventarioAlamacenSAE($this->input->post());
                 break;
+            case 'getMovimientosAlmacenesSAE':
+                $resultado = $this->SAEReports->getMovimientosAlmacenesSAE($this->input->post());
+                break;
             case 'exportaInventarioAlmacen':
                 $resultado = $this->SAEReports->exportaInventarioAlamacenSAE($this->input->post());
+                break;
+            case 'exportaMovimientosAlmacenesSAE':
+                $resultado = $this->SAEReports->exportaMovimientosAlmacenesSAE($this->input->post());
                 break;
             case 'exportaReporteComprasSAE':
                 $resultado = $this->SAEReports->exportaReporteComprasSAE($this->input->post());
@@ -47,6 +53,13 @@ class Controller_SAEReports extends Base {
             case 'GeneraOC':
                 $resultado = $this->SAEReports->generaOC($this->input->post());
                 break;
+            case 'mostrarReporteRemisiones':
+                $resultado = $this->SAEReports->mostrarReporteRemisiones($this->input->post());
+                break;
+            case 'exportaReporteRemisiones':
+                $resultado = $this->SAEReports->exportaReporteRemisiones($this->input->post());
+                break;
+
         }
         echo json_encode($resultado);
     }

@@ -1087,8 +1087,8 @@ Servicio.prototype.modalCampoFirmaExtra = function () {
 
     $('#btnModalAbortar').removeClass('hidden');
 
-    var html = ' <div id="campo_firma_extra">';
-
+    var html = ' <div id="campo_firma_extra">\n\
+                    <div class="panel-body">';
     html += '           <form class="margin-bottom-0" id="formFirmaExtra" data-parsley-validate="true">\n\
                             <div class="row m-t-10">\n\
                                 <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
@@ -1135,6 +1135,7 @@ Servicio.prototype.modalCampoFirmaExtra = function () {
                                 </div>\n\
                             </div>\n\
                         </form>\n\
+                    </div>\n\
                 </div>';
     return html;
 
@@ -1158,7 +1159,7 @@ Servicio.prototype.formConcluirServicio = function () {
                                     <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
                                         <div class="form-group">\n\
                                             <label id="inputCorreo">Correo(s) *</label>\n\
-                                            <ul id="tagCorreo" class="inverse"></ul>\n\
+                                            <ul id="tagValor" class="inverse"></ul>\n\
                                         </div>\n\
                                     </div>\n\
                                 </div>';

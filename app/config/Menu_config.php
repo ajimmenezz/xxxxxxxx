@@ -2161,14 +2161,18 @@ $config['Admin Proyectos'] = array(
         'Url' => '/AdminProyectos/Inventarios',
         'css' => array('Generales/notas'),
         'pluginsCss' => array(
-            'DataTables/css/data-table'
+            'DataTables/css/data-table',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Servicio', 'Base/Tabla', 'Base/Botones', 'AdminProyectos/SAEReports', 'Base/Nota'),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Servicio', 'Base/Tabla', 'Base/Fecha', 'Base/Botones', 'AdminProyectos/SAEReports', 'Base/Nota'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
             'moment/moment-locales.min',
-            'moment/es'
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
         ),
         'Permiso' => 'VRSAEINV'
     )
@@ -2506,6 +2510,56 @@ $config['Reportes SAE'] = array(
             'jquery-tag-it/css/jquery.tagit'
         ),
         'js' => array('Base/Base', 'Base/Socket', 'Base/Tabla', 'Base/Select', 'Base/Fecha', 'ReportesSAE/comprasproyecto'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'jquery-tag-it/js/tag-it.min'
+        ),
+        'Permiso' => 'VRSAEC'
+    ),
+    'Remisiones' => array(
+        'liga' => 'Remisiones',
+        'icono' => 'fa fa-search',
+        'Url' => '/ReportesSAE/Remisiones',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'jquery-tag-it/css/jquery.tagit'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Tabla', 'Base/Select', 'Base/Fecha', 'ReportesSAE/remisiones'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'jquery-tag-it/js/tag-it.min'
+        ),
+        'Permiso' => 'VRSAEC'
+    ),
+    'Movimientos' => array(
+        'liga' => 'Movimientos Almacén',
+        'icono' => 'fa fa-search',
+        'Url' => '/ReportesSAE/Movimientos_Almacen',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'jquery-tag-it/css/jquery.tagit'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Tabla', 'Base/Select', 'Base/Fecha', 'ReportesSAE/movimientos'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',

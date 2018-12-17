@@ -379,102 +379,102 @@ class Controller_SegundoPlano extends \CI_Controller {
     }
 
     public function checkUbicaphoneEstatus() {
-        $result = $this->ubicaphone->getAllDevices();
-        $array = [];
-        date_default_timezone_set("America/Mexico_City");
-        foreach ($result as $key => $value) {
-            $infoUser = $this->DB->getInfoUserByIMEI($value['imei']);
-            $mail = '';
-            $nombre = '';
-            if (!empty($infoUser)) {
-                $mail = $infoUser[0]['Email'];
-                $nombre = $infoUser[0]['Usuario'];
-            }
-
-            $t1 = strtotime(date('Y-m-d H:i:s', $value['timestamp']));
-            $t2 = strtotime(date('Y-m-d H:i:s'));
-
-            $diff = $t2 - $t1;
-            $hours = $diff / 3600;
-
-            if ($hours > 3 && $mail != '') {
-                array_push($array, [
-                    'nombre' => $nombre,
-                    'mail' => $mail,
-                    'hours' => $hours,
-                    'imei' => $value['imei'],
-                    'fecha' => date('Y-m-d H:i:s', $value['timestamp']),
-                    'timestamp' => $value['timestamp'],
-                    'usuario' => $value['alias'],
-                    'lat' => $value['lat'],
-                    'lng' => $value['lng'],
-                    'direccion' => $value['street']
-                ]);
-            }
-        }
-
-
-
-        echo "<pre>";
-        var_dump($array);
-        echo "</pre>";
+//        $result = $this->ubicaphone->getAllDevices();
+//        $array = [];
+//        date_default_timezone_set("America/Mexico_City");
+//        foreach ($result as $key => $value) {
+//            $infoUser = $this->DB->getInfoUserByIMEI($value['imei']);
+//            $mail = '';
+//            $nombre = '';
+//            if (!empty($infoUser)) {
+//                $mail = $infoUser[0]['Email'];
+//                $nombre = $infoUser[0]['Usuario'];
+//            }
+//
+//            $t1 = strtotime(date('Y-m-d H:i:s', $value['timestamp']));
+//            $t2 = strtotime(date('Y-m-d H:i:s'));
+//
+//            $diff = $t2 - $t1;
+//            $hours = $diff / 3600;
+//
+//            if ($hours > 3 && $mail != '') {
+//                array_push($array, [
+//                    'nombre' => $nombre,
+//                    'mail' => $mail,
+//                    'hours' => $hours,
+//                    'imei' => $value['imei'],
+//                    'fecha' => date('Y-m-d H:i:s', $value['timestamp']),
+//                    'timestamp' => $value['timestamp'],
+//                    'usuario' => $value['alias'],
+//                    'lat' => $value['lat'],
+//                    'lng' => $value['lng'],
+//                    'direccion' => $value['street']
+//                ]);
+//            }
+//        }
+//
+//
+//
+//        echo "<pre>";
+//        var_dump($array);
+//        echo "</pre>";
     }
 
     public function getUbicaphoneGeofenceActivations() {
-        $from = strtotime("2018-10-30 00:00:00");
-        $to = strtotime("2018-10-30 23:59:59");
-        $data = [
-            'imei' => '351515080890249',
-            'from' => $from,
-            'to' => $to
-        ];
-        $result = $this->ubicaphone->getGeofenceActivations($data);
-
+//        $from = strtotime("2018-10-30 00:00:00");
+//        $to = strtotime("2018-10-30 23:59:59");
+//        $data = [
+//            'imei' => '351515080890249',
+//            'from' => $from,
+//            'to' => $to
+//        ];
+//        $result = $this->ubicaphone->getGeofenceActivations($data);
+//
+////        echo "<pre>";
+////        var_dump($result);
+////        echo "</pre>";
+//
+//        $array = [];
+//        $origins = '19.3625308,-99.1851497';
+//        foreach ($result as $key => $value) {
+//            if ($value['eventType'] == 'GEO_IN_START') {
+//                $agregar = false;
+//
+//
+//                if (empty($array)) {
+//                    $agregar = true;
+//                } else if (end($array)['idGeocerca'] != $value['geofenceID'] && end($array)['timestamp'] != $value['timestamp'] && end($array)['lat'] != $value['lat'] && end($array)['lng'] != $value['lng']) {
+//                    $agregar = true;
+//                    $origins = end($array)['lat'] . ',' . end($array)['lng'];
+//                }
+//
+//
+//                if ($agregar) {
+//
+//                    $resultado = $this->Url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" . $origins . "&destinations=" . $value['lat'] . "," . $value['lng'] . "&key=AIzaSyD3ELeFOp0xTOMrj2GDa9xNyzRuSbI-C3s";
+//                    $json = json_decode(@file_get_contents($resultado));
+//                    var_dump($json);
+//
+//                    array_push($array, [
+//                        'imei' => $value['deviceImei'],
+//                        'usuario' => $value['deviceName'],
+//                        'idGeocerca' => $value['geofenceID'],
+//                        'geocerca' => $value['geofenceName'],
+//                        'fecha' => date('Y-m-d H:i:s', $value['timestamp']),
+//                        'timestamp' => $value['timestamp'],
+//                        'lat' => $value['lat'],
+//                        'lng' => $value['lng'],
+//                        'direccion' => $value['street'],
+//                        'distance' => $json->rows[0]->elements[0]->distance->value,
+//                        'duration' => $json->rows[0]->elements[0]->duration->value
+//                    ]);
+//                }
+//            }
+//        }
+//
 //        echo "<pre>";
-//        var_dump($result);
+//        var_dump($array);
 //        echo "</pre>";
-
-        $array = [];
-        $origins = '19.3625308,-99.1851497';
-        foreach ($result as $key => $value) {
-            if ($value['eventType'] == 'GEO_IN_START') {
-                $agregar = false;
-
-
-                if (empty($array)) {
-                    $agregar = true;
-                } else if (end($array)['idGeocerca'] != $value['geofenceID'] && end($array)['timestamp'] != $value['timestamp'] && end($array)['lat'] != $value['lat'] && end($array)['lng'] != $value['lng']) {
-                    $agregar = true;
-                    $origins = end($array)['lat'] . ',' . end($array)['lng'];
-                }
-
-
-                if ($agregar) {
-
-                    $resultado = $this->Url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" . $origins . "&destinations=" . $value['lat'] . "," . $value['lng'] . "&key=AIzaSyD3ELeFOp0xTOMrj2GDa9xNyzRuSbI-C3s";
-                    $json = json_decode(@file_get_contents($resultado));
-                    var_dump($json);
-
-                    array_push($array, [
-                        'imei' => $value['deviceImei'],
-                        'usuario' => $value['deviceName'],
-                        'idGeocerca' => $value['geofenceID'],
-                        'geocerca' => $value['geofenceName'],
-                        'fecha' => date('Y-m-d H:i:s', $value['timestamp']),
-                        'timestamp' => $value['timestamp'],
-                        'lat' => $value['lat'],
-                        'lng' => $value['lng'],
-                        'direccion' => $value['street'],
-                        'distance' => $json->rows[0]->elements[0]->distance->value,
-                        'duration' => $json->rows[0]->elements[0]->duration->value
-                    ]);
-                }
-            }
-        }
-
-        echo "<pre>";
-        var_dump($array);
-        echo "</pre>";
     }   
 
 }

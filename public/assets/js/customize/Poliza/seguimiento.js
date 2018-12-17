@@ -218,6 +218,7 @@ $(function () {
 
         servicios.mostrarModal('Firma', servicios.formConcluirServicio());
         $('#btnModalConfirmar').addClass('hidden');
+
         var myBoardFirma = new DrawingBoard.Board('campoFirma', {
             background: "#fff",
             color: "#000",
@@ -232,9 +233,11 @@ $(function () {
             ],
             webStorage: false
         });
+        
         $("#tagCorreo").tagit({
             allowSpaces: false
         });
+        
         myBoardFirma.ev.trigger('board:reset', 'what', 'up');
 
         $('#btnConcluirServicio').off('click');
@@ -243,7 +246,7 @@ $(function () {
             var imgInput = (myBoardFirma.blankCanvas == img) ? '' : img;
             if (evento.validarFormulario('#formConcluirServicioFirma')) {
                 var personaRecibe = $('#inputPersonaRecibe').val();
-                var correo = $("#tagCorreo").tagit("assignedTags");
+                var correo = $("#tagValor").tagit("assignedTags");
                 if (correo.length > 0) {
                     if (servicios.validarCorreoArray(correo)) {
                         if (imgInput !== '') {
@@ -1005,7 +1008,7 @@ $(function () {
         //Encargado de generar el archivo Pdf
         $('#btnGeneraPdfServicio').off('click');
         $('#btnGeneraPdfServicio').on('click', function () {
-            var data = {'servicio': datosTabla[0], 'ticket' : ticket, 'generarPDF' : true};
+            var data = {'servicio': datosTabla[0], 'ticket': ticket, 'generarPDF': true};
             evento.enviarEvento('Seguimiento/GenerarPDF', data, '', function (respuesta) {
                 window.open(respuesta, '_blank');
             });
@@ -1016,7 +1019,7 @@ $(function () {
             $('#seccionSeguimientoServicio').empty().addClass('hidden');
             $('#listaPoliza').removeClass('hidden');
         });
-        
+
         servicios.eventosFolio(datosTabla[2], '#informacionRevision', servicio);
 
     };
@@ -2519,6 +2522,8 @@ $(function () {
     };
 
     var eventosParaSeccionSeguimientoCorrectivo = function () {
+
+
         var datosTabla = arguments[0];
         var respuesta = arguments[1];
         var servicio = datosTabla[0];
@@ -4531,7 +4536,7 @@ $(function () {
         var concluirServicio = arguments[5] || false;
         var estatus = arguments[6] || false;
         var html = '<div class="row" m-t-10">\n\
-                        <div id="col-md-12 text-center">\n\
+                        <div id="divcampoLapizTecnico" class="col-md-12 text-center">\n\
                             <div id="campoLapizTecnico"></div>\n\
                         </div>\n\
                     </div>\n\
@@ -4799,6 +4804,9 @@ $(function () {
 
     var validarCamposFirma = function () {
         var data = arguments[0];
+//        var myBoard = null;
+//        var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+//        var alto = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
         var myBoard = new DrawingBoard.Board('campoLapiz', {
             background: "#fff",
             color: "#000",
@@ -4819,6 +4827,18 @@ $(function () {
         });
 
         myBoard.ev.trigger('board:reset', 'what', 'up');
+
+//        $(window).resize(function () {
+//            servicios.ajusteCanvasFirma()
+//            myBoard = servicios.campoLapiz('campoLapiz');
+//        });
+//
+//        var arrayMedidas = servicios.ajusteCanvasMedidas(ancho, alto);
+//
+//        $('#campoLapiz').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
+//
+//        myBoard = servicios.campoLapiz('campoLapiz');
+
         $('#btnGuardarFirma').on('click', function () {
             var img = myBoard.getImg();
             var imgInput = (myBoard.blankCanvas == img) ? '' : img;

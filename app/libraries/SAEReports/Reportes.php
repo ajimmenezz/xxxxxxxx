@@ -3,7 +3,6 @@
 namespace Librerias\SAEReports;
 
 ini_set('max_execution_time', 3600);
-ini_set('max_execution_time', 1000000);
 
 use Controladores\Controller_Datos_Usuario as General;
 use Librerias\Generales\PDF as PDF;
@@ -31,12 +30,71 @@ class Reportes extends General {
     /* Encargado de regresar los el inventario del almacen virtual de SAE */
 
     public function getInventarioAlamacenSAE(array $datos = null) {
-        $consulta = $this->DBSAE->getInventarioAlamacenSAE($datos['almacen']);
-        return $consulta;
+        if(!isset($datos['desde'])){
+          $condicion = " where FECHAELAB BETWEEN DATEADD(week, -1, GETDATE()) and GETDATE() ";
+        }else{
+          $condicion = " where FECHAELAB BETWEEN '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 23:59:59' ";
+        }
+        $data['inventario'] = $this->DBSAE->getInventarioAlamacenSAE($datos['almacen']);
+        $data['movimientos'] =$this->DBSAE->consultaBDSAE("select
+                                                            NUM_MOV as Numero_Movimiento,
+                                                            movimientos.CVE_FOLIO as Folio,
+                                                            productos.CVE_ART as Clave_Producto,
+                                                            productos.DESCR as Articulo,
+                                                            (select DESCR from ALMACENES03 almacenes where almacenes.CVE_ALM = movimientos.ALMACEN) as Almacen,
+                                                            (select DESCR from CONM03 conceptos where conceptos.CVE_CPTO = movimientos.CVE_CPTO) as Concepto,
+                                                            case movimientos.TIPO_DOC when 'M' then 'Traspaso' when 'r' then 'Compra/Remisión' end as Movimiento,
+                                                            movimientos.REFER as Referencia,
+                                                            movimientos.CANT as Cantidad,
+                                                            CAST(movimientos.COSTO as CHAR) as Costo,
+                                                            CAST(movimientos.COSTO_PROM_INI as CHAR) as Costo_Promo_Inicial,
+                                                            CAST(movimientos.COSTO_PROM_FIN as CHAR) as Costo_Promo_Final,
+                                                            movimientos.UNI_VENTA as Unidad_Venta,
+                                                            movimientos.EXISTENCIA as Existencia,
+                                                            movimientos.FECHAELAB as Fecha,
+                                                            movimientos.MOV_ENLAZADO
+                                                        from MINVE03 movimientos
+                                                        inner join INVE03 productos
+                                                            on movimientos.CVE_ART = productos.CVE_ART ".$condicion."
+                                                        and movimientos.ALMACEN = '".$datos['almacen']."'
+                                                        order by Numero_Movimiento");
+        return $data;
+    }
+    
+    public function getMovimientosAlmacenesSAE(array $datos = null) {
+        if (!isset($datos['desde'])) {
+            $condicion = " where FECHAELAB BETWEEN DATEADD(week, -1, GETDATE()) and GETDATE() ";
+        } else {
+            $condicion = " where FECHAELAB BETWEEN '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 23:59:59' ";
+        }
+
+        $data['movimientos'] = $this->DBSAE->consultaBDSAE("select
+                                                            NUM_MOV as Numero_Movimiento,
+                                                            movimientos.CVE_FOLIO as Folio,
+                                                            productos.CVE_ART as Clave_Producto,
+                                                            productos.DESCR as Articulo,
+                                                            (select DESCR from ALMACENES03 almacenes where almacenes.CVE_ALM = movimientos.ALMACEN) as Almacen,
+                                                            (select DESCR from CONM03 conceptos where conceptos.CVE_CPTO = movimientos.CVE_CPTO) as Concepto,
+                                                            case movimientos.TIPO_DOC when 'M' then 'Traspaso' when 'r' then 'Compra/Remisión' end as Movimiento,
+                                                            movimientos.REFER as Referencia,
+                                                            movimientos.CANT as Cantidad,
+                                                            CAST(movimientos.COSTO as CHAR) as Costo,
+                                                            CAST(movimientos.COSTO_PROM_INI as CHAR) as Costo_Promo_Inicial,
+                                                            CAST(movimientos.COSTO_PROM_FIN as CHAR) as Costo_Promo_Final,
+                                                            movimientos.UNI_VENTA as Unidad_Venta,
+                                                            movimientos.EXISTENCIA as Existencia,
+                                                            movimientos.FECHAELAB as Fecha,
+                                                            movimientos.MOV_ENLAZADO
+                                                        from MINVE03 movimientos
+                                                        inner join INVE03 productos
+                                                            on movimientos.CVE_ART = productos.CVE_ART " . $condicion . "                                                        
+                                                        order by Numero_Movimiento");
+        return $data;
     }
 
     public function exportaInventarioAlamacenSAE(array $datos = null) {
         $info = $datos['info'];
+        $movimientos = $datos['movimientos'];
 
         /* Begin Hoja 1 */
         //Crea una hoja en la posición 0 y la nombra.
@@ -70,8 +128,172 @@ class Reportes extends General {
         $this->Excel->setTableContent('A', 2, $info, true, $arrayAlign);
         /* End Hoja 1 */
 
+        /* Begin Hoja 2 */
+        $this->Excel->createSheet('Movimientos', 1);
+        $this->Excel->setActiveSheet(1);
+        $arrayTitulosMovimientos = [
+            'Número Movimiento',
+            'Folio',
+            'Clave Artículo',
+            'Artículo',
+            'Almacén',
+            'Concepto',
+            'Movimiento',
+            'Referencia',
+            'Cantidad',
+            'Costo',
+            'Costo Promo Inicial',
+            'Costo Promo Final',
+            'Unidad Venta',
+            'Existencia',
+            'Fecha',
+            'Movimiento Enlazado'];
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
+        $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
+        $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
+        $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', 'center', 'center', 'center', '', 'center', 'center', 'center'];
+        $this->Excel->setTableContent('A', 1, $movimientos, true, $arrayAlignMovimientos);
+        /* End Hoja 2 */
+        
+        
         $time = date("ymd_H_i_s");
         $nombreArchivo = 'Inventario_' . $datos['almacen'] . '_' . $time . '.xlsx';
+        $nombreArchivo = trim($nombreArchivo);
+        $ruta = 'storage/Archivos/SAEReports/' . $nombreArchivo;
+
+        //Guarda la hoja envíandole la ruta y el nombre del archivo que se va a guardar.
+        $this->Excel->saveFile($ruta);
+
+        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
+    }
+    
+    public function exportaMovimientosAlmacenesSAE(array $datos = null) {        
+        $movimientos = $datos['movimientos'];
+
+        /* Begin Hoja 2 */
+        $this->Excel->createSheet('Movimientos', 0);
+        $this->Excel->setActiveSheet(0);
+        $arrayTitulosMovimientos = [
+            'Número Movimiento',
+            'Folio',
+            'Clave Artículo',
+            'Artículo',
+            'Almacén',
+            'Concepto',
+            'Movimiento',
+            'Referencia',
+            'Cantidad',
+            'Costo',
+            'Costo Promo Inicial',
+            'Costo Promo Final',
+            'Unidad Venta',
+            'Existencia',
+            'Fecha',
+            'Movimiento Enlazado'];
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
+        $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
+        $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
+        $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', 'center', 'center', 'center', '', 'center', 'center', 'center'];
+        $this->Excel->setTableContent('A', 1, $movimientos, true, $arrayAlignMovimientos);
+        /* End Hoja 2 */
+        
+        
+        $time = date("ymd_H_i_s");
+        $nombreArchivo = 'Movimientos_Inventario_' . $time . '.xlsx';
+        $nombreArchivo = trim($nombreArchivo);
+        $ruta = 'storage/Archivos/SAEReports/' . $nombreArchivo;
+
+        //Guarda la hoja envíandole la ruta y el nombre del archivo que se va a guardar.
+        $this->Excel->saveFile($ruta);
+
+        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
+    }
+    
+    public function exportaReporteComprasSAE(array $datos = null) {
+        $compras = isset($datos['compras']) ? $datos['compras'] : [];
+        $existencias = isset($datos['existencias']) ? $datos['existencias'] : [];
+        $movimientos = isset($datos['movimientos']) ? $datos['movimientos'] : [];                 
+
+        /* Begin Hoja 1 */
+        //Crea una hoja en la posición 0 y la nombra.
+        $this->Excel->createSheet('Compras', 0);
+        //Selecciona la hoja creada y la marca como activa. Todas las modificaciones se harán en está hoja.
+        $this->Excel->setActiveSheet(0);
+        //Arreglo de los subtitulos de la tabla. La posición es de izquierda a derecha.
+        $arrayTitulosCompras = [
+            'Empresa',
+            'Referencia',
+            'Proyecto',
+            'Observaciones',
+            'Oc',
+            'Fecha',
+            'Clave Artículo',
+            'Artículo',
+            'Línea',
+            'Cantidad',
+            'Precio',
+            'Total'];
+        //Envía el arreglo de los subtitulos a la hoja activa.
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulosCompras);
+        //Arreglo con el ancho por columna. 
+        $arrayWidthCompras = [12.86, 20.14, 16.14, 18.29, 14.86, 21.14, 17.43, 33.71, 10, 13.10, 11, 10];
+        //Envía y setea los anchos de las columnas definidos en el arreglo de los anchos por columna.
+        $this->Excel->setColumnsWidth('A', $arrayWidthCompras);
+        //Arreglo de alineación por columna.
+        $arrayAlignCompras = ['', '', '', '', '', 'center', '', '', '', 'center', 'center', 'center'];
+        //Envía:
+        //La letra donde comienza la tabla
+        //El número de fila donde comenzará la tabla -1
+        //El contenido en forma de arreglo
+        //Boleano que define si la tabla llevará autofiltros o no
+        //Arreglo con la alineación de las columnas.
+        $this->Excel->setTableContent('A', 1, $compras, true, $arrayAlignCompras);
+        /* End Hoja 1 */
+
+        /* Begin Hoja 2 */
+        $this->Excel->createSheet('Existencias', 1);
+        $this->Excel->setActiveSheet(1);
+        $arrayTitulosExistencias = [
+            'Clave Artículo',
+            'Artículo',
+            'Almacén Virtual',
+            'Existencias'];
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulosExistencias);
+        $arrayWidthExistencias = [18, 33.71, 34.14, 15];
+        $this->Excel->setColumnsWidth('A', $arrayWidthExistencias);
+        $arrayAlignExistencias = ['center', '', '', 'center'];
+        $this->Excel->setTableContent('A', 1, $existencias, true, $arrayAlignExistencias);
+        /* End Hoja 2 */
+
+        /* Begin Hoja 3 */
+        $this->Excel->createSheet('Movimientos', 2);
+        $this->Excel->setActiveSheet(2);
+        $arrayTitulosMovimientos = [
+            'Número Movimiento',
+            'Folio',
+            'Clave Artículo',
+            'Artículo',
+            'Almacén',
+            'Concepto',
+            'Movimiento',
+            'Referencia',
+            'Cantidad',
+            'Costo',
+            'Costo Promo Inicial',
+            'Costo Promo Final',
+            'Unidad Venta',
+            'Existencia',
+            'Fecha',
+            'Movimiento Enlazado'];
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
+        $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
+        $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
+        $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', 'center', 'center', 'center', '', 'center', 'center', 'center'];
+        $this->Excel->setTableContent('A', 1, $movimientos, true, $arrayAlignMovimientos);
+        /* End Hoja 3 */
+
+        $time = date("ymd_H_i_s");
+        $nombreArchivo = 'Reportes_Compras_' . $time . '.xlsx';
         $nombreArchivo = trim($nombreArchivo);
         $ruta = 'storage/Archivos/SAEReports/' . $nombreArchivo;
 
@@ -130,6 +352,59 @@ class Reportes extends General {
 
         $time = date("ymd_H_i_s");
         $nombreArchivo = 'Reportes_Compras_Proyecto' . $time . '.xlsx';
+        $nombreArchivo = trim($nombreArchivo);
+        $ruta = 'storage/Archivos/SAEReports/' . $nombreArchivo;
+
+        //Guarda la hoja envíandole la ruta y el nombre del archivo que se va a guardar.
+        $this->Excel->saveFile($ruta);
+
+        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
+    }
+
+    public function exportaReporteRemisiones(array $datos = null) {
+        $compras = $datos['compras'];
+
+        /* Begin Hoja 1 */
+        //Crea una hoja en la posición 0 y la nombra.
+        $this->Excel->createSheet('Compras', 0);
+        //Selecciona la hoja creada y la marca como activa. Todas las modificaciones se harán en está hoja.
+        $this->Excel->setActiveSheet(0);
+        //Arreglo de los subtitulos de la tabla. La posición es de izquierda a derecha.
+        $arrayTitulosCompras = [
+            'Remision',
+            'Fecha Elaboración',
+            'Tipo Documento Anterior',
+            'Documento Anterior',
+            'Producto',
+            'Clave',
+            'Serie',
+            'Observacione Partida',
+            'Observaciones Remisión',
+            'Pedido',
+            'Req',
+            'Fecha Documento',
+            'Fecha Entrada',
+            'Fecha Venta',
+            'Fecha Cancelación'];
+        //Envía el arreglo de los subtitulos a la hoja activa.
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulosCompras);
+        //Arreglo con el ancho por columna.
+        $arrayWidthCompras = [20, 25, 20, 20, 35, 20, 20, 30, 30, 15, 20, 25, 25, 25, 25];
+        //Envía y setea los anchos de las columnas definidos en el arreglo de los anchos por columna.
+        $this->Excel->setColumnsWidth('A', $arrayWidthCompras);
+        //Arreglo de alineación por columna.
+        $arrayAlignCompras = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+        //Envía:
+        //La letra donde comienza la tabla
+        //El número de fila donde comenzará la tabla -1
+        //El contenido en forma de arreglo
+        //Boleano que define si la tabla llevará autofiltros o no
+        //Arreglo con la alineación de las columnas.
+        $this->Excel->setTableContent('A', 1, $compras, true, $arrayAlignCompras);
+        /* End Hoja 1 */
+
+        $time = date("ymd_H_i_s");
+        $nombreArchivo = 'Reporte Remisiones_' . $time . '.xlsx';
         $nombreArchivo = trim($nombreArchivo);
         $ruta = 'storage/Archivos/SAEReports/' . $nombreArchivo;
 
@@ -231,38 +506,70 @@ class Reportes extends General {
 
         $condicion .= ")";
 
-        $data['query'] = $query = "select
-                                                        compras.CVE_DOC as OC,
-                                                        proveedores.NOMBRE as Proveedor,
-                                                        compras.SU_REFER as Referencia,
-                                                        compras.FECHA_DOC as FechaDocumento,
-                                                        compras.FECHA_CANCELA as FechaCancelacion,
-                                                        compras.FECHAELAB as FechaElaboracion,
-                                                        cast(compras.CAN_TOT as float) as TotalCompra,
-                                                        CAST(compras.IMP_TOT4 as float) as Impuesto,
-                                                        CAST(compras.DES_TOT as float) as Descuento,
-                                                        CAST(compras.IMPORTE as float) as Importe,
-                                                        libres.CAMPLIB1 as Proyecto,
-                                                        libres.CAMPLIB2,
-                                                        partidas.NUM_PAR as NumeroPartida,
-                                                        partidas.CVE_ART as ClaveArticulo,
-                                                        productos.DESCR as Articulo,
-                                                        partidas.CANT as Cantidad,
-                                                        CAST((partidas.TOT_PARTIDA / partidas.CANT)  as float) as PrecioUnitario,
-                                                        moneda.DESCR as Moneda,
-                                                        compras.TIPCAMB as TipoCambio,
-                                                        CAST(partidas.TOT_PARTIDA as float) as TotalPartida,
-                                                        partidas.TOT_PARTIDA * compras.TIPCAMB  as TotalPesos
-                                                        from COMPO03 compras
-                                                        inner join COMPO_CLIB03 libres on compras.CVE_DOC = libres.CLAVE_DOC
-                                                        inner join PAR_COMPO03 partidas on compras.CVE_DOC = partidas.CVE_DOC
-                                                        inner join INVE03 productos on partidas.CVE_ART = productos.CVE_ART
-                                                        inner join PROV03 proveedores on compras.CVE_CLPV = proveedores.CLAVE
-                                                        inner join MONED03 moneda on compras.NUM_MONED = moneda.NUM_MONED ".$condicion;
+        $query = "select
+                  compras.CVE_DOC as OC,
+                  proveedores.NOMBRE as Proveedor,
+                  compras.SU_REFER as Referencia,
+                  compras.FECHA_DOC as FechaDocumento,
+                  compras.FECHA_CANCELA as FechaCancelacion,
+                  compras.FECHAELAB as FechaElaboracion,
+                  cast(compras.CAN_TOT as float) as TotalCompra,
+                  CAST(compras.IMP_TOT4 as float) as Impuesto,
+                  CAST(compras.DES_TOT as float) as Descuento,
+                  CAST(compras.IMPORTE as float) as Importe,
+                  libres.CAMPLIB1 as Proyecto,
+                  libres.CAMPLIB2,
+                  partidas.NUM_PAR as NumeroPartida,
+                  partidas.CVE_ART as ClaveArticulo,
+                  productos.DESCR as Articulo,
+                  partidas.CANT as Cantidad,
+                  CAST((partidas.TOT_PARTIDA / partidas.CANT)  as float) as PrecioUnitario,
+                  moneda.DESCR as Moneda,
+                  compras.TIPCAMB as TipoCambio,
+                  CAST(partidas.TOT_PARTIDA as float) as TotalPartida,
+                  partidas.TOT_PARTIDA * compras.TIPCAMB  as TotalPesos
+                  from COMPO03 compras
+                  inner join COMPO_CLIB03 libres on compras.CVE_DOC = libres.CLAVE_DOC
+                  inner join PAR_COMPO03 partidas on compras.CVE_DOC = partidas.CVE_DOC
+                  inner join INVE03 productos on partidas.CVE_ART = productos.CVE_ART
+                  inner join PROV03 proveedores on compras.CVE_CLPV = proveedores.CLAVE
+                  inner join MONED03 moneda on compras.NUM_MONED = moneda.NUM_MONED ".$condicion;
 
         $data['compras'] = $this->DBSAE->consultaBDSAE($query);
 
         return array('formulario' => parent::getCI()->load->view('ReportesSAE/Modal/ReporteComprasSAEProyecto', $data, TRUE), 'datos' => $data);
+    }
+
+    public function mostrarReporteRemisiones(array $datos) {
+        $condicion = " where remision.FECHAELAB between '".$datos['desde']." 00:00:00' and '".$datos['hasta']." 23:59:59' ";
+
+        $query = "select
+                remision.CVE_DOC as Remision,
+                remision.FECHAELAB as FechaElaboracion,
+                case remision.TIP_DOC_ANT
+                	when 'P' then 'PEDIDO'
+                	when 'C' then 'COTIZACION'
+                	else 'OTRO'
+                end as TipoDocumentoAnterior,
+                remision.DOC_ANT as DocumentoAnterior,
+                productos.DESCR as Producto,
+                productos.CVE_ART as Modelo,
+                hist_series.NUM_SER as Serie,
+                (select STR_OBS from OBS_DOCF03 obs1 where obs1.CVE_OBS = partidas.CVE_OBS) as Observaciones_Partida,
+                (select STR_OBS from OBS_DOCF03 obs1 where obs1.CVE_OBS = remision.CVE_OBS) as Observaciones_Remision,
+                libres.CAMPLIB1 as Pedido, libres.CAMPLIB4 as Req,remision.FECHA_DOC, remision.FECHA_ENT,
+                remision.FECHA_VEN,
+                remision.FECHA_CANCELA
+                from
+                FACTR03 remision
+                inner join PAR_FACTR03 partidas on remision.CVE_DOC = partidas.CVE_DOC
+                inner join INVE03 productos on partidas.CVE_ART = productos.CVE_ART
+                left join HNUMSER03 hist_series on partidas.REG_SERIE = hist_series.REG_SERIE
+                left join FACTR_CLIB03 libres on remision.CVE_DOC = libres.CLAVE_DOC ".$condicion;
+
+        $data['compras'] = $this->DBSAE->consultaBDSAE($query);
+
+        return array('formulario' => parent::getCI()->load->view('ReportesSAE/Modal/ReporteRemisiones', $data, TRUE), 'datos' => $data);
     }
 
     public function generaOC(array $datos) {
