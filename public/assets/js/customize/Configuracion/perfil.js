@@ -171,6 +171,17 @@ $(function () {
         });
     });
 
+    $('#inputToken').off("click");
+    $('#inputToken').on('click', function () {
+        mostrarCargaPagina();
+        var data = {};
+        evento.enviarEvento('PerfilUsuario/ActualizarTokenUsuario', data, '', function (respuesta) {
+            if (respuesta) {
+                recargarPagina();
+            }
+        });
+    });
+
     var cerrarModalCambios = function () {
         $('#btnCerrarCambios').off('click');
         $('#btnCerrarCambios').on('click', function () {

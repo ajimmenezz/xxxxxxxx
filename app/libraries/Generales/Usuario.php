@@ -361,12 +361,12 @@ class Usuario extends General {
                     <div class="row">
                         <div class="col-md-120">
                             <div class="alert alert-warning fade in m-b-15">                            
-                                Para definir password debe complir con los siguientes puntos:
+                                Para definir password debe cumplir con los siguientes puntos:
                                 <ul>
-                                    <li>una mayuscula</li>
-                                    <li>una minuscula</li>
-                                    <li>un numero</li>
-                                    <li>la longitud minuma 8 y maxima 15</li>
+                                    <li>una mayúscula</li>
+                                    <li>una minúscula</li>
+                                    <li>un número</li>
+                                    <li>la longitud mínima 8 y máxima 15</li>
                                 </ul>                          
                             </div>                        
                         </div>
@@ -381,4 +381,30 @@ class Usuario extends General {
         return ['modal' => $html];
     }
 
+    public function actualizarTokenUsuario(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $i = 1;
+        
+        while ($i < 1000) {
+            $token = bin2hex(random_bytes(64));
+            $token = substr($token, 1, 32);
+            $token = strtoupper($token);
+            
+            $verificarToken = $this->DBU->consultaTokenUsuarios(array('token' => $token));
+            
+            if (empty($verificarToken)) {
+                $consulta = $this->DBU->actualizarCampoUsuario(array(
+                    'campo' => 'Token',
+                    'inputNuevo' => $token,
+                    'id' => $usuario['Id']
+                ));
+
+                $i = 1000;
+                return TRUE;
+            }
+            $i++;
+        }
+    }
+
+    
 }

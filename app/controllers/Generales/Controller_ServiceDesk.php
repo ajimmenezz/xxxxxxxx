@@ -22,7 +22,7 @@ class Controller_ServiceDesk extends Base {
                 $resultado = $this->InformacionServicios->validarServicio($this->input->post());
                 break;
             case 'GuardarInformacionSD':
-                $resultado = $this->InformacionServicios->guardarDatosServiceDesk($this->input->post('servicio'), TRUE);
+                $resultado = $this->InformacionServicios->guardarDatosServiceDesk($this->input->post('servicio'));
                 break;
             case 'DatosSD':
                 $resultado = $this->InformacionServicios->datosSD($this->input->post('solicitud'));
