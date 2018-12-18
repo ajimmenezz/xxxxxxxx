@@ -16,6 +16,7 @@ class Modelo_Gapsi extends Modelo_Base {
     public function getClientes() {
         $query = "select * from db_Clientes where Nombre <> '' order by Nombre";
         $consulta = parent::connectDBGapsi()->query($query);
+        
         return $consulta->result_array();
     }
 
