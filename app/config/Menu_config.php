@@ -325,7 +325,7 @@ $config['Solicitudes'] = array(
             'select2/dist/css/select2.min',
             'parsley/src/parsley'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Generales/solicitud_asignada'),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Servicio', 'Base/Select', 'Base/fileUpload', 'Base/Nota', 'Base/Tabla', 'Generales/solicitud_asignada'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
