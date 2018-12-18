@@ -56,6 +56,18 @@ class Controller_Gasto extends Base {
             case 'MarcarLeido':
                 $resultado = $this->catalogo->marcarLeido($this->input->post());
                 break;
+            case 'MostrarTablaMisGatos':
+                $resultado = $this->catalogo->comprobarGastos();
+                break;
+            case 'ComprobacionRegistro':
+                $resultado = $this->catalogo->comprobacionRegistro($this->input->post());
+                break;
+            case 'TerminarComprobante':
+                $resultado = $this->catalogo->terminarComprobante($this->input->post());
+                break;
+            case 'ActualizarCampoComprobado':
+                $resultado = $this->catalogo->actualizarComprobacion($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

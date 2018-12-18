@@ -569,10 +569,425 @@ class Catalogos extends General {
         }
         return $return;
     }
-    
+
     public function marcarLeido(array $datos) {
         $return = $this->DB->marcarLeido($datos);
         return $return;
+    }
+
+    public function comprobarGastos() {
+        $datos = $this->DB->getComprobarGastos();
+        $resultado = ['datos' => $datos];
+        return array('resultado' => $resultado, 'vistaTabla' => parent::getCI()->load->view('Gapsi/Mis-Gastos', $resultado, TRUE));
+    }
+
+    public function comprobacionRegistro($datos) {
+        $idRegistro = $datos['idGasto'];
+        $monto = $datos['monto'];
+        $typeFiles = null;
+        $CI = parent::getCI();
+        $carpeta = './storage/Gastos/' . $idRegistro . '/FACT/';
+//        $carpeta = 'Gastos/' . $idRegistro . '/FACT/';
+
+        if (!empty($_FILES)) {
+            $typeFiles = $_FILES['inputArchivoComprobante']['type'];
+        }
+
+        if (in_array('text/xml', $typeFiles)) {
+            $archivosComprobantes = $_FILES;
+            $respuesta = $this->comprobarXML($archivosComprobantes);
+            if ($respuesta === true) {
+                $archivos = setMultiplesArchivos($CI, 'inputArchivoComprobante', $carpeta, 'gapsi');
+                $respuesta = $this->validarComprobanteGastos($monto, $archivos, $datos);                
+            }
+        } else {
+            $archivos = setMultiplesArchivos($CI, 'inputArchivoComprobante', $carpeta,'gapsi');
+            return $this->cambiarNombre($archivos, $idRegistro);
+//            $respuesta = $this->DB->registrarSinXML($datos);
+        }
+        return $respuesta;
+    }
+
+    // Comprobar numero de archivos XML y PDF
+    public function comprobarXML($archivosComprobantes) {
+
+        $nombreComprobante = [];
+        foreach ($archivosComprobantes as $key => $archivoComprobante) {
+            $nombreComprobante = $archivoComprobante['name'];
+            $arrayArchivos = [];
+            $arrayTipoArchivo = [];
+
+
+            foreach ($nombreComprobante as $key => $nombreComprobante) {
+                $respuesta = null;
+                $extension = pathinfo($nombreComprobante, PATHINFO_EXTENSION);
+                array_push($arrayArchivos, array('extensiones' => $extension));
+                array_push($arrayTipoArchivo, $extension);
+
+                if (in_array('xml', $arrayTipoArchivo)) {
+                    $unXML = 1;
+                    $contadorXML = array_count_values(array_column($arrayArchivos, 'extensiones'))['xml'];
+
+                    if ($contadorXML > 1) {
+                        $unXML = 2;
+                    }
+
+                    if ($unXML === 1) {
+                        if (in_array('pdf', $arrayTipoArchivo)) {
+                            $unPDF = array_count_values(array_column($arrayArchivos, 'extensiones'))['pdf'];
+                            $contadorPDF = $unPDF;
+
+                            if ($contadorPDF > 1) {
+                                $respuesta = ['code' => 500, 'errorBack' => 'Se seleccionaron más de 1 PDF. Por favor verifique sus archivos.'];
+                            } else {
+                                $respuesta = true;
+                            }
+                        } else {
+                            $respuesta = ['code' => 500, 'errorBack' => 'Recuerda, por cada XML debe haber un PDF.'];
+                        }
+                    } else {
+                        $respuesta = ['code' => 500, 'errorBack' => 'Solo es necesario un XML con un PDF'];
+                    }
+                }
+            }
+            return $respuesta;
+        }
+    }
+
+    //Obtener UUID y validar monto y version de XML
+    public function validarComprobanteGastos($monto, $archivos, $datos) {
+
+        foreach ($archivos as $key => $value) {
+            $extension = pathinfo($value, PATHINFO_EXTENSION);
+            if ($extension === 'xml') {
+                $xml = simplexml_load_file(getcwd() . $value);
+
+                $arrayComprobante = (array) $xml->xpath('//cfdi:Comprobante')[0];
+                $resultadoComprobante = $this->validarTotalXML($arrayComprobante, $monto);
+                if ($resultadoComprobante['code'] != 200) {
+                    $this->eliminaArchivos($archivos);
+                    return ['code' => 500, 'errorBack' => $resultadoComprobante['error']];
+                }
+
+                $arrayReceptor = (array) $xml->xpath('//cfdi:Receptor')[0];
+                $resultadoComprobante = $this->validarReceptorXML($arrayReceptor);
+                if ($resultadoComprobante['code'] != 200) {
+                    $this->eliminaArchivos($archivos);
+                    return ['code' => 500, 'errorBack' => $resultadoComprobante['error']];
+                }
+
+                $cfdi = new LeerCFDI();
+                $cfdi->cargaXml(getcwd() . $value);
+                $valorUUID = $cfdi->uuid();
+                if (isset($valorUUID)) {
+                    $datos = ['idGasto' => $datos['idGasto'],
+                        'Monto' => $datos['monto'],
+                        'Comentario' => null,
+                        'Status' => 'Enviado',
+                        'UUID' => $valorUUID];
+
+                    return $this->DB->insertarComprobanteGapsi($datos);
+                } else {
+                    return ['code' => 500, 'errorBack' => "No se encuentra UUID"];
+                }
+            }
+        }
+    }
+
+    public function eliminaArchivos(array $archivos) {
+        foreach ($archivos as $k => $v) {
+            try {
+                unlink('.' . $v);
+            } catch (Exception $ex) {
+                
+            }
+        }
+    }
+
+    //Validar Version de archivo XML
+    public function validarTotalXML(array $datos, float $total) {
+        $arrayReturn = [
+            'code' => 200,
+            'error' => 'OK'
+        ];
+
+        $total = abs($total);
+
+        foreach ($datos as $k => $nodoComprobante) {
+            if (isset($nodoComprobante['Version'])) {
+                if ($nodoComprobante['Version'] === '3.3' || $nodoComprobante['Version'] === 'V3.3' || $nodoComprobante['Version'] === 'V 3.3') {
+                    $resultadoComprobante = TRUE;
+                } else {
+                    $arrayReturn['code'] = 400;
+                    $arrayReturn['error'] = 'La Version de XML es incorrecta. Es necesario que el CFDI tenga la versión 3.3';
+                }
+            } else {
+                $arrayReturn['code'] = 400;
+                $arrayReturn['error'] = 'La etiqueta de versión del CFDI no existe. Verifique su archivo';
+            }
+
+            if (isset($nodoComprobante['Total'])) {
+                $totalFloat = (float) $nodoComprobante['Total'];
+                if ($totalFloat >= ((float) $total - 0.99) && $totalFloat <= ((float) $total) + 0.99) {
+                    
+                } else {
+                    $arrayReturn['code'] = 400;
+                    $arrayReturn['error'] = 'El total de la factura no corresponde al capturado para comprobacion. Factura:$' . $totalFloat . ' y Monto:$' . $total;
+                }
+            } else {
+                $arrayReturn['code'] = 400;
+                $arrayReturn['error'] = 'La etiqueta Total del CFDI no existe. Verifique su archivo';
+            }
+        }
+
+        return $arrayReturn;
+    }
+
+    //Validar monto de archivo XML
+    public function validarReceptorXML(array $datos) {
+        $arrayReturn = [
+            'code' => 200,
+            'error' => 'OK'
+        ];
+
+        foreach ($datos as $k => $nodoReceptor) {
+            if (isset($nodoReceptor['Rfc'])) {
+                if ($nodoReceptor['Rfc'] === 'SSO0101179Z7') {
+                    
+                } else {
+                    $arrayReturn['code'] = 400;
+                    $arrayReturn['error'] = 'El receptor (RFC) no coincide con SSO0101179Z7. Verifique su archivo';
+                }
+            } else {
+                return 'La etiqueta RFC del Receptor no existe. Verifique su archivo';
+            }
+        }
+
+        return $arrayReturn;
+    }
+
+    public function cambiarNombre($archivos, $idRegistro) {
+
+        $nuevoNombre = "./storage/Gastos/" . $idRegistro . "/FACT/" . $idRegistro;
+        $contador = 0;
+
+        foreach ($archivos as $key => $ruta) {
+            
+            $rutaArchivo = "." . $ruta;
+            if (file_exists($rutaArchivo)) {
+                $extension = explode(".", $ruta);
+                $nuevoNombre1 = $nuevoNombre . "." . $extension[1];
+                if (file_exists($nuevoNombre1)) {
+                    $contador++;
+                    $nuevoNombre2 = $nuevoNombre . "(" . $contador . ")." . $extension[1];
+                    rename($rutaArchivo, $nuevoNombre2);
+                    $respuestaArchivo = ['code' => 200, 'errorBack' => 'Comprobante de pago Registrado'];
+                } else {
+                    if (rename($rutaArchivo, $nuevoNombre1)) {
+                        $respuestaArchivo = ['code' => 200, 'errorBack' => 'Comprobante de pago Registrado'];
+                    } else {
+                        $respuestaArchivo =  ['code' => 500, 'errorBack' => 'El comprobante no se ha registrado correctamente'];
+                    }
+                }
+            } else {
+                $respuestaArchivo = ['code' => 500, 'errorBack' => 'La ruta no es correcta'];
+            }
+        }
+        return $respuestaArchivo;
+    }
+    
+    public function actualizarComprobacion($datos) {
+
+        $consulta = $this->DB->consultaRegistro($datos);
+        if ($consulta) {
+            $this->DB->marcarComprobado($datos);
+            $this->DB->actualizarMontoComprobado($datos);
+            return ['code' => 200, "error" => "ok"];
+        } else {
+            return ['code' => 500, "error" => "Necesitas registrar comprobantes"];
+        }
+    }
+    
+    public function terminarComprobante($datos) {
+        $consulta = $this->DB->consultaRegistro($datos);
+        
+        if($consulta){
+            return ['code' => 200, "error" => true];
+        }else{
+            return ['code' => 500, "error" => "No es posible teminar comprobacion"];
+        }
+    }
+
+}
+
+//Clase para obtener informacion de XML
+class LeerCFDI {
+
+    /**
+     * Namespaces
+     */
+    private $namespaces;
+
+    /**
+     * Archivo XML
+     */
+    private $xml;
+
+    /**
+     * Serie del CFDI
+     */
+    private $serie;
+
+    /**
+     * Folio del CFDI
+     */
+    private $folio;
+
+    /**
+     * RFC del emisor
+     */
+    private $rfcEmisor;
+
+    /**
+     * RFC del receptor
+     */
+    private $rfcReceptor;
+
+    /**
+     * Fecha del CFDI
+     */
+    private $fecha;
+
+    /**
+     * Total del CFDI
+     */
+    private $total;
+
+    /**
+     * Tipo de comprobante
+     */
+    private $tipoComprobante;
+
+    /**
+     * UUID del CFDI
+     */
+    private $uuid;
+
+    /**
+     * archivoXML Ruta del archivo XML
+     */
+    function cargaXml($archivoXML) {
+
+        if (file_exists($archivoXML)) {
+            libxml_use_internal_errors(true);
+            $this->xml = new \SimpleXMLElement($archivoXML, null, true);
+            $this->namespaces = $this->xml->getNamespaces(true);
+        } else {
+            throw new Exception("Error al cargar archivo XML, verifique que el archivo exista.", 1);
+        }
+    }
+
+    /**
+     * Obtener el RFC del Emisor
+     */
+    function rfcEmisor() {
+
+        foreach ($this->xml->xpath('//cfdi:Comprobante//cfdi:Emisor') as $emisor) {
+            $this->rfcEmisor = $emisor['rfc'] != "" ? $emisor['rfc'] : $emisor['Rfc'];
+        }
+
+        return $this->rfcEmisor;
+    }
+
+    /**
+     * Obtener el RFC del Receptor
+     */
+    function rfcReceptor() {
+
+        foreach ($this->xml->xpath('//cfdi:Comprobante//cfdi:Receptor') as $receptor) {
+            $this->rfcReceptor = $receptor['rfc'] != "" ? $receptor['rfc'] : $receptor['Rfc'];
+        }
+
+        return $this->rfcReceptor;
+    }
+
+    /**
+     * Obtener el RFC  del CFDI
+     */
+    function total() {
+
+        foreach ($this->xml->xpath('//cfdi:Comprobante') as $comprobante) {
+            $this->total = $comprobante['total'] != "" ? $comprobante['total'] : $comprobante['Total'];
+        }
+        return $this->total;
+    }
+
+    /**
+     * Obtener la serie del CFDI
+     */
+    function serie() {
+
+        foreach ($this->xml->xpath('//cfdi:Comprobante') as $comprobante) {
+            $this->serie = $comprobante['serie'] != "" ? $comprobante['serie'] : $comprobante['Serie'];
+        }
+
+        return $this->serie;
+    }
+
+    /**
+     * Obtener elfolio del CFDI
+     */
+    function folio() {
+
+        foreach ($this->xml->xpath('//cfdi:Comprobante') as $comprobante) {
+            $this->folio = $comprobante['folio'] != "" ? $comprobante['folio'] : $comprobante['Folio'];
+        }
+
+        return $this->folio;
+    }
+
+    /**
+     * Obtener el la fecha del CFDI
+     */
+    function fecha() {
+
+        foreach ($this->xml->xpath('//cfdi:Comprobante') as $comprobante) {
+            $this->fecha = $comprobante['fecha'] != "" ? $comprobante['fecha'] : $comprobante['Fecha'];
+        }
+
+        return $this->fecha;
+    }
+
+    /**
+     * Obtener el tipo del comprobante del  CFDI (Ingreso o Egreso);
+     */
+    function tipoComprobante() {
+
+        foreach ($this->xml->xpath('//cfdi:Comprobante') as $comprobante) {
+            $this->tipoComprobante = $comprobante['tipoDeComprobante'] != "" ? $comprobante['tipoDeComprobante'] : $comprobante['TipoDeComprobante'];
+        }
+
+        if (strcmp(strtolower($this->tipoComprobante), 'ingreso') == 0 || strcmp(strtolower($this->tipoComprobante), 'i') == 0) {
+            $this->tipoComprobante = "I";
+        } else {
+            $this->tipoComprobante = "E";
+        }
+
+        return $this->tipoComprobante;
+    }
+
+    /**
+     * Obtener el UUID de la factura
+     */
+    function uuid() {
+
+        $this->xml->registerXPathNamespace('t', $this->namespaces['tfd']);
+
+        foreach ($this->xml->xpath('//t:TimbreFiscalDigital') as $tfd) {
+            $this->uuid = "{$tfd['UUID']}";
+        }
+
+        return $this->uuid;
     }
 
 }
