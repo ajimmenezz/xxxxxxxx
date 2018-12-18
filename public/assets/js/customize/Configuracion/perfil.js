@@ -18,6 +18,7 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
+
     $('.editarPerfil').off("click");
     $('.editarPerfil').on('click', function () {
         mostrarCargaPagina();
@@ -181,6 +182,11 @@ $(function () {
             }
         });
     });
+
+
+    var cargarObjetosPerfil = function () {
+        select.crearSelect('#selectSucursales');
+    }
 
     var cerrarModalCambios = function () {
         $('#btnCerrarCambios').off('click');

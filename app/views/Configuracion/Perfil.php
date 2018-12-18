@@ -228,6 +228,43 @@
                             <input type="text" class="form-control" id="datepicker-default" placeholder="Select Date" value="04/1/2014" />
                         </div>
                     </div>
+
+                    <div class="row m-t-10">
+                        <div class="panel-body">
+                            <div class="col-md-3">
+                                <label class="col-xs-12 col-md-2 control-label">Lugar de nacimiento</label>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="catalogoActualizarSucursales">País *</label>
+                                    <select id="selectActualizarPaisSucursales" class="form-control" style="width: 100%" data-parsley-required="true">
+                                        <option value="">Seleccionar</option>
+                                        <?php
+                                        foreach ($paises as $item) {
+                                            echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="catalogoActualizarSucursales">Estado *</label>
+                                    <select id="selectActualizarEstadoSucursales" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
+                                        <option value="">Seleccionar</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="catalogoActualizarSucursales">Delegación o Municipio *</label>
+                                    <select id="selectActualizarMunicipioSucursales" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
+                                        <option value="">Seleccionar</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="col-xs-12 col-md-2 control-label">Lugar de nacimiento</label>
                         <label class="col-md-1 control-label">Pais</label>
