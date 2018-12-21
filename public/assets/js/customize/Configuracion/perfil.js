@@ -3,6 +3,10 @@ $(function () {
     var evento = new Base();
     var websocket = new Socket();
     var file = new Upload();
+    var select = new Select();
+    var calendario = new Fecha();
+    var tabla = new Tabla();
+
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();
 
@@ -18,6 +22,47 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
+    calendario.crearFecha('.calendario');
+
+    tabla.generaTablaPersonal('#data-table-datos-academicos', null, null, true, true, [[0, 'desc']]);
+    tabla.generaTablaPersonal('#data-table-datos-idiomas', null, null, true, true, [[0, 'desc']]);
+    tabla.generaTablaPersonal('#data-table-datos-computacionales', null, null, true, true, [[0, 'desc']]);
+    tabla.generaTablaPersonal('#data-table-datos-sistemas-especiales', null, null, true, true, [[0, 'desc']]);
+    tabla.generaTablaPersonal('#data-table-datos-dependientes-economicos', null, null, true, true, [[0, 'desc']]);
+
+    $("#selectActualizarPaisUsuario").on("change", function () {
+        $("#selectActualizarEstadoUsuario").empty().append('<option value="">Seleccionar...</option>');
+        select.cambiarOpcion("#selectActualizarEstadoUsuario", '');
+        var pais = $(this).val();
+        if (pais !== '') {
+            var data = {IdPais: pais};
+            evento.enviarEvento('PerfilUsuario/MostrarDatosEstados', data, '#seccion-informacion-usuario', function (respuesta) {
+                $.each(respuesta, function (k, v) {
+                    $("#selectActualizarEstadoUsuario").append('<option value="' + v.Id + '">' + v.Nombre + '</option>')
+                });
+                $("#selectActualizarEstadoUsuario").removeAttr("disabled");
+            });
+        } else {
+            $("#selectActualizarEstadoUsuario").attr("disabled", "disabled");
+        }
+    });
+
+    $("#selectActualizarEstadoUsuario").on("change", function () {
+        $("#selectActualizarMunicipioUsuario").empty().append('<option value="">Seleccionar...</option>');
+        select.cambiarOpcion("#selectActualizarMunicipioUsuario", '');
+        var pais = $(this).val();
+        if (pais !== '') {
+            var data = {IdEstado: pais};
+            evento.enviarEvento('PerfilUsuario/MostrarDatosMunicipio', data, '#seccion-informacion-usuario', function (respuesta) {
+                $.each(respuesta, function (k, v) {
+                    $("#selectActualizarMunicipioUsuario").append('<option value="' + v.Id + '">' + v.Nombre + '</option>')
+                });
+                $("#selectActualizarMunicipioUsuario").removeAttr("disabled");
+            });
+        } else {
+            $("#selectActualizarMunicipioUsuario").attr("disabled", "disabled");
+        }
+    });
 
     $('.editarPerfil').off("click");
     $('.editarPerfil').on('click', function () {
@@ -183,10 +228,88 @@ $(function () {
         });
     });
 
+    $('#btnGuardarPersonalesUsuario').off("click");
+    $('#btnGuardarPersonalesUsuario').on('click', function () {
+        var fechaNacimiento = $('#inputFechaNacimiento').val();
+        var pais = $('#selectActualizarPaisUsuario').val();
+        var estado = $('#selectActualizarEstadoUsuario').val();
+        var municipio = $('#selectActualizarMunicipioUsuario').val();
+        var estadoCivil = $('#selectActualizarEstadoCivilUsuario').val();
+        var nacionalidad = $('#inputActualizarNacionalidadUsuario').val();
+        var telefonoParticular = $('#inputActualizarTelefonoParticularUsuario').val();
+        var estatura = $('#inputActualizarEstaturaUsuario').val();
+        var sexo = $('#selectActualizarSexoUsuario').val();
+        var peso = $('#inputActualizarPesoUsuario').val();
+        var tipoSangre = $('#inputActualizarTipoSangreUsuario').val();
+        var tallaPantalon = $('#inputActualizarTallaPantalonUsuario').val();
+        var tallaCamisa = $('#inputActualizarTallaCamisaUsuario').val();
+        var tallaZapatos = $('#inputActualizarTallaZapatosUsuario').val();
+        var curp = $('#inputActualizarCurpUsuario').val();
+        var rfc = $('#inputActualizarRfcUsuario').val();
+        var institutoAfore = $('#inputActualizarInstitutoAforeUsuario').val();
+        var numeroAfore = $('#inputActualizarNumeroAforeUsuario').val();
+        var nss = $('#inputActualizarNssUsuario').val();
 
-    var cargarObjetosPerfil = function () {
-        select.crearSelect('#selectSucursales');
-    }
+        if (fechaNacimiento !== '') {
+            var data = {
+                fechaNacimiento: fechaNacimiento,
+                pais: pais,
+                estado: estado,
+                municipio: municipio,
+                estadoCivil: estadoCivil,
+                nacionalidad: nacionalidad,
+                telefonoParticular: telefonoParticular,
+                estatura: estatura,
+                sexo: sexo,
+                peso: peso,
+                tipoSangre: tipoSangre,
+                tallaPantalon: tallaPantalon,
+                tallaCamisa: tallaCamisa,
+                tallaZapatos: tallaZapatos,
+                curp: curp,
+                rfc: rfc,
+                institutoAfore: institutoAfore,
+                numeroAfore: numeroAfore,
+                nss: nss
+            };
+            evento.enviarEvento('PerfilUsuario/GuardarDatosPersonalesUsuario', data, '', function (respuesta) {
+                console.log(respuesta);
+            });
+        } else {
+            evento.mostrarMensaje("#errorGuardarPersonalesUsuario", false, "El campo Fecha de nacimiento esta vacío.", 4000);
+        }
+
+    });
+
+    $('#btnGuardarAcademicosUsuario').off("click");
+    $('#btnGuardarAcademicosUsuario').on('click', function () {
+        console.log('pumas');
+    });
+
+    $('#btnGuardarIdiomasUsuario').off("click");
+    $('#btnGuardarIdiomasUsuario').on('click', function () {
+        console.log('pumas');
+    });
+
+    $('#btnGuardarComputacionalesUsuario').off("click");
+    $('#btnGuardarComputacionalesUsuario').on('click', function () {
+        console.log('pumas');
+    });
+
+    $('#btnGuardarEspecialesUsuario').off("click");
+    $('#btnGuardarEspecialesUsuario').on('click', function () {
+        console.log('pumas');
+    });
+
+    $('#btnGuardarAutomovilUsuario').off("click");
+    $('#btnGuardarAutomovilUsuario').on('click', function () {
+        console.log('pumas');
+    });
+
+    $('#btnGuardarDependientesUsuario').off("click");
+    $('#btnGuardarDependientesUsuario').on('click', function () {
+        console.log('pumas');
+    });
 
     var cerrarModalCambios = function () {
         $('#btnCerrarCambios').off('click');

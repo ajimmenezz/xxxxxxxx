@@ -3044,4 +3044,212 @@ class Catalogo extends General {
         return $informacion;
     }
 
+    /* Metodo que obtiene los estados civiles
+     * 
+     */
+
+    public function catRhEdoCivil(string $operacion, array $where = null) {
+        switch ($operacion) {
+            //Inserta
+            case '1':
+
+                break;
+            //Actualiza
+            case '2':
+
+                break;
+            //Obtiene informacion
+            case '3':
+                $consulta = $this->DBC->getArticulos('cat_rh_edo_civil');
+                if (!empty($consulta)) {
+                    return $consulta;
+                } else {
+                    return FALSE;
+                }
+                break;
+        }
+    }
+
+    /* Metodo que obtiene el sexo
+     * 
+     */
+
+    public function catRhSexo(string $operacion, array $where = null) {
+        switch ($operacion) {
+            //Inserta
+            case '1':
+
+                break;
+            //Actualiza
+            case '2':
+
+                break;
+            //Obtiene informacion
+            case '3':
+                $consulta = $this->DBC->getArticulos('cat_rh_sexo');
+                if (!empty($consulta)) {
+                    return $consulta;
+                } else {
+                    return FALSE;
+                }
+                break;
+        }
+    }
+
+    /* Metodo que obtiene el nivel de estudio
+     * 
+     */
+
+    public function catRhNivelEstudio(string $operacion, array $where = null) {
+        switch ($operacion) {
+            //Inserta
+            case '1':
+
+                break;
+            //Actualiza
+            case '2':
+
+                break;
+            //Obtiene informacion
+            case '3':
+                $consulta = $this->DBC->getArticulos('cat_rh_nvl_estudio');
+                if (!empty($consulta)) {
+                    return $consulta;
+                } else {
+                    return FALSE;
+                }
+                break;
+        }
+    }
+
+    /* Metodo que obtiene los documentos de estudio
+     * 
+     */
+
+    public function catRhDocumentosEstudio(string $operacion, array $where = null) {
+        switch ($operacion) {
+            //Inserta
+            case '1':
+
+                break;
+            //Actualiza
+            case '2':
+
+                break;
+            //Obtiene informacion
+            case '3':
+                $consulta = $this->DBC->getArticulos('cat_rh_docs_estudio');
+                if (!empty($consulta)) {
+                    return $consulta;
+                } else {
+                    return FALSE;
+                }
+                break;
+        }
+    }
+
+    /* Metodo que obtiene habilidades con el idioma
+     * 
+     */
+
+    public function catRhHabilidadesIdioma(string $operacion, array $where = null) {
+        switch ($operacion) {
+            //Inserta
+            case '1':
+
+                break;
+            //Actualiza
+            case '2':
+
+                break;
+            //Obtiene informacion
+            case '3':
+                $consulta = $this->DBC->getArticulos('cat_rh_habilidades_idioma');
+                if (!empty($consulta)) {
+                    return $consulta;
+                } else {
+                    return FALSE;
+                }
+                break;
+        }
+    }
+
+    /* Metodo que obtiene habilidades con software
+     * 
+     */
+
+    public function catRhHabilidadesSoftware(string $operacion, array $where = null) {
+        switch ($operacion) {
+            //Inserta
+            case '1':
+
+                break;
+            //Actualiza
+            case '2':
+
+                break;
+            //Obtiene informacion
+            case '3':
+                $consulta = $this->DBC->getArticulos('cat_rh_habilidades_software');
+                if (!empty($consulta)) {
+                    return $consulta;
+                } else {
+                    return FALSE;
+                }
+                break;
+        }
+    }
+
+    /* Metodo que obtiene el nivel de habilidad
+     * 
+     */
+
+    public function catRhNivelHabilidad(string $operacion, array $where = null) {
+        switch ($operacion) {
+            //Inserta
+            case '1':
+
+                break;
+            //Actualiza
+            case '2':
+
+                break;
+            //Obtiene informacion
+            case '3':
+                $consulta = $this->DBC->getArticulos('cat_rh_nvl_habilidad');
+                if (!empty($consulta)) {
+                    return $consulta;
+                } else {
+                    return FALSE;
+                }
+                break;
+        }
+    }
+
+    /* Metodo que obtiene el nivel de habilidad
+     * 
+     */
+
+    public function catRhHabilidadesSistema(string $operacion, array $where = null) {
+        switch ($operacion) {
+            //Inserta
+            case '1':
+
+                break;
+            //Actualiza
+            case '2':
+
+                break;
+            //Obtiene informacion
+            case '3':
+                $consulta = $this->DBC->getArticulos('cat_rh_habilidades_sistema');
+                if (!empty($consulta)) {
+                    return $consulta;
+                } else {
+                    return FALSE;
+                }
+                break;
+        }
+    }
+
 }

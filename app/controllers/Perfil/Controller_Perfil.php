@@ -10,10 +10,14 @@ use Controladores\Controller_Base as Base;
 class Controller_Perfil extends Base {
 
     private $perfil;
+    private $perfilUsuario;
+    private $catalogo;
 
     public function __construct() {
         parent::__construct();
         $this->perfil = \Librerias\Generales\Usuario::factory();
+        $this->perfilUsuario = \Librerias\RH\Perfil_Usuario::factory();
+        $this->catalogo = \Librerias\Generales\Catalogo::factory();
     }
 
     /*
@@ -43,6 +47,9 @@ class Controller_Perfil extends Base {
             case 'ActualizarTokenUsuario':
                 $resultado = $this->perfil->actualizarTokenUsuario($this->input->post());
                 break;
+            case 'GuardarDatosPersonalesUsuario':
+                $resultado = $this->perfilUsuario->guardarDatosPersonalesUsuario($this->input->post());
+                break;
             case 'MostrarFormularioPerfilUsuario':
                 $resultado = $this->perfil->mostrarFormularioPerfilUsuario($this->input->post());
                 break;
@@ -51,6 +58,12 @@ class Controller_Perfil extends Base {
                 break;
             case 'MostrarFormularioActualizarPasswordUsuario':
                 $resultado = $this->perfil->mostrarFormularioActualizarPasswordUsuario($this->input->post());
+                break;
+            case 'MostrarDatosEstados':
+                $resultado = $this->catalogo->catLocalidades('2', $this->input->post());
+                break;
+            case 'MostrarDatosMunicipio':
+                $resultado = $this->catalogo->catLocalidades('3', $this->input->post());
                 break;
             default:
                 $resultado = FALSE;
