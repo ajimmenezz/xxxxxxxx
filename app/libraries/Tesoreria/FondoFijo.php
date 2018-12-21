@@ -30,7 +30,8 @@ class FondoFijo extends General {
             'listaComprobaciones' => $this->DB->getDetallesFondoFijoXUsuario($datos['id']),
             'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
             'saldo' => $this->DB->getSaldoByUsuario($datos['id']),
-            'xautorizar' => $this->DB->getSaldoXAutorizarByUsuario($datos['id'])
+            'xautorizar' => $this->DB->getSaldoXAutorizarByUsuario($datos['id']),
+            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id'])
         ];
 
         return [

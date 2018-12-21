@@ -56,7 +56,7 @@
                     <div class="col-md-4 col-sm-6 col-xs-12">
                         <div class="form-group">
                             <label class="f-s-15 f-w-600">Fecha de Depósito: *</label>
-                            <input type="datetime-local" id="txtDate" value="<?php echo $date = date('Y-m-d\TH:i'); ?>" class="form-control" data-parsley-pattern="^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])T(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])$" required/>
+                            <input type="datetime-local" id="txtDate" value="<?php echo $date = date('Y-m-d\TH:i'); ?>" class="form-control" data-parsley-pattern="^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])$" required/>
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-6 col-xs-12">
@@ -65,6 +65,21 @@
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
                                 <input type="text" id="txtMonto" class="form-control" placeholder="59.90" value="" data-parsley-type="number" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="f-s-15 f-w-600">Concepto de Registro: *</label>
+                            <div>
+                                <label class="radio-inline f-s-17 f-w-500">
+                                    <input type="radio" name="optionsConcepto" value="1" checked="">
+                                    Fondo Fijo
+                                </label>
+                                <label class="radio-inline f-s-17 f-w-500">
+                                    <input type="radio" name="optionsConcepto" value="2">
+                                    Gasolina
+                                </label>
                             </div>
                         </div>
                     </div>

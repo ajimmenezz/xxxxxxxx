@@ -49,6 +49,7 @@ $(function () {
                                 'id': datos[0],
                                 'fecha': $("#txtDate").val(),
                                 'monto': $.trim($("#txtMonto").val()),
+                                'concepto': $("input:radio[name ='optionsConcepto']:checked").val(),
                                 'observaciones': $.trim($("#textObservaciones").val()),
                                 'evidencias': $("#fotosDeposito").val()
                             }

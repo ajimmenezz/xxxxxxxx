@@ -460,13 +460,14 @@ class Secciones extends General {
                 $datos['listaComprobaciones'] = $this->ModeloTesoreria->getDetallesFondoFijoXUsuario($usuario['Id']);
                 $datos['usuario'] = $this->ModeloTesoreria->getNombreUsuarioById($usuario['Id']);
                 $datos['saldo'] = $this->ModeloTesoreria->getSaldoByUsuario($usuario['Id']);
+                $datos['saldoGasolina'] = $this->ModeloTesoreria->getSaldoGasolinaByUsuario($usuario['Id']);
                 $datos['xautorizar'] = $this->ModeloTesoreria->getSaldoXAutorizarByUsuario($usuario['Id']);
                 break;
             case 'Comprobacion/Autorizar_Fondo_Fijo':
                 $usuario = $this->Usuario->getDatosUsuario();
-                $datos['listaComprobaciones'] = $this->ModeloTesoreria->getComprobacionesXAutorizar($usuario['Id']);    
+                $datos['listaComprobaciones'] = $this->ModeloTesoreria->getComprobacionesXAutorizar($usuario['Id']);
                 break;
-            case 'Localizacion/Dispositivos':                
+            case 'Localizacion/Dispositivos':
                 $datos['dispositivos'] = $this->ubicaphone->cargaDispositivosGlobal();
                 break;
             default:
