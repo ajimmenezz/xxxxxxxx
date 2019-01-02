@@ -233,11 +233,11 @@ $(function () {
             ],
             webStorage: false
         });
-        
+
         $("#tagCorreo").tagit({
             allowSpaces: false
         });
-        
+
         myBoardFirma.ev.trigger('board:reset', 'what', 'up');
 
         $('#btnConcluirServicio').off('click');
@@ -4975,6 +4975,54 @@ $(function () {
 
     };
 
+    //Fecha y hora
+    $('#fechaValidacion').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss'
+    });
+    $('#fechaEnvio').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss'
+    });
+    $('#fechaRecepcionAlmacen').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss'
+    });
+    $('#fechaRecepcionLab').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss'
+    });
+    $('#fechaRecepcionLogistica').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss'
+    });
+    $('#fechaRecepcion').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss'
+    });
+    $('#fechaRecepcionTecnico').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss'
+    });
+    
+    //obtener valor fecha
+    $("#fechaValidacion").find("input").val();
+    $("#fechaEnvio").find("input").val();
+    $("#fechaRecepcionAlmacen").find("input").val();
+    $("#fechaRecepcionLab").find("input").val();
+    $("#fechaRecepcionLogistica").find("input").val();
+    $("#fechaRecepcion").find("input").val();
+    $("#fechaRecepcionTecnico").find("input").val();
+    
+    //radio inputs valor
+    $('input:radio[name=optionsRadios]:checked').val();
+    
+    //tablas
+    tabla.generaTablaPersonal('#lista-equipos-enviados-solicitados', null, null, true, true, [[0, 'desc']]);
+    tabla.generaTablaPersonal('#listaRefaccionUtilizada', null, null, true, true, [[0, 'desc']]);
+    
+    //Iniciar input archivos
+    file.crearUpload('#archivosProblemaGuia', 'Seguimiento/subirProblema');
+    file.crearUpload('#evidenciaEnvio', 'Seguimiento/subirEvidenciaEnvio');
+    file.crearUpload('#evidenciaRecepcionAlmacen', 'Seguimiento/subirEvidenciaRecepcion');
+    file.crearUpload('#evidenciaRecepcionLab', 'Seguimiento/subirEvidenciaRecepcion');
+    file.crearUpload('#archivosLabHistorial', 'Seguimiento/subirAdjuntosLabHistorial');
+    file.crearUpload('#evidenciaRecepcionLogistica', 'Seguimiento/subirAdjuntosLabHistorial');
+    file.crearUpload('#evidenciaEntrega', 'Seguimiento/subirAdjuntosLabHistorial');
+    file.crearUpload('#evidenciaRecepcionTecnico', 'Seguimiento/subirAdjuntosLabHistorial');
 });
 
 var eventoAuxiliar;
