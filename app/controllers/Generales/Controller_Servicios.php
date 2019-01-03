@@ -69,6 +69,9 @@ class Controller_Servicios extends Base {
             case 'GuardarVueltaAsociado':
                 $resultado = $this->Servicio->guardarVueltaAsociados($this->input->post());
                 break;
+            case 'GuardarVueltaAsociadoSinFirma':
+                $resultado = $this->Servicio->guardarVueltaAsociadosSinFirma($this->input->post());
+                break;
             case 'ActualizaNotas':
                 $resultado = $this->notas->actualizaNotas($this->input->post());
                 break;
