@@ -4975,6 +4975,7 @@ $(function () {
 
     };
 
+    // catalogo Poliza equipo almacen y laborario
     //Fecha y hora
     $('#fechaValidacion').datetimepicker({
         format: 'YYYY-MM-DD HH:mm:ss'

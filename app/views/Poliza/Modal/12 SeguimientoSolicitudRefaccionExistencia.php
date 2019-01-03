@@ -8,11 +8,6 @@
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <h4>Seguimiento de Solicitud de Refacción</h4>
                 </div>
-                <div class="col-md-6 col-sm-6 col-xs-6">
-                    <div class="form-group text-right">
-                        <a href="javascript:;" class="btn btn-sm btn-success f-s-13" id="solicitarGuia">Solicitar Cotización</a>
-                    </div>
-                </div>
             </div>
             <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
