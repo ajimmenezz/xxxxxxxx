@@ -280,17 +280,6 @@
                                 <input type="text" class="form-control" id="inputActualizarNacionalidadUsuario" style="width: 100%"/>                            
                             </div>
                             <div class="col-md-4">
-                                <label for="inputActualizarTelefonoParticularUsuario">Telefóno particular</label>
-                                <input type="text" class="form-control" id="inputActualizarTelefonoParticularUsuario" style="width: 100%"/>
-                            </div>
-                        </div>
-
-                        <div class="row m-t-10">
-                            <div class="col-md-4">
-                                <label for="inputActualizarEstaturaUsuario">Estatura</label>
-                                <input type="text" class="form-control" id="inputActualizarEstaturaUsuario" placeholder="01-555-5555555" style="width: 100%"/>
-                            </div>
-                            <div class="col-md-4">
                                 <label for="selectActualizarSexoUsuario">Sexo</label>
                                 <select id="selectActualizarSexoUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                     <option value="">Seleccionar...</option>
@@ -301,17 +290,24 @@
                                     ?>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label for="inputActualizarPesoUsuario">Peso</label>
-                                <input type="text" class="form-control" id="inputActualizarPesoUsuario" style="width: 100%"/>
-                            </div>
                         </div>
 
                         <div class="row m-t-10">
                             <div class="col-md-4">
+                                <label for="inputActualizarEstaturaUsuario">Estatura</label>
+                                <input type="text" class="form-control" id="inputActualizarEstaturaUsuario" style="width: 100%"/>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="inputActualizarPesoUsuario">Peso</label>
+                                <input type="text" class="form-control" id="inputActualizarPesoUsuario" style="width: 100%"/>
+                            </div>
+                            <div class="col-md-4">
                                 <label for="cinputActualizarTipoSangreUsuario">Tipo de sangre</label>
                                 <input type="text" class="form-control" id="inputActualizarTipoSangreUsuario" style="width: 100%"/>
                             </div>
+                        </div>
+
+                        <div class="row m-t-10">
                             <div class="col-md-4">
                                 <label for="inputActualizarTallaPantalonUsuario">Talla de pantalon</label>
                                 <input type="text" class="form-control" id="inputActualizarTallaPantalonUsuario" style="width: 100%"/>
@@ -320,13 +316,13 @@
                                 <label for="inputActualizarTallaCamisaPantalonUsuario">Talla de camisa</label>
                                 <input type="text" class="form-control" id="inputActualizarTallaCamisaUsuario" style="width: 100%"/>
                             </div>
-                        </div>
-
-                        <div class="row m-t-10">
                             <div class="col-md-4">
                                 <label for="inputActualizarTallaZapatosUsuario">Tallas zapatos</label>
                                 <input type="text" class="form-control" id="inputActualizarTallaZapatosUsuario" style="width: 100%"/>
                             </div>
+                        </div>
+
+                        <div class="row m-t-10">
                             <div class="col-md-4">
                                 <label for="inputActualizarCurpUsuario">CURP</label>
                                 <input type="text" class="form-control" id="inputActualizarCurpUsuario" style="width: 100%"/>
@@ -334,6 +330,10 @@
                             <div class="col-md-4">
                                 <label for="inputActualizarRfcUsuario">RFC</label>
                                 <input type="text" class="form-control" id="inputActualizarRfcUsuario" style="width: 100%"/>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="inputActualizarNssUsuario">NSS</label>
+                                <input type="text" class="form-control" id="inputActualizarNssUsuario" style="width: 100%"/>
                             </div>
                         </div>
 
@@ -345,10 +345,6 @@
                             <div class="col-md-4">
                                 <label for="inputActualizarNumeroAforeUsuario">Numero de AFORE</label>
                                 <input type="text" class="form-control" id="inputActualizarNumeroAforeUsuario" style="width: 100%"/>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="inputActualizarNssUsuario">NSS</label>
-                                <input type="text" class="form-control" id="inputActualizarNssUsuario" style="width: 100%"/>
                             </div>
                         </div>
 
@@ -386,7 +382,7 @@
                             <select id="selectActualizarNivelEstudioUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['estadoCivil'] as $item) {
+                                foreach ($datos['catalogos']['nivelEstudio'] as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
@@ -394,7 +390,7 @@
                         </div>
                         <div class="col-md-4">
                             <label for="selectActualizarNombreInstitutoUsuario">Nombre de la institución *</label>
-                            <input type="tel" class="form-control" id="selectActualizarNombreInstitutoUsuario" placeholder="01-555-5555555" style="width: 100%"/>
+                            <input type="tel" class="form-control" id="selectActualizarNombreInstitutoUsuario" style="width: 100%"/>
                         </div>
                         <div class="col-md-4">
                             <label for="selectActualizarDocumentoRecibidoUsuario">Documento recibido *</label>
@@ -429,7 +425,7 @@
                     <div class="row m-t-10">
                         <!--Empezando error--> 
                         <div class="col-md-12">
-                            <div class="errorGuardarAcademicosUsuario"></div>
+                            <div id="errorGuardarAcademicosUsuario"></div>
                         </div>
                         <!--Finalizando Error-->
                     </div>   
@@ -533,7 +529,7 @@
                     <div class="row m-t-10">
                         <!--Empezando error--> 
                         <div class="col-md-12">
-                            <div class="errorGuardarIdiomasUsuario"></div>
+                            <div id="errorGuardarIdiomasUsuario"></div>
                         </div>
                         <!--Finalizando Error-->
                     </div>   
@@ -613,7 +609,7 @@
                     <div class="row m-t-10">
                         <!--Empezando error--> 
                         <div class="col-md-12">
-                            <div class="errorGuardarComputacionalesUsuario"></div>
+                            <div id="errorGuardarComputacionalesUsuario"></div>
                         </div>
                         <!--Finalizando Error-->
                     </div>   
@@ -690,7 +686,7 @@
                     <div class="row m-t-10">
                         <!--Empezando error--> 
                         <div class="col-md-12">
-                            <div class="errorGuardarEspecialesUsuario"></div>
+                            <div id="errorGuardarEspecialesUsuario"></div>
                         </div>
                         <!--Finalizando Error-->
                     </div>   
@@ -746,39 +742,42 @@
                             <div id="inputFechaAntiguedadUsuario" class="input-group date calendario" >
                                 <input id="selectActualizarAntiguedadUsuario" type="text" class="form-control"/>
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            </div>                        </div>
+                            </div>                        
+                        </div>
                     </div>
 
                     <div class="row m-t-10">
                         <div class="col-md-6">
                             <label for="inputActualizarTipoLicenciaUsuario">Tipo de licencia</label>
-                            <input type="tel" class="form-control" id="inputActualizarTipoLicenciaUsuario" placeholder="01-555-5555555" style="width: 100%"/>
+                            <input type="tel" class="form-control" id="inputActualizarTipoLicenciaUsuario" style="width: 100%"/>
                         </div>
                         <div class="col-md-6">
                             <label for="selectActualizarTipoVigenciaUsuario">Vigencia</label>
                             <div id="inputFechaVigenciaUsuario" class="input-group date calendario" >
                                 <input id="selectActualizarTipoVigenciaUsuario" type="text" class="form-control"/>
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            </div>                        </div>
+                            </div>                        
+                        </div>
                     </div>
 
                     <div class="row m-t-10">
                         <div class="col-md-6">
                             <label for="inputActualizarNumeroLicenciaUsuario">Numero de licencia</label>
-                            <input type="tel" class="form-control" id="inputActualizarNumeroLicenciaUsuario" placeholder="01-555-5555555" style="width: 100%"/>
+                            <input type="tel" class="form-control" id="inputActualizarNumeroLicenciaUsuario" style="width: 100%"/>
                         </div>
                         <div class="col-md-6">
                             <label for="selectActualizarNumeroVigenciaUsuario">Vigencia</label>
                             <div id="inputFechaNacimientoUsuario" class="input-group date calendario" >
                                 <input id="selectActualizarNumeroVigenciaUsuario" type="text" class="form-control"/>
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                            </div>                        </div>
+                            </div>                        
+                        </div>
                     </div>
 
                     <div class="row m-t-10">
                         <!--Empezando error--> 
                         <div class="col-md-12">
-                            <div class="errorGuardarAutomovilUsuario"></div>
+                            <div id="errorGuardarAutomovilUsuario"></div>
                         </div>
                         <!--Finalizando Error-->
                     </div>   

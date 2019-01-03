@@ -236,7 +236,6 @@ $(function () {
         var municipio = $('#selectActualizarMunicipioUsuario').val();
         var estadoCivil = $('#selectActualizarEstadoCivilUsuario').val();
         var nacionalidad = $('#inputActualizarNacionalidadUsuario').val();
-        var telefonoParticular = $('#inputActualizarTelefonoParticularUsuario').val();
         var estatura = $('#inputActualizarEstaturaUsuario').val();
         var sexo = $('#selectActualizarSexoUsuario').val();
         var peso = $('#inputActualizarPesoUsuario').val();
@@ -258,7 +257,6 @@ $(function () {
                 municipio: municipio,
                 estadoCivil: estadoCivil,
                 nacionalidad: nacionalidad,
-                telefonoParticular: telefonoParticular,
                 estatura: estatura,
                 sexo: sexo,
                 peso: peso,
@@ -278,38 +276,186 @@ $(function () {
         } else {
             evento.mostrarMensaje("#errorGuardarPersonalesUsuario", false, "El campo Fecha de nacimiento esta vacío.", 4000);
         }
-
     });
 
     $('#btnGuardarAcademicosUsuario').off("click");
     $('#btnGuardarAcademicosUsuario').on('click', function () {
-        console.log('pumas');
+        var nivelEstudio = $('#selectActualizarNivelEstudioUsuario').val();
+        var nombreInstituto = $('#selectActualizarNombreInstitutoUsuario').val();
+        var documentoRecibido = $('#selectActualizarDocumentoRecibidoUsuario').val();
+        var desde = $('#inputActualizarDesdeUsuario').val();
+        var hasta = $('#inputActualizarHastaUsuario').val();
+
+        var data = {
+            nivelEstudio: nivelEstudio,
+            nombreInstituto: nombreInstituto,
+            documentoRecibido: documentoRecibido,
+            desde: desde,
+            hasta: hasta
+        };
+
+        var arrayCampos = [
+            {'objeto': '#selectActualizarNivelEstudioUsuario', 'mensajeError': 'Falta seleccionar el campo Nivel de Estudio.'},
+            {'objeto': '#selectActualizarNombreInstitutoUsuario', 'mensajeError': 'Falta seleccionarel campo Nombre de la Institución.'},
+            {'objeto': '#selectActualizarDocumentoRecibidoUsuario', 'mensajeError': 'Falta seleccionar el campo DocumentoRecibido.'},
+            {'objeto': '#inputActualizarDesdeUsuario', 'mensajeError': 'Falta seleccionar el campo Desde.'},
+            {'objeto': '#inputActualizarHastaUsuario', 'mensajeError': 'Falta escribir el campo Hasta.'}
+        ];
+
+        var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorGuardarAcademicosUsuario');
+
+        if (camposFormularioValidados) {
+            evento.enviarEvento('PerfilUsuario/GuardarDatosAcademicosUsuario', data, '', function (respuesta) {
+                console.log(respuesta);
+            });
+        }
     });
 
     $('#btnGuardarIdiomasUsuario').off("click");
     $('#btnGuardarIdiomasUsuario').on('click', function () {
-        console.log('pumas');
+        var idioma = $('#selectActualizarIdiomaUsuario').val();
+        var comprension = $('#selectActualizarComprensionUsuario').val();
+        var lectura = $('#selectActualizarLecturaUsuario').val();
+        var escritura = $('#selectActualizarEscrituraUsuario').val();
+        var comentarios = $('#inputActualizarComantariosIdiomasUsuario').val();
+
+        var data = {
+            idioma: idioma,
+            comprension: comprension,
+            lectura: lectura,
+            escritura: escritura,
+            comentarios: comentarios
+        };
+
+        var arrayCampos = [
+            {'objeto': '#selectActualizarIdiomaUsuario', 'mensajeError': 'Falta seleccionar el campo Idioma.'},
+            {'objeto': '#selectActualizarComprensionUsuario', 'mensajeError': 'Falta seleccionarel campo Comprensión.'},
+            {'objeto': '#selectActualizarLecturaUsuario', 'mensajeError': 'Falta seleccionar el campo Lectura.'},
+            {'objeto': '#selectActualizarEscrituraUsuario', 'mensajeError': 'Falta seleccionar el campo Escritura.'}
+        ];
+
+        var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorGuardarIdiomasUsuario');
+
+        if (camposFormularioValidados) {
+            evento.enviarEvento('PerfilUsuario/GuardarDatosIdiomasUsuario', data, '', function (respuesta) {
+                console.log(respuesta);
+            });
+        }
     });
 
     $('#btnGuardarComputacionalesUsuario').off("click");
     $('#btnGuardarComputacionalesUsuario').on('click', function () {
-        console.log('pumas');
+        var software = $('#selectActualizarSoftwareUsuario').val();
+        var nivel = $('#selectActualizarNivelComputacionalesUsuario').val();
+        var comentarios = $('#inputActualizarComentariosComputacionalesUsuario').val();
+
+        var data = {
+            software: software,
+            nivel: nivel,
+            comentarios: comentarios
+        };
+
+        var arrayCampos = [
+            {'objeto': '#selectActualizarSoftwareUsuario', 'mensajeError': 'Falta seleccionar el campo Software.'},
+            {'objeto': '#selectActualizarNivelComputacionalesUsuario', 'mensajeError': 'Falta seleccionarel campo Nivel.'}
+        ];
+
+        var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorGuardarComputacionalesUsuario');
+
+        if (camposFormularioValidados) {
+            evento.enviarEvento('PerfilUsuario/GuardarDatosComputacionalesUsuario', data, '', function (respuesta) {
+                console.log(respuesta);
+            });
+        }
     });
 
     $('#btnGuardarEspecialesUsuario').off("click");
     $('#btnGuardarEspecialesUsuario').on('click', function () {
-        console.log('pumas');
+        var sistema = $('#selectActualizarSistemasUsuario').val();
+        var nivel = $('#selectActualizarNivelSistemasUsuario').val();
+        var comentarios = $('#inputActualizarComnetariosSistemasUsuario').val();
+
+        var data = {
+            sistema: sistema,
+            nivel: nivel,
+            comentarios: comentarios
+        };
+
+        var arrayCampos = [
+            {'objeto': '#selectActualizarSistemasUsuario', 'mensajeError': 'Falta seleccionar el campo Sistema.'},
+            {'objeto': '#selectActualizarNivelSistemasUsuario', 'mensajeError': 'Falta seleccionarel campo Nivel.'}
+        ];
+
+        var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorGuardarEspecialesUsuario');
+
+        if (camposFormularioValidados) {
+            evento.enviarEvento('PerfilUsuario/GuardarDatosSistemasEspecialesUsuario', data, '', function (respuesta) {
+                console.log(respuesta);
+            });
+        }
     });
 
     $('#btnGuardarAutomovilUsuario').off("click");
     $('#btnGuardarAutomovilUsuario').on('click', function () {
-        console.log('pumas');
+        var dominio = $('#selectActualizarDominaUsuario').val();
+        var antiguedad = $('#selectActualizarAntiguedadUsuario').val();
+        var tipoLicencia = $('#inputActualizarTipoLicenciaUsuario').val();
+        var vigenciaTipoLicencia = $('#selectActualizarTipoVigenciaUsuario').val();
+        var numeroLicencia = $('#inputActualizarNumeroLicenciaUsuario').val();
+        var vigenciaNumeroLicencia = $('#selectActualizarNumeroVigenciaUsuario').val();
+
+        var validacion = false;
+        var arrayValidacion = [];
+        var mensajeErrorArray = 'Falta llenar algún campo.';
+
+        arrayValidacion[0] = [dominio, antiguedad, 'Los campos ¿Sabe conducir? y Antiguedad no pueden estar vacios.'];
+        arrayValidacion[1] = [tipoLicencia, vigenciaTipoLicencia, 'Los campos Tipo de Licencia y Vigencia no pueden estar vacios.'];
+        arrayValidacion[2] = [numeroLicencia, vigenciaNumeroLicencia, 'Los campos Número de Licencia y Vigencia no pueden estar vacios.'];
+
+        $.each(arrayValidacion, function (k, v) {
+            if (v[0] !== '' || v[1] !== '') {
+                validacion = validarCamposDatosAutomovil(v[0], v[1]);
+                if (validacion === false) {
+                    mensajeErrorArray = v[2];
+                }
+            }
+        });
+
+        if (validacion) {
+            var data = {
+                dominio: dominio,
+                antiguedad: antiguedad,
+                tipoLicencia: tipoLicencia,
+                vigenciaTipoLicencia: vigenciaTipoLicencia,
+                numeroLicencia: numeroLicencia,
+                vigenciaNumeroLicencia: vigenciaNumeroLicencia,
+            };
+            evento.enviarEvento('PerfilUsuario/GuardarDatosAutomovilUsuario', data, '', function (respuesta) {
+                console.log(respuesta);
+            });
+        } else {
+            evento.mostrarMensaje("#errorGuardarAutomovilUsuario", false, mensajeErrorArray, 4000);
+        }
+
     });
 
     $('#btnGuardarDependientesUsuario').off("click");
     $('#btnGuardarDependientesUsuario').on('click', function () {
         console.log('pumas');
     });
+
+    var validarCamposDatosAutomovil = function () {
+        var primerCampo = arguments[0];
+        var segundoCampo = arguments[1];
+        var validacion = false;
+
+        if (primerCampo !== '' && segundoCampo !== '') {
+            validacion = true
+        }
+
+        return validacion;
+
+    }
 
     var cerrarModalCambios = function () {
         $('#btnCerrarCambios').off('click');

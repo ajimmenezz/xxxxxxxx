@@ -50,6 +50,21 @@ class Controller_Perfil extends Base {
             case 'GuardarDatosPersonalesUsuario':
                 $resultado = $this->perfilUsuario->guardarDatosPersonalesUsuario($this->input->post());
                 break;
+            case 'GuardarDatosAcademicosUsuario':
+                $resultado = $this->perfilUsuario->guardarDatosAcademicosUsuario($this->input->post());
+                break;
+            case 'GuardarDatosIdiomasUsuario':
+                $resultado = $this->perfilUsuario->guardarDatosIdiomasUsuario($this->input->post());
+                break;
+            case 'GuardarDatosComputacionalesUsuario':
+                $resultado = $this->perfilUsuario->guardarDatosComputacionalesUsuario($this->input->post());
+                break;
+            case 'GuardarDatosSistemasEspecialesUsuario':
+                $resultado = $this->perfilUsuario->guardarDatosSistemasEspecialesUsuario($this->input->post());
+                break;
+            case 'GuardarDatosAutomovilUsuario':
+                $resultado = $this->perfilUsuario->guardarDatosAutomovilUsuario($this->input->post());
+                break;
             case 'MostrarFormularioPerfilUsuario':
                 $resultado = $this->perfil->mostrarFormularioPerfilUsuario($this->input->post());
                 break;

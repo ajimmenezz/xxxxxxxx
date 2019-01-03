@@ -41,7 +41,64 @@ class Perfil_Usuario extends General {
     }
 
     public function guardarDatosPersonalesUsuario(array $datos) {
-        var_dump($datos);
+        $usuario = $this->usuario->getDatosUsuario();
+
+        $datos['id'] = $usuario['Id'];
+        $resultado = $this->DBU->actualizarTRHPersonal($datos);
+
+        return $resultado;
+    }
+
+    public function guardarDatosAcademicosUsuario(array $datos) {
+        $usuario = $this->usuario->getDatosUsuario();
+
+        $datos['idUsuario'] = $usuario['Id'];
+        $datos['fechaCaptura'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $resultado = $this->DBU->insertarTRHAcademicos($datos);
+
+        return $resultado;
+    }
+
+    public function guardarDatosIdiomasUsuario(array $datos) {
+        $usuario = $this->usuario->getDatosUsuario();
+
+        $datos['idUsuario'] = $usuario['Id'];
+        $datos['fechaCaptura'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $resultado = $this->DBU->insertarTRHIdiomas($datos);
+
+        return $resultado;
+    }
+
+    public function guardarDatosComputacionalesUsuario(array $datos) {
+        $usuario = $this->usuario->getDatosUsuario();
+
+        $datos['idUsuario'] = $usuario['Id'];
+        $datos['fechaCaptura'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $resultado = $this->DBU->insertarTRHSoftware($datos);
+
+        return $resultado;
+    }
+
+    public function guardarDatosSistemasEspecialesUsuario(array $datos) {
+        $usuario = $this->usuario->getDatosUsuario();
+
+        $datos['idUsuario'] = $usuario['Id'];
+        $datos['fechaCaptura'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $resultado = $this->DBU->insertarTRHSistemas($datos);
+
+        return $resultado;
+    }
+
+    public function guardarDatosAutomovilUsuario(array $datos) {
+        $usuario = $this->usuario->getDatosUsuario();
+
+        $consulta = $this->DBU->getPersonal('SELECT * FROM t_rh_conduccion WHERE IdUsuario = "' . $usuario['Id'] . '"');
+        var_dump($consulta);
+//        $datos['idUsuario'] = $usuario['Id'];
+//        $datos['fechaCaptura'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+//        $resultado = $this->DBU->insertarTRHSistemas($datos);
+//
+//        return $resultado;
     }
 
 }

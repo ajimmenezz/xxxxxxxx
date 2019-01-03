@@ -127,4 +127,71 @@ class Modelo_Usuario extends Modelo_Base {
         return $consulta;
     }
 
+    public function actualizarTRHPersonal(array $datos) {
+        $consulta = $this->actualizar('t_rh_personal', [
+            'FechaNacimiento' => $datos['fechaNacimiento'],
+            'PaisNac' => $datos['pais'],
+            'EstadoNac' => $datos['estado'],
+            'MunicipioNac' => $datos['municipio'],
+            'Nacionalidad' => $datos['nacionalidad'],
+            'IdSexo' => $datos['sexo'],
+            'IdEstadoCivil' => $datos['estadoCivil'],
+            'Estatura' => $datos['estatura'],
+            'Peso' => $datos['peso'],
+            'Sangre' => $datos['tipoSangre'],
+            'TallaCamisa' => $datos['tallaCamisa'],
+            'TallaPantalon' => $datos['tallaPantalon'],
+            'TallaZapatos' => $datos['tallaZapatos'],
+            'CURP' => $datos['curp'],
+            'NSS' => $datos['nss'],
+            'RFC' => $datos['rfc'],
+            'Afore' => $datos['numeroAfore'],
+            'InstAfore' => $datos['institutoAfore']], ['IdUsuario' => $datos['id']]);
+        return $consulta;
+    }
+
+    public function insertarTRHAcademicos(array $datos) {
+        $consulta = $this->insertar('t_rh_academicos', ['IdUsuario' => $datos['idUsuario'],
+            'IdNivelEstudio' => $datos['nivelEstudio'],
+            'Institucion' => $datos['nombreInstituto'],
+            'IdDocumento' => $datos['documentoRecibido'],
+            'Desde' => $datos['desde'],
+            'Hasta' => $datos['hasta'],
+            'FechaCaptura' => $datos['fechaCaptura'],
+            'Flag' => '1']);
+        return $consulta;
+    }
+
+    public function insertarTRHIdiomas(array $datos) {
+        $consulta = $this->insertar('t_rh_idiomas', ['IdUsuario' => $datos['idUsuario'],
+            'Idioma' => $datos['idioma'],
+            'Comprension' => $datos['comprension'],
+            'Lectura' => $datos['lectura'],
+            'Escritura' => $datos['escritura'],
+            'Comentarios' => $datos['comentarios'],
+            'FechaCaptura' => $datos['fechaCaptura'],
+            'Flag' => '1']);
+        return $consulta;
+    }
+
+    public function insertarTRHSoftware(array $datos) {
+        $consulta = $this->insertar('t_rh_software', ['IdUsuario' => $datos['idUsuario'],
+            'IdSoftware' => $datos['software'],
+            'IdNivelHabilidad' => $datos['nivel'],
+            'Comentarios' => $datos['comentarios'],
+            'FechaCaptura' => $datos['fechaCaptura'],
+            'Flag' => '1']);
+        return $consulta;
+    }
+
+    public function insertarTRHSistemas(array $datos) {
+        $consulta = $this->insertar('t_rh_sistemas', ['IdUsuario' => $datos['idUsuario'],
+            'IdSistema' => $datos['sistema'],
+            'IdNivelHabilidad' => $datos['nivel'],
+            'Comentarios' => $datos['comentarios'],
+            'FechaCaptura' => $datos['fechaCaptura'],
+            'Flag' => '1']);
+        return $consulta;
+    }
+
 }
