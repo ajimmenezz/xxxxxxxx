@@ -2831,7 +2831,8 @@ class Servicio extends General {
         $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
         $folio = $this->DBS->getServicios('SELECT
                                                 IdSucursal,
-                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
+                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio,
+                                                Atiende
                                             FROM t_servicios_ticket
                                             WHERE Id = "' . $datos['servicio'] . '"');
 
@@ -2849,7 +2850,7 @@ class Servicio extends General {
             'Vuelta' => $vuelta,
             'Folio' => $folio[0]['Folio'],
             'Fecha' => $fecha,
-            'IdUsuario' => $usuario['Id'],
+            'IdUsuario' => $folio[0]['Atiende'],
             'IdEstatus' => '8',
             'FechaEstatus' => $fecha
                 )
