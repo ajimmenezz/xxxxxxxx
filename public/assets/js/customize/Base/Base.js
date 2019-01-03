@@ -47,7 +47,9 @@ function Base() {
             $('#iconCargando').remove();
         }
     };
+    this.plasmarInformacionSD();
 
+    this.eventosVueltasMantenimiento();
 }
 
 //Envia peticiones al servidor
@@ -499,6 +501,8 @@ Base.prototype.eventosVueltasMantenimiento = function () {
                             </div>\n\
                         </div>';
         _this.mostrarModal('Agregar vuelta mantenimiento', html);
+
+        $('#btnModalConfirmar').off("click");
         $('#btnModalConfirmar').on('click', function () {
             var servicio = $('#inputServicioVueltaMantenimiento').val();
             var folio = $('#inputFolioVueltaMantenimiento').val();
@@ -547,6 +551,8 @@ Base.prototype.eventosVueltasMantenimiento = function () {
                             </div>\n\
                         </div>';
         _this.mostrarModal('Crear PDF vuelta mantenimiento', html);
+
+        $('#btnModalConfirmar').off("click");
         $('#btnModalConfirmar').on('click', function () {
             var servicio = $('#inputServicioVueltaMantenimiento').val();
             var folio = $('#inputFolioVueltaMantenimiento').val();
@@ -559,6 +565,39 @@ Base.prototype.eventosVueltasMantenimiento = function () {
                 });
             } else {
                 _this.mostrarMensaje('#errorServicioAgregarVueltaMantemiento', false, 'Debes colocar el servicio.', 3000);
+            }
+        });
+    });
+
+    $('#btnAgregarVueltaCorrectivo').off("click");
+    $('#btnAgregarVueltaCorrectivo').on('click', function () {
+        var html = '<div class="row">\n\
+                        <div class="col-md-12">\n\
+                                <div class="form-group">\n\
+                                    <label>Servicio *</label>\n\
+                                    <input id="inputServicioVueltaCorrectivo" type="text" class="form-control" data-parsley-type="number"/>\n\
+                                </div>\n\
+                            </div>\n\
+                      </div>\n\
+                        <div class="row m-t-10">\n\
+                            <div class="col-md-12">\n\
+                                <div id="errorServicioAgregarVueltaMantemiento"></div>\n\
+                            </div>\n\
+                        </div>';
+        _this.mostrarModal('Agregar vuelta mantenimiento', html);
+
+        $('#btnModalConfirmar').off("click");
+        $('#btnModalConfirmar').on('click', function () {
+            var servicio = $('#inputServicioVueltaCorrectivo').val();
+
+            if (servicio !== '') {
+                var data = {servicio: servicio};
+                _this.enviarEvento('/Generales/Servicio/GuardarVueltaAsociadoSinFirma', data, '#modal-dialogo', function (respuesta) {
+                    _this.mensajeConfirmacion('Se agrego la vuelta correctamente.', 'Correcto');
+                });
+            } else {
+                _this.mostrarMensaje('#errorServicioAgregarVueltaMantemiento', false, 'Debes colocar el servicio.', 3000);
+
             }
         });
     });

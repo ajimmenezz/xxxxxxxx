@@ -2819,10 +2819,64 @@ class Servicio extends General {
             return FALSE;
         }
     }
-    
+
     public function getGeneralesByServicio(int $servicio) {
-        $generales = $this->DBS->consulta("SELECT * FROM t_servicios_ticket WHERE Id = '". $servicio ."'")[0];
+        $generales = $this->DBS->consulta("SELECT * FROM t_servicios_ticket WHERE Id = '" . $servicio . "'")[0];
         return $generales;
+    }
+
+    public function guardarVueltaAsociadosSinFirma(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
+        $folio = $this->DBS->getServicios('SELECT
+                                                IdSucursal,
+                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
+                                            FROM t_servicios_ticket
+                                            WHERE Id = "' . $datos['servicio'] . '"');
+
+        $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio[0]['Folio']);
+
+        if (empty($vueltasFacturasOutsourcing)) {
+            $vuelta = '1';
+        } else {
+            $numeroVuelta = (int) $vueltasFacturasOutsourcing[0]['Vuelta'];
+            $vuelta = $numeroVuelta + 1;
+        }
+
+        $idFacturacionOutSourcing = $this->DBS->setServicioId('t_facturacion_outsourcing', array(
+            'IdServicio' => $datos['servicio'],
+            'Vuelta' => $vuelta,
+            'Folio' => $folio[0]['Folio'],
+            'Fecha' => $fecha,
+            'IdUsuario' => $usuario['Id'],
+            'IdEstatus' => '8',
+            'FechaEstatus' => $fecha
+                )
+        );
+
+        $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
+        $infoServicio = $this->getInformacionServicio($datos['servicio']);
+        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+        $host = $_SERVER['SERVER_NAME'];
+
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $infoServicio = $this->getInformacionServicio($datos['servicio']);
+            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
+        } else {
+            $path = 'http://' . $host . '/' . $linkPdf['link'];
+        }
+
+        $consulta = $this->DBS->actualizarServicio('t_facturacion_outsourcing', array(
+            'Archivo' => $path,
+                ), array('Id' => $idFacturacionOutSourcing)
+        );
+
+        if ($consulta) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
     }
 
 }

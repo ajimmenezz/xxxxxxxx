@@ -72,10 +72,10 @@
         echo $personalCss;
         ?>
         <!-- ================== FINALIZANDO ARCHIVOS CSS DE LA PAGINA ================== -->
-        
+
         <script src="/assets/js/customize/Calendar/catalogo_calendar.js"></script>
         <script src="https://apis.google.com/js/api.js"></script>
-        
+
         <!-- ================== EMPEZANDO Google Charts ================= -->
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <!-- ================== FINALIZANDO Google Charts ================= -->
@@ -133,8 +133,8 @@
         </script>
 
         <!-- ================== FINALIZANDO SMART LOOK ================== -->  
-        
-        
+
+
     </head>
 
     <body class="pace-top">
@@ -221,10 +221,20 @@
                         </li>
                         <!--Finalizando Notificaciones Tickets-->                                               
 
+
+                        <?php
+                        $permisosCompletosTodosServicios = FALSE;
+                        if (in_array('209', $usuario['PermisosAdicionales'])) {
+                            $permisosCompletosTodosServicios = TRUE;
+                        } else if (in_array('209', $usuario['Permisos'])) {
+                            $permisosCompletosTodosServicios = TRUE;
+                        }
+                        ?>
                         <!--Empezando Seccion del usuario-->
-                        <li class="dropdown navbar-user">
-                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-                                <?php (empty($datosUsuario['UrlFoto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $datosUsuario['UrlFoto']; ?>
+                        <li class = "dropdown navbar-user">
+                            <a href = "javascript:;" class = "dropdown-toggle" data-toggle = "dropdown">
+                                <?php (empty($datosUsuario['UrlFoto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $datosUsuario['UrlFoto'];
+                                ?>
                                 <img src="<?php echo $foto; ?>" alt="" />
                                 <span class="hidden-xs"><?php echo $usuario['Nombre']; ?></span> <b class="caret"></b>
                             </a>
@@ -232,6 +242,15 @@
                                 <li class="arrow"></li>
                                 <li><a href="/Configuracion/Perfil">Editar Perfil</a></li>
                                 <li><a href="javascript:;">Reportar Sistemas</a></li>
+                                <?php
+                                if ($permisosCompletosTodosServicios) {
+                                    ?>
+                                    <li class="divider"></li>
+                                    <li><a id="btnInformacionSD" href="javascript:;" >Información SD</a></li>
+                                    <li><a id="btnAgregarVueltaCorrectivo" href="javascript:;" >Agregar Vuelta Correctivo</a></li>
+                                    <li><a id="btnAgregarVueltaMantenimiento" href="javascript:;" >Agregar Vuelta Mantenimiento</a></li>
+                                    <li><a id="btnCrearPDFVueltaMantenimiento" href="javascript:;" >Crear PDF Vuelta Mantenimiento</a></li>
+                                <?php } ?>
                                 <li class="divider"></li>
                                 <li><a href="javascript:;" id="cerrar-sesion" >Cerrar Sesión</a></li>
                             </ul>
@@ -252,45 +271,3 @@
                 <!-- Finalizando contenedor-fluido -->
             </div>
             <!-- Finalizando cabezera -->
-
-            <?php
-            $permisosCompletosTodosServicios = FALSE;
-            if (in_array('209', $usuario['PermisosAdicionales'])) {
-                $permisosCompletosTodosServicios = TRUE;
-            } else if (in_array('209', $usuario['Permisos'])) {
-                $permisosCompletosTodosServicios = TRUE;
-            }
-
-            if ($permisosCompletosTodosServicios) {
-                ?>
-                <div id="menuAdministrarSD" class="hidden">
-                    <!-- begin theme-panel -->
-                    <div class="theme-panel">
-                        <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn"><i class="fa fa-cog"></i></a>
-                        <div class="theme-panel-content">
-                            <h5 class="m-t-0">Panel Administrador</h5>
-                            <div class="divider"></div>
-
-                            <div class="row m-t-10">
-                                <div class="col-md-12">
-                                    <a id="btnInformacionSD" href="javascript:;" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-cloud-upload m-r-3"></i> Información SD</a>
-                                </div>
-                            </div>
-                            <div class="row m-t-10">
-                                <div class="col-md-12">
-                                    <a id="btnAgregarVueltaMantenimiento" href="javascript:;" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-cloud-upload m-r-3"></i> Agregar Vuelta Mantenimiento</a>
-                                </div>
-                            </div>
-                            <div class="row m-t-10">
-                                <div class="col-md-12">
-                                    <a id="btnCrearPDFVueltaMantenimiento" href="javascript:;" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-cloud-upload m-r-3"></i> Crear PDF Vuelta Mantenimiento</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end theme-panel -->
-                </div>
-            <?php } ?>
-
-
-
