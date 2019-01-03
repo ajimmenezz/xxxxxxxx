@@ -543,10 +543,10 @@ $(function () {
                 } else {
                     if (
                             datosOld.ubicacion != datos.ubicacion
-                            && datosOld.sistema != datos.sistema
-                            && datosOld.elemento != datos.elemento
-                            && datosOld.serie != datos.serie
-                            && datosOld.clave != datos.clave
+                            || datosOld.sistema != datos.sistema
+                            || datosOld.elemento != datos.elemento
+                            || datosOld.serie != datos.serie
+                            || datosOld.clave != datos.clave
                             ) {
                         pasa = true;
                     }
