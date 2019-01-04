@@ -7,8 +7,16 @@
             <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Acciones <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu">                
-                <li id="btnRegistrarDeposito"><a href="#"><i class="fa fa-money" aria-hidden="true"></i> Registrar Depósito</a></li>
+            <ul class="dropdown-menu">
+                <?php
+                if (in_array(297, $permisos)) {
+                    ?>
+                    <li id="btnRegistrarDeposito"><a href="#"><i class="fa fa-money" aria-hidden="true"></i> Registrar Depósito</a></li>
+                    <li id="btnCorteGasolina"><a href="#"><i class="fa fa-car" aria-hidden="true"></i> Ajustar Gasolina</a></li>
+                    <?php
+                }
+                ?>
+            </ul>
         </div>
         <label id="btnRegresar" class="btn btn-success">
             <i class="fa fa fa-reply"></i> Regresar
@@ -40,7 +48,7 @@
                     <!--Finalizando Separador-->
                 </div>    
             </div> 
-        </div>       
+        </div>
         <div class="row m-t-0">
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="row">

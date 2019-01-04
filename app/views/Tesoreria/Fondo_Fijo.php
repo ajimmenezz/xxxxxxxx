@@ -44,6 +44,7 @@
                             <th class="all">Fecha de Último Depósito</th>
                             <th class="all">Monto de Último Depósito</th>                            
                             <th class="all">Último Saldo Conocido</th>
+                            <th class="all">Saldo Gasolina</th>
                             <th class="all">Fecha de último saldo</th>
                         </tr>
                     </thead>
@@ -54,6 +55,7 @@
                                 $fecha = ($value['Fecha'] != '') ? $value['Fecha'] : 'N.E.';
                                 $monto = ($value['Monto'] != '') ? '$' . $value['Monto'] : 'N.E.';
                                 $saldo = ($value['Saldo'] != '') ? '$' . $value['Saldo'] : 'N.E.';
+                                $saldoGasolina = ($value['SaldoGasolina'] != '') ? '$' . $value['SaldoGasolina'] : 'N.E.';
                                 $fechaSaldo = ($value['FechaSaldo'] != '') ? $value['FechaSaldo'] : 'N.E.';
 
                                 echo '<tr>';
@@ -63,6 +65,7 @@
                                 echo '<td class="text-center">' . $fecha . '</td>';
                                 echo '<td class="text-center">' . $monto . '</td>';
                                 echo '<td class="text-center">' . $saldo . '</td>';
+                                echo '<td class="text-center">' . $saldoGasolina . '</td>';
                                 echo '<td class="text-center">' . $fechaSaldo . '</td>';
                                 echo '</tr>';
                             }

@@ -3,6 +3,7 @@
 namespace Librerias\Tesoreria;
 
 use Controladores\Controller_Base_General as General;
+use Librerias\Generales\LeerCFDI as CFDI;
 
 class FondoFijo extends General {
 
@@ -10,6 +11,7 @@ class FondoFijo extends General {
     private $DBC;
     private $Correo;
     private $usuario;
+    private $cfdi;
 
     public function __construct() {
         parent::__construct();
@@ -31,7 +33,8 @@ class FondoFijo extends General {
             'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
             'saldo' => $this->DB->getSaldoByUsuario($datos['id']),
             'xautorizar' => $this->DB->getSaldoXAutorizarByUsuario($datos['id']),
-            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id'])
+            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id']),
+            'permisos' => array_merge($this->usuario['Permisos'], $this->usuario['PermisosAdicionales'])
         ];
 
         return [
@@ -47,8 +50,14 @@ class FondoFijo extends General {
             'listaComprobaciones' => $this->DB->getDetallesFondoFijoXUsuario($datos['id']),
             'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
             'saldo' => $this->DB->getSaldoByUsuario($datos['id']),
+            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id']),
             'monto' => $generalesMontoFijoUsuario['MontoUsuario'],
-            'estatus' => $generalesMontoFijoUsuario['Flag']
+            'estatus' => $generalesMontoFijoUsuario['Flag'],
+            'montoSiccob' => $this->DB->getMontoDepositoSiccob($datos['id']),
+            'montoResidig' => $this->DB->getMontoDepositoResidig($datos['id']),
+            'montoGasolina' => $this->DB->getMontoDepositoGasolina($datos['id']),
+            'montoOtros' => $this->DB->getMontoDepositoOtros($datos['id']),
+            'listaSinPago' => $this->DB->getComprobacionesSinPagar($datos['id']),
         ];
 
         return [
@@ -86,8 +95,8 @@ class FondoFijo extends General {
                     . '<p>'
                     . ' Se ha registrado un nuevo depósito por la cantidad de <strong>$' . number_format($datos['monto'], 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifica la información mencionada ingresando al sistema'
                     . '</p>';
-            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
-            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
+//            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+//            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
         }
 
         return $registrar;
@@ -126,8 +135,22 @@ class FondoFijo extends General {
         $carpeta = 'comprobaciones/fondo_fijo/' . $date . '/';
 
         $archivos = '';
+        $archivosAux = [];
+
+        $datosXML = [
+            'serie' => '',
+            'folio' => '',
+            'receptor' => '',
+            'fecha' => '',
+            'total' => '',
+            'uuid' => '',
+            'version' => '1'
+        ];
+
+
         if (!empty($_FILES)) {
             $archivos = setMultiplesArchivos($CI, 'fotosDeposito', $carpeta);
+            $archivosAux = $archivos;
             $archivosFact = $archivos;
 
             $countXML = 0;
@@ -153,22 +176,18 @@ class FondoFijo extends General {
                         return ['code' => 500, 'errorBack' => 'Se seleccionaron más de 1 XML. Por favor verifique sus archivos.'];
                     }
 
-                    $xml = simplexml_load_file(getcwd() . $value);
+                    $this->cfdi = new CFDI();
+                    $this->cfdi->cargaXml(getcwd() . $value);
+                    $resultado = $this->cfdi->validar($datos['monto']);
 
-                    $arrayComprobante = (array) $xml->xpath('//cfdi:Comprobante');
-                    $arrayComprobante = (array) $arrayComprobante[0];
-                    $resultadoComprobante = $this->validarTotalXML($arrayComprobante, $datos['monto']);
-                    if ($resultadoComprobante['code'] != 200) {
+                    if ($resultado['code'] != 200) {
                         $this->eliminaArchivos($archivos);
-                        return ['code' => 500, 'errorBack' => $resultadoComprobante['error']];
-                    }
-
-                    $arrayReceptor = (array) $xml->xpath('//cfdi:Receptor');
-                    $arrayReceptor = (array) $arrayReceptor[0];
-                    $resultadoReceptor = $this->validarReceptorXML($arrayReceptor);
-                    if ($resultadoReceptor['code'] != 200) {
-                        $this->eliminaArchivos($archivos);
-                        return ['code' => 500, 'errorBack' => $resultadoReceptor['error']];
+                        return [
+                            'code' => $resultado['code'],
+                            'errorBack' => $resultado['error']
+                        ];
+                    } else {
+                        $datosXML = $resultado['data'];
                     }
                 }
             }
@@ -199,70 +218,13 @@ class FondoFijo extends General {
             }
         }
 
-        $datos = array_merge($datos, ['archivos' => $archivos]);
+        $datos = array_merge($datos, ['archivos' => $archivos], ['cfdi' => $datosXML]);
 
         $registrar = $this->DB->registrarComprobante($datos);
+        if ($registrar['code'] != 200) {
+            $this->eliminaArchivos($archivosAux);
+        }
         return $registrar;
-    }
-
-    public function validarTotalXML(array $datos, float $total) {
-        $arrayReturn = [
-            'code' => 200,
-            'error' => ''
-        ];
-
-        $total = abs($total);
-
-        foreach ($datos as $k => $nodoComprobante) {
-            if (isset($nodoComprobante['Version'])) {
-                if ($nodoComprobante['Version'] === '3.3' || $nodoComprobante['Version'] === 'V3.3' || $nodoComprobante['Version'] === 'V 3.3') {
-                    $resultadoComprobante = TRUE;
-                } else {
-                    $arrayReturn['code'] = 400;
-                    $arrayReturn['error'] = 'La Version de XML es incorrecta. Es necesario que el CFDI tenga la versión 3.3';
-                }
-            } else {
-                $arrayReturn['code'] = 400;
-                $arrayReturn['error'] = 'La etiqueta de versión del CFDI no existe. Verifique su archivo';
-            }
-
-            if (isset($nodoComprobante['Total'])) {
-                $totalFloat = (float) $nodoComprobante['Total'];
-                if ($totalFloat >= ((float) $total - 0.99) && $totalFloat <= ((float) $total) + 0.99) {
-                    
-                } else {
-                    $arrayReturn['code'] = 400;
-                    $arrayReturn['error'] = 'El total de la factura no corresponde al capturado para comprobacion. Factura:$' . $totalFloat . ' y Monto:$' . $total;
-                }
-            } else {
-                $arrayReturn['code'] = 400;
-                $arrayReturn['error'] = 'La etiqueta Total del CFDI no existe. Verifique su archivo';
-            }
-        }
-
-        return $arrayReturn;
-    }
-
-    public function validarReceptorXML(array $datos) {
-        $arrayReturn = [
-            'code' => 200,
-            'error' => ''
-        ];
-
-        foreach ($datos as $k => $nodoReceptor) {
-            if (isset($nodoReceptor['Rfc'])) {
-                if ($nodoReceptor['Rfc'] === 'SSO0101179Z7') {
-                    
-                } else {
-                    $arrayReturn['code'] = 400;
-                    $arrayReturn['error'] = 'El receptor (RFC) no coincide con SSO0101179Z7. Verifique su archivo';
-                }
-            } else {
-                return 'La etiqueta RFC del Receptor no existe. Verifique su archivo';
-            }
-        }
-
-        return $arrayReturn;
     }
 
     public function eliminaArchivos(array $archivos) {

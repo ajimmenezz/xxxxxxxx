@@ -59,6 +59,15 @@ Tabla.prototype.reordenarTabla = function (elemento, order) {
     $(elemento).DataTable().order(order).draw();
 }
 
+Tabla.prototype.filtrarColumna = function (elemento, col, valor) {
+    if ($(elemento).DataTable().column(col).search() !== valor) {
+        $(elemento).DataTable()
+                .column(col)
+                .search(valor)
+                .draw();
+    }
+}
+
 //Se encarga de limpiar la tabla
 Tabla.prototype.limpiarTabla = function (elemento) {
     $(elemento).DataTable().clear().draw();
