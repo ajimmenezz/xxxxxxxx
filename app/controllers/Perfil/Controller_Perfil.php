@@ -47,6 +47,9 @@ class Controller_Perfil extends Base {
             case 'ActualizarTokenUsuario':
                 $resultado = $this->perfil->actualizarTokenUsuario($this->input->post());
                 break;
+            case 'ActualizarDatosAcademicosUsuario':
+                $resultado = $this->perfilUsuario->actualizarDatosAcademicosUsuario($this->input->post());
+                break;
             case 'GuardarDatosPersonalesUsuario':
                 $resultado = $this->perfilUsuario->guardarDatosPersonalesUsuario($this->input->post());
                 break;
@@ -65,6 +68,9 @@ class Controller_Perfil extends Base {
             case 'GuardarDatosAutomovilUsuario':
                 $resultado = $this->perfilUsuario->guardarDatosAutomovilUsuario($this->input->post());
                 break;
+            case 'GuardarDatosDependientesEconomicosUsuario':
+                $resultado = $this->perfilUsuario->guardarDatosDependientesEconomicosUsuario($this->input->post());
+                break;
             case 'MostrarFormularioPerfilUsuario':
                 $resultado = $this->perfil->mostrarFormularioPerfilUsuario($this->input->post());
                 break;
@@ -79,6 +85,9 @@ class Controller_Perfil extends Base {
                 break;
             case 'MostrarDatosMunicipio':
                 $resultado = $this->catalogo->catLocalidades('3', $this->input->post());
+                break;
+            case 'datosGuardadosPerfilUsuario':
+                $resultado = $this->perfilUsuario->datosGuardadosPerfilUsuario();
                 break;
             default:
                 $resultado = FALSE;

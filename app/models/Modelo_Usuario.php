@@ -107,6 +107,64 @@ class Modelo_Usuario extends Modelo_Base {
         return $consulta[0];
     }
 
+    public function consultaTRHConduccion(array $data) {
+        $consulta = $this->consulta('SELECT 
+                                        *
+                                    FROM t_rh_conduccion 
+                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
+        return $consulta[0];
+    }
+
+    public function consultaTRHAcademicos(array $data) {
+        $consulta = $this->consulta('SELECT 
+                                        *,
+                                        (SELECT Nombre FROM cat_rh_docs_estudio WHERE Id = IdDocumento) Documento,
+                                        (SELECT Nombre FROM cat_rh_nvl_estudio WHERE Id = IdNivelEstudio) NivelEstudio
+                                    FROM t_rh_academicos 
+                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
+        return $consulta;
+    }
+
+    public function consultaTRHIdiomas(array $data) {
+        $consulta = $this->consulta('SELECT 
+                                        *,
+                                        (SELECT Nombre FROM cat_rh_habilidades_idioma WHERE Id = Idioma) NombreIdioma,
+                                        (SELECT Nombre FROM cat_rh_nvl_habilidad WHERE Id = Comprension) NivelComprension,
+                                        (SELECT Nombre FROM cat_rh_nvl_habilidad WHERE Id = Lectura) NivelLectura,
+                                        (SELECT Nombre FROM cat_rh_nvl_habilidad WHERE Id = Escritura) NivelEscritura
+                                    FROM t_rh_idiomas 
+                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
+        return $consulta;
+    }
+
+    public function consultaTRHSoftware(array $data) {
+        $consulta = $this->consulta('SELECT 
+                                        *,
+                                        (SELECT Nombre FROM cat_rh_habilidades_software WHERE Id = IdSoftware) Software,
+                                        (SELECT Nombre FROM cat_rh_nvl_habilidad WHERE Id = IdNivelHabilidad) Nivel
+                                    FROM t_rh_software
+                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
+        return $consulta;
+    }
+
+    public function consultaTRHSistemas(array $data) {
+        $consulta = $this->consulta('SELECT 
+                                        *,
+                                        (SELECT Nombre FROM cat_rh_habilidades_sistema WHERE Id = IdSistema) Sistema,
+                                        (SELECT Nombre FROM cat_rh_nvl_habilidad WHERE Id = IdNivelHabilidad) Nivel
+                                    FROM t_rh_sistemas
+                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
+        return $consulta;
+    }
+
+    public function consultaTRHDependientes(array $data) {
+        $consulta = $this->consulta('SELECT 
+                                        *
+                                    FROM t_rh_dependientes
+                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
+        return $consulta;
+    }
+
     public function actualizarCampoTRHPersonal(array $datos) {
         $consulta = $this->actualizar('t_rh_personal', [
             $datos['campo'] => $datos['inputNuevo']], ['IdUsuario' => $datos['id']]);
@@ -116,6 +174,17 @@ class Modelo_Usuario extends Modelo_Base {
     public function actualizarCampoUsuario(array $datos) {
         $consulta = $this->actualizar('cat_v3_usuarios', [
             $datos['campo'] => $datos['inputNuevo']], ['Id' => $datos['id']]);
+        return $consulta;
+    }
+
+    public function actualizarCampoTRHAcademicos(array $datos) {
+        $consulta = $this->actualizar('t_rh_academicos', [
+            'IdNivelEstudio' => $datos['nivelEstudio'],
+            'Institucion' => $datos['institucion'],
+            'IdDocumento' => $datos['documento'],
+            'Desde' => $datos['desde'],
+            'Hasta' => $datos['hasta'],
+            'FechaMod' => $datos['fechaMod']], ['Id' => $datos['id']]);
         return $consulta;
     }
 
@@ -147,6 +216,18 @@ class Modelo_Usuario extends Modelo_Base {
             'RFC' => $datos['rfc'],
             'Afore' => $datos['numeroAfore'],
             'InstAfore' => $datos['institutoAfore']], ['IdUsuario' => $datos['id']]);
+        return $consulta;
+    }
+
+    public function actualizarTRHConduccion(array $datos) {
+        $consulta = $this->actualizar('t_rh_conduccion', [
+            'Dominio' => $datos['dominio'],
+            'NoLicencia' => $datos['numeroLicencia'],
+            'TipoLicencia' => $datos['tipoLicencia'],
+            'Antiguedad' => $datos['antiguedad'],
+            'Expedicion' => $datos['vigenciaNumeroLicencia'],
+            'Vigencia' => $datos['vigenciaTipoLicencia'],
+            'FechaMod' => $datos['fechaMod']], ['IdUsuario' => $datos['idUsuario']]);
         return $consulta;
     }
 
@@ -189,6 +270,29 @@ class Modelo_Usuario extends Modelo_Base {
             'IdSistema' => $datos['sistema'],
             'IdNivelHabilidad' => $datos['nivel'],
             'Comentarios' => $datos['comentarios'],
+            'FechaCaptura' => $datos['fechaCaptura'],
+            'Flag' => '1']);
+        return $consulta;
+    }
+
+    public function insertarTRHConduccion(array $datos) {
+        $consulta = $this->insertar('t_rh_conduccion', ['IdUsuario' => $datos['idUsuario'],
+            'Dominio' => $datos['dominio'],
+            'NoLicencia' => $datos['numeroLicencia'],
+            'TipoLicencia' => $datos['tipoLicencia'],
+            'Antiguedad' => $datos['antiguedad'],
+            'Expedicion' => $datos['vigenciaNumeroLicencia'],
+            'Vigencia' => $datos['vigenciaTipoLicencia'],
+            'FechaCaptura' => $datos['fechaCaptura'],
+            'Flag' => '1']);
+        return $consulta;
+    }
+
+    public function insertarTRHDependientes(array $datos) {
+        $consulta = $this->insertar('t_rh_dependientes', ['IdUsuario' => $datos['idUsuario'],
+            'Nombre' => $datos['nombre'],
+            'Parentesco' => $datos['parentesco'],
+            'FechaNacimiento' => $datos['vigencia'],
             'FechaCaptura' => $datos['fechaCaptura'],
             'Flag' => '1']);
         return $consulta;

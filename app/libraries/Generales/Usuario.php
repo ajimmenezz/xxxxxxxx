@@ -384,14 +384,14 @@ class Usuario extends General {
     public function actualizarTokenUsuario(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $i = 1;
-        
+
         while ($i < 1000) {
             $token = bin2hex(random_bytes(64));
             $token = substr($token, 1, 32);
             $token = strtoupper($token);
-            
+
             $verificarToken = $this->DBU->consultaTokenUsuarios(array('token' => $token));
-            
+
             if (empty($verificarToken)) {
                 $consulta = $this->DBU->actualizarCampoUsuario(array(
                     'campo' => 'Token',
@@ -406,5 +406,4 @@ class Usuario extends General {
         }
     }
 
-    
 }

@@ -27,6 +27,7 @@
                 <!-- Empezando perfil-image -->
                 <div class="profile-image">
                     <?php $datosUsuario = $datos['datosUsuario']['datosUsuario']; ?>
+                    <?php $datosConduccion = $datos['datosUsuario']['datosConduccion']; ?>
                     <?php (empty($datosUsuario['UrlFoto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $datosUsuario['UrlFoto']; ?>
                     <img src="<?php echo $foto; ?>" alt="" />
                     <input type="hidden" value="<?php echo $usuario['Usuario']; ?>" id="usuario"/>
@@ -178,13 +179,13 @@
     </div>
     <!-- Fin de perfil contenedor --> 
 
-    <div class="row">
+    <div class="row hidden">
         <div class="col-md-6 col-xs-6">
             <h1 class="page-header">Información del Usuario</h1>
         </div>
     </div>
     <!-- Finalizando titulo de la pagina -->
-    <div id="seccion-informacion-usuario" class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
+    <div id="seccion-informacion-usuario" class="panel panel-inverse panel-with-tabs hidden" data-sortable-id="ui-unlimited-tabs-1">
         <!--Empezando Pestañas para definir la seccion-->
         <div class="panel-heading p-0">
             <div class="panel-heading-btn m-r-10 m-t-10">
@@ -210,7 +211,11 @@
 
         <!--Empezando contenido de la informacion del servicio-->
         <div class="tab-content">
-
+            <div id="cargandoInformacionUsuario" class="text-center hidden">
+                <img
+                    width="200"
+                    src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif" />
+            </div>
             <!--Empezando con datos personales-->
             <div class="tab-pane fade active in" id="personales">
                 <h3 class="m-t-10 text-center">Datos Personales</h3>
@@ -223,7 +228,7 @@
                             <div class="col-md-4">
                                 <label for="inputFechaNacimientoUsuario">Fecha de nacimiento *</label>
                                 <div id="inputFechaNacimientoUsuario" class="input-group date calendario" >
-                                    <input id="inputFechaNacimiento" type="text" class="form-control"/>
+                                    <input id="inputFechaNacimiento" type="text" class="form-control" value="<?php echo $datosUsuario['FechaNacimiento'] ?>"/>
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                 </div>
                             </div>
@@ -277,7 +282,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="inputActualizarNacionalidadUsuario">Nacionalidad</label>
-                                <input type="text" class="form-control" id="inputActualizarNacionalidadUsuario" style="width: 100%"/>                            
+                                <input type="text" class="form-control" id="inputActualizarNacionalidadUsuario" style="width: 100%" value="<?php echo $datosUsuario['Nacionalidad'] ?>"/>                            
                             </div>
                             <div class="col-md-4">
                                 <label for="selectActualizarSexoUsuario">Sexo</label>
@@ -295,56 +300,56 @@
                         <div class="row m-t-10">
                             <div class="col-md-4">
                                 <label for="inputActualizarEstaturaUsuario">Estatura</label>
-                                <input type="text" class="form-control" id="inputActualizarEstaturaUsuario" style="width: 100%"/>
+                                <input type="text" class="form-control" id="inputActualizarEstaturaUsuario" style="width: 100%"  value="<?php echo $datosUsuario['Estatura'] ?>"/>
                             </div>
                             <div class="col-md-4">
                                 <label for="inputActualizarPesoUsuario">Peso</label>
-                                <input type="text" class="form-control" id="inputActualizarPesoUsuario" style="width: 100%"/>
+                                <input type="text" class="form-control" id="inputActualizarPesoUsuario" style="width: 100%" value="<?php echo $datosUsuario['Peso'] ?>"/>
                             </div>
                             <div class="col-md-4">
                                 <label for="cinputActualizarTipoSangreUsuario">Tipo de sangre</label>
-                                <input type="text" class="form-control" id="inputActualizarTipoSangreUsuario" style="width: 100%"/>
+                                <input type="text" class="form-control" id="inputActualizarTipoSangreUsuario" style="width: 100%" value="<?php echo $datosUsuario['Sangre'] ?>"/>
                             </div>
                         </div>
 
                         <div class="row m-t-10">
                             <div class="col-md-4">
                                 <label for="inputActualizarTallaPantalonUsuario">Talla de pantalon</label>
-                                <input type="text" class="form-control" id="inputActualizarTallaPantalonUsuario" style="width: 100%"/>
+                                <input type="text" class="form-control" id="inputActualizarTallaPantalonUsuario" style="width: 100%" value="<?php echo $datosUsuario['TallaPantalon'] ?>"/>
                             </div>
                             <div class="col-md-4">
                                 <label for="inputActualizarTallaCamisaPantalonUsuario">Talla de camisa</label>
-                                <input type="text" class="form-control" id="inputActualizarTallaCamisaUsuario" style="width: 100%"/>
+                                <input type="text" class="form-control" id="inputActualizarTallaCamisaUsuario" style="width: 100%" value="<?php echo $datosUsuario['TallaCamisa'] ?>"/>
                             </div>
                             <div class="col-md-4">
                                 <label for="inputActualizarTallaZapatosUsuario">Tallas zapatos</label>
-                                <input type="text" class="form-control" id="inputActualizarTallaZapatosUsuario" style="width: 100%"/>
+                                <input type="text" class="form-control" id="inputActualizarTallaZapatosUsuario" style="width: 100%" value="<?php echo $datosUsuario['TallaZapatos'] ?>"/>
                             </div>
                         </div>
 
                         <div class="row m-t-10">
                             <div class="col-md-4">
                                 <label for="inputActualizarCurpUsuario">CURP</label>
-                                <input type="text" class="form-control" id="inputActualizarCurpUsuario" style="width: 100%"/>
+                                <input type="text" class="form-control" id="inputActualizarCurpUsuario" style="width: 100%" value="<?php echo $datosUsuario['CURP'] ?>"/>
                             </div>
                             <div class="col-md-4">
                                 <label for="inputActualizarRfcUsuario">RFC</label>
-                                <input type="text" class="form-control" id="inputActualizarRfcUsuario" style="width: 100%"/>
+                                <input type="text" class="form-control" id="inputActualizarRfcUsuario" style="width: 100%" value="<?php echo $datosUsuario['RFC'] ?>"/>
                             </div>
                             <div class="col-md-4">
                                 <label for="inputActualizarNssUsuario">NSS</label>
-                                <input type="text" class="form-control" id="inputActualizarNssUsuario" style="width: 100%"/>
+                                <input type="text" class="form-control" id="inputActualizarNssUsuario" style="width: 100%" value="<?php echo $datosUsuario['NSS'] ?>"/>
                             </div>
                         </div>
 
                         <div class="row m-t-10">
                             <div class="col-md-4">
                                 <label for="inputActualizarInstitutoAforeUsuario">Instituto AFORE</label>
-                                <input type="text" class="form-control" id="inputActualizarInstitutoAforeUsuario" style="width: 100%"/>
+                                <input type="text" class="form-control" id="inputActualizarInstitutoAforeUsuario" style="width: 100%" value="<?php echo $datosUsuario['InstAfore'] ?>"/>
                             </div>
                             <div class="col-md-4">
                                 <label for="inputActualizarNumeroAforeUsuario">Numero de AFORE</label>
-                                <input type="text" class="form-control" id="inputActualizarNumeroAforeUsuario" style="width: 100%"/>
+                                <input type="text" class="form-control" id="inputActualizarNumeroAforeUsuario" style="width: 100%" value="<?php echo $datosUsuario['Afore'] ?>"/>
                             </div>
                         </div>
 
@@ -362,7 +367,7 @@
                                     <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarPersonalesUsuario"><i class="fa fa-save"></i> Guardar</a>
                                 </div>
                             </div>
-                        </div>   
+                        </div>  
                     </form>
                 </div>
             </div>
@@ -450,6 +455,9 @@
                                     <th class="all">Desde</th>
                                     <th class="all">Hasta</th>
                                     <th class="all">Documento</th>
+                                    <th class="all">Acciones</th>
+                                    <th class="never">IdNivelEstudio</th>
+                                    <th class="never">IdDocumento</th>
                                 </tr>
                             </thead>
                             <tbody>                                     
@@ -554,6 +562,11 @@
                                     <th class="all">Lectura</th>
                                     <th class="all">Escritura</th>
                                     <th class="all">Comentarios</th>
+                                    <th class="all">Acciones</th>
+                                    <th class="never">IdIdioma</th>
+                                    <th class="never">IdComprension</th>
+                                    <th class="never">IdLectura</th>
+                                    <th class="never">IdEscritura</th>
                                 </tr>
                             </thead>
                             <tbody>                                     
@@ -740,7 +753,7 @@
                         <div class="col-md-6">
                             <label for="selectActualizarAntiguedadUsuario">Antigüedad</label>
                             <div id="inputFechaAntiguedadUsuario" class="input-group date calendario" >
-                                <input id="selectActualizarAntiguedadUsuario" type="text" class="form-control"/>
+                                <input id="selectActualizarAntiguedadUsuario" type="text" class="form-control" value="<?php echo $datosConduccion['Antiguedad'] ?>" />
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>                        
                         </div>
@@ -749,12 +762,12 @@
                     <div class="row m-t-10">
                         <div class="col-md-6">
                             <label for="inputActualizarTipoLicenciaUsuario">Tipo de licencia</label>
-                            <input type="tel" class="form-control" id="inputActualizarTipoLicenciaUsuario" style="width: 100%"/>
+                            <input type="tel" class="form-control" id="inputActualizarTipoLicenciaUsuario" style="width: 100%" value="<?php echo $datosConduccion['TipoLicencia'] ?>" />
                         </div>
                         <div class="col-md-6">
                             <label for="selectActualizarTipoVigenciaUsuario">Vigencia</label>
                             <div id="inputFechaVigenciaUsuario" class="input-group date calendario" >
-                                <input id="selectActualizarTipoVigenciaUsuario" type="text" class="form-control"/>
+                                <input id="selectActualizarTipoVigenciaUsuario" type="text" class="form-control" value="<?php echo $datosConduccion['Expedicion'] ?>" />
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>                        
                         </div>
@@ -763,12 +776,12 @@
                     <div class="row m-t-10">
                         <div class="col-md-6">
                             <label for="inputActualizarNumeroLicenciaUsuario">Numero de licencia</label>
-                            <input type="tel" class="form-control" id="inputActualizarNumeroLicenciaUsuario" style="width: 100%"/>
+                            <input type="tel" class="form-control" id="inputActualizarNumeroLicenciaUsuario" style="width: 100%" value="<?php echo $datosConduccion['NoLicencia'] ?>" />
                         </div>
                         <div class="col-md-6">
                             <label for="selectActualizarNumeroVigenciaUsuario">Vigencia</label>
                             <div id="inputFechaNacimientoUsuario" class="input-group date calendario" >
-                                <input id="selectActualizarNumeroVigenciaUsuario" type="text" class="form-control"/>
+                                <input id="selectActualizarNumeroVigenciaUsuario" type="text" class="form-control" value="<?php echo $datosConduccion['Vigencia'] ?>"/>
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>                        
                         </div>
@@ -805,22 +818,25 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label for="inputActualizarNombreDependienteUsuario">Nombre *</label>
-                            <input type="tel" class="form-control" id="inputActualizarNombreDependienteUsuario" placeholder="01-555-5555555" style="width: 100%"/>
+                            <input type="tel" class="form-control" id="inputActualizarNombreDependienteUsuario" style="width: 100%"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarParentescoUsuario">Parentesco *</label>
-                            <input type="tel" class="form-control" id="inputActualizarParentescoUsuario" placeholder="01-555-5555555" style="width: 100%"/>
+                            <input type="tel" class="form-control" id="inputActualizarParentescoUsuario" style="width: 100%"/>
                         </div>
                         <div class="col-md-4">
-                            <label for="inputActualizarParentescoVigenciaUsuario">Vigencia *</label>
-                            <input type="tel" class="form-control" id="inputActualizarParentescoVigenciaUsuario" placeholder="01-555-5555555" style="width: 100%"/>
+                            <label for="inputActualizarParentescoVigenciaUsuario">Fecha de Nacimiento *</label>
+                            <div id="inputFechaParentescoVigencia" class="input-group date calendario" >
+                                <input id="inputActualizarParentescoVigenciaUsuario" type="text" class="form-control"/>
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            </div>   
                         </div>
                     </div>
 
                     <div class="row m-t-10">
                         <!--Empezando error--> 
                         <div class="col-md-12">
-                            <div class="errorGuardarDependientesUsuario"></div>
+                            <div id="errorGuardarDependientesUsuario"></div>
                         </div>
                         <!--Finalizando Error-->
                     </div>   
@@ -842,7 +858,7 @@
                                     <th class="never">Id</th>
                                     <th class="all">Nombre</th>
                                     <th class="all">Parentesco</th>
-                                    <th class="all">Vigencia</th>
+                                    <th class="all">Fecha de Nacimiento</th>
                                 </tr>
                             </thead>
                             <tbody>                                     
@@ -856,8 +872,7 @@
         </div> 
 
 
-
-
+        <a href="javascript:;" class="btn btn-primary m-r-5 hidden " id="btn-show-alert"><i class="fa fa-save"></i> Guardar</a>
 
     </div>
 </div>

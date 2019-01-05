@@ -21,7 +21,23 @@ class Perfil_Usuario extends General {
         $usuario = $this->usuario->getDatosUsuario();
         $data = array();
         $data['datosUsuario'] = $this->DBU->consultaTRHPersonal(array('IdUsuario' => $usuario['Id']));
+        $data['datosConduccion'] = $this->DBU->consultaTRHConduccion(array('IdUsuario' => $usuario['Id']));
 
+        return $data;
+    }
+
+    public function datosGuardadosPerfilUsuario() {
+        $usuario = $this->usuario->getDatosUsuario();
+        $data = array();
+        $data['datosUsuario'] = $this->DBU->consultaTRHPersonal(array('IdUsuario' => $usuario['Id']));
+        $data['datosConduccion'] = $this->DBU->consultaTRHConduccion(array('IdUsuario' => $usuario['Id']));
+        $data['datosAcademicos'] = $this->DBU->consultaTRHAcademicos(array('IdUsuario' => $usuario['Id']));
+        $data['datosIdiomas'] = $this->DBU->consultaTRHIdiomas(array('IdUsuario' => $usuario['Id']));
+        $data['datosSoftware'] = $this->DBU->consultaTRHSoftware(array('IdUsuario' => $usuario['Id']));
+        $data['datosSistemas'] = $this->DBU->consultaTRHSistemas(array('IdUsuario' => $usuario['Id']));
+        $data['datosDependientes'] = $this->DBU->consultaTRHDependientes(array('IdUsuario' => $usuario['Id']));
+        $data['nivelEstudio'] = $this->catalogo->catRhNivelEstudio('3');
+        $data['documentosEstudio'] = $this->catalogo->catRhDocumentosEstudio('3');
         return $data;
     }
 
@@ -56,7 +72,11 @@ class Perfil_Usuario extends General {
         $datos['fechaCaptura'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $resultado = $this->DBU->insertarTRHAcademicos($datos);
 
-        return $resultado;
+        if (!empty($resultado)) {
+            return $this->DBU->consultaTRHAcademicos(array('IdUsuario' => $usuario['Id']));
+        } else {
+            return FALSE;
+        }
     }
 
     public function guardarDatosIdiomasUsuario(array $datos) {
@@ -66,7 +86,11 @@ class Perfil_Usuario extends General {
         $datos['fechaCaptura'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $resultado = $this->DBU->insertarTRHIdiomas($datos);
 
-        return $resultado;
+        if (!empty($resultado)) {
+            return $this->DBU->consultaTRHIdiomas(array('IdUsuario' => $usuario['Id']));
+        } else {
+            return FALSE;
+        }
     }
 
     public function guardarDatosComputacionalesUsuario(array $datos) {
@@ -76,7 +100,11 @@ class Perfil_Usuario extends General {
         $datos['fechaCaptura'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $resultado = $this->DBU->insertarTRHSoftware($datos);
 
-        return $resultado;
+        if (!empty($resultado)) {
+            return $this->DBU->consultaTRHSoftware(array('IdUsuario' => $usuario['Id']));
+        } else {
+            return FALSE;
+        }
     }
 
     public function guardarDatosSistemasEspecialesUsuario(array $datos) {
@@ -86,19 +114,51 @@ class Perfil_Usuario extends General {
         $datos['fechaCaptura'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $resultado = $this->DBU->insertarTRHSistemas($datos);
 
-        return $resultado;
+        if (!empty($resultado)) {
+            return $this->DBU->consultaTRHSistemas(array('IdUsuario' => $usuario['Id']));
+        } else {
+            return FALSE;
+        }
     }
 
     public function guardarDatosAutomovilUsuario(array $datos) {
         $usuario = $this->usuario->getDatosUsuario();
-
         $consulta = $this->DBU->getPersonal('SELECT * FROM t_rh_conduccion WHERE IdUsuario = "' . $usuario['Id'] . '"');
-        var_dump($consulta);
-//        $datos['idUsuario'] = $usuario['Id'];
-//        $datos['fechaCaptura'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-//        $resultado = $this->DBU->insertarTRHSistemas($datos);
-//
-//        return $resultado;
+        $datos['idUsuario'] = $usuario['Id'];
+
+        if (empty($consulta)) {
+            $datos['fechaCaptura'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $resultado = $this->DBU->insertarTRHConduccion($datos);
+        } else {
+            $datos['fechaMod'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $resultado = $this->DBU->actualizarTRHConduccion($datos);
+        }
+        return $resultado;
+    }
+
+    public function guardarDatosDependientesEconomicosUsuario(array $datos) {
+        $usuario = $this->usuario->getDatosUsuario();
+        $datos['idUsuario'] = $usuario['Id'];
+        $datos['fechaCaptura'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $resultado = $this->DBU->insertarTRHDependientes($datos);
+
+        if (!empty($resultado)) {
+            return $this->DBU->consultaTRHDependientes(array('IdUsuario' => $usuario['Id']));
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function actualizarDatosAcademicosUsuario(array $datos) {
+        $usuario = $this->usuario->getDatosUsuario();
+        $datos['fechaMod'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $resultado = $this->DBU->actualizarCampoTRHAcademicos($datos);
+        
+        if (!empty($resultado)) {
+            return $this->DBU->consultaTRHAcademicos(array('IdUsuario' => $usuario['Id']));
+        } else {
+            return FALSE;
+        }
     }
 
 }
