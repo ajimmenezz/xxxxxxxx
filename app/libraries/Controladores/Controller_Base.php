@@ -68,7 +68,6 @@ abstract class Controller_Base extends CI_Controller {
                                 $data['usuario'] = $usuario;
                                 $data['fechaServidor'] = $this->getFecha();
                                 $data['horaServidor'] = $this->getHora();
-                                $data['datosUsuario'] = $this->DBU->consultaTRHPersonal(array('IdUsuario' => $usuario['Id']));
                                 $this->load->view('Plantillas/Cabecera', $data);
                                 $this->load->view('Plantillas/Menu', $data);                                
                                 $this->load->view($carpeta, $data);

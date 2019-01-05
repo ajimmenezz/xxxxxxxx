@@ -74,6 +74,7 @@ class Secciones extends General {
         $this->FondoFijo = \Librerias\Tesoreria\FondoFijo::factory();
         $this->ModeloTesoreria = \Modelos\Modelo_Tesoreria::factory();
         $this->Compras = \Librerias\Compras\Compras::factory();
+        $this->PerfilUsuario = \Librerias\RH\Perfil_Usuario::factory();
 //        $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
         $this->ModeloDashboard = \Modelos\Modelo_Dashboard::factory();
     }
@@ -464,10 +465,13 @@ class Secciones extends General {
                 break;
             case 'Comprobacion/Autorizar_Fondo_Fijo':
                 $usuario = $this->Usuario->getDatosUsuario();
-                $datos['listaComprobaciones'] = $this->ModeloTesoreria->getComprobacionesXAutorizar($usuario['Id']);    
+                $datos['listaComprobaciones'] = $this->ModeloTesoreria->getComprobacionesXAutorizar($usuario['Id']);
                 break;
-            case 'Localizacion/Dispositivos':                
-                $datos['dispositivos'] = $this->ubicaphone->cargaDispositivosGlobal();
+            case 'Localizacion/Dispositivos':
+                break;
+            case 'Configuracion/Perfil':
+                $datos['datosUsuario'] = $this->PerfilUsuario->datosPerfilUsuario();
+                $datos['catalogos'] = $this->PerfilUsuario->datosCatalogosUsuario();
                 break;
             default:
                 break;
