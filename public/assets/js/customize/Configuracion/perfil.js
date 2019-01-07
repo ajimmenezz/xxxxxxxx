@@ -40,11 +40,19 @@ $(function () {
             var municipio = respuesta.datosUsuario.MunicipioNac;
             var nivelEstudio = respuesta.nivelEstudio;
             var documentosEstudio = respuesta.documentosEstudio;
+            var habilidadesIdioma = respuesta.habilidadesIdioma;
+            var nivelHabilidades = respuesta.nivelHabilidades;
+            var habilidadesSoftware = respuesta.habilidadesSoftware;
+            var habilidadesSistema = respuesta.habilidadesSistema;
 
             newGlobals.push(estado);
             newGlobals.push(municipio);
             newGlobals.push(nivelEstudio);
             newGlobals.push(documentosEstudio);
+            newGlobals.push(habilidadesIdioma);
+            newGlobals.push(nivelHabilidades);
+            newGlobals.push(habilidadesSoftware);
+            newGlobals.push(habilidadesSistema);
 
             select.cambiarOpcion('#selectActualizarPaisUsuario', respuesta.datosUsuario.PaisNac);
             select.cambiarOpcion('#selectActualizarEstadoCivilUsuario', respuesta.datosUsuario.IdEstadoCivil);
@@ -59,6 +67,15 @@ $(function () {
 
             botonActualizarAcademico();
             botonActualizarIdioma();
+            botonActualizarSoftware();
+            botonActualizarSistema();
+            botonActualizarDependiente();
+            botonEliminarAcademico();
+            botonEliminarIdioma();
+            botonEliminarSoftware();
+            botonEliminarSistema();
+            botonEliminarDependiente();
+
         });
     });
 
@@ -354,6 +371,7 @@ $(function () {
                     $('#inputActualizarHastaUsuario').val('');
                     recargandoTablaAcademicos(respuesta);
                     botonActualizarAcademico();
+                    botonEliminarAcademico();
                 } else {
                     evento.mostrarMensaje("#errorGuardarAcademicosUsuario", false, "Hubo un error contacte al administrador de AdIST", 4000);
                 }
@@ -398,6 +416,8 @@ $(function () {
                     select.cambiarOpcion('#selectActualizarEscrituraUsuario', '');
                     $('#inputActualizarComantariosIdiomasUsuario').val('');
                     recargandoTablaIdiomas(respuesta);
+                    botonActualizarIdioma();
+                    botonEliminarIdioma();
                 } else {
                     evento.mostrarMensaje("#errorGuardarIdiomasUsuario", false, "Hubo un error contacte al administrador de AdIST", 4000);
                 }
@@ -434,6 +454,8 @@ $(function () {
                     select.cambiarOpcion('#selectActualizarNivelComputacionalesUsuario', '');
                     $('#inputActualizarComentariosComputacionalesUsuario').val('');
                     recargandoTablaSoftware(respuesta);
+                    botonActualizarSoftare();
+                    botonEliminarSoftware();
                 } else {
                     evento.mostrarMensaje("#errorGuardarComputacionalesUsuario", false, "Hubo un error contacte al administrador de AdIST", 4000);
                 }
@@ -470,6 +492,8 @@ $(function () {
                     select.cambiarOpcion('#selectActualizarNivelSistemasUsuario', '');
                     $('#inputActualizarComnetariosSistemasUsuario').val('');
                     recargandoTablaSistemas(respuesta);
+                    botonActualizarSistema();
+                    botonEliminarSistema();
                 } else {
                     evento.mostrarMensaje("#errorGuardarEspecialesUsuario", false, "Hubo un error contacte al administrador de AdIST", 4000);
                 }
@@ -551,6 +575,8 @@ $(function () {
                     $('#inputActualizarParentescoUsuario').val('');
                     $('#inputActualizarParentescoVigenciaUsuario').val('');
                     recargandoTablaDependientes(respuesta);
+                    botonActualizarDependiente();
+                    botonEliminarDependiente();
                 } else {
                     evento.mostrarMensaje("#errorGuardarDependientesUsuario", false, "Hubo un error contacte al administrador de AdIST", 4000);
                 }
@@ -572,8 +598,33 @@ $(function () {
         $('.btn-actualizar-idioma').on('click', function () {
             var idIdioma = $(this).data('id-idioma');
             var variablesGlobales = viewGlobals();
-            console.log(idIdioma);
-            actualizarDatosIdiomas(idIdioma, variablesGlobales[2], variablesGlobales[3]);
+            actualizarDatosIdiomas(idIdioma, variablesGlobales[4], variablesGlobales[5]);
+        });
+    }
+    
+    var botonActualizarSoftware = function () {
+        $('.btn-actualizar-software').off("click");
+        $('.btn-actualizar-software').on('click', function () {
+            var idSoftware = $(this).data('id-software');
+            var variablesGlobales = viewGlobals();
+            actualizarDatosSoftware(idSoftware, variablesGlobales[6], variablesGlobales[5]);
+        });
+    }
+    
+    var botonActualizarSistema = function () {
+        $('.btn-actualizar-sistema').off("click");
+        $('.btn-actualizar-sistema').on('click', function () {
+            var idSistema = $(this).data('id-sistema');
+            var variablesGlobales = viewGlobals();
+            actualizarDatosSistemas(idSistema, variablesGlobales[7], variablesGlobales[5]);
+        });
+    }
+    
+    var botonActualizarDependiente = function () {
+        $('.btn-actualizar-dependiente').off("click");
+        $('.btn-actualizar-dependiente').on('click', function () {
+            var idDependiente = $(this).data('id-dependiente');
+            actualizarDatosDependientes(idDependiente);
         });
     }
 
@@ -583,6 +634,46 @@ $(function () {
             evento.terminarModal('#modalEdit');
             $('#cargando').addClass('hidden');
             $('#configuracionPerfilUsuario').removeClass('hidden');
+        });
+    }
+    
+    var botonEliminarAcademico = function () {
+        $('.btn-eliminar-academico').off("click");
+        $('.btn-eliminar-academico').on('click', function () {
+            var idAcademico = $(this).data('id-academico');
+            eliminarDatos(idAcademico, 'academicos');
+        });
+    }
+    
+    var botonEliminarIdioma = function () {
+        $('.btn-eliminar-idioma').off("click");
+        $('.btn-eliminar-idioma').on('click', function () {
+            var idIdioma = $(this).data('id-idioma');
+            eliminarDatos(idIdioma, 'idiomas');
+        });
+    }
+        
+    var botonEliminarSoftware = function () {
+        $('.btn-eliminar-software').off("click");
+        $('.btn-eliminar-software').on('click', function () {
+            var idSoftware = $(this).data('id-software');
+            eliminarDatos(idSoftware, 'software');
+        });
+    }
+        
+    var botonEliminarSistema = function () {
+        $('.btn-eliminar-sistema').off("click");
+        $('.btn-eliminar-sistema').on('click', function () {
+            var idSistema = $(this).data('id-sistema');
+            eliminarDatos(idSistema, 'sistemas');
+        });
+    }
+        
+    var botonEliminarDependiente = function () {
+        $('.btn-eliminar-dependiente').off("click");
+        $('.btn-eliminar-dependiente').on('click', function () {
+            var idDependiente = $(this).data('id-dependiente');
+            eliminarDatos(idDependiente, 'dependientes');
         });
     }
 
@@ -604,7 +695,7 @@ $(function () {
     var recargandoTablaAcademicos = function (datosAcademicos) {
         tabla.limpiarTabla('#data-table-datos-academicos');
         $.each(datosAcademicos, function (key, item) {
-            var botones = '<a href="javascript:;" class="btn btn-success btn-xs btn-actualizar-academico" data-id-academico="' + item.Id + '"><i class="fa fa-pencil"></i> Actualizar</a> <a onclick="eventoEliminarProblemaEquipo();" class="btn btn-danger btn-xs "><i class="fa fa-trash-o"></i> Eliminar</a>';
+            var botones = '<a href="javascript:;" class="btn btn-success btn-xs btn-actualizar-academico" data-id-academico="' + item.Id + '"><i class="fa fa-pencil"></i> Actualizar</a>  <a href="javascript:;" class="btn btn-danger btn-xs btn-eliminar-academico" data-id-academico="' + item.Id + '"><i class="fa fa-trash-o"></i> Eliminar</a>';
             tabla.agregarFila('#data-table-datos-academicos', [item.Id, item.NivelEstudio, item.Institucion, item.Desde, item.Hasta, item.Documento, botones, item.IdNivelEstudio, item.IdDocumento]);
         });
     };
@@ -612,29 +703,32 @@ $(function () {
     var recargandoTablaIdiomas = function (datosIdiomas) {
         tabla.limpiarTabla('#data-table-datos-idiomas');
         $.each(datosIdiomas, function (key, item) {
-            var botones = '<a href="javascript:;" class="btn btn-success btn-xs btn-actualizar-idioma" data-id-idioma="' + item.Id + '"><i class="fa fa-pencil"></i> Actualizar</a> <a onclick="eventoEliminarProblemaEquipo();" class="btn btn-danger btn-xs "><i class="fa fa-trash-o"></i> Eliminar</a>';
+            var botones = '<a href="javascript:;" class="btn btn-success btn-xs btn-actualizar-idioma" data-id-idioma="' + item.Id + '"><i class="fa fa-pencil"></i> Actualizar</a> <a href="javascript:;" class="btn btn-danger btn-xs btn-eliminar-idioma" data-id-idioma="' + item.Id + '"><i class="fa fa-trash-o"></i> Eliminar</a>';
             tabla.agregarFila('#data-table-datos-idiomas', [item.Id, item.NombreIdioma, item.NivelComprension, item.NivelLectura, item.NivelEscritura, item.Comentarios, botones, item.Idioma, item.Comprension, item.Lectura, item.Escritura]);
         });
     };
 
-    var recargandoTablaSoftware = function (datosIdiomas) {
+    var recargandoTablaSoftware = function (datosSoftware) {
         tabla.limpiarTabla('#data-table-datos-computacionales');
-        $.each(datosIdiomas, function (key, item) {
-            tabla.agregarFila('#data-table-datos-computacionales', [item.Id, item.Software, item.Nivel, item.Comentarios]);
+        $.each(datosSoftware, function (key, item) {
+            var botones = '<a href="javascript:;" class="btn btn-success btn-xs btn-actualizar-software" data-id-software="' + item.Id + '"><i class="fa fa-pencil"></i> Actualizar</a> <a href="javascript:;" class="btn btn-danger btn-xs btn-eliminar-software" data-id-software="' + item.Id + '"></i> Eliminar</a>';
+            tabla.agregarFila('#data-table-datos-computacionales', [item.Id, item.Software, item.Nivel, item.Comentarios, botones, item.IdSoftware, item.IdNivelHabilidad]);
         });
     };
 
-    var recargandoTablaSistemas = function (datosIdiomas) {
+    var recargandoTablaSistemas = function (datosSistemas) {
         tabla.limpiarTabla('#data-table-datos-sistemas-especiales');
-        $.each(datosIdiomas, function (key, item) {
-            tabla.agregarFila('#data-table-datos-sistemas-especiales', [item.Id, item.Sistema, item.Nivel, item.Comentarios]);
+        $.each(datosSistemas, function (key, item) {
+            var botones = '<a href="javascript:;" class="btn btn-success btn-xs btn-actualizar-sistema" data-id-sistema="' + item.Id + '"><i class="fa fa-pencil"></i> Actualizar</a> <a href="javascript:;" class="btn btn-danger btn-xs btn-eliminar-sistema" data-id-sistema="' + item.Id + '"></i> Eliminar</a>';
+            tabla.agregarFila('#data-table-datos-sistemas-especiales', [item.Id, item.Sistema, item.Nivel, item.Comentarios, botones, item.IdSistema, item.IdNivelHabilidad]);
         });
     };
 
-    var recargandoTablaDependientes = function (datosIdiomas) {
+    var recargandoTablaDependientes = function (datosDependientes) {
         tabla.limpiarTabla('#data-table-datos-dependientes-economicos');
-        $.each(datosIdiomas, function (key, item) {
-            tabla.agregarFila('#data-table-datos-dependientes-economicos', [item.Id, item.Nombre, item.Parentesco, item.FechaNacimiento]);
+        $.each(datosDependientes, function (key, item) {
+            var botones = '<a href="javascript:;" class="btn btn-success btn-xs btn-actualizar-dependiente" data-id-dependiente="' + item.Id + '"><i class="fa fa-pencil"></i> Actualizar</a> <a href="javascript:;" class="btn btn-danger btn-xs btn-eliminar-dependiente" data-id-dependiente="' + item.Id + '"></i> Eliminar</a>';
+            tabla.agregarFila('#data-table-datos-dependientes-economicos', [item.Id, item.Nombre, item.Parentesco, item.FechaNacimiento, botones]);
         });
     };
 
@@ -711,6 +805,7 @@ $(function () {
 
         select.crearSelect('#actualizarNivelEstudioUsuario');
         select.crearSelect('#actualizarDocumentoRecibidoUsuario');
+        calendario.crearFecha('.calendario');
 
         select.cambiarOpcion('#actualizarNivelEstudioUsuario', anteriorNivelEstudio);
         select.cambiarOpcion('#actualizarDocumentoRecibidoUsuario', anteriorDocumentoRecibido);
@@ -749,14 +844,7 @@ $(function () {
 
             if (camposFormularioValidados) {
                 evento.enviarEvento('PerfilUsuario/ActualizarDatosAcademicosUsuario', data, '#modalEdit', function (respuesta) {
-                    ocultarCargaPaginaInformacionUsuario('#academicos');
-                    if (respuesta instanceof Array || respuesta instanceof Object) {
-                        recargandoTablaAcademicos(respuesta);
-                        evento.terminarModal('#modalEdit');
-                        botonActualizarAcademico();
-                    } else {
-                        evento.mostrarMensaje("#errorAcademicosUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
-                    }
+                    respuestaAcademicos(respuesta);
                 });
             }
         });
@@ -765,126 +853,499 @@ $(function () {
     }
     
     var actualizarDatosIdiomas = function () {
-        var idAcademico = arguments[0];
-        var catalogoNivelEstudio = arguments[1];
-        var catalogoDocumentoEstudio = arguments[2];
+        var idIdioma = arguments[0];
+        var catalogoHabilidadesIdioma = arguments[1];
+        var catalogoNivelHabilidades = arguments[2];
 
-        var anteriorNivelEstudio = '';
-        var anteriorInstitucion = '';
-        var anteriorDocumentoRecibido = '';
-        var anteriorDesde = '';
-        var anteriorHasta = '';
-        var tablaDatosAcademicos = $('#data-table-datos-academicos').DataTable().data();
+        var anteriorIdioma = '';
+        var anteriorComprension = '';
+        var anteriorLectura = '';
+        var anteriorEscritura = '';
+        var anteriorComentarios = '';
+        var tablaDatosIdiomas = $('#data-table-datos-idiomas').DataTable().data();
 
-        $.each(tablaDatosAcademicos, function (key, valor) {
-            if (idAcademico == valor[0]) {
-                anteriorNivelEstudio = valor[7];
-                anteriorInstitucion = valor[2];
-                anteriorDocumentoRecibido = valor[8];
-                anteriorDesde = valor[3];
-                anteriorHasta = valor[4];
+        $.each(tablaDatosIdiomas, function (key, valor) {
+            if (idIdioma == valor[0]) {
+                anteriorIdioma = valor[7];
+                anteriorComprension = valor[8];
+                anteriorLectura = valor[9];
+                anteriorEscritura = valor[10];
+                anteriorComentarios = valor[5];
             }
         });
 
         var html = '<div class="row">\n\
                         <div class="col-md-6">\n\
-                            <label for="selectActualizarIdiomaUsuario">Idioma *</label>\n\
-                            <select id="selectActualizarIdiomaUsuario" class="form-control" style="width: 100%" data-parsley-required="true">\n\
+                            <label for="actualizarIdiomaUsuario">Idioma *</label>\n\
+                            <select id="actualizarIdiomaUsuario" class="form-control" style="width: 100%" data-parsley-required="true">\n\
                                 <option value="">Seleccionar...</option>\n\
                             </select>\n\
                         </div>\n\
                         <div class="col-md-6">\n\
-                            <label for="selectActualizarComprensionUsuario">Comprensión *</label>\n\
-                            <select id="selectActualizarComprensionUsuario" class="form-control" style="width: 100%" data-parsley-required="true">\n\
+                            <label for="actualizarComprensionUsuario">Comprensión *</label>\n\
+                            <select id="actualizarComprensionUsuario" class="form-control" style="width: 100%" data-parsley-required="true">\n\
                                 <option value="">Seleccionar...</option>\n\
                             </select>\n\
                         </div>\n\
                     </div>\n\
                     <div class="row m-t-10">\n\
                         <div class="col-md-6">\n\
-                            <label for="selectActualizarLecturaUsuario">Lectura *</label>\n\
-                            <select id="selectActualizarLecturaUsuario" class="form-control" style="width: 100%" data-parsley-required="true">\n\
+                            <label for="actualizarLecturaUsuario">Lectura *</label>\n\
+                            <select id="actualizarLecturaUsuario" class="form-control" style="width: 100%" data-parsley-required="true">\n\
                                 <option value="">Seleccionar...</option>\n\
                             </select>\n\
                         </div>\n\
                         <div class="col-md-6">\n\
-                            <label for="selectActualizarEscrituraUsuario">Escritura *</label>\n\
-                            <select id="selectActualizarEscrituraUsuario" class="form-control" style="width: 100%" data-parsley-required="true">\n\
+                            <label for="actualizarEscrituraUsuario">Escritura *</label>\n\
+                            <select id="actualizarEscrituraUsuario" class="form-control" style="width: 100%" data-parsley-required="true">\n\
                                 <option value="">Seleccionar...</option>\n\
                             </select>\n\
                         </div>\n\
                     </div>\n\
                     <div class="row m-t-10">\n\
                         <div class="col-md-12">\n\
-                            <label for="inputActualizarComantariosIdiomasUsuario">Comentarios</label>\n\
-                            <textarea id="inputActualizarComantariosIdiomasUsuario" class="form-control entregaGarantia" placeholder="Ingrese los comentarios" rows="3" ></textarea>\n\
+                            <label for="actualizarComantariosIdiomasUsuario">Comentarios</label>\n\
+                            <textarea id="actualizarComantariosIdiomasUsuario" class="form-control entregaGarantia" placeholder="Ingrese los comentarios" rows="3" ></textarea>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div class="row m-t-10">\n\
+                        <div class="col-md-12">\n\
+                            <div id="errorIdiomasUsuario"></div>\n\
                         </div>\n\
                     </div>';
         evento.iniciarModal('#modalEdit', 'Editar Idioma', html);
 
-//        $.each(catalogoNivelEstudio, function (key, valor) {
-//            $("#actualizarNivelEstudioUsuario").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
-//        });
-//
-//        $.each(catalogoDocumentoEstudio, function (key, valor) {
-//            $("#actualizarDocumentoRecibidoUsuario").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
-//        });
-//
-//        select.crearSelect('#actualizarNivelEstudioUsuario');
-//        select.crearSelect('#actualizarDocumentoRecibidoUsuario');
-//
-//        select.cambiarOpcion('#actualizarNivelEstudioUsuario', anteriorNivelEstudio);
-//        select.cambiarOpcion('#actualizarDocumentoRecibidoUsuario', anteriorDocumentoRecibido);
-//        $('#actualizarNombreInstitutoUsuario').val(anteriorInstitucion);
-//        $('#actualizarDesdeUsuario').val(anteriorDesde);
-//        $('#actualizarHastaUsuario').val(anteriorHasta);
+        $.each(catalogoHabilidadesIdioma, function (key, valor) {
+            $("#actualizarIdiomaUsuario").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
+        });
 
-//        $('#btnGuardarCambios').off('click');
-//        $('#btnGuardarCambios').on('click', function () {
-//            var nivelEstudio = $('#actualizarNivelEstudioUsuario').val();
-//            var nombreInstituto = $('#actualizarNombreInstitutoUsuario').val();
-//            var documentoRecibido = $('#actualizarDocumentoRecibidoUsuario').val();
-//            var desde = $('#actualizarDesdeUsuario').val();
-//            var hasta = $('#actualizarHastaUsuario').val();
-//
-//            var data = {
-//                id: idAcademico,
-//                nivelEstudio: nivelEstudio,
-//                institucion: nombreInstituto,
-//                documento: documentoRecibido,
-//                desde: desde,
-//                hasta: hasta
-//            };
-//
-//            var arrayCampos = [
-//                {'objeto': '#actualizarNivelEstudioUsuario', 'mensajeError': 'Falta seleccionar el campo Nivel de Estudio.'},
-//                {'objeto': '#actualizarNombreInstitutoUsuario', 'mensajeError': 'Falta seleccionarel campo Nombre de la Institución.'},
-//                {'objeto': '#actualizarDocumentoRecibidoUsuario', 'mensajeError': 'Falta seleccionar el campo DocumentoRecibido.'},
-//                {'objeto': '#actualizarDesdeUsuario', 'mensajeError': 'Falta seleccionar el campo Desde.'},
-//                {'objeto': '#actualizarHastaUsuario', 'mensajeError': 'Falta escribir el campo Hasta.'}
-//            ];
-//
-//            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorAcademicosUsuario');
-//
-//            mostrarCargaPaginaInformacionUsuario('#academicos');
-//
-//            if (camposFormularioValidados) {
-//                evento.enviarEvento('PerfilUsuario/ActualizarDatosAcademicosUsuario', data, '#modalEdit', function (respuesta) {
-//                    ocultarCargaPaginaInformacionUsuario('#academicos');
-//                    if (respuesta instanceof Array || respuesta instanceof Object) {
-//                        recargandoTablaAcademicos(respuesta);
-//                        evento.terminarModal('#modalEdit');
-//                        botonActualizarAcademico();
-//                    } else {
-//                        evento.mostrarMensaje("#errorAcademicosUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
-//                    }
-//                });
-//            }
-//        });
+        $.each(catalogoNivelHabilidades, function (key, valor) {
+            $("#actualizarComprensionUsuario").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
+            $("#actualizarLecturaUsuario").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
+            $("#actualizarEscrituraUsuario").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
+        });
+
+        select.crearSelect('#actualizarIdiomaUsuario');
+        select.crearSelect('#actualizarComprensionUsuario');
+        select.crearSelect('#actualizarLecturaUsuario');
+        select.crearSelect('#actualizarEscrituraUsuario');
+
+        select.cambiarOpcion('#actualizarIdiomaUsuario', anteriorIdioma);
+        select.cambiarOpcion('#actualizarComprensionUsuario', anteriorComprension);
+        select.cambiarOpcion('#actualizarLecturaUsuario', anteriorLectura);
+        select.cambiarOpcion('#actualizarEscrituraUsuario', anteriorEscritura);
+
+        $('#actualizarComantariosIdiomasUsuario').val(anteriorComentarios);
+
+        $('#btnGuardarCambios').off('click');
+        $('#btnGuardarCambios').on('click', function () {
+            var nivelIdioma = $('#actualizarIdiomaUsuario').val();
+            var comprension = $('#actualizarComprensionUsuario').val();
+            var lectura = $('#actualizarLecturaUsuario').val();
+            var escritura = $('#actualizarEscrituraUsuario').val();
+            var comentarios = $('#actualizarComantariosIdiomasUsuario').val();
+
+            var data = {
+                id: idIdioma,
+                nivelIdioma: nivelIdioma,
+                comprension: comprension,
+                lectura: lectura,
+                escritura: escritura,
+                comentarios: comentarios
+            };
+
+            var arrayCampos = [
+                {'objeto': '#actualizarIdiomaUsuario', 'mensajeError': 'Falta seleccionar el campo Nivel de Idioma.'},
+                {'objeto': '#actualizarComprensionUsuario', 'mensajeError': 'Falta seleccionarel campo Comprensión.'},
+                {'objeto': '#actualizarLecturaUsuario', 'mensajeError': 'Falta seleccionar el campo Lectura.'},
+                {'objeto': '#actualizarEscrituraUsuario', 'mensajeError': 'Falta seleccionar el campo Escritura.'}
+            ];
+
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorIdiomasUsuario');
+
+            mostrarCargaPaginaInformacionUsuario('#idiomas');
+
+            if (camposFormularioValidados) {
+                evento.enviarEvento('PerfilUsuario/ActualizarDatosIdiomasUsuario', data, '#modalEdit', function (respuesta) {
+                    respuestaIdiomas(respuesta);
+                });
+            }
+        });
+
+        cerrarModalCambios();
+    }
+    
+    var actualizarDatosSoftware = function () {
+        var idSoftware = arguments[0];
+        var catalogoHabilidadesSoftware = arguments[1];
+        var catalogoNivelHabilidades = arguments[2];
+
+        var anteriorSoftware = '';
+        var anteriorNivel = '';
+        var anteriorComentarios = '';
+        var tablaDatosSoftware = $('#data-table-datos-computacionales').DataTable().data();
+
+        $.each(tablaDatosSoftware, function (key, valor) {
+            if (idSoftware == valor[0]) {
+                anteriorSoftware = valor[5];
+                anteriorNivel = valor[6];
+                anteriorComentarios = valor[3];
+            }
+        });
+
+        var html = '<div class="row">\n\
+                        <div class="col-md-6">\n\
+                            <label for="actualizarSoftwareUsuario">Software *</label>\n\
+                            <select id="actualizarSoftwareUsuario" class="form-control" style="width: 100%" data-parsley-required="true">\n\
+                                <option value="">Seleccionar...</option>\n\
+                            </select>\n\
+                        </div>\n\
+                        <div class="col-md-6">\n\
+                            <label for="actualizarNivelComputacionalesUsuario">Nivel *</label>\n\
+                            <select id="actualizarNivelComputacionalesUsuario" class="form-control" style="width: 100%" data-parsley-required="true">\n\
+                                <option value="">Seleccionar...</option>\n\
+                            </select>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div class="row m-t-10">\n\
+                        <div class="col-md-12">\n\
+                            <label for="actualizarComentariosComputacionalesUsuario">Comentarios</label>\n\
+                            <textarea id="actualizarComentariosComputacionalesUsuario" class="form-control entregaGarantia" placeholder="Ingrese los comentarios" rows="3" ></textarea>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div class="row m-t-10">\n\
+                        <div class="col-md-12">\n\
+                            <div id="errorSoftwareUsuario"></div>\n\
+                        </div>\n\
+                    </div>';
+        evento.iniciarModal('#modalEdit', 'Editar Dato Computacional', html);
+
+        $.each(catalogoHabilidadesSoftware, function (key, valor) {
+            $("#actualizarSoftwareUsuario").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
+        });
+
+        $.each(catalogoNivelHabilidades, function (key, valor) {
+            $("#actualizarNivelComputacionalesUsuario").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
+        });
+
+        select.crearSelect('#actualizarSoftwareUsuario');
+        select.crearSelect('#actualizarNivelComputacionalesUsuario');
+
+        select.cambiarOpcion('#actualizarSoftwareUsuario', anteriorSoftware);
+        select.cambiarOpcion('#actualizarNivelComputacionalesUsuario', anteriorNivel);
+
+        $('#actualizarComentariosComputacionalesUsuario').val(anteriorComentarios);
+
+        $('#btnGuardarCambios').off('click');
+        $('#btnGuardarCambios').on('click', function () {
+            var nivelSoftware = $('#actualizarSoftwareUsuario').val();
+            var nivel = $('#actualizarNivelComputacionalesUsuario').val();
+            var comentarios = $('#actualizarComentariosComputacionalesUsuario').val();
+
+            var data = {
+                id: idSoftware,
+                nivelSoftware: nivelSoftware,
+                nivel: nivel,
+                comentarios: comentarios
+            };
+
+            var arrayCampos = [
+                {'objeto': '#actualizarSoftwareUsuario', 'mensajeError': 'Falta seleccionar el campo Software.'},
+                {'objeto': '#actualizarNivelComputacionalesUsuario', 'mensajeError': 'Falta seleccionarel campo Nivel.'}
+            ];
+
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorSoftwareUsuario');
+
+            mostrarCargaPaginaInformacionUsuario('#computacionales');
+
+            if (camposFormularioValidados) {
+                evento.enviarEvento('PerfilUsuario/ActualizarDatosSoftwareUsuario', data, '#modalEdit', function (respuesta) {
+                    respuestaSoftware(respuesta);
+                });
+            }
+        });
 
         cerrarModalCambios();
     }
 
+   var actualizarDatosSistemas = function () {
+        var idSistema = arguments[0];
+        var catalogoHabilidadesSistema = arguments[1];
+        var catalogoNivelHabilidades = arguments[2];
+
+        var anteriorSistema = '';
+        var anteriorNivel = '';
+        var anteriorComentarios = '';
+        var tablaDatosSistema = $('#data-table-datos-sistemas-especiales').DataTable().data();
+
+        $.each(tablaDatosSistema, function (key, valor) {
+            if (idSistema == valor[0]) {
+                anteriorSistema = valor[5];
+                anteriorNivel = valor[6];
+                anteriorComentarios = valor[3];
+            }
+        });
+
+        var html = '<div class="row">\n\
+                        <div class="col-md-6">\n\
+                            <label for="actualizarSistemasUsuario">Sistemas *</label>\n\
+                            <select id="actualizarSistemasUsuario" class="form-control" style="width: 100%" data-parsley-required="true">\n\
+                                <option value="">Seleccionar...</option>\n\
+                            </select>\n\
+                        </div>\n\
+                        <div class="col-md-6">\n\
+                            <label for="actualizarNivelSistemasUsuario">Nivel *</label>\n\
+                            <select id="actualizarNivelSistemasUsuario" class="form-control" style="width: 100%" data-parsley-required="true">\n\
+                                <option value="">Seleccionar...</option>\n\
+                            </select>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div class="row m-t-10">\n\
+                        <div class="col-md-12">\n\
+                            <label for="actualizarComnetariosSistemasUsuario">Comentarios</label>\n\
+                            <textarea id="actualizarComnetariosSistemasUsuario" class="form-control entregaGarantia" placeholder="Ingrese los comentarios" rows="3" ></textarea>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div class="row m-t-10">\n\
+                        <div class="col-md-12">\n\
+                            <div id="errorSistemaUsuario"></div>\n\
+                        </div>\n\
+                    </div>';
+        evento.iniciarModal('#modalEdit', 'Editar Dato Computacional', html);
+
+        $.each(catalogoHabilidadesSistema, function (key, valor) {
+            $("#actualizarSistemasUsuario").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
+        });
+
+        $.each(catalogoNivelHabilidades, function (key, valor) {
+            $("#actualizarNivelSistemasUsuario").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
+        });
+
+        select.crearSelect('#actualizarSistemasUsuario');
+        select.crearSelect('#actualizarNivelSistemasUsuario');
+
+        select.cambiarOpcion('#actualizarSistemasUsuario', anteriorSistema);
+        select.cambiarOpcion('#actualizarNivelSistemasUsuario', anteriorNivel);
+
+        $('#actualizarComnetariosSistemasUsuario').val(anteriorComentarios);
+
+        $('#btnGuardarCambios').off('click');
+        $('#btnGuardarCambios').on('click', function () {
+            var nivelSistema = $('#actualizarSistemasUsuario').val();
+            var nivel = $('#actualizarNivelSistemasUsuario').val();
+            var comentarios = $('#actualizarComnetariosSistemasUsuario').val();
+
+            var data = {
+                id: idSistema,
+                nivelSistema: nivelSistema,
+                nivel: nivel,
+                comentarios: comentarios
+            };
+
+            var arrayCampos = [
+                {'objeto': '#actualizarSistemasUsuario', 'mensajeError': 'Falta seleccionar el campo Sitemas.'},
+                {'objeto': '#actualizarNivelSistemasUsuario', 'mensajeError': 'Falta seleccionarel campo Nivel.'}
+            ];
+
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorSistemaUsuario');
+
+            mostrarCargaPaginaInformacionUsuario('#sistemasEspeciales');
+
+            if (camposFormularioValidados) {
+                evento.enviarEvento('PerfilUsuario/ActualizarDatosSistemasUsuario', data, '#modalEdit', function (respuesta) {
+                    respuestaSistemas(respuesta);
+                });
+            }
+        });
+
+        cerrarModalCambios();
+    }
+    
+    var actualizarDatosDependientes = function () {
+        var idDependiente = arguments[0];
+
+        var anteriorNombre = '';
+        var anteriorParentesco = '';
+        var anteriorFechaNacimiento = '';
+        var tablaDatosDependientes = $('#data-table-datos-dependientes-economicos').DataTable().data();
+
+        $.each(tablaDatosDependientes, function (key, valor) {
+            if (idDependiente == valor[0]) {
+                anteriorNombre = valor[1];
+                anteriorParentesco = valor[2];
+                anteriorFechaNacimiento = valor[3];
+            }
+        });
+
+        var html = '<div class="row">\n\
+                        <div class="col-md-4">\n\
+                            <label for="actualizarNombreDependienteUsuario">Nombre *</label>\n\
+                            <input type="tel" class="form-control" id="actualizarNombreDependienteUsuario" style="width: 100%"/>\n\
+                        </div>\n\
+                        <div class="col-md-4">\n\
+                            <label for="actualizarParentescoUsuario">Parentesco *</label>\n\
+                            <input type="tel" class="form-control" id="actualizarParentescoUsuario" style="width: 100%"/>\n\
+                        </div>\n\
+                        <div class="col-md-4">\n\
+                            <label for="actualizarParentescoVigenciaUsuario">Fecha de Nacimiento *</label>\n\
+                            <div id="fechaParentescoVigencia" class="input-group date calendario" >\n\
+                                <input id="actualizarParentescoVigenciaUsuario" type="text" class="form-control"/>\n\
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>\n\
+                            </div>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div class="row m-t-10">\n\
+                        <div class="col-md-12">\n\
+                            <div id="errorDependienteUsuario"></div>\n\
+                        </div>\n\
+                    </div>';
+        evento.iniciarModal('#modalEdit', 'Editar Dependiente', html);
+        
+        calendario.crearFecha('.calendario');
+
+        $('#actualizarNombreDependienteUsuario').val(anteriorNombre);
+        $('#actualizarParentescoUsuario').val(anteriorParentesco);
+        $('#actualizarParentescoVigenciaUsuario').val(anteriorFechaNacimiento);
+
+        $('#btnGuardarCambios').off('click');
+        $('#btnGuardarCambios').on('click', function () {
+            var nombre = $('#actualizarNombreDependienteUsuario').val();
+            var parentesco = $('#actualizarParentescoUsuario').val();
+            var fechaNacimiento = $('#actualizarParentescoVigenciaUsuario').val();
+
+            var data = {
+                id: idDependiente,
+                nombre: nombre,
+                parentesco: parentesco,
+                fechaNacimiento: fechaNacimiento
+            };
+
+            var arrayCampos = [
+                {'objeto': '#actualizarNombreDependienteUsuario', 'mensajeError': 'Falta seleccionar el campo Nombre.'},
+                {'objeto': '#actualizarParentescoUsuario', 'mensajeError': 'Falta seleccionarel campo Parentesco.'},
+                {'objeto': '#actualizarParentescoVigenciaUsuario', 'mensajeError': 'Falta seleccionarel campo Fecha de Nacimiento.'}
+            ];
+
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorDependienteUsuario');
+
+            mostrarCargaPaginaInformacionUsuario('#dependientesEconomicos');
+
+            if (camposFormularioValidados) {
+                evento.enviarEvento('PerfilUsuario/ActualizarDatosDependientesUsuario', data, '#modalEdit', function (respuesta) {
+                    respuestaDependientes(respuesta);
+                });
+            }
+        });
+
+        cerrarModalCambios();
+    }
+    
+    var eliminarDatos = function () {
+        var id = arguments[0];
+        var tabla = arguments[1];
+        
+        var data = {id: id, tabla: tabla};
+        
+        switch(tabla){
+            case 'academicos':
+                mostrarCargaPaginaInformacionUsuario('#academicos');
+            break;
+            case 'idiomas':
+                mostrarCargaPaginaInformacionUsuario('#idiomas');
+            break;
+            case 'software':
+                mostrarCargaPaginaInformacionUsuario('#computacionales');
+            break;
+            case 'sistemas':
+                mostrarCargaPaginaInformacionUsuario('#sistemasEspeciales');
+            break;
+            case 'dependientes':
+                mostrarCargaPaginaInformacionUsuario('#dependientesEconomicos');
+            break;
+        }
+        
+        evento.enviarEvento('PerfilUsuario/EliminarDatos', data, '#modalEdit', function (respuesta) {
+            switch(tabla){
+                case 'academicos':
+                    respuestaAcademicos(respuesta);
+                break;
+                case 'idiomas':
+                    respuestaIdiomas(respuesta);
+                break;
+                case 'software':
+                    respuestaSoftware(respuesta);
+                break;
+                case 'sistemas':
+                    respuestaSistemas(respuesta);
+                break;
+                case 'dependientes':
+                    respuestaDependientes(respuesta);
+                break;
+            }
+
+        });
+    }
+    
+    var respuestaAcademicos = function (respuesta) {
+        ocultarCargaPaginaInformacionUsuario('#academicos');
+        if (respuesta instanceof Array || respuesta instanceof Object) {
+                recargandoTablaAcademicos(respuesta);
+                evento.terminarModal('#modalEdit');
+                botonActualizarAcademico();
+                botonEliminarAcademico();
+        } else {
+            evento.mostrarMensaje("#errorAcademicosUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
+        }
+    }
+    
+    var respuestaIdiomas = function (respuesta) {
+        ocultarCargaPaginaInformacionUsuario('#idiomas');
+        if (respuesta instanceof Array || respuesta instanceof Object) {
+            recargandoTablaIdiomas(respuesta);
+            evento.terminarModal('#modalEdit');
+            botonActualizarIdioma();
+            botonEliminarIdioma();
+        } else {
+            evento.mostrarMensaje("#errorIdiomasUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
+        }
+    }
+        
+    var respuestaSoftware = function (respuesta) {
+        ocultarCargaPaginaInformacionUsuario('#computacionales');
+        if (respuesta instanceof Array || respuesta instanceof Object) {
+            recargandoTablaSoftware(respuesta);
+            evento.terminarModal('#modalEdit');
+            botonActualizarSoftware();
+            botonEliminarSoftware();
+        } else {
+            evento.mostrarMensaje("#errorSoftwareUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
+        }
+    }
+        
+    var respuestaSistemas = function (respuesta) {
+        ocultarCargaPaginaInformacionUsuario('#sistemasEspeciales');
+        if (respuesta instanceof Array || respuesta instanceof Object) {
+            recargandoTablaSistemas(respuesta);
+            evento.terminarModal('#modalEdit');
+            botonActualizarSistema();
+            botonEliminarSistema();
+        } else {
+            evento.mostrarMensaje("#errorSistemaUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
+        }
+    }
+        
+    var respuestaDependientes = function (respuesta) {
+        ocultarCargaPaginaInformacionUsuario('#dependientesEconomicos');
+        if (respuesta instanceof Array || respuesta instanceof Object) {
+            recargandoTablaDependientes(respuesta);
+            evento.terminarModal('#modalEdit');
+            botonActualizarDependiente();
+            botonEliminarDependiente();
+        } else {
+            evento.mostrarMensaje("#errorDependienteUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
+        }
+    }
+    
     var recargarPagina = function () {
         evento.terminarModal('#modalEdit');
         location.reload();
@@ -900,7 +1361,6 @@ $(function () {
         }
 
         return validacion;
-
     }
 
     var viewGlobals = function () {

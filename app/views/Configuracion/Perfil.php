@@ -179,13 +179,13 @@
     </div>
     <!-- Fin de perfil contenedor --> 
 
-    <div class="row hidden">
+    <div class="row">
         <div class="col-md-6 col-xs-6">
             <h1 class="page-header">Información del Usuario</h1>
         </div>
     </div>
     <!-- Finalizando titulo de la pagina -->
-    <div id="seccion-informacion-usuario" class="panel panel-inverse panel-with-tabs hidden" data-sortable-id="ui-unlimited-tabs-1">
+    <div id="seccion-informacion-usuario" class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
         <!--Empezando Pestañas para definir la seccion-->
         <div class="panel-heading p-0">
             <div class="panel-heading-btn m-r-10 m-t-10">
@@ -645,6 +645,9 @@
                                     <th class="all">Software</th>
                                     <th class="all">Nivel</th>
                                     <th class="all">Comentarios</th>
+                                    <th class="all">Acciones</th>
+                                    <th class="never">IdSoftware</th>
+                                    <th class="never">IdNivelHabilidad</th>
                                 </tr>
                             </thead>
                             <tbody>                                     
@@ -722,6 +725,9 @@
                                     <th class="all">Sistemas</th>
                                     <th class="all">Nivel</th>
                                     <th class="all">Comentarios</th>
+                                    <th class="all">Acciones</th>
+                                    <th class="never">IdSistema</th>
+                                    <th class="never">IdNivelHabilidad</th>
                                 </tr>
                             </thead>
                             <tbody>                                     
@@ -753,7 +759,8 @@
                         <div class="col-md-6">
                             <label for="selectActualizarAntiguedadUsuario">Antigüedad</label>
                             <div id="inputFechaAntiguedadUsuario" class="input-group date calendario" >
-                                <input id="selectActualizarAntiguedadUsuario" type="text" class="form-control" value="<?php echo $datosConduccion['Antiguedad'] ?>" />
+                                <?php (empty($datosConduccion)) ? $antiguedad = '' : $antiguedad = $datosConduccion['Antiguedad']; ?>
+                                <input id="selectActualizarAntiguedadUsuario" type="text" class="form-control" value="<?php echo $antiguedad; ?>" />
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>                        
                         </div>
@@ -762,12 +769,14 @@
                     <div class="row m-t-10">
                         <div class="col-md-6">
                             <label for="inputActualizarTipoLicenciaUsuario">Tipo de licencia</label>
-                            <input type="tel" class="form-control" id="inputActualizarTipoLicenciaUsuario" style="width: 100%" value="<?php echo $datosConduccion['TipoLicencia'] ?>" />
+                            <?php (empty($datosConduccion)) ? $tipoLicencia = '' : $tipoLicencia = $datosConduccion['TipoLicencia']; ?>
+                            <input type="tel" class="form-control" id="inputActualizarTipoLicenciaUsuario" style="width: 100%" value="<?php echo $tipoLicencia; ?>" />
                         </div>
                         <div class="col-md-6">
                             <label for="selectActualizarTipoVigenciaUsuario">Vigencia</label>
                             <div id="inputFechaVigenciaUsuario" class="input-group date calendario" >
-                                <input id="selectActualizarTipoVigenciaUsuario" type="text" class="form-control" value="<?php echo $datosConduccion['Expedicion'] ?>" />
+                                <?php (empty($datosConduccion)) ? $expedicion = '' : $expedicion= $datosConduccion['Expedicion']; ?>
+                                <input id="selectActualizarTipoVigenciaUsuario" type="text" class="form-control" value="<?php echo $expedicion; ?>" />
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>                        
                         </div>
@@ -775,13 +784,15 @@
 
                     <div class="row m-t-10">
                         <div class="col-md-6">
+                            <?php (empty($datosConduccion)) ? $noLicencia = '' : $noLicencia = $datosConduccion['NoLicencia']; ?>
                             <label for="inputActualizarNumeroLicenciaUsuario">Numero de licencia</label>
-                            <input type="tel" class="form-control" id="inputActualizarNumeroLicenciaUsuario" style="width: 100%" value="<?php echo $datosConduccion['NoLicencia'] ?>" />
+                            <input type="tel" class="form-control" id="inputActualizarNumeroLicenciaUsuario" style="width: 100%" value="<?php echo $noLicencia; ?>" />
                         </div>
                         <div class="col-md-6">
                             <label for="selectActualizarNumeroVigenciaUsuario">Vigencia</label>
                             <div id="inputFechaNacimientoUsuario" class="input-group date calendario" >
-                                <input id="selectActualizarNumeroVigenciaUsuario" type="text" class="form-control" value="<?php echo $datosConduccion['Vigencia'] ?>"/>
+                                <?php (empty($datosConduccion)) ? $vigencia = '' : $vigencia = $datosConduccion['Vigencia']; ?>
+                                <input id="selectActualizarNumeroVigenciaUsuario" type="text" class="form-control" value="<?php echo $vigencia; ?>"/>
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>                        
                         </div>
@@ -859,6 +870,7 @@
                                     <th class="all">Nombre</th>
                                     <th class="all">Parentesco</th>
                                     <th class="all">Fecha de Nacimiento</th>
+                                    <th class="all">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>                                     

@@ -112,7 +112,11 @@ class Modelo_Usuario extends Modelo_Base {
                                         *
                                     FROM t_rh_conduccion 
                                     WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
-        return $consulta[0];
+        if(!empty($consulta)){
+            return $consulta[0];
+        }else{
+            return array();
+        }
     }
 
     public function consultaTRHAcademicos(array $data) {
@@ -121,7 +125,8 @@ class Modelo_Usuario extends Modelo_Base {
                                         (SELECT Nombre FROM cat_rh_docs_estudio WHERE Id = IdDocumento) Documento,
                                         (SELECT Nombre FROM cat_rh_nvl_estudio WHERE Id = IdNivelEstudio) NivelEstudio
                                     FROM t_rh_academicos 
-                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
+                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"
+                                    AND Flag = "1"');
         return $consulta;
     }
 
@@ -133,7 +138,8 @@ class Modelo_Usuario extends Modelo_Base {
                                         (SELECT Nombre FROM cat_rh_nvl_habilidad WHERE Id = Lectura) NivelLectura,
                                         (SELECT Nombre FROM cat_rh_nvl_habilidad WHERE Id = Escritura) NivelEscritura
                                     FROM t_rh_idiomas 
-                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
+                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"
+                                    AND Flag = "1"');
         return $consulta;
     }
 
@@ -143,7 +149,8 @@ class Modelo_Usuario extends Modelo_Base {
                                         (SELECT Nombre FROM cat_rh_habilidades_software WHERE Id = IdSoftware) Software,
                                         (SELECT Nombre FROM cat_rh_nvl_habilidad WHERE Id = IdNivelHabilidad) Nivel
                                     FROM t_rh_software
-                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
+                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"
+                                    AND Flag = "1"');
         return $consulta;
     }
 
@@ -153,7 +160,8 @@ class Modelo_Usuario extends Modelo_Base {
                                         (SELECT Nombre FROM cat_rh_habilidades_sistema WHERE Id = IdSistema) Sistema,
                                         (SELECT Nombre FROM cat_rh_nvl_habilidad WHERE Id = IdNivelHabilidad) Nivel
                                     FROM t_rh_sistemas
-                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
+                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"
+                                    AND Flag = "1"');
         return $consulta;
     }
 
@@ -161,7 +169,8 @@ class Modelo_Usuario extends Modelo_Base {
         $consulta = $this->consulta('SELECT 
                                         *
                                     FROM t_rh_dependientes
-                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
+                                    WHERE IdUsuario = "' . $data['IdUsuario'] . '"
+                                    AND Flag = "1"');
         return $consulta;
     }
 
@@ -184,6 +193,44 @@ class Modelo_Usuario extends Modelo_Base {
             'IdDocumento' => $datos['documento'],
             'Desde' => $datos['desde'],
             'Hasta' => $datos['hasta'],
+            'FechaMod' => $datos['fechaMod']], ['Id' => $datos['id']]);
+        return $consulta;
+    }
+    
+    public function actualizarCampoTRHIdiomas(array $datos) {
+        $consulta = $this->actualizar('t_rh_idiomas', [
+            'Idioma' => $datos['nivelIdioma'],
+            'Comprension' => $datos['comprension'],
+            'Lectura' => $datos['lectura'],
+            'Escritura' => $datos['escritura'],
+            'Comentarios' => $datos['comentarios'],
+            'FechaMod' => $datos['fechaMod']], ['Id' => $datos['id']]);
+        return $consulta;
+    }    
+    
+    public function actualizarCampoTRHSoftware(array $datos) {
+        $consulta = $this->actualizar('t_rh_software', [
+            'IdSoftware' => $datos['nivelSoftware'],
+            'IdNivelHabilidad' => $datos['nivel'],
+            'Comentarios' => $datos['comentarios'],
+            'FechaMod' => $datos['fechaMod']], ['Id' => $datos['id']]);
+        return $consulta;
+    }
+    
+    public function actualizarCampoTRHSistemas(array $datos) {
+        $consulta = $this->actualizar('t_rh_sistemas', [
+            'IdSistema' => $datos['nivelSistema'],
+            'IdNivelHabilidad' => $datos['nivel'],
+            'Comentarios' => $datos['comentarios'],
+            'FechaMod' => $datos['fechaMod']], ['Id' => $datos['id']]);
+        return $consulta;
+    }
+    
+    public function actualizarCampoTRHDependientes(array $datos) {
+        $consulta = $this->actualizar('t_rh_dependientes', [
+            'Nombre' => $datos['nombre'],
+            'Parentesco' => $datos['parentesco'],
+            'FechaNacimiento' => $datos['fechaNacimiento'],
             'FechaMod' => $datos['fechaMod']], ['Id' => $datos['id']]);
         return $consulta;
     }
@@ -295,6 +342,13 @@ class Modelo_Usuario extends Modelo_Base {
             'FechaNacimiento' => $datos['vigencia'],
             'FechaCaptura' => $datos['fechaCaptura'],
             'Flag' => '1']);
+        return $consulta;
+    }
+    
+    public function eliminarTRH(array $datos) {
+        $consulta = $this->actualizar($datos['tablaNombre'], [
+            'Flag' => '0',
+            'FechaMod' => $datos['fechaMod']], ['Id' => $datos['id']]);
         return $consulta;
     }
 

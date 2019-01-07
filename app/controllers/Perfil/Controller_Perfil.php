@@ -50,6 +50,18 @@ class Controller_Perfil extends Base {
             case 'ActualizarDatosAcademicosUsuario':
                 $resultado = $this->perfilUsuario->actualizarDatosAcademicosUsuario($this->input->post());
                 break;
+            case 'ActualizarDatosIdiomasUsuario':
+                $resultado = $this->perfilUsuario->actualizarDatosIdiomasUsuario($this->input->post());
+                break;
+            case 'ActualizarDatosSoftwareUsuario':
+                $resultado = $this->perfilUsuario->actualizarDatosSoftwareUsuario($this->input->post());
+                break;
+            case 'ActualizarDatosSistemasUsuario':
+                $resultado = $this->perfilUsuario->actualizarDatosSistemasUsuario($this->input->post());
+                break;
+            case 'ActualizarDatosDependientesUsuario':
+                $resultado = $this->perfilUsuario->actualizarDatosDependientesUsuario($this->input->post());
+                break;
             case 'GuardarDatosPersonalesUsuario':
                 $resultado = $this->perfilUsuario->guardarDatosPersonalesUsuario($this->input->post());
                 break;
@@ -88,6 +100,9 @@ class Controller_Perfil extends Base {
                 break;
             case 'datosGuardadosPerfilUsuario':
                 $resultado = $this->perfilUsuario->datosGuardadosPerfilUsuario();
+                break;
+            case 'EliminarDatos':
+                $resultado = $this->perfilUsuario->eliminarDatos($this->input->post());
                 break;
             default:
                 $resultado = FALSE;
