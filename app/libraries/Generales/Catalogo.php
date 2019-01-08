@@ -3066,7 +3066,19 @@ class Catalogo extends General {
                 break;
             //Actualiza
             case '2':
-
+                $parametro = 'Nombre';
+                $consulta = $this->DBC->actualizarArticulo('cat_rh_edo_civil', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
+                );
+                if (!empty($consulta)) {
+                    return $this->catRhEdoCivil('3');
+                } else {
+                    return FALSE;
+                }
                 break;
             //Obtiene informacion
             case '3':
@@ -3104,7 +3116,19 @@ class Catalogo extends General {
                 break;
             //Actualiza
             case '2':
-
+                $parametro = 'Nombre';
+                $consulta = $this->DBC->actualizarArticulo('cat_rh_sexo', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
+                );
+                if (!empty($consulta)) {
+                    return $this->catRhSexo('3');
+                } else {
+                    return FALSE;
+                }
                 break;
             //Obtiene informacion
             case '3':
@@ -3142,7 +3166,19 @@ class Catalogo extends General {
                 break;
             //Actualiza
             case '2':
-
+                $parametro = 'Nombre';
+                $consulta = $this->DBC->actualizarArticulo('cat_rh_nvl_estudio', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
+                );
+                if (!empty($consulta)) {
+                    return $this->catRhNivelEstudio('3');
+                } else {
+                    return FALSE;
+                }
                 break;
             //Obtiene informacion
             case '3':
@@ -3230,7 +3266,19 @@ class Catalogo extends General {
                 break;
             //Actualiza
             case '2':
-
+                $parametro = 'Nombre';
+                $consulta = $this->DBC->actualizarArticulo('cat_rh_habilidades_idioma', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
+                );
+                if (!empty($consulta)) {
+                    return $this->catRhHabilidadesIdioma('3');
+                } else {
+                    return FALSE;
+                }
                 break;
             //Obtiene informacion
             case '3':
@@ -3268,7 +3316,19 @@ class Catalogo extends General {
                 break;
             //Actualiza
             case '2':
-
+                $parametro = 'Nombre';
+                $consulta = $this->DBC->actualizarArticulo('cat_rh_habilidades_software', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
+                );
+                if (!empty($consulta)) {
+                    return $this->catRhHabilidadesSoftware('3');
+                } else {
+                    return FALSE;
+                }
                 break;
             //Obtiene informacion
             case '3':
@@ -3306,7 +3366,19 @@ class Catalogo extends General {
                 break;
             //Actualiza
             case '2':
-
+                $parametro = 'Nombre';
+                $consulta = $this->DBC->actualizarArticulo('cat_rh_nvl_habilidad', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
+                );
+                if (!empty($consulta)) {
+                    return $this->catRhNivelHabilidad('3');
+                } else {
+                    return FALSE;
+                }
                 break;
             //Obtiene informacion
             case '3':
@@ -3345,19 +3417,18 @@ class Catalogo extends General {
             //Actualiza
             case '2':
                 $parametro = 'Nombre';
-                $consulta = $this->DBC->actualizarArticulo('cat_perfiles', array(
+                $consulta = $this->DBC->actualizarArticulo('cat_rh_habilidades_sistema', array(
                     'Nombre' => $datos['nombre'],
-                    'IdDepartamento' => $datos['departamento'],
-                    'Permisos' => implode(',', $datos['permisos']),
-                    'Descripcion' => $datos['descripcion'],
-                    'Clave' => $datos['clave'],
-                    'Cantidad' => $datos['cantidad'],
-                    'Nivel' => $datos['nivel'],
                     'Flag' => $datos['estatus']
                         ), array('Id' => $datos['id']),
                         //Variable para mandar datos de restriccion para que no se repita el nombre
                         $datos['nombre'], $parametro
                 );
+                if (!empty($consulta)) {
+                    return $this->catRhHabilidadesSistema('3');
+                } else {
+                    return FALSE;
+                }
                 break;
             //Obtiene informacion
             case '3':

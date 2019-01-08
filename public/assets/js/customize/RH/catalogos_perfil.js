@@ -57,7 +57,7 @@ $(function () {
 
         evento.iniciarModal('#modalEdit', 'Editar Documento Recibido', htmlFormaularioEdicion);
         select.crearSelect('#listEstatus');
-        select.cambiarOpcion('#selectActualizarNivelSistemasUsuario', datosTabla[1]);
+        select.cambiarOpcion('#listEstatus', datosTabla[1]);
 
         $("#btnGuardarCambios").off("click");
         $("#btnGuardarCambios").on("click", function () {
@@ -107,38 +107,32 @@ $(function () {
     $('#table-estado-civil tbody').on('click', 'tr', function () {
         let _this = this;
         var datosTabla = $('#table-estado-civil').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('Catalogos/FormularioEditarEstadoCivil', datos, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Editar Estado Civl', respuesta.formulario);
+        var htmlFormaularioEdicion = formularioEdicion('Estado Civil', datosTabla[2]);
 
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-//                    if ($.trim($("#txtTipo").val()) !== '') {
-//                        var datos = {
-//                            'id': $('#idTipo').val(),
-//                            'tipo': $.trim($("#txtTipo").val()),
-//                            'estatus': $("#listEstatus").val()
-//                        };
-//                        evento.enviarEvento('Catalogos/EditarTipo', datos, '#modalEdit', function (respuesta) {
-//                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-//                                evento.terminarModal('#modalEdit');
-//                                $('#table-tipos').DataTable().row(_this).data([respuesta.Id, respuesta.Flag, respuesta.Nombre, respuesta.Estatus]);
-//                                tabla.reordenarTabla('#table-tipos', [2, 'asc']);
-//                                $('#table-tipos').DataTable().page.jumpToData(respuesta.Id, 0);
-//                            } else {
-//                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-//                            }
-//                        });
-//                    } else {
-//                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-//                    }
+        evento.iniciarModal('#modalEdit', 'Editar Estado Civil', htmlFormaularioEdicion);
+        select.crearSelect('#listEstatus');
+        select.cambiarOpcion('#listEstatus', datosTabla[1]);
+
+        $("#btnGuardarCambios").off("click");
+        $("#btnGuardarCambios").on("click", function () {
+            if ($.trim($("#txtCampoCatalogoPerfil").val()) !== '') {
+                var datos = {
+                    'operacion': 'estadoCivil',
+                    'id': datosTabla[0],
+                    'nombre': $.trim($("#txtCampoCatalogoPerfil").val()),
+                    'estatus': $("#listEstatus").val()
+                };
+
+                evento.enviarEvento('EventoCatalogosPerfil/ActualizarCatalogoPerfil', datos, '#modalEdit', function (respuesta) {
+                    if (respuesta instanceof Array || respuesta instanceof Object) {
+                        recargandoTabla(respuesta, '#table-estado-civil');
+                        evento.terminarModal('#modalEdit');
+                    } else {
+                        evento.mostrarMensaje("#errorMessage", false, 'Ya existe nombre del documento recibido', 4000);
+                    }
                 });
-
             } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
+                evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
             }
         });
     });
@@ -167,39 +161,32 @@ $(function () {
     $('#table-idiomas tbody').on('click', 'tr', function () {
         let _this = this;
         var datosTabla = $('#table-idiomas').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('CatalogosPerfil/FormularioEditarIdioma', datos, '#panel-catalogos-perfil', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Editar Idioma', respuesta.formulario);
+        var htmlFormaularioEdicion = formularioEdicion('Idioma', datosTabla[2]);
 
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-//                    if ($.trim($("#txtConcepto").val()) !== '') {
-//                        var datos = {
-//                            'id': $('#idConcepto').val(),
-//                            'concepto': $.trim($("#txtConcepto").val()),
-//                            'sistema': $("#listSistemas").val(),
-//                            'estatus': $("#listEstatus").val()
-//                        };
-//                        evento.enviarEvento('Catalogos/EditarConcepto', datos, '#modalEdit', function (respuesta) {
-//                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-//                                evento.terminarModal('#modalEdit');
-//                                $('#table-conceptos').DataTable().row(_this).data([respuesta.Id, respuesta.IdSistema, respuesta.Flag, respuesta.Nombre, respuesta.Sistema, respuesta.Estatus]);
-//                                tabla.reordenarTabla('#table-conceptos', [3, 'asc']);
-//                                $('#table-conceptos').DataTable().page.jumpToData(respuesta.Id, 0);
-//                            } else {
-//                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-//                            }
-//                        });
-//                    } else {
-//                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-//                    }
+        evento.iniciarModal('#modalEdit', 'Editar Idioma', htmlFormaularioEdicion);
+        select.crearSelect('#listEstatus');
+        select.cambiarOpcion('#listEstatus', datosTabla[1]);
+
+        $("#btnGuardarCambios").off("click");
+        $("#btnGuardarCambios").on("click", function () {
+            if ($.trim($("#txtCampoCatalogoPerfil").val()) !== '') {
+                var datos = {
+                    'operacion': 'idioma',
+                    'id': datosTabla[0],
+                    'nombre': $.trim($("#txtCampoCatalogoPerfil").val()),
+                    'estatus': $("#listEstatus").val()
+                };
+
+                evento.enviarEvento('EventoCatalogosPerfil/ActualizarCatalogoPerfil', datos, '#modalEdit', function (respuesta) {
+                    if (respuesta instanceof Array || respuesta instanceof Object) {
+                        recargandoTabla(respuesta, '#table-idiomas ');
+                        evento.terminarModal('#modalEdit');
+                    } else {
+                        evento.mostrarMensaje("#errorMessage", false, 'Ya existe nombre del documento recibido', 4000);
+                    }
                 });
-
             } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
+                evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
             }
         });
     });
@@ -228,39 +215,32 @@ $(function () {
     $('#table-niveles-estudio tbody').on('click', 'tr', function () {
         let _this = this;
         var datosTabla = $('#table-niveles-estudio').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('CatalogosPerfil/FormularioEditarNivelEstudio', datos, '#panel-catalogos-perfil', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Editar Nivel de Estudio', respuesta.formulario);
+        var htmlFormaularioEdicion = formularioEdicion('Nivel de estudio', datosTabla[2]);
 
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-//                    if ($.trim($("#txtArea").val()) !== '') {
-//                        var datos = {
-//                            'id': $('#idArea').val(),
-//                            'area': $.trim($("#txtArea").val()),
-//                            'concepto': $("#listConceptos").val(),
-//                            'estatus': $("#listEstatus").val()
-//                        };
-//                        evento.enviarEvento('Catalogos/EditarArea', datos, '#modalEdit', function (respuesta) {
-//                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-//                                evento.terminarModal('#modalEdit');
-//                                $('#table-areas').DataTable().row(_this).data([respuesta.Id, respuesta.IdConcepto, respuesta.Flag, respuesta.Nombre, respuesta.Concepto, respuesta.Estatus]);
-//                                tabla.reordenarTabla('#table-areas', [3, 'asc']);
-//                                $('#table-areas').DataTable().page.jumpToData(respuesta.Id, 0);
-//                            } else {
-//                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-//                            }
-//                        });
-//                    } else {
-//                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-//                    }
+        evento.iniciarModal('#modalEdit', 'Editar Nivel de Estudio', htmlFormaularioEdicion);
+        select.crearSelect('#listEstatus');
+        select.cambiarOpcion('#listEstatus', datosTabla[1]);
+
+        $("#btnGuardarCambios").off("click");
+        $("#btnGuardarCambios").on("click", function () {
+            if ($.trim($("#txtCampoCatalogoPerfil").val()) !== '') {
+                var datos = {
+                    'operacion': 'nivelEstudio',
+                    'id': datosTabla[0],
+                    'nombre': $.trim($("#txtCampoCatalogoPerfil").val()),
+                    'estatus': $("#listEstatus").val()
+                };
+
+                evento.enviarEvento('EventoCatalogosPerfil/ActualizarCatalogoPerfil', datos, '#modalEdit', function (respuesta) {
+                    if (respuesta instanceof Array || respuesta instanceof Object) {
+                        recargandoTabla(respuesta, '#table-niveles-estudio');
+                        evento.terminarModal('#modalEdit');
+                    } else {
+                        evento.mostrarMensaje("#errorMessage", false, 'Ya existe nombre del documento recibido', 4000);
+                    }
                 });
-
             } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
+                evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
             }
         });
     });
@@ -286,44 +266,35 @@ $(function () {
         }
     });
 
-    $('#table-niveles-habilidad tbody').on('dblclick', 'tr', function () {
+    $('#table-niveles-habilidad tbody').on('click', 'tr', function () {
         let _this = this;
         var datosTabla = $('#table-niveles-habilidad').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('Catalogos/FormularioEditarNivelEstudio', datos, '#panel-catalogos-perfil', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Editar Nivel de Habilidad', respuesta.formulario);
+        var htmlFormaularioEdicion = formularioEdicion('Nivel de habilidad', datosTabla[2]);
 
-                $("#listAreas").combobox();
+        evento.iniciarModal('#modalEdit', 'Editar Nivel de Habilidad', htmlFormaularioEdicion);
+        select.crearSelect('#listEstatus');
+        select.cambiarOpcion('#listEstatus', datosTabla[1]);
 
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-//                    if ($.trim($("#txtUbicacion").val()) !== '') {
-//                        var datos = {
-//                            'id': $('#idUbicacion').val(),
-//                            'ubicacion': $.trim($("#txtUbicacion").val()),
-//                            'area': $("#listAreas").val(),
-//                            'estatus': $("#listEstatus").val()
-//                        };
-//                        evento.enviarEvento('Catalogos/EditarUbicacion', datos, '#modalEdit', function (respuesta) {
-//                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-//                                evento.terminarModal('#modalEdit');
-//                                $('#table-ubicaciones').DataTable().row(_this).data([respuesta.Id, respuesta.IdArea, respuesta.Flag, respuesta.Nombre, respuesta.Area, respuesta.Estatus]);
-//                                tabla.reordenarTabla('#table-ubicaciones', [3, 'asc']);
-//                                $('#table-ubicaciones').DataTable().page.jumpToData(respuesta.Id, 0);
-//                            } else {
-//                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-//                            }
-//                        });
-//                    } else {
-//                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-//                    }
+        $("#btnGuardarCambios").off("click");
+        $("#btnGuardarCambios").on("click", function () {
+            if ($.trim($("#txtCampoCatalogoPerfil").val()) !== '') {
+                var datos = {
+                    'operacion': 'nivelHabilidad',
+                    'id': datosTabla[0],
+                    'nombre': $.trim($("#txtCampoCatalogoPerfil").val()),
+                    'estatus': $("#listEstatus").val()
+                };
+
+                evento.enviarEvento('EventoCatalogosPerfil/ActualizarCatalogoPerfil', datos, '#modalEdit', function (respuesta) {
+                    if (respuesta instanceof Array || respuesta instanceof Object) {
+                        recargandoTabla(respuesta, '#table-niveles-habilidad');
+                        evento.terminarModal('#modalEdit');
+                    } else {
+                        evento.mostrarMensaje("#errorMessage", false, 'Ya existe nombre del documento recibido', 4000);
+                    }
                 });
-
             } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
+                evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
             }
         });
     });
@@ -352,39 +323,32 @@ $(function () {
     $('#table-sexos tbody').on('click', 'tr', function () {
         let _this = this;
         var datosTabla = $('#table-sexos').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('Catalogos/FormularioEditarSexo', datos, '#panel-catalogos-perfil', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Editar Sexo', respuesta.formulario);
+        var htmlFormaularioEdicion = formularioEdicion('Sexo', datosTabla[2]);
 
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-//                    if ($.trim($("#txtAccesorio").val()) !== '') {
-//                        var datos = {
-//                            'id': $('#idAccesorio').val(),
-//                            'accesorio': $.trim($("#txtAccesorio").val()),
-//                            'sistema': $("#listSistemas").val(),
-//                            'estatus': $("#listEstatus").val()
-//                        };
-//                        evento.enviarEvento('Catalogos/EditarAccesorio', datos, '#modalEdit', function (respuesta) {
-//                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-//                                evento.terminarModal('#modalEdit');
-//                                $('#table-accesorios').DataTable().row(_this).data([respuesta.Id, respuesta.IdSistema, respuesta.Flag, respuesta.Nombre, respuesta.Sistema, respuesta.Estatus]);
-//                                tabla.reordenarTabla('#table-accesorios', [3, 'asc']);
-//                                $('#table-accesorios').DataTable().page.jumpToData(respuesta.Id, 0);
-//                            } else {
-//                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-//                            }
-//                        });
-//                    } else {
-//                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-//                    }
+        evento.iniciarModal('#modalEdit', 'Editar Sexo', htmlFormaularioEdicion);
+        select.crearSelect('#listEstatus');
+        select.cambiarOpcion('#listEstatus', datosTabla[1]);
+
+        $("#btnGuardarCambios").off("click");
+        $("#btnGuardarCambios").on("click", function () {
+            if ($.trim($("#txtCampoCatalogoPerfil").val()) !== '') {
+                var datos = {
+                    'operacion': 'sexo',
+                    'id': datosTabla[0],
+                    'nombre': $.trim($("#txtCampoCatalogoPerfil").val()),
+                    'estatus': $("#listEstatus").val()
+                };
+
+                evento.enviarEvento('EventoCatalogosPerfil/ActualizarCatalogoPerfil', datos, '#modalEdit', function (respuesta) {
+                    if (respuesta instanceof Array || respuesta instanceof Object) {
+                        recargandoTabla(respuesta, '#table-sexos');
+                        evento.terminarModal('#modalEdit');
+                    } else {
+                        evento.mostrarMensaje("#errorMessage", false, 'Ya existe nombre del documento recibido', 4000);
+                    }
                 });
-
             } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
+                evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
             }
         });
     });
@@ -410,44 +374,35 @@ $(function () {
         }
     });
 
-    $('#table-sistemas tbody').on('dblclick', 'tr', function () {
+    $('#table-sistemas tbody').on('click', 'tr', function () {
         let _this = this;
         var datosTabla = $('#table-sistemas').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('Catalogos/FormularioEditarSistema', datos, '#panel-catalogos-perfil', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Editar Sistema', respuesta.formulario);
+        var htmlFormaularioEdicion = formularioEdicion('Sistema', datosTabla[2]);
 
-                $("#listAccesorios").combobox();
-                $("#listMaterial").combobox();
+        evento.iniciarModal('#modalEdit', 'Editar Sistema', htmlFormaularioEdicion);
+        select.crearSelect('#listEstatus');
+        select.cambiarOpcion('#listEstatus', datosTabla[1]);
 
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-//                    if ($("#listAccesorios").val() !== '' && $("listMaterial").val() !== '') {
-//                        var datos = {
-//                            'id': $("#idMaterial").val(),
-//                            'accesorio': $("#listAccesorios").val(),
-//                            'material': $("#listMaterial").val()
-//                        };
-//                        evento.enviarEvento('Catalogos/EditarMaterial', datos, '#modalEdit', function (respuesta) {
-//                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-//                                evento.terminarModal('#modalEdit');
-//                                $('#table-material').DataTable().row(_this).data([respuesta.Id, respuesta.IdMaterial, respuesta.IdAccesorio, respuesta.Material, respuesta.Accesorio]);
-//                                tabla.reordenarTabla('#table-material', [3, 'asc']);
-//                                $('#table-material').DataTable().page.jumpToData(respuesta.Id, 0);
-//                            } else {
-//                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-//                            }
-//                        });
-//                    } else {
-//                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer no ha seleccionado el material o el accesorio.", 4000);
-//                    }
+        $("#btnGuardarCambios").off("click");
+        $("#btnGuardarCambios").on("click", function () {
+            if ($.trim($("#txtCampoCatalogoPerfil").val()) !== '') {
+                var datos = {
+                    'operacion': 'sistema',
+                    'id': datosTabla[0],
+                    'nombre': $.trim($("#txtCampoCatalogoPerfil").val()),
+                    'estatus': $("#listEstatus").val()
+                };
+
+                evento.enviarEvento('EventoCatalogosPerfil/ActualizarCatalogoPerfil', datos, '#modalEdit', function (respuesta) {
+                    if (respuesta instanceof Array || respuesta instanceof Object) {
+                        recargandoTabla(respuesta, '#table-sistemas');
+                        evento.terminarModal('#modalEdit');
+                    } else {
+                        evento.mostrarMensaje("#errorMessage", false, 'Ya existe nombre del documento recibido', 4000);
+                    }
                 });
-
             } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
+                evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
             }
         });
     });
@@ -475,33 +430,34 @@ $(function () {
 
     $('#table-software tbody').on('click', 'tr', function () {
         let _this = this;
-        var datosTabla = $('#table-software').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
+        var datosTabla = $('#table-software ').DataTable().row(_this).data();
+        var htmlFormaularioEdicion = formularioEdicion('Software', datosTabla[2]);
 
-        evento.enviarEvento('Catalogos/FormularioEditarKit', datos, '#panel-catalogos-perfil', function (respuesta) {
-//            if (respuesta.code == 200) {
-//                $("#divKitMaterial").empty().append(respuesta.formulario);
-//
-//                $("#listMaterial").combobox();
-//
-//                $("#seccionCatalogos").fadeOut(400, function () {
-//                    $("#divKitMaterial").fadeIn(400);
-//                });
-//
-//                $("#divKitMaterial #btnRegresar").off("click");
-//                $("#divKitMaterial #btnRegresar").on("click", function () {
-//                    $("#divKitMaterial").fadeOut(400, function () {
-//                        $("#seccionCatalogos").fadeIn(400, function () {
-//                            $("#divKitMaterial").empty();
-//                        });
-//                    });
-//                });
-//                initKitActions(_this);
-//            } else {
-//                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-//            }
+        evento.iniciarModal('#modalEdit', 'Editar Software', htmlFormaularioEdicion);
+        select.crearSelect('#listEstatus');
+        select.cambiarOpcion('#listEstatus', datosTabla[1]);
+
+        $("#btnGuardarCambios").off("click");
+        $("#btnGuardarCambios").on("click", function () {
+            if ($.trim($("#txtCampoCatalogoPerfil").val()) !== '') {
+                var datos = {
+                    'operacion': 'software',
+                    'id': datosTabla[0],
+                    'nombre': $.trim($("#txtCampoCatalogoPerfil").val()),
+                    'estatus': $("#listEstatus").val()
+                };
+
+                evento.enviarEvento('EventoCatalogosPerfil/ActualizarCatalogoPerfil', datos, '#modalEdit', function (respuesta) {
+                    if (respuesta instanceof Array || respuesta instanceof Object) {
+                        recargandoTabla(respuesta, '#table-software ');
+                        evento.terminarModal('#modalEdit');
+                    } else {
+                        evento.mostrarMensaje("#errorMessage", false, 'Ya existe nombre del documento recibido', 4000);
+                    }
+                });
+            } else {
+                evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
+            }
         });
     });
 

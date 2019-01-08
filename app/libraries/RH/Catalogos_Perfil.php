@@ -50,7 +50,6 @@ class Catalogos_Perfil extends General {
     }
 
     public function actualizarCatalogosPerfil(array $datos) {
-
         switch ($datos['operacion']) {
             case 'documentoRecibido':
                 $resultado = $this->catalogo->catRhDocumentosEstudio('2', $datos);
