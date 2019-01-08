@@ -35,7 +35,6 @@ $(function () {
 
     $('#btn-show-alert').click(function () {
         evento.enviarEvento('PerfilUsuario/datosGuardadosPerfilUsuario', {}, '#seccion-informacion-usuario', function (respuesta) {
-            console.log(respuesta);
             var estado = respuesta.datosUsuario.EstadoNac;
             var municipio = respuesta.datosUsuario.MunicipioNac;
             var nivelEstudio = respuesta.nivelEstudio;
@@ -303,6 +302,8 @@ $(function () {
         var numeroAfore = $('#inputActualizarNumeroAforeUsuario').val();
         var nss = $('#inputActualizarNssUsuario').val();
 
+        mostrarCargaPaginaInformacionUsuario('#personales');
+
         if (fechaNacimiento !== '') {
             var data = {
                 fechaNacimiento: fechaNacimiento,
@@ -325,10 +326,14 @@ $(function () {
                 nss: nss
             };
             evento.enviarEvento('PerfilUsuario/GuardarDatosPersonalesUsuario', data, '', function (respuesta) {
-                console.log(respuesta);
+                if (respuesta) {
+                    mensajeModal('Se guardo correctamente.', 'Correcto', '#personales');
+                } else {
+                    mensajeModal('No hay ningún campo modificado.', 'Advertencia', '#personales');
+                }
             });
         } else {
-            evento.mostrarMensaje("#errorGuardarPersonalesUsuario", false, "El campo Fecha de nacimiento esta vacío.", 4000);
+            mensajeModal('El campo Fecha de nacimiento esta vacío.', 'Advertencia', '#personales');
         }
     });
 
@@ -376,6 +381,8 @@ $(function () {
                     evento.mostrarMensaje("#errorGuardarAcademicosUsuario", false, "Hubo un error contacte al administrador de AdIST", 4000);
                 }
             });
+        } else {
+            ocultarCargaPaginaInformacionUsuario('#academicos');
         }
     });
 
@@ -422,6 +429,8 @@ $(function () {
                     evento.mostrarMensaje("#errorGuardarIdiomasUsuario", false, "Hubo un error contacte al administrador de AdIST", 4000);
                 }
             });
+        } else {
+            ocultarCargaPaginaInformacionUsuario('#idiomas');
         }
     });
 
@@ -460,6 +469,8 @@ $(function () {
                     evento.mostrarMensaje("#errorGuardarComputacionalesUsuario", false, "Hubo un error contacte al administrador de AdIST", 4000);
                 }
             });
+        } else {
+            ocultarCargaPaginaInformacionUsuario('#computacionales');
         }
     });
 
@@ -498,6 +509,8 @@ $(function () {
                     evento.mostrarMensaje("#errorGuardarEspecialesUsuario", false, "Hubo un error contacte al administrador de AdIST", 4000);
                 }
             });
+        } else {
+            ocultarCargaPaginaInformacionUsuario('#sistemasEspeciales');
         }
     });
 
@@ -513,6 +526,8 @@ $(function () {
         var validacion = false;
         var arrayValidacion = [];
         var mensajeErrorArray = 'Falta llenar algún campo.';
+
+        mostrarCargaPaginaInformacionUsuario('#automovil');
 
         arrayValidacion[0] = [dominio, antiguedad, 'Los campos ¿Sabe conducir? y Antiguedad no pueden estar vacios.'];
         arrayValidacion[1] = [tipoLicencia, vigenciaTipoLicencia, 'Los campos Tipo de Licencia y Vigencia no pueden estar vacios.'];
@@ -537,12 +552,17 @@ $(function () {
                 vigenciaNumeroLicencia: vigenciaNumeroLicencia,
             };
             evento.enviarEvento('PerfilUsuario/GuardarDatosAutomovilUsuario', data, '', function (respuesta) {
-                console.log(respuesta);
+                ocultarCargaPaginaInformacionUsuario('#automovil');
+                if (respuesta) {
+                    evento.mostrarMensaje("#errorGuardarAutomovilUsuario", true, 'Se guardo correctamente.', 4000);
+                } else {
+                    evento.mostrarMensaje("#errorGuardarAutomovilUsuario", false, 'No hay ningún campo modificado.', 4000);
+                }
             });
         } else {
+            ocultarCargaPaginaInformacionUsuario('#automovil');
             evento.mostrarMensaje("#errorGuardarAutomovilUsuario", false, mensajeErrorArray, 4000);
         }
-
     });
 
     $('#btnGuardarDependientesUsuario').off("click");
@@ -581,6 +601,8 @@ $(function () {
                     evento.mostrarMensaje("#errorGuardarDependientesUsuario", false, "Hubo un error contacte al administrador de AdIST", 4000);
                 }
             });
+        } else {
+            ocultarCargaPaginaInformacionUsuario('#dependientesEconomicos');
         }
     });
 
@@ -592,7 +614,7 @@ $(function () {
             actualizarDatosAcademicos(idAcademico, variablesGlobales[2], variablesGlobales[3]);
         });
     }
-    
+
     var botonActualizarIdioma = function () {
         $('.btn-actualizar-idioma').off("click");
         $('.btn-actualizar-idioma').on('click', function () {
@@ -601,7 +623,7 @@ $(function () {
             actualizarDatosIdiomas(idIdioma, variablesGlobales[4], variablesGlobales[5]);
         });
     }
-    
+
     var botonActualizarSoftware = function () {
         $('.btn-actualizar-software').off("click");
         $('.btn-actualizar-software').on('click', function () {
@@ -610,7 +632,7 @@ $(function () {
             actualizarDatosSoftware(idSoftware, variablesGlobales[6], variablesGlobales[5]);
         });
     }
-    
+
     var botonActualizarSistema = function () {
         $('.btn-actualizar-sistema').off("click");
         $('.btn-actualizar-sistema').on('click', function () {
@@ -619,7 +641,7 @@ $(function () {
             actualizarDatosSistemas(idSistema, variablesGlobales[7], variablesGlobales[5]);
         });
     }
-    
+
     var botonActualizarDependiente = function () {
         $('.btn-actualizar-dependiente').off("click");
         $('.btn-actualizar-dependiente').on('click', function () {
@@ -636,7 +658,7 @@ $(function () {
             $('#configuracionPerfilUsuario').removeClass('hidden');
         });
     }
-    
+
     var botonEliminarAcademico = function () {
         $('.btn-eliminar-academico').off("click");
         $('.btn-eliminar-academico').on('click', function () {
@@ -644,7 +666,7 @@ $(function () {
             eliminarDatos(idAcademico, 'academicos');
         });
     }
-    
+
     var botonEliminarIdioma = function () {
         $('.btn-eliminar-idioma').off("click");
         $('.btn-eliminar-idioma').on('click', function () {
@@ -652,7 +674,7 @@ $(function () {
             eliminarDatos(idIdioma, 'idiomas');
         });
     }
-        
+
     var botonEliminarSoftware = function () {
         $('.btn-eliminar-software').off("click");
         $('.btn-eliminar-software').on('click', function () {
@@ -660,7 +682,7 @@ $(function () {
             eliminarDatos(idSoftware, 'software');
         });
     }
-        
+
     var botonEliminarSistema = function () {
         $('.btn-eliminar-sistema').off("click");
         $('.btn-eliminar-sistema').on('click', function () {
@@ -668,7 +690,7 @@ $(function () {
             eliminarDatos(idSistema, 'sistemas');
         });
     }
-        
+
     var botonEliminarDependiente = function () {
         $('.btn-eliminar-dependiente').off("click");
         $('.btn-eliminar-dependiente').on('click', function () {
@@ -851,7 +873,7 @@ $(function () {
 
         cerrarModalCambios();
     }
-    
+
     var actualizarDatosIdiomas = function () {
         var idIdioma = arguments[0];
         var catalogoHabilidadesIdioma = arguments[1];
@@ -974,7 +996,7 @@ $(function () {
 
         cerrarModalCambios();
     }
-    
+
     var actualizarDatosSoftware = function () {
         var idSoftware = arguments[0];
         var catalogoHabilidadesSoftware = arguments[1];
@@ -1068,7 +1090,7 @@ $(function () {
         cerrarModalCambios();
     }
 
-   var actualizarDatosSistemas = function () {
+    var actualizarDatosSistemas = function () {
         var idSistema = arguments[0];
         var catalogoHabilidadesSistema = arguments[1];
         var catalogoNivelHabilidades = arguments[2];
@@ -1160,7 +1182,7 @@ $(function () {
 
         cerrarModalCambios();
     }
-    
+
     var actualizarDatosDependientes = function () {
         var idDependiente = arguments[0];
 
@@ -1200,7 +1222,7 @@ $(function () {
                         </div>\n\
                     </div>';
         evento.iniciarModal('#modalEdit', 'Editar Dependiente', html);
-        
+
         calendario.crearFecha('.calendario');
 
         $('#actualizarNombreDependienteUsuario').val(anteriorNombre);
@@ -1239,65 +1261,65 @@ $(function () {
 
         cerrarModalCambios();
     }
-    
+
     var eliminarDatos = function () {
         var id = arguments[0];
         var tabla = arguments[1];
-        
+
         var data = {id: id, tabla: tabla};
-        
-        switch(tabla){
+
+        switch (tabla) {
             case 'academicos':
                 mostrarCargaPaginaInformacionUsuario('#academicos');
-            break;
+                break;
             case 'idiomas':
                 mostrarCargaPaginaInformacionUsuario('#idiomas');
-            break;
+                break;
             case 'software':
                 mostrarCargaPaginaInformacionUsuario('#computacionales');
-            break;
+                break;
             case 'sistemas':
                 mostrarCargaPaginaInformacionUsuario('#sistemasEspeciales');
-            break;
+                break;
             case 'dependientes':
                 mostrarCargaPaginaInformacionUsuario('#dependientesEconomicos');
-            break;
+                break;
         }
-        
+
         evento.enviarEvento('PerfilUsuario/EliminarDatos', data, '#modalEdit', function (respuesta) {
-            switch(tabla){
+            switch (tabla) {
                 case 'academicos':
                     respuestaAcademicos(respuesta);
-                break;
+                    break;
                 case 'idiomas':
                     respuestaIdiomas(respuesta);
-                break;
+                    break;
                 case 'software':
                     respuestaSoftware(respuesta);
-                break;
+                    break;
                 case 'sistemas':
                     respuestaSistemas(respuesta);
-                break;
+                    break;
                 case 'dependientes':
                     respuestaDependientes(respuesta);
-                break;
+                    break;
             }
 
         });
     }
-    
+
     var respuestaAcademicos = function (respuesta) {
         ocultarCargaPaginaInformacionUsuario('#academicos');
         if (respuesta instanceof Array || respuesta instanceof Object) {
-                recargandoTablaAcademicos(respuesta);
-                evento.terminarModal('#modalEdit');
-                botonActualizarAcademico();
-                botonEliminarAcademico();
+            recargandoTablaAcademicos(respuesta);
+            evento.terminarModal('#modalEdit');
+            botonActualizarAcademico();
+            botonEliminarAcademico();
         } else {
             evento.mostrarMensaje("#errorAcademicosUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
         }
     }
-    
+
     var respuestaIdiomas = function (respuesta) {
         ocultarCargaPaginaInformacionUsuario('#idiomas');
         if (respuesta instanceof Array || respuesta instanceof Object) {
@@ -1309,7 +1331,7 @@ $(function () {
             evento.mostrarMensaje("#errorIdiomasUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
         }
     }
-        
+
     var respuestaSoftware = function (respuesta) {
         ocultarCargaPaginaInformacionUsuario('#computacionales');
         if (respuesta instanceof Array || respuesta instanceof Object) {
@@ -1321,7 +1343,7 @@ $(function () {
             evento.mostrarMensaje("#errorSoftwareUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
         }
     }
-        
+
     var respuestaSistemas = function (respuesta) {
         ocultarCargaPaginaInformacionUsuario('#sistemasEspeciales');
         if (respuesta instanceof Array || respuesta instanceof Object) {
@@ -1333,7 +1355,7 @@ $(function () {
             evento.mostrarMensaje("#errorSistemaUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
         }
     }
-        
+
     var respuestaDependientes = function (respuesta) {
         ocultarCargaPaginaInformacionUsuario('#dependientesEconomicos');
         if (respuesta instanceof Array || respuesta instanceof Object) {
@@ -1345,7 +1367,7 @@ $(function () {
             evento.mostrarMensaje("#errorDependienteUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
         }
     }
-    
+
     var recargarPagina = function () {
         evento.terminarModal('#modalEdit');
         location.reload();
@@ -1386,4 +1408,23 @@ $(function () {
         });
         return mensaje;
     };
+
+    var mensajeModal = function () {
+        var mensaje = arguments[0];
+        var titulo = arguments[1];
+        var div = arguments[2];
+        var html = '<div class="row">\n\
+                            <div id="mensaje-modal" class="col-md-12 text-center">\n\
+                                <h3>' + mensaje + '</h3>\n\
+                            </div>\n\
+                      </div>';
+        evento.mostrarModal(titulo, html);
+        $('#btnModalConfirmar').addClass('hidden');
+        $('#btnModalAbortar').removeClass('hidden');
+        $('#btnModalAbortar').empty().append('Cerrar');
+        $('#btnModalAbortar').on('click', function () {
+            ocultarCargaPaginaInformacionUsuario(div);
+            evento.cerrarModal();
+        });
+    }
 });

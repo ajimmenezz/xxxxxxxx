@@ -49,14 +49,14 @@ class Perfil_Usuario extends General {
     public function datosCatalogosUsuario() {
         $data = array();
         $data['paises'] = $this->catalogo->catLocalidades('1');
-        $data['estadoCivil'] = $this->catalogo->catRhEdoCivil('3');
-        $data['sexo'] = $this->catalogo->catRhSexo('3');
-        $data['nivelEstudio'] = $this->catalogo->catRhNivelEstudio('3');
-        $data['documentosEstudio'] = $this->catalogo->catRhDocumentosEstudio('3');
-        $data['habilidadesIdioma'] = $this->catalogo->catRhHabilidadesIdioma('3');
-        $data['habilidadesSoftware'] = $this->catalogo->catRhHabilidadesSoftware('3');
-        $data['nivelHabilidades'] = $this->catalogo->catRhNivelHabilidad('3');
-        $data['habilidadesSistema'] = $this->catalogo->catRhHabilidadesSistema('3');
+        $data['estadoCivil'] = $this->catalogo->catRhEdoCivil('3', array('Flag' => '1'));
+        $data['sexo'] = $this->catalogo->catRhSexo('3', array('Flag' => '1'));
+        $data['nivelEstudio'] = $this->catalogo->catRhNivelEstudio('3', array('Flag' => '1'));
+        $data['documentosEstudio'] = $this->catalogo->catRhDocumentosEstudio('3', array('Flag' => '1'));
+        $data['habilidadesIdioma'] = $this->catalogo->catRhHabilidadesIdioma('3', array('Flag' => '1'));
+        $data['habilidadesSoftware'] = $this->catalogo->catRhHabilidadesSoftware('3', array('Flag' => '1'));
+        $data['nivelHabilidades'] = $this->catalogo->catRhNivelHabilidad('3', array('Flag' => '1'));
+        $data['habilidadesSistema'] = $this->catalogo->catRhHabilidadesSistema('3', array('Flag' => '1'));
 
         return $data;
     }
@@ -67,6 +67,11 @@ class Perfil_Usuario extends General {
         $datos['id'] = $usuario['Id'];
         $resultado = $this->DBU->actualizarTRHPersonal($datos);
 
+        if (!empty($resultado)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
         return $resultado;
     }
 
@@ -138,6 +143,13 @@ class Perfil_Usuario extends General {
             $datos['fechaMod'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
             $resultado = $this->DBU->actualizarTRHConduccion($datos);
         }
+
+        if (!empty($resultado)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+        
         return $resultado;
     }
 
@@ -158,26 +170,26 @@ class Perfil_Usuario extends General {
         $usuario = $this->usuario->getDatosUsuario();
         $datos['fechaMod'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $resultado = $this->DBU->actualizarCampoTRHAcademicos($datos);
-        
+
         if (!empty($resultado)) {
             return $this->DBU->consultaTRHAcademicos(array('IdUsuario' => $usuario['Id']));
         } else {
             return FALSE;
         }
     }
-    
+
     public function actualizarDatosIdiomasUsuario(array $datos) {
         $usuario = $this->usuario->getDatosUsuario();
         $datos['fechaMod'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $resultado = $this->DBU->actualizarCampoTRHIdiomas($datos);
-        
+
         if (!empty($resultado)) {
             return $this->DBU->consultaTRHIdiomas(array('IdUsuario' => $usuario['Id']));
         } else {
             return FALSE;
         }
     }
-    
+
     public function actualizarDatosSoftwareUsuario(array $datos) {
         $usuario = $this->usuario->getDatosUsuario();
         $datos['fechaMod'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
@@ -189,7 +201,7 @@ class Perfil_Usuario extends General {
             return FALSE;
         }
     }
-    
+
     public function actualizarDatosSistemasUsuario(array $datos) {
         $usuario = $this->usuario->getDatosUsuario();
         $datos['fechaMod'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
@@ -201,7 +213,7 @@ class Perfil_Usuario extends General {
             return FALSE;
         }
     }
-    
+
     public function actualizarDatosDependientesUsuario(array $datos) {
         $usuario = $this->usuario->getDatosUsuario();
         $datos['fechaMod'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
@@ -213,51 +225,51 @@ class Perfil_Usuario extends General {
             return FALSE;
         }
     }
-    
+
     public function eliminarDatos(array $datos) {
         $usuario = $this->usuario->getDatosUsuario();
         $tabla = '';
-        switch ($datos['tabla']){
+        switch ($datos['tabla']) {
             case 'academicos':
                 $tabla = 't_rh_academicos';
-            break;
+                break;
             case 'idiomas':
                 $tabla = 't_rh_idiomas';
-            break;
+                break;
             case 'software':
                 $tabla = 't_rh_software';
-            break;
+                break;
             case 'sistemas':
                 $tabla = 't_rh_sistemas';
-            break;
+                break;
             case 'dependientes':
                 $tabla = 't_rh_dependientes';
-            break;
+                break;
         }
-        
+
         $datos['fechaMod'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $datos['tablaNombre'] = $tabla;
 
         $resultado = $this->DBU->eliminarTRH($datos);
-        
-        switch ($datos['tabla']){
+
+        switch ($datos['tabla']) {
             case 'academicos':
                 $datosArray = $this->DBU->consultaTRHAcademicos(array('IdUsuario' => $usuario['Id']));
-            break;
+                break;
             case 'idiomas':
                 $datosArray = $this->DBU->consultaTRHIdiomas(array('IdUsuario' => $usuario['Id']));
-            break;
+                break;
             case 'software':
                 $datosArray = $this->DBU->consultaTRHSoftware(array('IdUsuario' => $usuario['Id']));
-            break;
+                break;
             case 'sistemas':
                 $datosArray = $this->DBU->consultaTRHSistemas(array('IdUsuario' => $usuario['Id']));
-            break;
+                break;
             case 'dependientes':
                 $datosArray = $this->DBU->consultaTRHDependientes(array('IdUsuario' => $usuario['Id']));
-            break;
+                break;
         }
-        
+
         if (!empty($resultado)) {
             return $datosArray;
         } else {

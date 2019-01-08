@@ -54,7 +54,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
-                            <h4>Lista de Documentos Recibodos</h4>
+                            <h4>Lista de Documentos Recibidos</h4>
                             <div class="underline m-b-10"></div>
                         </div>
                     </div>

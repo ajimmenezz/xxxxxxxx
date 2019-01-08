@@ -179,7 +179,7 @@
     </div>
     <!-- Fin de perfil contenedor --> 
 
-    <div class="row">
+    <div class="row m-t-15">
         <div class="col-md-6 col-xs-6">
             <h1 class="page-header">Información del Usuario</h1>
         </div>
@@ -428,13 +428,6 @@
                     </div>
 
                     <div class="row m-t-10">
-                        <!--Empezando error--> 
-                        <div class="col-md-12">
-                            <div id="errorGuardarAcademicosUsuario"></div>
-                        </div>
-                        <!--Finalizando Error-->
-                    </div>   
-                    <div class="row m-t-10">
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
@@ -442,6 +435,14 @@
                             </div>
                         </div>
                     </div>  
+
+                    <div class="row m-t-10">
+                        <!--Empezando error--> 
+                        <div class="col-md-12">
+                            <div id="errorGuardarAcademicosUsuario"></div>
+                        </div>
+                        <!--Finalizando Error-->
+                    </div> 
 
                     <div class="separatorBorder"></div>
 
@@ -535,13 +536,6 @@
                     </div>
 
                     <div class="row m-t-10">
-                        <!--Empezando error--> 
-                        <div class="col-md-12">
-                            <div id="errorGuardarIdiomasUsuario"></div>
-                        </div>
-                        <!--Finalizando Error-->
-                    </div>   
-                    <div class="row m-t-10">
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
@@ -549,6 +543,14 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row m-t-10">
+                        <!--Empezando error--> 
+                        <div class="col-md-12">
+                            <div id="errorGuardarIdiomasUsuario"></div>
+                        </div>
+                        <!--Finalizando Error-->
+                    </div>  
 
                     <div class="separatorBorder"></div>
 
@@ -620,13 +622,6 @@
                     </div>
 
                     <div class="row m-t-10">
-                        <!--Empezando error--> 
-                        <div class="col-md-12">
-                            <div id="errorGuardarComputacionalesUsuario"></div>
-                        </div>
-                        <!--Finalizando Error-->
-                    </div>   
-                    <div class="row m-t-10">
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
@@ -634,6 +629,14 @@
                             </div>
                         </div>
                     </div>  
+
+                    <div class="row m-t-10">
+                        <!--Empezando error--> 
+                        <div class="col-md-12">
+                            <div id="errorGuardarComputacionalesUsuario"></div>
+                        </div>
+                        <!--Finalizando Error-->
+                    </div> 
 
                     <div class="separatorBorder"></div>
 
@@ -700,13 +703,6 @@
                     </div>
 
                     <div class="row m-t-10">
-                        <!--Empezando error--> 
-                        <div class="col-md-12">
-                            <div id="errorGuardarEspecialesUsuario"></div>
-                        </div>
-                        <!--Finalizando Error-->
-                    </div>   
-                    <div class="row m-t-10">
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
@@ -714,6 +710,14 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row m-t-10">
+                        <!--Empezando error--> 
+                        <div class="col-md-12">
+                            <div id="errorGuardarEspecialesUsuario"></div>
+                        </div>
+                        <!--Finalizando Error-->
+                    </div>   
 
                     <div class="separatorBorder"></div>
 
@@ -775,7 +779,7 @@
                         <div class="col-md-6">
                             <label for="selectActualizarTipoVigenciaUsuario">Vigencia</label>
                             <div id="inputFechaVigenciaUsuario" class="input-group date calendario" >
-                                <?php (empty($datosConduccion)) ? $expedicion = '' : $expedicion= $datosConduccion['Expedicion']; ?>
+                                <?php (empty($datosConduccion)) ? $expedicion = '' : $expedicion = $datosConduccion['Expedicion']; ?>
                                 <input id="selectActualizarTipoVigenciaUsuario" type="text" class="form-control" value="<?php echo $expedicion; ?>" />
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>                        
@@ -789,7 +793,7 @@
                             <input type="tel" class="form-control" id="inputActualizarNumeroLicenciaUsuario" style="width: 100%" value="<?php echo $noLicencia; ?>" />
                         </div>
                         <div class="col-md-6">
-                            <label for="selectActualizarNumeroVigenciaUsuario">Vigencia</label>
+                            <label for="selectActualizarNumeroVigenciaUsuario">Expedición</label>
                             <div id="inputFechaNacimientoUsuario" class="input-group date calendario" >
                                 <?php (empty($datosConduccion)) ? $vigencia = '' : $vigencia = $datosConduccion['Vigencia']; ?>
                                 <input id="selectActualizarNumeroVigenciaUsuario" type="text" class="form-control" value="<?php echo $vigencia; ?>"/>
@@ -804,7 +808,8 @@
                             <div id="errorGuardarAutomovilUsuario"></div>
                         </div>
                         <!--Finalizando Error-->
-                    </div>   
+                    </div> 
+
                     <div class="row m-t-10">
                         <div class="col-md-12">
                             <div class="form-group text-center">
@@ -812,7 +817,7 @@
                                 <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarAutomovilUsuario"><i class="fa fa-save"></i> Guardar</a>
                             </div>
                         </div>
-                    </div>
+                    </div>  
 
                 </form>    
             </div>
@@ -845,13 +850,6 @@
                     </div>
 
                     <div class="row m-t-10">
-                        <!--Empezando error--> 
-                        <div class="col-md-12">
-                            <div id="errorGuardarDependientesUsuario"></div>
-                        </div>
-                        <!--Finalizando Error-->
-                    </div>   
-                    <div class="row m-t-10">
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
@@ -859,6 +857,14 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row m-t-10">
+                        <!--Empezando error--> 
+                        <div class="col-md-12">
+                            <div id="errorGuardarDependientesUsuario"></div>
+                        </div>
+                        <!--Finalizando Error-->
+                    </div>   
 
                     <div class="separatorBorder"></div>
 
@@ -882,7 +888,6 @@
             </div>
             <!--Empezando con datos de dependientes Economicos-->
         </div> 
-
 
         <a href="javascript:;" class="btn btn-primary m-r-5 hidden " id="btn-show-alert"><i class="fa fa-save"></i> Guardar</a>
 

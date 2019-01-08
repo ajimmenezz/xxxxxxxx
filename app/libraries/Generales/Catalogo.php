@@ -3085,7 +3085,7 @@ class Catalogo extends General {
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
                             *,
-                            estatus(Flag) Estatus
+                            IF(Flag = 0, "Inactivo", "Activo") Estatus
                         FROM cat_rh_edo_civil' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
@@ -3135,7 +3135,7 @@ class Catalogo extends General {
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
                             *,
-                            estatus(Flag) Estatus
+                            IF(Flag = 0, "Inactivo", "Activo") Estatus
                         FROM cat_rh_sexo' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
@@ -3185,7 +3185,7 @@ class Catalogo extends General {
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
                             *,
-                            estatus(Flag) Estatus
+                            IF(Flag = 0, "Inactivo", "Activo") Estatus
                         FROM cat_rh_nvl_estudio' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
@@ -3235,7 +3235,7 @@ class Catalogo extends General {
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
                             *,
-                            estatus(Flag) Estatus
+                            IF(Flag = 0, "Inactivo", "Activo") Estatus
                         FROM cat_rh_docs_estudio' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
@@ -3285,7 +3285,7 @@ class Catalogo extends General {
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
                             *,
-                            estatus(Flag) Estatus
+                            IF(Flag = 0, "Inactivo", "Activo") Estatus
                         FROM cat_rh_habilidades_idioma' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
@@ -3335,7 +3335,7 @@ class Catalogo extends General {
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
                             *,
-                            estatus(Flag) Estatus
+                            IF(Flag = 0, "Inactivo", "Activo") Estatus
                         FROM cat_rh_habilidades_software' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
@@ -3385,7 +3385,7 @@ class Catalogo extends General {
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
                             *,
-                            estatus(Flag) Estatus
+                            IF(Flag = 0, "Inactivo", "Activo") Estatus
                         FROM cat_rh_nvl_habilidad' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
@@ -3435,7 +3435,7 @@ class Catalogo extends General {
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
                             *,
-                            estatus(Flag) Estatus
+                            IF(Flag = 0, "Inactivo", "Activo") Estatus
                         FROM cat_rh_habilidades_sistema' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;

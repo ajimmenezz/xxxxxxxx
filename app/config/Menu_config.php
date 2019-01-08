@@ -1313,7 +1313,7 @@ $config['RH'] = array(
             'parsley/src/i18n/es',
             'bootstrap-combobox/js/bootstrap-combobox'
         ),
-        'Permiso' => 'VCP'
+        'Permiso' => 'VCAP'
     ),
     'Resumen_Personal' => array(
         'liga' => 'Resumen de Personal',
