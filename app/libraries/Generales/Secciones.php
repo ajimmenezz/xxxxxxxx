@@ -473,6 +473,16 @@ class Secciones extends General {
                 $datos['datosUsuario'] = $this->PerfilUsuario->datosPerfilUsuario();
                 $datos['catalogos'] = $this->PerfilUsuario->datosCatalogosUsuario();
                 break;
+            case 'RH/Catalogos_Perfil':
+                $datos['DocumentosRecibidos'] = $this->Catalogo->catRhDocumentosEstudio('3');
+                $datos['EstadoCivil'] = $this->Catalogo->catRhEdoCivil('3');
+                $datos['Idiomas'] = $this->Catalogo->catRhHabilidadesIdioma('3');
+                $datos['NivelesEstudio'] = $this->Catalogo->catRhNivelEstudio('3');
+                $datos['NivelesHabilidad'] = $this->Catalogo->catRhNivelHabilidad('3');
+                $datos['Sexos'] = $this->Catalogo->catRhSexo('3');
+                $datos['Sistemas'] = $this->Catalogo->catRhHabilidadesSistema('3');
+                $datos['Software'] = $this->Catalogo->catRhHabilidadesSoftware('3');
+                break;
             default:
                 break;
         }

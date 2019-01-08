@@ -1291,6 +1291,30 @@ $config['RH'] = array(
         ),
         'Permiso' => 'VRHSE'
     ),
+    'Catalogo-Perfil' => array(
+        'liga' => 'Catálogos Perfil',
+        'icono' => '',
+        'Url' => '/RH/Catalogos_Perfil',
+        'css' => array('Proyectos2/Catalogo'),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'bootstrap-combobox/css/bootstrap-combobox',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'RH/catalogos_perfil'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
+            'select2/dist/js/select2.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'bootstrap-combobox/js/bootstrap-combobox'
+        ),
+        'Permiso' => 'VCP'
+    ),
     'Resumen_Personal' => array(
         'liga' => 'Resumen de Personal',
         'icono' => 'fa fa-list-alt',

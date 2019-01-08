@@ -3037,7 +3037,9 @@ class Catalogo extends General {
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_x4d_tipos_sistema' . $flag);
                 if (!empty($consulta)) {
-                    $informacion = $consulta;
+                    return $consulta;
+                } else {
+                    return FALSE;
                 }
                 break;
         }
@@ -3048,11 +3050,19 @@ class Catalogo extends General {
      * 
      */
 
-    public function catRhEdoCivil(string $operacion, array $where = null) {
+    public function catRhEdoCivil(string $operacion, array $datos = null) {
         switch ($operacion) {
             //Inserta
             case '1':
-
+                $validar = array('Nombre' => $datos['estadoCivil']);
+                $consulta = $this->DBC->setArticulo('cat_rh_edo_civil', array(
+                    'Nombre' => $datos['estadoCivil'],
+                    'Flag' => '1'), $validar);
+                if (!empty($consulta)) {
+                    return $this->catRhEdoCivil('3', array('Flag' => '1'));
+                } else {
+                    return FALSE;
+                }
                 break;
             //Actualiza
             case '2':
@@ -3060,7 +3070,11 @@ class Catalogo extends General {
                 break;
             //Obtiene informacion
             case '3':
-                $consulta = $this->DBC->getArticulos('cat_rh_edo_civil');
+                $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
+                $consulta = $this->DBC->getJuntarTablas('SELECT
+                            *,
+                            estatus(Flag) Estatus
+                        FROM cat_rh_edo_civil' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
                 } else {
@@ -3074,11 +3088,19 @@ class Catalogo extends General {
      * 
      */
 
-    public function catRhSexo(string $operacion, array $where = null) {
+    public function catRhSexo(string $operacion, array $datos = null) {
         switch ($operacion) {
             //Inserta
             case '1':
-
+                $validar = array('Nombre' => $datos['sexo']);
+                $consulta = $this->DBC->setArticulo('cat_rh_sexo', array(
+                    'Nombre' => $datos['sexo'],
+                    'Flag' => '1'), $validar);
+                if (!empty($consulta)) {
+                    return $this->catRhSexo('3', array('Flag' => '1'));
+                } else {
+                    return FALSE;
+                }
                 break;
             //Actualiza
             case '2':
@@ -3086,7 +3108,11 @@ class Catalogo extends General {
                 break;
             //Obtiene informacion
             case '3':
-                $consulta = $this->DBC->getArticulos('cat_rh_sexo');
+                $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
+                $consulta = $this->DBC->getJuntarTablas('SELECT
+                            *,
+                            estatus(Flag) Estatus
+                        FROM cat_rh_sexo' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
                 } else {
@@ -3100,11 +3126,19 @@ class Catalogo extends General {
      * 
      */
 
-    public function catRhNivelEstudio(string $operacion, array $where = null) {
+    public function catRhNivelEstudio(string $operacion, array $datos = null) {
         switch ($operacion) {
             //Inserta
             case '1':
-
+                $validar = array('Nombre' => $datos['nivelEstudio']);
+                $consulta = $this->DBC->setArticulo('cat_rh_nvl_estudio', array(
+                    'Nombre' => $datos['nivelEstudio'],
+                    'Flag' => '1'), $validar);
+                if (!empty($consulta)) {
+                    return $this->catRhNivelEstudio('3', array('Flag' => '1'));
+                } else {
+                    return FALSE;
+                }
                 break;
             //Actualiza
             case '2':
@@ -3112,7 +3146,11 @@ class Catalogo extends General {
                 break;
             //Obtiene informacion
             case '3':
-                $consulta = $this->DBC->getArticulos('cat_rh_nvl_estudio');
+                $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
+                $consulta = $this->DBC->getJuntarTablas('SELECT
+                            *,
+                            estatus(Flag) Estatus
+                        FROM cat_rh_nvl_estudio' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
                 } else {
@@ -3126,19 +3164,43 @@ class Catalogo extends General {
      * 
      */
 
-    public function catRhDocumentosEstudio(string $operacion, array $where = null) {
+    public function catRhDocumentosEstudio(string $operacion, array $datos = null) {
         switch ($operacion) {
             //Inserta
             case '1':
-
+                $validar = array('Nombre' => $datos['documentoRecibido']);
+                $consulta = $this->DBC->setArticulo('cat_rh_docs_estudio', array(
+                    'Nombre' => $datos['documentoRecibido'],
+                    'Flag' => '1'), $validar);
+                if (!empty($consulta)) {
+                    return $this->catRhDocumentosEstudio('3');
+                } else {
+                    return FALSE;
+                }
                 break;
             //Actualiza
             case '2':
-
+                $parametro = 'Nombre';
+                $consulta = $this->DBC->actualizarArticulo('cat_rh_docs_estudio', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
+                );
+                if (!empty($consulta)) {
+                    return $this->catRhDocumentosEstudio('3');
+                } else {
+                    return FALSE;
+                }
                 break;
             //Obtiene informacion
             case '3':
-                $consulta = $this->DBC->getArticulos('cat_rh_docs_estudio');
+                $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
+                $consulta = $this->DBC->getJuntarTablas('SELECT
+                            *,
+                            estatus(Flag) Estatus
+                        FROM cat_rh_docs_estudio' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
                 } else {
@@ -3152,11 +3214,19 @@ class Catalogo extends General {
      * 
      */
 
-    public function catRhHabilidadesIdioma(string $operacion, array $where = null) {
+    public function catRhHabilidadesIdioma(string $operacion, array $datos = null) {
         switch ($operacion) {
             //Inserta
             case '1':
-
+                $validar = array('Nombre' => $datos['idioma']);
+                $consulta = $this->DBC->setArticulo('cat_rh_habilidades_idioma', array(
+                    'Nombre' => $datos['idioma'],
+                    'Flag' => '1'), $validar);
+                if (!empty($consulta)) {
+                    return $this->catRhHabilidadesIdioma('3', array('Flag' => '1'));
+                } else {
+                    return FALSE;
+                }
                 break;
             //Actualiza
             case '2':
@@ -3164,7 +3234,11 @@ class Catalogo extends General {
                 break;
             //Obtiene informacion
             case '3':
-                $consulta = $this->DBC->getArticulos('cat_rh_habilidades_idioma');
+                $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
+                $consulta = $this->DBC->getJuntarTablas('SELECT
+                            *,
+                            estatus(Flag) Estatus
+                        FROM cat_rh_habilidades_idioma' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
                 } else {
@@ -3178,11 +3252,19 @@ class Catalogo extends General {
      * 
      */
 
-    public function catRhHabilidadesSoftware(string $operacion, array $where = null) {
+    public function catRhHabilidadesSoftware(string $operacion, array $datos = null) {
         switch ($operacion) {
             //Inserta
             case '1':
-
+                $validar = array('Nombre' => $datos['software']);
+                $consulta = $this->DBC->setArticulo('cat_rh_habilidades_software', array(
+                    'Nombre' => $datos['software'],
+                    'Flag' => '1'), $validar);
+                if (!empty($consulta)) {
+                    return $this->catRhHabilidadesSoftware('3', array('Flag' => '1'));
+                } else {
+                    return FALSE;
+                }
                 break;
             //Actualiza
             case '2':
@@ -3190,7 +3272,11 @@ class Catalogo extends General {
                 break;
             //Obtiene informacion
             case '3':
-                $consulta = $this->DBC->getArticulos('cat_rh_habilidades_software');
+                $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
+                $consulta = $this->DBC->getJuntarTablas('SELECT
+                            *,
+                            estatus(Flag) Estatus
+                        FROM cat_rh_habilidades_software' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
                 } else {
@@ -3204,11 +3290,19 @@ class Catalogo extends General {
      * 
      */
 
-    public function catRhNivelHabilidad(string $operacion, array $where = null) {
+    public function catRhNivelHabilidad(string $operacion, array $datos = null) {
         switch ($operacion) {
             //Inserta
             case '1':
-
+                $validar = array('Nombre' => $datos['nivelHabilidad']);
+                $consulta = $this->DBC->setArticulo('cat_rh_nvl_habilidad', array(
+                    'Nombre' => $datos['nivelHabilidad'],
+                    'Flag' => '1'), $validar);
+                if (!empty($consulta)) {
+                    return $this->catRhNivelHabilidad('3', array('Flag' => '1'));
+                } else {
+                    return FALSE;
+                }
                 break;
             //Actualiza
             case '2':
@@ -3216,7 +3310,11 @@ class Catalogo extends General {
                 break;
             //Obtiene informacion
             case '3':
-                $consulta = $this->DBC->getArticulos('cat_rh_nvl_habilidad');
+                $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
+                $consulta = $this->DBC->getJuntarTablas('SELECT
+                            *,
+                            estatus(Flag) Estatus
+                        FROM cat_rh_nvl_habilidad' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
                 } else {
@@ -3230,19 +3328,44 @@ class Catalogo extends General {
      * 
      */
 
-    public function catRhHabilidadesSistema(string $operacion, array $where = null) {
+    public function catRhHabilidadesSistema(string $operacion, array $datos = null) {
         switch ($operacion) {
             //Inserta
             case '1':
-
+                $validar = array('Nombre' => $datos['sistema']);
+                $consulta = $this->DBC->setArticulo('cat_rh_habilidades_sistema', array(
+                    'Nombre' => $datos['sistema'],
+                    'Flag' => '1'), $validar);
+                if (!empty($consulta)) {
+                    return $this->catRhHabilidadesSistema('3', array('Flag' => '1'));
+                } else {
+                    return FALSE;
+                }
                 break;
             //Actualiza
             case '2':
-
+                $parametro = 'Nombre';
+                $consulta = $this->DBC->actualizarArticulo('cat_perfiles', array(
+                    'Nombre' => $datos['nombre'],
+                    'IdDepartamento' => $datos['departamento'],
+                    'Permisos' => implode(',', $datos['permisos']),
+                    'Descripcion' => $datos['descripcion'],
+                    'Clave' => $datos['clave'],
+                    'Cantidad' => $datos['cantidad'],
+                    'Nivel' => $datos['nivel'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
+                );
                 break;
             //Obtiene informacion
             case '3':
-                $consulta = $this->DBC->getArticulos('cat_rh_habilidades_sistema');
+                $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
+                $consulta = $this->DBC->getJuntarTablas('SELECT
+                            *,
+                            estatus(Flag) Estatus
+                        FROM cat_rh_habilidades_sistema' . $flag);
                 if (!empty($consulta)) {
                     return $consulta;
                 } else {
