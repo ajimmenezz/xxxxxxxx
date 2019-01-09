@@ -306,14 +306,14 @@ class Modelo_SAE7 extends Modelo_Base {
             'observaciones' => $datos['observaciones']
         ));
 
-        $diaPrimeroMes = $this->consultaACOMPMes($datos['fecha']);
-
+        $diaPrimeroMes = $this->consultaPrimerDiaMes();
+//        var_dump($diaPrimeroMes);
         $this->actualizarCantidadesACOMP(array(
             'subtotal' => $arraySubtotal['subtotal'],
             'iva' => $arraySubtotal['iva'],
             'descuento' => $arraySubtotal['descuento'],
             'descuentoFinanciero' => $datos['descuentoFinanciero'],
-            'fechaMes' => $diaPrimeroMes[0]['PER_ACUM']));
+            'fechaMes' => $diaPrimeroMes[0]['PrimerDiaMes']));
 
         if ($datos['orden'] === 'Requisicion') {
             $orden = 'q';
@@ -506,14 +506,14 @@ class Modelo_SAE7 extends Modelo_Base {
             'observaciones' => $datos['observaciones']
         ));
 
-        $diaPrimeroMes = $this->consultaACOMPMes($datos['fecha']);
+        $diaPrimeroMes = $this->consultaPrimerDiaMes();
 
         $this->actualizarCantidadesACOMP(array(
             'subtotal' => $arraySubtotal['subtotal'],
             'iva' => $arraySubtotal['iva'],
             'descuento' => $arraySubtotal['descuento'],
             'descuentoFinanciero' => $datos['descuentoFinanciero'],
-            'fechaMes' => $diaPrimeroMes[0]['PER_ACUM']));
+            'fechaMes' => $diaPrimeroMes[0]['PrimerDiaMes']));
 
         $this->actualizarCOMPO(array(
             'claveDocumento' => $datos['claveNuevaDocumentacion'],
@@ -675,8 +675,8 @@ class Modelo_SAE7 extends Modelo_Base {
         return $consulta->result_array();
     }
 
-    public function consultaACOMPMes(string $diaPrimeroMes) {
-        $consulta = parent::connectDBSAE7()->query("SELECT PER_ACUM FROM ACOMP03 WHERE  PER_ACUM = DATEADD(MONTH, -1, DATEADD(DAY, 1, EOMONTH('" . $diaPrimeroMes . "')))");
+    public function consultaPrimerDiaMes() {
+        $consulta = parent::connectDBSAE7()->query("SELECT DATEADD(MM, DATEDIFF(MM,0,GETDATE()), 0) AS 'PrimerDiaMes';");
         return $consulta->result_array();
     }
 
@@ -696,7 +696,7 @@ class Modelo_SAE7 extends Modelo_Base {
         $consulta = parent::connectDBSAE7()->query("select 
                                                         partidas.*,
                                                         TOT_PARTIDA as Subtotal 
-                                                    from PAR_COMPO03 partidas
+                                                    from PAR_COMPO1 partidas
                                                     where CVE_DOC = '" . $claveDocumento . "'");
         return $consulta->result_array();
     }
@@ -953,8 +953,8 @@ class Modelo_SAE7 extends Modelo_Base {
                     '" . $datos['claveProvedor'] . "',
                     'O',
                     '" . $datos['referencia'] . "',
-                    '" . $datos['fechaDoc'] . " 00:00:00.000',
-                    '" . $datos['fechaRec'] . " 00:00:00.000',
+                    '" . $datos['fechaDoc'] . "',
+                    '" . $datos['fechaRec'] . "',
                     EOMONTH(GETDATE()),
                     " . $datos['cantidadTotal'] . ",
                     0,

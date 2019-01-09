@@ -96,11 +96,11 @@ class Compras extends General {
     public function consultaListaOrdenesCompra(array $datos = null) {
         $fecha = mdate('%Y-%m-%d', now('America/Mexico_City'));
         if (empty($datos)) {
-            $whereFecha = "WHERE FECHA_DOC = '" . $fecha . "'";
+            $whereFecha = "WHERE FECHA_DOC between '" . $fecha . "' and '" . $fecha . " 23:59:59'";
         } else {
             switch ($datos['fecha']) {
                 case 'hoy':
-                    $whereFecha = "WHERE FECHA_DOC = '" . $fecha . "'";
+                    $whereFecha = "WHERE FECHA_DOC between '" . $fecha . "' and '" . $fecha . " 23:59:59'";
                     break;
                 case 'esteMes':
                     $whereFecha = "WHERE FECHA_DOC >= DATEADD(mm,DATEDIFF(mm,0,GETDATE()),0)";
