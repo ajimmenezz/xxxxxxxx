@@ -6,7 +6,7 @@ $(function () {
     var select = new Select();
     var tabla = new Tabla();
     var file = new Upload();
-    var objetosPagina = new Map();
+    var usuario_perfil = new Usuario_perfil();
 
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();
@@ -169,16 +169,8 @@ $(function () {
                 $('#resumenPersonal').removeClass('hidden');
             });
 
+            usuario_perfil.SelectNacimiento();
 
-
-            var vistaSeguimiento = new usuario_perfil(objetosPagina);
-
-
-            vistaSeguimiento.obtenerDatoFilaTabla('data-table-proyectos-iniciados', function (datos) {
-                vistaSeguimiento.mostrarDatosProyecto(datos);
-            });
-
-            vistaSeguimiento.prueba();
         });
     });
     //Evento que actualizar al personal

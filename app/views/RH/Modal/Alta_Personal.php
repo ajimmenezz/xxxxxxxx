@@ -200,7 +200,7 @@
                             <select id="selectActualizarPaisUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['paises'] as $item) {
+                                foreach ($paises as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
@@ -228,7 +228,7 @@
                             <select id="selectActualizarEstadoCivilUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['estadoCivil'] as $item) {
+                                foreach ($estadoCivil as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
@@ -243,7 +243,7 @@
                             <select id="selectActualizarSexoUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['sexo'] as $item) {
+                                foreach ($sexo as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
@@ -339,7 +339,7 @@
                             <select id="selectActualizarNivelEstudioUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['nivelEstudio'] as $item) {
+                                foreach ($nivelEstudio as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
@@ -354,7 +354,7 @@
                             <select id="selectActualizarDocumentoRecibidoUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['documentosEstudio'] as $item) {
+                                foreach ($documentosEstudio as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
@@ -413,7 +413,7 @@
                             <select id="selectActualizarIdiomaUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['habilidadesIdioma'] as $item) {
+                                foreach ($habilidadesIdioma as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
@@ -424,7 +424,7 @@
                             <select id="selectActualizarComprensionUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['nivelHabilidades'] as $item) {
+                                foreach ($nivelHabilidades as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
@@ -449,7 +449,7 @@
                             <select id="selectActualizarEscrituraUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['nivelHabilidades'] as $item) {
+                                foreach ($nivelHabilidades as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
@@ -497,7 +497,7 @@
                             <select id="selectActualizarSoftwareUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['habilidadesSoftware'] as $item) {
+                                foreach ($habilidadesSoftware as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
@@ -508,7 +508,7 @@
                             <select id="selectActualizarNivelComputacionalesUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['nivelHabilidades'] as $item) {
+                                foreach ($nivelHabilidades as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
