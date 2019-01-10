@@ -438,7 +438,7 @@
                             <select id="selectActualizarLecturaUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['nivelHabilidades'] as $item) {
+                                foreach ($nivelHabilidades as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
@@ -558,7 +558,7 @@
                             <select id="selectActualizarSistemasUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['habilidadesSistema'] as $item) {
+                                foreach ($habilidadesSistema as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>
@@ -569,7 +569,7 @@
                             <select id="selectActualizarNivelSistemasUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Seleccionar...</option>
                                 <?php
-                                foreach ($datos['catalogos']['nivelHabilidades'] as $item) {
+                                foreach ($nivelHabilidades as $item) {
                                     echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
                                 }
                                 ?>

@@ -169,7 +169,10 @@ $(function () {
                 $('#resumenPersonal').removeClass('hidden');
             });
 
+            $("#selectActualizarPaisUsuario").on("change", function () {
+
             usuario_perfil.SelectNacimiento();
+            });
 
         });
     });
