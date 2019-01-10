@@ -585,15 +585,15 @@ class Reportes extends General {
                                                 MUNICIPIO,
                                                 ESTADO,
                                                 RFC
-                                                from PROV01 where CLAVE = (select CVE_CLPV from COMPO01 where CVE_DOC = '" . $datos['documento'] . "')")[0];
+                                                from PROV03 where CLAVE = (select CVE_CLPV from COMPO03 where CVE_DOC = '" . $datos['documento'] . "')")[0];
 
         $generales = $this->DBSAE->consultaBDSAE("select
                                                 CONVERT(varchar(10),orden.FECHA_DOC,103) as Fecha,
-                                                (select DESCR from ALMACENES01 where CVE_ALM = orden.NUM_ALMA) as Almacen,
+                                                (select DESCR from ALMACENES03 where CVE_ALM = orden.NUM_ALMA) as Almacen,
                                                 orden.OBS_COND as EntregarA,
                                                 campos.CAMPLIB1 as Proyecto,
                                                 campos.CAMPLIB2 as LugarEntrega,
-                                                (select STR_OBS from OBS_DOCC01 where CVE_OBS = orden.CVE_OBS) as Observaciones,
+                                                (select STR_OBS from OBS_DOCC03 where CVE_OBS = orden.CVE_OBS) as Observaciones,
                                                 orden.CAN_TOT as Subtotal,
                                                 orden.DES_TOT as Descuento,
                                                 orden.DES_FIN as DescFin,
@@ -602,8 +602,8 @@ class Reportes extends General {
                                                 orden.IMP_TOT3 as IEPS3,
                                                 orden.IMP_TOT4 as IVA,
                                                 orden.IMPORTE as Total
-                                                from COMPO01 orden
-                                                inner join COMPO_CLIB01 campos on orden.CVE_DOC = campos.CLAVE_DOC
+                                                from COMPO03 orden
+                                                inner join COMPO_CLIB03 campos on orden.CVE_DOC = campos.CLAVE_DOC
                                                 where CVE_DOC = '" . $datos['documento'] . "'")[0];
 
         $partidas = $this->DBSAE->consultaBDSAE("select
@@ -613,9 +613,9 @@ class Reportes extends General {
                                                 partida.DESCU as Descuento,
                                                 partida.COST as Costo,
                                                 partida.TOT_PARTIDA as Importe,
-                                                (select STR_OBS from OBS_DOCC01 where CVE_OBS = partida.CVE_OBS) as Observaciones
-                                                from PAR_COMPO01 partida
-                                                inner join INVE01 producto on partida.CVE_ART = producto.CVE_ART
+                                                (select STR_OBS from OBS_DOCC03 where CVE_OBS = partida.CVE_OBS) as Observaciones
+                                                from PAR_COMPO03 partida
+                                                inner join INVE03 producto on partida.CVE_ART = producto.CVE_ART
                                                 where CVE_DOC = '" . $datos['documento'] . "'");
 
         $this->pdf = new PDFOC();

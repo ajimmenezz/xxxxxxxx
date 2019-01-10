@@ -184,9 +184,10 @@ $db['SAE'] = array(
         'port' => 1433
 );
 
+//	'hostname' => '192.168.0.7, 49161',
 $db['SAE7'] = array(
 	'dsn'	=> '',
-	'hostname' => '192.168.0.7, 49161',
+	'hostname' => '192.168.0.35, 51051',
 	'username' => 'adist',
 	'password' => 'course3Goose,',
 	'database' => 'SAE7EMPRESA3',

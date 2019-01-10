@@ -100,7 +100,7 @@ $(function () {
     var cargarObjetosFormulario = function () {
         var fechaActual = new Date();
         var date = formatDateToString(fechaActual);
-        var fechaMilisegundos = date + " " + fechaActual.getHours() + ":" + fechaActual.getMinutes() + ":" + fechaActual.getSeconds() + ":" + fechaActual.getMilliseconds();
+        var fechaMilisegundos = date + " " + fechaActual.getHours() + ":" + fechaActual.getMinutes() + ":" + fechaActual.getSeconds() + "." + fechaActual.getMilliseconds();
         
         select.crearSelect('#selectOrdenOrdenCompra');
         select.crearSelect('#selectProveedorOrdenCompra');

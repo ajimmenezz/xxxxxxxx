@@ -281,7 +281,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function guardarOrdenCompra(array $datos, array $arraySubtotal) {
-        $this->iniciaTransaccion();
+        $this->iniciaTransaccionSAE();
 
         $ultimaClaveTBLCONTROLTabla32 = $this->consultaUltimaClaveTBLCONTROL('32');
         $nuevaClaveTabla32 = $ultimaClaveTBLCONTROLTabla32[0]['ULT_CVE'] + 1;
@@ -307,7 +307,7 @@ class Modelo_SAE7 extends Modelo_Base {
         ));
 
         $diaPrimeroMes = $this->consultaPrimerDiaMes();
-//        var_dump($diaPrimeroMes);
+
         $this->actualizarCantidadesACOMP(array(
             'subtotal' => $arraySubtotal['subtotal'],
             'iva' => $arraySubtotal['iva'],
@@ -445,16 +445,17 @@ class Modelo_SAE7 extends Modelo_Base {
             }
         }
 
-        if ($this->estatusTransaccion() === FALSE) {
-            $this->roolbackTransaccion();
+        $this->terminaTransaccionSAE();
+
+        if ($this->estatusTransaccionSAE() === FALSE) {
+            $this->roolbackTransaccionSAE();
         } else {
-            $this->terminaTransaccion();
             return TRUE;
         }
     }
 
     public function actualizarOrdenCompra(array $datos, array $arraySubtotal) {
-        $this->iniciaTransaccion();
+        $this->iniciaTransaccionSAE();
 
         if ($datos['orden'] === 'Requisicion') {
             $orden = 'q';
@@ -641,10 +642,11 @@ class Modelo_SAE7 extends Modelo_Base {
             }
         }
 
-        if ($this->estatusTransaccion() === FALSE) {
-            $this->roolbackTransaccion();
+        $this->terminaTransaccionSAE();
+
+        if ($this->estatusTransaccionSAE() === FALSE) {
+            $this->roolbackTransaccionSAE();
         } else {
-            $this->terminaTransaccion();
             return TRUE;
         }
     }
@@ -696,7 +698,7 @@ class Modelo_SAE7 extends Modelo_Base {
         $consulta = parent::connectDBSAE7()->query("select 
                                                         partidas.*,
                                                         TOT_PARTIDA as Subtotal 
-                                                    from PAR_COMPO1 partidas
+                                                    from PAR_COMPO03 partidas
                                                     where CVE_DOC = '" . $claveDocumento . "'");
         return $consulta->result_array();
     }

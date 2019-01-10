@@ -220,6 +220,26 @@ class Base {
     public function estatusTransaccion() {
         return self::connectDBPrueba()->trans_status();
     }
+    
+    public function iniciaTransaccionSAE() {
+        self::connectDBSAE7()->trans_start();
+    }
+
+    public function terminaTransaccionSAE() {
+        self::connectDBSAE7()->trans_complete();
+    }
+
+    public function commitTransaccionSAE() {
+        self::connectDBSAE7()->trans_commit();
+    }
+
+    public function roolbackTransaccionSAE() {
+        self::connectDBSAE7()->trans_rollback();
+    }
+
+    public function estatusTransaccionSAE() {
+        return self::connectDBSAE7()->trans_status();
+    }
 
     /*
      * Ejecuta la consulta solicitada a la Base de Datos de AdIST 2
