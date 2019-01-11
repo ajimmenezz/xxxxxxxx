@@ -163,6 +163,15 @@ class Usuario extends General {
             $data['departamentos'] = $this->Catalogo->catDepartamentos('3', array('Flag' => '1'));
             $data['perfiles'] = $this->Catalogo->catPerfiles('3');
             $data['infocatV3Usuarios'] = $this->Catalogo->catConsultaGeneral('select Id,nombreUsuario(Id)as Nombre from cat_v3_usuarios where Flag = 1 AND Id > 1 ORDER BY Nombre ASC');
+            $data['paises'] = $this->Catalogo->catLocalidades('1');
+            $data['estadoCivil'] = $this->Catalogo->catRhEdoCivil('3', array('Flag' => '1'));
+            $data['sexo'] = $this->Catalogo->catRhSexo('3', array('Flag' => '1'));
+            $data['nivelEstudio'] = $this->Catalogo->catRhNivelEstudio('3', array('Flag' => '1'));
+            $data['documentosEstudio'] = $this->Catalogo->catRhDocumentosEstudio('3', array('Flag' => '1'));
+            $data['habilidadesIdioma'] = $this->Catalogo->catRhHabilidadesIdioma('3', array('Flag' => '1'));
+            $data['habilidadesSoftware'] = $this->Catalogo->catRhHabilidadesSoftware('3', array('Flag' => '1'));
+            $data['nivelHabilidades'] = $this->Catalogo->catRhNivelHabilidad('3', array('Flag' => '1'));
+            $data['habilidadesSistema'] = $this->Catalogo->catRhHabilidadesSistema('3', array('Flag' => '1'));
 
             if (!empty($datos['id'])) {
                 $data['idArea'] = $this->Catalogo->catConsultaGeneral('SELECT e.Id as Area FROM t_rh_personal a INNER JOIN cat_v3_usuarios b ON b.Id = a.IdUsuario INNER JOIN cat_perfiles c ON b.IdPerfil = c.Id INNER JOIN cat_v3_departamentos_siccob d on c.IdDepartamento = d.Id INNER JOIN cat_v3_areas_siccob e ON d.IdArea = e.Id where a.id = ' . $datos['id']);

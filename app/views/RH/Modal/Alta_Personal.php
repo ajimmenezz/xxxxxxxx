@@ -11,17 +11,21 @@
         <div class="tab-overflow">
             <ul class="nav nav-tabs nav-tabs-inverse">
                 <li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>
-                <li class="active"><a href="#nav-tab-1" data-toggle="tab">Información Personal</a></li>
-                <!--                    <li class=""><a href="#nav-tab-2" data-toggle="tab">Información Postal</a></li>
-                                    <li class=""><a href="#nav-tab-3" data-toggle="tab">Información Laboral</a></li>
-                                    <li class=""><a href="#nav-tab-4" data-toggle="tab">Información de cuentas y créditos</a></li>-->
+                <li class="active"><a href="#nav-tab-informormacion-personal" data-toggle="tab">Información Personal</a></li>
+                <li class=""><a href="#nav-tab-datos-personales" data-toggle="tab">Datos Personales</a></li>
+                <li class=""><a href="#nav-tab-academicos" data-toggle="tab">Academicos</a></li>
+                <li class=""><a href="#nav-tab-idiomas" data-toggle="tab">Idiomas</a></li>
+                <li class=""><a href="#nav-tab-computacionales" data-toggle="tab">Computacionales</a></li>
+                <li class=""><a href="#nav-tab-sistemas-especiales" data-toggle="tab">Sistemas Especiales</a></li>
+                <li class=""><a href="#nav-tab-automovil" data-toggle="tab">Automovil</a></li>
+                <li class=""><a href="#nav-tab-dependientes-economicos" data-toggle="tab">Dependientes Economicos</a></li>
                 <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
             </ul>
         </div>
     </div>
     <div class="panel-body">
         <div class="tab-content">
-            <div class="tab-pane fade active in" id="nav-tab-1">
+            <div class="tab-pane fade active in" id="nav-tab-informormacion-personal">
                 <h3 class="m-t-10">Información Personal</h3>
                 <!--Empezando Separador-->
                 <div class="col-md-12">
@@ -182,14 +186,546 @@
                     </form>
                 </div>
             </div>
-            <div class="tab-pane fade" id="nav-tab-2">
-                <h3 class="m-t-10">Información Postal</h3>
+            <div class="tab-pane fade" id="nav-tab-datos-personales">
+                <h3 class="m-t-10">Datos Personales</h3>
+                <!--Empezando Separador-->
+                <div class="col-md-12">
+                    <div class="underline m-b-15 m-t-15"></div>
+                </div>
+                <!--Finalizando Separador-->
+                <form class="form-horizontal">
+                    <div class="row m-t-10">
+                        <div class="col-md-4">
+                            <label for="selectActualizarPaisUsuario">País</label>
+                            <select id="selectActualizarPaisUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($paises as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="selectActualizarEstadoUsuario">Estado</label>
+                            <select id="selectActualizarEstadoUsuario" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
+                                <option value="">Seleccionar...</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="selectActualizarMunicipioUsuario">Delegación o Municipio</label>
+                            <select id="selectActualizarMunicipioUsuario" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
+                                <option value="">Seleccionar...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="separatorBorder"></div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-4">
+                            <label for="selectActualizarEstadoCivilUsuario">Estado civil</label>
+                            <select id="selectActualizarEstadoCivilUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($estadoCivil as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputActualizarNacionalidadUsuario">Nacionalidad</label>
+                            <input type="text" class="form-control" id="inputActualizarNacionalidadUsuario" style="width: 100%" value="<?php // echo $datosUsuario['Nacionalidad']          ?>"/>                            
+                        </div>
+                        <div class="col-md-4">
+                            <label for="selectActualizarSexoUsuario">Sexo</label>
+                            <select id="selectActualizarSexoUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($sexo as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-4">
+                            <label for="inputActualizarEstaturaUsuario">Estatura</label>
+                            <input type="text" class="form-control" id="inputActualizarEstaturaUsuario" style="width: 100%"  value="<?php // echo $datosUsuario['Estatura']          ?>"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputActualizarPesoUsuario">Peso</label>
+                            <input type="text" class="form-control" id="inputActualizarPesoUsuario" style="width: 100%" value="<?php // echo $datosUsuario['Peso']          ?>"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="cinputActualizarTipoSangreUsuario">Tipo de sangre</label>
+                            <input type="text" class="form-control" id="inputActualizarTipoSangreUsuario" style="width: 100%" value="<?php // echo $datosUsuario['Sangre']          ?>"/>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-4">
+                            <label for="inputActualizarTallaPantalonUsuario">Talla de pantalon</label>
+                            <input type="text" class="form-control" id="inputActualizarTallaPantalonUsuario" style="width: 100%" value="<?php // echo $datosUsuario['TallaPantalon']          ?>"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputActualizarTallaCamisaPantalonUsuario">Talla de camisa</label>
+                            <input type="text" class="form-control" id="inputActualizarTallaCamisaUsuario" style="width: 100%" value="<?php // echo $datosUsuario['TallaCamisa']          ?>"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputActualizarTallaZapatosUsuario">Tallas zapatos</label>
+                            <input type="text" class="form-control" id="inputActualizarTallaZapatosUsuario" style="width: 100%" value="<?php // echo $datosUsuario['TallaZapatos']          ?>"/>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-4">
+                            <label for="inputActualizarCurpUsuario">CURP</label>
+                            <input type="text" class="form-control" id="inputActualizarCurpUsuario" style="width: 100%" value="<?php // echo $datosUsuario['CURP']          ?>"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputActualizarRfcUsuario">RFC</label>
+                            <input type="text" class="form-control" id="inputActualizarRfcUsuario" style="width: 100%" value="<?php // echo $datosUsuario['RFC']          ?>"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputActualizarNssUsuario">NSS</label>
+                            <input type="text" class="form-control" id="inputActualizarNssUsuario" style="width: 100%" value="<?php // echo $datosUsuario['NSS']          ?>"/>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-4">
+                            <label for="inputActualizarInstitutoAforeUsuario">Instituto AFORE</label>
+                            <input type="text" class="form-control" id="inputActualizarInstitutoAforeUsuario" style="width: 100%" value="<?php // echo $datosUsuario['InstAfore']          ?>"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputActualizarNumeroAforeUsuario">Numero de AFORE</label>
+                            <input type="text" class="form-control" id="inputActualizarNumeroAforeUsuario" style="width: 100%" value="<?php // echo $datosUsuario['Afore']          ?>"/>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <!--Empezando error--> 
+                        <div class="col-md-12">
+                            <div class="errorGuardarPersonalesUsuario"></div>
+                        </div>
+                        <!--Finalizando Error-->
+                    </div>   
+                    <div class="row m-t-10">
+                        <div class="col-md-12">
+                            <div class="form-group text-center">
+                                <br>
+                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarPersonalesUsuario"><i class="fa fa-save"></i> Guardar</a>
+                            </div>
+                        </div>
+                    </div>  
+                </form>
             </div>
-            <div class="tab-pane fade" id="nav-tab-3">
-                <h3 class="m-t-10">Información Laboral</h3>
+            <div class="tab-pane fade" id="nav-tab-academicos">
+                <h3 class="m-t-10">Datos Academicos</h3>
+                <!--Empezando Separador-->
+                <div class="col-md-12">
+                    <div class="underline m-b-15 m-t-15"></div>
+                </div>
+                <!--Finalizando Separador-->
+                <form class="form-horizontal">
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="selectActualizarNivelEstudioUsuario">Nivel de estudio *</label>
+                            <select id="selectActualizarNivelEstudioUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($nivelEstudio as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="selectActualizarNombreInstitutoUsuario">Nombre de la institución *</label>
+                            <input type="tel" class="form-control" id="selectActualizarNombreInstitutoUsuario" style="width: 100%"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="selectActualizarDocumentoRecibidoUsuario">Documento recibido *</label>
+                            <select id="selectActualizarDocumentoRecibidoUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($documentosEstudio as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-6">
+                            <label for="inputActualizarDesdeUsuario">Desde *</label>
+                            <div id="inputFecha" class="input-group date calendario" >
+                                <input id="inputActualizarDesdeUsuario" type="text" class="form-control"/>
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inputActualizarHastaUsuario">Hasta *</label>
+                            <div id="inputFecha" class="input-group date calendario" >
+                                <input id="inputActualizarHastaUsuario" type="text" class="form-control"/>
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-12">
+                            <div class="form-group text-center">
+                                <br>
+                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarAcademicosUsuario"><i class="fa fa-save"></i> Guardar</a>
+                            </div>
+                        </div>
+                    </div>  
+
+                    <div class="row m-t-10">
+                        <!--Empezando error--> 
+                        <div class="col-md-12">
+                            <div id="errorGuardarAcademicosUsuario"></div>
+                        </div>
+                        <!--Finalizando Error-->
+                    </div> 
+                </form>
             </div>
-            <div class="tab-pane fade" id="nav-tab-4">
-                <h3 class="m-t-10">Información de cuentas y créditos</h3>
+            <div class="tab-pane fade" id="nav-tab-idiomas">
+                <h3 class="m-t-10">Datos Idiomas</h3>
+                <!--Empezando Separador-->
+                <div class="col-md-12">
+                    <div class="underline m-b-15 m-t-15"></div>
+                </div>
+                <!--Finalizando Separador-->
+
+                <form class="form-horizontal">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="selectActualizarIdiomaUsuario">Idioma *</label>
+                            <select id="selectActualizarIdiomaUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($habilidadesIdioma as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="selectActualizarComprensionUsuario">Comprensión *</label>
+                            <select id="selectActualizarComprensionUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($nivelHabilidades as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>                        
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-6">
+                            <label for="selectActualizarLecturaUsuario">Lectura *</label>
+                            <select id="selectActualizarLecturaUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($nivelHabilidades as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="selectActualizarEscrituraUsuario">Escritura *</label>
+                            <select id="selectActualizarEscrituraUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($nivelHabilidades as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>                        
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-12">                                    
+                            <label for="inputActualizarComantariosIdiomasUsuario">Comentarios</label>
+                            <textarea id="inputActualizarComantariosIdiomasUsuario" class="form-control entregaGarantia" placeholder="Ingrese los comentarios" rows="3" ></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-12">
+                            <div class="form-group text-center">
+                                <br>
+                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarIdiomasUsuario"><i class="fa fa-save"></i> Guardar</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <!--Empezando error--> 
+                        <div class="col-md-12">
+                            <div id="errorGuardarIdiomasUsuario"></div>
+                        </div>
+                        <!--Finalizando Error-->
+                    </div>  
+                </form>
+            </div>
+            <div class="tab-pane fade" id="nav-tab-computacionales">
+                <h3 class="m-t-10">Datos Computacionales</h3>
+                <!--Empezando Separador-->
+                <div class="col-md-12">
+                    <div class="underline m-b-15 m-t-15"></div>
+                </div>
+                <!--Finalizando Separador-->
+                <form class="form-horizontal">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="selectActualizarSoftwareUsuario">Software *</label>
+                            <select id="selectActualizarSoftwareUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($habilidadesSoftware as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="selectActualizarNivelComputacionalesUsuario">Nivel *</label>
+                            <select id="selectActualizarNivelComputacionalesUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($nivelHabilidades as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                            </select>                        
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-12">                                    
+                            <label for="inputActualizarComentariosComputacionalesUsuario">Comentarios</label>
+                            <textarea id="inputActualizarComentariosComputacionalesUsuario" class="form-control entregaGarantia" placeholder="Ingrese los comentarios" rows="3" ></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-12">
+                            <div class="form-group text-center">
+                                <br>
+                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarComputacionalesUsuario"><i class="fa fa-save"></i> Guardar</a>
+                            </div>
+                        </div>
+                    </div>  
+
+                    <div class="row m-t-10">
+                        <!--Empezando error--> 
+                        <div class="col-md-12">
+                            <div id="errorGuardarComputacionalesUsuario"></div>
+                        </div>
+                        <!--Finalizando Error-->
+                    </div> 
+                </form>
+            </div>
+            <div class="tab-pane fade" id="nav-tab-sistemas-especiales">
+                <h3 class="m-t-10">Datos Sistemas Especiales</h3>
+                <!--Empezando Separador-->
+                <div class="col-md-12">
+                    <div class="underline m-b-15 m-t-15"></div>
+                </div>
+                <!--Finalizando Separador-->
+
+                <form class="form-horizontal">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="selectActualizarSistemasUsuario">Sistemas *</label>
+                            <select id="selectActualizarSistemasUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($habilidadesSistema as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="selectActualizarNivelSistemasUsuario">Nivel *</label>
+                            <select id="selectActualizarNivelSistemasUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($nivelHabilidades as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>                        
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-12">                                    
+                            <label for="inputActualizarComnetariosSistemasUsuario">Comentarios</label>
+                            <textarea id="inputActualizarComnetariosSistemasUsuario" class="form-control entregaGarantia" placeholder="Ingrese los comentarios" rows="3" ></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-12">
+                            <div class="form-group text-center">
+                                <br>
+                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarEspecialesUsuario"><i class="fa fa-save"></i> Guardar</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <!--Empezando error--> 
+                        <div class="col-md-12">
+                            <div id="errorGuardarEspecialesUsuario"></div>
+                        </div>
+                        <!--Finalizando Error-->
+                    </div> 
+                </form>
+            </div>
+            <div class="tab-pane fade" id="nav-tab-automovil">
+                <h3 class="m-t-10">Datos Automovil</h3>
+                <!--Empezando Separador-->
+                <div class="col-md-12">
+                    <div class="underline m-b-15 m-t-15"></div>
+                </div>
+                <!--Finalizando Separador-->
+
+                <form class="form-horizontal">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="selectActualizarDominaUsuario">¿Sabe conducir?</label>
+                            <select id="selectActualizarDominaUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar</option>
+                                <option value="1">Si</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="selectActualizarAntiguedadUsuario">Antigüedad</label>
+                            <div id="inputFechaAntiguedadUsuario" class="input-group date calendario" >
+                                <?php (empty($datosConduccion)) ? $antiguedad = '' : $antiguedad = $datosConduccion['Antiguedad']; ?>
+                                <input id="selectActualizarAntiguedadUsuario" type="text" class="form-control" value="<?php echo $antiguedad; ?>" />
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            </div>                        
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-6">
+                            <label for="inputActualizarTipoLicenciaUsuario">Tipo de licencia</label>
+                            <?php (empty($datosConduccion)) ? $tipoLicencia = '' : $tipoLicencia = $datosConduccion['TipoLicencia']; ?>
+                            <input type="tel" class="form-control" id="inputActualizarTipoLicenciaUsuario" style="width: 100%" value="<?php echo $tipoLicencia; ?>" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="selectActualizarTipoVigenciaUsuario">Vigencia</label>
+                            <div id="inputFechaVigenciaUsuario" class="input-group date calendario" >
+                                <?php (empty($datosConduccion)) ? $expedicion = '' : $expedicion = $datosConduccion['Expedicion']; ?>
+                                <input id="selectActualizarTipoVigenciaUsuario" type="text" class="form-control" value="<?php echo $expedicion; ?>" />
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            </div>                        
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-6">
+                            <?php (empty($datosConduccion)) ? $noLicencia = '' : $noLicencia = $datosConduccion['NoLicencia']; ?>
+                            <label for="inputActualizarNumeroLicenciaUsuario">Numero de licencia</label>
+                            <input type="tel" class="form-control" id="inputActualizarNumeroLicenciaUsuario" style="width: 100%" value="<?php echo $noLicencia; ?>" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="selectActualizarNumeroVigenciaUsuario">Expedición</label>
+                            <div id="inputFechaNacimientoUsuario" class="input-group date calendario" >
+                                <?php (empty($datosConduccion)) ? $vigencia = '' : $vigencia = $datosConduccion['Vigencia']; ?>
+                                <input id="selectActualizarNumeroVigenciaUsuario" type="text" class="form-control" value="<?php echo $vigencia; ?>"/>
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            </div>                        
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <!--Empezando error--> 
+                        <div class="col-md-12">
+                            <div id="errorGuardarAutomovilUsuario"></div>
+                        </div>
+                        <!--Finalizando Error-->
+                    </div> 
+
+                    <div class="row m-t-10">
+                        <div class="col-md-12">
+                            <div class="form-group text-center">
+                                <br>
+                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarAutomovilUsuario"><i class="fa fa-save"></i> Guardar</a>
+                            </div>
+                        </div>
+                    </div>  
+                </form>
+            </div>
+            <div class="tab-pane fade" id="nav-tab-dependientes-economicos">
+                <h3 class="m-t-10">Datos Dependientes Economicos</h3>
+                <!--Empezando Separador-->
+                <div class="col-md-12">
+                    <div class="underline m-b-15 m-t-15"></div>
+                </div>
+                <!--Finalizando Separador-->
+
+                <form class="form-horizontal">
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="inputActualizarNombreDependienteUsuario">Nombre *</label>
+                            <input type="tel" class="form-control" id="inputActualizarNombreDependienteUsuario" style="width: 100%"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputActualizarParentescoUsuario">Parentesco *</label>
+                            <input type="tel" class="form-control" id="inputActualizarParentescoUsuario" style="width: 100%"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputActualizarParentescoVigenciaUsuario">Fecha de Nacimiento *</label>
+                            <div id="inputFechaParentescoVigencia" class="input-group date calendario" >
+                                <input id="inputActualizarParentescoVigenciaUsuario" type="text" class="form-control"/>
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            </div>   
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <div class="col-md-12">
+                            <div class="form-group text-center">
+                                <br>
+                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarDependientesUsuario"><i class="fa fa-save"></i> Guardar</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row m-t-10">
+                        <!--Empezando error--> 
+                        <div class="col-md-12">
+                            <div id="errorGuardarDependientesUsuario"></div>
+                        </div>
+                        <!--Finalizando Error-->
+                    </div>   
+                </form>
             </div>
         </div>
     </div>

@@ -6,6 +6,8 @@ $(function () {
     var select = new Select();
     var tabla = new Tabla();
     var file = new Upload();
+    var usuario_perfil = new Usuario_perfil();
+
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();
     //Muestra la hora en el sistema
@@ -39,6 +41,22 @@ $(function () {
             $('#selectDepartamento').removeAttr('disabled');
             select.crearSelect('#selectPerfil');
             select.crearSelect('#selectJefe');
+            select.crearSelect('#selectActualizarPaisUsuario');
+            select.crearSelect('#selectActualizarEstadoUsuario');
+            select.crearSelect('#selectActualizarMunicipioUsuario');
+            select.crearSelect('#selectActualizarEstadoCivilUsuario');
+            select.crearSelect('#selectActualizarSexoUsuario');
+            select.crearSelect('#selectActualizarNivelEstudioUsuario');
+            select.crearSelect('#selectActualizarDocumentoRecibidoUsuario');
+            select.crearSelect('#selectActualizarIdiomaUsuario');
+            select.crearSelect('#selectActualizarComprensionUsuario');
+            select.crearSelect('#selectActualizarLecturaUsuario');
+            select.crearSelect('#selectActualizarEscrituraUsuario');
+            select.crearSelect('#selectActualizarSoftwareUsuario');
+            select.crearSelect('#selectActualizarNivelComputacionalesUsuario');
+            select.crearSelect('#selectActualizarSistemasUsuario');
+            select.crearSelect('#selectActualizarNivelSistemasUsuario');
+            select.crearSelect('#selectActualizarDominaUsuario');
             $('#inputAPPersonal').val(datos[1]);
             $('#inputAMPersonal').val(datos[2]);
             $('#inputNombrePersonal').val(datos[3]);
@@ -150,6 +168,12 @@ $(function () {
                 $('#formularioPersonal').empty().addClass('hidden');
                 $('#resumenPersonal').removeClass('hidden');
             });
+
+            $("#selectActualizarPaisUsuario").on("change", function () {
+
+            usuario_perfil.SelectNacimiento();
+            });
+
         });
     });
     //Evento que actualizar al personal
