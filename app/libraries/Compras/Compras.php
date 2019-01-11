@@ -11,6 +11,7 @@ class Compras extends General {
     private $reportes;
     private $DBSAE;
     private $DBG;
+    private $usuario;
 
     public function __construct() {
         parent::__construct();
@@ -19,6 +20,7 @@ class Compras extends General {
         $this->reportes = \Librerias\SAEReports\Reportes::factory();
         $this->DBSAE = \Modelos\Modelo_SAE7::factory();
         $this->DBG = \Modelos\Modelo_Gapsi::factory();
+        $this->usuario = \Librerias\Generales\Registro_Usuario::factory();
         parent::getCI()->load->helper('date');
     }
 
@@ -137,6 +139,7 @@ class Compras extends General {
     }
 
     public function guardarOrdenCompra(array $datos) {
+        $usuario = $this->usuario->getDatosUsuario();
         $arraySubtotal = $this->subtotalTablaPartidas($datos['datosTabla'], $datos['esquema'], $datos['descuentoFinanciero']);
         $consulta = $this->DBSAE->guardarOrdenCompra($datos, $arraySubtotal);
 
@@ -163,6 +166,7 @@ class Compras extends General {
 
             $idGapsi = $this->DBG->ordenCompra($arrayGapsiOrdenCompra);
             if (!empty($idGapsi)) {
+
                 $carpeta = './storage/Gastos/' . $idGapsi['last'] . '/PRE';
 
                 if (!file_exists($carpeta)) {
@@ -174,6 +178,13 @@ class Compras extends General {
                     'documento' => $datos['claveNuevaDocumentacion'],
                     'idGapsi' => $idGapsi['last']));
 
+//                $this->DBG->insertarArchivosGastosGapsi(array(
+//                    'idGapsi' => $idGapsi['last'],
+//                    'archivos' => $carpeta,
+//                    'idUsuario' => $usuario['Id'],
+//                    'email' => $usuario['EmailCorporativo']
+//                ));
+                
                 return '.' . $gastoPDF;
             } else {
                 return FALSE;

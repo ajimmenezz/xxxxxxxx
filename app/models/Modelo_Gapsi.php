@@ -16,7 +16,7 @@ class Modelo_Gapsi extends Modelo_Base {
     public function getClientes() {
         $query = "select * from db_Clientes where Nombre <> '' order by Nombre";
         $consulta = parent::connectDBGapsi()->query($query);
-        
+
         return $consulta->result_array();
     }
 
@@ -448,11 +448,10 @@ class Modelo_Gapsi extends Modelo_Base {
                 (SELECT Tipo FROM db_Beneficiarios WHERE ID = IDBeneficiario) TipoBeneficiario
                 from db_Registro
                 where OrdenCompra = '" . $datos['ordenCompra'] . "'";
-//            $query = "select * from db_Beneficiarios";
 
         $consulta = parent::connectDBGapsi()->query($query);
         $gasto = $consulta->result_array();
-//        var_dump($gasto);
+
         return $gasto;
     }
 
@@ -520,22 +519,16 @@ class Modelo_Gapsi extends Modelo_Base {
         $consultaComprobante = "select Monto from db_ComprobacionRegistro where Registro = '" . $datos['idGasto'] . "'";
         $consulta = parent::connectDBGapsi()->query($consultaComprobante);
         $montoComprobante = $consulta->result_array();
-        
+
         $consultaRegistro = "select Importe from db_Registro where ID = '" . $datos['idGasto'] . "'";
         $registro = parent::connectDBGapsi()->query($consultaRegistro);
         $montoRegistro = $registro->result_array();
-        
-        if($montoComprobante >= $montoRegistro){
+
+        if ($montoComprobante >= $montoRegistro) {
             return true;
         } else {
             return false;
         }
-        
-//        if ($monto > 0) {
-//            return true;
-//        } else {
-//            return false;
-//        }
     }
 
     public function actualizarMontoComprobado($datos) {
@@ -566,4 +559,19 @@ class Modelo_Gapsi extends Modelo_Base {
         }
     }
 
+
+
+    
+        public function insertarArchivosGastosGapsi(array $datos) {
+        $consulta = parent::connectDBPrueba()->query("insert into "
+                . "t_archivos_gastos_gapsi"
+                . "(IdGasto, Archivos, Email, IdUsuario) "
+                . "VALUES "
+                . "('" . $datos['idGapsi'] . "', '" . $datos['archivos'] . ", " . $datos['email'] . ", " . $datos['idUsuario'] . "')");
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
 }
