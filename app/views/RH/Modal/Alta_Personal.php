@@ -12,13 +12,13 @@
             <ul class="nav nav-tabs nav-tabs-inverse">
                 <li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>
                 <li class="active"><a href="#nav-tab-informormacion-personal" data-toggle="tab">Información Personal</a></li>
-                <li class=""><a href="#nav-tab-datos-personales" data-toggle="tab">Datos Personales</a></li>
-                <li class=""><a href="#nav-tab-academicos" data-toggle="tab">Academicos</a></li>
-                <li class=""><a href="#nav-tab-idiomas" data-toggle="tab">Idiomas</a></li>
-                <li class=""><a href="#nav-tab-computacionales" data-toggle="tab">Computacionales</a></li>
-                <li class=""><a href="#nav-tab-sistemas-especiales" data-toggle="tab">Sistemas Especiales</a></li>
-                <li class=""><a href="#nav-tab-automovil" data-toggle="tab">Automovil</a></li>
-                <li class=""><a href="#nav-tab-dependientes-economicos" data-toggle="tab">Dependientes Economicos</a></li>
+                <li class="hidden"><a href="#nav-tab-datos-personales" data-toggle="tab">Datos Personales</a></li>
+                <li class="hidden"><a href="#nav-tab-academicos" data-toggle="tab">Academicos</a></li>
+                <li class="hidden"><a href="#nav-tab-idiomas" data-toggle="tab">Idiomas</a></li>
+                <li class="hidden"><a href="#nav-tab-computacionales" data-toggle="tab">Computacionales</a></li>
+                <li class="hidden"><a href="#nav-tab-sistemas-especiales" data-toggle="tab">Sistemas Especiales</a></li>
+                <li class="hidden"><a href="#nav-tab-automovil" data-toggle="tab">Automovil</a></li>
+                <li class="hidden"><a href="#nav-tab-dependientes-economicos" data-toggle="tab">Dependientes Economicos</a></li>
                 <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
             </ul>
         </div>
@@ -236,7 +236,7 @@
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarNacionalidadUsuario">Nacionalidad</label>
-                            <input type="text" class="form-control" id="inputActualizarNacionalidadUsuario" style="width: 100%" value="<?php // echo $datosUsuario['Nacionalidad']          ?>"/>                            
+                            <input type="text" class="form-control" id="inputActualizarNacionalidadUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['Nacionalidad']; ?>"/>                            
                         </div>
                         <div class="col-md-4">
                             <label for="selectActualizarSexoUsuario">Sexo</label>
@@ -254,56 +254,41 @@
                     <div class="row m-t-10">
                         <div class="col-md-4">
                             <label for="inputActualizarEstaturaUsuario">Estatura</label>
-                            <input type="text" class="form-control" id="inputActualizarEstaturaUsuario" style="width: 100%"  value="<?php // echo $datosUsuario['Estatura']          ?>"/>
+                            <input type="text" class="form-control" id="inputActualizarEstaturaUsuario" style="width: 100%"  value="<?php echo $datosPersonal[0]['Estatura']; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarPesoUsuario">Peso</label>
-                            <input type="text" class="form-control" id="inputActualizarPesoUsuario" style="width: 100%" value="<?php // echo $datosUsuario['Peso']          ?>"/>
+                            <input type="text" class="form-control" id="inputActualizarPesoUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['Peso']; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="cinputActualizarTipoSangreUsuario">Tipo de sangre</label>
-                            <input type="text" class="form-control" id="inputActualizarTipoSangreUsuario" style="width: 100%" value="<?php // echo $datosUsuario['Sangre']          ?>"/>
+                            <input type="text" class="form-control" id="inputActualizarTipoSangreUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['Sangre']; ?>"/>
                         </div>
                     </div>
 
                     <div class="row m-t-10">
                         <div class="col-md-4">
                             <label for="inputActualizarTallaPantalonUsuario">Talla de pantalon</label>
-                            <input type="text" class="form-control" id="inputActualizarTallaPantalonUsuario" style="width: 100%" value="<?php // echo $datosUsuario['TallaPantalon']          ?>"/>
+                            <input type="text" class="form-control" id="inputActualizarTallaPantalonUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['TallaPantalon']; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarTallaCamisaPantalonUsuario">Talla de camisa</label>
-                            <input type="text" class="form-control" id="inputActualizarTallaCamisaUsuario" style="width: 100%" value="<?php // echo $datosUsuario['TallaCamisa']          ?>"/>
+                            <input type="text" class="form-control" id="inputActualizarTallaCamisaUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['TallaCamisa']; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarTallaZapatosUsuario">Tallas zapatos</label>
-                            <input type="text" class="form-control" id="inputActualizarTallaZapatosUsuario" style="width: 100%" value="<?php // echo $datosUsuario['TallaZapatos']          ?>"/>
-                        </div>
-                    </div>
-
-                    <div class="row m-t-10">
-                        <div class="col-md-4">
-                            <label for="inputActualizarCurpUsuario">CURP</label>
-                            <input type="text" class="form-control" id="inputActualizarCurpUsuario" style="width: 100%" value="<?php // echo $datosUsuario['CURP']          ?>"/>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="inputActualizarRfcUsuario">RFC</label>
-                            <input type="text" class="form-control" id="inputActualizarRfcUsuario" style="width: 100%" value="<?php // echo $datosUsuario['RFC']          ?>"/>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="inputActualizarNssUsuario">NSS</label>
-                            <input type="text" class="form-control" id="inputActualizarNssUsuario" style="width: 100%" value="<?php // echo $datosUsuario['NSS']          ?>"/>
+                            <input type="text" class="form-control" id="inputActualizarTallaZapatosUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['TallaZapatos']; ?>"/>
                         </div>
                     </div>
 
                     <div class="row m-t-10">
                         <div class="col-md-4">
                             <label for="inputActualizarInstitutoAforeUsuario">Instituto AFORE</label>
-                            <input type="text" class="form-control" id="inputActualizarInstitutoAforeUsuario" style="width: 100%" value="<?php // echo $datosUsuario['InstAfore']          ?>"/>
+                            <input type="text" class="form-control" id="inputActualizarInstitutoAforeUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['InstAfore']; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarNumeroAforeUsuario">Numero de AFORE</label>
-                            <input type="text" class="form-control" id="inputActualizarNumeroAforeUsuario" style="width: 100%" value="<?php // echo $datosUsuario['Afore']          ?>"/>
+                            <input type="text" class="form-control" id="inputActualizarNumeroAforeUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['Afore']; ?>"/>
                         </div>
                     </div>
 
@@ -318,7 +303,7 @@
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarPersonalesUsuario"><i class="fa fa-save"></i> Guardar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnGuardarPersonalesUsuario"><i class="fa fa-plus"></i> Actualizar</a>
                             </div>
                         </div>
                     </div>  

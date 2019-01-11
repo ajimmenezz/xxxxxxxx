@@ -26,6 +26,8 @@ $(function () {
         var data = {id: datos[0]};
         var url = [];
         evento.enviarEvento('EventoAltaPersonal/MostrarPersonalActualizar', data, '#seccionPersonal', function (respuesta) {
+            console.log(respuesta);
+            var datosPersonal = respuesta.datos.datosPersonal[0];
             $.each(respuesta.datos.urlFoto, function (key, valor) {
                 url[0] = valor.UrlFoto;
             });
@@ -121,6 +123,9 @@ $(function () {
             select.cambiarOpcion('#selectPerfil', respuesta.datos.idPerfil[0].IdPerfil);
             select.cambiarOpcion('#selectJefe', respuesta.datos.consultaV3Usuarios[0].IdJefe);
 
+            select.cambiarOpcion('#selectActualizarEstadoCivilUsuario', respuesta.datos.datosPersonal[0].IdEstadoCivil);
+            select.cambiarOpcion('#selectActualizarSexoUsuario', respuesta.datos.datosPersonal[0].IdSexo);
+
             //Evento que actualizar al personal
             $('#btnactualizarPersonal').on('click', function () {
                 if (evento.validarFormulario('#formNuevoPersonal')) {
@@ -169,9 +174,28 @@ $(function () {
                 $('#resumenPersonal').removeClass('hidden');
             });
 
+            select.cambiarOpcion('#selectActualizarPaisUsuario', datosPersonal.PaisNac);
+            $("#selectActualizarPaisUsuario").on("change", function () {
+                $("#selectActualizarEstadoUsuario").empty().append('<option value="">Seleccionar...</option>');
+                var pais = $(this).val();
+                if (pais !== '') {
+                    var data = {IdPais: pais};
+                    evento.enviarEvento('/Configuracion/PerfilUsuario/MostrarDatosEstados', data, '#seccion-informacion-usuario', function (respuesta) {
+                        $.each(respuesta, function (k, v) {
+                            $("#selectActualizarEstadoUsuario").append('<option value="' + v.Id + '">' + v.Nombre + '</option>')
+                        });
+                        $("#selectActualizarEstadoUsuario").removeAttr("disabled");
+                        select.cambiarOpcion('#selectActualizarEstadoUsuario', datosPersonal.EstadoNac);
+                    });
+                } else {
+                    $("#selectActualizarEstadoUsuario").attr("disabled", "disabled");
+                }
 
-            usuario_perfil.SelectNacimiento();
-            usuario_perfil.SelectNacimiento();
+
+            });
+
+            usuario_perfil.SelectNacimiento(respuesta.datos.datosPersonal[0]);
+            usuario_perfil.BotonesActualizar(respuesta.datos.datosPersonal[0].Id);
 
         });
     });
@@ -265,5 +289,3 @@ $(function () {
         });
     });
 });
-
-

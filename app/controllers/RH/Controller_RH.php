@@ -9,6 +9,7 @@ class Controller_RH extends Base {
     public function __construct() {
         parent::__construct();
         $this->personal = \Librerias\Generales\Usuario::factory();
+        $this->perfilUsuario = \Librerias\RH\Perfil_Usuario::factory();
     }
 
     /*
@@ -31,6 +32,9 @@ class Controller_RH extends Base {
                 break;
             case 'EliminarFoto':
                 $resultado = $this->personal->eliminarFoto($this->input->post());
+                break;
+            case 'ActualizarDatosPersonal':
+                $resultado = $this->perfilUsuario->guardarDatosPersonal($this->input->post());
                 break;
         }
         echo json_encode($resultado);

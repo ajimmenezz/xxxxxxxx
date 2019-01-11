@@ -75,6 +75,18 @@ class Perfil_Usuario extends General {
         return $resultado;
     }
 
+    public function guardarDatosPersonal(array $datos) {
+
+        $resultado = $this->DBU->actualizarTRHAltaPersonal($datos);
+
+        if (!empty($resultado)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+        return $resultado;
+    }
+
     public function guardarDatosAcademicosUsuario(array $datos) {
         $usuario = $this->usuario->getDatosUsuario();
 
@@ -149,7 +161,7 @@ class Perfil_Usuario extends General {
         } else {
             return FALSE;
         }
-        
+
         return $resultado;
     }
 

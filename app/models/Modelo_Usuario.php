@@ -265,6 +265,26 @@ class Modelo_Usuario extends Modelo_Base {
             'InstAfore' => $datos['institutoAfore']], ['IdUsuario' => $datos['id']]);
         return $consulta;
     }
+    
+    public function actualizarTRHAltaPersonal(array $datos) {
+        $consulta = $this->actualizar('t_rh_personal', [
+            'FechaNacimiento' => $datos['fechaNacimiento'],
+            'PaisNac' => $datos['pais'],
+            'EstadoNac' => $datos['estado'],
+            'MunicipioNac' => $datos['municipio'],
+            'Nacionalidad' => $datos['nacionalidad'],
+            'IdSexo' => $datos['sexo'],
+            'IdEstadoCivil' => $datos['estadoCivil'],
+            'Estatura' => $datos['estatura'],
+            'Peso' => $datos['peso'],
+            'Sangre' => $datos['tipoSangre'],
+            'TallaCamisa' => $datos['tallaCamisa'],
+            'TallaPantalon' => $datos['tallaPantalon'],
+            'TallaZapatos' => $datos['tallaZapatos'],
+            'Afore' => $datos['numeroAfore'],
+            'InstAfore' => $datos['institutoAfore']], ['IdUsuario' => $datos['id']]);
+        return $consulta;
+    }
 
     public function actualizarTRHConduccion(array $datos) {
         $consulta = $this->actualizar('t_rh_conduccion', [

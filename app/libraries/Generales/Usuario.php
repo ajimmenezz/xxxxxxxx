@@ -178,6 +178,7 @@ class Usuario extends General {
                 $data['idDepartamento'] = $this->Catalogo->catConsultaGeneral('SELECT d.Id FROM t_rh_personal a INNER JOIN cat_v3_usuarios b ON b.Id = a.IdUsuario INNER JOIN cat_perfiles c ON b.IdPerfil = c.Id INNER JOIN cat_v3_departamentos_siccob d ON c.IdDepartamento = d.Id INNER JOIN cat_v3_areas_siccob e ON d.IdArea = e.Id where a.id = ' . $datos['id']);
                 $data['idPerfil'] = $this->Catalogo->catConsultaGeneral('SELECT b.IdPerfil FROM t_rh_personal a INNER JOIN cat_v3_usuarios b ON b.Id = a.IdUsuario INNER JOIN cat_perfiles c ON b.IdPerfil = c.Id INNER JOIN cat_v3_departamentos_siccob d ON c.IdDepartamento = d.Id INNER JOIN cat_v3_areas_siccob e ON d.IdArea = e.Id where a.id = ' . $datos['id']);
                 $data['urlFoto'] = $this->DBU->getPersonal('SELECT UrlFoto FROM t_rh_personal WHERE id = ' . $datos['id']);
+                $data['datosPersonal'] = $this->DBU->getPersonal('SELECT * FROM t_rh_personal WHERE id = ' . $datos['id']);
                 $data['consultaV3Usuarios'] = $this->DBU->getPersonal('SELECT IdJefe FROM cat_v3_usuarios WHERE id = ' . $datos['id']);
             }
             return array('formulario' => parent::getCI()->load->view('RH/Modal/Alta_Personal', $data, TRUE), 'datos' => $data);
