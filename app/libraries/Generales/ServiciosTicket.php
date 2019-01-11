@@ -28,6 +28,7 @@ class ServiciosTicket extends General {
     private $InformacionServicios;
     private $MSP;
     private $pdf;
+    private $DBA;
 
     public function __construct() {
         parent::__construct();
@@ -49,6 +50,7 @@ class ServiciosTicket extends General {
         $this->DBTO = \Modelos\Modelo_TicketsOld::factory();
         $this->DBT = \Modelos\Modelo_Tesoreria::factory();
         $this->pdf = new PDFAux();
+        $this->DBA = \Modelos\Modelo_InventarioConsignacion::factory();
 
         parent::getCI()->load->helper(array('date'));
     }
@@ -426,6 +428,25 @@ class ServiciosTicket extends General {
                     case '2':
                         $data['informacion'] = $this->getServicioCorrectivo($datos['servicio'], $datosServicio['Ticket']);
                         $data['servicio'] = $datos['servicio'];
+                        $usuario = $this->Usuario->getDatosUsuario();
+                        /*
+                         * * Se determina si se tiene o no el permiso para que el usuario dentro de las soluciones determine
+                         * que usará algún componente y equipo completo del stock de inventario a consignación
+                         */
+                        /*
+                         * Revisa si se ocuparon componentes del inventario para este servicio y no omitirlos 
+                         * por estar bloqueados                         
+                         */
+                        $componentesUtilizadosStock = '';
+                        if (isset($data['informacion']['correctivosSolucionRefaccion'])) {
+                            foreach ($data['informacion']['correctivosSolucionRefaccion'] as $key => $value) {
+                                $componentesUtilizadosStock .= ',' . $value['IdInventario'];
+                            }
+                            
+                            $componentesUtilizadosStock = ($componentesUtilizadosStock != '') ? substr($componentesUtilizadosStock, 1) : '';
+                        }
+                        $data['usarStock'] = (in_array(293, $usuario['PermisosAdicionales']) || in_array(293, $usuario['Permisos'])) ? true : false;
+                        $data['inventarioComponentes'] = $this->DBA->getComponentesDisponiblesParaServicio($usuario['Id'], $data['informacion']['informacionDatosGeneralesCorrectivo'][0]['IdModelo'], $componentesUtilizadosStock);
                         $data['formulario'] = parent::getCI()->load->view('Poliza/Modal/formularioSeguimientoServicioCorrectivo', $data, TRUE);
                         break;
                     /* Concluye el servicio de Correctivo y retorna los servicios del departamento */

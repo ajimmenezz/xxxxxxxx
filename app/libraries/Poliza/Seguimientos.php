@@ -1610,11 +1610,16 @@ class Seguimientos extends General {
                     'Observaciones' => $datos['observaciones']
                 );
 
-                if (is_array($datos['datosTablaReparacionRefaccion'])) {
-                    $datosTablaReparacionRefaccion = $datos['datosTablaReparacionRefaccion'];
+                if (isset($datos['usaStock']) && $datos['usaStock']) {
+                    $datosTablaReparacionRefaccion = $this->DBP->getDatosTablaReparacionRefaccionInventario($datos['datosTablaReparacionRefaccion']);
                 } else {
-                    $datosTablaReparacionRefaccion = divideString($datos['datosTablaReparacionRefaccion'], 3);
+                    if (is_array($datos['datosTablaReparacionRefaccion'])) {
+                        $datosTablaReparacionRefaccion = $datos['datosTablaReparacionRefaccion'];
+                    } else {
+                        $datosTablaReparacionRefaccion = divideString($datos['datosTablaReparacionRefaccion'], 3);
+                    }
                 }
+
 
                 if ($archivos) {
                     $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionRefaccion($dataCorrectivosSoluciones, $datosTablaReparacionRefaccion);

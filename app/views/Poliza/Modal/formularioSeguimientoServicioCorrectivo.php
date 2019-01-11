@@ -1624,65 +1624,124 @@
                                 </div>
                             </div>
 
-                            <!--Empezando Refaccion, Cantidad-->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="selectRefaccionSolucionReparacionConRefaccion">Refacción *</label>
-                                        <select id="selectRefaccionSolucionReparacionConRefaccion" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
-                                            <option value="">Seleccionar</option>
-                                            <?php
-                                            if ($informacion['catalogoComponentesEquipos'] !== FALSE) {
-                                                if ($informacion['catalogoComponentesEquipos'] !== NULL) {
-                                                    foreach ($informacion['catalogoComponentesEquipos'] as $item) {
-                                                        echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                            <?php
+                            if (!$usarStock) {
+                                ?>
+                                <!--Empezando Refaccion, Cantidad-->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="selectRefaccionSolucionReparacionConRefaccion">Refacción *</label>
+                                            <select id="selectRefaccionSolucionReparacionConRefaccion" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
+                                                <option value="">Seleccionar</option>
+                                                <?php
+                                                if ($informacion['catalogoComponentesEquipos'] !== FALSE) {
+                                                    if ($informacion['catalogoComponentesEquipos'] !== NULL) {
+                                                        foreach ($informacion['catalogoComponentesEquipos'] as $item) {
+                                                            echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                                        }
                                                     }
                                                 }
-                                            }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">                                           
+                                            <label for="inputCantidadRefaccionSolicitudReparacionConRefaccion">Cantidad *</label>
+                                            <input id="inputCantidadRefaccionSolicitudReparacionConRefaccion" type="number" class="form-control"  placeholder="Cantidad" disabled/>
+                                        </div>                               
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group text-center">
+                                            <br>
+                                            <a id="btnAgregarReparacionConRefaccion" href="javascript:;" class="btn btn-success m-t-4 "><i class="fa fa-plus"></i> Agregar</a>                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Finalizando-->
+
+                                <!--Empezando Tabla Refaccion y Cantidad-->
+                                <div class="table-responsive">
+                                    <table id="data-table-reparacion-refaccion" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                        <thead>
+                                            <tr>                                
+                                                <th class="never">IdRefaccion</th>
+                                                <th class="all">Refacción</th>
+                                                <th class="all">Cantidad</th>                                                  
+                                            </tr>
+                                        </thead>
+                                        <tbody>                                      
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!--Finalizando-->
+
+                                <!--Empezando mensaje de tabla-->
+                                <div class="row">
+                                    <div class="col-md-12 m-t-20">
+                                        <div class="alert alert-warning fade in m-b-15">                            
+                                            Para eliminar el registro de la tabla solo tiene que dar click sobre fila para eliminarlo.                            
+                                        </div>                        
+                                    </div>
+                                </div>
+                                <!--Finalizando mensaje de tabla-->
+
+                                <?php
+                            } else {
+                                ?>
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <?php
+                                        if (!isset($inventarioComponentes) || count($inventarioComponentes) <= 0) {
                                             ?>
-                                        </select>
+                                            <div class="row">
+                                                <div class="col-md-12 m-b-10">
+                                                    <div class="alert alert-warning fade in f-s-15">
+                                                        <strong>Warning! </strong>Al parecer no cuentas con refacciones para este equipo.
+                                                    </div>                        
+                                                </div>
+                                            </div>
+                                            <?php
+                                        }
+                                        ?>
+                                        <div class="table-responsive">
+                                            <table id="data-table-reparacion-refaccion-stock" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                                <thead>
+                                                    <tr>                                
+                                                        <th class="never">IdRefaccion</th>
+                                                        <th class="all">Refacción</th>
+                                                        <th class="never">Cantidad</th>                                                     
+                                                        <th class="never">IdInventario</th>
+                                                        <th class="all">Serie</th>
+                                                        <th class="all"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>    
+                                                    <?php
+                                                    if (isset($inventarioComponentes) && count($inventarioComponentes) > 0) {
+                                                        foreach ($inventarioComponentes as $key => $value) {
+                                                            $checked = ($value['Usado'] <= 0) ? 'fa-square-o' : 'fa-check-square-o';
+                                                            echo ''
+                                                            . '<tr>'
+                                                            . ' <td>' . $value['IdProducto'] . '</td>'
+                                                            . ' <td>' . $value['Producto'] . '</td>'
+                                                            . ' <td>' . $value['Cantidad'] . '</td>'
+                                                            . ' <td>' . $value['IdInventario'] . '</td>'
+                                                            . ' <td>' . $value['Serie'] . '</td>'
+                                                            . ' <td class="text-center"><i data-id="' . $value['IdInventario'] . '" class="checkRefaccionesStock fa fa-2x ' . $checked . '"></i></td>'
+                                                            . '</tr>';
+                                                        }
+                                                    }
+                                                    ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">                                           
-                                        <label for="inputCantidadRefaccionSolicitudReparacionConRefaccion">Cantidad *</label>
-                                        <input id="inputCantidadRefaccionSolicitudReparacionConRefaccion" type="number" class="form-control"  placeholder="Cantidad" disabled/>
-                                    </div>                               
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group text-center">
-                                        <br>
-                                        <a id="btnAgregarReparacionConRefaccion" href="javascript:;" class="btn btn-success m-t-4 "><i class="fa fa-plus"></i> Agregar</a>                            
-                                    </div>
-                                </div>
-                            </div>
-                            <!--Finalizando-->
-
-                            <!--Empezando Tabla Refaccion y Cantidad-->
-                            <div class="table-responsive">
-                                <table id="data-table-reparacion-refaccion" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-                                    <thead>
-                                        <tr>                                
-                                            <th class="never">IdRefaccion</th>
-                                            <th class="all">Refacción</th>
-                                            <th class="all">Cantidad</th>                                                     
-                                        </tr>
-                                    </thead>
-                                    <tbody>                                      
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!--Finalizando-->
-
-                            <!--Empezando mensaje de tabla-->
-                            <div class="row">
-                                <div class="col-md-12 m-t-20">
-                                    <div class="alert alert-warning fade in m-b-15">                            
-                                        Para eliminar el registro de la tabla solo tiene que dar click sobre fila para eliminarlo.                            
-                                    </div>                        
-                                </div>
-                            </div>
-                            <!--Finalizando mensaje de tabla-->
+                                <?php
+                            }
+                            ?>
 
                             <!--Empezando Evidencias Solucion-->
                             <div class="row m-t-20">

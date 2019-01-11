@@ -314,13 +314,44 @@ class Modelo_Poliza extends Modelo_Base {
     public function insertarServicioCorrectivoSolicitudesSolucionRefaccion(array $dataCorrectivosSoluciones, array $dataCorrectivosSolucionesRefaccion) {
         $this->iniciaTransaccion();
 
+
+        /* Se ejecuta el siguiente código para que se desbloqueen todos los
+         * productos bloqueados en la última solución, ya sean componentes 
+         * o equipos completos         
+         */
+
+        $this->queryBolean("update
+                            t_inventario
+                            set Bloqueado = 0
+                            where Id in (
+                            select 
+                            IdInventario 
+                            from t_correctivos_solucion_refaccion 
+                            where IdSolucionCorrectivo in (select MAX(Id) from t_correctivos_soluciones where IdServicio = '" . $dataCorrectivosSoluciones['IdServicio'] . "')
+                            and IdInventario is not null
+                            and IdInventario <> '')");
+
+        $this->queryBolean("update t_correctivos_solucion_refaccion set IdInventario = null where IdSolucionCorrectivo = (select MAX(Id) from t_correctivos_soluciones where IdServicio = '" . $dataCorrectivosSoluciones['IdServicio'] . "')");
+        /**/
+
         $this->insertar('t_correctivos_soluciones', $dataCorrectivosSoluciones);
         $IdCorrectivoSoluciones = parent::connectDBPrueba()->insert_id();
+
         foreach ($dataCorrectivosSolucionesRefaccion as $value) {
-            $this->insertar('t_correctivos_solucion_refaccion', array(
-                'IdSolucionCorrectivo' => $IdCorrectivoSoluciones,
-                'IdRefaccion' => $value[0],
-                'Cantidad' => $value[2]));
+            if (isset($value['Id'])) {
+                $this->insertar('t_correctivos_solucion_refaccion', array(
+                    'IdSolucionCorrectivo' => $IdCorrectivoSoluciones,
+                    'IdRefaccion' => $value['IdProducto'],
+                    'Cantidad' => $value['Cantidad'],
+                    'IdInventario' => $value['Id']));
+                $this->actualizar("t_inventario", ['Bloqueado' => 1], ['Id' => $value['Id']]);
+            } else {
+                $this->insertar('t_correctivos_solucion_refaccion', array(
+                    'IdSolucionCorrectivo' => $IdCorrectivoSoluciones,
+                    'IdRefaccion' => $value[0],
+                    'Cantidad' => $value[2])
+                );
+            }
         }
 
         $this->terminaTransaccion();
@@ -777,10 +808,10 @@ class Modelo_Poliza extends Modelo_Base {
         $respuesta = null;
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $consultaChecklistRevisionTecnica = $this->mostrarFallasTecnicas($datos['IdServicio']);
-        
+
         foreach ($consultaChecklistRevisionTecnica as $falla) {
 
-            
+
             $this->iniciaTransaccion();
             $descripcionCorrectivo = "Seguimiento de Diagnostico en Checklist para el equipo " . $falla['Equipo'] . " con la Serie " . $falla['Serie'] . " por falla " . $falla['Falla'];
 
@@ -848,22 +879,187 @@ class Modelo_Poliza extends Modelo_Base {
 
             if ($this->estatusTransaccion() === FALSE) {
                 $this->roolbackTransaccion();
-                  $respuesta = 0;
+                $respuesta = 0;
 //                $return_array['inserto'] = "no paso";
 //                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
             } else {
                 $this->commitTransaccion();
-                $this->actualizar("t_checklist_revision_tecnica", array('FlagInsert' => 1),array('Id' => $falla['Id']));
+                $this->actualizar("t_checklist_revision_tecnica", array('FlagInsert' => 1), array('Id' => $falla['Id']));
                 $respuesta = 1;
 //                $return_array['code'] = $datos;
 //                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
             }
         }
-        
+
 //                    echo '<pre>';
 //            print_r($respuesta);
 //            return false;
         return $respuesta;
+    }
+
+    public function getDatosTablaReparacionRefaccionInventario(string $ids) {
+        $consulta = $this->consulta("select 
+                                    IdProducto,
+                                    'Producto' as Producto,
+                                    Cantidad,
+                                    Id
+                                    from t_inventario
+                                    where Id in (" . $ids . ")");
+
+        return $consulta;
+    }
+
+    public function actualizaInventariosMovimientosXConslusionCorrectivo(int $id) {
+
+        $this->iniciaTransaccion();
+
+        /* Obtiene la última solución del correctivo y el tipo de solución */
+        $solucion = $this->consulta("select Id, IdTipoSolucion from t_correctivos_soluciones where IdServicio = '" . $id . "' order by Id desc limit 1");
+        if (!empty($solucion)) {
+            $_idSolucion = $solucion[0]['Id'];
+            $_tipoSolucion = $solucion[0]['IdTipoSolucion'];
+
+            switch ($_tipoSolucion) {
+                case 2: case '2':
+                    $_refaccionesUtilizadas = $this->consulta("select 
+                                                                * 
+                                                                from t_inventario 
+                                                                where Id in (select 
+                                                                    IdInventario 
+                                                                    from t_correctivos_solucion_refaccion 
+                                                                    where IdSolucionCorrectivo = '" . $_idSolucion . "'
+                                                                    and IdInventario is not null
+                                                                    and IdInventario <> '')
+                                                                and IdTipoProducto = 2;");
+                    if (!empty($_refaccionesUtilizadas)) {
+                        foreach ($_refaccionesUtilizadas as $key => $value) {
+
+
+                            /*
+                             * Agrega al inventario la refacciòn dañada
+                             * que se supone que el usuario retira cuando
+                             * deja otra refacciòn
+                             */
+                            $this->insert("t_inventario", [
+                                'IdAlmacen' => $value['IdAlmacen'],
+                                'IdTipoProducto' => $value['IdTipoProducto'],
+                                'IdProducto' => $value['IdProducto'],
+                                'IdEstatus' => 22,
+                                'Cantidad' => 1
+                            ]);
+
+                            /*
+                             * Obtiene el id de almacèn virtual
+                             * correspondiente al complejo del servicio
+                             */
+                            $almacen = $this->consulta(""
+                                    . "select "
+                                    . "Id "
+                                    . "from cat_v3_almacenes_virtuales "
+                                    . "where IdTipoAlmacen = 2 "
+                                    . "and IdReferenciaAlmacen = (select IdSucursal from t_servicios_ticket where Id = '" . $id . "')");
+                            $almacen = $almacen[0]['Id'];
+
+                            /*
+                             * Inserta el movimiento de salida de la refacciòn 
+                             * dañada del almacèn virtual del complejo
+                             */
+                            $thia->insert("t_movimientos_inventario", [
+                                'IdTipoMovimiento' => 4,
+                                'IdServicio' => $id,
+                                'IdAlmacen' => $almacen,
+                                'IdTipoProducto' => $value['IdTipoProducto'],
+                                'IdProducto' => $value['IdProducto'],
+                                'IdEstatus' => 22,
+                                'IdUsuario' => $this->usuario['Id'],
+                                'Cantidad' => 1,
+                                'Serie' => '',
+                                'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                            ]);
+
+                            /*
+                             * Obtiene el Id del movimiento de salida
+                             */
+                            $enlazado = $this->ultimoId();
+
+                            /*
+                             * Inserta el movimiento de entrada de la refacciòn
+                             * dañada al almacèn del usuario
+                             */
+                            $thia->insert("t_movimientos_inventario", [
+                                'IdMovimientoEnlazado' => $enlazado,
+                                'IdTipoMovimiento' => 5,
+                                'IdServicio' => $id,
+                                'IdAlmacen' => $value['IdAlmacen'],
+                                'IdTipoProducto' => $value['IdTipoProducto'],
+                                'IdProducto' => $value['IdProducto'],
+                                'IdEstatus' => 22,
+                                'IdUsuario' => $this->usuario['Id'],
+                                'Cantidad' => 1,
+                                'Serie' => '',
+                                'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                            ]);
+
+                            /*
+                             * Actualiza el almacen del producto utilizado
+                             */
+                            $this->actualizar("t_inventario", ['IdAlmacen' => $almacen], ['Id' => $value['Id']]);
+
+                            /*
+                             * Inserta el movimiento de salida del almacèn del usuario
+                             * que refiere a la refacciòn utilizada en el servicio
+                             */
+                            $thia->insert("t_movimientos_inventario", [
+                                'IdTipoMovimiento' => 4,
+                                'IdServicio' => $id,
+                                'IdAlmacen' => $value['IdAlmacen'],
+                                'IdTipoProducto' => $value['IdTipoProducto'],
+                                'IdProducto' => $value['IdProducto'],
+                                'IdEstatus' => $value['IdEstatus'],
+                                'IdUsuario' => $this->usuario['Id'],
+                                'Cantidad' => $value['Cantidad'],
+                                'Serie' => $value['Serie'],
+                                'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                            ]);
+                            /*
+                             * Obtiene el Id del movimiento de salida
+                             * del almacèn del usuario
+                             */
+                            $enlazado = $this->ultimoId();
+
+                            /*
+                             * Inserta el movimiento de entrada al almacèn del complejo
+                             * de la refacciòn utilizada en el servicio
+                             */
+                            $thia->insert("t_movimientos_inventario", [
+                                'IdMovimientoEnlazado' => $enlazado,
+                                'IdTipoMovimiento' => 5,
+                                'IdServicio' => $id,
+                                'IdAlmacen' => $almacen,
+                                'IdTipoProducto' => $value['IdTipoProducto'],
+                                'IdProducto' => $value['IdProducto'],
+                                'IdEstatus' => $value['IdEstatus'],
+                                'IdUsuario' => $this->usuario['Id'],
+                                'Cantidad' => $value['Cantidad'],
+                                'Serie' => $value['Serie'],
+                                'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                            ]);
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
     }
 
 }
