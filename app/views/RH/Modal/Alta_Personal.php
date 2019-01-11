@@ -236,7 +236,8 @@
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarNacionalidadUsuario">Nacionalidad</label>
-                            <input type="text" class="form-control" id="inputActualizarNacionalidadUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['Nacionalidad']; ?>"/>                            
+                            <?php (isset($datosPersonal)) ? $nacionalidad = '' : $nacionalidad = $datosPersonal[0]['Nacionalidad']; ?>
+                            <input type="text" class="form-control" id="inputActualizarNacionalidadUsuario" style="width: 100%" value="<?php echo $nacionalidad; ?>"/>                            
                         </div>
                         <div class="col-md-4">
                             <label for="selectActualizarSexoUsuario">Sexo</label>
@@ -253,42 +254,50 @@
 
                     <div class="row m-t-10">
                         <div class="col-md-4">
-                            <label for="inputActualizarEstaturaUsuario">Estatura</label>
-                            <input type="text" class="form-control" id="inputActualizarEstaturaUsuario" style="width: 100%"  value="<?php echo $datosPersonal[0]['Estatura']; ?>"/>
+                            <label for="inputActualizarEstaturaUsuario">Estatura</label>                            
+                            <?php (isset($datosPersonal)) ? $estatura = '' : $estatura = $datosPersonal[0]['Estatura']; ?>
+                            <input type="text" class="form-control" id="inputActualizarEstaturaUsuario" style="width: 100%"  value="<?php echo $estatura; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarPesoUsuario">Peso</label>
-                            <input type="text" class="form-control" id="inputActualizarPesoUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['Peso']; ?>"/>
+                            <?php (isset($datosPersonal)) ? $peso = '' : $peso = $datosPersonal[0]['Peso']; ?>
+                            <input type="text" class="form-control" id="inputActualizarPesoUsuario" style="width: 100%" value="<?php echo $peso; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="cinputActualizarTipoSangreUsuario">Tipo de sangre</label>
-                            <input type="text" class="form-control" id="inputActualizarTipoSangreUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['Sangre']; ?>"/>
+                            <?php (isset($datosPersonal)) ? $sangre = '' : $sangre = $datosPersonal[0]['Sangre']; ?>
+                            <input type="text" class="form-control" id="inputActualizarTipoSangreUsuario" style="width: 100%" value="<?php echo $sangre; ?>"/>
                         </div>
                     </div>
 
                     <div class="row m-t-10">
                         <div class="col-md-4">
                             <label for="inputActualizarTallaPantalonUsuario">Talla de pantalon</label>
-                            <input type="text" class="form-control" id="inputActualizarTallaPantalonUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['TallaPantalon']; ?>"/>
+                            <?php (isset($datosPersonal)) ? $tallaPantalon = '' : $tallaPantalon = $datosPersonal[0]['TallaPantalon']; ?>
+                            <input type="text" class="form-control" id="inputActualizarTallaPantalonUsuario" style="width: 100%" value="<?php echo $tallaPantalon; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarTallaCamisaPantalonUsuario">Talla de camisa</label>
-                            <input type="text" class="form-control" id="inputActualizarTallaCamisaUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['TallaCamisa']; ?>"/>
+                            <?php (isset($datosPersonal)) ? $tallaCamisa = '' : $tallaCamisa = $datosPersonal[0]['Tallacamisa']; ?>
+                            <input type="text" class="form-control" id="inputActualizarTallaCamisaUsuario" style="width: 100%" value="<?php echo $tallaCamisa; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarTallaZapatosUsuario">Tallas zapatos</label>
-                            <input type="text" class="form-control" id="inputActualizarTallaZapatosUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['TallaZapatos']; ?>"/>
+                            <?php (isset($datosPersonal)) ? $tallaZapatos = '' : $tallaZapatos = $datosPersonal[0]['TallaZapatos']; ?>
+                            <input type="text" class="form-control" id="inputActualizarTallaZapatosUsuario" style="width: 100%" value="<?php echo $tallaZapatos; ?>"/>
                         </div>
                     </div>
 
                     <div class="row m-t-10">
                         <div class="col-md-4">
                             <label for="inputActualizarInstitutoAforeUsuario">Instituto AFORE</label>
-                            <input type="text" class="form-control" id="inputActualizarInstitutoAforeUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['InstAfore']; ?>"/>
+                            <?php (isset($datosPersonal)) ? $instAfore = '' : $instAfore = $datosPersonal[0]['InstAfore']; ?>
+                            <input type="text" class="form-control" id="inputActualizarInstitutoAforeUsuario" style="width: 100%" value="<?php echo $instAfore; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarNumeroAforeUsuario">Numero de AFORE</label>
-                            <input type="text" class="form-control" id="inputActualizarNumeroAforeUsuario" style="width: 100%" value="<?php echo $datosPersonal[0]['Afore']; ?>"/>
+                            <?php (isset($datosPersonal)) ? $afore = '' : $afore = $datosPersonal[0]['Afore']; ?>
+                            <input type="text" class="form-control" id="inputActualizarNumeroAforeUsuario" style="width: 100%" value="<?php echo $afore; ?>"/>
                         </div>
                     </div>
 
