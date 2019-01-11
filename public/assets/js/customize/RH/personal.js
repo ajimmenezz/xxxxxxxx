@@ -169,10 +169,9 @@ $(function () {
                 $('#resumenPersonal').removeClass('hidden');
             });
 
-            $("#selectActualizarPaisUsuario").on("change", function () {
 
             usuario_perfil.SelectNacimiento();
-            });
+            usuario_perfil.SelectNacimiento();
 
         });
     });
