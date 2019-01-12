@@ -462,6 +462,7 @@ class Secciones extends General {
                 $datos['saldo'] = $this->ModeloTesoreria->getSaldoByUsuario($usuario['Id']);
                 $datos['saldoGasolina'] = $this->ModeloTesoreria->getSaldoGasolinaByUsuario($usuario['Id']);
                 $datos['xautorizar'] = $this->ModeloTesoreria->getSaldoXAutorizarByUsuario($usuario['Id']);
+                $datos['rechazado'] = $this->ModeloTesoreria->getSaldoRechazadoSinPagar($usuario['Id']);
                 break;
             case 'Comprobacion/Autorizar_Fondo_Fijo':
                 $usuario = $this->Usuario->getDatosUsuario();

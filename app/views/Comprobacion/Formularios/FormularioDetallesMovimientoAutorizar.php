@@ -167,12 +167,29 @@
     ?>
 </div>
 <div class="row m-t-20">
+    <div class="col-md-12 underline"></div>
+</div>
+<div class="row m-t-20">
     <div class="col-md-12 col-sm-12 col-xs-12">
-        <a id="btnRechazarMovimiento" class="btn btn-danger btn-block">Rechazar Movimiento</a>
+        <div class="form-group">
+            <label class="f-w-600 f-s-15">Observaciones:</label>
+            <textarea class="form-control" placeholder="Escribe aqui las observaciones de la autorización o el rechazo" id="txtObservacionesAutorizacion"></textarea>
+            <div id="errorAutorizacion"></div>
+        </div>
+    </div>
+</div>
+<div class="row m-t-5">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <a id="btnAutorizarMovimiento" class="btn btn-success btn-block f-s-15 f-w-600">Autorizar Movimiento</a>
     </div>
 </div>
 <div class="row m-t-20">
     <div class="col-md-12 col-sm-12 col-xs-12">
-        <a id="btnAutorizarMovimiento" class="btn btn-success btn-block">Autorizar Movimiento</a>
+        <a id="btnRechazarMovimiento" class="btn btn-warning btn-block f-s-15 f-w-600">Rechazar Movimiento (Sin cobro)</a>
+    </div>
+</div>
+<div class="row m-t-20">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <a id="btnRechazarMovimientoCobrable" class="btn btn-danger btn-block f-s-15 f-w-600">Rechazar Movimiento (Con cobro)</a>
     </div>
 </div>

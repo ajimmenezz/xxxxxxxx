@@ -131,6 +131,19 @@ $(function () {
 
             });
 
+            $("#btnCorteGasolina").off("click");
+            $("#btnCorteGasolina").on("click", function () {
+                evento.enviarEvento('Fondo_Fijo/FormularioAjustarGasolina', {'id': datos[0]}, '#panelDetallesFondoFijo', function (respuesta) {
+                    $("#seccionAjustarGasolina").empty().append(respuesta.html);
+                    evento.cambiarDiv("#seccionDetallesFondoFijo", "#seccionAjustarGasolina");
+
+                    
+                });
+
+            });
+
+
+
             $('#table-comprobaciones-fondo-fijo tbody').on('click', 'tr', function () {
                 var datos = $('#table-comprobaciones-fondo-fijo').DataTable().row(this).data();
                 evento.enviarEvento('Fondo_Fijo/FormularioDetallesMovimiento', {'id': datos[0], 'rol': '1'}, '#panelDetallesFondoFijo', function (respuesta) {

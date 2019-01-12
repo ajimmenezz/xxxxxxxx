@@ -34,6 +34,7 @@ class FondoFijo extends General {
             'saldo' => $this->DB->getSaldoByUsuario($datos['id']),
             'xautorizar' => $this->DB->getSaldoXAutorizarByUsuario($datos['id']),
             'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id']),
+            'saldoRechazado' => $this->DB->getSaldoRechazadoSinPagar($datos['id']),
             'permisos' => array_merge($this->usuario['Permisos'], $this->usuario['PermisosAdicionales'])
         ];
 
@@ -62,6 +63,17 @@ class FondoFijo extends General {
 
         return [
             'html' => parent::getCI()->load->view('Tesoreria/Formularios/FormularioRegistrarDeposito', $datos, TRUE)
+        ];
+    }
+    
+    public function formularioAjustarGasolina(array $datos) {
+        $datos = [
+            'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
+            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id'])
+        ];
+
+        return [
+            'html' => parent::getCI()->load->view('Tesoreria/Formularios/FormularioAjustarGasolina', $datos, TRUE)
         ];
     }
 
@@ -265,7 +277,39 @@ class FondoFijo extends General {
             $titulo = 'Comprobante Rechazado - Fondo Fijo';
             $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
                     . '<p>'
-                    . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' ha  rechazado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" por el total de $' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifique la información mencionada ingresando al sistema o comuniquese con el usuario que rechazó el comprobante.'
+                    . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' '
+                    . ' ha  rechazado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" '
+                    . ' por el total de <strong>$' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> '
+                    . ' correspondiente al fondo fijo. <br />'
+                    . ' Observaciones: <strong>' . $datos['observaciones']. '</strong><br />'
+                    . ' Por favor verifique la información mencionada ingresando al sistema '
+                    . 'o comuniquese con el usuario que rechazó el comprobante.'
+                    . '</p>';
+            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
+        }
+
+        return $rechazar;
+    }
+
+    public function rechazarMovimientoCobrable(array $datos) {
+        $rechazar = $this->DB->rechazarMovimientoCobrable($datos);
+
+        if ($rechazar['code'] == 200) {
+            $generalesUsuario = $this->DB->getGeneralInfoByUserID($rechazar['id']);
+            $generalesUsuarioRechaza = $this->DB->getGeneralInfoByUserID($this->usuario['Id']);
+            $generalesMovimiento = $this->DB->getDetallesFondoFijoXId($datos['id'])[0];
+
+            $titulo = 'Comprobante Rechazado - Fondo Fijo';
+            $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
+                    . '<p>'
+                    . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' '
+                    . ' ha  rechazado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" '
+                    . ' por el total de <strong>$' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> '
+                    . ' correspondiente al fondo fijo. <br />'
+                    . ' Observaciones: <strong>' . $datos['observaciones']. '</strong><br />'
+                    . ' Por favor verifique la información mencionada ingresando al sistema '
+                    . 'o comuniquese con el usuario que rechazó el comprobante.'
                     . '</p>';
             $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
             $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);

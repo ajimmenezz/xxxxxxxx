@@ -90,6 +90,9 @@
 <div id="seccionRegistrarDeposito" class="content" style="display: none"></div>
 <!--Finalizando seccion para mostrar el formulario de los depositos -->
 
+<!--Empezando seccion para mostrar el formulario de los depositos -->
+<div id="seccionAjustarGasolina" class="content" style="display: none"></div>
+<!--Finalizando seccion para mostrar el formulario de los depositos -->
 
 <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
     <div class="modal-dialog" role="document">

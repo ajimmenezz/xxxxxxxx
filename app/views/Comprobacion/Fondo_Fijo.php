@@ -43,7 +43,16 @@
             <div class="row m-t-0">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="row">
-                        <div class="col-md-offset-3 col-md-3 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6">
+                        <div class="col-md-3 col-sm-4 col-xs-6">
+                            <div class="widget widget-stats bg-red">
+                                <div class="stats-icon"><i class="fa fa-money"></i></div>
+                                <div class="stats-info">
+                                    <h4 class="f-w-600">SALDO RECHAZADO COBRABLE</h4>
+                                    <p class="f-w-600">$<?php echo number_format($datos['rechazado'], 2, '.', ','); ?></p>	
+                                </div>                            
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-4 col-xs-6">
                             <div class="widget widget-stats bg-blue">
                                 <div class="stats-icon"><i class="fa fa-money"></i></div>
                                 <div class="stats-info">
