@@ -106,8 +106,6 @@ $(function () {
                                 'comprobaciones': _comprobaciones
                             }
 
-                            console.log(_datos);
-
                             if (_datos.monto < 1) {
                                 evento.mostrarMensaje("#errorMessageDeposito", false, "El monto depositado no puede ser menor a $1.00", 4000);
                                 return false;
@@ -136,8 +134,34 @@ $(function () {
                 evento.enviarEvento('Fondo_Fijo/FormularioAjustarGasolina', {'id': datos[0]}, '#panelDetallesFondoFijo', function (respuesta) {
                     $("#seccionAjustarGasolina").empty().append(respuesta.html);
                     evento.cambiarDiv("#seccionDetallesFondoFijo", "#seccionAjustarGasolina");
-
                     
+                    
+                    $("#btnGuardarAjusteGasolina").off("click");
+                    $("#btnGuardarAjusteGasolina").on("click", function () {
+                        console.log("algo");
+                        if (evento.validarFormulario('#form-ajustar-gasolina')) {
+                            var _datos = {
+                                'id': datos[0],
+                                'fecha': $("#txtDate").val(),
+                                'monto': $.trim($("#txtMonto").val())
+                            }
+
+                            if (_datos.monto < 0) {
+                                evento.mostrarMensaje("#errorMessageAjusteGasolina", false, "El monto de gasolina no puede ser un número negativo", 4000);
+                                return false;
+                            }
+
+                            evento.enviarEvento('Fondo_Fijo/AjustarGasolina', _datos, '#panelRegistrarAjusteGasolina', function (respuesta) {
+                                if (respuesta.code == 200) {
+                                    cargaDetallesFondoFijo(datos, "#panelRegistrarDeposito", "#seccionAjustarGasolina", "#listaFondosFijos");
+                                } else {
+                                    evento.mostrarMensaje("#errorMessageAjusteGasolina", false, "Ocurrió un error al guardar el ajuste. Por favor recargue su página y vuelva a intentarlo.", 4000);
+                                }
+                            });
+
+                        }
+                    });
+
                 });
 
             });

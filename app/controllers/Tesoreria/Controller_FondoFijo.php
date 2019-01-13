@@ -62,6 +62,9 @@ class Controller_FondoFijo extends Base {
             case 'AutorizarMovimiento':
                 $resultado = $this->fondo_fijo->autorizarMovimiento($this->input->post());
                 break;
+            case 'AjustarGasolina':
+                $resultado = $this->fondo_fijo->ajustarGasolina($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

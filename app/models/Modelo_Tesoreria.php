@@ -376,6 +376,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                                         when tcff.IdTipoMovimiento = 1 then 'Depósito Fondo Fijo'
                                         when tcff.IdTipoMovimiento = 3 then 'Reembolso por Cancelación'
                                         when tcff.IdTipoMovimiento = 4 then 'Depósito Gasolina'
+                                        when tcff.IdTipoMovimiento = 5 then 'Ajuste de Gasolna'
                                         else ccc.Nombre
                                     end as Nombre,
                                     /*if(tcff.IdTipoMovimiento = 1, 'Depósito', if(tcff.IdTipoMovimiento = 3 ,'Reembolso por Cancelación' , ccc.Nombre)) as Nombre,*/
@@ -429,7 +430,13 @@ class Modelo_Tesoreria extends Modelo_Base {
                                     tcff.IdTipoMovimiento,
                                     tcff.IdUsuarioFF,
                                     (select Nombre from cat_v3_comprobacion_tipos_movimiento where Id = tcff.IdTipoMovimiento) as TipoMovimiento,
-                                    if(tcff.IdTipoMovimiento = 1, 'Depósito', if(tcff.IdTipoMovimiento = 3 ,'Reembolso por Cancelación' , ccc.Nombre)) as Nombre,
+                                    case
+                                        when tcff.IdTipoMovimiento = 1 then 'Deposito'
+                                        when tcff.IdTIpoMovimiento = 3 then 'Reembolso por Cancelación'
+                                        when tcff.IdTipoMovimiento = 4 then 'Depósito Gasolina'
+                                        when tcff.IdTipoMovimiento = 5 then 'Ajuste de gasolina'
+                                        else ccc.Nombre
+                                    end as Nombre,
                                     tcff.IdConcepto,
                                     if(ccc.Extraordinario = 1, 'SI', 'NO') as Extraordinario,
                                     if(tcff.EnPresupuesto = 1, 'SI', 'NO') as EnPresupuesto,
@@ -961,6 +968,47 @@ class Modelo_Tesoreria extends Modelo_Base {
             return [
                 'code' => 200,
                 'id' => $generales['IdUsuarioFF']
+            ];
+        }
+    }
+
+    public function ajustarGasolina(array $datos) {
+        $this->iniciaTransaccion();
+
+        $saldo = $this->getSaldoByUsuario($datos['id']);
+        $saldoGasolina = $this->getSaldoGasolinaByUsuario($datos['id']);
+        $saldoGasolinaNuevo = (float) $datos['monto'];
+        $diferencia = (float) $saldoGasolina - (float) $saldoGasolinaNuevo;
+
+        $this->insertar("t_comprobacion_fondo_fijo", [
+            "IdUsuario" => $this->usuario['Id'],
+            "Fecha" => $this->getFecha(),
+            "IdUsuarioFF" => $datos['id'],
+            "IdTipoMovimiento" => 5,
+            "IdTipoComprobante" => 3,
+            "IdEstatus" => 7,
+            "Monto" => (float) $diferencia * -1,
+            "Saldo" => (float) $saldo,
+            "SaldoGasolina" => $saldoGasolinaNuevo,
+            "FechaMovimiento" => $datos['fecha'],
+            "Observaciones" => "Ajuste de Gasolina",
+            "Archivos" => "",
+            "FechaAutorizacion" => $this->getFecha(),
+            "IdUsuarioAutoriza" => $this->usuario['Id'],
+            "EnPresupuesto" => 1
+        ]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'id' => $datos['id']
             ];
         }
     }

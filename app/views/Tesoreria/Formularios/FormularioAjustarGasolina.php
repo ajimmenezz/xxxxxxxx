@@ -57,7 +57,7 @@
         <!--Finalizando Error-->
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-                <a id="btnGuardarDeposito" class="btn btn-success f-w-600 f-s-15">Ajustar Gasolina</a>
+                <a id="btnGuardarAjusteGasolina" class="btn btn-success f-w-600 f-s-15">Ajustar Gasolinas</a>
             </div>
         </div>
     </div>  

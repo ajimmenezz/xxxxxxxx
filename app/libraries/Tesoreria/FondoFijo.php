@@ -347,5 +347,10 @@ class FondoFijo extends General {
             'html' => parent::getCI()->load->view('Comprobacion/Formularios/FormularioDetallesMovimientoAutorizar', $datos, TRUE)
         ];
     }
+    
+    public function ajustarGasolina(array $datos) {
+        $ajustar = $this->DB->ajustarGasolina($datos);
+        return $ajustar;
+    }
 
 }
