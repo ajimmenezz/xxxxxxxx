@@ -1788,34 +1788,92 @@
                     </div>
                     <div class="tab-pane fade" id="cambio-equipo">
                         <div class="well">
-
-                            <!--Empezando Equipo y Numero de Serie-->
-                            <div class="row m-t-20">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="selectEquipoSolucionCambioEquipo">Equipo *</label>
-                                        <select id="selectEquipoSolucionCambioEquipo" class="form-control" style="width: 100%" disabled>
-                                            <option value="">Seleccionar</option>
-                                            <?php
-                                            if ($informacion['EquiposXLinea'] !== FALSE) {
-                                                if ($informacion['EquiposXLinea'] !== NULL) {
-                                                    foreach ($informacion['EquiposXLinea'] as $item) {
-                                                        echo '<option value="' . $item['IdMod'] . '">' . $item['Linea'] . ' - ' . $item['Marca'] . ' - ' . $item['Modelo'] . '</option>';
+                            <?php
+                            if (!$usarStock) {
+                                ?>                               
+                                <!--Empezando Equipo y Numero de Serie-->
+                                <div class="row m-t-20">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="selectEquipoSolucionCambioEquipo">Equipo *</label>
+                                            <select id="selectEquipoSolucionCambioEquipo" class="form-control" style="width: 100%" disabled>
+                                                <option value="">Seleccionar</option>
+                                                <?php
+                                                if ($informacion['EquiposXLinea'] !== FALSE) {
+                                                    if ($informacion['EquiposXLinea'] !== NULL) {
+                                                        foreach ($informacion['EquiposXLinea'] as $item) {
+                                                            echo '<option value="' . $item['IdMod'] . '">' . $item['Linea'] . ' - ' . $item['Marca'] . ' - ' . $item['Modelo'] . '</option>';
+                                                        }
                                                     }
                                                 }
-                                            }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="inputSerieSolucionCambioEquipo">Número de Serie *</label>
+                                            <input type="text" class="form-control" id="inputSerieSolucionCambioEquipo" placeholder="Serie" style="width: 100%" disabled/>                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Finalizando-->
+
+                                <?php
+                            } else {
+                                ?>
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <?php
+                                        if (!isset($inventarioEquipos) || count($inventarioEquipos) <= 0) {
                                             ?>
-                                        </select>
+                                            <div class="row">
+                                                <div class="col-md-12 m-b-10">
+                                                    <div class="alert alert-warning fade in f-s-15">
+                                                        <strong>Warning! </strong>Al parecer no cuentas con equipos compatibles. Si crees que es un error recarga la página o contacta al administrador.
+                                                    </div>                        
+                                                </div>
+                                            </div>
+                                            <?php
+                                        }
+                                        ?>
+                                        <div class="table-responsive">
+                                            <table id="data-table-reparacion-cambio-stock" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                                <thead>
+                                                    <tr>                                
+                                                        <th class="never">IdEquipo</th>
+                                                        <th class="all">Equipo</th>
+                                                        <th class="never">Cantidad</th>                                                     
+                                                        <th class="never">IdInventario</th>
+                                                        <th class="all">Serie</th>
+                                                        <th class="all"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>    
+                                                    <?php
+                                                    if (isset($inventarioEquipos) && count($inventarioEquipos) > 0) {
+                                                        foreach ($inventarioEquipos as $key => $value) {
+                                                            $checked = ($value['Usado'] <= 0) ? 'fa-square-o' : 'fa-check-square-o';
+                                                            echo ''
+                                                            . '<tr>'
+                                                            . ' <td>' . $value['IdProducto'] . '</td>'
+                                                            . ' <td>' . $value['Producto'] . '</td>'
+                                                            . ' <td>' . $value['Cantidad'] . '</td>'
+                                                            . ' <td>' . $value['IdInventario'] . '</td>'
+                                                            . ' <td>' . $value['Serie'] . '</td>'
+                                                            . ' <td class="text-center"><i data-id="' . $value['IdInventario'] . '" data-id-producto="' . $value['IdProducto'] . '" data-serie="' . $value['Serie'] . '" class="checkEquipoStock fa fa-2x ' . $checked . '"></i></td>'
+                                                            . '</tr>';
+                                                        }
+                                                    }
+                                                    ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="inputSerieSolucionCambioEquipo">Número de Serie *</label>
-                                        <input type="text" class="form-control" id="inputSerieSolucionCambioEquipo" placeholder="Serie" style="width: 100%" disabled/>                            
-                                    </div>
-                                </div>
-                            </div>
-                            <!--Finalizando-->
+                                <?php
+                            }
+                            ?>
 
                             <!--Empezando Evidencias Solucion-->
                             <div class="row m-t-20">

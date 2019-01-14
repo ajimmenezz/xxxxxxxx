@@ -750,4 +750,26 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         return $consulta;
     }
 
+    public function getEquiposDisponiblesParaServicio(int $usuario, int $modelo, string $idsBloqueados = '') {
+        $idsBloqueados = ($idsBloqueados != '') ? $idsBloqueados : '0';
+        $consulta = $this->consulta("select 
+                                    IdProducto,
+                                    modelo(IdProducto) as Producto,
+                                    Cantidad,
+                                    Id as IdInventario,
+                                    Serie,
+                                    Bloqueado as Usado
+                                    from 
+                                    t_inventario
+                                    where IdTipoProducto = 1 and IdProducto in (
+                                    select Id from cat_v3_modelos_equipo where Marca in (
+                                    select Id from cat_v3_marcas_equipo where Sublinea in (
+                                    select Id from cat_v3_sublineas_equipo where Linea = 
+                                    (select Linea from cat_v3_sublineas_equipo where Id = (select Sublinea from cat_v3_marcas_equipo where Id = (select Marca from cat_v3_modelos_equipo where Id = '" . $modelo . "'))))))
+                                    and IdAlmacen in (select Id from cat_v3_almacenes_virtuales where (IdTipoAlmacen = 1 && IdReferenciaAlmacen = '" . $usuario . "') || IdResponsable = '" . $usuario . "')
+                                    and (Bloqueado = 0 || Id in (" . $idsBloqueados . "))
+                                    and IdEstatus = 17;");
+        return $consulta;
+    }
+
 }

@@ -2024,6 +2024,7 @@ class Servicio extends General {
             'IdEstatus' => '4',
             'FechaConclusion' => $fecha
                 ), array('Id' => $datos['servicio']));
+        $this->DBP->actualizaInventariosMovimientosXConslusionCorrectivo($datos['servicio']);
         $verificarEstatusTicket = $this->DBS->getServicios('SELECT 
                                                                 IdEstatus,
                                                                 IdSolicitud
@@ -2819,9 +2820,9 @@ class Servicio extends General {
             return FALSE;
         }
     }
-    
+
     public function getGeneralesByServicio(int $servicio) {
-        $generales = $this->DBS->consulta("SELECT * FROM t_servicios_ticket WHERE Id = '". $servicio ."'")[0];
+        $generales = $this->DBS->consulta("SELECT * FROM t_servicios_ticket WHERE Id = '" . $servicio . "'")[0];
         return $generales;
     }
 

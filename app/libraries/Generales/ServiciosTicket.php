@@ -430,10 +430,6 @@ class ServiciosTicket extends General {
                         $data['servicio'] = $datos['servicio'];
                         $usuario = $this->Usuario->getDatosUsuario();
                         /*
-                         * * Se determina si se tiene o no el permiso para que el usuario dentro de las soluciones determine
-                         * que usará algún componente y equipo completo del stock de inventario a consignación
-                         */
-                        /*
                          * Revisa si se ocuparon componentes del inventario para este servicio y no omitirlos 
                          * por estar bloqueados                         
                          */
@@ -442,11 +438,36 @@ class ServiciosTicket extends General {
                             foreach ($data['informacion']['correctivosSolucionRefaccion'] as $key => $value) {
                                 $componentesUtilizadosStock .= ',' . $value['IdInventario'];
                             }
-                            
+
                             $componentesUtilizadosStock = ($componentesUtilizadosStock != '') ? substr($componentesUtilizadosStock, 1) : '';
                         }
+                        
+                        /*
+                         * Revisa si se ocuparon equipos del inventario para este servicio y no omitirlos 
+                         * por estar bloqueados                         
+                         */
+                        $equiposUtilizadosStock = '';
+                        if (isset($data['informacion']['correctivosSolucionCambio'])) {
+                            foreach ($data['informacion']['correctivosSolucionCambio'] as $key => $value) {
+                                $equiposUtilizadosStock .= ',' . $value['IdInventario'];
+                            }
+
+                            $equiposUtilizadosStock = ($equiposUtilizadosStock != '') ? substr($equiposUtilizadosStock, 1) : '';
+                        }
+                        
+                        
+                        /*
+                         * * Se determina si se tiene o no el permiso para que el usuario dentro de las soluciones determine
+                         * que usará algún componente y equipo completo del stock de inventario a consignación
+                         */
                         $data['usarStock'] = (in_array(293, $usuario['PermisosAdicionales']) || in_array(293, $usuario['Permisos'])) ? true : false;
-                        $data['inventarioComponentes'] = $this->DBA->getComponentesDisponiblesParaServicio($usuario['Id'], $data['informacion']['informacionDatosGeneralesCorrectivo'][0]['IdModelo'], $componentesUtilizadosStock);
+                        if (isset($data['informacion']['informacionDatosGeneralesCorrectivo'][0])) {
+                            $data['inventarioComponentes'] = $this->DBA->getComponentesDisponiblesParaServicio($usuario['Id'], $data['informacion']['informacionDatosGeneralesCorrectivo'][0]['IdModelo'], $componentesUtilizadosStock);
+                            $data['inventarioEquipos'] = $this->DBA->getEquiposDisponiblesParaServicio($usuario['Id'], $data['informacion']['informacionDatosGeneralesCorrectivo'][0]['IdModelo'], $equiposUtilizadosStock);                            
+                        } else {
+                            $data['inventarioComponentes'] = [];
+                            $data['inventarioEquipos'] = [];
+                        }
                         $data['formulario'] = parent::getCI()->load->view('Poliza/Modal/formularioSeguimientoServicioCorrectivo', $data, TRUE);
                         break;
                     /* Concluye el servicio de Correctivo y retorna los servicios del departamento */
