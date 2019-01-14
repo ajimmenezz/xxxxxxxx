@@ -26,6 +26,9 @@ class Controller_FondoFijo extends Base {
             case 'FormularioRegistrarDeposito':
                 $resultado = $this->fondo_fijo->formularioRegistrarDeposito($this->input->post());
                 break;
+            case 'FormularioAjustarGasolina':
+                $resultado = $this->fondo_fijo->formularioAjustarGasolina($this->input->post());
+                break;
             case 'RegistrarDeposito':
                 $resultado = $this->fondo_fijo->registrarDeposito($this->input->post());
                 break;
@@ -53,8 +56,14 @@ class Controller_FondoFijo extends Base {
             case 'RechazarMovimiento':
                 $resultado = $this->fondo_fijo->rechazarMovimiento($this->input->post());
                 break;
+            case 'RechazarMovimientoCobrable':
+                $resultado = $this->fondo_fijo->rechazarMovimientoCobrable($this->input->post());
+                break;
             case 'AutorizarMovimiento':
                 $resultado = $this->fondo_fijo->autorizarMovimiento($this->input->post());
+                break;
+            case 'AjustarGasolina':
+                $resultado = $this->fondo_fijo->ajustarGasolina($this->input->post());
                 break;
             default:
                 $resultado = FALSE;

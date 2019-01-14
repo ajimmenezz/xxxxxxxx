@@ -345,6 +345,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                                         and IdTipoMovimiento = 1 
                                         and IdEstatus = 7 
                                         order by FechaAutorizacion desc limit 1) as Monto,
+                                    tcff.SaldoGasolina,    
                                     tcff.Saldo,
                                     tcff.FechaAutorizacion as FechaSaldo,
                                     cffu.Flag
@@ -365,21 +366,30 @@ class Modelo_Tesoreria extends Modelo_Base {
         $fechas = $this->consulta("select 
                                    DATE_SUB(CONCAT(DATE_FORMAT(now(),'%Y-%m'),'-01'), INTERVAL 2 DAY) as FechaIni,
                                    CONCAT(DATE_FORMAT(now(),'%Y-%m'),'-31') as FechaFin");
-        
-        
+
+
         $consulta = $this->consulta("select 
                                     tcff.Id,
                                     tcff.FechaAutorizacion as Fecha,
                                     tcff.FechaMovimiento,
-                                    if(tcff.IdTipoMovimiento = 1, 'Depósito', if(tcff.IdTipoMovimiento = 3 ,'Reembolso por Cancelación' , ccc.Nombre)) as Nombre,
+                                    case
+                                        when tcff.IdTipoMovimiento = 1 then 'Depósito Fondo Fijo'
+                                        when tcff.IdTipoMovimiento = 3 then 'Reembolso por Cancelación'
+                                        when tcff.IdTipoMovimiento = 4 then 'Depósito Gasolina'
+                                        when tcff.IdTipoMovimiento = 5 then 'Ajuste de Gasolna'
+                                        else ccc.Nombre
+                                    end as Nombre,
+                                    /*if(tcff.IdTipoMovimiento = 1, 'Depósito', if(tcff.IdTipoMovimiento = 3 ,'Reembolso por Cancelación' , ccc.Nombre)) as Nombre,*/
                                     if(ccc.Extraordinario = 1, 'SI', 'NO') as Extraordinario,
                                     if(tcff.EnPresupuesto = 1, 'SI', 'NO') as EnPresupuesto,
                                     tcff.Monto,
                                     tcff.Saldo,
+                                    tcff.SaldoGasolina,
                                     ticketByServicio(tcff.IdServicio) as Ticket,
                                     (select Nombre from cat_v3_tipos_comprobante where Id = tcff.IdTipoComprobante) as TipoComprobante,
                                     estatus(tcff.IdEstatus) as Estatus,
-                                    tcff.IdEstatus                                    
+                                    tcff.IdEstatus,
+                                    tcff.Cobrable
 
                                     from
                                     t_comprobacion_fondo_fijo tcff
@@ -387,6 +397,28 @@ class Modelo_Tesoreria extends Modelo_Base {
                                     where tcff.IdUsuarioFF = '" . $id . "'
                                     and tcff.Fecha >= DATE_FORMAT(DATE_SUB(now(),INTERVAL 2 MONTH),'%Y-%m-%d')
                                     order by tcff.FechaAutorizacion desc");
+        return $consulta;
+    }
+
+    public function getComprobacionesSinPagar(int $id) {
+        $consulta = $this->consulta("select 
+                                    Id,
+                                    case
+                                            when IdConcepto <> 8 and IdTipoComprobante in (2,3) then 1
+                                            when IdConcepto = 8 then 2
+                                            when IdConcepto <> 8 and Receptor = 'SSO0101179Z7' then 3
+                                            when IdConcepto <> 8 and Receptor = 'RSD130305DI7' then 4
+                                    end as TipoRegistro,
+                                    (select Nombre from cat_v3_comprobacion_conceptos where Id = IdConcepto) as Concepto,
+                                    Monto,
+                                    if(EnPresupuesto = 1, 'Automático', nombreUsuario(IdUsuarioAutoriza)) as Autoriza,
+                                    FechaAutorizacion,
+                                    Receptor
+                                    from t_comprobacion_fondo_fijo
+                                    where IdUsuarioFF = '" . $id . "'
+                                    and Pagado = 0
+                                    and IdTipoMovimiento = 2
+                                    and IdEstatus = 7");
         return $consulta;
     }
 
@@ -398,7 +430,14 @@ class Modelo_Tesoreria extends Modelo_Base {
                                     tcff.IdTipoMovimiento,
                                     tcff.IdUsuarioFF,
                                     (select Nombre from cat_v3_comprobacion_tipos_movimiento where Id = tcff.IdTipoMovimiento) as TipoMovimiento,
-                                    if(tcff.IdTipoMovimiento = 1, 'Depósito', if(tcff.IdTipoMovimiento = 3 ,'Reembolso por Cancelación' , ccc.Nombre)) as Nombre,
+                                    case
+                                        when tcff.IdTipoMovimiento = 1 then 'Deposito'
+                                        when tcff.IdTIpoMovimiento = 3 then 'Reembolso por Cancelación'
+                                        when tcff.IdTipoMovimiento = 4 then 'Depósito Gasolina'
+                                        when tcff.IdTipoMovimiento = 5 then 'Ajuste de gasolina'
+                                        else ccc.Nombre
+                                    end as Nombre,
+                                    tcff.IdConcepto,
                                     if(ccc.Extraordinario = 1, 'SI', 'NO') as Extraordinario,
                                     if(tcff.EnPresupuesto = 1, 'SI', 'NO') as EnPresupuesto,
                                     tcff.Monto,
@@ -431,22 +470,46 @@ class Modelo_Tesoreria extends Modelo_Base {
         $this->iniciaTransaccion();
 
         $saldo = $this->getSaldoByUsuario($datos['id']);
+        $saldoGasolina = $this->getSaldoGasolinaByUsuario($datos['id']);
+
+        $saldoNuevo = ((float) $saldo + (float) $datos['monto']);
+        $saldoGasolinaNuevo = (float) $saldoGasolina;
+        $tipoMovimiento = 1;
+        if (in_array($datos['concepto'], [2, '2'])) {
+            $saldoNuevo = (float) $saldo;
+            $saldoGasolinaNuevo = ((float) $saldoGasolina + (float) $datos['monto']);
+            $tipoMovimiento = 4;
+        }
 
         $this->insertar("t_comprobacion_fondo_fijo", [
             "IdUsuario" => $this->usuario['Id'],
             "Fecha" => $this->getFecha(),
             "IdUsuarioFF" => $datos['id'],
-            "IdTipoMovimiento" => 1,
+            "IdTipoMovimiento" => $tipoMovimiento,
             "IdTipoComprobante" => 2,
             "IdEstatus" => 7,
             "Monto" => $datos['monto'],
-            "Saldo" => ((float) $saldo + (float) $datos['monto']),
+            "Saldo" => $saldoNuevo,
+            "SaldoGasolina" => $saldoGasolinaNuevo,
             "FechaMovimiento" => str_replace("T", " ", $datos['fecha']),
             "Observaciones" => $datos["observaciones"],
             "Archivos" => $datos["archivos"],
             "FechaAutorizacion" => $this->getFecha(),
             "IdUsuarioAutoriza" => $this->usuario['Id']
         ]);
+
+        if (isset($datos['comprobaciones']) && count($datos['comprobaciones']) > 0) {
+            $comprobaciones = explode(",", $datos['comprobaciones']);
+            foreach ($comprobaciones as $key => $value) {
+                if ($value != '') {
+                    $this->actualizar("t_comprobacion_fondo_fijo", [
+                        'Pagado' => 1,
+                        'MontoPagado' => $datos['monto'],
+                        'ArchivosPago' => $datos['archivos']
+                            ], ['Id' => $value]);
+                }
+            }
+        }
 
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();
@@ -455,6 +518,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                 'error' => $this->tipoError()
             ];
         } else {
+//            $this->roolbackTransaccion();
             $this->commitTransaccion();
             return ['code' => 200];
         }
@@ -465,9 +529,134 @@ class Modelo_Tesoreria extends Modelo_Base {
                 . "select "
                 . "Saldo "
                 . "from t_comprobacion_fondo_fijo "
-                . "where Id = (select Id from t_comprobacion_fondo_fijo where IdUsuarioFF = '" . $id . "' and IdEstatus = 7 order by FechaAutorizacion desc limit 1)");
+                . "where Id = ("
+                . "             select "
+                . "             Id "
+                . "             from t_comprobacion_fondo_fijo "
+                . "             where IdUsuarioFF = '" . $id . "' "
+                . "             and (IdEstatus = 7 || ("
+                . "                                     IdEstatus = 10 "
+                . "                                     and Cobrable = 1 "
+                . "                                     and IdUsuarioAutoriza is not null "
+                . "                                     and FechaAutorizacion is not null)"
+                . "                                    )  "
+                . "             order by FechaAutorizacion desc limit 1)");
         if (!empty($saldo)) {
             $saldo = $saldo[0]['Saldo'];
+        } else {
+            $saldo = 0;
+        }
+
+        return $saldo;
+    }
+
+    public function getMontoDepositoSiccob(int $id) {
+        $monto = $this->consulta("select
+                                if(sum(Monto) is null, 0, sum(Monto)) as Total
+                                from t_comprobacion_fondo_fijo
+                                where IdUsuarioFF = '" . $id . "'
+                                and Pagado = 0
+                                and Receptor = 'SSO0101179Z7'
+                                and IdEstatus = 7;");
+        if (!empty($monto)) {
+            $monto = $monto[0]['Total'];
+        } else {
+            $monto = 0;
+        }
+
+        return $monto;
+    }
+
+    public function getMontoDepositoResidig(int $id) {
+        $monto = $this->consulta("select
+                                if(sum(Monto) is null, 0, sum(Monto)) as Total
+                                from t_comprobacion_fondo_fijo
+                                where IdUsuarioFF = '" . $id . "'
+                                and Pagado = 0
+                                and Receptor = 'RSD130305DI7'
+                                and IdEstatus = 7;");
+        if (!empty($monto)) {
+            $monto = $monto[0]['Total'];
+        } else {
+            $monto = 0;
+        }
+
+        return $monto;
+    }
+
+    public function getMontoDepositoGasolina(int $id) {
+        $monto = $this->consulta("select 
+                                if(sum(Monto) is null, 0, sum(Monto)) as Total 
+                                from t_comprobacion_fondo_fijo 
+                                where IdUsuarioFF = '" . $id . "' 
+                                and Pagado = 0 
+                                and IdConcepto = 8 
+                                and IdEstatus = 7 
+                                and IdTipoMovimiento = 2;");
+        if (!empty($monto)) {
+            $monto = $monto[0]['Total'];
+        } else {
+            $monto = 0;
+        }
+
+        return $monto;
+    }
+
+    public function getMontoDepositoOtros(int $id) {
+        $monto = $this->consulta("select 
+                                if(sum(Monto) is null, 0, sum(Monto)) as Total 
+                                from t_comprobacion_fondo_fijo 
+                                where IdUsuarioFF = '" . $id . "' 
+                                and Pagado = 0 
+                                and IdTipoComprobante in (2,3) 
+                                and IdConcepto <> 8 
+                                and IdEstatus = 7 
+                                and IdTipoMovimiento = 2;");
+        if (!empty($monto)) {
+            $monto = $monto[0]['Total'];
+        } else {
+            $monto = 0;
+        }
+
+        return $monto;
+    }
+
+    public function getSaldoGasolinaByUsuario(int $id) {
+        $saldo = $this->consulta(""
+                . "select "
+                . "SaldoGasolina "
+                . "from t_comprobacion_fondo_fijo "
+                . "where Id = ("
+                . "             select "
+                . "             Id "
+                . "             from t_comprobacion_fondo_fijo "
+                . "             where IdUsuarioFF = '" . $id . "' "
+                . "             and (IdEstatus = 7 || ("
+                . "                                     IdEstatus = 10 "
+                . "                                     and Cobrable = 1 "
+                . "                                     and IdUsuarioAutoriza is not null "
+                . "                                     and FechaAutorizacion is not null)"
+                . "                                    )  "
+                . "             order by FechaAutorizacion desc limit 1)");
+        if (!empty($saldo)) {
+            $saldo = $saldo[0]['SaldoGasolina'];
+        } else {
+            $saldo = 0;
+        }
+
+        return $saldo;
+    }
+
+    public function getSaldoRechazadoSinPagar(int $id) {
+        $saldo = $this->consulta("select 
+                                sum(Monto) as Total
+                                from t_comprobacion_fondo_fijo 
+                                where IdUsuarioFF = '" . $id . "'
+                                and IdEstatus = 10
+                                and Cobrable = 1
+                                and Pagado = 0");
+        if (!empty($saldo)) {
+            $saldo = abs($saldo[0]['Total']);
         } else {
             $saldo = 0;
         }
@@ -602,7 +791,31 @@ class Modelo_Tesoreria extends Modelo_Base {
     public function registrarComprobante(array $datos) {
         $this->iniciaTransaccion();
 
+        $revisarUUID = $this->consulta(""
+                . "select * "
+                . "from t_comprobacion_fondo_fijo "
+                . "where UUID = '" . $datos['cfdi']['uuid'] . "' "
+                . "and UUID <> '' "
+                . "and UUID is not null "
+                . "and IdEstatus in (7,8)");
+
+        if (!empty($revisarUUID)) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'errorBack' => 'Esta factura ya se utilizò con anterioridad. Revise su información'
+            ];
+        }
+
         $saldo = $this->getSaldoByUsuario($this->usuario['Id']);
+        $saldoGasolina = $this->getSaldoGasolinaByUsuario($this->usuario['Id']);
+
+        $saldoNuevo = ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? ((float) $saldo + (float) $datos['monto']) : null;
+        $saldoGasolinaNuevo = (float) $saldoGasolina;
+        if (in_array($datos['concepto'], [8, '8'])) {
+            $saldoNuevo = (float) $saldo;
+            $saldoGasolinaNuevo = ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? ((float) $saldoGasolina + (float) $datos['monto']) : null;
+        }
 
         $this->insertar("t_comprobacion_fondo_fijo", [
             "IdUsuario" => $this->usuario['Id'],
@@ -613,7 +826,8 @@ class Modelo_Tesoreria extends Modelo_Base {
             "IdTipoComprobante" => $datos['tipoComprobante'],
             "IdEstatus" => ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? 7 : 8,
             "Monto" => $datos['monto'],
-            "Saldo" => ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? ((float) $saldo + (float) $datos['monto']) : null,
+            "Saldo" => $saldoNuevo,
+            "SaldoGasolina" => $saldoGasolinaNuevo,
             "FechaMovimiento" => str_replace("T", " ", $datos['fecha']),
             "IdServicio" => $datos['servicio'],
             "IdOrigen" => $datos['origen'],
@@ -627,7 +841,12 @@ class Modelo_Tesoreria extends Modelo_Base {
             "EnPresupuesto" => $datos['enPresupuesto'],
             "XML" => $datos['xml'],
             "PDF" => $datos['pdf'],
-            "MontoConcepto" => $datos['montoMaximo']
+            "MontoConcepto" => $datos['montoMaximo'],
+            "SerieCFDI" => $datos['cfdi']['serie'],
+            "FolioCFDI" => $datos['cfdi']['folio'],
+            "UUID" => $datos['cfdi']['uuid'],
+            "Receptor" => $datos['cfdi']['receptor'],
+            "Pagado" => 0
         ]);
 
         if ($this->estatusTransaccion() === FALSE) {
@@ -696,7 +915,8 @@ class Modelo_Tesoreria extends Modelo_Base {
         $this->actualizar("t_comprobacion_fondo_fijo", [
             "IdEstatus" => 10,
             "IdUsuarioAutoriza" => $this->usuario['Id'],
-            "FechaAutorizacion" => $this->getFecha()
+            "FechaAutorizacion" => $this->getFecha(),
+            "ObservacionesRechazo" => trim($datos['observaciones'])
                 ], ["Id" => $datos['id']]);
 
 
@@ -720,12 +940,102 @@ class Modelo_Tesoreria extends Modelo_Base {
 
         $generales = $this->getDetallesFondoFijoXId($datos['id'])[0];
         $saldo = $this->getSaldoByUsuario($generales['IdUsuarioFF']);
+        $saldoGasolina = $this->getSaldoGasolinaByUsuario($generales['IdUsuarioFF']);
+
+        $saldoNuevo = ((float) $saldo + (float) $generales['Monto']);
+        $saldoGasolinaNuevo = (float) $saldoGasolina;
+        if (in_array($generales['IdConcepto'], [8, '8'])) {
+            $saldoNuevo = (float) $saldo;
+            $saldoGasolinaNuevo = ((float) $saldoGasolina + (float) $generales['Monto']);
+        }
 
         $this->actualizar("t_comprobacion_fondo_fijo", [
             "IdEstatus" => 7,
-            "Saldo" => ((float) $saldo + (float) $generales['Monto']),
+            "Saldo" => $saldoNuevo,
+            "SaldoGasolina" => $saldoGasolinaNuevo,
             "IdUsuarioAutoriza" => $this->usuario['Id'],
             "FechaAutorizacion" => $this->getFecha()
+                ], ["Id" => $datos['id']]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'id' => $generales['IdUsuarioFF']
+            ];
+        }
+    }
+
+    public function ajustarGasolina(array $datos) {
+        $this->iniciaTransaccion();
+
+        $saldo = $this->getSaldoByUsuario($datos['id']);
+        $saldoGasolina = $this->getSaldoGasolinaByUsuario($datos['id']);
+        $saldoGasolinaNuevo = (float) $datos['monto'];
+        $diferencia = (float) $saldoGasolina - (float) $saldoGasolinaNuevo;
+
+        $this->insertar("t_comprobacion_fondo_fijo", [
+            "IdUsuario" => $this->usuario['Id'],
+            "Fecha" => $this->getFecha(),
+            "IdUsuarioFF" => $datos['id'],
+            "IdTipoMovimiento" => 5,
+            "IdTipoComprobante" => 3,
+            "IdEstatus" => 7,
+            "Monto" => (float) $diferencia * -1,
+            "Saldo" => (float) $saldo,
+            "SaldoGasolina" => $saldoGasolinaNuevo,
+            "FechaMovimiento" => $datos['fecha'],
+            "Observaciones" => "Ajuste de Gasolina",
+            "Archivos" => "",
+            "FechaAutorizacion" => $this->getFecha(),
+            "IdUsuarioAutoriza" => $this->usuario['Id'],
+            "EnPresupuesto" => 1
+        ]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'id' => $datos['id']
+            ];
+        }
+    }
+
+    public function rechazarMovimientoCobrable(array $datos) {
+        $this->iniciaTransaccion();
+
+        $generales = $this->getDetallesFondoFijoXId($datos['id'])[0];
+        $saldo = $this->getSaldoByUsuario($generales['IdUsuarioFF']);
+        $saldoGasolina = $this->getSaldoGasolinaByUsuario($generales['IdUsuarioFF']);
+
+        $saldoNuevo = ((float) $saldo + (float) $generales['Monto']);
+        $saldoGasolinaNuevo = (float) $saldoGasolina;
+        if (in_array($generales['IdConcepto'], [8, '8'])) {
+            $saldoNuevo = (float) $saldo;
+            $saldoGasolinaNuevo = ((float) $saldoGasolina + (float) $generales['Monto']);
+        }
+
+        $this->actualizar("t_comprobacion_fondo_fijo", [
+            "IdEstatus" => 10,
+            "Saldo" => $saldoNuevo,
+            "SaldoGasolina" => $saldoGasolinaNuevo,
+            "IdUsuarioAutoriza" => $this->usuario['Id'],
+            "FechaAutorizacion" => $this->getFecha(),
+            "EnPresupuesto" => 0,
+            "ObservacionesRechazo" => trim($datos['observaciones']),
+            "Cobrable" => 1
                 ], ["Id" => $datos['id']]);
 
         if ($this->estatusTransaccion() === FALSE) {

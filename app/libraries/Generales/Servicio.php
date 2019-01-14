@@ -2024,6 +2024,7 @@ class Servicio extends General {
             'IdEstatus' => '4',
             'FechaConclusion' => $fecha
                 ), array('Id' => $datos['servicio']));
+        $this->DBP->actualizaInventariosMovimientosXConslusionCorrectivo($datos['servicio']);
         $verificarEstatusTicket = $this->DBS->getServicios('SELECT 
                                                                 IdEstatus,
                                                                 IdSolicitud

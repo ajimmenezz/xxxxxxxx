@@ -1610,11 +1610,16 @@ class Seguimientos extends General {
                     'Observaciones' => $datos['observaciones']
                 );
 
-                if (is_array($datos['datosTablaReparacionRefaccion'])) {
-                    $datosTablaReparacionRefaccion = $datos['datosTablaReparacionRefaccion'];
+                if (isset($datos['usaStock']) && $datos['usaStock']) {
+                    $datosTablaReparacionRefaccion = $this->DBP->getDatosTablaReparacionRefaccionInventario($datos['datosTablaReparacionRefaccion']);
                 } else {
-                    $datosTablaReparacionRefaccion = divideString($datos['datosTablaReparacionRefaccion'], 3);
+                    if (is_array($datos['datosTablaReparacionRefaccion'])) {
+                        $datosTablaReparacionRefaccion = $datos['datosTablaReparacionRefaccion'];
+                    } else {
+                        $datosTablaReparacionRefaccion = divideString($datos['datosTablaReparacionRefaccion'], 3);
+                    }
                 }
+
 
                 if ($archivos) {
                     $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionRefaccion($dataCorrectivosSoluciones, $datosTablaReparacionRefaccion);
@@ -1693,7 +1698,7 @@ class Seguimientos extends General {
                 );
 
                 if ($archivos) {
-                    $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionCambio($dataCorrectivosSoluciones, $datos['equipo'], $datos['serie'], $dataCenso);
+                    $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionCambio($dataCorrectivosSoluciones, $datos['equipo'], $datos['serie'], $dataCenso, $datos['idsInventario'], $datos['operacion']);
                     $archivos = implode(',', $archivos);
                     if ($datos['evidencias'] !== NULL) {
                         if ($datos['evidencias'] !== '') {
@@ -1713,7 +1718,7 @@ class Seguimientos extends General {
                     }
                 } else {
                     $evidencias = $this->DBS->consultaGeneralSeguimiento('SELECT Evidencias FROM t_correctivos_soluciones WHERE IdServicio = ' . $datos['servicio'] . ' order by Fecha DESC LIMIT 1');
-                    $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionCambio($dataCorrectivosSoluciones, $datos['equipo'], $datos['serie'], $dataCenso);
+                    $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionCambio($dataCorrectivosSoluciones, $datos['equipo'], $datos['serie'], $dataCenso, $datos['idsInventario'], $datos['operacion']);
                     if (!empty($IdCorrectivoSoluciones)) {
                         $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
                             'Evidencias' => $evidencias[0]['Evidencias']
@@ -2403,6 +2408,8 @@ class Seguimientos extends General {
             'FechaConclusion' => $fecha
                 ), array('Id' => $datos['servicio'])
         );
+
+        $this->DBP->actualizaInventariosMovimientosXConslusionCorrectivo($datos['servicio']);
     }
 
     public function solicitarMultimedia(array $datos) {

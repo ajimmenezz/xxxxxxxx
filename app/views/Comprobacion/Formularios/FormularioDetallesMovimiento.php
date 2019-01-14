@@ -44,7 +44,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label class="f-s-13 f-w-600">Autorizado por</label>
-            <label class="form-control"><?php echo ($generales['EnPresupuesto'] == "SI") ? 'PRESUPUESTO' : $generales['Autoriza']; ?></label>
+            <label class="form-control"><?php echo ($generales['EnPresupuesto'] == "SI" && !in_array($generales['IdTipoMovimiento'], [5, '5'])) ? 'PRESUPUESTO' : $generales['Autoriza']; ?></label>
         </div>
     </div>
     <div class="col-md-6 col-sm-6 col-xs-12">

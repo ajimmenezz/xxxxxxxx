@@ -729,299 +729,47 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         return $consulta;
     }
 
-    /*     * *********************************************************** */
-
-    public function getElementosSucursal($id = "") {
-        $consulta = $this->consulta("select
-                                    tes.Id,
-                                    (select Nombre from cat_v3_x4d_ubicaciones WHERE Id = tes.IdUbicacion) as Ubicacion,
-                                    (select Nombre from cat_v3_x4d_tipos_sistema WHERE Id = tes.IdSistema) as Sistema,
-                                    concat(
-                                            (select Nombre from cat_v3_x4d_equipos where Id = cxe.IdEquipo),
-                                            ' - ',
-                                            (select Nombre from cat_v3_x4d_marcas where Id = cxe.IdMarca),
-                                            ' - ',
-                                            cxe.Nombre
-                                    ) as Elemento,                                    
+    public function getComponentesDisponiblesParaServicio(int $usuario, int $modelo, string $idsBloqueados = '') {
+        $idsBloqueados = ($idsBloqueados != '') ? $idsBloqueados : '0';
+        $consulta = $this->consulta("select 
+                                    IdProducto,
+                                    (select concat(Nombre, ' (', (select Nombre from cat_v3_modelos_equipo where Id = cce.IdModelo), ')') from cat_v3_componentes_equipo cce where Id = IdProducto) as Producto,
+                                    Cantidad,
+                                    Id as IdInventario,
                                     Serie,
-                                    ClaveCinemex,
-                                    Imagen
-                                    from t_elementos_salas4D tes inner join cat_v3_x4d_elementos cxe
-                                    on tes.IdElemento = cxe.Id
-                                    where IdSucursal = '" . $id . "' and tes.Flag = 1;");
+                                    Bloqueado as Usado
+                                    from t_inventario where IdTipoProducto = 2 and IdProducto in (
+                                    select Id from cat_v3_componentes_equipo where IdModelo in (
+                                    select Id from cat_v3_modelos_equipo where Marca in (
+                                    select Id from cat_v3_marcas_equipo where Sublinea in (
+                                    select Id from cat_v3_sublineas_equipo where Linea = 
+                                    (select Linea from cat_v3_sublineas_equipo where Id = (select Sublinea from cat_v3_marcas_equipo where Id = (select Marca from cat_v3_modelos_equipo where Id = '" . $modelo . "')))))))
+                                    and IdAlmacen in (select Id from cat_v3_almacenes_virtuales where (IdTipoAlmacen = 1 && IdReferenciaAlmacen = '" . $usuario . "') || IdResponsable = '" . $usuario . "')
+                                    and (Bloqueado = 0 || Id in (" . $idsBloqueados . "))
+                                    and IdEstatus = 17");
         return $consulta;
     }
 
-    public function getSubelementosSucursal($id = "") {
-        $consulta = $this->consulta("select
-                                    tss.Id,
-                                    (select Nombre from cat_v3_x4d_ubicaciones WHERE Id = tes.IdUbicacion) as Ubicacion,
-                                    (select Nombre from cat_v3_x4d_tipos_sistema WHERE Id = tes.IdSistema) as Sistema,
-                                    concat(
-                                                                    (select Nombre from cat_v3_x4d_equipos where Id = cxe.IdEquipo),
-                                                                    ' - ',
-                                                                    (select Nombre from cat_v3_x4d_marcas where Id = cxe.IdMarca),
-                                                                    ' - ',
-                                                                    cxe.Nombre
-                                    ) as Elemento,                                    
-                                    concat(	
-                                                                    cxs.Nombre,
-                                                                    ' - ',
-                                                                    (select Nombre from cat_v3_x4d_marcas where Id = cxs.IdMarca)
-
-                                    ) as Subelemento,  
-                                    tss.Serie,
-                                    tss.ClaveCinemex,
-                                    tss.Imagen
-                                    from t_elementos_salas4D tes 
-                                    inner join t_subelementos_salas4D tss on tes.Id = tss.IdRegistroElemento
-                                    inner join cat_v3_x4d_elementos cxe on tes.IdElemento = cxe.Id
-                                    inner join cat_v3_x4d_subelementos cxs on tss.IdSubelemento = cxs.Id
-
-                                    where IdSucursal = '" . $id . "' and tes.Flag = 1 and tss.Flag = 1;");
-        return $consulta;
-    }
-
-    public function getUbicaciones($id = '') {
-        $condicion = ($id != '') ? ' WHERE Id = "' . $id . '"' : ' WHERE Flag = 1 ';
-        $consulta = $this->consulta('select Id, Nombre from cat_v3_x4d_ubicaciones ' . $condicion . ' order by Nombre');
-        return $consulta;
-    }
-
-    public function getSistemas($id = '') {
-        $condicion = ($id != '') ? ' WHERE Id = "' . $id . '"' : ' WHERE Flag = 1 ';
-        $consulta = $this->consulta('select Id, Nombre from cat_v3_x4d_tipos_sistema ' . $condicion . ' order by Nombre');
-        return $consulta;
-    }
-
-    public function getElementos($id = '') {
-        $condicion = ($id != '') ? ' WHERE Id = "' . $id . '"' : ' WHERE Flag = 1 ';
+    public function getEquiposDisponiblesParaServicio(int $usuario, int $modelo, string $idsBloqueados = '') {
+        $idsBloqueados = ($idsBloqueados != '') ? $idsBloqueados : '0';
         $consulta = $this->consulta("select 
-                                    Id, 
-                                    concat(
-                                            (select Nombre from cat_v3_x4d_equipos where Id = cxe.IdEquipo),
-                                            ' - ',
-                                            (select Nombre from cat_v3_x4d_marcas where Id = cxe.IdMarca),
-                                            ' - ',
-                                            Nombre
-                                    ) as Nombre from cat_v3_x4d_elementos cxe " . $condicion . " order by Nombre");
+                                    IdProducto,
+                                    modelo(IdProducto) as Producto,
+                                    Cantidad,
+                                    Id as IdInventario,
+                                    Serie,
+                                    Bloqueado as Usado
+                                    from 
+                                    t_inventario
+                                    where IdTipoProducto = 1 and IdProducto in (
+                                    select Id from cat_v3_modelos_equipo where Marca in (
+                                    select Id from cat_v3_marcas_equipo where Sublinea in (
+                                    select Id from cat_v3_sublineas_equipo where Linea = 
+                                    (select Linea from cat_v3_sublineas_equipo where Id = (select Sublinea from cat_v3_marcas_equipo where Id = (select Marca from cat_v3_modelos_equipo where Id = '" . $modelo . "'))))))
+                                    and IdAlmacen in (select Id from cat_v3_almacenes_virtuales where (IdTipoAlmacen = 1 && IdReferenciaAlmacen = '" . $usuario . "') || IdResponsable = '" . $usuario . "')
+                                    and (Bloqueado = 0 || Id in (" . $idsBloqueados . "))
+                                    and IdEstatus = 17;");
         return $consulta;
-    }
-
-    public function insertaElementos($data) {
-        $this->iniciaTransaccion();
-        $return_array = [
-            'code' => 500,
-            'ids' => []
-        ];
-        foreach ($data['data'] as $key => $value) {
-            $fecha = $this->consulta("select now() as Fecha;");
-
-            $this->insertar("t_elementos_salas4d", [
-                "IdUsuario" => $this->usuario['Id'],
-                "IdSucursal" => $data['sucursal'],
-                "IdUbicacion" => $value['ubicacion'],
-                "IdSistema" => $value['sistema'],
-                "IdElemento" => $value['elemento'],
-                "Serie" => $value['serie'],
-                "ClaveCinemex" => $value['clave'],
-                "Imagen" => $data['images'],
-                "FechaCaptura" => $fecha[0]['Fecha']]
-            );
-            array_push($return_array['ids'], $this->connectDBPrueba()->insert_id());
-        }
-
-        if ($this->estatusTransaccion() === FALSE) {
-            $this->roolbackTransaccion();
-            $return_array['ids'] = [];
-        } else {
-            $this->commitTransaccion();
-            $return_array['code'] = 200;
-        }
-        return $return_array;
-    }
-
-    public function insertaSublemento($data, $imagenes = '') {
-        $id = '';
-        $this->iniciaTransaccion();
-
-        $fecha = $this->consulta("select now() as Fecha;");
-
-        $this->insertar("t_subelementos_salas4D", [
-            "IdUsuario" => $this->usuario['Id'],
-            "IdRegistroElemento" => $data['elemento'],
-            "IdSubelemento" => $data['subelemento'],
-            "Serie" => $data['serie'],
-            "ClaveCinemex" => $data['clave'],
-            "Imagen" => $imagenes,
-            "FechaCaptura" => $fecha[0]['Fecha']]
-        );
-
-        if ($this->estatusTransaccion() === FALSE) {
-            $this->roolbackTransaccion();
-        } else {
-            $id = $this->connectDBPrueba()->insert_id();
-            $this->commitTransaccion();
-        }
-
-        return $id;
-    }
-
-    public function guardaCambiosElemento($data, $imagenes = '') {
-        $fecha = $this->consulta("select now() as Fecha;");
-        if (!$this->connectDBPrueba()->simple_query(""
-                        . "update t_elementos_salas4d "
-                        . "set IdUsuario = '" . $this->usuario['Id'] . "', "
-                        . "IdSucursal = '" . $data['sucursal'] . "', "
-                        . "IdUbicacion = '" . $data['ubicacion'] . "', "
-                        . "IdSistema = '" . $data['sistema'] . "', "
-                        . "IdElemento = '" . $data['elemento'] . "', "
-                        . "Serie = '" . $data['serie'] . "', "
-                        . "ClaveCinemex = '" . $data['clave'] . "', "
-                        . "Imagen = '" . $imagenes . "', "
-                        . "FechaCaptura = '" . $fecha[0]['Fecha'] . "' "
-                        . "where Id = '" . $data['registro'] . "';")) {
-            return ['code' => 500, 'error' => $this->connectDBPrueba()->error()];
-        } else {
-            return ['code' => 200, 'error' => ''];
-        }
-    }
-
-    public function getElementosRegistrados($ids = '0') {
-        $consulta = $this->consulta("select 
-                                    tes.Id,
-                                    tes.IdElemento,
-                                    concat(
-                                            (select Nombre from cat_v3_x4d_equipos where Id = cxe.IdEquipo),
-                                            ' - ',
-                                            (select Nombre from cat_v3_x4d_marcas where Id = cxe.IdMarca),
-                                            ' - ',
-                                            Nombre,
-                                            ' (Serie: ',
-                                            if(tes.Serie <> '', tes.Serie, 'S/N'),
-                                            ', Clave: ',
-                                            if(tes.ClaveCinemex <> '', tes.ClaveCinemex, 'S/N'),
-                                            ')'
-                                    ) as Nombre
-
-                                    from t_elementos_salas4d tes inner join cat_v3_x4d_elementos cxe
-                                    on tes.IdElemento = cxe.Id
-                                    where tes.Id in (" . $ids . ") and tes.Flag = 1;");
-        return $consulta;
-    }
-
-    public function getCatalogoSublementosByRegistro($idRegistro = '') {
-        $consulta = $this->consulta("select 
-                                    cxs.Id,
-                                    concat(cxs.Nombre,' - ',(select Nombre from cat_v3_x4d_marcas where Id = cxs.IdMarca)) as Nombre
-                                    from cat_v3_x4d_subelementos cxs 
-                                    where IdElemento = (select IdElemento from t_elementos_salas4d where Id = '" . $idRegistro . "');");
-        return $consulta;
-    }
-
-    public function getSubelementosByRegistro($idRegistro = '') {
-        $consulta = $this->consulta("select 
-                                    tss.Id,
-                                    concat(cxs.Nombre,' - ',(select Nombre from cat_v3_x4d_marcas where Id = cxs.IdMarca)) as Subelemento,
-                                    tss.Serie,
-                                    tss.ClaveCinemex,
-                                    tss.Imagen
-                                    from t_subelementos_salas4D tss 
-                                    inner join cat_v3_x4d_subelementos cxs on tss.IdSubelemento = cxs.Id
-
-                                    where tss.IdRegistroElemento = '" . $idRegistro . "' and tss.Flag = 1
-                                    ORDER BY tss.FechaCaptura desc; ");
-        return $consulta;
-    }
-
-    public function getDetallesElemento($idRegistro = '') {
-        $consulta = $this->consulta("select 
-                                    tes.*,
-                                    (select Nombre from cat_v3_x4d_ubicaciones where Id = tes.IdUbicacion) as Ubicacion,
-                                    (select Nombre from cat_v3_x4d_tipos_sistema where Id = tes.IdSistema) as Sistema,
-                                    (select                                     
-                                        concat(
-                                            Nombre,                                            
-                                            ' - ',
-                                            (select Nombre from cat_v3_x4d_marcas where Id = cxe.IdMarca)
-                                        ) as Nombre from cat_v3_x4d_elementos cxe
-                                        where cxe.Id = tes.IdElemento
-                                    ) as Elemento                                    
-                                    from t_elementos_salas4d  tes
-                                    where tes.Id = '" . $idRegistro . "';");
-        return $consulta;
-    }
-
-    public function getDetallesSubelemento($idRegistro = '') {
-        $consulta = $this->consulta("select
-                                    tss.Id,
-                                    (select Nombre from cat_v3_x4d_ubicaciones WHERE Id = tes.IdUbicacion) as Ubicacion,
-                                    (select Nombre from cat_v3_x4d_tipos_sistema WHERE Id = tes.IdSistema) as Sistema,
-                                    concat(
-                                                                    (select Nombre from cat_v3_x4d_equipos where Id = cxe.IdEquipo),
-                                                                    ' - ',
-                                                                    (select Nombre from cat_v3_x4d_marcas where Id = cxe.IdMarca),
-                                                                    ' - ',
-                                                                    cxe.Nombre
-                                    ) as Elemento,                                    
-                                    concat(	
-                                                                    cxs.Nombre,
-                                                                    ' - ',
-                                                                    (select Nombre from cat_v3_x4d_marcas where Id = cxs.IdMarca)
-
-                                    ) as Subelemento,  
-                                    tss.Serie,
-                                    tss.ClaveCinemex,
-                                    tss.Imagen
-                                    from t_elementos_salas4D tes 
-                                    inner join t_subelementos_salas4D tss on tes.Id = tss.IdRegistroElemento
-                                    inner join cat_v3_x4d_elementos cxe on tes.IdElemento = cxe.Id
-                                    inner join cat_v3_x4d_subelementos cxs on tss.IdSubelemento = cxs.Id
-
-                                    where tss.Id = '" . $idRegistro . "';");
-        return $consulta;
-    }
-
-    public function eliminarSubelemento($idRegistro = '') {
-        $fecha = $this->consulta("select now() as Fecha;");
-        if (!$this->connectDBPrueba()->simple_query(""
-                        . "update t_subelementos_salas4D "
-                        . "set Flag = 0, "
-                        . "FechaElimina = '" . $fecha[0]['Fecha'] . "', "
-                        . "UsuarioElimina = '" . $this->usuario['Id'] . "'"
-                        . "where Id = '" . $idRegistro . "';")) {
-            return ['code' => 500, 'error' => $this->connectDBPrueba()->error()];
-        } else {
-            return ['code' => 200, 'error' => ''];
-        }
-    }
-
-    public function eliminarElemento($idRegistro = '') {
-        $fecha = $this->consulta("select now() as Fecha;");
-        if (!$this->connectDBPrueba()->simple_query(""
-                        . "update t_elementos_salas4d "
-                        . "set Flag = 0, "
-                        . "FechaElimina = '" . $fecha[0]['Fecha'] . "', "
-                        . "UsuarioElimina = '" . $this->usuario['Id'] . "'"
-                        . "where Id = '" . $idRegistro . "';")) {
-            return ['code' => 500, 'error' => $this->connectDBPrueba()->error()];
-        } else {
-            return ['code' => 200, 'error' => ''];
-        }
-    }
-
-    public function actualizaImagenesElemento($elemento, $imagenes) {
-        $fecha = $this->consulta("select now() as Fecha;");
-        if (!$this->connectDBPrueba()->simple_query(""
-                        . "update t_elementos_salas4d "
-                        . "set IdUsuario = '" . $this->usuario['Id'] . "', "
-                        . "FechaCaptura = '" . $fecha[0]['Fecha'] . "', "
-                        . "Imagen = '" . $imagenes . "' "
-                        . "where Id = '" . $elemento . "';")) {
-            return ['code' => 500, 'error' => $this->connectDBPrueba()->error()];
-        } else {
-            return ['code' => 200, 'error' => ''];
-        }
     }
 
 }
