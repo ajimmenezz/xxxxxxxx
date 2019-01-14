@@ -108,7 +108,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12 hidden divRefaccionEquipo">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Equipo *</label>
-                        <select id="listaSolicitarEquipo" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
+                        <select id="listaSolicitarEquipo" class="form-control" style="width: 100%" disabled>
                             <option value="">Selecciona . . .</option>
                             <?php
                             foreach ($listaEquipo as $item) {
@@ -121,7 +121,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12 hidden divRefaccionEquipo">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Refacción</label>
-                        <select id="listaSolicitarRefaccion" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
+                        <select id="listaSolicitarRefaccion" class="form-control" style="width: 100%" disabled>
                             <option value="">Selecciona . . .</option>
                         </select>
                     </div>
@@ -130,12 +130,13 @@
         </form>
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-                <div id="errorFormulario"></div>
+                <div id="errorFormularioValidacion"></div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-                <a id="btnGuardarValidacion" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-15">Guardar Validación</a>
+                <a id="btnGuardarValidacion" href="javascript:;" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-15">Guardar Validación</a>
+                <!--<a id="btnConcluirServicioCorrectivo" href="javascript:;" class="btn btn-danger m-r-5 "><i class="fa fa-unlock-alt"></i> Concluir Servicio</a>-->
             </div>
         </div>
     </div>

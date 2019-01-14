@@ -44,10 +44,10 @@ $(function () {
         select.crearSelect('#listaSolicitarRefaccion');
 
         //Fecha y hora
-        $('#fechaValidacion').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm:ss'
-        });
-        
+//        $('#fechaValidacion').datetimepicker({
+//            format: 'YYYY-MM-DD HH:mm:ss'
+//        });
+
         //obtener valor fecha
         $("#fechaValidacion").val();
         $("#fechaEnvio").val();
@@ -94,6 +94,7 @@ $(function () {
                 });
 
                 selectTicket();
+                guardarValidacion();
             } else {
                 evento.mostrarMensaje("#errorFormulario", true, "No hay ningun Servicio en Problema", 4000);
             }
@@ -129,8 +130,6 @@ $(function () {
 
             select.cambiarOpcion('#listaTipoPersonal', '');
             evento.enviarEvento('Seguimiento/MostrarEquipoDanado', datos, panel, function (respuesta) {
-//                console.log(respuesta);
-//                var equipo = respuesta.Equipo;
                 $.each(respuesta, function (k, v) {
                     $('#equipoEnviado').empty().attr("value", v.Equipo);
                 });
@@ -178,6 +177,7 @@ $(function () {
         });
     };
 
+    var flagEquipoRefaccion = 0;
     var radioMovimiento = function () {
         var radioMovimiento = $("input[name='movimiento']:checked").val();
 
@@ -200,7 +200,8 @@ $(function () {
                     $('#divEquipoEnvio').addClass('hidden');
                     $('.divRefaccionEquipo').removeClass('hidden');
                     $('#listaSolicitarEquipo').removeAttr('disabled');
-                    selectEquipo();
+                    selectEquipoValidacion();
+                    flagEquipoRefaccion = 1;
                     break;
                 default:
                     break;
@@ -208,7 +209,7 @@ $(function () {
         });
     };
 
-    var selectEquipo = function () {
+    var selectEquipoValidacion = function () {
         $('#listaSolicitarEquipo').on('change', function () {
             var seleccionado = $('#listaSolicitarEquipo option:selected').val();
             var datos = {'idEquipo': seleccionado};
@@ -227,6 +228,46 @@ $(function () {
             });
 
             $('#listaSolicitarRefaccion').attr('disabled', 'disabled');
+        });
+    };
+
+    var validarEquipo = function () {
+        var seleccionEquipo = $('#listaSolicitarEquipo option:selected').val();
+
+        if (flagEquipoRefaccion === 1 && seleccionEquipo !== "") {
+            return 1;
+        } else {
+            return 0;
+        }
+
+    };
+
+    var guardarValidacion = function () {
+        $('#btnGuardarValidacion').off('click');
+        $('#btnGuardarValidacion').on('click', function () {
+            var selectSolicitudEquipo = validarEquipo();
+            console.log(selectSolicitudEquipo);
+//            var flagSelectEquipo = 0;
+//
+//            selecSolicitudEquipo === 1 ? flagSelectEquipo = 1 : flagSelectEquipo = 0;
+//
+//            if (selecSolicitudEquipo === 1) {
+////                console.log(flagSelectEquipo);
+//                if (evento.validarFormulario('#formValidacion')) {
+//                    console.log("validado");
+//                }else{
+//                    console.log("0");
+//                }
+//            } else if (flagSelectEquipo === 0){
+//                evento.mostrarMensaje("#errorFormularioValidacion", true, "Seleccione el equipo solicitado", 4000);            
+//            } else {
+////                evento.mostrarMensaje("#errorFormularioValidacion", true, "Seleccione el equipo solicitado", 4000);
+//                if (evento.validarFormulario('#formValidacion')) {
+//                    console.log("validado");
+//                }
+//            }
+
+
         });
     };
 
