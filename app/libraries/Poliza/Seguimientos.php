@@ -2577,4 +2577,86 @@ class Seguimientos extends General {
         return $this->DBS->consultaGeneralSeguimiento('SELECT COUNT(Id) AS Contador FROM t_mantenimientos_equipo_faltante WHERE IdServicio = "' . $servicio . '"');
     }
 
+    //Seguimiento Equipos
+    public function mostrarVistaPorUsuario() {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $idPerfil = $usuario['IdPerfil'];
+        $datos= [];
+        
+//      57 = Técnico de Mantenimiento Correctivo
+//      52 = Responsable de logistica
+//      38 = Responsable de Laboratorio
+//      56 = Técnico de Laboratorio     
+//         = Jefetura de almacen
+        switch ($idPerfil) {
+            case '38': //ok
+            case '56':
+                $datos['IdPerfil'] = 38;
+                $datos['nombrePerfil'] = "Laboratorio";
+                break;
+            case '41':
+            case '52': 
+            case '60': //ok
+                $datos['IdPerfil'] = 52;
+                $datos['nombrePerfil'] = " Logística";
+                break;
+            case '57': //ok
+                $datos['IdPerfil'] = 57;
+                $datos['nombrePerfil'] = "Técnico de Mantenimiento Correctivo";
+                break;
+            case '51':
+            case '62': //ok
+                $datos['IdPerfil'] = 62;
+                $datos['nombrePerfil'] = "Almacen";
+                break;
+            default:
+                break;
+        }
+        return $datos;
+    }
+    
+    // regresa el estatus de t_equipos_allab
+    public function vistaPorPerfil() {
+//        $data = $this->DBP->consultaEstatus();
+        $datosUsuario = $this->mostrarVistaPorUsuario();
+        $data['ticketsEnProblemas'] = $this->DBP->consultaTicketXUsuario();
+        $data['tipoPersonaValida'] = $this->DBP->mostrarPerfilPersonaValida();
+        $data['listaEquipo'] = $this->DBP->mostrarEquipo();
+        
+        $formulario = array ('formulario' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE),
+                              'datosUsuario' => $datosUsuario,
+                              'dataUsuario' => $data);
+        return $formulario;
+    }
+    
+    public function mostrarEquipoDanado($idServicio) {
+        $equipoDanado = $this->DBP->mostrarEquipoDanado($idServicio['idServcio']);
+        return $equipoDanado;
+    }
+    
+    public function mostrarTicketsUsuario(){
+        $informacionServicioa = $this->DBP->consultaTicketXUsuario();
+        return $informacionServicioa;
+    }
+    
+    public function mostrarServiciosUsuario($datos){
+        $informacionServicio = $this->DBP->consultaServicioXUsuario($datos['idTicket']);
+        return $informacionServicio;
+    }
+    
+    public function mostrarPerfilPersonaValida() {
+        $perfilPersonaValida = $this->DBP->mostrarPerfilPersonaValida();
+        return $perfilPersonaValida;
+    }
+    
+    public function mostrarNombrePersonalValida($datos) {
+        $nombrePersonal = $this->DBP->mostrarNombrePersonalValida($datos['idTipoPersonal']);
+        return $nombrePersonal;
+    }
+    
+    public function mostrarRefaccionXEquipo($datos) {
+        $refaccion = $this->DBP->mostrarRefaccionXEquipo($datos['idEquipo']);
+        return $refaccion;
+    }
+
 }

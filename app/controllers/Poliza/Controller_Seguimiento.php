@@ -266,6 +266,24 @@ class Controller_Seguimiento extends Base {
             case 'nuevosServiciosDesdeChecklist':
                 $resultado = $this->Poliza->nuevosServiciosDesdeChecklist($this->input->post());
                 break;
+            case 'VistaPorPerfil':
+                $resultado = $this->Seguimientos->vistaPorPerfil();
+                break;
+            case 'MostrarTicketsUsuario':
+                $resultado = $this->Seguimientos->mostrarTicketsUsuario();
+                break;
+            case 'MostrarServiciosUsuario':
+                $resultado = $this->Seguimientos->mostrarServiciosUsuario($this->input->post());
+                break;
+            case 'MostrarEquipoDanado':
+                $resultado = $this->Seguimientos->mostrarEquipoDanado($this->input->post());
+                break;
+            case 'MostrarNombrePersonalValida':
+                $resultado = $this->Seguimientos->mostrarNombrePersonalValida($this->input->post());
+                break;
+            case 'MostrarRefaccionXEquipo':
+                $resultado = $this->Seguimientos->mostrarRefaccionXEquipo($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

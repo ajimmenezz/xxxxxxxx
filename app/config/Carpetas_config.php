@@ -91,7 +91,7 @@ $config['Secciones'] = array(
         'Servicios-Correctivos-Sin-Firma' => 'Servicios_Sin_Firma',
         'Resumen-Vueltas-Asocidaos' => 'Resumen_Vueltas_Asociados',
         'Catalogo-Checklist' => 'Catalogo_Checklist',
-        'Seguimiento-Equipos' => 'Catalogo_Seguimiento_Equipos'
+        'Seguimiento-Equipos' => 'Seguimiento_Equipos'
     ),
     'Redes' => array(
         'Dashboard-Redes' => 'Dashboard',

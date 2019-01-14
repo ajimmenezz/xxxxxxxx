@@ -865,5 +865,77 @@ class Modelo_Poliza extends Modelo_Base {
 //            return false;
         return $respuesta;
     }
+    
+    public function consultaEstatus($IdUsario){
+//        $r = $this->consulta("SELECT * FROM t_correctivos_generales WHERE Id = '" . $ultimoIdCorrectivosGenerales . "'");
+    }
+    
+    public function consultaTicketXUsuario() {
+        $tickets = $this->consulta("SELECT tst.Id,tst.Ticket FROM t_servicios_ticket tst WHERE IdEstatus = '3' AND Atiende = '". $this->usuario['Id'] ."'");
+        return $tickets;
+    }
+    
+    public function consultaServicioXUsuario($datos) {
+        $tickets = $this->consulta("SELECT 
+                                        tst.Id,
+                                        tst.Ticket,
+                                        tst.IdSucursal,
+                                        tst.IdEstatus,
+                                        tst.Atiende,
+                                        tst.Descripcion,
+                                        tcg.IdModelo 
+                                    FROM
+                                        t_servicios_ticket tst
+                                        INNER JOIN t_correctivos_generales tcg
+                                    WHERE
+                                        tst.IdEstatus = '3' AND
+                                        tst.Id = '". $datos."' AND
+                                        tst.Id = tcg.IdServicio;");
+        return $tickets;
+    }
+    
+    public function mostrarEquipoDanado($idModelo) {
+        $equipoDanado = $this->consulta("SELECT 
+                                            *
+                                        FROM
+                                            v_equipos
+                                        WHERE
+                                            Id = '" . $idModelo .  "'");
+        
+        return $equipoDanado;
+    }
+    
+    public function mostrarPerfilPersonaValida() {
+        $personaValida = $this->consulta("SELECT 
+                                            cp.Id, cp.Nombre
+                                        FROM
+                                            cat_perfiles cp
+                                        WHERE
+                                            cp.Id IN (38 , 39, 46)");
+        return $personaValida;
+    }
+    
+    public function mostrarNombrePersonalValida($datos) {
+        $datosPersonal = $this->consulta("SELECT 
+                                            cvu.Id,CONCAT(trp.Nombres,' ',trp.ApPaterno) AS Nombre
+                                        FROM
+                                            t_rh_personal trp
+                                        INNER JOIN
+                                                cat_v3_usuarios cvu
+                                        WHERE trp.IdUsuario = cvu.Id AND
+                                        IdPerfil = '". $datos ."'");
+        
+        return $datosPersonal;
+    }
+    
+    public function mostrarEquipo() {
+        $equipo = $this->consulta("SELECT * FROM v_equipos");
+        return $equipo;
+    }
+    
+    public function mostrarRefaccionXEquipo($dato) {
+        $refaccionXequipo = $this->consulta("SELECT * FROM cat_v3_componentes_equipo WHERE IdModelo = '". $dato . "' AND Flag = 1");
+        return $refaccionXequipo;
+    }
 
 }
