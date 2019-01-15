@@ -1,6 +1,16 @@
 <!-- Empezando titulo de la pagina -->
-<h1 class="page-header">Alta <small>de Personal</small></h1>
+<div class="row">
+    <div class="col-md-6 col-xs-6">
+        <h1 class="page-header">Alta <small>de Personal</small></h1>
+    </div>
+    <div class="col-md-6 col-xs-6 text-right">
+        <label id="btnCancelarActualizarPersonal" class="btn btn-success">
+            <i class="fa fa fa-reply"></i> Regresar
+        </label>  
+    </div>
+</div>
 <!-- Finalizando titulo de la pagina -->
+
 <!-- Empezando panel alta de personal -->
 <div id="seccion-datos-personal" class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
     <div class="panel-heading p-0">
@@ -12,19 +22,24 @@
             <ul class="nav nav-tabs nav-tabs-inverse">
                 <li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>
                 <li class="active"><a href="#nav-tab-informormacion-personal" data-toggle="tab">Información Personal</a></li>
-                <li class="hidden"><a href="#nav-tab-datos-personales" data-toggle="tab">Datos Personales</a></li>
-                <li class="hidden"><a href="#nav-tab-academicos" data-toggle="tab">Academicos</a></li>
-                <li class="hidden"><a href="#nav-tab-idiomas" data-toggle="tab">Idiomas</a></li>
-                <li class="hidden"><a href="#nav-tab-computacionales" data-toggle="tab">Computacionales</a></li>
-                <li class="hidden"><a href="#nav-tab-sistemas-especiales" data-toggle="tab">Sistemas Especiales</a></li>
-                <li class="hidden"><a href="#nav-tab-automovil" data-toggle="tab">Automovil</a></li>
-                <li class="hidden"><a href="#nav-tab-dependientes-economicos" data-toggle="tab">Dependientes Economicos</a></li>
+                <li class=""><a href="#nav-tab-datos-personales" data-toggle="tab">Datos Personales</a></li>
+                <li class=""><a href="#nav-tab-academicos" data-toggle="tab">Academicos</a></li>
+                <li class=""><a href="#nav-tab-idiomas" data-toggle="tab">Idiomas</a></li>
+                <li class=""><a href="#nav-tab-computacionales" data-toggle="tab">Computacionales</a></li>
+                <li class=""><a href="#nav-tab-sistemas-especiales" data-toggle="tab">Sistemas Especiales</a></li>
+                <li class=""><a href="#nav-tab-automovil" data-toggle="tab">Automovil</a></li>
+                <li class=""><a href="#nav-tab-dependientes-economicos" data-toggle="tab">Dependientes Economicos</a></li>
                 <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
             </ul>
         </div>
     </div>
     <div class="panel-body">
         <div class="tab-content">
+            <div id="cargandoInformacionUsuario" class="text-center hidden">
+                <img
+                    width="200"
+                    src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif" />
+            </div>
             <div class="tab-pane fade active in" id="nav-tab-informormacion-personal">
                 <h3 class="m-t-10">Información Personal</h3>
                 <!--Empezando Separador-->
@@ -163,14 +178,12 @@
                             <div class="form-group text-center">
                                 <br>
                                 <a href="javascript:;" class="btn btn-success m-r-5 " id="btnNuevoPersonal"><i class="fa fa-plus"></i> Agregar</a>
-                                <a href="javascript:;" class="btn btn-danger m-r-5 " id="btnCancelarNuevoPersonal"><i class="fa fa-times"></i> Cancelar</a>
                             </div>
                         </div>
                         <div id="actualizarPersonal" class="col-md-12 hidden">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnactualizarPersonal"><i class="fa fa-plus"></i> Actualizar</a>
-                                <a href="javascript:;" class="btn btn-danger m-r-5 " id="btnCancelarActualizarPersonal"><i class="fa fa-times"></i> Cancelar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnactualizarPersonal"><i class="fa fa-pencil"></i> Actualizar</a>
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -236,7 +249,7 @@
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarNacionalidadUsuario">Nacionalidad</label>
-                            <?php (isset($datosPersonal)) ? $nacionalidad = '' : $nacionalidad = $datosPersonal[0]['Nacionalidad']; ?>
+                            <?php (!isset($datosPersonal)) ? $nacionalidad = '' : $nacionalidad = $datosPersonal[0]['Nacionalidad']; ?>
                             <input type="text" class="form-control" id="inputActualizarNacionalidadUsuario" style="width: 100%" value="<?php echo $nacionalidad; ?>"/>                            
                         </div>
                         <div class="col-md-4">
@@ -255,17 +268,17 @@
                     <div class="row m-t-10">
                         <div class="col-md-4">
                             <label for="inputActualizarEstaturaUsuario">Estatura</label>                            
-                            <?php (isset($datosPersonal)) ? $estatura = '' : $estatura = $datosPersonal[0]['Estatura']; ?>
+                            <?php (!isset($datosPersonal)) ? $estatura = '' : $estatura = $datosPersonal[0]['Estatura']; ?>
                             <input type="text" class="form-control" id="inputActualizarEstaturaUsuario" style="width: 100%"  value="<?php echo $estatura; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarPesoUsuario">Peso</label>
-                            <?php (isset($datosPersonal)) ? $peso = '' : $peso = $datosPersonal[0]['Peso']; ?>
+                            <?php (!isset($datosPersonal)) ? $peso = '' : $peso = $datosPersonal[0]['Peso']; ?>
                             <input type="text" class="form-control" id="inputActualizarPesoUsuario" style="width: 100%" value="<?php echo $peso; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="cinputActualizarTipoSangreUsuario">Tipo de sangre</label>
-                            <?php (isset($datosPersonal)) ? $sangre = '' : $sangre = $datosPersonal[0]['Sangre']; ?>
+                            <?php (!isset($datosPersonal)) ? $sangre = '' : $sangre = $datosPersonal[0]['Sangre']; ?>
                             <input type="text" class="form-control" id="inputActualizarTipoSangreUsuario" style="width: 100%" value="<?php echo $sangre; ?>"/>
                         </div>
                     </div>
@@ -273,17 +286,17 @@
                     <div class="row m-t-10">
                         <div class="col-md-4">
                             <label for="inputActualizarTallaPantalonUsuario">Talla de pantalon</label>
-                            <?php (isset($datosPersonal)) ? $tallaPantalon = '' : $tallaPantalon = $datosPersonal[0]['TallaPantalon']; ?>
+                            <?php (!isset($datosPersonal)) ? $tallaPantalon = '' : $tallaPantalon = $datosPersonal[0]['TallaPantalon']; ?>
                             <input type="text" class="form-control" id="inputActualizarTallaPantalonUsuario" style="width: 100%" value="<?php echo $tallaPantalon; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarTallaCamisaPantalonUsuario">Talla de camisa</label>
-                            <?php (isset($datosPersonal)) ? $tallaCamisa = '' : $tallaCamisa = $datosPersonal[0]['Tallacamisa']; ?>
+                            <?php (!isset($datosPersonal)) ? $tallaCamisa = '' : $tallaCamisa = $datosPersonal[0]['TallaCamisa']; ?>
                             <input type="text" class="form-control" id="inputActualizarTallaCamisaUsuario" style="width: 100%" value="<?php echo $tallaCamisa; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarTallaZapatosUsuario">Tallas zapatos</label>
-                            <?php (isset($datosPersonal)) ? $tallaZapatos = '' : $tallaZapatos = $datosPersonal[0]['TallaZapatos']; ?>
+                            <?php (!isset($datosPersonal)) ? $tallaZapatos = '' : $tallaZapatos = $datosPersonal[0]['TallaZapatos']; ?>
                             <input type="text" class="form-control" id="inputActualizarTallaZapatosUsuario" style="width: 100%" value="<?php echo $tallaZapatos; ?>"/>
                         </div>
                     </div>
@@ -291,12 +304,12 @@
                     <div class="row m-t-10">
                         <div class="col-md-4">
                             <label for="inputActualizarInstitutoAforeUsuario">Instituto AFORE</label>
-                            <?php (isset($datosPersonal)) ? $instAfore = '' : $instAfore = $datosPersonal[0]['InstAfore']; ?>
+                            <?php (!isset($datosPersonal)) ? $instAfore = '' : $instAfore = $datosPersonal[0]['InstAfore']; ?>
                             <input type="text" class="form-control" id="inputActualizarInstitutoAforeUsuario" style="width: 100%" value="<?php echo $instAfore; ?>"/>
                         </div>
                         <div class="col-md-4">
                             <label for="inputActualizarNumeroAforeUsuario">Numero de AFORE</label>
-                            <?php (isset($datosPersonal)) ? $afore = '' : $afore = $datosPersonal[0]['Afore']; ?>
+                            <?php (!isset($datosPersonal)) ? $afore = '' : $afore = $datosPersonal[0]['Afore']; ?>
                             <input type="text" class="form-control" id="inputActualizarNumeroAforeUsuario" style="width: 100%" value="<?php echo $afore; ?>"/>
                         </div>
                     </div>
@@ -377,7 +390,7 @@
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarAcademicosUsuario"><i class="fa fa-save"></i> Guardar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnGuardarAcademicosUsuario"><i class="fa fa-plus"></i> Agregar</a>
                             </div>
                         </div>
                     </div>  
@@ -390,6 +403,28 @@
                         <!--Finalizando Error-->
                     </div> 
                 </form>
+
+                <div class="separatorBorder"></div>
+
+                <div class="table-responsive">
+                    <table id="data-table-datos-academicos" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="never">Id</th>
+                                <th class="all">Nivel de estudio</th>
+                                <th class="all">Nombre de la institución</th>
+                                <th class="all">Desde</th>
+                                <th class="all">Hasta</th>
+                                <th class="all">Documento</th>
+                                <th class="all">Acciones</th>
+                                <th class="never">IdNivelEstudio</th>
+                                <th class="never">IdDocumento</th>
+                            </tr>
+                        </thead>
+                        <tbody>                                     
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="tab-pane fade" id="nav-tab-idiomas">
                 <h3 class="m-t-10">Datos Idiomas</h3>
@@ -462,7 +497,7 @@
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarIdiomasUsuario"><i class="fa fa-save"></i> Guardar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnGuardarIdiomasUsuario"><i class="fa fa-plus"></i> Agregar</a>
                             </div>
                         </div>
                     </div>
@@ -475,6 +510,30 @@
                         <!--Finalizando Error-->
                     </div>  
                 </form>
+
+                <div class="separatorBorder"></div>
+
+                <div class="table-responsive">
+                    <table id="data-table-datos-idiomas" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="never">Id</th>
+                                <th class="all">Idioma</th>
+                                <th class="all">Comprensión</th>
+                                <th class="all">Lectura</th>
+                                <th class="all">Escritura</th>
+                                <th class="all">Comentarios</th>
+                                <th class="all">Acciones</th>
+                                <th class="never">IdIdioma</th>
+                                <th class="never">IdComprension</th>
+                                <th class="never">IdLectura</th>
+                                <th class="never">IdEscritura</th>
+                            </tr>
+                        </thead>
+                        <tbody>                                     
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="tab-pane fade" id="nav-tab-computacionales">
                 <h3 class="m-t-10">Datos Computacionales</h3>
@@ -522,7 +581,7 @@
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarComputacionalesUsuario"><i class="fa fa-save"></i> Guardar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnGuardarComputacionalesUsuario"><i class="fa fa-plus"></i> Agregar</a>
                             </div>
                         </div>
                     </div>  
@@ -535,7 +594,28 @@
                         <!--Finalizando Error-->
                     </div> 
                 </form>
+
+                <div class="separatorBorder"></div>
+
+                <div class="table-responsive">
+                    <table id="data-table-datos-computacionales" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="never">Id</th>
+                                <th class="all">Software</th>
+                                <th class="all">Nivel</th>
+                                <th class="all">Comentarios</th>
+                                <th class="all">Acciones</th>
+                                <th class="never">IdSoftware</th>
+                                <th class="never">IdNivelHabilidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>                                     
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
             <div class="tab-pane fade" id="nav-tab-sistemas-especiales">
                 <h3 class="m-t-10">Datos Sistemas Especiales</h3>
                 <!--Empezando Separador-->
@@ -582,7 +662,7 @@
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarEspecialesUsuario"><i class="fa fa-save"></i> Guardar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnGuardarEspecialesUsuario"><i class="fa fa-plus"></i> Agregar</a>
                             </div>
                         </div>
                     </div>
@@ -595,7 +675,28 @@
                         <!--Finalizando Error-->
                     </div> 
                 </form>
+
+                <div class="separatorBorder"></div>
+
+                <div class="table-responsive">
+                    <table id="data-table-datos-sistemas-especiales" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="never">Id</th>
+                                <th class="all">Sistemas</th>
+                                <th class="all">Nivel</th>
+                                <th class="all">Comentarios</th>
+                                <th class="all">Acciones</th>
+                                <th class="never">IdSistema</th>
+                                <th class="never">IdNivelHabilidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>                                     
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
             <div class="tab-pane fade" id="nav-tab-automovil">
                 <h3 class="m-t-10">Datos Automovil</h3>
                 <!--Empezando Separador-->
@@ -669,7 +770,7 @@
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarAutomovilUsuario"><i class="fa fa-save"></i> Guardar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnGuardarAutomovilUsuario"><i class="fa fa-pencil"></i> Actualizar</a>
                             </div>
                         </div>
                     </div>  
@@ -707,7 +808,7 @@
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarDependientesUsuario"><i class="fa fa-save"></i> Guardar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnGuardarDependientesUsuario"><i class="fa fa-plus"></i> Agregar</a>
                             </div>
                         </div>
                     </div>
@@ -720,8 +821,42 @@
                         <!--Finalizando Error-->
                     </div>   
                 </form>
+
+                <div class="separatorBorder"></div>
+
+                <div class="table-responsive">
+                    <table id="data-table-datos-dependientes-economicos" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="never">Id</th>
+                                <th class="all">Nombre</th>
+                                <th class="all">Parentesco</th>
+                                <th class="all">Fecha de Nacimiento</th>
+                                <th class="all">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>                                     
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <!-- Finalizando panel alta de personal -->
+
+<div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <div id="error-in-modal"></div>
+                <button type="button" id="btnCerrarCambios" class="btn btn-secondary">Cerrar</button>
+                <button type="button" id="btnGuardarCambios" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>

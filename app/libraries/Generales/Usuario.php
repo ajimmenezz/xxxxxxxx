@@ -180,6 +180,12 @@ class Usuario extends General {
                 $data['urlFoto'] = $this->DBU->getPersonal('SELECT UrlFoto FROM t_rh_personal WHERE id = ' . $datos['id']);
                 $data['datosPersonal'] = $this->DBU->getPersonal('SELECT * FROM t_rh_personal WHERE id = ' . $datos['id']);
                 $data['consultaV3Usuarios'] = $this->DBU->getPersonal('SELECT IdJefe FROM cat_v3_usuarios WHERE id = ' . $datos['id']);
+                $data['datosAcademicos'] = $this->DBU->consultaTRHAcademicos(array('IdUsuario' => $datos['id']));
+                $data['datosConduccion'] = $this->DBU->consultaTRHConduccion(array('IdUsuario' => $datos['id']));
+                $data['datosIdiomas'] = $this->DBU->consultaTRHIdiomas(array('IdUsuario' => $datos['id']));
+                $data['datosSoftware'] = $this->DBU->consultaTRHSoftware(array('IdUsuario' => $datos['id']));
+                $data['datosSistemas'] = $this->DBU->consultaTRHSistemas(array('IdUsuario' => $datos['id']));
+                $data['datosDependientes'] = $this->DBU->consultaTRHDependientes(array('IdUsuario' => $datos['id']));
             }
             return array('formulario' => parent::getCI()->load->view('RH/Modal/Alta_Personal', $data, TRUE), 'datos' => $data);
         }

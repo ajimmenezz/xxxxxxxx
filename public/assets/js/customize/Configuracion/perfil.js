@@ -378,7 +378,7 @@ $(function () {
                     botonActualizarAcademico();
                     botonEliminarAcademico();
                 } else {
-                    evento.mostrarMensaje("#errorGuardarAcademicosUsuario", false, "Hubo un error contacte al administrador de AdIST", 4000);
+                    mensajeModal('Hubo un error contacte al administrador de AdIST.', 'Error', '#academicos');
                 }
             });
         } else {
@@ -607,8 +607,8 @@ $(function () {
     });
 
     var botonActualizarAcademico = function () {
-        $('.btn-actualizar-academico').off("click");
-        $('.btn-actualizar-academico').on('click', function () {
+        $('#data-table-datos-academicos tbody').off('click', '.btn-actualizar-academico');
+        $('#data-table-datos-academicos tbody').on('click', '.btn-actualizar-academico', function (e) {
             var idAcademico = $(this).data('id-academico');
             var variablesGlobales = viewGlobals();
             actualizarDatosAcademicos(idAcademico, variablesGlobales[2], variablesGlobales[3]);
@@ -616,8 +616,8 @@ $(function () {
     }
 
     var botonActualizarIdioma = function () {
-        $('.btn-actualizar-idioma').off("click");
-        $('.btn-actualizar-idioma').on('click', function () {
+        $('#data-table-datos-idiomas tbody').off('click', '.btn-actualizar-idioma');
+        $('#data-table-datos-idiomas tbody').on('click', '.btn-actualizar-idioma', function (e) {
             var idIdioma = $(this).data('id-idioma');
             var variablesGlobales = viewGlobals();
             actualizarDatosIdiomas(idIdioma, variablesGlobales[4], variablesGlobales[5]);
@@ -625,8 +625,8 @@ $(function () {
     }
 
     var botonActualizarSoftware = function () {
-        $('.btn-actualizar-software').off("click");
-        $('.btn-actualizar-software').on('click', function () {
+        $('#data-table-datos-computacionales tbody').off('click', '.btn-actualizar-software');
+        $('#data-table-datos-computacionales tbody').on('click', '.btn-actualizar-software', function (e) {
             var idSoftware = $(this).data('id-software');
             var variablesGlobales = viewGlobals();
             actualizarDatosSoftware(idSoftware, variablesGlobales[6], variablesGlobales[5]);
@@ -634,8 +634,8 @@ $(function () {
     }
 
     var botonActualizarSistema = function () {
-        $('.btn-actualizar-sistema').off("click");
-        $('.btn-actualizar-sistema').on('click', function () {
+        $('#data-table-datos-sistemas-especiales tbody').off('click', '.btn-actualizar-sistema');
+        $('#data-table-datos-sistemas-especiales tbody').on('click', '.btn-actualizar-sistema', function (e) {
             var idSistema = $(this).data('id-sistema');
             var variablesGlobales = viewGlobals();
             actualizarDatosSistemas(idSistema, variablesGlobales[7], variablesGlobales[5]);
@@ -643,8 +643,8 @@ $(function () {
     }
 
     var botonActualizarDependiente = function () {
-        $('.btn-actualizar-dependiente').off("click");
-        $('.btn-actualizar-dependiente').on('click', function () {
+        $('#data-table-datos-dependientes-economicos tbody').off('click', '.btn-actualizar-dependiente');
+        $('#data-table-datos-dependientes-economicos tbody').on('click', '.btn-actualizar-dependiente', function (e) {
             var idDependiente = $(this).data('id-dependiente');
             actualizarDatosDependientes(idDependiente);
         });
@@ -660,40 +660,40 @@ $(function () {
     }
 
     var botonEliminarAcademico = function () {
-        $('.btn-eliminar-academico').off("click");
-        $('.btn-eliminar-academico').on('click', function () {
+        $('#data-table-datos-academicos tbody').off('click', '.btn-eliminar-academico');
+        $('#data-table-datos-academicos tbody').on('click', '.btn-eliminar-academico', function (e) {
             var idAcademico = $(this).data('id-academico');
             eliminarDatos(idAcademico, 'academicos');
         });
     }
 
     var botonEliminarIdioma = function () {
-        $('.btn-eliminar-idioma').off("click");
-        $('.btn-eliminar-idioma').on('click', function () {
+        $('#data-table-datos-idiomas tbody').off('click', '.btn-eliminar-idioma');
+        $('#data-table-datos-idiomas tbody').on('click', '.btn-eliminar-idioma', function (e) {
             var idIdioma = $(this).data('id-idioma');
             eliminarDatos(idIdioma, 'idiomas');
         });
     }
 
     var botonEliminarSoftware = function () {
-        $('.btn-eliminar-software').off("click");
-        $('.btn-eliminar-software').on('click', function () {
+        $('#data-table-datos-computacionales tbody').off('click', '.btn-eliminar-software');
+        $('#data-table-datos-computacionales tbody').on('click', '.btn-eliminar-software', function (e) {
             var idSoftware = $(this).data('id-software');
             eliminarDatos(idSoftware, 'software');
         });
     }
 
     var botonEliminarSistema = function () {
-        $('.btn-eliminar-sistema').off("click");
-        $('.btn-eliminar-sistema').on('click', function () {
+        $('#data-table-datos-sistemas-especiales tbody').off('click', '.btn-eliminar-sistema');
+        $('#data-table-datos-sistemas-especiales tbody').on('click', '.btn-eliminar-sistema', function (e) {
             var idSistema = $(this).data('id-sistema');
             eliminarDatos(idSistema, 'sistemas');
         });
     }
 
     var botonEliminarDependiente = function () {
-        $('.btn-eliminar-dependiente').off("click");
-        $('.btn-eliminar-dependiente').on('click', function () {
+        $('#data-table-datos-dependientes-economicos tbody').off('click', '.btn-eliminar-dependiente');
+        $('#data-table-datos-dependientes-economicos tbody').on('click', '.btn-eliminar-dependiente', function (e) {
             var idDependiente = $(this).data('id-dependiente');
             eliminarDatos(idDependiente, 'dependientes');
         });
@@ -1316,7 +1316,7 @@ $(function () {
             botonActualizarAcademico();
             botonEliminarAcademico();
         } else {
-            evento.mostrarMensaje("#errorAcademicosUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
+            mensajeModal('Hubo un error contacte al administrador de AdIST.', 'Error', '#dependientesEconomicos');
         }
     }
 
@@ -1328,7 +1328,7 @@ $(function () {
             botonActualizarIdioma();
             botonEliminarIdioma();
         } else {
-            evento.mostrarMensaje("#errorIdiomasUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
+            mensajeModal('Hubo un error contacte al administrador de AdIST.', 'Error', '#dependientesEconomicos');
         }
     }
 
@@ -1340,7 +1340,7 @@ $(function () {
             botonActualizarSoftware();
             botonEliminarSoftware();
         } else {
-            evento.mostrarMensaje("#errorSoftwareUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
+            mensajeModal('Hubo un error contacte al administrador de AdIST.', 'Error', '#dependientesEconomicos');
         }
     }
 
@@ -1352,7 +1352,7 @@ $(function () {
             botonActualizarSistema();
             botonEliminarSistema();
         } else {
-            evento.mostrarMensaje("#errorSistemaUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
+            mensajeModal('Hubo un error contacte al administrador de AdIST.', 'Error', '#dependientesEconomicos');
         }
     }
 
@@ -1364,7 +1364,7 @@ $(function () {
             botonActualizarDependiente();
             botonEliminarDependiente();
         } else {
-            evento.mostrarMensaje("#errorDependienteUsuario", false, "Hubo un error contacte al administrador de AdIST.", 4000);
+            mensajeModal('Hubo un error contacte al administrador de AdIST.', 'Error', '#dependientesEconomicos');
         }
     }
 

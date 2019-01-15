@@ -431,7 +431,7 @@
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarAcademicosUsuario"><i class="fa fa-save"></i> Guardar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnGuardarAcademicosUsuario"><i class="fa fa-plus"></i> Agregar</a>
                             </div>
                         </div>
                     </div>  
@@ -539,7 +539,7 @@
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarIdiomasUsuario"><i class="fa fa-save"></i> Guardar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnGuardarIdiomasUsuario"><i class="fa fa-plus"></i> Agregar</a>
                             </div>
                         </div>
                     </div>
@@ -625,7 +625,7 @@
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarComputacionalesUsuario"><i class="fa fa-save"></i> Guardar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnGuardarComputacionalesUsuario"><i class="fa fa-plus"></i> Agregar</a>
                             </div>
                         </div>
                     </div>  
@@ -706,7 +706,7 @@
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarEspecialesUsuario"><i class="fa fa-save"></i> Guardar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnGuardarEspecialesUsuario"><i class="fa fa-plus"></i> Agregar</a>
                             </div>
                         </div>
                     </div>
@@ -853,7 +853,7 @@
                         <div class="col-md-12">
                             <div class="form-group text-center">
                                 <br>
-                                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarDependientesUsuario"><i class="fa fa-save"></i> Guardar</a>
+                                <a href="javascript:;" class="btn btn-success m-r-5 " id="btnGuardarDependientesUsuario"><i class="fa fa-plus"></i> Agregar</a>
                             </div>
                         </div>
                     </div>

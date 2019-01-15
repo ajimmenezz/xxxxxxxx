@@ -26,8 +26,8 @@ $(function () {
         var data = {id: datos[0]};
         var url = [];
         evento.enviarEvento('EventoAltaPersonal/MostrarPersonalActualizar', data, '#seccionPersonal', function (respuesta) {
-            console.log(respuesta);
             var datosPersonal = respuesta.datos.datosPersonal[0];
+
             $.each(respuesta.datos.urlFoto, function (key, valor) {
                 url[0] = valor.UrlFoto;
             });
@@ -80,6 +80,8 @@ $(function () {
             //mascara para no. seguro social
             $('#inputNoSeguroSocial').mask("99999999999");
             calendario.crearFecha('.calendario');
+            iniciarTablas();
+
             //Creando input de foto
             $('#actualizarFoto').empty().append('\
                             <div class="form-group">\n\
@@ -116,6 +118,23 @@ $(function () {
                     $('#selectPerfil').removeAttr('disabled');
                 } else {
                     $('#selectPerfil').attr('disabled', 'disabled');
+                }
+            });
+
+            $('#selectActualizarPaisUsuario').on('change', function () {
+                $("#selectActualizarEstadoUsuario").empty().append('<option value="">Seleccionar...</option>');
+                var pais = $(this).val();
+                if (pais !== '') {
+                    var data = {IdPais: pais};
+                    evento.enviarEvento('/Configuracion/PerfilUsuario/MostrarDatosEstados', data, '#seccion-informacion-usuario', function (respuesta) {
+                        $.each(respuesta, function (k, v) {
+                            $("#selectActualizarEstadoUsuario").append('<option value="' + v.Id + '">' + v.Nombre + '</option>')
+                        });
+                        $("#selectActualizarEstadoUsuario").removeAttr("disabled");
+                        select.cambiarOpcion('#selectActualizarEstadoUsuario', datosPersonal.EstadoNac);
+                    });
+                } else {
+                    $("#selectActualizarEstadoUsuario").attr("disabled", "disabled");
                 }
             });
             select.cambiarOpcion('#selectArea', respuesta.datos.idArea[0].Area);
@@ -175,27 +194,17 @@ $(function () {
             });
 
             select.cambiarOpcion('#selectActualizarPaisUsuario', datosPersonal.PaisNac);
-            $("#selectActualizarPaisUsuario").on("change", function () {
-                $("#selectActualizarEstadoUsuario").empty().append('<option value="">Seleccionar...</option>');
-                var pais = $(this).val();
-                if (pais !== '') {
-                    var data = {IdPais: pais};
-                    evento.enviarEvento('/Configuracion/PerfilUsuario/MostrarDatosEstados', data, '#seccion-informacion-usuario', function (respuesta) {
-                        $.each(respuesta, function (k, v) {
-                            $("#selectActualizarEstadoUsuario").append('<option value="' + v.Id + '">' + v.Nombre + '</option>')
-                        });
-                        $("#selectActualizarEstadoUsuario").removeAttr("disabled");
-                        select.cambiarOpcion('#selectActualizarEstadoUsuario', datosPersonal.EstadoNac);
-                    });
-                } else {
-                    $("#selectActualizarEstadoUsuario").attr("disabled", "disabled");
-                }
 
+            usuario_perfil.RecargandoTablaAcademicos(respuesta.datos.datosAcademicos);
+            usuario_perfil.RecargandoTablaIdiomas(respuesta.datos.datosIdiomas);
+            usuario_perfil.RecargandoTablaSoftware(respuesta.datos.datosSoftware);
+            usuario_perfil.RecargandoTablaSistemas(respuesta.datos.datosSistemas);
+            usuario_perfil.RecargandoTablaDependientes(respuesta.datos.datosDependientes);
 
-            });
+            eventosBotonesActualizarEliminar(respuesta);
 
             usuario_perfil.SelectNacimiento(respuesta.datos.datosPersonal[0]);
-            usuario_perfil.BotonesActualizar(respuesta.datos.datosPersonal[0].Id);
+            usuario_perfil.BotonesActualizar(respuesta.datos.datosPersonal[0].Id, respuesta);
 
         });
     });
@@ -203,6 +212,14 @@ $(function () {
     $('#btnAgregarPersonal').on('click', function () {
         evento.enviarEvento('EventoAltaPersonal/MostrarPersonalActualizar', '', '#seccionPersonal', function (respuesta) {
             $('#formularioPersonal').removeClass('hidden').empty().append(respuesta.formulario);
+
+            $('[href=#nav-tab-datos-personales]').parent('li').addClass('hidden');
+            $('[href=#nav-tab-academicos]').parent('li').addClass('hidden');
+            $('[href=#nav-tab-idiomas]').parent('li').addClass('hidden');
+            $('[href=#nav-tab-computacionales]').parent('li').addClass('hidden');
+            $('[href=#nav-tab-sistemas-especiales]').parent('li').addClass('hidden');
+            $('[href=#nav-tab-automovil]').parent('li').addClass('hidden');
+            $('[href=#nav-tab-dependientes-economicos]').parent('li').addClass('hidden');
             //mascara para telefono movil
             $('#inputTMPersonal').mask("999-9999999999");
             //mascara para telefono fijo
@@ -282,10 +299,32 @@ $(function () {
                     }
                 }
             });
-            $('#btnCancelarNuevoPersonal').on('click', function () {
+
+            $('#btnCancelarActualizarPersonal').on('click', function () {
                 $('#formularioPersonal').empty().addClass('hidden');
                 $('#resumenPersonal').removeClass('hidden');
             });
         });
     });
+
+    var iniciarTablas = function () {
+        tabla.generaTablaPersonal('#data-table-datos-academicos', null, null, true, true, [[0, 'desc']]);
+        tabla.generaTablaPersonal('#data-table-datos-idiomas', null, null, true, true, [[0, 'desc']]);
+        tabla.generaTablaPersonal('#data-table-datos-computacionales', null, null, true, true, [[0, 'desc']]);
+        tabla.generaTablaPersonal('#data-table-datos-sistemas-especiales', null, null, true, true, [[0, 'desc']]);
+        tabla.generaTablaPersonal('#data-table-datos-dependientes-economicos', null, null, true, true, [[0, 'desc']]);
+    }
+
+    var eventosBotonesActualizarEliminar = function (respuesta) {
+        usuario_perfil.BotonActualizarAcademico(respuesta.datos.nivelEstudio, respuesta.datos.documentosEstudio, respuesta.datos.datosPersonal[0].Id);
+        usuario_perfil.BotonActualizarIdioma(respuesta.datos.habilidadesIdioma, respuesta.datos.nivelHabilidades, respuesta.datos.datosPersonal[0].Id);
+        usuario_perfil.BotonActualizarSoftware(respuesta.datos.habilidadesSoftware, respuesta.datos.nivelHabilidades, respuesta.datos.datosPersonal[0].Id);
+        usuario_perfil.BotonActualizarSistema(respuesta.datos.habilidadesSistema, respuesta.datos.nivelHabilidades, respuesta.datos.datosPersonal[0].Id);
+        usuario_perfil.BotonActualizarDependiente(respuesta.datos.datosPersonal[0].Id);
+        usuario_perfil.BotonEliminarAcademico(respuesta.datos.datosPersonal[0].Id, respuesta.datos.nivelEstudio, respuesta.datos.documentosEstudio);
+        usuario_perfil.BotonEliminarIdioma(respuesta.datos.datosPersonal[0].Id, respuesta.datos.habilidadesIdioma, respuesta.datos.nivelHabilidades);
+        usuario_perfil.BotonEliminarSoftware(respuesta.datos.datosPersonal[0].Id, respuesta.datos.habilidadesSoftware, respuesta.datos.nivelHabilidades);
+        usuario_perfil.BotonEliminarSistema(respuesta.datos.datosPersonal[0].Id, respuesta.datos.habilidadesSistema, respuesta.datos.nivelHabilidades);
+        usuario_perfil.BotonEliminarDependiente(respuesta.datos.datosPersonal[0].Id);
+    }
 });
