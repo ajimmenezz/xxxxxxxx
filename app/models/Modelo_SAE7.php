@@ -875,12 +875,11 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function actualizarCOMPO(array $datos) {
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $query = "update COMPO03 set
                     CVE_CLPV = '" . $datos['claveProvedor'] . "',
                     SU_REFER = '" . $datos['referencia'] . "', 
-                    FECHA_DOC = '" . $datos['fechaDoc'] . "', 
-                    FECHA_REC = '" . $datos['fechaRec'] . "', 
+                    FECHA_DOC = GETDATE(), 
+                    FECHA_REC = GETDATE(),
                     FECHA_PAG = EOMONTH(GETDATE()),
                     CAN_TOT = " . $datos['cantidadTotal'] . ", 
                     IMP_TOT4 = " . $datos['iva'] . ", 
@@ -892,7 +891,7 @@ class Modelo_SAE7 extends Modelo_Base {
                     TIP_DOC_E = '" . $datos['orden'] . "', 
                     NUM_MONED = " . $datos['moneda'] . ", 
                     TIPCAMB = " . $datos['tipoCambio'] . ", 
-                    FECHAELAB = '" . $fecha . "', 
+                    FECHAELAB = GETDATE(), 
                     FOLIO = " . $datos['folio'] . ", 
                     DES_FIN_PORC = " . $datos['descuentoFinanciero'] . ", 
                     DES_TOT_PORC = " . $datos['descuentoTotalParc'] . ", 
@@ -957,8 +956,8 @@ class Modelo_SAE7 extends Modelo_Base {
                     '" . $datos['claveProvedor'] . "',
                     'O',
                     '" . $datos['referencia'] . "',
-                    '" . $datos['fechaDoc'] . "',
-                    '" . $datos['fechaRec'] . "',
+                    GETDATE(),
+                    GETDATE(),
                     EOMONTH(GETDATE()),
                     " . $datos['cantidadTotal'] . ",
                     0,

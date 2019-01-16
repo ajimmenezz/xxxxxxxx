@@ -185,7 +185,11 @@ $db['SAE'] = array(
     'port' => 1433
 );
 
-//	'hostname' => '192.168.0.35, 51051',
+//IP de Base de datos Produccion SAE7
+//    'hostname' => '192.168.0.7, 49161',
+//IP de Base de datos de Pruebas de SAE7
+//    'hostname' => '192.168.0.35, 51051',
+
 $db['SAE7'] = array(
     'dsn' => '',
     'hostname' => '192.168.0.7, 49161',
