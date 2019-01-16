@@ -284,6 +284,12 @@ class Controller_Seguimiento extends Base {
             case 'MostrarRefaccionXEquipo':
                 $resultado = $this->Seguimientos->mostrarRefaccionXEquipo($this->input->post());
                 break;
+            case 'GuardarValidacionTecnico':
+                $resultado = $this->Seguimientos->guardarValidacionTecnico($this->input->post());
+                break;
+            case 'MostrarVistaValidacionTecnico':
+                $resultado = $this->Seguimientos->mostrarVistaValidacionTecnico($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

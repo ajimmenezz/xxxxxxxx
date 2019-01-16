@@ -76,24 +76,25 @@
                 </div>
             </div>
             <div class="row">
+                <input type="hidden" value="" id="inputMovimiento" />
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">¿Que movimiento va a realizar? *</label>
                         <div class="radio">
                             <label>
-                                <input type="radio" name="movimiento" value="foraneos" disabled/>
+                                <input type="radio" name="movimiento" value="1" disabled/>
                                 Envío de Equipo a Laboratorio (Foraneos)
                             </label>
                         </div>
                         <div class="radio">
                             <label>
-                                <input type="radio" name="movimiento" value="locales" disabled/>
+                                <input type="radio" name="movimiento" value="2" disabled/>
                                 Entrega de Equipo en Laboratorio (Locales)
                             </label>
                         </div>
                         <div class="radio">
                             <label>
-                                <input type="radio" name="movimiento" value="EquipoRefaccion" disabled/>
+                                <input type="radio" name="movimiento" value="3" disabled/>
                                 Solicitud de Equipo o Refacción
                             </label>
                         </div>
@@ -102,7 +103,7 @@
                 <div class="col-md-8 col-sm-6 col-xs-12 hidden" id="divEquipoEnvio">
                     <div class="form-group" >
                         <label class="f-w-600 f-s-13">Equipo que se envía *</label>
-                        <input value="" readonly="readonly" type="text" class="form-control" id="equipoEnviado" placeholder=""  data-parsley-required="true"/>
+                        <input value="" readonly="readonly" type="text" class="form-control" id="equipoEnviado" data-IdEquipo="" data-parsley-required="true"/>
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12 hidden divRefaccionEquipo">

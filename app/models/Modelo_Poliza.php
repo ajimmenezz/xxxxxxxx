@@ -777,10 +777,10 @@ class Modelo_Poliza extends Modelo_Base {
         $respuesta = null;
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $consultaChecklistRevisionTecnica = $this->mostrarFallasTecnicas($datos['IdServicio']);
-        
+
         foreach ($consultaChecklistRevisionTecnica as $falla) {
 
-            
+
             $this->iniciaTransaccion();
             $descripcionCorrectivo = "Seguimiento de Diagnostico en Checklist para el equipo " . $falla['Equipo'] . " con la Serie " . $falla['Serie'] . " por falla " . $falla['Falla'];
 
@@ -848,33 +848,37 @@ class Modelo_Poliza extends Modelo_Base {
 
             if ($this->estatusTransaccion() === FALSE) {
                 $this->roolbackTransaccion();
-                  $respuesta = 0;
+                $respuesta = 0;
 //                $return_array['inserto'] = "no paso";
 //                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
             } else {
                 $this->commitTransaccion();
-                $this->actualizar("t_checklist_revision_tecnica", array('FlagInsert' => 1),array('Id' => $falla['Id']));
+                $this->actualizar("t_checklist_revision_tecnica", array('FlagInsert' => 1), array('Id' => $falla['Id']));
                 $respuesta = 1;
 //                $return_array['code'] = $datos;
 //                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
             }
         }
-        
-//                    echo '<pre>';
-//            print_r($respuesta);
-//            return false;
         return $respuesta;
     }
     
-    public function consultaEstatus($IdUsario){
-//        $r = $this->consulta("SELECT * FROM t_correctivos_generales WHERE Id = '" . $ultimoIdCorrectivosGenerales . "'");
+// SELECTS ------------- Seguimiento Equipos
+    public function consultaEquiposAllab(int $idServicio = null) {
+                
+        if(!empty($idServicio)){
+            $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "' AND Flag = 1");
+        }else{
+            $consulta = $this->consulta("SELECT * FROM t_equipos_allab AND Flag = 1");
+        }
+        
+        return $consulta;
     }
     
     public function consultaTicketXUsuario() {
-        $tickets = $this->consulta("SELECT tst.Id,tst.Ticket FROM t_servicios_ticket tst WHERE IdEstatus = '3' AND Atiende = '". $this->usuario['Id'] ."'");
+        $tickets = $this->consulta("SELECT tst.Id,tst.Ticket FROM t_servicios_ticket tst WHERE IdEstatus = '3' AND Atiende = '" . $this->usuario['Id'] . "'");
         return $tickets;
     }
-    
+
     public function consultaServicioXUsuario($datos) {
         $tickets = $this->consulta("SELECT 
                                         tst.Id,
@@ -883,29 +887,29 @@ class Modelo_Poliza extends Modelo_Base {
                                         tst.IdEstatus,
                                         tst.Atiende,
                                         tst.Descripcion,
-                                        tcg.IdModelo 
+                                        tcg.IdModelo,
+                                        tcg.Serie
                                     FROM
                                         t_servicios_ticket tst
-                                        INNER JOIN t_correctivos_generales tcg
+                                        INNER JOIN t_correctivos_generales tcg on tst.Id = tcg.IdServicio
                                     WHERE
                                         tst.IdEstatus = '3' AND
-                                        tst.Id = '". $datos."' AND
-                                        tst.Id = tcg.IdServicio;");
+                                        tst.Id = '" . $datos . "'");
         return $tickets;
     }
-    
+
     public function mostrarEquipoDanado($idModelo) {
         $equipoDanado = $this->consulta("SELECT 
                                             *
                                         FROM
                                             v_equipos
                                         WHERE
-                                            Id = '" . $idModelo .  "'");
-        
+                                            Id = '" . $idModelo . "'");
+
         return $equipoDanado;
     }
-    
-    public function mostrarPerfilPersonaValida() {
+
+    public function mostrarTipoPersonaValida() {
         $personaValida = $this->consulta("SELECT 
                                             cp.Id, cp.Nombre
                                         FROM
@@ -914,28 +918,104 @@ class Modelo_Poliza extends Modelo_Base {
                                             cp.Id IN (38 , 39, 46)");
         return $personaValida;
     }
-    
+
     public function mostrarNombrePersonalValida($datos) {
         $datosPersonal = $this->consulta("SELECT 
                                             cvu.Id,CONCAT(trp.Nombres,' ',trp.ApPaterno) AS Nombre
                                         FROM
-                                            t_rh_personal trp
-                                        INNER JOIN
-                                                cat_v3_usuarios cvu
-                                        WHERE trp.IdUsuario = cvu.Id AND
-                                        IdPerfil = '". $datos ."'");
-        
+                                            t_rh_personal trp INNER JOIN cat_v3_usuarios cvu on trp.IdUsuario = cvu.Id
+                                        WHERE 
+                                            IdPerfil = '" . $datos . "'");
+
         return $datosPersonal;
     }
-    
-    public function mostrarEquipo() {
-        $equipo = $this->consulta("SELECT * FROM v_equipos");
+
+    public function mostrarEquipo($idModelo = null) {
+        $modelo = "";
+        if(!empty($idModelo)){
+            $modelo = " WHERE Id = '".$idModelo."'";
+        }
+        
+        $equipo = $this->consulta("SELECT * FROM v_equipos ".$modelo);
         return $equipo;
     }
-    
+
     public function mostrarRefaccionXEquipo($dato) {
-        $refaccionXequipo = $this->consulta("SELECT * FROM cat_v3_componentes_equipo WHERE IdModelo = '". $dato . "' AND Flag = 1");
+        $refaccionXequipo = $this->consulta("SELECT * FROM cat_v3_componentes_equipo WHERE IdModelo = '" . $dato . "' AND Flag = 1");
         return $refaccionXequipo;
+    }
+    
+    public function mostrarVistaTecnico(array $datos) {
+        $consultaEquipo = $this->mostrarEquipoDanado($datos['IdModelo']);
+        $equipoSolicitado = $this->mostrarEquipo($datos['IdModelo']);
+//        $equipoRefaccion = $this->mostrarRefaccionXEquipo($datos['IdModelo']);
+        
+        $valor = "";
+        $whereRefaccion = "";
+        
+        if(!empty($datos['IdRefaccion'])){
+            $valor = ",cvce.Nombre";
+            $whereRefaccion = " INNER JOIN cat_v3_componentes_equipo cvce on cvce.Id = tea.IdRefaccion";
+        }
+        
+        $consulta = ("SELECT 
+                            tea.Id,
+                            tst.Ticket,
+                        tst.Id,
+                        CONCAT(tst.Id,' - ',tst.Descripcion) as servicio,
+                        (SELECT cp.Nombre FROM cat_perfiles cp WHERE cp.Id = '". $datos['IdTipoPersonal'] ."') as tipoPersonal,
+                        (SELECT Id FROM cat_v3_equipos_allab_tipo_movimiento cveam WHERE cveam.Id = '". $datos['IdTipoMovimiento'] ."') as tipoMovimiento,
+                        tea.IdModelo,
+                        tea.FechaValidacion,
+                        tea.IdRefaccion".
+                        $valor
+                    ." FROM
+                        t_equipos_allab tea
+                    INNER JOIN
+                            t_servicios_ticket tst on tst.Id = tea.IdServicio
+                    INNER JOIN
+                        t_correctivos_generales tcg on tcg.IdServicio = tea.IdServicio".
+                    $whereRefaccion    
+                    ." WHERE
+                        tea.IdServicio = '". $datos['IdServicio'] ."'");
+        
+        $servicio = $this->consulta($consulta);
+        $datosServicio = array('servicio' => $servicio, 'equipo' => $consultaEquipo, 'equipoSolicitado' => $equipoSolicitado);
+        
+        return $datosServicio;
+    }
+
+// -----------  INSERTS
+    public function insertarValidacionTecnico($dato) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        
+        if($dato['IdRefaccion'] === ''){
+            $dato['IdRefaccion'] = null;
+        }
+        
+        if($dato['Serie'] === ''){
+            $dato['Serie'] = null;
+        }
+        
+        $datos = array( 'IdServicio' => $dato['IdServicio'],
+                        'IdPersonalValida' => $dato['IdPersonalValida'],
+                        'FechaValidacion' => $dato['FechaValidacion'],
+                        'IdTipoMovimiento' => $dato['IdTipoMovimiento'],
+                        'IdModelo' => $dato['IdModelo'],
+                        'Serie' => $dato['Serie'],
+                        'IdRefaccion' => $dato['IdRefaccion'],
+                        'IdUsuario' => $this->usuario['Id'],
+                        'IdEstatus' => 2,
+                        'FechaEstatus' => $fecha,
+                        'Flag' => 1);
+        
+        $insertar = $this->insertar('t_equipos_allab', $datos);
+        
+        if(!empty($insertar)){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
     }
 
 }

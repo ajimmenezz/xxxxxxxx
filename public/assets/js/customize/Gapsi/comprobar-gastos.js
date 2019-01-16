@@ -22,7 +22,7 @@ $(function () {
     file.crearUpload('#inputArchivoComprobante', 'Gasto/ComprobacionRegistro', ['jpg', 'jpeg', 'png', 'pdf', 'xml']);
 
     evento.enviarEvento('Gasto/MostrarTablaMisGatos', {}, '#divDetalleGastos', function (respuesta) {
-//        console.log(respuesta.datos);
+        console.log(respuesta.resultado);
         $("#divComprobanteGasto").empty().append(respuesta.vistaTabla);
 
         tabla.generaTablaPersonal("#data-table-gastos", null, null, true, true, [[0, 'asc']]);
