@@ -2543,9 +2543,6 @@ class Servicio extends General {
 
     public function guardarVueltaAsociados(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-        if (!isset($datos['vueltaAutomatica'])) {
-            $this->enviarCorreoConcluido(array('abarcenas@siccob.com.mx'), 'Vuelta-' . $datos['servicio'], 'Se creo la vuelta del servicio:' . $datos['servicio']);
-        }
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
         $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));

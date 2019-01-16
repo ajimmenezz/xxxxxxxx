@@ -96,7 +96,8 @@ class Compras extends General {
     }
 
     public function consultaListaOrdenesCompra(array $datos = null) {
-        $fecha = mdate('%Y-%m-%d', now('America/Mexico_City'));
+        $fecha = mdate('%Y-%d-%m', now('America/Mexico_City'));
+
         if (empty($datos)) {
             $whereFecha = "WHERE FECHA_DOC between '" . $fecha . "' and '" . $fecha . " 23:59:59'";
         } else {
@@ -178,14 +179,22 @@ class Compras extends General {
                     'documento' => $datos['claveNuevaDocumentacion'],
                     'idGapsi' => $idGapsi['last']));
 
-//                $this->DBG->insertarArchivosGastosGapsi(array(
-//                    'idGapsi' => $idGapsi['last'],
-//                    'archivos' => $carpeta,
-//                    'idUsuario' => $usuario['Id'],
-//                    'email' => $usuario['EmailCorporativo']
-//                ));
-                
-                return '.' . $gastoPDF;
+                if (!empty($gastoPDF)) {
+                    $registroGapsi = $this->DBG->insertarArchivosGastosGapsi(array(
+                        'idGapsi' => $idGapsi['last'],
+                        'archivos' => $gastoPDF,
+                        'idUsuario' => $usuario['Id'],
+                        'email' => $usuario['EmailCorporativo']
+                    ));
+
+                    if (!empty($registroGapsi)) {
+                        return '.' . $gastoPDF;
+                    } else {
+                        return FALSE;
+                    }
+                } else {
+                    return FALSE;
+                }
             } else {
                 return FALSE;
             }

@@ -291,7 +291,7 @@ class Modelo_SAE7 extends Modelo_Base {
             'claveAnterior' => $ultimaClaveTBLCONTROLTabla32[0]['ULT_CVE'],
             'numeroTabla' => '32'));
 
-        $this->actualizarUltimoDocumento($datos['folio'], $datos['fecha']);
+        $this->actualizarUltimoDocumento($datos['folio']);
 
         $ultimaClaveTBLCONTROLTabla57 = $this->consultaUltimaClaveTBLCONTROL('57');
         $nuevaClaveTabla57 = $ultimaClaveTBLCONTROLTabla57[0]['ULT_CVE'] + 1;
@@ -751,7 +751,9 @@ class Modelo_SAE7 extends Modelo_Base {
                 AND ULT_CVE = '" . $datos['claveAnterior'] . "'");
     }
 
-    public function actualizarUltimoDocumento(string $nuevoUltimoDocumento, string $fechaDocumento) {
+    public function actualizarUltimoDocumento(string $nuevoUltimoDocumento) {
+        $fechaDocumento = mdate('%Y-%d-%m %H:%i:%s', now('America/Mexico_City'));
+
         $query = "UPDATE FOLIOSC03 
                     SET ULT_DOC=(CASE WHEN ULT_DOC < '" . $nuevoUltimoDocumento . "' THEN '" . $nuevoUltimoDocumento . "' ELSE ULT_DOC END),                      
                     FECH_ULT_DOC= '" . $fechaDocumento . "'

@@ -559,19 +559,17 @@ class Modelo_Gapsi extends Modelo_Base {
         }
     }
 
-
-
-    
-        public function insertarArchivosGastosGapsi(array $datos) {
+    public function insertarArchivosGastosGapsi(array $datos) {
         $consulta = parent::connectDBPrueba()->query("insert into "
                 . "t_archivos_gastos_gapsi"
-                . "(IdGasto, Archivos, Email, IdUsuario) "
+                . "(IdGasto, Archivos, Email, IdUsuario)"
                 . "VALUES "
-                . "('" . $datos['idGapsi'] . "', '" . $datos['archivos'] . ", " . $datos['email'] . ", " . $datos['idUsuario'] . "')");
+                . "('" . $datos['idGapsi'] . "', '" . $datos['archivos'] . "', '" . $datos['email'] . "', '" . $datos['idUsuario'] . "')");
         if (!empty($consulta)) {
             return $consulta;
         } else {
             return FALSE;
         }
     }
+
 }

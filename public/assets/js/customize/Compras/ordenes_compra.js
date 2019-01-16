@@ -100,8 +100,11 @@ $(function () {
     var cargarObjetosFormulario = function () {
         var fechaActual = new Date();
         var date = formatDateToString(fechaActual);
-        var fechaMilisegundos = date + " " + fechaActual.getHours() + ":" + fechaActual.getMinutes() + ":" + fechaActual.getSeconds() + "." + fechaActual.getMilliseconds();
-        
+        var fechaSegundos = formatoCeros(fechaActual.getSeconds());
+        var fechaMinutos = formatoCeros(fechaActual.getMinutes());
+        var fechaHoras = formatoCeros(fechaActual.getHours());
+        var fechaMilisegundos = date + " " + fechaHoras + ":" + fechaMinutos + ":" + fechaSegundos + "." + fechaActual.getMilliseconds();
+
         select.crearSelect('#selectOrdenOrdenCompra');
         select.crearSelect('#selectProveedorOrdenCompra');
         select.crearSelect('#selectEsquemaOrdenCompra');
@@ -118,7 +121,7 @@ $(function () {
         select.crearSelect('#selectUnidadPartida0');
 
         $('#inputFechaOrdenCompra').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm:ss',
+            format: 'YYYY-DD-MM HH:mm:ss',
             widgetPositioning: {
                 horizontal: 'right',
                 vertical: 'bottom'
@@ -126,7 +129,7 @@ $(function () {
         });
 
         $('#inputFechaRecOrdenCompra').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm:ss',
+            format: 'YYYY-DD-MM HH:mm:ss',
             widgetPositioning: {
                 horizontal: 'right',
                 vertical: 'bottom'
@@ -204,16 +207,15 @@ $(function () {
 
         $("#selectOrdenOrdenCompra").on("change", function () {
             var ordenCompra = $(this).val();
-
+            tabla.limpiarTabla('#data-table-partidas-oc');
+            tabla.agregarFilaHtml('#data-table-partidas-oc', datosNuevaPartida(productos, 0, 0));
+            cargarObjetosTabla(0);
+            eventosTablaPartida(0);
             if (ordenCompra === 'Requisicion') {
                 $('#divRequisicion').removeClass('hidden');
             } else {
                 $('#divRequisicion').addClass('hidden');
                 select.cambiarOpcion('#selectRequisicionesOrdenCompra', '');
-                tabla.limpiarTabla('#data-table-partidas-oc');
-                tabla.agregarFilaHtml('#data-table-partidas-oc', datosNuevaPartida(productos, 0, 0));
-                cargarObjetosTabla(0);
-                eventosTablaPartida(0);
             }
         });
 
@@ -292,27 +294,23 @@ $(function () {
             }
         });
 
-        $('#data-table-partidas-oc').on("mousedown", "tr", function () {
+        $('#data-table-partidas-oc tbody').on('click', '.btn-eliminar-partida', function (e) {
             var _this = this;
-            timer = setTimeout(function () {
-                var datosTablaPartidasOC = $('#data-table-partidas-oc').DataTable().rows().data();
-                var numeroFila = datosTablaPartidasOC.length;
-                if (numeroFila > 1) {
-                    if (tabla.validarClickRenglon('#data-table-partidas-oc')) {
-                        tabla.eliminarFila('#data-table-partidas-oc', _this);
-                        var datosTablaPartidasOC2 = $('#data-table-partidas-oc').DataTable().rows().data();
-                        var numeroFila2 = datosTablaPartidasOC2.length;
+            var datosTablaPartidasOC = $('#data-table-partidas-oc').DataTable().rows().data();
+            var numeroFila = datosTablaPartidasOC.length;
+            if (numeroFila > 1) {
+                if (tabla.validarClickRenglon('#data-table-partidas-oc')) {
+                    tabla.eliminarFila("#data-table-partidas-oc", $(this).closest("tr"));
+                    var datosTablaPartidasOC2 = $('#data-table-partidas-oc').DataTable().rows().data();
+                    var numeroFila2 = datosTablaPartidasOC2.length;
 
-                        if (numeroFila2 === 1) {
-                            $('#mensajeEliminarFila').addClass('hidden');
-                        }
+                    if (numeroFila2 === 1) {
+                        $('#mensajeEliminarFila').addClass('hidden');
                     }
-                } else {
-                    evento.mostrarMensaje('.errorTablaPartida', false, 'Debe de haber por lo menos una fila.', 4000);
                 }
-            }, 2 * 1000);
-        }).on("mouseup mouseleave", function () {
-            clearTimeout(timer);
+            } else {
+                evento.mostrarMensaje('.errorTablaPartida', false, 'Debe de haber por lo menos una fila.', 4000);
+            }
         });
 
         $('#btnGuardarOC').on('click', function () {
@@ -522,7 +520,10 @@ $(function () {
                         <td class="text-center">\n\
                             <input id="subtotalPartida' + numeroFila + '" type="number" class="form-control" value="0.00" min="0" disabled/>\n\
                         </td>\n\
-                        <td class="text-center">' + numeroFila + '</td>';
+                        <td class="text-center">' + numeroFila + '</td>\n\
+                        <td>\n\
+                            <a href="javascript:;" class="btn btn-danger btn-xs btn-eliminar-partida" data-eliminar="' + numeroFila + '"><i class="fa fa-trash-o"></i> Eliminar</a>\n\
+                        </td>';
         nuevaFila += "</tr>";
         return nuevaFila;
     }
@@ -840,6 +841,17 @@ $(function () {
         r = r.replace(new RegExp(/./g), "");
 
         return r;
+    }
+
+    var formatoCeros = function (fechaActual) {
+        var fechaNueva = '';
+        if (fechaActual > 10) {
+            fechaNueva = fechaActual;
+        } else {
+            fechaNueva = '0' + fechaActual;
+        }
+
+        return fechaNueva;
     }
 
     var formatDateToString = function (date) {

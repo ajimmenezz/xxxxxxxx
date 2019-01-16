@@ -210,6 +210,7 @@
                                         <th class="all" style="max-width: 150px !important;">Costo por Unidad</th>
                                         <th class="all" style="max-width: 150px !important;">Subtotal por partida</th>
                                         <th class="never">NumeroPartida</th>
+                                        <th class="all" style="max-width: 150px !important;">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>        
@@ -252,17 +253,12 @@
                                         <td>
                                             0
                                         </td>
+                                        <td>
+                                            <a href="javascript:;" class="btn btn-danger btn-xs btn-eliminar-partida" data-eliminar="0"><i class="fa fa-trash-o"></i> Eliminar</a>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="mensajeEliminarFila" class="row hidden">
-                    <div class="col-md-12 m-t-5">
-                        <div class="alert alert-warning fade in m-b-15">                            
-                            Para eliminar una fila manten presionado el botón izquiedo del mause.                            
                         </div>
                     </div>
                 </div>
