@@ -1610,7 +1610,7 @@ class Seguimientos extends General {
                     'Observaciones' => $datos['observaciones']
                 );
 
-                if (isset($datos['usaStock']) && $datos['usaStock']) {
+                if (isset($datos['usaStock']) && $datos['usaStock'] != 'false') {
                     $datosTablaReparacionRefaccion = $this->DBP->getDatosTablaReparacionRefaccionInventario($datos['datosTablaReparacionRefaccion']);
                 } else {
                     if (is_array($datos['datosTablaReparacionRefaccion'])) {
