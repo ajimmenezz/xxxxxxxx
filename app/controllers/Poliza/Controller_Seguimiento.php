@@ -267,7 +267,8 @@ class Controller_Seguimiento extends Base {
                 $resultado = $this->Poliza->nuevosServiciosDesdeChecklist($this->input->post());
                 break;
             case 'VistaPorPerfil':
-                $resultado = $this->Seguimientos->vistaPorPerfil();
+//                $resultado = $this->Seguimientos->vistaPorPerfil();
+                $resultado = $this->Seguimientos->mostrarVistaPorUsuario($this->input->post());
                 break;
             case 'MostrarTicketsUsuario':
                 $resultado = $this->Seguimientos->mostrarTicketsUsuario();
@@ -287,9 +288,16 @@ class Controller_Seguimiento extends Base {
             case 'GuardarValidacionTecnico':
                 $resultado = $this->Seguimientos->guardarValidacionTecnico($this->input->post());
                 break;
-            case 'MostrarVistaValidacionTecnico':
-                $resultado = $this->Seguimientos->mostrarVistaValidacionTecnico($this->input->post());
+            case 'VistaEnvioAlmacen':
+                $resultado = $this->Seguimientos->vistaEnvioAlmacen($this->input->post());
                 break;
+            case 'GuardarEnvioAlmacen':
+                $resultado = $this->Seguimientos->guardarEnvioAlmacen($this->input->post());
+                break;
+            case 'SolicitarGuia':
+                $resultado = $this->Seguimientos->solicitarGuia($this->input->post());
+                break;
+            
             default:
                 $resultado = FALSE;
                 break;

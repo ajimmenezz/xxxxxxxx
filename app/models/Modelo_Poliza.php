@@ -861,19 +861,44 @@ class Modelo_Poliza extends Modelo_Base {
         }
         return $respuesta;
     }
-    
+
 // SELECTS ------------- Seguimiento Equipos
-    public function consultaEquiposAllab(int $idServicio = null) {
-                
-        if(!empty($idServicio)){
-            $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "' AND Flag = 1");
-        }else{
-            $consulta = $this->consulta("SELECT * FROM t_equipos_allab AND Flag = 1");
+    public function estatusAllab($idServicio) {
+
+        if (!empty($idServicio)) {
+            $consulta = $this->consulta("SELECT IdEstatus FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "' AND Flag = 1");
+            foreach ($consulta as $value) {
+                return $value;
+            }
+        } else {
+            return false;
         }
-        
-        return $consulta;
     }
-    
+
+    public function consultaTablaServicioAllab() {
+
+
+        $consulta = $this->consulta("SELECT 
+                                        tea.Id,
+                                        tst.Id as IdServicio,
+                                        tst.Ticket,
+                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.Id = tst.IdSucursal) as NombreSucursal,
+                                        ve.Equipo,
+                                        tea.FechaValidacion,
+                                        tea.IdEstatus,
+                                        (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
+                                        tea.IdRefaccion
+                                    FROM t_equipos_allab tea
+                                    INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
+                                    INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
     public function consultaTicketXUsuario() {
         $tickets = $this->consulta("SELECT tst.Id,tst.Ticket FROM t_servicios_ticket tst WHERE IdEstatus = '3' AND Atiende = '" . $this->usuario['Id'] . "'");
         return $tickets;
@@ -930,13 +955,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $datosPersonal;
     }
 
-    public function mostrarEquipo($idModelo = null) {
-        $modelo = "";
-        if(!empty($idModelo)){
-            $modelo = " WHERE Id = '".$idModelo."'";
-        }
-        
-        $equipo = $this->consulta("SELECT * FROM v_equipos ".$modelo);
+    public function mostrarEquipo() {
+        $equipo = $this->consulta("SELECT * FROM v_equipos");
         return $equipo;
     }
 
@@ -944,77 +964,94 @@ class Modelo_Poliza extends Modelo_Base {
         $refaccionXequipo = $this->consulta("SELECT * FROM cat_v3_componentes_equipo WHERE IdModelo = '" . $dato . "' AND Flag = 1");
         return $refaccionXequipo;
     }
-    
-    public function mostrarVistaTecnico(array $datos) {
-        $consultaEquipo = $this->mostrarEquipoDanado($datos['IdModelo']);
-        $equipoSolicitado = $this->mostrarEquipo($datos['IdModelo']);
-//        $equipoRefaccion = $this->mostrarRefaccionXEquipo($datos['IdModelo']);
-        
-        $valor = "";
-        $whereRefaccion = "";
-        
-        if(!empty($datos['IdRefaccion'])){
-            $valor = ",cvce.Nombre";
-            $whereRefaccion = " INNER JOIN cat_v3_componentes_equipo cvce on cvce.Id = tea.IdRefaccion";
-        }
-        
-        $consulta = ("SELECT 
-                            tea.Id,
-                            tst.Ticket,
-                        tst.Id,
-                        CONCAT(tst.Id,' - ',tst.Descripcion) as servicio,
-                        (SELECT cp.Nombre FROM cat_perfiles cp WHERE cp.Id = '". $datos['IdTipoPersonal'] ."') as tipoPersonal,
-                        (SELECT Id FROM cat_v3_equipos_allab_tipo_movimiento cveam WHERE cveam.Id = '". $datos['IdTipoMovimiento'] ."') as tipoMovimiento,
-                        tea.IdModelo,
-                        tea.FechaValidacion,
-                        tea.IdRefaccion".
-                        $valor
-                    ." FROM
-                        t_equipos_allab tea
-                    INNER JOIN
-                            t_servicios_ticket tst on tst.Id = tea.IdServicio
-                    INNER JOIN
-                        t_correctivos_generales tcg on tcg.IdServicio = tea.IdServicio".
-                    $whereRefaccion    
-                    ." WHERE
-                        tea.IdServicio = '". $datos['IdServicio'] ."'");
-        
-        $servicio = $this->consulta($consulta);
-        $datosServicio = array('servicio' => $servicio, 'equipo' => $consultaEquipo, 'equipoSolicitado' => $equipoSolicitado);
-        
-        return $datosServicio;
+
+    public function mostrarVistaRefaccion($dato) {
+        $refaccionXequipo = $this->consulta("SELECT * FROM cat_v3_componentes_equipo WHERE Id = '" . $dato . "' AND Flag = 1");
+        return $refaccionXequipo;
     }
 
-// -----------  INSERTS
+    public function mostrarPaqueterias() {
+        $consulta = $this->consulta("SELECT * FROM cat_v3_paqueterias WHERE Flag = 1");
+        if (!empty($consulta)) {
+            return $consulta;
+        }
+    }
+
     public function insertarValidacionTecnico($dato) {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        
-        if($dato['IdRefaccion'] === ''){
+
+        if ($dato['IdRefaccion'] === '') {
             $dato['IdRefaccion'] = null;
         }
-        
-        if($dato['Serie'] === ''){
+
+        if ($dato['Serie'] === '') {
             $dato['Serie'] = null;
         }
-        
-        $datos = array( 'IdServicio' => $dato['IdServicio'],
-                        'IdPersonalValida' => $dato['IdPersonalValida'],
-                        'FechaValidacion' => $dato['FechaValidacion'],
-                        'IdTipoMovimiento' => $dato['IdTipoMovimiento'],
-                        'IdModelo' => $dato['IdModelo'],
-                        'Serie' => $dato['Serie'],
-                        'IdRefaccion' => $dato['IdRefaccion'],
-                        'IdUsuario' => $this->usuario['Id'],
-                        'IdEstatus' => 2,
-                        'FechaEstatus' => $fecha,
-                        'Flag' => 1);
-        
+
+        $datos = array('IdServicio' => $dato['IdServicio'],
+            'IdPersonalValida' => $dato['IdPersonalValida'],
+            'FechaValidacion' => $dato['FechaValidacion'],
+            'IdTipoMovimiento' => $dato['IdTipoMovimiento'],
+            'IdModelo' => $dato['IdModelo'],
+            'Serie' => $dato['Serie'],
+            'IdRefaccion' => $dato['IdRefaccion'],
+            'IdUsuario' => $this->usuario['Id'],
+            'IdEstatus' => 2,
+            'FechaEstatus' => $fecha,
+            'Flag' => 1);
+
         $insertar = $this->insertar('t_equipos_allab', $datos);
-        
-        if(!empty($insertar)){
+
+        if (!empty($insertar)) {
             return TRUE;
-        }else{
+        } else {
             return FALSE;
+        }
+    }
+
+    public function insertarEnvioGuia(array $datos) {
+        $insertar = $this->insertar('t_equipos_allab_envio_tecnico', $datos);
+
+        if (!empty($insertar)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    // -------------------------
+    public function consultaDatosValidacion(int $datos = null) {
+        $condicion = "";
+        $valor = "";
+        if (!empty($datos['IdRefaccion'])) {
+            $valor = " ,cvce.Nombre as Refaccion";
+            $condicion = " INNER JOIN cat_v3_componentes_equipo cvce ON cvce.Id = tea.IdRefaccion ";
+        }
+        $consulta = $this->consulta("SELECT
+                                        tea.IdEstatus,
+                                        tst.Ticket,
+                                        tea.IdServicio,
+                                        tea.FechaValidacion,
+                                        CONCAT(tst.Id,' - ',tst.Descripcion) AS Servicio,
+                                        CONCAT(trp.Nombres,' ',trp.ApMaterno) AS NombrePersonal,
+                                        (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS Movimiento,
+                                        ve.Equipo". $valor ."
+                                        ,'Lectura'
+                                    FROM 
+                                            t_equipos_allab tea
+                                    INNER JOIN 
+                                            t_servicios_ticket tst on tst.Id = tea.IdServicio
+                                    INNER JOIN
+                                            t_rh_personal trp ON trp.IdUsuario = tea.IdPersonalValida
+                                    INNER JOIN
+                                            v_equipos ve ON ve.Id = tea.IdModelo". $condicion ."
+                                    WHERE 
+                                            IdServicio = 28714");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return false;
         }
     }
 

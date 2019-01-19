@@ -2577,124 +2577,262 @@ class Seguimientos extends General {
         return $this->DBS->consultaGeneralSeguimiento('SELECT COUNT(Id) AS Contador FROM t_mantenimientos_equipo_faltante WHERE IdServicio = "' . $servicio . '"');
     }
 
-    //----------------------   Seguimiento Equipos
-    public function mostrarVistaPorUsuario() {
+//----------------------   Seguimiento Equipos
+    public function mostrarTabla() {
         $usuario = $this->Usuario->getDatosUsuario();
         $idPerfil = $usuario['IdPerfil'];
-        $datos = [];
 
-//      57 = Técnico de Mantenimiento Correctivo
-//      52 = Responsable de logistica
-//      38 = Responsable de Laboratorio
-//      56 = Técnico de Laboratorio     
-//         = Jefetura de almacen
+        $datosServicio = $this->DBP->consultaTablaServicioAllab();
+
+        if (!empty($datosServicio)) {
+            return $datosServicio;
+        } else {
+            return ['code' => 500, 'mensaje' => 'No hay registros para mostrar'];
+        }
+    }
+
+    public function perfilUsuario() {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $idPerfil = $usuario['IdPerfil'];
+        return $idPerfil;
+
+//        switch ($idPerfil) {
+//            case '38':
+//            case '56':
+//                $datos['IdPerfil'] = 38;
+//                $datos['nombrePerfil'] = "Laboratorio";
+//                break;
+//            case '41':
+//            case '52':
+//            case '60':
+//                $datos['IdPerfil'] = 52;
+//                $datos['nombrePerfil'] = " Logística";
+//                break;
+//            case '57':
+////                return $this->vistaValidacion($estatus);
+//            case '51':
+//            case '62':
+//                $datos['IdPerfil'] = 62;
+//                $datos['nombrePerfil'] = "Almacen";
+//                break;
+//            default:
+//                break;
+//        }
+//        return $formulario;
+    }
+
+    public function mostrarVistaPorUsuario($datos = null) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $idPerfil = $usuario['IdPerfil'];
+        $estatus = $this->DBP->estatusAllab($datos['idServicio']);
+        $idEstatus = $estatus['IdEstatus'];
+
         switch ($idPerfil) {
-            case '38': //ok
-            case '56':
-                $datos['IdPerfil'] = 38;
-                $datos['nombrePerfil'] = "Laboratorio";
+            
+            case '57': // Tecnico
+                if ($idEstatus === '2') {
+                    return $this->vistaEnvioAlmacen($datos);
+                }
+                if ($idEstatus === '12') {
+                    return $this->vistaEnvioAlmacen();
+                }
+                if ($idEstatus === '26' || $idEstatus === '27' || $idEstatus === '4') {
+                    return $this->vistaEnvioAsigncionGuia(); // lectura
+                }
+                if ($idEstatus === '36') {
+                    return $this->recepcionTecnico();
+                }
+                if(!$idEstatus){
+                    return $this->vistaValidacion();
+                }
+                break;
+            case '38':
+            case '56': //Laboratorio
+                if ($idEstatus === '2') {
+                    return $this->revisionHistorial();
+                }
+                if ($idEstatus === '29') {
+                    return $this->recepcionLaboratorio();
+                }
                 break;
             case '41':
             case '52':
-            case '60': //ok
-                $datos['IdPerfil'] = 52;
-                $datos['nombrePerfil'] = " Logística";
-                break;
-            case '57': //ok
-                $datos['IdPerfil'] = 57;
-                $datos['nombrePerfil'] = "Técnico de Mantenimiento Correctivo";
+            case '60': // Logistica
+                if ($idEstatus === '12') {
+                    return $this->envioSeguimientoLogistica();
+                }
+                if ($idEstatus === '26' || $idEstatus === '27' || $idEstatus === '4') {
+                    return $this->vistaAsignacionGuiaLogistica();
+                }
+                if ($idEstatus === '30') {
+                    return $this->recepcionLogistica();
+                }
                 break;
             case '51':
-            case '62': //ok
-                $datos['IdPerfil'] = 62;
-                $datos['nombrePerfil'] = "Almacen";
+            case '62': // Almacen
+                if ($idEstatus === '28') {
+                   return $this->recepcionAlmacen(); 
+                }
                 break;
             default:
                 break;
         }
-        return $datos;
-    }
 
-    // regresa el estatus de t_equipos_allab
-    public function vistaPorPerfil() {
-        $datosUsuario = $this->mostrarVistaPorUsuario();
-        $data['ticketsEnProblemas'] = $this->DBP->consultaTicketXUsuario();
-        $data['tipoPersonaValida'] = $this->DBP->mostrarTipoPersonaValida();
-        $data['listaEquipo'] = $this->DBP->mostrarEquipo();
+//        switch ($estatus['IdEstatus']) {
+//            case 2: //en atencion escritura
+//                if ($idPerfil === '57') {
+//                    return $this->vistaEnvioAlmacen();
+//                }
+//                if ($idPerfil === '38' || $idPerfil === '56') {
+//                    return $this->revisionHistorial();
+//                }
+//                break;
 
-        $formulario = array('formulario' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE),
-            'datosUsuario' => $datosUsuario,
-            'dataUsuario' => $data);
-        return $formulario;
-    }
-
-    public function mostrarEquipoDanado($idServicio) {
-        $equipoDanado = $this->DBP->mostrarEquipoDanado($idServicio['idServcio']);
-        return $equipoDanado;
-    }
-
-    public function mostrarTicketsUsuario() {
-        $informacionServicioa = $this->DBP->consultaTicketXUsuario();
-        return $informacionServicioa;
-    }
-
-    public function mostrarServiciosUsuario($datos) {
-        $informacionServicio = $this->DBP->consultaServicioXUsuario($datos['idTicket']);
-        return $informacionServicio;
-    }
-
-    public function mostrarPerfilPersonaValida() {
-        $perfilPersonaValida = $this->DBP->mostrarTipoPersonaValida();
-        return $perfilPersonaValida;
-    }
-
-    public function mostrarNombrePersonalValida($datos) {
-        $nombrePersonal = $this->DBP->mostrarNombrePersonalValida($datos['idTipoPersonal']);
-        return $nombrePersonal;
-    }
-
-    public function mostrarRefaccionXEquipo($datos) {
-        $refaccion = $this->DBP->mostrarRefaccionXEquipo($datos['idEquipo']);
-        if (!empty($refaccion)) {
-            return $refaccion;
-        }else{
-            return false;
-        }
-    }
-
-    public function guardarValidacionTecnico($datos) {
-
-        $IdServicio = $datos['IdServicio'];
-//        $equipoAllab = $this->DBP->consultaEquiposAllab($IdServicio);
-//
-//        if (!empty($equipoAllab)) {
-//            $mensaje = ['mensaje' => "Ya existe un seguimiento para este servicio",
-//                        'code' => 500];
-//            return $mensaje;
-//        } else {
-        $nuevaValidacion = $this->DBP->insertarValidacionTecnico($datos);
-        if ($nuevaValidacion) {
-            $equipoAllab = $this->DBP->consultaEquiposAllab($IdServicio);
-            $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
-                'datos' => $equipoAllab,
-                'code' => 400];
-            return $mensaje;
-        } else {
-            $mensaje = ['mensaje' => "Hay un problema al insertar la información",
-                'code' => 500];
-            return $mensaje;
-        }
+//            case 12: // En transito lectura
+//                if ($idPerfil === '57') {
+//                    return $this->vistaEnvioAlmacen();
+//                }
+//                if ($idPerfil === '52' || $idPerfil === '41' || $idPerfil === '60') {
+//                    return $this->envioSeguimientoLogistica();
+//                }
+//                break;
+//            case 26:// Falta guia - logistica y tecnico
+//            case 27:// Problema con guia
+//            case 4: // Concluir
+//                if ($idPerfil === '57') {
+//                    return $this->vistaEnvioAsigncionGuia(); // lectura
+//                }
+//                if ($idPerfil === '52' || $idPerfil === '41' || $idPerfil === '60') {
+//                    return $this->vistaAsignacionGuiaLogistica();
+//                }
+//                break;
+//            case 28://Recepcion almacen
+//                if ($idPerfil === '62' || $idPerfil === '51') {
+//                    return $this->recepcionAlmacen();
+//                }
+//                break;
+//            case 29://recepcion laboratorio
+//                if ($idPerfil === '38' || $idPerfil === '56') {
+//                    return $this->recepcionLaboratorio();
+//                }
+//                break;
+//            case 30: //recepcion logistica
+//                if ($idPerfil === '52' || $idPerfil === '41' || $idPerfil === '60') {
+//                    return $this->recepcionLogistica();
+//                }
+//                break;
+//            case 36: //producto entregado
+//                if ($idPerfil === '57') {
+//                    return $this->recepcionTecnico();
+//                }
+//                break;
+//            default:
+//                return $this->vistaValidacion();
+//                break;
 //        }
     }
 
-    public function mostrarDatosValidacionTecnico($idServicio) {
-        $equipoAllab = $this->DBP->consultaEquiposAllab($idServicio);
-        return $equipoAllab;
+    public function vistaValidacion() {
+        $dataValidacion['datosValidacion'] = [];
+//        $data = [];
+
+        $formulario = array('formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $dataValidacion, TRUE));
+        return $formulario;
     }
 
-    public function mostrarVistaValidacionTecnico(array $datos) {
-        $mostrarDatos = $this->DBP->mostrarVistaTecnico($datos);
-        return $mostrarDatos;
+    public function vistaEnvioAlmacen($datos) {
+        $dataValidacion['datosValidacion'] = $this->DBP->consultaDatosValidacion($datos['idServicio'],$datos['IdRefaccion']);
+        $data = [];
+        
+        $formulario = array('formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $dataValidacion, TRUE),
+            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE));
+        return $formulario;
+    }
+
+    public function vistaEnvioAsigncionGuia() {
+        $data = [];
+
+        $formulario = array('formularioAsignacionGuia' => parent::getCI()->load->view('Poliza/Modal/2FormularioEnvioSinGuia', $data, TRUE),
+            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE),
+            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+        return $formulario;
+    }
+
+    public function vistaAsignacionGuiaLogistica() {
+        $data = [];
+
+        $formulario = array('formularioAsignacionGuiaLogistica' => parent::getCI()->load->view('Poliza/Modal/2FormularioEnvioSinGuia', $data, TRUE),
+            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+        return $formulario;
+    }
+
+    public function recepcionAlmacen() {
+        $data = [];
+
+        $formulario = array('formularioRecepcionAlmacen' => parent::getCI()->load->view('Poliza/Modal/4FormularioRecepcionAlmacen', $data, TRUE),
+            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE),
+            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+        return $formulario;
+    }
+
+    public function recepcionLaboratorio() {
+        $data = [];
+
+        $formulario = array('formularioRecepcionLaboratorio' => parent::getCI()->load->view('Poliza/Modal/5FormularioRecepcionLaboratorio', $data, TRUE),
+            'formularioRecepcionAlmacen' => parent::getCI()->load->view('Poliza/Modal/4FormularioRecepcionAlmacen', $data, TRUE),
+            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE),
+            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+        return $formulario;
+    }
+
+    public function revisionHistorial() {
+        $data = [];
+
+        $formulario = array('formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE),
+            'formularioRecepcionLaboratorio' => parent::getCI()->load->view('Poliza/Modal/5FormularioRecepcionLaboratorio', $data, TRUE),
+            'formularioRecepcionAlmacen' => parent::getCI()->load->view('Poliza/Modal/4FormularioRecepcionAlmacen', $data, TRUE),
+            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE),
+            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+        return $formulario;
+    }
+
+    public function recepcionLogistica() {
+        $data = [];
+
+        $formulario = array('formularioRecepcionLogistica' => parent::getCI()->load->view('Poliza/Modal/7FormularioRecepcionLogistica', $data, TRUE),
+            'formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE),
+            'formularioRecepcionLaboratorio' => parent::getCI()->load->view('Poliza/Modal/5FormularioRecepcionLaboratorio', $data, TRUE),
+            'formularioRecepcionAlmacen' => parent::getCI()->load->view('Poliza/Modal/4FormularioRecepcionAlmacen', $data, TRUE),
+            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE),
+            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+        return $formulario;
+    }
+
+    public function envioSeguimientoLogistica() {
+        $data = [];
+
+        $formulario = array('formularioEnvioSeguimientoLogistica' => parent::getCI()->load->view('Poliza/Modal/8FormularioEnvioSeguimientoLogistica', $data, TRUE),
+            'formularioRecepcionLogistica' => parent::getCI()->load->view('Poliza/Modal/7FormularioRecepcionLogistica', $data, TRUE),
+            'formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE),
+            'formularioRecepcionLaboratorio' => parent::getCI()->load->view('Poliza/Modal/5FormularioRecepcionLaboratorio', $data, TRUE),
+            'formularioRecepcionAlmacen' => parent::getCI()->load->view('Poliza/Modal/4FormularioRecepcionAlmacen', $data, TRUE),
+            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE),
+            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+        return $formulario;
+    }
+
+    public function recepcionTecnico() {
+        $data = [];
+
+        $formulario = array('formularioRecepcionTecnico' => parent::getCI()->load->view('Poliza/Modal/9FormularioRecepcionTecnica', $data, TRUE),
+            'formularioEnvioSeguimientoLogistica' => parent::getCI()->load->view('Poliza/Modal/8FormularioEnvioSeguimientoLogistica', $data, TRUE),
+            'formularioRecepcionLogistica' => parent::getCI()->load->view('Poliza/Modal/7FormularioRecepcionLogistica', $data, TRUE),
+            'formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE),
+            'formularioRecepcionLaboratorio' => parent::getCI()->load->view('Poliza/Modal/5FormularioRecepcionLaboratorio', $data, TRUE),
+            'formularioRecepcionAlmacen' => parent::getCI()->load->view('Poliza/Modal/4FormularioRecepcionAlmacen', $data, TRUE),
+            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE),
+            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+        return $formulario;
     }
 
 }

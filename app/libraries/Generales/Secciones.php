@@ -470,9 +470,9 @@ class Secciones extends General {
             case 'Localizacion/Dispositivos':                
                 $datos['dispositivos'] = $this->ubicaphone->cargaDispositivosGlobal();
                 break;
-            case 'Poliza/Seguimiento_Equipos':                
-                $datos['vistaUsuario'] = $this->Seguimientos->mostrarVistaPorUsuario();
-                $datos['perfilesPersonaValida'] = $this->Seguimientos->mostrarPerfilPersonaValida();
+            case 'Poliza/Seguimiento_Equipos':
+                $datos['tablaEquipos'] = $this->Seguimientos->mostrarTabla();
+                $datos['vistaUsuario'] = $this->Seguimientos->perfilUsuario();
                 break;
             default:
                 break;

@@ -1,4 +1,4 @@
-<div id="divEnvioSeguimientoLog" class="content">
+
     <div id="panelEnvioSeguimientoLog" class="panel panel-inverse">
         <div class="panel-heading">
             <h4 class="panel-title">7) Envío y Seguimiento Logística</h4>
@@ -89,12 +89,7 @@
                     <div class="col-md-4 col-sm-6 col-xs-12">
                         <div class="form-group">
                             <label class="f-w-600 f-s-13">Fecha de Recepción *</label>
-                            <div class="input-group date" id="fechaRecepcion">
-                                <input type="text" class="form-control"/>
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                            </div>
+                            <input type="datetime-local" id="fechaEnvioSegLog" value="<?php echo $date = date('Y-m-d\TH:i'); ?>" class="form-control" data-parsley-pattern="^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])T(|0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])$" required/>
                         </div>
                     </div>
                     <div class="col-md-9 col-sm-9 col-xs-12">
@@ -108,7 +103,7 @@
                     <div class="col-md-9 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label class="f-w-600 f-s-13">Evidencia de Entrega *</label> 
-                            <input id="evidenciaEntrega"  name="evidenciaEntrega[]" type="file" multiple />
+                            <input id="evidenciaEntregaLog"  name="evidenciaEntregaLog[]" type="file" multiple />
                         </div>
                     </div>
                 </div>
@@ -119,5 +114,4 @@
                 </div>
             </form>
         </div>
-    </div>    
-</div>
+    </div>   
