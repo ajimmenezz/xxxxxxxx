@@ -872,26 +872,56 @@ class Modelo_Tesoreria extends Modelo_Base {
                 ], ["Id" => $datos['id']]);
 
         if ($generales['IdEstatus'] == 7) {
-            $saldo = $this->getSaldoByUsuario($generales['IdUsuarioFF']);
-            $ultimo = $this->getUltimoMovimientoSaldo($generales['IdUsuarioFF']);
 
-            $saldoNuevo = ($ultimo < $datos['id']) ? (float) $saldo : ((float) $saldo + (float) abs($generales['Monto']));
+            if ($generales['IdConcepto'] == 8) {
+                $saldo = $this->getSaldoByUsuario($generales['IdUsuarioFF']);
+                $saldoGasolina = $this->getSaldoGasolinaByUsuario($generales['IdUsuarioFF']);
+                $ultimo = $this->getUltimoMovimientoSaldo($generales['IdUsuarioFF']);
 
-            $this->insertar("t_comprobacion_fondo_fijo", [
-                "IdUsuario" => $this->usuario['Id'],
-                "Fecha" => $this->getFecha(),
-                "IdUsuarioFF" => $this->usuario['Id'],
-                "IdTipoMovimiento" => 3,
-                "IdTipoComprobante" => 3,
-                "IdEstatus" => 7,
-                "Monto" => abs($generales['Monto']),
-                "Saldo" => $saldoNuevo,
-                "FechaMovimiento" => $this->getFecha(),
-                "Observaciones" => "Reembolso por cancelación del movimiento " . $datos['id'],
-                "Archivos" => "",
-                "FechaAutorizacion" => $this->getFecha(),
-                "IdUsuarioAutoriza" => $this->usuario['Id']
-            ]);
+                $saldoNuevo = ($ultimo < $datos['id']) ? (float) $saldoGasolina : ((float) $saldoGasolina + (float) abs($generales['Monto']));
+
+                $this->insertar("t_comprobacion_fondo_fijo", [
+                    "IdUsuario" => $this->usuario['Id'],
+                    "Fecha" => $this->getFecha(),
+                    "IdUsuarioFF" => $this->usuario['Id'],
+                    "IdTipoMovimiento" => 3,
+                    "IdTipoComprobante" => 3,
+                    "IdEstatus" => 7,
+                    "Monto" => abs($generales['Monto']),
+                    "Saldo" => $saldo,
+                    "SaldoGasolina" => $saldoNuevo,
+                    "FechaMovimiento" => $this->getFecha(),
+                    "Observaciones" => "Reembolso por cancelación del movimiento " . $datos['id'],
+                    "Archivos" => "",
+                    "FechaAutorizacion" => $this->getFecha(),
+                    "IdUsuarioAutoriza" => $this->usuario['Id']
+                ]);
+                
+                
+            } else {
+                $saldo = $this->getSaldoByUsuario($generales['IdUsuarioFF']);
+                $saldoGasolina = $this->getSaldoGasolinaByUsuario($generales['IdUsuarioFF']);
+                $ultimo = $this->getUltimoMovimientoSaldo($generales['IdUsuarioFF']);
+
+                $saldoNuevo = ($ultimo < $datos['id']) ? (float) $saldo : ((float) $saldo + (float) abs($generales['Monto']));
+
+                $this->insertar("t_comprobacion_fondo_fijo", [
+                    "IdUsuario" => $this->usuario['Id'],
+                    "Fecha" => $this->getFecha(),
+                    "IdUsuarioFF" => $this->usuario['Id'],
+                    "IdTipoMovimiento" => 3,
+                    "IdTipoComprobante" => 3,
+                    "IdEstatus" => 7,
+                    "Monto" => abs($generales['Monto']),
+                    "Saldo" => $saldoNuevo,
+                    "SaldoGasolina" => $saldoGasolina,
+                    "FechaMovimiento" => $this->getFecha(),
+                    "Observaciones" => "Reembolso por cancelación del movimiento " . $datos['id'],
+                    "Archivos" => "",
+                    "FechaAutorizacion" => $this->getFecha(),
+                    "IdUsuarioAutoriza" => $this->usuario['Id']
+                ]);
+            }
         }
 
         if ($this->estatusTransaccion() === FALSE) {
@@ -1103,7 +1133,7 @@ class Modelo_Tesoreria extends Modelo_Base {
         $consulta = $this->actualizar('t_facturacion_outsourcing', [
             "IdEstatus" => $datos['estatus']
                 ], ["Id" => $datos['idVuelta']]);
-        
+
         return $consulta;
     }
 
