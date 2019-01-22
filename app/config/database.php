@@ -187,8 +187,8 @@ $db['SAE'] = array(
 
 $db['SAE7'] = array(
     'dsn' => '',
-    'hostname' => '192.168.0.7, 49161', //Produccion
-//    'hostname' => '192.168.0.35, 51051', //Pruebas
+//    'hostname' => '192.168.0.7, 49161', //Produccion
+    'hostname' => '192.168.0.35, 51051', //Pruebas
     'username' => 'adist',
     'password' => 'course3Goose,',
     'database' => 'SAE7EMPRESA3',

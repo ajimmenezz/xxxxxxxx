@@ -60,7 +60,7 @@ $(function () {
         evento.enviarEvento('Compras/MostrarFormularioOrdenCompra', {}, '#panelOrdenesDeCompra', function (respuesta) {
             cargarSeccionOrdenCompra(respuesta);
             cargarObjetosFormulario();
-            eventosFormulario(respuesta);
+            eventosFormulario(respuesta, 'Agregar');
         });
     });
 
@@ -81,7 +81,8 @@ $(function () {
         evento.enviarEvento('Compras/MostrarEditarOrdenCompra', data, '#panelOrdenesDeCompra', function (respuesta) {
             cargarSeccionOrdenCompra(respuesta);
             cargarObjetosFormulario();
-            eventosFormulario(respuesta);
+            console.log(respuesta);
+            eventosFormulario(respuesta, 'Editar');
             cargarInformacionFormularioEditar(respuesta);
 
         });
@@ -152,15 +153,16 @@ $(function () {
 
     var eventosFormulario = function () {
         var respuesta = arguments[0];
+        var tipoOperacion = arguments[1];
+        console.log(tipoOperacion);
         var productos = respuesta.datos.productos;
-        var timer;
 
         if (respuesta.datos.editarOrdenCompraGapsi !== undefined) {
             var editarOrdenComprarGapsi = respuesta.datos.editarOrdenCompraGapsi[0];
         } else {
             var editarOrdenComprarGapsi = null;
         }
-
+        
         window.addEventListener("keypress", function (event) {
             if (event.keyCode == 13) { //Enter
                 event.preventDefault();
@@ -228,7 +230,7 @@ $(function () {
                         cargarSelectRequisiciones(requisicion, productos, fechaRequisicion)
                     } else {
                         evento.enviarEvento('Compras/ConsultaPartidasOrdenCompraAnteriores', data, '#panelFormularioOrdenesDeCompra', function (respuesta) {
-                            agregarTablaRequisiciones(respuesta, productos, fechaRequisicion);
+                            agregarTablaRequisiciones(respuesta, productos, fechaRequisicion, true);
                         });
                     }
                 }
@@ -415,6 +417,7 @@ $(function () {
                 select.cambiarOpcion('#selectRequisicionesOrdenCompra', requisicionAnterior);
             });
         } else {
+            console.log('pumas4');
             agregarTablaRequisiciones(respuesta.datos.parCompo, respuesta.datos.productos);
         }
 
@@ -423,7 +426,6 @@ $(function () {
         select.cambiarOpcion('#selectAlmacenOrdenCompra', respuesta.datos.compo.NUM_ALMA);
         select.cambiarOpcion('#selectMonedaOrdenCompra', respuesta.datos.compo.NUM_MONED);
         if (respuesta.datos.editarOrdenCompraGapsi.length > 0) {
-            console.log('pumas');
             select.cambiarOpcion('#selectClienteOrdenCompra', respuesta.datos.editarOrdenCompraGapsi[0].Cliente);
             select.cambiarOpcion('#selectTipoServicioOrdenCompra', respuesta.datos.editarOrdenCompraGapsi[0].TipoServicio);
         }
@@ -447,6 +449,7 @@ $(function () {
         var dataRequisicion = {'claveDocumento': requisicion};
 
         evento.enviarEvento('Compras/ConsultaListaRequisiciones', dataRequisicion, '#panelFormularioOrdenesDeCompra', function (respuesta) {
+            console.log('pumas3');
             agregarTablaRequisiciones(respuesta, productos, fechaRequisicion);
         });
     }
@@ -486,6 +489,7 @@ $(function () {
         var productos = arguments[0];
         var numeroFila = arguments[1];
         var partidaRequisicion = arguments[2];
+        console.log(partidaRequisicion);
         var nuevaFila = '<tr role="row">';
         nuevaFila += '<td>\n\
                         <div id="partidaClave' + numeroFila + '" data-partida-requisicion="' + partidaRequisicion + '">\n\
@@ -498,6 +502,7 @@ $(function () {
                             <select id="selectProductoPartida' + numeroFila + '" class="form-control" style="width: 100%" data-parsley-required="true">\n\
                                 <option value="">Seleccionar...</option>';
         $.each(productos, function (index, value) {
+            value.COSTO_UNIDAD = '10';
             nuevaFila += '<option data-costo-unidad="' + value.COSTO_UNIDAD + '" data-unidad1="' + value.UNI_MED + '" data-unidad2="' + value.UNI_ALT + '" value="' + value.CVE_ART + '">' + value.DESCR + ' (' + $.trim(value.CVE_ART) + ')</option>';
         });
         nuevaFila += '</select>\n\
@@ -538,7 +543,8 @@ $(function () {
 
         $('#selectProductoPartida' + numeroFila).on("change", function () {
             var clave = $(this).val();
-            eventoProductoPartida(numeroFila, clave);
+            var costoUnidad = $('#selectProductoPartida' + numeroFila + ' option:selected').data('costo-unidad')
+            eventoProductoPartida(numeroFila, clave, costoUnidad);
         });
 
         $('#cantidad' + numeroFila).on("change", function () {
@@ -558,9 +564,9 @@ $(function () {
     var eventoProductoPartida = function () {
         var numeroFila = arguments[0];
         var clave = arguments[1];
+        var costoUnidad = arguments[2];
 
         if (clave !== '') {
-            var costoUnidad = $('#selectProductoPartida' + numeroFila + ' option:selected').data('costo-unidad');
             var unidad1 = $('#selectProductoPartida' + numeroFila + ' option:selected').data('unidad1');
             var unidad2 = $('#selectProductoPartida' + numeroFila + ' option:selected').data('unidad2');
             var cantidad = $('#inputDescuentoOrdenCompra').val();
@@ -575,7 +581,8 @@ $(function () {
             $("#selectUnidadPartida" + numeroFila).append('<option value="' + unidad2 + '">' + unidad2 + '</option>');
             $('#cantidad' + numeroFila).val(1);
             $('#costoUnidad' + numeroFila).val(costoUnidad);
-            $('#subtotalPartida' + numeroFila).val(costoUnidad);
+            console.log(costoUnidad);
+//            $('#subtotalPartida' + numeroFila).val(costoUnidad);
             $('#descuento' + numeroFila).val(cantidad);
             eventoBotonObservacionesPartida(numeroFila);
         } else {
@@ -779,7 +786,8 @@ $(function () {
         var requisiciones = arguments[0];
         var productos = arguments[1];
         var fechaRequisicion = arguments[2] || '';
-
+        var costoEditar = arguments[3] || false;
+        console.log(costoEditar);
         tabla.limpiarTabla('#data-table-partidas-oc');
         if (requisiciones.length !== 0) {
             $.each(requisiciones, function (k, v) {
