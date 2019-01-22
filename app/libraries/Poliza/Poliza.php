@@ -261,6 +261,10 @@ class Poliza extends General {
                                                                                 t_servicios_ticket
                                                                             WHERE
                                                                                 Id = tfo.IdServicio) EstatusServicio
+                                                                        nombreUsuario(tfo.IdSupervisor) AS SupervisorAutorizado,
+                                                                        tfo.Monto,
+                                                                        tfo.Viatico,
+                                                                        (tfo.Monto + tfo.Viatico) AS Total
                                                                     FROM
                                                                         t_facturacion_outsourcing tfo
                                                                             INNER JOIN
@@ -291,7 +295,11 @@ class Poliza extends General {
                                                                             sucursal(tst.IdSucursal) Sucursal,
                                                                             nombreUsuario(tfo.IdUsuario) NombreAtiende,
                                                                             estatus(tfo.IdEstatus) Estatus,
-                                                                            estatus(tst.IdEstatus) AS EstatusServicio
+                                                                            estatus(tst.IdEstatus) AS EstatusServicio,
+                                                                            nombreUsuario(tfo.IdSupervisor) AS SupervisorAutorizado,
+                                                                            tfo.Monto,
+                                                                            tfo.Viatico,
+                                                                            (tfo.Monto + tfo.Viatico) AS Total
                                                                         FROM
                                                                             t_facturacion_outsourcing tfo
                                                                                 INNER JOIN
@@ -319,7 +327,11 @@ class Poliza extends General {
                                                                     estatus(tfo.IdEstatus) Estatus,
                                                                     nombreUsuario(tfo.IdUsuario) NombreAtiende,
                                                                     tst.Atiende,
-                                                                    (SELECT estatus(IdEstatus) FROM t_servicios_ticket WHERE Id = tfo.IdServicio) EstatusServicio
+                                                                    (SELECT estatus(IdEstatus) FROM t_servicios_ticket WHERE Id = tfo.IdServicio) EstatusServicio,
+                                                                    nombreUsuario(tfo.IdSupervisor) AS SupervisorAutorizado,
+                                                                    tfo.Monto,
+                                                                    tfo.Viatico,
+                                                                    (tfo.Monto + tfo.Viatico) AS Total
                                                                     FROM t_facturacion_outsourcing tfo
                                                                     INNER JOIN t_servicios_ticket tst
                                                                     ON tst.Id = tfo.IdServicio
@@ -346,7 +358,11 @@ class Poliza extends General {
                                                         sucursal(tst.IdSucursal) Sucursal,
                                                         nombreUsuario(tfo.IdUsuario) NombreAtiende,
                                                         estatus(tfo.IdEstatus) Estatus,
-                                                        estatus(tst.IdEstatus) AS EstatusServicio
+                                                        estatus(tst.IdEstatus) AS EstatusServicio,
+                                                        nombreUsuario(tfo.IdSupervisor) AS SupervisorAutorizado,
+                                                        tfo.Monto,
+                                                        tfo.Viatico,
+                                                        (tfo.Monto + tfo.Viatico) AS Total
                                                     FROM
                                                         t_facturacion_outsourcing tfo
                                                             INNER JOIN
@@ -778,10 +794,10 @@ class Poliza extends General {
         } else {
             $path = 'http://' . $host . '/' . $pdf;
         }
-        
+
         $linkPDF = '<br>Para descargar el archivo PDF de conclusión <a href="' . $path . '" target="_blank">dar click aqui</a>';
         $textoCorreo = '<p>Se notifica que el servicio de ' . $datosServicio['TipoServicio'] . ' con numero de ticket ' . $datos['ticket'] . ' se a concluido por ' . $usuario['Nombre'] . '<br>' . $linkPDF . '</p>';
-        
+
         if ($actualizarServicio) {
             $this->nuevosServiciosDesdeChecklist($actualizarServicio);
             foreach ($actualizarServicio as $key => $value) {
@@ -804,10 +820,10 @@ class Poliza extends General {
         $revisionFisica = $this->DBP->consultaRevisionPunotPDF($datos['servicio']);
         $revisionTecnica = $this->DBP->mostrarFallasTecnicas($datos['servicio']);
         $this->pdf = new PDFAux("Sucursal: " . $datosServicio['Sucursal'] . " \n Resumen de Servicio - Checklist");
-        
+
         if ($datos['generarPDF']) {
             $generarPDF = true;
-        }else{
+        } else {
             $generarPDF = false;
         }
         $this->paginaInformacionGeneral($datosServicio, $datos, $generarPDF);
@@ -843,7 +859,7 @@ class Poliza extends General {
 
         $this->pdf->multiceldaConTitulo("Descripción", $datosServicio['DescripcionServicio']);
         $y = $this->pdf->GetY() + 18;
-        if($generarPDF == FALSE){
+        if ($generarPDF == FALSE) {
             $this->pdf->imagenConTiuloYSubtitulo($datosServicio['Firma'], "Firma Cierre", $datosServicio['NombreFirma'], $y);
         }
     }
@@ -906,7 +922,7 @@ class Poliza extends General {
             $this->DBP->insertarNuevoServicioCorrectivo($datosTicket);
             $this->enviarCorreoConcluido(array('correo' => 'yarzola@siccob.com.mx'), $titulo, $textoCorreo);
         }
-        
+
         return true;
     }
 

@@ -62,6 +62,12 @@ class Controller_Tesoreria extends Base {
             case 'rechazarVuelta':
                 $resultado = $this->tesoreria->rechazarVuelta($this->input->post());
                 break;
+            case 'verificarReabrirVuelta':
+                $resultado = $this->tesoreria->verificarReabrirVuelta($this->input->post());
+                break;
+            case 'reabrirVuelta':
+                $resultado = $this->tesoreria->reabrirVuelta($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

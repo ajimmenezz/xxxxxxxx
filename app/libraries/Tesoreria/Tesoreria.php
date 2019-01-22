@@ -498,6 +498,26 @@ class Tesoreria extends General {
         $evidenciaPago = $this->DBT->evidenciaPagoFactura($datos['idVuelta']);
 
         return $evidenciaPago;
+    }
+    
+    public function verificarReabrirVuelta() {
+        $usuario = $this->Usuario->getDatosUsuario();
+
+        if (in_array('299', $usuario['PermisosAdicionales']) || in_array('299', $usuario['Permisos'])) {
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }   
+    
+    public function reabrirVuelta(array $datos) {
+        $consulta = $this->DBT->cambiarEstatusTablaFacturacionOutsourcing($datos);
+        
+        if(!empty($consulta)){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
     }        
 
 }

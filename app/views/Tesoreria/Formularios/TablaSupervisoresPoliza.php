@@ -12,6 +12,10 @@
                 <th class="all">Fecha</th>
                 <th class="all">Estatus Vuelta</th>
                 <th class="all">Estatus Servicio</th>
+                <th class="all">Autorizado por</th>
+                <th class="all">Monto</th>
+                <th class="all">Viatico</th>
+                <th class="all">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +33,10 @@
                     echo '<td>' . $value['Fecha'] . '</td>';
                     echo '<td>' . $value['Estatus'] . '</td>';
                     echo '<td><font color="red">' . $value['EstatusServicio'] . '</font></td>';
+                    echo '<td>' . $value['SupervisorAutorizado'] . '</td>';
+                    echo '<td>' . $value['Monto'] . '</td>';
+                    echo '<td>' . $value['Viatico'] . '</td>';
+                    echo '<td>' . $value['Total'] . '</td>';
                     echo '</tr>';
                 }
             }
