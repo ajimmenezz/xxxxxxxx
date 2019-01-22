@@ -318,7 +318,7 @@ $(function () {
             var fechaRec = $('#inputFechaRecOrdenCompra').val();
 
             if (camposTablaValidados && camposFormularioValidados) {
-                if (fecha <= fechaRec) {
+                if (fecha <= fechaRec + '00:00:00.00') {
                     if (quitaAcentos(proveedor) !== quitaAcentos(beneficiario)) {
                         evento.mostrarModal('Advertencia', validarProvedorBeneficiario());
 

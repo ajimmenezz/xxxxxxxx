@@ -754,11 +754,9 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function actualizarUltimoDocumento(string $nuevoUltimoDocumento) {
-        $fechaDocumento = mdate('%Y-%d-%m %H:%i:%s', now('America/Mexico_City'));
-
         $query = "UPDATE FOLIOSC03 
                     SET ULT_DOC=(CASE WHEN ULT_DOC < '" . $nuevoUltimoDocumento . "' THEN '" . $nuevoUltimoDocumento . "' ELSE ULT_DOC END),                      
-                    FECH_ULT_DOC= '" . $fechaDocumento . "'
+                    FECH_ULT_DOC= GETDATE()
                 WHERE TIP_DOC = N'o'  
                 AND SERIE = N'OC'";
         $consulta = parent::connectDBSAE7()->query($query);
