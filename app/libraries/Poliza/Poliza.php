@@ -260,7 +260,7 @@ class Poliza extends General {
                                                                             FROM
                                                                                 t_servicios_ticket
                                                                             WHERE
-                                                                                Id = tfo.IdServicio) EstatusServicio
+                                                                                Id = tfo.IdServicio) EstatusServicio,
                                                                         nombreUsuario(tfo.IdSupervisor) AS SupervisorAutorizado,
                                                                         tfo.Monto,
                                                                         tfo.Viatico,
