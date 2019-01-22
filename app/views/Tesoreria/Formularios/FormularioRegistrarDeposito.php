@@ -79,25 +79,17 @@
                         <small>OTROS</small><br>
                         <small>
                             <?php
-                            if ($saldoGasolina < 0) {
-                                $totalGasolina = abs($montoGasolina);
-                            } else {
-                                $totalGasolina = abs($montoGasolina) + $saldoGasolina;
-                            }
+                            $totalGasolina = abs($montoGasolina) + (($saldoGasolina > 0) ? $saldoGasolina : 0);
 
-                            if ($saldo < 0) {
-                                $montoOtros = $monto - abs($montoSiccob) - abs($montoResidig) - $totalGasolina + abs($montoOtros);
-                            } else {
-                                $montoOtros = $monto - $saldo - abs($montoSiccob) - abs($montoResidig) - $totalGasolina - abs($montoOtros);
-                            }
+                            $totalMontoOtros = $monto - $saldo - $totalGasolina - abs($montoSiccob) - abs($montoResidig);
 
-                            if ($montoOtros <= 0) {
-                                $montoOtros = 0;
+                            if ($totalMontoOtros <= 0) {
+                                $totalMontoOtros = 0;
                             }
-                            echo '$' . number_format($montoOtros, 2, ".", ",");
+                            echo '$' . number_format($totalMontoOtros, 2, ".", ",");
                             ?>
                         </small>       
-                        <input type="hidden" value="<?php echo number_format($montoOtros, 2, ".", "") ?>" id="hiddenMontoOtros" />
+                        <input type="hidden" value="<?php echo number_format($totalMontoOtros, 2, ".", "") ?>" id="hiddenMontoOtros" />
                     </a>
                 </div>
             </div>
