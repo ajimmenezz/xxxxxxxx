@@ -114,8 +114,10 @@ class InformacionServicios extends General {
                 'Servicio' => $servicio,
                 'ServicioConcluir' => $servicioConcluir));
 
-            if ($resultadoSD->operation->result->status !== 'Success') {
-                $estatus = $resultadoSD->operation->result->message;
+            if (!empty($resultadoSD)) {
+                if ($resultadoSD->operation->result->status !== 'Success') {
+                    $estatus = $resultadoSD->operation->result->message;
+                }
             }
         }
 
@@ -182,7 +184,9 @@ class InformacionServicios extends General {
             }
         }
 
-        $this->guardarLogSD($resultadoSD, $datos['Folio']);
+        if (!empty($resultadoSD)) {
+            $this->guardarLogSD($resultadoSD, $datos['Folio']);
+        }
 
         return $resultadoSD;
     }
@@ -762,8 +766,13 @@ class InformacionServicios extends General {
 
                         if ($descripcion['estatus']) {
                             $ServiceDesck = $this->ServiceDesk->setResolucionServiceDesk($key, $folio[0]['Folio'], $descripcion['html']);
-                            if ($ServiceDesck->operation->result->status !== 'Success') {
-                                return $ServiceDesck->operation->result->message;
+
+                            if (!empty($ServiceDesck)) {
+                                if ($ServiceDesck->operation->result->status !== 'Success') {
+                                    return $ServiceDesck->operation->result->message;
+                                } else {
+                                    return TRUE;
+                                }
                             } else {
                                 return TRUE;
                             }
@@ -891,15 +900,15 @@ class InformacionServicios extends General {
 
         return $sucursal;
     }
-    
+
     public function checklist(array $datos) {
         $linkPdf = $this->rutaPDF($datos);
         $descripcion = "<div>Ha concluido el Servicio Checklist</div><br/>
                         <a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a>";
-        
+
         return $descripcion;
     }
-    
+
     public function rutaPDF(array $datos) {
         $host = $_SERVER['SERVER_NAME'];
         $infoServicio = $this->getInformacionServicio($datos['servicio']);

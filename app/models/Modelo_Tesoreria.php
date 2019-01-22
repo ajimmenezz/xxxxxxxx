@@ -1099,4 +1099,12 @@ class Modelo_Tesoreria extends Modelo_Base {
         return $consulta;
     }
 
+    public function cambiarEstatusTablaFacturacionOutsourcing(array $datos) {
+        $consulta = $this->actualizar('t_facturacion_outsourcing', [
+            "IdEstatus" => $datos['estatus']
+                ], ["Id" => $datos['idVuelta']]);
+        
+        return $consulta;
+    }
+
 }

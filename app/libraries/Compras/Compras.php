@@ -96,8 +96,8 @@ class Compras extends General {
     }
 
     public function consultaListaOrdenesCompra(array $datos = null) {
-        $fecha = mdate('%Y-%d-%m', now('America/Mexico_City'));
-
+        $fecha = mdate('%Y-%m-%d', now('America/Mexico_City'));
+        
         if (empty($datos)) {
             $whereFecha = "WHERE FECHA_DOC between '" . $fecha . " 00:00:00' and '" . $fecha . " 23:59:59'";
         } else {

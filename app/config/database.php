@@ -185,14 +185,10 @@ $db['SAE'] = array(
     'port' => 1433
 );
 
-//IP de Base de datos Produccion SAE7
-//    'hostname' => '192.168.0.7, 49161',
-//IP de Base de datos de Pruebas de SAE7
-//    'hostname' => '192.168.0.35, 51051',
-
 $db['SAE7'] = array(
     'dsn' => '',
-    'hostname' => '192.168.0.7, 49161',
+    'hostname' => '192.168.0.7, 49161', //Produccion
+//    'hostname' => '192.168.0.35, 51051', //Pruebas
     'username' => 'adist',
     'password' => 'course3Goose,',
     'database' => 'SAE7EMPRESA3',
@@ -211,28 +207,6 @@ $db['SAE7'] = array(
     'failover' => array(),
     'save_queries' => TRUE
 );
-
-//$db['SAE7'] = array(
-//	'dsn'	=> '',
-//	'hostname' => 'DESKTOP-0AJI7SU\SQLEXPRESS',
-//	'username' => 'sa',
-//	'password' => 'S1cc0bS.',
-//	'database' => 'SAE7EMPRESA3',
-//	'dbdriver' => 'sqlsrv',
-//	'dbprefix' => '',
-//	'pconnect' => FALSE,
-//	'db_debug' => (ENVIRONMENT !== 'production'),
-//	'cache_on' => FALSE,
-//	'cachedir' => '',
-//	'char_set' => 'utf8',
-//	'dbcollat' => 'utf8_general_ci',
-//	'swap_pre' => '',
-//	'encrypt' => FALSE,
-//	'compress' => FALSE,
-//	'stricton' => FALSE,
-//	'failover' => array(),
-//	'save_queries' => TRUE
-//);
 
 $db['Gapsi'] = array(
     'dsn' => '',

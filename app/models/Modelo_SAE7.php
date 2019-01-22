@@ -165,6 +165,8 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function consultaListaOrdenesCompra(string $whereFecha) {
+        parent::connectDBSAE7()->query("SET language us_english");
+
         $query = "SELECT 
                     COMP.CVE_DOC,
                     PROV.NOMBRE,
@@ -752,11 +754,9 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function actualizarUltimoDocumento(string $nuevoUltimoDocumento) {
-        $fechaDocumento = mdate('%Y-%d-%m %H:%i:%s', now('America/Mexico_City'));
-
         $query = "UPDATE FOLIOSC03 
                     SET ULT_DOC=(CASE WHEN ULT_DOC < '" . $nuevoUltimoDocumento . "' THEN '" . $nuevoUltimoDocumento . "' ELSE ULT_DOC END),                      
-                    FECH_ULT_DOC= '" . $fechaDocumento . "'
+                    FECH_ULT_DOC= GETDATE()
                 WHERE TIP_DOC = N'o'  
                 AND SERIE = N'OC'";
         $consulta = parent::connectDBSAE7()->query($query);
@@ -875,11 +875,12 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function actualizarCOMPO(array $datos) {
+        parent::connectDBSAE7()->query("SET language us_english");
         $query = "update COMPO03 set
                     CVE_CLPV = '" . $datos['claveProvedor'] . "',
                     SU_REFER = '" . $datos['referencia'] . "', 
                     FECHA_DOC = GETDATE(), 
-                    FECHA_REC = GETDATE(),
+                    FECHA_REC = '" . $datos['fechaRec'] . "',
                     FECHA_PAG = EOMONTH(GETDATE()),
                     CAN_TOT = " . $datos['cantidadTotal'] . ", 
                     IMP_TOT4 = " . $datos['iva'] . ", 
@@ -912,6 +913,7 @@ class Modelo_SAE7 extends Modelo_Base {
     }
 
     public function insertarCOMPO(array $datos) {
+        parent::connectDBSAE7()->query("SET language us_english");
         $query = "insert into COMPO03
                     (TIP_DOC,
                      CVE_DOC, 
@@ -957,7 +959,7 @@ class Modelo_SAE7 extends Modelo_Base {
                     'O',
                     '" . $datos['referencia'] . "',
                     GETDATE(),
-                    GETDATE(),
+                    '" . $datos['fechaRec'] . "',
                     EOMONTH(GETDATE()),
                     " . $datos['cantidadTotal'] . ",
                     0,

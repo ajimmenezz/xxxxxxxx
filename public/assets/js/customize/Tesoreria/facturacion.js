@@ -59,6 +59,27 @@ $(function () {
                 });
             } else if (estatusVuelta === 'RECHAZADO') {
                 observacionesRechazo(idVuelta);
+            } else if (estatusVuelta === 'AUTORIZADO') {
+                evento.enviarEvento('Facturacion/verificarReabrirVuelta', {}, '#panelFacturacionTesoreria', function (respuesta) {
+                    if (respuesta) {
+                        var modalMensaje = evento.mensajeValidar('¿Realmente quiere Reabrir la Vuelta?');
+                        evento.mostrarModal('Advertencia', modalMensaje);
+                        var idVuelta = datosTabla[0];
+                        var data = {idVuelta: idVuelta, estatus: '8'};
+                        
+                        $('#btnAceptarConfirmacion').on('click', function () {
+                            evento.enviarEvento('Facturacion/reabrirVuelta', data, '#modal-dialogo', function (respuesta) {
+                                if (respuesta) {
+                                    evento.mensajeConfirmacion('Se reabrio la vuelta con exito.', 'Correcto');
+                                }
+                            });
+                        });
+
+                        $('#btnCancelarConfirmacion').on('click', function () {
+                            evento.cerrarModal();
+                        });
+                    }
+                });
             }
         }
     });
@@ -118,17 +139,17 @@ $(function () {
         $('#data-table-subir-facturas').on('change', 'input.editor-active', function () {
             var dataCheckbox = $(this).attr('data-checkbox');
             var dataId = $(this).attr('data-id');
-                if ($(this).is(":checked")) {
-                    listaTickets.push(dataCheckbox);
-                    listaIds.push(dataId);
-                } else {
-                    listaTickets.splice($.inArray(dataCheckbox, listaTickets), 1);
-                    listaIds.splice($.inArray(dataId, listaIds), 1);
-                }
+            if ($(this).is(":checked")) {
+                listaTickets.push(dataCheckbox);
+                listaIds.push(dataId);
+            } else {
+                listaTickets.splice($.inArray(dataCheckbox, listaTickets), 1);
+                listaIds.splice($.inArray(dataId, listaIds), 1);
+            }
 
-                var listaTicketsFiltrada = listaTickets.unique();
-                var stringListaTickets = listaTicketsFiltrada.join(",");
-                $('#inputTicketsFacturaTesoreria').val(stringListaTickets);
+            var listaTicketsFiltrada = listaTickets.unique();
+            var stringListaTickets = listaTicketsFiltrada.join(",");
+            $('#inputTicketsFacturaTesoreria').val(stringListaTickets);
         });
 
         $('#btnGuardarSubirArchivos').off('click');

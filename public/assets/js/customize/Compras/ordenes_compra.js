@@ -33,28 +33,24 @@ $(function () {
         evento.enviarEvento('Compras/ConsultaListaOrdenesCompra', data, '#panelOrdenesDeCompra', function (respuesta) {
             recargandoListaTablaOrdenesCompra(respuesta);
 
-            $('.btnPDFOrdenCompra').off('click');
-            $('.btnPDFOrdenCompra').on('click', function () {
+            $('#data-table-ordenes-compra tbody').on('click', '.btnPDFOrdenCompra', function (e) {
                 var ordenCompra = $(this).data('boton-pdf');
                 eventoCrearPDF(ordenCompra);
             });
 
-            $('.btnEditarOrdenCompra').off('click');
-            $('.btnEditarOrdenCompra').on('click', function () {
+            $('#data-table-ordenes-compra tbody').on('click', '.btnEditarOrdenCompra', function (e) {
                 var ordenCompra = $(this).data('boton-editar');
                 eventoEditarOrdenCompra(ordenCompra);
             });
         });
     });
 
-    $('.btnPDFOrdenCompra').off('click');
-    $('.btnPDFOrdenCompra').on('click', function () {
+    $('#data-table-ordenes-compra tbody').on('click', '.btnPDFOrdenCompra', function (e) {
         var ordenCompra = $(this).data('boton-pdf');
         eventoCrearPDF(ordenCompra);
     });
 
-    $('.btnEditarOrdenCompra').off('click');
-    $('.btnEditarOrdenCompra').on('click', function () {
+    $('#data-table-ordenes-compra tbody').on('click', '.btnEditarOrdenCompra', function (e) {
         var ordenCompra = $(this).data('boton-editar');
         eventoEditarOrdenCompra(ordenCompra);
     });
@@ -121,7 +117,7 @@ $(function () {
         select.crearSelect('#selectUnidadPartida0');
 
         $('#inputFechaOrdenCompra').datetimepicker({
-            format: 'YYYY-DD-MM HH:mm:ss',
+            format: 'YYYY-MM-DD HH:mm:ss',
             widgetPositioning: {
                 horizontal: 'right',
                 vertical: 'bottom'
@@ -129,7 +125,7 @@ $(function () {
         });
 
         $('#inputFechaRecOrdenCompra').datetimepicker({
-            format: 'YYYY-DD-MM HH:mm:ss',
+            format: 'YYYY-MM-DD',
             widgetPositioning: {
                 horizontal: 'right',
                 vertical: 'bottom'
@@ -137,7 +133,7 @@ $(function () {
         });
 
         $('#inputFechaOrdenCompra').val(fechaMilisegundos);
-        $('#inputFechaRecOrdenCompra').val(fechaMilisegundos);
+        $('#inputFechaRecOrdenCompra').val();
 
         $('[data-toggle="tooltip"]').tooltip();
         tabla.generaTablaPersonal(
@@ -322,7 +318,7 @@ $(function () {
             var fechaRec = $('#inputFechaRecOrdenCompra').val();
 
             if (camposTablaValidados && camposFormularioValidados) {
-                if (fecha <= fechaRec) {
+                if (fecha <= fechaRec + '00:00:00.00') {
                     if (quitaAcentos(proveedor) !== quitaAcentos(beneficiario)) {
                         evento.mostrarModal('Advertencia', validarProvedorBeneficiario());
 
@@ -426,8 +422,11 @@ $(function () {
         select.cambiarOpcion('#selectEsquemaOrdenCompra', respuesta.datos.parCompo[0].IMPU4);
         select.cambiarOpcion('#selectAlmacenOrdenCompra', respuesta.datos.compo.NUM_ALMA);
         select.cambiarOpcion('#selectMonedaOrdenCompra', respuesta.datos.compo.NUM_MONED);
-        select.cambiarOpcion('#selectClienteOrdenCompra', respuesta.datos.editarOrdenCompraGapsi[0].Cliente);
-        select.cambiarOpcion('#selectTipoServicioOrdenCompra', respuesta.datos.editarOrdenCompraGapsi[0].TipoServicio);
+        if (respuesta.datos.editarOrdenCompraGapsi.length > 0) {
+            console.log('pumas');
+            select.cambiarOpcion('#selectClienteOrdenCompra', respuesta.datos.editarOrdenCompraGapsi[0].Cliente);
+            select.cambiarOpcion('#selectTipoServicioOrdenCompra', respuesta.datos.editarOrdenCompraGapsi[0].TipoServicio);
+        }
 
         $('#selectProyectoOrdenCompra').val('90').trigger('change');
         $('#inputFechaOrdenCompra').val(respuesta.datos.compo.FECHA_DOC);
@@ -845,7 +844,7 @@ $(function () {
 
     var formatoCeros = function (fechaActual) {
         var fechaNueva = '';
-        if (fechaActual > 10) {
+        if (fechaActual >= 10) {
             fechaNueva = fechaActual;
         } else {
             fechaNueva = '0' + fechaActual;
