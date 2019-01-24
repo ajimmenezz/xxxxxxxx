@@ -231,8 +231,9 @@ class Modelo_Gapsi extends Modelo_Base {
                 . "registro.*, "
                 . "(select Descripcion from db_Proyectos where ID = registro.Proyecto) as NameProyecto "
                 . "from db_Registro registro "
-                . "where ID in (''" . $ids . ")"
-                . "and AplicaComprobacion = 1";
+                . "where ID in (''" . $ids . ") "
+                . "and [Status] in ('Solicitado','Rechazado')";
+//                . "and AplicaComprobacion = 1";
 
         if ($ids !== ',') {
             $consulta = parent::connectDBGapsi()->query($query);
