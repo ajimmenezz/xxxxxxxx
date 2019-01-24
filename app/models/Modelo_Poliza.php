@@ -866,9 +866,9 @@ class Modelo_Poliza extends Modelo_Base {
     public function estatusAllab($idServicio) {
 
         if (!empty($idServicio)) {
-            $consulta = $this->consulta("SELECT IdEstatus FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "' AND Flag = 1");
+            $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "'");
             foreach ($consulta as $value) {
-                return $value;
+                return ['Id' => $value['Id'], 'IdEstatus' => $value['IdEstatus'], 'Flag' => $value['Flag']];
             }
         } else {
             return false;
@@ -1020,7 +1020,7 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     // -------------------------
-    public function consultaDatosValidacion(int $datos = null) {
+    public function consultaDatosValidacion($datos = null) {
         $condicion = "";
         $valor = "";
         if (!empty($datos['IdRefaccion'])) {
@@ -1032,10 +1032,11 @@ class Modelo_Poliza extends Modelo_Base {
                                         tst.Ticket,
                                         tea.IdServicio,
                                         tea.FechaValidacion,
+                                        (SELECT cveatm.Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS TipoMovimiento,
                                         CONCAT(tst.Id,' - ',tst.Descripcion) AS Servicio,
                                         CONCAT(trp.Nombres,' ',trp.ApMaterno) AS NombrePersonal,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS Movimiento,
-                                        ve.Equipo". $valor ."
+                                        ve.Equipo" . $valor . "
                                         ,'Lectura'
                                     FROM 
                                             t_equipos_allab tea
@@ -1044,14 +1045,75 @@ class Modelo_Poliza extends Modelo_Base {
                                     INNER JOIN
                                             t_rh_personal trp ON trp.IdUsuario = tea.IdPersonalValida
                                     INNER JOIN
-                                            v_equipos ve ON ve.Id = tea.IdModelo". $condicion ."
+                                            v_equipos ve ON ve.Id = tea.IdModelo" . $condicion . "
                                     WHERE 
-                                            IdServicio = 28714");
+                                            IdServicio = '" . $datos['idServicio'] . "'");
 
         if (!empty($consulta)) {
             return $consulta;
         } else {
             return false;
+        }
+    }
+
+    public function consultaSolicitudGuiaTecnico($idServicio) {
+        $datosServcio = $this->estatusAllab($idServicio);
+
+        if (!empty($datosServcio)) {
+            $consultaGuia = $this->consulta("SELECT 
+                                                (SELECT Nombre FROM cat_v3_paqueterias cvp WHERE cvp.Id = teaet.IdPaqueteria) AS Paqueteria,
+                                                teaet.Guia,
+                                                teaet.Fecha,
+                                                teaet.ArchivosSolicitud
+                                            FROM
+                                                t_equipos_allab_envio_tecnico teaet
+                                            WHERE 
+                                                    IdRegistro = '" . $datosServcio['Id'] . "'");
+            if (!empty($consultaGuia)) {
+                return $consultaGuia;
+            } else {
+                return "Falso con estatus 26 en t_equipos_allab_envio_tecnico";
+            }
+        } else {
+            return "falso en estatus 26 con tecnico";
+        }
+        return $datosServcio;
+    }
+
+    public function consultaRecepcionAlmacen(array $datos) {
+        $datosServcio = $this->estatusAllab($datos['IdServicio']);
+        $idRecepcion = null;
+
+        $consultaRecepcion = $this->consulta("SELECT 
+                                                tear.Id,
+                                                CONCAT(trp.Nombres,' ',trp.ApMaterno,' ',trp.ApPaterno) AS UsuarioRecibe,
+                                                tear.Fecha,
+                                                tear.Archivos
+                                            FROM
+                                                t_equipos_allab_recepciones tear
+                                            INNER JOIN
+                                                t_rh_personal trp ON trp.IdUsuario = tear.IdUsuario
+                                            WHERE
+                                                IdRegistro = '" . $datosServcio['Id'] . "' AND
+                                                IdDepartamento = '".$datos['IdDepartamento']."' AND
+                                                IdEstatus = '".$datos['IdEstatus']."'");
+
+        foreach ($consultaRecepcion as $value) {
+            $idRecepcion = $value['Id'];
+        }
+        $recpcionProblema = $this->consulta("SELECT 
+                                                tearp.Fecha,
+                                                tearp.Problema,
+                                                tearp.Archivos
+                                            FROM
+                                                t_equipos_allab_recepciones_problemas tearp
+                                            WHERE
+                                                    tearp.Id = '" . $idRecepcion . "'");
+
+        if (!empty($recpcionProblema)) {
+            return array('recepcion' => $consultaRecepcion, 'recepcionProblema' => $recpcionProblema);
+        } else {
+            return array('recepcion' => $consultaRecepcion);
         }
     }
 

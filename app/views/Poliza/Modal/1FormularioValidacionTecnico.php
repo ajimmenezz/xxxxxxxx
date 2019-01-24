@@ -1,10 +1,37 @@
 <!--<div id="divNuevaSolicitud" class="content">
     <h1 class="page-header">Nueva Solicitud o Envio de Equipo</h1>-->
+<?php
+if (!empty($datosValidacion)) {
+    foreach ($datosValidacion as $item) {
+        $ticket = $item['Ticket'];
+        $servicio = $item['Servicio'];
+        $nombrePersonal = $item['NombrePersonal'];
+        $fecha = $item['FechaValidacion'];
+        $tipoMovimiento = $item['TipoMovimiento'];
+        $movimiento = $item['Movimiento'];
+        if ($item['Lectura'] === 'Lectura') {
+            $mostrarSelect = "hidden";
+            $mostrarInput = "";
+        }
+        ?>
+        <?php
+    }
+} else {
+    $mostrarSelect = "";
+    $mostrarInput = "hidden";
+    $ticket = "";
+    $servicio = "";
+    $nombrePersonal = "";
+    $fecha = "";
+    $movimiento = "";
+    $tipoMovimiento = "";
+}
+?>
 <div id="envioAlmacenSinGuia" class="hidden"></div>
 <div id="envioAlmacenConGuia" class="hidden"></div>
 <div id="panelValidacion" class="panel panel-inverse">
     <div class="panel-heading">
-        <div class="panel-heading-btn">
+        <div class="panel-heading-btn <?php echo $mostrarSelect ?>">
             <label id="btnRegresarTabla" class="btn btn-success btn-xs">
                 <i class="fa fa fa-reply"></i> Regresar
             </label>
@@ -19,31 +46,6 @@
             </div>
         </div>
         <form id="formValidacion" data-parsley-validate="true">
-            <?php
-            if (!empty($datosValidacion)) {
-                foreach ($datosValidacion as $item) {
-                    $ticket = $item['Ticket'];
-                    $servicio = $item['Servicio'];
-                    $nombrePersonal = $item['NombrePersonal'];
-                    $fecha = $item['FechaValidacion'];
-                    $movimiento = $item['Movimiento'];
-                    if ($item['Lectura'] === 'Lectura') {
-                        $mostrarSelect = "hidden";
-                        $mostrarInput = "";
-                    }
-                    ?>
-                <?php
-                }
-            } else {
-                $mostrarSelect = "";
-                $mostrarInput = "hidden";
-                $ticket = "";
-                $servicio = "";
-                $nombrePersonal = "";
-                $fecha = "";
-                $movimiento = "";
-            }
-            ?>
             <div class="row">
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group <?php echo $mostrarSelect ?>">
@@ -80,7 +82,7 @@
                     </div>
                     <div class="form-group <?php echo $mostrarInput ?>">
                         <label class="f-w-600 f-s-13">Tipo de personal que valida *</label>
-                        <input type="text" class="form-control" placeholder="" disabled/>
+                        <input type="text" class="form-control" placeholder="<?php echo $tipoMovimiento ?>" disabled/>
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
@@ -92,7 +94,7 @@
                     </div>
                     <div class="form-group <?php echo $mostrarInput ?>">
                         <label class="f-w-600 f-s-13">Personal que valida *</label>
-                        <input type="text" class="form-control" placeholder="<?php echo $nombrePersonal?>" disabled/>
+                        <input type="text" class="form-control" placeholder="<?php echo $nombrePersonal ?>" disabled/>
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
@@ -102,7 +104,7 @@
                     </div>
                     <div class="form-group <?php echo $mostrarInput ?>">
                         <label class="f-w-600 f-s-13">Fecha de Validación *</label>
-                        <input type="text" class="form-control" placeholder="<?php echo $fecha?>" disabled/>
+                        <input type="text" class="form-control" placeholder="<?php echo $fecha ?>" disabled/>
                     </div>
                 </div>
             </div>
@@ -132,7 +134,7 @@
                     </div>
                     <div class="form-group <?php echo $mostrarInput ?>">
                         <label class="f-w-600 f-s-13">Fecha de Validación *</label>
-                        <input type="text" class="form-control" placeholder="<?php echo $movimiento?>" disabled/>
+                        <input type="text" class="form-control" placeholder="<?php echo $movimiento ?>" disabled/>
                     </div>
                 </div>
                 <div class="col-md-8 col-sm-6 col-xs-12 hidden" id="divEquipoEnvio">
@@ -165,9 +167,8 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+            <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelect ?>">
                 <a id="btnGuardarValidacion" href="javascript:;" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-15">Guardar Validación</a>
-                <!--<a id="btnConcluirServicioCorrectivo" href="javascript:;" class="btn btn-danger m-r-5 "><i class="fa fa-unlock-alt"></i> Concluir Servicio</a>-->
             </div>
         </div>
     </div>

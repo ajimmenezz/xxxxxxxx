@@ -104,19 +104,20 @@ $(function () {
         var IdRefaccion = arguments[1];
         var datos = {"idServicio" : idServicio, 'IdRefaccion' : IdRefaccion};
         evento.enviarEvento('Seguimiento/VistaPorPerfil', datos, panel, function (respuesta) {
-//            console.log(respuesta);
+            console.log(respuesta);
 
                 $('#panelTablaEquiposEnviados').addClass('hidden');
-                $('#seccionFormulariosRecepcionTecnico').removeClass('hidden').empty().append(respuesta.formularioRecepcionTecnico);
-                $('#seccionFormulariosEnvSegLogistica').removeClass('hidden').empty().append(respuesta.formularioEnvioSeguimientoLogistica);
-                $('#seccionFormulariosRecepcionLogistica').removeClass('hidden').empty().append(respuesta.formularioRecepcionLogistica);
-                $('#seccionFormulariosRevisionHistorial').removeClass('hidden').empty().append(respuesta.formularioRevisionHistorial);
-                $('#seccionFormulariosRecepcionLaboratorio').removeClass('hidden').empty().append(respuesta.formularioRecepcionLaboratorio);
-                $('#seccionFormulariosRecepcionAlmacen').removeClass('hidden').empty().append(respuesta.formularioRecepcionAlmacen);
-                $('#seccionFormulariosAsignacionGuiaLogistica').removeClass('hidden').empty().append(respuesta.formularioAsignacionGuiaLogistica);
-                $('#seccionFormulariosAsignacionGuia').removeClass('hidden').empty().append(respuesta.formularioAsignacionGuia);
-                $('#seccionFormulariosGuia').removeClass('hidden').empty().append(respuesta.formularioGuia);
-                $('#seccionFormulariosValidacion').removeClass('hidden').empty().append(respuesta.formularioValidacion);
+//                $('#seccionFormulariosRecepcionTecnico').removeClass('hidden').empty().append(respuesta.formulario.formularioRecepcionTecnico);
+//                $('#seccionFormulariosEnvSegLogistica').removeClass('hidden').empty().append(respuesta.formulario.formularioEnvioSeguimientoLogistica);
+                $('#seccionFormulariosRecepcionLogistica').removeClass('hidden').empty().append(respuesta.formularioRecepcionLog.formularioRecepcionLogistica);
+                $('#seccionFormulariosRevisionHistorial').removeClass('hidden').empty().append(respuesta.formularioHistorialRefaccion.formularioRevisionHistorial);
+                $('#seccionFormulariosRecepcionLaboratorio').removeClass('hidden').empty().append(respuesta.formularioRecepcionLab.formularioRecepcionLaboratorio);
+                $('#seccionFormulariosRecepcionAlmacen').removeClass('hidden').empty().append(respuesta.formularioRecepcionAlmacen.formularioRecepcionAlmacen);
+//                $('#seccionFormulariosAsignacionGuiaLogistica').removeClass('hidden').empty().append(respuesta.formulario.formularioAsignacionGuiaLogistica);
+//                $('#seccionFormulariosAsignacionGuia').removeClass('hidden').empty().append(respuesta.formulario.formularioAsignacionGuia);
+                $('#seccionPanelEspera').removeClass('hidden').empty().append(respuesta.PanelEspera.panelEspera);
+                $('#seccionFormulariosGuia').removeClass('hidden').empty().append(respuesta.formularioEnvioAlmacen.formularioGuia);
+                $('#seccionFormulariosValidacion').removeClass('hidden').empty().append(respuesta.formularioValidacion.formularioValidacion);
                 incioEtiquetas();
 
                 $('#btnRegresarTabla').off('click');

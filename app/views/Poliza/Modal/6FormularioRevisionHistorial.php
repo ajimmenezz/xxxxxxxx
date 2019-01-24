@@ -61,7 +61,7 @@
                     </div>
                     <div class="col-md-2 col-sm-4 col-xs-12">
                         <div class="form-group">
-                            <label for="">Cantidad</label>
+                            <label for="">Modelo</label>
                             <input type="number" step="any" id="cantidad" class="form-control">
                         </div>
                     </div>
