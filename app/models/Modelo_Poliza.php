@@ -1116,5 +1116,32 @@ class Modelo_Poliza extends Modelo_Base {
             return array('recepcion' => $consultaRecepcion);
         }
     }
+    
+    public function consultaEnvioLogistica($datos) {
+        $datosServcio = $this->estatusAllab($datos['IdServicio']);
+        
+        $datosEnvioLog = $this->consulta("SELECT 
+                                            *
+                                        FROM
+                                            t_equipos_allab_envio_logistica teael
+                                        WHERE
+                                            teael.IdRegistro = '". $datosServcio['Id'] ."'");
+        
+        $consulta = $this->consulta("SELECT 
+                                        (SELECT cvp.Nombre FROM cat_v3_paqueterias cvp WHERE cvp.Id = '1' AND cvp.Flag = 1) AS paqueteria,
+                                        teael.Guia,
+                                        teael.FechaEnvio,
+                                        teael.ArchivosEnvio,
+                                        teael.IdTipoLugarRecepcion,
+                                        (SELECT cveatlr.Nombre FROM cat_v3_equipos_allab_tipo_lugar_recepcion cveatlr WHERE cveatlr.Id = '1') AS DondeRecibe,
+                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.IdCliente = 1 AND Id = '1') AS Sucursal,
+                                        teael.IdSucursal,
+                                        teael.Recibe,
+                                        teael.ArchivosEntrega
+                                    FROM
+                                        t_equipos_allab_envio_logistica teael
+                                    WHERE 
+                                            teael.IdRegistro = '". $datosEnvioLog['Id'] ."'");
+    }
 
 }
