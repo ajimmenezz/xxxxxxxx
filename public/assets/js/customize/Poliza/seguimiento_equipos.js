@@ -96,6 +96,7 @@ $(function () {
             IdServicio = datos[1];
             IdRefaccion = datos[8];
             formulario(IdServicio,IdRefaccion);
+            
         }
     });
 
@@ -126,5 +127,9 @@ $(function () {
                 
         });
     };
+    
+    var eventosComentarios = function(){
+        
+    }
 
 });
