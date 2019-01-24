@@ -79,8 +79,7 @@
         </div>
     </div>
     <div id="seccionPanelEspera" class="hidden"></div>
-    <div id="seccionFormulariosRecepcionTecnico" class="hidden"></div>
-    <div id="seccionFormulariosEnvSegLogistica" class="hidden"></div>
+    <div id="seccionFormulariosEnvSegLog" class="hidden"></div>
     <div id="seccionFormulariosRecepcionLogistica" class="hidden"></div>
     <div id="seccionFormulariosRevisionHistorial" class="hidden"></div>
     <div id="seccionFormulariosRecepcionLaboratorio" class="hidden"></div>

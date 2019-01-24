@@ -108,13 +108,11 @@ $(function () {
 
                 $('#panelTablaEquiposEnviados').addClass('hidden');
 //                $('#seccionFormulariosRecepcionTecnico').removeClass('hidden').empty().append(respuesta.formulario.formularioRecepcionTecnico);
-//                $('#seccionFormulariosEnvSegLogistica').removeClass('hidden').empty().append(respuesta.formulario.formularioEnvioSeguimientoLogistica);
+                $('#seccionFormulariosEnvSegLog').removeClass('hidden').empty().append(respuesta.formularioEnvioSeguimientoLog.formularioEnvioSeguimientoLog);
                 $('#seccionFormulariosRecepcionLogistica').removeClass('hidden').empty().append(respuesta.formularioRecepcionLog.formularioRecepcionLogistica);
                 $('#seccionFormulariosRevisionHistorial').removeClass('hidden').empty().append(respuesta.formularioHistorialRefaccion.formularioRevisionHistorial);
                 $('#seccionFormulariosRecepcionLaboratorio').removeClass('hidden').empty().append(respuesta.formularioRecepcionLab.formularioRecepcionLaboratorio);
                 $('#seccionFormulariosRecepcionAlmacen').removeClass('hidden').empty().append(respuesta.formularioRecepcionAlmacen.formularioRecepcionAlmacen);
-//                $('#seccionFormulariosAsignacionGuiaLogistica').removeClass('hidden').empty().append(respuesta.formulario.formularioAsignacionGuiaLogistica);
-//                $('#seccionFormulariosAsignacionGuia').removeClass('hidden').empty().append(respuesta.formulario.formularioAsignacionGuia);
                 $('#seccionPanelEspera').removeClass('hidden').empty().append(respuesta.PanelEspera.panelEspera);
                 $('#seccionFormulariosGuia').removeClass('hidden').empty().append(respuesta.formularioEnvioAlmacen.formularioGuia);
                 $('#seccionFormulariosValidacion').removeClass('hidden').empty().append(respuesta.formularioValidacion.formularioValidacion);
