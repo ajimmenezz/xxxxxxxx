@@ -2813,7 +2813,7 @@ class Seguimientos extends General {
         $informacion = array('IdServicio' => $datos['idServicio']);
         $datosEnvioLogistica['informacionEnvioLog'] = $this->DBP->consultaEnvioLogistica($informacion);
 
-        if(!empty($datosEnvioLogistica)){
+        if (!empty($datosEnvioLogistica)) {
             $formulario = array('formularioEnvioSeguimientoLog' => parent::getCI()->load->view('Poliza/Modal/8FormularioEnvioSeguimientoLogistica', $datosEnvioLogistica, TRUE));
             return $formulario;
         }
@@ -2832,4 +2832,26 @@ class Seguimientos extends General {
 //            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
 //        return $formulario;
 //    }
+
+    public function agregarComentarioSeguimientosEquipos(array $datos) {
+        $generales = $this->DB->getGeneralesTarea($datos['id']);
+        $proyecto = $generales['IdProyecto'];
+
+        $archivos = $result = null;
+        $CI = parent::getCI();
+        $carpeta = 'Proyectos/Proyecto_' . $proyecto . '/Tareas/';
+        $archivos = "";
+        if (!empty($_FILES)) {
+            $archivos = setMultiplesArchivos($CI, 'adjuntosTarea', $carpeta);
+            if ($archivos) {
+                $archivos = implode(',', $archivos);
+            }
+        }
+
+        $datos = array_merge($datos, ['archivos' => $archivos]);
+        $resultado = $this->DB->guardarNotasAdjuntos($datos);
+
+        return $resultado;
+    }
+
 }

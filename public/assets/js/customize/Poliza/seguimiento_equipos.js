@@ -68,12 +68,12 @@ $(function () {
         file.crearUpload('#evidenciaEnvio', 'Seguimiento/GuardarEnvioAlmacen');
         file.crearUpload('#evidenciaRecepcionAlmacen', 'Seguimiento/subirEvidenciaRecepcion');
         file.crearUpload('#evidenciaRecepcionLab', 'Seguimiento/subirEvidenciaRecepcion');
-        file.crearUpload('#archivosLabHistorial', 'Seguimiento/subirAdjuntosLabHistorial');
+        file.crearUpload('#archivosLabHistorial', 'Seguimiento/AgregarComentarioSeguimientosEquipos');
         file.crearUpload('#evidenciaRecepcionLogistica', 'Seguimiento/subirAdjuntosLabHistorial');
         file.crearUpload('#evidenciaEntrega', 'Seguimiento/subirAdjuntosLabHistorial');
         file.crearUpload('#evidenciaRecepcionTecnico', 'Seguimiento/subirAdjuntosLabHistorial');
         file.crearUpload('#evidenciaRecepcionlog', 'Seguimiento/subirAdjuntosLabHistorial');
-        
+
         file.crearUpload('#adjuntosProblemaAlm', 'Seguimiento/subirAdjuntosLabHistorial');
         file.crearUpload('#adjuntosProblemaLab', 'Seguimiento/subirAdjuntosLabHistorial');
         file.crearUpload('#adjuntosProblemaLog', 'Seguimiento/subirAdjuntosLabHistorial');
@@ -81,7 +81,7 @@ $(function () {
         file.crearUpload('#evidenciaEnvioGuia', 'Seguimiento/subirAdjuntosLabHistorial');
 
     };
-    
+
     $('#agregarEquipo').off('click');
     $('#agregarEquipo').on('click', function () {
         var IdServicio = "";
@@ -95,41 +95,66 @@ $(function () {
         if (datos !== undefined) {
             IdServicio = datos[1];
             IdRefaccion = datos[8];
-            formulario(IdServicio,IdRefaccion);
-            
+            formulario(IdServicio, IdRefaccion);
         }
     });
 
     var formulario = function () {
         var idServicio = arguments[0];
         var IdRefaccion = arguments[1];
-        var datos = {"idServicio" : idServicio, 'IdRefaccion' : IdRefaccion};
+        var datos = {"idServicio": idServicio, 'IdRefaccion': IdRefaccion};
         evento.enviarEvento('Seguimiento/VistaPorPerfil', datos, panel, function (respuesta) {
             console.log(respuesta);
 
-                $('#panelTablaEquiposEnviados').addClass('hidden');
+            $('#panelTablaEquiposEnviados').addClass('hidden');
 //                $('#seccionFormulariosRecepcionTecnico').removeClass('hidden').empty().append(respuesta.formulario.formularioRecepcionTecnico);
-                $('#seccionFormulariosEnvSegLog').removeClass('hidden').empty().append(respuesta.formularioEnvioSeguimientoLog.formularioEnvioSeguimientoLog);
-                $('#seccionFormulariosRecepcionLogistica').removeClass('hidden').empty().append(respuesta.formularioRecepcionLog.formularioRecepcionLogistica);
-                $('#seccionFormulariosRevisionHistorial').removeClass('hidden').empty().append(respuesta.formularioHistorialRefaccion.formularioRevisionHistorial);
-                $('#seccionFormulariosRecepcionLaboratorio').removeClass('hidden').empty().append(respuesta.formularioRecepcionLab.formularioRecepcionLaboratorio);
-                $('#seccionFormulariosRecepcionAlmacen').removeClass('hidden').empty().append(respuesta.formularioRecepcionAlmacen.formularioRecepcionAlmacen);
-                $('#seccionPanelEspera').removeClass('hidden').empty().append(respuesta.PanelEspera.panelEspera);
-                $('#seccionFormulariosGuia').removeClass('hidden').empty().append(respuesta.formularioEnvioAlmacen.formularioGuia);
-                $('#seccionFormulariosValidacion').removeClass('hidden').empty().append(respuesta.formularioValidacion.formularioValidacion);
-                incioEtiquetas();
+            $('#seccionFormulariosEnvSegLog').removeClass('hidden').empty().append(respuesta.formularioEnvioSeguimientoLog.formularioEnvioSeguimientoLog);
+            $('#seccionFormulariosRecepcionLogistica').removeClass('hidden').empty().append(respuesta.formularioRecepcionLog.formularioRecepcionLogistica);
+            $('#seccionFormulariosRevisionHistorial').removeClass('hidden').empty().append(respuesta.formularioHistorialRefaccion.formularioRevisionHistorial);
+            $('#seccionFormulariosRecepcionLaboratorio').removeClass('hidden').empty().append(respuesta.formularioRecepcionLab.formularioRecepcionLaboratorio);
+            $('#seccionFormulariosRecepcionAlmacen').removeClass('hidden').empty().append(respuesta.formularioRecepcionAlmacen.formularioRecepcionAlmacen);
+            $('#seccionPanelEspera').removeClass('hidden').empty().append(respuesta.PanelEspera.panelEspera);
+            $('#seccionFormulariosGuia').removeClass('hidden').empty().append(respuesta.formularioEnvioAlmacen.formularioGuia);
+            $('#seccionFormulariosValidacion').removeClass('hidden').empty().append(respuesta.formularioValidacion.formularioValidacion);
+            incioEtiquetas();
+            eventosComentarios();
 
-                $('#btnRegresarTabla').off('click');
-                $('#btnRegresarTabla').on('click', function () {
-                    $('#panelTablaEquiposEnviados').removeClass('hidden');
-                    $('#seccionFormulariosValidacion').addClass('hidden');
-                });
-                
+            $('#btnRegresarTabla').off('click');
+            $('#btnRegresarTabla').on('click', function () {
+                $('#panelTablaEquiposEnviados').removeClass('hidden');
+                $('#seccionFormulariosValidacion').addClass('hidden');
+            });
+
         });
     };
-    
-    var eventosComentarios = function(){
-        
-    }
 
+    var eventosComentarios = function () {
+
+        $('#agregarComentarioHistorial').off('click');
+        $('#agregarComentarioHistorial').on('click', function () {
+            var comentarios = $.trim($("#comentariosObservaciones").val());
+            var adjunto = $("#archivosLabHistorial").val();
+
+            if (comentarios !== '' || adjunto !== '') {
+                var datos = {
+//                    'id': $.trim($("#IdTarea").val()),
+                    'comentarios': comentarios
+                };
+
+                file.enviarArchivos('#archivosLabHistorial', 'Seguimiento/AgregarComentarioSeguimientosEquipos', '#panelFormularioSeguimientoTarea', datos, function (respuesta) {
+                    console.log(respuesta);
+//                    if (respuesta.code == 200) {
+//                        evento.mostrarMensaje("#errorGuardarNotasAdjunto", true, "Se ha guardado la nota correctamente", 6000);
+//                        $("#txtNotaTarea").val('').text('');
+//                        file.limpiar('#adjuntosTarea');
+//                        cargaNotasAdjuntos();
+//                    } else {
+//                        evento.mostrarMensaje("#errorAgregarComentario", false, "Ocurrió un error al guardar el comnetario. Por favor recargue su página y vuelva a intentarlo.", 4000);
+//                    }
+                });
+            } else {
+                evento.mostrarMensaje("#errorAgregarComentario", false, "Al menos debe agregar el comentario o un adjunto para poder agregar la información", 4000);
+            }
+        });
+    }
 });

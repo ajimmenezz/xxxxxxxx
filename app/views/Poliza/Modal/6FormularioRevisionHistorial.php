@@ -37,6 +37,11 @@
                             <input id="archivosLabHistorial"  name="archivosLabHistorial[]" type="file" multiple />
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div id="errorAgregarComentario"></div>
+                        </div>
+                    </div>
                     <div class="col-md-12 col-sm-12 col-xs-12 text-center">
                         <a id="agregarComentarioHistorial" class="btn btn-sm btn-success m-t-10 m-r-10 f-w-600 f-s-13">Agregar Comentario</a>
                     </div>

@@ -297,7 +297,9 @@ class Controller_Seguimiento extends Base {
             case 'SolicitarGuia':
                 $resultado = $this->Seguimientos->solicitarGuia($this->input->post());
                 break;
-            
+            case 'AgregarComentarioSeguimientosEquipos':
+                $resultado = $this->Seguimientos->agregarComentarioSeguimientosEquipos($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
