@@ -2643,6 +2643,9 @@ class Seguimientos extends General {
                         'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                         'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
                         'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
+                        'formularioEnvioSeguimientoLog' => [],
+                        'formularioHistorialRefaccion' => [],
+                        'formularioRecepcionLog' => [],
                         'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
                 }
 
@@ -2813,10 +2816,8 @@ class Seguimientos extends General {
         $informacion = array('IdServicio' => $datos['idServicio']);
         $datosEnvioLogistica['informacionEnvioLog'] = $this->DBP->consultaEnvioLogistica($informacion);
 
-        if(!empty($datosEnvioLogistica)){
-            $formulario = array('formularioEnvioSeguimientoLog' => parent::getCI()->load->view('Poliza/Modal/8FormularioEnvioSeguimientoLogistica', $datosEnvioLogistica, TRUE));
-            return $formulario;
-        }
+        $formulario = array('formularioEnvioSeguimientoLog' => parent::getCI()->load->view('Poliza/Modal/8FormularioEnvioSeguimientoLogistica', $datosEnvioLogistica, TRUE));
+        return $formulario;
     }
 
 //    public function recepcionTecnico() {

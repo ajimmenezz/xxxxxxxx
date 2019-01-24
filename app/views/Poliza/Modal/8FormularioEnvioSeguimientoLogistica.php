@@ -9,10 +9,25 @@
                 <legend>Documentación de envío</legend>
             </div>
         </div>
+        <?php
+//        echo $informacionEnvioLog;
+        if (!empty($informacionEnvioLog)) {
+            foreach ($informacionEnvioLog as $value) {
+                $paqueteria = $value['paqueteria'];
+                $guia = $value['Guia'];
+                $fechaEnvio = $value['FechaEnvio'];
+            }
+            $mostrarSelect = "hidden";
+            $mostrarInput = "";
+        }else{
+            $mostrarSelect = "";
+            $mostrarInput = "hidden";
+        }
+        ?>
         <form id="formDocumentacionEnvio" data-parsley-validate="true">
             <div class="row">
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="form-group">
+                    <div class="form-group <?php $mostrarSelect?>">
                         <label class="f-w-600 f-s-13">Paquetería *</label>
                         <select id="listPaqueteria" class="form-control" style="width: 100%" data-parsley-required="true">
                             <option value="">Selecciona . . .</option>
@@ -62,7 +77,7 @@
             <form id="formSeguimientoEntrega" data-parsley-validate="true">
                 <div class="row">
                     <div class="col-md-4 col-sm-6 col-xs-12">
-                        <div class="form-group">
+                        <div class="form-group <?php $mostrarSelect?>">
                             <label class="f-w-600 f-s-13">¿Donde se recibe? *</label>
                             <select id="listDondeRecibe" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Selecciona . . .</option>
@@ -72,7 +87,7 @@
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-6 col-xs-12">
-                        <div class="form-group">
+                        <div class="form-group <?php $mostrarSelect?>">
                             <label class="f-w-600 f-s-13">Sucursal (Solo en caso de ser sucursal) *</label>
                             <select id="listSucursal" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Selecciona . . .</option>

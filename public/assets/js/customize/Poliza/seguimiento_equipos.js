@@ -89,6 +89,7 @@ $(function () {
     });
 
     $('#lista-equipos-enviados-solicitados tbody').on('click', 'tr', function () {
+        var Id = "";
         var IdServicio = "";
         var IdRefaccion = "";
         var datos = $('#lista-equipos-enviados-solicitados').DataTable().row(this).data();
