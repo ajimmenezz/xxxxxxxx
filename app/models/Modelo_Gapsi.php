@@ -232,7 +232,7 @@ class Modelo_Gapsi extends Modelo_Base {
                 . "(select Descripcion from db_Proyectos where ID = registro.Proyecto) as NameProyecto "
                 . "from db_Registro registro "
                 . "where ID in (''" . $ids . ") "
-                . "and [Status] in ('Solicitado','Rechazado')";
+                . "and Status in ('Solicitado','Rechazado')";
 //                . "and AplicaComprobacion = 1";
 
         if ($ids !== ',') {
