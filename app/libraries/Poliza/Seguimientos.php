@@ -2584,4 +2584,310 @@ class Seguimientos extends General {
         return $this->DBS->consultaGeneralSeguimiento('SELECT COUNT(Id) AS Contador FROM t_mantenimientos_equipo_faltante WHERE IdServicio = "' . $servicio . '"');
     }
 
+//----------------------   Seguimiento Equipos
+    public function mostrarTabla() {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $idPerfil = $usuario['IdPerfil'];
+
+        $datosServicio = $this->DBP->consultaTablaServicioAllab();
+
+        if (!empty($datosServicio)) {
+            return $datosServicio;
+        } else {
+            return ['code' => 500, 'mensaje' => 'No hay registros para mostrar'];
+        }
+    }
+
+    public function perfilUsuario() {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $idPerfil = $usuario['IdPerfil'];
+        return $idPerfil;
+
+//        switch ($idPerfil) {
+//            case '38':
+//            case '56':
+//                $datos['IdPerfil'] = 38;
+//                $datos['nombrePerfil'] = "Laboratorio";
+//                break;
+//            case '41':
+//            case '52':
+//            case '60':
+//                $datos['IdPerfil'] = 52;
+//                $datos['nombrePerfil'] = " Logística";
+//                break;
+//            case '57':
+////                return $this->vistaValidacion($estatus);
+//            case '51':
+//            case '62':
+//                $datos['IdPerfil'] = 62;
+//                $datos['nombrePerfil'] = "Almacen";
+//                break;
+//            default:
+//                break;
+//        }
+//        return $formulario;
+    }
+
+    public function mostrarVistaPorUsuario($datos = null) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $idPerfil = $usuario['IdPerfil'];
+        $estatus = $this->DBP->estatusAllab($datos['idServicio']);
+        $idEstatus = $estatus['IdEstatus'];
+        $flag = $estatus['Flag'];
+
+        switch ($idPerfil) {
+
+            case '57': // Tecnico
+                if ($idEstatus === '2' && $flag === '1') {
+                    return array('formularioValidacion' => $this->vistaValidacion($datos),
+                        'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                        'PanelEspera' => []);
+                }
+                if ($idEstatus === '12' && $flag === '1') {
+                    $departamentoEspera = "Almacen";
+                    $textoEspera = "Esperando informacion del Departamento de Almacen";
+                    return array('PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera),
+                        'formularioValidacion' => $this->vistaValidacion($datos),
+                        'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos));
+                }
+                if ($idEstatus === '28' && $flag === '1') {
+                    $departamentoEspera = "Laboratorio";
+                    $textoEspera = "Esperando informacion del Departamento de Laboratorio";
+                    return array('formularioValidacion' => $this->vistaValidacion($datos),
+                        'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                        'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                        'formularioRecepcionLab' => [],
+                        'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
+                }
+
+                if ($idEstatus === '29' && $flag === '1') {
+                    $departamentoEspera = "Laboratorio";
+                    $textoEspera = "Esperando informacion del Departamento de Laboratorio (Historial y Refaccion)";
+                    return array('formularioValidacion' => $this->vistaValidacion($datos),
+                        'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                        'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                        'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
+                        'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
+                }
+                
+                if ($idEstatus === '4' && $flag === '1') {
+                    $departamentoEspera = "Logistica";
+                    $textoEspera = "Esperando informacion del Departamento de Logistica";
+                    return array('formularioValidacion' => $this->vistaValidacion($datos),
+                        'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                        'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                        'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
+                        'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
+                        'formularioRecepcionLog' => [],
+                         'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
+                }
+
+                if ($idEstatus === '30' && $flag === '1') {
+                    
+                }
+//                if ($idEstatus === '26' || $idEstatus === '27' || $idEstatus === '4' && $flag === '0') {
+//                    return $this->vistaEnvioAsignacionGuia($datos); 
+//                }
+//                if ($idEstatus === '36') {
+//                    return $this->recepcionTecnico();
+//                }
+                if (!$idEstatus) {
+                    return $this->vistaValidacion($datos);
+                }
+                break;
+            case '51':
+            case '62': // Almacen
+                if ($idEstatus === '12' && $flag === '1') {
+                    return array('formularioValidacion' => $this->vistaValidacion($datos),
+                        'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                        'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                        'PanelEspera' => []);
+                }
+                if ($idEstatus === '28' && $flag === '1') {
+                    $departamentoEspera = "Laboratorio";
+                    $textoEspera = "Esperando informacion del Departamento de Laboratorio";
+                    return array('formularioValidacion' => $this->vistaValidacion($datos),
+                        'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                        'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                        'formularioRecepcionLab' => [],
+                        'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
+                }
+                if ($idEstatus === '29' && $flag === '1') {
+                    $departamentoEspera = "Laboratorio";
+                    $textoEspera = "Esperando informacion del Departamento de Laboratorio (Historial y Refaccion)";
+                    return array('formularioValidacion' => $this->vistaValidacion($datos),
+                        'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                        'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                        'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
+                        'formularioHistorialRefaccion' => [],
+                        'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
+                }
+                break;
+            case '38':
+            case '56': //Laboratorio
+                if ($idEstatus === '28' && $flag === '1') {
+                    return array('formularioValidacion' => $this->vistaValidacion($datos),
+                        'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                        'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                        'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
+                        'PanelEspera' => []);
+                }
+                if ($idEstatus === '29' && $flag === '1') {//falta historial
+                    return array('formularioValidacion' => $this->vistaValidacion($datos),
+                        'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                        'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                        'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
+                        'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
+                        'PanelEspera' => []);
+                }
+                
+
+                break;
+            case '41':
+            case '52':
+            case '60': // Logistica
+                if ($idEstatus === '4' && $flag === '1') {
+                    return array('formularioValidacion' => $this->vistaValidacion($datos),
+                                'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                                'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
+                                'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
+                                'formularioRecepcionLog' => $this->recepcionLogistica($datos),
+                                'PanelEspera' => []);
+                }
+//                if ($idEstatus === '12') {
+//                    return $this->envioSeguimientoLogistica();
+//                }
+//                if ($idEstatus === '26' || $idEstatus === '27' || $idEstatus === '4') {
+//                    return $this->vistaAsignacionGuiaLogistica();
+//                }
+
+                break;
+            default:
+                return "default";
+        }
+    }
+
+    public function vistaEsperaInformacion($departamentoEspera, $textoEspera) {
+        $datosInfo['departamentoEspera'] = $departamentoEspera;
+        $datosInfo['textoEspera'] = $textoEspera;
+        return array('panelEspera' => parent::getCI()->load->view('Poliza/Modal/PanelEsperaInformacion', $datosInfo, TRUE));
+    }
+
+    public function vistaValidacion($datos) {
+        $dataValidacion['datosValidacion'] = $this->DBP->consultaDatosValidacion($datos);
+
+        return array('formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $dataValidacion, TRUE));
+    }
+
+    public function vistaEnvioAlmacen($datos) {
+        $dataSolicitudGuia['datosSolicitudGuia'] = $this->DBP->consultaSolicitudGuiaTecnico($datos['idServicio']);
+
+        return array('formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $dataSolicitudGuia, TRUE));
+    }
+
+    public function recepcionAlmacen($datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $infoRecepcion = array('IdServicio' => $datos['idServicio'], 'IdDepartamento' => 1, 'IdEstatus' => 28);
+        $datosRecepcionAlmacen['datosRecepcion'] = $this->DBP->consultaRecepcionAlmacen($infoRecepcion);
+        $datosRecepcionAlmacen['usuario'] = $usuario['Nombre'];
+
+        $formulario = array('formularioRecepcionAlmacen' => parent::getCI()->load->view('Poliza/Modal/4FormularioRecepcionAlmacen', $datosRecepcionAlmacen, TRUE));
+        return $formulario;
+    }
+
+    public function recepcionLaboratorio($datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $infoRecepcion = array('IdServicio' => $datos['idServicio'], 'IdDepartamento' => 2, 'IdEstatus' => 29);
+        $datosRecepcionAlmacen['datosRecepcion'] = $this->DBP->consultaRecepcionAlmacen($infoRecepcion);
+        $datosRecepcionAlmacen['usuario'] = $usuario['Nombre'];
+
+        $formulario = array('formularioRecepcionLaboratorio' => parent::getCI()->load->view('Poliza/Modal/5FormularioRecepcionLaboratorio', $datosRecepcionAlmacen, TRUE));
+        return $formulario;
+    }
+
+    public function revisionHistorial($datos) {
+        $data = [];
+
+        $formulario = array('formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE));
+        return $formulario;
+    }
+
+    public function recepcionLogistica($datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $infoRecepcion = array('IdServicio' => $datos['idServicio'], 'IdDepartamento' => 3, 'IdEstatus' => 30);
+        $datosRecepcionAlmacen['datosRecepcion'] = $this->DBP->consultaRecepcionAlmacen($infoRecepcion);
+        $datosRecepcionAlmacen['usuario'] = $usuario['Nombre'];
+
+        $formulario = array('formularioRecepcionLogistica' => parent::getCI()->load->view('Poliza/Modal/7FormularioRecepcionLogistica', $datosRecepcionAlmacen, TRUE));
+        return $formulario;
+    }
+
+//    public function vistaEnvioAsignacionGuia($datos) {
+//        $dataValidacion['datosValidacion'] = $this->DBP->consultaDatosValidacion($datos['idServicio'],$datos['IdRefaccion']);
+//        $dataSolicitudGuia['datosSolicitudGuia'] = $this->DBP->consultaSolicitudGuiaTecnico($datos['idServicio']);
+//        $data = [];
+//
+//        $formulario = array('formularioAsignacionGuia' => parent::getCI()->load->view('Poliza/Modal/2FormularioEnvioSinGuia', $dataSolicitudGuia, TRUE),
+//            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE),
+//            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $dataValidacion, TRUE));
+//        return $formulario;
+//    }
+//
+//    public function vistaAsignacionGuiaLogistica() {
+//        $data = [];
+//
+//        $formulario = array('formularioAsignacionGuiaLogistica' => parent::getCI()->load->view('Poliza/Modal/2FormularioEnvioSinGuia', $data, TRUE),
+//            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+//        return $formulario;
+//    }
+//    public function recepcionLaboratorio() {
+//        $data = [];
+//
+//        $formulario = array('formularioRecepcionLaboratorio' => parent::getCI()->load->view('Poliza/Modal/5FormularioRecepcionLaboratorio', $data, TRUE),
+//            'formularioRecepcionAlmacen' => parent::getCI()->load->view('Poliza/Modal/4FormularioRecepcionAlmacen', $data, TRUE),
+//            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE),
+//            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+//        return $formulario;
+//    }
+//
+//
+//    public function recepcionLogistica() {
+//        $data = [];
+//
+//        $formulario = array('formularioRecepcionLogistica' => parent::getCI()->load->view('Poliza/Modal/7FormularioRecepcionLogistica', $data, TRUE),
+//            'formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE),
+//            'formularioRecepcionLaboratorio' => parent::getCI()->load->view('Poliza/Modal/5FormularioRecepcionLaboratorio', $data, TRUE),
+//            'formularioRecepcionAlmacen' => parent::getCI()->load->view('Poliza/Modal/4FormularioRecepcionAlmacen', $data, TRUE),
+//            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE),
+//            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+//        return $formulario;
+//    }
+//
+//    public function envioSeguimientoLogistica() {
+//        $data = [];
+//
+//        $formulario = array('formularioEnvioSeguimientoLogistica' => parent::getCI()->load->view('Poliza/Modal/8FormularioEnvioSeguimientoLogistica', $data, TRUE),
+//            'formularioRecepcionLogistica' => parent::getCI()->load->view('Poliza/Modal/7FormularioRecepcionLogistica', $data, TRUE),
+//            'formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE),
+//            'formularioRecepcionLaboratorio' => parent::getCI()->load->view('Poliza/Modal/5FormularioRecepcionLaboratorio', $data, TRUE),
+//            'formularioRecepcionAlmacen' => parent::getCI()->load->view('Poliza/Modal/4FormularioRecepcionAlmacen', $data, TRUE),
+//            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE),
+//            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+//        return $formulario;
+//    }
+//
+//    public function recepcionTecnico() {
+//        $data = [];
+//
+//        $formulario = array('formularioRecepcionTecnico' => parent::getCI()->load->view('Poliza/Modal/9FormularioRecepcionTecnica', $data, TRUE),
+//            'formularioEnvioSeguimientoLogistica' => parent::getCI()->load->view('Poliza/Modal/8FormularioEnvioSeguimientoLogistica', $data, TRUE),
+//            'formularioRecepcionLogistica' => parent::getCI()->load->view('Poliza/Modal/7FormularioRecepcionLogistica', $data, TRUE),
+//            'formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE),
+//            'formularioRecepcionLaboratorio' => parent::getCI()->load->view('Poliza/Modal/5FormularioRecepcionLaboratorio', $data, TRUE),
+//            'formularioRecepcionAlmacen' => parent::getCI()->load->view('Poliza/Modal/4FormularioRecepcionAlmacen', $data, TRUE),
+//            'formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $data, TRUE),
+//            'formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $data, TRUE));
+//        return $formulario;
+//    }
 }

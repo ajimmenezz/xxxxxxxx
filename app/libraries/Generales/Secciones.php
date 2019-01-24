@@ -56,6 +56,7 @@ class Secciones extends General {
         $this->Rutas = \Librerias\Logistica\Rutas::factory();
         $this->Seguimiento = \Librerias\Logistica\Seguimiento::factory();
         $this->Poliza = \Librerias\Poliza\Poliza::factory();
+        $this->Seguimientos = \Librerias\Poliza\Seguimientos::factory();
 //        $this->DB_Adist2 = \Modelos\Modelo_DB_Adist2::factory(); Este objeto se estara utilizando para proyectos
         $this->DBP = \Modelos\Modelo_Proyectos::factory();
         $this->DBC = \Modelos\Modelo_Catalogo_Proyectos::factory();
@@ -472,6 +473,9 @@ class Secciones extends General {
             case 'Localizacion/Dispositivos':
                 $datos['dispositivos'] = $this->ubicaphone->cargaDispositivosGlobal();
                 break;
+            case 'Poliza/Seguimiento_Equipos':
+                $datos['tablaEquipos'] = $this->Seguimientos->mostrarTabla();
+                $datos['vistaUsuario'] = $this->Seguimientos->perfilUsuario();
             case 'Configuracion/Perfil':
                 $datos['datosUsuario'] = $this->PerfilUsuario->datosPerfilUsuario();
                 $datos['catalogos'] = $this->PerfilUsuario->datosCatalogosUsuario();

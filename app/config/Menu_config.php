@@ -928,6 +928,38 @@ $config['Poliza'] = array(
             'select2/dist/js/select2.min'
         ),
         'Permiso' => 'VCCHECK'
+    ),
+    'Seguimiento-Equipos' => array(
+        'liga' => 'Seguimiento Equipos Almacen y Laboratorio',
+        'icono' => '',
+        'Url' => '/Poliza/Seguimiento_Equipos',
+        'css' => array('Poliza/Catalogo_Checklist'),
+        'pluginsCss' => array(
+            'bootstrap-datepicker/css/datepicker',
+            'bootstrap-datepicker/css/datepicker3',
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'jquery-tag-it/css/jquery.tagit',
+            'parsley/src/parsley',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'jquery-fileUpload/css/fileinput.min'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Nota', 'Base/Tabla', 'Poliza/seguimiento_equipos'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
+            'jquery-tag-it/js/tag-it.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'select2/dist/js/select2.min',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es'
+        ),
+        'Permiso' => 'SEAL'
     )
 );
 

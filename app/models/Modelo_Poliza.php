@@ -914,304 +914,261 @@ class Modelo_Poliza extends Modelo_Base {
 //                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
             }
         }
-
-//                    echo '<pre>';
-//            print_r($respuesta);
-//            return false;
         return $respuesta;
     }
 
-    public function getDatosTablaReparacionRefaccionInventario(string $ids) {
-        $consulta = $this->consulta("select 
-                                    IdProducto,
-                                    'Producto' as Producto,
-                                    Cantidad,
-                                    Id
-                                    from t_inventario
-                                    where Id in (" . $ids . ")");
+// SELECTS ------------- Seguimiento Equipos
+    public function estatusAllab($idServicio) {
 
-        return $consulta;
+        if (!empty($idServicio)) {
+            $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "'");
+            foreach ($consulta as $value) {
+                return ['Id' => $value['Id'], 'IdEstatus' => $value['IdEstatus'], 'Flag' => $value['Flag']];
+            }
+        } else {
+            return false;
+        }
     }
 
-    public function actualizaInventariosMovimientosXConslusionCorrectivo(int $id) {
-
-        $this->iniciaTransaccion();
-
-        /* Obtiene la última solución del correctivo y el tipo de solución */
-        $solucion = $this->consulta("select Id, IdTipoSolucion from t_correctivos_soluciones where IdServicio = '" . $id . "' order by Id desc limit 1");
-        if (!empty($solucion)) {
-            $_idSolucion = $solucion[0]['Id'];
-            $_tipoSolucion = $solucion[0]['IdTipoSolucion'];
-
-            switch ($_tipoSolucion) {
-                case 2: case '2':
-                    $_refaccionesUtilizadas = $this->consulta("select 
-                                                                * 
-                                                                from t_inventario 
-                                                                where Id in (select 
-                                                                    IdInventario 
-                                                                    from t_correctivos_solucion_refaccion 
-                                                                    where IdSolucionCorrectivo = '" . $_idSolucion . "'
-                                                                    and IdInventario is not null
-                                                                    and IdInventario <> '')
-                                                                and IdTipoProducto = 2;");
-                    if (!empty($_refaccionesUtilizadas)) {
-                        foreach ($_refaccionesUtilizadas as $key => $value) {
+    public function consultaTablaServicioAllab() {
 
 
-                            /*
-                             * Agrega al inventario la refacciòn dañada
-                             * que se supone que el usuario retira cuando
-                             * deja otra refacciòn
-                             */
-                            $this->insertar("t_inventario", [
-                                'IdAlmacen' => $value['IdAlmacen'],
-                                'IdTipoProducto' => $value['IdTipoProducto'],
-                                'IdProducto' => $value['IdProducto'],
-                                'IdEstatus' => 22,
-                                'Cantidad' => 1
-                            ]);
+        $consulta = $this->consulta("SELECT 
+                                        tea.Id,
+                                        tst.Id as IdServicio,
+                                        tst.Ticket,
+                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.Id = tst.IdSucursal) as NombreSucursal,
+                                        ve.Equipo,
+                                        tea.FechaValidacion,
+                                        tea.IdEstatus,
+                                        (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
+                                        tea.IdRefaccion
+                                    FROM t_equipos_allab tea
+                                    INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
+                                    INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo");
 
-                            /*
-                             * Obtiene el id de almacèn virtual
-                             * correspondiente al complejo del servicio
-                             */
-                            $almacen = $this->consulta(""
-                                    . "select "
-                                    . "Id "
-                                    . "from cat_v3_almacenes_virtuales "
-                                    . "where IdTipoAlmacen = 2 "
-                                    . "and IdReferenciaAlmacen = (select IdSucursal from t_servicios_ticket where Id = '" . $id . "')");
-                            $almacen = $almacen[0]['Id'];
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
 
-                            /*
-                             * Inserta el movimiento de salida de la refacciòn 
-                             * dañada del almacèn virtual del complejo
-                             */
-                            $this->insertar("t_movimientos_inventario", [
-                                'IdTipoMovimiento' => 4,
-                                'IdServicio' => $id,
-                                'IdAlmacen' => $almacen,
-                                'IdTipoProducto' => $value['IdTipoProducto'],
-                                'IdProducto' => $value['IdProducto'],
-                                'IdEstatus' => 22,
-                                'IdUsuario' => $this->usuario['Id'],
-                                'Cantidad' => 1,
-                                'Serie' => '',
-                                'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
-                            ]);
+    public function consultaTicketXUsuario() {
+        $tickets = $this->consulta("SELECT tst.Id,tst.Ticket FROM t_servicios_ticket tst WHERE IdEstatus = '3' AND Atiende = '" . $this->usuario['Id'] . "'");
+        return $tickets;
+    }
 
-                            /*
-                             * Obtiene el Id del movimiento de salida
-                             */
-                            $enlazado = $this->ultimoId();
+    public function consultaServicioXUsuario($datos) {
+        $tickets = $this->consulta("SELECT 
+                                        tst.Id,
+                                        tst.Ticket,
+                                        tst.IdSucursal,
+                                        tst.IdEstatus,
+                                        tst.Atiende,
+                                        tst.Descripcion,
+                                        tcg.IdModelo,
+                                        tcg.Serie
+                                    FROM
+                                        t_servicios_ticket tst
+                                        INNER JOIN t_correctivos_generales tcg on tst.Id = tcg.IdServicio
+                                    WHERE
+                                        tst.IdEstatus = '3' AND
+                                        tst.Id = '" . $datos . "'");
+        return $tickets;
+    }
 
-                            /*
-                             * Inserta el movimiento de entrada de la refacciòn
-                             * dañada al almacèn del usuario
-                             */
-                            $this->insertar("t_movimientos_inventario", [
-                                'IdMovimientoEnlazado' => $enlazado,
-                                'IdTipoMovimiento' => 5,
-                                'IdServicio' => $id,
-                                'IdAlmacen' => $value['IdAlmacen'],
-                                'IdTipoProducto' => $value['IdTipoProducto'],
-                                'IdProducto' => $value['IdProducto'],
-                                'IdEstatus' => 22,
-                                'IdUsuario' => $this->usuario['Id'],
-                                'Cantidad' => 1,
-                                'Serie' => '',
-                                'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
-                            ]);
+    public function mostrarEquipoDanado($idModelo) {
+        $equipoDanado = $this->consulta("SELECT 
+                                            *
+                                        FROM
+                                            v_equipos
+                                        WHERE
+                                            Id = '" . $idModelo . "'");
 
-                            /*
-                             * Actualiza el almacen del producto utilizado
-                             */
-                            $this->actualizar("t_inventario", ['IdAlmacen' => $almacen], ['Id' => $value['Id']]);
+        return $equipoDanado;
+    }
 
-                            /*
-                             * Inserta el movimiento de salida del almacèn del usuario
-                             * que refiere a la refacciòn utilizada en el servicio
-                             */
-                            $this->insertar("t_movimientos_inventario", [
-                                'IdTipoMovimiento' => 4,
-                                'IdServicio' => $id,
-                                'IdAlmacen' => $value['IdAlmacen'],
-                                'IdTipoProducto' => $value['IdTipoProducto'],
-                                'IdProducto' => $value['IdProducto'],
-                                'IdEstatus' => $value['IdEstatus'],
-                                'IdUsuario' => $this->usuario['Id'],
-                                'Cantidad' => $value['Cantidad'],
-                                'Serie' => $value['Serie'],
-                                'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
-                            ]);
-                            /*
-                             * Obtiene el Id del movimiento de salida
-                             * del almacèn del usuario
-                             */
-                            $enlazado = $this->ultimoId();
+    public function mostrarTipoPersonaValida() {
+        $personaValida = $this->consulta("SELECT 
+                                            cp.Id, cp.Nombre
+                                        FROM
+                                            cat_perfiles cp
+                                        WHERE
+                                            cp.Id IN (38 , 39, 46)");
+        return $personaValida;
+    }
 
-                            /*
-                             * Inserta el movimiento de entrada al almacèn del complejo
-                             * de la refacciòn utilizada en el servicio
-                             */
-                            $this->insertar("t_movimientos_inventario", [
-                                'IdMovimientoEnlazado' => $enlazado,
-                                'IdTipoMovimiento' => 5,
-                                'IdServicio' => $id,
-                                'IdAlmacen' => $almacen,
-                                'IdTipoProducto' => $value['IdTipoProducto'],
-                                'IdProducto' => $value['IdProducto'],
-                                'IdEstatus' => $value['IdEstatus'],
-                                'IdUsuario' => $this->usuario['Id'],
-                                'Cantidad' => $value['Cantidad'],
-                                'Serie' => $value['Serie'],
-                                'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
-                            ]);
-                        }
-                    }
-                    break;
+    public function mostrarNombrePersonalValida($datos) {
+        $datosPersonal = $this->consulta("SELECT 
+                                            cvu.Id,CONCAT(trp.Nombres,' ',trp.ApPaterno) AS Nombre
+                                        FROM
+                                            t_rh_personal trp INNER JOIN cat_v3_usuarios cvu on trp.IdUsuario = cvu.Id
+                                        WHERE 
+                                            IdPerfil = '" . $datos . "'");
 
-                case 3: case '3':
-                    $datosEquipo = $this->consulta("select IdModelo, Serie from t_correctivos_generales where IdServicio = '" . $id . "'")[0];
+        return $datosPersonal;
+    }
 
-                    $_equiposUtilizados = $this->consulta("select 
-                                                                * 
-                                                                from t_inventario 
-                                                                where Id in (select 
-                                                                    IdInventario 
-                                                                    from t_correctivos_solucion_cambio 
-                                                                    where IdSolucionCorrectivo = '" . $_idSolucion . "'
-                                                                    and IdInventario is not null
-                                                                    and IdInventario <> '')
-                                                                and IdTipoProducto = 1;");
-                    if (!empty($_equiposUtilizados)) {
-                        foreach ($_equiposUtilizados as $key => $value) {
-                            /*
-                             * Agrega al inventario el equipo dañado
-                             * que se supone que el usuario retira cuando
-                             * deja otra refacciòn
-                             */
-                            $this->insertar("t_inventario", [
-                                'IdAlmacen' => $value['IdAlmacen'],
-                                'IdTipoProducto' => 1,
-                                'IdProducto' => $datosEquipo['IdModelo'],
-                                'IdEstatus' => 22,
-                                'Cantidad' => 1,
-                                'Serie' => $datosEquipo['Serie']
-                            ]);
+    public function mostrarEquipo() {
+        $equipo = $this->consulta("SELECT * FROM v_equipos");
+        return $equipo;
+    }
 
-                            /*
-                             * Obtiene el id de almacèn virtual
-                             * correspondiente al complejo del servicio
-                             */
-                            $almacen = $this->consulta(""
-                                    . "select "
-                                    . "Id "
-                                    . "from cat_v3_almacenes_virtuales "
-                                    . "where IdTipoAlmacen = 2 "
-                                    . "and IdReferenciaAlmacen = (select IdSucursal from t_servicios_ticket where Id = '" . $id . "')");
-                            $almacen = $almacen[0]['Id'];
+    public function mostrarRefaccionXEquipo($dato) {
+        $refaccionXequipo = $this->consulta("SELECT * FROM cat_v3_componentes_equipo WHERE IdModelo = '" . $dato . "' AND Flag = 1");
+        return $refaccionXequipo;
+    }
 
-                            /*
-                             * Inserta el movimiento de salida del equipo
-                             * dañado del almacèn virtual del complejo
-                             */
-                            $this->insertar("t_movimientos_inventario", [
-                                'IdTipoMovimiento' => 4,
-                                'IdServicio' => $id,
-                                'IdAlmacen' => $almacen,
-                                'IdTipoProducto' => 1,
-                                'IdProducto' => $datosEquipo['IdModelo'],
-                                'IdEstatus' => 22,
-                                'IdUsuario' => $this->usuario['Id'],
-                                'Cantidad' => 1,
-                                'Serie' => $datosEquipo['Serie'],
-                                'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
-                            ]);
+    public function mostrarVistaRefaccion($dato) {
+        $refaccionXequipo = $this->consulta("SELECT * FROM cat_v3_componentes_equipo WHERE Id = '" . $dato . "' AND Flag = 1");
+        return $refaccionXequipo;
+    }
 
-                            /*
-                             * Obtiene el Id del movimiento de salida
-                             */
-                            $enlazado = $this->ultimoId();
+    public function mostrarPaqueterias() {
+        $consulta = $this->consulta("SELECT * FROM cat_v3_paqueterias WHERE Flag = 1");
+        if (!empty($consulta)) {
+            return $consulta;
+        }
+    }
 
-                            /*
-                             * Inserta el movimiento de entrada del equipo
-                             * dañado al almacèn del usuario
-                             */
-                            $this->insertar("t_movimientos_inventario", [
-                                'IdMovimientoEnlazado' => $enlazado,
-                                'IdTipoMovimiento' => 5,
-                                'IdServicio' => $id,
-                                'IdAlmacen' => $value['IdAlmacen'],
-                                'IdTipoProducto' => 1,
-                                'IdProducto' => $datosEquipo['IdModelo'],
-                                'IdEstatus' => 22,
-                                'IdUsuario' => $this->usuario['Id'],
-                                'Cantidad' => 1,
-                                'Serie' => $datosEquipo['Serie'],
-                                'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
-                            ]);
+    public function insertarValidacionTecnico($dato) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
-                            /*
-                             * Actualiza el almacen del producto utilizado
-                             */
-                            $this->actualizar("t_inventario", ['IdAlmacen' => $almacen], ['Id' => $value['Id']]);
-
-                            /*
-                             * Inserta el movimiento de salida del almacèn del usuario
-                             * que refiere a la refacciòn utilizada en el servicio
-                             */
-                            $this->insertar("t_movimientos_inventario", [
-                                'IdTipoMovimiento' => 4,
-                                'IdServicio' => $id,
-                                'IdAlmacen' => $value['IdAlmacen'],
-                                'IdTipoProducto' => $value['IdTipoProducto'],
-                                'IdProducto' => $value['IdProducto'],
-                                'IdEstatus' => $value['IdEstatus'],
-                                'IdUsuario' => $this->usuario['Id'],
-                                'Cantidad' => $value['Cantidad'],
-                                'Serie' => $value['Serie'],
-                                'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
-                            ]);
-                            /*
-                             * Obtiene el Id del movimiento de salida
-                             * del almacèn del usuario
-                             */
-                            $enlazado = $this->ultimoId();
-
-                            /*
-                             * Inserta el movimiento de entrada al almacèn del complejo
-                             * de la refacciòn utilizada en el servicio
-                             */
-                            $this->insertar("t_movimientos_inventario", [
-                                'IdMovimientoEnlazado' => $enlazado,
-                                'IdTipoMovimiento' => 5,
-                                'IdServicio' => $id,
-                                'IdAlmacen' => $almacen,
-                                'IdTipoProducto' => $value['IdTipoProducto'],
-                                'IdProducto' => $value['IdProducto'],
-                                'IdEstatus' => $value['IdEstatus'],
-                                'IdUsuario' => $this->usuario['Id'],
-                                'Cantidad' => $value['Cantidad'],
-                                'Serie' => $value['Serie'],
-                                'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
-                            ]);
-                        }
-                    }
-                    break;
-
-                default:
-                    break;
-            }
+        if ($dato['IdRefaccion'] === '') {
+            $dato['IdRefaccion'] = null;
         }
 
-        if ($this->estatusTransaccion() === false) {
-            $this->roolbackTransaccion();
-            return ['code' => 400];
+        if ($dato['Serie'] === '') {
+            $dato['Serie'] = null;
+        }
+
+        $datos = array('IdServicio' => $dato['IdServicio'],
+            'IdPersonalValida' => $dato['IdPersonalValida'],
+            'FechaValidacion' => $dato['FechaValidacion'],
+            'IdTipoMovimiento' => $dato['IdTipoMovimiento'],
+            'IdModelo' => $dato['IdModelo'],
+            'Serie' => $dato['Serie'],
+            'IdRefaccion' => $dato['IdRefaccion'],
+            'IdUsuario' => $this->usuario['Id'],
+            'IdEstatus' => 2,
+            'FechaEstatus' => $fecha,
+            'Flag' => 1);
+
+        $insertar = $this->insertar('t_equipos_allab', $datos);
+
+        if (!empty($insertar)) {
+            return TRUE;
         } else {
-            $this->commitTransaccion();
-            return ['code' => 200];
+            return FALSE;
+        }
+    }
+
+    public function insertarEnvioGuia(array $datos) {
+        $insertar = $this->insertar('t_equipos_allab_envio_tecnico', $datos);
+
+        if (!empty($insertar)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    // -------------------------
+    public function consultaDatosValidacion($datos = null) {
+        $condicion = "";
+        $valor = "";
+        if (!empty($datos['IdRefaccion'])) {
+            $valor = " ,cvce.Nombre as Refaccion";
+            $condicion = " INNER JOIN cat_v3_componentes_equipo cvce ON cvce.Id = tea.IdRefaccion ";
+        }
+        $consulta = $this->consulta("SELECT
+                                        tea.IdEstatus,
+                                        tst.Ticket,
+                                        tea.IdServicio,
+                                        tea.FechaValidacion,
+                                        (SELECT cveatm.Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS TipoMovimiento,
+                                        CONCAT(tst.Id,' - ',tst.Descripcion) AS Servicio,
+                                        CONCAT(trp.Nombres,' ',trp.ApMaterno) AS NombrePersonal,
+                                        (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS Movimiento,
+                                        ve.Equipo" . $valor . "
+                                        ,'Lectura'
+                                    FROM 
+                                            t_equipos_allab tea
+                                    INNER JOIN 
+                                            t_servicios_ticket tst on tst.Id = tea.IdServicio
+                                    INNER JOIN
+                                            t_rh_personal trp ON trp.IdUsuario = tea.IdPersonalValida
+                                    INNER JOIN
+                                            v_equipos ve ON ve.Id = tea.IdModelo" . $condicion . "
+                                    WHERE 
+                                            IdServicio = '" . $datos['idServicio'] . "'");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return false;
+        }
+    }
+
+    public function consultaSolicitudGuiaTecnico($idServicio) {
+        $datosServcio = $this->estatusAllab($idServicio);
+
+        if (!empty($datosServcio)) {
+            $consultaGuia = $this->consulta("SELECT 
+                                                (SELECT Nombre FROM cat_v3_paqueterias cvp WHERE cvp.Id = teaet.IdPaqueteria) AS Paqueteria,
+                                                teaet.Guia,
+                                                teaet.Fecha,
+                                                teaet.ArchivosSolicitud
+                                            FROM
+                                                t_equipos_allab_envio_tecnico teaet
+                                            WHERE 
+                                                    IdRegistro = '" . $datosServcio['Id'] . "'");
+            if (!empty($consultaGuia)) {
+                return $consultaGuia;
+            } else {
+                return "Falso con estatus 26 en t_equipos_allab_envio_tecnico";
+            }
+        } else {
+            return "falso en estatus 26 con tecnico";
+        }
+        return $datosServcio;
+    }
+
+    public function consultaRecepcionAlmacen(array $datos) {
+        $datosServcio = $this->estatusAllab($datos['IdServicio']);
+        $idRecepcion = null;
+
+        $consultaRecepcion = $this->consulta("SELECT 
+                                                tear.Id,
+                                                CONCAT(trp.Nombres,' ',trp.ApMaterno,' ',trp.ApPaterno) AS UsuarioRecibe,
+                                                tear.Fecha,
+                                                tear.Archivos
+                                            FROM
+                                                t_equipos_allab_recepciones tear
+                                            INNER JOIN
+                                                t_rh_personal trp ON trp.IdUsuario = tear.IdUsuario
+                                            WHERE
+                                                IdRegistro = '" . $datosServcio['Id'] . "' AND
+                                                IdDepartamento = '".$datos['IdDepartamento']."' AND
+                                                IdEstatus = '".$datos['IdEstatus']."'");
+
+        foreach ($consultaRecepcion as $value) {
+            $idRecepcion = $value['Id'];
+        }
+        $recpcionProblema = $this->consulta("SELECT 
+                                                tearp.Fecha,
+                                                tearp.Problema,
+                                                tearp.Archivos
+                                            FROM
+                                                t_equipos_allab_recepciones_problemas tearp
+                                            WHERE
+                                                    tearp.Id = '" . $idRecepcion . "'");
+
+        if (!empty($recpcionProblema)) {
+            return array('recepcion' => $consultaRecepcion, 'recepcionProblema' => $recpcionProblema);
+        } else {
+            return array('recepcion' => $consultaRecepcion);
         }
     }
 
