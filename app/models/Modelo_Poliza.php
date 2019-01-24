@@ -1095,8 +1095,8 @@ class Modelo_Poliza extends Modelo_Base {
                                                 t_rh_personal trp ON trp.IdUsuario = tear.IdUsuario
                                             WHERE
                                                 IdRegistro = '" . $datosServcio['Id'] . "' AND
-                                                IdDepartamento = '".$datos['IdDepartamento']."' AND
-                                                IdEstatus = '".$datos['IdEstatus']."'");
+                                                IdDepartamento = '" . $datos['IdDepartamento'] . "' AND
+                                                IdEstatus = '" . $datos['IdEstatus'] . "'");
 
         foreach ($consultaRecepcion as $value) {
             $idRecepcion = $value['Id'];
@@ -1116,32 +1116,47 @@ class Modelo_Poliza extends Modelo_Base {
             return array('recepcion' => $consultaRecepcion);
         }
     }
-    
+
     public function consultaEnvioLogistica($datos) {
         $datosServcio = $this->estatusAllab($datos['IdServicio']);
-        
+        $idLogistica = null;
+        $lugarRecepcion = null;
+        $estatus = null;
+
         $datosEnvioLog = $this->consulta("SELECT 
                                             *
                                         FROM
                                             t_equipos_allab_envio_logistica teael
                                         WHERE
-                                            teael.IdRegistro = '". $datosServcio['Id'] ."'");
-        
+                                            teael.IdRegistro = '" . $datosServcio['Id'] . "'");
+        if (!empty($datosEnvioLog)) {
+            foreach ($datosEnvioLog as $value) {
+                $lugarRecepcion = $value['IdTipoLugarRecepcion'];
+                $estatus = $value['IdEstatus'];
+                $idLogistica = $value['Id'];
+            }
+        }
+
         $consulta = $this->consulta("SELECT 
                                         (SELECT cvp.Nombre FROM cat_v3_paqueterias cvp WHERE cvp.Id = '1' AND cvp.Flag = 1) AS paqueteria,
                                         teael.Guia,
                                         teael.FechaEnvio,
                                         teael.ArchivosEnvio,
                                         teael.IdTipoLugarRecepcion,
-                                        (SELECT cveatlr.Nombre FROM cat_v3_equipos_allab_tipo_lugar_recepcion cveatlr WHERE cveatlr.Id = '1') AS DondeRecibe,
-                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.IdCliente = 1 AND Id = '1') AS Sucursal,
+                                        (SELECT cveatlr.Nombre FROM cat_v3_equipos_allab_tipo_lugar_recepcion cveatlr WHERE cveatlr.Id = '" . $lugarRecepcion . "') AS DondeRecibe,
+                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.IdCliente = 1 AND Id = '" . $estatus . "') AS Sucursal,
                                         teael.IdSucursal,
                                         teael.Recibe,
                                         teael.ArchivosEntrega
                                     FROM
                                         t_equipos_allab_envio_logistica teael
                                     WHERE 
-                                            teael.IdRegistro = '". $datosEnvioLog['Id'] ."'");
+                                            teael.IdRegistro = '" . $idLogistica . "'");
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return false;
+        }
     }
 
 }
