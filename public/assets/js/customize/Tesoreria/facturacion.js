@@ -363,7 +363,7 @@ $(function () {
 
         tabla.limpiarTabla('#data-table-facturas-poliza');
         $.each(respuesta, function (key, valor) {
-            tabla.agregarFila('#data-table-facturas-poliza', [valor.Id, valor.IdServicio, valor.Ticket, valor.Folio, valor.Vuelta, valor.Sucursal, valor.NombreAtiende, valor.Fecha, valor.Estatus, valor.EstatusServicio], true);
+            tabla.agregarFila('#data-table-facturas-poliza', [valor.Id, valor.IdServicio, valor.Ticket, valor.Folio, valor.Vuelta, valor.Sucursal, valor.NombreAtiende, valor.Fecha, valor.Estatus, valor.EstatusServicio, valor.SupervisorAutorizado, valor.Monto, valor.Viatico, valor.Total], true);
         });
     };
 
