@@ -6,12 +6,14 @@ if (!empty($datosSolicitudGuia)) {
         $fecha = $value['Fecha'];
         $mostrarSelect = "hidden";
         $mostrarInput = "";
-        if (!empty($archivo)) {
-            $archivo = $value['ArchivosSolicitud'];
-            $mostrarInput = "";
+        if (!empty($value['ArchivosEnvio'])) {
+            $archivo = $value['ArchivosEnvio'];
+            $mostrarInputFile = "";
+            $mostrarSelectInput = "hidden";
         } else {
             $archivo = "";
             $mostrarInputFile = "hidden";
+            $mostrarSelectInput = "hidden";
         }
     }
 } else {
@@ -22,6 +24,7 @@ if (!empty($datosSolicitudGuia)) {
     $mostrarSelect = "";
     $mostrarInput = "hidden";
     $mostrarInputFile = "hidden";
+    $mostrarSelectInput = "";
 }
 ?>
 <div id="panelEnvioConGuia" class="panel panel-inverse">
@@ -78,10 +81,23 @@ if (!empty($datosSolicitudGuia)) {
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-9 col-sm-12 col-xs-12 <?php echo $mostrarSelect ?>">
-                    <div class="form-group">
+                <div class="col-md-9 col-sm-12 col-xs-12">
+                    <div class="form-group <?php echo $mostrarSelectInput?> ">
                         <label class="f-w-600 f-s-13">Evidencia del envío</label> 
                         <input id="evidenciaEnvioGuia"  name="evidenciaEnvioGuia[]" type="file" multiple />
+                    </div>
+                    <div class="form-group <?php echo $mostrarInputFile ?>">
+                        <label class="f-w-600 f-s-13">Evidencia de envío</label>      
+                        <div id="" class=" evidencia">
+                            <?php
+                            $archivosEnvia = explode(',', $archivo);
+                            foreach ($archivosEnvia as $value) {
+                                ?>
+                                <a class="m-l-5 m-r-5" href="<?php echo $value ?>" data-lightbox="image-<?php echo $value ?>">
+                                    <img src="<?php echo $value ?>" style="max-height:115px !important;" />
+                                </a>
+                            <?php } ?>
+                        </div>
                     </div>
                 </div>
             </div>

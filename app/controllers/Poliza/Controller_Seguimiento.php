@@ -293,11 +293,7 @@ class Controller_Seguimiento extends Base {
                 break;
             case 'GuardarEnvioAlmacen':
                 $resultado = $this->Seguimientos->guardarEnvioAlmacen($this->input->post());
-                break;
-            case 'SolicitarGuia':
-                $resultado = $this->Seguimientos->solicitarGuia($this->input->post());
-                break;
-            
+                break;            
             default:
                 $resultado = FALSE;
                 break;
