@@ -77,6 +77,7 @@ $(function () {
         file.crearUpload('#adjuntosProblemaAlm', 'Seguimiento/subirAdjuntosLabHistorial');
         file.crearUpload('#adjuntosProblemaLab', 'Seguimiento/subirAdjuntosLabHistorial');
         file.crearUpload('#adjuntosProblemaLog', 'Seguimiento/subirAdjuntosLabHistorial');
+        file.crearUpload('#adjuntosProblemaTec', 'Seguimiento/subirAdjuntosLabHistorial');
         file.crearUpload('#evidenciaEntregaLog', 'Seguimiento/subirAdjuntosLabHistorial');
         file.crearUpload('#evidenciaEnvioGuia', 'Seguimiento/subirAdjuntosLabHistorial');
 
@@ -91,23 +92,27 @@ $(function () {
     $('#lista-equipos-enviados-solicitados tbody').on('click', 'tr', function () {
         var IdServicio = "";
         var IdRefaccion = "";
+        var idEstatus = "";
+        
         var datos = $('#lista-equipos-enviados-solicitados').DataTable().row(this).data();
         if (datos !== undefined) {
             IdServicio = datos[1];
             IdRefaccion = datos[8];
-            formulario(IdServicio,IdRefaccion);
+            idEstatus = datos[6];
+            formulario(IdServicio,IdRefaccion,idEstatus);
         }
     });
 
     var formulario = function () {
         var idServicio = arguments[0];
         var IdRefaccion = arguments[1];
-        var datos = {"idServicio" : idServicio, 'IdRefaccion' : IdRefaccion};
+        var idEstatus = arguments[2];
+        var datos = {"idServicio" : idServicio, 'IdRefaccion' : IdRefaccion, 'idEstatus' : idEstatus};
         evento.enviarEvento('Seguimiento/VistaPorPerfil', datos, panel, function (respuesta) {
             console.log(respuesta);
 
                 $('#panelTablaEquiposEnviados').addClass('hidden');
-//                $('#seccionFormulariosRecepcionTecnico').removeClass('hidden').empty().append(respuesta.formulario.formularioRecepcionTecnico);
+                $('#seccionFormulariosRecepcionTecnico').removeClass('hidden').empty().append(respuesta.formularioRecepcionTecnico.formularioRecepcionTecnico);
                 $('#seccionFormulariosEnvSegLog').removeClass('hidden').empty().append(respuesta.formularioEnvioSeguimientoLog.formularioEnvioSeguimientoLog);
                 $('#seccionFormulariosRecepcionLogistica').removeClass('hidden').empty().append(respuesta.formularioRecepcionLog.formularioRecepcionLogistica);
                 $('#seccionFormulariosRevisionHistorial').removeClass('hidden').empty().append(respuesta.formularioHistorialRefaccion.formularioRevisionHistorial);

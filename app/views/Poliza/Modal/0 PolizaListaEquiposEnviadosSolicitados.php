@@ -1,5 +1,5 @@
 <div id="divListaEquiposEnviados" class="content">
-    <input type="hidden" value="<?php echo $datos['vistaUsuario']['IdPerfil'] ?>" id="IdPerfil" />
+    <input type="hidden" value="<?php // echo $datos['vistaUsuario']['IdPerfil'] ?>" id="IdPerfil" />
     <h1 class="page-header">Seguimiento Equipos Almecén o Solicitados</h1>
     <div id="panelTablaEquiposEnviados" class="panel panel-inverse">
         <div class="panel-heading">    

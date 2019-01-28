@@ -5,12 +5,14 @@ if (!empty($datosRecepcion['recepcion'])) {
         $fecha = $value['Fecha'];
         $mostrarSelect = "hidden";
         $mostrarInput = "";
-        if (!empty($archivcos)) {
-            $archivo = $value['Archivos'];
-            $mostrarInput = "";
+        if (!empty($value['Archivos'])) {
+            $archivoRecepcion = $value['Archivos'];
+            $mostrarInputFile = "";
+            $mostrarSelectInput = "hidden";
         } else {
-            $archivo = "";
+            $archivoRecepcion = "";
             $mostrarInputFile = "hidden";
+            $mostrarSelectInput = "hidden";
         }
     }
 } else {
@@ -20,26 +22,23 @@ if (!empty($datosRecepcion['recepcion'])) {
     $mostrarSelect = "";
     $mostrarInput = "hidden";
     $mostrarInputFile = "hidden";
+    $mostrarSelectInput = "";
 }
 
 if (!empty($datosRecepcion['recepcionProblema'])) {
     foreach ($datosRecepcion['recepcionProblema'] as $problema) {
-        $nota = $problema['Problema'];
-        $mostrarNota = "hidden";
-        $mostrarInputNota = "";
-        if (!empty($archivos)) {
-            $archivos = $problema['Archivos'];
-        } else {
-            $archivo = "";
-            $mostrarInputFile = "hidden";
-        }
+        $mostrarNota = "disabled";
+        $mostrarSelectInputProblema = "disabled";
+        $mostrarBtnProblema = "hidden";
     }
-} else {
-    $nota = "";
-    $archivo = "";
-    $mostrarInputFile = "";
+} else if (!empty($datosRecepcion['recepcion']) && empty($datosRecepcion['recepcionProblema'])) {
+    $mostrarNota = "disabled";
+    $mostrarSelectInputProblema = "disabled";
+    $mostrarBtnProblema = "hidden";
+}else{
     $mostrarNota = "";
-    $mostrarInputNota = "hidden";
+    $mostrarSelectInputProblema = "";
+    $mostrarBtnProblema = "";
 }
 ?>
 <div id="panelRecepcionAlmacen" class="panel panel-inverse">
@@ -55,7 +54,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
         <div class="row"></div>
         <ul class="nav nav-pills">
             <li class="active"><a href="#RecepcionAlm" data-toggle="tab">Recepcion</a></li>
-            <li><a href="#problmeasRecepcionAlm" data-toggle="tab">Problemas de recepción</a></li>
+            <li><a href="#problemasRecepcionAlm" data-toggle="tab">Problemas de recepción</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane fade active in" id="RecepcionAlm">
@@ -82,9 +81,22 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                             </div>
                         </div>
                         <div class="col-md-9 col-sm-12 col-xs-12">
-                            <div class="form-group <?php echo $mostrarInputFile ?>">
+                            <div class="form-group <?php echo $mostrarSelectInput ?>">
                                 <label class="f-w-600 f-s-13">Evidencia de recepción *</label> 
                                 <input id="evidenciaRecepcionAlmacen"  name="evidenciaRecepcionAlmacen[]" type="file" multiple />
+                            </div>
+                            <div class="form-group <?php echo $mostrarInputFile ?>">
+                                <label class="f-w-600 f-s-13">Evidencia de recepción *</label>      
+                                <div id="" class=" evidencia">
+                                    <?php
+                                    $archivosEnvia = explode(',', $archivoRecepcion);
+                                    foreach ($archivosEnvia as $value) {
+                                        ?>
+                                        <a class="m-l-5 m-r-5" href="<?php echo $value ?>" data-lightbox="image-<?php echo $value ?>">
+                                            <img src="<?php echo $value ?>" style="max-height:115px !important;" />
+                                        </a>
+                                    <?php } ?>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -98,30 +110,26 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                     </fieldset>
                 </form>
             </div>
-            <div class="tab-pane fade" id="problmeasRecepcionAlm">
+            <div class="tab-pane fade" id="problemasRecepcionAlm">
                 <form id="formProblemaRecepcionAlmacen" data-parsley-validate="true">
                     <div class="row">
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <div class="form-group <?php echo $mostrarNota ?>">
+                            <div class="form-group">
                                 <label class="f-w-600 f-s-13">Nota:</label>
-                                <textarea class="form-control" rows="5" id="txtNota" value=""></textarea>                            
-                            </div>
-                            <div class="form-group <?php echo $mostrarInputNota ?>">
-                                <label class="f-w-600 f-s-13">Nota:</label>
-                                <input type="text" class="form-control" placeholder="<?php echo $nota ?>" disabled/>
+                                <textarea class="form-control" rows="5" id="txtNota" value="" <?php echo $mostrarNota ?>></textarea>                            
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
-                            <div class="form-group <?php echo $mostrarInputFile ?>">
+                            <div class="form-group">
                                 <label class="f-w-600 f-s-13">Adjuntos:</label>
-                                <input id="adjuntosProblemaAlm" name="adjuntosTarea[]" type="file" multiple=""/>    
+                                <input id="adjuntosProblemaAlm" name="adjuntosTarea[]" type="file" multiple="" <?php echo $mostrarSelectInputProblema ?>/>    
                             </div>
                         </div>
                     </div>
                     <div>
-                        <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelect ?>">
+                        <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarBtnProblema ?>">
                             <a id="btnAgregarProblemaAlm" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13">Agregar Problema</a>
                         </div>
                     </div>

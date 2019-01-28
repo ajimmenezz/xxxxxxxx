@@ -472,7 +472,7 @@ class Secciones extends General {
                 break;
             case 'Poliza/Seguimiento_Equipos':
                 $datos['tablaEquipos'] = $this->Seguimientos->mostrarTabla();
-                $datos['vistaUsuario'] = $this->Seguimientos->perfilUsuario();
+//                $datos['permisoNuevoRegistro'] = $this->Seguimiento->permisoNuevoRegistro();
                 break;
             default:
                 break;
