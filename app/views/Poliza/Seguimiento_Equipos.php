@@ -48,8 +48,8 @@
                             </thead>
                             <tbody>
                                     <?php
-                                    if (!empty($datos['tablaEquipos'])) {
-                                        foreach ($datos['tablaEquipos'] as $key => $value) {
+;                                    if ($datos['tablaEquipos']['code'] === 200) {
+                                        foreach ($datos['tablaEquipos']['datosTabla'] as $key => $value) {
                                             echo '<tr>';
                                             echo '<td>' . $value['Id'] . '</td>';
                                             echo '<td>' . $value['IdServicio'] . '</td>';

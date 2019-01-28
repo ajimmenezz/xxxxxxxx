@@ -931,8 +931,6 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function consultaTablaServicioAllab() {
-
-
         $consulta = $this->consulta("SELECT 
                                         tea.Id,
                                         tst.Id as IdServicio,
@@ -946,6 +944,93 @@ class Modelo_Poliza extends Modelo_Base {
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function consultaTablaServicioAllabSupervisor(string $usuario) {
+        $consulta = $this->consulta("SELECT 
+                                        tea.Id,
+                                        tst.Id as IdServicio,
+                                        tst.Ticket,
+                                        (SELECT 
+                                                cvs.Nombre
+                                            FROM
+                                                cat_v3_sucursales cvs
+                                            WHERE
+                                                cvs.Id = tst.IdSucursal) as NombreSucursal,
+                                        ve.Equipo,
+                                        tea.FechaValidacion,
+                                        tea.IdEstatus,
+                                        (SELECT 
+                                                cve.Nombre
+                                            FROM
+                                                cat_v3_estatus cve
+                                            WHERE
+                                                cve.Id = tea.IdEstatus) as NombreEstatus,
+                                        tea.IdRefaccion
+                                    FROM
+                                        t_equipos_allab tea
+                                            INNER JOIN
+                                        t_servicios_ticket tst ON tst.Id = tea.IdServicio
+                                            INNER JOIN
+                                        v_equipos ve ON ve.Id = tea.IdModelo
+                                            INNER JOIN
+                                        cat_v3_sucursales cvs ON cvs.Id = tst.IdSucursal
+                                            INNER JOIN
+                                        cat_v3_regiones_cliente cvrc ON cvrc.Id = cvs.IdRegionCliente
+                                    WHERE
+                                        cvrc.IdResponsableInterno = '" . $usuario . "'");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function consultaTablaServicioAllabTecnico(string $usuario) {
+        $consulta = $this->consulta("SELECT 
+                                        tea.Id,
+                                        tst.Id as IdServicio,
+                                        tst.Ticket,
+                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.Id = tst.IdSucursal) as NombreSucursal,
+                                        ve.Equipo,
+                                        tea.FechaValidacion,
+                                        tea.IdEstatus,
+                                        (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
+                                        tea.IdRefaccion
+                                    FROM t_equipos_allab tea
+                                    INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
+                                    INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
+                                    WHERE tea.IdUsuario = '" . $usuario . "'");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function consultaTablaServicioAllabPerfil(string $estatus) {
+        $consulta = $this->consulta("SELECT 
+                                        tea.Id,
+                                        tst.Id as IdServicio,
+                                        tst.Ticket,
+                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.Id = tst.IdSucursal) as NombreSucursal,
+                                        ve.Equipo,
+                                        tea.FechaValidacion,
+                                        tea.IdEstatus,
+                                        (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
+                                        tea.IdRefaccion
+                                    FROM t_equipos_allab tea
+                                    INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
+                                    INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
+                                    WHERE tea.IdEstatus IN('" . $estatus . "')");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1494,6 +1579,102 @@ class Modelo_Poliza extends Modelo_Base {
             $this->commitTransaccion();
             return ['code' => 200];
         }
+    }
+
+    public function insertarEquiposAllabRevicionLaboratorioHistorial(array $datos) {
+        $this->iniciaTransaccion();
+
+        $this->insertar('t_equipos_allab_revision_laboratorio', [
+            'IdRegistro' => $datos['id'],
+            'IdUsuario' => $datos['idUsuario'],
+            'Fecha' => $datos['fecha'],
+            'IdEstatus' => '29'
+        ]);
+
+        $idRevision = parent::connectDBPrueba()->insert_id();
+
+        $this->insertar('t_equipos_allab_revision_laboratorio_historial', [
+            'IdRevision' => $idRevision,
+            'IdUsuario' => $datos['idUsuario'],
+            'Fecha' => $datos['fecha'],
+            'Comentarios' => $datos['comentarios'],
+            'Archivos' => $datos['archivos']
+        ]);
+
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function insertarEquiposAllabRecepcionesProblemas(array $datos) {
+        $consulta = $this->insertar('t_equipos_allab_recepciones_problemas', [
+            'IdRecepcion' => $datos['idRecepcion'],
+            'IdUsuario' => $datos['idUsuario'],
+            'Fecha' => $datos['fecha'],
+            'Problema' => $datos['comentarios'],
+            'Archivos' => $datos['archivos']
+        ]);
+
+        return $consulta;
+
+    }
+
+    public function consultaComentariosAdjuntosSolicitudEquipo(int $id) {
+        $consulta = $this->consulta('select 
+                                        tearlh.Id,
+                                        nombreUsuario(tearlh.IdUsuario) as Usuario,
+                                        (select 
+                                                UrlFoto
+                                            from
+                                                t_rh_personal
+                                            where
+                                                IdUsuario = tearlh.IdUsuario) as UrlFoto,
+                                        DATE_FORMAT(tearlh.Fecha, "%M %e, %Y - %l:%i %p") as Fecha,
+                                        tearlh.Comentarios as Nota,
+                                        tearlh.Archivos as Adjuntos
+                                    from
+                                        t_equipos_allab_revision_laboratorio_historial tearlh
+                                        left join
+                                    t_equipos_allab_revision_laboratorio tearl ON tearl.Id = tearlh.IdRevision
+                                        left join
+                                    t_equipos_allab tea ON tea.Id = tearl.IdRegistro
+                                    where tea.Id = "' . $id . '"
+                                    and tea.Flag = 1
+                                    order by tearlh.Id desc');
+        return $consulta;
+    }
+
+    public function consultaRecepcionesProblemasSolicitudEquipo(array $datos) {
+        $consulta = $this->consulta('SELECT 
+                                            tearp.Id,
+                                    nombreUsuario(tearp.IdUsuario) as Usuario,
+                                    (select 
+                                            UrlFoto
+                                        from
+                                            t_rh_personal
+                                        where
+                                            IdUsuario = tearp.IdUsuario) as UrlFoto,
+                                    DATE_FORMAT(tearp.Fecha, "%M %e, %Y - %l:%i %p") as Fecha,
+                                    tearp.Problema as Nota,
+                                    tearp.Archivos as Adjuntos
+                                    FROM
+                                        t_equipos_allab_recepciones_problemas tearp
+                                            left join
+                                        t_equipos_allab_recepciones tear ON tear.Id = tearp.IdRecepcion
+                                            left join
+                                        t_equipos_allab tea ON tea.Id = tear.IdRegistro
+                                    where tea.Id = "' . $datos['id'] . '"
+                                    AND tear.IdDepartamento = "' . $datos['idDepartamento'] . '"
+                                    AND tear.IdEstatus = "' . $datos['idEstatus'] . '"
+                                    and tea.Flag = 1
+                                    order by tearp.Id desc');
+        return $consulta;
     }
 
 }

@@ -74,7 +74,7 @@ $(function () {
         file.crearUpload('#evidenciaRecepcionTecnico', 'Seguimiento/subirAdjuntosLabHistorial');
         file.crearUpload('#evidenciaRecepcionlog', 'Seguimiento/subirAdjuntosLabHistorial');
 
-        file.crearUpload('#adjuntosProblemaAlm', 'Seguimiento/subirAdjuntosLabHistorial');
+        file.crearUpload('#adjuntosProblemaAlm', 'Seguimiento/AgregarRecepcionesProblemasSeguimientosEquipos');
         file.crearUpload('#adjuntosProblemaLab', 'Seguimiento/subirAdjuntosLabHistorial');
         file.crearUpload('#adjuntosProblemaLog', 'Seguimiento/subirAdjuntosLabHistorial');
         file.crearUpload('#evidenciaEntregaLog', 'Seguimiento/subirAdjuntosLabHistorial');
@@ -93,15 +93,17 @@ $(function () {
         var IdRefaccion = "";
         var datos = $('#lista-equipos-enviados-solicitados').DataTable().row(this).data();
         if (datos !== undefined) {
+            var idTabla = datos[0];
             IdServicio = datos[1];
             IdRefaccion = datos[8];
-            formulario(IdServicio, IdRefaccion);
+            formulario(IdServicio, IdRefaccion, idTabla);
         }
     });
 
     var formulario = function () {
         var idServicio = arguments[0];
         var IdRefaccion = arguments[1];
+        var idTabla = arguments[2];
         var datos = {"idServicio": idServicio, 'IdRefaccion': IdRefaccion};
         evento.enviarEvento('Seguimiento/VistaPorPerfil', datos, panel, function (respuesta) {
             console.log(respuesta);
@@ -117,7 +119,8 @@ $(function () {
             $('#seccionFormulariosGuia').removeClass('hidden').empty().append(respuesta.formularioEnvioAlmacen.formularioGuia);
             $('#seccionFormulariosValidacion').removeClass('hidden').empty().append(respuesta.formularioValidacion.formularioValidacion);
             incioEtiquetas();
-            eventosComentarios();
+            eventosComentarios(idTabla);
+            cargaComentariosAdjuntos(idTabla);
 
             $('#btnRegresarTabla').off('click');
             $('#btnRegresarTabla').on('click', function () {
@@ -128,7 +131,23 @@ $(function () {
         });
     };
 
-    var eventosComentarios = function () {
+    var eventosComentarios = function (idTabla) {
+
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            switch (target) {
+                case "#problmeasRecepcionAlm":
+                    cargaRecepcionesProblemas(idTabla, '1', '28', '#panelRecepcionAlmacen', '#divNotasAdjuntos');
+                    break;
+//                case "#ConsumoMaterial":
+//                    cargaConsumirMaterial();
+//                    break;
+//                case "#NotasAdjuntos":
+//                    cargaNotasAdjuntos();
+//                    break;
+            }
+        });
 
         $('#agregarComentarioHistorial').off('click');
         $('#agregarComentarioHistorial').on('click', function () {
@@ -137,24 +156,84 @@ $(function () {
 
             if (comentarios !== '' || adjunto !== '') {
                 var datos = {
-//                    'id': $.trim($("#IdTarea").val()),
+                    'id': idTabla,
                     'comentarios': comentarios
                 };
 
-                file.enviarArchivos('#archivosLabHistorial', 'Seguimiento/AgregarComentarioSeguimientosEquipos', '#panelFormularioSeguimientoTarea', datos, function (respuesta) {
-                    console.log(respuesta);
-//                    if (respuesta.code == 200) {
-//                        evento.mostrarMensaje("#errorGuardarNotasAdjunto", true, "Se ha guardado la nota correctamente", 6000);
-//                        $("#txtNotaTarea").val('').text('');
-//                        file.limpiar('#adjuntosTarea');
-//                        cargaNotasAdjuntos();
-//                    } else {
-//                        evento.mostrarMensaje("#errorAgregarComentario", false, "Ocurrió un error al guardar el comnetario. Por favor recargue su página y vuelva a intentarlo.", 4000);
-//                    }
+                file.enviarArchivos('#archivosLabHistorial', 'Seguimiento/AgregarComentarioSeguimientosEquipos', '#panelLaboratorioHistorial', datos, function (respuesta) {
+                    if (respuesta.code == 200) {
+                        evento.mostrarMensaje("#errorAgregarComentario", true, "Se ha guardado el comentario correctamente", 6000);
+                        $("#comentariosObservaciones").val('').text('');
+                        file.limpiar('#archivosLabHistorial');
+                        cargaComentariosAdjuntos(idTabla);
+                    } else {
+                        evento.mostrarMensaje("#errorAgregarComentario", false, "Ocurrió un error al guardar el comnetario. Por favor recargue su página y vuelva a intentarlo.", 4000);
+                    }
                 });
             } else {
                 evento.mostrarMensaje("#errorAgregarComentario", false, "Al menos debe agregar el comentario o un adjunto para poder agregar la información", 4000);
             }
         });
+
+        $('#btnAgregarProblemaAlm').off('click');
+        $('#btnAgregarProblemaAlm').on('click', function () {
+            var comentarios = $.trim($("#txtNota").val());
+            var adjunto = $("#adjuntosProblemaAlm").val();
+
+            if (comentarios !== '' || adjunto !== '') {
+                var datos = {
+                    'id': idTabla,
+                    'comentarios': comentarios,
+                    'tipoProblema': 'almacen'
+                };
+
+                file.enviarArchivos('#adjuntosProblemaAlm', 'Seguimiento/AgregarRecepcionesProblemasSeguimientosEquipos', '#panelLaboratorioHistorial', datos, function (respuesta) {
+                    if (respuesta.code == 200) {
+                        evento.mostrarMensaje("#errorAgregarProblemaAlm", true, "Se ha guardado la nota correctamente", 6000);
+                        $("#txtNota").val('').text('');
+                        file.limpiar('#adjuntosProblemaAlm');
+                        cargaRecepcionesProblemas(idTabla, '1', '28', '#panelRecepcionAlmacen', '#divNotasAdjuntos');
+                    } else {
+                        evento.mostrarMensaje("#errorAgregarProblemaAlm", false, "Ocurrió un error al guardar la nota. Por favor recargue su página y vuelva a intentarlo.", 4000);
+                    }
+                });
+            } else {
+                evento.mostrarMensaje("#errorAgregarProblemaAlm", false, "Al menos debe agregar la nota o un adjunto para poder agregar la información", 4000);
+            }
+        });
     }
+
+    var cargaComentariosAdjuntos = function (idTabla) {
+        var datos = {
+            'id': idTabla
+        };
+
+        evento.enviarEvento('Seguimiento/CargaComentariosAdjuntos', datos, '#panelLaboratorioHistorial', function (respuesta) {
+            if (respuesta.code == 200) {
+                $("#divComentariosAdjuntos").empty().append(respuesta.formulario);
+            } else {
+                evento.mostrarMensaje("#errorAgregarComentario", false, respuesta.error, 4000);
+            }
+        });
+    }
+
+    var cargaRecepcionesProblemas = function () {
+        var idTabla = arguments[0];
+        var idDepartamento = arguments[1];
+        var idEstatus = arguments[2];
+        var panel = arguments[3];
+        var div = arguments[4];
+        var datos = {
+            'id': idTabla,
+            'idDepartamento': idDepartamento,
+            'idEstatus': idEstatus
+        };
+
+        evento.enviarEvento('Seguimiento/CargaRecepcionesProblemas', datos, panel, function (respuesta) {
+            if (respuesta.code == 200) {
+                $(div).empty().append(respuesta.formulario);
+            }
+        });
+    }
+
 });

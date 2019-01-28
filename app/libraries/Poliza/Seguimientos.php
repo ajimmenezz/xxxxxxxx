@@ -2589,10 +2589,35 @@ class Seguimientos extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $idPerfil = $usuario['IdPerfil'];
 
-        $datosServicio = $this->DBP->consultaTablaServicioAllab();
+        if (in_array('306', $usuario['PermisosAdicionales']) || in_array('306', $usuario['Permisos'])) {
+            $datosServicio = $this->DBP->consultaTablaServicioAllab(); // Todas las Solicitudes de equipo
+        } else if (in_array('307', $usuario['PermisosAdicionales']) || in_array('307', $usuario['Permisos'])) {
+            $datosServicio = $this->DBP->consultaTablaServicioAllabSupervisor($usuario['Id']); // Solicitudes de equipo por Zona del Supervisor
+        } else if (in_array('308', $usuario['PermisosAdicionales']) || in_array('308', $usuario['Permisos'])) {
+            $datosServicio = $this->DBP->consultaTablaServicioAllabTecnico($usuario['Id']); // Solicitudes de equipo por Tecnico
+        } else if (in_array('309', $usuario['PermisosAdicionales']) || in_array('309', $usuario['Permisos'])) {
+            switch ($idPerfil) {
+                case '51':
+                case '62': // Almacen
+                    $estatus = '12,28,29';
+                    break;
+                case '38':
+                case '56': //Laboratorio
+                    $estatus = '28,29';
+                    break;
+                case '41':
+                case '52':
+                case '60': // Logistica
+                    $estatus = '4,30';
+                    break;
+            }
+            $datosServicio = $this->DBP->consultaTablaServicioAllabPerfil($estatus); // Todas las Solicitudes de equipo
+        } else {
+            $datosServicio = array();
+        }
 
         if (!empty($datosServicio)) {
-            return $datosServicio;
+            return ['code' => 200, 'mensaje' => 'Correcto', 'datosTabla' => $datosServicio];
         } else {
             return ['code' => 500, 'mensaje' => 'No hay registros para mostrar'];
         }
@@ -2680,6 +2705,10 @@ class Seguimientos extends General {
                     return array('formularioValidacion' => $this->vistaValidacion($datos),
                         'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                         'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                        'formularioRecepcionLab' => [],
+                        'formularioHistorialRefaccion' => [],
+                        'formularioRecepcionLog' => [],
+                        'formularioEnvioSeguimientoLog' => [],
                         'PanelEspera' => []);
                 }
                 if ($idEstatus === '28' && $flag === '1') {
@@ -2834,24 +2863,97 @@ class Seguimientos extends General {
 //    }
 
     public function agregarComentarioSeguimientosEquipos(array $datos) {
-        $generales = $this->DB->getGeneralesTarea($datos['id']);
-        $proyecto = $generales['IdProyecto'];
-
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $archivos = $result = null;
         $CI = parent::getCI();
-        $carpeta = 'Proyectos/Proyecto_' . $proyecto . '/Tareas/';
+        $carpeta = 'solicitudesEquipo/Solicitud_' . $datos['id'] . '/Adjuntos/';
         $archivos = "";
         if (!empty($_FILES)) {
-            $archivos = setMultiplesArchivos($CI, 'adjuntosTarea', $carpeta);
+            $archivos = setMultiplesArchivos($CI, 'archivosLabHistorial', $carpeta);
             if ($archivos) {
                 $archivos = implode(',', $archivos);
             }
         }
 
-        $datos = array_merge($datos, ['archivos' => $archivos]);
-        $resultado = $this->DB->guardarNotasAdjuntos($datos);
+        $datos['idUsuario'] = $usuario['Id'];
+        $datos['archivos'] = $archivos;
+        $datos['fecha'] = $fecha;
+
+        $resultado = $this->DBP->insertarEquiposAllabRevicionLaboratorioHistorial($datos);
 
         return $resultado;
+    }
+
+    public function cargaComentariosAdjuntos(array $data) {
+        $notas = $this->DBP->consultaComentariosAdjuntosSolicitudEquipo($data['id']);
+
+        $datos = [
+            'notas' => $notas,
+        ];
+        return [
+            'code' => 200,
+            'formulario' => parent::getCI()->load->view('Proyectos2/Tareas/Formularios/NotasAdjuntos', $datos, TRUE)
+        ];
+    }
+
+    public function agregarRecepcionesProblemasSeguimientosEquipos(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $archivos = $result = null;
+        $CI = parent::getCI();
+
+        if ($datos['tipoProblema'] === 'almacen') {
+            $idDepartamento = '1';
+            $idEstatus = '28';
+            $nombreCarpeta = 'Almacen';
+        }
+
+        $carpeta = 'solicitudesEquipo/Solicitud_' . $datos['id'] . '/RecepcionesProblemas/' . $nombreCarpeta . '/';
+        $archivos = "";
+        if (!empty($_FILES)) {
+            $archivos = setMultiplesArchivos($CI, 'adjuntosProblemaAlm', $carpeta);
+            if ($archivos) {
+                $archivos = implode(',', $archivos);
+            }
+        }
+
+        $datos['idUsuario'] = $usuario['Id'];
+        $datos['archivos'] = $archivos;
+        $datos['fecha'] = $fecha;
+
+
+        $idRecepcion = $this->DBS->consultaGeneralSeguimiento('SELECT 
+                                                                    Id
+                                                                FROM
+                                                                    t_equipos_allab_recepciones tear
+                                                                WHERE IdRegistro = "' . $datos['id'] . '"
+                                                                AND IdDepartamento = "' . $idDepartamento . '"
+                                                                AND IdEstatus = "' . $idEstatus . '"');
+        $datos['idRecepcion'] = $idRecepcion[0]['Id'];
+        $resultado = $this->DBP->insertarEquiposAllabRecepcionesProblemas($datos);
+
+        if (!empty($resultado)) {
+            return [
+                'code' => 200
+            ];
+        } else {
+            return [
+                'code' => 400
+            ];
+        }
+    }
+
+    public function cargaRecepcionesProblemas(array $data) {
+        $notas = $this->DBP->consultaRecepcionesProblemasSolicitudEquipo($data);
+
+        $datos = [
+            'notas' => $notas,
+        ];
+        return [
+            'code' => 200,
+            'formulario' => parent::getCI()->load->view('Proyectos2/Tareas/Formularios/NotasAdjuntos', $datos, TRUE)
+        ];
     }
 
 }

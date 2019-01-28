@@ -116,16 +116,26 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <div class="form-group <?php echo $mostrarInputFile ?>">
                                 <label class="f-w-600 f-s-13">Adjuntos:</label>
-                                <input id="adjuntosProblemaAlm" name="adjuntosTarea[]" type="file" multiple=""/>    
+                                <input id="adjuntosProblemaAlm" name="adjuntosProblemaAlm[]" type="file" multiple=""/>    
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div id="errorAgregarProblemaAlm"></div>
+                        </div>
+                    </div>
                     <div>
-                        <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelect ?>">
+                        <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelect   ?>">
                             <a id="btnAgregarProblemaAlm" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13">Agregar Problema</a>
                         </div>
                     </div>
                 </form>
+
+                <div class="row m-t-25">
+                    <legend>Notas y adjuntos</legend>
+                </div>
+                <div class="timelineTareas" id="divNotasAdjuntos"></div>
             </div>                
         </div>
     </div>

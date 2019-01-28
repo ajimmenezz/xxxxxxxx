@@ -49,6 +49,7 @@
                 <div class="row m-t-25">
                     <legend>Comentarios y adjuntos de la revisión</legend>
                 </div>
+                <div class="timelineTareas" id="divComentariosAdjuntos"></div>
             </div>
             <div class="tab-pane fade" id="refaccionUtilizada">
                 <div class="row">

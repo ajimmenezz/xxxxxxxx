@@ -300,6 +300,15 @@ class Controller_Seguimiento extends Base {
             case 'AgregarComentarioSeguimientosEquipos':
                 $resultado = $this->Seguimientos->agregarComentarioSeguimientosEquipos($this->input->post());
                 break;
+            case 'AgregarRecepcionesProblemasSeguimientosEquipos':
+                $resultado = $this->Seguimientos->agregarRecepcionesProblemasSeguimientosEquipos($this->input->post());
+                break;
+            case 'CargaComentariosAdjuntos':
+                $resultado = $this->Seguimientos->cargaComentariosAdjuntos($this->input->post());
+                break;
+            case 'CargaRecepcionesProblemas':
+                $resultado = $this->Seguimientos->cargaRecepcionesProblemas($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
