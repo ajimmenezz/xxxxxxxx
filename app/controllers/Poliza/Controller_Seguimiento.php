@@ -309,6 +309,12 @@ class Controller_Seguimiento extends Base {
             case 'CargaRecepcionesProblemas':
                 $resultado = $this->Seguimientos->cargaRecepcionesProblemas($this->input->post());
                 break;
+            case 'GuardarRecepcionTecnico':
+                $resultado = $this->Seguimientos->guardarRecepcionTecnico($this->input->post());
+                break;
+            case 'ConsultaServiciosTecnico':
+                $resultado = $this->Seguimientos->consultaServiciosTecnico($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

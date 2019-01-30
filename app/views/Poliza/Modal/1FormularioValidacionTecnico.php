@@ -52,6 +52,11 @@ if (!empty($datosValidacion)) {
                         <label class="f-w-600 f-s-13">Ticket *</label>
                         <select id="listaTicket" class="form-control" style="width: 100%" data-parsley-required="true">
                             <option value="">Selecciona . . .</option>
+                            <?php
+                            foreach ($ticketTecnico as $item) {
+                                echo '<option value="' . $item['Ticket'] . '">' . $item['Ticket'] . '</option>';
+                            }
+                            ?>
                         </select>    
                     </div>
                     <div class="form-group <?php echo $mostrarInput ?>">
@@ -173,4 +178,3 @@ if (!empty($datosValidacion)) {
         </div>
     </div>
 </div>    
-<!--</div>-->

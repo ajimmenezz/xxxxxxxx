@@ -423,7 +423,6 @@ $(function () {
         select.cambiarOpcion('#selectAlmacenOrdenCompra', respuesta.datos.compo.NUM_ALMA);
         select.cambiarOpcion('#selectMonedaOrdenCompra', respuesta.datos.compo.NUM_MONED);
         if (respuesta.datos.editarOrdenCompraGapsi.length > 0) {
-            console.log('pumas');
             select.cambiarOpcion('#selectClienteOrdenCompra', respuesta.datos.editarOrdenCompraGapsi[0].Cliente);
             select.cambiarOpcion('#selectTipoServicioOrdenCompra', respuesta.datos.editarOrdenCompraGapsi[0].TipoServicio);
         }

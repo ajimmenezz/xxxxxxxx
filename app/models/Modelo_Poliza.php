@@ -1039,128 +1039,12 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaTicketXUsuario() {
-        $tickets = $this->consulta("SELECT tst.Id,tst.Ticket FROM t_servicios_ticket tst WHERE IdEstatus = '3' AND Atiende = '" . $this->usuario['Id'] . "'");
-        return $tickets;
+// -------------------------
+    public function consultarPermisoAgregarRegistro(array $datos) {
+        var_dump($datos);
     }
 
-    public function consultaServicioXUsuario($datos) {
-        $tickets = $this->consulta("SELECT 
-                                        tst.Id,
-                                        tst.Ticket,
-                                        tst.IdSucursal,
-                                        tst.IdEstatus,
-                                        tst.Atiende,
-                                        tst.Descripcion,
-                                        tcg.IdModelo,
-                                        tcg.Serie
-                                    FROM
-                                        t_servicios_ticket tst
-                                        INNER JOIN t_correctivos_generales tcg on tst.Id = tcg.IdServicio
-                                    WHERE
-                                        tst.IdEstatus = '3' AND
-                                        tst.Id = '" . $datos . "'");
-        return $tickets;
-    }
-
-    public function mostrarEquipoDanado($idModelo) {
-        $equipoDanado = $this->consulta("SELECT 
-                                            *
-                                        FROM
-                                            v_equipos
-                                        WHERE
-                                            Id = '" . $idModelo . "'");
-
-        return $equipoDanado;
-    }
-
-    public function mostrarTipoPersonaValida() {
-        $personaValida = $this->consulta("SELECT 
-                                            cp.Id, cp.Nombre
-                                        FROM
-                                            cat_perfiles cp
-                                        WHERE
-                                            cp.Id IN (38 , 39, 46)");
-        return $personaValida;
-    }
-
-    public function mostrarNombrePersonalValida($datos) {
-        $datosPersonal = $this->consulta("SELECT 
-                                            cvu.Id,CONCAT(trp.Nombres,' ',trp.ApPaterno) AS Nombre
-                                        FROM
-                                            t_rh_personal trp INNER JOIN cat_v3_usuarios cvu on trp.IdUsuario = cvu.Id
-                                        WHERE 
-                                            IdPerfil = '" . $datos . "'");
-
-        return $datosPersonal;
-    }
-
-    public function mostrarEquipo() {
-        $equipo = $this->consulta("SELECT * FROM v_equipos");
-        return $equipo;
-    }
-
-    public function mostrarRefaccionXEquipo($dato) {
-        $refaccionXequipo = $this->consulta("SELECT * FROM cat_v3_componentes_equipo WHERE IdModelo = '" . $dato . "' AND Flag = 1");
-        return $refaccionXequipo;
-    }
-
-    public function mostrarVistaRefaccion($dato) {
-        $refaccionXequipo = $this->consulta("SELECT * FROM cat_v3_componentes_equipo WHERE Id = '" . $dato . "' AND Flag = 1");
-        return $refaccionXequipo;
-    }
-
-    public function mostrarPaqueterias() {
-        $consulta = $this->consulta("SELECT * FROM cat_v3_paqueterias WHERE Flag = 1");
-        if (!empty($consulta)) {
-            return $consulta;
-        }
-    }
-
-    public function insertarValidacionTecnico($dato) {
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-
-        if ($dato['IdRefaccion'] === '') {
-            $dato['IdRefaccion'] = null;
-        }
-
-        if ($dato['Serie'] === '') {
-            $dato['Serie'] = null;
-        }
-
-        $datos = array('IdServicio' => $dato['IdServicio'],
-            'IdPersonalValida' => $dato['IdPersonalValida'],
-            'FechaValidacion' => $dato['FechaValidacion'],
-            'IdTipoMovimiento' => $dato['IdTipoMovimiento'],
-            'IdModelo' => $dato['IdModelo'],
-            'Serie' => $dato['Serie'],
-            'IdRefaccion' => $dato['IdRefaccion'],
-            'IdUsuario' => $this->usuario['Id'],
-            'IdEstatus' => 2,
-            'FechaEstatus' => $fecha,
-            'Flag' => 1);
-
-        $insertar = $this->insertar('t_equipos_allab', $datos);
-
-        if (!empty($insertar)) {
-            return TRUE;
-        } else {
-            return FALSE;
-        }
-    }
-
-    public function insertarEnvioGuia(array $datos) {
-        $insertar = $this->insertar('t_equipos_allab_envio_tecnico', $datos);
-
-        if (!empty($insertar)) {
-            return TRUE;
-        } else {
-            return FALSE;
-        }
-    }
-
-    // -------------------------
-    public function consultaDatosValidacion($datos = null) {
+    public function consultaDatosValidacion(array $datos = null) {
         $condicion = "";
         $valor = "";
         if (!empty($datos['IdRefaccion'])) {
@@ -1196,7 +1080,7 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaSolicitudGuiaTecnico($idServicio) {
+    public function consultaSolicitudGuiaTecnico(int $idServicio) {
         $datosServcio = $this->estatusAllab($idServicio);
 
         if (!empty($datosServcio)) {
@@ -1204,7 +1088,8 @@ class Modelo_Poliza extends Modelo_Base {
                                                 (SELECT Nombre FROM cat_v3_paqueterias cvp WHERE cvp.Id = teaet.IdPaqueteria) AS Paqueteria,
                                                 teaet.Guia,
                                                 teaet.Fecha,
-                                                teaet.ArchivosSolicitud
+                                                teaet.ArchivosSolicitud,
+                                                teaet.ArchivosEnvio
                                             FROM
                                                 t_equipos_allab_envio_tecnico teaet
                                             WHERE 
@@ -1212,12 +1097,12 @@ class Modelo_Poliza extends Modelo_Base {
             if (!empty($consultaGuia)) {
                 return $consultaGuia;
             } else {
-                return "Falso con estatus 26 en t_equipos_allab_envio_tecnico";
+                return null;
             }
         } else {
-            return "falso en estatus 26 con tecnico";
+            return null;
         }
-        return $datosServcio;
+//        return $datosServcio;
     }
 
     public function consultaRecepcionAlmacen(array $datos) {
@@ -1234,9 +1119,9 @@ class Modelo_Poliza extends Modelo_Base {
                                             INNER JOIN
                                                 t_rh_personal trp ON trp.IdUsuario = tear.IdUsuario
                                             WHERE
-                                                IdRegistro = '" . $datosServcio['Id'] . "' AND
-                                                IdDepartamento = '" . $datos['IdDepartamento'] . "' AND
-                                                IdEstatus = '" . $datos['IdEstatus'] . "'");
+                                                tear.IdRegistro = '" . $datosServcio['Id'] . "' AND
+                                                tear.IdDepartamento = '" . $datos['IdDepartamento'] . "' AND
+                                                tear.IdEstatus = '" . $datos['IdEstatus'] . "'");
 
         foreach ($consultaRecepcion as $value) {
             $idRecepcion = $value['Id'];
@@ -1253,49 +1138,32 @@ class Modelo_Poliza extends Modelo_Base {
         if (!empty($recpcionProblema)) {
             return array('recepcion' => $consultaRecepcion, 'recepcionProblema' => $recpcionProblema);
         } else {
-            return array('recepcion' => $consultaRecepcion);
+            return array('recepcion' => $consultaRecepcion, 'recepcionProblema' => []);
         }
     }
 
-    public function consultaEnvioLogistica($datos) {
+    public function consultaEnvioLogistica(array $datos) {
         $datosServcio = $this->estatusAllab($datos['IdServicio']);
-        $idLogistica = null;
-        $lugarRecepcion = null;
-        $estatus = null;
-
-        $datosEnvioLog = $this->consulta("SELECT 
-                                            *
-                                        FROM
-                                            t_equipos_allab_envio_logistica teael
-                                        WHERE
-                                            teael.IdRegistro = '" . $datosServcio['Id'] . "'");
-        if (!empty($datosEnvioLog)) {
-            foreach ($datosEnvioLog as $value) {
-                $lugarRecepcion = $value['IdTipoLugarRecepcion'];
-                $estatus = $value['IdEstatus'];
-                $idLogistica = $value['Id'];
-            }
-        }
 
         $consulta = $this->consulta("SELECT 
-                                        (SELECT cvp.Nombre FROM cat_v3_paqueterias cvp WHERE cvp.Id = '1' AND cvp.Flag = 1) AS paqueteria,
+                                        teael.Id,
+                                        (SELECT cvp.Nombre FROM cat_v3_paqueterias cvp WHERE cvp.Id = teael.IdPaqueteria AND cvp.Flag = 1) AS paqueteria,
                                         teael.Guia,
                                         teael.FechaEnvio,
                                         teael.ArchivosEnvio,
                                         teael.IdTipoLugarRecepcion,
-                                        (SELECT cveatlr.Nombre FROM cat_v3_equipos_allab_tipo_lugar_recepcion cveatlr WHERE cveatlr.Id = '" . $lugarRecepcion . "') AS DondeRecibe,
-                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.IdCliente = 1 AND Id = '" . $estatus . "') AS Sucursal,
+                                        (SELECT cveatlr.Nombre FROM cat_v3_equipos_allab_tipo_lugar_recepcion cveatlr WHERE cveatlr.Id = teael.IdTipoLugarRecepcion) AS DondeRecibe,
+                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.IdCliente = 1 AND Id = teael.IdSucursal) AS Sucursal,
                                         teael.IdSucursal,
                                         teael.Recibe,
-                                        teael.ArchivosEntrega
+                                        teael.ArchivosEntrega,
+                                        teael.FechaRecepcion
                                     FROM
                                         t_equipos_allab_envio_logistica teael
                                     WHERE 
-                                            teael.IdRegistro = '" . $idLogistica . "'");
+                                        teael.IdRegistro = '" . $datosServcio['Id'] . "'");
         if (!empty($consulta)) {
             return $consulta;
-        } else {
-            return false;
         }
     }
 
@@ -1622,7 +1490,6 @@ class Modelo_Poliza extends Modelo_Base {
         ]);
 
         return $consulta;
-
     }
 
     public function consultaComentariosAdjuntosSolicitudEquipo(int $id) {
@@ -1645,7 +1512,6 @@ class Modelo_Poliza extends Modelo_Base {
                                         left join
                                     t_equipos_allab tea ON tea.Id = tearl.IdRegistro
                                     where tea.Id = "' . $id . '"
-                                    and tea.Flag = 1
                                     order by tearlh.Id desc');
         return $consulta;
     }
@@ -1672,8 +1538,52 @@ class Modelo_Poliza extends Modelo_Base {
                                     where tea.Id = "' . $datos['id'] . '"
                                     AND tear.IdDepartamento = "' . $datos['idDepartamento'] . '"
                                     AND tear.IdEstatus = "' . $datos['idEstatus'] . '"
-                                    and tea.Flag = 1
                                     order by tearp.Id desc');
+        return $consulta;
+    }
+
+    public function insertarEquiposAllabRecpciones(array $datos) {
+        $this->iniciaTransaccion();
+        $consulta = $this->insertar('t_equipos_allab_recepciones', [
+            'IdRegistro' => $datos['id'],
+            'IdDepartamento' => $datos['idDepartamento'],
+            'IdEstatus' => $datos['idEstatus'],
+            'IdUsuario' => $datos['idUsuario'],
+            'Fecha' => $datos['fecha'],
+            'Archivos' => $datos['archivos']
+        ]);
+
+        $this->actualizar('t_equipos_allab', array('IdEstatus' => $datos['idEstatus'], 'FechaEstatus' => $datos['fecha']), ['Id' => $datos['id']]);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function consultaTicketsUsuario(array $datos) {
+        $consulta = $this->consulta('SELECT 
+                                        Ticket
+                                    FROM
+                                        t_servicios_ticket
+                                    WHERE
+                                        Atiende = "' . $datos['usuario'] . '"
+                                    AND IdEstatus = "' . $datos['estatus'] . '"');
+        return $consulta;
+    }
+    
+    public function consultaServiciosUsuario(array $datos) {
+        $consulta = $this->consulta('SELECT 
+                                        Id,
+                                        Descripcion
+                                    FROM
+                                        t_servicios_ticket
+                                    WHERE
+                                        Ticket = "' . $datos['ticket'] . '"');
         return $consulta;
     }
 
