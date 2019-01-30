@@ -2887,6 +2887,7 @@ class Seguimientos extends General {
     }
 
     public function formulariosTecnico(array $datos = null, string $idEstatus = null, string $flag = null, array $permisos, array $permisosAdicionales) {
+        
         if ($idEstatus === '2' && $flag === '0') {
             return array('formularioValidacion' => $this->vistaValidacion($datos),
                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
@@ -3051,11 +3052,14 @@ class Seguimientos extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $dataValidacion['ticketTecnico'] = $this->DBP->consultaTicketsUsuario(array('usuario' => $usuario['Id'], 'estatus' => '3'));
         $dataValidacion['datosValidacion'] = $this->DBP->consultaDatosValidacion($datos);
+        $dataValidacion['tipoPerfiles'] = $this->DBP->mostrarTipoPersonaValida();
+        $dataValidacion['listaEquipo'] = $this->DBP->mostrarEquipo();
 
         return array('formularioValidacion' => parent::getCI()->load->view('Poliza/Modal/1FormularioValidacionTecnico', $dataValidacion, TRUE));
     }
 
     public function vistaEnvioAlmacen(array $datos) {
+        $dataSolicitudGuia['paqueterias'] = $this->DBP->mostrarPaqueterias();
         $dataSolicitudGuia['datosSolicitudGuia'] = $this->DBP->consultaSolicitudGuiaTecnico($datos['idServicio']);
 
         return array('formularioGuia' => parent::getCI()->load->view('Poliza/Modal/3FormularioEnvioConGuia', $dataSolicitudGuia, TRUE));
@@ -3259,14 +3263,122 @@ class Seguimientos extends General {
 
         return $resultado;
     }
-    
-    public function consultaServiciosTecnico(array $datos){
+
+    public function consultaServiciosTecnico(array $datos) {
         $resultado = $this->DBP->consultaServiciosUsuario($datos);
-         if(!empty($resultado)){
-             return $resultado;
-         }else{
-             return FALSE;
-         }
+        if (!empty($resultado)) {
+            return $resultado;
+        } else {
+            return FALSE;
+        }
     }
 
+    //nuevo 
+
+    public function mostrarNombrePersonalValida($datos) {
+        $nombrePersonal = $this->DBP->mostrarNombrePersonalValida($datos['idTipoPersonal']);
+        return $nombrePersonal;
+    }
+
+    public function mostrarRefaccionXEquipo($datos) {
+        $refaccion = $this->DBP->mostrarRefaccionXEquipo($datos['idEquipo']);
+        if (!empty($refaccion)) {
+            return $refaccion;
+        } else {
+            return false;
+        }
+    }
+
+    public function guardarValidacionTecnico($datos) {
+
+        $IdServicio = $datos['IdServicio'];
+        $equipoAllab = $this->DBP->consultaEquiposAllab($IdServicio);
+
+        if (!empty($equipoAllab)) {
+            $mensaje = ['mensaje' => "Ya existe una solicitud para este servicio",
+                'code' => 500];
+            return $mensaje;
+        } else {
+            $nuevaValidacion = $this->DBP->insertarValidacionTecnico($datos);
+            if ($nuevaValidacion) {
+                $equipoAllab = $this->mostrarVistaPorUsuario(array('idServicio' => $IdServicio));
+                $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
+                    'datos' => $equipoAllab,
+                    'code' => 400];
+                return $mensaje;
+            } else {
+                $mensaje = ['mensaje' => "Hay un problema al insertar la información",
+                    'code' => 500];
+                return $mensaje;
+            }
+        }
+    }
+
+    public function mostrarEquipoDanado($idModelo) {
+        $equipoDanado = $this->DBP->mostrarEquipoDanado($idModelo['idModelo']);
+        return $equipoDanado;
+    }
+
+    public function guardarEnvioAlmacen(array $datos) {
+
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $idAllab = $this->DBP->estatusAllab($datos['idServicio']);
+        
+        $info = array(
+            'IdRegistro' => $idAllab['Id'],
+            'IdUsuario' => $usuario['Id'],
+            'IdEstatusEnvio' => 12,
+            'IdPaqueteria' => $datos['IdPaqueteria'],
+            'Guia' => $datos['Guia'],
+            'Fecha' => $datos['Fecha'],
+            'ArchivosEnvio' => null,
+            'Solicitud' => 0,
+            'IdUsuarioSolicitud' => null,
+            'IdEstatusSolicitud' => null,
+            'FechaEstatusSolicitud' => null,
+            'ArchivosSolicitud' => null
+        );
+
+        $datosEstatus = array(
+            'idEstatus' => 12,
+            'id' => $idAllab['Id'],
+            'fecha' => $datos['Fecha']);
+
+        if (!empty($_FILES)) {
+            $CI = parent::getCI();
+            $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/EvidenciasEquipo/';
+            $archivos = implode(',', setMultiplesArchivos($CI, 'evidenciaEnvioGuia', $carpeta));
+
+            if (!empty($archivos) && $archivos != '') {
+                $info['ArchivosEnvio'] = $archivos;
+                $insertar = $this->DBP->insertarEnvioGuia($info, $datosEstatus);
+                if ($insertar['code'] === 200) {
+                    $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 12));
+                    $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
+                        'datos' => $formularios,
+                        'idTabla' => $idAllab['Id'],
+                        'code' => 200];
+                    return $mensaje;
+                } else {
+                    return $insertar;
+                }
+            }
+        } else {
+            $insertar = $this->DBP->insertarEnvioGuia($info, $datosEstatus);
+            if ($insertar['code'] === 200) {
+                $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 12));
+                $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
+                    'datos' => $formularios,
+                    'idTabla' => $idAllab['Id'],
+                    'code' => 200];
+                return $mensaje;
+            } else {
+                return $insertar;
+            }
+        }
+//            print_r($insertar);
+    }
+
+    //termina nuevo
 }

@@ -1553,7 +1553,7 @@ class Modelo_Poliza extends Modelo_Base {
             'Archivos' => $datos['archivos']
         ]);
 
-        $this->actualizar('t_equipos_allab', array('IdEstatus' => $datos['idEstatus'], 'FechaEstatus' => $datos['fecha']), ['Id' => $datos['id']]);
+        $this->cambiarEsatus($datos);
 
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
@@ -1563,6 +1563,17 @@ class Modelo_Poliza extends Modelo_Base {
             $this->commitTransaccion();
             return ['code' => 200];
         }
+    }
+    
+    public function cambiarEsatus(array $datos) {
+        
+        $resultado = $this->actualizar('t_equipos_allab', array('IdEstatus' => $datos['idEstatus'], 'Flag' => 1, 'FechaEstatus' => $datos['fecha']), ['Id' => $datos['id']]);
+        
+       if(!empty($resultado)){
+            return TRUE;
+       }else{
+           return FALSE;
+       }
     }
 
     public function consultaTicketsUsuario(array $datos) {
@@ -1575,16 +1586,129 @@ class Modelo_Poliza extends Modelo_Base {
                                     AND IdEstatus = "' . $datos['estatus'] . '"');
         return $consulta;
     }
-    
+
     public function consultaServiciosUsuario(array $datos) {
         $consulta = $this->consulta('SELECT 
-                                        Id,
-                                        Descripcion
+                                        tst.Id,
+                                        tst.Descripcion,
+                                        tcg.IdModelo,
+                                        tcg.Serie
                                     FROM
-                                        t_servicios_ticket
+                                        t_servicios_ticket tst
+                                        INNER JOIN t_correctivos_generales tcg on tst.Id = tcg.IdServicio
                                     WHERE
                                         Ticket = "' . $datos['ticket'] . '"');
         return $consulta;
     }
 
+    // nuevo
+
+    public function mostrarTipoPersonaValida() {
+        $personaValida = $this->consulta("SELECT 
+                                            cp.Id, cp.Nombre
+                                        FROM
+                                            cat_perfiles cp
+                                        WHERE
+                                            cp.Id IN (38 , 39, 46)");
+        return $personaValida;
+    }
+
+    public function mostrarNombrePersonalValida($datos) {
+        $datosPersonal = $this->consulta("SELECT 
+                                            cvu.Id,CONCAT(trp.Nombres,' ',trp.ApPaterno) AS Nombre
+                                        FROM
+                                            t_rh_personal trp INNER JOIN cat_v3_usuarios cvu on trp.IdUsuario = cvu.Id
+                                        WHERE 
+                                            IdPerfil = '" . $datos . "'");
+
+        return $datosPersonal;
+    }
+    
+    public function mostrarEquipo() {
+        $equipo = $this->consulta("SELECT * FROM v_equipos");
+        return $equipo;
+    }
+    
+    public function mostrarRefaccionXEquipo($dato) {
+        $refaccionXequipo = $this->consulta("SELECT * FROM cat_v3_componentes_equipo WHERE IdModelo = '" . $dato . "' AND Flag = 1");
+        return $refaccionXequipo;
+    }
+    
+    public function consultaEquiposAllab(int $idServicio = null) {
+
+        if (!empty($idServicio)) {
+            $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "' AND Flag = 1");
+        } else {
+            $consulta = $this->consulta("SELECT * FROM t_equipos_allab AND Flag = 1");
+        }
+
+        return $consulta;
+    }
+    
+    public function insertarValidacionTecnico($dato) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+        if ($dato['IdRefaccion'] === '') {
+            $dato['IdRefaccion'] = null;
+        }
+
+        if ($dato['Serie'] === '') {
+            $dato['Serie'] = null;
+        }
+
+        $datos = array('IdServicio' => $dato['IdServicio'],
+            'IdPersonalValida' => $dato['IdPersonalValida'],
+            'FechaValidacion' => $dato['FechaValidacion'],
+            'IdTipoMovimiento' => $dato['IdTipoMovimiento'],
+            'IdModelo' => $dato['IdModelo'],
+            'Serie' => $dato['Serie'],
+            'IdRefaccion' => $dato['IdRefaccion'],
+            'IdUsuario' => $this->usuario['Id'],
+            'IdEstatus' => 2,
+            'FechaEstatus' => $fecha,
+            'Flag' => 0);
+
+        $insertar = $this->insertar('t_equipos_allab', $datos);
+
+        if (!empty($insertar)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+    
+    public function mostrarEquipoDanado($idModelo) {
+        $equipoDanado = $this->consulta("SELECT 
+                                            *
+                                        FROM
+                                            v_equipos
+                                        WHERE
+                                            Id = '" . $idModelo . "'");
+
+        return $equipoDanado;
+    }
+
+    public function mostrarPaqueterias() {
+        $consulta = $this->consulta("SELECT * FROM cat_v3_paqueterias WHERE Flag = 1");
+        if (!empty($consulta)) {
+            return $consulta;
+        }
+    }
+    
+    public function insertarEnvioGuia(array $datos, array $estatus) {
+        $this->iniciaTransaccion();
+        
+        $this->insertar('t_equipos_allab_envio_tecnico', $datos);        
+        $this->cambiarEsatus($estatus);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+    // termina nuevo
 }

@@ -52,6 +52,11 @@ if (!empty($datosSolicitudGuia)) {
                         <label class="f-w-600 f-s-13">Paquetería *</label>
                         <select id="listPaqueteria" class="form-control" style="width: 100%" data-parsley-required="true">
                             <option value="">Selecciona . . .</option>
+                            <?php
+                            foreach ($paqueterias as $item) {
+                                echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                            }
+                            ?>
                         </select>
                     </div>
                     <div class="form-group <?php echo $mostrarInput ?>">
@@ -62,7 +67,7 @@ if (!empty($datosSolicitudGuia)) {
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group <?php echo $mostrarSelect ?>" >
                         <label class="f-w-600 f-s-13"># Guía *</label>
-                        <input type="text" class="form-control" id="guia" placeholder="55666476146549"  data-parsley-required="true"/>
+                        <input type="text" class="form-control" id="guia" placeholder=""  data-parsley-required="true"/>
                     </div>
                     <div class="form-group <?php echo $mostrarInput ?>">
                         <label class="f-w-600 f-s-13"># Guía *</label>

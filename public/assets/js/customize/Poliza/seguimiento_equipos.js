@@ -79,7 +79,7 @@ $(function () {
         file.crearUpload('#adjuntosProblemaLog', 'Seguimiento/AgregarRecepcionesProblemasSeguimientosEquipos');
         file.crearUpload('#adjuntosProblemaTec', 'Seguimiento/AgregarRecepcionesProblemasSeguimientosEquipos');
         file.crearUpload('#evidenciaEntregaLog', 'Seguimiento/subirAdjuntosLabHistorial');
-        file.crearUpload('#evidenciaEnvioGuia', 'Seguimiento/subirAdjuntosLabHistorial');
+        file.crearUpload('#evidenciaEnvioGuia', 'Seguimiento/GuardarEnvioAlmacen');
 
     };
 
@@ -116,34 +116,42 @@ $(function () {
         evento.enviarEvento('Seguimiento/VistaPorPerfil', datos, panel, function (respuesta) {
             console.log(respuesta);
 
-            $('#panelTablaEquiposEnviados').addClass('hidden');
-            $('#seccionFormulariosRecepcionTecnico').removeClass('hidden').empty().append(respuesta.formularioRecepcionTecnico.formularioRecepcionTecnico);
-            $('#seccionFormulariosEnvSegLog').removeClass('hidden').empty().append(respuesta.formularioEnvioSeguimientoLog.formularioEnvioSeguimientoLog);
-            $('#seccionFormulariosRecepcionLogistica').removeClass('hidden').empty().append(respuesta.formularioRecepcionLog.formularioRecepcionLogistica);
-            $('#seccionFormulariosRevisionHistorial').removeClass('hidden').empty().append(respuesta.formularioHistorialRefaccion.formularioRevisionHistorial);
-            $('#seccionFormulariosRecepcionLaboratorio').removeClass('hidden').empty().append(respuesta.formularioRecepcionLab.formularioRecepcionLaboratorio);
-            $('#seccionFormulariosRecepcionAlmacen').removeClass('hidden').empty().append(respuesta.formularioRecepcionAlmacen.formularioRecepcionAlmacen);
-            $('#seccionPanelEspera').removeClass('hidden').empty().append(respuesta.PanelEspera.panelEspera);
-            $('#seccionFormulariosGuia').removeClass('hidden').empty().append(respuesta.formularioEnvioAlmacen.formularioGuia);
-            $('#seccionFormulariosValidacion').removeClass('hidden').empty().append(respuesta.formularioValidacion.formularioValidacion);
+            vistasDeFormularios(respuesta);
             incioEtiquetas();
             eventosGenerales(idTabla);
             eventosComentarios(idTabla);
 //            cargaComentariosAdjuntos(idTabla);
 
-            if ($.inArray('306', respuesta.permisos) !== -1 || $.inArray('306', respuesta.permisosAdicionales) !== -1 || $.inArray('307', respuesta.permisos) !== -1 || $.inArray('307', respuesta.permisosAdicionales) !== -1) {
-                bloquerTodosCampos();
-            }
 
-            $('#btnRegresarTabla').off('click');
-            $('#btnRegresarTabla').on('click', function () {
-                $('#panelTablaEquiposEnviados').removeClass('hidden');
-                $('#seccionFormulariosValidacion').addClass('hidden');
-            });
+
+
         });
     };
 
+    var vistasDeFormularios = function (respuesta) {
+        $('#panelTablaEquiposEnviados').addClass('hidden');
+        $('#seccionFormulariosRecepcionTecnico').removeClass('hidden').empty().append(respuesta.formularioRecepcionTecnico.formularioRecepcionTecnico);
+        $('#seccionFormulariosEnvSegLog').removeClass('hidden').empty().append(respuesta.formularioEnvioSeguimientoLog.formularioEnvioSeguimientoLog);
+        $('#seccionFormulariosRecepcionLogistica').removeClass('hidden').empty().append(respuesta.formularioRecepcionLog.formularioRecepcionLogistica);
+        $('#seccionFormulariosRevisionHistorial').removeClass('hidden').empty().append(respuesta.formularioHistorialRefaccion.formularioRevisionHistorial);
+        $('#seccionFormulariosRecepcionLaboratorio').removeClass('hidden').empty().append(respuesta.formularioRecepcionLab.formularioRecepcionLaboratorio);
+        $('#seccionFormulariosRecepcionAlmacen').removeClass('hidden').empty().append(respuesta.formularioRecepcionAlmacen.formularioRecepcionAlmacen);
+        $('#seccionPanelEspera').removeClass('hidden').empty().append(respuesta.PanelEspera.panelEspera);
+        $('#seccionFormulariosGuia').removeClass('hidden').empty().append(respuesta.formularioEnvioAlmacen.formularioGuia);
+        $('#seccionFormulariosValidacion').removeClass('hidden').empty().append(respuesta.formularioValidacion.formularioValidacion);
+
+        if ($.inArray('306', respuesta.permisos) !== -1 || $.inArray('306', respuesta.permisosAdicionales) !== -1 || $.inArray('307', respuesta.permisos) !== -1 || $.inArray('307', respuesta.permisosAdicionales) !== -1) {
+            bloquerTodosCampos();
+        }
+    };
+
     var eventosGenerales = function (idTabla) {
+
+        $('#btnRegresarTabla').off('click');
+        $('#btnRegresarTabla').on('click', function () {
+            $('#panelTablaEquiposEnviados').removeClass('hidden');
+            $('#seccionFormulariosValidacion').addClass('hidden');
+        });
 
         $("#listaTicket").on("change", function () {
             select.cambiarOpcion("#listaServicio", '');
@@ -156,7 +164,7 @@ $(function () {
                 evento.enviarEvento('Seguimiento/ConsultaServiciosTecnico', datos, '#panelValidacion', function (respuesta) {
                     console.log(respuesta);
                     $.each(respuesta, function (k, v) {
-                        $("#listaServicio").append('<option value="' + v.ID + '">' + v.Id + ' - ' + v.Descripcion + '</option>')
+                        $("#listaServicio").append('<option value="' + v.Id + '" data-idModelo = "' + v.IdModelo + '" data-serie="' + v.Serie + '">' + v.Id + ' - ' + v.Descripcion + '</option>');
                     });
                     $("#listaServicio").removeAttr("disabled");
 //
@@ -170,34 +178,219 @@ $(function () {
                 $("#listaServicio").attr("disabled", "disabled");
             }
         });
-
-        $("#listaServicio").on("change", function () {
-            $("#listaTipoPersonal").removeAttr("disabled");
-
-//            $("#listaServicio").empty().append('<option value="">Seleccionar...</option>');
-//            if ($(this).val() !== '') {
-//                var datos = {
-//                    'ticket': $(this).val()
-//                }
 //
-//                evento.enviarEvento('Seguimiento/ConsultaServiciosTecnico', datos, '#panelValidacion', function (respuesta) {
-//                    console.log(respuesta);
-//                    $.each(respuesta, function (k, v) {
-//                        $("#listaServicio").append('<option value="' + v.ID + '">' + v.Id + ' - ' + v.Descripcion + '</option>')
-//                    });
-//                    $("#listaServicio").removeAttr("disabled");
+        $("#listaServicio").on("change", function () {
+
+            var servicioSeleccionado = $(this).find(':selected').attr('data-idModelo');
+            var datos = {'idModelo': servicioSeleccionado};
+
+            select.cambiarOpcion('#listaTipoPersonal', '');
+            evento.enviarEvento('Seguimiento/MostrarEquipoDanado', datos, panel, function (respuesta) {
+
+                if (respuesta.length > 0) {
+                    $.each(respuesta, function (k, v) {
+                        $('#equipoEnviado').empty().attr({"value": v.Equipo, "data-IdEquipo": v.Id});
+                    });
+                    $('#listaTipoPersonal').removeAttr('disabled');
+                }
+            });
+
+            if ($(this).val() !== '') {
+                $("#listaTipoPersonal").removeAttr("disabled");
+            } else {
+                select.cambiarOpcion('#listaTipoPersonal', '');
+                $("#listaTipoPersonal").attr("disabled", "disabled");
+            }
+//
+////            $("#listaServicio").empty().append('<option value="">Seleccionar...</option>');
+////            
+////                var datos = {
+////                    'ticket': $(this).val()
+////                }
 ////
-////                    if (editarOrdenComprarGapsi !== null) {
-////                        select.cambiarOpcion('#selectProyectoOrdenCompra', editarOrdenComprarGapsi.Proyecto);
-////                    } else {
-////                        select.cambiarOpcion("#selectProyectoOrdenCompra", '');
-////                    }
-//                });
-//            } else {
-//                $("#listaServicio").attr("disabled", "disabled");
-//                select.cambiarOpcion("#listaServicio", '');
-//            }
+////                evento.enviarEvento('Seguimiento/ConsultaServiciosTecnico', datos, '#panelValidacion', function (respuesta) {
+////                    console.log(respuesta);
+////                    $.each(respuesta, function (k, v) {
+////                        $("#listaServicio").append('<option value="' + v.ID + '">' + v.Id + ' - ' + v.Descripcion + '</option>')
+////                    });
+////                    $("#listaServicio").removeAttr("disabled");
+//////
+//////                    if (editarOrdenComprarGapsi !== null) {
+//////                        select.cambiarOpcion('#selectProyectoOrdenCompra', editarOrdenComprarGapsi.Proyecto);
+//////                    } else {
+//////                        select.cambiarOpcion("#selectProyectoOrdenCompra", '');
+//////                    }
+////                });
+////            } else {
+////                $("#listaServicio").attr("disabled", "disabled");
+////                select.cambiarOpcion("#listaServicio", '');
+////            }
         });
+
+        // nuevo
+        $('#listaTipoPersonal').on('change', function () {
+            var seleccionado = $('#listaTipoPersonal option:selected').val();
+            var datos = {'idTipoPersonal': seleccionado};
+
+            $('#listaNombrePersonal').empty().append('<option value="">Seleccionar</option>');
+            select.cambiarOpcion('#listaNombrePersonal', '');
+            evento.enviarEvento('Seguimiento/MostrarNombrePersonalValida', datos, panel, function (respuesta) {
+                if (respuesta) {
+                    $.each(respuesta, function (k, v) {
+                        $('#listaNombrePersonal').append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                    });
+                }
+                if (respuesta.length > 0) {
+                    $('#listaNombrePersonal').removeAttr('disabled');
+                    $('#fechaValidacion').removeAttr('disabled');
+                    $('input[type=radio][name=movimiento]').removeAttr('disabled');
+                }
+            });
+            $('#listaNombrePersonal').attr('disabled', 'disabled');
+            $('input[type=radio][name=movimiento]').attr('disabled', 'disabled');
+
+            var disabledRadio = $('input[type=radio][name=movimiento]').attr('disabled');
+
+            if (disabledRadio === 'disabled') {
+                $('#divEquipoEnvio').addClass('hidden');
+                $('.divRefaccionEquipo').addClass('hidden');
+                $("input[name='movimiento']").removeAttr('checked');
+            }
+        });
+
+        $('input[type=radio][name=movimiento]').change(function () {
+
+            switch (this.value) {
+                case '1':
+                    $('#divEquipoEnvio').removeClass('hidden');
+                    $('.divRefaccionEquipo').addClass('hidden');
+                    select.cambiarOpcion('#listaSolicitarEquipo', '');
+                    select.cambiarOpcion('#listaSolicitarRefaccion', '');
+                    $("#inputMovimiento").attr('value', '1');
+                    break;
+                case '2':
+                    $('#divEquipoEnvio').removeClass('hidden');
+                    $('.divRefaccionEquipo').addClass('hidden');
+                    select.cambiarOpcion('#listaSolicitarEquipo', '');
+                    select.cambiarOpcion('#listaSolicitarRefaccion', '');
+                    $("#inputMovimiento").attr('value', '2');
+                    break;
+                case '3':
+                    $('#divEquipoEnvio').addClass('hidden');
+                    $('.divRefaccionEquipo').removeClass('hidden');
+                    $('#listaSolicitarEquipo').removeAttr('disabled');
+                    $("#inputMovimiento").attr('value', '3');
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        $('#listaSolicitarEquipo').on('change', function () {
+            var seleccionado = $('#listaSolicitarEquipo option:selected').val();
+            var datos = {'idEquipo': seleccionado};
+            panel = $('#panelValidacion');
+
+            $('#listaSolicitarRefaccion').empty().append('<option value="">Seleccionar</option>');
+            select.cambiarOpcion('#listaSolicitarRefaccion', '');
+
+            evento.enviarEvento('Seguimiento/MostrarRefaccionXEquipo', datos, panel, function (respuesta) {
+                if (respuesta.length > 0) {
+                    $.each(respuesta, function (k, v) {
+                        $('#listaSolicitarRefaccion').append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                    });
+                    $('#listaSolicitarRefaccion').removeAttr('disabled');
+                }
+            });
+
+            $('#listaSolicitarRefaccion').attr('disabled', 'disabled');
+        });
+
+        $('#btnGuardarValidacion').off('click');
+        $('#btnGuardarValidacion').on('click', function () {
+
+            var tipoMovimiento = $('#inputMovimiento').val();
+            var IdServicio = $('#listaServicio').val();
+            var IdPersonalValida = $('#listaNombrePersonal').val();
+            var FechaValidacion = $("#fechaValidacion").val();
+            var IdTipoMovimiento = $("input[name='movimiento']:checked").val();
+            var IdModelo = $('#listaServicio').find(':selected').attr('data-idmodelo');
+            var Serie = $('#listaServicio').find(':selected').attr('data-serie');
+            var IdTipoPersonal = $('#listaTipoPersonal').val();
+            var equipoEnviado = $("#equipoEnviado").attr('data-IdEquipo');
+
+            var datosValidacion = {'IdServicio': IdServicio,
+                'IdPersonalValida': IdPersonalValida,
+                'FechaValidacion': FechaValidacion,
+                'IdTipoMovimiento': IdTipoMovimiento,
+                'IdModelo': IdModelo,
+                'Serie': Serie,
+                'IdRefaccion': null,
+                'equipoEnviado': equipoEnviado,
+                'IdTipoPersonal': IdTipoPersonal};
+
+            switch (tipoMovimiento) {
+                case '1':
+                case '2':
+                    if (evento.validarFormulario('#formValidacion')) {
+                        botonGuardarValidacion(datosValidacion, idTabla);
+                    }
+                    break;
+                case '3':
+                    var idEquipoEnviado = validarEquipo();
+
+                    if (idEquipoEnviado !== '') {
+                        datosValidacion.IdModelo = idEquipoEnviado.seleccionEquipo;
+                        datosValidacion.IdRefaccion = idEquipoEnviado.selectEquipoRefaccion || null;
+                        datosValidacion.Serie = null;
+
+                        botonGuardarValidacion(datosValidacion, idTabla);
+                    } else {
+                        evento.mostrarMensaje("#errorFormularioValidacion", false, "Selecciona equipo solicitado", 4000);
+                    }
+                    break;
+                default:
+                    evento.validarFormulario('#formValidacion');
+            }
+
+        });
+
+        $('#btnGuardarEnvio').off('click');
+        $('#btnGuardarEnvio').on('click', function () {
+
+            panel = $('#panelEnvioConGuia').val();
+            var paqueteria = $('#listPaqueteria option:selected').val();
+            var guia = $('#guia').val();
+            var fecha = $('#fechaValidacion').val();
+            var evidencia = $('#evidenciaEnvioGuia').val();
+            var idServicio = $('#inputServicio').attr('data-idServicio');
+            var datos = {'IdPaqueteria': paqueteria, 'Guia': guia, 'Fecha': fecha, 'idServicio': idServicio};
+            
+            if (evento.validarFormulario('#formEnvioAlmacen')) {
+                if (evidencia !== '' || evidencia !== undefined) {
+                    file.enviarArchivos('#evidenciaEnvioGuia', 'Seguimiento/GuardarEnvioAlmacen', '#panelEnvioConGuia', datos, function (respuesta) {
+//                        evento.mostrarMensaje("#errorFormularioEnvio", true, respuesta.mensaje, 4000);
+                        vistasDeFormularios(respuesta.datos);
+                        incioEtiquetas();
+                        eventosGenerales(respuesta.idTabla);
+                        eventosComentarios(respuesta.idTabla);
+                    });
+                } else {
+                    evento.enviarEvento('Seguimiento/GuardarEnvioAlmacen', datos, panel, function (respuesta) {
+//                        evento.mostrarMensaje("#errorFormularioEnvio", true, respuesta.mensaje, 4000);
+                        vistasDeFormularios(respuesta.datos);
+                        incioEtiquetas();
+                        eventosGenerales(respuesta.idTabla);
+                        eventosComentarios(respuesta.idTabla);
+                    });
+                }
+
+            } else {
+                evento.mostrarMensaje("#errorFormularioEnvio", false, "Ingresa los datos solicitados", 4000);
+            }
+        });
+
+        // termina nuevo
 
         $('#btnGuardarRecepcionTec').off('click');
         $('#btnGuardarRecepcionTec').on('click', function () {
@@ -224,7 +417,40 @@ $(function () {
                 });
             }
         });
-    }
+    };
+
+    // nuevo
+    var botonGuardarValidacion = function () {
+        var datos = arguments[0];
+        var idTabla = arguments[1];
+        panel = $('#panelValidacion');
+
+        evento.enviarEvento('Seguimiento/GuardarValidacionTecnico', datos, panel, function (respuesta) {
+//            console.log(respuesta);
+            if (respuesta.code === 400) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(idTabla);
+                eventosComentarios(idTabla);
+            } else {
+                evento.mostrarMensaje("#errorFormularioValidacion", false, respuesta.mensaje, 4000);
+            }
+        });
+    };
+
+    var validarEquipo = function () {
+        var seleccionEquipo = $('#listaSolicitarEquipo option:selected').val();
+        var selectEquipoRefaccion = $('#listaSolicitarRefaccion option:selected').val();
+
+        if (seleccionEquipo !== "") {
+            var equipoRefaccion = {'seleccionEquipo': seleccionEquipo, 'selectEquipoRefaccion': selectEquipoRefaccion};
+            return equipoRefaccion;
+        } else {
+            evento.mostrarMensaje("#errorFormularioValidacion", false, "Selecciona el equipo solicitado", 4000);
+        }
+    };
+
+    // termina nuevo
 
     var eventosComentarios = function (idTabla) {
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -414,6 +640,8 @@ $(function () {
     }
 
     var bloquerTodosCampos = function () {
+        $('#guia').attr('disabled', 'disabled');
+        $('#fechaValidacion').attr('disabled', 'disabled');
         $('#IdUsuarioRecibe').attr('disabled', 'disabled');
         $('#fechaRecepcionAlm').attr('disabled', 'disabled');
         $('#fechaRecepcionTecnico').attr('disabled', 'disabled');
@@ -423,6 +651,8 @@ $(function () {
         $('#txtNotaTecnico').attr('disabled', 'disabled');
         $('#comentariosObservaciones').attr('disabled', 'disabled');
         $('#cantidad').attr('disabled', 'disabled');
+        $('#solicitarGuia').addClass('disabled');
+        $('#btnGuardarEnvio').addClass('disabled');
         $('#btnAgregarProblemaAlm').addClass('disabled');
         $('#btnAgregarProblemaLab').addClass('disabled');
         $('#btnAgregarProblemaLog').addClass('disabled');

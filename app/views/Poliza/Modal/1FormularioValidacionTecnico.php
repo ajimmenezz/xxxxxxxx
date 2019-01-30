@@ -3,6 +3,7 @@
 <?php
 if (!empty($datosValidacion)) {
     foreach ($datosValidacion as $item) {
+        $idServicio = $item['IdServicio'];
         $ticket = $item['Ticket'];
         $servicio = $item['Servicio'];
         $nombrePersonal = $item['NombrePersonal'];
@@ -25,6 +26,7 @@ if (!empty($datosValidacion)) {
     $fecha = "";
     $movimiento = "";
     $tipoMovimiento = "";
+    $idServicio = "";
 }
 ?>
 <div id="envioAlmacenSinGuia" class="hidden"></div>
@@ -73,7 +75,7 @@ if (!empty($datosValidacion)) {
                     </div>
                     <div class="form-group <?php echo $mostrarInput ?>">
                         <label class="f-w-600 f-s-13">Servicio *</label>
-                        <input type="text" class="form-control" placeholder="<?php echo $servicio ?>" disabled/>
+                        <input id="inputServicio" type="text" class="form-control" placeholder="<?php echo $servicio ?>" data-idServicio="<?php echo $idServicio?>" disabled/>
                     </div>
                 </div>
             </div>
@@ -83,6 +85,11 @@ if (!empty($datosValidacion)) {
                         <label class="f-w-600 f-s-13">Tipo de personal que valida *</label>
                         <select id="listaTipoPersonal" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
                             <option value="">Selecciona . . .</option>
+                            <?php
+                            foreach ($tipoPerfiles as $item) {
+                                echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                            }
+                            ?>
                         </select>
                     </div>
                     <div class="form-group <?php echo $mostrarInput ?>">
@@ -153,6 +160,11 @@ if (!empty($datosValidacion)) {
                         <label class="f-w-600 f-s-13">Equipo *</label>
                         <select id="listaSolicitarEquipo" class="form-control" style="width: 100%" disabled>
                             <option value="">Selecciona . . .</option>
+                            <?php
+                            foreach ($listaEquipo as $item) {
+                                echo '<option value="' . $item['Id'] . '">' . $item['Equipo'] . '</option>';
+                            }
+                            ?>
                         </select>
                     </div>
                 </div>
