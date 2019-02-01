@@ -741,12 +741,14 @@ class Reportes extends General {
         
         if($generales['NUM_MONED'] === '1'){
             $textoMoneda = 'PESOS';
+            $tipoMoneda = 'M.N.';
         }else{
             $textoMoneda = 'DOLARES';
+            $tipoMoneda = 'USD';
         }
         
         $letra = NumeroALetras::convertir($totales[0], $textoMoneda);
-        $this->pdf->Cell(200, 6, $letra . ' ' . $totales[1] . '/100 M.N.', 0, 0, 'L', false);
+        $this->pdf->Cell(200, 6, $letra . ' ' . $totales[1] . '/100 ' . $tipoMoneda, 0, 0, 'L', false);
 
         $this->pdf->SetXY(10, 215);
         $this->pdf->SetFont('Arial', '', 10);
