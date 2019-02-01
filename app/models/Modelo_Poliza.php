@@ -1030,7 +1030,7 @@ class Modelo_Poliza extends Modelo_Base {
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
-                                    WHERE tea.IdEstatus IN('" . $estatus . "')");
+                                    WHERE tea.IdEstatus IN(" . $estatus . ")");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1452,14 +1452,12 @@ class Modelo_Poliza extends Modelo_Base {
     public function insertarEquiposAllabRevicionLaboratorioHistorial(array $datos) {
         $this->iniciaTransaccion();
 
-        $this->insertar('t_equipos_allab_revision_laboratorio', [
-            'IdRegistro' => $datos['id'],
-            'IdUsuario' => $datos['idUsuario'],
-            'Fecha' => $datos['fecha'],
-            'IdEstatus' => '29'
-        ]);
-
-        $idRevision = parent::connectDBPrueba()->insert_id();
+        $revisionLaboratorio = $this->consultaEquiposAllabRevicionLaboratorio($datos);
+        if (!empty($revisionLaboratorio)) {
+            $idRevision = $revisionLaboratorio[0]['Id'];
+        } else {
+            $idRevision = $this->insertarEquiposAllabRevicionLaboratorio($datos);
+        }
 
         $this->insertar('t_equipos_allab_revision_laboratorio_historial', [
             'IdRevision' => $idRevision,
@@ -1469,6 +1467,7 @@ class Modelo_Poliza extends Modelo_Base {
             'Archivos' => $datos['archivos']
         ]);
 
+        $this->cambiarEsatus(array('idEstatus' => '2', 'flag' => '1', 'id' => $datos['id'], 'fecha' => $datos['fecha']));
 
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
@@ -1480,8 +1479,28 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
+    public function insertarEquiposAllabRevicionLaboratorio(array $datos) {
+        $this->insertar('t_equipos_allab_revision_laboratorio', [
+            'IdRegistro' => $datos['id'],
+            'IdUsuario' => $datos['idUsuario'],
+            'Fecha' => $datos['fecha'],
+            'IdEstatus' => '29'
+        ]);
+
+        $idRevision = parent::connectDBPrueba()->insert_id();
+
+        return $idRevision;
+    }
+
+    public function consultaEquiposAllabRevicionLaboratorio(array $datos) {
+        $consulta = $this->consulta('SELECT * FROM t_equipos_allab_revision_laboratorio WHERE IdRegistro = " ' . $datos['id'] . ' "');
+        return $consulta;
+    }
+
     public function insertarEquiposAllabRecepcionesProblemas(array $datos) {
-        $consulta = $this->insertar('t_equipos_allab_recepciones_problemas', [
+        $this->iniciaTransaccion();
+
+        $this->insertar('t_equipos_allab_recepciones_problemas', [
             'IdRecepcion' => $datos['idRecepcion'],
             'IdUsuario' => $datos['idUsuario'],
             'Fecha' => $datos['fecha'],
@@ -1489,7 +1508,16 @@ class Modelo_Poliza extends Modelo_Base {
             'Archivos' => $datos['archivos']
         ]);
 
-        return $consulta;
+        $this->cambiarEsatus($datos);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
     }
 
     public function consultaComentariosAdjuntosSolicitudEquipo(int $id) {
@@ -1537,21 +1565,14 @@ class Modelo_Poliza extends Modelo_Base {
                                         t_equipos_allab tea ON tea.Id = tear.IdRegistro
                                     where tea.Id = "' . $datos['id'] . '"
                                     AND tear.IdDepartamento = "' . $datos['idDepartamento'] . '"
-                                    AND tear.IdEstatus = "' . $datos['idEstatus'] . '"
                                     order by tearp.Id desc');
         return $consulta;
     }
 
-    public function insertarEquiposAllabRecpciones(array $datos) {
+    public function insertarEquiposAllabRecepcionesCambiarEstatus(array $datos) {
         $this->iniciaTransaccion();
-        $consulta = $this->insertar('t_equipos_allab_recepciones', [
-            'IdRegistro' => $datos['id'],
-            'IdDepartamento' => $datos['idDepartamento'],
-            'IdEstatus' => $datos['idEstatus'],
-            'IdUsuario' => $datos['idUsuario'],
-            'Fecha' => $datos['fecha'],
-            'Archivos' => $datos['archivos']
-        ]);
+
+        $this->insertarEquiposAllabRecpciones($datos);
 
         $this->cambiarEsatus($datos);
 
@@ -1564,16 +1585,54 @@ class Modelo_Poliza extends Modelo_Base {
             return ['code' => 200];
         }
     }
-    
+
+    public function insertarEquiposAllabRecpciones(array $datos) {
+        $this->iniciaTransaccion();
+        $this->insertar('t_equipos_allab_recepciones', [
+            'IdRegistro' => $datos['id'],
+            'IdDepartamento' => $datos['idDepartamento'],
+            'IdEstatus' => $datos['idEstatus'],
+            'IdUsuario' => $datos['idUsuario'],
+            'Fecha' => $datos['fecha'],
+            'Archivos' => $datos['archivos']
+        ]);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function actualizarEquiposAllabRecepciones(array $datos) {
+        $this->iniciaTransaccion();
+        $this->actualizar('t_equipos_allab_recepciones', array('IdEstatus' => $datos['idEstatus'],
+            'IdUsuario' => $datos['idUsuario'],
+            'Fecha' => $datos['fecha'],
+            'Archivos' => $datos['archivos']), array('IdRegistro' => $datos['id']));
+        $this->cambiarEsatus($datos);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
     public function cambiarEsatus(array $datos) {
-        
-        $resultado = $this->actualizar('t_equipos_allab', array('IdEstatus' => $datos['idEstatus'], 'Flag' => 1, 'FechaEstatus' => $datos['fecha']), ['Id' => $datos['id']]);
-        
-       if(!empty($resultado)){
+        $resultado = $this->actualizar('t_equipos_allab', array('IdEstatus' => $datos['idEstatus'], 'Flag' => $datos['flag'], 'FechaEstatus' => $datos['fecha']), ['Id' => $datos['id']]);
+
+        if (!empty($resultado)) {
             return TRUE;
-       }else{
-           return FALSE;
-       }
+        } else {
+            return FALSE;
+        }
     }
 
     public function consultaTicketsUsuario(array $datos) {
@@ -1623,28 +1682,28 @@ class Modelo_Poliza extends Modelo_Base {
 
         return $datosPersonal;
     }
-    
+
     public function mostrarEquipo() {
         $equipo = $this->consulta("SELECT * FROM v_equipos");
         return $equipo;
     }
-    
+
     public function mostrarRefaccionXEquipo($dato) {
         $refaccionXequipo = $this->consulta("SELECT * FROM cat_v3_componentes_equipo WHERE IdModelo = '" . $dato . "' AND Flag = 1");
         return $refaccionXequipo;
     }
-    
+
     public function consultaEquiposAllab(int $idServicio = null) {
 
         if (!empty($idServicio)) {
-            $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "' AND Flag = 1");
+            $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "'");
         } else {
-            $consulta = $this->consulta("SELECT * FROM t_equipos_allab AND Flag = 1");
+            $consulta = $this->consulta("SELECT * FROM t_equipos_allab");
         }
 
         return $consulta;
     }
-    
+
     public function insertarValidacionTecnico($dato) {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
@@ -1676,7 +1735,7 @@ class Modelo_Poliza extends Modelo_Base {
             return FALSE;
         }
     }
-    
+
     public function mostrarEquipoDanado($idModelo) {
         $equipoDanado = $this->consulta("SELECT 
                                             *
@@ -1694,11 +1753,11 @@ class Modelo_Poliza extends Modelo_Base {
             return $consulta;
         }
     }
-    
+
     public function insertarEnvioGuia(array $datos, array $estatus) {
         $this->iniciaTransaccion();
-        
-        $this->insertar('t_equipos_allab_envio_tecnico', $datos);        
+
+        $this->insertar('t_equipos_allab_envio_tecnico', $datos);
         $this->cambiarEsatus($estatus);
 
         $this->terminaTransaccion();
@@ -1710,5 +1769,91 @@ class Modelo_Poliza extends Modelo_Base {
             return ['code' => 200];
         }
     }
+
     // termina nuevo
+
+    public function consultaIdRegistro(array $datos) {
+        $equipoDanado = $this->consulta('SELECT 
+                                            Id
+                                        FROM
+                                            t_equipos_allab_recepciones tear
+                                        WHERE IdRegistro = "' . $datos['idRegistro'] . '"
+                                        AND IdDepartamento = "' . $datos['idDepartamento'] . '"');
+
+        return $equipoDanado;
+    }
+
+    public function consultaComponentesEquipoInvetario(array $datos) {
+        $equipoDanado = $this->consulta('SELECT 
+                                            ce.Id, ce.IdModelo, ce.Nombre
+                                        FROM
+                                            cat_v3_componentes_equipo ce
+                                        WHERE ce.IdModelo = "' . $datos['idModelo'] . '"');
+
+        return $equipoDanado;
+    }
+
+    public function laboratorioRefacciones(array $datos) {
+        $this->iniciaTransaccion();
+
+        $this->insertar('t_equipos_allab_revision_laboratorio_refacciones', array(
+            'IdRevision' => $datos['idRevision'],
+            'IdUsuario' => $datos['idUsuario'],
+            'Fecha' => $datos['fecha'],
+            'IdInventario' => $datos['idInvetario'],
+            'Cantidad' => $datos['cantidad'],
+            'Flag' => $datos['flag']
+        ));
+
+        $this->cambiarEsatus($datos);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function consultaListaRefaccionesUtilizadasServicio(string $idServicio) {
+        $equipoDanado = $this->consulta('SELECT 
+                                                tearlr.Id,
+                                                tearlr.Cantidad,
+                                                (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tearlr.IdInventario) AS Nombre
+                                         FROM t_equipos_allab_revision_laboratorio_refacciones tearlr
+                                        INNER JOIN t_equipos_allab_revision_laboratorio tearl
+                                        ON tearl.Id = tearlr.IdRevision
+                                        INNER JOIN t_equipos_allab tea
+                                        ON tea.Id = tearl.IdRegistro
+                                        WHERE tea.IdServicio = " ' . $idServicio . ' "
+                                        AND tearlr.Flag = "1"');
+
+        return $equipoDanado;
+    }
+
+    public function flagearRefaccionUtilizada(array $datos) {
+        $resultado = $this->actualizar('t_equipos_allab_revision_laboratorio_refacciones', array('Flag' => $datos['flag']), ['Id' => $datos['id']]);
+
+        if (!empty($resultado)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function consultaHistorialRegistro(array $datos) {
+        $equipoDanado = $this->consulta('SELECT 
+                                            *
+                                        FROM
+                                            t_equipos_allab_revision_laboratorio_historial tearlh
+                                                INNER JOIN
+                                            t_equipos_allab_revision_laboratorio tearl ON tearl.Id = tearlh.IdRevision
+                                        WHERE
+                                            tearl.IdRegistro = " ' . $datos['id'] . ' "');
+
+        return $equipoDanado;
+    }
+
 }

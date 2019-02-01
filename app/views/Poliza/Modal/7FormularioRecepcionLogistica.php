@@ -73,7 +73,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         <div class="col-md-4 col-sm-6 col-xs-12">
                             <div class="form-group <?php echo $mostrarSelect ?>">
                                 <label class="f-w-600 f-s-13">Fecha de Recepción *</label>
-                                <input type="datetime-local" id="fechaRecepcionAlm" value="<?php echo $date = date('Y-m-d\TH:i'); ?>" class="form-control" data-parsley-pattern="^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])T(|0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])$" required/>
+                                <input type="datetime-local" id="fechaRecepcionLogistica" value="<?php echo $date = date('Y-m-d\TH:i'); ?>" class="form-control" data-parsley-pattern="^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])T(|0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])$" required/>
                             </div>
                             <div class="form-group <?php echo $mostrarInput ?>">
                                 <label class="f-w-600 f-s-13">Fecha de Recepción *</label>
@@ -83,7 +83,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <div class="form-group <?php echo $mostrarSelectInput ?>">
                                 <label class="f-w-600 f-s-13">Evidencia de recepción *</label> 
-                                <input id="evidenciaRecepcionLab"  name="evidenciaRecepcionAlmacen[]" type="file" multiple />
+                                <input id="evidenciaRecepcionLogistica"  name="evidenciaRecepcionLogistica[]" type="file" multiple />
                             </div>
                             <div class="form-group <?php echo $mostrarInputFile ?>">
                                 <label class="f-w-600 f-s-13">Evidencia de recepción *</label>      
@@ -101,7 +101,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         </div>
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div id="errorFormulario"></div>
+                                <div id="errorFormularioLogistica"></div>
                             </div>
                         </div>
                         <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelect ?>">
@@ -116,7 +116,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         <div class="col-md-8 col-sm-9 col-xs-12">
                             <div class="form-group">
                                 <label class="f-w-600 f-s-13">Nota:</label>
-                                <textarea class="form-control" rows="5" id="txtNotaLogistica" value="" <?php // echo $mostrarNota ?>></textarea>                            
+                                <textarea class="form-control" rows="5" id="txtNotaLogistica" value="" <?php echo $mostrarNota ?>></textarea>                            
                             </div>
                         </div>
                     </div>
@@ -124,7 +124,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label class="f-w-600 f-s-13">Adjuntos:</label>
-                                <input id="adjuntosProblemaLog" name="adjuntosProblemaLog[]" type="file" multiple="" <?php // echo $mostrarSelectInputProblema ?>/>    
+                                <input id="adjuntosProblemaLog" name="adjuntosProblemaLog[]" type="file" multiple="" <?php echo $mostrarSelectInputProblema ?>/>    
                             </div>
                         </div>
                     </div>
@@ -134,7 +134,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         </div>
                     </div>
                     <div>
-                        <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php // echo $mostrarBtnProblema ?>">
+                        <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarBtnProblema ?>">
                             <a id="btnAgregarProblemaLog" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13">Agregar Problema</a>
                         </div>
                     </div>

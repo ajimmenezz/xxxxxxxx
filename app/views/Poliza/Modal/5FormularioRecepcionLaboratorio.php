@@ -83,7 +83,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <div class="form-group <?php echo $mostrarSelectInput ?>">
                                 <label class="f-w-600 f-s-13">Evidencia de recepción *</label> 
-                                <input id="evidenciaRecepcionLab"  name="evidenciaRecepcionAlmacen[]" type="file" multiple />
+                                <input id="evidenciaRecepcionLab"  name="evidenciaRecepcionLab[]" type="file" multiple />
                             </div>
                             <div class="form-group <?php echo $mostrarInputFile ?>">
                                 <label class="f-w-600 f-s-13">Evidencia de recepción *</label>      
@@ -101,11 +101,11 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         </div>
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div id="errorFormulario"></div>
+                                <div id="errorFormularioLaboratorio"></div>
                             </div>
                         </div>
                         <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelect ?>">
-                            <a id="btnGuardarRecepcionAlm" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13">Guardar Recepción</a>
+                            <a id="btnGuardarRecepcionLab" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13">Guardar Recepción</a>
                         </div>
                     </fieldset>
                 </form>
@@ -116,7 +116,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         <div class="col-md-8 col-sm-9 col-xs-12">
                             <div class="form-group">
                                 <label class="f-w-600 f-s-13">Nota:</label>
-                                <textarea class="form-control" rows="5" id="txtNotaLaboratorio" value="" <?php // echo $mostrarNota  ?>></textarea>                            
+                                <textarea class="form-control" rows="5" id="txtNotaLaboratorio" value="" <?php echo $mostrarNota  ?>></textarea>                            
                             </div>
                         </div>
                     </div>
@@ -124,7 +124,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label class="f-w-600 f-s-13">Adjuntos:</label>
-                                <input id="adjuntosProblemaLab" name="adjuntosProblemaLab[]" type="file" multiple="" <?php // echo $mostrarSelectInputProblema  ?>/>    
+                                <input id="adjuntosProblemaLab" name="adjuntosProblemaLab[]" type="file" multiple="" <?php echo $mostrarSelectInputProblema  ?>/>    
                             </div>
                         </div>
                     </div>

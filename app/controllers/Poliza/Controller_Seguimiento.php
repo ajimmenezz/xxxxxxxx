@@ -312,8 +312,26 @@ class Controller_Seguimiento extends Base {
             case 'GuardarRecepcionTecnico':
                 $resultado = $this->Seguimientos->guardarRecepcionTecnico($this->input->post());
                 break;
+            case 'GuardarRecepcionLogistica':
+                $resultado = $this->Seguimientos->guardarRecepcionLogistica($this->input->post());
+                break;
+            case 'GuardarRecepcionAlmacen':
+                $resultado = $this->Seguimientos->guardarRecepcionAlmacen($this->input->post());
+                break;
+            case 'GuardarRecepcionLaboratorio':
+                $resultado = $this->Seguimientos->guardarRecepcionLaboratorio($this->input->post());
+                break;
+            case 'GuardarRefacionUtilizada':
+                $resultado = $this->Seguimientos->guardarRefacionUtilizada($this->input->post());
+                break;
+            case 'EliminarRefacionUtilizada':
+                $resultado = $this->Seguimientos->eliminarRefacionUtilizada($this->input->post());
+                break;
             case 'ConsultaServiciosTecnico':
                 $resultado = $this->Seguimientos->consultaServiciosTecnico($this->input->post());
+                break;
+            case 'ConcluirRevicionLaboratorio':
+                $resultado = $this->Seguimientos->concluirRevicionLaboratorio($this->input->post());
                 break;
             default:
                 $resultado = FALSE;

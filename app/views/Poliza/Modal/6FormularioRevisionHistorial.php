@@ -1,3 +1,17 @@
+<?php
+if (!empty($datosValidacion)) {
+    foreach ($datosValidacion as $value) {
+        if ($value['IdEstatus'] === '4') {
+            $datosCloncluirRevision = "hidden";
+        } else {
+            $datosCloncluirRevision = "";
+        }
+    }
+} else {
+    $datosCloncluirRevision = "";
+}
+
+?>
 <div id="panelLaboratorioHistorial" class="panel panel-inverse">
     <div class="panel-heading">
         <h4 class="panel-title">5) Revisión en Laboratorio</h4>
@@ -5,14 +19,14 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-                <div id="errorFormulario"></div>
+                <div id="errorConcluirRevision"></div>
             </div>
         </div>
         <ul class="nav nav-pills col-md-6 col-sm-6 col-xs-12">
             <li class="active"><a href="#revisionHistorial" data-toggle="tab">Historial</a></li>
             <li><a href="#refaccionUtilizada" data-toggle="tab">Refacciones Utilizadas</a></li>
         </ul>
-        <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="col-md-6 col-sm-6 col-xs-12 <?php echo $datosCloncluirRevision ?>">
             <div class="form-group text-right">
                 <a href="javascript:;" class="btn btn-sm btn-danger f-s-13" id="consluirRevisionLab">Concluir Revisión</a>
             </div>
@@ -24,7 +38,7 @@
         </div>
         <div class="tab-content">
             <div class="tab-pane fade active in" id="revisionHistorial">
-                <div class="row">
+                <div class="row <?php echo $datosCloncluirRevision ?>">
                     <div class="col-md-9 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label class="f-w-600 f-s-13">Comentarios y Observaciones</label>
@@ -52,27 +66,33 @@
                 <div class="timelineTareas" id="divComentariosAdjuntos"></div>
             </div>
             <div class="tab-pane fade" id="refaccionUtilizada">
-                <div class="row">
+                <div class="row <?php echo $datosCloncluirRevision ?>">
                     <div class="col-md-4 col-sm-4 col-xs-12">
                         <div class="form-group">
-                            <label class="f-w-600 f-s-13">Refacción Utilizada</label>
+                            <label class="f-w-600 f-s-13">Refacción Utilizada *</label>
                             <select id="listRefaccionUtil" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Selecciona . . .</option>
-                                <option value="1">Mother Board</option>
-                                <option value="2">Disco Duro</option>
-                                <option value="3">Funete</option>
-                                <option value="4">Cabezal de Impresión</option>
+                                <?php
+                                foreach ($componentesEquipo as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-2 col-sm-4 col-xs-12">
                         <div class="form-group">
-                            <label for="">Modelo</label>
-                            <input type="number" step="any" id="cantidad" class="form-control">
+                            <label for="">Cantidad *</label>
+                            <input type="number" step="any" id="cantidadRefaccion" class="form-control">
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 m-t-20">
                         <a id="btnAgregarRefaccion" class="btn btn-success f-s-13">Agregar Refacción</a>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div id="errorAgregarRefaccion"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -81,15 +101,23 @@
                             <table id="listaRefaccionUtilizada" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                 <thead>
                                     <tr>
+                                        <th class="never">Id</th>
                                         <th class="all">Refacción</th>
                                         <th class="all">Cantidad</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Mother Board</td>
-                                        <td>1</td>
-                                    </tr>
+                                    <?php
+                                    if (!empty($listRefaccionesUtilizadasServicio)) {
+                                        foreach ($listRefaccionesUtilizadasServicio as $key => $value) {
+                                            echo '<tr>';
+                                            echo '<td>' . $value['Id'] . '</td>';
+                                            echo '<td>' . $value['Nombre'] . '</td>';
+                                            echo '<td>' . $value['Cantidad'] . '</td>';
+                                            echo '</tr>';
+                                        }
+                                    }
+                                    ?>  
                                 </tbody>
                             </table>
                         </div>
