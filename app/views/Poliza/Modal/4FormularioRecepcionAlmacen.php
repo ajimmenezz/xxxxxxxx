@@ -9,10 +9,12 @@ if (!empty($datosRecepcion['recepcion'])) {
             $archivoRecepcion = $value['Archivos'];
             $mostrarInputFile = "";
             $mostrarSelectInput = "hidden";
+            $mostrarAdjuntos = "disabled";
         } else {
             $archivoRecepcion = "";
             $mostrarInputFile = "hidden";
-            $mostrarSelectInput = "hidden";
+            $mostrarSelectInput = "";
+            $mostrarAdjuntos = "";
         }
     }
 } else {
@@ -23,6 +25,7 @@ if (!empty($datosRecepcion['recepcion'])) {
     $mostrarInput = "hidden";
     $mostrarInputFile = "hidden";
     $mostrarSelectInput = "";
+    $mostrarAdjuntos = "";
 }
 
 if (!empty($datosRecepcion['recepcionProblema'])) {
@@ -35,7 +38,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
     $mostrarNota = "disabled";
     $mostrarSelectInputProblema = "disabled";
     $mostrarBtnProblema = "hidden";
-}else{
+} else {
     $mostrarNota = "";
     $mostrarSelectInputProblema = "";
     $mostrarBtnProblema = "";
@@ -61,21 +64,21 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                 <form id="formRecepcionAlmacen" data-parsley-validate="true">
                     <fieldset>
                         <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="form-group <?php echo $mostrarSelect ?>">
+                            <div class="form-group <?php echo $mostrarSelectInput ?>">
                                 <label class="f-w-600 f-s-13">Usuario que recibe *</label>
                                 <input type="text" class="form-control" id="IdUsuarioRecibe" placeholder="<?php echo $usuario; ?>"  data-parsley-required="true" disabled/>
                             </div>
-                            <div class="form-group <?php echo $mostrarInput ?>">
+                            <div class="form-group <?php echo $mostrarInputFile ?>">
                                 <label class="f-w-600 f-s-13">Usuario que recibe *</label>
                                 <input type="text" class="form-control" placeholder="<?php echo $nombreRecibe ?>" disabled/>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="form-group <?php echo $mostrarSelect ?>">
+                            <div class="form-group <?php echo $mostrarSelectInput ?>">
                                 <label class="f-w-600 f-s-13">Fecha de Recepción *</label>
                                 <input type="datetime-local" id="fechaRecepcionAlm" value="<?php echo $date = date('Y-m-d\TH:i'); ?>" class="form-control" data-parsley-pattern="^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])T(|0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])$" required/>
                             </div>
-                            <div class="form-group <?php echo $mostrarInput ?>">
+                            <div class="form-group <?php echo $mostrarInputFile ?>">
                                 <label class="f-w-600 f-s-13">Fecha de Recepción *</label>
                                 <input type="text" class="form-control" placeholder="<?php echo $fecha ?>" disabled/>
                             </div>
@@ -101,10 +104,10 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         </div>
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div id="errorFormulario"></div>
+                                <div id="errorFormularioAlmacen"></div>
                             </div>
                         </div>
-                        <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelect ?>">
+                        <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelectInput ?>">
                             <a id="btnGuardarRecepcionAlm" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13">Guardar Recepción</a>
                         </div>
                     </fieldset>
@@ -116,7 +119,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         <div class="col-md-8 col-sm-9 col-xs-12">
                             <div class="form-group">
                                 <label class="f-w-600 f-s-13">Nota:</label>
-                                <textarea class="form-control" rows="5" id="txtNotaAlmacen" value="" <?php echo $mostrarNota ?>></textarea>                            
+                                <textarea class="form-control" rows="5" id="txtNotaAlmacen" value="" <?php echo $mostrarAdjuntos ?>></textarea>                            
                             </div>
                         </div>
                     </div>
@@ -124,7 +127,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label class="f-w-600 f-s-13">Adjuntos:</label>
-                                <input id="adjuntosProblemaAlm" name="adjuntosTarea[]" type="file" multiple="" <?php echo $mostrarSelectInputProblema ?>/>    
+                                <input id="adjuntosProblemaAlm" name="adjuntosProblemaAlm[]" type="file" multiple="" <?php echo $mostrarAdjuntos ?>/>    
                             </div>
                         </div>
                     </div>
@@ -134,7 +137,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         </div>
                     </div>
                     <div>
-                        <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarBtnProblema ?>">
+                        <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelectInput ?>">
                             <a id="btnAgregarProblemaAlm" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13">Agregar Problema</a>
                         </div>
                     </div>
