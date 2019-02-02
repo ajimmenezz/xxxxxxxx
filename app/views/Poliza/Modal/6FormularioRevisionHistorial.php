@@ -1,7 +1,7 @@
 <?php
 if (!empty($datosValidacion)) {
     foreach ($datosValidacion as $value) {
-        if ($value['IdEstatus'] === '4') {
+        if ($value['IdEstatus'] === '4' || $value['IdEstatus'] === '34' || $value['IdEstatus'] === '30') {
             $datosCloncluirRevision = "hidden";
         } else {
             $datosCloncluirRevision = "";

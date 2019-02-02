@@ -396,19 +396,18 @@ $(function () {
 
             if (camposFormularioValidados) {
                 var data = {
-                    'id': idTabla
+                    'id': idTabla,
+                    'idServicio': idServicio
                 }
-                console.log(data);
 
                 file.enviarArchivos('#evidenciaRecepcionLogistica', 'Seguimiento/GuardarRecepcionLogistica', '#panelRecepcionLogistica', data, function (respuesta) {
                     console.log(respuesta);
-//                    if (respuesta.code == 200) {
-//                        $('#fechaRecepcionTecnico').attr('disabled', 'disabled');
-//                        $('#btnGuardarRecepcionTec').addClass('disabled');
-//                        evento.mostrarMensaje("#errorFormularioTecnico", true, "Se ha guardado correctamente.", 4000);
-//                    } else {
-//                        evento.mostrarMensaje("#errorFormularioTecnico", false, "Ocurrió un error al guardar el comentario. Por favor recargue su página y vuelva a intentarlo.", 4000);
-//                    }
+                    if (respuesta.code == 200) {
+                        vistasDeFormularios(respuesta.datos);
+                        incioEtiquetas();
+                        eventosGenerales(idTabla, respuesta.idServicio);
+                        eventosComentarios(idTabla, respuesta.idServicio);
+                    }
                 });
             }
         });
