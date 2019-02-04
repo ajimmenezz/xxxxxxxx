@@ -324,6 +324,12 @@ class Controller_Seguimiento extends Base {
             case 'GuardarRefacionUtilizada':
                 $resultado = $this->Seguimientos->guardarRefacionUtilizada($this->input->post());
                 break;
+            case 'GuardarEnvioLogistica':
+                $resultado = $this->Seguimientos->guardarEnvioLogistica($this->input->post());
+                break;
+            case 'GuardarEntregaLogistica':
+                $resultado = $this->Seguimientos->guardarEntregaLogistica($this->input->post());
+                break;
             case 'EliminarRefacionUtilizada':
                 $resultado = $this->Seguimientos->eliminarRefacionUtilizada($this->input->post());
                 break;

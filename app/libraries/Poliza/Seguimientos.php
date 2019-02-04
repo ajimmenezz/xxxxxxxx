@@ -2608,7 +2608,7 @@ class Seguimientos extends General {
                 case '41':
                 case '52':
                 case '60': // Logistica
-                    $estatus = "'4','30','34'";
+                    $estatus = "'4','12','30','31','34'";
                     break;
             }
 
@@ -3294,6 +3294,9 @@ class Seguimientos extends General {
 
     public function envioSeguimientoLogistica(array $datos) {
         $informacion = array('IdServicio' => $datos['idServicio']);
+        $datosEnvioLogistica['dondeRecibe'] = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM cat_v3_equipos_allab_tipo_lugar_recepcion WHERE Flag = "1"');
+        $datosEnvioLogistica['paqueterias'] = $this->DBP->mostrarPaqueterias();
+        $datosEnvioLogistica['sucursales'] = $this->Catalogo->catSucursales('3', array('Flag' => '1'));
         $datosEnvioLogistica['informacionEnvioLog'] = $this->DBP->consultaEnvioLogistica($informacion);
 
         if (!empty($datosEnvioLogistica)) {
@@ -3447,7 +3450,7 @@ class Seguimientos extends General {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $archivos = $result = null;
         $CI = parent::getCI();
-        $carpeta = 'solicitudesEquipo/Solicitud_' . $datos['id'] . '/RecepcionTecnico/';
+        $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/solicitudesEquipo/Solicitud_' . $datos['id'] . '/RecepcionTecnico/';
         $archivos = "";
         if (!empty($_FILES)) {
             $archivos = setMultiplesArchivos($CI, 'evidenciaRecepcionTecnico', $carpeta);
@@ -3461,10 +3464,32 @@ class Seguimientos extends General {
         $datos['idEstatus'] = '31';
         $datos['archivos'] = $archivos;
         $datos['fecha'] = $fecha;
+        $datos['flag'] = '1';
 
-        $resultado = $this->DBP->insertarEquiposAllabRecpciones($datos);
+//        $resultado = $this->DBP->insertarEquiposAllabRecpciones($datos);
+        $idRecepcion = $this->DBP->consultaIdRegistro(array(
+            'idRegistro' => $datos['id'],
+            'idDepartamento' => $datos['idDepartamento']));
 
-        return $resultado;
+        if (empty($idRecepcion)) {
+            $resultado = $this->DBP->insertarEquiposAllabRecepcionesCambiarEstatus($datos);
+        } else {
+            $resultado = $this->DBP->actualizarEquiposAllabRecepciones($datos);
+        }
+
+        if ($resultado['code'] === 200) {
+            $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => $datos['idEstatus']));
+
+            $mensaje = ['mensaje' => "Correcto",
+                'datos' => $formularios,
+                'idServicio' => $datos['idServicio'],
+                'code' => 200];
+            return $mensaje;
+        } else {
+            $mensaje = ['mensaje' => "Hay un problema con la información",
+                'code' => 400];
+            return $mensaje;
+        }
     }
 
     public function guardarRecepcionLogistica(array $datos) {
@@ -3683,7 +3708,8 @@ class Seguimientos extends General {
         $datosEstatus = array(
             'idEstatus' => 12,
             'id' => $idAllab['Id'],
-            'fecha' => $datos['Fecha']);
+            'fecha' => $datos['Fecha'],
+            'flag' => '1');
 
         if (!empty($_FILES)) {
             $CI = parent::getCI();
@@ -3815,6 +3841,111 @@ class Seguimientos extends General {
             $mensaje = ['mensaje' => "No hay registro de Historial.",
                 'code' => 400];
             return $mensaje;
+        }
+    }
+
+    public function guardarEnvioLogistica(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+        $datosInsertar = array(
+            'IdRegistro' => $datos['id'],
+            'IdUsuario' => $usuario['Id'],
+            'IdEstatus' => 12,
+            'FechaEstatus' => $fecha,
+            'IdPaqueteria' => $datos['paqueteria'],
+            'Guia' => $datos['guia'],
+            'FechaEnvio' => $datos['fechaEnvio'],
+            'ArchivosEnvio' => null,
+            'IdTipoLugarRecepcion' => null,
+            'IdSucursal' => null,
+            'FechaRecepcion' => null,
+            'Recibe' => null,
+            'ArchivosEntrega' => null
+        );
+
+        if (!empty($_FILES)) {
+            $CI = parent::getCI();
+            $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/EvidenciasEnvioLogistica/';
+            $archivos = implode(',', setMultiplesArchivos($CI, 'evidenciaEnvio', $carpeta));
+
+            if (!empty($archivos) && $archivos != '') {
+                $datosInsertar['ArchivosEnvio'] = $archivos;
+                $insertar = $this->DBP->insertarEnvioLogistica($datosInsertar);
+                if ($insertar['code'] === 200) {
+                    $mensaje = ['mensaje' => "Se guardo correctamente el envio.",
+                        'code' => 200];
+                    return $mensaje;
+                } else {
+                    $mensaje = ['mensaje' => $insertar,
+                        'code' => 400];
+                    return $mensaje;
+                }
+            }
+        } else {
+            $insertar = $this->DBP->insertarEnvioLogistica($datosInsertar);
+            if ($insertar['code'] === 200) {
+                $mensaje = ['mensaje' => "Se guardo correctamente el envio.",
+                    'code' => 200];
+                return $mensaje;
+            } else {
+                $mensaje = ['mensaje' => $insertar,
+                    'code' => 400];
+                return $mensaje;
+            }
+        }
+    }
+
+    public function guardarEntregaLogistica(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+        $datosActualizar = array(
+            'IdEstatus' => 12,
+            'FechaEstatus' => $fecha,
+            'IdTipoLugarRecepcion' => $datos['tipoLugarRecepcion'],
+            'IdSucursal' => $datos['sucursal'],
+            'FechaRecepcion' => $datos['fechaRecepcion'],
+            'Recibe' => $datos['recibe'],
+            'ArchivosEntrega' => null
+        );
+
+        $datosEstatus = array(
+            'idEstatus' => 12,
+            'id' => $datos['id'],
+            'fecha' => $fecha,
+            'flag' => '0');
+
+        $CI = parent::getCI();
+        $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/EvidenciasEntregaLogistica/';
+        $archivos = implode(',', setMultiplesArchivos($CI, 'evidenciaEntregaLog', $carpeta));
+
+        if (!empty($archivos) && $archivos != '') {
+            $datosActualizar['ArchivosEntrega'] = $archivos;
+            $resultado = $this->DBP->actualizarEnvioLogistica($datosActualizar, $datosEstatus);
+            if ($resultado['code'] === 200) {
+                $correoTecnico = $this->DBS->consultaGeneralSeguimiento('SELECT 
+                                                                                (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = IdUsuario) CorreoTecnico,
+                                                                                nombreUsuario(IdUsuario) Tecnico
+                                                                            FROM
+                                                                                t_equipos_allab
+                                                                            WHERE Id = "' . $datos['id'] . '"');
+
+                $textoTecnico = '<p><strong>' . $correoTecnico[0]['Tecnico'] . '</strong> el departamento de logistica le he entregado un equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
+
+                $this->enviarCorreoConcluido(array($correoTecnico[0]['CorreoTecnico']), 'Seguimiento solicitud de equipo', $textoTecnico);
+
+                $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 12));
+                $mensaje = ['mensaje' => "Se guardo correctamente la entrega.",
+                    'datos' => $formularios,
+                    'idTabla' => $datos['id'],
+                    'code' => 200];
+                return $mensaje;
+            } else {
+                $mensaje = ['mensaje' => $insertar,
+                    'code' => 400];
+                return $mensaje;
+            }
         }
     }
 

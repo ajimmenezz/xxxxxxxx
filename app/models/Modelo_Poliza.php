@@ -1856,4 +1856,35 @@ class Modelo_Poliza extends Modelo_Base {
         return $equipoDanado;
     }
 
+    public function insertarEnvioLogistica(array $datos) {
+        $this->iniciaTransaccion();
+
+        $this->insertar('t_equipos_allab_envio_logistica', $datos);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function actualizarEnvioLogistica(array $datos, array $datosEstatus) {
+        $this->iniciaTransaccion();
+
+        $this->actualizar("t_equipos_allab_envio_logistica", $datos, ['IdRegistro' => $datosEstatus['id']]);
+        $this->cambiarEsatus($datosEstatus);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
 }

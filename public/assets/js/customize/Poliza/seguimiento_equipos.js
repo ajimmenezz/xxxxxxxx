@@ -65,7 +65,7 @@ $(function () {
 
         //Iniciar input archivos
         file.crearUpload('#archivosProblemaGuia', 'Seguimiento/subirProblema');
-        file.crearUpload('#evidenciaEnvio', 'Seguimiento/GuardarEnvioAlmacen');
+        file.crearUpload('#evidenciaEnvio', 'Seguimiento/GuardarEnvioLogistica');
         file.crearUpload('#evidenciaRecepcionAlmacen', 'Seguimiento/GuardarRecepcionAlmacen');
         file.crearUpload('#evidenciaRecepcionLab', 'Seguimiento/GuardarRecepcionLaboratorio');
         file.crearUpload('#archivosLabHistorial', 'Seguimiento/AgregarComentarioSeguimientosEquipos');
@@ -78,7 +78,7 @@ $(function () {
         file.crearUpload('#adjuntosProblemaLab', 'Seguimiento/AgregarRecepcionesProblemasSeguimientosEquipos');
         file.crearUpload('#adjuntosProblemaLog', 'Seguimiento/AgregarRecepcionesProblemasSeguimientosEquipos');
         file.crearUpload('#adjuntosProblemaTec', 'Seguimiento/AgregarRecepcionesProblemasSeguimientosEquipos');
-        file.crearUpload('#evidenciaEntregaLog', 'Seguimiento/subirAdjuntosLabHistorial');
+        file.crearUpload('#evidenciaEntregaLog', 'Seguimiento/GuardarEntregaLogistica');
         file.crearUpload('#evidenciaEnvioGuia', 'Seguimiento/GuardarEnvioAlmacen');
 
     };
@@ -324,7 +324,6 @@ $(function () {
 
         $('#btnGuardarEnvio').off('click');
         $('#btnGuardarEnvio').on('click', function () {
-
             panel = $('#panelEnvioConGuia').val();
             var paqueteria = $('#listPaqueteria option:selected').val();
             var guia = $('#guia').val();
@@ -336,7 +335,6 @@ $(function () {
             if (evento.validarFormulario('#formEnvioAlmacen')) {
                 if (evidencia !== '' || evidencia !== undefined) {
                     file.enviarArchivos('#evidenciaEnvioGuia', 'Seguimiento/GuardarEnvioAlmacen', '#panelEnvioConGuia', datos, function (respuesta) {
-//                        evento.mostrarMensaje("#errorFormularioEnvio", true, respuesta.mensaje, 4000);
                         vistasDeFormularios(respuesta.datos);
                         incioEtiquetas();
                         eventosGenerales(respuesta.idTabla);
@@ -344,7 +342,6 @@ $(function () {
                     });
                 } else {
                     evento.enviarEvento('Seguimiento/GuardarEnvioAlmacen', datos, panel, function (respuesta) {
-//                        evento.mostrarMensaje("#errorFormularioEnvio", true, respuesta.mensaje, 4000);
                         vistasDeFormularios(respuesta.datos);
                         incioEtiquetas();
                         eventosGenerales(respuesta.idTabla);
@@ -370,14 +367,16 @@ $(function () {
 
             if (camposFormularioValidados) {
                 var data = {
-                    'id': idTabla
+                    'id': idTabla,
+                    'idServicio': idServicio
                 }
 
                 file.enviarArchivos('#evidenciaRecepcionTecnico', 'Seguimiento/GuardarRecepcionTecnico', '#panelRecepcionTecnico', data, function (respuesta) {
                     if (respuesta.code == 200) {
-                        $('#fechaRecepcionTecnico').attr('disabled', 'disabled');
-                        $('#btnGuardarRecepcionTec').addClass('disabled');
-                        evento.mostrarMensaje("#errorFormularioTecnico", true, "Se ha guardado correctamente.", 4000);
+                        vistasDeFormularios(respuesta.datos);
+                        incioEtiquetas();
+                        eventosGenerales(idTabla, respuesta.idServicio);
+                        eventosComentarios(idTabla, respuesta.idServicio);
                     } else {
                         evento.mostrarMensaje("#errorFormularioTecnico", false, "Ocurrió un error al guardar el comentario. Por favor recargue su página y vuelva a intentarlo.", 4000);
                     }
@@ -401,7 +400,6 @@ $(function () {
                 }
 
                 file.enviarArchivos('#evidenciaRecepcionLogistica', 'Seguimiento/GuardarRecepcionLogistica', '#panelRecepcionLogistica', data, function (respuesta) {
-                    console.log(respuesta);
                     if (respuesta.code == 200) {
                         vistasDeFormularios(respuesta.datos);
                         incioEtiquetas();
@@ -533,6 +531,106 @@ $(function () {
                     evento.mostrarMensaje("#errorConcluirRevision", false, respuesta.mensaje, 4000);
                 }
             });
+        });
+
+        $('#btnGuardarEnvioLogistica').off('click');
+        $('#btnGuardarEnvioLogistica').on('click', function () {
+            var arrayCampos = [
+                {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
+                {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
+                {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'}
+            ];
+
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorFormularioEnvioLogistica');
+
+            if (camposFormularioValidados) {
+                var evidencia = $('#evidenciaEnvio').val();
+                var datos = {
+                    'id': idTabla,
+                    'idServicio': idServicio,
+                    'paqueteria': $('#listPaqueteria').val(),
+                    'guia': $('#guiaLogistica').val(),
+                    'fechaEnvio': $('#fechaEnvio').val()
+                }
+
+                if (evidencia !== '' || evidencia !== undefined) {
+                    file.enviarArchivos('#evidenciaEnvio', 'Seguimiento/GuardarEnvioLogistica', '#panelEnvioSeguimientoLog', datos, function (respuesta) {
+                        $('#divSeguimientoEntrega').removeClass('hidden');
+                        $('#divBotonGuardarEntrega').removeClass('hidden');
+                        $('#listPaqueteria').attr('disabled', 'disabled');
+                        $('#fechaEnvio').attr('disabled', 'disabled');
+                        $('#guiaLogistica').attr('disabled', 'disabled');
+                        $('#btnGuardarEnvioLogistica').addClass('disabled');
+                    });
+                } else {
+                    evento.enviarEvento('Seguimiento/GuardarEnvioLogistica', datos, panel, function (respuesta) {
+                        $('#divSeguimientoEntrega').removeClass('hidden');
+                        $('#divBotonGuardarEntrega').removeClass('hidden');
+                        $('#listPaqueteria').attr('disabled', 'disabled');
+                        $('#fechaEnvio').attr('disabled', 'disabled');
+                        $('#guiaLogistica').attr('disabled', 'disabled');
+                        $('#btnGuardarEnvioLogistica').addClass('disabled');
+                        file.deshabilitar('#evidenciaEnvio');
+                    });
+                }
+            }
+        });
+
+        $('#listDondeRecibe').on('change', function () {
+            if ($(this).val() === '2') {
+                $('#selectSucursal').removeClass('hidden');
+            } else {
+                $('#selectSucursal').addClass('hidden');
+            }
+        });
+
+        $('#btnGuardarEntrega').off('click');
+        $('#btnGuardarEntrega').on('click', function () {
+            if ($('#listDondeRecibe').val() === '2') {
+                var arrayCampos = [
+                    {'objeto': '#listDondeRecibe', 'mensajeError': 'Falta seleccionar donde recibe.'},
+                    {'objeto': '#listSucursal', 'mensajeError': 'Falta seleccionar la sucursal.'},
+                    {'objeto': '#fechaEnvioSegLog', 'mensajeError': 'Falta la fecha.'},
+                    {'objeto': '#personaRecibe', 'mensajeError': 'Falta la persona que recibe.'},
+                    {'objeto': '#evidenciaEntregaLog', 'mensajeError': 'Falta seleccionar la evidencia de entrega.'}
+                ];
+
+                var datos = {
+                    'id': idTabla,
+                    'idServicio': idServicio,
+                    'tipoLugarRecepcion': $('#listDondeRecibe').val(),
+                    'sucursal': $('#listSucursal').val(),
+                    'fechaRecepcion': $('#fechaEnvioSegLog').val(),
+                    'recibe': $('#personaRecibe').val()
+                }
+            } else {
+                var arrayCampos = [
+                    {'objeto': '#listDondeRecibe', 'mensajeError': 'Falta seleccionar donde recibe.'},
+                    {'objeto': '#fechaEnvioSegLog', 'mensajeError': 'Falta la fecha.'},
+                    {'objeto': '#personaRecibe', 'mensajeError': 'Falta la parsona que recibe.'},
+                    {'objeto': '#evidenciaEntregaLog', 'mensajeError': 'Falta seleccionar la evidencia de entrega..'}
+                ];
+                var datos = {
+                    'id': idTabla,
+                    'idServicio': idServicio,
+                    'tipoLugarRecepcion': $('#listDondeRecibe').val(),
+                    'sucursal': null,
+                    'fechaRecepcion': $('#fechaEnvioSegLog').val(),
+                    'recibe': $('#personaRecibe').val()
+                }
+            }
+
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorGuardarEntrega');
+
+            if (camposFormularioValidados) {
+                file.enviarArchivos('#evidenciaEntregaLog', 'Seguimiento/GuardarEntregaLogistica', '#panelEnvioSeguimientoLog', datos, function (respuesta) {
+                    vistasDeFormularios(respuesta.datos);
+                    incioEtiquetas();
+                    eventosGenerales(respuesta.idTabla);
+                    eventosComentarios(respuesta.idTabla);
+                });
+            }
+
         });
     };
 
