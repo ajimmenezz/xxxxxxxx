@@ -2608,7 +2608,7 @@ class Seguimientos extends General {
                 case '41':
                 case '52':
                 case '60': // Logistica
-                    $estatus = "'4','12','30','31','34'";
+                    $estatus = "'4','12','26','27','30','31','34'";
                     break;
             }
 
@@ -2918,6 +2918,31 @@ class Seguimientos extends General {
                             'formularioRecepcionTecnico' => [],
                             'PanelEspera' => []);
                     }
+                    if ($idEstatus === '26' && $flag === '1') {
+                        return array('formularioValidacion' => $this->vistaValidacion($datos),
+                            'formularioGuia' => $this->vistaDeGuia($datos),
+                            'formularioEnvioAlmacen' => [],
+                            'formularioRecepcionAlmacen' => [],
+                            'formularioRecepcionLab' => [],
+                            'formularioHistorialRefaccion' => [],
+                            'formularioRecepcionLog' => [],
+                            'formularioEnvioSeguimientoLog' => [],
+                            'formularioRecepcionTecnico' => [],
+                            'PanelEspera' => []);
+                    }
+
+                    if ($idEstatus === '27' && $flag === '1') {
+                        return array('formularioValidacion' => $this->vistaValidacion($datos),
+                            'formularioGuia' => $this->vistaDeGuia($datos),
+                            'formularioEnvioAlmacen' => [],
+                            'formularioRecepcionAlmacen' => [],
+                            'formularioRecepcionLab' => [],
+                            'formularioHistorialRefaccion' => [],
+                            'formularioRecepcionLog' => [],
+                            'formularioEnvioSeguimientoLog' => [],
+                            'formularioRecepcionTecnico' => [],
+                            'PanelEspera' => []);
+                    }
 
                     if ($idEstatus === '4' && $flag === '1') {
                         return array('formularioValidacion' => $this->vistaValidacion($datos),
@@ -2993,7 +3018,6 @@ class Seguimientos extends General {
     }
 
     public function formulariosTecnico(array $datos = null, string $idEstatus = null, string $flag = null, array $permisos, array $permisosAdicionales) {
-
         if ($idEstatus === '2' && $flag === '0') {
             return array('formularioValidacion' => $this->vistaValidacion($datos),
                 'formularioGuia' => [],
@@ -3009,10 +3033,40 @@ class Seguimientos extends General {
                 'permisosAdicionales' => $permisosAdicionales);
         }
 
+        if ($idEstatus === '26' && $flag === '1') {
+            return array('formularioValidacion' => $this->vistaValidacion($datos),
+                'formularioGuia' => $this->vistaDeGuia($datos),
+                'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                'formularioRecepcionAlmacen' => [],
+                'formularioRecepcionLab' => [],
+                'formularioHistorialRefaccion' => [],
+                'formularioRecepcionLog' => [],
+                'formularioEnvioSeguimientoLog' => [],
+                'formularioRecepcionTecnico' => [],
+                'PanelEspera' => [],
+                'permisos' => $permisos,
+                'permisosAdicionales' => $permisosAdicionales);
+        }
+
+        if ($idEstatus === '27' && $flag === '1') {
+            return array('formularioValidacion' => $this->vistaValidacion($datos),
+                'formularioGuia' => $this->vistaDeGuia($datos),
+                'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                'formularioRecepcionAlmacen' => [],
+                'formularioRecepcionLab' => [],
+                'formularioHistorialRefaccion' => [],
+                'formularioRecepcionLog' => [],
+                'formularioEnvioSeguimientoLog' => [],
+                'formularioRecepcionTecnico' => [],
+                'PanelEspera' => [],
+                'permisos' => $permisos,
+                'permisosAdicionales' => $permisosAdicionales);
+        }
+
         if ($idEstatus === '4' && $flag === '0') {
             return array('formularioValidacion' => $this->vistaValidacion($datos),
                 'formularioGuia' => $this->vistaDeGuia($datos),
-                'formularioEnvioAlmacen' => [],
+                'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                 'formularioRecepcionAlmacen' => [],
                 'formularioRecepcionLab' => [],
                 'formularioHistorialRefaccion' => [],
@@ -3240,12 +3294,20 @@ class Seguimientos extends General {
     }
 
     public function vistaDeGuia(array $datos) {
-        $dataSolicitudGuia['datosSolicitudGuia'] = $this->DBP->consultaSolicitudGuiaTecnico($datos['idServicio']);
+        $usuario = $this->Usuario->getDatosUsuario();
 
+        if ($usuario['IdPerfil'] === '41' || $usuario['IdPerfil'] === '52' || $usuario['IdPerfil'] === '60') {
+            $dataSolicitudGuia['formularioEditable'] = TRUE;
+        } else {
+            $dataSolicitudGuia['formularioEditable'] = FALSE;
+        }
+        $dataSolicitudGuia['estatus'] = $this->DBP->estatusAllab($datos['idServicio']);
+        $dataSolicitudGuia['datosSolicitudGuia'] = $this->DBP->consultaSolicitudGuiaTecnico($datos['idServicio']);
         return array('formularioParaGuia' => parent::getCI()->load->view('Poliza/Modal/2FormularioEnvioSinGuia', $dataSolicitudGuia, TRUE));
     }
 
     public function vistaEnvioAlmacen(array $datos) {
+        $dataSolicitudGuia['estatus'] = $this->DBP->estatusAllab($datos['idServicio']);
         $dataSolicitudGuia['paqueterias'] = $this->DBP->mostrarPaqueterias();
         $dataSolicitudGuia['datosSolicitudGuia'] = $this->DBP->consultaSolicitudGuiaTecnico($datos['idServicio']);
 
@@ -3466,7 +3528,6 @@ class Seguimientos extends General {
         $datos['fecha'] = $fecha;
         $datos['flag'] = '1';
 
-//        $resultado = $this->DBP->insertarEquiposAllabRecpciones($datos);
         $idRecepcion = $this->DBP->consultaIdRegistro(array(
             'idRegistro' => $datos['id'],
             'idDepartamento' => $datos['idDepartamento']));
@@ -3514,7 +3575,6 @@ class Seguimientos extends General {
         $datos['fecha'] = $fecha;
         $datos['flag'] = '1';
 
-//        $resultado = $this->DBP->insertarEquiposAllabRecpciones($datos);
         $idRecepcion = $this->DBP->consultaIdRegistro(array(
             'idRegistro' => $datos['id'],
             'idDepartamento' => $datos['idDepartamento']));
@@ -3946,6 +4006,98 @@ class Seguimientos extends General {
                     'code' => 400];
                 return $mensaje;
             }
+        }
+    }
+
+    public function guardarProblemaGuiaLogistica(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+        $archivos = $result = null;
+        $CI = parent::getCI();
+        $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/solicitudesEquipo/Solicitud_' . $datos['id'] . '/DocumentacionGuia/';
+        $archivos = "";
+        if (!empty($_FILES)) {
+            $archivos = setMultiplesArchivos($CI, 'archivosProblemaGuia', $carpeta);
+            if ($archivos) {
+                $archivos = implode(',', $archivos);
+            }
+        }
+
+        $idRegistro = $this->DBP->consultaSolicitudGuiaTecnico($datos['idServicio']);
+
+        $datosRegistro = array(
+            'IdRegistro' => $datos['id'],
+            'IdUsuario' => $usuario['Id'],
+            'IdEstatusEnvio' => $datos['idEstatus'],
+            'Fecha' => $fecha,
+            'ArchivosEnvio' => null,
+            'Solicitud' => 1,
+            'IdUsuarioSolicitud' => null,
+            'IdEstatusSolicitud' => null,
+            'FechaEstatusSolicitud' => null,
+            'ArchivosSolicitud' => $archivos,
+            'ComentarioDeGuia' => $datos['comentarios']
+        );
+
+        $datosEstatus = array(
+            'idEstatus' => $datos['idEstatus'],
+            'id' => $datos['id'],
+            'fecha' => $fecha,
+            'flag' => $datos['flag']);
+
+        if (empty($idRegistro)) {
+            $resultado = $this->DBP->insertarEnvioGuia($datosRegistro, $datosEstatus);
+        } else {
+            $resultado = $this->DBP->actualizarEnvioGuia($datosRegistro, $datosEstatus, $idRegistro[0]['Id']);
+        }
+
+        if ($resultado = 200) {
+            if ($datos['idEstatus'] === '4') {
+                $correoTecnico = $this->DBS->consultaGeneralSeguimiento('SELECT 
+                                                                                (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = IdUsuario) CorreoTecnico,
+                                                                                nombreUsuario(IdUsuario) Tecnico
+                                                                            FROM
+                                                                                t_equipos_allab
+                                                                            WHERE Id = "' . $datos['id'] . '"');
+
+                $textoTecnico = '<p><strong>' . $correoTecnico[0]['Tecnico'] . '</strong> el departamento de logistica le mando el número de guía que solicito del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
+
+                $this->enviarCorreoConcluido(array($correoTecnico[0]['CorreoTecnico']), 'Seguimiento solicitud de guía', $textoTecnico);
+            }
+            $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => $datos['idEstatus']));
+            $mensaje = ['mensaje' => "Se guardo correctamente la entrega.",
+                'datos' => $formularios,
+                'idTabla' => $datos['id'],
+                'code' => 200];
+            return $mensaje;
+        } else {
+            $mensaje = ['mensaje' => $resultado,
+                'code' => 400];
+            return $mensaje;
+        }
+    }
+
+    public function solicitarGuia(array $datos) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+        $datos['fecha'] = $fecha;
+        $datos['idEstatus'] = 26;
+        $datos['flag'] = '1';
+
+        $resultado = $this->DBP->cambiarEsatus($datos);
+
+        if ($resultado) {
+            $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 26));
+            $mensaje = ['mensaje' => "Es correcto.",
+                'datos' => $formularios,
+                'idTabla' => $datos['id'],
+                'code' => 200];
+            return $mensaje;
+        } else {
+            $mensaje = ['mensaje' => $resultado,
+                'code' => 400];
+            return $mensaje;
         }
     }
 

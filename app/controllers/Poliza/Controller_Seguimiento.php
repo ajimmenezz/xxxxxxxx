@@ -330,6 +330,9 @@ class Controller_Seguimiento extends Base {
             case 'GuardarEntregaLogistica':
                 $resultado = $this->Seguimientos->guardarEntregaLogistica($this->input->post());
                 break;
+            case 'GuardarProblemaGuiaLogistica':
+                $resultado = $this->Seguimientos->guardarProblemaGuiaLogistica($this->input->post());
+                break;
             case 'EliminarRefacionUtilizada':
                 $resultado = $this->Seguimientos->eliminarRefacionUtilizada($this->input->post());
                 break;
@@ -338,6 +341,9 @@ class Controller_Seguimiento extends Base {
                 break;
             case 'ConcluirRevicionLaboratorio':
                 $resultado = $this->Seguimientos->concluirRevicionLaboratorio($this->input->post());
+                break;
+            case 'SolicitarGuia':
+                $resultado = $this->Seguimientos->solicitarGuia($this->input->post());
                 break;
             default:
                 $resultado = FALSE;

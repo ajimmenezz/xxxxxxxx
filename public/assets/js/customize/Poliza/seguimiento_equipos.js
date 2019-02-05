@@ -64,7 +64,7 @@ $(function () {
         tabla.generaTablaPersonal('#listaRefaccionUtilizada', null, null, true, true, [[0, 'desc']]);
 
         //Iniciar input archivos
-        file.crearUpload('#archivosProblemaGuia', 'Seguimiento/subirProblema');
+        file.crearUpload('#archivosProblemaGuia', 'Seguimiento/GuardarProblemaGuiaLogistica');
         file.crearUpload('#evidenciaEnvio', 'Seguimiento/GuardarEnvioLogistica');
         file.crearUpload('#evidenciaRecepcionAlmacen', 'Seguimiento/GuardarRecepcionAlmacen');
         file.crearUpload('#evidenciaRecepcionLab', 'Seguimiento/GuardarRecepcionLaboratorio');
@@ -135,6 +135,7 @@ $(function () {
         $('#seccionFormulariosRecepcionAlmacen').removeClass('hidden').empty().append(respuesta.formularioRecepcionAlmacen.formularioRecepcionAlmacen);
         $('#seccionPanelEspera').removeClass('hidden').empty().append(respuesta.PanelEspera.panelEspera);
         $('#seccionFormulariosGuia').removeClass('hidden').empty().append(respuesta.formularioEnvioAlmacen.formularioGuia);
+        $('#seccionFormulariosSinGuia').removeClass('hidden').empty().append(respuesta.formularioGuia.formularioParaGuia);
         $('#seccionFormulariosValidacion').removeClass('hidden').empty().append(respuesta.formularioValidacion.formularioValidacion);
 
         if ($.inArray('306', respuesta.permisos) !== -1 || $.inArray('306', respuesta.permisosAdicionales) !== -1 || $.inArray('307', respuesta.permisos) !== -1 || $.inArray('307', respuesta.permisosAdicionales) !== -1) {
@@ -594,7 +595,6 @@ $(function () {
                     {'objeto': '#personaRecibe', 'mensajeError': 'Falta la persona que recibe.'},
                     {'objeto': '#evidenciaEntregaLog', 'mensajeError': 'Falta seleccionar la evidencia de entrega.'}
                 ];
-
                 var datos = {
                     'id': idTabla,
                     'idServicio': idServicio,
@@ -631,6 +631,74 @@ $(function () {
                 });
             }
 
+        });
+
+        $('#solicitarGuia').off('click');
+        $('#solicitarGuia').on('click', function () {
+            var data = {'id': idTabla, 'idServicio': idServicio};
+            evento.enviarEvento('Seguimiento/SolicitarGuia', data, '#panelEnvioConGuia', function (respuesta) {
+                if (respuesta.code === 200) {
+                    vistasDeFormularios(respuesta.datos);
+                    incioEtiquetas();
+                    eventosGenerales(idTabla, respuesta.idServicio);
+                    eventosComentarios(idTabla, respuesta.idServicio);
+                    cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+                }
+            });
+        });
+
+        $('#btnGuardarProblema').off('click');
+        $('#btnGuardarProblema').on('click', function () {
+            var arrayCampos = [
+                {'objeto': '#txtComentariosGuia', 'mensajeError': 'Falta escribir comentarios.'},
+                {'objeto': '#archivosProblemaGuia', 'mensajeError': 'Falta seleccionar la evidencia.'}
+            ];
+
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorGuardarGuiaLogistica');
+
+            if (camposFormularioValidados) {
+                var datos = {
+                    'id': idTabla,
+                    'idServicio': idServicio,
+                    'comentarios': $('#txtComentariosGuia').val(),
+                    'idEstatus': 27,
+                    'flag': '1'
+                }
+
+                file.enviarArchivos('#archivosProblemaGuia', 'Seguimiento/GuardarProblemaGuiaLogistica', '#panelAsignacionGuia', datos, function (respuesta) {
+                    vistasDeFormularios(respuesta.datos);
+                    incioEtiquetas();
+                    eventosGenerales(respuesta.idTabla);
+                    eventosComentarios(respuesta.idTabla);
+                });
+            }
+        });
+
+        $('#btnGuardarSolicitud').off('click');
+        $('#btnGuardarSolicitud').on('click', function () {
+            var arrayCampos = [
+                {'objeto': '#txtComentariosGuia', 'mensajeError': 'Falta escribir comentarios.'},
+                {'objeto': '#archivosProblemaGuia', 'mensajeError': 'Falta seleccionar la evidencia.'}
+            ];
+
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorGuardarGuiaLogistica');
+
+            if (camposFormularioValidados) {
+                var datos = {
+                    'id': idTabla,
+                    'idServicio': idServicio,
+                    'comentarios': $('#txtComentariosGuia').val(),
+                    'idEstatus': 4,
+                    'flag': '0'
+                }
+
+                file.enviarArchivos('#archivosProblemaGuia', 'Seguimiento/GuardarProblemaGuiaLogistica', '#panelAsignacionGuia', datos, function (respuesta) {
+                    vistasDeFormularios(respuesta.datos);
+                    incioEtiquetas();
+                    eventosGenerales(respuesta.idTabla);
+                    eventosComentarios(respuesta.idTabla);
+                });
+            }
         });
     };
 

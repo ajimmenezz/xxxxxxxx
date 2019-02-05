@@ -88,6 +88,7 @@
     <div id="seccionFormulariosAsignacionGuiaLogistica" class="hidden"></div>
     <div id="seccionFormulariosAsignacionGuia" class="hidden"></div>
     <div id="seccionFormulariosGuiaLogistica" class="hidden"></div>
+    <div id="seccionFormulariosSinGuia" class="hidden"></div>
     <div id="seccionFormulariosGuia" class="hidden"></div>
     <div id="seccionFormulariosValidacion" class="hidden"></div>
 </div>

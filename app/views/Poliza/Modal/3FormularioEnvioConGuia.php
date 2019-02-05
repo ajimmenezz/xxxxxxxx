@@ -26,6 +26,12 @@ if (!empty($datosSolicitudGuia)) {
     $mostrarInputFile = "hidden";
     $mostrarSelectInput = "";
 }
+
+if($estatus['IdEstatus'] === '26'){
+    $botonSolicitarGuia = 'hidden';
+}else{
+    $botonSolicitarGuia = '';
+}
 ?>
 <div id="panelEnvioConGuia" class="panel panel-inverse">
     <div class="panel-heading">
@@ -38,7 +44,7 @@ if (!empty($datosSolicitudGuia)) {
             </div>
             <div class="col-md-6 col-sm-6 col-xs-6 <?php echo $mostrarSelect ?>">
                 <div class="form-group text-right">
-                    <a href="javascript:;" class="btn btn-sm btn-success f-s-13" id="solicitarGuia">Solicitar Guía</a>
+                    <a href="javascript:;" class="btn btn-sm btn-success f-s-13 <?php echo $botonSolicitarGuia ?>" id="solicitarGuia" >Solicitar Guía </a>
                 </div>
             </div>
         </div>

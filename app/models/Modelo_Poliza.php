@@ -1085,11 +1085,8 @@ class Modelo_Poliza extends Modelo_Base {
 
         if (!empty($datosServcio)) {
             $consultaGuia = $this->consulta("SELECT 
-                                                (SELECT Nombre FROM cat_v3_paqueterias cvp WHERE cvp.Id = teaet.IdPaqueteria) AS Paqueteria,
-                                                teaet.Guia,
-                                                teaet.Fecha,
-                                                teaet.ArchivosSolicitud,
-                                                teaet.ArchivosEnvio
+                                                teaet.*,
+                                                (SELECT Nombre FROM cat_v3_paqueterias cvp WHERE cvp.Id = teaet.IdPaqueteria) AS Paqueteria
                                             FROM
                                                 t_equipos_allab_envio_tecnico teaet
                                             WHERE 
@@ -1102,7 +1099,6 @@ class Modelo_Poliza extends Modelo_Base {
         } else {
             return null;
         }
-//        return $datosServcio;
     }
 
     public function consultaRecepcionAlmacen(array $datos) {
@@ -1770,7 +1766,22 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    // termina nuevo
+    public function actualizarEnvioGuia(array $datos, array $datosEstatus, string $id) {
+        $this->iniciaTransaccion();
+
+        $this->actualizar('t_equipos_allab_envio_tecnico', $datos, ['Id' => $id]);
+
+        $this->cambiarEsatus($datosEstatus);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
 
     public function consultaIdRegistro(array $datos) {
         $equipoDanado = $this->consulta('SELECT 
