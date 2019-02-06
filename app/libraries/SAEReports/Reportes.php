@@ -601,7 +601,8 @@ class Reportes extends General {
                                                 orden.IMP_TOT2 as IEPS2,
                                                 orden.IMP_TOT3 as IEPS3,
                                                 orden.IMP_TOT4 as IVA,
-                                                orden.IMPORTE as Total
+                                                orden.IMPORTE as Total,
+                                                orden.NUM_MONED
                                                 from COMPO03 orden
                                                 inner join COMPO_CLIB03 campos on orden.CVE_DOC = campos.CLAVE_DOC
                                                 where CVE_DOC = '" . $datos['documento'] . "'")[0];
@@ -737,8 +738,17 @@ class Reportes extends General {
         $this->pdf->Ln();
         $this->pdf->Ln();
         $totales = explode(".", number_format($generales['Total'], 2, '.', ''));
-        $letra = NumeroALetras::convertir($totales[0], 'PESOS');
-        $this->pdf->Cell(200, 6, $letra . ' ' . $totales[1] . '/100 M.N.', 0, 0, 'L', false);
+        
+        if($generales['NUM_MONED'] === '1'){
+            $textoMoneda = 'PESOS';
+            $tipoMoneda = 'M.N.';
+        }else{
+            $textoMoneda = 'DOLARES';
+            $tipoMoneda = 'USD';
+        }
+        
+        $letra = NumeroALetras::convertir($totales[0], $textoMoneda);
+        $this->pdf->Cell(200, 6, $letra . ' ' . $totales[1] . '/100 ' . $tipoMoneda, 0, 0, 'L', false);
 
         $this->pdf->SetXY(10, 215);
         $this->pdf->SetFont('Arial', '', 10);

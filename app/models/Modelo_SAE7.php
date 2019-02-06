@@ -248,7 +248,8 @@ class Modelo_SAE7 extends Modelo_Base {
                     partida.IMPU4 as IVA,
                     producto.ULT_COSTO,
                     partida.CANT * producto.ULT_COSTO as Subtotal,
-                    partida.NUM_PAR
+                    partida.NUM_PAR,
+                    (producto.ULT_COSTO*producto.FAC_CONV) as COSTO_UNIDAD
                   FROM DOCTOSIGC03 doctos
                   INNER JOIN PAR_COMPQ03 partida
                   ON doctos.CVE_DOC_E = partida.CVE_DOC AND doctos.PARTIDA = partida.NUM_PAR
@@ -272,13 +273,108 @@ class Modelo_SAE7 extends Modelo_Base {
                     partida.IMPU4 as IVA,
                     producto.ULT_COSTO,
                     partida.CANT * producto.ULT_COSTO as Subtotal,
-                    partida.NUM_PAR
+                    partida.NUM_PAR,
+                    (producto.ULT_COSTO*producto.FAC_CONV) as COSTO_UNIDAD
                 from PAR_COMPQ03 partida
                 left join INVE03 producto on partida.CVE_ART = producto.CVE_ART
                 where partida.CVE_DOC = '" . $claveDocumento . "'
                 and partida.PXR > 0
                 order by partida.NUM_PAR asc";
         $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta->result_array();
+    }
+
+    public function consultaUltimaClaveTBLCONTROL(string $numeroTabla) {
+        $consulta = parent::connectDBSAE7()->query("SELECT ULT_CVE FROM TBLCONTROL03 WHERE ID_TABLA = '" . $numeroTabla . "'");
+        return $consulta->result_array();
+    }
+
+    public function consultaUltimoNumeroDocumento() {
+        $query = "SELECT 
+                    SERIE,
+                    TIP_DOC,
+                    FOLIODESDE, 
+                    FOLIOHASTA,
+                    ULT_DOC, 
+                    FECH_ULT_DOC                  
+                FROM FOLIOSC03                  
+                WHERE TIP_DOC = 'o'                   
+                AND SERIE = 'STAND.'								 
+                GROUP BY 
+                TIP_DOC,SERIE, 
+                FOLIODESDE, 
+                FOLIOHASTA , 
+                ULT_DOC, 
+                FECH_ULT_DOC";
+        $consulta = parent::connectDBSAE7()->query($query);
+        return $consulta->result_array();
+    }
+
+    public function consultaPrimerDiaMes() {
+        $consulta = parent::connectDBSAE7()->query("SELECT DATEADD(MM, DATEDIFF(MM,0,GETDATE()), 0) AS 'PrimerDiaMes';");
+        return $consulta->result_array();
+    }
+
+    public function consultaFAC_CONV_INVE(string $producto) {
+        $consulta = parent::connectDBSAE7()->query("SELECT INVE.FAC_CONV
+                                                    FROM INVE03 INVE
+                                                    WHERE INVE.CVE_ART = '" . $producto . "'");
+        return $consulta->result_array();
+    }
+
+    public function consultaCOMPO(string $claveDocumento) {
+        $consulta = parent::connectDBSAE7()->query("select * from COMPO03 where CVE_DOC = '" . $claveDocumento . "'");
+        return $consulta->result_array();
+    }
+
+    public function consultaPAR_COMPO(string $claveDocumento) {
+        $consulta = parent::connectDBSAE7()->query("select 
+                                                        partidas.*,
+                                                        partidas.COST as COSTO_UNIDAD,
+                                                        TOT_PARTIDA as Subtotal 
+                                                    from PAR_COMPO03 partidas
+                                                    where CVE_DOC = '" . $claveDocumento . "'");
+        return $consulta->result_array();
+    }
+
+    public function consultaDOCTOSIG_CVE_ART(string $claveDocumento) {
+        $consulta = parent::connectDBSAE7()->query("select 
+                                                        (select CVE_ART from PAR_COMPO03 where CVE_DOC = '" . $claveDocumento . "' and NUM_PAR = docto.PART_E) CVE_ART,
+                                                        docto.CANT_E,
+                                                        docto.CVE_DOC_E,
+                                                        docto.PARTIDA,
+                                                        docto.CVE_DOC
+                                                    from DOCTOSIGC03 docto
+                                                    where CVE_DOC = '" . $claveDocumento . "'");
+        return $consulta->result_array();
+    }
+
+    public function consultaCOMPO_CLIB(string $claveDocumento) {
+        $consulta = parent::connectDBSAE7()->query("select * from COMPO_CLIB03 where CLAVE_DOC = '" . $claveDocumento . "'");
+        return $consulta->result_array();
+    }
+
+    public function consultaOBS_DOCC(string $claveObservaciones) {
+        $consulta = parent::connectDBSAE7()->query("select * from OBS_DOCC03 where CVE_OBS = '" . $claveObservaciones . "'");
+        return $consulta->result_array();
+    }
+
+    public function consultaPartidasEditar(string $claveDocumentacion) {
+        $consulta = parent::connectDBSAE7()->query("SELECT 
+                                                    	partidas.CANT,
+                                                        partidas.CVE_ART,
+                                                        partidas.UNI_VENTA,
+                                                        partidas.DESCU,
+                                                        partidas.IMPU1,
+                                                        partidas.IMPU2,
+                                                        partidas.IMPU3,
+                                                        partidas.IMPU4 as IVA,
+                                                        partidas.TOT_PARTIDA as Subtotal,
+                                                        partidas.NUM_PAR
+                                                FROM COMPQ03 requis
+                                                inner join PAR_COMPQ03 partidas on requis.CVE_DOC = partidas.CVE_DOC
+                                                inner join DOCTOSIGC03 doctos on doctos.CVE_DOC_E = partidas.CVE_DOC and doctos.PARTIDA = partidas.NUM_PAR
+                                                where requis.DOC_SIG  = '" . $claveDocumentacion . "' and doctos.CVE_DOC =  '" . $claveDocumentacion . "'");
         return $consulta->result_array();
     }
 
@@ -653,99 +749,6 @@ class Modelo_SAE7 extends Modelo_Base {
         }
     }
 
-    public function consultaUltimaClaveTBLCONTROL(string $numeroTabla) {
-        $consulta = parent::connectDBSAE7()->query("SELECT ULT_CVE FROM TBLCONTROL03 WHERE ID_TABLA = '" . $numeroTabla . "'");
-        return $consulta->result_array();
-    }
-
-    public function consultaUltimoNumeroDocumento() {
-        $query = "SELECT 
-                    SERIE,
-                    TIP_DOC,
-                    FOLIODESDE, 
-                    FOLIOHASTA,
-                    ULT_DOC, 
-                    FECH_ULT_DOC                  
-                FROM FOLIOSC03                  
-                WHERE TIP_DOC = 'o'                   
-                AND SERIE = 'STAND.'								 
-                GROUP BY 
-                TIP_DOC,SERIE, 
-                FOLIODESDE, 
-                FOLIOHASTA , 
-                ULT_DOC, 
-                FECH_ULT_DOC";
-        $consulta = parent::connectDBSAE7()->query($query);
-        return $consulta->result_array();
-    }
-
-    public function consultaPrimerDiaMes() {
-        $consulta = parent::connectDBSAE7()->query("SELECT DATEADD(MM, DATEDIFF(MM,0,GETDATE()), 0) AS 'PrimerDiaMes';");
-        return $consulta->result_array();
-    }
-
-    public function consultaFAC_CONV_INVE(string $producto) {
-        $consulta = parent::connectDBSAE7()->query("SELECT INVE.FAC_CONV
-                                                    FROM INVE03 INVE
-                                                    WHERE INVE.CVE_ART = '" . $producto . "'");
-        return $consulta->result_array();
-    }
-
-    public function consultaCOMPO(string $claveDocumento) {
-        $consulta = parent::connectDBSAE7()->query("select * from COMPO03 where CVE_DOC = '" . $claveDocumento . "'");
-        return $consulta->result_array();
-    }
-
-    public function consultaPAR_COMPO(string $claveDocumento) {
-        $consulta = parent::connectDBSAE7()->query("select 
-                                                        partidas.*,
-                                                        TOT_PARTIDA as Subtotal 
-                                                    from PAR_COMPO03 partidas
-                                                    where CVE_DOC = '" . $claveDocumento . "'");
-        return $consulta->result_array();
-    }
-
-    public function consultaDOCTOSIG_CVE_ART(string $claveDocumento) {
-        $consulta = parent::connectDBSAE7()->query("select 
-                                                        (select CVE_ART from PAR_COMPO03 where CVE_DOC = '" . $claveDocumento . "' and NUM_PAR = docto.PART_E) CVE_ART,
-                                                        docto.CANT_E,
-                                                        docto.CVE_DOC_E,
-                                                        docto.PARTIDA,
-                                                        docto.CVE_DOC
-                                                    from DOCTOSIGC03 docto
-                                                    where CVE_DOC = '" . $claveDocumento . "'");
-        return $consulta->result_array();
-    }
-
-    public function consultaCOMPO_CLIB(string $claveDocumento) {
-        $consulta = parent::connectDBSAE7()->query("select * from COMPO_CLIB03 where CLAVE_DOC = '" . $claveDocumento . "'");
-        return $consulta->result_array();
-    }
-
-    public function consultaOBS_DOCC(string $claveObservaciones) {
-        $consulta = parent::connectDBSAE7()->query("select * from OBS_DOCC03 where CVE_OBS = '" . $claveObservaciones . "'");
-        return $consulta->result_array();
-    }
-
-    public function consultaPartidasEditar(string $claveDocumentacion) {
-        $consulta = parent::connectDBSAE7()->query("SELECT 
-                                                    	partidas.CANT,
-                                                        partidas.CVE_ART,
-                                                        partidas.UNI_VENTA,
-                                                        partidas.DESCU,
-                                                        partidas.IMPU1,
-                                                        partidas.IMPU2,
-                                                        partidas.IMPU3,
-                                                        partidas.IMPU4 as IVA,
-                                                        partidas.TOT_PARTIDA as Subtotal,
-                                                        partidas.NUM_PAR
-                                                FROM COMPQ03 requis
-                                                inner join PAR_COMPQ03 partidas on requis.CVE_DOC = partidas.CVE_DOC
-                                                inner join DOCTOSIGC03 doctos on doctos.CVE_DOC_E = partidas.CVE_DOC and doctos.PARTIDA = partidas.NUM_PAR
-                                                where requis.DOC_SIG  = '" . $claveDocumentacion . "' and doctos.CVE_DOC =  '" . $claveDocumentacion . "'");
-        return $consulta->result_array();
-    }
-
     public function actualizarUltimaClaveTBLCONTROL(array $datos) {
         parent::connectDBSAE7()->query("update TBLCONTROL03
                 set ULT_CVE = '" . $datos['nuevaClave'] . "'
@@ -879,7 +882,7 @@ class Modelo_SAE7 extends Modelo_Base {
         $query = "update COMPO03 set
                     CVE_CLPV = '" . $datos['claveProvedor'] . "',
                     SU_REFER = '" . $datos['referencia'] . "', 
-                    FECHA_DOC = GETDATE(), 
+                    FECHA_DOC = '" . $datos['fechaDoc'] . "', 
                     FECHA_REC = '" . $datos['fechaRec'] . "',
                     FECHA_PAG = EOMONTH(GETDATE()),
                     CAN_TOT = " . $datos['cantidadTotal'] . ", 
@@ -958,7 +961,7 @@ class Modelo_SAE7 extends Modelo_Base {
                     '" . $datos['claveProvedor'] . "',
                     'O',
                     '" . $datos['referencia'] . "',
-                    GETDATE(),
+                    '" . $datos['fechaDoc'] . "',
                     '" . $datos['fechaRec'] . "',
                     EOMONTH(GETDATE()),
                     " . $datos['cantidadTotal'] . ",
