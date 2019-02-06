@@ -147,10 +147,26 @@ $(function () {
         var idTabla = arguments[0];
         var idServicio = arguments[1];
 
-        $('#btnRegresarTabla').off('click');
-        $('#btnRegresarTabla').on('click', function () {
+        $('.btnRegresarTabla').removeClass('hidden');
+
+        $('.btnRegresarTabla').off('click');
+        $('.btnRegresarTabla').on('click', function () {
             $('#panelTablaEquiposEnviados').removeClass('hidden');
             $('#seccionFormulariosValidacion').addClass('hidden');
+            $('#seccionPanelEspera').addClass('hidden');
+            $('#seccionFormulariosRecepcionTecnico').addClass('hidden');
+            $('#seccionFormulariosEnvSegLog').addClass('hidden');
+            $('#seccionFormulariosRecepcionLogistica').addClass('hidden');
+            $('#seccionFormulariosRevisionHistorial').addClass('hidden');
+            $('#seccionFormulariosRecepcionLaboratorio').addClass('hidden');
+            $('#seccionFormulariosRecepcionAlmacen').addClass('hidden');
+            $('#seccionFormulariosAsignacionGuiaLogistica').addClass('hidden');
+            $('#seccionFormulariosAsignacionGuia').addClass('hidden');
+            $('#seccionFormulariosGuiaLogistica').addClass('hidden');
+            $('#seccionFormulariosSinGuia').addClass('hidden');
+            $('#seccionFormulariosGuia').addClass('hidden');
+            $('#seccionFormulariosValidacion').addClass('hidden');
+            $('.btnRegresarTabla').addClass('hidden');
         });
 
         $("#listaTicket").on("change", function () {
@@ -196,7 +212,6 @@ $(function () {
             }
         });
 
-        // nuevo
         $('#listaTipoPersonal').on('change', function () {
             var seleccionado = $('#listaTipoPersonal option:selected').val();
             var datos = {'idTipoPersonal': seleccionado};
@@ -354,8 +369,6 @@ $(function () {
                 evento.mostrarMensaje("#errorFormularioEnvio", false, "Ingresa los datos solicitados", 4000);
             }
         });
-
-        // termina nuevo
 
         $('#btnGuardarRecepcionTec').off('click');
         $('#btnGuardarRecepcionTec').on('click', function () {

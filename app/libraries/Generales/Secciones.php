@@ -475,7 +475,7 @@ class Secciones extends General {
                 break;
             case 'Poliza/Seguimiento_Equipos':
                 $datos['tablaEquipos'] = $this->Seguimientos->mostrarTabla();
-//                $datos['permisoNuevoRegistro'] = $this->Seguimiento->permisoNuevoRegistro();
+                $datos['permisoNuevoRegistro'] = $this->Seguimientos->permisoNuevoRegistro();
                 break;
             case 'Configuracion/Perfil':
                 $datos['datosUsuario'] = $this->PerfilUsuario->datosPerfilUsuario();
