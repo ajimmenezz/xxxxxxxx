@@ -739,7 +739,7 @@ class Reportes extends General {
         $this->pdf->Ln();
         $totales = explode(".", number_format($generales['Total'], 2, '.', ''));
         
-        if($generales['NUM_MONED'] === '1'){
+        if($generales['NUM_MONED'] === 1){
             $textoMoneda = 'PESOS';
             $tipoMoneda = 'M.N.';
         }else{
