@@ -919,7 +919,6 @@ class Modelo_Poliza extends Modelo_Base {
 
 // SELECTS ------------- Seguimiento Equipos
     public function estatusAllab($idServicio) {
-
         if (!empty($idServicio)) {
             $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "'");
             foreach ($consulta as $value) {
@@ -940,7 +939,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.FechaValidacion,
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
-                                        tea.IdRefaccion
+                                        tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo");
@@ -972,7 +972,8 @@ class Modelo_Poliza extends Modelo_Base {
                                                 cat_v3_estatus cve
                                             WHERE
                                                 cve.Id = tea.IdEstatus) as NombreEstatus,
-                                        tea.IdRefaccion
+                                        tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM
                                         t_equipos_allab tea
                                             INNER JOIN
@@ -1003,7 +1004,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.FechaValidacion,
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
-                                        tea.IdRefaccion
+                                        tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
@@ -1026,7 +1028,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.FechaValidacion,
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
-                                        tea.IdRefaccion
+                                        tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
@@ -1039,9 +1042,87 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-// -------------------------
-    public function consultarPermisoAgregarRegistro(array $datos) {
-        var_dump($datos);
+    public function consultaTablaServicioAllabPerfilLogistica() {
+        $consulta = $this->consulta("SELECT 
+                                        tea.Id,
+                                        tst.Id as IdServicio,
+                                        tst.Ticket,
+                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.Id = tst.IdSucursal) as NombreSucursal,
+                                        ve.Equipo,
+                                        tea.FechaValidacion,
+                                        tea.IdEstatus,
+                                        (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
+                                        tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
+                                    FROM t_equipos_allab tea
+                                    INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
+                                    INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
+                                    WHERE
+                                    (CASE
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4' , '12', '26', '27', '30', '31','32','33','34')
+                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '30', '31', '34')
+                                    END)");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function consultaTablaServicioAllabPerfilAlmacen() {
+        $consulta = $this->consulta("SELECT 
+                                        tea.Id,
+                                        tst.Id as IdServicio,
+                                        tst.Ticket,
+                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.Id = tst.IdSucursal) as NombreSucursal,
+                                        ve.Equipo,
+                                        tea.FechaValidacion,
+                                        tea.IdEstatus,
+                                        (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
+                                        tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
+                                    FROM t_equipos_allab tea
+                                    INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
+                                    INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
+                                    WHERE
+                                    (CASE
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4','12','28','29','30','32','33','34')
+                                    END)");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function consultaTablaServicioAllabPerfilLaboratorio() {
+        $consulta = $this->consulta("SELECT 
+                                        tea.Id,
+                                        tst.Id as IdServicio,
+                                        tst.Ticket,
+                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.Id = tst.IdSucursal) as NombreSucursal,
+                                        ve.Equipo,
+                                        tea.FechaValidacion,
+                                        tea.IdEstatus,
+                                        (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
+                                        tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
+                                    FROM t_equipos_allab tea
+                                    INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
+                                    INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
+                                    WHERE
+                                    (CASE
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','2','4','34')
+                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','29','33','2') OR tea.IdEstatus = '4' AND Flag = '1'
+                                    END)");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
     }
 
     public function consultaDatosValidacion(array $datos = null) {

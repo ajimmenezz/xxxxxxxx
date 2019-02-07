@@ -29,7 +29,7 @@ if (!empty($datosSolicitudGuia)) {
 
 if ($estatus['IdEstatus'] === '26') {
     $botonSolicitarGuia = 'hidden';
-}if ($estatus['IdEstatus'] === '4' && $estatus['Flag'] === '0') {
+}else if ($estatus['IdEstatus'] === '4' && $estatus['Flag'] === '0') {
     $mostrarSelect = '';
     $botonSolicitarGuia = 'hidden';
     $mostrarInput = 'hidden';
@@ -38,6 +38,7 @@ if ($estatus['IdEstatus'] === '26') {
     $botonSolicitarGuia = '';
 }
 ?>
+
 <div id="panelEnvioConGuia" class="panel panel-inverse">
     <div class="panel-heading">
         <h4 class="panel-title">2) Envío a Almacén</h4>

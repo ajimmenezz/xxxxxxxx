@@ -54,6 +54,7 @@
                                     <th class="never">IdEstatus</th>
                                     <th class="all">Estatus</th>
                                     <th class="all">Refaccion</th>
+                                    <th class="all">Tipo Movimiento</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -70,6 +71,7 @@
                                         echo '<td>' . $value['IdEstatus'] . '</td>';
                                         echo '<td>' . $value['NombreEstatus'] . '</td>';
                                         echo '<td>' . $value['IdRefaccion'] . '</td>';
+                                        echo '<td>' . $value['TipoMovimiento'] . '</td>';
                                         echo '</tr>';
                                     }
                                 }

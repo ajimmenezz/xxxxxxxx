@@ -360,8 +360,8 @@ $(function () {
                     evento.enviarEvento('Seguimiento/GuardarEnvioAlmacen', datos, panel, function (respuesta) {
                         vistasDeFormularios(respuesta.datos);
                         incioEtiquetas();
-                        eventosGenerales(respuesta.idTabla);
-                        eventosComentarios(respuesta.idTabla);
+                        eventosGenerales(respuesta.idTabla, respuesta.idServicio);
+                        eventosComentarios(respuesta.idTabla, respuesta.idServicio);
                     });
                 }
 
@@ -501,25 +501,6 @@ $(function () {
                         select.cambiarOpcion('#listRefaccionUtil', '');
                         recargandoTablaRefaccionesUtilizadas(respuesta.datos);
                         evento.mostrarMensaje("#errorAgregarRefaccion", true, 'Refacción agregada correctamente.', 4000);
-                    } else {
-                        evento.mostrarMensaje("#errorAgregarRefaccion", false, respuesta.mensaje, 4000);
-                    }
-                });
-            }
-        });
-
-        $('#listaRefaccionUtilizada tbody').on('click', 'tr', function () {
-            var datos = $('#listaRefaccionUtilizada').DataTable().row(this).data();
-            if (datos !== undefined) {
-                var data = {
-                    'id': datos[0],
-                    'idServicio': idServicio
-                };
-
-                evento.enviarEvento('Seguimiento/EliminarRefacionUtilizada', data, '#panelLaboratorioHistorial', function (respuesta) {
-                    if (respuesta.code === 200) {
-                        recargandoTablaRefaccionesUtilizadas(respuesta.datos);
-                        evento.mostrarMensaje("#errorAgregarRefaccion", true, respuesta.mensaje, 4000);
                     } else {
                         evento.mostrarMensaje("#errorAgregarRefaccion", false, respuesta.mensaje, 4000);
                     }
@@ -715,7 +696,6 @@ $(function () {
         });
     };
 
-    // nuevo
     var botonGuardarValidacion = function () {
         var datos = arguments[0];
         var idTabla = arguments[1];
@@ -725,8 +705,8 @@ $(function () {
             if (respuesta.code === 400) {
                 vistasDeFormularios(respuesta.datos);
                 incioEtiquetas();
-                eventosGenerales(idTabla);
-                eventosComentarios(idTabla);
+                eventosGenerales(respuesta.idTabla, respuesta.idServicio);
+                eventosComentarios(respuesta.idTabla, respuesta.idServicio);
             } else {
                 evento.mostrarMensaje("#errorFormularioValidacion", false, respuesta.mensaje, 4000);
             }
