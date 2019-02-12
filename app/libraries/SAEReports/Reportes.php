@@ -30,13 +30,13 @@ class Reportes extends General {
     /* Encargado de regresar los el inventario del almacen virtual de SAE */
 
     public function getInventarioAlamacenSAE(array $datos = null) {
-        if(!isset($datos['desde'])){
-          $condicion = " where FECHAELAB BETWEEN DATEADD(week, -1, GETDATE()) and GETDATE() ";
-        }else{
-          $condicion = " where FECHAELAB BETWEEN '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 23:59:59' ";
+        if (!isset($datos['desde'])) {
+            $condicion = " where FECHAELAB BETWEEN DATEADD(week, -1, GETDATE()) and GETDATE() ";
+        } else {
+            $condicion = " where FECHAELAB BETWEEN '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 23:59:59' ";
         }
         $data['inventario'] = $this->DBSAE->getInventarioAlamacenSAE($datos['almacen']);
-        $data['movimientos'] =$this->DBSAE->consultaBDSAE("select
+        $data['movimientos'] = $this->DBSAE->consultaBDSAE("select
                                                             NUM_MOV as Numero_Movimiento,
                                                             movimientos.CVE_FOLIO as Folio,
                                                             productos.CVE_ART as Clave_Producto,
@@ -55,12 +55,12 @@ class Reportes extends General {
                                                             movimientos.MOV_ENLAZADO
                                                         from MINVE03 movimientos
                                                         inner join INVE03 productos
-                                                            on movimientos.CVE_ART = productos.CVE_ART ".$condicion."
-                                                        and movimientos.ALMACEN = '".$datos['almacen']."'
+                                                            on movimientos.CVE_ART = productos.CVE_ART " . $condicion . "
+                                                        and movimientos.ALMACEN = '" . $datos['almacen'] . "'
                                                         order by Numero_Movimiento");
         return $data;
     }
-    
+
     public function getMovimientosAlmacenesSAE(array $datos = null) {
         if (!isset($datos['desde'])) {
             $condicion = " where FECHAELAB BETWEEN DATEADD(week, -1, GETDATE()) and GETDATE() ";
@@ -154,8 +154,8 @@ class Reportes extends General {
         $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', 'center', 'center', 'center', '', 'center', 'center', 'center'];
         $this->Excel->setTableContent('A', 1, $movimientos, true, $arrayAlignMovimientos);
         /* End Hoja 2 */
-        
-        
+
+
         $time = date("ymd_H_i_s");
         $nombreArchivo = 'Inventario_' . $datos['almacen'] . '_' . $time . '.xlsx';
         $nombreArchivo = trim($nombreArchivo);
@@ -166,8 +166,8 @@ class Reportes extends General {
 
         return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
     }
-    
-    public function exportaMovimientosAlmacenesSAE(array $datos = null) {        
+
+    public function exportaMovimientosAlmacenesSAE(array $datos = null) {
         $movimientos = $datos['movimientos'];
 
         /* Begin Hoja 2 */
@@ -196,8 +196,8 @@ class Reportes extends General {
         $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', 'center', 'center', 'center', '', 'center', 'center', 'center'];
         $this->Excel->setTableContent('A', 1, $movimientos, true, $arrayAlignMovimientos);
         /* End Hoja 2 */
-        
-        
+
+
         $time = date("ymd_H_i_s");
         $nombreArchivo = 'Movimientos_Inventario_' . $time . '.xlsx';
         $nombreArchivo = trim($nombreArchivo);
@@ -208,11 +208,11 @@ class Reportes extends General {
 
         return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
     }
-    
+
     public function exportaReporteComprasSAE(array $datos = null) {
         $compras = isset($datos['compras']) ? $datos['compras'] : [];
         $existencias = isset($datos['existencias']) ? $datos['existencias'] : [];
-        $movimientos = isset($datos['movimientos']) ? $datos['movimientos'] : [];                 
+        $movimientos = isset($datos['movimientos']) ? $datos['movimientos'] : [];
 
         /* Begin Hoja 1 */
         //Crea una hoja en la posición 0 y la nombra.
@@ -495,13 +495,13 @@ class Reportes extends General {
     public function mostrarReporteComprasSAEProyecto(array $datos) {
         $claves = explode(",", $datos['claves']);
 
-        $condicion = " where compras.FECHAELAB between '".$datos['desde']." 00:00:00' and '".$datos['hasta']." 00:00:00' and (1 <> 1";
+        $condicion = " where compras.FECHAELAB between '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 00:00:00' and (1 <> 1";
 
         foreach ($claves as $key => $value) {
-          $condicion .= " or compras.SU_REFER like '%".$value."%'
-          or libres.CAMPLIB1 like '%".$value."%'
-          or compras.SU_REFER like '%".strtoupper($value)."%'
-          or libres.CAMPLIB1 like '%".strtoupper($value)."%'";
+            $condicion .= " or compras.SU_REFER like '%" . $value . "%'
+          or libres.CAMPLIB1 like '%" . $value . "%'
+          or compras.SU_REFER like '%" . strtoupper($value) . "%'
+          or libres.CAMPLIB1 like '%" . strtoupper($value) . "%'";
         }
 
         $condicion .= ")";
@@ -533,7 +533,7 @@ class Reportes extends General {
                   inner join PAR_COMPO03 partidas on compras.CVE_DOC = partidas.CVE_DOC
                   inner join INVE03 productos on partidas.CVE_ART = productos.CVE_ART
                   inner join PROV03 proveedores on compras.CVE_CLPV = proveedores.CLAVE
-                  inner join MONED03 moneda on compras.NUM_MONED = moneda.NUM_MONED ".$condicion;
+                  inner join MONED03 moneda on compras.NUM_MONED = moneda.NUM_MONED " . $condicion;
 
         $data['compras'] = $this->DBSAE->consultaBDSAE($query);
 
@@ -541,7 +541,7 @@ class Reportes extends General {
     }
 
     public function mostrarReporteRemisiones(array $datos) {
-        $condicion = " where remision.FECHAELAB between '".$datos['desde']." 00:00:00' and '".$datos['hasta']." 23:59:59' ";
+        $condicion = " where remision.FECHAELAB between '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 23:59:59' ";
 
         $query = "select
                 remision.CVE_DOC as Remision,
@@ -565,7 +565,7 @@ class Reportes extends General {
                 inner join PAR_FACTR03 partidas on remision.CVE_DOC = partidas.CVE_DOC
                 inner join INVE03 productos on partidas.CVE_ART = productos.CVE_ART
                 left join HNUMSER03 hist_series on partidas.REG_SERIE = hist_series.REG_SERIE
-                left join FACTR_CLIB03 libres on remision.CVE_DOC = libres.CLAVE_DOC ".$condicion;
+                left join FACTR_CLIB03 libres on remision.CVE_DOC = libres.CLAVE_DOC " . $condicion;
 
         $data['compras'] = $this->DBSAE->consultaBDSAE($query);
 
@@ -594,15 +594,15 @@ class Reportes extends General {
                                                 campos.CAMPLIB1 as Proyecto,
                                                 campos.CAMPLIB2 as LugarEntrega,
                                                 (select STR_OBS from OBS_DOCC03 where CVE_OBS = orden.CVE_OBS) as Observaciones,
-                                                orden.CAN_TOT as Subtotal,
+                                                (orden.CAN_TOT / orden.TIPCAMB) as Subtotal,
                                                 orden.DES_TOT as Descuento,
                                                 orden.DES_FIN as DescFin,
                                                 orden.IMP_TOT1 as IEPS1,
                                                 orden.IMP_TOT2 as IEPS2,
                                                 orden.IMP_TOT3 as IEPS3,
-                                                orden.IMP_TOT4 as IVA,
-                                                orden.IMPORTE as Total,
-                                                orden.NUM_MONED
+                                                (orden.IMP_TOT4 / orden.TIPCAMB) as IVA,
+                                                orden.NUM_MONED,
+                                                (((orden.CAN_TOT - orden.DES_TOT) - orden.DES_FIN) + orden.IMP_TOT4)  / orden.TIPCAMB AS Total
                                                 from COMPO03 orden
                                                 inner join COMPO_CLIB03 campos on orden.CVE_DOC = campos.CLAVE_DOC
                                                 where CVE_DOC = '" . $datos['documento'] . "'")[0];
@@ -738,15 +738,15 @@ class Reportes extends General {
         $this->pdf->Ln();
         $this->pdf->Ln();
         $totales = explode(".", number_format($generales['Total'], 2, '.', ''));
-        
-        if($generales['NUM_MONED'] === 1){
+
+        if ($generales['NUM_MONED'] === 1) {
             $textoMoneda = 'PESOS';
             $tipoMoneda = 'M.N.';
-        }else{
+        } else {
             $textoMoneda = 'DOLARES';
             $tipoMoneda = 'USD';
         }
-        
+
         $letra = NumeroALetras::convertir($totales[0], $textoMoneda);
         $this->pdf->Cell(200, 6, $letra . ' ' . $totales[1] . '/100 ' . $tipoMoneda, 0, 0, 'L', false);
 

@@ -69,8 +69,8 @@
                             <th class="all">Fecha de Recepción</th>
                             <th class="all">Serie</th>
                             <th class="all">Folio</th>
-                            <th class="all">Importe</th>
                             <th class="all">Total de doc</th>
+                            <th class="all">Moneda</th>
                             <th class="all">Archivo</th>
                             <th class="all">Acciones</th>
                         </tr>
@@ -88,8 +88,8 @@
                                 echo '<td>' . $value['FECHA_REC'] . '</td>';
                                 echo '<td>' . $value['SERIE'] . '</td>';
                                 echo '<td>' . $value['FOLIO'] . '</td>';
-                                echo '<td>' . $value['IMPORTE'] . '</td>';
-                                echo '<td>' . $value['TOTALDOCTO'] . '</td>';
+                                echo '<td>' . $value['TOTAL'] . '</td>';
+                                echo '<td>' . $value['TIPOMONEDA'] . '</td>';
                                 echo '<td><a href="javascript:;" target="_blank" class="btn btn-danger btn-xs btnPDFOrdenCompra" data-boton-pdf="' . $value['CVE_DOC'] . '"><i class="fa fa-file-pdf-o"></i> PDF</a></td>';
                                 echo '<td><a href="javascript:;" class="btn btn-success btn-xs btnEditarOrdenCompra" data-boton-editar="' . $value['CVE_DOC'] . '"><i class="fa fa-pencil"></i> Editar</a>';
                                 echo '</tr>';
