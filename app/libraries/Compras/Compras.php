@@ -165,7 +165,7 @@ class Compras extends General {
                 'TipoServicio' => $datos['textoTipoServicio'],
                 'Descripcion' => $arraySubtotal['descripcionGapsi'],
                 'Importe' => $arraySubtotal['totalGapsi'],
-                'Observaciones' => $arraySubtotal['observaciones'],
+                'Observaciones' => $datos['observaciones'],
                 'Proyecto' => $datos['proyecto'],
                 'Sucursal' => $datos['sucursal'],
                 'Moneda' => $moneda,
@@ -260,6 +260,7 @@ class Compras extends General {
         $subtotal = '0.00';
         $descuentoPartida = '0.00';
         $descripcionGapsi = '';
+        
         foreach ($datos as $key => $value) {
             $subtotal = (double) $subtotal + $value['subtotalPartida'];
             $porcentajeDescuento = $value['subtotalPartida'] * $value['descuento'] / 100;
@@ -268,13 +269,15 @@ class Compras extends General {
         }
         
         $ivaGapsi = number_format($subtotal * (int) $datosExtra['esquema'] / 100, 2, ".", "");
-        $totalGapsi = ((($subtotal - $descuentoPartida) - ($subtotal * $datosExtra['descuento'] / 100)) - ($subtotal * $datosExtra['descuentoFinanciero'] / 100)) + $ivaGapsi;
+        $subtotalGapsi = ((($subtotal - $descuentoPartida) - ($subtotal * $datosExtra['descuento'] / 100)) - ($subtotal * $datosExtra['descuentoFinanciero'] / 100)); 
+        $totalGapsi = $subtotalGapsi + $ivaGapsi;
         $subtotal = $subtotal * $datosExtra['tipoCambio'];
-        $iva = number_format($subtotal * (int) $datosExtra['esquema'] / 100, 2, ".", "");
         $descuentoPartida = $descuentoPartida * $datosExtra['tipoCambio'];
         $descuento = ($subtotal * $datosExtra['descuento'] / 100) * $datosExtra['tipoCambio'];
         $descuentoFinanciero = ($subtotal * $datosExtra['descuentoFinanciero'] / 100) * $datosExtra['tipoCambio'];
-        $total = ((($subtotal - $descuento) - $descuentoFinanciero) - $descuentoPartida) + $iva;
+        $subtotal = ((($subtotal - $descuento) - $descuentoFinanciero) - $descuentoPartida);
+        $iva = number_format($subtotal * (int) $datosExtra['esquema'] / 100, 2, ".", "");
+        $total = $subtotal + $iva;
 
         return array(
             'subtotal' => $subtotal, 
