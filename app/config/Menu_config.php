@@ -2457,7 +2457,7 @@ $config['Mercadotecnia'] = array(
 $config['CIMOS'] = array(
     'Seguimiento-Cimos' => array(
         'liga' => 'Seguimiento',
-        'icono' => 'fa fa-eye',
+        'icono' => '',
         'Url' => '/Cimos/Seguimiento',
         'css' => array('Generales/notas', 'Generales/servicios'),
         'pluginsCss' => array(
@@ -2495,7 +2495,7 @@ $config['CIMOS'] = array(
     ),
     'Reportes-Cimos' => array(
         'liga' => 'Reportes',
-        'icono' => 'fa fa-pie-chart',
+        'icono' => '',
         'Url' => '/Cimos/Reportes',
         'css' => array(),
         'pluginsCss' => array(
@@ -2509,6 +2509,39 @@ $config['CIMOS'] = array(
             'jquery-tag-it/css/jquery.tagit'
         ),
         'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/Botones', 'Cimos/reportes'),
+        'pluginsJs' => array(
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'jquery-tag-it/js/tag-it.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'moment/moment-locales.min',
+            'moment/es',
+            'select2/dist/js/select2.min',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'masked-input/masked-input.min',
+            'jquery-tag-it/js/tag-it.min'
+        ),
+        'Permiso' => 'VCISE'
+    ),
+    'Contratos' => array(
+        'liga' => 'Contratos',
+        'icono' => '',
+        'Url' => '/Cimos/Contratos',
+        'css' => array(),
+        'pluginsCss' => array(
+            'bootstrap-datepicker/css/datepicker',
+            'bootstrap-datepicker/css/datepicker3',
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'jquery-tag-it/css/jquery.tagit',
+            'parsley/src/parsley',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'jquery-tag-it/css/jquery.tagit'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/Botones', 'Cimos/contratos'),
         'pluginsJs' => array(
             'bootstrap-datepicker/js/bootstrap-datepicker',
             'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',

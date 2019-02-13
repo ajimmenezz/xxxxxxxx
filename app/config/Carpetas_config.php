@@ -144,6 +144,7 @@ $config['Secciones'] = array(
         'Seguimiento-Mercadotecnia' => 'Seguimiento'
     ),
     'Cimos' => array(
+        'Contratos' => 'Contratos',
         'Seguimiento-Cimos' => 'Seguimiento',
         'Reportes-Cimos' => 'Reportes',
     ),

@@ -29,6 +29,9 @@ class Controller_Reportes extends Base {
             case 'MakeContractPdf':
                 $resultado = $this->Cimos->makeContractPdf($this->input->post());
                 break;
+            case 'SearchByID':
+                $resultado = $this->Cimos->searchByID($this->input->post());
+                break;             
             default :
                 $resultado = [];
                 break;
