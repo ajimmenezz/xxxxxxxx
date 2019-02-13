@@ -177,6 +177,12 @@ class Modelo_SAE7 extends Modelo_Base {
                     COMP.FOLIO,
                     COMP.IMPORTE,
                     COMP.TOT_IND + COMP.IMPORTE AS TOTALDOCTO,
+                    (((COMP.CAN_TOT - COMP.DES_TOT) - COMP.DES_FIN) + COMP.IMP_TOT4)  / COMP.TIPCAMB AS TOTAL,
+                    CASE 
+                        WHEN COMP.NUM_MONED = '1'
+                                THEN 'MN'
+                        ELSE 'USD'
+                    END as TIPOMONEDA,
                     CASE COMP.STATUS
                             WHEN 'E' THEN 'Emitida'
                             WHEN 'O' THEN 'Original'
@@ -432,7 +438,7 @@ class Modelo_SAE7 extends Modelo_Base {
             'cantidadTotal' => $arraySubtotal['subtotal'],
             'iva' => $arraySubtotal['iva'],
             'descuentoTotal' => $arraySubtotal['descuento'],
-            'descuentoFinanciero' => $datos['descuentoFinanciero'],
+            'descuentoFinanciero' => $arraySubtotal['descuentoFinanciero'],
             'observacionesCond' => $datos['entregaA'],
             'claveObservaciones' => $nuevaClaveTabla57,
             'folio' => $datos['folio'],
@@ -623,7 +629,7 @@ class Modelo_SAE7 extends Modelo_Base {
             'cantidadTotal' => $arraySubtotal['subtotal'],
             'iva' => $arraySubtotal['iva'],
             'descuentoTotal' => $arraySubtotal['descuento'],
-            'descuentoFinanciero' => $datos['descuentoFinanciero'],
+            'descuentoFinanciero' => $arraySubtotal['descuentoFinanciero'],
             'observacionesCond' => $datos['entregaA'],
             'claveObservaciones' => $nuevaClaveTabla57,
             'folio' => $datos['folio'],

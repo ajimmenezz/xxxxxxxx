@@ -97,7 +97,7 @@ class Compras extends General {
 
     public function consultaListaOrdenesCompra(array $datos = null) {
         $fecha = mdate('%Y-%m-%d', now('America/Mexico_City'));
-        
+
         if (empty($datos)) {
             $whereFecha = "WHERE FECHA_DOC between '" . $fecha . " 00:00:00' and '" . $fecha . " 23:59:59'";
         } else {
@@ -141,7 +141,14 @@ class Compras extends General {
 
     public function guardarOrdenCompra(array $datos) {
         $usuario = $this->usuario->getDatosUsuario();
-        $arraySubtotal = $this->subtotalTablaPartidas($datos['datosTabla'], $datos['esquema'], $datos['descuentoFinanciero']);
+        $datosExtra = array(
+            'esquema' => $datos['esquema'],
+            'tipoMoneda' => $datos['moneda'],
+            'tipoCambio' => $datos['tipoCambio'],
+            'descuentoFinanciero' => $datos['descuentoFinanciero'],
+            'descuento' => $datos['descuento']);
+        $arraySubtotal = $this->subtotalTablaPartidas($datos['datosTabla'], $datosExtra);
+
         $consulta = $this->DBSAE->guardarOrdenCompra($datos, $arraySubtotal);
 
         if ($consulta) {
@@ -156,8 +163,8 @@ class Compras extends General {
                 'Tipo' => $datos['tipo'],
                 'TipoTrans' => 'COMPRA',
                 'TipoServicio' => $datos['textoTipoServicio'],
-                'Descripcion' => $datos['observaciones'],
-                'Importe' => $arraySubtotal['total'],
+                'Descripcion' => $arraySubtotal['descripcionGapsi'],
+                'Importe' => $arraySubtotal['totalGapsi'],
                 'Observaciones' => $datos['observaciones'],
                 'Proyecto' => $datos['proyecto'],
                 'Sucursal' => $datos['sucursal'],
@@ -204,7 +211,14 @@ class Compras extends General {
     }
 
     public function actualizarOrdenCompra(array $datos) {
-        $arraySubtotal = $this->subtotalTablaPartidas($datos['datosTabla'], $datos['esquema'], $datos['descuentoFinanciero']);
+        $datosExtra = array(
+            'esquema' => $datos['esquema'],
+            'tipoMoneda' => $datos['moneda'],
+            'tipoCambio' => $datos['tipoCambio'],
+            'descuentoFinanciero' => $datos['descuentoFinanciero'],
+            'descuento' => $datos['descuento']);
+        $arraySubtotal = $this->subtotalTablaPartidas($datos['datosTabla'], $datosExtra);
+
         $consulta = $this->DBSAE->actualizarOrdenCompra($datos, $arraySubtotal);
 
         if ($consulta) {
@@ -220,8 +234,8 @@ class Compras extends General {
                 'Tipo' => $datos['tipo'],
                 'TipoTrans' => 'COMPRA',
                 'TipoServicio' => $datos['textoTipoServicio'],
-                'Descripcion' => $datos['observaciones'],
-                'Importe' => $arraySubtotal['total'],
+                'Descripcion' => $arraySubtotal['descripcionGapsi'],
+                'Importe' => $arraySubtotal['totalGapsi'],
                 'Observaciones' => $datos['observaciones'],
                 'Proyecto' => $datos['proyecto'],
                 'Sucursal' => $datos['sucursal'],
@@ -242,20 +256,37 @@ class Compras extends General {
         }
     }
 
-    public function subtotalTablaPartidas(array $datos, string $esquema, string $descuentoFinanciero) {
+    public function subtotalTablaPartidas(array $datos, array $datosExtra) {
         $subtotal = '0.00';
-        $descuento = '0.00';
+        $descuentoPartida = '0.00';
+        $descripcionGapsi = '';
+        
         foreach ($datos as $key => $value) {
             $subtotal = (double) $subtotal + $value['subtotalPartida'];
             $porcentajeDescuento = $value['subtotalPartida'] * $value['descuento'] / 100;
-            $descuento = $descuento + $porcentajeDescuento;
+            $descuentoPartida = $descuentoPartida + $porcentajeDescuento;
+            $descripcionGapsi = $descripcionGapsi . $value['nombreProducto'] . ', ';
         }
+        
+        $ivaGapsi = number_format($subtotal * (int) $datosExtra['esquema'] / 100, 2, ".", "");
+        $subtotalGapsi = ((($subtotal - $descuentoPartida) - ($subtotal * $datosExtra['descuento'] / 100)) - ($subtotal * $datosExtra['descuentoFinanciero'] / 100)); 
+        $totalGapsi = $subtotalGapsi + $ivaGapsi;
+        $subtotal = $subtotal * $datosExtra['tipoCambio'];
+        $descuentoPartida = $descuentoPartida * $datosExtra['tipoCambio'];
+        $descuento = ($subtotal * $datosExtra['descuento'] / 100) * $datosExtra['tipoCambio'];
+        $descuentoFinanciero = ($subtotal * $datosExtra['descuentoFinanciero'] / 100) * $datosExtra['tipoCambio'];
+        $subtotal = ((($subtotal - $descuento) - $descuentoFinanciero) - $descuentoPartida);
+        $iva = number_format($subtotal * (int) $datosExtra['esquema'] / 100, 2, ".", "");
+        $total = $subtotal + $iva;
 
-        $subtotal = number_format($subtotal, 2, ".", "");
-        $iva = number_format($subtotal * (int) $esquema / 100, 2, ".", "");
-        $total = ($subtotal + $iva) - $descuento - $descuentoFinanciero;
-
-        return array('subtotal' => $subtotal, 'iva' => $iva, 'descuento' => $descuento, 'total' => $total);
+        return array(
+            'subtotal' => $subtotal, 
+            'iva' => $iva, 
+            'descuento' => $descuento + $descuentoPartida, 
+            'total' => $total, 
+            'descuentoFinanciero' => $descuentoFinanciero, 
+            'totalGapsi' => $totalGapsi,
+            'descripcionGapsi' => $descripcionGapsi);
     }
 
     public function crearPDFGastoOrdenCompra(array $datos) {

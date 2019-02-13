@@ -765,7 +765,8 @@ $(function () {
                 'costoUnidad': $('#costoUnidad' + numeroFila).val(),
                 'subtotalPartida': $('#subtotalPartida' + numeroFila).val(),
                 'observacionesPartida': arrayObservacionesPartida[numeroFila],
-                'partidaRequisicion': $('#partidaClave' + numeroFila).data('partida-requisicion')
+                'partidaRequisicion': $('#partidaClave' + numeroFila).data('partida-requisicion'),
+                'nombreProducto': $('#selectProductoPartida' + numeroFila + ' option:selected').text()
             });
         });
 
