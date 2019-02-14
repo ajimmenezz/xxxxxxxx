@@ -698,7 +698,6 @@ $(function () {
 
     var botonGuardarValidacion = function () {
         var datos = arguments[0];
-        var idTabla = arguments[1];
         panel = $('#panelValidacion');
 
         evento.enviarEvento('Seguimiento/GuardarValidacionTecnico', datos, panel, function (respuesta) {

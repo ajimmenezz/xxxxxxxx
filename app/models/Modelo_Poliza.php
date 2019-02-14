@@ -1979,4 +1979,19 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
+    public function consultaHisto(array $datos) {
+        $equipoDanado = $this->consulta('SELECT 
+                                            *
+                                        FROM
+                                            t_inventario ti
+                                                INNER JOIN
+                                            cat_v3_almacenes_virtuales cvav ON ti.IdAlmacen = cvav.Id
+                                        WHERE
+                                            cvav.IdReferenciaAlmacen = "299"
+                                                AND ti.IdProducto = "88"
+                                                AND ti.IdTipoProducto = "1"');
+
+        return $equipoDanado;
+    }
+
 }
