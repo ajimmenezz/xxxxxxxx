@@ -704,4 +704,15 @@ class Catalogos extends General {
         return $carpeta;
     }
 
+    public function mostrarFormularioHistorialEquipo() {
+        return array(
+            'html' => parent::getCI()->load->view('Almacen/Modal/FormularioHistorialEquipo', [], TRUE)
+        );
+    }
+
+    public function mostrarHistorialEquipo(array $datos) {
+        $movimientos = $this->DB->getMovimientosByAlmacen(0, ['serie' => $datos['id']]);
+        return $movimientos;
+    }
+
 }

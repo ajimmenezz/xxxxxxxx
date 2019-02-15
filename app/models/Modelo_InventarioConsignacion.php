@@ -129,11 +129,15 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
     }
 
     public function getMovimientosByAlmacen($id, array $datos = []) {
-        $condicion = "";
+        if ($id == 0) {
+            $condicion = " where 1=1 ";
+        } else {
+            $condicion = " where inve.IdAlmacen = '" . $id . "' ";
+        }
 
         if (!empty($datos)) {
-            $fechaIni = $datos['desde'];
-            $fechaFin = $datos['hasta'];
+            $fechaIni = isset($datos['desde']) ? $datos['desde'] : '';
+            $fechaFin = isset($datos['hasta']) ? $datos['hasta'] : '';
 
             if ($fechaIni == '' && $fechaFin != '') {
                 $condicion .= " and inve.Fecha <= '" . $fechaFin . " 23:59:59' ";
@@ -143,20 +147,23 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                 $condicion .= " and inve.Fecha >= '" . $fechaIni . " 00:00:00' and inve.Fecha <= '" . $fechaFin . " 23:59:59' ";
             }
 
-            if ($datos['tipoMov'] != '') {
+            if (isset($datos['tipoMov']) && $datos['tipoMov'] != '') {
                 $condicion .= " and inve.IdTipoMovimiento = '" . $datos['tipoMov'] . "'";
             }
 
-            if ($datos['tipoProd'] != '') {
+            if (isset($datos['tipoProd']) && $datos['tipoProd'] != '') {
                 $condicion .= " and inve.IdTipoProducto = '" . $datos['tipoProd'] . "'";
             }
+
+            if (isset($datos['serie']) && $datos['serie'] != '') {
+                $condicion .= " and inve.Serie = '" . $datos['serie'] . "' ";
+            }
         }
-
-
 
         $consulta = $this->consulta("select 
                                     (select Nombre from cat_v3_tipos_movimiento_inventario where Id = inve.IdTipoMovimiento) as Movimiento,
                                     (select Nombre from cat_v3_almacenes_virtuales where Id = (select IdAlmacen from t_movimientos_inventario where Id = inve.IdMovimientoEnlazado)) as Origen,
+                                    (select Nombre from cat_v3_almacenes_virtuales where Id = inve.IdAlmacen) as Almacen,
                                     nombreUsuario(inve.IdUsuario) as Usuario,
                                     inve.Fecha,
                                     (select Nombre from cat_v3_tipos_producto_inventario where Id = inve.IdTipoProducto) as TipoProducto,
@@ -186,7 +193,7 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                     inve.Serie,
                                     estatus(inve.IdEstatus) as Estatus
                                     from t_movimientos_inventario inve
-                                    where inve.IdAlmacen = '" . $id . "' " . $condicion . ";");
+                                     " . $condicion . ";");
         return $consulta;
     }
 

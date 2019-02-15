@@ -18,6 +18,7 @@
                     <li id="btnVerAltasIniciales"><a href="#"><i class="fa fa-eye"></i> Ver Altas Iniciales.</a></li>                    
                     <li id="btnVerKitsEquipo"><a href="#"><i class="fa fa-laptop"></i> Kits de Equipos.</a></li>                    
                     <li id="btnDeshuesarEquipo"><a href="#"><i class="fa fa-wrench"></i> Deshuesar Equipo.</a></li>                    
+                    <li id="btnHistorialEquipo"><a href="#"><i class="fa fa-history"></i> Historial de Equipo.</a></li>                    
                 </ul>
             </div>             
         </div>
@@ -126,3 +127,7 @@
 <!--Empezando seccion para el trapaso de productos entre almacenes-->
 <div id="divDeshuesarEquipo" class="content" style="display:none"></div>
 <!--Finalizando seccion para el trapaso de productos entre almacenes-->
+
+<!--Empezando seccion para el reporte historico de un equipo-->
+<div id="divHistorialEquipo" class="content" style="display:none"></div>
+<!--Finalizando seccion para el reporte historico de un equipo-->

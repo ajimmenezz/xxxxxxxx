@@ -139,6 +139,35 @@ $(function () {
         verDeshuesarEquipo();
     });
 
+    $("#btnHistorialEquipo").on("click", function () {
+        evento.enviarEvento('Catalogo/MostrarFormularioHistorialEquipo', {}, '#seccionAlmacenes', function (respuesta) {
+            $("#divHistorialEquipo").empty().append(respuesta.html);
+            tabla.generaTablaPersonal('#data-table-movimientos', null, null, true);
+            evento.cambiarDiv("#divListaCatalogos", "#divHistorialEquipo", verHistorialEquipo());
+        });
+    });
+
+    function verHistorialEquipo() {
+        $("#btnBuscarHistorialEquipo").off("click");
+        $("#btnBuscarHistorialEquipo").on("click", function () {
+            var id = $.trim($("#txtSerie").val());
+            $("#divResult").hide();
+            if (id !== '') {
+                evento.enviarEvento('Catalogo/MostrarHistorialEquipo', {id: id}, '#panelHistorialEquipo', function (respuesta) {
+                    tabla.limpiarTabla('#data-table-movimientos');
+                    $.each(respuesta, function (k, v) {
+                        tabla.agregarFila('#data-table-movimientos', [v.Movimiento, v.Almacen, v.TipoProducto, v.Producto, v.Serie, v.Estatus, v.Usuario, v.Fecha]);
+                    });
+                    $("#divResult").show();
+                });
+            } else {
+                evento.mostrarMensaje(".divError", false, "La serie de equipo es necesaria para la generación del historial", 4000);
+                tabla.limpiarTabla('#data-table-movimientos');
+                $("#divResult").hide();
+            }
+        });
+    }
+
     function verDeshuesarEquipo() {
         var notificacion = arguments[0];
         evento.enviarEvento('Catalogo/MostrarDeshuesarEquipo', {}, '#seccionAlmacenes', function (respuesta) {
@@ -148,7 +177,6 @@ $(function () {
 
             $("#divListaCatalogos").fadeOut(400, function () {
                 $("#divDeshuesarEquipo").fadeIn(400, function () {
-                    console.log(typeof notificacion);
                     if (typeof notificacion !== "undefined") {
                         if (notificacion == 1) {
                             evento.mostrarMensaje('#errorDeshuesar', true, 'Los componentes y sus estatus han sido agregados a su inventario.', 4000);
@@ -516,7 +544,7 @@ $(function () {
 
                         select.crearSelect('#listModelos');
                         select.crearSelect('#listRefacciones');
-                        
+
                         $("#listModelos").on("change", function () {
                             var _modelo = $(this).val();
 
@@ -695,7 +723,7 @@ $(function () {
         var sinSerie = arguments[1];
 
         evento.enviarEvento('Catalogo/RevisaSeriesDuplicadas', datos, '#panelAgregarProducto', function (respuesta) {
-            var seriesDuplicadas = respuesta.series;            
+            var seriesDuplicadas = respuesta.series;
             if (seriesDuplicadas.length > 0) {
                 var html = '<h4 class="text-center">Las siguientes series ya se encuentran registradas en el sistema.\nPor favor corrija la información.</h4><h5 class="bg-warning"><ul>';
                 $.each(seriesDuplicadas, function (k, v) {

@@ -105,7 +105,7 @@ class Controller_Catalogos extends Base {
             case 'CargaComponentesPoliza':
                 $resultado = $this->catalogosAlmacen->cargaComponentesPoliza($this->input->post());
                 break;
-            case 'GuardarProductosInventario':                
+            case 'GuardarProductosInventario':
                 $resultado = $this->catalogosAlmacen->guardarProductosInventario($this->input->post());
                 break;
             case 'AgregarProductoSalas':
@@ -116,57 +116,63 @@ class Controller_Catalogos extends Base {
                 break;
             case 'AgregarProductoSAE':
                 $resultado = $this->catalogosAlmacen->mostrarFormularioProductoSAE();
-                break;    
+                break;
             case 'MostrarFormularioTraspaso':
                 $resultado = $this->catalogosAlmacen->mostrarFormularioTraspaso();
-                break;    
+                break;
             case 'MostrarProductosTraspaso':
                 $resultado = $this->catalogosAlmacen->mostrarProductosTraspaso($this->input->post());
-                break;    
+                break;
             case 'TraspasarProductos':
                 $resultado = $this->catalogosAlmacen->traspasarProductos($this->input->post());
-                break;    
+                break;
             case 'MostrarTraspasos':
                 $resultado = $this->catalogosAlmacen->mostrarTraspasos();
-                break;    
+                break;
             case 'ImprimirTraspaso':
                 $resultado = $this->catalogosAlmacen->imprimirTraspaso($this->input->post());
-                break;    
+                break;
             case 'NuevaAltaInicial':
                 $resultado = $this->catalogosAlmacen->nuevaAltaInicial($this->input->post());
-                break;    
+                break;
             case 'CerrarAltaInicial':
                 $resultado = $this->catalogosAlmacen->cerrarAltaInicial();
-                break;    
+                break;
             case 'MostrarAltasIniciales':
                 $resultado = $this->catalogosAlmacen->mostrarAltasIniciales();
-                break;    
+                break;
             case 'ImprimirAltaInicial':
                 $resultado = $this->catalogosAlmacen->imprimirAltaInicial($this->input->post());
-                break;    
+                break;
             case 'MostrarKitsEquipos':
                 $resultado = $this->catalogosAlmacen->mostrarKitsEquipos();
-                break;    
+                break;
             case 'MostrarComponentesEquipoKit':
                 $resultado = $this->catalogosAlmacen->mostrarComponentesEquipoKit($this->input->post());
-                break;    
+                break;
             case 'GuardarKit':
                 $resultado = $this->catalogosAlmacen->guardarKit($this->input->post());
-                break;    
+                break;
             case 'MostrarDeshuesarEquipo':
                 $resultado = $this->catalogosAlmacen->mostrarDeshuesarEquipo();
-                break;    
+                break;
             case 'MostrarComponentesDeshueso':
                 $resultado = $this->catalogosAlmacen->mostrarComponentesDeshueso($this->input->post());
-                break;    
-            case 'GuardarComponentesDeshueso':                
+                break;
+            case 'GuardarComponentesDeshueso':
                 $resultado = $this->catalogosAlmacen->guardarComponentesDeshueso($this->input->post());
                 break;
-            case 'FiltrarMovimientosInventario':                
+            case 'FiltrarMovimientosInventario':
                 $resultado = $this->catalogosAlmacen->filtrarMovimientosInventario($this->input->post());
                 break;
-            case 'RevisaSeriesDuplicadas':                
+            case 'RevisaSeriesDuplicadas':
                 $resultado = $this->catalogosAlmacen->revisaSeriesDuplicadas($this->input->post());
+                break;
+            case 'MostrarFormularioHistorialEquipo':
+                $resultado = $this->catalogosAlmacen->mostrarFormularioHistorialEquipo();
+                break;
+            case 'MostrarHistorialEquipo':
+                $resultado = $this->catalogosAlmacen->mostrarHistorialEquipo($this->input->post());
                 break;
             default:
                 $resultado = FALSE;
