@@ -536,7 +536,7 @@ class Seguimientos extends General {
         $datosRecoleccion = $this->DBS->consultaGeneralSeguimiento('SELECT Id FROM t_censos_generales WHERE IdServicio = ' . $datos['servicio']);
 
         if (empty($datosRecoleccion)) {
-            $this->sobreEscribirServicioCenso($datos['servicio'], $datos['sucursal']);
+            //$this->sobreEscribirServicioCenso($datos['servicio'], $datos['sucursal']);
             $consulta = $this->DBS->insertarSeguimiento('t_censos_generales', array(
                 'IdServicio' => $datos['servicio'],
                 'IdSucursal' => $datos['sucursal'],
@@ -553,7 +553,7 @@ class Seguimientos extends General {
                 return FALSE;
             }
         } else {
-            $this->sobreEscribirServicioCenso($datos['servicio'], $datos['sucursal']);
+            //$this->sobreEscribirServicioCenso($datos['servicio'], $datos['sucursal']);
             $consulta = $this->DBS->actualizarSeguimiento('t_censos_generales', array(
                 'IdServicio' => $datos['servicio'],
                 'IdSucursal' => $datos['sucursal'],
