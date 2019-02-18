@@ -344,6 +344,12 @@ class Controller_Seguimiento extends Base {
             case 'SolicitarGuia':
                 $resultado = $this->Seguimientos->solicitarGuia($this->input->post());
                 break;
+            case 'ValidarSolicitudEquipo':
+                $resultado = $this->Seguimientos->validarSolicitudEquipo($this->input->post());
+                break;
+            case 'GuardarSolicitudProducto':
+                $resultado = $this->Seguimientos->guardarSolicitudProducto($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

@@ -2643,6 +2643,18 @@ class Seguimientos extends General {
                     break;
                 case '51':
                 case '62': // Almacen
+                    if ($idEstatus === '2' && $flag === '0') {
+                        return array('formularioValidacion' => $this->vistaValidacion($datos),
+                            'formularioGuia' => $this->vistaSeguimientoSolicitudRefaccionEquipo($datos),
+                            'formularioEnvioAlmacen' => [],
+                            'formularioRecepcionAlmacen' => [],
+                            'formularioRecepcionLab' => [],
+                            'formularioHistorialRefaccion' => [],
+                            'formularioRecepcionLog' => [],
+                            'formularioEnvioSeguimientoLog' => [],
+                            'formularioRecepcionTecnico' => [],
+                            'PanelEspera' => []);
+                    }
                     if ($idEstatus === '12' && $flag === '1') {
                         return array('formularioValidacion' => $this->vistaValidacion($datos),
                             'formularioGuia' => [],
@@ -3102,21 +3114,66 @@ class Seguimientos extends General {
                     break;
                 case '3':
                     if (in_array('307', $usuario['PermisosAdicionales']) || in_array('307', $usuario['Permisos'])) {
-                        return array('formularioValidacion' => $this->vistaValidacion($datos),
-                            'formularioGuia' => $this->vistaValidacionSupervisor($datos),
-                            'formularioEnvioAlmacen' => [],
-                            'formularioRecepcionAlmacen' => [],
-                            'formularioRecepcionLab' => [],
-                            'formularioHistorialRefaccion' => [],
-                            'formularioRecepcionLog' => [],
-                            'formularioEnvioSeguimientoLog' => [],
-                            'formularioRecepcionTecnico' => [],
-                            'PanelEspera' => [],
-                            'permisos' => $permisos,
-                            'permisosAdicionales' => $permisosAdicionales);
+                        $inventarioAlmacenesVirtuales = $this->verificarAlmacenesVirtuales($datos['idServicio']);
+
+                        if (!empty($inventarioAlmacenesVirtuales)) {
+                            $solicitudesRefaccion = $this->DBP->consultaEquiposAllabSolicitudesRefaccion($datos['idServicio']);
+
+                            if ($solicitudesRefaccion[0]['IdEstatus'] === '9') {
+                                return array('formularioValidacion' => $this->vistaValidacion($datos),
+                                    'formularioGuia' => $this->vistaValidacionSupervisor($datos),
+                                    'formularioEnvioAlmacen' => [],
+                                    'formularioRecepcionAlmacen' => [],
+                                    'formularioRecepcionLab' => [],
+                                    'formularioHistorialRefaccion' => [],
+                                    'formularioRecepcionLog' => [],
+                                    'formularioEnvioSeguimientoLog' => [],
+                                    'formularioRecepcionTecnico' => [],
+                                    'PanelEspera' => [],
+                                    'permisos' => $permisos,
+                                    'permisosAdicionales' => $permisosAdicionales);
+                            } else {
+                                $departamentoEspera = "Almacén";
+                                $textoEspera = "Esperando información de Almacén";
+                                return array('formularioValidacion' => $this->vistaValidacion($datos),
+                                    'formularioGuia' => [],
+                                    'formularioEnvioAlmacen' => [],
+                                    'formularioRecepcionAlmacen' => [],
+                                    'formularioRecepcionLab' => [],
+                                    'formularioHistorialRefaccion' => [],
+                                    'formularioRecepcionLog' => [],
+                                    'formularioEnvioSeguimientoLog' => [],
+                                    'formularioRecepcionTecnico' => [],
+                                    'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera),
+                                    'permisos' => $permisos,
+                                    'permisosAdicionales' => $permisosAdicionales);
+                            }
+                        } else {
+                            $departamentoEspera = "Almacén";
+                            $textoEspera = "Esperando información de Almacén";
+                            return array('formularioValidacion' => $this->vistaValidacion($datos),
+                                'formularioGuia' => [],
+                                'formularioEnvioAlmacen' => [],
+                                'formularioRecepcionAlmacen' => [],
+                                'formularioRecepcionLab' => [],
+                                'formularioHistorialRefaccion' => [],
+                                'formularioRecepcionLog' => [],
+                                'formularioEnvioSeguimientoLog' => [],
+                                'formularioRecepcionTecnico' => [],
+                                'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera),
+                                'permisos' => $permisos,
+                                'permisosAdicionales' => $permisosAdicionales);
+                        }
                     } else {
-                        $departamentoEspera = "Supervisor";
-                        $textoEspera = "Esperando validación de su supervisor";
+                        $solicitudesRefaccion = $this->DBP->consultaEquiposAllabSolicitudesRefaccion($datos['idServicio']);
+
+                        if ($solicitudesRefaccion[0]['IdEstatus'] === '9') {
+                            $departamentoEspera = "Supervisor";
+                            $textoEspera = "Esperando información de su supervisor";
+                        } else {
+                            $departamentoEspera = "Almacén";
+                            $textoEspera = "Esperando información de Almacén";
+                        }
                         return array('formularioValidacion' => $this->vistaValidacion($datos),
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => [],
@@ -3421,13 +3478,37 @@ class Seguimientos extends General {
     }
 
     public function vistaValidacionSupervisor(array $datos) {
-//        $usuario = $this->Usuario->getDatosUsuario();
         $data = array();
-//        $dataSolicitudGuia['estatus'] = $this->DBP->estatusAllab($datos['idServicio']);
-//        $dataSolicitudGuia['datosSolicitudGuia'] = $this->DBP->consultaSolicitudGuiaTecnico($datos['idServicio']);
-        return array('formularioParaGuia' => parent::getCI()->load->view('Poliza/Modal/10ValidacionSolicitudRefaccion', $data, TRUE));
+
+        $formulario = 'Poliza/Modal/10ValidacionSolicitudRefaccion';
+
+        return array('formularioParaGuia' => parent::getCI()->load->view($formulario, $data, TRUE));
     }
-    
+
+    public function vistaSeguimientoSolicitudRefaccionEquipo(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $data = array();
+
+        $equipoAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+
+        if (empty($equipoAllab[0]['IdRefaccion'])) {
+            $tipoProducto = '1';
+        } else {
+            $tipoProducto = '2';
+        }
+
+        $arrayInventarioAlmacen = array(
+            'idUsuario' => $usuario['Id'],
+            'tipoProducto' => $tipoProducto
+        );
+
+        $data['invetarioAlmacen'] = $this->DBP->consultaInventarioAlmacen($arrayInventarioAlmacen);
+
+        $formulario = 'Poliza/Modal/12SeguimientoSolicitudRefaccionExistencia';
+
+        return array('formularioParaGuia' => parent::getCI()->load->view($formulario, $data, TRUE));
+    }
+
     public function vistaDeGuia(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
 
@@ -3783,7 +3864,6 @@ class Seguimientos extends General {
 
     public function guardarRecepcionLaboratorio(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $archivos = $result = null;
         $CI = parent::getCI();
@@ -3836,12 +3916,12 @@ class Seguimientos extends General {
         }
     }
 
-    public function mostrarNombrePersonalValida($datos) {
+    public function mostrarNombrePersonalValida(array$datos) {
         $nombrePersonal = $this->DBP->mostrarNombrePersonalValida($datos['idTipoPersonal']);
         return $nombrePersonal;
     }
 
-    public function mostrarRefaccionXEquipo($datos) {
+    public function mostrarRefaccionXEquipo(array $datos) {
         $refaccion = $this->DBP->mostrarRefaccionXEquipo($datos['idEquipo']);
         if (!empty($refaccion)) {
             return $refaccion;
@@ -3850,9 +3930,9 @@ class Seguimientos extends General {
         }
     }
 
-    public function guardarValidacionTecnico($datos) {
-        $IdServicio = $datos['IdServicio'];
-        $equipoAllab = $this->DBP->consultaEquiposAllab($IdServicio);
+    public function guardarValidacionTecnico(array $datos) {
+        $idServicio = $datos['IdServicio'];
+        $equipoAllab = $this->DBP->consultaEquiposAllab($idServicio);
 
         if (!empty($equipoAllab)) {
             $mensaje = ['mensaje' => "Ya existe una solicitud para este servicio",
@@ -3861,12 +3941,34 @@ class Seguimientos extends General {
         } else {
             $nuevaValidacion = $this->DBP->insertarValidacionTecnico($datos);
             if ($nuevaValidacion) {
-                $equipoAllabNuevo = $this->DBP->consultaEquiposAllab($IdServicio);
-                $formulario = $this->mostrarVistaPorUsuario(array('idServicio' => $IdServicio));
+                $equipoAllabNuevo = $this->DBP->consultaEquiposAllab($idServicio);
+                if ($datos['IdTipoMovimiento'] === '3') {
+                    $inventarioAlmacenesVirtuales = $this->verificarAlmacenesVirtuales($idServicio);
+
+                    if (!empty($inventarioAlmacenesVirtuales)) {
+                        $estatusSolicitudRefaccion = '9';
+                    } else {
+                        $estatusSolicitudRefaccion = '7';
+                    }
+
+                    $usuario = $this->Usuario->getDatosUsuario();
+                    $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+                    $arraySolicitudRefaccion = array(
+                        'id' => $equipoAllabNuevo[0]['Id'],
+                        'idUsuario' => $usuario['Id'],
+                        'estatus' => $estatusSolicitudRefaccion,
+                        'fechaEstatus' => $fecha
+                    );
+
+                    $this->DBP->insertarEquiposAllabSolicitudRefaccion($arraySolicitudRefaccion);
+                }
+
+                $formulario = $this->mostrarVistaPorUsuario(array('idServicio' => $idServicio));
                 $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
                     'datos' => $formulario,
                     'idTabla' => $equipoAllabNuevo[0]['Id'],
-                    'idServicio' => $IdServicio,
+                    'idServicio' => $idServicio,
                     'code' => 400];
                 return $mensaje;
             } else {
@@ -3875,6 +3977,28 @@ class Seguimientos extends General {
                 return $mensaje;
             }
         }
+    }
+
+    public function verificarAlmacenesVirtuales(string $idServicio) {
+        $arrayEquiposAllab = $this->DBP->consultaEquiposAllab($idServicio);
+
+        if (!empty($arrayEquiposAllab[0]['IdRefaccion'])) {
+            $producto = $arrayEquiposAllab[0]['IdRefaccion'];
+            $tipoProducto = '2';
+        } else {
+            $producto = $arrayEquiposAllab[0]['IdModelo'];
+            $tipoProducto = '1';
+        }
+
+        $arrayValidacion = array(
+            'idUsuario' => $arrayEquiposAllab[0]['IdUsuario'],
+            'producto' => $producto,
+            'tipoProducto' => $tipoProducto
+        );
+
+        $inventarioAlmacenesVirtuales = $this->DBP->consultaInventarioAlmacenesVirtuales($arrayValidacion);
+
+        return $inventarioAlmacenesVirtuales;
     }
 
     public function mostrarEquipoDanado($idModelo) {
@@ -3939,7 +4063,6 @@ class Seguimientos extends General {
             'id' => $idAllab['Id'],
             'fecha' => $datos['Fecha'],
             'flag' => '1');
-
 
         if (!empty($_FILES)) {
             $CI = parent::getCI();
@@ -4299,6 +4422,63 @@ class Seguimientos extends General {
             return TRUE;
         } else {
             return FALSE;
+        }
+    }
+
+    public function validarSolicitudEquipo(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+        $arraySolicitudRefaccion = array(
+            'id' => $datos['id'],
+            'idUsuario' => $usuario['Id'],
+            'idEstatus' => $datos['idEstatus'],
+            'fechaEstatus' => $fecha,
+            'cobrable' => $datos['cobrable']
+        );
+
+        $resultado = $this->DBP->actualizarEquiposAllabSolicitudesRefaccion($arraySolicitudRefaccion);
+
+        if (!empty($resultado)) {
+            $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 2));
+            $mensaje = ['mensaje' => "Es correcto.",
+                'datos' => $formularios,
+                'idTabla' => $datos['id'],
+                'idServicio' => $datos['idServicio'],
+                'code' => 200];
+            return $mensaje;
+        } else {
+            $mensaje = ['mensaje' => $resultado,
+                'code' => 400];
+            return $mensaje;
+        }
+    }
+
+    public function guardarSolicitudProducto(array $datos) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+        $solicitudesRefaccion = $this->DBP->consultaEquiposAllabSolicitudesRefaccion($datos['idServicio']);
+        $datos['idSolicitudRefaccion'] = $solicitudesRefaccion[0]['Id'];
+        $datosEstatus = array(
+            'idEstatus' => $datos['idEstatus'],
+            'fecha' => $fecha,
+            'flag' => '1',
+            'id' => $datos['id']);
+
+        $resultado = $this->DBP->insertarRefaccionRefacciones($datos, $datosEstatus);
+
+        if (!empty($resultado)) {
+            $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 2));
+            $mensaje = ['mensaje' => "Es correcto.",
+                'datos' => $formularios,
+                'idTabla' => $datos['id'],
+                'idServicio' => $datos['idServicio'],
+                'code' => 200];
+            return $mensaje;
+        } else {
+            $mensaje = ['mensaje' => $resultado,
+                'code' => 400];
+            return $mensaje;
         }
     }
 

@@ -1075,20 +1075,48 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.Id,
                                         tst.Id as IdServicio,
                                         tst.Ticket,
-                                        (SELECT cvs.Nombre FROM cat_v3_sucursales cvs WHERE cvs.Id = tst.IdSucursal) as NombreSucursal,
+                                        (SELECT 
+                                                cvs.Nombre
+                                            FROM
+                                                cat_v3_sucursales cvs
+                                            WHERE
+                                                cvs.Id = tst.IdSucursal) as NombreSucursal,
                                         ve.Equipo,
                                         tea.FechaValidacion,
                                         tea.IdEstatus,
-                                        (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
+                                        (SELECT 
+                                                cve.Nombre
+                                            FROM
+                                                cat_v3_estatus cve
+                                            WHERE
+                                                cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
-                                        (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
-                                    FROM t_equipos_allab tea
-                                    INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
-                                    INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
+                                        (SELECT 
+                                                Nombre
+                                            FROM
+                                                cat_v3_equipos_allab_tipo_movimiento
+                                            WHERE
+                                                Id = tea.IdTipoMovimiento) TipoMovimiento
+                                    FROM
+                                        t_equipos_allab tea
+                                            INNER JOIN
+                                        t_servicios_ticket tst ON tst.Id = tea.IdServicio
+                                            INNER JOIN
+                                        v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
-                                    (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4','12','28','29','30','32','33','34')
-                                    END)");
+                                        (CASE
+                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4' , '12', '28', '29', '30', '32', '33', '34')
+                                            WHEN
+                                                tea.IdTipoMovimiento = '3'
+                                            THEN
+                                                tea.IdEstatus = '2' AND Flag = 0
+                                                    AND (SELECT 
+                                                        IdEstatus
+                                                    FROM
+                                                        t_equipos_allab_solicitud_refaccion
+                                                    WHERE
+                                                        IdRegistro = tea.Id) = '7'
+                                        END)");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1114,8 +1142,8 @@ class Modelo_Poliza extends Modelo_Base {
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','2','4','34')
-                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','29','33','2') OR tea.IdEstatus = '4' AND Flag = '1'
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34') OR tea.IdEstatus = '2' AND Flag = '1'
+                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','29','33') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '1'
                                     END)");
 
         if (!empty($consulta)) {
@@ -1737,8 +1765,6 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    // nuevo
-
     public function mostrarTipoPersonaValida() {
         $personaValida = $this->consulta("SELECT 
                                             cp.Id, cp.Nombre
@@ -1979,7 +2005,7 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaHisto(array $datos) {
+    public function consultaInventarioAlmacenesVirtuales(array $datos) {
         $equipoDanado = $this->consulta('SELECT 
                                             *
                                         FROM
@@ -1987,11 +2013,94 @@ class Modelo_Poliza extends Modelo_Base {
                                                 INNER JOIN
                                             cat_v3_almacenes_virtuales cvav ON ti.IdAlmacen = cvav.Id
                                         WHERE
-                                            cvav.IdReferenciaAlmacen = "299"
-                                                AND ti.IdProducto = "88"
-                                                AND ti.IdTipoProducto = "1"');
+                                            cvav.IdReferenciaAlmacen = "' . $datos['idUsuario'] . '"
+                                                AND ti.IdProducto = "' . $datos['producto'] . '"
+                                                AND ti.IdTipoProducto = "' . $datos['tipoProducto'] . '"');
 
         return $equipoDanado;
+    }
+
+    public function insertarEquiposAllabSolicitudRefaccion(array $datos) {
+        $resultado = $this->insertar('t_equipos_allab_solicitud_refaccion', [
+            'IdRegistro' => $datos['id'],
+            'IdUsuario' => $datos['idUsuario'],
+            'IdEstatus' => $datos['estatus'],
+            'FechaEstatus' => $datos['fechaEstatus']
+        ]);
+
+        return $resultado;
+    }
+
+    public function actualizarEquiposAllabSolicitudesRefaccion(array $datos) {
+        $resultado = $this->actualizar("t_equipos_allab_solicitud_refaccion", array(
+            'IdUsuario' => $datos['idUsuario'],
+            'IdEstatus' => $datos['idEstatus'],
+            'FechaEstatus' => $datos['fechaEstatus'],
+            'Cobrable' => $datos['cobrable']
+                ), ['IdRegistro' => $datos['id']]);
+
+        return $resultado;
+    }
+
+    public function consultaEquiposAllabSolicitudesRefaccion(string $idServicio) {
+        $consulta = $this->consulta('SELECT 
+                                            teasr.*
+                                        FROM
+                                            t_equipos_allab_solicitud_refaccion teasr
+                                        INNER join t_equipos_allab tea
+                                        ON teasr.IdRegistro = tea.Id
+                                        WHERE tea.IdServicio = " ' . $idServicio . ' "');
+
+        return $consulta;
+    }
+
+    public function consultaInventarioAlmacen(array $datos) {
+        $consulta = $this->consulta('select 
+                                        ti.Id,
+                                        ti.Serie,
+                                        (CASE 
+                                                WHEN IdTipoProducto = "1" THEN (SELECT Nombre FROM cat_v3_modelos_equipo WHERE Id = IdProducto)
+                                                WHEN IdTipoProducto = "2" THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = IdProducto)
+                                        END) AS Producto
+                                        from t_inventario ti
+                                        where ti.IdAlmacen in (
+                                                select 
+                                                Id
+                                                from cat_v3_almacenes_virtuales
+                                                where IdResponsable = "' . $datos['idUsuario'] . '" /*IdUsuario*/
+                                                or (IdTipoAlmacen = 1 and IdReferenciaAlmacen = "' . $datos['idUsuario'] . '" /*IdUsuario*/)
+                                        )
+                                        and ti.IdTipoProducto = "' . $datos['tipoProducto'] . '" /*Cambio dependiendo equipo o refaccion*/
+                                        and ti.IdEstatus = 17
+                                        and ti.Bloqueado = 0');
+
+        return $consulta;
+    }
+
+    public function insertarRefaccionRefacciones(array $datos, array $datosEstatus) {
+        $this->iniciaTransaccion();
+
+        foreach ($datos['listaProductos'] as $key => $value) {
+            $arraySolicitudRefaccionRefacciones = array(
+                'IdSolicitudRefaccion' => $datos['idSolicitudRefaccion'],
+                'IdInvetario' => $value
+            );
+
+            $this->insertar('t_equipos_allab_solicitud_refaccion_refacciones', $arraySolicitudRefaccionRefacciones);
+            $this->actualizar("t_inventario", ['Bloqueado' => 1], ['Id' => $value]);
+        }
+        
+        $this->cambiarEsatus($datosEstatus);
+
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
     }
 
 }

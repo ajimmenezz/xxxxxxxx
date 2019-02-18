@@ -62,6 +62,7 @@ $(function () {
 
         //tablas
         tabla.generaTablaPersonal('#listaRefaccionUtilizada', null, null, true, true, [[0, 'desc']]);
+        tabla.generaTablaPersonal('#lista-solicitud-producto', null, null, true, true);
 
         //Iniciar input archivos
         file.crearUpload('#archivosProblemaGuia', 'Seguimiento/GuardarProblemaGuiaLogistica');
@@ -694,7 +695,77 @@ $(function () {
                 });
             }
         });
+
+        $('#btnValidarSolicitud').off('click');
+        $('#btnValidarSolicitud').on('click', function () {
+            var data = {'id': idTabla, 'idServicio': idServicio, 'tipoValidacion': 'validar', 'cobrable': '0', 'idEstatus': '7'};
+            botonValidacionSupervisor(data, idTabla);
+        });
+
+        $('#btnCobrarRefaccion').off('click');
+        $('#btnCobrarRefaccion').on('click', function () {
+            var data = {'id': idTabla, 'idServicio': idServicio, 'tipoValidacion': 'cobrar', 'cobrable': '1', 'idEstatus': '7'};
+            botonValidacionSupervisor(data, idTabla);
+        });
+
+        var listaIds = [];
+
+        $('#lista-solicitud-producto').on('change', 'input.editor-active', function () {
+            var dataId = $(this).attr('data-id');
+
+            if ($(this).is(":checked")) {
+                listaIds.push(dataId);
+            } else {
+                listaIds.splice($.inArray(dataId, listaIds), 1);
+            }
+        });
+
+        $('#btnTerminarSeleccionLocal').off('click');
+        $('#btnTerminarSeleccionLocal').on('click', function () {
+            if (listaIds.length > 0) {
+                var data = {'listaProductos': listaIds, 'id': idTabla, 'idServicio': idServicio, 'idEstatus': 'local'};
+                terminarSeleccion(data, idTabla);
+            }
+        });
+
+        $('#btnTerminarSeleccionForaneo').off('click');
+        $('#btnTerminarSeleccionForaneo').on('click', function () {
+            if (listaIds.length > 0) {
+                var data = {'listaProductos': listaIds, 'id': idTabla, 'idServicio': idServicio, 'idEstatus': 'local'};
+                terminarSeleccion(data, idTabla);
+            }
+        });
     };
+
+    var terminarSeleccion = function () {
+        var data = arguments[0];
+        var idTabla = arguments[1];
+
+        evento.enviarEvento('Seguimiento/GuardarSolicitudProducto', data, '#panelValidacionExistencia', function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(idTabla, respuesta.idServicio);
+                eventosComentarios(idTabla, respuesta.idServicio);
+                cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+            }
+        });
+    }
+
+    var botonValidacionSupervisor = function () {
+        var data = arguments[0];
+        var idTabla = arguments[1];
+
+        evento.enviarEvento('Seguimiento/ValidarSolicitudEquipo', data, '#panelValidacionSolicitudRefaccion', function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(idTabla, respuesta.idServicio);
+                eventosComentarios(idTabla, respuesta.idServicio);
+                cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+            }
+        });
+    }
 
     var botonGuardarValidacion = function () {
         var datos = arguments[0];
