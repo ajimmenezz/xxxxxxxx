@@ -1,6 +1,15 @@
 <div id="divListaEquiposEnviados" class="content">
-    <input type="hidden" value="<?php // echo $datos['vistaUsuario']  ?>" id="IdPerfil" />
-    <h1 class="page-header">Seguimiento Equipos Almecén o Solicitados</h1>
+    <input type="hidden" id="IdPerfil" />
+    <div class="row">
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <h1 class="page-header">Seguimiento Equipos Almecén o Solicitados</h1>
+        </div>
+        <div class="col-md-6 col-xs-6 text-right">
+            <label class="btnRegresarTabla btn btn-success hidden">
+                <i class="fa fa fa-reply"></i> Regresar
+            </label> 
+        </div>
+    </div>
     <div id="panelTablaEquiposEnviados" class="panel panel-inverse">
         <div class="panel-heading">    
             <h4 class="panel-title">Seguimiento Equipos Almecén o Solicitados</h4>
@@ -12,7 +21,8 @@
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <div class="form-group text-right" id="botonNuevoValidacion">
-                        <a href="javascript:;" class="btn btn-success" id="agregarEquipo">Nuevo</a>
+                        <?php $botonNuevo = ($datos['permisoNuevoRegistro']) ? "" : "hidden"; ?>
+                        <a href="javascript:;" class="btn btn-success <?php echo $botonNuevo; ?>" id="agregarEquipo"><i class="fa fa-plus"></i> Nuevo</a>
                     </div>
                 </div>
             </div>
@@ -35,46 +45,41 @@
                         <table id="lista-equipos-enviados-solicitados" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                             <thead>
                                 <tr>
-                                    <th class="all">Id</th>
-                                    <th class="all">IdServicio</th>
+                                    <th class="never">Id</th>
+                                    <th class="all">Servicio</th>
                                     <th class="all">Ticket</th>
                                     <th class="all">Sucursal</th>
                                     <th class="all">Equipo o Refacción</th>
                                     <th class="all">Fecha</th>
-                                    <th class="all">IdEstatus</th>
+                                    <th class="never">IdEstatus</th>
                                     <th class="all">Estatus</th>
                                     <th class="all">Refaccion</th>
+                                    <th class="all">Tipo Movimiento</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                    <?php
-;                                    if ($datos['tablaEquipos']['code'] === 200) {
-                                        foreach ($datos['tablaEquipos']['datosTabla'] as $key => $value) {
-                                            echo '<tr>';
-                                            echo '<td>' . $value['Id'] . '</td>';
-                                            echo '<td>' . $value['IdServicio'] . '</td>';
-                                            echo '<td>' . $value['Ticket'] . '</td>';
-                                            echo '<td>' . $value['NombreSucursal'] . '</td>';
-                                            echo '<td>' . $value['Equipo'] . '</td>';
-                                            echo '<td>' . $value['FechaValidacion'] . '</td>';
-                                            echo '<td>' . $value['IdEstatus'] . '</td>';
-                                            echo '<td>' . $value['NombreEstatus'] . '</td>';
-                                            echo '<td>' . $value['IdRefaccion'] . '</td>';
-                                            echo '</tr>';
-                                        }
+                                <?php
+                                if ($datos['tablaEquipos']['code'] === 200) {
+                                    foreach ($datos['tablaEquipos']['datosTabla'] as $key => $value) {
+                                        echo '<tr>';
+                                        echo '<td>' . $value['Id'] . '</td>';
+                                        echo '<td>' . $value['IdServicio'] . '</td>';
+                                        echo '<td>' . $value['Ticket'] . '</td>';
+                                        echo '<td>' . $value['NombreSucursal'] . '</td>';
+                                        echo '<td>' . $value['Equipo'] . '</td>';
+                                        echo '<td>' . $value['FechaValidacion'] . '</td>';
+                                        echo '<td>' . $value['IdEstatus'] . '</td>';
+                                        echo '<td>' . $value['NombreEstatus'] . '</td>';
+                                        echo '<td>' . $value['IdRefaccion'] . '</td>';
+                                        echo '<td>' . $value['TipoMovimiento'] . '</td>';
+                                        echo '</tr>';
                                     }
-                                    ?>
+                                }
+                                ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <!--<pre>-->
-                    <?php
-//                    print_r($datos['vistaUsuario']['IdPerfil'] . " " . $datos['vistaUsuario']['nombrePerfil']);
-                    ?>
-                <!--</pre>-->
             </div>
         </div>
     </div>

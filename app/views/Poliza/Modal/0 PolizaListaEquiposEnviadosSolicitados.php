@@ -1,9 +1,18 @@
 <div id="divListaEquiposEnviados" class="content">
-    <input type="hidden" value="<?php // echo $datos['vistaUsuario']['IdPerfil'] ?>" id="IdPerfil" />
+    <input type="hidden" value="<?php // echo $datos['vistaUsuario']['IdPerfil']   ?>" id="IdPerfil" />
     <h1 class="page-header">Seguimiento Equipos Almecén o Solicitados</h1>
     <div id="panelTablaEquiposEnviados" class="panel panel-inverse">
         <div class="panel-heading">    
-            <h4 class="panel-title">Seguimiento Equipos Almecén o Solicitados</h4>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <h4 class="panel-title">Seguimiento Equipos Almecén o Solicitados</h4>
+                </div>
+                <div class="col-md-6 col-xs-6 text-right">
+                    <label class="btnRegresarTabla btn btn-success hidden">
+                        <i class="fa fa fa-reply"></i> Regresar
+                    </label> 
+                </div>
+            </div>
         </div>
         <div class="panel-body">
             <div class="row">
@@ -54,7 +63,7 @@
                 <pre>
                     <?php
 //                        foreach ($datos['vistaUsuario'] as $key => $value) {
-                            print_r($datos['vistaUsuario']['IdPerfil']);
+                    print_r($datos['vistaUsuario']['IdPerfil']);
 //                        }
                     ?>
                 </pre>

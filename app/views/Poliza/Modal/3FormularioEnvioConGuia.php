@@ -27,12 +27,18 @@ if (!empty($datosSolicitudGuia)) {
     $mostrarSelectInput = "";
 }
 
-if($estatus['IdEstatus'] === '26'){
+if ($estatus['IdEstatus'] === '26') {
     $botonSolicitarGuia = 'hidden';
-}else{
+}else if ($estatus['IdEstatus'] === '4' && $estatus['Flag'] === '0') {
+    $mostrarSelect = '';
+    $botonSolicitarGuia = 'hidden';
+    $mostrarInput = 'hidden';
+    $mostrarSelectInput = '';
+} else {
     $botonSolicitarGuia = '';
 }
 ?>
+
 <div id="panelEnvioConGuia" class="panel panel-inverse">
     <div class="panel-heading">
         <h4 class="panel-title">2) Envío a Almacén</h4>
@@ -92,8 +98,8 @@ if($estatus['IdEstatus'] === '26'){
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-9 col-sm-12 col-xs-12">
-                    <div class="form-group <?php echo $mostrarSelectInput?> ">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="form-group <?php echo $mostrarSelectInput ?> ">
                         <label class="f-w-600 f-s-13">Evidencia del envío</label> 
                         <input id="evidenciaEnvioGuia"  name="evidenciaEnvioGuia[]" type="file" multiple />
                     </div>

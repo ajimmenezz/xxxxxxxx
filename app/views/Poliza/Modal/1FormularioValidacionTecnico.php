@@ -1,5 +1,3 @@
-<!--<div id="divNuevaSolicitud" class="content">
-    <h1 class="page-header">Nueva Solicitud o Envio de Equipo</h1>-->
 <?php
 if (!empty($datosValidacion)) {
     foreach ($datosValidacion as $item) {
@@ -33,11 +31,6 @@ if (!empty($datosValidacion)) {
 <div id="envioAlmacenConGuia" class="hidden"></div>
 <div id="panelValidacion" class="panel panel-inverse">
     <div class="panel-heading">
-        <div class="panel-heading-btn <?php echo $mostrarSelect ?>">
-            <label id="btnRegresarTabla" class="btn btn-success btn-xs">
-                <i class="fa fa fa-reply"></i> Regresar
-            </label>
-        </div>
         <h4 class="panel-title">1) Validación</h4>
     </div>
     <div class="panel-body">
@@ -185,7 +178,7 @@ if (!empty($datosValidacion)) {
         </div>
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelect ?>">
-                <a id="btnGuardarValidacion" href="javascript:;" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-15">Guardar Validación</a>
+                <a id="btnGuardarValidacion" href="javascript:;" class="btn btn-primary m-t-10 m-r-10 f-w-600 f-s-15"><i class="fa fa-save"></i> Guardar Validación</a>
             </div>
         </div>
     </div>

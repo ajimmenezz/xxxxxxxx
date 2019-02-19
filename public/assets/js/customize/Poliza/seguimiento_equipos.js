@@ -62,6 +62,7 @@ $(function () {
 
         //tablas
         tabla.generaTablaPersonal('#listaRefaccionUtilizada', null, null, true, true, [[0, 'desc']]);
+        tabla.generaTablaPersonal('#lista-solicitud-producto', null, null, true, true);
 
         //Iniciar input archivos
         file.crearUpload('#archivosProblemaGuia', 'Seguimiento/GuardarProblemaGuiaLogistica');
@@ -147,10 +148,26 @@ $(function () {
         var idTabla = arguments[0];
         var idServicio = arguments[1];
 
-        $('#btnRegresarTabla').off('click');
-        $('#btnRegresarTabla').on('click', function () {
+        $('.btnRegresarTabla').removeClass('hidden');
+
+        $('.btnRegresarTabla').off('click');
+        $('.btnRegresarTabla').on('click', function () {
             $('#panelTablaEquiposEnviados').removeClass('hidden');
             $('#seccionFormulariosValidacion').addClass('hidden');
+            $('#seccionPanelEspera').addClass('hidden');
+            $('#seccionFormulariosRecepcionTecnico').addClass('hidden');
+            $('#seccionFormulariosEnvSegLog').addClass('hidden');
+            $('#seccionFormulariosRecepcionLogistica').addClass('hidden');
+            $('#seccionFormulariosRevisionHistorial').addClass('hidden');
+            $('#seccionFormulariosRecepcionLaboratorio').addClass('hidden');
+            $('#seccionFormulariosRecepcionAlmacen').addClass('hidden');
+            $('#seccionFormulariosAsignacionGuiaLogistica').addClass('hidden');
+            $('#seccionFormulariosAsignacionGuia').addClass('hidden');
+            $('#seccionFormulariosGuiaLogistica').addClass('hidden');
+            $('#seccionFormulariosSinGuia').addClass('hidden');
+            $('#seccionFormulariosGuia').addClass('hidden');
+            $('#seccionFormulariosValidacion').addClass('hidden');
+            $('.btnRegresarTabla').addClass('hidden');
         });
 
         $("#listaTicket").on("change", function () {
@@ -196,7 +213,6 @@ $(function () {
             }
         });
 
-        // nuevo
         $('#listaTipoPersonal').on('change', function () {
             var seleccionado = $('#listaTipoPersonal option:selected').val();
             var datos = {'idTipoPersonal': seleccionado};
@@ -277,50 +293,64 @@ $(function () {
 
         $('#btnGuardarValidacion').off('click');
         $('#btnGuardarValidacion').on('click', function () {
-            var tipoMovimiento = $('#inputMovimiento').val();
-            var IdServicio = $('#listaServicio').val();
-            var IdPersonalValida = $('#listaNombrePersonal').val();
-            var FechaValidacion = $("#fechaValidacion").val();
-            var IdTipoMovimiento = $("input[name='movimiento']:checked").val();
-            var IdModelo = $('#listaServicio').find(':selected').attr('data-idmodelo');
-            var Serie = $('#listaServicio').find(':selected').attr('data-serie');
-            var IdTipoPersonal = $('#listaTipoPersonal').val();
-            var equipoEnviado = $("#equipoEnviado").attr('data-IdEquipo');
+            var arrayCampos = [
+                {'objeto': '#listaTicket', 'mensajeError': 'Falta seleccionar el ticket.'},
+                {'objeto': '#listaServicio', 'mensajeError': 'Falta seleccionar el servicio.'},
+                {'objeto': '#listaTipoPersonal', 'mensajeError': 'Falta seleccionar el tipo de personal que valida.'},
+                {'objeto': '#listaNombrePersonal', 'mensajeError': 'Falta seleccionar el personal que valida.'}
+            ];
 
-            var datosValidacion = {'IdServicio': IdServicio,
-                'IdPersonalValida': IdPersonalValida,
-                'FechaValidacion': FechaValidacion,
-                'IdTipoMovimiento': IdTipoMovimiento,
-                'IdModelo': IdModelo,
-                'Serie': Serie,
-                'IdRefaccion': null,
-                'equipoEnviado': equipoEnviado,
-                'IdTipoPersonal': IdTipoPersonal};
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorFormularioValidacion');
 
-            switch (tipoMovimiento) {
-                case '1':
-                case '2':
-                    if (evento.validarFormulario('#formValidacion')) {
-                        botonGuardarValidacion(datosValidacion, idTabla);
+            if (camposFormularioValidados) {
+                var tipoMovimiento = $('#inputMovimiento').val();
+                var IdServicio = $('#listaServicio').val();
+                var IdPersonalValida = $('#listaNombrePersonal').val();
+                var FechaValidacion = $("#fechaValidacion").val();
+                var IdTipoMovimiento = $("input[name='movimiento']:checked").val();
+                var IdModelo = $('#listaServicio').find(':selected').attr('data-idmodelo');
+                var Serie = $('#listaServicio').find(':selected').attr('data-serie');
+                var IdTipoPersonal = $('#listaTipoPersonal').val();
+                var equipoEnviado = $("#equipoEnviado").attr('data-IdEquipo');
+
+                var datosValidacion = {'IdServicio': IdServicio,
+                    'IdPersonalValida': IdPersonalValida,
+                    'FechaValidacion': FechaValidacion,
+                    'IdTipoMovimiento': IdTipoMovimiento,
+                    'IdModelo': IdModelo,
+                    'Serie': Serie,
+                    'IdRefaccion': null,
+                    'equipoEnviado': equipoEnviado,
+                    'IdTipoPersonal': IdTipoPersonal};
+
+                if (tipoMovimiento !== '') {
+                    switch (tipoMovimiento) {
+                        case '1':
+                        case '2':
+                            if (evento.validarFormulario('#formValidacion')) {
+                                botonGuardarValidacion(datosValidacion, idTabla);
+                            }
+                            break;
+                        case '3':
+                            var idEquipoEnviado = validarEquipo();
+
+                            if (idEquipoEnviado !== '') {
+                                datosValidacion.IdModelo = idEquipoEnviado.seleccionEquipo;
+                                datosValidacion.IdRefaccion = idEquipoEnviado.selectEquipoRefaccion || null;
+                                datosValidacion.Serie = null;
+
+                                botonGuardarValidacion(datosValidacion, idTabla);
+                            } else {
+                                evento.mostrarMensaje("#errorFormularioValidacion", false, "Selecciona equipo solicitado", 4000);
+                            }
+                            break;
+                        default:
+                            evento.validarFormulario('#formValidacion');
                     }
-                    break;
-                case '3':
-                    var idEquipoEnviado = validarEquipo();
-
-                    if (idEquipoEnviado !== '') {
-                        datosValidacion.IdModelo = idEquipoEnviado.seleccionEquipo;
-                        datosValidacion.IdRefaccion = idEquipoEnviado.selectEquipoRefaccion || null;
-                        datosValidacion.Serie = null;
-
-                        botonGuardarValidacion(datosValidacion, idTabla);
-                    } else {
-                        evento.mostrarMensaje("#errorFormularioValidacion", false, "Selecciona equipo solicitado", 4000);
-                    }
-                    break;
-                default:
-                    evento.validarFormulario('#formValidacion');
+                } else {
+                    evento.mostrarMensaje("#errorFormularioValidacion", false, "Selecciona el movimiento que va a realizar.", 4000);
+                }
             }
-
         });
 
         $('#btnGuardarEnvio').off('click');
@@ -345,8 +375,8 @@ $(function () {
                     evento.enviarEvento('Seguimiento/GuardarEnvioAlmacen', datos, panel, function (respuesta) {
                         vistasDeFormularios(respuesta.datos);
                         incioEtiquetas();
-                        eventosGenerales(respuesta.idTabla);
-                        eventosComentarios(respuesta.idTabla);
+                        eventosGenerales(respuesta.idTabla, respuesta.idServicio);
+                        eventosComentarios(respuesta.idTabla, respuesta.idServicio);
                     });
                 }
 
@@ -354,8 +384,6 @@ $(function () {
                 evento.mostrarMensaje("#errorFormularioEnvio", false, "Ingresa los datos solicitados", 4000);
             }
         });
-
-        // termina nuevo
 
         $('#btnGuardarRecepcionTec').off('click');
         $('#btnGuardarRecepcionTec').on('click', function () {
@@ -374,10 +402,7 @@ $(function () {
 
                 file.enviarArchivos('#evidenciaRecepcionTecnico', 'Seguimiento/GuardarRecepcionTecnico', '#panelRecepcionTecnico', data, function (respuesta) {
                     if (respuesta.code == 200) {
-                        vistasDeFormularios(respuesta.datos);
-                        incioEtiquetas();
-                        eventosGenerales(idTabla, respuesta.idServicio);
-                        eventosComentarios(idTabla, respuesta.idServicio);
+                        location.reload();
                     } else {
                         evento.mostrarMensaje("#errorFormularioTecnico", false, "Ocurrió un error al guardar el comentario. Por favor recargue su página y vuelva a intentarlo.", 4000);
                     }
@@ -406,6 +431,7 @@ $(function () {
                         incioEtiquetas();
                         eventosGenerales(idTabla, respuesta.idServicio);
                         eventosComentarios(idTabla, respuesta.idServicio);
+                        recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                     }
                 });
             }
@@ -432,6 +458,7 @@ $(function () {
                         incioEtiquetas();
                         eventosGenerales(idTabla, respuesta.idServicio);
                         eventosComentarios(idTabla, respuesta.idServicio);
+                        recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                     }
                 });
             }
@@ -458,6 +485,7 @@ $(function () {
                         incioEtiquetas();
                         eventosGenerales(idTabla, respuesta.idServicio);
                         eventosComentarios(idTabla, respuesta.idServicio);
+                        recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                     }
                 });
             }
@@ -495,25 +523,6 @@ $(function () {
             }
         });
 
-        $('#listaRefaccionUtilizada tbody').on('click', 'tr', function () {
-            var datos = $('#listaRefaccionUtilizada').DataTable().row(this).data();
-            if (datos !== undefined) {
-                var data = {
-                    'id': datos[0],
-                    'idServicio': idServicio
-                };
-
-                evento.enviarEvento('Seguimiento/EliminarRefacionUtilizada', data, '#panelLaboratorioHistorial', function (respuesta) {
-                    if (respuesta.code === 200) {
-                        recargandoTablaRefaccionesUtilizadas(respuesta.datos);
-                        evento.mostrarMensaje("#errorAgregarRefaccion", true, respuesta.mensaje, 4000);
-                    } else {
-                        evento.mostrarMensaje("#errorAgregarRefaccion", false, respuesta.mensaje, 4000);
-                    }
-                });
-            }
-        });
-
         $('#consluirRevisionLab').off('click');
         $('#consluirRevisionLab').on('click', function () {
             var data = {
@@ -528,6 +537,7 @@ $(function () {
                     eventosGenerales(idTabla, respuesta.idServicio);
                     eventosComentarios(idTabla, respuesta.idServicio);
                     cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+                    recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                 } else {
                     evento.mostrarMensaje("#errorConcluirRevision", false, respuesta.mensaje, 4000);
                 }
@@ -700,20 +710,88 @@ $(function () {
                 });
             }
         });
+
+        $('#btnValidarSolicitud').off('click');
+        $('#btnValidarSolicitud').on('click', function () {
+            var data = {'id': idTabla, 'idServicio': idServicio, 'tipoValidacion': 'validar', 'cobrable': '0', 'idEstatus': '7'};
+            botonValidacionSupervisor(data, idTabla);
+        });
+
+        $('#btnCobrarRefaccion').off('click');
+        $('#btnCobrarRefaccion').on('click', function () {
+            var data = {'id': idTabla, 'idServicio': idServicio, 'tipoValidacion': 'cobrar', 'cobrable': '1', 'idEstatus': '7'};
+            botonValidacionSupervisor(data, idTabla);
+        });
+
+        var listaIds = [];
+
+        $('#lista-solicitud-producto').on('change', 'input.editor-active', function () {
+            var dataId = $(this).attr('data-id');
+
+            if ($(this).is(":checked")) {
+                listaIds.push(dataId);
+            } else {
+                listaIds.splice($.inArray(dataId, listaIds), 1);
+            }
+        });
+
+        $('#btnTerminarSeleccionLocal').off('click');
+        $('#btnTerminarSeleccionLocal').on('click', function () {
+            if (listaIds.length > 0) {
+                var data = {'listaProductos': listaIds, 'id': idTabla, 'idServicio': idServicio, 'idEstatus': '38', 'flag': '1'};
+                terminarSeleccion(data, idTabla);
+            }
+        });
+
+        $('#btnTerminarSeleccionForaneo').off('click');
+        $('#btnTerminarSeleccionForaneo').on('click', function () {
+            if (listaIds.length > 0) {
+                var data = {'listaProductos': listaIds, 'id': idTabla, 'idServicio': idServicio, 'idEstatus': '38', 'flag': '0'};
+                terminarSeleccion(data, idTabla);
+            }
+        });
     };
 
-    // nuevo
+    var terminarSeleccion = function () {
+        var data = arguments[0];
+        var idTabla = arguments[1];
+
+        evento.enviarEvento('Seguimiento/GuardarSolicitudProducto', data, '#panelValidacionExistencia', function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(idTabla, respuesta.idServicio);
+                eventosComentarios(idTabla, respuesta.idServicio);
+                cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+            }
+        });
+    }
+
+    var botonValidacionSupervisor = function () {
+        var data = arguments[0];
+        var idTabla = arguments[1];
+
+        evento.enviarEvento('Seguimiento/ValidarSolicitudEquipo', data, '#panelValidacionSolicitudRefaccion', function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(idTabla, respuesta.idServicio);
+                eventosComentarios(idTabla, respuesta.idServicio);
+                cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+            }
+        });
+    }
+
     var botonGuardarValidacion = function () {
         var datos = arguments[0];
-        var idTabla = arguments[1];
         panel = $('#panelValidacion');
 
         evento.enviarEvento('Seguimiento/GuardarValidacionTecnico', datos, panel, function (respuesta) {
             if (respuesta.code === 400) {
                 vistasDeFormularios(respuesta.datos);
                 incioEtiquetas();
-                eventosGenerales(idTabla);
-                eventosComentarios(idTabla);
+                eventosGenerales(respuesta.idTabla, respuesta.idServicio);
+                eventosComentarios(respuesta.idTabla, respuesta.idServicio);
             } else {
                 evento.mostrarMensaje("#errorFormularioValidacion", false, respuesta.mensaje, 4000);
             }
@@ -802,6 +880,7 @@ $(function () {
                         $("#txtNotaAlmacen").val('').text('');
                         file.limpiar('#adjuntosProblemaAlm');
                         cargaRecepcionesProblemas(idTabla, '1', '28', '#panelRecepcionAlmacen', '#divNotasAdjuntosAlmacen');
+                        recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                     } else {
                         evento.mostrarMensaje("#errorAgregarProblemaAlm", false, "Ocurrió un error al guardar la nota. Por favor recargue su página y vuelva a intentarlo.", 4000);
                     }
@@ -830,6 +909,7 @@ $(function () {
                         $("#txtNotaLaboratorio").val('').text('');
                         file.limpiar('#adjuntosProblemaLab');
                         cargaRecepcionesProblemas(idTabla, '2', '29', '#panelRecepcionLaboratorio', '#divNotasAdjuntosLaboratorio');
+                        recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                     } else {
                         evento.mostrarMensaje("#errorAgregarProblemaLab", false, "Ocurrió un error al guardar la nota. Por favor recargue su página y vuelva a intentarlo.", 4000);
                     }
@@ -858,6 +938,7 @@ $(function () {
                         $("#txtNotaLogistica").val('').text('');
                         file.limpiar('#adjuntosProblemaLog');
                         cargaRecepcionesProblemas(idTabla, '3', '30', '#panelRecepcionLogistica', '#divNotasAdjuntosLogistica');
+                        recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                     } else {
                         evento.mostrarMensaje("#errorAgregarProblemaLog", false, "Ocurrió un error al guardar la nota. Por favor recargue su página y vuelva a intentarlo.", 4000);
                     }
@@ -886,6 +967,7 @@ $(function () {
                         $("#txtNotaTecnico").val('').text('');
                         file.limpiar('#adjuntosProblemaTec');
                         cargaRecepcionesProblemas(idTabla, '4', '31', '#panelRecepcionTecnico', '#divNotasAdjuntosTecnico');
+                        recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                     } else {
                         evento.mostrarMensaje("#errorAgregarProblemaTec", false, "Ocurrió un error al guardar la nota. Por favor recargue su página y vuelva a intentarlo.", 4000);
                     }
@@ -989,6 +1071,14 @@ $(function () {
 
         $.each(refaccionesUtilizadas, function (key, item) {
             tabla.agregarFila('#listaRefaccionUtilizada', [item.Id, item.Nombre, item.Cantidad]);
+        });
+    };
+
+    var recargandoTablaEquiposEnviadosSolicitados = function (equipoEnviadosSolicitados) {
+        tabla.limpiarTabla('#lista-equipos-enviados-solicitados');
+
+        $.each(equipoEnviadosSolicitados, function (key, item) {
+            tabla.agregarFila('#lista-equipos-enviados-solicitados', [item.Id, item.IdServicio, item.Ticket, item.NombreSucursal, item.Equipo, item.FechaValidacion, item.IdEstatus, item.NombreEstatus, item.IdRefaccion, item.TipoMovimiento]);
         });
     };
 
