@@ -126,7 +126,7 @@ if ($estatus['IdEstatus'] === '26') {
         </div>
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelect ?>">
-                <a id="btnGuardarEnvio" class="btn btn-success btn-sm m-t-10 m-r-10 f-w-600 f-s-13">Guardar Envío</a>
+                <a id="btnGuardarEnvio" class="btn btn-primary btn-sm m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-save"></i> Guardar Envío</a>
             </div>
         </div>
     </div>

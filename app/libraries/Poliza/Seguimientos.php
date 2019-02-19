@@ -3497,7 +3497,7 @@ class Seguimientos extends General {
                     'permisosAdicionales' => $permisosAdicionales);
             }
         }
-        
+
         if ($idEstatus === '35' && $flag === '1') {
             $equipoAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
             if ($equipoAllab[0]['IdTipoMovimiento'] === '1') {
@@ -3950,6 +3950,7 @@ class Seguimientos extends General {
             $mensaje = ['mensaje' => "Correcto",
                 'datos' => $formularios,
                 'idServicio' => $datos['idServicio'],
+                'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200];
             return $mensaje;
         } else {
@@ -3997,6 +3998,7 @@ class Seguimientos extends General {
             $mensaje = ['mensaje' => "Correcto",
                 'datos' => $formularios,
                 'idServicio' => $datos['idServicio'],
+                'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200];
             return $mensaje;
         } else {
@@ -4043,6 +4045,7 @@ class Seguimientos extends General {
             $mensaje = ['mensaje' => "Correcto",
                 'datos' => $formularios,
                 'idServicio' => $datos['idServicio'],
+                'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200];
             return $mensaje;
         } else {
@@ -4269,6 +4272,7 @@ class Seguimientos extends General {
                     $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
                         'datos' => $formularios,
                         'idTabla' => $idAllab['Id'],
+                        'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                         'code' => 200];
                     return $mensaje;
                 } else {
@@ -4283,6 +4287,7 @@ class Seguimientos extends General {
                 $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
                     'datos' => $formularios,
                     'idTabla' => $idAllab['Id'],
+                    'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                     'code' => 200];
                 return $mensaje;
             } else {
@@ -4505,6 +4510,7 @@ class Seguimientos extends General {
                 $mensaje = ['mensaje' => "Se guardo correctamente la entrega.",
                     'datos' => $formularios,
                     'idTabla' => $datos['id'],
+                    'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                     'code' => 200];
                 return $mensaje;
             } else {
@@ -4547,7 +4553,7 @@ class Seguimientos extends General {
         );
 
         $datosEstatus = array(
-            'idEstatus' => $datos['idEstatus'],
+            'idEstatus' => '4',
             'id' => $datos['id'],
             'fecha' => $fecha,
             'flag' => $datos['flag']);
@@ -4559,7 +4565,7 @@ class Seguimientos extends General {
         }
 
         if ($resultado = 200) {
-            if ($datos['idEstatus'] === '4') {
+            if ($datos['idEstatus'] === '37') {
                 $correoTecnico = $this->DBS->consultaGeneralSeguimiento('SELECT 
                                                                                 (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = IdUsuario) CorreoTecnico,
                                                                                 nombreUsuario(IdUsuario) Tecnico
@@ -4576,6 +4582,7 @@ class Seguimientos extends General {
             $mensaje = ['mensaje' => "Se guardo correctamente la entrega.",
                 'datos' => $formularios,
                 'idTabla' => $datos['id'],
+                'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200];
             return $mensaje;
         } else {
@@ -4600,6 +4607,7 @@ class Seguimientos extends General {
                 'datos' => $formularios,
                 'idTabla' => $datos['id'],
                 'idServicio' => $datos['idServicio'],
+                'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200];
             return $mensaje;
         } else {
@@ -4639,6 +4647,7 @@ class Seguimientos extends General {
                 'datos' => $formularios,
                 'idTabla' => $datos['id'],
                 'idServicio' => $datos['idServicio'],
+                'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200];
             return $mensaje;
         } else {
@@ -4701,6 +4710,7 @@ class Seguimientos extends General {
                     'datos' => $formularios,
                     'idTabla' => $datos['id'],
                     'idServicio' => $datos['idServicio'],
+                    'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                     'code' => 200];
                 return $mensaje;
             } else {

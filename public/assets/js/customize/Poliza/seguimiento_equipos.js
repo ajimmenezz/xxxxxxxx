@@ -698,8 +698,8 @@ $(function () {
                     'id': idTabla,
                     'idServicio': idServicio,
                     'comentarios': $('#txtComentariosGuia').val(),
-                    'idEstatus': 4,
-                    'flag': '0'
+                    'idEstatus': 37,
+                    'flag': '1'
                 }
 
                 file.enviarArchivos('#archivosProblemaGuia', 'Seguimiento/GuardarProblemaGuiaLogistica', '#panelAsignacionGuia', datos, function (respuesta) {
@@ -829,7 +829,7 @@ $(function () {
                     cargaRecepcionesProblemas(idTabla, '3', '30', '#panelRecepcionLogistica', '#divNotasAdjuntosLogistica');
                     break;
                 case "#problemasRecepcionTenico":
-                    cargaRecepcionesProblemas(idTabla, '4', '31', '#panelRecepcionTecnico', '#divNotasAdjuntosTecnico');
+                    cargaRecepcionesProblemas(idTabla, '39', '31', '#panelRecepcionTecnico', '#divNotasAdjuntosTecnico');
                     break;
             }
         });
@@ -966,7 +966,7 @@ $(function () {
                         evento.mostrarMensaje("#errorAgregarProblemaTec", true, "Se ha guardado la nota correctamente", 6000);
                         $("#txtNotaTecnico").val('').text('');
                         file.limpiar('#adjuntosProblemaTec');
-                        cargaRecepcionesProblemas(idTabla, '4', '31', '#panelRecepcionTecnico', '#divNotasAdjuntosTecnico');
+                        cargaRecepcionesProblemas(idTabla, '39', '31', '#panelRecepcionTecnico', '#divNotasAdjuntosTecnico');
                         recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                     } else {
                         evento.mostrarMensaje("#errorAgregarProblemaTec", false, "Ocurrió un error al guardar la nota. Por favor recargue su página y vuelva a intentarlo.", 4000);
