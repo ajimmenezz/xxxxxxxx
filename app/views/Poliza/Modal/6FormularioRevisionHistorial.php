@@ -1,7 +1,7 @@
 <?php
 if (!empty($datosValidacion)) {
     foreach ($datosValidacion as $value) {
-        if ($value['IdEstatus'] === '4' || $value['IdEstatus'] === '34' || $value['IdEstatus'] === '30') {
+        if ($value['IdEstatus'] === '39' || $value['IdEstatus'] === '34' || $value['IdEstatus'] === '30' || $value['IdEstatus'] === '35') {
             $datosCloncluirRevision = "hidden";
         } else {
             $datosCloncluirRevision = "";
@@ -39,13 +39,13 @@ if (!empty($datosValidacion)) {
         <div class="tab-content">
             <div class="tab-pane fade active in" id="revisionHistorial">
                 <div class="row <?php echo $datosCloncluirRevision ?>">
-                    <div class="col-md-9 col-sm-12 col-xs-12">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label class="f-w-600 f-s-13">Comentarios y Observaciones</label>
                             <textarea class="form-control" id="comentariosObservaciones" rows="5" placeholder=""></textarea>
                         </div>
                     </div>
-                    <div class="col-md-9 col-sm-12 col-xs-12">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label class="f-w-600 f-s-13">Adjuntos</label> 
                             <input id="archivosLabHistorial"  name="archivosLabHistorial[]" type="file" multiple />
@@ -57,7 +57,7 @@ if (!empty($datosValidacion)) {
                         </div>
                     </div>
                     <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-                        <a id="agregarComentarioHistorial" class="btn btn-sm btn-success m-t-10 m-r-10 f-w-600 f-s-13">Agregar Comentario</a>
+                        <a id="agregarComentarioHistorial" class="btn btn-sm btn-success m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-plus"></i> Agregar Comentario</a>
                     </div>
                 </div>
                 <div class="row m-t-25">
@@ -87,7 +87,7 @@ if (!empty($datosValidacion)) {
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 m-t-20">
-                        <a id="btnAgregarRefaccion" class="btn btn-success f-s-13">Agregar Refacción</a>
+                        <a id="btnAgregarRefaccion" class="btn btn-success f-s-13"><i class="fa fa-plus"></i> Agregar Refacción</a>
                     </div>
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">

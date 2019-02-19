@@ -22,7 +22,7 @@
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <div class="form-group text-right" id="botonNuevoValidacion">
                         <?php $botonNuevo = ($datos['permisoNuevoRegistro']) ? "" : "hidden"; ?>
-                        <a href="javascript:;" class="btn btn-success <?php echo $botonNuevo; ?>" id="agregarEquipo">Nuevo</a>
+                        <a href="javascript:;" class="btn btn-success <?php echo $botonNuevo; ?>" id="agregarEquipo"><i class="fa fa-plus"></i> Nuevo</a>
                     </div>
                 </div>
             </div>
