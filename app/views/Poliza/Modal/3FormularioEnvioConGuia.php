@@ -37,6 +37,7 @@ if ($estatus['IdEstatus'] === '26') {
 } else {
     $botonSolicitarGuia = '';
 }
+//
 ?>
 
 <div id="panelEnvioConGuia" class="panel panel-inverse">
