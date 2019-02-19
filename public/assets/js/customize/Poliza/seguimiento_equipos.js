@@ -4,9 +4,6 @@ $(function () {
     var websocket = new Socket();
     var tabla = new Tabla();
     var select = new Select();
-//    var servicios = new Servicio();
-//    var nota = new Nota();
-//    var dataCategoria;
     var file = new Upload();
 
     //Evento que maneja las peticiones del socket
