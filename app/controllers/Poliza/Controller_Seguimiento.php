@@ -350,6 +350,15 @@ class Controller_Seguimiento extends Base {
             case 'GuardarSolicitudProducto':
                 $resultado = $this->Seguimientos->guardarSolicitudProducto($this->input->post());
                 break;
+            case 'CargaAreasPuntosCenso':
+                $resultado = $this->Seguimientos->cargaAreasPuntosCenso($this->input->post());
+                break;                
+            case 'AgregaAreaPuntosCenso':
+                $resultado = $this->Seguimientos->agregaAreaPuntosCenso($this->input->post());
+                break;                
+            case 'GuardaCambiosAreasPuntos':
+                $resultado = $this->Seguimientos->guardaCambiosAreasPuntos($this->input->post());
+                break;                
             default:
                 $resultado = FALSE;
                 break;
