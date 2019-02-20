@@ -4727,4 +4727,4 @@ class Seguimientos extends General {
         }
     }
 
-}
+}//
