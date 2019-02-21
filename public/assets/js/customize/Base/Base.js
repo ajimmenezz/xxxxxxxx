@@ -80,7 +80,10 @@ Base.prototype.enviarEvento = function () {
             if (callback !== null) {
                 callback(data);
             }
-        }).fail(function (data) {
+        }).fail(function (xhr, textStatus, errorThrown) {
+            console.log(xhr.responseText);
+            console.log(textStatus);
+            console.log(errorThrown);
             _this.finalizarCargando(objeto);
         });
     } else if (arguments.length === 0 || arguments.length >= 5) {

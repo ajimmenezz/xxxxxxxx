@@ -1072,12 +1072,16 @@ $(function () {
         var columnas = servicios.datosTablaDocumentacionFirmada();
         tabla.generaTablaPersonal('#data-table-documetacion-firmada', respuesta.documentacionFirmada, columnas, null, null, [[0, 'desc']]);
         $("#contentAreaPuntos").empty();
+        $("#contentEquiposPunto").empty();
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             var target = $(e.target).attr("href");
             switch (target) {
                 case "#AreaPuntos":
                     cargaAreasPuntosCenso(respuesta.servicio);
+                    break;
+                case "#EquiposPunto":
+                    cargaEquiposPuntoCenso(respuesta.servicio);
                     break;
             }
         });
@@ -1086,6 +1090,35 @@ $(function () {
         $("#divNotasServicio").slimScroll({height: '400px'});
         nota.initButtons({servicio: datosTabla[0]}, 'Seguimiento');
     };
+
+    function cargaEquiposPuntoCenso() {
+        var servicio = arguments[0];
+        $("#formularioCapturaCenso").empty().hide();
+        evento.enviarEvento('Seguimiento/CargaEquiposPuntoCenso', {'servicio': servicio}, '#seccion-servicio-censo', function (respuesta) {
+            $("#contentEquiposPunto").empty().append(respuesta.html);
+
+            $(".btnPuntoArea").off("click");
+            $(".btnPuntoArea").on("click", function () {
+                var data = {
+                    'servicio': servicio,
+                    'area': $(this).attr("data-area"),
+                    'punto': $(this).attr("data-punto")
+                };
+                evento.enviarEvento('Seguimiento/CargaFormularioCapturaCenso', data, '#seccion-servicio-censo', function (respuesta) {
+                    $("#formularioCapturaCenso").empty().append(respuesta.html);
+                    $("#formularioCapturaCenso").show();
+                    $("#contentEquiposPunto").hide();
+
+                    $(".btnCancelarCapturaCenso").off("click");
+                    $(".btnCancelarCapturaCenso").on("click", function () {
+                        $("#formularioCapturaCenso").empty().hide();
+                        $("#contentEquiposPunto").show();
+                    });
+
+                });
+            });
+        });
+    }
 
     function cargaAreasPuntosCenso() {
         var servicio = arguments[0];
@@ -1247,6 +1280,7 @@ $(function () {
             select.cambiarOpcion('#selectSucursales', respuesta.informacionDatosGenerales[0].IdSucursal);
             $('#selectSucursales').attr('disabled', 'disabled');
             $('[href=#AreaPuntos]').parent('li').removeClass('hidden');
+            $('[href=#EquiposPunto]').parent('li').removeClass('hidden');
         } else {
             if (respuesta.datosServicio.IdSucursal !== null) {
                 select.cambiarOpcion('#selectSucursales', respuesta.datosServicio.IdSucursal);
@@ -1266,6 +1300,7 @@ $(function () {
                 console.log(respuesta);
                 $('#selectSucursales').attr('disabled', 'disabled');
                 $('[href=#AreaPuntos]').parent('li').removeClass('hidden');
+                $('[href=#EquiposPunto]').parent('li').removeClass('hidden');
             });
         } else {
             evento.mostrarMensaje('.errorDatosGeneralesCenso', false, 'Debes llenar todos los campos para poder guardar la información', 3000)

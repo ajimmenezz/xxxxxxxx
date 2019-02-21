@@ -359,6 +359,12 @@ class Controller_Seguimiento extends Base {
             case 'GuardaCambiosAreasPuntos':
                 $resultado = $this->Seguimientos->guardaCambiosAreasPuntos($this->input->post());
                 break;                
+            case 'CargaEquiposPuntoCenso':
+                $resultado = $this->Seguimientos->cargaEquiposPuntoCenso($this->input->post());
+                break;                
+            case 'CargaFormularioCapturaCenso':
+                $resultado = $this->Seguimientos->cargaFormularioCapturaCenso($this->input->post());
+                break;                
             default:
                 $resultado = FALSE;
                 break;

@@ -4762,10 +4762,34 @@ class Seguimientos extends General {
         $result = $this->DBCensos->agregaAreaPuntosCenso($datos);
         return $result;
     }
-    
+
     public function guardaCambiosAreasPuntos(array $datos) {
         $result = $this->DBCensos->guardaCambiosAreasPuntos($datos);
         return $result;
+    }
+
+    public function cargaEquiposPuntoCenso(array $datos) {
+        $areasPuntos = $this->DBCensos->getAreasPuntosCensos($datos['servicio']);
+        $data = [
+            'areasPuntos' => $areasPuntos
+        ];
+        return ['html' => parent::getCI()->load->view('Poliza/Modal/CensoEquiposPuntoGroupArea', $data, TRUE)];
+    }
+
+    public function cargaFormularioCapturaCenso(array $datos) {
+        $kitStandarArea = $this->DBCensos->getKitStandarArea($datos['area']);
+        $modelosStandar = $this->DBCensos->getModelosStandarByArea($datos['area']);
+        $equiposCensados = $this->DBCensos->getEquiposCensoByAreaPunto($datos);
+        $nombreArea = $this->DBCensos->getNombreAreaById($datos['area']);
+        $data = [
+            'kitStandarArea' => $kitStandarArea,
+            'modelosStandar' => $modelosStandar,
+            'equiposCensados' => $equiposCensados,
+            'nombreArea' => $nombreArea,
+            'datosGenerales' => $datos
+        ];
+
+        return ['html' => parent::getCI()->load->view('Poliza/Modal/FormularioCapturaCenso', $data, TRUE)];
     }
 
 }

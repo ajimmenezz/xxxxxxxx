@@ -32,6 +32,7 @@
                 <li class="active"><a href="#General" data-toggle="tab">Información General</a></li>
                 <!--<li class="hidden"><a href="#Datos" data-toggle="tab">Datos</a></li>-->
                 <li class="hidden"><a href="#AreaPuntos" data-toggle="tab">Puntos por Área</a></li>
+                <li class="hidden"><a href="#EquiposPunto" data-toggle="tab">Equipos por Punto</a></li>
                 <li class=""><a href="#DocumentacionFirmada" data-toggle="tab">Documentación Firmada</a></li>
                 <!--<li class=""><a href="#Notas" data-toggle="tab">Conversación</a></li>-->
                 <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
@@ -302,6 +303,13 @@
                     </div>
                 </div>
                 <div id="contentAreaPuntos"></div>                
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="EquiposPunto">            
+            <div class="panel-body">                
+                <div id="contentEquiposPunto"></div>                
+                <div id="formularioCapturaCenso" style="display:none"></div>                
             </div>
         </div>
 
