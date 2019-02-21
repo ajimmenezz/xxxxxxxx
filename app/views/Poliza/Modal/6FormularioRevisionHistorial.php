@@ -1,7 +1,7 @@
 <?php
 if (!empty($datosValidacion)) {
     foreach ($datosValidacion as $value) {
-        if ($value['IdEstatus'] === '39' || $value['IdEstatus'] === '34' || $value['IdEstatus'] === '30' || $value['IdEstatus'] === '35') {
+        if ($value['IdEstatus'] === '39' || $value['IdEstatus'] === '34' || $value['IdEstatus'] === '30' || $value['IdEstatus'] === '35' || $value['IdEstatus'] === '12' || $value['IdEstatus'] === '36') {
             $datosCloncluirRevision = "hidden";
         } else {
             $datosCloncluirRevision = "";
@@ -41,7 +41,7 @@ if (!empty($datosValidacion)) {
                 <div class="row <?php echo $datosCloncluirRevision ?>">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
-                            <label class="f-w-600 f-s-13">Comentarios y Observaciones</label>
+                            <label class="f-w-600 f-s-13">Comentarios y Observaciones *</label>
                             <textarea class="form-control" id="comentariosObservaciones" rows="5" placeholder=""></textarea>
                         </div>
                     </div>
@@ -67,7 +67,7 @@ if (!empty($datosValidacion)) {
             </div>
             <div class="tab-pane fade" id="refaccionUtilizada">
                 <div class="row <?php echo $datosCloncluirRevision ?>">
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-md-8 col-sm-8 col-xs-12">
                         <div class="form-group">
                             <label class="f-w-600 f-s-13">Refacción Utilizada *</label>
                             <select id="listRefaccionUtil" class="form-control" style="width: 100%" data-parsley-required="true">
@@ -80,19 +80,13 @@ if (!empty($datosValidacion)) {
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2 col-sm-4 col-xs-12">
-                        <div class="form-group">
-                            <label for="">Cantidad *</label>
-                            <input type="number" step="any" id="cantidadRefaccion" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-sm-4 col-xs-12 m-t-20">
+                    <div class="col-md-4 col-sm-4 col-xs-12 m-t-25">
                         <a id="btnAgregarRefaccion" class="btn btn-success f-s-13"><i class="fa fa-plus"></i> Agregar Refacción</a>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div id="errorAgregarRefaccion"></div>
-                        </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div id="errorAgregarRefaccion"></div>
                     </div>
                 </div>
                 <div class="row">
@@ -104,6 +98,7 @@ if (!empty($datosValidacion)) {
                                         <th class="never">Id</th>
                                         <th class="all">Refacción</th>
                                         <th class="all">Cantidad</th>
+                                        <th class="never">IdInventario</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -114,6 +109,7 @@ if (!empty($datosValidacion)) {
                                             echo '<td>' . $value['Id'] . '</td>';
                                             echo '<td>' . $value['Nombre'] . '</td>';
                                             echo '<td>' . $value['Cantidad'] . '</td>';
+                                            echo '<td>' . $value['IdInventario'] . '</td>';
                                             echo '</tr>';
                                         }
                                     }

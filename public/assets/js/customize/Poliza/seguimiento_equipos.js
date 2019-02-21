@@ -112,8 +112,6 @@ $(function () {
         var datos = {"idServicio": idServicio, 'IdRefaccion': IdRefaccion, 'idEstatus': idEstatus};
 
         evento.enviarEvento('Seguimiento/VistaPorPerfil', datos, panel, function (respuesta) {
-            console.log(respuesta);
-
             vistasDeFormularios(respuesta);
             incioEtiquetas();
             eventosGenerales(idTabla, idServicio);
@@ -169,19 +167,20 @@ $(function () {
 
         $("#listaTicket").on("change", function () {
             select.cambiarOpcion("#listaServicio", '');
-            $("#listaServicio").empty().append('<option value="">Seleccionar...</option>');
             if ($(this).val() !== '') {
                 var datos = {
                     'ticket': $(this).val()
                 }
 
                 evento.enviarEvento('Seguimiento/ConsultaServiciosTecnico', datos, '#panelValidacion', function (respuesta) {
+                    $("#listaServicio").empty().append('<option value="">Seleccionar...</option>');
                     $.each(respuesta, function (k, v) {
                         $("#listaServicio").append('<option value="' + v.Id + '" data-idModelo = "' + v.IdModelo + '" data-serie="' + v.Serie + '">' + v.Id + ' - ' + v.Descripcion + '</option>');
                     });
                     $("#listaServicio").removeAttr("disabled");
                 });
             } else {
+                $("#listaServicio").empty().append('<option value="">Seleccionar...</option>');
                 $("#listaServicio").attr("disabled", "disabled");
             }
         });
@@ -192,7 +191,7 @@ $(function () {
             var datos = {'idModelo': servicioSeleccionado};
 
             select.cambiarOpcion('#listaTipoPersonal', '');
-            evento.enviarEvento('Seguimiento/MostrarEquipoDanado', datos, panel, function (respuesta) {
+            evento.enviarEvento('Seguimiento/MostrarEquipoDanado', datos, '#panelValidacion', function (respuesta) {
 
                 if (respuesta.length > 0) {
                     $.each(respuesta, function (k, v) {
@@ -216,7 +215,7 @@ $(function () {
 
             $('#listaNombrePersonal').empty().append('<option value="">Seleccionar</option>');
             select.cambiarOpcion('#listaNombrePersonal', '');
-            evento.enviarEvento('Seguimiento/MostrarNombrePersonalValida', datos, panel, function (respuesta) {
+            evento.enviarEvento('Seguimiento/MostrarNombrePersonalValida', datos, '#panelValidacion', function (respuesta) {
                 if (respuesta) {
                     $.each(respuesta, function (k, v) {
                         $('#listaNombrePersonal').append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
@@ -491,15 +490,14 @@ $(function () {
         $('#btnAgregarRefaccion').off('click');
         $('#btnAgregarRefaccion').on('click', function () {
             var arrayCampos = [
-                {'objeto': '#listRefaccionUtil', 'mensajeError': 'Falta seleccionar la Refacción utilizada.'},
-                {'objeto': '#cantidadRefaccion', 'mensajeError': 'Falta escribir la cantidad.'}
+                {'objeto': '#listRefaccionUtil', 'mensajeError': 'Falta seleccionar la Refacción utilizada.'}
             ];
 
             var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorAgregarRefaccion');
 
             if (camposFormularioValidados) {
                 var idInventario = $('#listRefaccionUtil').val();
-                var cantidad = $('#cantidadRefaccion').val();
+                var cantidad = '1';
                 var data = {
                     'id': idTabla,
                     'idInvetario': idInventario,
@@ -512,6 +510,10 @@ $(function () {
                         $('#cantidadRefaccion').val('');
                         select.cambiarOpcion('#listRefaccionUtil', '');
                         recargandoTablaRefaccionesUtilizadas(respuesta.datos);
+                        $("#listRefaccionUtil").empty().append('<option value="">Seleccionar...</option>');
+                        $.each(respuesta.componentesEquipo, function (k, v) {
+                            $("#listRefaccionUtil").append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                        });
                         evento.mostrarMensaje("#errorAgregarRefaccion", true, 'Refacción agregada correctamente.', 4000);
                     } else {
                         evento.mostrarMensaje("#errorAgregarRefaccion", false, respuesta.mensaje, 4000);
@@ -563,22 +565,27 @@ $(function () {
 
                 if (evidencia !== '' || evidencia !== undefined) {
                     file.enviarArchivos('#evidenciaEnvio', 'Seguimiento/GuardarEnvioLogistica', '#panelEnvioSeguimientoLog', datos, function (respuesta) {
-                        $('#divSeguimientoEntrega').removeClass('hidden');
-                        $('#divBotonGuardarEntrega').removeClass('hidden');
-                        $('#listPaqueteria').attr('disabled', 'disabled');
-                        $('#fechaEnvio').attr('disabled', 'disabled');
-                        $('#guiaLogistica').attr('disabled', 'disabled');
-                        $('#btnGuardarEnvioLogistica').addClass('disabled');
+                        if (respuesta.code === 200) {
+                            $('#divSeguimientoEntrega').removeClass('hidden');
+                            $('#divBotonGuardarEntrega').removeClass('hidden');
+                            $('#listPaqueteria').attr('disabled', 'disabled');
+                            $('#fechaEnvio').attr('disabled', 'disabled');
+                            $('#guiaLogistica').attr('disabled', 'disabled');
+                            $('#btnGuardarEnvioLogistica').addClass('disabled');
+                            file.deshabilitar('#evidenciaEnvio');
+                        }
                     });
                 } else {
                     evento.enviarEvento('Seguimiento/GuardarEnvioLogistica', datos, panel, function (respuesta) {
-                        $('#divSeguimientoEntrega').removeClass('hidden');
-                        $('#divBotonGuardarEntrega').removeClass('hidden');
-                        $('#listPaqueteria').attr('disabled', 'disabled');
-                        $('#fechaEnvio').attr('disabled', 'disabled');
-                        $('#guiaLogistica').attr('disabled', 'disabled');
-                        $('#btnGuardarEnvioLogistica').addClass('disabled');
-                        file.deshabilitar('#evidenciaEnvio');
+                        if (respuesta.code === 200) {
+                            $('#divSeguimientoEntrega').removeClass('hidden');
+                            $('#divBotonGuardarEntrega').removeClass('hidden');
+                            $('#listPaqueteria').attr('disabled', 'disabled');
+                            $('#fechaEnvio').attr('disabled', 'disabled');
+                            $('#guiaLogistica').attr('disabled', 'disabled');
+                            $('#btnGuardarEnvioLogistica').addClass('disabled');
+                            file.deshabilitar('#evidenciaEnvio');
+                        }
                     });
                 }
             }
@@ -633,8 +640,10 @@ $(function () {
                 file.enviarArchivos('#evidenciaEntregaLog', 'Seguimiento/GuardarEntregaLogistica', '#panelEnvioSeguimientoLog', datos, function (respuesta) {
                     vistasDeFormularios(respuesta.datos);
                     incioEtiquetas();
-                    eventosGenerales(respuesta.idTabla);
-                    eventosComentarios(respuesta.idTabla);
+                    eventosGenerales(idTabla, respuesta.idServicio);
+                    eventosComentarios(idTabla, respuesta.idServicio);
+                    cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+                    recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                 });
             }
 
@@ -650,6 +659,7 @@ $(function () {
                     eventosGenerales(idTabla, respuesta.idServicio);
                     eventosComentarios(idTabla, respuesta.idServicio);
                     cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+                    recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                 }
             });
         });
@@ -675,8 +685,10 @@ $(function () {
                 file.enviarArchivos('#archivosProblemaGuia', 'Seguimiento/GuardarProblemaGuiaLogistica', '#panelAsignacionGuia', datos, function (respuesta) {
                     vistasDeFormularios(respuesta.datos);
                     incioEtiquetas();
-                    eventosGenerales(respuesta.idTabla);
-                    eventosComentarios(respuesta.idTabla);
+                    eventosGenerales(idTabla, respuesta.idServicio);
+                    eventosComentarios(idTabla, respuesta.idServicio);
+                    cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+                    recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                 });
             }
         });
@@ -702,8 +714,10 @@ $(function () {
                 file.enviarArchivos('#archivosProblemaGuia', 'Seguimiento/GuardarProblemaGuiaLogistica', '#panelAsignacionGuia', datos, function (respuesta) {
                     vistasDeFormularios(respuesta.datos);
                     incioEtiquetas();
-                    eventosGenerales(respuesta.idTabla);
-                    eventosComentarios(respuesta.idTabla);
+                    eventosGenerales(idTabla, respuesta.idServicio);
+                    eventosComentarios(idTabla, respuesta.idServicio);
+                    cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+                    recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                 });
             }
         });
@@ -737,6 +751,8 @@ $(function () {
             if (listaIds.length > 0) {
                 var data = {'listaProductos': listaIds, 'id': idTabla, 'idServicio': idServicio, 'idEstatus': '38', 'flag': '1'};
                 terminarSeleccion(data, idTabla);
+            } else {
+                evento.mostrarMensaje("#errorSolicitudProducto", false, 'Seleccione un producto.', 4000);
             }
         });
 
@@ -745,6 +761,27 @@ $(function () {
             if (listaIds.length > 0) {
                 var data = {'listaProductos': listaIds, 'id': idTabla, 'idServicio': idServicio, 'idEstatus': '38', 'flag': '0'};
                 terminarSeleccion(data, idTabla);
+            } else {
+                evento.mostrarMensaje("#errorSolicitudProducto", false, 'Seleccione un producto.', 4000);
+            }
+        });
+
+        $('#listaRefaccionUtilizada tbody').on('click', 'tr', function () {
+            var datos = $('#listaRefaccionUtilizada').DataTable().row(this).data();
+            if (datos !== undefined) {
+                var data = {'id': datos[0], 'idInventario': datos[3], 'idServicio': idServicio};
+                evento.enviarEvento('Seguimiento/EliminarRefacionUtilizada', data, '#panelLaboratorioHistorial', function (respuesta) {
+                    if (respuesta.code === 200) {
+                        recargandoTablaRefaccionesUtilizadas(respuesta.datos);
+                        $("#listRefaccionUtil").empty().append('<option value="">Seleccionar...</option>');
+                        $.each(respuesta.componentesEquipo, function (k, v) {
+                            $("#listRefaccionUtil").append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                        });
+                        evento.mostrarMensaje("#errorAgregarRefaccion", true, 'Refacción eliminada correctamente.', 4000);
+                    } else {
+                        evento.mostrarMensaje("#errorAgregarRefaccion", false, respuesta.mensaje, 4000);
+                    }
+                });
             }
         });
     };
@@ -789,6 +826,7 @@ $(function () {
                 incioEtiquetas();
                 eventosGenerales(respuesta.idTabla, respuesta.idServicio);
                 eventosComentarios(respuesta.idTabla, respuesta.idServicio);
+                recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
             } else {
                 evento.mostrarMensaje("#errorFormularioValidacion", false, respuesta.mensaje, 4000);
             }
@@ -806,8 +844,6 @@ $(function () {
             evento.mostrarMensaje("#errorFormularioValidacion", false, "Selecciona el equipo solicitado", 4000);
         }
     };
-
-    // termina nuevo
 
     var eventosComentarios = function () {
         var idTabla = arguments[0];
@@ -1067,7 +1103,7 @@ $(function () {
         tabla.limpiarTabla('#listaRefaccionUtilizada');
 
         $.each(refaccionesUtilizadas, function (key, item) {
-            tabla.agregarFila('#listaRefaccionUtilizada', [item.Id, item.Nombre, item.Cantidad]);
+            tabla.agregarFila('#listaRefaccionUtilizada', [item.Id, item.Nombre, item.Cantidad, item.IdInventario]);
         });
     };
 

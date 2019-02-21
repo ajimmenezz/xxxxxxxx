@@ -56,6 +56,11 @@ $mensajeCotizacion = 'hidden';
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div id="errorSolicitudProducto"></div>
+            </div>
+        </div>
         <div class="row <?php echo $botonTeminarSeleccion; ?>">
             <div class="col-md-6 col-sm-6 col-xs-6 text-center">
                 <a id="btnTerminarSeleccionLocal" class="btn btn-primary m-t-10 m-r-10 f-w-600 f-s-13">Guargar Producto(s) - Local</a>

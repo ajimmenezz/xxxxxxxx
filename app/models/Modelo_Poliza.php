@@ -943,7 +943,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
-                                    INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo");
+                                    INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
+                                    WHERE tea.IdEstatus NOT IN('31')");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1010,7 +1011,7 @@ class Modelo_Poliza extends Modelo_Base {
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE tea.IdUsuario = '" . $usuario . "'
-                                    AND tea.IdEstatus != '36'");
+                                    AND tea.IdEstatus != '31'");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1060,8 +1061,8 @@ class Modelo_Poliza extends Modelo_Base {
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4' , '12', '26', '27', '30', '31','32','33','34')
-                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '30', '31', '34') OR tea.IdEstatus = '38' AND Flag = '0'
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '30', '31','32','33','34','36','37','39')
+                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '30', '31', '34', '36') OR tea.IdEstatus = '38' AND Flag = '0'
                                     END)");
 
         if (!empty($consulta)) {
@@ -1106,11 +1107,11 @@ class Modelo_Poliza extends Modelo_Base {
                                         v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                         (CASE
-                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4' , '12', '28', '29', '30', '32', '33', '34')
+                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4' , '12', '28', '29', '30', '32', '33', '34', '36', '39')
                                             WHEN
                                                 tea.IdTipoMovimiento = '3'
                                             THEN
-                                                tea.IdEstatus = '2' AND Flag = 0 OR tea.IdEstatus = '38'
+                                                tea.IdEstatus = '2' AND Flag = 0 OR tea.IdEstatus IN ('38','30','36')
                                                     AND (SELECT 
                                                         IdEstatus
                                                     FROM
@@ -1143,7 +1144,7 @@ class Modelo_Poliza extends Modelo_Base {
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','39') OR tea.IdEstatus = '2' AND Flag = '1'
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','36','39') OR tea.IdEstatus = '2' AND Flag = '1' OR tea.IdEstatus = '12' AND Flag = '0'
                                         WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','29','33','39') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '0'
                                     END)");
 
@@ -1601,11 +1602,27 @@ class Modelo_Poliza extends Modelo_Base {
     public function actualizarEquiposAllabRevicionLaboratorio(array $datos) {
         $this->iniciaTransaccion();
 
-        $this->actualizar('t_equipos_allab_revision_laboratorio', array(
-            'IdEstatus' => '4',
-                ), array('IdRegistro' => $datos['id']));
+//        $this->actualizar('t_equipos_allab_revision_laboratorio', array(
+//            'IdEstatus' => '4',
+//                ), array('IdRegistro' => $datos['id']));
 
-        $this->cambiarEsatus($datos);
+//        $this->cambiarEsatus($datos);
+
+        $consultaLaboratorioRefacciones = $this->consulta('SELECT 
+                                                                tearlr.IdInventario
+                                                            FROM
+                                                                t_equipos_allab_revision_laboratorio_refacciones tearlr
+                                                                    INNER JOIN
+                                                                t_equipos_allab_revision_laboratorio tearl
+                                                                    ON tearlr.IdRevision = tearl.Id
+                                                                    WHERE tearl.IdRegistro = " ' . $datos['id'] . ' "
+                                                                    AND Flag = "1"');
+
+        foreach ($consultaLaboratorioRefacciones as $key => $value) {
+            var_dump($value);
+        }
+//        $this->actualizar('t_inventario', array('IdEstatus' => '40'), ['Id' => $datos['idInventario']]);
+
 
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
@@ -1737,7 +1754,7 @@ class Modelo_Poliza extends Modelo_Base {
         $this->actualizar('t_equipos_allab_recepciones', array('IdEstatus' => $datos['idEstatus'],
             'IdUsuario' => $datos['idUsuario'],
             'Fecha' => $datos['fecha'],
-            'Archivos' => $datos['archivos']), array('IdRegistro' => $datos['id']));
+            'Archivos' => $datos['archivos']), array('IdRegistro' => $datos['id'], 'IdDepartamento' => $datos['idDepartamento']));
         $this->cambiarEsatus($datos);
 
         $this->terminaTransaccion();
@@ -1761,13 +1778,14 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function consultaTicketsUsuario(array $datos) {
-        $consulta = $this->consulta('SELECT 
-                                        Ticket
+        $consulta = $this->consulta('SELECT
+                                        tst.Ticket
                                     FROM
-                                        t_servicios_ticket
+                                        t_servicios_ticket tst
                                     WHERE
-                                        Atiende = "' . $datos['usuario'] . '"
-                                    AND IdEstatus = "' . $datos['estatus'] . '"');
+                                        tst.Atiende = "' . $datos['usuario'] . '"
+                                    AND tst.IdEstatus = "' . $datos['estatus'] . '"
+                                    AND tst.Id NOT IN (SELECT IdServicio FROM t_equipos_allab WHERE IdServicio = tst.Id)');
         return $consulta;
     }
 
@@ -1922,11 +1940,33 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function consultaComponentesEquipoInvetario(array $datos) {
-        $equipoDanado = $this->consulta('SELECT 
-                                            ce.Id, ce.IdModelo, ce.Nombre
-                                        FROM
-                                            cat_v3_componentes_equipo ce
-                                        WHERE ce.IdModelo = "' . $datos['idModelo'] . '"');
+        $equipoDanado = $this->consulta('select 
+                                            ti.Id,
+                                            ti.Serie,
+                                                ti.IdProducto,
+                                            (SELECT 
+                                                    Nombre
+                                                FROM
+                                                    cat_v3_componentes_equipo
+                                                WHERE
+                                                    Id = IdProducto) AS Nombre
+                                        from
+                                            t_inventario ti
+                                        INNER JOIN cat_v3_componentes_equipo cvce
+                                                ON ti.IdProducto = cvce.Id
+                                        where
+                                            ti.IdAlmacen in (select 
+                                                    Id
+                                                from
+                                                    cat_v3_almacenes_virtuales
+                                                where
+                                                    IdResponsable = "' . $datos['idUsuario'] . '"
+                                                        or (IdTipoAlmacen = 1
+                                                        and IdReferenciaAlmacen = "' . $datos['idUsuario'] . '"))
+                                                and ti.IdTipoProducto = "2"
+                                                and ti.IdEstatus = 17
+                                                and ti.Bloqueado = 0
+                                                        and cvce.IdModelo = "' . $datos['idModelo'] . '"');
 
         return $equipoDanado;
     }
@@ -1942,6 +1982,8 @@ class Modelo_Poliza extends Modelo_Base {
             'Cantidad' => $datos['cantidad'],
             'Flag' => $datos['flag']
         ));
+
+        $this->actualizar('t_inventario', array('Bloqueado' => '1'), ['Id' => $datos['idInvetario']]);
 
         $this->cambiarEsatus($datos);
 
@@ -1959,12 +2001,15 @@ class Modelo_Poliza extends Modelo_Base {
         $equipoDanado = $this->consulta('SELECT 
                                                 tearlr.Id,
                                                 tearlr.Cantidad,
-                                                (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tearlr.IdInventario) AS Nombre
+                                                tearlr.IdInventario,
+                                                (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = ti.IdProducto) AS Nombre
                                          FROM t_equipos_allab_revision_laboratorio_refacciones tearlr
                                         INNER JOIN t_equipos_allab_revision_laboratorio tearl
                                         ON tearl.Id = tearlr.IdRevision
                                         INNER JOIN t_equipos_allab tea
                                         ON tea.Id = tearl.IdRegistro
+                                        INNER JOIN t_inventario ti
+                                        ON tearlr.IdInventario = ti.Id
                                         WHERE tea.IdServicio = " ' . $idServicio . ' "
                                         AND tearlr.Flag = "1"');
 
@@ -1973,6 +2018,7 @@ class Modelo_Poliza extends Modelo_Base {
 
     public function flagearRefaccionUtilizada(array $datos) {
         $resultado = $this->actualizar('t_equipos_allab_revision_laboratorio_refacciones', array('Flag' => $datos['flag']), ['Id' => $datos['id']]);
+        $this->actualizar('t_inventario', array('Bloqueado' => '0'), ['Id' => $datos['idInventario']]);
 
         if (!empty($resultado)) {
             return TRUE;
@@ -1994,10 +2040,12 @@ class Modelo_Poliza extends Modelo_Base {
         return $equipoDanado;
     }
 
-    public function insertarEnvioLogistica(array $datos) {
+    public function insertarEnvioLogistica(array $datos, array $datosEstatus) {
         $this->iniciaTransaccion();
 
         $this->insertar('t_equipos_allab_envio_logistica', $datos);
+        $this->cambiarEsatus($datosEstatus);
+
 
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
