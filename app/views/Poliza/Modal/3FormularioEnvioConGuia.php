@@ -29,7 +29,7 @@ if (!empty($datosSolicitudGuia)) {
 
 if ($estatus['IdEstatus'] === '26') {
     $botonSolicitarGuia = 'hidden';
-}else if ($estatus['IdEstatus'] === '4' && $estatus['Flag'] === '0') {
+}else if ($estatus['IdEstatus'] === '37' && $estatus['Flag'] === '1') {
     $mostrarSelect = '';
     $botonSolicitarGuia = 'hidden';
     $mostrarInput = 'hidden';

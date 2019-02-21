@@ -60,7 +60,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
             <div class="tab-pane fade active in" id="RecepcionLog">
                 <form id="formRecepcionAlmacen" data-parsley-validate="true">
                     <fieldset>
-                        <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="col-md-6 col-sm-6 col-xs-12">
                             <div class="form-group <?php echo $mostrarSelect ?>">
                                 <label class="f-w-600 f-s-13">Usuario que recibe *</label>
                                 <input type="text" class="form-control" id="IdUsuarioRecibe" placeholder="<?php echo $usuario; ?>"  data-parsley-required="true" disabled/>
@@ -70,7 +70,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                                 <input type="text" class="form-control" placeholder="<?php echo $nombreRecibe ?>" disabled/>
                             </div>
                         </div>
-                        <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="col-md-6 col-sm-6 col-xs-12">
                             <div class="form-group <?php echo $mostrarSelect ?>">
                                 <label class="f-w-600 f-s-13">Fecha de Recepción *</label>
                                 <input type="datetime-local" id="fechaRecepcionLogistica" value="<?php echo $date = date('Y-m-d\TH:i'); ?>" class="form-control" data-parsley-pattern="^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])T(|0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])$" required/>
@@ -80,7 +80,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                                 <input type="text" class="form-control" placeholder="<?php echo $fecha ?>" disabled/>
                             </div>
                         </div>
-                        <div class="col-md-9 col-sm-12 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group <?php echo $mostrarSelectInput ?>">
                                 <label class="f-w-600 f-s-13">Evidencia de recepción *</label> 
                                 <input id="evidenciaRecepcionLogistica"  name="evidenciaRecepcionLogistica[]" type="file" multiple />
@@ -105,7 +105,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                             </div>
                         </div>
                         <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelect ?>">
-                            <a id="btnGuardarRecepcionLog" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13">Guardar Recepción</a>
+                            <a id="btnGuardarRecepcionLog" class="btn btn-primary m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-save"></i> Guardar Recepción</a>
                         </div>
                     </fieldset>
                 </form>
@@ -113,17 +113,17 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
             <div class="tab-pane fade" id="problemasRecepcionLog">
                 <form id="formProblemaRecepcionAlmacen" data-parsley-validate="true">
                     <div class="row">
-                        <div class="col-md-8 col-sm-9 col-xs-12">
+                        <div class="col-md-12 col-sm-9 col-xs-12">
                             <div class="form-group">
-                                <label class="f-w-600 f-s-13">Nota:</label>
+                                <label class="f-w-600 f-s-13">Nota *</label>
                                 <textarea class="form-control" rows="5" id="txtNotaLogistica" value="" <?php echo $mostrarNota ?>></textarea>                            
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-9 col-sm-12 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group">
-                                <label class="f-w-600 f-s-13">Adjuntos:</label>
+                                <label class="f-w-600 f-s-13">Adjuntos *</label>
                                 <input id="adjuntosProblemaLog" name="adjuntosProblemaLog[]" type="file" multiple="" <?php echo $mostrarSelectInputProblema ?>/>    
                             </div>
                         </div>
@@ -135,7 +135,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                     </div>
                     <div>
                         <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarBtnProblema ?>">
-                            <a id="btnAgregarProblemaLog" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13">Agregar Problema</a>
+                            <a id="btnAgregarProblemaLog" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-plus"></i> Agregar Problema</a>
                         </div>
                     </div>
                 </form>
