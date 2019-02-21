@@ -161,7 +161,7 @@ Base.prototype.mostrarMensaje = function (objeto, tipo, mensaje, duración) {
             }, duración);
 
             $('html,body').animate({
-                scrollTop: $("#mensajeError").offset().top
+                scrollTop: $(objeto).offset().top - 100
             }, 'slow');
             break;
         case true:

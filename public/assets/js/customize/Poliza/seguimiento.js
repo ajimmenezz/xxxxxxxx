@@ -1116,6 +1116,103 @@ $(function () {
                         $("#contentEquiposPunto").show();
                     });
 
+                    $(".existeModelosEstandar").off("click");
+                    $(".existeModelosEstandar").on("click", function () {
+                        var fila = $(this).closest("tr.registroEquiposEstandar");
+                        if ($(this).is(":checked")) {
+                            fila.find(".listModelosEstandar").removeAttr("disabled");
+                            fila.find(".serieModelosEstandar").removeAttr("disabled");
+                            fila.find(".ilegibleModelosEstandar").removeAttr("disabled");
+                            fila.find(".danadoModelosEstandar").removeAttr("disabled");
+                            fila.removeClass("table-border-red").addClass("table-border-green");
+                        } else {
+                            fila.find(".listModelosEstandar").attr('disabled', true);
+                            fila.find(".serieModelosEstandar").attr('disabled', true);
+                            fila.find(".ilegibleModelosEstandar").attr('disabled', true);
+                            fila.find(".danadoModelosEstandar").attr('disabled', true);
+                            fila.removeClass("table-border-green").addClass("table-border-red");
+                        }
+                    });
+
+                    $(".ilegibleModelosEstandar").off("click");
+                    $(".ilegibleModelosEstandar").on("click", function () {
+                        var fila = $(this).closest("tr.registroEquiposEstandar");
+                        var campoSerie = fila.find(".serieModelosEstandar");
+                        if ($(this).is(":checked")) {
+                            campoSerie.attr("disabled", true);
+                            campoSerie.val("ILEGIBLE");
+                        } else {
+                            campoSerie.removeAttr("disabled");
+                            campoSerie.val("");
+                        }
+                    });
+
+                    $(".btnGuardarCapturaCenso").off("click");
+                    $(".btnGuardarCapturaCenso").on("click", function () {
+
+                        data = {
+                            'servicio': servicio,
+                            'area': data.area,
+                            'punto': data.punto,
+                            'nuevosEstandar': [],
+                            'activosEstandar': []
+                        }
+
+                        $(".registroEquiposEstandar").each(function () {
+                            var fila = $(this);
+                            if (fila.hasClass('registroNuevo')) {
+                                var checkExiste = fila.find(".existeModelosEstandar");
+                                if (checkExiste.is(":checked")) {
+                                    var datosEquipo = {
+                                        'modelo': fila.find(".listModelosEstandar").val(),
+                                        'serie': fila.find(".serieModelosEstandar").val(),
+                                        'ilegible': (fila.find(".ilegibleModelosEstandar").is(":checked")) ? 1 : 0,
+                                        'existe': 1,
+                                        'danado': (fila.find(".danadoModelosEstandar").is(":checked")) ? 1 : 0,
+                                    };
+                                    if (datosEquipo.modelo == "") {
+                                        evento.mostrarMensaje(".divErrorCapturaCensoEstandar", false, "Falta seleccionar el modelo en alguno de sus registros. Desmarque la casilla 'Existe' en caso de que el equipo no exista", 6000);
+                                        return true;
+                                    }
+
+                                    if (datosEquipo.serie == "" && datosEquipo.ilegible == 0) {
+                                        evento.mostrarMensaje(".divErrorCapturaCensoEstandar", false, "Falta el número de serie en alguno de sus registros. Marque la casilla 'Ilegible' en caso de que la serie no sea alcanzable o no se encuentre en el equipo.", 6000);
+                                        return true;
+                                    }
+
+                                    data.nuevosEstandar.push(datosEquipo);
+                                }
+                            } else if (fila.hasClass('registroActivo')) {
+                                var datosEquipo = {
+                                    'id': fila.attr("data-id"),
+                                    'modelo': fila.find(".listModelosEstandar").val(),
+                                    'serie': fila.find(".serieModelosEstandar").val(),
+                                    'ilegible': (fila.find(".ilegibleModelosEstandar").is(":checked")) ? 1 : 0,
+                                    'existe': (fila.find(".existeModelosEstandar").is(":checked")) ? 1 : 0,
+                                    'danado': (fila.find(".danadoModelosEstandar").is(":checked")) ? 1 : 0,
+                                };
+
+                                if (datosEquipo.existe == 1 && datosEquipo.modelo == "") {
+                                    evento.mostrarMensaje(".divErrorCapturaCensoEstandar", false, "Falta seleccionar el modelo en alguno de sus registros. Desmarque la casilla 'Existe' en caso de que el equipo no exista", 6000);
+                                    return true;
+                                }
+
+                                if (datosEquipo.existe == 1 && datosEquipo.serie == "" && datosEquipo.ilegible == 0) {
+                                    evento.mostrarMensaje(".divErrorCapturaCensoEstandar", false, "Falta el número de serie en alguno de sus registros. Marque la casilla 'Ilegible' en caso de que la serie no sea alcanzable o no se encuentre en el equipo.", 6000);
+                                    return true;
+                                }
+                                data.activosEstandar.push(datosEquipo);
+                            }
+                        });
+
+                        evento.enviarEvento('Seguimiento/GuardaEquiposPuntoCenso', data, '#seccion-servicio-censo', function (respuesta) {
+                            if (respuesta.code == 200) {
+                                cargaEquiposPuntoCenso(servicio);
+                            } else {
+                                evento.mostrarMensaje(".divErrorCapturaCensoEstandar", false, "Ocurrió un error al guardar los registros. Por favor contácte al administrador.", 6000);
+                            }
+                        });
+                    });
                 });
             });
         });

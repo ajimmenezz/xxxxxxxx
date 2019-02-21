@@ -4766,7 +4766,7 @@ class Seguimientos extends General {
     public function guardaCambiosAreasPuntos(array $datos) {
         $result = $this->DBCensos->guardaCambiosAreasPuntos($datos);
         return $result;
-    }
+    }    
 
     public function cargaEquiposPuntoCenso(array $datos) {
         $areasPuntos = $this->DBCensos->getAreasPuntosCensos($datos['servicio']);
@@ -4781,15 +4781,22 @@ class Seguimientos extends General {
         $modelosStandar = $this->DBCensos->getModelosStandarByArea($datos['area']);
         $equiposCensados = $this->DBCensos->getEquiposCensoByAreaPunto($datos);
         $nombreArea = $this->DBCensos->getNombreAreaById($datos['area']);
+        $modelosEquipo = $this->DBCensos->getModelosGenerales();
         $data = [
             'kitStandarArea' => $kitStandarArea,
             'modelosStandar' => $modelosStandar,
             'equiposCensados' => $equiposCensados,
-            'nombreArea' => $nombreArea,
-            'datosGenerales' => $datos
+            'modelos' => $modelosEquipo,
+            'nombreArea' => $nombreArea,            
+            'datosGenerales' => $datos            
         ];
 
         return ['html' => parent::getCI()->load->view('Poliza/Modal/FormularioCapturaCenso', $data, TRUE)];
+    }
+    
+    public function guardaEquiposPuntoCenso(array $datos) {
+        $result = $this->DBCensos->guardaEquiposPuntoCenso($datos);
+        return $result;
     }
 
 }

@@ -119,6 +119,7 @@ class Modelo_Censos extends Modelo_Base {
 
     public function getEquiposCensoByAreaPunto(array $datos) {
         $consulta = $this->consulta("select
+                                    Id,
                                     IdModelo,
                                     modelo(IdModelo) as Modelo,
                                     Serie,
@@ -136,6 +137,62 @@ class Modelo_Censos extends Modelo_Base {
     public function getNombreAreaById(int $area) {
         $consulta = $this->consulta("select Nombre from cat_v3_areas_atencion where Id = '" . $area . "'");
         return $consulta[0]['Nombre'];
+    }
+
+    public function getModelosGenerales() {
+        $consulta = $this->consulta("select 
+                                    Id,
+                                    modelo(Id) as Modelo
+                                    from cat_v3_modelos_equipo 
+                                    where Flag = 1
+                                    order by Modelo");
+        return $consulta;
+    }
+
+    public function guardaEquiposPuntoCenso(array $datos) {
+        $this->iniciaTransaccion();
+
+        foreach ($datos['activosEstandar'] as $key => $value) {
+            if ($value['existe'] == 1) {
+                $this->actualizar("t_censos", [
+                    'IdModelo' => $value['modelo'],
+                    'Serie' => $value['serie'],
+                    'Existe' => $value['existe'],
+                    'Danado' => $value['danado']
+                        ], ['Id' => $value['id']]);
+            } else {
+                $this->eliminar("t_censos", ['Id' => $value['Id']]);
+            }
+        }
+
+        foreach ($datos['nuevosEstandar'] as $key => $value) {
+            $this->insertar("t_censos", [
+                'IdServicio' => $datos['servicio'],
+                'IdArea' => $datos['area'],
+                'Punto' => $datos['punto'],
+                'IdModelo' => $value['modelo'],
+                'Serie' => $value['serie'],
+                'Existe' => 1,
+                'Danado' => $value['danado']
+            ]);
+        }
+
+        $this->insertar("t_censos_areas_puntos_revisados", [
+            'IdServicio' => $datos['servicio'],
+            'IdArea' => $datos['area'],
+            'Punto' => $datos['punto']
+        ]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
     }
 
 }

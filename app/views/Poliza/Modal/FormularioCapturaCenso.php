@@ -11,7 +11,12 @@
                 <a class="btn btn-success btnGuardarCapturaCenso pull-right m-r-10 m-l-10 f-s-14 f-w-600">Guardar</a>
             </div>
         </div>
-        <div class="row">
+        <div class="row m-t-10">
+            <div class="col-md-offset-1 col-md-10 col-sm-offset-0 col-sm-12 col-xs-offset-0 col-xs-12">          
+                <div class="divErrorCapturaCensoEstandar"></div>
+            </div>
+        </div>
+        <div class="row m-t-10">
             <div class="col-md-offset-1 col-md-10 col-sm-offset-0 col-sm-12 col-xs-offset-0 col-xs-12">          
                 <h4 class="text-center f-w-600 f-s-20"><?php echo $nombreArea . ' ' . $datosGenerales['punto']; ?></h4>        
                 <div class="underline"></div>
@@ -46,6 +51,7 @@
                             <tbody>
                                 <?php
                                 for ($i = 1; $i <= $value['Cantidad']; $i++) {
+                                    $idEquipoCensado = 0;
                                     $optionsModelos = '';
                                     $serie = '';
                                     $checkedIlegible = '';
@@ -57,6 +63,7 @@
                                             $selected = '';
                                             foreach ($arrayEquiposCensados as $keyEquiposCensados => $valueEquiposCensados) {
                                                 if ($valueEquiposCensados['IdModelo'] == $v['Id']) {
+                                                    $idEquipoCensado = $valueEquiposCensados['Id'];
                                                     $selected = 'selected';
                                                     $serie = $valueEquiposCensados['Serie'];
                                                     $checkedIlegible = ($serie == 'ILEGIBLE') ? 'checked="checked"' : '';
@@ -71,27 +78,28 @@
                                         }
                                     }
                                     $disabled = ($existe) ? '' : 'disabled="disabled"';
-                                    $border = ($existe) ? 'table-border-green' : 'table-border-red"';
+                                    $border = ($existe) ? 'table-border-green' : 'table-border-red';
+                                    $tipoRegistro = ($existe) ? 'registroActivo' : ' registroNuevo';
                                     ?>
-                                    <tr class="<?php echo $border; ?>">
+                                    <tr data-id="<?php echo $idEquipoCensado; ?>" class="registroEquiposEstandar <?php echo $border . ' ' . $tipoRegistro; ?>">
                                         <td># <?php echo $i; ?></td>
                                         <td>
-                                            <select class="form-control" <?php echo $disabled; ?>>
+                                            <select class="form-control listModelosEstandar" <?php echo $disabled; ?>>
                                                 <option value="">Seleccionar . . .</option>  
                                                 <?php echo $optionsModelos; ?>
                                             </select>
                                         </td>
                                         <td>
-                                            <input role="button" type="text" class="form-control" value="<?php echo $serie; ?>" placeholder="XXXYYYZZZ-123" <?php echo $disabled; ?>/>
+                                            <input role="button" type="text" class="form-control serieModelosEstandar" value="<?php echo $serie; ?>" placeholder="XXXYYYZZZ-123" <?php echo $disabled; ?>/>
                                         </td>
                                         <td class="text-center">
-                                            <input role="button" class="m-t-10" style="transform:scale(2, 2);" type="checkbox" <?php echo $checkedIlegible . ' ' . $disabled; ?> />
+                                            <input role="button" class="m-t-10 ilegibleModelosEstandar" style="transform:scale(2, 2);" type="checkbox" <?php echo $checkedIlegible . ' ' . $disabled; ?> />
                                         </td>
                                         <td class="text-center">
-                                            <input role="button" class="m-t-10" style="transform:scale(2, 2);" type="checkbox" <?php echo $checkedExiste; ?> />
+                                            <input role="button" class="m-t-10 existeModelosEstandar" style="transform:scale(2, 2);" type="checkbox" <?php echo $checkedExiste; ?> />
                                         </td>
                                         <td class="text-center">
-                                            <input role="button" class="m-t-10" style="transform:scale(2, 2);" type="checkbox" <?php echo $checkedDanado . ' ' . $disabled; ?> />
+                                            <input role="button" class="m-t-10 danadoModelosEstandar" style="transform:scale(2, 2);" type="checkbox" <?php echo $checkedDanado . ' ' . $disabled; ?> />
                                         </td>
                                     </tr>
                                     <?php
@@ -148,7 +156,15 @@
                                     <td># <?php echo $i; ?></td>
                                     <td>
                                         <select class="form-control">
-                                            <option value="">Seleccionar . . .</option>                                            
+                                            <option value="">Seleccionar . . .</option>         
+                                            <?php
+                                            if (isset($modelos) && count($modelos) > 0) {
+                                                foreach ($modelos as $keyModelos => $valueModelos) {
+                                                    $selected = ($valueModelos['Id'] == $valueEquiposCensados['IdModelo']) ? 'selected' : '';
+                                                    echo '<option value="' . $valueModelos['Id'] . '" ' . $selected . '>' . $valueModelos['Modelo'] . '</option>';
+                                                }
+                                            }
+                                            ?>
                                         </select>
                                     </td>
                                     <td>
