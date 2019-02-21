@@ -53,7 +53,7 @@ if (!empty($informacionEnvioLog)) {
     </div>
     <div class="panel-body">
         <div class="row">
-            <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="col-md-12 col-sm-12 col-xs-12">
                 <legend>Documentación de envío</legend>
             </div>
         </div>
@@ -139,7 +139,7 @@ if (!empty($informacionEnvioLog)) {
             </div>
             <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelect ?>">
-                    <a id="btnGuardarEnvioLogistica" class="btn btn-success btn-sm m-t-10 m-r-10 f-w-600 f-s-13">Guardar Envío</a>
+                    <a id="btnGuardarEnvioLogistica" class="btn btn-primary btn-sm m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-save"></i> Guardar Envío</a>
                 </div>
             </div>
         </form>
@@ -234,7 +234,7 @@ if (!empty($informacionEnvioLog)) {
                 </div>
                 <div id="divBotonGuardarEntrega" class="row <?php echo $camposSeguimientoEntrega ?>">
                     <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-                        <a id="btnGuardarEntrega" class="btn btn-success btn-sm m-t-10 m-r-10 f-w-600 f-s-13">Guardar Entrega</a>
+                        <a id="btnGuardarEntrega" class="btn btn-primary btn-sm m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-save"></i> Guardar Entrega</a>
                     </div>
                 </div>
             </form>

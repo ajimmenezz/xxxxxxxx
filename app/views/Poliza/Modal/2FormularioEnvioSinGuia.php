@@ -35,7 +35,7 @@
             $botonesEditables = 'hidden';
         }
 
-        if ($estatus['IdEstatus'] === '4' && $estatus['Flag'] === '0') {
+        if ($estatus['IdEstatus'] === '37' && $estatus['Flag'] === '1') {
             $botonesEditables = 'hidden';
             $camposEditables = 'disabled';
         }
