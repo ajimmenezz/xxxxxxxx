@@ -1094,6 +1094,7 @@ $(function () {
     function cargaEquiposPuntoCenso() {
         var servicio = arguments[0];
         $("#formularioCapturaCenso").empty().hide();
+        $("#contentEquiposPunto").show();
         evento.enviarEvento('Seguimiento/CargaEquiposPuntoCenso', {'servicio': servicio}, '#seccion-servicio-censo', function (respuesta) {
             $("#contentEquiposPunto").empty().append(respuesta.html);
 
