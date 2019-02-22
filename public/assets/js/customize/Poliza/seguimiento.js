@@ -1100,6 +1100,7 @@ $(function () {
 
             $(".btnPuntoArea").off("click");
             $(".btnPuntoArea").on("click", function () {
+                var buttonPuntoArea = $(this);
                 var data = {
                     'servicio': servicio,
                     'area': $(this).attr("data-area"),
@@ -1138,6 +1139,31 @@ $(function () {
                     $(".ilegibleModelosEstandar").on("click", function () {
                         var fila = $(this).closest("tr.registroEquiposEstandar");
                         var campoSerie = fila.find(".serieModelosEstandar");
+                        if ($(this).is(":checked")) {
+                            campoSerie.attr("disabled", true);
+                            campoSerie.val("ILEGIBLE");
+                        } else {
+                            campoSerie.removeAttr("disabled");
+                            campoSerie.val("");
+                        }
+                    });
+
+                    $("#checkIlegibleEquipoAdicional").off("click");
+                    $("#checkIlegibleEquipoAdicional").on("click", function () {
+                        var campoSerie = $("#txtSerieEquipoAdicional");
+                        if ($(this).is(":checked")) {
+                            campoSerie.attr("disabled", true);
+                            campoSerie.val("ILEGIBLE");
+                        } else {
+                            campoSerie.removeAttr("disabled");
+                            campoSerie.val("");
+                        }
+                    });
+
+                    $(".ilegibleEquiposAdicionales").off("click");
+                    $(".ilegibleEquiposAdicionales").on("click", function () {
+                        var fila = $(this).closest("tr.registrosAdicionales");
+                        var campoSerie = fila.find(".serieEquiposAdicionales");
                         if ($(this).is(":checked")) {
                             campoSerie.attr("disabled", true);
                             campoSerie.val("ILEGIBLE");
@@ -1210,6 +1236,88 @@ $(function () {
                                 cargaEquiposPuntoCenso(servicio);
                             } else {
                                 evento.mostrarMensaje(".divErrorCapturaCensoEstandar", false, "Ocurrió un error al guardar los registros. Por favor contácte al administrador.", 6000);
+                            }
+                        });
+                    });
+
+                    $("#btnAgregarEquipoAdicional").off("click");
+                    $("#btnAgregarEquipoAdicional").on("click", function () {
+                        data = {
+                            'servicio': servicio,
+                            'area': data.area,
+                            'punto': data.punto,
+                            'modelo': $("#listModelosEquipoAdicional").val(),
+                            'serie': $.trim($("#txtSerieEquipoAdicional").val()),
+                            'ilegible': $("#checkIlegibleEquipoAdicional").is(":checked") ? 1 : 0,
+                            'danado': $("#checkDanadoEquipoAdicional").is(":checked") ? 1 : 0
+                        }
+
+                        if (data.modelo == "") {
+                            evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el modelo para agregar el equipo.", 4000);
+                            return true;
+                        }
+
+                        if (data.serie == "" && data.ilegible == 0) {
+                            evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta el número de serie. Marque la casilla 'Ilegible' en caso de que la serie no sea alcanzable o no se encuentre en el equipo.", 6000);
+                            return true;
+                        }
+
+                        evento.enviarEvento('Seguimiento/GuardarEquipoAdicionalCenso', data, '#seccion-servicio-censo', function (respuesta) {
+                            if (respuesta.code == 200) {
+                                buttonPuntoArea.click();
+                            } else {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Ocurrió un error al guardar el equipo. Por favor contácte al administrador.", 6000);
+                            }
+                        });
+
+                    });
+
+                    $(".btnEliminarEquiposAdicionalesCenso").off("click");
+                    $(".btnEliminarEquiposAdicionalesCenso").on("click", function () {
+                        var fila = $(this).closest("tr.registrosAdicionales");
+                        var datos = {
+                            'id': $(this).attr("data-id")
+                        };
+                        evento.enviarEvento('Seguimiento/EliminarEquiposAdicionalesCenso', datos, '#seccion-servicio-censo', function (respuesta) {
+                            if (respuesta.code == 200) {
+                                fila.remove();
+                            } else {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Ocurrió un error al eliminar el equipo. Por favor contácte al administrador.", 6000);
+                            }
+                        });
+
+                    });
+
+                    $(".btnGuardarCambiosEquiposAdicionalesCenso").off("click");
+                    $(".btnGuardarCambiosEquiposAdicionalesCenso").on("click", function () {
+                        var fila = $(this).closest("tr.registrosAdicionales");
+                        data = {
+                            'servicio': servicio,
+                            'area': data.area,
+                            'punto': data.punto,
+                            'id': fila.attr("data-id"),
+                            'modelo': fila.find(".listModelosEquiposAdicionales").val(),
+                            'serie': fila.find(".serieEquiposAdicionales").val(),
+                            'ilegible': (fila.find(".ilegibleEquiposAdicionales").is(":checked")) ? 1 : 0,
+                            'existe': 1,
+                            'danado': (fila.find(".danadoEquiposAdicionales").is(":checked")) ? 1 : 0,
+                        }
+
+                        if (data.modelo == "") {
+                            evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el modelo.", 4000);
+                            return true;
+                        }
+
+                        if (data.serie == "" && datosEquipo.ilegible == 0) {
+                            evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta el número de serie. Marque la casilla 'Ilegible' en caso de que la serie no sea alcanzable o no se encuentre en el equipo.", 6000);
+                            return true;
+                        }
+
+                        evento.enviarEvento('Seguimiento/GuardaCambiosEquiposAdicionalesCenso', data, '#seccion-servicio-censo', function (respuesta) {
+                            if (respuesta.code == 200) {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", true, "Todos los cambios han sido guardados.", 4000);
+                            } else {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Ocurrió un error al guardar los registros. Por favor contácte al administrador.", 6000);
                             }
                         });
                     });

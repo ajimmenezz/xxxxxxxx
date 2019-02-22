@@ -368,6 +368,18 @@ class Controller_Seguimiento extends Base {
             case 'GuardaEquiposPuntoCenso':
                 $resultado = $this->Seguimientos->guardaEquiposPuntoCenso($this->input->post());
                 break;                
+            case 'GuardarEquipoAdicionalCenso':
+                $resultado = $this->Seguimientos->guardarEquipoAdicionalCenso($this->input->post());
+                break;                
+            case 'EliminarEquiposAdicionalesCenso':
+                $resultado = $this->Seguimientos->eliminarEquiposAdicionalesCenso($this->input->post());
+                break;                
+            case 'GuardaCambiosEquiposAdicionalesCenso':
+                $resultado = $this->Seguimientos->guardaCambiosEquiposAdicionalesCenso($this->input->post());
+                break;                
+            case 'CargaFormularioCapturaAdicionalesCenso':
+                $resultado = $this->Seguimientos->cargaFormularioCapturaAdicionalesCenso($this->input->post());
+                break;                
             default:
                 $resultado = FALSE;
                 break;

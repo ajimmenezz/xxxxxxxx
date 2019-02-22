@@ -20,6 +20,28 @@ class Modelo_Censos extends Modelo_Base {
                 t_censos_puntos tcp
                 where tcp.IdServicio = '" . $servicio . "'
                 order by Area");
+
+        if (empty($consulta)) {
+            $this->queryBolean("insert into t_censos_puntos
+                                    select
+                                    null,
+                                    IdServicio,
+                                    IdArea,
+                                    MAX(Punto) as Puntos
+                                    from t_censos where IdServicio = '" . $servicio . "'
+                                    group by IdArea");
+
+            $consulta = $this->consulta("select 
+                tcp.Id,
+                tcp.IdArea,
+                areaAtencion(tcp.IdArea) as Area,
+                tcp.Puntos
+                from
+                t_censos_puntos tcp
+                where tcp.IdServicio = '" . $servicio . "'
+                order by Area");
+        }
+
         return $consulta;
     }
 
@@ -152,29 +174,33 @@ class Modelo_Censos extends Modelo_Base {
     public function guardaEquiposPuntoCenso(array $datos) {
         $this->iniciaTransaccion();
 
-        foreach ($datos['activosEstandar'] as $key => $value) {
-            if ($value['existe'] == 1) {
-                $this->actualizar("t_censos", [
-                    'IdModelo' => $value['modelo'],
-                    'Serie' => $value['serie'],
-                    'Existe' => $value['existe'],
-                    'Danado' => $value['danado']
-                        ], ['Id' => $value['id']]);
-            } else {
-                $this->eliminar("t_censos", ['Id' => $value['Id']]);
+        if (isset($datos['activosEstandar']) && count($datos['activosEstandar']) > 0) {
+            foreach ($datos['activosEstandar'] as $key => $value) {
+                if ($value['existe'] == 1) {
+                    $this->actualizar("t_censos", [
+                        'IdModelo' => $value['modelo'],
+                        'Serie' => $value['serie'],
+                        'Existe' => $value['existe'],
+                        'Danado' => $value['danado']
+                            ], ['Id' => $value['id']]);
+                } else {
+                    $this->eliminar("t_censos", ['Id' => $value['Id']]);
+                }
             }
         }
 
-        foreach ($datos['nuevosEstandar'] as $key => $value) {
-            $this->insertar("t_censos", [
-                'IdServicio' => $datos['servicio'],
-                'IdArea' => $datos['area'],
-                'Punto' => $datos['punto'],
-                'IdModelo' => $value['modelo'],
-                'Serie' => $value['serie'],
-                'Existe' => 1,
-                'Danado' => $value['danado']
-            ]);
+        if (isset($datos['nuevosEstandar']) && count($datos['nuevosEstandar']) > 0) {
+            foreach ($datos['nuevosEstandar'] as $key => $value) {
+                $this->insertar("t_censos", [
+                    'IdServicio' => $datos['servicio'],
+                    'IdArea' => $datos['area'],
+                    'Punto' => $datos['punto'],
+                    'IdModelo' => $value['modelo'],
+                    'Serie' => $value['serie'],
+                    'Existe' => 1,
+                    'Danado' => $value['danado']
+                ]);
+            }
         }
 
         $this->insertar("t_censos_areas_puntos_revisados", [
@@ -182,6 +208,81 @@ class Modelo_Censos extends Modelo_Base {
             'IdArea' => $datos['area'],
             'Punto' => $datos['punto']
         ]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function getPuntosCensoRevisados(int $servicio) {
+        $consulta = $this->consulta("select 
+                                    * 
+                                    from t_censos_areas_puntos_revisados 
+                                    where IdServicio = '" . $servicio . "'");
+
+        return $consulta;
+    }
+
+    public function guardarEquipoAdicionalCenso(array $datos) {
+        $this->iniciaTransaccion();
+
+        $this->insertar("t_censos", [
+            'IdServicio' => $datos['servicio'],
+            'IdArea' => $datos['area'],
+            'IdModelo' => $datos['modelo'],
+            'Punto' => $datos['punto'],
+            'Serie' => $datos['serie'],
+            'Existe' => 1,
+            'Danado' => $datos['danado']
+        ]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200, 'id' => $this->ultimoId()];
+        }
+    }
+
+    public function eliminarEquiposAdicionalesCenso(array $datos) {
+        $this->iniciaTransaccion();
+
+        $this->eliminar("t_censos", [
+            "Id" => $datos['id']
+        ]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function guardaCambiosEquiposAdicionalesCenso(array $datos) {
+        $this->iniciaTransaccion();
+
+        $this->actualizar("t_censos", [
+            'IdModelo' => $datos['modelo'],
+            'Serie' => $datos['serie'],
+            'Existe' => $datos['existe'],
+            'Danado' => $datos['danado']
+                ], ['Id' => $datos['id']]);
 
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();

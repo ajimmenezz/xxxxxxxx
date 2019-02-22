@@ -4766,12 +4766,14 @@ class Seguimientos extends General {
     public function guardaCambiosAreasPuntos(array $datos) {
         $result = $this->DBCensos->guardaCambiosAreasPuntos($datos);
         return $result;
-    }    
+    }
 
     public function cargaEquiposPuntoCenso(array $datos) {
         $areasPuntos = $this->DBCensos->getAreasPuntosCensos($datos['servicio']);
+        $puntosRevisados = $this->DBCensos->getPuntosCensoRevisados($datos['servicio']);
         $data = [
-            'areasPuntos' => $areasPuntos
+            'areasPuntos' => $areasPuntos,
+            'puntosRevisados' => $puntosRevisados
         ];
         return ['html' => parent::getCI()->load->view('Poliza/Modal/CensoEquiposPuntoGroupArea', $data, TRUE)];
     }
@@ -4787,15 +4789,44 @@ class Seguimientos extends General {
             'modelosStandar' => $modelosStandar,
             'equiposCensados' => $equiposCensados,
             'modelos' => $modelosEquipo,
-            'nombreArea' => $nombreArea,            
-            'datosGenerales' => $datos            
+            'nombreArea' => $nombreArea,
+            'datosGenerales' => $datos
         ];
 
         return ['html' => parent::getCI()->load->view('Poliza/Modal/FormularioCapturaCenso', $data, TRUE)];
     }
     
+    public function cargaFormularioCapturaAdicionalesCenso(array $datos) {                
+        $equiposCensados = $this->DBCensos->getEquiposCensoByAreaPunto($datos);
+        $nombreArea = $this->DBCensos->getNombreAreaById($datos['area']);
+        $modelosEquipo = $this->DBCensos->getModelosGenerales();
+        $data = [                        
+            'equiposCensados' => $equiposCensados,
+            'modelos' => $modelosEquipo,
+            'nombreArea' => $nombreArea,
+            'datosGenerales' => $datos
+        ];
+
+        return ['html' => parent::getCI()->load->view('Poliza/Modal/FormularioCapturaAdicionalesCenso', $data, TRUE)];
+    }
+
     public function guardaEquiposPuntoCenso(array $datos) {
         $result = $this->DBCensos->guardaEquiposPuntoCenso($datos);
+        return $result;
+    }
+    
+    public function guardarEquipoAdicionalCenso(array $datos) {
+        $result = $this->DBCensos->guardarEquipoAdicionalCenso($datos);
+        return $result;
+    }
+    
+    public function eliminarEquiposAdicionalesCenso(array $datos) {
+        $result = $this->DBCensos->eliminarEquiposAdicionalesCenso($datos);
+        return $result;
+    }
+    
+    public function guardaCambiosEquiposAdicionalesCenso(array $datos) {
+        $result = $this->DBCensos->guardaCambiosEquiposAdicionalesCenso($datos);
         return $result;
     }
 
