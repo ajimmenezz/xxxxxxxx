@@ -59,6 +59,7 @@ $(function () {
 
         //tablas
         tabla.generaTablaPersonal('#listaRefaccionUtilizada', null, null, true, true, [[0, 'desc']]);
+        tabla.generaTablaPersonal('#listaRefaccionUtilizadaLaboratorio', null, null, true, true, [[0, 'desc']]);
         tabla.generaTablaPersonal('#lista-solicitud-producto', null, null, true, true);
 
         //Iniciar input archivos
