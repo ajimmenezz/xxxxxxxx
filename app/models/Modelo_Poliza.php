@@ -939,6 +939,7 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
@@ -973,6 +974,7 @@ class Modelo_Poliza extends Modelo_Base {
                                             WHERE
                                                 cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM
                                         t_equipos_allab tea
@@ -1005,6 +1007,7 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
@@ -1030,6 +1033,7 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
@@ -1054,6 +1058,7 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
@@ -1092,6 +1097,7 @@ class Modelo_Poliza extends Modelo_Base {
                                             WHERE
                                                 cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT 
                                                 Nombre
                                             FROM
@@ -1137,6 +1143,7 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
@@ -1633,7 +1640,7 @@ class Modelo_Poliza extends Modelo_Base {
                 'Fecha' => $datos['fecha']);
 
             $this->insertar('t_movimientos_inventario', $arrayMovimientoInventarioSalida);
-            
+
             $idMovimientoInventarioSalida = parent::connectDBPrueba()->insert_id();
 
             $arrayTablaInventario = array(

@@ -1112,7 +1112,7 @@ $(function () {
         tabla.limpiarTabla('#lista-equipos-enviados-solicitados');
 
         $.each(equipoEnviadosSolicitados, function (key, item) {
-            tabla.agregarFila('#lista-equipos-enviados-solicitados', [item.Id, item.IdServicio, item.Ticket, item.NombreSucursal, item.Equipo, item.FechaValidacion, item.IdEstatus, item.NombreEstatus, item.IdRefaccion, item.TipoMovimiento]);
+            tabla.agregarFila('#lista-equipos-enviados-solicitados', [item.Id, item.IdServicio, item.Ticket, item.NombreSucursal, item.Equipo, item.FechaValidacion, item.IdEstatus, item.NombreEstatus, item.IdRefaccion, item.Refaccion, item.TipoMovimiento]);
         });
     };
 
