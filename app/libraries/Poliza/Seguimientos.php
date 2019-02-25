@@ -2042,6 +2042,7 @@ class Seguimientos extends General {
         if (empty($verificarCensoExistente)) {
             $this->DBS->consultaQuery('insert into t_censos
                                     select 
+                                    null
                                     "' . $servicio . '", 
                                     IdArea, 
                                     IdModelo, 
