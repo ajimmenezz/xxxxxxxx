@@ -22,7 +22,7 @@
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <div class="form-group text-right" id="botonNuevoValidacion">
                         <?php $botonNuevo = ($datos['permisoNuevoRegistro']) ? "" : "hidden"; ?>
-                        <a href="javascript:;" class="btn btn-success <?php echo $botonNuevo; ?>" id="agregarEquipo"><i class="fa fa-plus"></i> Nuevo</a>
+                        <a href="javascript:;" class="btn btn-success <?php echo $botonNuevo; ?>" id="agregarEquipo"><i class="fa fa-plus"></i> Nueva Solicitud</a>
                     </div>
                 </div>
             </div>
@@ -53,6 +53,7 @@
                                     <th class="all">Fecha</th>
                                     <th class="never">IdEstatus</th>
                                     <th class="all">Estatus</th>
+                                    <th class="never">IdRefaccion</th>
                                     <th class="all">Refaccion</th>
                                     <th class="all">Tipo Movimiento</th>
                                 </tr>
@@ -71,6 +72,7 @@
                                         echo '<td>' . $value['IdEstatus'] . '</td>';
                                         echo '<td>' . $value['NombreEstatus'] . '</td>';
                                         echo '<td>' . $value['IdRefaccion'] . '</td>';
+                                        echo '<td>' . $value['Refaccion'] . '</td>';
                                         echo '<td>' . $value['TipoMovimiento'] . '</td>';
                                         echo '</tr>';
                                     }

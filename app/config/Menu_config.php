@@ -931,7 +931,7 @@ $config['Poliza'] = array(
     ),
     'Seguimiento-Equipos' => array(
         'liga' => 'Seguimiento Equipos Almacen y Laboratorio',
-        'icono' => '',
+        'icono' => 'fa fa-wrench',
         'Url' => '/Poliza/Seguimiento_Equipos',
         'css' => array('Poliza/Catalogo_Checklist'),
         'pluginsCss' => array(
