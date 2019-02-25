@@ -19,6 +19,7 @@ class Seguimientos extends General {
     private $MSP;
     private $usuario;
     private $MSicsa;
+    private $DBCensos;
 
     public function __construct() {
         parent::__construct();
@@ -35,34 +36,45 @@ class Seguimientos extends General {
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
         $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
         $this->MSicsa = \Modelos\Modelo_Sicsa::factory();
+        $this->DBCensos = \Modelos\Modelo_Censos::factory();
 
         parent::getCI()->load->helper('dividestringconviertearray');
     }
 
     public function consultaTodosCensoServicio(string $servicio) {
-        $consulta = $this->DBS->consultaGeneralSeguimiento('SELECT 
-                                                      tc.*,                
-                                                      cvaa.Nombre as Sucursal,
-                                                      cvme.Nombre as Modelo,
-                                                      cvmae.Nombre as Marca,
-                                                      cvle.Nombre as Linea 
-                                                      FROM t_censos tc inner join cat_v3_areas_atencion cvaa
-                                                      on tc.IdArea = cvaa.Id
-                                                      inner join cat_v3_modelos_equipo cvme
-                                                      on tc.IdModelo = cvme.Id 
-                                                      inner join cat_v3_marcas_equipo cvmae
-                                                      on cvme.Marca = cvmae.Id 
-                                                      inner join cat_v3_sublineas_equipo cvse
-                                                      on cvmae.Sublinea = cvse.Id 
-                                                      inner join cat_v3_lineas_equipo cvle
-                                                      on cvse.Linea = cvle.Id
-                                                    WHERE IdServicio = "' . $servicio . '"
-                                                    ORDER BY Sucursal, Punto, Linea ASC');
-        if (!empty($consulta)) {
-            return $consulta;
-        } else {
-            return FALSE;
-        }
+        $areasPuntos = $this->DBS->consulta("select 
+                                        tcp.Id,
+                                        tcp.IdArea,
+                                        areaAtencion(tcp.IdArea) as Area,
+                                        tcp.Puntos
+                                        from
+                                        t_censos_puntos tcp
+                                        where tcp.IdServicio = '" . $servicio . "'
+                                        order by Area");
+
+        $censo = $this->DBS->consulta('SELECT 
+                                        tc.*,                
+                                        cvaa.Nombre as Sucursal,
+                                        cvme.Nombre as Modelo,
+                                        cvmae.Nombre as Marca,
+                                        cvle.Nombre as Linea 
+                                        FROM t_censos tc inner join cat_v3_areas_atencion cvaa
+                                        on tc.IdArea = cvaa.Id
+                                        inner join cat_v3_modelos_equipo cvme
+                                        on tc.IdModelo = cvme.Id 
+                                        inner join cat_v3_marcas_equipo cvmae
+                                        on cvme.Marca = cvmae.Id 
+                                        inner join cat_v3_sublineas_equipo cvse
+                                        on cvmae.Sublinea = cvse.Id 
+                                        inner join cat_v3_lineas_equipo cvle
+                                        on cvse.Linea = cvle.Id
+                                      WHERE IdServicio = "' . $servicio . '"
+                                      ORDER BY Sucursal, Punto, Linea ASC');
+
+        return [
+            'areaspuntos' => $areasPuntos,
+            'censo' => $censo
+        ];
     }
 
     public function consultaAreaPuntoXSucursal(string $sucursal, string $agruparX) {
@@ -2048,6 +2060,15 @@ class Seguimientos extends General {
                                                     and tst.IdEstatus = 4
                                                     order by IdServicio desc limit 1)'
             );
+
+            $this->DBS->queryBolean("insert into t_censos_puntos
+                                    select
+                                    null,
+                                    IdServicio,
+                                    IdArea,
+                                    MAX(Punto) as Puntos
+                                    from t_censos where IdServicio = '" . $servicio . "'
+                                    group by IdArea");
         }
     }
 
@@ -4880,6 +4901,88 @@ class Seguimientos extends General {
                 'code' => 400];
             return $mensaje;
         }
+    }
+
+    public function cargaAreasPuntosCenso(array $datos) {
+        $areasPuntos = $this->DBCensos->getAreasPuntosCensos($datos['servicio']);
+        $areasCliente = $this->DBCensos->getAreasClienteFaltantesCenso($datos['servicio']);
+        $datos = [
+            'areasPuntos' => $areasPuntos,
+            'areasCliente' => $areasCliente
+        ];
+        return ['html' => parent::getCI()->load->view('Poliza/Modal/CensoAreasPuntos', $datos, TRUE)];
+    }
+
+    public function agregaAreaPuntosCenso(array $datos) {
+        $result = $this->DBCensos->agregaAreaPuntosCenso($datos);
+        return $result;
+    }
+
+    public function guardaCambiosAreasPuntos(array $datos) {
+        $result = $this->DBCensos->guardaCambiosAreasPuntos($datos);
+        return $result;
+    }
+
+    public function cargaEquiposPuntoCenso(array $datos) {
+        $areasPuntos = $this->DBCensos->getAreasPuntosCensos($datos['servicio']);
+        $puntosRevisados = $this->DBCensos->getPuntosCensoRevisados($datos['servicio']);
+        $data = [
+            'areasPuntos' => $areasPuntos,
+            'puntosRevisados' => $puntosRevisados
+        ];
+        return ['html' => parent::getCI()->load->view('Poliza/Modal/CensoEquiposPuntoGroupArea', $data, TRUE)];
+    }
+
+    public function cargaFormularioCapturaCenso(array $datos) {
+        $kitStandarArea = $this->DBCensos->getKitStandarArea($datos['area']);
+        $modelosStandar = $this->DBCensos->getModelosStandarByArea($datos['area']);
+        $equiposCensados = $this->DBCensos->getEquiposCensoByAreaPunto($datos);
+        $nombreArea = $this->DBCensos->getNombreAreaById($datos['area']);
+        $modelosEquipo = $this->DBCensos->getModelosGenerales();
+        $data = [
+            'kitStandarArea' => $kitStandarArea,
+            'modelosStandar' => $modelosStandar,
+            'equiposCensados' => $equiposCensados,
+            'modelos' => $modelosEquipo,
+            'nombreArea' => $nombreArea,
+            'datosGenerales' => $datos
+        ];
+
+        return ['html' => parent::getCI()->load->view('Poliza/Modal/FormularioCapturaCenso', $data, TRUE)];
+    }
+    
+    public function cargaFormularioCapturaAdicionalesCenso(array $datos) {                
+        $equiposCensados = $this->DBCensos->getEquiposCensoByAreaPunto($datos);
+        $nombreArea = $this->DBCensos->getNombreAreaById($datos['area']);
+        $modelosEquipo = $this->DBCensos->getModelosGenerales();
+        $data = [                        
+            'equiposCensados' => $equiposCensados,
+            'modelos' => $modelosEquipo,
+            'nombreArea' => $nombreArea,
+            'datosGenerales' => $datos
+        ];
+
+        return ['html' => parent::getCI()->load->view('Poliza/Modal/FormularioCapturaAdicionalesCenso', $data, TRUE)];
+    }
+
+    public function guardaEquiposPuntoCenso(array $datos) {
+        $result = $this->DBCensos->guardaEquiposPuntoCenso($datos);
+        return $result;
+    }
+    
+    public function guardarEquipoAdicionalCenso(array $datos) {
+        $result = $this->DBCensos->guardarEquipoAdicionalCenso($datos);
+        return $result;
+    }
+    
+    public function eliminarEquiposAdicionalesCenso(array $datos) {
+        $result = $this->DBCensos->eliminarEquiposAdicionalesCenso($datos);
+        return $result;
+    }
+    
+    public function guardaCambiosEquiposAdicionalesCenso(array $datos) {
+        $result = $this->DBCensos->guardaCambiosEquiposAdicionalesCenso($datos);
+        return $result;
     }
 
 }

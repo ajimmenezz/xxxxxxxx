@@ -350,6 +350,36 @@ class Controller_Seguimiento extends Base {
             case 'GuardarSolicitudProducto':
                 $resultado = $this->Seguimientos->guardarSolicitudProducto($this->input->post());
                 break;
+            case 'CargaAreasPuntosCenso':
+                $resultado = $this->Seguimientos->cargaAreasPuntosCenso($this->input->post());
+                break;                
+            case 'AgregaAreaPuntosCenso':
+                $resultado = $this->Seguimientos->agregaAreaPuntosCenso($this->input->post());
+                break;                
+            case 'GuardaCambiosAreasPuntos':
+                $resultado = $this->Seguimientos->guardaCambiosAreasPuntos($this->input->post());
+                break;                
+            case 'CargaEquiposPuntoCenso':
+                $resultado = $this->Seguimientos->cargaEquiposPuntoCenso($this->input->post());
+                break;                
+            case 'CargaFormularioCapturaCenso':
+                $resultado = $this->Seguimientos->cargaFormularioCapturaCenso($this->input->post());
+                break;                
+            case 'GuardaEquiposPuntoCenso':
+                $resultado = $this->Seguimientos->guardaEquiposPuntoCenso($this->input->post());
+                break;                
+            case 'GuardarEquipoAdicionalCenso':
+                $resultado = $this->Seguimientos->guardarEquipoAdicionalCenso($this->input->post());
+                break;                
+            case 'EliminarEquiposAdicionalesCenso':
+                $resultado = $this->Seguimientos->eliminarEquiposAdicionalesCenso($this->input->post());
+                break;                
+            case 'GuardaCambiosEquiposAdicionalesCenso':
+                $resultado = $this->Seguimientos->guardaCambiosEquiposAdicionalesCenso($this->input->post());
+                break;                
+            case 'CargaFormularioCapturaAdicionalesCenso':
+                $resultado = $this->Seguimientos->cargaFormularioCapturaAdicionalesCenso($this->input->post());
+                break;                
             default:
                 $resultado = FALSE;
                 break;

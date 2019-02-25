@@ -80,7 +80,10 @@ Base.prototype.enviarEvento = function () {
             if (callback !== null) {
                 callback(data);
             }
-        }).fail(function (data) {
+        }).fail(function (xhr, textStatus, errorThrown) {
+            console.log(xhr.responseText);
+            console.log(textStatus);
+            console.log(errorThrown);
             _this.finalizarCargando(objeto);
         });
     } else if (arguments.length === 0 || arguments.length >= 5) {
@@ -158,7 +161,7 @@ Base.prototype.mostrarMensaje = function (objeto, tipo, mensaje, duración) {
             }, duración);
 
             $('html,body').animate({
-                scrollTop: $("#mensajeError").offset().top
+                scrollTop: $(objeto).offset().top - 100
             }, 'slow');
             break;
         case true:
