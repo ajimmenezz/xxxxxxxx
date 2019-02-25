@@ -4486,6 +4486,7 @@ class Seguimientos extends General {
     }
 
     public function concluirRevicionLaboratorio(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
         $historialRegistro = $this->DBP->consultaHistorialRegistro($datos);
         $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
 
@@ -4494,6 +4495,7 @@ class Seguimientos extends General {
             $datos['idEstatus'] = '39';
             $datos['flag'] = '1';
             $datos['fecha'] = $fecha;
+            $datos['idUsuario'] = $usuario['Id'];
 
             $resultado = $this->DBP->actualizarEquiposAllabRevicionLaboratorio($datos);
             if ($resultado['code'] === 200) {

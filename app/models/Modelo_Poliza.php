@@ -674,7 +674,6 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function mostrarRevisionPunto(array $datos) {
-
         $consulta = $this->consulta("SELECT
                                         tcrp.Id,
                                         tcrp.IdServicio,
@@ -1275,7 +1274,6 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function actualizaInventariosMovimientosXConslusionCorrectivo(int $id) {
-
         $this->iniciaTransaccion();
 
         /* Obtiene la última solución del correctivo y el tipo de solución */
@@ -1602,26 +1600,70 @@ class Modelo_Poliza extends Modelo_Base {
     public function actualizarEquiposAllabRevicionLaboratorio(array $datos) {
         $this->iniciaTransaccion();
 
-//        $this->actualizar('t_equipos_allab_revision_laboratorio', array(
-//            'IdEstatus' => '4',
-//                ), array('IdRegistro' => $datos['id']));
-
-//        $this->cambiarEsatus($datos);
+        $this->actualizar('t_equipos_allab_revision_laboratorio', array(
+            'IdEstatus' => '4',
+                ), array('IdRegistro' => $datos['id']));
 
         $consultaLaboratorioRefacciones = $this->consulta('SELECT 
-                                                                tearlr.IdInventario
+                                                                tearlr.IdInventario,
+                                                                ti.*
                                                             FROM
                                                                 t_equipos_allab_revision_laboratorio_refacciones tearlr
                                                                     INNER JOIN
                                                                 t_equipos_allab_revision_laboratorio tearl
                                                                     ON tearlr.IdRevision = tearl.Id
+                                                                    INNER JOIN
+                                                                t_inventario ti ON tearlr.IdInventario = ti.Id
                                                                     WHERE tearl.IdRegistro = " ' . $datos['id'] . ' "
                                                                     AND Flag = "1"');
 
         foreach ($consultaLaboratorioRefacciones as $key => $value) {
-            var_dump($value);
+            $this->actualizar('t_inventario', array('IdEstatus' => '40'), ['Id' => $value['IdInventario']]);
+
+            $arrayMovimientoInventarioSalida = array(
+                'IdTipoMovimiento' => '4',
+                'IdServicio' => $datos['idServicio'],
+                'IdAlmacen' => $value['IdAlmacen'],
+                'IdTipoProducto' => '2',
+                'IdProducto' => $value['IdInventario'],
+                'IdEstatus' => '17',
+                'IdUsuario' => $datos['idUsuario'],
+                'Cantidad' => $value['Cantidad'],
+                'Serie' => $value['Serie'],
+                'Fecha' => $datos['fecha']);
+
+            $this->insertar('t_movimientos_inventario', $arrayMovimientoInventarioSalida);
+            
+            $idMovimientoInventarioSalida = parent::connectDBPrueba()->insert_id();
+
+            $arrayTablaInventario = array(
+                'IdAlmacen' => $value['IdAlmacen'],
+                'IdTipoProducto' => '2',
+                'IdProducto' => $value['IdInventario'],
+                'IdEstatus' => '22',
+                'Cantidad' => $value['Cantidad'],
+                'Serie' => $value['Serie']
+            );
+
+            $this->insertar('t_inventario', $arrayTablaInventario);
+
+            $arrayMovimientoInventarioEntrada = array(
+                'IdMovimientoEnlazado' => $idMovimientoInventarioSalida,
+                'IdTipoMovimiento' => '5',
+                'IdServicio' => $datos['idServicio'],
+                'IdAlmacen' => $value['IdAlmacen'],
+                'IdTipoProducto' => '2',
+                'IdProducto' => $value['IdInventario'],
+                'IdEstatus' => '22',
+                'IdUsuario' => $datos['idUsuario'],
+                'Cantidad' => $value['Cantidad'],
+                'Serie' => $value['Serie'],
+                'Fecha' => $datos['fecha']);
+
+            $this->insertar('t_movimientos_inventario', $arrayMovimientoInventarioEntrada);
         }
-//        $this->actualizar('t_inventario', array('IdEstatus' => '40'), ['Id' => $datos['idInventario']]);
+
+        $this->cambiarEsatus($datos);
 
 
         $this->terminaTransaccion();
