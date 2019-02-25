@@ -1649,6 +1649,23 @@ class Servicio extends General {
                                                                         tst.IdTipoServicio
                                                                     FROM t_servicios_ticket tst WHERE tst.Id = "' . $datos['servicio'] . '"');
 
+
+        $tipoServicio = $verificarServicioSinClaficar[0]['IdTipoServicio'];
+
+        if (in_array($tipoServicio, [11, '11'])) {
+            $consultaPuntosCensos = $this->DBS->consulta("select * from t_censos_puntos where IdServicio = '" . $datos['servicio'] . "'");
+            if (!empty($consultaPuntosCensos)) {
+                foreach ($consultaPuntosCensos as $key => $value) {
+                    $this->DBS->queryBolean(""
+                            . "delete "
+                            . "from t_censos "
+                            . "where IdServicio = '" . $value['IdServicio'] . "' "
+                            . "and IdArea = '" . $value['IdArea'] . "' "
+                            . "and Punto > " . $value['Puntos']);
+                }
+            }
+        }
+
         if (!empty($datos['sucursal'])) {
             $this->DBS->actualizarServicio('t_servicios_ticket', array('IdSucursal' => $datos['sucursal']), array('Id' => $datos['servicio']));
         }

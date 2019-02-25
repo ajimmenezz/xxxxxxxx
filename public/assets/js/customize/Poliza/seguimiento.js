@@ -1410,12 +1410,13 @@ $(function () {
         });
 
         $('#btnConcluirServicioCenso').on('click', function (e) {
-            var datosTablaModelos = $('#data-table-censo-modelos').DataTable().rows().data();
-            if (datosTablaModelos.length > 0) {
-                concluirServicioCenso(datosTablaModelos, datosTabla);
-            } else {
-                evento.mostrarMensaje('.errorDatosGeneralesCenso', false, 'Para guardar los Censos debe haber agregado un registro en la tabla un Censo en la pestaña Datos.', 5000);
-            }
+            concluirServicioCenso([], datosTabla);
+//            var datosTablaModelos = $('#data-table-censo-modelos').DataTable().rows().data();
+//            if (datosTablaModelos.length > 0) {
+//                concluirServicioCenso(datosTablaModelos, datosTabla);
+//            } else {
+//                evento.mostrarMensaje('.errorDatosGeneralesCenso', false, 'Para guardar los Censos debe haber agregado un registro en la tabla un Censo en la pestaña Datos.', 5000);
+//            }
         });
 
         //Evento encargado de eliminar un fila de la tabla censos
