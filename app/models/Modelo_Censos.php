@@ -184,7 +184,7 @@ class Modelo_Censos extends Modelo_Base {
                         'Danado' => $value['danado']
                             ], ['Id' => $value['id']]);
                 } else {
-                    $this->eliminar("t_censos", ['Id' => $value['Id']]);
+                    $this->eliminar("t_censos", ['Id' => $value['id']]);
                 }
             }
         }
