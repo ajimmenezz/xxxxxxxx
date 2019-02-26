@@ -1664,6 +1664,15 @@ class Servicio extends General {
                             . "and Punto > " . $value['Puntos']);
                 }
             }
+
+            $this->DBS->queryBolean("delete
+                                    from t_censos
+                                    where IdServicio = '" . $value['IdServicio'] . "'
+                                    and IdArea not in (
+                                                    select 
+                                                    IdArea 
+                                                    from t_censos_puntos 
+                                                    where IdServicio = '" . $value['IdServicio'] . "')");
         }
 
         if (!empty($datos['sucursal'])) {
