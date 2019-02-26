@@ -2970,20 +2970,30 @@ class Seguimientos extends General {
                         if ($equipoAllab[0]['IdTipoMovimiento'] === '1') {
                             $departamentoEspera = "Logistica";
                             $textoEspera = "Esperando informacion del Departamento de Logistica";
+                            return array('formularioValidacion' => $this->vistaValidacion($datos),
+                                'formularioGuia' => [],
+                                'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                                'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
+                                'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
+                                'formularioRecepcionLog' => [],
+                                'formularioEnvioSeguimientoLog' => [],
+                                'formularioRecepcionTecnico' => [],
+                                'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
                         } else {
                             $departamentoEspera = "Técnico";
                             $textoEspera = "Esperando informacion del Técnico";
+                            return array('formularioValidacion' => $this->vistaValidacion($datos),
+                                'formularioGuia' => [],
+                                'formularioEnvioAlmacen' => [],
+                                'formularioRecepcionAlmacen' => [],
+                                'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
+                                'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
+                                'formularioRecepcionLog' => [],
+                                'formularioEnvioSeguimientoLog' => [],
+                                'formularioRecepcionTecnico' => [],
+                                'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
                         }
-                        return array('formularioValidacion' => $this->vistaValidacion($datos),
-                            'formularioGuia' => [],
-                            'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
-                            'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
-                            'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
-                            'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
-                            'formularioRecepcionLog' => [],
-                            'formularioEnvioSeguimientoLog' => [],
-                            'formularioRecepcionTecnico' => [],
-                            'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
                     }
                     if ($idEstatus === '34' && $flag === '1') {
                         $departamentoEspera = "Logistica";

@@ -53,7 +53,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
         </div>
         <div class="row"></div>
         <ul class="nav nav-pills">
-            <li class="active"><a href="#RecepcionLab" data-toggle="tab">Recepcion</a></li>
+            <li class="active"><a href="#RecepcionLab" data-toggle="tab">Recepción</a></li>
             <li><a href="#problemasRecepcionLab" data-toggle="tab">Problemas de recepción</a></li>
         </ul>
         <div class="tab-content">

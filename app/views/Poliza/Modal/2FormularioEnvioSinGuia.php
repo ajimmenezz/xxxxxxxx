@@ -77,7 +77,7 @@
                 <div class="row <?php echo $botonesEditables ?>">
                     <div class="col-md-12 col-sm-12 col-xs-12 text-center">
                         <a id="btnGuardarProblema" class="btn btn-sm btn-danger m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-save"></i> Guardar Problema</a>
-                        <a id="btnGuardarSolicitud" class="btn btn-sm btn-primary m-t-10 m-l-10 f-w-600 f-s-13"><i class="fa fa-save"></i> Guardar Solicitud</a>
+                        <a id="btnGuardarSolicitud" class="btn btn-sm btn-primary m-t-10 m-l-10 f-w-600 f-s-13"><i class="fa fa-save"></i> Guardar Solicitud de Guía</a>
                     </div>
                 </div>
             </fieldset>

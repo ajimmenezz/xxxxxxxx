@@ -66,7 +66,7 @@ $mensajeCotizacion = 'hidden';
                 <a id="btnTerminarSeleccionLocal" class="btn btn-primary m-t-10 m-r-10 f-w-600 f-s-13">Guargar Producto(s) - Local</a>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-6 text-center">
-                <a id="btnTerminarSeleccionForaneo" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13">Guardar Producto(s) - Foraneo</a>
+                <a id="btnTerminarSeleccionForaneo" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13">Guardar Producto(s) - Foráneo</a>
             </div>
         </div>
         <div class="alert alert-warning fade in m-b-15 m-t-20 <?php echo $mensajeCotizacion; ?>">                            

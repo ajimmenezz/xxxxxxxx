@@ -43,17 +43,17 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
 ?>
 <div id="panelRecepcionLogistica" class="panel panel-inverse">
     <div class="panel-heading">
-        <h4 class="panel-title">3) Recepción en Logistica</h4>
+        <h4 class="panel-title">3) Recepción en Logística</h4>
     </div>
     <div class="panel-body">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-                <legend>Documentación de recepción en Logistica</legend>
+                <legend>Documentación de recepción en Logística</legend>
             </div>
         </div>
         <div class="row"></div>
         <ul class="nav nav-pills">
-            <li class="active"><a href="#RecepcionLog" data-toggle="tab">Recepcion</a></li>
+            <li class="active"><a href="#RecepcionLog" data-toggle="tab">Recepción</a></li>
             <li><a href="#problemasRecepcionLog" data-toggle="tab">Problemas de recepción</a></li>
         </ul>
         <div class="tab-content">

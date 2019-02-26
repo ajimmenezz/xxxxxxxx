@@ -74,11 +74,11 @@ if (!empty($datosValidacion)) {
                             <label class="f-w-600 f-s-13">Refacción Utilizada *</label>
                             <select id="listRefaccionUtil" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Selecciona . . .</option>
-<?php
-foreach ($componentesEquipo as $item) {
-    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
-}
-?>
+                                <?php
+                                foreach ($componentesEquipo as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
                             </select>
                         </div>
                     </div>
@@ -104,21 +104,26 @@ foreach ($componentesEquipo as $item) {
                                     </tr>
                                 </thead>
                                 <tbody>
-<?php
-if (!empty($listRefaccionesUtilizadasServicio)) {
-    foreach ($listRefaccionesUtilizadasServicio as $key => $value) {
-        echo '<tr>';
-        echo '<td>' . $value['Id'] . '</td>';
-        echo '<td>' . $value['Nombre'] . '</td>';
-        echo '<td>' . $value['Cantidad'] . '</td>';
-        echo '<td>' . $value['IdInventario'] . '</td>';
-        echo '</tr>';
-    }
-}
-?>  
+                                    <?php
+                                    if (!empty($listRefaccionesUtilizadasServicio)) {
+                                        foreach ($listRefaccionesUtilizadasServicio as $key => $value) {
+                                            echo '<tr>';
+                                            echo '<td>' . $value['Id'] . '</td>';
+                                            echo '<td>' . $value['Nombre'] . '</td>';
+                                            echo '<td>' . $value['Cantidad'] . '</td>';
+                                            echo '<td>' . $value['IdInventario'] . '</td>';
+                                            echo '</tr>';
+                                        }
+                                    }
+                                    ?>  
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                    <div class="col-md-12 m-t-20">
+                        <div class="alert alert-warning fade in m-b-15">                            
+                            Para eliminar el registro de la tabla solo tiene que dar click sobre fila para eliminarlo.                            
+                        </div>                        
                     </div>
                 </div>
                 <div class="row <?php echo $tablaRefaccionUtilizada ?>">
@@ -134,18 +139,18 @@ if (!empty($listRefaccionesUtilizadasServicio)) {
                                     </tr>
                                 </thead>
                                 <tbody>
-<?php
-if (!empty($listRefaccionesUtilizadasServicio)) {
-    foreach ($listRefaccionesUtilizadasServicio as $key => $value) {
-        echo '<tr>';
-        echo '<td>' . $value['Id'] . '</td>';
-        echo '<td>' . $value['Nombre'] . '</td>';
-        echo '<td>' . $value['Cantidad'] . '</td>';
-        echo '<td>' . $value['IdInventario'] . '</td>';
-        echo '</tr>';
-    }
-}
-?>  
+                                    <?php
+                                    if (!empty($listRefaccionesUtilizadasServicio)) {
+                                        foreach ($listRefaccionesUtilizadasServicio as $key => $value) {
+                                            echo '<tr>';
+                                            echo '<td>' . $value['Id'] . '</td>';
+                                            echo '<td>' . $value['Nombre'] . '</td>';
+                                            echo '<td>' . $value['Cantidad'] . '</td>';
+                                            echo '<td>' . $value['IdInventario'] . '</td>';
+                                            echo '</tr>';
+                                        }
+                                    }
+                                    ?>  
                                 </tbody>
                             </table>
                         </div>
