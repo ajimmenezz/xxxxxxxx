@@ -167,7 +167,7 @@ class ServiciosTicket extends General {
 
     public function getServiciosEnValidacion() {
         $usuario = $this->Usuario->getDatosUsuario();
-        $permisoValidacion = 'AND ts.Solicita = "' . $usuario['Id'] . '"';
+        $permisoValidacion = 'AND ts.Solicita = "' . $usuario['Id'] . '" AND tst.IdTipoServicio != "11"';
 
         if (in_array('79', $usuario['PermisosAdicionales']) || in_array('79', $usuario['Permisos'])) {
             $permisoValidacion = '';
@@ -176,8 +176,6 @@ class ServiciosTicket extends General {
         } elseif (in_array('82', $usuario['Permisos']) || in_array('82', $usuario['PermisosAdicionales'])) {
             $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where cp.IdDepartamento = 7))) ';
         }
-
-
 
         return $this->DBST->getServicios('
                 SELECT 
@@ -441,7 +439,7 @@ class ServiciosTicket extends General {
 
                             $componentesUtilizadosStock = ($componentesUtilizadosStock != '') ? substr($componentesUtilizadosStock, 1) : '';
                         }
-                        
+
                         /*
                          * Revisa si se ocuparon equipos del inventario para este servicio y no omitirlos 
                          * por estar bloqueados                         
@@ -454,8 +452,8 @@ class ServiciosTicket extends General {
 
                             $equiposUtilizadosStock = ($equiposUtilizadosStock != '') ? substr($equiposUtilizadosStock, 1) : '';
                         }
-                        
-                        
+
+
                         /*
                          * * Se determina si se tiene o no el permiso para que el usuario dentro de las soluciones determine
                          * que usará algún componente y equipo completo del stock de inventario a consignación
@@ -463,7 +461,7 @@ class ServiciosTicket extends General {
                         $data['usarStock'] = (in_array(293, $usuario['PermisosAdicionales']) || in_array(293, $usuario['Permisos'])) ? true : false;
                         if (isset($data['informacion']['informacionDatosGeneralesCorrectivo'][0])) {
                             $data['inventarioComponentes'] = $this->DBA->getComponentesDisponiblesParaServicio($usuario['Id'], $data['informacion']['informacionDatosGeneralesCorrectivo'][0]['IdModelo'], $componentesUtilizadosStock);
-                            $data['inventarioEquipos'] = $this->DBA->getEquiposDisponiblesParaServicio($usuario['Id'], $data['informacion']['informacionDatosGeneralesCorrectivo'][0]['IdModelo'], $equiposUtilizadosStock);                            
+                            $data['inventarioEquipos'] = $this->DBA->getEquiposDisponiblesParaServicio($usuario['Id'], $data['informacion']['informacionDatosGeneralesCorrectivo'][0]['IdModelo'], $equiposUtilizadosStock);
                         } else {
                             $data['inventarioComponentes'] = [];
                             $data['inventarioEquipos'] = [];
