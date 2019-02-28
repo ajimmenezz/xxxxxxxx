@@ -233,8 +233,7 @@
                         <!--Empezando Seccion del usuario-->
                         <li class = "dropdown navbar-user">
                             <a href = "javascript:;" class = "dropdown-toggle" data-toggle = "dropdown">
-                                <?php (empty($datosUsuario['UrlFoto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $datosUsuario['UrlFoto'];
-                                ?>
+                                <?php (empty($datosUsuario['UrlFoto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $datosUsuario['UrlFoto']; ?>
                                 <img src="<?php echo $foto; ?>" alt="" />
                                 <span class="hidden-xs"><?php echo $usuario['Nombre']; ?></span> <b class="caret"></b>
                             </a>

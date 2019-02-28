@@ -1,7 +1,7 @@
 <!-- Empezando #contenido -->
 <div id="listaPoliza" class="content">
     <!-- Empezando titulo de la pagina -->
-    <h1 class="page-header">Seguimiento Poliza</h1>
+    <h1 class="page-header">Seguimiento Póliza</h1>
     <!-- Finalizando titulo de la pagina -->
     <!-- Empezando panel seguimiento poliza -->
     <div id="panelSeguimientoPoliza" class="panel panel-inverse">
@@ -11,7 +11,7 @@
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>                            
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
             </div>
-            <h4 class="panel-title">Seguimiento Poliza</h4>
+            <h4 class="panel-title">Seguimiento Póliza</h4>
         </div>
         <!--Finalizando cabecera del panel-->
         <!--Empezando cuerpo del panel-->

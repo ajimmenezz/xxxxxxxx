@@ -1,5 +1,5 @@
 <!-- Empezando titulo de la pagina -->
-<h1 class="page-header">Seguimiento Poliza</h1>
+<h1 class="page-header">Seguimiento Póliza</h1>
 <!-- Finalizando titulo de la pagina -->
 <!-- begin panel -->
 <div id="seccion-servicio-mantemiento-puntos-censados" class="panel panel-inverse">

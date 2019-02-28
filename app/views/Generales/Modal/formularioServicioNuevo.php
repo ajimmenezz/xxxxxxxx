@@ -19,7 +19,7 @@
                         <option value="">Seleccionar</option>
                         <?php
                         foreach ($tipoServicio as $key => $value) {
-                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . ' (' . $value['Departamento'] . ')</option>';
                         }
                         ?>
                     </select>                            
@@ -34,7 +34,6 @@
                         <option value="">Seleccionar</option>
                         <?php
                         foreach ($atiende as $key => $value) {
-//                            var_dump($value);
                             echo '<option value="' . $value['IdUsuario'] . '" data="'. $value['EmailCorporativo'] .'">' . $value['Nombre'] . '</option>';
                         }
                         ?>
