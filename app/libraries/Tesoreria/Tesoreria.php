@@ -480,18 +480,32 @@ class Tesoreria extends General {
 
     public function totalVueltasFactura(array $datos) {
         $totalFactura = 0;
+        $iva = $this->ivaOutsorcing();
 
         foreach ($datos as $k => $v) {
-            $montoIvaVuelta = number_format($v['Monto'] * 16 / 100, 2);
+            $montoIvaVuelta = number_format($v['Monto'] * $iva / 100, 2);
             $montoIvaVuelta = str_replace(',', '', $montoIvaVuelta);
-            $totalIvaMontoVuelta = $v['Monto'] + (float)$montoIvaVuelta;
-            $viaticoIvaVuelta = number_format($v['Viatico'] * 16 / 100, 2);
+            $totalIvaMontoVuelta = $v['Monto'] + (float) $montoIvaVuelta;
+            $viaticoIvaVuelta = number_format($v['Viatico'] * $iva / 100, 2);
             $viaticoIvaVuelta = str_replace(',', '', $viaticoIvaVuelta);
-            $totalIvaViaticoVuelta = $v['Viatico'] + (float)$viaticoIvaVuelta;
+            $totalIvaViaticoVuelta = $v['Viatico'] + (float) $viaticoIvaVuelta;
             $sumaMontoViatico = $totalIvaMontoVuelta + $totalIvaViaticoVuelta;
             $totalFactura = $totalFactura + $sumaMontoViatico;
         }
+
         return (float) $totalFactura;
+    }
+
+    public function ivaOutsorcing() {
+        $usuario = $this->Usuario->getDatosUsuario();
+        
+        if ($usuario['Id'] === '119') {
+            $iva = 8;
+        } else {
+            $iva = 16;
+        }
+
+        return $iva;
     }
 
     public function evidenciaPagoFactura(array $datos) {
@@ -499,25 +513,25 @@ class Tesoreria extends General {
 
         return $evidenciaPago;
     }
-    
+
     public function verificarReabrirVuelta() {
         $usuario = $this->Usuario->getDatosUsuario();
 
         if (in_array('299', $usuario['PermisosAdicionales']) || in_array('299', $usuario['Permisos'])) {
             return TRUE;
-        }else{
+        } else {
             return FALSE;
         }
-    }   
-    
+    }
+
     public function reabrirVuelta(array $datos) {
         $consulta = $this->DBT->cambiarEstatusTablaFacturacionOutsourcing($datos);
-        
-        if(!empty($consulta)){
+
+        if (!empty($consulta)) {
             return TRUE;
-        }else{
+        } else {
             return FALSE;
         }
-    }        
+    }
 
 }
