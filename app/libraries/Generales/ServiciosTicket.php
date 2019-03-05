@@ -152,7 +152,8 @@ class ServiciosTicket extends General {
                 (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
             from t_servicios_ticket tst inner join cat_v3_servicios_departamento csd
             on tst.IdTipoServicio = csd.Id or tst.IdTipoServicio = 9
-            where tst.IdEstatus in (1,2,3,10,12) 
+            where tst.Atiende = ' . $usuario['Id'] . '
+            and tst.IdEstatus in (1,2,3,10,12) 
             and (csd.IdDepartamento = ' . $departamento . ' or tst.IdTipoServicio = 9) group by tst.Id desc '
                             . $queryUnion);
         }
