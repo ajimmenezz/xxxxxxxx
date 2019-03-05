@@ -14,12 +14,14 @@ class ServiceDesk extends General {
     private $Url;
     private $FIELDS;
     private $UrlUsers;
+    private $modeloServiceDesck;
 
     public function __construct() {
         parent::__construct();
         ini_set('max_execution_time', 300);
         $this->Url = "http://mesadeayuda.cinemex.net:8080/sdpapi/request";
         $this->UrlUsers = "http://mesadeayuda.cinemex.net:8080/sdpapi/requester/";
+        $this->modeloServiceDesck = \Modelos\Modelo_ServiceDesk::factory();
     }
 
     /*
@@ -207,8 +209,24 @@ class ServiceDesk extends General {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $FIELDS);
         $return = curl_exec($ch);
         curl_close($ch);
+        $jsonDecode = json_decode($return);
+        $this->generateLogResolverSD(array($jsonDecode, $folio));
 
-        return json_decode($return);
+        return $jsonDecode;
+    }
+
+    private function generateLogResolverSD(array $dataOperationSD) {
+        if ($dataOperationSD[0]->operation->result->status !== 'Success') {
+            $user = $this->Usuario->getDatosUsuario();
+            $date = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $dataToInsert = array(
+                'IdUsuario' => $user['Id'],
+                'Fecha' => $date,
+                'Codigo' => $dataOperationSD[0]->operation->result->status,
+                'Mensaje' => $dataOperationSD[0]->operation->result->message,
+                'Folio' => $dataOperationSD[1]);
+            $this->modeloServiceDesck->saveLogUpgradeSD($dataToInsert);
+        }
     }
 
     public function setResolucionServiceDesk2(string $key, string $folio, string $datos) {
