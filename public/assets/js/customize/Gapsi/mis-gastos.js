@@ -121,6 +121,27 @@ $(function () {
             }
         });
 
+        if ($("#checkCredito").is(":checked")) {
+            $("#fechaCredito").removeAttr("disabled");
+            $("#fechaCredito").attr("data-parsley-required", "true");
+        } else {
+            $("#fechaCredito").attr("disabled", "disabled");
+            $("#fechaCredito").attr("data-parsley-required", "false");
+            $("#fechaCredito").val("");
+        }
+
+        $("#checkCredito").on("click");
+        $("#checkCredito").on("click", function () {
+            if ($(this).is(":checked")) {
+                $("#fechaCredito").removeAttr("disabled");
+                $("#fechaCredito").attr("data-parsley-required", "true");
+            } else {
+                $("#fechaCredito").attr("disabled", "disabled");
+                $("#fechaCredito").attr("data-parsley-required", "false");
+                $("#fechaCredito").val("");
+            }
+        });
+
         $("#listCategoria").on("change", function () {
             $("#listSubcategoria").empty().append('<option value="">Selecciona . . .</option>');
             select.cambiarOpcion("#listSubcategoria", '');
@@ -207,6 +228,8 @@ $(function () {
                         'TipoTrans': $("#listTipoTrasnferencia option:selected").text(),
                         'TipoServicio': $("#listTiposServicio option:selected").text(),
                         'OC': $.trim($("#txtOC").val()),
+                        'Credito': ($("#checkCredito").is(":checked")) ? 1 : 0,
+                        'FechaCredito': $("#fechaCredito").val(),
                         'Descripcion': $("#txtDescripcion").val(),
                         'Importe': total,
                         'Observaciones': $("#txtObservaciones").val(),

@@ -32,6 +32,13 @@
         $_tipoBeneficiario = $Gasto['gasto']['TipoBeneficiario'];
         $_tipoTrans = $Gasto['gasto']['TipoTrans'];
         $_oc = $Gasto['gasto']['OrdenCompra'];
+        $_fechaCredito = $Gasto['gasto']['FechaPagoCredito'];
+        if ($_fechaCredito == '') {
+            $_credito = '';
+        } else {
+            $_credito = 'checked';
+            $_fechaCredito = substr($_fechaCredito, 0, 10);
+        }
 
         $__proyecto = $Gasto['gasto']['Proyecto'];
         $__sucursal = $Gasto['gasto']['Sucursal'];
@@ -179,6 +186,12 @@
                     <div class="form-group">
                         <label class="f-w-600 f-s-13">Orden de Compra:</label>
                         <input type="text" class="form-control" id="txtOC" placeholder="" value="<?php echo $_oc; ?>"  data-parsley-required="false" <?php echo $__disable; ?>/>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label class="f-w-600 f-s-13">¿A crédito? <input type="checkbox" id="checkCredito" <?php echo $_credito; ?>/></label>
+                        <input type="date" class="form-control" id="fechaCredito" disabled="" data-parsley-required="false" value="<?php echo $_fechaCredito; ?>" />
                     </div>
                 </div>
             </div>            
