@@ -268,6 +268,8 @@ class Tesoreria extends General {
             $extencion = pathinfo($value, PATHINFO_EXTENSION);
             if ($nombreExtencion !== $extencion) {
                 if ($extencion === 'xml') {
+                    libxml_use_internal_errors(true);
+
                     $xml = simplexml_load_file($rutaActual . $value);
 
                     $arrayComprobante = (array) $xml->xpath('//cfdi:Comprobante');
@@ -498,7 +500,7 @@ class Tesoreria extends General {
 
     public function ivaOutsorcing() {
         $usuario = $this->Usuario->getDatosUsuario();
-        
+
         if ($usuario['Id'] === '119') {
             $iva = 8;
         } else {
