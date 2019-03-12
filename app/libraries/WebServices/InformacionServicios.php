@@ -93,6 +93,9 @@ class InformacionServicios extends General {
                         case '11':
                             $html .= $this->servicioSinDetalles($datos);
                             break;
+                        case '5':
+                            $html .= $this->trafficService($datos);
+                            break;
                     }
                 } else {
                     $html .= $this->sinClasificar($datos);
@@ -902,26 +905,18 @@ class InformacionServicios extends General {
     }
 
     public function checklist(array $datos) {
-        $linkPdf = $this->rutaPDF($datos);
+        $linkPdf = $this->cargarPDF($datos);
         $descripcion = "<div>Ha concluido el Servicio Checklist</div><br/>
                         <a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a>";
 
         return $descripcion;
     }
 
-    public function rutaPDF(array $datos) {
-        $host = $_SERVER['SERVER_NAME'];
-        $infoServicio = $this->getInformacionServicio($datos['servicio']);
-        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-        $ruta = '/storage/Archivos//Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
-
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
-        } else {
-            $path = 'http://' . $host . '/' . $ruta;
-        }
-
-        return $path;
+    public function trafficService(array $datos) {
+        $linkPdf = $this->cargarPDF($datos);
+        $descripcion = "<br/><div>Se ha realizo un servicio de Tráfico</div>
+                        <a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a><br/>";
+        return $descripcion;
     }
 
 }
