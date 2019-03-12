@@ -61,6 +61,76 @@ class Modelo_Notificacion extends Modelo_Base {
         return $consulta;
     }
 
+    public function showSupervisorAndBranchTechnician(string $idSolicitud) {
+        return $this->consulta('(SELECT 
+                                    cvrc.IdResponsableInterno AS IdUsuario,
+                                    nombreUsuario(cvu.Id) AS Nombre,
+                                    cvu.Usuario,
+                                    cp.Nombre as Perfil,
+                                    cvu.EmailCorporativo,
+                                    cvu.SDKey,
+                                    cp.IdDepartamento
+                                FROM
+                                    t_solicitudes ts
+                                        INNER JOIN
+                                    cat_v3_sucursales cvs ON cvs.Id = ts.IdSucursal
+                                        INNER JOIN
+                                    cat_v3_regiones_cliente cvrc ON cvrc.Id = cvs.IdRegionCliente
+                                        INNER JOIN
+                                    cat_v3_usuarios cvu ON cvu.Id = cvrc.IdResponsableInterno
+                                        INNER JOIN
+                                    cat_perfiles cp ON cp.Id = cvu.IdPerfil
+                                WHERE
+                                    ts.Id = "' . $idSolicitud . '")
+                                UNION
+                                SELECT 
+                                    cvs.IdResponsable AS IdUsuario,
+                                    nombreUsuario(cvu.Id) AS Nombre,
+                                    cvu.Usuario,
+                                    cp.Nombre as Perfil,
+                                    cvu.EmailCorporativo,
+                                    cvu.SDKey,
+                                    cp.IdDepartamento
+                                FROM
+                                    t_solicitudes ts
+                                        INNER JOIN
+                                    cat_v3_sucursales cvs ON cvs.Id = ts.IdSucursal
+                                        INNER JOIN
+                                    cat_v3_usuarios cvu ON cvu.Id = cvs.IdResponsable
+                                        INNER JOIN
+                                    cat_perfiles cp ON cp.Id = cvu.IdPerfil
+                                WHERE
+                                    ts.Id = "' . $idSolicitud . '"'
+        );
+    }
+
+    public function showSupervisorsPolicyCoordinator() {
+        return $this->consulta('SELECT 
+                                    cvu.Id as IdUsuario,
+                                    nombreUsuario(cvu.Id) AS Nombre,
+                                    cvu.Usuario,
+                                    cp.Nombre as Perfil, 
+                                    cvu.EmailCorporativo, 
+                                    cvu.SDKey, 
+                                    cp.IdDepartamento 
+                                FROM cat_v3_usuarios cvu 
+                                INNER JOIN cat_perfiles cp ON cp.Id = cvu.IdPerfil 
+                                WHERE cp.IdDepartamento = 11
+                                AND cp.Nivel IN(3,4)
+                                AND cvu.flag = 1'
+        );
+    }
+
+    public function showIdSucursalTableSolicitudes(string $idSolicitud) {
+        return $this->consulta('SELECT 
+                                        IdSucursal
+                                    FROM
+                                        t_solicitudes
+                                    WHERE
+                                        Id = "' . $idSolicitud . '"'
+        );
+    }
+
     /*
      * Se encarga de actualizar la notificacion
      * 
@@ -85,4 +155,5 @@ class Modelo_Notificacion extends Modelo_Base {
         $consulta = $this->consulta($sentencia);
         return $consulta;
     }
+
 }

@@ -287,7 +287,8 @@ class Solicitud extends General {
                                     <br>' . $linkDetallesSolicitud . '<br><br>
                                     Asunto: <p><b>' . $datos['asunto'] . '</b> </p><br>
                                     Con la siguiente descripción:<br> <p><b>' . $datos['descripcion'] . '</b> </p><br>
-                                    Favor de atender en breve.'
+                                    Favor de atender en breve.',
+                    'idSolicitud' => $numeroSolicitud
                 ));
                 $texto = '<p>Estimado(a) <strong>' . $solicitante['Nombre'] . ',</strong> se le ha mandado la información de la solicitud que ha creado.<br>Número de solicitud: <strong>' . $numeroSolicitud . '</strong>.' . $stringFolio . $stringSucursal . '</p></b>' . $linkDetallesSolicitud . '<br><br>
                             Asunto: <p><b>' . $datos['asunto'] . '</b> </p><br><br>
@@ -656,6 +657,10 @@ class Solicitud extends General {
         $data['remitente'] = $datos['remitente'];
         $data['tipo'] = $datos['tipo'];
         $data['descripcion'] = $datos['descripcion'];
+        
+        if(isset($datos['idSolicitud'])){
+            $data['idSolicitud'] = $datos['idSolicitud'];
+        }
 
         $this->Notificacion->setNuevaNotificacion($data, $datos['titulo'], $datos['mensaje'], $atiende);
 
