@@ -51,6 +51,7 @@
                             <tbody>
                                 <?php
                                 for ($i = 1; $i <= $value['Cantidad']; $i++) {
+                                    $usado = false;
                                     $idEquipoCensado = 0;
                                     $optionsModelos = '';
                                     $serie = '';
@@ -62,18 +63,21 @@
                                     foreach ($modelosStandar as $k => $v) {
                                         if ($value['IdSublinea'] == $v['Sublinea']) {
                                             $selected = '';
-                                            foreach ($arrayEquiposCensados as $keyEquiposCensados => $valueEquiposCensados) {
-                                                if ($valueEquiposCensados['IdModelo'] == $v['Id']) {
-                                                    $idEquipoCensado = $valueEquiposCensados['Id'];
-                                                    $selected = 'selected';
-                                                    $serie = $valueEquiposCensados['Serie'];
-                                                    $checkedIlegible = ($serie == 'ILEGIBLE') ? 'checked="checked"' : '';
-                                                    $checkedExiste = ($valueEquiposCensados['Existe'] == 1 ) ? 'checked="checked"' : 0;
-                                                    $checkedDanado = ($valueEquiposCensados['Danado'] == 1 ) ? 'checked="checked"' : 0;
-                                                    $disabledSerie = ($checkedIlegible !== '') ? 'disabled="disabled"' : '';
-                                                    $existe = true;
-                                                    unset($arrayEquiposCensados[$keyEquiposCensados]);
-                                                    break;
+                                            if (!$usado) {
+                                                foreach ($arrayEquiposCensados as $keyEquiposCensados => $valueEquiposCensados) {
+                                                    if ($valueEquiposCensados['IdModelo'] == $v['Id']) {
+                                                        $idEquipoCensado = $valueEquiposCensados['Id'];
+                                                        $selected = 'selected';
+                                                        $serie = $valueEquiposCensados['Serie'];
+                                                        $checkedIlegible = ($serie == 'ILEGIBLE') ? 'checked="checked"' : '';
+                                                        $checkedExiste = ($valueEquiposCensados['Existe'] == 1 ) ? 'checked="checked"' : 0;
+                                                        $checkedDanado = ($valueEquiposCensados['Danado'] == 1 ) ? 'checked="checked"' : 0;
+                                                        $disabledSerie = ($checkedIlegible !== '') ? 'disabled="disabled"' : '';
+                                                        $existe = true;
+                                                        unset($arrayEquiposCensados[$keyEquiposCensados]);
+                                                        $usado = true;
+                                                        break;
+                                                    }
                                                 }
                                             }
                                             $optionsModelos .= '<option value="' . $v['Id'] . '" ' . $selected . '>' . $v['Marca'] . ' ' . $v['Modelo'] . '</option>';
@@ -120,7 +124,7 @@
                 <a class="btn btn-danger btnCancelarCapturaCenso pull-right m-r-10 m-l-10 f-s-14 f-w-600">Cancelar</a>
                 <a class="btn btn-success btnGuardarCapturaCenso pull-right m-r-10 m-l-10 f-s-14 f-w-600">Guardar</a>
             </div>
-        </div>
+        </div>        
     </div>
     <div class="tab-pane fade" id="nav-pill-equipos-adicionales">        
         <div class="row">
