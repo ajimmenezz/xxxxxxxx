@@ -42,7 +42,7 @@ class Notificacion extends General {
         return $this->DBN->getNotificaciones($usuario['Id']);
     }
 
-    /*
+    /* gi
      * Se encarga de solicitar actualizar la notificacion como vista
      * 
      */
@@ -68,7 +68,7 @@ class Notificacion extends General {
                 if (isset($datos['idSolicitud'])) {
                     $data = $this->defineUsersPolicy(array('idSolicitud' => $datos['idSolicitud']));
                 } else {
-                    $data = $this->DBN->showSupervisorAndBranchTechnician($dataToDefinePolicyUsers['idSolicitud']);
+                    $data = $dataUsuersPolicy = $this->DBN->showSupervisorsPolicyCoordinator();
                 }
             } else {
                 $data = $this->Catalogo->catUsuarios('3', array('Flag' => '1'), array('IdDepartamento' => $datos['departamento']));
