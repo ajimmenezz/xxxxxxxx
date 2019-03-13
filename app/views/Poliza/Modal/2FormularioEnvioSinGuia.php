@@ -14,7 +14,7 @@
                 $disabled = 'disabled';
                 $hidden = 'hidden';
                 $hiddenContrario = '';
-                $comentario = $value['ComentarioDeGuia'];
+                $comentario = $value['ComentariosSolicitud'];
                 $archivos = $value['ArchivosEnvio'];
                 $archivosSolicitud = $value['ArchivosSolicitud'];
             }

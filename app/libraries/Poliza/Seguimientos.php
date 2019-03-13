@@ -4739,7 +4739,7 @@ class Seguimientos extends General {
             'IdEstatusSolicitud' => null,
             'FechaEstatusSolicitud' => null,
             'ArchivosSolicitud' => $archivos,
-            'ComentarioDeGuia' => $datos['comentarios']
+            'ComentariosSolicitud' => $datos['comentarios']
         );
 
         $datosEstatus = array(

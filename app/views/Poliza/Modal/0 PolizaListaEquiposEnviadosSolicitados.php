@@ -1,11 +1,11 @@
 <div id="divListaEquiposEnviados" class="content">
     <input type="hidden" value="<?php // echo $datos['vistaUsuario']['IdPerfil']   ?>" id="IdPerfil" />
-    <h1 class="page-header">Seguimiento Equipos Almecén o Solicitados</h1>
+    <h1 class="page-header">Seguimiento Equipos Almacén o Solicitados</h1>
     <div id="panelTablaEquiposEnviados" class="panel panel-inverse">
         <div class="panel-heading">    
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                    <h4 class="panel-title">Seguimiento Equipos Almecén o Solicitados</h4>
+                    <h4 class="panel-title">Seguimiento Equipos Almacén o Solicitados</h4>
                 </div>
                 <div class="col-md-6 col-xs-6 text-right">
                     <label class="btnRegresarTabla btn btn-success hidden">

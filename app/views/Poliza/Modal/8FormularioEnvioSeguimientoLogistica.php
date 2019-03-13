@@ -170,7 +170,7 @@ if (!empty($informacionEnvioLog)) {
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <div id="selectSucursal" class="form-group hidden">
-                            <label class="f-w-600 f-s-13">Sucursal  *</label>
+                            <label class="f-w-600 f-s-13">Complejo  *</label>
                             <select id="listSucursal" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Selecciona . . .</option>
                                 <?php
@@ -181,7 +181,7 @@ if (!empty($informacionEnvioLog)) {
                             </select>
                         </div>
                         <div class="form-group <?php echo $camposSeguimientoEntregaContrario ?>">
-                            <label class="f-w-600 f-s-13">Sucursal (Solo en caso de ser sucursal) *</label>
+                            <label class="f-w-600 f-s-13">Complejo (Solo en caso de ser complejo) *</label>
                             <input type="text" class="form-control" placeholder="<?php echo $Sucursal ?>" disabled/>
                         </div>
                     </div>

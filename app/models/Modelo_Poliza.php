@@ -1834,7 +1834,8 @@ class Modelo_Poliza extends Modelo_Base {
                                     WHERE
                                         tst.Atiende = "' . $datos['usuario'] . '"
                                     AND tst.IdEstatus = "' . $datos['estatus'] . '"
-                                    AND tst.Id NOT IN (SELECT IdServicio FROM t_equipos_allab WHERE IdServicio = tst.Id)');
+                                    AND tst.Id NOT IN (SELECT IdServicio FROM t_equipos_allab WHERE IdServicio = tst.Id)
+                                    GROUP BY Ticket');
         return $consulta;
     }
 

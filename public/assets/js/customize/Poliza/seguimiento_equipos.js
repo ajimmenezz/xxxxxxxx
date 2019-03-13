@@ -174,6 +174,7 @@ $(function () {
                 }
 
                 evento.enviarEvento('Seguimiento/ConsultaServiciosTecnico', datos, '#panelValidacion', function (respuesta) {
+                    console.log(respuesta);
                     $("#listaServicio").empty().append('<option value="">Seleccionar...</option>');
                     $.each(respuesta, function (k, v) {
                         $("#listaServicio").append('<option value="' + v.Id + '" data-idModelo = "' + v.IdModelo + '" data-serie="' + v.Serie + '">' + v.Id + ' - ' + v.Descripcion + '</option>');
@@ -187,10 +188,9 @@ $(function () {
         });
 
         $("#listaServicio").on("change", function () {
-
             var servicioSeleccionado = $(this).find(':selected').attr('data-idModelo');
             var datos = {'idModelo': servicioSeleccionado};
-
+            
             select.cambiarOpcion('#listaTipoPersonal', '');
             evento.enviarEvento('Seguimiento/MostrarEquipoDanado', datos, '#panelValidacion', function (respuesta) {
 

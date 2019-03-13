@@ -63,7 +63,7 @@ if (!empty($datosValidacion)) {
                     <div class="form-group <?php echo $mostrarSelect ?>">
                         <label class="f-w-600 f-s-13">Servicio *</label>
                         <select id="listaServicio" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
-                            <option value="">Selecciona . . .</option>
+                            <option value="" data-idModelo = "" data-serie="">Selecciona . . .</option>
                         </select>
                     </div>
                     <div class="form-group <?php echo $mostrarInput ?>">

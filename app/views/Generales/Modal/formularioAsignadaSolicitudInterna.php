@@ -1,5 +1,4 @@
 <!--Empezando seccion para seguimiento de la solicitud-->
-<?php var_dump('pumas'); ?>
 <div id="seccionSeguimiento" >       
     <input type="hidden" id="creator-sd" value="<?php echo (isset($datosSD->CREATEDBY)) ? $datosSD->CREATEDBY : ''; ?>" />
     <input type="hidden" id="requester-sd" value="<?php echo (isset($datosSD->REQUESTER)) ? $datosSD->REQUESTER : ''; ?>" />

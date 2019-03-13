@@ -65,7 +65,11 @@ class Notificacion extends General {
 
         if (empty($usuario)) {
             if ($datos['departamento'] === '11') {
-                $data = $this->defineUsersPolicy(array('idSolicitud' => $datos['idSolicitud']));
+                if (isset($datos['idSolicitud'])) {
+                    $data = $this->defineUsersPolicy(array('idSolicitud' => $datos['idSolicitud']));
+                } else {
+                    $data = $this->DBN->showSupervisorAndBranchTechnician($dataToDefinePolicyUsers['idSolicitud']);
+                }
             } else {
                 $data = $this->Catalogo->catUsuarios('3', array('Flag' => '1'), array('IdDepartamento' => $datos['departamento']));
             }
