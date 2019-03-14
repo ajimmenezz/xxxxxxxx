@@ -1065,8 +1065,8 @@ class Modelo_Poliza extends Modelo_Base {
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '30', '31','32','33','34','36','37','39')
-                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '30', '31', '34', '36') OR tea.IdEstatus = '38' AND Flag = '0'
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '30', '32','33','34','36','37','39')
+                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '30', '34', '36') OR tea.IdEstatus = '38' AND Flag = '0'
                                     END)");
 
         if (!empty($consulta)) {
@@ -1176,6 +1176,9 @@ class Modelo_Poliza extends Modelo_Base {
                                         (SELECT cveatm.Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS TipoMovimiento,
                                         CONCAT(tst.Id,' - ',tst.Descripcion) AS Servicio,
                                         CONCAT(trp.Nombres,' ',trp.ApMaterno) AS NombrePersonal,
+                                        (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tcd.IdTipoDiagnostico) AS TipoDiagnostico,
+                                        (SELECT Nombre FROM cat_v3_tipos_falla WHERE Id = tcd.IdTipoFalla) AS TipoFalla,
+                                        (SELECT Nombre FROM cat_v3_fallas_equipo WHERE Id= tcd.IdFalla) AS Falla,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS Movimiento,
                                         ve.Equipo" . $valor . "
                                         ,'Lectura'
@@ -1187,8 +1190,10 @@ class Modelo_Poliza extends Modelo_Base {
                                             t_rh_personal trp ON trp.IdUsuario = tea.IdPersonalValida
                                     INNER JOIN
                                             v_equipos ve ON ve.Id = tea.IdModelo" . $condicion . "
+                                    INNER JOIN
+                                            t_correctivos_diagnostico tcd ON tcd.IdServicio = tea.IdServicio
                                     WHERE 
-                                            IdServicio = '" . $datos['idServicio'] . "'");
+                                            tea.IdServicio = '" . $datos['idServicio'] . "'");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1849,7 +1854,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         t_servicios_ticket tst
                                         INNER JOIN t_correctivos_generales tcg on tst.Id = tcg.IdServicio
                                     WHERE
-                                        Ticket = "' . $datos['ticket'] . '"');
+                                        Ticket = "' . $datos['ticket'] . '"
+                                    AND tst.Id NOT IN (SELECT IdServicio FROM t_equipos_allab WHERE IdServicio = tst.Id)');
         return $consulta;
     }
 

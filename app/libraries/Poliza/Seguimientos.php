@@ -2749,7 +2749,7 @@ class Seguimientos extends General {
                             $textoEspera = "Esperando informacion del Departamento de Logistica";
                         } else {
                             $departamentoEspera = "Técnico";
-                            $textoEspera = "Esperando informacion del Técnico";
+                            $textoEspera = "Esperando información del Técnico";
                         }
                         return array('formularioValidacion' => $this->vistaValidacion($datos),
                             'formularioGuia' => [],
@@ -2808,7 +2808,7 @@ class Seguimientos extends General {
                     }
                     if ($idEstatus === '36' && $flag === '1') {
                         $departamentoEspera = "Técnico";
-                        $textoEspera = "Esperando informacion del Técnico";
+                        $textoEspera = "Esperando información del Técnico";
                         $equipoAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
                         if ($equipoAllab[0]['IdTipoMovimiento'] === '1') {
                             return array('formularioValidacion' => $this->vistaValidacion($datos),
@@ -2850,7 +2850,7 @@ class Seguimientos extends General {
                     }
                     if ($idEstatus === '38' && $flag === '1') {
                         $departamentoEspera = "Técnico";
-                        $textoEspera = "Esperando informacion del Técnico";
+                        $textoEspera = "Esperando información del Técnico";
                         return array('formularioValidacion' => $this->vistaValidacion($datos),
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => [],
@@ -2982,7 +2982,7 @@ class Seguimientos extends General {
                                 'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
                         } else {
                             $departamentoEspera = "Técnico";
-                            $textoEspera = "Esperando informacion del Técnico";
+                            $textoEspera = "Esperando información del Técnico";
                             return array('formularioValidacion' => $this->vistaValidacion($datos),
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
@@ -3053,7 +3053,7 @@ class Seguimientos extends General {
                     }
                     if ($idEstatus === '36' && $flag === '1') {
                         $departamentoEspera = "Técnico";
-                        $textoEspera = "Esperando informacion del Técnico";
+                        $textoEspera = "Esperando información del Técnico";
                         return array('formularioValidacion' => $this->vistaValidacion($datos),
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
@@ -3199,7 +3199,7 @@ class Seguimientos extends General {
 
                     if ($idEstatus === '36' && $flag === '1') {
                         $departamentoEspera = "Técnico";
-                        $textoEspera = "Esperando informacion del Técnico";
+                        $textoEspera = "Esperando información del Técnico";
                         $equipoAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
                         if ($equipoAllab[0]['IdTipoMovimiento'] === '1') {
                             return array('formularioValidacion' => $this->vistaValidacion($datos),
@@ -4996,7 +4996,9 @@ class Seguimientos extends General {
         $result = $this->DBCensos->guardaCambiosEquiposAdicionalesCenso($datos);
         return $result;
     }
+    
+    public function creationOfTeamRequestEmailList(){
+        
+    }
 
 }
-
-//

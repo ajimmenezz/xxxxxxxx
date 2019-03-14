@@ -20,7 +20,7 @@ $mensajeCotizacion = 'hidden';
             </div>
             <div class="col-md-6 col-sm-6 col-xs-4 <?php echo $botonCotizar; ?>">
                 <div class="form-group text-right">
-                    <a href="javascript:;" class="btn btn-sm btn-success f-s-13" id="solicitarGuia">Solicitar Cotización</a>
+                    <a href="javascript:;" class="btn btn-sm btn-success f-s-13" id="solicitarCotizacion">Solicitar Cotización</a>
                 </div>
             </div>
         </div>

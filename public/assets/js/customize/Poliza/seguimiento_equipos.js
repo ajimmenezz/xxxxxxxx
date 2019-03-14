@@ -174,8 +174,8 @@ $(function () {
                 }
 
                 evento.enviarEvento('Seguimiento/ConsultaServiciosTecnico', datos, '#panelValidacion', function (respuesta) {
-                    console.log(respuesta);
-                    $("#listaServicio").empty().append('<option value="">Seleccionar...</option>');
+                    $('#listaServicio').empty().append('<option value="" data-idModelo = "" data-serie="">Seleccionar</option>').attr('disabled', 'disabled');
+
                     $.each(respuesta, function (k, v) {
                         $("#listaServicio").append('<option value="' + v.Id + '" data-idModelo = "' + v.IdModelo + '" data-serie="' + v.Serie + '">' + v.Id + ' - ' + v.Descripcion + '</option>');
                     });
@@ -188,25 +188,28 @@ $(function () {
         });
 
         $("#listaServicio").on("change", function () {
-            var servicioSeleccionado = $(this).find(':selected').attr('data-idModelo');
-            var datos = {'idModelo': servicioSeleccionado};
-            
-            select.cambiarOpcion('#listaTipoPersonal', '');
-            evento.enviarEvento('Seguimiento/MostrarEquipoDanado', datos, '#panelValidacion', function (respuesta) {
+            var servicioSeleccionado = $('#listaServicio option:selected').attr('data-idModelo');
 
-                if (respuesta.length > 0) {
-                    $.each(respuesta, function (k, v) {
-                        $('#equipoEnviado').empty().attr({"value": v.Equipo, "data-IdEquipo": v.Id});
-                    });
-                    $('#listaTipoPersonal').removeAttr('disabled');
-                }
-            });
+            if (servicioSeleccionado !== '') {
+                var datos = {'idModelo': servicioSeleccionado};
 
-            if ($(this).val() !== '') {
-                $("#listaTipoPersonal").removeAttr("disabled");
-            } else {
                 select.cambiarOpcion('#listaTipoPersonal', '');
-                $("#listaTipoPersonal").attr("disabled", "disabled");
+                evento.enviarEvento('Seguimiento/MostrarEquipoDanado', datos, '#panelValidacion', function (respuesta) {
+
+                    if (respuesta.length > 0) {
+                        $.each(respuesta, function (k, v) {
+                            $('#equipoEnviado').empty().attr({"value": v.Equipo, "data-IdEquipo": v.Id});
+                        });
+                        $('#listaTipoPersonal').removeAttr('disabled');
+                    }
+                });
+
+                if ($(this).val() !== '') {
+                    $("#listaTipoPersonal").removeAttr("disabled");
+                } else {
+                    select.cambiarOpcion('#listaTipoPersonal', '');
+                    $("#listaTipoPersonal").attr("disabled", "disabled");
+                }
             }
         });
 
@@ -214,7 +217,8 @@ $(function () {
             var seleccionado = $('#listaTipoPersonal option:selected').val();
             var datos = {'idTipoPersonal': seleccionado};
 
-            $('#listaNombrePersonal').empty().append('<option value="">Seleccionar</option>');
+            $('#listaNombrePersonal').empty().append('<option value="">Seleccionar</option>').attr('disabled', 'disabled');
+
             select.cambiarOpcion('#listaNombrePersonal', '');
             evento.enviarEvento('Seguimiento/MostrarNombrePersonalValida', datos, '#panelValidacion', function (respuesta) {
                 if (respuesta) {
@@ -573,7 +577,6 @@ $(function () {
                             $('#fechaEnvio').attr('disabled', 'disabled');
                             $('#guiaLogistica').attr('disabled', 'disabled');
                             $('#btnGuardarEnvioLogistica').addClass('disabled');
-                            file.deshabilitar('#evidenciaEnvio');
                         }
                     });
                 } else {
