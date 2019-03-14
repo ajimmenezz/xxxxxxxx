@@ -2263,4 +2263,16 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
+    public function consultPostByProfiles(string $idProfile, string $idTechnical) {
+        $answerQuery = $this->consulta("SELECT 
+                                        EmailCorporativo
+                                    FROM
+                                        cat_v3_usuarios cvu
+                                    WHERE
+                                        cvu.IdPerfil IN(" . $idProfile . ")
+                                    OR cvu.Id = '" . $idTechnical . "'");
+
+        return $answerQuery;
+    }
+
 }
