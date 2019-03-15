@@ -18,10 +18,10 @@
         "react/stomp": "^0.2.0",
         "cboden/ratchet": "^0.3.5",
         "codeigniter/framework": "^3.0.6",
-        "phpoffice/phpexcel" : "1.8.*",
-        "setasign/fpdf" : "1.8.1",        
+        "phpoffice/phpexcel": "1.8.*",
+        "setasign/fpdf": "1.8.1",        
         "aws/aws-sdk-php": "dev-master",
-        "google/apiclient": "dev-master"
+        "google/apiclient": "dev-master",
+        "setasign/fpdi": "2.2.0"
     }
-    
 }

@@ -3,6 +3,8 @@
 namespace Librerias\Tesoreria;
 
 use Controladores\Controller_Datos_Usuario as General;
+use FPDF;
+use setasign\Fpdi;
 
 class Tesoreria extends General {
 
@@ -20,6 +22,7 @@ class Tesoreria extends General {
         $this->poliza = \Librerias\Poliza\Poliza::factory();
         $this->correo = \Librerias\Generales\Correo::factory();
         parent::getCI()->load->helper('date');
+        libxml_use_internal_errors(true);
     }
 
     public function validarPuesto() {
@@ -64,6 +67,18 @@ class Tesoreria extends General {
                                 <div class="col-md-6">
                                     <div class="form-group text-right">
                                         <a href="javascript:;" class="btn btn-success btn-lg " id="btnSubirFactura"><i class="fa fa-cloud-upload"></i> Subir Factura</a>
+                                        <a href="javascript:;" class="btn btn-danger btn-lg " id="btnCombinarFacturas"><i class="fa fa-file-pdf-o"></i> Combinar facturas</a>
+                                    </div>
+                                </div>
+                            </div>';
+        } else if (in_array('275', $usuario['PermisosAdicionales']) || in_array('275', $usuario['Permisos'])) {
+            $htmlTitulo = '<div class="row">
+                                <div class="col-md-6">
+                                    <h3 class="m-t-10">' . $titulo . '</h3>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group text-right">                                        
+                                        <a href="javascript:;" class="btn btn-success btn-lg " id="btnGenerarPdf"><i class="fa fa-pdf"></i> Combinar facturas</a>
                                     </div>
                                 </div>
                             </div>';
@@ -146,7 +161,7 @@ class Tesoreria extends General {
         return array('formulario' => parent::getCI()->load->view('/Tesoreria/Formularios/FormularioValidarVuelta', $data, TRUE), 'datos' => $data);
     }
 
-    public function formularioPago(array $datos) {
+    public function formularioPago(array $datos) {       
         $rutaActual = getcwd();
         $data = array();
         $data['datosFactura'] = $this->DBT->consultaFacturaOutsourcingDocumantacion($datos['id']);
@@ -534,6 +549,10 @@ class Tesoreria extends General {
         } else {
             return FALSE;
         }
+    }
+
+    public function combinarFacturasActivas() {
+        
     }
 
 }
