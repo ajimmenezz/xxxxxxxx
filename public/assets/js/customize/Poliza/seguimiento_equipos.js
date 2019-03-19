@@ -655,17 +655,19 @@ $(function () {
 
         $('#solicitarGuia').off('click');
         $('#solicitarGuia').on('click', function () {
-            var data = {'id': idTabla, 'idServicio': idServicio};
-            evento.enviarEvento('Seguimiento/SolicitarGuia', data, '#panelEnvioConGuia', function (respuesta) {
-                if (respuesta.code === 200) {
-                    vistasDeFormularios(respuesta.datos);
-                    incioEtiquetas();
-                    eventosGenerales(idTabla, respuesta.idServicio);
-                    eventosComentarios(idTabla, respuesta.idServicio);
-                    cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
-                    recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
-                }
-            });
+//            evento.iniciarModal('#modalEdit', 'Editar Perfil Usuario', '');
+
+//            var data = {'id': idTabla, 'idServicio': idServicio};
+//            evento.enviarEvento('Seguimiento/SolicitarGuia', data, '#panelEnvioConGuia', function (respuesta) {
+//                if (respuesta.code === 200) {
+//                    vistasDeFormularios(respuesta.datos);
+//                    incioEtiquetas();
+//                    eventosGenerales(idTabla, respuesta.idServicio);
+//                    eventosComentarios(idTabla, respuesta.idServicio);
+//                    cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+//                    recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
+//                }
+//            });
         });
 
         $('#btnGuardarProblema').off('click');
