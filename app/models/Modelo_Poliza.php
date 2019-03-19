@@ -2274,5 +2274,34 @@ class Modelo_Poliza extends Modelo_Base {
 
         return $answerQuery;
     }
+    
+    public function consultSupervisorAndTechnicalMail(string $idTechnical) {
+        $answerQuery = $this->consulta("(SELECT 
+                                            cvu.EmailCorporativo
+                                        FROM
+                                            cat_v3_usuarios cvu
+                                        WHERE cvu.Id = '" . $idTechnical . "')
+                                        UNION
+                                        SELECT 
+                                            (SELECT 
+                                                    EmailCorporativo
+                                                FROM
+                                                    cat_v3_usuarios
+                                                WHERE
+                                                    Id = cvrc.IdResponsableInterno) EmailCorporativo
+                                        FROM
+                                            cat_v3_usuarios cvu
+                                                INNER JOIN
+                                            t_servicios_ticket tst ON tst.Atiende = cvu.Id
+                                                INNER JOIN
+                                            cat_v3_sucursales cvs ON cvs.Id = tst.IdSucursal
+                                                INNER JOIN
+                                            cat_v3_regiones_cliente cvrc ON cvrc.Id = cvs.IdRegionCliente
+                                        WHERE
+                                            cvu.Id = '" . $idTechnical . "'
+                                        GROUP BY cvrc.IdResponsableInterno");
+
+        return $answerQuery;
+    }
 
 }

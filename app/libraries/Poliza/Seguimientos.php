@@ -4274,6 +4274,8 @@ class Seguimientos extends General {
             $nuevaValidacion = $this->DBP->insertarValidacionTecnico($datos);
             if ($nuevaValidacion) {
                 $equipoAllabNuevo = $this->DBP->consultaEquiposAllab($idServicio);
+                $datosAllab = $this->DBP->consultaEquiposAllab($datos['IdServicio']);
+
                 if ($datos['IdTipoMovimiento'] === '3') {
                     $inventarioAlmacenesVirtuales = $this->verificarAlmacenesVirtuales($idServicio);
 
@@ -4294,9 +4296,14 @@ class Seguimientos extends General {
                     );
 
                     $this->DBP->insertarEquiposAllabSolicitudRefaccion($arraySolicitudRefaccion);
-                }
 
-                $datosAllab = $this->DBP->consultaEquiposAllab($datos['IdServicio']);
+                    $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['IdServicio'] . '</strong>.</p>';
+                    $dataEmails = $this->creatingSupervisorAndTechnicalEmailList(array('idTechnical' => $datosAllab[0]['IdUsuario']));
+                    $this->enviarCorreoConcluido($dataEmails, 'Seguimiento solicitud de equipo', $textoCorreo);
+
+                    $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 2, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
+                    $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
+                }
 
                 if ($datosAllab[0]['IdTipoMovimiento'] === '2') {
                     $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['IdServicio'] . '</strong>.</p>';
@@ -4366,38 +4373,6 @@ class Seguimientos extends General {
             'FechaEstatusSolicitud' => null,
             'ArchivosSolicitud' => null
         );
-
-//        if ($datosAllab[0]['IdTipoMovimiento'] === '1') {
-//            $correosAlmacen = $this->DBS->consultaGeneralSeguimiento('SELECT 
-//                                                                            EmailCorporativo
-//                                                                        FROM
-//                                                                            cat_v3_usuarios cvu
-//                                                                                INNER JOIN cat_perfiles cp
-//                                                                                ON cp.Id = cvu.IdPerfil
-//                                                                        WHERE cp.IdDepartamento = "16"');
-//            $arrayCorreos = array();
-//
-//            foreach ($correosAlmacen as $key => $value) {
-//                array_push($arrayCorreos, $value['EmailCorporativo']);
-//            }
-//
-//            $textoCorreo = '<p><strong>Almacen</strong> se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
-//        } else if ($datosAllab[0]['IdTipoMovimiento'] === '2') {
-//            $correosLaboratorio = $this->DBS->consultaGeneralSeguimiento('SELECT 
-//                                                                            EmailCorporativo
-//                                                                        FROM
-//                                                                            cat_v3_usuarios cvu
-//                                                                                INNER JOIN cat_perfiles cp
-//                                                                                ON cp.Id = cvu.IdPerfil
-//                                                                        WHERE cp.IdDepartamento = "10"');
-//            $arrayCorreos = array();
-//
-//            foreach ($correosLaboratorio as $key => $value) {
-//                array_push($arrayCorreos, $value['EmailCorporativo']);
-//            }
-//
-//            $textoCorreo = '<p><strong>Laboratorio</strong> se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
-//        }
 
         $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
         $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 12, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
@@ -4526,39 +4501,6 @@ class Seguimientos extends General {
 
             $resultado = $this->DBP->actualizarEquiposAllabRevicionLaboratorio($datos);
             if ($resultado['code'] === 200) {
-//                if ($datosAllab[0]['IdTipoMovimiento'] === '1') {
-//                    $correosLogistica = $this->DBS->consultaGeneralSeguimiento('SELECT 
-//                                                                            EmailCorporativo
-//                                                                        FROM
-//                                                                            cat_v3_usuarios cvu
-//                                                                                INNER JOIN cat_perfiles cp
-//                                                                                ON cp.Id = cvu.IdPerfil
-//                                                                        WHERE cp.IdDepartamento = "17"');
-//                    $arrayCorreos = array();
-//
-//                    foreach ($correosLogistica as $key => $value) {
-//                        array_push($arrayCorreos, $value['EmailCorporativo']);
-//                    }
-//
-//                    $textoCorreo = '<p><strong>Logística</strong> se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
-//                } else if ($datosAllab[0]['IdTipoMovimiento'] === '2') {
-//                    $correoTecnico = $this->DBS->consultaGeneralSeguimiento('SELECT 
-//                                                                                (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = IdUsuario) CorreoTecnico,
-//                                                                                nombreUsuario(IdUsuario) Tecnico
-//                                                                            FROM
-//                                                                                t_equipos_allab
-//                                                                            WHERE Id = "' . $datos['id'] . '"');
-//
-//                    $textoCorreo = '<p><strong>' . $correoTecnico[0]['Tecnico'] . '</strong> el departamento de logistica le he entregado un equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
-//
-//                    $arrayCorreos = array();
-//
-//                    foreach ($correoTecnico as $key => $value) {
-//                        array_push($arrayCorreos, $value['CorreoTecnico']);
-//                    }
-//                }
-
-
                 $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
                 $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 39, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
                 $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
@@ -4699,16 +4641,6 @@ class Seguimientos extends General {
             $datosActualizar['ArchivosEntrega'] = $archivos;
             $resultado = $this->DBP->actualizarEnvioLogistica($datosActualizar, $datosEstatus);
             if ($resultado['code'] === 200) {
-//                $correoTecnico = $this->DBS->consultaGeneralSeguimiento('SELECT 
-//                                                                                (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = IdUsuario) CorreoTecnico,
-//                                                                                nombreUsuario(IdUsuario) Tecnico
-//                                                                            FROM
-//                                                                                t_equipos_allab
-//                                                                            WHERE Id = "' . $datos['id'] . '"');
-//
-//                $textoTecnico = '<p><strong>' . $correoTecnico[0]['Tecnico'] . '</strong> el departamento de logistica le he entregado un equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
-//
-//                $this->enviarCorreoConcluido(array($correoTecnico[0]['CorreoTecnico']), 'Seguimiento solicitud de equipo', $textoTecnico);
                 $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
                 $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
                 $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
@@ -4886,37 +4818,10 @@ class Seguimientos extends General {
             $resultado = $this->DBP->insertarRefaccionRefacciones($datos, $datosEstatus);
 
             if (!empty($resultado)) {
-                if ($datos['flag'] === '1') {
-                    $correoTecnico = $this->DBS->consultaGeneralSeguimiento('SELECT 
-                                                                                (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = IdUsuario) CorreoTecnico,
-                                                                                nombreUsuario(IdUsuario) Tecnico
-                                                                            FROM
-                                                                                t_equipos_allab
-                                                                            WHERE Id = "' . $datos['id'] . '"');
-
-
-
-
-                    foreach ($correoTecnico as $key => $value) {
-                        array_push($arrayCorreos, $value['CorreoTecnico']);
-                    }
-                    $textoCorreo = '<p><strong>' . $correoTecnico[0]['Tecnico'] . '</strong> el departamento de almacén le pide que le de seguimiento del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
-                } else {
-                    $correosLogistica = $this->DBS->consultaGeneralSeguimiento('SELECT 
-                                                                            EmailCorporativo
-                                                                        FROM
-                                                                            cat_v3_usuarios cvu
-                                                                                INNER JOIN cat_perfiles cp
-                                                                                ON cp.Id = cvu.IdPerfil
-                                                                        WHERE cp.IdDepartamento = "17"');
-
-                    foreach ($correosLogistica as $key => $value) {
-                        array_push($arrayCorreos, $value['EmailCorporativo']);
-                    }
-
-                    $textoCorreo = '<p><strong>Logística</strong> se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
-                }
-                $this->enviarCorreoConcluido($arrayCorreos, 'Seguimiento solicitud de equipo', $textoCorreo);
+                $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+                $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
+                $dataEmailProfiles = $this->validateDeliveryProductWarehouse(array('movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario'], 'flag' => $datosAllab[0]['Flag']));
+                $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
 
                 $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => $datos['idEstatus']));
                 $mensaje = ['mensaje' => "Es correcto.",
@@ -5037,6 +4942,8 @@ class Seguimientos extends General {
             case 2 :
                 if ($dataToCreateEmailList['movementType'] === '2') {
                     $listOfProfiles = "'38','56'";
+                } elseif ($dataToCreateEmailList['movementType'] === '3') {
+                    $listOfProfiles = "'51','62'";
                 }
                 break;
             case 12 :
@@ -5051,20 +4958,49 @@ class Seguimientos extends General {
                     $listOfProfiles = "'51','62','38','56'";
                 }
                 break;
+            case 38 :
+                if ($dataToCreateEmailList['movementType'] === '3') {
+                    $listOfProfiles = "'51','62','41','52','60'";
+                }
+                break;
             case 31 :
             case 36 :
             case 39 :
                 if ($dataToCreateEmailList['movementType'] === '1') {
-                    $listOfProfiles = "'51','52','38','56','41','52','60'";
+                    $listOfProfiles = "'51','62','38','56','41','52','60'";
+                } elseif ($dataToCreateEmailList['movementType'] === '3') {
+                    $listOfProfiles = "'51','62','41','52','60'";
                 } else {
                     $listOfProfiles = "'38','56'";
                 }
                 break;
             default :
-                $listOfProfiles = '';
+                $listOfProfiles = "''";
                 break;
         }
+
         return $listOfProfiles;
+    }
+
+    private function validateDeliveryProductWarehouse(array $dataToCreateEmailList) {
+        if ($dataToCreateEmailList['flag'] === '1') {
+            $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 0, 'movementType' => $dataToCreateEmailList['movementType'], 'idTechnical' => $dataToCreateEmailList['idTechnical'], 'flag' => $dataToCreateEmailList['flag']));
+        } else {
+            $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 38, 'movementType' => $dataToCreateEmailList['movementType'], 'idTechnical' => $dataToCreateEmailList['idTechnical'], 'flag' => $dataToCreateEmailList['flag']));
+        }
+
+        return $dataEmailProfiles;
+    }
+
+    private function creatingSupervisorAndTechnicalEmailList(array $dataToCreateEmailList) {
+        $dataEmails = array();
+        $answerQueryEmails = $this->DBP->consultSupervisorAndTechnicalMail($dataToCreateEmailList['idTechnical']);
+
+        foreach ($answerQueryEmails as $key => $value) {
+            array_push($dataEmails, $value['EmailCorporativo']);
+        }
+
+        return $dataEmails;
     }
 
 }
