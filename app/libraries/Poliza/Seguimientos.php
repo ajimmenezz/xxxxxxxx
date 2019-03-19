@@ -5003,4 +5003,10 @@ class Seguimientos extends General {
         return $dataEmails;
     }
 
+    public function mostrarFormularioInformacionGeneracionGuia(array $dataToCreateEmailList) {
+        $data = array();
+
+        return ['modal' => parent::getCI()->load->view('Poliza/Formularios/InformacionGeneracionGuia.php', $data, TRUE)];
+    }
+
 }

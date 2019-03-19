@@ -655,7 +655,9 @@ $(function () {
 
         $('#solicitarGuia').off('click');
         $('#solicitarGuia').on('click', function () {
-//            evento.iniciarModal('#modalEdit', 'Editar Perfil Usuario', '');
+            evento.enviarEvento('Seguimiento/MostrarFormularioInformacionGeneracionGuia', {}, '#panelEnvioConGuia', function (respuesta) {
+                evento.iniciarModal('#modalEdit', 'Información para generar guía', respuesta.modal);
+            });
 
 //            var data = {'id': idTabla, 'idServicio': idServicio};
 //            evento.enviarEvento('Seguimiento/SolicitarGuia', data, '#panelEnvioConGuia', function (respuesta) {
