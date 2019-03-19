@@ -83,7 +83,7 @@ class Modelo_Notificacion extends Modelo_Base {
                                 WHERE
                                     ts.Id = "' . $idSolicitud . '")
                                 UNION
-                                SELECT 
+                                (SELECT 
                                     cvs.IdResponsable AS IdUsuario,
                                     nombreUsuario(cvu.Id) AS Nombre,
                                     cvu.Usuario,
@@ -100,7 +100,7 @@ class Modelo_Notificacion extends Modelo_Base {
                                         INNER JOIN
                                     cat_perfiles cp ON cp.Id = cvu.IdPerfil
                                 WHERE
-                                    ts.Id = "' . $idSolicitud . '"'
+                                    ts.Id = "' . $idSolicitud . '")'
         );
     }
 
