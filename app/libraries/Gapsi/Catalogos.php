@@ -89,6 +89,9 @@ class Catalogos extends General {
 
     public function solicitarGasto(array $datos) {
         $resultado = $this->DB->solicitarGasto($datos);
+        if($resultado['code'] == 508){
+            return $resultado;
+        }
         $last = ($resultado['code'] == 200) ? $resultado['last'] . '/' : '';
 
         $archivos = $result = null;

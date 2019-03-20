@@ -235,6 +235,8 @@ $(function () {
     $("#btnSolicitarGasto").off("click");
     $("#btnSolicitarGasto").on("click", function () {
         if (evento.validarFormulario('#formGasto')) {
+            $("#btnSolicitarGasto").off("click");
+            $("#btnSolicitarGasto").attr("disabled", "disabled");
             var _conceptos = '[';
             var total = 0;
             var count = 0;
@@ -243,12 +245,6 @@ $(function () {
                 _conceptos += ',"subcategoria":"' + $(this).find('.value-subcategoria').val() + '"';
                 _conceptos += ',"concepto":"' + $(this).find('.value-concepto').val() + '"';
                 _conceptos += ',"monto":"' + $(this).find('.value-monto').val() + '"},';
-//
-//                _conceptos[count] = [];
-//                _conceptos[count]['categoria'] = $(this).find('.value-categoria').val();
-//                _conceptos[count]['subcategoria'] = $(this).find('.value-subcategoria').val();
-//                _conceptos[count]['concepto'] = $(this).find('.value-concepto').val();
-//                _conceptos[count]['monto'] = $(this).find('.value-monto').val();
 
                 total = parseFloat(total) + parseFloat($(this).find('.value-monto').val());
             });
@@ -284,6 +280,14 @@ $(function () {
                         limpiarFormulario();
                         $("#formGasto").parsley().reset();
                         file.limpiar('#fotosGasto');
+                        setTimeout(function () {
+                            location.reload();
+                        }, 5000);
+                    } else if (respuesta.code == 508) {
+                        evento.mostrarMensaje("#errorFormulario", false, respuesta.message, 4000);
+                        setTimeout(function () {
+                            location.reload();
+                        }, 10000);
                     } else {
                         evento.mostrarMensaje("#errorFormulario", false, "Ocurrió un error al solicitar el gasto. Por favor recargue su página y vuelva a intentarlo.", 4000);
                     }

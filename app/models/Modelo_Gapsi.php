@@ -109,6 +109,26 @@ class Modelo_Gapsi extends Modelo_Base {
         }
 
         parent::connectDBGapsi()->trans_begin();
+        $query = "select "
+                . "count(*) as Total "
+                . "from db_Registro "
+                . "where Tipo = '" . $datos['Tipo'] . "' "
+                . "and TipoServicio = '" . $datos['TipoServicio'] . "' "
+                . "and Proyecto = '" . $datos['Proyecto'] . "' "
+                . "and Beneficiario = '" . $datos['Beneficiario'] . "' "
+                . "and TipoTrans = '" . $datos['TipoTrans'] . "' "
+                . "and Descripcion = '" . $datos['Descripcion'] . "' "
+                . "and Importe = '" . $datos['Importe'] . "' "
+                . "and Moneda = '" . $datos['Moneda'] . "' "
+                . "and DATEDIFF(minute, FechaSolicitud, GETDATE()) <= 10";
+        $consulta = parent::connectDBGapsi()->query($query);
+        $row = $consulta->result_array();
+
+        if ($row[0]['Total'] > 0) {
+            parent::connectDBGapsi()->trans_rollback();
+            return ['code' => 508, 'message' => 'Al parecer ya existe un registro con esas características. Espera al menos 10 minutos para volver a solicitar un gasto similar.'];
+        }
+
         $query = "insert into "
                 . "db_Registro "
                 . "(Beneficiario, IDBeneficiario, Tipo, TipoTrans, TipoServicio, Descripcion, FCaptura, Importe, Observaciones, Proyecto, GastoFrecuente, Sucursal, Status, UsuarioSolicitud, FechaSolicitud, Fecha, Moneda, OrdenCompra, SolicADIST, FechaPagoCredito) "
