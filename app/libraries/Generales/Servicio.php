@@ -122,8 +122,7 @@ class Servicio extends General {
                     $htmlDocumentacion .= ''
                             . '<div class="row">'
                             . ' <div class="col-md-6 col-xs-12">'
-                            . '     <h6>Fecha y Hora de Envío</h6>'
-                            . '     <h5>' . $fechaEnvio . '</h5>'
+                            . '     <h6>Fecha y Hora de Envío</h6> <h5>' . $fechaEnvio . '</h5>'
                             . ' </div>'
                             . '</div>';
                     if (in_array($documentacion[0]['IdTipoEnvio'], [2, 3, '2', '3'])) {
@@ -619,8 +618,12 @@ class Servicio extends General {
                 }
 
                 $htmlDocumentacion .= ''
-                        . '     <h6><strong>Fecha y Hora de Envío</strong></h6>'
-                        . '     <h5>' . $fechaEnvio . '</h5>'
+                        . '     <table class="table table-condensed">'
+                        . '         <tr>'
+                        . '             <th style="' . $style['th-50'] . '"><h6><strong>Fecha y Hora de Envío</strong></h6></th>'
+                        . '             <th style="' . $style['th-50'] . '"><h5>' . $fechaEnvio . '</h5></th>'
+                        . '         </tr>'
+                        . '     </table>'
                         . '     <h4>Información de Entrega</h4>'
                         . '     <div class="underline"></div>'
                         . '     <table class="table table-condensed">'
@@ -637,17 +640,16 @@ class Servicio extends General {
                         . '         </tr>'
                         . '         <tr>'
                         . '             <td colspan="2"><h5>' . $comentariosEntrega . '</h5></td>'
-                        . '         </tr>'
-                        . '         <tr>'
-                        . '             <th style="' . $style['th'] . '" colspan="2"><h6><strong>Evidencia de Entrega</strong></h6></th>'
-                        . '         </tr>'
-                        . '         <tr>'
-                        . '             <td colspan="2">' . $htmlArchivosTexto . '</td>'
-                        . '         </tr>'
-                        . '     </table>';
-
-
-
+                        . '         </tr>';
+                if ($htmlArchivosTexto !== '') {
+                    $htmlDocumentacion .= '<tr>'
+                            . '             <th style="' . $style['th'] . '" colspan="2"><h6><strong>Evidencia de Entrega</strong></h6></th>'
+                            . '         </tr>'
+                            . '         <tr>'
+                            . '             <td colspan="2">' . $htmlArchivosTexto . '</td>'
+                            . '         </tr>';
+                };
+                $htmlDocumentacion .= '     </table>';
                 break;
         }
 
@@ -656,18 +658,6 @@ class Servicio extends General {
                 . ' <h4>Información del Servicio</h4>'
                 . ' <div class="underline" style="width:132%"></div>'
                 . '     <table class="table table-condensed">'
-                . '         <tr>'
-                . '             <th style="' . $style['th-25'] . '"><h6><strong># Solicitud</strong></h6></th>'
-                . '             <th style="' . $style['th-25'] . '"><h6><strong>Solicitante</strong></h6></th>'
-                . '             <th style="' . $style['th-25'] . '"><h6><strong>Fecha de Solicitud</strong></h6></th>'
-                . '             <th style="' . $style['th-25'] . '"><h6><strong>Estatus de Solicitud</strong></h6></th>'
-                . '         </tr>'
-                . '         <tr>'
-                . '             <td style="' . $style['td-25'] . '"><h5>' . $DS_solicitud . '</h5></td>'
-                . '             <td style="' . $style['td-25'] . '"><h5>' . $DS_solicitante . '</h5></td>'
-                . '             <td style="' . $style['td-25'] . '"><h5>' . $DS_fechaSolicitud . '</h5></td>'
-                . '             <td style="' . $style['td-25'] . '"><h5>' . $DS_estatusSolicitud . '</h5></td>'
-                . '         </tr>'
                 . '         <tr>'
                 . '             <th colspan="4">'
                 . '                 <h6><strong>Descripción de Solicitud</strong></h6>'
@@ -694,14 +684,6 @@ class Servicio extends General {
                 . '         <tr>'
                 . '             <td colspan="4"><h5>' . $DS_descripcionServicio . '</h5></td>'
                 . '         </tr>'
-                . '         <tr>'
-                . '             <th colspan="2"><h6><strong>Tiempo de Solicitud</strong></h6></th>'
-                . '             <th colspan="2"><h6><strong>Tipo de Servicio</strong></h6></th>'
-                . '         </tr>'
-                . '         <tr>'
-                . '             <td colspan="2"><h5>' . $DS_tiempoSolicitud . ' hrs</h5></td>'
-                . '             <td colspan="2"><h5>' . $DS_tiempoServicio . ' hrs</h5></td>'
-                . '         </tr>'
                 . '     </table>'
                 . ' <h4>Información General del tráfico</h4>'
                 . ' <div class="underline"></div>'
@@ -722,30 +704,37 @@ class Servicio extends General {
                 . '             <td style="' . $style['td-50'] . '"><h5>' . $origen . '</h5></td>'
                 . '             <td style="' . $style['td-50'] . '"><h5>' . $destino . '</h5></td>'
                 . '         </tr>'
-                . '     </table>'
-                . ' <h4>Documentación del servicio.</h4>'
-                . ' <div class="underline"></div>'
-                . $htmlDocumentacion
-                . '</div>';
+                . '     </table>';
+        
+        if ($htmlDocumentacion !== '') {
+            $html .= ' <h4>Documentación del servicio.</h4>'
+                    . ' <div class="underline"></div>'
+                    . $htmlDocumentacion;
+        }
+        
+        $html .= '</div>';
 
-        $html .= ''
-                . '<div style="page-break-before: always;"></div>'
-                . '<div class="divTablas">'
-                . ' <h4>Detalle de Items</h4>'
-                . ' <div class="underline"></div>'
-                . '     <table id="data-table-detalle-items" class="table table-hover table-striped table-bordered no-wrap ">'
-                . '         <thead>'
-                . '             <tr>'
-                . '                 <th class="' . $style['th'] . '">Item</th>'
-                . '                 <th class="' . $style['th'] . '">Serie</th>'
-                . '                 <th class="' . $style['th'] . '">Cantidad</th>'
-                . '             </tr>'
-                . '         </thead>'
-                . '         <tbody>'
-                . '         ' . $optionEquipos
-                . '         </tbody>'
-                . '     </table>'
-                . '</div>';
+        if ($optionEquipos !== '') {
+            $html .= ''
+                    . '<div style="page-break-before: always;"></div>'
+                    . '<div class="divTablas">'
+                    . ' <h4>Detalle de Items</h4>'
+                    . ' <div class="underline"></div>'
+                    . '     <table id="data-table-detalle-items" class="table table-hover table-striped table-bordered no-wrap ">'
+                    . '         <thead>'
+                    . '             <tr>'
+                    . '                 <th class="' . $style['th'] . '">Item</th>'
+                    . '                 <th class="' . $style['th'] . '">Serie</th>'
+                    . '                 <th class="' . $style['th'] . '">Cantidad</th>'
+                    . '             </tr>'
+                    . '         </thead>'
+                    . '         <tbody>'
+                    . '         ' . $optionEquipos
+                    . '         </tbody>'
+                    . '     </table>'
+                    . '</div>';
+        }
+
         $html .= $htmlArchivosE . $htmlArchivos;
         if (count($notasPdf) > 0) {
             $html .= '<div style="page-break-after:always;">'
