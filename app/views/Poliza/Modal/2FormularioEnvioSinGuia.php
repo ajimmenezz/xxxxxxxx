@@ -13,10 +13,16 @@
             foreach ($datosSolicitudGuia as $value) {
                 $disabled = 'disabled';
                 $hidden = 'hidden';
-                $hiddenContrario = '';
                 $comentario = $value['ComentariosSolicitud'];
                 $archivos = $value['ArchivosEnvio'];
                 $archivosSolicitud = $value['ArchivosSolicitud'];
+                
+                if (empty($archivosSolicitud)) {
+                    $hiddenContrario = 'hidden';
+                } else {
+                    $hiddenContrario = '';
+                }
+                $informacionSolicitudGuia = $value['InformacionSolicitudGuia'];
             }
         } else {
             $disabled = "";
@@ -25,6 +31,7 @@
             $archivos = "";
             $archivosSolicitud = "";
             $hiddenContrario = "hidden";
+            $informacionSolicitudGuia = "";
         }
 
         if ($formularioEditable) {
@@ -43,6 +50,12 @@
         <form id="formAsignacionGuia" data-parsley-validate="true">
             <fieldset>
                 <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="f-w-600 f-s-13">Información para generar guía *</label>
+                            <textarea class="form-control" id="txtInformacionGuia" rows="10" <?php echo $camposEditables ?> disabled><?php echo $informacionSolicitudGuia ?></textarea>
+                        </div>
+                    </div>
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label class="f-w-600 f-s-13">Comentarios de la solicitud *</label>

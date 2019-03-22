@@ -4358,6 +4358,7 @@ class Seguimientos extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $idAllab = $this->DBP->estatusAllab($datos['idServicio']);
         $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+        $idRegistro = $this->DBP->consultaSolicitudGuiaTecnico($datos['idServicio']);
 
         $info = array(
             'IdRegistro' => $idAllab['Id'],
@@ -4390,8 +4391,12 @@ class Seguimientos extends General {
 
             if (!empty($archivos) && $archivos != '') {
                 $info['ArchivosEnvio'] = $archivos;
-                $insertar = $this->DBP->insertarEnvioGuia($info, $datosEstatus);
-                if ($insertar['code'] === 200) {
+                if (empty($idRegistro)) {
+                    $resultado = $this->DBP->insertarEnvioGuia($info, $datosEstatus);
+                } else {
+                    $resultado = $this->DBP->actualizarEnvioGuia($info, $datosEstatus, $idRegistro[0]['Id']);
+                }
+                if ($resultado['code'] === 200) {
                     $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
                     $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 12));
                     $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
@@ -4401,12 +4406,16 @@ class Seguimientos extends General {
                         'code' => 200];
                     return $mensaje;
                 } else {
-                    return $insertar;
+                    return $resultado;
                 }
             }
         } else {
-            $insertar = $this->DBP->insertarEnvioGuia($info, $datosEstatus);
-            if ($insertar['code'] === 200) {
+            if (empty($idRegistro)) {
+                $resultado = $this->DBP->insertarEnvioGuia($info, $datosEstatus);
+            } else {
+                $resultado = $this->DBP->actualizarEnvioGuia($info, $datosEstatus, $idRegistro[0]['Id']);
+            }
+            if ($resultado['code'] === 200) {
                 $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
                 $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 12));
                 $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
@@ -4416,7 +4425,7 @@ class Seguimientos extends General {
                     'code' => 200];
                 return $mensaje;
             } else {
-                return $insertar;
+                return $resultado;
             }
         }
     }
@@ -4738,15 +4747,38 @@ class Seguimientos extends General {
     }
 
     public function solicitarGuia(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $idAllab = $this->DBP->estatusAllab($datos['idServicio']);
+        $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
         $datos['fecha'] = $fecha;
         $datos['idEstatus'] = 26;
         $datos['flag'] = '1';
 
-        $resultado = $this->DBP->cambiarEsatus($datos);
+        $info = array(
+            'IdRegistro' => $idAllab['Id'],
+            'IdUsuario' => $usuario['Id'],
+            'IdEstatusEnvio' => 26,
+            'IdPaqueteria' => null,
+            'Guia' => null,
+            'Fecha' => null,
+            'ArchivosEnvio' => null,
+            'Solicitud' => $datosAllab[0]['IdTipoMovimiento'],
+            'IdUsuarioSolicitud' => null,
+            'IdEstatusSolicitud' => null,
+            'FechaEstatusSolicitud' => null,
+            'ArchivosSolicitud' => null,
+            'InformacionSolicitudGuia' => $datos['informationGuide']
+        );
+
+        $resultado = $this->DBP->insertarEnvioGuia($info, $datos);
 
         if ($resultado) {
+            $textoCorreo = '<p>Se le ha pedido una número de guía para darle seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
+            $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 26, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
+            $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
             $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 26));
             $mensaje = ['mensaje' => "Es correcto.",
                 'datos' => $formularios,
@@ -4953,6 +4985,9 @@ class Seguimientos extends General {
                     $listOfProfiles = "'38','56'";
                 }
                 break;
+            case 26 :
+                $listOfProfiles = "'41','52',60";
+                break;
             case 28 :
                 if ($dataToCreateEmailList['movementType'] === '1') {
                     $listOfProfiles = "'51','62','38','56'";
@@ -5003,10 +5038,17 @@ class Seguimientos extends General {
         return $dataEmails;
     }
 
-    public function mostrarFormularioInformacionGeneracionGuia(array $dataToCreateEmailList) {
-        $data = array();
+    public function showFormInformationGenerationGuide(array $dataToGenerateTheViewForTheGuide) {
+        $dataShowFormHtmlView = array();
+        $user = $this->Usuario->getDatosUsuario();
+        $consultationServiceAndRequest = $this->DBP->consultationServiceAndRequest($dataToGenerateTheViewForTheGuide['idService']);
+        $key = $this->MSP->getApiKeyByUser($user['Id']);
 
-        return ['modal' => parent::getCI()->load->view('Poliza/Formularios/InformacionGeneracionGuia.php', $data, TRUE)];
+        $dataShowFormHtmlView['TIList'] = $this->ServiceDesk->consultarDepartamentoTI($key);
+        $dataShowFormHtmlView['orderNumber'] = 'Ticket - ' . $consultationServiceAndRequest[0]['Ticket'] . ', Folio - ' . $consultationServiceAndRequest[0]['Folio'];
+        $dataShowFormHtmlView['technicalName'] = $user['Nombre'];
+
+        return ['modal' => parent::getCI()->load->view('Poliza/Formularios/InformacionGeneracionGuia.php', $dataShowFormHtmlView, TRUE)];
     }
 
 }

@@ -381,7 +381,7 @@ class Controller_Seguimiento extends Base {
                 $resultado = $this->Seguimientos->cargaFormularioCapturaAdicionalesCenso($this->input->post());
                 break;
             case 'MostrarFormularioInformacionGeneracionGuia':
-                $resultado = $this->Seguimientos->mostrarFormularioInformacionGeneracionGuia($this->input->post());
+                $resultado = $this->Seguimientos->showFormInformationGenerationGuide($this->input->post());
                 break;
             default:
                 $resultado = FALSE;

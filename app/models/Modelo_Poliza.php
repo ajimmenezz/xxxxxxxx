@@ -2303,5 +2303,18 @@ class Modelo_Poliza extends Modelo_Base {
 
         return $answerQuery;
     }
+    
+    public function consultationServiceAndRequest(string $service) {
+        $answerQuery = $this->consulta("SELECT 
+                                            ts.Ticket,
+                                                ts.Folio
+                                        FROM
+                                            t_servicios_ticket tst
+                                        INNER JOIN t_solicitudes ts ON ts.Id = tst.IdSolicitud
+                                        WHERE
+                                            tst.Id = '" . $service . "'");
+
+        return $answerQuery;
+    }
 
 }
