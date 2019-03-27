@@ -4082,6 +4082,7 @@ class Seguimientos extends General {
             $textoCorreo = '<p>Se ha concluido la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
             $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 31, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
             $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
+            $this->toAssignSD(array('idStatus' => 31, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
             $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => $datos['idEstatus']));
             $mensaje = ['mensaje' => "Correcto",
                 'datos' => $formularios,
@@ -4179,6 +4180,7 @@ class Seguimientos extends General {
             $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
             $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 28, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
             $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
+            $this->toAssignSD(array('idStatus' => 28, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
             $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => $datos['idEstatus']));
             $mensaje = ['mensaje' => "Correcto",
                 'datos' => $formularios,
@@ -4311,6 +4313,7 @@ class Seguimientos extends General {
                     $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
                 }
 
+                $this->toAssignSD(array('idStatus' => 2, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
                 $formulario = $this->mostrarVistaPorUsuario(array('idServicio' => $idServicio, 'idEstatus' => 2));
                 $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
                     'datos' => $formulario,
@@ -4377,6 +4380,7 @@ class Seguimientos extends General {
 
         $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
         $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 12, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
+        $this->toAssignSD(array('idStatus' => 12, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
 
         $datosEstatus = array(
             'idEstatus' => 12,
@@ -4513,6 +4517,7 @@ class Seguimientos extends General {
                 $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
                 $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 39, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
                 $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
+                $this->toAssignSD(array('idStatus' => 39, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
                 $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 39));
                 $mensaje = ['mensaje' => "Se ha concluido correctamente.",
                     'datos' => $formularios,
@@ -4654,6 +4659,7 @@ class Seguimientos extends General {
                 $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
                 $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
                 $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
+                $this->toAssignSD(array('idStatus' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
                 $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 12));
                 $mensaje = ['mensaje' => "Se guardo correctamente la entrega.",
                     'datos' => $formularios,
@@ -4720,6 +4726,8 @@ class Seguimientos extends General {
 
         if ($resultado = 200) {
             if ($datos['idEstatus'] === '37') {
+                $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+
                 $correoTecnico = $this->DBS->consultaGeneralSeguimiento('SELECT 
                                                                                 (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = IdUsuario) CorreoTecnico,
                                                                                 nombreUsuario(IdUsuario) Tecnico
@@ -4730,6 +4738,7 @@ class Seguimientos extends General {
                 $textoTecnico = '<p><strong>' . $correoTecnico[0]['Tecnico'] . '</strong> el departamento de logistica le mando el número de guía que solicito del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
 
                 $this->enviarCorreoConcluido(array($correoTecnico[0]['CorreoTecnico']), 'Seguimiento solicitud de guía', $textoTecnico);
+                $this->toAssignSD(array('idStatus' => 37, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
             }
 
             $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => $datos['idEstatus']));
@@ -4779,6 +4788,7 @@ class Seguimientos extends General {
             $textoCorreo = '<p>Se le ha pedido una número de guía para darle seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
             $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 26, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
             $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
+            $this->toAssignSD(array('idStatus' => 26, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
             $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 26));
             $mensaje = ['mensaje' => "Es correcto.",
                 'datos' => $formularios,
@@ -5049,6 +5059,76 @@ class Seguimientos extends General {
         $dataShowFormHtmlView['technicalName'] = $user['Nombre'];
 
         return ['modal' => parent::getCI()->load->view('Poliza/Formularios/InformacionGeneracionGuia.php', $dataShowFormHtmlView, TRUE)];
+    }
+
+    private function toAssignSD(array $dataToCreateEmailList) {
+        $user = $this->Usuario->getDatosUsuario();
+        $idSDWarehouse = '28801';
+        $idSDLaboratory = '14731';
+        $idSDLogistics = '8708';
+
+        switch ($dataToCreateEmailList['idStatus']) {
+            case 2 :
+                if ($dataToCreateEmailList['movementType'] === '2') {
+                    $idSD = $idSDLaboratory;
+                } elseif ($dataToCreateEmailList['movementType'] === '3') {
+                    $idSD = $idSDWarehouse;
+                }
+                break;
+            case 12 :
+                if ($dataToCreateEmailList['movementType'] === '1') {
+                    $idSD = $idSDWarehouse;
+                } else {
+                    $idSD = $idSDLaboratory;
+                }
+                break;
+            case 26 :
+                $idSD = $idSDLogistics;
+                break;
+            case 28 :
+                if ($dataToCreateEmailList['movementType'] === '1') {
+                    $idSD = $idSDLaboratory;
+                }
+                break;
+            case 36 :
+            case 38 :
+                if ($dataToCreateEmailList['movementType'] === '3') {
+                    $idSD = $this->findTechnicalId(array('SDKey' => $user['SDKey'], 'idService' => $dataToCreateEmailList['idService']));
+                }
+                break;
+            case 39 :
+                if ($dataToCreateEmailList['movementType'] === '1') {
+                    $idSD = $idSDLogistics;
+                } elseif ($dataToCreateEmailList['movementType'] === '2') {
+                    $idSD = $idSDLaboratory;
+                }
+                break;
+            default :
+                $idSD = $this->findTechnicalId(array('SDKey' => $user['SDKey'], 'idService' => $dataToCreateEmailList['idService']));
+                break;
+        }
+
+        if ($idSD !== '') {
+            $dataService = $this->DBP->consultationServiceAndRequest($dataToCreateEmailList['idService']);
+            $reassignment = json_decode($this->ServiceDesk->reasignarFolioSD($dataService[0]['Folio'], $idSD, $user['SDKey']));
+        }
+
+        return $reassignment;
+    }
+
+    private function findTechnicalId(array $dataFindTechnicalId) {
+        $idSD = '';
+        $sdTechnicalList = $this->ServiceDesk->getTecnicosSD($dataFindTechnicalId['SDKey']);
+        $sdTechnicalList = json_decode($sdTechnicalList);
+        $datosAllab = $this->DBP->consultaEquiposAllab($dataFindTechnicalId['idService']);
+
+        foreach ($sdTechnicalList->operation->details as $key => $value) {
+            if ($datosAllab[0]['NombreUsuario'] . ' - Siccob' === $value->TECHNICIANNAME) {
+                $idSD = $value->TECHNICIANID;
+            }
+        }
+
+        return $idSD;
     }
 
 }

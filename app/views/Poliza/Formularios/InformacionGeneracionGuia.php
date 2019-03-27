@@ -62,28 +62,28 @@
             <div class="col-md-3 col-sm-3 col-xs-3">
                 <label class="f-w-600">Peso *</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="info-peso-1" data-parsley-required="true"/>
+                    <input type="number" class="form-control" id="info-peso-1" data-parsley-required="true"/>
                     <span class="input-group-addon">kg</span>
                 </div>
             </div>
             <div class="col-md-3 col-sm-3 col-xs-3">
                 <label class="f-w-600">Largo *</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="info-largo-1" data-parsley-required="true"/>
+                    <input type="number" class="form-control" id="info-largo-1" data-parsley-required="true"/>
                     <span class="input-group-addon">cm</span>
                 </div>
             </div>
             <div class="col-md-3 col-sm-3 col-xs-3">
                 <label class="f-w-600">Ancho *</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="info-ancho-1" data-parsley-required="true"/>
+                    <input type="number" class="form-control" id="info-ancho-1" data-parsley-required="true"/>
                     <span class="input-group-addon">cm</span>
                 </div>
             </div>
             <div class="col-md-3 col-sm-3 col-xs-3">
                 <label class="f-w-600">Alto *</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="info-alto-1" data-parsley-required="true"/>
+                    <input type="number" class="form-control" id="info-alto-1" data-parsley-required="true"/>
                     <span class="input-group-addon">cm</span>
                 </div>
             </div>

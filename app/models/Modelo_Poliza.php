@@ -1891,9 +1891,11 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function consultaEquiposAllab(int $idServicio = null) {
-
         if (!empty($idServicio)) {
-            $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "'");
+            $consulta = $this->consulta("SELECT
+                                             *, nombreUsuario(IdUsuario) NombreUsuario 
+                                         FROM t_equipos_allab 
+                                         WHERE IdServicio = '" . $idServicio . "'");
         } else {
             $consulta = $this->consulta("SELECT * FROM t_equipos_allab");
         }
