@@ -59,6 +59,7 @@ class Phantom extends General {
 
         if (strpos($_SERVER['HTTP_USER_AGENT'], 'Windows')) {
             exec('phantomjs ' . $this->archivoJS . ' ' . $ruta . ' ' . $archivoSalida . ' ' . $this->size . ' ' . $cabecera, $out);
+//            echo 'phantomjs ' . $this->archivoJS . ' ' . $ruta . ' ' . $archivoSalida . ' ' . $this->size . ' ' . $cabecera;
         } else {
             exec('phantomjs ' . $this->archivoJS . ' ' . $ruta . ' ' . $phantomArchivo . ' ' . $this->size . ' ' . $cabecera, $out);
             exec('gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=' . $archivoSalida . ' ' . $phantomArchivo);

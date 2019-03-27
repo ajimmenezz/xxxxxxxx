@@ -917,7 +917,7 @@ $(function () {
         var myBoardFirma = null;
         var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
         var alto = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-        var arrayMedidas = servicios.ajusteCanvasMedidas(ancho, alto);
+//        var arrayMedidas = servicios.ajusteCanvasMedidas(ancho, alto);
 
 //        var myBoardFirma = new DrawingBoard.Board('campoFirma', {
 //            background: "#fff",
@@ -946,7 +946,7 @@ $(function () {
             myBoardFirma = servicios.campoLapiz('campoFirma');
         });
 
-        $('#campoFirma').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
+//        $('#campoFirma').css({"margin": "0 auto", "width": arrayMedidas[0] + "px", "height": arrayMedidas[1] + "px"});
 
         myBoardFirma = servicios.campoLapiz('campoFirma');
 
