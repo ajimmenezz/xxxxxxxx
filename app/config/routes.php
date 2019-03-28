@@ -142,6 +142,7 @@ $route['RH/EventoCatalogo/(:any)'] = 'RH/Controller_Perfiles/manejarEvento/$1';
 $route['RH/EventoCatalogoDepartamento/(:any)'] = 'RH/Controller_Departamentos/manejarEvento/$1';
 $route['RH/Seguimiento/(:any)'] = 'RH/Controller_Seguimiento/manejarEvento/$1';
 $route['RH/EventoCatalogosPerfil/(:any)'] = 'RH/Controller_Catalogos_Perfil/manejarEvento/$1';
+$route['RH/EventoPermisosVacaciones/(:any)'] = 'RH/Controller_PermisosVacaciones/manejarEvento/$1';
 
 /* Routers para el manejo de la seccion Capacitacion */
 $route['Capacitacion/(:any)'] = 'Capacitacion/Controller_Capacitacion/desplegarPantalla/$1';

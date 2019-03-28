@@ -37,6 +37,8 @@ class Secciones extends General {
     private $Compras;
     private $ubicaphone;
     private $ModeloDashboard;
+    private $permisosVacaciones;
+    private $autorizarpermisos;
 
     public function __construct() {
         parent::__construct();
@@ -78,6 +80,8 @@ class Secciones extends General {
         $this->PerfilUsuario = \Librerias\RH\Perfil_Usuario::factory();
 //        $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
         $this->ModeloDashboard = \Modelos\Modelo_Dashboard::factory();
+        $this->permisosVacaciones = \Librerias\RH\Permisos_Vacaciones::factory();
+        $this->autorizarpermisos = \Librerias\RH\Autorizar_permisos::factory();
     }
 
     /*
@@ -234,6 +238,17 @@ class Secciones extends General {
                 $datos['Permisos'] = $this->Catalogo->catPermisos("3");
                 $datos['SelectAreas'] = $this->Catalogo->catAreas("3", array('Flag' => '1'));
                 $datos['ListaPerfiles'] = $this->Catalogo->catPerfiles("3");
+                break;
+            case 'RH/Permisos_vacaciones':
+                $usuario = $this->Usuario->getDatosUsuario();
+                $datos['departamento'] = $this->permisosVacaciones->buscarDepartamento();
+                $datos['tipoAusencia'] = $this->permisosVacaciones->obtenerTiposAusencia();
+                $datos['motivoAusencia'] = $this->permisosVacaciones->obtenerMotivoAusencia();
+                $datos['permisosAusencias'] = $this->permisosVacaciones->obtenerPermisosAusencia($usuario['Id']);
+                break;
+            case 'RH/Autorizar_permisos':
+                $usuario = $this->Usuario->getDatosUsuario();
+                $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id']);
                 break;
             case 'Poliza':
                 $datos['TiposProyectos'] = $this->DBPO->getTiposProyecto();

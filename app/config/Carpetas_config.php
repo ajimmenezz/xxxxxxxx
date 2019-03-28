@@ -66,7 +66,9 @@ $config['Secciones'] = array(
         'Catalogo-Perfiles' => 'Perfiles',
         'Catalogo-Departamentos' => 'Departamentos',
         'Seguimiento-RH' => 'Seguimiento',
-        'Catalogo-Perfil' => 'Catalogos_Perfil'
+        'Catalogo-Perfil' => 'Catalogos_Perfil',
+        'Permisosvacaciones-RH' => 'Permisos_vacaciones',
+        'AutorizarPermisos-RH' => 'Autorizar_permisos'
     ),
     'Capacitacion' => array(
         'Capacitacion-Videos' => 'Videos'
