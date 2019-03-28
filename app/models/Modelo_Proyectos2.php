@@ -14,13 +14,14 @@ class Modelo_Proyectos2 extends Modelo_Base {
     }
 
     public function getSistemas(int $sistema = null) {
-        $condicion = (!is_null($sistema)) ? " where Id = '" . $sistema . "'" : '';
+        $condicion = (!is_null($sistema)) ? " and Id = '" . $sistema . "'" : '';
         $consulta = $this->consulta("select  
                                     Id,
                                     Nombre,
                                     if(Flag = 1, 'Activo', 'Inactivo') as Estatus,
                                     Flag
-                                    from cat_v3_sistemas_proyecto " . $condicion . "
+                                    from cat_v3_sistemas_proyecto
+                                    where Flag > 0 " . $condicion . "
                                     order by Nombre;");
         return $consulta;
     }
@@ -54,13 +55,14 @@ class Modelo_Proyectos2 extends Modelo_Base {
     }
 
     public function getTipos(int $tipo = null) {
-        $condicion = (!is_null($tipo)) ? " where Id = '" . $tipo . "'" : '';
+        $condicion = (!is_null($tipo)) ? " and Id = '" . $tipo . "'" : '';
         $consulta = $this->consulta("select  
                                     Id,
                                     Nombre,
                                     if(Flag = 1, 'Activo', 'Inactivo') as Estatus,
                                     Flag
-                                    from cat_v3_tipo_proyecto " . $condicion . "
+                                    from cat_v3_tipo_proyecto 
+                                    where Flag > 0 " . $condicion . "
                                     order by Nombre;");
         return $consulta;
     }
@@ -94,7 +96,7 @@ class Modelo_Proyectos2 extends Modelo_Base {
     }
 
     public function getConceptos(int $concepto = null) {
-        $condicion = (!is_null($concepto)) ? " where c.Id = '" . $concepto . "'" : '';
+        $condicion = (!is_null($concepto)) ? " and c.Id = '" . $concepto . "'" : '';
         $consulta = $this->consulta("select 
                                     c.Id,
                                     c.Nombre,
@@ -103,7 +105,8 @@ class Modelo_Proyectos2 extends Modelo_Base {
                                     if(c.Flag = 1, 'Activo', 'Inactivo') as Estatus,
                                     c.Flag
                                     from cat_v3_conceptos_proyecto c
-                                    inner join cat_v3_sistemas_proyecto s on c.IdSistema = s.Id " . $condicion . "
+                                    inner join cat_v3_sistemas_proyecto s on c.IdSistema = s.Id 
+                                    where c.Flag > 0 " . $condicion . " 
                                     order by Nombre;");
         return $consulta;
     }
@@ -116,10 +119,17 @@ class Modelo_Proyectos2 extends Modelo_Base {
                 . "and IdSistema = '" . $datos['sistema'] . "'");
 
         if (!empty($consulta)) {
-            return [
-                'id' => null,
-                'error' => "El concepto ya se encuentra registrado en la Base de Datos"
-            ];
+            if ($consulta[0]['Flag'] < 1) {
+                $this->actualizar("cat_v3_conceptos_proyecto", ['Flag' => 1], ['Id' => $consulta[0]['Id']]);
+                return [
+                    'id' => $consulta[0]['Id']
+                ];
+            } else {
+                return [
+                    'id' => null,
+                    'error' => "El concepto ya se encuentra registrado en la Base de Datos"
+                ];
+            }
         } else {
             $insert = $this->insertar("cat_v3_conceptos_proyecto", ['Nombre' => mb_strtoupper($datos['concepto']), 'IdSistema' => $datos['sistema']]);
             if (!is_null($insert)) {
@@ -164,7 +174,7 @@ class Modelo_Proyectos2 extends Modelo_Base {
     }
 
     public function getAreas(int $area = null) {
-        $condicion = (!is_null($area)) ? " where a.Id = '" . $area . "'" : '';
+        $condicion = (!is_null($area)) ? " and a.Id = '" . $area . "'" : '';
         $consulta = $this->consulta("select 
                                     a.Id,
                                     a.Nombre,
@@ -173,7 +183,8 @@ class Modelo_Proyectos2 extends Modelo_Base {
                                     if(a.Flag = 1, 'Activo', 'Inactivo') as Estatus,
                                     a.Flag
                                     from cat_v3_areas_proyectos a 
-                                    inner join cat_v3_conceptos_proyecto c on a.IdConcepto = c.Id " . $condicion . "
+                                    inner join cat_v3_conceptos_proyecto c on a.IdConcepto = c.Id 
+                                    where a.Flag > 0 " . $condicion . "
                                     order by Nombre;");
         return $consulta;
     }
@@ -186,10 +197,17 @@ class Modelo_Proyectos2 extends Modelo_Base {
                 . "and IdConcepto = '" . $datos['concepto'] . "'");
 
         if (!empty($consulta)) {
-            return [
-                'id' => null,
-                'error' => "El Área ya se encuentra registrada en la Base de Datos"
-            ];
+            if ($consulta[0]['Flag'] < 1) {
+                $this->actualizar("cat_v3_areas_proyectos", ['Flag' => 1], ['Id' => $consulta[0]['Id']]);
+                return [
+                    'id' => $consulta[0]['Id']
+                ];
+            } else {
+                return [
+                    'id' => null,
+                    'error' => "El Área ya se encuentra registrada en la Base de Datos"
+                ];
+            }
         } else {
             $insert = $this->insertar("cat_v3_areas_proyectos", ['Nombre' => mb_strtoupper($datos['area']), 'IdConcepto' => $datos['concepto']]);
             if (!is_null($insert)) {
@@ -234,7 +252,7 @@ class Modelo_Proyectos2 extends Modelo_Base {
     }
 
     public function getUbicaciones(int $ubicacion = null) {
-        $condicion = (!is_null($ubicacion)) ? " where ubicaciones.Id = '" . $ubicacion . "'" : '';
+        $condicion = (!is_null($ubicacion)) ? " and ubicaciones.Id = '" . $ubicacion . "'" : '';
         $consulta = $this->consulta("select 
                                     ubicaciones.Id,
                                     ubicaciones.Nombre,
@@ -246,7 +264,7 @@ class Modelo_Proyectos2 extends Modelo_Base {
                                     inner join cat_v3_areas_proyectos areas on ubicaciones.IdArea = areas.Id
                                     inner join cat_v3_conceptos_proyecto conceptos on areas.IdConcepto = conceptos.Id
                                     inner join cat_v3_sistemas_proyecto sistemas on conceptos.IdSistema = sistemas.Id 
-                                    " . $condicion . " 
+                                    where ubicaciones.Flag > 0 " . $condicion . " 
                                     order by Nombre, Area;");
         return $consulta;
     }
@@ -259,10 +277,17 @@ class Modelo_Proyectos2 extends Modelo_Base {
                 . "and IdArea = '" . $datos['area'] . "'");
 
         if (!empty($consulta)) {
-            return [
-                'id' => null,
-                'error' => "La Ubicación ya se encuentra registrada en la Base de Datos"
-            ];
+            if ($consulta[0]['Flag'] < 1) {
+                $this->actualizar("cat_v3_ubicaciones_proyectos", ['Flag' => 1], ['Id' => $consulta[0]['Id']]);
+                return [
+                    'id' => $consulta[0]['Id']
+                ];
+            } else {
+                return [
+                    'id' => null,
+                    'error' => "La Ubicación ya se encuentra registrada en la Base de Datos"
+                ];
+            }
         } else {
             $insert = $this->insertar("cat_v3_ubicaciones_proyectos", ['Nombre' => mb_strtoupper($datos['ubicacion']), 'IdArea' => $datos['area']]);
             if (!is_null($insert)) {

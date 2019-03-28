@@ -737,7 +737,7 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
     }
 
     public function getComponentesDisponiblesParaServicio(int $usuario, int $modelo, string $idsBloqueados = '') {
-        $idsBloqueados = ($idsBloqueados != '') ? $idsBloqueados : '0';
+        $idsBloqueados = ($idsBloqueados != '' && $idsBloqueados != ',') ? $idsBloqueados : '0';
         $consulta = $this->consulta("select 
                                     IdProducto,
                                     (select concat(Nombre, ' (', (select Nombre from cat_v3_modelos_equipo where Id = cce.IdModelo), ')') from cat_v3_componentes_equipo cce where Id = IdProducto) as Producto,
