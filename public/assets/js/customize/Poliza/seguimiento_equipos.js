@@ -809,6 +809,22 @@ $(function () {
                 });
             }
         });
+
+        $('#solicitarLaboratorio').off('click');
+        $('#solicitarLaboratorio').on('click', function () {
+            var data = {'idServicio': idServicio};
+            botonSolicitarLaboratorio(data, idTabla);
+        });
+
+        $('#btnTerminarSeleccionLaboratorio').off('click');
+        $('#btnTerminarSeleccionLaboratorio').on('click', function () {
+            if (listaIds.length > 0) {
+                var data = {'listaProductos': listaIds, 'id': idTabla, 'idServicio': idServicio, 'idEstatus': '2', 'flag': '0'};
+                botonTerminarSeleccionLaboratorio(data);
+            } else {
+                evento.mostrarMensaje("#errorSolicitudProducto", false, 'Seleccione un producto.', 4000);
+            }
+        });
     };
 
     var terminarSeleccion = function () {
@@ -857,6 +873,33 @@ $(function () {
             }
         });
     };
+
+    var botonSolicitarLaboratorio = function () {
+        var data = arguments[0];
+        var idTabla = arguments[1];
+
+        evento.enviarEvento('Seguimiento/SolicitarRefaccionLaboratorio', data, '#panelValidacionExistencia', function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(idTabla, respuesta.idServicio);
+                eventosComentarios(idTabla, respuesta.idServicio);
+            }
+        });
+    }
+
+    var botonTerminarSeleccionLaboratorio = function () {
+        var data = arguments[0];
+
+        evento.enviarEvento('Seguimiento/AsignarRefaccionAlmacen', data, '#panelValidacionExistencia', function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(data.idTabla, respuesta.idServicio);
+                eventosComentarios(data.idTabla, respuesta.idServicio);
+            }
+        });
+    }
 
     var validarEquipo = function () {
         var seleccionEquipo = $('#listaSolicitarEquipo option:selected').val();

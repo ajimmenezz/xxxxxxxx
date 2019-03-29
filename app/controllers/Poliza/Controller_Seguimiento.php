@@ -383,6 +383,12 @@ class Controller_Seguimiento extends Base {
             case 'MostrarFormularioInformacionGeneracionGuia':
                 $resultado = $this->Seguimientos->showFormInformationGenerationGuide($this->input->post());
                 break;
+            case 'SolicitarRefaccionLaboratorio':
+                $resultado = $this->Seguimientos->requestLaboratoryReplacement($this->input->post());
+                break;
+            case 'AsignarRefaccionAlmacen':
+                $resultado = $this->Seguimientos->assignSparePartToStore($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
