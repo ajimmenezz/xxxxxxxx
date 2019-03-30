@@ -1173,6 +1173,22 @@ $(function () {
                         }
                     });
 
+                    $("#listModelosEquipoAdicional").on("change", function () {
+                        var modelo = $("#listModelosEquipoAdicional option:selected").text();
+                        if ($("#txtEtiquetaEquipoAdicional").length) {
+                            if (modelo.indexOf("COMPUTADORA") >= 0) {
+                                $("#txtMACEquipoAdicional").removeAttr("disabled");
+                                $("#listSOEquipoAdicional").removeAttr("disabled");
+                            }else{
+                                $("#txtMACEquipoAdicional").val("");
+                                $("#txtMACEquipoAdicional").attr("disabled","disabled");
+                                $("#listSOEquipoAdicional").val("");
+                                $("#listSOEquipoAdicional").attr("disabled", "disabled");
+                                
+                            }
+                        }
+                    });
+
                     $(".btnGuardarCapturaCenso").off("click");
                     $(".btnGuardarCapturaCenso").on("click", function () {
 

@@ -50,8 +50,8 @@ class Modelo_Ticket extends Modelo_Base {
             $consulta = parent::connectDBAdist2()->query($query);
             return parent::connectDBAdist2()->insert_id();
         } else {
-            $consulta = parent::connectDBAdist3()->query($query);
-            return parent::connectDBAdist3()->insert_id();
+            $consulta = parent::connectDBAdist2P()->query($query);
+            return parent::connectDBAdist2P()->insert_id();
         }
     }
 

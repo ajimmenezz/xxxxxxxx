@@ -160,6 +160,21 @@ class Modelo_Censos extends Modelo_Base {
         $consulta = $this->consulta("select Nombre from cat_v3_areas_atencion where Id = '" . $area . "'");
         return $consulta[0]['Nombre'];
     }
+    
+    public function getClienteByIdArea(int $area) {
+        $consulta = $this->consulta("select IdCliente from cat_v3_areas_atencion where Id = '" . $area . "'");
+        return $consulta[0]['IdCliente'];
+    }
+    
+    public function getSistemasOperativos() {
+        $consulta = $this->consulta("select Id, Nombre from cat_v3_sistemas_operativos where Flag = 1");
+        return $consulta;
+    }
+    
+    public function getEstatusEquipoPrimeMX() {
+        $consulta = $this->consulta("select Id, Nombre from cat_v3_estatus where Id in (42,43,44,45)");
+        return $consulta;
+    }       
 
     public function getModelosGenerales() {
         $consulta = $this->consulta("select 
