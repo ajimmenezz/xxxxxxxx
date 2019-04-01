@@ -26,7 +26,7 @@
                                 <thead>
                                     <tr>
                                         <th class="never">IdPermiso</th>
-                                        <th class="all">Fecha de Solicitud</th>
+                                        <th class="all">Fecha de Trámite</th>
                                         <th class="all">Tipo Ausencia</th>
                                         <th class="all">Motivo Ausencia</th>
                                         <th class="all">Fecha de Ausencia</th>
@@ -85,6 +85,10 @@
                                                     echo '<td></td>';
                                                 }
                                                 switch ($value['IdEstatus']){
+                                                    case '6':
+                                                        echo '<td>Cancelado</td>';
+                                                        echo '<td></td>';
+                                                        break;
                                                     case '7':
                                                         echo '<td>Autorizado</td>';
                                                         echo '<td></td>';
@@ -154,7 +158,7 @@
                         
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label>Fecha Documento</label>
+                                <label>Fecha de Tramite</label>
                                 <input type="text" class="form-control date" id="inputFechaDocumento" style="width: 100%" disabled/>
                             </div>
                         </div>

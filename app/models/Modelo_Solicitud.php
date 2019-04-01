@@ -409,10 +409,5 @@ class Modelo_Solicitud extends Modelo_Base {
             return FALSE;
         }
     }
-    
-    public function guardarPermisoAusencia(array $datos) {
-        $consulta = $this->insertar('t_permisos_ausencia_rh', $datos);
-        return $consulta;
-    }
 
 }

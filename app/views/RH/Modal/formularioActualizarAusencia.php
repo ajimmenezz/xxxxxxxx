@@ -226,14 +226,20 @@
                     </div>
                 </div>
                 <!--Finalizando mensaje-->
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <div class="form-group">                            
                         <div id="btnActualizarSolicitudPermiso" class="col-md-offset-2 col-md-8 text-center m-t-10 m-b-10">
                             <button id="btnActualizarPermiso" type="button" class="btn btn-sm btn-success m-r-5" ><i class="fa fa-check"></i> Actualizar</button>
                         </div>
                     </div>
                 </div>
-                
+                <div class="col-md-6">
+                    <div class="form-group">                            
+                        <div id="btnActualizarSolicitudPermiso" class="col-md-offset-2 col-md-8 text-center m-t-10 m-b-10">
+                            <button id="btnCancelarPermiso" type="button" class="btn btn-sm btn-danger m-r-5" ><i class="fa fa-check"></i> Cancelar Permiso</button>
+                        </div>
+                    </div>
+                </div>
             </form>
         </div>        
     </div>

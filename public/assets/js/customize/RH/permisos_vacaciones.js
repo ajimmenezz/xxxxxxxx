@@ -90,7 +90,6 @@ $(function () {
     $("#btnGenerarSolicitudPermiso").on("click", function () {
         if (evento.validarFormulario('#formSolicitudPermiso')) {
             var data = {
-                fechaDocumento: $('#inputFechaDocumento').val(),
                 nombre: $('#inputNombre').val(),
                 idUsuario: $('#idUsuario').val(),
                 departamento: $('#inputDepartamento').val(),
@@ -203,12 +202,41 @@ $(function () {
                         $("#btnVerPDFAutorizar").on("click", function () {
                             window.open('/storage/Archivos/'+$('#archivoPDF').val(), '_blank');
                         });
-//actualizar permiso
+//actualizar permisos
+                        $("#btnCancelarPermiso").on("click", function () {
+                            var html = '<div class="row m-t-20">\n\
+                                <form id="formCancelarPermiso" class="margin-bottom-0" enctype="multipart/form-data">\n\
+                                    <div id="modal-dialogo" class="col-md-12 text-center">\n\
+                                        <label>¿Estas seguro de Cancelar tu solicitud?</label><br>\n\
+                                        <button id="btnCancelarRechazo" type="button" class="btn btn-sm btn-danger"><i class="fa fa-times"></i> Cerrar</button>\n\
+                                        <button id="btnAceptarRechazo" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
+                                    </div>\n\
+                                </form>\n\
+                                </div>';
+                            $('#btnModalConfirmar').addClass('hidden');
+                            $('#btnModalAbortar').addClass('hidden');
+                            evento.mostrarModal('Rachazar Permiso', html);
+                            $('#btnCancelarRechazo').on('click', function () {
+                                evento.cerrarModal();
+                            });
+                            $('#btnAceptarRechazo').on('click', function () {
+                                var dataActualizar = {
+                                    idPermiso: $('#idPermisoAct').val()
+                                }
+                                evento.enviarEvento('EventoPermisosVacaciones/Cancelar', dataActualizar, '#formCancelarPermiso', function (respuesta) {
+                                    if (respuesta) {
+                                        location.reload();
+                                    } else {
+                                        evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
+                                    }
+                                });
+                            });
+                        });
                         $("#btnActualizarPermiso").on("click", function () {
                             if (evento.validarFormulario('#formActualizarPermiso')) {
                                 var dataActualizar = {
-                                    fechaDocumento: $('#inputFechaDocumentoAct').val(),
                                     nombre: $('#inputNombreAct').val(),
+                                    idUsuario: "",
                                     idPermiso: $('#idPermisoAct').val(),
                                     departamento: $('#inputDepartamentoAct').val(),
                                     puesto: $('#inputPuestoAct').val(),
@@ -223,7 +251,7 @@ $(function () {
                                     pdf: $('#archivoPDF').val()
                                 }
                                 if ( $('#inputCitaFolioAct').val() != '' ) {
-                                    evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermisoArchivo', dataActualizar, '', function (respuesta) {
+                                    evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermisoArchivo', dataActualizar, '#panelPermisosVacaciones', function (respuesta) {
                                         if (respuesta !== 'otraImagen') {
                                             window.open(respuesta, '_blank');
                                             location.reload();
@@ -232,7 +260,7 @@ $(function () {
                                         }
                                     });
                                 } else {
-                                    evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermiso', dataActualizar, '', function (respuesta) {
+                                    evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermiso', dataActualizar, '#panelPermisosVacaciones', function (respuesta) {
                                         if (respuesta) {
                                             window.open(respuesta, '_blank');
                                             location.reload();

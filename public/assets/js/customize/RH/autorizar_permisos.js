@@ -31,7 +31,7 @@ $(function () {
             idPermiso: informacionPermisoAusencia[0],
             perfilUsuario: perfilUsuario
         }
-        evento.enviarEvento('EventoPermisosVacaciones/Autorizar', datosPermiso, '', function (respuesta) {
+        evento.enviarEvento('EventoPermisosVacaciones/Autorizar', datosPermiso, '#panelAutorizarPermisos', function (respuesta) {
             if (respuesta) {
                 $('#contentRevisarPermiso').removeClass('hidden').empty().append(respuesta.formulario);
                 $('#contentPermisosPendientes').addClass('hidden');
@@ -39,10 +39,8 @@ $(function () {
                     $('#contentRevisarPermiso').empty().addClass('hidden');
                     $('#contentPermisosPendientes').removeClass('hidden');
                 });
-                fechaCompleta = formatoFecha();
                 var data ={
                     idPermiso: $('#idPermisoRevisar').val(),
-                    fecha: fechaCompleta,
                     idPerfil: perfilUsuario,
                     idUser: idUsuario
                 }
@@ -80,7 +78,7 @@ $(function () {
                     });
                 });
                 $("#btnAutorizarPermiso").on("click", function () {
-                    evento.enviarEvento('EventoPermisosVacaciones/AutorizarPermiso', data, '', function (respuesta) {
+                    evento.enviarEvento('EventoPermisosVacaciones/AutorizarPermiso', data, '#panelRevisarPermisos', function (respuesta) {
                         if (respuesta) {
                             location.reload();
                         } else {
@@ -89,7 +87,7 @@ $(function () {
                     });
                 });
                 $("#btnConluirAutorizacion").on("click", function () {
-                    evento.enviarEvento('EventoPermisosVacaciones/ConluirAutorizacion', data, '', function (respuesta) {
+                    evento.enviarEvento('EventoPermisosVacaciones/ConluirAutorizacion', data, '#panelRevisarPermisos', function (respuesta) {
                         if (respuesta) {
                             location.reload();
                         } else {
@@ -102,18 +100,5 @@ $(function () {
             }
         });
     });
-
-    
+   
 });
-
-function formatoFecha() {
-    var fecha = new Date(),
-        mes = (fecha.getMonth() + 1),
-        dia = fecha.getDate(),
-        year = fecha.getFullYear();
-
-    if (mes.length < 2) mes = '0' + mes;
-    if (dia.length < 2) dia = '0' + dia;
-
-    return [year, mes, dia].join('-');
-}

@@ -25,7 +25,7 @@
                                 <thead>
                                     <tr>
                                         <th class="never">IdPermiso</th>
-                                        <th class="all">Fecha de Solicitud</th>
+                                        <th class="all">Fecha de Trámite</th>
                                         <th class="all">Nombre</th>
                                         <th class="all">Tipo Ausencia</th>
                                         <th class="all">Motivo Ausencia</th>
