@@ -1544,7 +1544,7 @@ class Solicitud extends General {
                                             Id,
                                             Nombre
                                         FROM cat_v3_clientes
-                                        WHERE Id IN(1,4,12,18)');
+                                        WHERE Id IN(1,4,12,18,20)');
     }
 
     public function sucursalesCliente(array $datos) {

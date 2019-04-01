@@ -4881,14 +4881,20 @@ class Seguimientos extends General {
         $modelosStandar = $this->DBCensos->getModelosStandarByArea($datos['area']);
         $equiposCensados = $this->DBCensos->getEquiposCensoByAreaPunto($datos);
         $nombreArea = $this->DBCensos->getNombreAreaById($datos['area']);
+        $cliente = $this->DBCensos->getClienteByIdArea($datos['area']);
         $modelosEquipo = $this->DBCensos->getModelosGenerales();
+        $estatusEquipoPrimeMX = $this->DBCensos->getEstatusEquipoPrimeMX();
+        $soEquipoPrimeMX = $this->DBCensos->getSistemasOperativos();
         $data = [
             'kitStandarArea' => $kitStandarArea,
             'modelosStandar' => $modelosStandar,
             'equiposCensados' => $equiposCensados,
             'modelos' => $modelosEquipo,
             'nombreArea' => $nombreArea,
-            'datosGenerales' => $datos
+            'datosGenerales' => $datos,
+            'cliente' => $cliente,
+            'estatus' => $estatusEquipoPrimeMX,
+            'so' => $soEquipoPrimeMX
         ];
 
         return ['html' => parent::getCI()->load->view('Poliza/Modal/FormularioCapturaCenso', $data, TRUE)];

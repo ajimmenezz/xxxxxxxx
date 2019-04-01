@@ -220,7 +220,7 @@ class Base {
     public function estatusTransaccion() {
         return self::connectDBPrueba()->trans_status();
     }
-    
+
     public function iniciaTransaccionSAE() {
         self::connectDBSAE7()->trans_start();
     }
@@ -249,8 +249,14 @@ class Base {
      */
 
     public function consultaAD2(string $consulta) {
-        $this->consulta = self::connectDBAdist2()->query($consulta);
-        return $this->consulta->result_array();
+        $host = $_SERVER['SERVER_NAME'];
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $this->consulta = self::connectDBAdist2()->query($consulta);
+            return $this->consulta->result_array();
+        } else {
+            $this->consulta = self::connectDBAdist2P()->query($consulta);
+            return $this->consulta->result_array();
+        }
     }
 
     public function queryBolean(string $consulta) {
