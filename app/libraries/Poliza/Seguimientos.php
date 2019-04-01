@@ -2050,7 +2050,10 @@ class Seguimientos extends General {
                                     Serie, 
                                     Extra,
                                     1,
-                                    0
+                                    0,
+				    17,
+				    null,
+				    null
                                     from t_censos 
                                     where IdServicio = (
                                                     select IdServicio 
