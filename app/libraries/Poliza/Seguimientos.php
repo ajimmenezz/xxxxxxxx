@@ -3937,9 +3937,10 @@ class Seguimientos extends General {
         $datosEnvioLogistica['informacionEnvioLog'] = $this->DBP->consultaEnvioLogistica($informacion);
 
         if (!empty($datosEnvioLogistica)) {
-            $formulario = array('formularioEnvioSeguimientoLog' => parent::getCI()->load->view('Poliza/Modal/8FormularioEnvioSeguimientoLogistica', $datosEnvioLogistica, TRUE));
+            $formulario = array('formularioEnvioSeguimientoLog' => parent::getCI()->load->view('Poliza/Modal/8FormularioEnvioSeguimientoLogistica', $datosEnvioLogistica, TRUE), 'datos' => $datosEnvioLogistica);
             return $formulario;
         }
+        
     }
 
     public function recepcionTecnico(array $datos) {
@@ -4585,6 +4586,11 @@ class Seguimientos extends General {
         $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
         $estatusAllab = 12;
 
+        if (isset($datos['cuenta'])) {
+            $cuenta = $datos['cuenta'];
+        } else {
+            $cuenta = null;
+        }
 
         $datosInsertar = array(
             'IdRegistro' => $datos['id'],
@@ -4599,7 +4605,8 @@ class Seguimientos extends General {
             'IdSucursal' => null,
             'FechaRecepcion' => null,
             'Recibe' => null,
-            'ArchivosEntrega' => null
+            'ArchivosEntrega' => null,
+            'CuentaSiccob' => $cuenta
         );
 
         $datosEstatus = array(
@@ -5214,7 +5221,7 @@ class Seguimientos extends General {
             'id' => $dataAssignSparePartToStore['id'],
             'fecha' => $date,
             'flag' => 0);
-        
+
         $result = $this->DBP->transparencyFromLaboratoryToEarehouse($dataAssignSparePartToStore, $dataStatus);
 
         if ($result['code'] === 200) {

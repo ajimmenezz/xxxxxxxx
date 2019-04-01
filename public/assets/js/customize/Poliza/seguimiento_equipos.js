@@ -118,7 +118,7 @@ $(function () {
             eventosGenerales(idTabla, idServicio);
             eventosComentarios(idTabla, idServicio);
             cargaComentariosAdjuntos(idTabla, respuesta.formularioHistorialRefaccion);
-
+            console.log(respuesta);
         });
     };
 
@@ -137,6 +137,11 @@ $(function () {
 
         if ($.inArray('306', respuesta.permisos) !== -1 || $.inArray('306', respuesta.permisosAdicionales) !== -1 || $.inArray('307', respuesta.permisos) !== -1 || $.inArray('307', respuesta.permisosAdicionales) !== -1) {
             bloquerTodosCampos();
+        }
+
+        if (respuesta.formularioEnvioSeguimientoLog !== undefined) {
+            var $radios = $('input[name="radioCuenta"]');
+            $radios.filter('[value=' + respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].CuentaSiccob + ']').attr('checked', true);
         }
     };
 
@@ -550,16 +555,29 @@ $(function () {
 
         $('#btnGuardarEnvioLogistica').off('click');
         $('#btnGuardarEnvioLogistica').on('click', function () {
-            var arrayCampos = [
-                {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
-                {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
-                {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'}
-            ];
-
-            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorFormularioEnvioLogistica');
-
-            if (camposFormularioValidados) {
-                var evidencia = $('#evidenciaEnvio').val();
+            var paqueteria = $('#listPaqueteria option:selected').val();
+            if (paqueteria === '2') {
+                var cuenta = $('input[name=radioCuenta]:checked').val();
+                var arrayCampos = [
+                    {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
+                    {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
+                    {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'},
+                    {'objeto': 'input[name=radioCuenta]:checked', 'mensajeError': 'Falta seleccionar el tipo de cuenta'}
+                ];
+                var datos = {
+                    'id': idTabla,
+                    'idServicio': idServicio,
+                    'paqueteria': $('#listPaqueteria').val(),
+                    'guia': $('#guiaLogistica').val(),
+                    'fechaEnvio': $('#fechaEnvio').val(),
+                    'cuenta': cuenta
+                }
+            } else {
+                var arrayCampos = [
+                    {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
+                    {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
+                    {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'}
+                ];
                 var datos = {
                     'id': idTabla,
                     'idServicio': idServicio,
@@ -567,6 +585,12 @@ $(function () {
                     'guia': $('#guiaLogistica').val(),
                     'fechaEnvio': $('#fechaEnvio').val()
                 }
+            }
+
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorFormularioEnvioLogistica');
+
+            if (camposFormularioValidados) {
+                var evidencia = $('#evidenciaEnvio').val();
 
                 if (evidencia !== '' || evidencia !== undefined) {
                     file.enviarArchivos('#evidenciaEnvio', 'Seguimiento/GuardarEnvioLogistica', '#panelEnvioSeguimientoLog', datos, function (respuesta) {
@@ -825,6 +849,19 @@ $(function () {
                 evento.mostrarMensaje("#errorSolicitudProducto", false, 'Seleccione un producto.', 4000);
             }
         });
+
+        $('#listPaqueteria').on('change', function () {
+            $('input[name="radioCuenta"]').attr('checked', false);
+
+            var seleccionado = $('#listPaqueteria option:selected').val();
+
+            if (seleccionado === '2') {
+                $('#divCuentas').removeClass('hidden');
+            } else {
+                $('#divCuentas').addClass('hidden');
+            }
+        });
+
     };
 
     var terminarSeleccion = function () {

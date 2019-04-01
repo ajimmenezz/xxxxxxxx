@@ -27,6 +27,12 @@ if (!empty($informacionEnvioLog)) {
             $camposSeguimientoEntrega = "";
             $camposSeguimientoEntregaContrario = "hidden";
         }
+
+        if ($value['CuentaSiccob'] === NULL) {
+            $campoCuenta = "hidden";
+        } else {
+            $campoCuenta = "";
+        }
     }
 } else {
     $paqueteria = "";
@@ -45,6 +51,7 @@ if (!empty($informacionEnvioLog)) {
     $mostrarSelectInput = "hidden";
     $camposSeguimientoEntrega = "";
     $camposSeguimientoEntregaContrario = "hidden";
+    $cuenta = "hidden";
 }
 ?>
 <div id="panelEnvioSeguimientoLog" class="panel panel-inverse">
@@ -57,20 +64,20 @@ if (!empty($informacionEnvioLog)) {
                 <legend>Documentación de envío</legend>
             </div>
         </div>
-        <?php
-        if (!empty($informacionEnvioLog)) {
-            foreach ($informacionEnvioLog as $value) {
-                $paqueteria = $value['paqueteria'];
-                $guia = $value['Guia'];
-                $fechaEnvio = $value['FechaEnvio'];
-            }
-            $mostrarSelect = "hidden";
-            $mostrarInput = "hidden";
-        } else {
-            $mostrarSelect = "";
-            $mostrarInput = "";
-        }
-        ?>
+<?php
+if (!empty($informacionEnvioLog)) {
+    foreach ($informacionEnvioLog as $value) {
+        $paqueteria = $value['paqueteria'];
+        $guia = $value['Guia'];
+        $fechaEnvio = $value['FechaEnvio'];
+    }
+    $mostrarSelect = "hidden";
+    $mostrarInput = "hidden";
+} else {
+    $mostrarSelect = "";
+    $mostrarInput = "";
+}
+?>
         <form id="formDocumentacionEnvio" data-parsley-validate="true">
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -78,11 +85,11 @@ if (!empty($informacionEnvioLog)) {
                         <label class="f-w-600 f-s-13">Paquetería *</label>
                         <select id="listPaqueteria" class="form-control" style="width: 100%" data-parsley-required="true">
                             <option value="">Selecciona . . .</option>
-                            <?php
-                            foreach ($paqueterias as $item) {
-                                echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
-                            }
-                            ?>
+<?php
+foreach ($paqueterias as $item) {
+    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+}
+?>
                         </select>
                     </div>
                     <div class="form-group <?php echo $formularioSeguimientoEntrega ?>">
@@ -98,6 +105,20 @@ if (!empty($informacionEnvioLog)) {
                     <div class="form-group <?php echo $formularioSeguimientoEntrega ?>">
                         <label class="f-w-600 f-s-13"># Guía</label>
                         <input type="text" class="form-control" placeholder="<?php echo $guia ?>" disabled/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div id="divCuentas" class="<?php echo $campoCuenta; ?>">
+                    <div class="col-md-3 col-sm-3 m-t-30">
+                        <label>
+                            <input type="radio" name="radioCuenta" value="1" /> Cuenta Siccob
+                        </label>
+                    </div>
+                    <div class="col-md-3 col-sm-3 m-t-30">
+                        <label>
+                            <input type="radio" name="radioCuenta" value="0" /> Cuenta Cliente
+                        </label>
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -120,14 +141,14 @@ if (!empty($informacionEnvioLog)) {
                     <div class="form-group <?php echo $mostrarInputFile ?>">
                         <label class="f-w-600 f-s-13">Evidencia de envío</label>  
                         <div id="" class="<?php $mostrarInputFile ?> evidencia">
-                            <?php
-                            $archivosEnvia = explode(',', $archivoEnvio);
-                            foreach ($archivosEnvia as $value) {
-                                ?>
+<?php
+$archivosEnvia = explode(',', $archivoEnvio);
+foreach ($archivosEnvia as $value) {
+    ?>
                                 <a class="m-l-5 m-r-5" href="<?php echo $value ?>" data-lightbox="image-<?php echo $value ?>">
                                     <img src="<?php echo $value ?>" style="max-height:115px !important;" />
                                 </a>
-                            <?php } ?>
+<?php } ?>
                         </div>
                     </div>
                 </div>
@@ -156,11 +177,11 @@ if (!empty($informacionEnvioLog)) {
                             <label class="f-w-600 f-s-13">¿Donde se recibe? *</label>
                             <select id="listDondeRecibe" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Selecciona . . .</option>
-                                <?php
-                                foreach ($dondeRecibe as $item) {
-                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
-                                }
-                                ?>
+<?php
+foreach ($dondeRecibe as $item) {
+    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+}
+?>
                             </select>
                         </div>
                         <div class="form-group <?php echo $camposSeguimientoEntregaContrario ?>">
@@ -173,11 +194,11 @@ if (!empty($informacionEnvioLog)) {
                             <label class="f-w-600 f-s-13">Complejo  *</label>
                             <select id="listSucursal" class="form-control" style="width: 100%" data-parsley-required="true">
                                 <option value="">Selecciona . . .</option>
-                                <?php
-                                foreach ($sucursales as $item) {
-                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
-                                }
-                                ?>
+<?php
+foreach ($sucursales as $item) {
+    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+}
+?>
                             </select>
                         </div>
                         <div class="form-group <?php echo $camposSeguimientoEntregaContrario ?>">
@@ -215,14 +236,14 @@ if (!empty($informacionEnvioLog)) {
                         <div class="form-group <?php echo $camposSeguimientoEntregaContrario ?>">
                             <label class="f-w-600 f-s-13">Evidencia de Entrega *</label>      
                             <div id="" class=" evidencia">
-                                <?php
-                                $archivosEntrega = explode(',', $archivosEntrega);
-                                foreach ($archivosEntrega as $value) {
-                                    ?>
+<?php
+$archivosEntrega = explode(',', $archivosEntrega);
+foreach ($archivosEntrega as $value) {
+    ?>
                                     <a class="m-l-5 m-r-5" href="<?php echo $value ?>" data-lightbox="image-<?php echo $value ?>">
                                         <img src="<?php echo $value ?>" style="max-height:115px !important;" />
                                     </a>
-                                <?php } ?>
+<?php } ?>
                             </div>
                         </div>
                     </div>

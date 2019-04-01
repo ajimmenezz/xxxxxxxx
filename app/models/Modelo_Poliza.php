@@ -1276,7 +1276,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         teael.IdSucursal,
                                         teael.Recibe,
                                         teael.ArchivosEntrega,
-                                        teael.FechaRecepcion
+                                        teael.FechaRecepcion,
+                                        teael.CuentaSiccob
                                     FROM
                                         t_equipos_allab_envio_logistica teael
                                     WHERE 
