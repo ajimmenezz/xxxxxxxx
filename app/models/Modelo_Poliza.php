@@ -1277,7 +1277,9 @@ class Modelo_Poliza extends Modelo_Base {
                                         teael.Recibe,
                                         teael.ArchivosEntrega,
                                         teael.FechaRecepcion,
-                                        teael.CuentaSiccob
+                                        teael.CuentaSiccob,
+                                        teael.IdUsuarioTransito,
+                                        nombreUsuario(teael.IdUsuarioTransito) Chofer
                                     FROM
                                         t_equipos_allab_envio_logistica teael
                                     WHERE 

@@ -3935,12 +3935,12 @@ class Seguimientos extends General {
         $datosEnvioLogistica['paqueterias'] = $this->DBP->mostrarPaqueterias();
         $datosEnvioLogistica['sucursales'] = $this->Catalogo->catSucursales('3', array('Flag' => '1'));
         $datosEnvioLogistica['informacionEnvioLog'] = $this->DBP->consultaEnvioLogistica($informacion);
+        $datosEnvioLogistica['choferes'] = $this->DBS->consultaGeneralSeguimiento('SELECT cu.Id, cu.Nombre, trp.ApPaterno, trp.ApMaterno FROM cat_v3_usuarios cu INNER JOIN t_rh_personal trp ON trp.IdUsuario = cu.Id WHERE cu.IdPerfil = 59');
 
         if (!empty($datosEnvioLogistica)) {
             $formulario = array('formularioEnvioSeguimientoLog' => parent::getCI()->load->view('Poliza/Modal/8FormularioEnvioSeguimientoLogistica', $datosEnvioLogistica, TRUE), 'datos' => $datosEnvioLogistica);
             return $formulario;
         }
-        
     }
 
     public function recepcionTecnico(array $datos) {
@@ -4356,7 +4356,7 @@ class Seguimientos extends General {
                     $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
                 }
 
-                $this->toAssignSD(array('idStatus' => 2, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
+                $this->toAssignSD(array('idStatus' => 2, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['IdServicio']));
                 $formulario = $this->mostrarVistaPorUsuario(array('idServicio' => $idServicio, 'idEstatus' => 2));
                 $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
                     'datos' => $formulario,
@@ -4592,13 +4592,23 @@ class Seguimientos extends General {
             $cuenta = null;
         }
 
+        if ($datos['tipoEnvio'] === '1') {
+            $paqueteria = $datos['paqueteria'];
+            $guia = $datos['guia'];
+            $chofer = NULL;
+        } else {
+            $paqueteria = NULL;
+            $guia = NULL;
+            $chofer = $datos['chofer'];
+        }
+
         $datosInsertar = array(
             'IdRegistro' => $datos['id'],
             'IdUsuario' => $usuario['Id'],
             'IdEstatus' => $estatusAllab,
             'FechaEstatus' => $fecha,
-            'IdPaqueteria' => $datos['paqueteria'],
-            'Guia' => $datos['guia'],
+            'IdPaqueteria' => $paqueteria,
+            'Guia' => $guia,
             'FechaEnvio' => $datos['fechaEnvio'],
             'ArchivosEnvio' => null,
             'IdTipoLugarRecepcion' => null,
@@ -4606,7 +4616,8 @@ class Seguimientos extends General {
             'FechaRecepcion' => null,
             'Recibe' => null,
             'ArchivosEntrega' => null,
-            'CuentaSiccob' => $cuenta
+            'CuentaSiccob' => $cuenta,
+            'IdUsuarioTransito' => $chofer
         );
 
         $datosEstatus = array(
@@ -5118,6 +5129,7 @@ class Seguimientos extends General {
         $idSDWarehouse = '28801';
         $idSDLaboratory = '14731';
         $idSDLogistics = '8708';
+        $idSD = '';
 
         switch ($dataToCreateEmailList['idStatus']) {
             case 2 :

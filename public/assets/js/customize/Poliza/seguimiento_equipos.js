@@ -44,6 +44,7 @@ $(function () {
         select.crearSelect('#listSucursal');
         select.crearSelect('#listRefaccionUtil');
         select.crearSelect('#listDondeRecibe');
+        select.crearSelect('#listChofer');
 
 
         //obtener valor fecha
@@ -118,7 +119,6 @@ $(function () {
             eventosGenerales(idTabla, idServicio);
             eventosComentarios(idTabla, idServicio);
             cargaComentariosAdjuntos(idTabla, respuesta.formularioHistorialRefaccion);
-            console.log(respuesta);
         });
     };
 
@@ -140,8 +140,18 @@ $(function () {
         }
 
         if (respuesta.formularioEnvioSeguimientoLog !== undefined) {
-            var $radios = $('input[name="radioCuenta"]');
-            $radios.filter('[value=' + respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].CuentaSiccob + ']').attr('checked', true);
+            if (respuesta.formularioEnvioSeguimientoLog.datos !== undefined) {
+                var $radiosTipoEnvio = $('input[name="radioTipoEnvio"]');
+                if (respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].IdUsuarioTransito !== null) {
+                    $radiosTipoEnvio.filter('[value=0]').attr('checked', true);
+                } else {
+                    $radiosTipoEnvio.filter('[value=1]').attr('checked', true);
+                }
+                $('input[name="radioTipoEnvio"]').attr("disabled", "disabled");
+                var $radiosCuenta = $('input[name="radioCuenta"]');
+                $radiosCuenta.filter('[value=' + respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].CuentaSiccob + ']').attr('checked', true);
+                $('input[name="radioCuenta"]').attr("disabled", "disabled");
+            }
         }
     };
 
@@ -555,35 +565,55 @@ $(function () {
 
         $('#btnGuardarEnvioLogistica').off('click');
         $('#btnGuardarEnvioLogistica').on('click', function () {
-            var paqueteria = $('#listPaqueteria option:selected').val();
-            if (paqueteria === '2') {
-                var cuenta = $('input[name=radioCuenta]:checked').val();
-                var arrayCampos = [
-                    {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
-                    {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
-                    {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'},
-                    {'objeto': 'input[name=radioCuenta]:checked', 'mensajeError': 'Falta seleccionar el tipo de cuenta'}
-                ];
-                var datos = {
-                    'id': idTabla,
-                    'idServicio': idServicio,
-                    'paqueteria': $('#listPaqueteria').val(),
-                    'guia': $('#guiaLogistica').val(),
-                    'fechaEnvio': $('#fechaEnvio').val(),
-                    'cuenta': cuenta
+            var tipoEnvio = $('input[name=radioTipoEnvio]:checked').val();
+            if (tipoEnvio === '1') {
+                var paqueteria = $('#listPaqueteria option:selected').val();
+                if (paqueteria === '2') {
+                    var cuenta = $('input[name=radioCuenta]:checked').val();
+                    var arrayCampos = [
+                        {'objeto': 'input[name=radioTipoEnvio]:checked', 'mensajeError': 'Falta seleccionar tipo de envió'},
+                        {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
+                        {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
+                        {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'},
+                        {'objeto': 'input[name=radioCuenta]:checked', 'mensajeError': 'Falta seleccionar el tipo de cuenta'}
+                    ];
+                    var datos = {
+                        'id': idTabla,
+                        'idServicio': idServicio,
+                        'paqueteria': $('#listPaqueteria').val(),
+                        'guia': $('#guiaLogistica').val(),
+                        'fechaEnvio': $('#fechaEnvio').val(),
+                        'cuenta': cuenta,
+                        'tipoEnvio': tipoEnvio
+                    }
+                } else {
+                    var arrayCampos = [
+                        {'objeto': 'input[name=radioTipoEnvio]:checked', 'mensajeError': 'Falta seleccionar tipo de envió'},
+                        {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
+                        {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
+                        {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'}
+                    ];
+                    var datos = {
+                        'id': idTabla,
+                        'idServicio': idServicio,
+                        'paqueteria': $('#listPaqueteria').val(),
+                        'guia': $('#guiaLogistica').val(),
+                        'fechaEnvio': $('#fechaEnvio').val(),
+                        'tipoEnvio': tipoEnvio
+                    }
                 }
             } else {
                 var arrayCampos = [
-                    {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
-                    {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
-                    {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'}
+                    {'objeto': 'input[name=radioTipoEnvio]:checked', 'mensajeError': 'Falta seleccionar tipo de envió'},
+                    {'objeto': '#listChofer', 'mensajeError': 'Falta seleccionar el chofer.'},
+                    {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'}
                 ];
                 var datos = {
                     'id': idTabla,
                     'idServicio': idServicio,
-                    'paqueteria': $('#listPaqueteria').val(),
-                    'guia': $('#guiaLogistica').val(),
-                    'fechaEnvio': $('#fechaEnvio').val()
+                    'chofer': $('#listChofer').val(),
+                    'fechaEnvio': $('#fechaEnvio').val(),
+                    'tipoEnvio': tipoEnvio
                 }
             }
 
@@ -859,6 +889,18 @@ $(function () {
                 $('#divCuentas').removeClass('hidden');
             } else {
                 $('#divCuentas').addClass('hidden');
+            }
+        });
+
+        $('.tipoEnvio').on('change', function () {
+            var tipoEnvio = $('input[name=radioTipoEnvio]:checked').val();
+
+            if (tipoEnvio === '1') {
+                $('#divPaqueteria').removeClass('hidden');
+                $('#divLogistica').addClass('hidden');
+            } else {
+                $('#divLogistica').removeClass('hidden');
+                $('#divPaqueteria').addClass('hidden');
             }
         });
 
