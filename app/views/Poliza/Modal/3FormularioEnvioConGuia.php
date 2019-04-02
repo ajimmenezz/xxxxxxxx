@@ -51,7 +51,7 @@ if ($estatus['IdEstatus'] === '26') {
             </div>
             <div class="col-md-6 col-sm-6 col-xs-6 <?php echo $mostrarSelect ?>">
                 <div class="form-group text-right">
-                    <a href="javascript:;" class="btn btn-sm btn-success f-s-13 <?php echo $botonSolicitarGuia ?>" id="solicitarGuia" >Solicitar Guía </a>
+                    <a href="javascript:;" class="btn btn-sm btn-success f-s-13 <?php echo $botonSolicitarGuia ?>" id="solicitarGuia" ><i class="fa fa-truck"></i> Solicitar Guía </a>
                 </div>
             </div>
         </div>

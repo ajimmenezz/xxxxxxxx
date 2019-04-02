@@ -44,6 +44,7 @@ $(function () {
         select.crearSelect('#listSucursal');
         select.crearSelect('#listRefaccionUtil');
         select.crearSelect('#listDondeRecibe');
+        select.crearSelect('#listChofer');
 
 
         //obtener valor fecha
@@ -118,7 +119,6 @@ $(function () {
             eventosGenerales(idTabla, idServicio);
             eventosComentarios(idTabla, idServicio);
             cargaComentariosAdjuntos(idTabla, respuesta.formularioHistorialRefaccion);
-
         });
     };
 
@@ -137,6 +137,21 @@ $(function () {
 
         if ($.inArray('306', respuesta.permisos) !== -1 || $.inArray('306', respuesta.permisosAdicionales) !== -1 || $.inArray('307', respuesta.permisos) !== -1 || $.inArray('307', respuesta.permisosAdicionales) !== -1) {
             bloquerTodosCampos();
+        }
+
+        if (respuesta.formularioEnvioSeguimientoLog !== undefined) {
+            if (respuesta.formularioEnvioSeguimientoLog.datos !== undefined) {
+                var $radiosTipoEnvio = $('input[name="radioTipoEnvio"]');
+                if (respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].IdUsuarioTransito !== null) {
+                    $radiosTipoEnvio.filter('[value=0]').attr('checked', true);
+                } else {
+                    $radiosTipoEnvio.filter('[value=1]').attr('checked', true);
+                }
+                $('input[name="radioTipoEnvio"]').attr("disabled", "disabled");
+                var $radiosCuenta = $('input[name="radioCuenta"]');
+                $radiosCuenta.filter('[value=' + respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].CuentaSiccob + ']').attr('checked', true);
+                $('input[name="radioCuenta"]').attr("disabled", "disabled");
+            }
         }
     };
 
@@ -550,23 +565,62 @@ $(function () {
 
         $('#btnGuardarEnvioLogistica').off('click');
         $('#btnGuardarEnvioLogistica').on('click', function () {
-            var arrayCampos = [
-                {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
-                {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
-                {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'}
-            ];
+            var tipoEnvio = $('input[name=radioTipoEnvio]:checked').val();
+            if (tipoEnvio === '1') {
+                var paqueteria = $('#listPaqueteria option:selected').val();
+                if (paqueteria === '2') {
+                    var cuenta = $('input[name=radioCuenta]:checked').val();
+                    var arrayCampos = [
+                        {'objeto': 'input[name=radioTipoEnvio]:checked', 'mensajeError': 'Falta seleccionar tipo de envió'},
+                        {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
+                        {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
+                        {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'},
+                        {'objeto': 'input[name=radioCuenta]:checked', 'mensajeError': 'Falta seleccionar el tipo de cuenta'}
+                    ];
+                    var datos = {
+                        'id': idTabla,
+                        'idServicio': idServicio,
+                        'paqueteria': $('#listPaqueteria').val(),
+                        'guia': $('#guiaLogistica').val(),
+                        'fechaEnvio': $('#fechaEnvio').val(),
+                        'cuenta': cuenta,
+                        'tipoEnvio': tipoEnvio
+                    }
+                } else {
+                    var arrayCampos = [
+                        {'objeto': 'input[name=radioTipoEnvio]:checked', 'mensajeError': 'Falta seleccionar tipo de envió'},
+                        {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
+                        {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
+                        {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'}
+                    ];
+                    var datos = {
+                        'id': idTabla,
+                        'idServicio': idServicio,
+                        'paqueteria': $('#listPaqueteria').val(),
+                        'guia': $('#guiaLogistica').val(),
+                        'fechaEnvio': $('#fechaEnvio').val(),
+                        'tipoEnvio': tipoEnvio
+                    }
+                }
+            } else {
+                var arrayCampos = [
+                    {'objeto': 'input[name=radioTipoEnvio]:checked', 'mensajeError': 'Falta seleccionar tipo de envió'},
+                    {'objeto': '#listChofer', 'mensajeError': 'Falta seleccionar el chofer.'},
+                    {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'}
+                ];
+                var datos = {
+                    'id': idTabla,
+                    'idServicio': idServicio,
+                    'chofer': $('#listChofer').val(),
+                    'fechaEnvio': $('#fechaEnvio').val(),
+                    'tipoEnvio': tipoEnvio
+                }
+            }
 
             var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorFormularioEnvioLogistica');
 
             if (camposFormularioValidados) {
                 var evidencia = $('#evidenciaEnvio').val();
-                var datos = {
-                    'id': idTabla,
-                    'idServicio': idServicio,
-                    'paqueteria': $('#listPaqueteria').val(),
-                    'guia': $('#guiaLogistica').val(),
-                    'fechaEnvio': $('#fechaEnvio').val()
-                }
 
                 if (evidencia !== '' || evidencia !== undefined) {
                     file.enviarArchivos('#evidenciaEnvio', 'Seguimiento/GuardarEnvioLogistica', '#panelEnvioSeguimientoLog', datos, function (respuesta) {
@@ -655,19 +709,38 @@ $(function () {
 
         $('#solicitarGuia').off('click');
         $('#solicitarGuia').on('click', function () {
-//            evento.iniciarModal('#modalEdit', 'Editar Perfil Usuario', '');
+            var dataToShowTheForm = {
+                'idService': idServicio
+            }
+            evento.enviarEvento('Seguimiento/MostrarFormularioInformacionGeneracionGuia', dataToShowTheForm, '#panelEnvioConGuia', function (respuesta) {
+                evento.iniciarModal('#modalEdit', 'Información para generar guía', respuesta.modal);
+                select.crearSelect('#lista-TI');
 
-//            var data = {'id': idTabla, 'idServicio': idServicio};
-//            evento.enviarEvento('Seguimiento/SolicitarGuia', data, '#panelEnvioConGuia', function (respuesta) {
-//                if (respuesta.code === 200) {
-//                    vistasDeFormularios(respuesta.datos);
-//                    incioEtiquetas();
-//                    eventosGenerales(idTabla, respuesta.idServicio);
-//                    eventosComentarios(idTabla, respuesta.idServicio);
-//                    cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
-//                    recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
-//                }
-//            });
+                $("#inputNumeroCajas").bind('keyup mouseup', function () {
+                    createChecklistInformation();
+                });
+
+                $('#btnGuardarCambios').off('click');
+                $('#btnGuardarCambios').on('click', function () {
+                    var informationGuide = creatingInformationGenerateGuide();
+
+                    var data = {'id': idTabla, 'idServicio': idServicio, informationGuide: informationGuide};
+                    evento.enviarEvento('Seguimiento/SolicitarGuia', data, '#modalEdit', function (respuesta) {
+                        if (respuesta.code === 200) {
+                            vistasDeFormularios(respuesta.datos);
+                            incioEtiquetas();
+                            eventosGenerales(idTabla, respuesta.idServicio);
+                            eventosComentarios(idTabla, respuesta.idServicio);
+                            cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+                            recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
+                            evento.cerrarModal();
+                            evento.terminarModal('#modalEdit');
+                        }
+                    });
+                });
+            });
+
+
         });
 
         $('#btnGuardarProblema').off('click');
@@ -790,6 +863,47 @@ $(function () {
                 });
             }
         });
+
+        $('#solicitarLaboratorio').off('click');
+        $('#solicitarLaboratorio').on('click', function () {
+            var data = {'idServicio': idServicio};
+            botonSolicitarLaboratorio(data, idTabla);
+        });
+
+        $('#btnTerminarSeleccionLaboratorio').off('click');
+        $('#btnTerminarSeleccionLaboratorio').on('click', function () {
+            if (listaIds.length > 0) {
+                var data = {'listaProductos': listaIds, 'id': idTabla, 'idServicio': idServicio, 'idEstatus': '2', 'flag': '0'};
+                botonTerminarSeleccionLaboratorio(data);
+            } else {
+                evento.mostrarMensaje("#errorSolicitudProducto", false, 'Seleccione un producto.', 4000);
+            }
+        });
+
+        $('#listPaqueteria').on('change', function () {
+            $('input[name="radioCuenta"]').attr('checked', false);
+
+            var seleccionado = $('#listPaqueteria option:selected').val();
+
+            if (seleccionado === '2') {
+                $('#divCuentas').removeClass('hidden');
+            } else {
+                $('#divCuentas').addClass('hidden');
+            }
+        });
+
+        $('.tipoEnvio').on('change', function () {
+            var tipoEnvio = $('input[name=radioTipoEnvio]:checked').val();
+
+            if (tipoEnvio === '1') {
+                $('#divPaqueteria').removeClass('hidden');
+                $('#divLogistica').addClass('hidden');
+            } else {
+                $('#divLogistica').removeClass('hidden');
+                $('#divPaqueteria').addClass('hidden');
+            }
+        });
+
     };
 
     var terminarSeleccion = function () {
@@ -838,6 +952,33 @@ $(function () {
             }
         });
     };
+
+    var botonSolicitarLaboratorio = function () {
+        var data = arguments[0];
+        var idTabla = arguments[1];
+
+        evento.enviarEvento('Seguimiento/SolicitarRefaccionLaboratorio', data, '#panelValidacionExistencia', function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(idTabla, respuesta.idServicio);
+                eventosComentarios(idTabla, respuesta.idServicio);
+            }
+        });
+    }
+
+    var botonTerminarSeleccionLaboratorio = function () {
+        var data = arguments[0];
+
+        evento.enviarEvento('Seguimiento/AsignarRefaccionAlmacen', data, '#panelValidacionExistencia', function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(data.idTabla, respuesta.idServicio);
+                eventosComentarios(data.idTabla, respuesta.idServicio);
+            }
+        });
+    }
 
     var validarEquipo = function () {
         var seleccionEquipo = $('#listaSolicitarEquipo option:selected').val();
@@ -1121,4 +1262,133 @@ $(function () {
         });
     };
 
+    var terminarSeleccion = function () {
+        var data = arguments[0];
+        var idTabla = arguments[1];
+
+        evento.enviarEvento('Seguimiento/GuardarSolicitudProducto', data, '#panelValidacionExistencia', function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(idTabla, respuesta.idServicio);
+                eventosComentarios(idTabla, respuesta.idServicio);
+                cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+            }
+        });
+    }
+
+    var createChecklistInformation = function () {
+        var cantidad = $("#inputNumeroCajas").val();
+        var campos = $("#formInformationBoxes").children('div.classForm').length;
+        var contador = 0;
+
+        if (cantidad !== campos) {
+            if (cantidad < campos) {
+                contador = 0;
+                $("#formInformationBoxes > div.classForm").each(function () {
+                    var _this = $(this);
+                    contador++;
+                    if (contador > cantidad) {
+                        _this.remove();
+                    }
+                });
+            } else {
+                for (var i = 0; i < cantidad; i++) {
+                    if (!$("#formInformationBoxes").children('div.classForm').eq(i).length) {
+                        $("#formInformationBoxes").append(htmlViewFormBoxes(i));
+                    }
+                }
+            }
+        }
+    }
+
+    var htmlViewFormBoxes = function (contador) {
+        var html = `<div class="classForm">
+                        <div class="row m-t-5">
+                            <div class="col-md-2 col-sm-2 col-xs-12">
+                                <div class="form-grup">
+                                    <label class="f-w-600">Caja</label>
+                                    <input type="text" value="#` + (contador + 1) + `" disabled="disabled" class="form-control f-s-16 text-center" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-5">
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <label class="f-w-600">Peso *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="info-peso-` + (contador + 1) + `" data-parsley-required="true"/>
+                                    <span class="input-group-addon">kg</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <label class="f-w-600">Largo *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="info-largo-` + (contador + 1) + `" data-parsley-required="true"/>
+                                    <span class="input-group-addon">cm</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <label class="f-w-600">Ancho *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="info-ancho-` + (contador + 1) + `" data-parsley-required="true"/>
+                                    <span class="input-group-addon">cm</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <label class="f-w-600">Alto *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="info-alto-` + (contador + 1) + `" data-parsley-required="true"/>
+                                    <span class="input-group-addon">cm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+        return html;
+    }
+
+    var creatingInformationGenerateGuide = function () {
+        var dataToValidateForm = [
+            {'objeto': '#inputOrigen', 'mensajeError': 'Falta escribir origen.'},
+            {'objeto': '#inputDestino', 'mensajeError': 'Falta escribir destino.'},
+            {'objeto': '#lista-TI', 'mensajeError': 'Falta seleccionar personal de TI que autoriza.'},
+            {'objeto': '#inputNumeroCajas', 'mensajeError': 'Falta el no. de cajas.'}
+        ];
+
+        var validatedFormsFields = evento.validarCamposObjetos(dataToValidateForm, '#errorFormularioInformacionGeneracionGuia');
+        if (validatedFormsFields) {
+            if ($('#inputNumeroCajas').val() > 0) {
+                if (evento.validarFormulario('#formInformationBoxes')) {
+                    var noIncidente = $('#inputNoIncidente').val();
+                    var nombreTecnico = $('#inputNombreTecnico').val();
+                    var origen = $('#inputOrigen').val();
+                    var destino = $('#inputDestino').val();
+                    var personalAutoriza = $('#lista-TI').val();
+                    var numeroCajas = $('#inputNumeroCajas').val();
+                    var textoInformacionGuia = 'No. Incidente: ' + noIncidente + '\n';
+                    textoInformacionGuia += 'Persona que solicita: ' + nombreTecnico + '\n';
+                    textoInformacionGuia += 'Origen: ' + origen + '\n';
+                    textoInformacionGuia += 'Destino: ' + destino + '\n';
+                    textoInformacionGuia += 'Personal de TI que autoriza: ' + personalAutoriza + '\n';
+                    textoInformacionGuia += 'No. Cajas: ' + numeroCajas + '\n';
+
+                    for (var i = 1; i <= numeroCajas; i++) {
+                        var peso = $('#info-peso-' + i).val();
+                        var largo = $('#info-largo-' + i).val();
+                        var ancho = $('#info-ancho-' + i).val();
+                        var alto = $('#info-alto-' + i).val();
+
+                        textoInformacionGuia += 'Caja: ' + i + '\n';
+                        textoInformacionGuia += 'Peso: ' + peso + 'kg \n';
+                        textoInformacionGuia += 'Largo: ' + largo + 'cm \n';
+                        textoInformacionGuia += 'Ancho: ' + ancho + 'cm \n';
+                        textoInformacionGuia += 'Alto: ' + alto + 'cm \n';
+                    }
+
+                    return textoInformacionGuia;
+                }
+            } else {
+                evento.mostrarMensaje("#errorFormularioInformacionGeneracionGuia", false, 'El campo de no. cajas deber ser positivo', 4000);
+            }
+        }
+    }
 });

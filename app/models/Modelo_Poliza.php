@@ -1112,11 +1112,11 @@ class Modelo_Poliza extends Modelo_Base {
                                         v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                         (CASE
-                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4' , '12', '28', '29', '30', '32', '33', '34', '36', '39')
+                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4', '12', '28', '29', '30', '32', '33', '34', '36', '39')
                                             WHEN
                                                 tea.IdTipoMovimiento = '3'
                                             THEN
-                                                tea.IdEstatus = '2' AND Flag = 0 OR tea.IdEstatus IN ('38','30','36')
+                                                tea.IdEstatus = '2' AND Flag = 0 OR tea.IdEstatus IN ('38','30','36', '41')
                                                     AND (SELECT 
                                                         IdEstatus
                                                     FROM
@@ -1152,6 +1152,7 @@ class Modelo_Poliza extends Modelo_Base {
                                     (CASE
                                         WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','36','39') OR tea.IdEstatus = '2' AND Flag = '1' OR tea.IdEstatus = '12' AND Flag = '0'
                                         WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','29','33','39') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '0'
+                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('41')
                                     END)");
 
         if (!empty($consulta)) {
@@ -1275,7 +1276,10 @@ class Modelo_Poliza extends Modelo_Base {
                                         teael.IdSucursal,
                                         teael.Recibe,
                                         teael.ArchivosEntrega,
-                                        teael.FechaRecepcion
+                                        teael.FechaRecepcion,
+                                        teael.CuentaSiccob,
+                                        teael.IdUsuarioTransito,
+                                        nombreUsuario(teael.IdUsuarioTransito) Chofer
                                     FROM
                                         t_equipos_allab_envio_logistica teael
                                     WHERE 
@@ -1891,9 +1895,11 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function consultaEquiposAllab(int $idServicio = null) {
-
         if (!empty($idServicio)) {
-            $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "'");
+            $consulta = $this->consulta("SELECT
+                                             *, nombreUsuario(IdUsuario) NombreUsuario 
+                                         FROM t_equipos_allab 
+                                         WHERE IdServicio = '" . $idServicio . "'");
         } else {
             $consulta = $this->consulta("SELECT * FROM t_equipos_allab");
         }
@@ -2216,7 +2222,6 @@ class Modelo_Poliza extends Modelo_Base {
 
         $this->cambiarEsatus($datosEstatus);
 
-
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
             $this->roolbackTransaccion();
@@ -2274,7 +2279,7 @@ class Modelo_Poliza extends Modelo_Base {
 
         return $answerQuery;
     }
-    
+
     public function consultSupervisorAndTechnicalMail(string $idTechnical) {
         $answerQuery = $this->consulta("(SELECT 
                                             cvu.EmailCorporativo
@@ -2302,6 +2307,72 @@ class Modelo_Poliza extends Modelo_Base {
                                         GROUP BY cvrc.IdResponsableInterno");
 
         return $answerQuery;
+    }
+
+    public function consultationServiceAndRequest(string $service) {
+        $answerQuery = $this->consulta("SELECT 
+                                            ts.Ticket,
+                                                ts.Folio
+                                        FROM
+                                            t_servicios_ticket tst
+                                        INNER JOIN t_solicitudes ts ON ts.Id = tst.IdSolicitud
+                                        WHERE
+                                            tst.Id = '" . $service . "'");
+
+        return $answerQuery;
+    }
+
+    public function transparencyFromLaboratoryToEarehouse(array $dataTransparencyFromLaboratoryToEarehouse, array $dataStatus) {
+        $this->iniciaTransaccion();
+
+        foreach ($dataTransparencyFromLaboratoryToEarehouse['listaProductos'] as $key => $value) {
+            $inquiryQuery = $this->consulta('SELECT * FROM t_inventario WHERE Id = "' . $value . '"');
+
+            $dataMovementInventoryTransfer = array(
+                'IdTipoMovimiento' => '2',
+                'IdServicio' => $dataTransparencyFromLaboratoryToEarehouse['idServicio'],
+                'IdAlmacen' => $inquiryQuery[0]['IdAlmacen'],
+                'IdTipoProducto' => $inquiryQuery[0]['IdProducto'],
+                'IdProducto' => $value,
+                'IdEstatus' => '17',
+                'IdUsuario' => $dataTransparencyFromLaboratoryToEarehouse['idUsuario'],
+                'Cantidad' => $inquiryQuery[0]['Cantidad'],
+                'Serie' => $inquiryQuery[0]['Serie'],
+                'Fecha' => $dataTransparencyFromLaboratoryToEarehouse['fecha']);
+            $this->actualizar('t_inventario', array('IdAlmacen' => '58'), ['Id' => $value]);
+            $this->insertar('t_movimientos_inventario', $dataMovementInventoryTransfer);
+
+
+            $idMovementInventoryTransfer = parent::connectDBPrueba()->insert_id();
+
+            $inquiryQueryUpdated = $this->consulta('SELECT * FROM t_inventario WHERE Id = "' . $value . '"');
+
+            $dataMovementInventoryEntry = array(
+                'IdMovimientoEnlazado' => $idMovementInventoryTransfer,
+                'IdTipoMovimiento' => '3',
+                'IdServicio' => $dataTransparencyFromLaboratoryToEarehouse['idServicio'],
+                'IdAlmacen' => $inquiryQueryUpdated[0]['IdAlmacen'],
+                'IdTipoProducto' => $inquiryQueryUpdated[0]['IdProducto'],
+                'IdProducto' => $value,
+                'IdEstatus' => '17',
+                'IdUsuario' => $dataTransparencyFromLaboratoryToEarehouse['idUsuario'],
+                'Cantidad' => $inquiryQueryUpdated[0]['Cantidad'],
+                'Serie' => $inquiryQueryUpdated[0]['Serie'],
+                'Fecha' => $dataTransparencyFromLaboratoryToEarehouse['fecha']);
+
+            $this->insertar('t_movimientos_inventario', $dataMovementInventoryEntry);
+        }
+
+        $this->cambiarEsatus($dataStatus);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
     }
 
 }
