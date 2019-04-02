@@ -395,7 +395,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                                     t_comprobacion_fondo_fijo tcff
                                     left join cat_v3_comprobacion_conceptos ccc on tcff.IdConcepto = ccc.Id
                                     where tcff.IdUsuarioFF = '" . $id . "'
-                                    and tcff.Fecha >= DATE_FORMAT(DATE_SUB(now(),INTERVAL 2 MONTH),'%Y-%m-%d')
+                                    and tcff.Fecha >= DATE_FORMAT(DATE_SUB(now(),INTERVAL 6 MONTH),'%Y-%m-%d')
                                     order by tcff.FechaAutorizacion desc");
         return $consulta;
     }
