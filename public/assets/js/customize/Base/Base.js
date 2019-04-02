@@ -658,8 +658,13 @@ Base.prototype.validarCampo = function () {
     var mensajeError = arrayCampos.mensajeError;
     var campoValidar = $(objeto).val();
 
-    if (campoValidar !== '') {
-        return true;
+    if (campoValidar !== undefined) {
+        if (campoValidar !== '') {
+            return true;
+        } else {
+            _this.mostrarMensaje(divError, false, mensajeError, 3000);
+            return false;
+        }
     } else {
         _this.mostrarMensaje(divError, false, mensajeError, 3000);
         return false;

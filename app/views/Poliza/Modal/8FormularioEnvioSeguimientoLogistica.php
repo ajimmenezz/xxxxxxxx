@@ -27,6 +27,22 @@ if (!empty($informacionEnvioLog)) {
             $camposSeguimientoEntrega = "";
             $camposSeguimientoEntregaContrario = "hidden";
         }
+
+        if ($value['CuentaSiccob'] === NULL) {
+            $campoCuenta = "hidden";
+        } else {
+            $campoCuenta = "";
+        }
+
+        if ($value['IdUsuarioTransito'] === NULL) {
+            $divPaqueteria = "";
+            $divLogistica = "hidden";
+            $chofer = "";
+        } else {
+            $divPaqueteria = "hidden";
+            $divLogistica = "";
+            $chofer = $value['Chofer'];
+        }
     }
 } else {
     $paqueteria = "";
@@ -45,6 +61,11 @@ if (!empty($informacionEnvioLog)) {
     $mostrarSelectInput = "hidden";
     $camposSeguimientoEntrega = "";
     $camposSeguimientoEntregaContrario = "hidden";
+    $cuenta = "hidden";
+    $campoCuenta = "hidden";
+    $divPaqueteria = "hidden";
+    $divLogistica = "hidden";
+    $chofer = "";
 }
 ?>
 <div id="panelEnvioSeguimientoLog" class="panel panel-inverse">
@@ -73,33 +94,84 @@ if (!empty($informacionEnvioLog)) {
         ?>
         <form id="formDocumentacionEnvio" data-parsley-validate="true">
             <div class="row">
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                    <div class="form-group <?php echo $mostrarSelect ?>">
-                        <label class="f-w-600 f-s-13">Paquetería *</label>
-                        <select id="listPaqueteria" class="form-control" style="width: 100%" data-parsley-required="true">
-                            <option value="">Selecciona . . .</option>
-                            <?php
-                            foreach ($paqueterias as $item) {
-                                echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
-                            }
-                            ?>
-                        </select>
+                <div class="col-md-3 col-sm-3">
+                    <label>
+                        <input class="tipoEnvio" type="radio" name="radioTipoEnvio" value="1" /> Paqueteria
+                    </label>
+                </div>
+                <div class="col-md-3 col-sm-3">
+                    <label>
+                        <input class="tipoEnvio" type="radio" name="radioTipoEnvio" value="0" /> Logistica
+                    </label>
+                </div>
+            </div>
+            <div id="divPaqueteria" class="<?php echo $divPaqueteria; ?>">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group <?php echo $mostrarSelect ?>">
+                            <label class="f-w-600 f-s-13">Paquetería *</label>
+                            <select id="listPaqueteria" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Selecciona . . .</option>
+                                <?php
+                                foreach ($paqueterias as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group <?php echo $formularioSeguimientoEntrega ?>">
+                            <label class="f-w-600 f-s-13">Paquetería *</label>
+                            <input type="text" class="form-control" placeholder="<?php echo $paqueteria ?>" disabled/>
+                        </div>
                     </div>
-                    <div class="form-group <?php echo $formularioSeguimientoEntrega ?>">
-                        <label class="f-w-600 f-s-13">Paquetería *</label>
-                        <input type="text" class="form-control" placeholder="<?php echo $paqueteria ?>" disabled/>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group <?php echo $mostrarSelect ?>">
+                            <label class="f-w-600 f-s-13"># Guía *</label>
+                            <input type="text" class="form-control" id="guiaLogistica" placeholder=""  data-parsley-required="true"/>
+                        </div>
+                        <div class="form-group <?php echo $formularioSeguimientoEntrega ?>">
+                            <label class="f-w-600 f-s-13"># Guía</label>
+                            <input type="text" class="form-control" placeholder="<?php echo $guia ?>" disabled/>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                    <div class="form-group <?php echo $mostrarSelect ?>">
-                        <label class="f-w-600 f-s-13"># Guía *</label>
-                        <input type="text" class="form-control" id="guiaLogistica" placeholder=""  data-parsley-required="true"/>
-                    </div>
-                    <div class="form-group <?php echo $formularioSeguimientoEntrega ?>">
-                        <label class="f-w-600 f-s-13"># Guía</label>
-                        <input type="text" class="form-control" placeholder="<?php echo $guia ?>" disabled/>
+                <div class="row">
+                    <div id="divCuentas" class="<?php echo $campoCuenta; ?>">
+                        <div class="col-md-3 col-sm-3 m-t-30">
+                            <label>
+                                <input type="radio" name="radioCuenta" value="1" /> Cuenta Siccob
+                            </label>
+                        </div>
+                        <div class="col-md-3 col-sm-3 m-t-30">
+                            <label>
+                                <input type="radio" name="radioCuenta" value="0" /> Cuenta Cliente
+                            </label>
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div id="divLogistica" class="<?php echo $divLogistica; ?>">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group <?php echo $mostrarSelect ?>">
+                            <label class="f-w-600 f-s-13">Chofer *</label>
+                            <select id="listChofer" class="form-control" style="width: 100%" data-parsley-required="true">
+                                <option value="">Selecciona . . .</option>
+                                <?php
+                                foreach ($choferes as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group <?php echo $formularioSeguimientoEntrega ?>">
+                            <label class="f-w-600 f-s-13">Chofer *</label>
+                            <input type="text" class="form-control" placeholder="<?php echo $chofer ?>" disabled/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="form-group <?php echo $mostrarSelect ?>">
                         <label class="f-w-600 f-s-13">Fecha de Envío *</label>

@@ -352,34 +352,43 @@ class Controller_Seguimiento extends Base {
                 break;
             case 'CargaAreasPuntosCenso':
                 $resultado = $this->Seguimientos->cargaAreasPuntosCenso($this->input->post());
-                break;                
+                break;
             case 'AgregaAreaPuntosCenso':
                 $resultado = $this->Seguimientos->agregaAreaPuntosCenso($this->input->post());
-                break;                
+                break;
             case 'GuardaCambiosAreasPuntos':
                 $resultado = $this->Seguimientos->guardaCambiosAreasPuntos($this->input->post());
-                break;                
+                break;
             case 'CargaEquiposPuntoCenso':
                 $resultado = $this->Seguimientos->cargaEquiposPuntoCenso($this->input->post());
-                break;                
+                break;
             case 'CargaFormularioCapturaCenso':
                 $resultado = $this->Seguimientos->cargaFormularioCapturaCenso($this->input->post());
-                break;                
+                break;
             case 'GuardaEquiposPuntoCenso':
                 $resultado = $this->Seguimientos->guardaEquiposPuntoCenso($this->input->post());
-                break;                
+                break;
             case 'GuardarEquipoAdicionalCenso':
                 $resultado = $this->Seguimientos->guardarEquipoAdicionalCenso($this->input->post());
-                break;                
+                break;
             case 'EliminarEquiposAdicionalesCenso':
                 $resultado = $this->Seguimientos->eliminarEquiposAdicionalesCenso($this->input->post());
-                break;                
+                break;
             case 'GuardaCambiosEquiposAdicionalesCenso':
                 $resultado = $this->Seguimientos->guardaCambiosEquiposAdicionalesCenso($this->input->post());
-                break;                
+                break;
             case 'CargaFormularioCapturaAdicionalesCenso':
                 $resultado = $this->Seguimientos->cargaFormularioCapturaAdicionalesCenso($this->input->post());
-                break;                
+                break;
+            case 'MostrarFormularioInformacionGeneracionGuia':
+                $resultado = $this->Seguimientos->showFormInformationGenerationGuide($this->input->post());
+                break;
+            case 'SolicitarRefaccionLaboratorio':
+                $resultado = $this->Seguimientos->requestLaboratoryReplacement($this->input->post());
+                break;
+            case 'AsignarRefaccionAlmacen':
+                $resultado = $this->Seguimientos->assignSparePartToStore($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
