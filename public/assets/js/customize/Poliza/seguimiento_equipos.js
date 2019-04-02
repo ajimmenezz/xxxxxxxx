@@ -141,16 +141,18 @@ $(function () {
 
         if (respuesta.formularioEnvioSeguimientoLog !== undefined) {
             if (respuesta.formularioEnvioSeguimientoLog.datos !== undefined) {
-                var $radiosTipoEnvio = $('input[name="radioTipoEnvio"]');
-                if (respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].IdUsuarioTransito !== null) {
-                    $radiosTipoEnvio.filter('[value=0]').attr('checked', true);
-                } else {
-                    $radiosTipoEnvio.filter('[value=1]').attr('checked', true);
+                if (respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog !== null) {
+                    var $radiosTipoEnvio = $('input[name="radioTipoEnvio"]');
+                    if (respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].IdUsuarioTransito !== null) {
+                        $radiosTipoEnvio.filter('[value=0]').attr('checked', true);
+                    } else {
+                        $radiosTipoEnvio.filter('[value=1]').attr('checked', true);
+                    }
+                    $('input[name="radioTipoEnvio"]').attr("disabled", "disabled");
+                    var $radiosCuenta = $('input[name="radioCuenta"]');
+                    $radiosCuenta.filter('[value=' + respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].CuentaSiccob + ']').attr('checked', true);
+                    $('input[name="radioCuenta"]').attr("disabled", "disabled");
                 }
-                $('input[name="radioTipoEnvio"]').attr("disabled", "disabled");
-                var $radiosCuenta = $('input[name="radioCuenta"]');
-                $radiosCuenta.filter('[value=' + respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].CuentaSiccob + ']').attr('checked', true);
-                $('input[name="radioCuenta"]').attr("disabled", "disabled");
             }
         }
     };

@@ -5139,6 +5139,7 @@ class Seguimientos extends General {
         $idSDLaboratory = '14731';
         $idSDLogistics = '8708';
         $idSD = '';
+        $reassignment = '';
 
         switch ($dataToCreateEmailList['idStatus']) {
             case 2 :
