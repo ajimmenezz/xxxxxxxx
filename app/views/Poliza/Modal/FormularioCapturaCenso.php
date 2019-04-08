@@ -214,7 +214,7 @@ if ($totalEquipmentStandarKit <= 0) {
                             </tr>
                             <tr>
                                 <td>
-                                    <input role="button" type="text" id="txtEtiquetaEquipoAdicional" class="form-control" value="" placeholder="001-TOL003-97-0108" style="min-width: 200px"/>
+                                    <input role="button" type="text" id="txtEtiquetaEquipoAdicional" class="form-control" value="" placeholder="001-TOL003-L1S15-97-1" style="min-width: 200px"/>
                                 </td>                                
                                 <td>
                                     <select class="form-control" id="listEstadosEquipoAdicional" style="min-width: 130px">
@@ -274,11 +274,16 @@ if ($totalEquipmentStandarKit <= 0) {
                                     <th class="text-center">Dañado</th>
                                     <?php
                                 }
+
+                                if ($cliente == 20) {
+                                    ?>
+                                    <th class="text-center">Etiqueta</th>   
+                                    <th class="text-center">Estatus</th>   
+                                    <th class="text-center">MAC Address</th>   
+                                    <th class="text-center">S.O.</th>   
+                                    <?php
+                                }
                                 ?>
-                                <th class="text-center">Etiqueta</th>   
-                                <th class="text-center">Estatus</th>   
-                                <th class="text-center">MAC Address</th>   
-                                <th class="text-center">S.O.</th>   
                                 <th class="text-center"></th>
                                 <th class="text-center"></th>
                             </tr>
@@ -287,8 +292,13 @@ if ($totalEquipmentStandarKit <= 0) {
                             <?php
                             $i = 0;
                             foreach ($arrayEquiposCensados as $keyEquiposCensados => $valueEquiposCensados) {
-                                $i++;
+                                $i++;                                
+                                $modeloEquipo = $valueEquiposCensados['Modelo'];
                                 $serie = $valueEquiposCensados['Serie'];
+                                $etiquetaEquipo = $valueEquiposCensados['Etiqueta'];
+                                $estadoEquipo = $valueEquiposCensados['IdEstatus'];
+                                $macEquipo = $valueEquiposCensados['MAC'];
+                                $soEquipo = $valueEquiposCensados['IdSO'];
                                 $checkedIlegible = ($serie == 'ILEGIBLE') ? 'checked="checked"' : '';
                                 $disabledSerie = ($checkedIlegible !== '') ? 'disabled="disabled"' : '';
                                 $checkedDanado = ($valueEquiposCensados['Danado'] == 1 ) ? 'checked="checked"' : 0;
@@ -297,7 +307,7 @@ if ($totalEquipmentStandarKit <= 0) {
                                 <tr data-id="<?php echo $valueEquiposCensados['Id']; ?>" class="registrosAdicionales">
                                     <td># <?php echo $i; ?></td>
                                     <td>
-                                        <select class="form-control listModelosEquiposAdicionales">
+                                        <select class="form-control listModelosEquiposAdicionales" style="min-width: 350px">
                                             <option value="">Seleccionar . . .</option>         
                                             <?php
                                             if (isset($modelos) && count($modelos) > 0) {
@@ -310,7 +320,7 @@ if ($totalEquipmentStandarKit <= 0) {
                                         </select>
                                     </td>
                                     <td>
-                                        <input role="button" type="text" class="form-control serieEquiposAdicionales" value="<?php echo $serie; ?>" placeholder="XXXYYYZZZ-123" <?php echo $disabledSerie; ?>/>
+                                        <input role="button" type="text" class="form-control serieEquiposAdicionales" value="<?php echo $serie; ?>" placeholder="XXXYYYZZZ-123" <?php echo $disabledSerie; ?> style="min-width: 150px"/>
                                     </td>
                                     <td class="text-center">
                                         <input role="button" class="m-t-10 ilegibleEquiposAdicionales" style="transform:scale(2, 2);" type="checkbox" <?php echo $checkedIlegible; ?> />
@@ -320,6 +330,49 @@ if ($totalEquipmentStandarKit <= 0) {
                                         ?>
                                         <td class="text-center">
                                             <input role="button" class="m-t-10 danadoEquiposAdicionales" style="transform:scale(2, 2);" type="checkbox" <?php echo $checkedDanado; ?> />
+                                        </td>
+                                        <?php
+                                    }
+
+                                    if ($cliente == 20) {
+                                        $disabledMACandSO = '';
+                                        $esComputadora = strpos($modeloEquipo, 'COMPUTADORA');                                        
+                                        if($esComputadora === false){
+                                            $disabledMACandSO = 'disabled="disabled"';
+                                        }
+                                        
+                                        ?>
+                                        <td>
+                                            <input role="button" type="text" class="form-control etiquetaEquiposAdicionales" value="<?php echo $etiquetaEquipo; ?>" style="min-width: 200px"/>
+                                        </td>
+                                        <td>
+                                            <select class="form-control listEstadosEquiposAdicionales" style="min-width: 120px">
+                                                <option value="">Seleccionar . . .</option>         
+                                                <?php
+                                                if (isset($estatus) && count($estatus) > 0) {
+                                                    foreach ($estatus as $keyEstatus => $valueEstatus) {
+                                                        $selected = ($valueEstatus['Id'] == $estadoEquipo) ? 'selected' : '';
+                                                        echo '<option value="' . $valueEstatus['Id'] . '" ' . $selected . '>' . $valueEstatus['Nombre'] . '</option>';
+                                                    }
+                                                }
+                                                ?>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input role="button" type="text" class="form-control macEquiposAdicionales" value="<?php echo $macEquipo; ?>" style="min-width: 150px" <?php echo $disabledMACandSO; ?>/>
+                                        </td>
+                                        <td>
+                                            <select class="form-control listSOEquiposAdicionales" style="min-width: 200px" <?php echo $disabledMACandSO; ?>>
+                                                <option value="">Seleccionar . . .</option>         
+                                                <?php
+                                                if (isset($so) && count($so) > 0) {
+                                                    foreach ($so as $keySO => $valueSO) {
+                                                        $selected = ($valueSO['Id'] == $soEquipo) ? 'selected' : '';
+                                                        echo '<option value="' . $valueSO['Id'] . '" ' . $selected . '>' . $valueSO['Nombre'] . '</option>';
+                                                    }
+                                                }
+                                                ?>
+                                            </select>
                                         </td>
                                         <?php
                                     }
@@ -341,4 +394,3 @@ if ($totalEquipmentStandarKit <= 0) {
         </div>
     </div>
 </div>
-

@@ -147,9 +147,13 @@ class Modelo_Censos extends Modelo_Base {
                                     Serie,
                                     Extra,
                                     Existe,
-                                    Danado
+                                    Danado,
+                                    Extra as Etiqueta,
+                                    IdEstatus,                                    
+                                    MAC,
+                                    IdSistemaOperativo as IdSO                                    
                                     from 
-                                    t_censos
+                                    t_censos tc
                                     where IdServicio = '" . $datos['servicio'] . "'
                                     and IdArea = '" . $datos['area'] . "'
                                     and Punto = '" . $datos['punto'] . "'");
@@ -160,21 +164,21 @@ class Modelo_Censos extends Modelo_Base {
         $consulta = $this->consulta("select Nombre from cat_v3_areas_atencion where Id = '" . $area . "'");
         return $consulta[0]['Nombre'];
     }
-    
+
     public function getClienteByIdArea(int $area) {
         $consulta = $this->consulta("select IdCliente from cat_v3_areas_atencion where Id = '" . $area . "'");
         return $consulta[0]['IdCliente'];
     }
-    
+
     public function getSistemasOperativos() {
         $consulta = $this->consulta("select Id, Nombre from cat_v3_sistemas_operativos where Flag = 1");
         return $consulta;
     }
-    
+
     public function getEstatusEquipoPrimeMX() {
         $consulta = $this->consulta("select Id, Nombre from cat_v3_estatus where Id in (42,43,44,45)");
         return $consulta;
-    }       
+    }
 
     public function getModelosGenerales() {
         $consulta = $this->consulta("select 
@@ -248,15 +252,113 @@ class Modelo_Censos extends Modelo_Base {
     public function guardarEquipoAdicionalCenso(array $datos) {
         $this->iniciaTransaccion();
 
+        $seriesExistentes = $this->consulta("select
+                                            count(*) as Total
+                                            from t_censos tc where IdServicio in (
+                                                    select
+                                                    MAX(tst.Id) as Id
+                                                    from
+                                                    t_servicios_ticket tst
+                                                    where IdSucursal in (
+                                                                        select 
+                                                                        Id 
+                                                                        from cat_v3_sucursales 
+                                                                        where IdCliente = (
+                                                                                            select 
+                                                                                            IdCliente 
+                                                                                            from cat_v3_sucursales 
+                                                                                            where Id = (select IdSucursal from t_servicios_ticket where Id = '" . $datos['servicio'] . "'))
+                                                                                            )
+                                                    and IdTipoServicio = 11
+                                                    and IdEstatus in (4,2)
+                                                    group by IdSucursal
+                                            ) and (tc.Serie = '" . $datos['serie'] . "' and tc.Serie != 'ILEGIBLE');");
+        if ($seriesExistentes[0]['Total'] > 0) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => 'Ya existe la serie en el registro de esta u otra sucursal. Verifique la información'
+            ];
+        }
+
+        $etiquetasExistentes = $this->consulta("select
+                                            count(*) as Total
+                                            from t_censos tc where IdServicio in (
+                                                    select
+                                                    MAX(tst.Id) as Id
+                                                    from
+                                                    t_servicios_ticket tst
+                                                    where IdSucursal in (
+                                                                        select 
+                                                                        Id 
+                                                                        from cat_v3_sucursales 
+                                                                        where IdCliente = (
+                                                                                            select 
+                                                                                            IdCliente 
+                                                                                            from cat_v3_sucursales 
+                                                                                            where Id = (select IdSucursal from t_servicios_ticket where Id = '" . $datos['servicio'] . "'))
+                                                                                            )
+                                                    and IdTipoServicio = 11
+                                                    and IdEstatus in (4,2)
+                                                    group by IdSucursal
+                                            ) and (tc.Extra = '" . $datos['etiqueta'] . "' and tc.Extra != '')");
+        if ($etiquetasExistentes[0]['Total'] > 0) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => 'Ya existe la etiqueta en el registro de esta u otra sucursal. Verifique la información'
+            ];
+        }
+
+        $macAddressExistentes = $this->consulta("select
+                                            count(*) as Total
+                                            from t_censos tc where IdServicio in (
+                                                    select
+                                                    MAX(tst.Id) as Id
+                                                    from
+                                                    t_servicios_ticket tst
+                                                    where IdSucursal in (
+                                                                        select 
+                                                                        Id 
+                                                                        from cat_v3_sucursales 
+                                                                        where IdCliente = (
+                                                                                            select 
+                                                                                            IdCliente 
+                                                                                            from cat_v3_sucursales 
+                                                                                            where Id = (select IdSucursal from t_servicios_ticket where Id = '" . $datos['servicio'] . "'))
+                                                                                            )
+                                                    and IdTipoServicio = 11
+                                                    and IdEstatus in (4,2)
+                                                    group by IdSucursal
+                                            ) and (tc.MAC = '" . $datos['mac'] . "' and tc.MAC != '')");
+        if ($macAddressExistentes[0]['Total'] > 0) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => 'Ya existe la MAC Address en el registro de esta u otra sucursal. Verifique la información'
+            ];
+        }
+
         $this->insertar("t_censos", [
             'IdServicio' => $datos['servicio'],
             'IdArea' => $datos['area'],
             'IdModelo' => $datos['modelo'],
             'Punto' => $datos['punto'],
             'Serie' => $datos['serie'],
+            'Extra' => $datos['etiqueta'],
+            'IdEstatus' => $datos['estado'],
+            'MAC' => $datos['mac'],
+            'IdSistemaOperativo' => $datos['so'],
             'Existe' => 1,
             'Danado' => $datos['danado']
         ]);
+
+        $this->insertar("t_censos_areas_puntos_revisados", [
+            'IdServicio' => $datos['servicio'],
+            'IdArea' => $datos['area'],
+            'Punto' => $datos['punto']
+        ]);
+
 
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();
@@ -292,9 +394,112 @@ class Modelo_Censos extends Modelo_Base {
     public function guardaCambiosEquiposAdicionalesCenso(array $datos) {
         $this->iniciaTransaccion();
 
+        $seriesExistentes = $this->consulta("select
+                                            count(*) as Total
+                                            from t_censos tc where IdServicio in (
+                                                    select
+                                                    MAX(tst.Id) as Id
+                                                    from
+                                                    t_servicios_ticket tst
+                                                    where IdSucursal in (
+                                                                        select 
+                                                                        Id 
+                                                                        from cat_v3_sucursales 
+                                                                        where IdCliente = (
+                                                                                            select 
+                                                                                            IdCliente 
+                                                                                            from cat_v3_sucursales 
+                                                                                            where Id = (select IdSucursal from t_servicios_ticket where Id = '" . $datos['servicio'] . "'))
+                                                                                            )
+                                                    and IdTipoServicio = 11
+                                                    and IdEstatus in (4,2)
+                                                    group by IdSucursal
+                                            ) and (tc.Serie = '" . $datos['serie'] . "' and tc.Serie != 'ILEGIBLE') 
+                                            and tc.Id <> '" . $datos['id'] . "'");
+        if ($seriesExistentes[0]['Total'] > 0) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => 'Ya existe la serie en el registro de esta u otra sucursal. Verifique la información'
+            ];
+        }
+
+        $etiquetasExistentes = $this->consulta("select
+                                            count(*) as Total
+                                            from t_censos tc where IdServicio in (
+                                                    select
+                                                    MAX(tst.Id) as Id
+                                                    from
+                                                    t_servicios_ticket tst
+                                                    where IdSucursal in (
+                                                                        select 
+                                                                        Id 
+                                                                        from cat_v3_sucursales 
+                                                                        where IdCliente = (
+                                                                                            select 
+                                                                                            IdCliente 
+                                                                                            from cat_v3_sucursales 
+                                                                                            where Id = (select IdSucursal from t_servicios_ticket where Id = '" . $datos['servicio'] . "'))
+                                                                                            )
+                                                    and IdTipoServicio = 11
+                                                    and IdEstatus in (4,2)
+                                                    group by IdSucursal
+                                            ) and (tc.Extra = '" . $datos['etiqueta'] . "' and tc.Extra != '')
+                                            and tc.Id <> '" . $datos['id'] . "'");
+        if ($etiquetasExistentes[0]['Total'] > 0) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => 'Ya existe la etiqueta en el registro de esta u otra sucursal. Verifique la información'
+            ];
+        }
+
+        $macAddressExistentes = $this->consulta("select
+                                            count(*) as Total
+                                            from t_censos tc where IdServicio in (
+                                                    select
+                                                    MAX(tst.Id) as Id
+                                                    from
+                                                    t_servicios_ticket tst
+                                                    where IdSucursal in (
+                                                                        select 
+                                                                        Id 
+                                                                        from cat_v3_sucursales 
+                                                                        where IdCliente = (
+                                                                                            select 
+                                                                                            IdCliente 
+                                                                                            from cat_v3_sucursales 
+                                                                                            where Id = (select IdSucursal from t_servicios_ticket where Id = '" . $datos['servicio'] . "'))
+                                                                                            )
+                                                    and IdTipoServicio = 11
+                                                    and IdEstatus in (4,2)
+                                                    group by IdSucursal
+                                            ) and (tc.MAC = '" . $datos['mac'] . "' and tc.MAC != '') 
+                                            and tc.Id <> '" . $datos['id'] . "'");
+        if ($macAddressExistentes[0]['Total'] > 0) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => 'Ya existe la MAC Address en el registro de esta u otra sucursal. Verifique la información'
+            ];
+        }
+
+        $this->queryBolean("
+            insert into  t_censos_areas_puntos_revisados
+            select 
+            null,
+            IdServicio,
+            IdArea,
+            Punto 
+            from t_censos where Id = '" . $datos['id'] . "'");
+
         $this->actualizar("t_censos", [
             'IdModelo' => $datos['modelo'],
             'Serie' => $datos['serie'],
+            'Extra' => $datos['etiqueta'],
+            'IdEstatus' => $datos['estado'],
+            'MAC' => $datos['mac'],
+            'IdSistemaOperativo' => $datos['so'],
             'Existe' => $datos['existe'],
             'Danado' => $datos['danado']
                 ], ['Id' => $datos['id']]);
