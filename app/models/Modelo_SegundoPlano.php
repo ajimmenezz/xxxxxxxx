@@ -93,7 +93,7 @@ class Modelo_SegundoPlano extends Base {
             'Asunto' => $datos['asunto'],
             'Resolucion' => $datos['resolucion'],
             'Solucionador' => $datos['resolver'],
-            'FechaResolucion' => $datos['fechaResolucion'],
+            'FechaResolucion' => ($datos['fechaResolucion'] != '0000-00-00 00:00:00') ? $datos['fechaResolucion'] : null,
             'FechaLectura' => (!isset($fecha['fechaLectura'])) ? $fecha[0]['Fecha'] : $fecha['fechaLectura'],
             'FechaComprobacion' => $fecha[0]['Fecha']
         ]);
