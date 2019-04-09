@@ -906,7 +906,41 @@ $(function () {
             }
         });
 
+        $('#btnSolicitarCotizacionRevisionLaboratorio').off('click');
+        $('#btnSolicitarCotizacionRevisionLaboratorio').on('click', function () {
+            var data = {
+                'servicio': idServicio,
+                'estatus': 29
+            }
+            mandarCotizacion(data, idTabla, '#panelLaboratorioHistorial');
+        });
+
+        $('#solicitarCotizacion').off('click');
+        $('#solicitarCotizacion').on('click', function () {
+            var data = {
+                'servicio': idServicio,
+                'estatus': 2
+            }
+            mandarCotizacion(data, idTabla, '#panelValidacionExistencia');
+        });
+
     };
+
+    var mandarCotizacion = function () {
+        var data = arguments[0];
+        var idTabla = arguments[1];
+        var panel = arguments[2];
+        
+        evento.enviarEvento('Seguimiento/crearDatosCotizarOpcionRevision', data, panel, function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(idTabla, respuesta.idServicio);
+                eventosComentarios(idTabla, respuesta.idServicio);
+                cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+            }
+        });
+    }
 
     var terminarSeleccion = function () {
         var data = arguments[0];

@@ -947,82 +947,6 @@ class Seguimientos extends General {
                                 ), array('Id' => $datos['servicio']));
                         $this->cambiarEstatusServiceDesk($datos['servicio'], 'Problema');
 
-
-
-
-                        //Incluir aqui la inserción a SICSA 
-
-                        $cotizacionAnterior = $this->DBS->consulta("select "
-                                . "count(*) as Total "
-                                . "from t_servicios_ticket tst "
-                                . "where tst.IdServicioOrigen = '" . $datos['servicio'] . "' "
-                                . "and tst.IdTipoServicio = 41");
-
-                        if ($cotizacionAnterior[0]['Total'] <= 0) {
-
-                            $detallesServicio = $this->DBS->consulta("SELECT
-                                                                ClaveSAE,
-                                                                (select Nombre from cat_v3_equipos_sae where Clave = cme.ClaveSAE) as Articulo,
-                                                                (select Equipo from v_equipos where Id = (select 
-                                                                            IdModelo 
-                                                                            from t_correctivos_generales 
-                                                                            where IdServicio = '" . $datos['servicio'] . "')) as Equipo
-                                                                from cat_v3_modelos_equipo cme
-                                                                where Id = (select 
-                                                                            IdModelo 
-                                                                            from t_correctivos_generales 
-                                                                            where IdServicio = '" . $datos['servicio'] . "')");
-
-                            $otherData = $this->DBS->consulta("SELECT                                                         
-                                                        tst.Ticket,
-                                                        tst.IdSolicitud,
-                                                        tst.IdSucursal,
-                                                        sucursalByServicio('" . $datos['servicio'] . "') as Sucursal,
-                                                        folioByServicio('" . $datos['servicio'] . "') as Folio,
-                                                        (select concat((select Nombre from cat_v3_clasificaciones_falla where Id = IdClasificacion),' - ', Nombre) from cat_v3_tipos_falla where Id = tcd.IdTipoFalla) as TipoFalla,
-                                                        (select Nombre from cat_v3_fallas_equipo where Id = tcd.IdFalla) as Falla,
-                                                        tcd.Observaciones
-                                                        from t_correctivos_diagnostico tcd 
-                                                        inner join t_servicios_ticket tst on tcd.IdServicio = tst.Id
-                                                        where IdServicio = '" . $datos['servicio'] . "'                                                        
-                                                        order by tcd.Id desc limit 1");
-
-                            $cve_art = ($detallesServicio[0]['ClaveSAE'] != '') ? $detallesServicio[0]['ClaveSAE'] : 'PIECE';
-                            $articulo = ($detallesServicio[0]['ClaveSAE'] != '') ? $detallesServicio[0]['Articulo'] : $detallesServicio[0]['Equipo'];
-
-
-                            $arrayDatosCotizacion = [
-                                'SD' => $otherData[0]['Folio'],
-                                'Complejo' => $otherData[0]['Sucursal'],
-                                'Observaciones' => '',
-                                'CVE' => $cve_art,
-                                'Articulo' => $articulo,
-                                'Categoria' => $otherData[0]['TipoFalla'],
-                                'Falla' => $otherData[0]['Falla'],
-                                'Link' => 'http://siccob.solutions/Detalles/Servicio/' . $datos['servicio']
-                            ];
-
-                            $insertSicsa = $this->MSicsa->insertaCotizacion($arrayDatosCotizacion);
-
-                            if ($insertSicsa['code'] == 200) {
-                                $arrayInsertCotizacion = [
-                                    'Ticket' => $otherData[0]['Ticket'],
-                                    'IdSolicitud' => $otherData[0]['IdSolicitud'],
-                                    'IdTipoServicio' => 41,
-                                    'IdSucursal' => $otherData[0]['IdSucursal'],
-                                    'IdEstatus' => 2,
-                                    'Solicita' => $this->usuario['Id'],
-                                    'Atiende' => 47,
-                                    'FechaCreacion' => $fecha,
-                                    'FechaInicio' => $fecha,
-                                    'Descripcion' => 'Cotización de ' . $arrayDatosCotizacion['Observaciones'],
-                                    'IdServicioOrigen' => $datos['servicio']
-                                ];
-
-                                $this->DBS->insertar('t_servicios_ticket', $arrayInsertCotizacion);
-                            }
-                        }
-
                         return $idCorrectivoDiagnostico;
                     } else {
                         return FALSE;
@@ -1130,6 +1054,73 @@ class Seguimientos extends General {
             }
         } else {
             return 'faltaDatosGenerales';
+        }
+    }
+
+    public function insercionSicsa(array $datos) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $cotizacionAnterior = $this->DBP->previousQuoteQuery($datos['servicio']);
+
+        if ($cotizacionAnterior[0]['Total'] <= 0) {
+            $detallesServicio = $this->DBS->consulta("SELECT
+                                                                ClaveSAE,
+                                                                (select Nombre from cat_v3_equipos_sae where Clave = cme.ClaveSAE) as Articulo,
+                                                                (select Equipo from v_equipos where Id = (select 
+                                                                            IdModelo 
+                                                                            from t_correctivos_generales 
+                                                                            where IdServicio = '" . $datos['servicio'] . "')) as Equipo
+                                                                from cat_v3_modelos_equipo cme
+                                                                where Id = (select 
+                                                                            IdModelo 
+                                                                            from t_correctivos_generales 
+                                                                            where IdServicio = '" . $datos['servicio'] . "')");
+            $otherData = $this->DBS->consulta("SELECT                                                         
+                                                        tst.Ticket,
+                                                        tst.IdSolicitud,
+                                                        tst.IdSucursal,
+                                                        sucursalByServicio('" . $datos['servicio'] . "') as Sucursal,
+                                                        folioByServicio('" . $datos['servicio'] . "') as Folio,
+                                                        (select concat((select Nombre from cat_v3_clasificaciones_falla where Id = IdClasificacion),' - ', Nombre) from cat_v3_tipos_falla where Id = tcd.IdTipoFalla) as TipoFalla,
+                                                        (select Nombre from cat_v3_fallas_equipo where Id = tcd.IdFalla) as Falla,
+                                                        tcd.Observaciones
+                                                        from t_correctivos_diagnostico tcd 
+                                                        inner join t_servicios_ticket tst on tcd.IdServicio = tst.Id
+                                                        where IdServicio = '" . $datos['servicio'] . "'                                                        
+                                                        order by tcd.Id desc limit 1");
+
+            $cve_art = ($detallesServicio[0]['ClaveSAE'] != '') ? $detallesServicio[0]['ClaveSAE'] : 'PIECE';
+            $articulo = ($detallesServicio[0]['ClaveSAE'] != '') ? $detallesServicio[0]['Articulo'] : $detallesServicio[0]['Equipo'];
+
+            $arrayDatosCotizacion = [
+                'SD' => $otherData[0]['Folio'],
+                'Complejo' => $otherData[0]['Sucursal'],
+                'Observaciones' => 'Prueba Adist',
+                'CVE' => $cve_art,
+                'Articulo' => $articulo,
+                'Categoria' => $otherData[0]['TipoFalla'],
+                'Falla' => $otherData[0]['Falla'],
+                'Link' => 'http://siccob.solutions/Detalles/Servicio/' . $datos['servicio']
+            ];
+
+            $insertSicsa = $this->MSicsa->insertaCotizacion($arrayDatosCotizacion);
+            
+            if ($insertSicsa['code'] == 200) {
+                $arrayInsertCotizacion = [
+                    'Ticket' => $otherData[0]['Ticket'],
+                    'IdSolicitud' => $otherData[0]['IdSolicitud'],
+                    'IdTipoServicio' => 41,
+                    'IdSucursal' => $otherData[0]['IdSucursal'],
+                    'IdEstatus' => 2,
+                    'Solicita' => $this->usuario['Id'],
+                    'Atiende' => 47,
+                    'FechaCreacion' => $fecha,
+                    'FechaInicio' => $fecha,
+                    'Descripcion' => 'Cotización de ' . $arrayDatosCotizacion['Observaciones'],
+                    'IdServicioOrigen' => $datos['servicio']
+                ];
+
+                return $this->DBS->insertar('t_servicios_ticket', $arrayInsertCotizacion);
+            }
         }
     }
 
@@ -3861,10 +3852,12 @@ class Seguimientos extends General {
 
         $data['invetarioAlmacen'] = $this->DBP->consultaInventarioAlmacen($arrayInventarioAlmacen);
         $data['idEstatus'] = $equipoAllab[0]['IdEstatus'];
+        $data['cotizacionAnterior'] = $this->DBP->previousQuoteQuery($datos['idServicio']);
+
 
         $formulario = 'Poliza/Modal/12SeguimientoSolicitudRefaccionExistencia';
 
-        return array('formularioParaGuia' => parent::getCI()->load->view($formulario, $data, TRUE));
+        return array('formularioParaGuia' => parent::getCI()->load->view($formulario, $data, TRUE), 'datos' => $data);
     }
 
     public function vistaDeGuia(array $datos) {
@@ -3917,8 +3910,9 @@ class Seguimientos extends General {
             'idModelo' => $equipoRegistro[0]['IdModelo'],
             'idUsuario' => $usuario['Id']));
         $data['listRefaccionesUtilizadasServicio'] = $this->DBP->consultaListaRefaccionesUtilizadasServicio($datos['idServicio']);
+        $data['cotizacionAnterior'] = $this->DBP->previousQuoteQuery($datos['idServicio']);
 
-        $formulario = array('formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE));
+        $formulario = array('formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE), 'datos' => $data);
         return $formulario;
     }
 
@@ -5247,7 +5241,7 @@ class Seguimientos extends General {
         $result = $this->DBP->transparencyFromLaboratoryToEarehouse($dataAssignSparePartToStore, $dataStatus);
 
         if ($result['code'] === 200) {
-            $dataAllab = $this->DBP->consultaEquiposAllab($$dataAssignSparePartToStore['idServicio']);
+            $dataAllab = $this->DBP->consultaEquiposAllab($dataAssignSparePartToStore['idServicio']);
             $textoCorreo = '<p>Se le pide le que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $dataRequestLaboratoryReplacement['idServicio'] . '</strong>.</p>';
             $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 2, 'movementType' => $dataAllab[0]['IdTipoMovimiento'], 'idTechnical' => $dataAllab[0]['IdUsuario']));
 
@@ -5258,6 +5252,23 @@ class Seguimientos extends General {
             $message = ['mensaje' => "Es correcto.",
                 'datos' => $forms,
                 'idServicio' => $dataRequestLaboratoryReplacement['idServicio'],
+                'code' => 200];
+            return $message;
+        } else {
+            $message = ['mensaje' => $result,
+                'code' => 400];
+            return $message;
+        }
+    }
+
+    public function createDataQuoteFromRevisionOption(array $dataQuoteFromRevisionOption) {
+        $result = $this->insercionSicsa($dataQuoteFromRevisionOption);
+
+        if (!empty($result)) {
+            $forms = $this->mostrarVistaPorUsuario(array('idServicio' => $dataQuoteFromRevisionOption['servicio'], 'idEstatus' => $dataQuoteFromRevisionOption['servicio']));
+            $message = ['mensaje' => "Es correcto.",
+                'datos' => $forms,
+                'idServicio' => $dataQuoteFromRevisionOption['servicio'],
                 'code' => 200];
             return $message;
         } else {
