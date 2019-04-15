@@ -279,7 +279,7 @@ class Permisos_Vacaciones extends General {
                 break;
         }
         $texto .= ' para el día ' . $datosPermisos['fechaPermisoDesde'] . '</p><br><br>
-                    <a href="http://adist/storage/Archivos/'.$carpeta.'">Archivo</a>';
+                    <a href="http://adist/'.$carpeta.'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia ' . $asunto, $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoJefe[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
     }
