@@ -239,13 +239,14 @@ class Autorizar_permisos extends General{
         if ($datosFirmas['MotivoRechazo'] != ""){
             $this->pdf->SetFont('Arial','B',35);
             $this->pdf->SetTextColor(254,159,159);
-            $this->pdf->RotatedText(30,210,'R e c h a z a d o',10);
+            $this->pdf->RotatedText(30,210,'R e c h a z a d o',0);
         }
         if ($estadoPermiso == "Autorizado y Concluido por: "){
             $this->pdf->SetFont('Arial','B',35);
             $this->pdf->SetTextColor(147,240,252);
-            $this->pdf->RotatedText(30,210,'A u t o r i z a d o',10);
+            $this->pdf->RotatedText(30,210,'A u t o r i z a d o',0);
         }
+        
         $this->pdf->SetFont("helvetica", "B", 11);
         $this->pdf->SetTextColor(0,0,0);
         switch ($datosPermiso['idPerfil']){
