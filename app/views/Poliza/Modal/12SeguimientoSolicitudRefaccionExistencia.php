@@ -1,4 +1,5 @@
 <?php
+
 if (!empty($invetarioAlmacen)) {
     $botonCotizar = 'hidden';
     if ($idEstatus === '41') {
@@ -18,9 +19,13 @@ if (!empty($invetarioAlmacen)) {
     $botonTeminarSeleccionLaboratorio = 'hidden';
 }
 
-
-
 $mensajeCotizacion = 'hidden';
+
+if ($cotizacionAnterior[0]['Total'] <= 0) {
+    $botonCotizacion = '';
+}else{
+    $botonCotizacion = 'hidden';
+}
 ?>
 <div id="panelValidacionExistencia" class="panel panel-inverse">
     <div class="panel-heading">
@@ -34,7 +39,7 @@ $mensajeCotizacion = 'hidden';
             <div class="col-md-6 col-sm-6 col-xs-4 <?php echo $botonCotizar; ?>">
                 <div class="form-group text-right">
                     <a href="javascript:;" class="btn btn-sm btn-info f-s-13" id="solicitarLaboratorio"><i class="fa fa-wrench"></i> Solicitar a Laboratorio</a>
-                    <a href="javascript:;" class="btn btn-sm btn-success f-s-13" id="solicitarCotizacion"><i class="fa fa-usd"></i> Solicitar Cotización</a>
+                    <a href="javascript:;" class="btn btn-sm btn-success f-s-13 <?php echo $botonCotizacion; ?>" id="solicitarCotizacion"><i class="fa fa-usd"></i> Solicitar Cotización</a>
                 </div>
             </div>
         </div>

@@ -2375,4 +2375,14 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
+    public function previousQuoteQuery(string $service) {
+        $answerQuery = $this->consulta("select
+                count(*) as Total
+                from t_servicios_ticket tst
+                where tst.IdServicioOrigen = '" . $service . "'
+                and tst.IdTipoServicio = 41");
+
+        return $answerQuery;
+    }
+
 }

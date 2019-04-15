@@ -141,16 +141,18 @@ $(function () {
 
         if (respuesta.formularioEnvioSeguimientoLog !== undefined) {
             if (respuesta.formularioEnvioSeguimientoLog.datos !== undefined) {
-                var $radiosTipoEnvio = $('input[name="radioTipoEnvio"]');
-                if (respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].IdUsuarioTransito !== null) {
-                    $radiosTipoEnvio.filter('[value=0]').attr('checked', true);
-                } else {
-                    $radiosTipoEnvio.filter('[value=1]').attr('checked', true);
+                if (respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog !== null) {
+                    var $radiosTipoEnvio = $('input[name="radioTipoEnvio"]');
+                    if (respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].IdUsuarioTransito !== null) {
+                        $radiosTipoEnvio.filter('[value=0]').attr('checked', true);
+                    } else {
+                        $radiosTipoEnvio.filter('[value=1]').attr('checked', true);
+                    }
+                    $('input[name="radioTipoEnvio"]').attr("disabled", "disabled");
+                    var $radiosCuenta = $('input[name="radioCuenta"]');
+                    $radiosCuenta.filter('[value=' + respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].CuentaSiccob + ']').attr('checked', true);
+                    $('input[name="radioCuenta"]').attr("disabled", "disabled");
                 }
-                $('input[name="radioTipoEnvio"]').attr("disabled", "disabled");
-                var $radiosCuenta = $('input[name="radioCuenta"]');
-                $radiosCuenta.filter('[value=' + respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].CuentaSiccob + ']').attr('checked', true);
-                $('input[name="radioCuenta"]').attr("disabled", "disabled");
             }
         }
     };
@@ -904,7 +906,41 @@ $(function () {
             }
         });
 
+        $('#btnSolicitarCotizacionRevisionLaboratorio').off('click');
+        $('#btnSolicitarCotizacionRevisionLaboratorio').on('click', function () {
+            var data = {
+                'servicio': idServicio,
+                'estatus': 29
+            }
+            mandarCotizacion(data, idTabla, '#panelLaboratorioHistorial');
+        });
+
+        $('#solicitarCotizacion').off('click');
+        $('#solicitarCotizacion').on('click', function () {
+            var data = {
+                'servicio': idServicio,
+                'estatus': 2
+            }
+            mandarCotizacion(data, idTabla, '#panelValidacionExistencia');
+        });
+
     };
+
+    var mandarCotizacion = function () {
+        var data = arguments[0];
+        var idTabla = arguments[1];
+        var panel = arguments[2];
+        
+        evento.enviarEvento('Seguimiento/crearDatosCotizarOpcionRevision', data, panel, function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(idTabla, respuesta.idServicio);
+                eventosComentarios(idTabla, respuesta.idServicio);
+                cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+            }
+        });
+    }
 
     var terminarSeleccion = function () {
         var data = arguments[0];

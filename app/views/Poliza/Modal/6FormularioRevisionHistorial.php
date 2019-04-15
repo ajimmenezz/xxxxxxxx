@@ -83,7 +83,20 @@ if (!empty($datosValidacion)) {
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 m-t-25">
-                        <a id="btnAgregarRefaccion" class="btn btn-success f-s-13"><i class="fa fa-plus"></i> Agregar Refacción</a>
+                        <?php
+                        if (empty($componentesEquipo)) {
+                            if ($cotizacionAnterior[0]['Total'] <= 0) {
+                                ?>
+                                <a id="btnSolicitarCotizacionRevisionLaboratorio" class="btn btn-primary f-s-13"><i class="fa fa-usd"></i> Solicitar Cotización</a>
+                                <?php
+                            }
+                        } else {
+                            ?>
+                            <a id = "btnAgregarRefaccion" class = "btn btn-success f-s-13"><i class = "fa fa-plus"></i> Agregar Refacción</a>
+                            <?php
+                        }
+                        ?>
+
                     </div>
                 </div>
                 <div class="row">
