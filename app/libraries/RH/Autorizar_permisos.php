@@ -35,7 +35,7 @@ class Autorizar_permisos extends General{
                  HoraEntrada, HoraSalida, Motivo, FolioDocumento, Archivo, IdUsuarioJefe FROM t_permisos_ausencia_rh AS tpa 
                  INNER JOIN t_rh_personal AS trp ON tpa.IdUsuario = trp.IdUsuario INNER JOIN cat_v3_usuarios AS cu ON tpa.IdUsuario=cu.Id 
                  INNER JOIN cat_perfiles AS cp ON cu.IdPerfil=cp.Id INNER JOIN cat_v3_departamentos_siccob AS cds ON cp.IdDepartamento=cds.Id 
-                 WHERE tpa.Id ='.$datosPermiso['idPermiso']);
+                 WHERE tpa.Id ="' . $datosPermiso['idPermiso'] . '"');
         
         return array('formulario' => parent::getCI()->load->view('RH/Modal/formularioRevisarAusencia', $informacionPermisoAusencia, TRUE));
     }
@@ -71,22 +71,22 @@ class Autorizar_permisos extends General{
         }
         $resultado = array_merge($estadoPermiso, $revisor);
         
-        /*$infoCorreo = $this->informacionCorreo($datosPermiso['idPermiso']);
+        $infoCorreo = $this->informacionCorreo($datosPermiso['idPermiso']);
         $texto = '<p>Estimado(a) <strong>' .$infoCorreo[0]['Nombre']. ',</strong> se ha <strong>Rechazado</strong> el permiso de ausencia.</p><br><br>
                     Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' '.$infoCorreo['motivoAusencia'].' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
                     Descroción: <p>' .$infoCorreo['descripcion']. '</p><br><br>
                     Motivo de Rechazo: <p><b>' . $datosPermiso[0]['motivoRechazo'] . '</b> </p>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Rechazado', $texto);
-        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);*/
+        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
         $this->agregarFirmasPDF($datosPermiso,$rechazado="Rechazado por: ",$resultado);
-        return $resultado;
-        //return $this->DBS->actualizar('t_permisos_ausencia_rh', $resultado, array('Id' => $datosPermiso['idPermiso']));
+        
+        return $this->DBS->actualizar('t_permisos_ausencia_rh', $resultado, array('Id' => $datosPermiso['idPermiso']));
     }
     
     public function autorizarPermiso(array $datosPermiso){
-        $informacionPermiso = $this->DBS->consultaGral('SELECT IdUsuarioJefe, IdUsuarioRH, IdUsuarioContabilidad, IdUsuarioDireccion 
-                FROM t_permisos_ausencia_rh WHERE Id='.$datosPermiso['idPermiso']);
+        $informacionPermiso = $this->DBS->consultaGral("SELECT IdUsuarioJefe, IdUsuarioRH, IdUsuarioContabilidad, IdUsuarioDireccion 
+                FROM t_permisos_ausencia_rh WHERE Id='".$datosPermiso['idPermiso']."'");
         if ($informacionPermiso[0]['IdUsuarioJefe'] == NULL){
             switch ($datosPermiso['idPerfil']){
                 case 21:
@@ -171,7 +171,9 @@ class Autorizar_permisos extends General{
     public function informacionCorreo($idPermiso){
         $solicitante = $this->DBS->consultaGral('SELECT cu.EmailCorporativo, CONCAT(trp.Nombres, " ",trp.ApPaterno, " ",trp.ApMaterno) AS Nombre, 
                 IdTipoAusencia, IdMotivoAusencia, FechaAusenciaDesde, Motivo, FolioDocumento FROM t_permisos_ausencia_rh AS tpar 
-                INNER JOIN cat_v3_usuarios AS cu ON tpar.IdUsuario=cu.Id INNER JOIN t_rh_personal AS trp ON tpar.IdUsuario=trp.IdUsuario WHERE tpar.Id='.$idPermiso);
+                INNER JOIN cat_v3_usuarios AS cu ON tpar.IdUsuario=cu.Id 
+                INNER JOIN t_rh_personal AS trp ON tpar.IdUsuario=trp.IdUsuario 
+                WHERE tpar.Id="'.$idPermiso.'"');
         switch ($solicitante[0]['IdTipoAusencia']){
             case '1':
                 $tipoAusencia = array (
@@ -221,9 +223,9 @@ class Autorizar_permisos extends General{
     }
     
     public function agregarFirmasPDF(array $datosPermiso, string $estadoPermiso, array $datosFirmas){
-        $direccionArchivo = $this->DBS->consultaGral('SELECT Archivo FROM t_permisos_ausencia_rh WHERE Id='.$datosPermiso['idPermiso']);
+        $direccionArchivo = $this->DBS->consultaGral("SELECT Archivo FROM t_permisos_ausencia_rh WHERE Id='".$datosPermiso['idPermiso']."'");
         $nombreJefe = $this->DBS->consultaGral('SELECT CONCAT(trp.Nombres," ",trp.ApPaterno," ",trp.ApMaterno) AS Nombre FROM cat_v3_usuarios AS cu 
-                INNER JOIN t_rh_personal AS trp ON cu.Id=trp.Id WHERE cu.IdPerfil='.$datosPermiso['idPerfil']);
+                INNER JOIN t_rh_personal AS trp ON cu.Id=trp.Id WHERE cu.IdPerfil="' .$datosPermiso['idPerfil']. '"');
         
         $rutaArchivo = explode("/", $direccionArchivo[0]['Archivo']);
         $idUsusarioPermiso = explode("_", $rutaArchivo[1]);

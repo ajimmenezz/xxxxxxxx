@@ -161,7 +161,7 @@ class Permisos_Vacaciones extends General {
                  HoraEntrada, HoraSalida, Motivo, FolioDocumento, Archivo, IdUsuarioJefe FROM t_permisos_ausencia_rh AS tpa 
                  INNER JOIN t_rh_personal AS trp ON tpa.IdUsuario = trp.IdUsuario INNER JOIN cat_v3_usuarios AS cu ON tpa.IdUsuario=cu.Id 
                  INNER JOIN cat_perfiles AS cp ON cu.IdPerfil=cp.Id INNER JOIN cat_v3_departamentos_siccob AS cds ON cp.IdDepartamento=cds.Id 
-                 WHERE tpa.Id =' . $idPermiso['idPermiso']);
+                 WHERE tpa.Id ="' . $idPermiso['idPermiso']. '"');
         $informacionPermisoAusencia['tiposAusencia'] = $this->obtenerTiposAusencia();
         $informacionPermisoAusencia['motivosAusencia'] = $this->obtenerMotivoAusencia();
 

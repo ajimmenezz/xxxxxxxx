@@ -205,9 +205,6 @@ class PDFI extends FPDI {
 		$x=$this->x;
 	if($y==-1)
 		$y=$this->y;
-	if($this->angle!=0)
-		$this->_out('Q');
-	$this->angle=$angle;
 	if($angle!=0){
 		$angle*=M_PI/180;
 		$c=cos($angle);
