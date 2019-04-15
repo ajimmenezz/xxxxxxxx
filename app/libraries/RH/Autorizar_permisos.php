@@ -74,8 +74,9 @@ class Autorizar_permisos extends General{
         $infoCorreo = $this->informacionCorreo($datosPermiso['idPermiso']);
         $texto = '<p>Estimado(a) <strong>' .$infoCorreo[0]['Nombre']. ',</strong> se ha <strong>Rechazado</strong> el permiso de ausencia.</p><br><br>
                     Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' '.$infoCorreo['motivoAusencia'].' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
-                    Descroción: <p>' .$infoCorreo['descripcion']. '</p><br><br>
-                    Motivo de Rechazo: <p><b>' . $datosPermiso[0]['motivoRechazo'] . '</b> </p>';
+                    Descripción: <p>' .$infoCorreo['descripcion']. '</p><br><br>
+                    Motivo de Rechazo: <p><b>' . $datosPermiso[0]['motivoRechazo'] . '</b> </p><br><br>
+                    <a href="http://adist/storage/Archivos/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Rechazado', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
@@ -130,7 +131,8 @@ class Autorizar_permisos extends General{
         $infoCorreo = $this->informacionCorreo($datosPermiso['idPermiso']);
         $texto = '<p>El permiso de ausencia de <strong>' .$infoCorreo[0]['Nombre']. ',</strong> ha sido previamente <strong>Autorizado</strong>, se requiere su concentimiento o rechazo.</p><br><br>
                     Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' '.$infoCorreo['motivoAusencia'].' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
-                    Descroción: <p>' .$infoCorreo['descripcion']. '</p>';
+                    Descripción: <p>' .$infoCorreo['descripcion']. '</p><br><br>
+                    <a href="http://adist/storage/Archivos/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Autorizado', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
@@ -159,7 +161,8 @@ class Autorizar_permisos extends General{
         $infoCorreo = $this->informacionCorreo($datosPermiso['idPermiso']);
         $texto = '<p>Estimado(a) <strong>' .$infoCorreo[0]['Nombre']. ',</strong> se ha <strong>Autorizado</strong> el permiso de ausencia.</p><br><br>
                     Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' '.$infoCorreo['motivoAusencia'].' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
-                    Descroción: <p>' .$infoCorreo['descripcion']. '</p>';
+                    Descripción: <p>' .$infoCorreo['descripcion']. '</p><br><br>
+                    <a href="http://adist/storage/Archivos/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Concluido', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         

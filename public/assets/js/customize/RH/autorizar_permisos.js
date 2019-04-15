@@ -42,8 +42,10 @@ $(function () {
                 var data ={
                     idPermiso: $('#idPermisoRevisar').val(),
                     idPerfil: perfilUsuario,
-                    idUser: idUsuario
+                    idUser: idUsuario,
+                    archivo: $('#archivoPDF').val()
                 }
+                
                 $("#btnVerPDFAutorizar").on("click", function () {
                     window.open('/storage/Archivos/'+$('#archivoPDF').val(), '_blank');
                 });

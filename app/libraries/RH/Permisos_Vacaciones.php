@@ -68,11 +68,11 @@ class Permisos_Vacaciones extends General {
         $carpeta = $this->pdf->definirArchivo('Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'], $documento);
         $this->pdf->Output('F', $carpeta, true);
 
-        $folio = $this->ajustarInformacionDBS($datosPermisos, $documento);
+        $idPermisoGenerado = $this->ajustarInformacionDBS($datosPermisos, $documento);
 
-        $this->enviarCorreoPermiso($datosPermisos, $asunto = "Generado");
+        $this->enviarCorreoPermiso($datosPermisos, $asunto = "Generado", $carpeta);
 
-        $carpetaFolio = $this->agregarFolioPDF($folio[0]['LAST_INSERT_ID()']);
+        $carpetaFolio = $this->agregarFolioPDF($idPermisoGenerado[0]['LAST_INSERT_ID()']);
 
         return $carpetaFolio;
     }
@@ -183,7 +183,7 @@ class Permisos_Vacaciones extends General {
 
         $this->revisarActualizarPermiso($datosPermisos);
 
-        $this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado");
+        $this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
 
         $carpetaFolio = $this->agregarFolioPDF($datosPermisos['idPermiso']);
 
@@ -206,7 +206,7 @@ class Permisos_Vacaciones extends General {
 
         $this->revisarActualizarPermiso($datosPermisos);
 
-        $this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado");
+        $this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
 
         $carpetaFolio = $this->agregarFolioPDF($datosPermisos['idPermiso']);
 
@@ -243,14 +243,15 @@ class Permisos_Vacaciones extends General {
                 ), array('Id' => $datosPermisos['idPermiso']));
     }
 
-    public function enviarCorreoPermiso($datosPermisos, $asunto) {
+    public function enviarCorreoPermiso($datosPermisos, $asunto, $carpeta) {
         if ($datosPermisos['idUsuario'] == "") {
             $idJefe = $this->jefeDirectoidPermiso($datosPermisos['idPermiso']);
         } else {
             $idJefe = $this->jefeDirecto($datosPermisos['idUsuario']);
         }
         $correoJefe = $this->correoJefeDirecto($idJefe[0]['IdJefe']);
-        $texto = '<p>Se ha ' . $asunto . ' el permiso de ausencia por parte de <strong>' . $datosPermisos['nombre'] . ',</strong> se requiere su concentimiento o rechazo del mismo.</p><br><br>
+        $texto = '<p>Se ha ' . $asunto . ' el permiso de ausencia por parte de <strong>' . $datosPermisos['nombre'] . ',</strong> 
+                    se requiere su concentimiento o rechazo del mismo.</p><br><br>
                     Permiso Solicitado: <p>';
         switch ($datosPermisos['tipoAusencia']) {
             case '1':
@@ -277,7 +278,8 @@ class Permisos_Vacaciones extends General {
                 $texto .= 'con motivo IMSS Incapacidad';
                 break;
         }
-        $texto .= ' para el día ' . $datosPermisos['fechaPermisoDesde'] . '</p><br><br>';
+        $texto .= ' para el día ' . $datosPermisos['fechaPermisoDesde'] . '</p><br><br>
+                    <a href="http://adist/storage/Archivos/'.$carpeta.'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia ' . $asunto, $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoJefe[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
     }
@@ -388,6 +390,10 @@ class Permisos_Vacaciones extends General {
             $this->pdf->SetXY(140, 86);
             $this->pdf->SetFont("helvetica", "", 10);
             $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['citaFolio']));
+        }else{
+            $this->pdf->SetXY(140, 86);
+            $this->pdf->SetFont("helvetica", "", 10);
+            $this->pdf->Cell(0, 0, utf8_decode("   ----------"));
         }
 
         $this->pdf->SetXY(10, 93);
@@ -411,7 +417,7 @@ class Permisos_Vacaciones extends General {
         if ($datosPermisos['fechaPermisoHasta'] != $datosPermisos['fechaPermisoDesde']) {
             $this->pdf->Cell(0, 0, utf8_decode($datosPermisos["fechaPermisoHasta"]));
         } else {
-            $this->pdf->Cell(0, 0, utf8_decode(""));
+            $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['fechaPermisoDesde']));
         }
 
         switch ($datosPermisos['tipoAusencia']) {
@@ -440,7 +446,7 @@ class Permisos_Vacaciones extends General {
                 $this->pdf->RoundedRect(140, 100, 60, 6, 1, '1234');
                 $this->pdf->SetXY(140, 104);
                 $this->pdf->SetFont("helvetica", "", 10);
-                $this->pdf->Cell(0, 0, " ");
+                $this->pdf->Cell(0, 0, "   ----------");
                 break;
         }
 
@@ -452,6 +458,19 @@ class Permisos_Vacaciones extends General {
             $this->pdf->SetXY(10, 116);
             $this->pdf->SetFont("helvetica", "", 10);
             $this->pdf->MultiCell(190, 4, utf8_decode($datosPermisos["descripcionAusencia"]));
+        }else{
+            switch ($datosPermisos['motivoAusencia']) {
+                case '3':
+                    $this->pdf->SetXY(10, 116);
+                    $this->pdf->SetFont("helvetica", "", 10);
+                    $this->pdf->MultiCell(190, 4, utf8_decode("IMSS Cita Médica"));
+                    break;
+                case '4':
+                    $this->pdf->SetXY(10, 116);
+                    $this->pdf->SetFont("helvetica", "", 10);
+                    $this->pdf->MultiCell(190, 4, utf8_decode("IMSS Incapacidad"));
+                    break;
+            }
         }
 
         //pie de documento
@@ -460,11 +479,13 @@ class Permisos_Vacaciones extends General {
         $this->pdf->Cell(0, 0, utf8_decode("Fecha de Documento: " . $fecha));
     }
 
-    public function agregarFolioPDF($folio) {
+    public function agregarFolioPDF($idPermisoGenerado) {
         $this->pdfi = new PDFI();
-        $direccionArchivo = $this->DBS->consultaGral('SELECT Archivo FROM t_permisos_ausencia_rh WHERE Id=' . $folio);
+        $direccionArchivo = $this->DBS->consultaGral("SELECT Archivo FROM t_permisos_ausencia_rh WHERE Id='" . $idPermisoGenerado ."'");
 
         $rutaArchivo = explode("/", $direccionArchivo[0]['Archivo']);
+        $idUser = explode("_", $rutaArchivo[1]);
+        $folioDocumento = $this->DBS->consultaGral("SELECT COUNT(Archivo) AS total FROM t_permisos_ausencia_rh WHERE IdUsuario='" . $idUser[1] ."'");
 
         $paginasArchivo = $this->pdfi->setSourceFile('../public/storage/Archivos/Permisos_Ausencia/' . $rutaArchivo[1] . '/' . $rutaArchivo[2]);
 
@@ -472,14 +493,14 @@ class Permisos_Vacaciones extends General {
         $tplIdx = $this->pdfi->importPage(1);
         $this->pdfi->useTemplate($tplIdx, 0, 0, 210, 297, true);
 
-        $cuenta = strlen($folio);
+        $cuenta = strlen($folioDocumento[0]['total']);
         $cerosFolio = '';
         for ($i = $cuenta; $i < 10; $i++) {
             $cerosFolio .= '0';
         }
         $this->pdfi->SetFont("helvetica", "", 7);
         $this->pdfi->SetXY(10, 276);
-        $this->pdfi->Cell(0, 0, utf8_decode("Folio: " . $cerosFolio . $folio));
+        $this->pdfi->Cell(0, 0, utf8_decode("Folio: " . $cerosFolio . $folioDocumento[0]['total']));
 
         if ($paginasArchivo > 1) {
             for ($i = 2; $i <= $paginasArchivo; $i++) {
