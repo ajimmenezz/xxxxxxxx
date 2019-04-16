@@ -1179,15 +1179,35 @@ $(function () {
                             if (modelo.indexOf("COMPUTADORA") >= 0) {
                                 $("#txtMACEquipoAdicional").removeAttr("disabled");
                                 $("#listSOEquipoAdicional").removeAttr("disabled");
-                            }else{
+                            } else {
                                 $("#txtMACEquipoAdicional").val("");
-                                $("#txtMACEquipoAdicional").attr("disabled","disabled");
+                                $("#txtMACEquipoAdicional").attr("disabled", "disabled");
                                 $("#listSOEquipoAdicional").val("");
                                 $("#listSOEquipoAdicional").attr("disabled", "disabled");
-                                
+
                             }
                         }
                     });
+
+                    $(".listModelosEquiposAdicionales").on("change", function () {
+                        var modelo = $("option:selected", this).text();
+                        var fila = $(this).closest("tr.registrosAdicionales");
+                        if (fila.find(".macEquiposAdicionales").length) {
+                            var campoMAC = fila.find(".macEquiposAdicionales");
+                            var campoSO = fila.find(".listSOEquiposAdicionales");
+                            if (modelo.indexOf("COMPUTADORA") >= 0) {
+                                campoMAC.removeAttr("disabled");
+                                campoSO.removeAttr("disabled");
+                            } else {
+                                campoMAC.val("");
+                                campoMAC.attr("disabled", "disabled");
+                                campoSO.val("");
+                                campoSO.attr("disabled", "disabled");
+                            }
+                        }
+
+                    });
+
 
                     $(".btnGuardarCapturaCenso").off("click");
                     $(".btnGuardarCapturaCenso").on("click", function () {
@@ -1263,9 +1283,14 @@ $(function () {
                             'area': data.area,
                             'punto': data.punto,
                             'modelo': $("#listModelosEquipoAdicional").val(),
+                            'modeloTexto': $("#listModelosEquipoAdicional option:selected").text(),
                             'serie': $.trim($("#txtSerieEquipoAdicional").val()),
                             'ilegible': $("#checkIlegibleEquipoAdicional").is(":checked") ? 1 : 0,
-                            'danado': $("#checkDanadoEquipoAdicional").is(":checked") ? 1 : 0
+                            'danado': $("#checkDanadoEquipoAdicional").is(":checked") ? 1 : 0,
+                            'etiqueta': ($("#txtEtiquetaEquipoAdicional").length) ? $("#txtEtiquetaEquipoAdicional").val() : '',
+                            'estado': ($("#listEstadosEquipoAdicional").length) ? $("#listEstadosEquipoAdicional").val() : '',
+                            'mac': ($("#txtMACEquipoAdicional").length) ? $("#txtMACEquipoAdicional").val() : '',
+                            'so': ($("#listSOEquipoAdicional").length) ? $("#listSOEquipoAdicional").val() : ''
                         }
 
                         if (data.modelo == "") {
@@ -1278,11 +1303,37 @@ $(function () {
                             return true;
                         }
 
+                        if ($("#txtEtiquetaEquipoAdicional").length) {
+                            var regexEtiqueta = /^[0-9]{3}-[A-Z]{3}[0-9]{3}-L[0-9]?[0-9]?[0-9]S[0-9]?[0-9]?[0-9]-[0-9]?[0-9]{2}-[0-9]?[0-9]?[0-9]?[0-9]$/;
+                            if (data.etiqueta == "" || !regexEtiqueta.test(data.etiqueta)) {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer hay un error con el formato de la etiqueta.", 6000);
+                                return true;
+                            }
+
+                            if (data.estado == "") {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el estado del equipo.", 6000);
+                                return true;
+                            }
+
+                            if (data.modeloTexto.indexOf("COMPUTADORA") >= 0) {
+                                var regexMacAddress = /^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/;
+                                if (data.mac == "" || !regexMacAddress.test(data.mac)) {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer hay un error con el formato de la MAC Address", 6000);
+                                    return true;
+                                }
+
+                                if (data.so == "") {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el S.O. del equipo.", 6000);
+                                    return true;
+                                }
+                            }
+                        }
+
                         evento.enviarEvento('Seguimiento/GuardarEquipoAdicionalCenso', data, '#seccion-servicio-censo', function (respuesta) {
                             if (respuesta.code == 200) {
                                 buttonPuntoArea.click();
                             } else {
-                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Ocurrió un error al guardar el equipo. Por favor contácte al administrador.", 6000);
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Error:" + respuesta.error + ". <br />Por favor contácte al administrador.", 6000);
                             }
                         });
 
@@ -1313,10 +1364,15 @@ $(function () {
                             'punto': data.punto,
                             'id': fila.attr("data-id"),
                             'modelo': fila.find(".listModelosEquiposAdicionales").val(),
+                            'modeloTexto': fila.find(".listModelosEquiposAdicionales option:selected").text(),
                             'serie': fila.find(".serieEquiposAdicionales").val(),
                             'ilegible': (fila.find(".ilegibleEquiposAdicionales").is(":checked")) ? 1 : 0,
                             'existe': 1,
                             'danado': (fila.find(".danadoEquiposAdicionales").is(":checked")) ? 1 : 0,
+                            'etiqueta': (fila.find(".etiquetaEquiposAdicionales").length) ? fila.find(".etiquetaEquiposAdicionales").val() : '',
+                            'estado': (fila.find(".listEstadosEquiposAdicionales").length) ? fila.find(".listEstadosEquiposAdicionales").val() : '',
+                            'mac': (fila.find(".macEquiposAdicionales").length) ? fila.find(".macEquiposAdicionales").val() : '',
+                            'so': (fila.find(".listSOEquiposAdicionales").length) ? fila.find(".listSOEquiposAdicionales").val() : ''
                         }
 
                         if (data.modelo == "") {
@@ -1329,11 +1385,37 @@ $(function () {
                             return true;
                         }
 
+                        if ($("#txtEtiquetaEquipoAdicional").length) {
+                            var regexEtiqueta = /^[0-9]{3}-[A-Z]{3}[0-9]{3}-L[0-9]?[0-9]?[0-9]S[0-9]?[0-9]?[0-9]-[0-9]?[0-9]{2}-[0-9]?[0-9]?[0-9]?[0-9]$/;
+                            if (data.etiqueta == "" || !regexEtiqueta.test(data.etiqueta)) {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer hay un error con el formato de la etiqueta.", 6000);
+                                return true;
+                            }
+
+                            if (data.estado == "") {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el estado del equipo.", 6000);
+                                return true;
+                            }
+
+                            if (data.modeloTexto.indexOf("COMPUTADORA") >= 0) {
+                                var regexMacAddress = /^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/;
+                                if (data.mac == "" || !regexMacAddress.test(data.mac)) {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer hay un error con el formato de la MAC Address", 6000);
+                                    return true;
+                                }
+
+                                if (data.so == "") {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el S.O. del equipo.", 6000);
+                                    return true;
+                                }
+                            }
+                        }
+
                         evento.enviarEvento('Seguimiento/GuardaCambiosEquiposAdicionalesCenso', data, '#seccion-servicio-censo', function (respuesta) {
                             if (respuesta.code == 200) {
                                 evento.mostrarMensaje(".divErrorEquipoAdicional", true, "Todos los cambios han sido guardados.", 4000);
                             } else {
-                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Ocurrió un error al guardar los registros. Por favor contácte al administrador.", 6000);
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Error:" + respuesta.error + ".<br />Por favor contácte al administrador.", 6000);
                             }
                         });
                     });
