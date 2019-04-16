@@ -69,6 +69,8 @@ class Correo extends General {
      */
 
     public function enviarCorreo(string $remitente, array $destinatario, string $asunto, string $mensaje, array $archivoAdjunto = [], string $style = '') {
+        $host = $_SERVER['SERVER_NAME'];
+
         if ($style == '') {
             $style = ''
                     . '<style>
@@ -100,7 +102,10 @@ class Correo extends General {
                 parent::getCI()->email->attach($value);
             }
         }
-        parent::getCI()->email->send();
+
+        if ($host !== 'siccobsolutions.com.mx' || $host !== 'siccobsolutions.com.mx') {
+            parent::getCI()->email->send();
+        }
     }
 
     /*
@@ -227,6 +232,6 @@ class Correo extends General {
         } else {
             return $clave;
         }
-    }   
+    }
 
 }
