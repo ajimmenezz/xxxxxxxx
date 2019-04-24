@@ -177,7 +177,7 @@
                             </div>
                             <div class="col-md-6">
                                 <?php
-                                if ($datosAusencia[0]["FechaAusenciaHasta"] != "0000-00-00") {
+                                if ($datosAusencia[0]["FechaAusenciaHasta"] != $datosAusencia[0]["FechaAusenciaDesde"]) {
                                 echo '<div id="inputFechaHastaRevisar" class="input-group date calendario">
                                         <input id="inputFechaPermisoHastaRevisar" type="text" class="form-control" disabled value="'.$datosAusencia[0]["FechaAusenciaHasta"].'"/>
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -225,6 +225,82 @@
                             break;
                     }
                     ?>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <?php
+                        if($datosAusencia[0]["IdTipoAusencia"] == 3 && $datosAusencia[0]['IdMotivoAusencia'] == 1){
+                            if ($datosAusencia[0]["FechaAusenciaHasta"] != $datosAusencia[0]["FechaAusenciaDesde"]) {
+                                $diff = abs(strtotime($datosAusencia[0]["FechaAusenciaDesde"]) - strtotime($datosAusencia[0]["FechaAusenciaHasta"]));
+                                $years = floor($diff / (365*60*60*24));
+                                $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+                                $days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
+                                switch($days){
+                                    case 1:
+                                        $totalDescuentoDias = '2.34 %';
+                                        break;
+                                    case 2:
+                                        $totalDescuentoDias = '3.51 %';
+                                        break;
+                                    case 3:
+                                        $totalDescuentoDias = '4.68 %';
+                                        break;
+                                    case 4:
+                                        $totalDescuentoDias = '5.85 %';
+                                        break;
+                                    case 5:
+                                        $totalDescuentoDias = '7.02 %';
+                                        break;
+                                    case 6:
+                                        $totalDescuentoDias = '8.19 %';
+                                        break;
+                                    case 7:
+                                        $totalDescuentoDias = '9.36 %';
+                                        break;
+                                    case 8:
+                                        $totalDescuentoDias = '10.53 %';
+                                        break;
+                                    case 9:
+                                        $totalDescuentoDias = '11.70 %';
+                                        break;
+                                    case 10:
+                                        $totalDescuentoDias = '12.87 %';
+                                        break;
+                                    default:
+                                        $totalDescuentoDias = '12.87 %';
+                                        break;
+                                }
+                                echo 
+                                '<label>Descuento</label>
+                                <input type="text" class="form-control" id="inputDescuento" style="width: 100%" disabled value="'.$totalDescuentoDias.'"/>';
+                            }else{
+                                echo 
+                                '<label>Descuento</label>
+                                <input type="text" class="form-control" id="inputDescuento" style="width: 100%" disabled value="1.17 %"/>';
+                            }
+                        }
+                        if($datosAusencia[0]["IdTipoAusencia"] == 1 && $datosAusencia[0]['IdMotivoAusencia'] == 1){
+                            $start_date = new DateTime('2007-09-01 09:00:00');
+                            $since_start = $start_date->diff(new DateTime('2007-09-01 '.$datosAusencia[0]["HoraEntrada"]));
+                            $horas =  $since_start->h;
+                            $minutos = $since_start->i;
+                            $totalDescuentoHrs = (($horas+($minutos/60))*1)/9;
+                            echo 
+                            '<label>Descuento</label>
+                            <input type="text" class="form-control" id="inputDescuento" style="width: 100%" disabled value="'.round($totalDescuentoHrs,4).' %"/>';
+                        }
+                        if($datosAusencia[0]["IdTipoAusencia"] == 2 && $datosAusencia[0]['IdMotivoAusencia'] == 1){
+                            $start_date = new DateTime('2007-09-01 '.$datosAusencia[0]["HoraSalida"]);
+                            $since_start = $start_date->diff(new DateTime('2007-09-01 07:00:00'));
+                            $horas =  $since_start->h;
+                            $minutos = $since_start->i;
+                            $totalDescuentoHrs = (($horas+($minutos/60))*1)/9;
+                            echo 
+                            '<label>Descuento</label>
+                            <input type="text" class="form-control" id="inputDescuento" style="width: 100%" disabled value="'.round($totalDescuentoHrs,4).' %"/>';
+                        }
+                        ?>
+                    </div>
                 </div>
                 <?php
                 echo '<div class="col-md-3">

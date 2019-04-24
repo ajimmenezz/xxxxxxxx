@@ -20,7 +20,7 @@
         </div>
         <h4 class="panel-title">Actualizar Permiso</h4>
     </div>
-    <div class="tab-content">
+    <div class="tab-content" id="ActualizarPermiso">
         <div class="panel-body">
             <form id="formActualizarPermiso" class="margin-bottom-0" data-parsley-validate="true" enctype="multipart/form-data">
                 
@@ -203,6 +203,12 @@
                             break;
                     }
                     ?>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Descuento</label>
+                        <input type="text" class="form-control date" id="inputDescuentoAct" style="width: 100%" disabled/>
+                    </div>
                 </div>
                 <?php
                 echo '<div class="col-md-3">

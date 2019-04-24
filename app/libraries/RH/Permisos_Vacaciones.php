@@ -108,11 +108,6 @@ class Permisos_Vacaciones extends General{
     public function ajustarInformacionDBS($datosPermisos, $documento){
         $archivo = 'Permisos_Ausencia/Ausencia_'.$datosPermisos['idUsuario'].'/'.$documento.'.pdf';
         
-        if($datosPermisos['fechaPermisoHasta'] != $datosPermisos['fechaPermisoDesde']){
-            $fechaPermisoHasta = $datosPermisos["fechaPermisoHasta"];
-        }else{
-            $fechaPermisoHasta = "";
-        }
         switch ($datosPermisos['tipoAusencia']){
             case '1':
                 $horaEntrada = $datosPermisos['horaAusencia'];
@@ -135,7 +130,7 @@ class Permisos_Vacaciones extends General{
                 'IdMotivoAusencia' => $datosPermisos['motivoAusencia'],
                 'FechaDocumento' => $fecha,
                 'FechaAusenciaDesde' => $datosPermisos['fechaPermisoDesde'],
-                'FechaAusenciaHasta' => $fechaPermisoHasta,
+                'FechaAusenciaHasta' => $datosPermisos['fechaPermisoHasta'],
                 'HoraEntrada' => $horaEntrada,
                 'HoraSalida' => $horaSalida,
                 'Motivo' => $datosPermisos['descripcionAusencia'],
@@ -197,7 +192,7 @@ class Permisos_Vacaciones extends General{
         
         $this->revisarActualizarPermiso($datosPermisos);
         
-        $this->enviarCorreoPermiso($datosPermisos, $asunto="Actualizado");
+        //$this->enviarCorreoPermiso($datosPermisos, $asunto="Actualizado");
         
         $carpetaFolio = $this->agregarFolioPDF($datosPermisos['idPermiso']);
 
@@ -379,6 +374,10 @@ class Permisos_Vacaciones extends General{
             $this->pdf->SetXY(140, 86);
             $this->pdf->SetFont("helvetica", "", 10);
             $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['citaFolio']));
+        }else{
+            $this->pdf->SetXY(140, 86);
+            $this->pdf->SetFont("helvetica", "", 10);
+            $this->pdf->Cell(0, 0, utf8_decode("   ----------"));
         }
         
         $this->pdf->SetXY(10, 93);
@@ -399,11 +398,7 @@ class Permisos_Vacaciones extends General{
         $this->pdf->RoundedRect(75, 100, 60, 6, 1, '1234');
         $this->pdf->SetXY(75, 104);
         $this->pdf->SetFont("helvetica", "", 10);
-        if($datosPermisos['fechaPermisoHasta'] != $datosPermisos['fechaPermisoDesde']){
-            $this->pdf->Cell(0, 0, utf8_decode($datosPermisos["fechaPermisoHasta"]));
-        }else{
-            $this->pdf->Cell(0, 0, utf8_decode(""));
-        }
+        $this->pdf->Cell(0, 0, utf8_decode($datosPermisos["fechaPermisoHasta"]));
         
         switch ($datosPermisos['tipoAusencia']){
             case '1':
@@ -431,7 +426,7 @@ class Permisos_Vacaciones extends General{
                 $this->pdf->RoundedRect(140, 100, 60, 6, 1, '1234');
                 $this->pdf->SetXY(140, 104);
                 $this->pdf->SetFont("helvetica", "", 10);
-                $this->pdf->Cell(0, 0, " ");
+                $this->pdf->Cell(0, 0, "   ----------");
                 break;
         }
         
@@ -443,6 +438,32 @@ class Permisos_Vacaciones extends General{
             $this->pdf->SetXY(10, 116);
             $this->pdf->SetFont("helvetica", "", 10);
             $this->pdf->MultiCell(190, 4, utf8_decode($datosPermisos["descripcionAusencia"]));
+        }else{
+            switch ($datosPermisos['motivoAusencia']){
+                case '3':
+                    $this->pdf->SetXY(10, 116);
+                    $this->pdf->SetFont("helvetica", "", 10);
+                    $this->pdf->MultiCell(190, 4, utf8_decode("IMSS Cita Médica"));
+                    break;
+                case '4':
+                    $this->pdf->SetXY(10, 116);
+                    $this->pdf->SetFont("helvetica", "", 10);
+                    $this->pdf->MultiCell(190, 4, utf8_decode("IMSS Incapacidad"));
+                    break;
+            }
+        }
+        $this->pdf->SetXY(130, 158);
+        $this->pdf->SetFont('Arial','B',9);
+        $this->pdf->SetTextColor(243,18,18);
+        $this->pdf->Cell(30, 0, utf8_decode("EL DESCUENTO POR PERMISO SERA DE:"));
+        $this->pdf->SetTextColor(0,0,0);
+        $this->pdf->RoundedRect(133, 160, 60, 6, 1, '1234');
+        $this->pdf->SetXY(133, 163);
+        $this->pdf->SetFont("helvetica", "", 10);
+        if($datosPermisos['descuentoPermiso'] != ""){
+            $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['descuentoPermiso']));
+        }else{
+            $this->pdf->Cell(0, 0, "   ----------");
         }
         
         //pie de documento

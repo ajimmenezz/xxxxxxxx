@@ -67,7 +67,7 @@
                                                     echo '<td>IMSS Incapacidad</td>';
                                                     break;
                                             }
-                                            if ($valores['FechaAusenciaHasta'] != "0000-00-00") {
+                                            if ($valores['FechaAusenciaHasta'] != $valores['FechaAusenciaDesde']) {
                                                 echo '<td>'.$valores['FechaAusenciaDesde'].' al '.$valores['FechaAusenciaHasta'].'</td>';
                                             } else {
                                                 echo '<td>'.$valores['FechaAusenciaDesde'].'</td>';

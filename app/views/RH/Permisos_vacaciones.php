@@ -69,7 +69,7 @@
                                                         break;
                                                 }
                                                 
-                                                if ($value['FechaAusenciaHasta'] != "0000-00-00") {
+                                                if ($value['FechaAusenciaHasta'] != $value['FechaAusenciaDesde']) {
                                                     echo '<td>'.$value['FechaAusenciaDesde'].' al '.$value['FechaAusenciaHasta'].'</td>';
                                                 } else {
                                                     echo '<td>'.$value['FechaAusenciaDesde'].'</td>';
@@ -196,7 +196,7 @@
                         <div class="col-md-4">                    
                             <div class="form-group">
                                 <label>Tipo de Ausencia *</label>
-                                <select id="selectTipoAusencia" class="form-control" name="SelectTipoAusencia" style="width: 100%" data-parsley-required="true">
+                                <select id="selectTipoAusencia" class="form-control efectoDescuento" name="SelectTipoAusencia" style="width: 100%" data-parsley-required="true">
                                     <option value="">Seleccionar</option>
                                     <?php
                                         foreach ($datos['tipoAusencia'] as $tipoAusencia) {
@@ -209,7 +209,7 @@
                         <div class="col-md-4">                    
                             <div class="form-group">
                                 <label>Motivo Ausencia *</label>
-                                <select id="selectMotivoAusencia" class="form-control" name="SelectMotivoAusencia" data-parsley-required="true" style="width: 100%" data-parsley-required="true">
+                                <select id="selectMotivoAusencia" class="form-control efectoDescuento" name="SelectMotivoAusencia" data-parsley-required="true" style="width: 100%" data-parsley-required="true">
                                     <option value="">Seleccionar</option>
                                     <?php
                                         foreach ($datos['motivoAusencia'] as $tipoAusencia) {
@@ -243,13 +243,13 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div id="inputFechaDesde" class="input-group date calendario">
-                                            <input id="inputFechaPermisoDesde" type="text" class="form-control" placeholder="Desde" data-parsley-required="true"/>
+                                            <input id="inputFechaPermisoDesde" type="text" class="form-control efectoDescuento" placeholder="Desde" data-parsley-required="true"/>
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div id="inputFechaHasta" class="input-group date calendario" >
-                                            <input id="inputFechaPermisoHasta" type="text" class="form-control" placeholder="Hasta"/>
+                                            <input id="inputFechaPermisoHasta" type="text" class="form-control efectoDescuento" placeholder="Hasta"/>
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                         </div>
                                     </div>
@@ -260,9 +260,15 @@
                             <div id="bloqueHorario" class="form-group" style="display: none;">
                                 <label id="labelHora"></label>
                                 <div class="input-group bootstrap-timepicker timepicker">
-                                    <input id="selectSolicitudHora" type="text" class="form-control input-small">
+                                    <input id="selectSolicitudHora" type="text" class="form-control input-small efectoDescuento">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Descuento</label>
+                                <input type="text" class="form-control date" id="inputDescuento" style="width: 100%" disabled/>
                             </div>
                         </div>
                         

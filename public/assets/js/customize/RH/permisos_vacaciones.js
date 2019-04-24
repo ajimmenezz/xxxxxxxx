@@ -85,6 +85,97 @@ $(function () {
                 $("#bloqueHorario").css("display","none");
         }
     });
+
+    $('#formSolicitudPermiso').on('change', function () {
+        if($('#selectTipoAusencia').val() == 3 && $('#selectMotivoAusencia').val() == 1){
+            $('#inputDescuento').val('0 %');
+            $('#Permisos').on('change', function () {
+                const date1 = new Date($('#inputFechaPermisoDesde').val());
+                const date2 = new Date($('#inputFechaPermisoHasta').val());
+                const diffTime = Math.abs(date2.getTime() - date1.getTime());
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                var totalDescuentoDias;
+                switch(diffDays){
+                    case 0:
+                        totalDescuentoDias = '1.17 %';
+                        break;
+                    case 1:
+                        totalDescuentoDias = '2.34 %';
+                        break;
+                    case 2:
+                        totalDescuentoDias = '3.51 %';
+                        break;
+                    case 3:
+                        totalDescuentoDias = '4.68 %';
+                        break;
+                    case 4:
+                        totalDescuentoDias = '5.85 %';
+                        break;
+                    case 5:
+                        totalDescuentoDias = '7.02 %';
+                        break;
+                    case 6:
+                        totalDescuentoDias = '8.19 %';
+                        break;
+                    case 7:
+                        totalDescuentoDias = '9.36 %';
+                        break;
+                    case 8:
+                        totalDescuentoDias = '10.53 %';
+                        break;
+                    case 9:
+                        totalDescuentoDias = '11.70 %';
+                        break;
+                    case 10:
+                        totalDescuentoDias = '12.87 %';
+                        break;
+                    default:
+                        totalDescuentoDias = '12.87 %';
+                        break;
+                }
+                $('#inputDescuento').val(totalDescuentoDias);
+            });
+        }
+        if($('#selectTipoAusencia').val() == 1 && $('#selectMotivoAusencia').val() == 1){
+            $('#Permisos').on('change', function () {
+                var valuestart = '09:00 AM';
+                var valuestop = $('#selectSolicitudHora').val();
+
+                //create date format          
+                var timeHourStart = new Date("01/01/2007 " + valuestart).getHours();
+                var timeHourEnd = new Date("01/01/2007 " + valuestop).getHours();
+                var timeMinutesStart = new Date("01/01/2007 " + valuestart).getMinutes();
+                var timeMinutesEnd = new Date("01/01/2007 " + valuestop).getMinutes();
+
+                var hourDiff = timeHourEnd - timeHourStart;
+                var minutesDiff = timeMinutesEnd - timeMinutesStart;
+                var totalDescuentoHrs = ((hourDiff+(minutesDiff/60))*1)/9;
+                $('#inputDescuento').val(Number.parseFloat(totalDescuentoHrs).toFixed(4) + ' %');
+            });
+        }
+        if($('#selectTipoAusencia').val() == 2 && $('#selectMotivoAusencia').val() == 1){
+            $('#Permisos').on('change', function () {
+                var valuestart = $('#selectSolicitudHora').val();
+                var valuestop = '07:00 PM';
+
+                //create date format          
+                var timeHourStart = new Date("01/01/2007 " + valuestart).getHours();
+                var timeHourEnd = new Date("01/01/2007 " + valuestop).getHours();
+                var timeMinutesStart = new Date("01/01/2007 " + valuestart).getMinutes();
+                var timeMinutesEnd = new Date("01/01/2007 " + valuestop).getMinutes();
+
+                var hourDiff = timeHourEnd - timeHourStart;
+                var minutesDiff = timeMinutesEnd - timeMinutesStart;
+                var totalDescuentoHrs = ((hourDiff+(minutesDiff/60))*1)/9;
+                $('#inputDescuento').val(Number.parseFloat(totalDescuentoHrs).toFixed(4) + ' %');
+            });
+        }
+        if ($('#selectMotivoAusencia').val() != 1) {
+            $('#Permisos').on('change', function () {
+                $("#inputDescuento").val('0 %');
+            });
+        }
+    });
     
     //evento para enviar la solicitud de permisos
     $("#btnGenerarSolicitudPermiso").on("click", function () {
@@ -101,7 +192,8 @@ $(function () {
                 evidenciaIncapacidad: $('#inputEvidenciaIncapacidad').val(),
                 fechaPermisoDesde: $('#inputFechaPermisoDesde').val(),
                 fechaPermisoHasta: $('#inputFechaPermisoHasta').val(),
-                horaAusencia: $('#selectSolicitudHora').val()
+                horaAusencia: $('#selectSolicitudHora').val(),
+                descuentoPermiso: $('#inputDescuento').val()
             }
             if ( $('#inputEvidenciaIncapacidad').val() !== '' ) {
                 file.enviarArchivos('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', '#panelPermisosVacaciones', data, function (respuesta) {
@@ -199,6 +291,99 @@ $(function () {
                                     $("#bloqueHorarioAct").css("display","none");
                             }
                         });
+
+                        $('#formActualizarPermiso').on('change', function () {
+                            if($('#selectTipoAusenciaAct').val() == 3 && $('#selectMotivoAusenciaAct').val() == 1){
+                                $('#inputDescuentoAct').val('0 %');
+                                $('#ActualizarPermiso').on('change', function () {
+                                    const date1 = new Date($('#inputFechaPermisoDesdeAct').val());
+                                    const date2 = new Date($('#inputFechaPermisoHastaAct').val());
+                                    const diffTime = Math.abs(date2.getTime() - date1.getTime());
+                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                    var totalDescuentoDias;
+                                    switch(diffDays){
+                                        case 0:
+                                            totalDescuentoDias = '1.17 %';
+                                            break;
+                                        case 1:
+                                            totalDescuentoDias = '2.34 %';
+                                            break;
+                                        case 2:
+                                            totalDescuentoDias = '3.51 %';
+                                            break;
+                                        case 3:
+                                            totalDescuentoDias = '4.68 %';
+                                            break;
+                                        case 4:
+                                            totalDescuentoDias = '5.85 %';
+                                            break;
+                                        case 5:
+                                            totalDescuentoDias = '7.02 %';
+                                            break;
+                                        case 6:
+                                            totalDescuentoDias = '8.19 %';
+                                            break;
+                                        case 7:
+                                            totalDescuentoDias = '9.36 %';
+                                            break;
+                                        case 8:
+                                            totalDescuentoDias = '10.53 %';
+                                            break;
+                                        case 9:
+                                            totalDescuentoDias = '11.70 %';
+                                            break;
+                                        case 10:
+                                            totalDescuentoDias = '12.87 %';
+                                            break;
+                                        default:
+                                            totalDescuentoDias = '12.87 %';
+                                            break;
+                                    }
+                                    $('#inputDescuentoAct').val(totalDescuentoDias);
+                                });
+                            }
+                            if($('#selectTipoAusenciaAct').val() == 1 && $('#selectMotivoAusenciaAct').val() == 1){
+                                $('#ActualizarPermiso').on('change', function () {
+                                    var valuestart = '09:00 AM';
+                                    var valuestop = $('#selectSolicitudHoraAct').val();
+                    
+                                    //create date format          
+                                    var timeHourStart = new Date("01/01/2007 " + valuestart).getHours();
+                                    var timeHourEnd = new Date("01/01/2007 " + valuestop).getHours();
+                                    var timeMinutesStart = new Date("01/01/2007 " + valuestart).getMinutes();
+                                    var timeMinutesEnd = new Date("01/01/2007 " + valuestop).getMinutes();
+                    
+                                    var hourDiff = timeHourEnd - timeHourStart;
+                                    var minutesDiff = timeMinutesEnd - timeMinutesStart;
+                                    var totalDescuentoHrs = ((hourDiff+(minutesDiff/60))*1)/9;
+                                    $('#inputDescuentoAct').val(Number.parseFloat(totalDescuentoHrs).toFixed(4) + ' %');
+                                });
+                            }
+                            if($('#selectTipoAusenciaAct').val() == 2 && $('#selectMotivoAusenciaAct').val() == 1){
+                                $('#ActualizarPermiso').on('change', function () {
+                                    var valuestart = $('#selectSolicitudHoraAct').val();
+                                    var valuestop = '07:00 PM';
+                    
+                                    //create date format          
+                                    var timeHourStart = new Date("01/01/2007 " + valuestart).getHours();
+                                    var timeHourEnd = new Date("01/01/2007 " + valuestop).getHours();
+                                    var timeMinutesStart = new Date("01/01/2007 " + valuestart).getMinutes();
+                                    var timeMinutesEnd = new Date("01/01/2007 " + valuestop).getMinutes();
+                    
+                                    var hourDiff = timeHourEnd - timeHourStart;
+                                    var minutesDiff = timeMinutesEnd - timeMinutesStart;
+                                    var totalDescuentoHrs = ((hourDiff+(minutesDiff/60))*1)/9;
+                                    $('#inputDescuentoAct').val(Number.parseFloat(totalDescuentoHrs).toFixed(4) + ' %');
+                                });
+                            }
+                            if ($('#selectMotivoAusenciaAct').val() != 1) {
+                                $('#ActualizarPermiso').on('change', function () {
+                                    $("#inputDescuentoAct").val('0 %');
+                                });
+                            }
+                        });
+
+
                         $("#btnVerPDFAutorizar").on("click", function () {
                             window.open('/storage/Archivos/'+$('#archivoPDF').val(), '_blank');
                         });
@@ -248,13 +433,14 @@ $(function () {
                                     fechaPermisoDesde: $('#inputFechaPermisoDesdeAct').val(),
                                     fechaPermisoHasta: $('#inputFechaPermisoHastaAct').val(),
                                     horaAusencia: $('#selectSolicitudHoraAct').val(),
-                                    pdf: $('#archivoPDF').val()
+                                    pdf: $('#archivoPDF').val(),
+                                    descuentoPermiso: $('#inputDescuentoAct').val()
                                 }
                                 if ( $('#inputCitaFolioAct').val() != '' ) {
                                     evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermisoArchivo', dataActualizar, '#panelPermisosVacaciones', function (respuesta) {
                                         if (respuesta !== 'otraImagen') {
-                                            window.open(respuesta, '_blank');
                                             location.reload();
+                                            window.open(respuesta, '_blank');
                                         } else {
                                             evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
                                         }
@@ -262,8 +448,8 @@ $(function () {
                                 } else {
                                     evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermiso', dataActualizar, '#panelPermisosVacaciones', function (respuesta) {
                                         if (respuesta) {
-                                            window.open(respuesta, '_blank');
                                             location.reload();
+                                            window.open(respuesta, '_blank');
                                         } else {
                                             evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
                                         }
