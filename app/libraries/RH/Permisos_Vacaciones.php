@@ -528,4 +528,49 @@ class Permisos_Vacaciones extends General {
         return $carpeta;
     }
 
+    public function enviarCorreoSiccob(){
+        $totalInacistencias = $this->DBS->consultaGral('SELECT CONCAT(trhp.Nombres, " ",trhp.ApPaterno, " ",trhp.ApMaterno) AS Nombre, 
+                                    IdTipoAusencia, IdMotivoAusencia, FechaAusenciaDesde, FechaAusenciaHasta, HoraEntrada, HoraSalida, Motivo 
+                                    FROM t_permisos_ausencia_rh AS tpa 
+                                    INNER JOIN cat_v3_usuarios AS cu ON tpa.IdUsuario = cu.Id 
+                                    INNER JOIN t_rh_personal AS trhp ON cu.Id = trhp.IdUsuario 
+                                    where tpa.IdEstatus = 7 AND FechaAusenciaDesde+0 = CURDATE()+1');
+        
+        $texto = 'El día de mañana las siguientes personas estarán ausentes:<br><br>';
+        if ($totalInacistencias != false) {
+            foreach ($totalInacistencias as $inacistencias) {
+                $texto .= '<strong>' . $inacistencias['Nombre'] . ',</strong> ';
+                switch ($inacistencias['IdTipoAusencia']) {
+                    case '1':
+                        $texto .= 'Llegara a las '.$inacistencias['HoraEntrada'];
+                        break;
+                    case '2':
+                        $texto .= 'Saldrá a las  '.$inacistencias['HoraSalida'];
+                        break;
+                    case '3':
+                        $texto .= 'No Asistirá';
+                        break;
+                }
+                switch ($inacistencias['IdMotivoAusencia']) {
+                    case '1':
+                        $texto .= ' por motivo Personal.';
+                        break;
+                    case '2':
+                        $texto .= ' por motivo de Trabajo/Comisión.';
+                        break;
+                    case '3':
+                        $texto .= ' por Cita Médica.';
+                        break;
+                    case '4':
+                        $texto .= ' por motivo de IMSS Incapacidad.';
+                        break;
+                }
+                $texto .= '<br>';
+            }
+            $mensaje = $this->Correo->mensajeCorreo('Ausencia de Personal', $texto);
+            $respuestaCorreo = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array('hhuerta@siccob.com.mx'), 'Ausencia de Personal', $mensaje);
+        }
+        
+        return $respuestaCorreo;
+    }
 }

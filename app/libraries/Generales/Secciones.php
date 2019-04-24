@@ -245,6 +245,7 @@ class Secciones extends General {
                 $datos['tipoAusencia'] = $this->permisosVacaciones->obtenerTiposAusencia();
                 $datos['motivoAusencia'] = $this->permisosVacaciones->obtenerMotivoAusencia();
                 $datos['permisosAusencias'] = $this->permisosVacaciones->obtenerPermisosAusencia($usuario['Id']);
+                $datos['enviarCorreos'] = $this->permisosVacaciones->enviarCorreoSiccob();
                 break;
             case 'RH/Autorizar_permisos':
                 $usuario = $this->Usuario->getDatosUsuario();

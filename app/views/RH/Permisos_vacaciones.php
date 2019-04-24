@@ -140,7 +140,7 @@
                             </table>
                         </div>  
                     </div>
-                    <!--Empezando mensaje--> 
+                    <!--Empezando mensaje-->
                     <div class="row">
                         <div class="col-md-12">
                             <div class="mensajeSolicitudPermisosV1"></div>
@@ -233,7 +233,8 @@
                         </div>
                         <div class="col-md-10">
                             <div id="archivoCitaIncapacidad" class="form-group" style="display: none">
-                                <label>Archivo Cita o Incapacidad *</label>
+                                <label>Archivo Cita o Incapacidad *</label><br>
+                                <label style="color: red">Todos los archivos que se requiera adjuntar deben ser escaneados a color</label>
                                 <input id="inputEvidenciaIncapacidad" name="evidenciasIncapacidad[]" type="file" multiple>
                             </div>
                         </div>
