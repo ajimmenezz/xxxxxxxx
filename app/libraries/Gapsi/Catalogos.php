@@ -322,7 +322,7 @@ class Catalogos extends General {
             }
         }
 
-        $editable = ($gasto['usuario'] == $this->usuario['Id'] && in_array($gasto['gasto']['Status'], ['Requiere Autorizacion', 'Solicitado'])) ? true : false;
+        $editable = ($gasto['usuario'] == $this->usuario['Id'] && in_array($gasto['gasto']['Status'], ['Requiere Autorizacion', 'Solicitado', 'Rechazado'])) ? true : false;
 
         $datos = [
             'Clientes' => $this->getClientes(),

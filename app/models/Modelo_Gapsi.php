@@ -329,7 +329,8 @@ where gasto.ID = '" . $id . "'";
                 . "Sucursal = '" . $datos['Sucursal'] . "', "
                 . "Moneda = '" . $datos['Moneda'] . "', "
                 . "OrdenCompra = '" . $datos['OC'] . "',"
-                . "FechaPagoCredito = " . $fechaCredito . " "
+                . "FechaPagoCredito = " . $fechaCredito . ", "
+                . "Status = 'Solicitado' "
                 . "where ID = '" . $datos['ID'] . "'";
 
         parent::connectDBGapsi()->query($query);
