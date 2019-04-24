@@ -64,6 +64,22 @@
                 <div class="underline m-b-10"></div>
             </div>
         </div>
+        <?php
+        if ($Gasto['gasto']["Status"] == "Rechazado") {
+            ?>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="note note-danger">
+                        <h4>Comentarios del Rechazo</h4>
+                        <p>
+                            <?php echo $Gasto["gasto"]["ComentarioRechazo"]; ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <?php
+        }
+        ?>
         <form id="formGasto" data-parsley-validate="true">
             <div class="row">
                 <div class="col-md-4 col-sm-6 col-xs-12">
