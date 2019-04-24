@@ -829,8 +829,8 @@ class Modelo_Comprobacion extends Modelo_Base {
                 'IdEstatus' => 1,
                 'Grupo' => $grupo,
                 'Observaciones' => $datos['observaciones'],
-                'FechaInicio' => $fini,
-                'FechaTermino' => $ffin,
+                'FechaInicio' => ($fini != '0000-00-00') ? $fini : NULL,
+                'FechaTermino' => ($ffin != '0000-00-00') ? $ffin : NULL,
                 'IdUsuarioModifica' => $this->usuario['Id']
             ]);
 
@@ -910,8 +910,8 @@ class Modelo_Comprobacion extends Modelo_Base {
             'IdUsuarioModifica' => $this->usuario['Id'],
             'IdSucursal' => $datos['sucursal'],
             'Observaciones' => $datos['observaciones'],
-            'FechaInicio' => $fini,
-            'FechaTermino' => $ffin
+            'FechaInicio' => ($fini != '0000-00-00') ? $fini : NULL,
+            'FechaTermino' => ($ffin != '0000-00-00') ? $ffin : NULL
                 ], ['Id' => $datos['id']]);
         if (!is_null($edit)) {
 

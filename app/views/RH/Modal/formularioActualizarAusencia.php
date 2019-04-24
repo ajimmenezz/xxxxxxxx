@@ -162,7 +162,7 @@
                                     </div>';
                                 } else {
                                 echo '<div id="inputFechaHastaAct" class="input-group date calendario">
-                                        <input id="inputFechaPermisoHastaAct" type="text" class="form-control" placeholder="Hasta"/>
+                                        <input id="inputFechaPermisoHastaAct" type="text" class="form-control" value="'.$datosAusencia[0]["FechaAusenciaDesde"].'" placeholder="Hasta"/>
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     </div>';
                                 }

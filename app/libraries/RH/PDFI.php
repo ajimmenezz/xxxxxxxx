@@ -271,6 +271,7 @@ class PDFI extends FPDI {
         $h = $this->h;
         $this->_out(sprintf('%.2F %.2F %.2F %.2F %.2F %.2F c ', $x1*$this->k, ($h-$y1)*$this->k,
             $x2*$this->k, ($h-$y2)*$this->k, $x3*$this->k, ($h-$y3)*$this->k));
+
     }
     
 }
