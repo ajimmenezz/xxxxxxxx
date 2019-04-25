@@ -22,22 +22,37 @@ if (!empty($datosSolicitudGuia)) {
     $fecha = "";
     $archivo = "";
     $mostrarSelect = "";
+    $mostrarSelectGuia = "";
     $mostrarInput = "hidden";
+    $mostarInputGuia = "hidden";
     $mostrarInputFile = "hidden";
     $mostrarSelectInput = "";
 }
 
 if ($estatus['IdEstatus'] === '26') {
     $botonSolicitarGuia = 'hidden';
-}else if ($estatus['IdEstatus'] === '37' && $estatus['Flag'] === '1') {
+} else if ($estatus['IdEstatus'] === '37' && $estatus['Flag'] === '1') {
     $mostrarSelect = '';
     $botonSolicitarGuia = 'hidden';
     $mostrarInput = 'hidden';
     $mostrarSelectInput = '';
+    if (!empty($datosSolicitudGuia[0]['Guia'])) {
+        $mostarInputGuia = '';
+        $mostrarSelectGuia = 'hidden';
+    } else {
+        $mostarInputGuia = 'hidden';
+        $mostrarSelectGuia = '';
+    }
 } else {
     $botonSolicitarGuia = '';
+    if (!empty($datosSolicitudGuia[0]['Guia'])) {
+        $mostarInputGuia = '';
+        $mostrarSelectGuia = 'hidden';
+    } else {
+        $mostarInputGuia = 'hidden';
+        $mostrarSelectGuia = '';
+    }
 }
-//
 ?>
 
 <div id="panelEnvioConGuia" class="panel panel-inverse">
@@ -78,11 +93,11 @@ if ($estatus['IdEstatus'] === '26') {
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                    <div class="form-group <?php echo $mostrarSelect ?>" >
+                    <div class="form-group <?php echo $mostrarSelectGuia ?>" >
                         <label class="f-w-600 f-s-13"># Guía *</label>
-                        <input type="text" class="form-control" id="guia" placeholder=""  data-parsley-required="true"/>
+                        <input type="text" class="form-control" id="guia" placeholder="" />
                     </div>
-                    <div class="form-group <?php echo $mostrarInput ?>">
+                    <div class="form-group <?php echo $mostarInputGuia ?>">
                         <label class="f-w-600 f-s-13"># Guía *</label>
                         <input type="text" class="form-control" placeholder="<?php echo $guia ?>" disabled/>
                     </div>

@@ -1204,16 +1204,16 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function consultaSolicitudGuiaTecnico(int $idServicio) {
-        $datosServcio = $this->estatusAllab($idServicio);
+        $datosServicio = $this->estatusAllab($idServicio);
 
-        if (!empty($datosServcio)) {
+        if (!empty($datosServicio)) {
             $consultaGuia = $this->consulta("SELECT 
                                                 teaet.*,
                                                 (SELECT Nombre FROM cat_v3_paqueterias cvp WHERE cvp.Id = teaet.IdPaqueteria) AS Paqueteria
                                             FROM
                                                 t_equipos_allab_envio_tecnico teaet
                                             WHERE 
-                                                    IdRegistro = '" . $datosServcio['Id'] . "'");
+                                                    IdRegistro = '" . $datosServicio['Id'] . "'");
             if (!empty($consultaGuia)) {
                 return $consultaGuia;
             } else {
@@ -1680,7 +1680,6 @@ class Modelo_Poliza extends Modelo_Base {
         }
 
         $this->cambiarEsatus($datos);
-
 
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
@@ -2332,7 +2331,7 @@ class Modelo_Poliza extends Modelo_Base {
                 'IdTipoMovimiento' => '2',
                 'IdServicio' => $dataTransparencyFromLaboratoryToEarehouse['idServicio'],
                 'IdAlmacen' => $inquiryQuery[0]['IdAlmacen'],
-                'IdTipoProducto' => $inquiryQuery[0]['IdProducto'],
+                'IdTipoProducto' => $inquiryQuery[0]['IdTipoProducto'],
                 'IdProducto' => $value,
                 'IdEstatus' => '17',
                 'IdUsuario' => $dataTransparencyFromLaboratoryToEarehouse['idUsuario'],
@@ -2346,13 +2345,13 @@ class Modelo_Poliza extends Modelo_Base {
             $idMovementInventoryTransfer = parent::connectDBPrueba()->insert_id();
 
             $inquiryQueryUpdated = $this->consulta('SELECT * FROM t_inventario WHERE Id = "' . $value . '"');
-
+            
             $dataMovementInventoryEntry = array(
                 'IdMovimientoEnlazado' => $idMovementInventoryTransfer,
                 'IdTipoMovimiento' => '3',
                 'IdServicio' => $dataTransparencyFromLaboratoryToEarehouse['idServicio'],
                 'IdAlmacen' => $inquiryQueryUpdated[0]['IdAlmacen'],
-                'IdTipoProducto' => $inquiryQueryUpdated[0]['IdProducto'],
+                'IdTipoProducto' => $inquiryQueryUpdated[0]['IdTipoProducto'],
                 'IdProducto' => $value,
                 'IdEstatus' => '17',
                 'IdUsuario' => $dataTransparencyFromLaboratoryToEarehouse['idUsuario'],
