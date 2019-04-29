@@ -4694,49 +4694,49 @@ class Seguimientos extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
-        $datosActualizar = array(
-            'IdEstatus' => 36,
-            'FechaEstatus' => $fecha,
-            'IdTipoLugarRecepcion' => $datos['tipoLugarRecepcion'],
-            'IdSucursal' => $datos['sucursal'],
-            'FechaRecepcion' => $datos['fechaRecepcion'],
-            'Recibe' => $datos['recibe'],
-            'ArchivosEntrega' => null
-        );
-
-        $datosEstatus = array(
-            'idEstatus' => 36,
-            'id' => $datos['id'],
-            'fecha' => $fecha,
-            'flag' => '1');
-
-        $CI = parent::getCI();
-        $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/EvidenciasEntregaLogistica/';
-        $archivos = implode(',', setMultiplesArchivos($CI, 'evidenciaEntregaLog', $carpeta));
-
-        if (!empty($archivos) && $archivos != '') {
-            $datosActualizar['ArchivosEntrega'] = $archivos;
-            $resultado = $this->DBP->actualizarEnvioLogistica($datosActualizar, $datosEstatus);
-            if ($resultado['code'] === 200) {
-                $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
-                $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
-                $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
-                $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
-                $this->toAssignSD(array('idStatus' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
-                $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
-                $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 12));
-                $mensaje = ['mensaje' => "Se guardo correctamente la entrega.",
-                    'datos' => $formularios,
-                    'idTabla' => $datos['id'],
-                    'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
-                    'code' => 200];
-                return $mensaje;
-            } else {
-                $mensaje = ['mensaje' => "Se ha producido un error en la entrega.",
-                    'code' => 400];
-                return $mensaje;
-            }
-        }
+//        $datosActualizar = array(
+//            'IdEstatus' => 36,
+//            'FechaEstatus' => $fecha,
+//            'IdTipoLugarRecepcion' => $datos['tipoLugarRecepcion'],
+//            'IdSucursal' => $datos['sucursal'],
+//            'FechaRecepcion' => $datos['fechaRecepcion'],
+//            'Recibe' => $datos['recibe'],
+//            'ArchivosEntrega' => null
+//        );
+//
+//        $datosEstatus = array(
+//            'idEstatus' => 36,
+//            'id' => $datos['id'],
+//            'fecha' => $fecha,
+//            'flag' => '1');
+//
+//        $CI = parent::getCI();
+//        $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/EvidenciasEntregaLogistica/';
+//        $archivos = implode(',', setMultiplesArchivos($CI, 'evidenciaEntregaLog', $carpeta));
+//
+//        if (!empty($archivos) && $archivos != '') {
+//            $datosActualizar['ArchivosEntrega'] = $archivos;
+//            $resultado = $this->DBP->actualizarEnvioLogistica($datosActualizar, $datosEstatus);
+//            if ($resultado['code'] === 200) {
+        $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+//                $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
+//                $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
+//                $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
+//                $this->toAssignSD(array('idStatus' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
+        $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
+//                $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 12));
+//                $mensaje = ['mensaje' => "Se guardo correctamente la entrega.",
+//                    'datos' => $formularios,
+//                    'idTabla' => $datos['id'],
+//                    'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
+//                    'code' => 200];
+//                return $mensaje;
+//            } else {
+//                $mensaje = ['mensaje' => "Se ha producido un error en la entrega.",
+//                    'code' => 400];
+//                return $mensaje;
+//            }
+//        }
     }
 
     public function guardarProblemaGuiaLogistica(array $datos) {
@@ -5382,9 +5382,18 @@ class Seguimientos extends General {
                     $viewHtml .= '<div>Nota: ' . $value['Nota'] . '</div>';
                     $viewHtml .= '<div>Adjunto: : <a href="http://' . $host . $dataTechnicalShipment[0]['ArchivosEnvio'] . '">Archivo</a></div>';
                 }
-                
-//                $viewHtml .= '<div>Tipo de envío (Logística): ' .  . '</di>';
-                
+
+                $dataLogistica = $this->DBP->consultaEnvioLogistica(array('Id' => $datosAllab[0]['Id'], 'IdServicio' => $dataCreateTextSD['service']));
+                var_dump($dataLogistica);
+
+//                $viewHtml .= '<div>Tipo de envío (Logística): ' . $dataLogistica[0][''] . '</di>';
+                $viewHtml .= '<div>Paqueteria: ' . $dataLogistica[0]['paqueteria'] . '</div>';
+                $viewHtml .= '<div>Guía: ' . $dataLogistica[0]['Guia'] . '</div>';
+
+                if ($dataLogistica[0]['IdSucursal'] !== '0') {
+                    $viewHtml .= '<div>Sucursal: ' . $dataLogistica[0]['Sucursal'] . '</div>';
+                }
+
                 break;
             case 39 :
                 if ($dataCreateTextSD['movementType'] === '1') {
