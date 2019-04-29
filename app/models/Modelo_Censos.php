@@ -151,7 +151,9 @@ class Modelo_Censos extends Modelo_Base {
                                     Extra as Etiqueta,
                                     IdEstatus,                                    
                                     MAC,
-                                    IdSistemaOperativo as IdSO                                    
+                                    IdSistemaOperativo as IdSO,
+                                    NombreRed,
+                                    IdEstatusSoftwareRQ
                                     from 
                                     t_censos tc
                                     where IdServicio = '" . $datos['servicio'] . "'
@@ -183,7 +185,9 @@ class Modelo_Censos extends Modelo_Base {
     public function getModelosGenerales() {
         $consulta = $this->consulta("select 
                                     Id,
-                                    modelo(Id) as Modelo
+                                    modelo(Id) as Modelo,
+                                    lineaByModelo(Id) as Linea,
+                                    sublineaByModelo(Id) as Sublinea
                                     from cat_v3_modelos_equipo 
                                     where Flag = 1
                                     order by Modelo");
@@ -349,6 +353,8 @@ class Modelo_Censos extends Modelo_Base {
             'IdEstatus' => $datos['estado'],
             'MAC' => $datos['mac'],
             'IdSistemaOperativo' => $datos['so'],
+            'NombreRed' => $datos['nombreRed'],
+            'IdEstatusSoftwareRQ' => $datos['rq'],
             'Existe' => 1,
             'Danado' => $datos['danado']
         ]);
@@ -500,6 +506,8 @@ class Modelo_Censos extends Modelo_Base {
             'IdEstatus' => $datos['estado'],
             'MAC' => $datos['mac'],
             'IdSistemaOperativo' => $datos['so'],
+            'NombreRed' => $datos['nombreRed'],
+            'IdEstatusSoftwareRQ' => $datos['rq'],
             'Existe' => $datos['existe'],
             'Danado' => $datos['danado']
                 ], ['Id' => $datos['id']]);
@@ -514,6 +522,18 @@ class Modelo_Censos extends Modelo_Base {
             $this->commitTransaccion();
             return ['code' => 200];
         }
+    }
+
+    public function getNomenclaturaInicial($idServicio) {
+        $nomenclatura = $this->consulta("select
+                                concat(
+                                (select SUBSTRING(Nombre,-3) from cat_v3_regiones_cliente where Id = cs.IdRegionCliente),
+                                '-',
+                                upper(replace(NombreCinemex,'Prmdts',''))) as Clave
+                                from 
+                                cat_v3_sucursales cs
+                                where cs.Id = (select IdSucursal from t_servicios_ticket where Id = '" . $idServicio . "')");
+        return $nomenclatura[0]['Clave'];
     }
 
 }
