@@ -1173,20 +1173,45 @@ $(function () {
                         }
                     });
 
+                    select.crearSelect("#listModelosEquipoAdicional");
+
                     $("#listModelosEquipoAdicional").on("change", function () {
                         var modelo = $("#listModelosEquipoAdicional option:selected").text();
+
                         if ($("#txtEtiquetaEquipoAdicional").length) {
+                            
+                            var regionSucursal = $("#txtRegionSucursalClave").val();
+                            var clave = regionSucursal;
+                            
+                            if ($("#listModelosEquipoAdicional").val() != '') {
+                                var linea = $("#listModelosEquipoAdicional option:selected").attr("data-linea");
+                                var sublinea = $("#listModelosEquipoAdicional option:selected").attr("data-sublinea");
+                                var area = $("#txtIdAreaClave").val();
+                                clave+= '-L' + linea + 'S' + sublinea + '-' + area + '-';
+                                $("#txtEtiquetaEquipoAdicional").removeAttr("disabled");
+                            }else{
+                                $("#txtEtiquetaEquipoAdicional").attr("disabled", "disabled");
+                            }
+                            
+                            $("#txtEtiquetaEquipoAdicional").val(clave);
+
                             if (modelo.indexOf("COMPUTADORA") >= 0) {
                                 $("#txtMACEquipoAdicional").removeAttr("disabled");
                                 $("#listSOEquipoAdicional").removeAttr("disabled");
+                                $("#txtNombreRedEquipoAdicional").removeAttr("disabled");
+                                $("#listRQEquipoAdicional").removeAttr("disabled");
                             } else {
                                 $("#txtMACEquipoAdicional").val("");
                                 $("#txtMACEquipoAdicional").attr("disabled", "disabled");
                                 $("#listSOEquipoAdicional").val("");
                                 $("#listSOEquipoAdicional").attr("disabled", "disabled");
-
+                                $("#txtNombreRedEquipoAdicional").val("");
+                                $("#txtNombreRedEquipoAdicional").attr("disabled", "disabled");
+                                $("#listRQEquipoAdicional").val("");
+                                $("#listRQEquipoAdicional").attr("disabled", "disabled");
                             }
                         }
+
                     });
 
                     $(".listModelosEquiposAdicionales").on("change", function () {
@@ -1195,14 +1220,22 @@ $(function () {
                         if (fila.find(".macEquiposAdicionales").length) {
                             var campoMAC = fila.find(".macEquiposAdicionales");
                             var campoSO = fila.find(".listSOEquiposAdicionales");
+                            var campoNombreRed = fila.find(".nombreRedEquiposAdicionales")
+                            var campoRQ = fila.find(".listRQEquiposAdicionales")
                             if (modelo.indexOf("COMPUTADORA") >= 0) {
                                 campoMAC.removeAttr("disabled");
                                 campoSO.removeAttr("disabled");
+                                campoNombreRed.removeAttr("disabled");
+                                campoRQ.removeAttr("disabled");
                             } else {
                                 campoMAC.val("");
                                 campoMAC.attr("disabled", "disabled");
                                 campoSO.val("");
                                 campoSO.attr("disabled", "disabled");
+                                campoNombreRed.val("");
+                                campoNombreRed.attr("disabled", "disabled");
+                                campoRQ.val("");
+                                campoRQ.attr("disabled", "disabled");
                             }
                         }
 
@@ -1290,7 +1323,9 @@ $(function () {
                             'etiqueta': ($("#txtEtiquetaEquipoAdicional").length) ? $("#txtEtiquetaEquipoAdicional").val() : '',
                             'estado': ($("#listEstadosEquipoAdicional").length) ? $("#listEstadosEquipoAdicional").val() : '',
                             'mac': ($("#txtMACEquipoAdicional").length) ? $("#txtMACEquipoAdicional").val() : '',
-                            'so': ($("#listSOEquipoAdicional").length) ? $("#listSOEquipoAdicional").val() : ''
+                            'so': ($("#listSOEquipoAdicional").length) ? $("#listSOEquipoAdicional").val() : '',
+                            'nombreRed': ($("#txtNombreRedEquipoAdicional").length) ? $("#txtNombreRedEquipoAdicional").val() : '',
+                            'rq': ($("#listRQEquipoAdicional").length) ? $("#listRQEquipoAdicional").val() : ''
                         }
 
                         if (data.modelo == "") {
@@ -1324,6 +1359,15 @@ $(function () {
 
                                 if (data.so == "") {
                                     evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el S.O. del equipo.", 6000);
+                                    return true;
+                                }
+                                if (data.nombreRed == "") {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer falta el nombre de red para el equipo.", 6000);
+                                    return true;
+                                }
+
+                                if (data.rq == "") {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el estatus del software RQ", 6000);
                                     return true;
                                 }
                             }
@@ -1372,7 +1416,9 @@ $(function () {
                             'etiqueta': (fila.find(".etiquetaEquiposAdicionales").length) ? fila.find(".etiquetaEquiposAdicionales").val() : '',
                             'estado': (fila.find(".listEstadosEquiposAdicionales").length) ? fila.find(".listEstadosEquiposAdicionales").val() : '',
                             'mac': (fila.find(".macEquiposAdicionales").length) ? fila.find(".macEquiposAdicionales").val() : '',
-                            'so': (fila.find(".listSOEquiposAdicionales").length) ? fila.find(".listSOEquiposAdicionales").val() : ''
+                            'so': (fila.find(".listSOEquiposAdicionales").length) ? fila.find(".listSOEquiposAdicionales").val() : '',
+                            'nombreRed': (fila.find(".nombreRedEquiposAdicionales").length) ? fila.find(".nombreRedEquiposAdicionales").val() : '',
+                            'rq': (fila.find(".listRQEquiposAdicionales").length) ? fila.find(".listRQEquiposAdicionales").val() : ''
                         }
 
                         if (data.modelo == "") {
@@ -1406,6 +1452,16 @@ $(function () {
 
                                 if (data.so == "") {
                                     evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el S.O. del equipo.", 6000);
+                                    return true;
+                                }
+                                
+                                if (data.nombreRed == "") {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer falta el nombre de red para el equipo.", 6000);
+                                    return true;
+                                }
+
+                                if (data.rq == "") {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el estatus del software RQ", 6000);
                                     return true;
                                 }
                             }

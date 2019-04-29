@@ -2366,7 +2366,7 @@ class ServiciosTicket extends General {
 
     public function consultaSucursalesXSolicitudCliente(string $ticket) {
         $sucursal = $this->DBTO->getServicioTicket($ticket);
-        return $this->DBST->consultaGeneral('SELECT 
+        $return = $this->DBST->consultaGeneral('SELECT 
                                                 Id,
                                                 sucursalCliente(Id) Nombre,
                                                 cliente(IdCliente) Cliente

@@ -2043,8 +2043,10 @@ class Seguimientos extends General {
                                     1,
                                     0,
 				    17,
-				    null,
-				    null
+				    IdSistemaOperativo,
+				    MAC,
+                                    NombreRed,
+                                    IdEstatusSoftwareRQ
                                     from t_censos 
                                     where IdServicio = (
                                                     select IdServicio 
@@ -4981,6 +4983,7 @@ class Seguimientos extends General {
         $modelosEquipo = $this->DBCensos->getModelosGenerales();
         $estatusEquipoPrimeMX = $this->DBCensos->getEstatusEquipoPrimeMX();
         $soEquipoPrimeMX = $this->DBCensos->getSistemasOperativos();
+        $nomenclatura = $this->DBCensos->getNomenclaturaInicial($datos['servicio']);
         $data = [
             'kitStandarArea' => $kitStandarArea,
             'modelosStandar' => $modelosStandar,
@@ -4990,7 +4993,8 @@ class Seguimientos extends General {
             'datosGenerales' => $datos,
             'cliente' => $cliente,
             'estatus' => $estatusEquipoPrimeMX,
-            'so' => $soEquipoPrimeMX
+            'so' => $soEquipoPrimeMX,
+            'nomenclatura' => $nomenclatura
         ];
 
         return ['html' => parent::getCI()->load->view('Poliza/Modal/FormularioCapturaCenso', $data, TRUE)];
