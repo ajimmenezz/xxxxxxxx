@@ -498,11 +498,13 @@ $(function () {
                 }
             });
         } else {
+            var informacionPermisoAusencia = $('#data-table-permisos-ausencia').DataTable().row(this).data();
+            
             if (informacionPermisoAusencia[7] == "Autorizado") {
-                evento.mostrarMensaje('.mensajeSolicitudPermisosV1', true, 'El permiso ya fue autorizado', 3000);
+                window.open('/storage/Archivos/'+informacionPermisoAusencia[9], '_blank');
             } else {
                 if (informacionPermisoAusencia[7] == "Rechazado") {
-                    evento.mostrarMensaje('.mensajeSolicitudPermisosV1', false, 'El permiso fue rechazado', 3000);
+                    window.open('/storage/Archivos/'+informacionPermisoAusencia[9], '_blank');
                 }
             }
         }

@@ -32,9 +32,11 @@ class Permisos_Vacaciones extends General {
     }
 
     public function obtenerPermisosAusencia($idUsuario) {
-        return $this->DBS->consultaGral('SELECT Id, FechaDocumento, IdTipoAusencia, IdMotivoAusencia, FechaAusenciaDesde, FechaAusenciaHasta, 
-                HoraEntrada, HoraSalida, IdEstatus, IdUsuarioJefe, IdUsuarioRH, IdUsuarioContabilidad, IdUsuarioDireccion 
-                FROM t_permisos_ausencia_rh WHERE IdUsuario ="' . $idUsuario . '"');
+        return $this->DBS->consultaGral('SELECT Id, FechaDocumento, IdTipoAusencia, IdMotivoAusencia, FechaAusenciaDesde, 
+                    FechaAusenciaHasta, HoraEntrada, HoraSalida, IdEstatus, Archivo, IdUsuarioJefe, IdUsuarioRH, IdUsuarioContabilidad, 
+                    IdUsuarioDireccion FROM t_permisos_ausencia_rh 
+                    WHERE IdUsuario = "' . $idUsuario . '" 
+                    AND DATE(FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE()');
     }
 
     public function jefeDirecto($idUsuario) {
@@ -280,7 +282,7 @@ class Permisos_Vacaciones extends General {
         $texto .= ' para el día ' . $datosPermisos['fechaPermisoDesde'] . '</p><br><br>
                     <a href="http://adist/'.$carpeta.'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia ' . $asunto, $texto);
-        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoJefe[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+        //$this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoJefe[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
     }
 
     public function cancelarPermiso($idPermiso) {
@@ -534,7 +536,7 @@ class Permisos_Vacaciones extends General {
                                     FROM t_permisos_ausencia_rh AS tpa 
                                     INNER JOIN cat_v3_usuarios AS cu ON tpa.IdUsuario = cu.Id 
                                     INNER JOIN t_rh_personal AS trhp ON cu.Id = trhp.IdUsuario 
-                                    where tpa.IdEstatus = 7 AND FechaAusenciaDesde+0 = CURDATE()+1');
+                                    where tpa.IdEstatus = 7 AND FechaAusenciaDesde = CURDATE()+1');
         
         $texto = 'El día de mañana las siguientes personas estarán ausentes:<br><br>';
         if ($totalInacistencias != false) {
@@ -568,9 +570,8 @@ class Permisos_Vacaciones extends General {
                 $texto .= '<br>';
             }
             $mensaje = $this->Correo->mensajeCorreo('Ausencia de Personal', $texto);
-            $respuestaCorreo = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array('hhuerta@siccob.com.mx'), 'Ausencia de Personal', $mensaje);
+            //$respuestaCorreo = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array('hhuerta@siccob.com.mx'), 'Ausencia de Personal', $mensaje);
         }
         
-        return $respuestaCorreo;
     }
 }

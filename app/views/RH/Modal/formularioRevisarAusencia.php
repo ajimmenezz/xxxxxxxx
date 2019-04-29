@@ -236,38 +236,41 @@
                                 $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
                                 $days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
                                 switch($days){
+                                    case 0:
+                                        $totalDescuentoDias = '1.17 Dias';
+                                        break;
                                     case 1:
-                                        $totalDescuentoDias = '2.34 %';
+                                        $totalDescuentoDias = '2.34 Dias';
                                         break;
                                     case 2:
-                                        $totalDescuentoDias = '3.51 %';
+                                        $totalDescuentoDias = '3.51 Dias';
                                         break;
                                     case 3:
-                                        $totalDescuentoDias = '4.68 %';
+                                        $totalDescuentoDias = '4.68 Dias';
                                         break;
                                     case 4:
-                                        $totalDescuentoDias = '5.85 %';
+                                        $totalDescuentoDias = '5.85 Dias';
                                         break;
                                     case 5:
-                                        $totalDescuentoDias = '7.02 %';
+                                        $totalDescuentoDias = '7.02 Dias';
                                         break;
                                     case 6:
-                                        $totalDescuentoDias = '8.19 %';
+                                        $totalDescuentoDias = '8.19 Dias';
                                         break;
                                     case 7:
-                                        $totalDescuentoDias = '9.36 %';
+                                        $totalDescuentoDias = '9.36 Dias';
                                         break;
                                     case 8:
-                                        $totalDescuentoDias = '10.53 %';
+                                        $totalDescuentoDias = '10.53 Dias';
                                         break;
                                     case 9:
-                                        $totalDescuentoDias = '11.70 %';
+                                        $totalDescuentoDias = '11.70 Dias';
                                         break;
                                     case 10:
-                                        $totalDescuentoDias = '12.87 %';
+                                        $totalDescuentoDias = '12.87 Dias';
                                         break;
                                     default:
-                                        $totalDescuentoDias = '12.87 %';
+                                        $totalDescuentoDias = '12.87 Dias';
                                         break;
                                 }
                                 echo 
@@ -287,7 +290,7 @@
                             $totalDescuentoHrs = (($horas+($minutos/60))*1)/9;
                             echo 
                             '<label>Descuento</label>
-                            <input type="text" class="form-control" id="inputDescuento" style="width: 100%" disabled value="'.round($totalDescuentoHrs,4).' %"/>';
+                            <input type="text" class="form-control" id="inputDescuento" style="width: 100%" disabled value="'.round($totalDescuentoHrs,4).' hrs"/>';
                         }
                         if($datosAusencia[0]["IdTipoAusencia"] == 2 && $datosAusencia[0]['IdMotivoAusencia'] == 1){
                             $start_date = new DateTime('2007-09-01 '.$datosAusencia[0]["HoraSalida"]);
@@ -297,7 +300,7 @@
                             $totalDescuentoHrs = (($horas+($minutos/60))*1)/9;
                             echo 
                             '<label>Descuento</label>
-                            <input type="text" class="form-control" id="inputDescuento" style="width: 100%" disabled value="'.round($totalDescuentoHrs,4).' %"/>';
+                            <input type="text" class="form-control" id="inputDescuento" style="width: 100%" disabled value="'.round($totalDescuentoHrs,4).' hrs"/>';
                         }
                         ?>
                     </div>

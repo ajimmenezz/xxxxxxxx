@@ -34,6 +34,7 @@
                                         <th class="all">Hora de Salida</th>
                                         <th class="all">Estado</th>
                                         <th class="all">Falta Autorizar</th>
+                                        <th class="never">Archivo</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -132,6 +133,7 @@
                                                         echo '<td></td>';
                                                         break;
                                                 }
+                                                echo '<td>'.$value['Archivo'].'</td>';
                                             echo "</tr>";
                                         }
                                     }
@@ -234,7 +236,7 @@
                         <div class="col-md-10">
                             <div id="archivoCitaIncapacidad" class="form-group" style="display: none">
                                 <label>Archivo Cita o Incapacidad *</label><br>
-                                <label style="color: red">Todos los archivos que se requiera adjuntar deben ser escaneados a color</label>
+                                <label style="color: red">Todos los archivos que se requiera adjuntar deben ser escaneados a color y en formato PDF</label>
                                 <input id="inputEvidenciaIncapacidad" name="evidenciasIncapacidad[]" type="file" multiple>
                             </div>
                         </div>

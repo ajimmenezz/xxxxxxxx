@@ -78,7 +78,7 @@ class Autorizar_permisos extends General{
                     Motivo de Rechazo: <p><b>' . $datosPermiso[0]['motivoRechazo'] . '</b> </p><br><br>
                     <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Rechazado', $texto);
-        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+        //$this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
         $this->agregarFirmasPDF($datosPermiso,$rechazado="Rechazado por: ",$resultado);
         
@@ -134,7 +134,7 @@ class Autorizar_permisos extends General{
                     Descripción: <p>' .$infoCorreo['descripcion']. '</p><br><br>
                     <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Autorizado', $texto);
-        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+        //$this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
         $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado por: ", $motivo = array ('MotivoRechazo' => ""));
         
@@ -164,7 +164,7 @@ class Autorizar_permisos extends General{
                     Descripción: <p>' .$infoCorreo['descripcion']. '</p><br><br>
                     <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Concluido', $texto);
-        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+        //$this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
         $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado y Concluido por: ", $motivo = array ('MotivoRechazo' => ""));
         
