@@ -16,6 +16,7 @@
                 $comentario = $value['ComentariosSolicitud'];
                 $archivos = $value['ArchivosEnvio'];
                 $archivosSolicitud = $value['ArchivosSolicitud'];
+                $guia = $value['Guia'];
                 
                 if (empty($archivosSolicitud)) {
                     $hiddenContrario = 'hidden';
@@ -32,6 +33,7 @@
             $archivosSolicitud = "";
             $hiddenContrario = "hidden";
             $informacionSolicitudGuia = "";
+            $guia = "";
         }
 
         if ($formularioEditable) {
@@ -53,13 +55,19 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label class="f-w-600 f-s-13">Información para generar guía *</label>
-                            <textarea class="form-control" id="txtInformacionGuia" rows="10" <?php echo $camposEditables ?> disabled><?php echo $informacionSolicitudGuia ?></textarea>
+                            <textarea class="form-control" id="txtInformacionGuia" rows="10" <?php echo $camposEditables; ?> disabled><?php echo $informacionSolicitudGuia ?></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="f-w-600 f-s-13">Guía *</label>
+                            <input id="txtGuia" type="text" class="form-control" placeholder="<?php echo $guia; ?>" <?php echo $camposEditables; ?>/>
                         </div>
                     </div>
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label class="f-w-600 f-s-13">Comentarios de la solicitud *</label>
-                            <textarea class="form-control" id="txtComentariosGuia" rows="5" placeholder="<?php echo $comentario ?>" <?php echo $camposEditables ?>></textarea>
+                            <textarea class="form-control" id="txtComentariosGuia" rows="5" placeholder="<?php echo $comentario; ?>" <?php echo $camposEditables ?>></textarea>
                         </div>
                     </div>
                     <div class="col-md-12 col-sm-12 col-xs-12">

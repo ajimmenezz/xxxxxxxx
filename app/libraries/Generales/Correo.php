@@ -69,15 +69,18 @@ class Correo extends General {
      */
 
     public function enviarCorreo(string $remitente, array $destinatario, string $asunto, string $mensaje, array $archivoAdjunto = [], string $style = '') {
-        if ($style == '') {
-            $style = ''
-                    . '<style>
+        $host = $_SERVER['SERVER_NAME'];
+
+        if ($host !== 'siccobsolutions.com.mx' || $host !== 'siccobsolutions.com.mx') {
+            if ($style == '') {
+                $style = ''
+                        . '<style>
                         .table-striped>tbody>tr:nth-of-type(odd) {
                             background-color: #f9f9f9;
 }                       }
                     </style>';
-        }
-        $contenido = '  <html>
+            }
+            $contenido = '  <html>
                             <head>
                                 <title>' . $asunto . '</title>
                                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -87,20 +90,22 @@ class Correo extends General {
                             ' . $mensaje . '
                             </body>
                         </html>';
-        $config['mailtype'] = 'html';
-        parent::getCI()->email->initialize($config);
-        $destinatarios = implode(',', $destinatario);
-        parent::getCI()->email->clear(TRUE);
-        parent::getCI()->email->from($remitente);
-        parent::getCI()->email->to($destinatarios);
-        parent::getCI()->email->subject($asunto);
-        parent::getCI()->email->message($contenido);
-        if (!empty($archivoAdjunto)) {
-            foreach ($archivoAdjunto as $key => $value) {
-                parent::getCI()->email->attach($value);
+            $config['mailtype'] = 'html';
+            parent::getCI()->email->initialize($config);
+            $destinatarios = implode(',', $destinatario);
+            parent::getCI()->email->clear(TRUE);
+            parent::getCI()->email->from($remitente);
+            parent::getCI()->email->to($destinatarios);
+            parent::getCI()->email->subject($asunto);
+            parent::getCI()->email->message($contenido);
+            if (!empty($archivoAdjunto)) {
+                foreach ($archivoAdjunto as $key => $value) {
+                    parent::getCI()->email->attach($value);
+                }
             }
+
+            parent::getCI()->email->send();
         }
-        parent::getCI()->email->send();
     }
 
     /*
@@ -227,6 +232,6 @@ class Correo extends General {
         } else {
             return $clave;
         }
-    }   
+    }
 
 }

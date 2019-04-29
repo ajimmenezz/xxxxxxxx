@@ -777,6 +777,7 @@ $(function () {
         $('#btnGuardarSolicitud').off('click');
         $('#btnGuardarSolicitud').on('click', function () {
             var arrayCampos = [
+                {'objeto': '#txtGuia', 'mensajeError': 'Falta escribir la Guía.'},
                 {'objeto': '#txtComentariosGuia', 'mensajeError': 'Falta escribir comentarios.'},
                 {'objeto': '#archivosProblemaGuia', 'mensajeError': 'Falta seleccionar la evidencia.'}
             ];
@@ -787,6 +788,7 @@ $(function () {
                 var datos = {
                     'id': idTabla,
                     'idServicio': idServicio,
+                    'guia': $('#txtGuia').val(),
                     'comentarios': $('#txtComentariosGuia').val(),
                     'idEstatus': 37,
                     'flag': '1'
@@ -930,7 +932,7 @@ $(function () {
         var data = arguments[0];
         var idTabla = arguments[1];
         var panel = arguments[2];
-        
+
         evento.enviarEvento('Seguimiento/crearDatosCotizarOpcionRevision', data, panel, function (respuesta) {
             if (respuesta.code === 200) {
                 vistasDeFormularios(respuesta.datos);
