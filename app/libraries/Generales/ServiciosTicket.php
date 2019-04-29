@@ -2374,6 +2374,7 @@ class ServiciosTicket extends General {
                                             WHERE Flag = 1
                                             AND IdCliente = "' . $sucursal[0]['Cliente'] . '"
                                             ORDER BY Nombre ASC');
+        return $return;
     }
 
     public function consultaSucursalesXSalas4D() {
