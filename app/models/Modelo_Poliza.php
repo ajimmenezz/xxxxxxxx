@@ -1279,6 +1279,7 @@ class Modelo_Poliza extends Modelo_Base {
                                         teael.FechaRecepcion,
                                         teael.CuentaSiccob,
                                         teael.IdUsuarioTransito,
+                                        teael.IdPaqueteria,
                                         nombreUsuario(teael.IdUsuarioTransito) Chofer
                                     FROM
                                         t_equipos_allab_envio_logistica teael

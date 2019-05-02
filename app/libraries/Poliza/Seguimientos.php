@@ -4118,11 +4118,13 @@ class Seguimientos extends General {
         }
 
         if ($resultado['code'] === 200) {
-            $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+        $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
             $textoCorreo = '<p>Se ha concluido la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
             $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 31, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
             $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
-            $this->toAssignSD(array('idStatus' => 31, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
+        $this->toAssignSD(array('idStatus' => 31, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
+        $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 31, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
+
             $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => $datos['idEstatus']));
             $mensaje = ['mensaje' => "Correcto",
                 'datos' => $formularios,
@@ -4694,49 +4696,49 @@ class Seguimientos extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
-//        $datosActualizar = array(
-//            'IdEstatus' => 36,
-//            'FechaEstatus' => $fecha,
-//            'IdTipoLugarRecepcion' => $datos['tipoLugarRecepcion'],
-//            'IdSucursal' => $datos['sucursal'],
-//            'FechaRecepcion' => $datos['fechaRecepcion'],
-//            'Recibe' => $datos['recibe'],
-//            'ArchivosEntrega' => null
-//        );
-//
-//        $datosEstatus = array(
-//            'idEstatus' => 36,
-//            'id' => $datos['id'],
-//            'fecha' => $fecha,
-//            'flag' => '1');
-//
-//        $CI = parent::getCI();
-//        $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/EvidenciasEntregaLogistica/';
-//        $archivos = implode(',', setMultiplesArchivos($CI, 'evidenciaEntregaLog', $carpeta));
-//
-//        if (!empty($archivos) && $archivos != '') {
-//            $datosActualizar['ArchivosEntrega'] = $archivos;
-//            $resultado = $this->DBP->actualizarEnvioLogistica($datosActualizar, $datosEstatus);
-//            if ($resultado['code'] === 200) {
-        $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
-//                $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
-//                $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
-//                $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
-//                $this->toAssignSD(array('idStatus' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
-        $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
-//                $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 12));
-//                $mensaje = ['mensaje' => "Se guardo correctamente la entrega.",
-//                    'datos' => $formularios,
-//                    'idTabla' => $datos['id'],
-//                    'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
-//                    'code' => 200];
-//                return $mensaje;
-//            } else {
-//                $mensaje = ['mensaje' => "Se ha producido un error en la entrega.",
-//                    'code' => 400];
-//                return $mensaje;
-//            }
-//        }
+        $datosActualizar = array(
+            'IdEstatus' => 36,
+            'FechaEstatus' => $fecha,
+            'IdTipoLugarRecepcion' => $datos['tipoLugarRecepcion'],
+            'IdSucursal' => $datos['sucursal'],
+            'FechaRecepcion' => $datos['fechaRecepcion'],
+            'Recibe' => $datos['recibe'],
+            'ArchivosEntrega' => null
+        );
+
+        $datosEstatus = array(
+            'idEstatus' => 36,
+            'id' => $datos['id'],
+            'fecha' => $fecha,
+            'flag' => '1');
+
+        $CI = parent::getCI();
+        $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/EvidenciasEntregaLogistica/';
+        $archivos = implode(',', setMultiplesArchivos($CI, 'evidenciaEntregaLog', $carpeta));
+
+        if (!empty($archivos) && $archivos != '') {
+            $datosActualizar['ArchivosEntrega'] = $archivos;
+            $resultado = $this->DBP->actualizarEnvioLogistica($datosActualizar, $datosEstatus);
+            if ($resultado['code'] === 200) {
+                $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+                $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
+                $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
+                $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
+                $this->toAssignSD(array('idStatus' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
+                $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 36, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
+                $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 12));
+                $mensaje = ['mensaje' => "Se guardo correctamente la entrega.",
+                    'datos' => $formularios,
+                    'idTabla' => $datos['id'],
+                    'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
+                    'code' => 200];
+                return $mensaje;
+            } else {
+                $mensaje = ['mensaje' => "Se ha producido un error en la entrega.",
+                    'code' => 400];
+                return $mensaje;
+            }
+        }
     }
 
     public function guardarProblemaGuiaLogistica(array $datos) {
@@ -5191,7 +5193,7 @@ class Seguimientos extends General {
                 $idSD = $idSDLaboratory;
                 break;
             default :
-                $idSD = $this->findTechnicalId(array('SDKey' => $user['SDKey'], 'idService' => $dataToCreateEmailList['idService']));
+//                $idSD = $this->findTechnicalId(array('SDKey' => $user['SDKey'], 'idService' => $dataToCreateEmailList['idService']));
                 break;
         }
 
@@ -5364,36 +5366,10 @@ class Seguimientos extends General {
                 break;
 //            case 31 :
             case 36 :
-                $dataWarehouse = $this->DBP->consultaRecepcionAlmacen(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
-                $dataRecord = $this->DBP->consultaComentariosAdjuntosSolicitudEquipo($datosAllab[0]['Id']);
-                $viewHtml .= '<div>Guia: ' . $dataTechnicalShipment[0]['Guia'] . '</div>';
-                $viewHtml .= '<div>Comentarios: ' . $dataTechnicalShipment[0]['ComentariosSolicitud'] . '</div>';
-                $viewHtml .= '<div>Evidencia: <a href="http://' . $host . $dataTechnicalShipment[0]['ArchivosSolicitud'] . '">Archivo</a></div>';
-                $viewHtml .= '<div>Paqueteria: ' . $dataTechnicalShipment[0]['Paqueteria'] . '</div>';
-                $viewHtml .= '<div>Fecha de envío: ' . $dataTechnicalShipment[0]['Fecha'] . '</div>';
-                $viewHtml .= '<div>Evidencia de envío: <a href="http://' . $host . $dataTechnicalShipment[0]['ArchivosEnvio'] . '">Archivo</a></div>';
-                $viewHtml .= '<div>Recibió en almacén: ' . $dataWarehouse['recepcion'][0]['UsuarioRecibe'] . '</div>';
-                $viewHtml .= '<div>Fecha recibida en almacén: ' . $dataWarehouse['recepcion'][0]['Fecha'] . '</div>';
-                $viewHtml .= '<div>Evidencia de recepción en almacén: <a href="http://' . $host . $dataWarehouse['recepcion'][0]['Archivos'] . '">Archivo</a></div>';
-
-                foreach ($dataRecord as $key => $value) {
-                    $viewHtml .= '<div>Usuario: ' . $value['Usuario'] . '</div>';
-                    $viewHtml .= '<div>Fecha: ' . $value['Fecha'] . '</div>';
-                    $viewHtml .= '<div>Nota: ' . $value['Nota'] . '</div>';
-                    $viewHtml .= '<div>Adjunto: : <a href="http://' . $host . $dataTechnicalShipment[0]['ArchivosEnvio'] . '">Archivo</a></div>';
-                }
-
-                $dataLogistica = $this->DBP->consultaEnvioLogistica(array('Id' => $datosAllab[0]['Id'], 'IdServicio' => $dataCreateTextSD['service']));
-                var_dump($dataLogistica);
-
-//                $viewHtml .= '<div>Tipo de envío (Logística): ' . $dataLogistica[0][''] . '</di>';
-                $viewHtml .= '<div>Paqueteria: ' . $dataLogistica[0]['paqueteria'] . '</div>';
-                $viewHtml .= '<div>Guía: ' . $dataLogistica[0]['Guia'] . '</div>';
-
-                if ($dataLogistica[0]['IdSucursal'] !== '0') {
-                    $viewHtml .= '<div>Sucursal: ' . $dataLogistica[0]['Sucursal'] . '</div>';
-                }
-
+                $viewHtml .= $this->validationView(array('IdServicio' => $dataCreateTextSD['service']));
+                $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
+                $viewHtml .= $this->laboratoryView(array('Id' => $datosAllab[0]['Id']));
+                $viewHtml .= $this->logisticsView(array('Id' => $datosAllab[0]['Id'], 'IdServicio' => $dataCreateTextSD['service']));
                 break;
             case 39 :
                 if ($dataCreateTextSD['movementType'] === '1') {
@@ -5421,13 +5397,109 @@ class Seguimientos extends General {
 //                    $listOfProfiles = "'38','56'";
                 }
                 break;
-            case 41 :
-//                $listOfProfiles = "'38','56'";
+            case 31 :
+                $viewHtml .= $this->validationView(array('IdServicio' => $dataCreateTextSD['service']));
+                $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
+                $viewHtml .= $this->laboratoryView(array('Id' => $datosAllab[0]['Id']));
+                $viewHtml .= $this->logisticsView(array('Id' => $datosAllab[0]['Id'], 'IdServicio' => $dataCreateTextSD['service']));
+                $viewHtml .= $this->technicalReceptionView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '4', 'IdEstatus' => '31', 'IdServicio' => $dataCreateTextSD['service']));
                 break;
             default :
 //                $listOfProfiles = "''";
                 break;
         }
+
+        return $viewHtml;
+    }
+
+    private function validationView(array $dataValidationView) {
+        $host = $_SERVER['SERVER_NAME'];
+        $viewHtml = '';
+        $dataTechnicalShipment = $this->DBP->consultaSolicitudGuiaTecnico($dataValidationView['IdServicio']);
+
+        $viewHtml .= '<div>Guia: ' . $dataTechnicalShipment[0]['Guia'] . '</div>';
+        $viewHtml .= '<div>Comentarios: ' . $dataTechnicalShipment[0]['ComentariosSolicitud'] . '</div>';
+        $viewHtml .= '<div>Evidencia: <a href="http://' . $host . $dataTechnicalShipment[0]['ArchivosSolicitud'] . '">Ver aquí</a></div>';
+        $viewHtml .= '<div>Paqueteria: ' . $dataTechnicalShipment[0]['Paqueteria'] . '</div>';
+        $viewHtml .= '<div>Fecha de envío: ' . $dataTechnicalShipment[0]['Fecha'] . '</div>';
+        $viewHtml .= '<div>Evidencia de envío: <a href="http://' . $host . $dataTechnicalShipment[0]['ArchivosEnvio'] . '">Ver aquí</a></div>';
+
+        return $viewHtml;
+    }
+
+    private function storeView(array $dataStoreView) {
+        $host = $_SERVER['SERVER_NAME'];
+        $viewHtml = '';
+        $dataWarehouse = $this->DBP->consultaRecepcionAlmacen(array('Id' => $dataStoreView['Id'], 'IdDepartamento' => $dataStoreView['IdDepartamento'], 'IdEstatus' => $dataStoreView['IdEstatus'], 'IdServicio' => $dataStoreView['IdServicio']));
+
+        $viewHtml .= '<div>Recibió en almacén: ' . $dataWarehouse['recepcion'][0]['UsuarioRecibe'] . '</div>';
+        $viewHtml .= '<div>Fecha recibida en almacén: ' . $dataWarehouse['recepcion'][0]['Fecha'] . '</div>';
+        $viewHtml .= '<div>Evidencia de recepción en almacén: <a href="http://' . $host . $dataWarehouse['recepcion'][0]['Archivos'] . '">Ver aquí</a></div>';
+
+        return $viewHtml;
+    }
+
+    private function laboratoryView(array $dataLaboratoryView) {
+        $host = $_SERVER['SERVER_NAME'];
+        $viewHtml = '';
+        $dataRecord = $this->DBP->consultaComentariosAdjuntosSolicitudEquipo($dataLaboratoryView['Id']);
+
+        foreach ($dataRecord as $key => $value) {
+            $viewHtml .= '<div>Usuario: ' . $value['Usuario'] . '</div>';
+            $viewHtml .= '<div>Fecha: ' . $value['Fecha'] . '</div>';
+            $viewHtml .= '<div>Nota: ' . $value['Nota'] . '</div>';
+            if ($value['Adjuntos'] !== '') {
+                $viewHtml .= '<div>Adjunto: : <a href="http://' . $host . $value['Adjuntos'] . '">Archivo</a></div>';
+            }
+        }
+
+        return $viewHtml;
+    }
+
+    private function logisticsView(array $dataLogisticsView) {
+        $host = $_SERVER['SERVER_NAME'];
+        $viewHtml = '';
+        $dataLogistica = $this->DBP->consultaEnvioLogistica(array('Id' => $dataLogisticsView['Id'], 'IdServicio' => $dataLogisticsView['IdServicio']));
+
+        if ($dataLogistica[0]['IdPaqueteria'] !== NULL) {
+            $viewHtml .= '<div>Tipo de envío (Logística): Paquetería</div>';
+            $viewHtml .= '<div>Guía: ' . $dataLogistica[0]['Guia'] . '</div>';
+            if ($dataLogistica[0]['IdPaqueteria'] === '2') {
+                if ($dataLogistica[0]['CuentaSiccob'] === '0') {
+                    $viewHtml .= '<div>Tipo Cuenta: Cliente</div>';
+                } else {
+                    $viewHtml .= '<div>Tipo Cuenta: Siccob</div>';
+                }
+            }
+        } else {
+            $viewHtml .= '<div>Tipo de envío (Logística): Logística</div>';
+        }
+
+        if ($dataLogistica[0]['ArchivosEnvio'] !== NULL) {
+            $viewHtml .= '<div>Evidencia de envío: <a href="http://' . $host . $dataLogistica[0]['ArchivosEnvio'] . '">Ver aquí</a></div>';
+        }
+
+        if ($dataLogistica[0]['IdSucursal'] !== '0') {
+            $viewHtml .= '<div>Recibido en: Complejo</div>';
+            $viewHtml .= '<div>Sucursal: ' . $dataLogistica[0]['Sucursal'] . '</div>';
+        } else {
+            $viewHtml .= '<div>Recibido en: Ocurre</div>';
+        }
+
+        $viewHtml .= '<div>Recibe: ' . $dataLogistica[0]['Recibe'] . '</div>';
+        $viewHtml .= '<div>Evidencia de envío: <a href="http://' . $host . $dataLogistica[0]['ArchivosEntrega'] . '">Ver aquí</a></div>';
+
+        return $viewHtml;
+    }
+
+    private function technicalReceptionView(array $dataTechnicalReceptionView) {
+        $host = $_SERVER['SERVER_NAME'];
+        $viewHtml = '';
+        $dataTechnicalReception = $this->DBP->consultaRecepcionAlmacen(array('Id' => $dataTechnicalReceptionView['Id'], 'IdDepartamento' => $dataTechnicalReceptionView['IdDepartamento'], 'IdEstatus' => $dataTechnicalReceptionView['IdEstatus'], 'IdServicio' => $dataTechnicalReceptionView['IdServicio']));
+
+        $viewHtml .= '<div>Recibió Técnico: ' . $dataTechnicalReception['recepcion'][0]['UsuarioRecibe'] . '</div>';
+        $viewHtml .= '<div>Fecha recibida del Técnico: ' . $dataTechnicalReception['recepcion'][0]['Fecha'] . '</div>';
+        $viewHtml .= '<div>Evidencia de recepción del Técnico: <a href="http://' . $host . $dataTechnicalReception['recepcion'][0]['Archivos'] . '">Ver aquí</a></div>';
 
         return $viewHtml;
     }
