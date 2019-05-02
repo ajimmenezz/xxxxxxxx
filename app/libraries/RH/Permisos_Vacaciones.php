@@ -569,8 +569,6 @@ class Permisos_Vacaciones extends General {
             }
             $mensaje = $this->Correo->mensajeCorreo('Ausencia de Personal', $texto);
             $respuestaCorreo = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array('hhuerta@siccob.com.mx'), 'Ausencia de Personal', $mensaje);
-        }
-        
-        return $respuestaCorreo;
+        }               
     }
 }
