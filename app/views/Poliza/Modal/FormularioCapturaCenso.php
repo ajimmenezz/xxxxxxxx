@@ -178,7 +178,7 @@ if ($totalEquipmentStandarKit <= 0) {
                                     <?php
                                     if (isset($modelos) && count($modelos) > 0) {
                                         foreach ($modelos as $keyModelos => $valueModelos) {
-                                            echo '<option value="' . $valueModelos['Id'] . '">' . $valueModelos['Modelo'] . '</option>';
+                                            echo '<option data-linea="' . $valueModelos['Linea'] . '" data-sublinea="' . $valueModelos['Sublinea'] . '" value="' . $valueModelos['Id'] . '">' . $valueModelos['Modelo'] . '</option>';
                                         }
                                     }
                                     ?>
@@ -199,7 +199,7 @@ if ($totalEquipmentStandarKit <= 0) {
                                 <?php
                             }
                             ?>
-                            <td <?php echo ($cliente == 20) ? 'rowspan="3"' : ''; ?> class="text-center">
+                            <td <?php echo ($cliente == 20) ? 'rowspan="5"' : ''; ?> class="text-center">
                                 <a id="btnAgregarEquipoAdicional" class="btn btn-success <?php echo ($cliente == 20) ? 'm-t-40' : ''; ?>"><i class="fa fa-plus-circle"></i></a>
                             </td>
                         </tr>   
@@ -214,7 +214,9 @@ if ($totalEquipmentStandarKit <= 0) {
                             </tr>
                             <tr>
                                 <td>
-                                    <input role="button" type="text" id="txtEtiquetaEquipoAdicional" class="form-control" value="" placeholder="001-TOL003-L1S15-97-1" style="min-width: 200px"/>
+                                    <input type="hidden" id="txtRegionSucursalClave" value="<?php echo $nomenclatura ?>" />
+                                    <input type="hidden" id="txtIdAreaClave" value="<?php echo $datosGenerales['area']; ?>" />
+                                    <input role="button" type="text" id="txtEtiquetaEquipoAdicional" class="form-control" value="<?php echo $nomenclatura ?>" placeholder="001-TOL003-L1S15-97-1" style="min-width: 200px" disabled="disabled"/>
                                 </td>                                
                                 <td>
                                     <select class="form-control" id="listEstadosEquipoAdicional" style="min-width: 130px">
@@ -243,6 +245,23 @@ if ($totalEquipmentStandarKit <= 0) {
                                         ?>
                                     </select>
                                 </td>
+                            </tr>
+                            <tr>                                
+                                <th class="text-center" colspan="2">Nombre de Equipo Red</th>
+                                <th class="text-center" colspan="2">Software RQ</th>                                      
+                            </tr>
+                            <tr>                                
+                                <td class="text-center" colspan="2">
+                                    <input role="button" type="text" id="txtNombreRedEquipoAdicional" class="form-control" value="" placeholder="Nombre de Equipo en Red" style="min-width: 130px" disabled="disabled"/>
+                                </td>
+                                <td class="text-center" colspan="2">
+                                    <select class="form-control" id="listRQEquipoAdicional" style="min-width: 120px" disabled="disabled">
+                                        <option value="">Seleccionar . . .</option>         
+                                        <option value="1">Instalado y arranca</option>
+                                        <option value="2">Instalado, NO arranca</option>
+                                        <option value="3">No instalado</option>
+                                    </select>
+                                </td>                                      
                             </tr>
                             <?php
                         }
@@ -281,6 +300,8 @@ if ($totalEquipmentStandarKit <= 0) {
                                     <th class="text-center">Estatus</th>   
                                     <th class="text-center">MAC Address</th>   
                                     <th class="text-center">S.O.</th>   
+                                    <th class="text-center">Nombre Red</th>   
+                                    <th class="text-center">Software RQ</th>   
                                     <?php
                                 }
                                 ?>
@@ -292,12 +313,14 @@ if ($totalEquipmentStandarKit <= 0) {
                             <?php
                             $i = 0;
                             foreach ($arrayEquiposCensados as $keyEquiposCensados => $valueEquiposCensados) {
-                                $i++;                                
+                                $i++;
                                 $modeloEquipo = $valueEquiposCensados['Modelo'];
                                 $serie = $valueEquiposCensados['Serie'];
                                 $etiquetaEquipo = $valueEquiposCensados['Etiqueta'];
                                 $estadoEquipo = $valueEquiposCensados['IdEstatus'];
                                 $macEquipo = $valueEquiposCensados['MAC'];
+                                $nombreRedEquipo = $valueEquiposCensados['NombreRed'];
+                                $idRQ = $valueEquiposCensados['IdEstatusSoftwareRQ'];           
                                 $soEquipo = $valueEquiposCensados['IdSO'];
                                 $checkedIlegible = ($serie == 'ILEGIBLE') ? 'checked="checked"' : '';
                                 $disabledSerie = ($checkedIlegible !== '') ? 'disabled="disabled"' : '';
@@ -336,11 +359,10 @@ if ($totalEquipmentStandarKit <= 0) {
 
                                     if ($cliente == 20) {
                                         $disabledMACandSO = '';
-                                        $esComputadora = strpos($modeloEquipo, 'COMPUTADORA');                                        
-                                        if($esComputadora === false){
+                                        $esComputadora = strpos($modeloEquipo, 'COMPUTADORA');
+                                        if ($esComputadora === false) {
                                             $disabledMACandSO = 'disabled="disabled"';
                                         }
-                                        
                                         ?>
                                         <td>
                                             <input role="button" type="text" class="form-control etiquetaEquiposAdicionales" value="<?php echo $etiquetaEquipo; ?>" style="min-width: 200px"/>
@@ -372,6 +394,17 @@ if ($totalEquipmentStandarKit <= 0) {
                                                     }
                                                 }
                                                 ?>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input role="button" type="text" class="form-control nombreRedEquiposAdicionales" value="<?php echo $nombreRedEquipo; ?>" style="min-width: 150px" <?php echo $disabledMACandSO; ?>/>
+                                        </td>
+                                        <td>
+                                            <select class="form-control listRQEquiposAdicionales" style="min-width: 200px" <?php echo $disabledMACandSO; ?>>
+                                                <option value="">Seleccionar . . .</option>         
+                                                <option value="1" <?php echo ($idRQ == 1) ? ' selected' : '' ?>>Instalado y arranca</option>
+                                                <option value="2" <?php echo ($idRQ == 2) ? ' selected' : '' ?>>Instalado, NO arranca</option>
+                                                <option value="3" <?php echo ($idRQ == 3) ? ' selected' : '' ?>>No instalado</option>
                                             </select>
                                         </td>
                                         <?php

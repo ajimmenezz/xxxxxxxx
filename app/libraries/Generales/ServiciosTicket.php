@@ -2366,7 +2366,7 @@ class ServiciosTicket extends General {
 
     public function consultaSucursalesXSolicitudCliente(string $ticket) {
         $sucursal = $this->DBTO->getServicioTicket($ticket);
-        return $this->DBST->consultaGeneral('SELECT 
+        $return = $this->DBST->consultaGeneral('SELECT 
                                                 Id,
                                                 sucursalCliente(Id) Nombre,
                                                 cliente(IdCliente) Cliente
@@ -2374,6 +2374,7 @@ class ServiciosTicket extends General {
                                             WHERE Flag = 1
                                             AND IdCliente = "' . $sucursal[0]['Cliente'] . '"
                                             ORDER BY Nombre ASC');
+        return $return;
     }
 
     public function consultaSucursalesXSalas4D() {
