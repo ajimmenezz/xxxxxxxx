@@ -107,7 +107,7 @@
                             if (isset($Proyectos['proyectos']) && count($Proyectos['proyectos']) > 0) {
                                 foreach ($Proyectos['proyectos'] as $key => $value) {
                                     $selected = ($value['ID'] == $__proyecto) ? 'selected' : '';
-                                    echo '<option data-tipo="' . $value['Tipo'] . '" value="' . $value['ID'] . '" ' . $selected . '>' . $value['Nombre'] . '</option>';
+                                    echo '<option data-tipo="' . $value['Tipo'] . '" value="' . $value['ID'] . '" ' . $selected . '>' . $value['Tipo'] . ' - ' . $value['Nombre'] . '</option>';
                                 }
                             }
                             ?>
