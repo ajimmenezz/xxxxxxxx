@@ -50,7 +50,7 @@ $(function () {
                 }
                 evento.enviarEvento('Gasto/ProyectosByCliente', datos, '#panelFormularioGasto', function (respuesta) {
                     $.each(respuesta.proyectos, function (k, v) {
-                        $("#listProyectos").append('<option data-tipo="' + v.Tipo + '" value="' + v.ID + '">' + v.Nombre + '</option>')
+                        $("#listProyectos").append('<option data-tipo="' + v.Tipo + '" value="' + v.ID + '">' + v.Tipo + ' - ' + v.Nombre + '</option>')
                     });
                     $("#listProyectos").removeAttr("disabled");
                 });

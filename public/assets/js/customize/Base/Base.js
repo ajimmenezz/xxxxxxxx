@@ -604,6 +604,39 @@ Base.prototype.eventosVueltasMantenimiento = function () {
             }
         });
     });
+    
+    $('#btnAgregarVueltaChecklist').off("click");
+    $('#btnAgregarVueltaChecklist').on('click', function () {
+        var html = '<div class="row">\n\
+                        <div class="col-md-12">\n\
+                                <div class="form-group">\n\
+                                    <label>Servicio *</label>\n\
+                                    <input id="inputServicioVueltaChecklist" type="text" class="form-control" data-parsley-type="number"/>\n\
+                                </div>\n\
+                            </div>\n\
+                      </div>\n\
+                        <div class="row m-t-10">\n\
+                            <div class="col-md-12">\n\
+                                <div id="errorServicioAgregarVueltaChecklist"></div>\n\
+                            </div>\n\
+                        </div>';
+        _this.mostrarModal('Agregar vuelta checklist', html);
+
+        $('#btnModalConfirmar').off("click");
+        $('#btnModalConfirmar').on('click', function () {
+            var servicio = $('#inputServicioVueltaChecklist').val();
+
+            if (servicio !== '') {
+                var data = {servicio: servicio};
+                _this.enviarEvento('/Generales/Servicio/GuardarVueltaAsociadoSinFirma', data, '#modal-dialogo', function (respuesta) {
+                    _this.mensajeConfirmacion('Se agrego la vuelta correctamente.', 'Correcto');
+                });
+            } else {
+                _this.mostrarMensaje('#errorServicioAgregarVueltaChecklist', false, 'Debes colocar el servicio.', 3000);
+
+            }
+        });
+    });
 };
 
 Base.prototype.cambiarDiv = function () {

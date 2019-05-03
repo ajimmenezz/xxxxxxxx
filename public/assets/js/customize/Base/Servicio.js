@@ -71,10 +71,10 @@ Servicio.prototype.nuevoServicio = function () {
             var descripcion = $('#inputDescripcionServicio').val();
             var now = new Date();
             var fecha = moment(now).format();
-            
+
             resource = {
                 "summary": "Atención a ticket",
-                "description": "Nuevo servicio.Se a agregado para su atención del ticket "+ ticketCalendario.Ticket +" con la siguiente descripcion " + descripcion,
+                "description": "Nuevo servicio.Se a agregado para su atención del ticket " + ticketCalendario.Ticket + " con la siguiente descripcion " + descripcion,
                 "location": "Ciudad de México, CDMX",
                 "start": {
                     "dateTime": now,
@@ -93,7 +93,7 @@ Servicio.prototype.nuevoServicio = function () {
                     }]
             };
 //            console.log(resource);
-            handleClientLoad(resource,true);
+            handleClientLoad(resource, true);
         };
 
         $('#btnCancelarServicio').on('click', function () {
@@ -393,48 +393,48 @@ Servicio.prototype.ServicioSinClasificar = function () {
         var evidencias = $('#evidenciaSinClasificar').val();
         var archivosPreview = _this.file.previews('.previewSinClasificar');
         if (descripcion !== '') {
-            if (idPerfil !== '83') {
-                var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, correo: '', operacion: '9'};
-                _this.modalConfirmacionFirma(ticket, data);
-                $('#btnNoFirma').on('click', function () {
-                    $('#btnSiFirma').attr('disabled', 'disabled');
-                    $('#btnNoFirma').attr('disabled', 'disabled');
-                    _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#modal-dialogo', data, function (respuesta) {
-                        if (respuesta === true) {
-                            _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
-                        } else {
-                            _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
-                        }
-                    });
-                });
-            } else {
-                var data = {servicio: servicio};
-                _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, panel, function (respuesta) {
+//            if (idPerfil !== '83') {
+            var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, correo: '', operacion: '9'};
+            _this.modalConfirmacionFirma(ticket, data);
+            $('#btnNoFirma').on('click', function () {
+                $('#btnSiFirma').attr('disabled', 'disabled');
+                $('#btnNoFirma').attr('disabled', 'disabled');
+                _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#modal-dialogo', data, function (respuesta) {
                     if (respuesta === true) {
-                        _this.validarTecnicoPoliza();
-
-                        var html = '<div class="row" m-t-10">\n\
-                                        <div id="col-md-12 text-center">\n\
-                                            <div id="campoLapizTecnico"></div>\n\
-                                        </div>\n\
-                                    </div>\n\
-                                    <div class="row m-t-20">\n\
-                                        <div class="col-md-12 text-center">\n\
-                                            <br>\n\
-                                            <label>Firma del técnico</label><br>\n\
-                                        </div>\n\
-                                    </div>\n\
-                                    <br>';
-
-                        $('#btnModalConfirmar').addClass('hidden');
-                        $('#btnModalConfirmar').off('click');
-                        _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
-                        _this.validarCamposFirma(ticket, servicio, true, true, '4');
+                        _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                     } else {
-                        _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
+                        _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                     }
                 });
-            }
+            });
+//            } else {
+//                var data = {servicio: servicio};
+//                _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, panel, function (respuesta) {
+//                    if (respuesta === true) {
+//                        _this.validarTecnicoPoliza();
+//
+//                        var html = '<div class="row" m-t-10">\n\
+//                                        <div id="col-md-12 text-center">\n\
+//                                            <div id="campoLapizTecnico"></div>\n\
+//                                        </div>\n\
+//                                    </div>\n\
+//                                    <div class="row m-t-20">\n\
+//                                        <div class="col-md-12 text-center">\n\
+//                                            <br>\n\
+//                                            <label>Firma del técnico</label><br>\n\
+//                                        </div>\n\
+//                                    </div>\n\
+//                                    <br>';
+//
+//                        $('#btnModalConfirmar').addClass('hidden');
+//                        $('#btnModalConfirmar').off('click');
+//                        _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
+//                        _this.validarCamposFirma(ticket, servicio, true, true, '4');
+//                    } else {
+//                        _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
+//                    }
+//                });
+//            }
         } else {
             _this.mostrarMensaje('.errorGeneralServicioSinClasificar', false, 'Debes llenar el campo Descripción.', 3000);
         }

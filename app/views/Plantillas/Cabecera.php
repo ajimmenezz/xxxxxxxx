@@ -248,6 +248,7 @@
                                     <li><a id="btnInformacionSD" href="javascript:;" >Información SD</a></li>
                                     <li><a id="btnAgregarVueltaCorrectivo" href="javascript:;" >Agregar Vuelta Correctivo</a></li>
                                     <li><a id="btnAgregarVueltaMantenimiento" href="javascript:;" >Agregar Vuelta Mantenimiento</a></li>
+                                    <li><a id="btnAgregarVueltaChecklist" href="javascript:;" >Agregar Vuelta Checklist</a></li>
                                     <li><a id="btnCrearPDFVueltaMantenimiento" href="javascript:;" >Crear PDF Vuelta Mantenimiento</a></li>
                                 <?php } ?>
                                 <li class="divider"></li>

@@ -205,6 +205,17 @@ class Modelo_Tesoreria extends Modelo_Base {
 
         return $consulta;
     }
+    
+    public function vueltasFacturasOutsourcingServicio(string $servicio) {
+        $consulta = $this->consulta('SELECT 
+                                            Vuelta
+                                        FROM
+                                        t_facturacion_outsourcing
+                                        WHERE IdServicio = "' . $servicio . '"
+                                        ORDER BY Id DESC LIMIT 1');
+
+        return $consulta;
+    }
 
     public function guardarViaticosOutsourcing(array $datos) {
         foreach ($datos['viaticos'] as $value) {

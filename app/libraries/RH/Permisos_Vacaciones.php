@@ -282,7 +282,7 @@ class Permisos_Vacaciones extends General {
         $texto .= ' para el día ' . $datosPermisos['fechaPermisoDesde'] . '</p><br><br>
                     <a href="http://adist/'.$carpeta.'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia ' . $asunto, $texto);
-        //$this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoJefe[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoJefe[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
     }
 
     public function cancelarPermiso($idPermiso) {
@@ -570,8 +570,8 @@ class Permisos_Vacaciones extends General {
                 $texto .= '<br>';
             }
             $mensaje = $this->Correo->mensajeCorreo('Ausencia de Personal', $texto);
-            //$respuestaCorreo = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array('hhuerta@siccob.com.mx'), 'Ausencia de Personal', $mensaje);
-        }
-        
+
+            $respuestaCorreo = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array('hhuerta@siccob.com.mx'), 'Ausencia de Personal', $mensaje);
+        }               
     }
 }
