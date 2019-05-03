@@ -705,13 +705,13 @@ class Servicio extends General {
                 . '             <td style="' . $style['td-50'] . '"><h5>' . $destino . '</h5></td>'
                 . '         </tr>'
                 . '     </table>';
-        
+
         if ($htmlDocumentacion !== '') {
             $html .= ' <h4>Documentación del servicio.</h4>'
                     . ' <div class="underline"></div>'
                     . $htmlDocumentacion;
         }
-        
+
         $html .= '</div>';
 
         if ($optionEquipos !== '') {
@@ -2849,13 +2849,24 @@ class Servicio extends General {
                                             FROM t_servicios_ticket
                                             WHERE Id = "' . $datos['servicio'] . '"');
 
-        $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio[0]['Folio']);
+        if ($folio[0]['Folio'] !== '0' || $folio[0]['Folio'] !== NULL) {
+            $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio[0]['Folio']);
 
-        if (empty($vueltasFacturasOutsourcing)) {
-            $vuelta = '1';
+            if (empty($vueltasFacturasOutsourcing)) {
+                $vuelta = '1';
+            } else {
+                $numeroVuelta = (int) $vueltasFacturasOutsourcing[0]['Vuelta'];
+                $vuelta = $numeroVuelta + 1;
+            }
         } else {
-            $numeroVuelta = (int) $vueltasFacturasOutsourcing[0]['Vuelta'];
-            $vuelta = $numeroVuelta + 1;
+            $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($datos['servicio']);
+            
+            if (empty($vueltasFacturasOutsourcingServicio)) {
+                $vuelta = '1';
+            } else {
+                $numeroVuelta = (int) $vueltasFacturasOutsourcingServicio[0]['Vuelta'];
+                $vuelta = $numeroVuelta + 1;
+            }
         }
 
         $idFacturacionOutSourcing = $this->DBS->setServicioId('t_facturacion_outsourcing', array(
