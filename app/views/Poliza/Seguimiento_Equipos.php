@@ -118,3 +118,19 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalSolicitarCotizacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <div id="error-in-modal"></div>
+                <button id="btnCancelarSolicitarCotizacion" type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
+                <button id="btnAceptarSolicitarCotizacion" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Solicitar</button>
+            </div>
+        </div>
+    </div>
+</div>

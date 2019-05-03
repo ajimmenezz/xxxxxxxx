@@ -934,6 +934,46 @@ $(function () {
         var panel = arguments[2];
 
         evento.enviarEvento('Seguimiento/crearDatosCotizarOpcionRevision', data, panel, function (respuesta) {
+            evento.iniciarModal('#modalSolicitarCotizacion', 'Solicitar Cotización', respuesta.modal);
+            $('input[type=radio][name=cotizacion]').change(function () {
+                switch (this.value) {
+                    case '1':
+                        $('#equipoCompleto').removeClass('hidden');
+                        $('#componentes').addClass('hidden');
+                        break;
+                    case '2':
+                        $('#componentes').removeClass('hidden');
+                        $('#equipoCompleto').addClass('hidden');
+                        break;
+                    
+                }
+            });
+            $("#btnAceptarSolicitarCotizacion").off("click");
+            $("#btnAceptarSolicitarCotizacion").on("click", function () {
+                var radioValue = $("input[name='cotizacion']:checked").val();
+                var datosCotizarComp = [];
+                
+                var informacionCotizacion = $('#data-table-solicitar-componentes').DataTable().rows().data();
+                for (var index = 0; index < informacionCotizacion.length; index++) {
+                    datosCotizarComp.push({'componente':informacionCotizacion[index][0], 'cantidad':document.getElementById("inputCantidad"+index).value});
+                }
+                if (radioValue == 1) {
+                    data['componentes'] = '';
+                    datosCotizar = {'servicio': data};
+                } else {
+                    data['componentes'] = datosCotizarComp;
+                    datosCotizar = {'servicio': data};
+                }
+                evento.enviarEvento('Seguimiento/enviarDatosCotizarOpcionRevision', datosCotizar, panel, function (respuesta) {
+                    if (respuesta) {
+                        location.reload();
+                    } else {
+                        evento.mostrarMensaje('.errorModalSolicitarCotizacion', false, 'Hubo un problema con la solicitud.', 3000);
+                    }
+                });
+            });
+        });
+        /*evento.enviarEvento('Seguimiento/crearDatosCotizarOpcionRevision', data, panel, function (respuesta) {
             if (respuesta.code === 200) {
                 vistasDeFormularios(respuesta.datos);
                 incioEtiquetas();
@@ -941,7 +981,7 @@ $(function () {
                 eventosComentarios(idTabla, respuesta.idServicio);
                 cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
             }
-        });
+        });*/
     }
 
     var terminarSeleccion = function () {

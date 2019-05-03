@@ -392,6 +392,9 @@ class Controller_Seguimiento extends Base {
             case 'crearDatosCotizarOpcionRevision':
                 $resultado = $this->Seguimientos->createDataQuoteFromRevisionOption($this->input->post());
                 break;
+            case 'enviarDatosCotizarOpcionRevision':
+                $resultado = $this->Seguimientos->checkInsertSicsa($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
