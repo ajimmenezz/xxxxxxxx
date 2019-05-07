@@ -6,6 +6,9 @@ if (!empty($datosSolicitudGuia)) {
         $fecha = $value['Fecha'];
         $mostrarSelect = "hidden";
         $mostrarInput = "";
+        $mostrarSelectGuia = "hidden";
+        $mostarInputGuia = '';
+
         if (!empty($value['ArchivosEnvio'])) {
             $archivo = $value['ArchivosEnvio'];
             $mostrarInputFile = "";
