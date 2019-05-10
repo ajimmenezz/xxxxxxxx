@@ -379,6 +379,11 @@ $(function () {
             var fecha = $('#fechaValidacion').val();
             var evidencia = $('#evidenciaEnvioGuia').val();
             var idServicio = $('#inputServicio').attr('data-idServicio');
+
+            if (guia === '') {
+                guia = $('#guiaColocada').val();
+            }
+            
             var datos = {'IdPaqueteria': paqueteria, 'Guia': guia, 'Fecha': fecha, 'idServicio': idServicio};
 
             if (evento.validarFormulario('#formEnvioAlmacen')) {
@@ -397,7 +402,6 @@ $(function () {
                         eventosComentarios(respuesta.idTabla, respuesta.idServicio);
                     });
                 }
-
             } else {
                 evento.mostrarMensaje("#errorFormularioEnvio", false, "Ingresa los datos solicitados", 4000);
             }
@@ -945,17 +949,17 @@ $(function () {
                         $('#componentes').removeClass('hidden');
                         $('#equipoCompleto').addClass('hidden');
                         break;
-                    
+
                 }
             });
             $("#btnAceptarSolicitarCotizacion").off("click");
             $("#btnAceptarSolicitarCotizacion").on("click", function () {
                 var radioValue = $("input[name='cotizacion']:checked").val();
                 var datosCotizarComp = [];
-                
+
                 var informacionCotizacion = $('#data-table-solicitar-componentes').DataTable().rows().data();
                 for (var index = 0; index < informacionCotizacion.length; index++) {
-                    datosCotizarComp.push({'componente':informacionCotizacion[index][0], 'cantidad':document.getElementById("inputCantidad"+index).value});
+                    datosCotizarComp.push({'componente': informacionCotizacion[index][0], 'cantidad': document.getElementById("inputCantidad" + index).value});
                 }
                 if (radioValue == 1) {
                     data['componentes'] = '';
@@ -974,14 +978,14 @@ $(function () {
             });
         });
         /*evento.enviarEvento('Seguimiento/crearDatosCotizarOpcionRevision', data, panel, function (respuesta) {
-            if (respuesta.code === 200) {
-                vistasDeFormularios(respuesta.datos);
-                incioEtiquetas();
-                eventosGenerales(idTabla, respuesta.idServicio);
-                eventosComentarios(idTabla, respuesta.idServicio);
-                cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
-            }
-        });*/
+         if (respuesta.code === 200) {
+         vistasDeFormularios(respuesta.datos);
+         incioEtiquetas();
+         eventosGenerales(idTabla, respuesta.idServicio);
+         eventosComentarios(idTabla, respuesta.idServicio);
+         cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+         }
+         });*/
     }
 
     var terminarSeleccion = function () {

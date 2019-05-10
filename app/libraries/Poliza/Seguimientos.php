@@ -1121,10 +1121,10 @@ class Seguimientos extends General {
                     return $this->DBS->insertar('t_servicios_ticket', $arrayInsertCotizacion);
                 }
             }
-        }else{
+        } else {
             $datosretorno = array();
-            foreach($datos['componentes'] as $value){
-                if($value['cantidad'] > 0){
+            foreach ($datos['componentes'] as $value) {
+                if ($value['cantidad'] > 0) {
 
                     $arrayDatosCotizacion = [
                         'SD' => $otherData[0]['Folio'],
@@ -1137,9 +1137,9 @@ class Seguimientos extends General {
                         'Falla' => $otherData[0]['Falla'],
                         'Link' => 'http://siccob.solutions/Detalles/Servicio/' . $datos['servicio']
                     ];
-    
+
                     $insertSicsa = $this->MSicsa->insertaCotizacion($arrayDatosCotizacion);
-    
+
                     if ($insertSicsa['code'] == 200) {
                         $arrayInsertCotizacion = [
                             'Ticket' => $otherData[0]['Ticket'],
@@ -1154,7 +1154,7 @@ class Seguimientos extends General {
                             'Descripcion' => 'Cotización de ' . $arrayDatosCotizacion['Observaciones'],
                             'IdServicioOrigen' => $datos['servicio']
                         ];
-    
+
                         $successfulInsert = $this->DBS->insertar('t_servicios_ticket', $arrayInsertCotizacion);
                     }
                 }
@@ -5254,9 +5254,11 @@ class Seguimientos extends General {
         $sdTechnicalList = json_decode($sdTechnicalList);
         $datosAllab = $this->DBP->consultaEquiposAllab($dataFindTechnicalId['idService']);
 
-        foreach ($sdTechnicalList->operation->details as $key => $value) {
-            if ($datosAllab[0]['NombreUsuario'] . ' - Siccob' === $value->TECHNICIANNAME) {
-                $idSD = $value->TECHNICIANID;
+        if (isset($sdTechnicalList->operation->details)) {
+            foreach ($sdTechnicalList->operation->details as $key => $value) {
+                if ($datosAllab[0]['NombreUsuario'] . ' - Siccob' === $value->TECHNICIANNAME) {
+                    $idSD = $value->TECHNICIANID;
+                }
             }
         }
 
@@ -5324,31 +5326,31 @@ class Seguimientos extends General {
     public function createDataQuoteFromRevisionOption(array $dataQuoteFromRevisionOption) {
         $consulta['infoSolicitud'] = $this->DBP->consultaEquiposAllab($dataQuoteFromRevisionOption['servicio']);
         $consulta['infoEquipo'] = $this->DBS->consulta('SELECT modelo(IdModelo) Equipo FROM t_correctivos_generales 
-                        WHERE IdServicio ="'.$dataQuoteFromRevisionOption['servicio'].'"');
+                        WHERE IdServicio ="' . $dataQuoteFromRevisionOption['servicio'] . '"');
         $consulta['componentes'] = $this->DBS->consulta('SELECT Nombre FROM cat_v3_componentes_equipo 
                         WHERE IdModelo = "300" AND Flag = 1');
-        
-        return array('modal' => parent::getCI()->load->view('Poliza/Modal/modalSolicitarCotizacion', $consulta, TRUE));
-        /*$result = $this->insercionSicsa($dataQuoteFromRevisionOption);
 
-        if (!empty($result)) {
-            $forms = $this->mostrarVistaPorUsuario(array('idServicio' => $dataQuoteFromRevisionOption['servicio'], 'idEstatus' => $dataQuoteFromRevisionOption['servicio']));
-            $message = ['mensaje' => "Es correcto.",
-                'datos' => $forms,
-                'idServicio' => $dataQuoteFromRevisionOption['servicio'],
-                'code' => 200];
-            return $message;
-        } else {
-            $message = ['mensaje' => $result,
-                'code' => 400];
-            return $message;
-        }*/
+        return array('modal' => parent::getCI()->load->view('Poliza/Modal/modalSolicitarCotizacion', $consulta, TRUE));
+        /* $result = $this->insercionSicsa($dataQuoteFromRevisionOption);
+
+          if (!empty($result)) {
+          $forms = $this->mostrarVistaPorUsuario(array('idServicio' => $dataQuoteFromRevisionOption['servicio'], 'idEstatus' => $dataQuoteFromRevisionOption['servicio']));
+          $message = ['mensaje' => "Es correcto.",
+          'datos' => $forms,
+          'idServicio' => $dataQuoteFromRevisionOption['servicio'],
+          'code' => 200];
+          return $message;
+          } else {
+          $message = ['mensaje' => $result,
+          'code' => 400];
+          return $message;
+          } */
     }
 
-    public function checkInsertSicsa(array $dataQuotation){
-        
+    public function checkInsertSicsa(array $dataQuotation) {
+
         $result = $this->insercionSicsa($dataQuotation['servicio']);
-        
+
         return $result;
     }
 
@@ -5409,8 +5411,6 @@ class Seguimientos extends General {
                     $viewHtml .= $this->validationView(array('IdServicio' => $dataCreateTextSD['service']));
                     $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
                     $viewHtml .= $this->laboratoryView(array('Id' => $datosAllab[0]['Id']));
-
-
                 } elseif ($dataCreateTextSD['movementType'] === '2') {
                     $viewHtml .= $this->laboratoryView(array('Id' => $datosAllab[0]['Id']));
                 }
@@ -5437,6 +5437,7 @@ class Seguimientos extends General {
     private function validationView(array $dataValidationView) {
         $host = $_SERVER['SERVER_NAME'];
         $viewHtml = '';
+        $counter = 0;
         $dataTechnicalShipment = $this->DBP->consultaSolicitudGuiaTecnico($dataValidationView['IdServicio']);
 
         if ($dataTechnicalShipment[0]['Paqueteria'] !== NULL) {
@@ -5462,6 +5463,7 @@ class Seguimientos extends General {
     private function storeView(array $dataStoreView) {
         $host = $_SERVER['SERVER_NAME'];
         $viewHtml = '';
+        $counter = 0;
         $dataWarehouse = $this->DBP->consultaRecepcionAlmacen(array('Id' => $dataStoreView['Id'], 'IdDepartamento' => $dataStoreView['IdDepartamento'], 'IdEstatus' => $dataStoreView['IdEstatus'], 'IdServicio' => $dataStoreView['IdServicio']));
 
         $viewHtml .= '<div>**Recepción por Almacén**</div>';
@@ -5484,6 +5486,7 @@ class Seguimientos extends General {
     private function laboratoryView(array $dataLaboratoryView) {
         $host = $_SERVER['SERVER_NAME'];
         $viewHtml = '';
+        $counter = 0;
         $dataRecord = $this->DBP->consultaComentariosAdjuntosSolicitudEquipo($dataLaboratoryView['Id']);
 
         $viewHtml .= '<div>**Recepción por Laboratorio**</div>';
@@ -5511,6 +5514,7 @@ class Seguimientos extends General {
     private function logisticsView(array $dataLogisticsView) {
         $host = $_SERVER['SERVER_NAME'];
         $viewHtml = '';
+        $counter = 0;
         $dataLogistica = $this->DBP->consultaEnvioLogistica(array('Id' => $dataLogisticsView['Id'], 'IdServicio' => $dataLogisticsView['IdServicio']));
         $viewHtml .= '<div>**Recepción por Logística**</div>';
 
@@ -5557,18 +5561,22 @@ class Seguimientos extends General {
     private function requestGuideView(array $dataRequestGuideView) {
         $host = $_SERVER['SERVER_NAME'];
         $viewHtml = '';
+        $counter = 0;
+
         $dataTechnicalShipment = $this->DBP->consultaSolicitudGuiaTecnico($dataRequestGuideView['service']);
 
         $viewHtml .= '<div>Guia: ' . $dataTechnicalShipment[0]['Guia'] . '</div>';
         $viewHtml .= '<div>Comentarios: ' . $dataTechnicalShipment[0]['ComentariosSolicitud'] . '</div>';
-        $viewHtml .= '<div>Evidencia:</div>';
 
-        $evidence = explode(',', $dataTechnicalShipment[0]['ArchivosSolicitud']);
+        if ($dataTechnicalShipment[0]['ArchivosSolicitud'] !== NULL) {
+            $viewHtml .= '<div>Evidencia:</div>';
+            $evidence = explode(',', $dataTechnicalShipment[0]['ArchivosSolicitud']);
 
-        foreach ($evidence as $value) {
-            if ($value != '') {
-                $counter++;
-                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
+            foreach ($evidence as $value) {
+                if ($value != '') {
+                    $counter++;
+                    $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
+                }
             }
         }
 
@@ -5578,6 +5586,8 @@ class Seguimientos extends General {
     private function technicalReceptionView(array $dataTechnicalReceptionView) {
         $host = $_SERVER['SERVER_NAME'];
         $viewHtml = '';
+        $counter = 0;
+
         $dataTechnicalReception = $this->DBP->consultaRecepcionAlmacen(array('Id' => $dataTechnicalReceptionView['Id'], 'IdDepartamento' => $dataTechnicalReceptionView['IdDepartamento'], 'IdEstatus' => $dataTechnicalReceptionView['IdEstatus'], 'IdServicio' => $dataTechnicalReceptionView['IdServicio']));
 
         $viewHtml .= '<div>**Recepción por Técnico**</div>';
