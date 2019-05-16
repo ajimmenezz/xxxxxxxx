@@ -42,19 +42,37 @@
             <div class="col-md-4">          
                 <div class="form-group">
                     <label for="folio">Folio Service Desk: </label>
-                    <p><strong><?php echo $datosSD->WORKORDERID; ?></strong></p>
+                    <?php
+                    $folio = 'Solicitud no entra bajo su ámbito permitido. Por lo tanto usted no está autorizado para actualizar la misma';
+                    if (isset($datosSD->WORKORDERID)) {
+                        $folio = $datosSD->WORKORDERID;
+                    }
+                    ?>
+                    <p><strong><?php echo $folio; ?></strong></p>
                 </div>    
             </div> 
             <div class="col-md-4">          
                 <div class="form-group">
                     <label for="estatus">Estatus Service Desk: </label>
-                    <p><strong><?php echo $datosSD->STATUS; ?></strong></p>
+                    <?php
+                    $estatus = 'Solicitud no entra bajo su ámbito permitido. Por lo tanto usted no está autorizado para actualizar la misma';
+                    if (isset($datosSD->STATUS)) {
+                        $estatus = $datosSD->STATUS;
+                    }
+                    ?>
+                    <p><strong><?php echo $estatus; ?></strong></p>
                 </div>    
             </div>
             <div class="col-md-4">          
                 <div class="form-group">
                     <label for="prioridad">Prioridad: </label>
-                    <p><strong><?php echo $datosSD->PRIORITY; ?></strong></p>
+                    <?php
+                    $prioridad = 'Solicitud no entra bajo su ámbito permitido. Por lo tanto usted no está autorizado para actualizar la misma';
+                    if (isset($datosSD->PRIORITY)) {
+                        $prioridad = $datosSD->PRIORITY;
+                    }
+                    ?>
+                    <p><strong><?php echo $prioridad; ?></strong></p>
                 </div>    
             </div>
         </div>
@@ -62,22 +80,42 @@
             <div class="col-md-4">          
                 <div class="form-group">
                     <label for="creado">Creado Por : </label>
-                    <input type="hidden" id="creator-sd" value="<?php echo $datosSD->CREATEDBY; ?>" />
-                    <input type="hidden" id="requester-sd" value="<?php echo $datosSD->REQUESTER; ?>" />
-                    <p><strong><?php echo $datosSD->CREATEDBY; ?></strong></p>
+                    <?php
+                    $creadoPor = 'Solicitud no entra bajo su ámbito permitido. Por lo tanto usted no está autorizado para actualizar la misma';
+                    if (isset($datosSD->CREATEDBY)) {
+                        $creadoPor = $datosSD->CREATEDBY;
+                        ?>
+                        <input type = "hidden" id = "creator-sd" value = "<?php echo $datosSD->CREATEDBY; ?>" />
+                        <input type = "hidden" id = "requester-sd" value = "<?php echo $datosSD->REQUESTER; ?>" />
+                        <?php
+                    }
+                    ?>
+                    <p><strong><?php echo $creadoPor; ?></strong></p>
                 </div>    
             </div> 
             <div class="col-md-4">          
                 <div class="form-group">
-                    <label for="estatus">Técnico Asignado: </label>                        
-                    <p><strong><?php echo $datosSD->TECHNICIAN; ?></strong></p>
+                    <label for="estatus">Técnico Asignado: </label>
+                    <?php
+                    $tecnico = 'Solicitud no entra bajo su ámbito permitido. Por lo tanto usted no está autorizado para actualizar la misma';
+                    if (isset($datosSD->TECHNICIAN)) {
+                        $tecnico = $datosSD->TECHNICIAN;
+                    }
+                    ?>
+                    <p><strong><?php echo $tecnico; ?></strong></p>
                 </div>    
             </div>
             <div class="col-md-4">          
                 <div class="form-group">
                     <label for="prioridad">Fecha Creación: </label>
+                    <?php
+                    $fechaCracion = 'Solicitud no entra bajo su ámbito permitido. Por lo tanto usted no está autorizado para actualizar la misma';
+                    if (isset($datosSD->CREATEDTIME)) {
+                        $fechaCreacion = date('Y-m-d H:i:s', $datosSD->CREATEDTIME / 1000);
+                    }
+                    ?>
                     <p>
-                        <strong><?php echo date('Y-m-d H:i:s', $datosSD->CREATEDTIME / 1000); ?></strong>
+                        <strong><?php echo $fechaCracion; ?></strong>
                     </p>
                 </div>    
             </div>
@@ -94,7 +132,13 @@
                 <div class="col-md-12">          
                     <div class="form-group">
                         <label for="asunto">Asunto: </label>
-                        <p><strong><?php echo $datosSD->SUBJECT; ?></strong></p>
+                        <?php
+                        $asunto = 'Solicitud no entra bajo su ámbito permitido. Por lo tanto usted no está autorizado para actualizar la misma';
+                        if (isset($datosSD->SUBJECT)) {
+                            $asunto = $datosSD->SUBJECT;
+                        }
+                        ?>
+                        <p><strong><?php echo $asunto; ?></strong></p>
                     </div>    
                 </div>
             </div>
@@ -102,7 +146,13 @@
                 <div class="col-md-12">          
                     <div class="form-group">
                         <label for="Solicitud">Solicitud: </label>
-                        <p><strong><?php echo $datosSD->SHORTDESCRIPTION; ?></strong></p>
+                        <?php
+                        $solicitud = 'Solicitud no entra bajo su ámbito permitido. Por lo tanto usted no está autorizado para actualizar la misma';
+                        if (isset($datosSD->SHORTDESCRIPTION)) {
+                            $solicitud = $datosSD->SHORTDESCRIPTION;
+                        }
+                        ?>
+                        <p><strong><?php echo $solicitud; ?></strong></p>
                     </div>    
                 </div>
             </div>
