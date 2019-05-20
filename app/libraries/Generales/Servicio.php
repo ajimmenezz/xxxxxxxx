@@ -2439,7 +2439,7 @@ class Servicio extends General {
                             tnso.Nota,
                         tnso.Fecha
                     FROM t_notas_solicitudes tnso 
-                    WHERE tnso.IdSolicitud = '" . $idSolicitud . "') AS TABLAS ORDER BY TABLAS.Fecha DESC";
+                    WHERE tnso.IdSolicitud = '" . $idSolicitud . "') AS TABLAS ORDER BY TABLAS.Fecha ASC";
         return $this->DBS->consultaGeneral($sentencia);
     }
 
