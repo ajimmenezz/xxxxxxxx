@@ -2175,10 +2175,20 @@ class ServiciosTicket extends General {
             $cuerentayochoMenos = mdate("%Y-%m-%d %H:%i:%s", strtotime("-48 hour"));
             $serviciosTicket = $this->DBST->consultaGeneral('SELECT * FROM t_servicios_ticket WHERE FechaConclusion <= "' . $cuerentayochoMenos . '" AND IdEstatus = 5');
             foreach ($serviciosTicket as $value) {
-                $censoMantenimiento = $this->DBST->consultaGeneral('SELECT IdTipoServicio FROM adist3_prod.t_servicios_ticket WHERE Id = "' . $value['Id'] . '"');
+                $censoMantenimiento = $this->DBST->consultaGeneral('SELECT IdTipoServicio FROM t_servicios_ticket WHERE Id = "' . $value['Id'] . '"');
                 if ($censoMantenimiento[0]['IdTipoServicio'] !== '11') {
                     if ($censoMantenimiento[0]['IdTipoServicio'] !== '12') {
-                        $this->verificarServicio(array('servicio' => $value['Id'], 'ticket' => $value['Ticket'], 'idSolicitud' => $value['IdSolicitud']));
+                        $serviciosSalas4d = $this->DBST->consultaGeneral('SELECT 
+                                                                                tst.IdTipoServicio
+                                                                            FROM
+                                                                                t_servicios_ticket AS tst
+                                                                            INNER JOIN cat_v3_servicios_departamento AS cvsd
+                                                                             ON cvsd.Id = tst.IdTipoServicio
+                                                                            WHERE cvsd.IdDepartamento = "7"
+                                                                            AND tst.Id = "' . $value['Id'] . '"');
+                        if (empty($serviciosSalas4d)) {
+                            $this->verificarServicio(array('servicio' => $value['Id'], 'ticket' => $value['Ticket'], 'idSolicitud' => $value['IdSolicitud']));
+                        }
                     }
                 }
             }
