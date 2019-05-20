@@ -442,7 +442,19 @@ class Modelo_Salas4D extends Modelo_Base {
                                     count(*) as Total
                                     from t_solicitudes ts 
                                     where " . $condicion . "
-                                    and ts.IdDepartamento = 7
+                                    and (ts.IdDepartamento = 7 or ts.Id in (
+                                            select 
+                                            tst.IdSolicitud
+                                            from 
+                                            t_servicios_ticket tst
+                                            where tst.IdTipoServicio in (
+                                                    select 
+                                                    Id 
+                                                    from cat_v3_servicios_departamento 
+                                                    where IdDepartamento = 7 or concat(',',IdDepartamentos,',') like '%,7,%'
+                                                    )
+                                            )
+                                    )
                                     and ts.IdEstatus <> 6
                                     group by ts.IdEstatus
                                     order by Total desc;");
@@ -475,7 +487,19 @@ class Modelo_Salas4D extends Modelo_Base {
                                     count(*) as Total
                                     from t_solicitudes ts 
                                     where " . $condicion . "
-                                    and ts.IdDepartamento = 7
+                                    and (ts.IdDepartamento = 7 or ts.Id in (
+                                            select 
+                                            tst.IdSolicitud
+                                            from 
+                                            t_servicios_ticket tst
+                                            where tst.IdTipoServicio in (
+                                                    select 
+                                                    Id 
+                                                    from cat_v3_servicios_departamento 
+                                                    where IdDepartamento = 7 or concat(',',IdDepartamentos,',') like '%,7,%'
+                                                    )
+                                            )
+                                    )
                                     and ts.IdEstatus <> 6
                                     group by ts.IdPrioridad
                                     order by Total desc;");
@@ -513,7 +537,14 @@ class Modelo_Salas4D extends Modelo_Base {
                                     from t_solicitudes ts inner join t_servicios_ticket tst
                                     on ts.Id = tst.IdSolicitud
                                     where " . $condicion . "
-                                    and ts.IdDepartamento = 7
+                                    and (ts.IdDepartamento = 7 or tst.IdTipoServicio in (
+                                        select 
+                                        Id 
+                                        from cat_v3_servicios_departamento 
+                                        where IdDepartamento = 7 
+                                        or concat(',',IdDepartamentos,',') like '%,7,%'
+                                        )
+                                    )
                                     and ts.IdEstatus <> 6
                                     and tst.IdEstatus <> 6
                                     group by tst.IdTipoServicio
@@ -556,7 +587,19 @@ class Modelo_Salas4D extends Modelo_Base {
                                     from t_solicitudes ts inner join t_solicitudes_internas tsi
                                     on ts.Id = tsi.IdSolicitud
                                     where " . $condicion . "
-                                    and ts.IdDepartamento = 7 
+                                    and (ts.IdDepartamento = 7 or ts.Id in (
+                                            select 
+                                            tst.IdSolicitud
+                                            from 
+                                            t_servicios_ticket tst
+                                            where tst.IdTipoServicio in (
+                                                    select 
+                                                    Id 
+                                                    from cat_v3_servicios_departamento 
+                                                    where IdDepartamento = 7 or concat(',',IdDepartamentos,',') like '%,7,%'
+                                                    )
+                                            )
+                                    ) 
                                     and ts.IdEstatus <> 6;");
 
         return $consulta;
@@ -630,7 +673,14 @@ class Modelo_Salas4D extends Modelo_Base {
                                     from t_solicitudes ts inner join t_servicios_ticket tst
                                     on ts.Id = tst.IdSolicitud
                                     where " . $condicion . "
-                                    and ts.IdDepartamento = 7
+                                    and (ts.IdDepartamento = 7 or tst.IdTipoServicio in (
+                                        select 
+                                        Id 
+                                        from cat_v3_servicios_departamento 
+                                        where IdDepartamento = 7 
+                                        or concat(',',IdDepartamentos,',') like '%,7,%'
+                                        )
+                                    )
                                     and ts.IdEstatus <> 6 
                                     and tst.IdEstatus <> 6  
                                     group by tst.IdEstatus
@@ -681,7 +731,14 @@ class Modelo_Salas4D extends Modelo_Base {
                                     from t_solicitudes ts inner join t_servicios_ticket tst
                                     on ts.Id = tst.IdSolicitud
                                     where " . $condicion . "
-                                    and ts.IdDepartamento = 7
+                                    and (ts.IdDepartamento = 7 or tst.IdTipoServicio in (
+                                        select 
+                                        Id 
+                                        from cat_v3_servicios_departamento 
+                                        where IdDepartamento = 7 
+                                        or concat(',',IdDepartamentos,',') like '%,7,%'
+                                        )
+                                    )
                                     and ts.IdEstatus <> 6 
                                     and tst.IdEstatus <> 6
                                     group by tst.IdSucursal
@@ -732,7 +789,14 @@ class Modelo_Salas4D extends Modelo_Base {
                                     from t_solicitudes ts inner join t_servicios_ticket tst
                                     on ts.Id = tst.IdSolicitud
                                     where " . $condicion . "
-                                    and ts.IdDepartamento = 7
+                                    and (ts.IdDepartamento = 7 or tst.IdTipoServicio in (
+                                        select 
+                                        Id 
+                                        from cat_v3_servicios_departamento 
+                                        where IdDepartamento = 7 
+                                        or concat(',',IdDepartamentos,',') like '%,7,%'
+                                        )
+                                    )
                                     and ts.IdEstatus <> 6
                                     and tst.IdEstatus <> 6
                                     group by tst.Atiende
@@ -794,7 +858,14 @@ class Modelo_Salas4D extends Modelo_Base {
                                     where " . $condicion . "
                                      and ts.IdEstatus <> 6
                                     and tst.IdEstatus <> 6    
-                                    and ts.IdDepartamento = 7;");
+                                    and (ts.IdDepartamento = 7 or tst.IdTipoServicio in (
+                                        select 
+                                        Id 
+                                        from cat_v3_servicios_departamento 
+                                        where IdDepartamento = 7 
+                                        or concat(',',IdDepartamentos,',') like '%,7,%'
+                                        )
+                                    );");
 
         return $consulta;
     }
