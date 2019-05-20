@@ -167,12 +167,12 @@ class ServiciosTicket extends General {
 
     public function getServiciosEnValidacion() {
         $usuario = $this->Usuario->getDatosUsuario();
-        $permisoValidacion = 'AND ts.Solicita = "' . $usuario['Id'] . '" AND tst.IdTipoServicio != "11"';
+        $permisoValidacion = 'AND ts.Solicita = "' . $usuario['Id'] . '" AND tst.IdTipoServicio != "11" AND cp.IdDepartamento != "7"';
 
         if (in_array('79', $usuario['PermisosAdicionales']) || in_array('79', $usuario['Permisos'])) {
             $permisoValidacion = '';
         } elseif (in_array('80', $usuario['PermisosAdicionales']) || in_array('80', $usuario['Permisos'])) {
-            $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where cp.IdDepartamento = 11))) ';
+            $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where cp.IdDepartamento = 11) AND cp.IdDepartamento != "7")) ';
         } elseif (in_array('82', $usuario['Permisos']) || in_array('82', $usuario['PermisosAdicionales'])) {
             $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where cp.IdDepartamento = 7))) ';
         }
