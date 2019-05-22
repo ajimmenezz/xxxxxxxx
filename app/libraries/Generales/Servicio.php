@@ -2849,18 +2849,29 @@ class Servicio extends General {
                                             FROM t_servicios_ticket
                                             WHERE Id = "' . $datos['servicio'] . '"');
 
-        if ($folio[0]['Folio'] !== '0' || $folio[0]['Folio'] !== NULL) {
-            $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio[0]['Folio']);
+        if ($folio[0]['Folio'] !== NULL) {
+            if ($folio[0]['Folio'] !== '0') {
+                $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio[0]['Folio']);
 
-            if (empty($vueltasFacturasOutsourcing)) {
-                $vuelta = '1';
+                if (empty($vueltasFacturasOutsourcing)) {
+                    $vuelta = '1';
+                } else {
+                    $numeroVuelta = (int) $vueltasFacturasOutsourcing[0]['Vuelta'];
+                    $vuelta = $numeroVuelta + 1;
+                }
             } else {
-                $numeroVuelta = (int) $vueltasFacturasOutsourcing[0]['Vuelta'];
-                $vuelta = $numeroVuelta + 1;
+                $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($datos['servicio']);
+
+                if (empty($vueltasFacturasOutsourcingServicio)) {
+                    $vuelta = '1';
+                } else {
+                    $numeroVuelta = (int) $vueltasFacturasOutsourcingServicio[0]['Vuelta'];
+                    $vuelta = $numeroVuelta + 1;
+                }
             }
         } else {
             $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($datos['servicio']);
-            
+
             if (empty($vueltasFacturasOutsourcingServicio)) {
                 $vuelta = '1';
             } else {
