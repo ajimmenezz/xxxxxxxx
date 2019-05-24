@@ -336,6 +336,9 @@ class Secciones extends General {
             case 'Compras/Seguimiento':
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('15');
                 break;
+            case 'Compras/Solicitud_Compra':
+                $datos['Clientes'] = $this->Gapsi->getClientes();
+                break;
             case 'Compras/Ordenes_Compra':
                 $datos['ListaOrdenesCompra'] = $this->Compras->consultaListaOrdenesCompra();
                 break;
