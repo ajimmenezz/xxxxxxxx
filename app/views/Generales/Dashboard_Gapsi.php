@@ -87,3 +87,5 @@
         
     </div>   
 </div>
+
+<div id="dashboardGapsiFilters" class="content hidden"></div>
