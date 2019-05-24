@@ -119,7 +119,8 @@ $config['Secciones'] = array(
         'Dashboard-Co' => 'Dashboard',
         'Seguimiento-Compras' => 'Seguimiento',
         'Ordenes-Compras' => 'Ordenes_Compra',
-        'Facturas-OC' => 'Facturacion_OC'
+        'Facturas-OC' => 'Facturacion_OC',
+        'Solicitud-Compra' => 'Solicitud_Compra'
     ),
     'MesaDeAyuda' => array(
         'Dashboard-Mesa' => 'Dashboard',
