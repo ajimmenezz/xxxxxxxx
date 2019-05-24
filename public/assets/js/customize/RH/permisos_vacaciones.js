@@ -23,13 +23,14 @@ $(function () {
     tabla.generaTablaPersonal('#data-table-permisos-ausencia', null, null, true, true);
     //Inicializa funciones de la plantilla
     App.init();
-
+    
     $('#inputFechaDocumento').datepicker({
         format: 'yyyy-mm-dd'
     });
     $('#inputFechaDocumento').datepicker("setDate", new Date());
     $('#inputFechaPermisoDesde').datepicker({
         format: 'yyyy-mm-dd',
+        daysOfWeekDisabled: [0,6],
         startDate: new Date()
     });
     $('#selectSolicitudHora').timepicker();
@@ -39,6 +40,7 @@ $(function () {
         $('#inputFechaPermisoHasta').val(diaDesde);
         $('#inputFechaPermisoHasta').datepicker({
             format: 'yyyy-mm-dd',
+            daysOfWeekDisabled: [0,6],
             startDate: diaDesde
         });
     });
@@ -90,10 +92,10 @@ $(function () {
         if($('#selectTipoAusencia').val() == 3 && $('#selectMotivoAusencia').val() == 1){
             $('#inputDescuento').val('0');
             $('#Permisos').on('change', function () {
-                const date1 = new Date($('#inputFechaPermisoDesde').val());
-                const date2 = new Date($('#inputFechaPermisoHasta').val());
-                const diffTime = Math.abs(date2.getTime() - date1.getTime());
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                date1 = new Date($('#inputFechaPermisoDesde').val());
+                date2 = new Date($('#inputFechaPermisoHasta').val());
+                diffTime = Math.abs(date2.getTime() - date1.getTime());
+                diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 var totalDescuentoDias;
                 switch(diffDays){
                     case 0:
@@ -237,7 +239,7 @@ $(function () {
 
         var informacionPermisoAusencia = $('#data-table-permisos-ausencia').DataTable().row(this).data();
         
-        if (informacionPermisoAusencia[7] == "Pendiente por Autorizar") {
+        if (informacionPermisoAusencia[7] === "Pendiente por Autorizar") {
             var data = {
                 idPermiso: informacionPermisoAusencia[0]
             }
@@ -257,7 +259,8 @@ $(function () {
                         });
                         $('#inputFechaDocumentoAct').datepicker("setDate", new Date());
                         $('#inputFechaPermisoDesdeAct').datepicker({
-                            format: 'yyyy-mm-dd'
+                            format: 'yyyy-mm-dd',
+                            daysOfWeekDisabled: [0,6]
                         });
                         $('#selectSolicitudHoraAct').timepicker();
                         $('#inputFechaPermisoHastaAct').on('click', function () {
@@ -265,6 +268,7 @@ $(function () {
                             $('#inputFechaPermisoHastaAct').val(diaDesde);
                             $('#inputFechaPermisoHastaAct').datepicker({
                                 format: 'yyyy-mm-dd',
+                                daysOfWeekDisabled: [0,6],
                                 startDate: diaDesde
                             });
                         });
@@ -312,10 +316,10 @@ $(function () {
                             if($('#selectTipoAusenciaAct').val() == 3 && $('#selectMotivoAusenciaAct').val() == 1){
                                 $('#inputDescuentoAct').val('0');
                                 $('#ActualizarPermiso').on('change', function () {
-                                    const date1 = new Date($('#inputFechaPermisoDesdeAct').val());
-                                    const date2 = new Date($('#inputFechaPermisoHastaAct').val());
-                                    const diffTime = Math.abs(date2.getTime() - date1.getTime());
-                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                    date1 = new Date($('#inputFechaPermisoDesdeAct').val());
+                                    date2 = new Date($('#inputFechaPermisoHastaAct').val());
+                                    diffTime = Math.abs(date2.getTime() - date1.getTime());
+                                    diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                                     var totalDescuentoDias;
                                     switch(diffDays){
                                         case 0:
