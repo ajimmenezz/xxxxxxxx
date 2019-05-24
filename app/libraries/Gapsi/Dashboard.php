@@ -4,7 +4,7 @@ namespace Librerias\Gapsi;
 
 use Controladores\Controller_Datos_Usuario as General;
 
-class Dashboard extends General {
+class ProyectoGapsi extends General {
 
     private $DBG;
 

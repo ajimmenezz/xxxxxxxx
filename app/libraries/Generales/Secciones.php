@@ -514,7 +514,7 @@ class Secciones extends General {
                 break;
             case 'Generales/Dashboard_Gapsi':
                 $datos['Proyectos'] = $this->DashboardGapsi->showAllProjects();
-                $datos['TiposProyectos'] = $this->DashboardGapsi->showAllProjects();
+                $datos['TiposProyectos'] = $this->DashboardGapsi->showProjectTypes();
                 break;
             default:
                 break;
