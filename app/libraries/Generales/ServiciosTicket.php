@@ -2203,7 +2203,7 @@ class ServiciosTicket extends General {
                                                 nombreUsuario(IdUSuario) AS Usuario
                                                 FROM t_servicios_avance tsa
                                                 WHERE IdServicio = "' . $servicio . '"
-                                                ORDER BY Fecha DESC');
+                                                ORDER BY Fecha ASC');
         foreach ($data as $key => $item) {
             $tablaEquipos = $this->DBST->consultaGeneral('SELECT 
                                                         tsae.IdItem,
