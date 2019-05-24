@@ -26,7 +26,8 @@ $config['Secciones'] = array(
         'Solicitud-Editar' => 'Solicitud_Editar',
         'Minuta_Resumen' => 'Minuta_Resumen',
         'Archivo_Nuevo' => 'Archivo_Nuevo',
-        'Archivo_Resumen' => 'Archivo_Resumen'
+        'Archivo_Resumen' => 'Archivo_Resumen',
+        'Dashboard_Gapsi' => 'Dashboard_Gapsi'
     ),
     'Administrador' => array(
         'Dashboard-Administrador' => 'Dashboard',
