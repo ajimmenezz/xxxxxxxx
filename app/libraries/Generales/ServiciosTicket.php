@@ -172,10 +172,11 @@ class ServiciosTicket extends General {
         if (in_array('79', $usuario['PermisosAdicionales']) || in_array('79', $usuario['Permisos'])) {
             $permisoValidacion = '';
         } elseif (in_array('80', $usuario['PermisosAdicionales']) || in_array('80', $usuario['Permisos'])) {
-            $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where cp.IdDepartamento = 11))) ';
-        } elseif (in_array('82', $usuario['Permisos']) || in_array('82', $usuario['PermisosAdicionales'])) {
-            $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where cp.IdDepartamento = 7))) ';
-        }
+            $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where cp.IdDepartamento = 11) AND cp.IdDepartamento != "7")) ';
+        } 
+//elseif (in_array('82', $usuario['Permisos']) || in_array('82', $usuario['PermisosAdicionales'])) {
+//            $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where cp.IdDepartamento = 7))) ';
+//        }
 
         return $this->DBST->getServicios('
                 SELECT 
@@ -2175,10 +2176,20 @@ class ServiciosTicket extends General {
             $cuerentayochoMenos = mdate("%Y-%m-%d %H:%i:%s", strtotime("-48 hour"));
             $serviciosTicket = $this->DBST->consultaGeneral('SELECT * FROM t_servicios_ticket WHERE FechaConclusion <= "' . $cuerentayochoMenos . '" AND IdEstatus = 5');
             foreach ($serviciosTicket as $value) {
-                $censoMantenimiento = $this->DBST->consultaGeneral('SELECT IdTipoServicio FROM adist3_prod.t_servicios_ticket WHERE Id = "' . $value['Id'] . '"');
+                $censoMantenimiento = $this->DBST->consultaGeneral('SELECT IdTipoServicio FROM t_servicios_ticket WHERE Id = "' . $value['Id'] . '"');
                 if ($censoMantenimiento[0]['IdTipoServicio'] !== '11') {
                     if ($censoMantenimiento[0]['IdTipoServicio'] !== '12') {
-                        $this->verificarServicio(array('servicio' => $value['Id'], 'ticket' => $value['Ticket'], 'idSolicitud' => $value['IdSolicitud']));
+                        $serviciosSalas4d = $this->DBST->consultaGeneral('SELECT 
+                                                                                tst.IdTipoServicio
+                                                                            FROM
+                                                                                t_servicios_ticket AS tst
+                                                                            INNER JOIN cat_v3_servicios_departamento AS cvsd
+                                                                             ON cvsd.Id = tst.IdTipoServicio
+                                                                            WHERE cvsd.IdDepartamento = "7"
+                                                                            AND tst.Id = "' . $value['Id'] . '"');
+                        if (empty($serviciosSalas4d)) {
+                            $this->verificarServicio(array('servicio' => $value['Id'], 'ticket' => $value['Ticket'], 'idSolicitud' => $value['IdSolicitud']));
+                        }
                     }
                 }
             }
@@ -2192,7 +2203,7 @@ class ServiciosTicket extends General {
                                                 nombreUsuario(IdUSuario) AS Usuario
                                                 FROM t_servicios_avance tsa
                                                 WHERE IdServicio = "' . $servicio . '"
-                                                ORDER BY Fecha DESC');
+                                                ORDER BY Fecha ASC');
         foreach ($data as $key => $item) {
             $tablaEquipos = $this->DBST->consultaGeneral('SELECT 
                                                         tsae.IdItem,

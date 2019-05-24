@@ -6,6 +6,9 @@ if (!empty($datosSolicitudGuia)) {
         $fecha = $value['Fecha'];
         $mostrarSelect = "hidden";
         $mostrarInput = "";
+        $mostrarSelectGuia = "hidden";
+        $mostarInputGuia = '';
+
         if (!empty($value['ArchivosEnvio'])) {
             $archivo = $value['ArchivosEnvio'];
             $mostrarInputFile = "";
@@ -99,7 +102,7 @@ if ($estatus['IdEstatus'] === '26') {
                     </div>
                     <div class="form-group <?php echo $mostarInputGuia ?>">
                         <label class="f-w-600 f-s-13"># Guía *</label>
-                        <input type="text" class="form-control" placeholder="<?php echo $guia ?>" disabled/>
+                        <input type="text" class="form-control" id="guiaColocada" value="<?php echo $guia ?>" disabled/>
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-6 col-xs-12">
