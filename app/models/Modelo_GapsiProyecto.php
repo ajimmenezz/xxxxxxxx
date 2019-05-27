@@ -4,7 +4,7 @@ namespace Modelos;
 
 use Librerias\Modelos\Base as Modelo_Base;
 
-class Modelo_Gapsi_Proyecto extends Modelo_Base {
+class Modelo_GapsiProyecto extends Modelo_Base {
 
     public function getProjects() {
         $query = parent::connectDBGapsi()->query("SELECT
