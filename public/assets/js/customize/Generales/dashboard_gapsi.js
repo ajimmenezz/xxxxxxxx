@@ -17,8 +17,8 @@ $(function () {
     //Evento para mostrar la ayuda del sistema
     evento.mostrarAyuda('Ayuda_Proyectos');
     
-    tabla.generaTablaPersonal('#data-table-tipo-proyectos', null, null, true, true, [[1, 'desc']]);
-    tabla.generaTablaPersonal('#data-table-proyectos', null, null, true, true);
+    tabla.generaTablaPersonal('#data-table-tipo-proyectos', null, null, true, true);
+    tabla.generaTablaPersonal('#data-table-proyectos', null, null, true, true, [], null, '<frt>', false);
 
     //Inicializa funciones de la plantilla
     App.init();
@@ -35,7 +35,7 @@ $(function () {
 //    setChartF();
 });
 
-var chart, data, options;
+var chartDashboard, dataDashboard, optionsDashboard;
 function setGraph(){
     google.charts.load('current', {packages: ['corechart', 'bar']});
     google.charts.setOnLoadCallback(setGraphDashboard);
@@ -48,60 +48,52 @@ function setGraphDashboard() {
 
     function drawChart() {
 
-        data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Proyectos');
+        dataDashboard = new google.visualization.DataTable();
+        dataDashboard.addColumn('string', 'Topping');
+        dataDashboard.addColumn('number', 'Proyectos');
         $("#data-table-tipo-proyectos").ready(function () {
         var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
             for (var i = 0; i < tableInfoTypeProyects.length; i++) {
-                data.addRows([
-                    [tableInfoTypeProyects[i][0], parseInt(tableInfoTypeProyects[i][1])]
+                dataDashboard.addRows([
+                    [tableInfoTypeProyects[i][1], parseInt(tableInfoTypeProyects[i][2])]
                 ]);
             }
         });
 
-        options = {is3D: true};
+        optionsDashboard = {is3D: true};
 
-        // Instantiate and draw our chart, passing in some options.
-        var chart = new google.visualization.PieChart(document.getElementById('graphDashboard'));
-        chart.draw(data, options);
+        chartDashboard = new google.visualization.PieChart(document.getElementById('graphDashboard'));
+        google.visualization.events.addListener(chartDashboard, 'select', selectGraphProyect);
+        chartDashboard.draw(dataDashboard, optionsDashboard);
     }
-//    data = new google.visualization.DataTable();
-//    data.addColumn('string', 'Topping');
-//    data.addColumn('number', 'Proyectos');
-//    $("#data-table-tipo-proyectos").ready(function () {
-//        var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
-//        for (var i = 0; i < tableInfoTypeProyects.length; i++) {
-//            data.addRows([
-//                [tableInfoTypeProyects[i][0], parseInt(tableInfoTypeProyects[i][1])]
-//            ]);
-//        }
-//    });
-//
-//    var options = {
-//        hAxis: {
-//            title: 'Tipo de Proyecto'
-//        },
-//        legend: {position: 'none'}
-//    };
-//    chart = new google.visualization.PieChart(document.getElementById('graphDashboard'));
-//    google.visualization.events.addListener(chart, 'select', selectGraphProyect);
-//    chart.draw(data, options);
     
-    resizeGraph(options);
+    resizeGraph(optionsDashboard);
 }
 
 function selectGraphProyect() {
-    var selectedItem = chart.getSelection()[0];
-    var value = data.getValue(selectedItem.row, 0);
-    //alert('The user selected ' + value);
-    console.log(data.getValue(selectedItem.row, 0));
+    var selectedItem = chartDashboard.getSelection()[0];
+    var nameProyect = dataDashboard.getValue(selectedItem.row, 0);
+    var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
+    for (var i = 0; i < tableInfoTypeProyects.length; i++) {
+        if (tableInfoTypeProyects[i][1] == nameProyect) {
+            var idBusqueda = tableInfoTypeProyects[i][0];
+        }
+    }
+    console.log(idBusqueda);
 }
 
 function selectTypeProyects(){
     $('#data-table-tipo-proyectos tbody').on('click', 'tr', function () {
         var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().row(this).data();
-        console.log(tableInfoTypeProyects);
+        var idTypeProyect = tableInfoTypeProyects[0];
+        var infoTableProyects = $('#data-table-proyectos').DataTable().rows().data();
+        for (var i = 0; i < infoTableProyects.length; i++) {
+            if (infoTableProyects[i][0] !== idTypeProyect) {
+                $('.type'+infoTableProyects[i][0]).hide();
+            }else{
+                $('.type'+infoTableProyects[i][0]).show();
+            }
+        }
     });
 }
 
@@ -124,7 +116,7 @@ function resizeGraph(options){
         }
         
     function resizeChart () {
-        chart.draw(data, options);
+        chart.draw(dataDashboard, options);
     }
 }
 /****************************************************************************************/

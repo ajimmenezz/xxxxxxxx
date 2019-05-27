@@ -10,7 +10,7 @@ class ProyectoGapsi extends General {
 
     public function __construct() {
         parent::__construct();
-        $this->DBG = \Modelos\Modelo_Gapsi::factory();
+        $this->DBG = \Modelos\Modelo_Proyecto_Gapsi::factory();
     }
 
     public function showAllProjects() {

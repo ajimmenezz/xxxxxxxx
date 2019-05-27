@@ -21,7 +21,7 @@
                             <table id="data-table-tipo-proyectos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                 <thead>
                                     <tr>
-                                        <th>id</th>
+                                        <th class="never">id</th>
                                         <th class="all">Tipo Proyecto</th>
                                         <th class="all">Proyectos</th>
                                     </tr>
@@ -30,7 +30,7 @@
                                     <?php
                                     foreach ($datos['TiposProyectos'] as $valorTipoProyecto) {
                                         echo "<tr>";
-                                            echo '<td>'.$valorTipoProyecto['Tipo'].'</td>';
+                                            echo '<td>'.$valorTipoProyecto['IdTipo'].'</td>';
                                             echo '<td>'.$valorTipoProyecto['Tipo'].'</td>';
                                             echo '<td>'.$valorTipoProyecto['Proyectos'].'</td>';
                                         echo "</tr>";
@@ -53,10 +53,11 @@
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 <!--tabla de todos los proyectos                    -->
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="width:auto; height:400px; overflow:auto;">
                         <table id="data-table-proyectos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                             <thead>
                                 <tr>
+                                    <th class="never">id</th>
                                     <th class="never">idProyecto</th>
                                     <th class="all">Proyecto</th>
                                     <th class="all">Gasto</th>
@@ -66,7 +67,8 @@
                             <tbody>
                                 <?php
                                 foreach ($datos['Proyectos'] as $valorProyecto) {
-                                    echo "<tr>";
+                                    echo '<tr class="type'.$valorProyecto['IdTipo'].'">';
+                                        echo '<td>'.$valorProyecto['IdTipo'].'</td>';
                                         echo '<td>'.$valorProyecto['IdProyecto'].'</td>';
                                         echo '<td>'.$valorProyecto['Descripcion'].'</td>';
                                         echo '<td>'.$valorProyecto['Gasto'].'</td>';
@@ -84,8 +86,4 @@
     </div>   
 </div>
 
-<div id="dashboardGapsiFilters">
-    <?php
-                                    var_dump($datos['TiposProyectos']);
-    ?>
-</div>
+<div id="dashboardGapsiFilters"></div>

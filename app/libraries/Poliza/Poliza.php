@@ -276,8 +276,8 @@ class Poliza extends General {
                                                                     WHERE
                                                                         cvrc.IdResponsableInterno = "' . $usuario['Id'] . '"
                                                                             AND (CASE
-                                                                            WHEN tfo.Vuelta = 1 THEN tst.IdEstatus IN (3 , 4)
-                                                                            WHEN tfo.Vuelta > 1 THEN tst.IdEstatus = 4
+                                                                            WHEN tfo.Vuelta > 1 THEN tst.IdEstatus IN (3 , 4)
+                                                                            WHEN tfo.Vuelta = 1 THEN tst.IdEstatus = 4
                                                                         END)
                                                                             AND tfo.IdEstatus = 8
                                                                             AND tfo.Fecha >= ' . $fechaLimiteVueltas . '
