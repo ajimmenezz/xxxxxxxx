@@ -83,7 +83,7 @@ class Secciones extends General {
         $this->ModeloDashboard = \Modelos\Modelo_Dashboard::factory();
         $this->permisosVacaciones = \Librerias\RH\Permisos_Vacaciones::factory();
         $this->autorizarpermisos = \Librerias\RH\Autorizar_permisos::factory();
-        $this->DashboardGapsi = \Librerias\Gapsi\Dashboard::factory();
+        $this->DashboardGapsi = \Librerias\Gapsi\ProyectoGapsi::factory();
     }
 
     /*

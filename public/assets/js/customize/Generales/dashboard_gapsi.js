@@ -16,12 +16,13 @@ $(function () {
 
     //Evento para mostrar la ayuda del sistema
     evento.mostrarAyuda('Ayuda_Proyectos');
+    
+    tabla.generaTablaPersonal('#data-table-tipo-proyectos', null, null, true, true, [[1, 'desc']]);
     tabla.generaTablaPersonal('#data-table-proyectos', null, null, true, true);
-    tabla.generaTablaPersonal('#data-table-tipo-proyectos', null, null, true, true);
 
     //Inicializa funciones de la plantilla
     App.init();
-    
+   
     setGraph();
     selectTypeProyects();
     selectProyects();
@@ -34,44 +35,84 @@ $(function () {
 //    setChartF();
 });
 
-var chart, data;
+var chart, data, options;
 function setGraph(){
     google.charts.load('current', {packages: ['corechart', 'bar']});
     google.charts.setOnLoadCallback(setGraphDashboard);
 }
 
 function setGraphDashboard() {
-    data = new google.visualization.DataTable();
-    data.addColumn('string', 'Topping');
-    data.addColumn('number', '');
-    data.addRows([
-        ['Mushrooms', 3],
-        ['Onions', 1],
-        ['Olives', 1],
-        ['Zucchini', 1],
-        ['Pepperoni', 2],
-        ['a', 3],
-        ['b', 1],
-        ['c', 1],
-        ['d', 1],
-        ['e', 2]
-    ]);
+        
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
 
-    var options = {
-        hAxis: {
-            title: 'Tipo de Proyecto'
-        },
-        vAxis: {
-            title: 'Proyectos'
-        },
-        legend: {position: 'none'}
-    };
-    chart = new google.visualization.ColumnChart(
-        document.getElementById('graphDashboard')
-    );
-    google.visualization.events.addListener(chart, 'select', selectGraphProyect);
-    chart.draw(data, options);
+    function drawChart() {
 
+        data = new google.visualization.DataTable();
+        data.addColumn('string', 'Topping');
+        data.addColumn('number', 'Proyectos');
+        $("#data-table-tipo-proyectos").ready(function () {
+        var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
+            for (var i = 0; i < tableInfoTypeProyects.length; i++) {
+                data.addRows([
+                    [tableInfoTypeProyects[i][0], parseInt(tableInfoTypeProyects[i][1])]
+                ]);
+            }
+        });
+
+        options = {is3D: true};
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.PieChart(document.getElementById('graphDashboard'));
+        chart.draw(data, options);
+    }
+//    data = new google.visualization.DataTable();
+//    data.addColumn('string', 'Topping');
+//    data.addColumn('number', 'Proyectos');
+//    $("#data-table-tipo-proyectos").ready(function () {
+//        var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
+//        for (var i = 0; i < tableInfoTypeProyects.length; i++) {
+//            data.addRows([
+//                [tableInfoTypeProyects[i][0], parseInt(tableInfoTypeProyects[i][1])]
+//            ]);
+//        }
+//    });
+//
+//    var options = {
+//        hAxis: {
+//            title: 'Tipo de Proyecto'
+//        },
+//        legend: {position: 'none'}
+//    };
+//    chart = new google.visualization.PieChart(document.getElementById('graphDashboard'));
+//    google.visualization.events.addListener(chart, 'select', selectGraphProyect);
+//    chart.draw(data, options);
+    
+    resizeGraph(options);
+}
+
+function selectGraphProyect() {
+    var selectedItem = chart.getSelection()[0];
+    var value = data.getValue(selectedItem.row, 0);
+    //alert('The user selected ' + value);
+    console.log(data.getValue(selectedItem.row, 0));
+}
+
+function selectTypeProyects(){
+    $('#data-table-tipo-proyectos tbody').on('click', 'tr', function () {
+        var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().row(this).data();
+        console.log(tableInfoTypeProyects);
+    });
+}
+
+function selectProyects(){
+    $('#data-table-proyectos tbody').on('click', 'tr', function () {
+        var tableInfoProyects = $('#data-table-proyectos').DataTable().row(this).data();
+        console.log(tableInfoProyects);
+    });
+}
+
+function resizeGraph(options){
     if (document.addEventListener) {
         window.addEventListener('resize', resizeChart);
     }
@@ -85,27 +126,6 @@ function setGraphDashboard() {
     function resizeChart () {
         chart.draw(data, options);
     }
-}
-
-function selectGraphProyect() {
-    var selectedItem = chart.getSelection()[0];
-    var value = data.getValue(selectedItem.row, 0);
-    //alert('The user selected ' + value);
-    console.log(data.getValue(selectedItem.row, 0));
-}
-
-function selectTypeProyects(){
-    $('#data-table-tipo-proyectos tbody').on('click', 'tr', function () {
-        var informacionPermisoAusencia = $('#data-table-tipo-proyectos').DataTable().row(this).data();
-        console.log(informacionPermisoAusencia);
-    });
-}
-
-function selectProyects(){
-    $('#data-table-proyectos tbody').on('click', 'tr', function () {
-        var informacionPermisoAusencia = $('#data-table-proyectos').DataTable().row(this).data();
-        console.log(informacionPermisoAusencia);
-    });
 }
 /****************************************************************************************/
 //function setChartA(){

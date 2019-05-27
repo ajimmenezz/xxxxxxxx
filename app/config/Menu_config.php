@@ -135,7 +135,7 @@ $config['Generales'] = array(
     ),
     'Dashboard_Gapsi' => array(
         'liga' => 'Dashboard Gapsi',
-        'icono' => '',
+        'icono' => 'fa fa-line-chart',
         'Url' => '/Generales/Dashboard_Gapsi',
         'css' => array(
             'Dashboard/Dashboard'
