@@ -11,7 +11,8 @@ class Modelo_Proyecto_Gapsi extends Modelo_Base {
                                                         dp.ID AS IdProyecto,
                                                         dp.Descripcion,
                                                         (SELECT SUM(Importe) FROM db_Registro WHERE Proyecto = dp.ID) AS Gasto,
-                                                        dp.FCreacion
+                                                        dp.FCreacion,
+                                                        (SELECT ID FROM db_Tipo WHERE Nombre = dp.Tipo) AS IdTipo
                                                   FROM db_Proyectos dp");
 
         if (!empty($query)) {
@@ -22,12 +23,11 @@ class Modelo_Proyecto_Gapsi extends Modelo_Base {
     }
 
     public function showProjectTypes() {
-        $query = parent::connectDBGapsi()->query("SELECT TOP (1000) 
+        $query = parent::connectDBGapsi()->query("SELECT 
                                                         dp.Tipo, 
-                                                        count(dp.ID) Proyectos
+                                                        count(dp.ID) Proyectos,
+                                                        (SELECT ID FROM db_Tipo WHERE Nombre = dp.Tipo) AS IdTipo
                                                   FROM db_Proyectos AS dp
-                                                  INNER JOIN db_Tipo AS dt
-                                                  ON dt.Nombre = dp.Tipo
                                                   GROUP BY Tipo");
 
         if (!empty($query)) {
