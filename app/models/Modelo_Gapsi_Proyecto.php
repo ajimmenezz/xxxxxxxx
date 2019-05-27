@@ -4,9 +4,9 @@ namespace Modelos;
 
 use Librerias\Modelos\Base as Modelo_Base;
 
-class Modelo_Proyecto_Gapsi extends Modelo_Base {
+class Modelo_Gapsi_Proyecto extends Modelo_Base {
 
-    public function showAllProjects() {
+    public function getProjects() {
         $query = parent::connectDBGapsi()->query("SELECT
                                                         dp.ID AS IdProyecto,
                                                         dp.Descripcion,
@@ -22,7 +22,7 @@ class Modelo_Proyecto_Gapsi extends Modelo_Base {
         }
     }
 
-    public function showProjectTypes() {
+    public function getProjectTypes() {
         $query = parent::connectDBGapsi()->query("SELECT 
                                                         dp.Tipo, 
                                                         count(dp.ID) Proyectos,

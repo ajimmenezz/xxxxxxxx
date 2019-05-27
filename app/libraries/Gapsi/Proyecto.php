@@ -4,17 +4,17 @@ namespace Librerias\Gapsi;
 
 use Controladores\Controller_Datos_Usuario as General;
 
-class ProyectoGapsi extends General {
+class Proyecto extends General {
 
     private $DBG;
 
     public function __construct() {
         parent::__construct();
-        $this->DBG = \Modelos\Modelo_Proyecto_Gapsi::factory();
+        $this->DBG = \Modelos\Modelo_Gapsi_Proyecto::factory();
     }
 
-    public function showAllProjects() {
-        $dataProjects = $this->DBG->showAllProjects();
+    public function getProjects() {
+        $dataProjects = $this->DBG->getProjects();
 
         if ($dataProjects['code'] === 200) {
             return $dataProjects['query'];
@@ -23,8 +23,8 @@ class ProyectoGapsi extends General {
         }
     }
 
-    public function showProjectTypes() {
-        $dataProjects = $this->DBG->showProjectTypes();
+    public function getProjectTypes() {
+        $dataProjects = $this->DBG->getProjectTypes();
 
         if ($dataProjects['code'] === 200) {
             return $dataProjects['query'];
