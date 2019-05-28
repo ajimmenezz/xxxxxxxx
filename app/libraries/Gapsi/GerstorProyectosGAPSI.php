@@ -41,6 +41,10 @@ class GerstorProyectosGAPSI extends General {
         $proyectos = $this->DBGestorProyectoGAPSI->getProjectsByType($filters['tipoProyecto']);
         $servicios = $this->DBGestorProyectoGAPSI->getServicesByType($filters['tipoProyecto']);
         $sucursales = $this->DBGestorProyectoGAPSI->getBranchOfficesByType($filters['tipoProyecto']);
+        $categorias = $this->DBGestorProyectoGAPSI->getCategoriesByType($filters['tipoProyecto']);
+        $subcategorias = $this->DBGestorProyectoGAPSI->getSubcategoryByType($filters['tipoProyecto']);
+        $concepto = $this->DBGestorProyectoGAPSI->getConceptByType($filters['tipoProyecto']);
+        $gastosCompras = $this->DBGestorProyectoGAPSI->getExpensesAndPurchasesProject($filters['tipoProyecto']);
         
 //        foreach ($proyectos['query'] as $key => $proyecto) {
 //            $temporal = new Proyecto($proyecto['IdProyecto']);
@@ -50,11 +54,14 @@ class GerstorProyectosGAPSI extends General {
 //        var_dump($proyectos);
         
 //        var_dump($this->proyectos);
-//        $gastosProyecto = $this->DBGestorProyectoGAPSI->getGastosYComprasProyecto($filters['tipoProyecto']);
         
         $dataProjectsInfo['proyectos'] = $proyectos['query'];
         $dataProjectsInfo['servicios'] = $servicios['query'];
         $dataProjectsInfo['sucursales'] = $sucursales['query'];
+        $dataProjectsInfo['categorias'] = $categorias['query'];
+        $dataProjectsInfo['subcategorias'] = $subcategorias['query'];
+        $dataProjectsInfo['concepto'] = $concepto['query'];
+        $dataProjectsInfo['gastosCompras'] = $gastosCompras['query'];
         return $dataProjectsInfo;
     }
 

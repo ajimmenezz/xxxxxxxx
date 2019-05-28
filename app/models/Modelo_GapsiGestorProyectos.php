@@ -84,12 +84,65 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
             return ['code' => 400];
         }
     }
-
-    public function getGastosYComprasProyecto(string $tipoProyecto) {
+    
+    public function getCategoriesByType(string $tipoProyecto) {
         $query = parent::connectDBGapsi()->query("SELECT 
-                                                    Proyecto
-                                                      FROM db_Registro AS dr
-                                                    WHERE Tipo = '" . $tipoProyecto . "'");
+                                                     ddg.Categoria,
+                                                    SUM(dr.Importe) AS Gasto
+                                                FROM db_Registro AS dr
+                                                INNER JOIN db_DetalleGasto ddg
+                                                ON ddg.ID = dr.ID
+                                                WHERE Tipo = '" . $tipoProyecto . "'
+                                                Group by ddg.Categoria");
+
+        if (!empty($query)) {
+            return ['code' => 200, 'query' => $query->result_array()];
+        } else {
+            return ['code' => 400];
+        }
+    }
+    
+    public function getSubcategoryByType(string $tipoProyecto) {
+        $query = parent::connectDBGapsi()->query("SELECT
+                                                    ddg.SubCategoria,
+                                                    SUM(dr.Importe) AS Gasto
+                                                FROM db_Registro AS dr
+                                                INNER JOIN db_DetalleGasto ddg
+                                                ON ddg.ID = dr.ID
+                                                WHERE Tipo = '" . $tipoProyecto . "'
+                                                GROUP BY ddg.SubCategoria");
+
+        if (!empty($query)) {
+            return ['code' => 200, 'query' => $query->result_array()];
+        } else {
+            return ['code' => 400];
+        }
+    }
+    
+    public function getConceptByType(string $tipoProyecto) {
+        $query = parent::connectDBGapsi()->query("SELECT
+                                                Concepto,
+                                                SUM(dr.Importe) AS Gasto
+                                                FROM db_Registro AS dr
+                                                INNER JOIN db_DetalleGasto ddg
+                                                ON ddg.ID = dr.ID
+                                                WHERE Tipo = '" . $tipoProyecto . "'
+                                                GROUP BY ddg.Concepto");
+
+        if (!empty($query)) {
+            return ['code' => 200, 'query' => $query->result_array()];
+        } else {
+            return ['code' => 400];
+        }
+    }
+
+    public function getExpensesAndPurchasesProject(string $tipoProyecto) {
+        $query = parent::connectDBGapsi()->query("SELECT 
+                                                    TipoTrans,
+                                                    SUM(dr.Importe) AS Gasto
+                                                FROM db_Registro AS dr
+                                                WHERE Tipo = '" . $tipoProyecto . "'
+                                                GROUP BY TipoTrans");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
