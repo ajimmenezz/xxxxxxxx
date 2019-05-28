@@ -36,19 +36,26 @@ class GerstorProyectosGAPSI extends General {
     }
 
     public function getProjectsInfo(array $filters) {
+        $dataProjectsInfo = array();
         $this->proyectos = array();        
-        $proyectos = $this->DBGestorProyectoGAPSI->getProjectsTypo($filters['tipoProyecto']);
+        $proyectos = $this->DBGestorProyectoGAPSI->getProjectsByType($filters['tipoProyecto']);
+        $servicios = $this->DBGestorProyectoGAPSI->getServicesByType($filters['tipoProyecto']);
+        $sucursales = $this->DBGestorProyectoGAPSI->getBranchOfficesByType($filters['tipoProyecto']);
         
 //        foreach ($proyectos['query'] as $key => $proyecto) {
 //            $temporal = new Proyecto($proyecto['IdProyecto']);
 //            $temporal->setSucursales();
 //            array_push($this->proyectos,$temporal);
 //        }
-        var_dump($proyectos);
+//        var_dump($proyectos);
         
 //        var_dump($this->proyectos);
-        $gastosProyecto = $this->DBGestorProyectoGAPSI->getGastosYComprasProyecto($filters['tipoProyecto']);
-        return $proyectos;
+//        $gastosProyecto = $this->DBGestorProyectoGAPSI->getGastosYComprasProyecto($filters['tipoProyecto']);
+        
+        $dataProjectsInfo['proyectos'] = $proyectos['query'];
+        $dataProjectsInfo['servicios'] = $servicios['query'];
+        $dataProjectsInfo['sucursales'] = $sucursales['query'];
+        return $dataProjectsInfo;
     }
 
     public function getProjectInfo(array $filters) {

@@ -37,12 +37,46 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
         }
     }
 
-    public function getProjectsTypo(string $tipoProyecto) {
+    public function getProjectsByType(string $tipoProyecto) {
         $query = parent::connectDBGapsi()->query("SELECT 
-                                                    Proyecto AS IdProyecto
-                                                      FROM db_Registro AS dr
-                                                    WHERE Tipo = '" . $tipoProyecto . "
-                                                    Group by Proyecto");
+                                                    Proyecto AS IdProyecto,
+                                                    (SELECT Descripcion FROM db_Proyectos WHERE ID = dr.Proyecto) AS Proyecto,
+                                                    SUM(dr.Importe) AS Gasto
+                                                FROM db_Registro AS dr
+                                                WHERE Tipo = '" . $tipoProyecto . "'
+                                                Group by Proyecto");
+
+        if (!empty($query)) {
+            return ['code' => 200, 'query' => $query->result_array()];
+        } else {
+            return ['code' => 400];
+        }
+    }
+    
+    public function getServicesByType(string $tipoProyecto) {
+        $query = parent::connectDBGapsi()->query("SELECT
+                                                    (SELECT ID FROM db_TipoServicio WHERE Nombre = dr.TipoServicio) AS IdServicio,
+                                                    dr.TipoServicio,
+                                                    SUM(dr.Importe) AS Gasto
+                                                FROM db_Registro AS dr
+                                                WHERE Tipo = '" . $tipoProyecto . "'
+                                                Group by TipoServicio");
+
+        if (!empty($query)) {
+            return ['code' => 200, 'query' => $query->result_array()];
+        } else {
+            return ['code' => 400];
+        }
+    }
+    
+    public function getBranchOfficesByType(string $tipoProyecto) {
+        $query = parent::connectDBGapsi()->query("SELECT
+                                                    (SELECT ID FROM db_Sucursales WHERE Id = dr.Sucursal) AS IdSucursal,
+                                                    (SELECT Nombre FROM db_Sucursales WHERE Id = dr.Sucursal) AS Sucursal,
+                                                    SUM(dr.Importe) AS Gasto
+                                                FROM db_Registro AS dr
+                                                WHERE Tipo = '" . $tipoProyecto . "'
+                                                Group by Sucursal");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
