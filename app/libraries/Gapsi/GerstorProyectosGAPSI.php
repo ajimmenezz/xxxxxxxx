@@ -37,25 +37,48 @@ class GerstorProyectosGAPSI extends General {
 
     public function getProjectsInfo(array $filters) {
         $dataProjectsInfo = array();
-        $this->proyectos = array();        
-        $proyectos = $this->DBGestorProyectoGAPSI->getProjectsByType($filters['tipoProyecto']);
-        $servicios = $this->DBGestorProyectoGAPSI->getServicesByType($filters['tipoProyecto']);
-        $sucursales = $this->DBGestorProyectoGAPSI->getBranchOfficesByType($filters['tipoProyecto']);
-        
+        $this->proyectos = array();
+
+        $paraemeters = $this->defineParameters($filters);
+        $proyectos = $this->DBGestorProyectoGAPSI->getProjectsByType($paraemeters);
+        $servicios = $this->DBGestorProyectoGAPSI->getServicesByType($paraemeters);
+        $sucursales = $this->DBGestorProyectoGAPSI->getBranchOfficesByType($paraemeters);
+        $categorias = $this->DBGestorProyectoGAPSI->getCategoriesByType($paraemeters);
+        $subcategorias = $this->DBGestorProyectoGAPSI->getSubcategoryByType($paraemeters);
+        $concepto = $this->DBGestorProyectoGAPSI->getConceptByType($paraemeters);
+        $gastosCompras = $this->DBGestorProyectoGAPSI->getExpensesAndPurchasesProject($paraemeters);
+
 //        foreach ($proyectos['query'] as $key => $proyecto) {
 //            $temporal = new Proyecto($proyecto['IdProyecto']);
 //            $temporal->setSucursales();
 //            array_push($this->proyectos,$temporal);
 //        }
 //        var_dump($proyectos);
-        
 //        var_dump($this->proyectos);
-//        $gastosProyecto = $this->DBGestorProyectoGAPSI->getGastosYComprasProyecto($filters['tipoProyecto']);
-        
+
         $dataProjectsInfo['proyectos'] = $proyectos['query'];
         $dataProjectsInfo['servicios'] = $servicios['query'];
         $dataProjectsInfo['sucursales'] = $sucursales['query'];
+        $dataProjectsInfo['categorias'] = $categorias['query'];
+        $dataProjectsInfo['subcategorias'] = $subcategorias['query'];
+        $dataProjectsInfo['concepto'] = $concepto['query'];
+        $dataProjectsInfo['gastosCompras'] = $gastosCompras['query'];
         return array('formulario' => parent::getCI()->load->view('Generales/Dashboard_Gapsi_Filters', $dataProjectsInfo, TRUE));
+    }
+
+    private function defineParameters(array $filters) {
+
+        if (isset($filters['proyecto'])) {
+            $parameters = "AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'";
+        } elseif (isset($filters['servicio'])) {
+            $parameters = "AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND dr.ID = '" . $filters['servicio'] . "'";
+        } else {
+            $parameters = "AND Tipo = '" . $filters['tipoProyecto'] . "'";
+        }
+
+        return $parameters;
     }
 
     public function getProjectInfo(array $filters) {
