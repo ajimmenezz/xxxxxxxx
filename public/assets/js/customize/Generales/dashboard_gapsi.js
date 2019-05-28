@@ -88,10 +88,14 @@ function setGraphDashboard() {
 }
 
 function selectGraphProyect() {
-    var selectedItem = chart.getSelection()[0];
-    var value = data.getValue(selectedItem.row, 0);
-    //alert('The user selected ' + value);
-    console.log(data.getValue(selectedItem.row, 0));
+    let data = {tipoProyecto : 'X4D'}
+    evento.enviarEvento('/Generales/Dashboard_Gapsi/tipoProyecto', data,'', function(respuesta){
+        console.log(respuesta);
+    });
+//    var selectedItem = chart.getSelection()[0];
+//    var value = data.getValue(selectedItem.row, 0);
+//    //alert('The user selected ' + value);
+//    console.log(data.getValue(selectedItem.row, 0));
 }
 
 function selectTypeProyects(){
