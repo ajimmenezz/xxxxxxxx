@@ -123,6 +123,7 @@ $route['Generales/Buscar/(:any)'] = 'Generales/Controller_Buscar/manejarEvento/$
 $route['Generales/ServiceDesk/(:any)'] = 'Generales/Controller_ServiceDesk/manejarEvento/$1';
 $route['Generales/Dispositivos/(:any)'] = 'Generales/Controller_Dispositivos/manejarEvento/$1';
 $route['Generales/Dashboard/(:any)'] = 'Generales/Controller_Dashboard/manejarEvento/$1';
+$route['Generales/Dashboard_Gapsi/(:any)'] = 'Gapsi/Controller_GestorProyectos/manejarEvento/$1';
 
 /* Routers para el manejo de páginas de PhantomJS */
 $route['Phantom/Servicio/(:any)'] = 'Phantom/Controller_Phantom/servicioPhantom/$1';
@@ -256,8 +257,12 @@ $route['Comprobacion/Fondo_Fijo/(:any)'] = 'Tesoreria/Controller_FondoFijo/manej
 
 /* Routers para el manejo de Localizacion */
 $route['Localizacion/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
-$route['Localizacion/Seguimiento/(:any)'] = 'Localizacion/Controller_Localizacion/manejarEvento/$1';
+$route['Localizac$route[ion/Seguimiento/(:any)'] = 'Localizacion/Controller_Localizacion/manejarEvento/$1';
 
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
 $route['Error/(:any)'] = 'Controller_Error/$1';
+
+
+/* Routers para dashboard gpasi gastos */
+//$route['Localizacion/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';

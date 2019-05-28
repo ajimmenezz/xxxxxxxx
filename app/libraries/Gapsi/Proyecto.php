@@ -10,10 +10,15 @@ class Proyecto extends General {
     private $id;
     private $tipo;    
     private $sucursales;
-    private $servicios;    
+       
 
-    public function __construct() {
+    public function __construct(int $idProyecto) {
         parent::__construct();
         $this->DBProyectoGAPSI = \Modelos\Modelo_GapsiProyecto::factory();
+        $this->id = $idProyecto;
     }        
+    
+    public function setSucursales(){
+        var_dump($this->id);
+    }
 }

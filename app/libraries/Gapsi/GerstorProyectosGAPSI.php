@@ -3,18 +3,20 @@
 namespace Librerias\Gapsi;
 
 use Controladores\Controller_Datos_Usuario as General;
+use Librerias\Gapsi\Proyecto as Proyecto;
 
 class GerstorProyectosGAPSI extends General {
-    
-    private $DBProyectoGAPSI;
-    
+
+    private $DBGestorProyectoGAPSI;
+    private $proyectos;
+
     public function __construct() {
         parent::__construct();
-        $this->DBProyectoGAPSI = \Modelos\Modelo_GapsiProyecto::factory();
+        $this->DBGestorProyectoGAPSI = \Modelos\Modelo_GapsiGestorProyectos::factory();
     }
 
     public function getListProjects() {
-        $dataProjects = $this->DBProyectoGAPSI->getProjects();
+        $dataProjects = $this->DBGestorProyectoGAPSI->getProjects();
 
         if ($dataProjects['code'] === 200) {
             return $dataProjects['query'];
@@ -24,13 +26,33 @@ class GerstorProyectosGAPSI extends General {
     }
 
     public function getProjectTypes() {
-        $dataProjects = $this->DBProyectoGAPSI->getProjectTypes();
+        $dataProjects = $this->DBGestorProyectoGAPSI->getProjectTypes();
 
         if ($dataProjects['code'] === 200) {
             return $dataProjects['query'];
         } else {
             return ['code' => 400];
         }
+    }
+
+    public function getProjectsInfo(array $filters) {
+        $this->proyectos = array();        
+        $proyectos = $this->DBGestorProyectoGAPSI->getProjectsTypo($filters['tipoProyecto']);
+        
+//        foreach ($proyectos['query'] as $key => $proyecto) {
+//            $temporal = new Proyecto($proyecto['IdProyecto']);
+//            $temporal->setSucursales();
+//            array_push($this->proyectos,$temporal);
+//        }
+        var_dump($proyectos);
+        
+//        var_dump($this->proyectos);
+        $gastosProyecto = $this->DBGestorProyectoGAPSI->getGastosYComprasProyecto($filters['tipoProyecto']);
+        return $proyectos;
+    }
+
+    public function getProjectInfo(array $filters) {
+        $dataProjects = $this->DBGestorProyectoGAPSI->getProjects();
     }
 
 }
