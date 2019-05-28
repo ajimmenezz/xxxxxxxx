@@ -18,7 +18,7 @@ $(function () {
     evento.mostrarAyuda('Ayuda_Proyectos');
     
     tabla.generaTablaPersonal('#data-table-tipo-proyectos', null, null, true, true);
-    tabla.generaTablaPersonal('#data-table-proyectos', null, null, true, true, [], null, '<frt>', false);
+    tabla.generaTablaPersonal('#data-table-proyectos', null, null, true, true);
 
     //Inicializa funciones de la plantilla
     App.init();
@@ -26,16 +26,11 @@ $(function () {
     setGraph();
     selectTypeProyects();
     selectProyects();
-/***********************************************************************/
-//    setChartA();
-//    setChartB();
-//    setChartC();
-//    setChartD();
-//    setChartE();
-//    setChartF();
 });
 
+var listaGlobaldeProyectos;
 var chartDashboard, dataDashboard, optionsDashboard;
+var chartFilter, dataFilter, optionsFilter;
 function setGraph(){
     google.charts.load('current', {packages: ['corechart', 'bar']});
     google.charts.setOnLoadCallback(setGraphDashboard);
@@ -52,7 +47,8 @@ function setGraphDashboard() {
         dataDashboard.addColumn('string', 'Topping');
         dataDashboard.addColumn('number', 'Proyectos');
         $("#data-table-tipo-proyectos").ready(function () {
-        var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
+            listaGlobaldeProyectos = $('#data-table-proyectos').DataTable().rows().data();
+            var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
             for (var i = 0; i < tableInfoTypeProyects.length; i++) {
                 dataDashboard.addRows([
                     [tableInfoTypeProyects[i][1], parseInt(tableInfoTypeProyects[i][2])]
@@ -70,40 +66,6 @@ function setGraphDashboard() {
     resizeGraph(optionsDashboard);
 }
 
-function selectGraphProyect() {
-    var selectedItem = chartDashboard.getSelection()[0];
-    var nameProyect = dataDashboard.getValue(selectedItem.row, 0);
-    var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
-    for (var i = 0; i < tableInfoTypeProyects.length; i++) {
-        if (tableInfoTypeProyects[i][1] == nameProyect) {
-            var idBusqueda = tableInfoTypeProyects[i][0];
-        }
-    }
-    console.log(idBusqueda);
-}
-
-function selectTypeProyects(){
-    $('#data-table-tipo-proyectos tbody').on('click', 'tr', function () {
-        var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().row(this).data();
-        var idTypeProyect = tableInfoTypeProyects[0];
-        var infoTableProyects = $('#data-table-proyectos').DataTable().rows().data();
-        for (var i = 0; i < infoTableProyects.length; i++) {
-            if (infoTableProyects[i][0] !== idTypeProyect) {
-                $('.type'+infoTableProyects[i][0]).hide();
-            }else{
-                $('.type'+infoTableProyects[i][0]).show();
-            }
-        }
-    });
-}
-
-function selectProyects(){
-    $('#data-table-proyectos tbody').on('click', 'tr', function () {
-        var tableInfoProyects = $('#data-table-proyectos').DataTable().row(this).data();
-        console.log(tableInfoProyects);
-    });
-}
-
 function resizeGraph(options){
     if (document.addEventListener) {
         window.addEventListener('resize', resizeChart);
@@ -116,199 +78,115 @@ function resizeGraph(options){
         }
         
     function resizeChart () {
-        chart.draw(dataDashboard, options);
+        chartDashboard.draw(dataDashboard, options);
     }
 }
+
+function selectTypeProyects(){
+    $('#data-table-tipo-proyectos tbody').on('click', 'tr', function () {
+        var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().row(this).data();
+        var idTypeProyect = tableInfoTypeProyects[0];
+        tabla.limpiarTabla('#data-table-proyectos')
+        for (var i = 0; i < listaGlobaldeProyectos.length; i++) {
+            if (listaGlobaldeProyectos[i][0] == idTypeProyect) {
+                tabla.agregarFila('#data-table-proyectos', listaGlobaldeProyectos[i]);
+            }
+        }
+    });
+}
+
+function selectProyects(){
+    $('#data-table-proyectos tbody').on('click', 'tr', function () {
+        var tableInfoProyects = $('#data-table-proyectos').DataTable().row(this).data();
+        //sendEventViewFilters(tableInfoProyects);
+    });
+}
+
+function selectGraphProyect() {
+    var selectedItem = chartDashboard.getSelection()[0];
+    var nameProyect = dataDashboard.getValue(selectedItem.row, 0);
+    sendEventViewFilters(nameProyect);
+}
+
+function sendEventViewFilters(search){
+    var dataSearch = {tipoProyecto: search}
+    evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', dataSearch, '#panelDashboardGapsi', function (respuesta) {
+        if (respuesta) {
+            $('#dashboardGapsiFilters').removeClass('hidden').empty().append(respuesta.formulario);
+            $('#contentDashboardGapsi').addClass('hidden');
+            eventsDashboardFilters();
+        } else {
+            alert('Hubo un problema con la solicitud de permiso.');
+        }
+    });
+}
+
+function eventsDashboardFilters(){
+    createTables();
+    $('#btnReturnDashboardGapsi').on('click', function () {
+        $('#dashboardGapsiFilters').empty().addClass('hidden');
+        $('#contentDashboardGapsi').removeClass('hidden');
+    });
+    
+    $("#data-tipo-proyecto").ready(function () {
+        var infoTypeProyects = $('#data-tipo-proyecto').DataTable().rows().data();
+        createDataViewGraph(infoTypeProyects, "chart_proyecto");
+    });
+    $("#data-tipo-serivicio").ready(function () {
+        var infoTypeProyects = $('#data-tipo-serivicio').DataTable().rows().data();
+        createDataViewGraph(infoTypeProyects, "chart_servicios");
+    });
+    $("#data-tipo-sucursal").ready(function () {
+        var infoTypeProyects = $('#data-tipo-sucursal').DataTable().rows().data();
+        createDataViewGraph(infoTypeProyects, "chart_sucursal");
+    });
+}
+
+function createTables(){
+    tabla.generaTablaPersonal('#data-tipo-proyecto', null, null, true, true);
+    tabla.generaTablaPersonal('#data-tipo-serivicio', null, null, true, true, [], null, '<frt>', false);
+    tabla.generaTablaPersonal('#data-tipo-sucursal', null, null, true, true, [], null, '<frt>', false);
+    tabla.generaTablaPersonal('#data-tipo-categoria', null, null, true, true, [], null, '<frt>', false);
+    tabla.generaTablaPersonal('#data-tipo-SubCategoria', null, null, true, true, [], null, '<frt>', false);
+    tabla.generaTablaPersonal('#data-tipo-concepto', null, null, true, true, [], null, '<frt>', false);
+}
 /****************************************************************************************/
-//function setChartA(){
-//    // Load the Visualization API and the corechart package.
-//      google.charts.load('current', {'packages':['corechart']});
-//
-//      // Set a callback to run when the Google Visualization API is loaded.
-//      google.charts.setOnLoadCallback(drawChart);
-//
-//      // Callback that creates and populates a data table,
-//      // instantiates the pie chart, passes in the data and
-//      // draws it.
-//      function drawChart() {
-//
-//        // Create the data table.
-//        var data = new google.visualization.DataTable();
-//        data.addColumn('string', 'Topping');
-//        data.addColumn('number', 'Slices');
-//        data.addRows([
-//          ['Mushrooms', 3],
-//          ['Onions', 1],
-//          ['Olives', 1],
-//          ['Zucchini', 1],
-//          ['Pepperoni', 2]
-//        ]);
-//
-//        // Set chart options
-//        var options = {is3D: true};
-//
-//        // Instantiate and draw our chart, passing in some options.
-//        var chart = new google.visualization.PieChart(document.getElementById('chart_proyecto'));
-//        chart.draw(data, options);
-//      }
-//}
-//function setChartB(){
-//    // Load the Visualization API and the corechart package.
-//      google.charts.load('current', {'packages':['corechart']});
-//
-//      // Set a callback to run when the Google Visualization API is loaded.
-//      google.charts.setOnLoadCallback(drawChart);
-//
-//      // Callback that creates and populates a data table,
-//      // instantiates the pie chart, passes in the data and
-//      // draws it.
-//      function drawChart() {
-//
-//        // Create the data table.
-//        var data = new google.visualization.DataTable();
-//        data.addColumn('string', 'Topping');
-//        data.addColumn('number', 'Slices');
-//        data.addRows([
-//          ['Mushrooms', 3],
-//          ['Onions', 1],
-//          ['Olives', 1],
-//          ['Zucchini', 1],
-//          ['Pepperoni', 2]
-//        ]);
-//
-//        // Set chart options
-//        var options = {is3D: true};
-//
-//        // Instantiate and draw our chart, passing in some options.
-//        var chart = new google.visualization.PieChart(document.getElementById('chart_B'));
-//        chart.draw(data, options);
-//      }
-//}
-//function setChartC(){
-//    // Load the Visualization API and the corechart package.
-//      google.charts.load('current', {'packages':['corechart']});
-//
-//      // Set a callback to run when the Google Visualization API is loaded.
-//      google.charts.setOnLoadCallback(drawChart);
-//
-//      // Callback that creates and populates a data table,
-//      // instantiates the pie chart, passes in the data and
-//      // draws it.
-//      function drawChart() {
-//
-//        // Create the data table.
-//        var data = new google.visualization.DataTable();
-//        data.addColumn('string', 'Topping');
-//        data.addColumn('number', 'Slices');
-//        data.addRows([
-//          ['Mushrooms', 3],
-//          ['Onions', 1],
-//          ['Olives', 1],
-//          ['Zucchini', 1],
-//          ['Pepperoni', 2]
-//        ]);
-//
-//        // Set chart options
-//        var options = {is3D: true};
-//
-//        // Instantiate and draw our chart, passing in some options.
-//        var chart = new google.visualization.PieChart(document.getElementById('chart_C'));
-//        chart.draw(data, options);
-//      }
-//}
-//function setChartD(){
-//    // Load the Visualization API and the corechart package.
-//      google.charts.load('current', {'packages':['corechart']});
-//
-//      // Set a callback to run when the Google Visualization API is loaded.
-//      google.charts.setOnLoadCallback(drawChart);
-//
-//      // Callback that creates and populates a data table,
-//      // instantiates the pie chart, passes in the data and
-//      // draws it.
-//      function drawChart() {
-//
-//        // Create the data table.
-//        var data = new google.visualization.DataTable();
-//        data.addColumn('string', 'Topping');
-//        data.addColumn('number', 'Slices');
-//        data.addRows([
-//          ['Mushrooms', 3],
-//          ['Onions', 1],
-//          ['Olives', 1],
-//          ['Zucchini', 1],
-//          ['Pepperoni', 2]
-//        ]);
-//
-//        // Set chart options
-//        var options = {is3D: true};
-//
-//        // Instantiate and draw our chart, passing in some options.
-//        var chart = new google.visualization.PieChart(document.getElementById('chart_D'));
-//        chart.draw(data, options);
-//      }
-//}
-//function setChartE(){
-//    // Load the Visualization API and the corechart package.
-//      google.charts.load('current', {'packages':['corechart']});
-//
-//      // Set a callback to run when the Google Visualization API is loaded.
-//      google.charts.setOnLoadCallback(drawChart);
-//
-//      // Callback that creates and populates a data table,
-//      // instantiates the pie chart, passes in the data and
-//      // draws it.
-//      function drawChart() {
-//
-//        // Create the data table.
-//        var data = new google.visualization.DataTable();
-//        data.addColumn('string', 'Topping');
-//        data.addColumn('number', 'Slices');
-//        data.addRows([
-//          ['Mushrooms', 3],
-//          ['Onions', 1],
-//          ['Olives', 1],
-//          ['Zucchini', 1],
-//          ['Pepperoni', 2]
-//        ]);
-//
-//        // Set chart options
-//        var options = {is3D: true};
-//
-//        // Instantiate and draw our chart, passing in some options.
-//        var chart = new google.visualization.PieChart(document.getElementById('chart_E'));
-//        chart.draw(data, options);
-//      }
-//}
-//function setChartF(){
-//    // Load the Visualization API and the corechart package.
-//      google.charts.load('current', {'packages':['corechart']});
-//
-//      // Set a callback to run when the Google Visualization API is loaded.
-//      google.charts.setOnLoadCallback(drawChart);
-//
-//      // Callback that creates and populates a data table,
-//      // instantiates the pie chart, passes in the data and
-//      // draws it.
-//      function drawChart() {
-//
-//        // Create the data table.
-//        var data = new google.visualization.DataTable();
-//        data.addColumn('string', 'Topping');
-//        data.addColumn('number', 'Slices');
-//        data.addRows([
-//          ['Mushrooms', 3],
-//          ['Onions', 1],
-//          ['Olives', 1],
-//          ['Zucchini', 1],
-//          ['Pepperoni', 2]
-//        ]);
-//
-//        // Set chart options
-//        var options = {is3D: true};
-//
-//        // Instantiate and draw our chart, passing in some options.
-//        var chart = new google.visualization.PieChart(document.getElementById('chart_F'));
-//        chart.draw(data, options);
-//      }
-//}
+function createDataViewGraph(infoChart, panel){
+    
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        
+        dataFilter = new google.visualization.DataTable();
+        dataFilter.addColumn('string', 'Topping');
+        dataFilter.addColumn('number', 'Slices');
+        for (var i = 0; i < infoChart.length; i++) {
+            dataFilter.addRows([
+                [infoChart[i][1], parseInt(infoChart[i][2])]
+            ]);
+        }
+
+        optionsFilter = {is3D: true};
+
+        chartFilter = new google.visualization.PieChart(document.getElementById(panel));
+        chartFilter.draw(dataFilter, optionsFilter); 
+    }
+    resizeGraphFilter(optionsFilter)
+}
+
+function resizeGraphFilter(options){
+    if (document.addEventListener) {
+        window.addEventListener('resize', resizeChart);
+    }
+    else 
+        if (document.attachEvent) {
+            window.attachEvent('onresize', resizeChart);
+        }else {
+            window.resize = resizeChart;
+        }
+        
+    function resizeChart () {
+        chartFilter.draw(dataFilter, options);
+    }
+}

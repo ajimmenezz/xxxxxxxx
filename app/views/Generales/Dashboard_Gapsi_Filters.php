@@ -1,9 +1,18 @@
 <div id="contentDashboardGapsiFilters" class="content">
-    <h1 class="page-header">Dashboard Gapsi</h1>
+    <div class="row">
+        <div class="col-md-9 col-sm-6 col-xs-12">
+            <h1 class="page-header">Dashboard Gapsi</h1>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12 text-right">
+            <label id="btnReturnDashboardGapsi" class="btn btn-success">
+                <i class="fa fa fa-reply"></i> Regresar
+            </label>  
+        </div>
+    </div>
     <div id="panelDashboardGapsiFilters" class="panel panel-inverse">
        
         <div class="panel-heading">
-            <h4 class="panel-title">Gastos</h4>
+            <h4 class="panel-title">Gastos</h4><?php //echo '<pre>'; var_dump($sucursales); echo '</pre>';?>
         </div>
         
         <div class="panel-body">
@@ -106,27 +115,25 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">                        
-                                    <div class="table-responsive">
+                                    <div class="table-responsive" style="width:auto; height:300px; overflow:auto;">
                                          <table id="data-tipo-proyecto" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                              <thead>
                                                  <tr>
+                                                     <th class="never">idProyecto</th>
                                                      <th class="all">Proyecto</th>
-                                                     <th class="all">Gastos</th>
+                                                     <th class="all">Gasto</th>
                                                  </tr>
                                              </thead>
                                              <tbody>
-                                                 <tr>
-                                                    <td>Mushrooms</td>
-                                                    <td>3</td>
-                                                 </tr>
-                                                 <tr>
-                                                    <td>Onions</td>
-                                                    <td>1</td>
-                                                 </tr>
-                                                 <tr>
-                                                    <td>Olives</td>
-                                                    <td>1</td>
-                                                 </tr>
+                                                <?php
+                                                foreach ($proyectos as $proyecto) {
+                                                    echo "<tr>";
+                                                        echo '<td>'.$proyecto['IdProyecto'].'</td>';
+                                                        echo '<td>'.$proyecto['Proyecto'].'</td>';
+                                                        echo '<td>'.$proyecto['Gasto'].'</td>';
+                                                    echo "</tr>";
+                                                }
+                                                ?>
                                              </tbody>
                                          </table>
                                      </div>
@@ -148,26 +155,28 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">                        
-                                <div id="chart_B" style="width: 100%; height: 20%;"></div>
+                                <div id="chart_servicios" style="width: 100%; height: 100%;"></div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                <div class="table-responsive">
-                                     <table id="data-tipo-Serivicio" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
+                                <div class="table-responsive" style="width:auto; height:300px; overflow:auto;">
+                                     <table id="data-tipo-serivicio" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                          <thead>
                                              <tr>
+                                                 <th class="never">idSerivicio</th>
                                                  <th class="all">Serivicio</th>
                                                  <th class="all">Gastos</th>
                                              </tr>
                                          </thead>
                                          <tbody>
-                                             <tr>
-                                                 <td>Compra</td>
-                                                 <td>315000</td>
-                                             </tr>
-                                             <tr>
-                                                 <td>Gastos</td>
-                                                 <td>160000</td>
-                                             </tr>
+                                            <?php
+                                            foreach ($servicios as $servicio) {
+                                                echo "<tr>";
+                                                    echo '<td>'.$servicio['IdServicio'].'</td>';
+                                                    echo '<td>'.$servicio['TipoServicio'].'</td>';
+                                                    echo '<td>'.$servicio['Gasto'].'</td>';
+                                                echo "</tr>";
+                                            }
+                                            ?>
                                          </tbody>
                                      </table>
                                  </div>
@@ -187,26 +196,28 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">                        
-                                    <div id="chart_C" style="width: 100%; height: 20%;"></div>
+                                    <div id="chart_sucursal" style="width: 100%; height: 20%;"></div>
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                    <div class="table-responsive">
-                                         <table id="data-tipo-Sucursal" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
+                                    <div class="table-responsive" style="width:auto; height:300px; overflow:auto;">
+                                         <table id="data-tipo-sucursal" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                              <thead>
                                                  <tr>
+                                                     <th class="never">idSucursal</th>
                                                      <th class="all">Sucursal</th>
                                                      <th class="all">Gastos</th>
                                                  </tr>
                                              </thead>
                                              <tbody>
-                                                 <tr>
-                                                     <td>Compra</td>
-                                                     <td>315000</td>
-                                                 </tr>
-                                                 <tr>
-                                                     <td>Gastos</td>
-                                                     <td>160000</td>
-                                                 </tr>
+                                                <?php
+                                                foreach ($sucursales as $sucursal) {
+                                                    echo "<tr>";
+                                                        echo '<td>'.$sucursal['IdSucursal'].'</td>';
+                                                        echo '<td>'.$sucursal['Sucursal'].'</td>';
+                                                        echo '<td>'.$sucursal['Gasto'].'</td>';
+                                                    echo "</tr>";
+                                                }
+                                                ?>
                                              </tbody>
                                          </table>
                                      </div>
@@ -230,7 +241,7 @@
                                     <div id="chart_D" style="width: 100%; height: 20%;"></div>
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive" style="width:auto; height:300px; overflow:auto;">
                                          <table id="data-tipo-categoria" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                              <thead>
                                                  <tr>
@@ -270,7 +281,7 @@
                                     <div id="chart_E" style="width: 100%; height: 20%;"></div>
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive" style="width:auto; height:300px; overflow:auto;">
                                          <table id="data-tipo-SubCategoria" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                              <thead>
                                                  <tr>
@@ -310,8 +321,8 @@
                                     <div id="chart_F" style="width: 100%; height: 20%;"></div>
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                    <div class="table-responsive">
-                                         <table id="data-tipo-Concepto" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
+                                    <div class="table-responsive" style="width:auto; height:300px; overflow:auto;">
+                                         <table id="data-tipo-concepto" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                              <thead>
                                                  <tr>
                                                      <th class="all">Concepto</th>

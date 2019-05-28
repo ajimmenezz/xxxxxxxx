@@ -52,7 +52,6 @@ $(function () {
             $("#citaFolio").css("display","block");
             $('#inputCitaFolio').attr('data-parsley-required', 'true');
             $("#archivoCitaIncapacidad").css("display","block");
-            $('#inputEvidenciaIncapacidad').attr('data-parsley-required', 'true');
             $("#descripcionAusencia").css("display","none");
             $('#textareaMotivoSolicitudPermiso').attr('data-parsley-required', 'false');
             $('#textareaMotivoSolicitudPermiso').val('');
@@ -63,7 +62,6 @@ $(function () {
             $('#inputCitaFolio').attr('data-parsley-required', 'false');
             $('#inputCitaFolio').val('');
             $("#archivoCitaIncapacidad").css("display","none");
-            $('#inputEvidenciaIncapacidad').attr('data-parsley-required', 'false');
             file.limpiar('#inputEvidenciaIncapacidad');
         }
         if ($(this).val() == '') {
@@ -213,25 +211,42 @@ $(function () {
                 horaAusencia: $('#selectSolicitudHora').val(),
                 descuentoPermiso: $('#inputDescuento').val()
             }
-            if ( $('#inputEvidenciaIncapacidad').val() !== '' ) {
-                file.enviarArchivos('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', '#panelPermisosVacaciones', data, function (respuesta) {
-                    if (respuesta !== 'otraImagen') {
-                        window.open(respuesta, '_blank');
-                        location.reload();
+            var html = '<div class="row m-t-20">\n\
+                    <form id="formDescuentoPermiso" class="margin-bottom-0" enctype="multipart/form-data">\n\
+                        <div id="modal-dialogo" class="col-md-12 text-center">\n\
+                            <h4>Se descontará '+data.descuentoPermiso+' al salario</h4><br>\n\
+                            <button id="btnCancelarPermisoM" type="button" class="btn btn-sm btn-danger"><i class="fa fa-times"></i> Cerrar</button>\n\
+                            <button id="btnAceptarPermisoM" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
+                        </div>\n\
+                    </form>\n\
+                    </div>';
+                $('#btnModalConfirmar').addClass('hidden');
+                $('#btnModalAbortar').addClass('hidden');
+                evento.mostrarModal('Descuento aplicable', html);
+                $('#btnCancelarPermisoM').on('click', function () {
+                    evento.cerrarModal();
+                });
+                $('#btnAceptarPermisoM').on('click', function () {
+                    if ( $('#inputEvidenciaIncapacidad').val() !== '' ) {
+                        file.enviarArchivos('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', '#panelPermisosVacaciones', data, function (respuesta) {
+                            if (respuesta !== 'otraImagen') {
+                                window.open(respuesta, '_blank');
+                                location.reload();
+                            } else {
+                                evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
+                            }
+                        });
                     } else {
-                        evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
+                        evento.enviarEvento('EventoPermisosVacaciones/Permisos', data, '#panelPermisosVacaciones', function (respuesta) {
+                            if (respuesta) {
+                                window.open(respuesta, '_blank');
+                                location.reload();
+                            } else {
+                                evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
+                            }
+                        });
                     }
                 });
-            } else {
-                evento.enviarEvento('EventoPermisosVacaciones/Permisos', data, '#panelPermisosVacaciones', function (respuesta) {
-                    if (respuesta) {
-                        window.open(respuesta, '_blank');
-                        location.reload();
-                    } else {
-                        evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
-                    }
-                });
-            }
         }
     });
 

@@ -55,7 +55,7 @@ class GerstorProyectosGAPSI extends General {
         $dataProjectsInfo['proyectos'] = $proyectos['query'];
         $dataProjectsInfo['servicios'] = $servicios['query'];
         $dataProjectsInfo['sucursales'] = $sucursales['query'];
-        return $dataProjectsInfo;
+        return array('formulario' => parent::getCI()->load->view('Generales/Dashboard_Gapsi_Filters', $dataProjectsInfo, TRUE));
     }
 
     public function getProjectInfo(array $filters) {

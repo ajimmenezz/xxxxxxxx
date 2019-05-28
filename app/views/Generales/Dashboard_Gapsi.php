@@ -53,7 +53,7 @@
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 <!--tabla de todos los proyectos                    -->
-                    <div class="table-responsive" style="width:auto; height:400px; overflow:auto;">
+                    <div class="table-responsive">
                         <table id="data-table-proyectos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                             <thead>
                                 <tr>
@@ -67,7 +67,7 @@
                             <tbody>
                                 <?php
                                 foreach ($datos['Proyectos'] as $valorProyecto) {
-                                    echo '<tr class="type'.$valorProyecto['IdTipo'].'">';
+                                    echo '<tr>';
                                         echo '<td>'.$valorProyecto['IdTipo'].'</td>';
                                         echo '<td>'.$valorProyecto['IdProyecto'].'</td>';
                                         echo '<td>'.$valorProyecto['Descripcion'].'</td>';
