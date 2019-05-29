@@ -75,12 +75,6 @@ function resizeGraph(options){
     } else {
         window.resize = resizeChart;
     }
-    else 
-        if (document.attachEvent) {
-            window.attachEvent('onresize', resizeChart);
-        }else {
-            window.resize = resizeChart;
-        }
         
     function resizeChart () {
         chartDashboard.draw(dataDashboard, options);
@@ -105,20 +99,34 @@ function selectTypeProyects(){
 
 function selectProyects(){
     $('#data-table-proyectos tbody').on('click', 'tr', function () {
+        var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
         var tableInfoProyects = $('#data-table-proyectos').DataTable().row(this).data();
-        //sendEventViewFilters(tableInfoProyects);
+        for (var i = 0; i < tableInfoTypeProyects.length; i++) {
+            if(tableInfoTypeProyects[i][0] == tableInfoProyects[0]){
+                var tipoProyecto = tableInfoTypeProyects[i][1];
+            }
+        }
+        var dataSearch = {
+            tipoProyecto: tipoProyecto,
+            moneda: 'MN',
+            proyecto: tableInfoProyects[1]
+        }
+        sendEventViewFilters(dataSearch);
     });
 }
 
 function selectGraphProyect() {
     var selectedItem = chartDashboard.getSelection()[0];
     var nameProyect = dataDashboard.getValue(selectedItem.row, 0);
-    sendEventViewFilters(nameProyect);
+    var dataSearch = {
+        tipoProyecto: nameProyect,
+        moneda: 'MN'
+    }
+    sendEventViewFilters(dataSearch);
 }
 
-function sendEventViewFilters(search){
-    var dataSearch = {tipoProyecto: search}
-    evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', dataSearch, '#panelDashboardGapsi', function (respuesta) {
+function sendEventViewFilters(data){
+    evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', data, '#panelDashboardGapsi', function (respuesta) {
         if (respuesta) {
             $('#dashboardGapsiFilters').removeClass('hidden').empty().append(respuesta.formulario);
             $('#contentDashboardGapsi').addClass('hidden');
@@ -161,7 +169,11 @@ function createElements(){
 function createGraphs(){
     $("#data-tipo-proyecto").ready(function () {
         var infoTypeProyects = $('#data-tipo-proyecto').DataTable().rows().data();
-        createDataGraph(infoTypeProyects, "chart_proyecto");
+        if(infoTypeProyects.length > 1){
+            createDataGraph(infoTypeProyects, "chart_proyecto");
+        }else{
+            $("#cardProyectos").css("display","none");
+        }
     });
     $("#data-tipo-serivicio").ready(function () {
         var infoTypeService = $('#data-tipo-serivicio').DataTable().rows().data();
