@@ -12,7 +12,7 @@
     <div id="panelDashboardGapsiFilters" class="panel panel-inverse">
        
         <div class="panel-heading">
-            <h4 class="panel-title">Gastos</h4><?php //echo '<pre>'; var_dump($sucursales); echo '</pre>';?>
+            <h4 class="panel-title">Gastos</h4><?php //echo '<pre>'; var_dump($proyectos); echo '</pre>';?>
         </div>
         
         <div class="panel-body">
@@ -35,7 +35,7 @@
                                         foreach ($gastosCompras as $valor) {
                                             echo "<tr>";
                                                 echo '<td>'.$valor['TipoTrans'].'</td>';
-                                                echo '<td>'.$valor['Gasto'].'</td>';
+                                                echo '<td>'.number_format($valor['Gasto'], 2).'</td>';
                                             echo "</tr>";
                                         }
                                         ?>
@@ -74,7 +74,7 @@
                                     <option value="">Seleccionar...</option>
                                     <?php
                                     foreach ($proyectos as $proyecto) {
-                                        echo '<option value="'.$proyecto['Proyecto'].'">'.$proyecto['Proyecto'].'</option>';
+                                        echo '<option value="'.$proyecto['IdProyecto'].'">'.$proyecto['Proyecto'].'</option>';
                                     }
                                     ?>
                                 </select>
@@ -85,7 +85,7 @@
                                     <option value="">Seleccionar...</option>
                                     <?php
                                     foreach ($servicios as $servicio) {
-                                        echo '<option value="'.$servicio['TipoServicio'].'">'.$servicio['TipoServicio'].'</option>';
+                                        echo '<option value="'.$servicio['IdServicio'].'">'.$servicio['TipoServicio'].'</option>';
                                     }
                                     ?>
                                 </select>
@@ -96,7 +96,7 @@
                                     <option value="">Seleccionar...</option>
                                     <?php
                                     foreach ($sucursales as $sucursal) {
-                                        echo '<option value="'.$sucursal['Sucursal'].'">'.$sucursal['Sucursal'].'</option>';
+                                        echo '<option value="'.$sucursal['IdSucursal'].'">'.$sucursal['Sucursal'].'</option>';
                                     }
                                     ?>
                                 </select>
@@ -179,7 +179,7 @@
                                                     echo "<tr>";
                                                         echo '<td>'.$proyecto['IdProyecto'].'</td>';
                                                         echo '<td>'.$proyecto['Proyecto'].'</td>';
-                                                        echo '<td>'.$proyecto['Gasto'].'</td>';
+                                                        echo '<td>'.number_format($proyecto['Gasto'], 2).'</td>';
                                                     echo "</tr>";
                                                 }
                                                 ?>
@@ -222,7 +222,7 @@
                                                 echo "<tr>";
                                                     echo '<td>'.$servicio['IdServicio'].'</td>';
                                                     echo '<td>'.$servicio['TipoServicio'].'</td>';
-                                                    echo '<td>'.$servicio['Gasto'].'</td>';
+                                                    echo '<td>'.number_format($servicio['Gasto'], 2).'</td>';
                                                 echo "</tr>";
                                             }
                                             ?>
@@ -263,7 +263,7 @@
                                                     echo "<tr>";
                                                         echo '<td>'.$sucursal['IdSucursal'].'</td>';
                                                         echo '<td>'.$sucursal['Sucursal'].'</td>';
-                                                        echo '<td>'.$sucursal['Gasto'].'</td>';
+                                                        echo '<td>'.number_format($sucursal['Gasto'], 2).'</td>';
                                                     echo "</tr>";
                                                 }
                                                 ?>
@@ -305,7 +305,7 @@
                                                     echo "<tr>";
                                                         echo '<td>1</td>';
                                                         echo '<td>'.$categoria['Categoria'].'</td>';
-                                                        echo '<td>'.$categoria['Gasto'].'</td>';
+                                                        echo '<td>'.number_format($categoria['Gasto'], 2).'</td>';
                                                     echo "</tr>";
                                                 }
                                                 ?>
@@ -347,7 +347,7 @@
                                                     echo "<tr>";
                                                         echo '<td>1</td>';
                                                         echo '<td>'.$subcategoria['SubCategoria'].'</td>';
-                                                        echo '<td>'.$subcategoria['Gasto'].'</td>';
+                                                        echo '<td>'.number_format($subcategoria['Gasto'], 2).'</td>';
                                                     echo "</tr>";
                                                 }
                                                 ?>
@@ -389,7 +389,7 @@
                                                     echo "<tr>";
                                                         echo '<td>1</td>';
                                                         echo '<td>'.$valor['Concepto'].'</td>';
-                                                        echo '<td>'.$valor['Gasto'].'</td>';
+                                                        echo '<td>'.number_format($valor['Gasto'], 2).'</td>';
                                                     echo "</tr>";
                                                 }
                                                 ?>

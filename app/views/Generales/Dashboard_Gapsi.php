@@ -71,7 +71,7 @@
                                         echo '<td>'.$valorProyecto['IdTipo'].'</td>';
                                         echo '<td>'.$valorProyecto['IdProyecto'].'</td>';
                                         echo '<td>'.$valorProyecto['Descripcion'].'</td>';
-                                        echo '<td>'.$valorProyecto['Gasto'].'</td>';
+                                        echo '<td>'.number_format($valorProyecto['Gasto'], 2).'</td>';
                                         echo '<td>'.$valorProyecto['FCreacion'].'</td>';
                                     echo "</tr>";
                                 }
