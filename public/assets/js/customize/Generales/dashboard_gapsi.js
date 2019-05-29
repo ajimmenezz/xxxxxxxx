@@ -75,12 +75,6 @@ function resizeGraph(options){
     } else {
         window.resize = resizeChart;
     }
-    else 
-        if (document.attachEvent) {
-            window.attachEvent('onresize', resizeChart);
-        }else {
-            window.resize = resizeChart;
-        }
         
     function resizeChart () {
         chartDashboard.draw(dataDashboard, options);
