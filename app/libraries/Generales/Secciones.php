@@ -4,7 +4,8 @@ namespace Librerias\Generales;
 
 use Controladores\Controller_Datos_Usuario as General;
 
-class Secciones extends General {
+class Secciones extends General
+{
 
     private $Catalogo;
     private $Notificacion;
@@ -40,7 +41,8 @@ class Secciones extends General {
     private $permisosVacaciones;
     private $autorizarpermisos;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         parent::getCI()->config->load('Menu_config');
         parent::getCI()->config->load('Pagina_config');
@@ -59,7 +61,7 @@ class Secciones extends General {
         $this->Seguimiento = \Librerias\Logistica\Seguimiento::factory();
         $this->Poliza = \Librerias\Poliza\Poliza::factory();
         $this->Seguimientos = \Librerias\Poliza\Seguimientos::factory();
-//        $this->DB_Adist2 = \Modelos\Modelo_DB_Adist2::factory(); Este objeto se estara utilizando para proyectos
+        //        $this->DB_Adist2 = \Modelos\Modelo_DB_Adist2::factory(); Este objeto se estara utilizando para proyectos
         $this->DBP = \Modelos\Modelo_Proyectos::factory();
         $this->DBC = \Modelos\Modelo_Catalogo_Proyectos::factory();
         $this->DashboardGeneral = \Librerias\Generales\Dashboard::factory();
@@ -78,7 +80,7 @@ class Secciones extends General {
         $this->ModeloTesoreria = \Modelos\Modelo_Tesoreria::factory();
         $this->Compras = \Librerias\Compras\Compras::factory();
         $this->PerfilUsuario = \Librerias\RH\Perfil_Usuario::factory();
-//        $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
+        //        $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
         $this->ModeloDashboard = \Modelos\Modelo_Dashboard::factory();
         $this->permisosVacaciones = \Librerias\RH\Permisos_Vacaciones::factory();
         $this->autorizarpermisos = \Librerias\RH\Autorizar_permisos::factory();
@@ -91,7 +93,8 @@ class Secciones extends General {
      * @return array regresa la lista de menu y modulos para el usuario
      */
 
-    public function getSecciones(array $usuario) {
+    public function getSecciones(array $usuario)
+    {
         $menu = array();
         $permisos = array();
         $catalogo = null;
@@ -131,7 +134,8 @@ class Secciones extends General {
      * Se encarga de obtener la notificaciones del usuario.
      */
 
-    public function getNotificaciones(string $usuario) {
+    public function getNotificaciones(string $usuario)
+    {
         return $this->Notificacion->getNotificacionesMenuCabecera($usuario);
     }
 
@@ -143,7 +147,8 @@ class Secciones extends General {
      *  
      */
 
-    public function getDatosPagina(string $url) {
+    public function getDatosPagina(string $url)
+    {
         $datos = array();
         switch ($url) {
             case 'RH/Areas':
@@ -197,7 +202,7 @@ class Secciones extends General {
                 $datos['TodasTareas'] = $this->DBP2->tienePermisoTodasTareas();
                 break;
             case 'Proyectos/Nuevo':
-//                $datos['Clientes'] = $this->DBP->getClientes();
+                //                $datos['Clientes'] = $this->DBP->getClientes();
                 $datos['Sistemas'] = $this->DBP->getSistemas();
                 $datos['Tipo'] = $this->DBP->getTiposProyecto();
                 $datos['Complejos'] = $this->DBP->getSucursales();
@@ -337,6 +342,11 @@ class Secciones extends General {
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('15');
                 break;
             case 'Compras/Solicitud_Compra':
+                $datos['Clientes'] = $this->Gapsi->getClientes();
+                $datos['Productos'] = $this->Compras->getSAEProducts();
+                break;
+            case 'Compras/Mis_Solicitudes_Compra':
+                $datos['Solicitudes'] = $this->Compras->getListaMisSolicitudes();
                 $datos['Clientes'] = $this->Gapsi->getClientes();
                 break;
             case 'Compras/Ordenes_Compra':
@@ -521,7 +531,8 @@ class Secciones extends General {
      * 
      */
 
-    public function getAlcance($tipoProyecto, $idProyecto) {
+    public function getAlcance($tipoProyecto, $idProyecto)
+    {
         $data = array();
         $indice = array();
         $data['tipoProyecto'] = $tipoProyecto;
@@ -560,8 +571,8 @@ class Secciones extends General {
      * 
      */
 
-    public function getAyuda(string $ayuda) {
+    public function getAyuda(string $ayuda)
+    {
         return array('informacion' => parent::getCI()->load->view('Ayuda/' . $ayuda, '', TRUE));
     }
-
 }
