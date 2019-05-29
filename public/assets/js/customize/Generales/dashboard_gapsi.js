@@ -1,5 +1,5 @@
 $(function () {
-   //Objetos
+    //Objetos
     evento = new Base();
     websocket = new Socket();
     select = new Select();
@@ -17,13 +17,13 @@ $(function () {
 
     //Evento para mostrar la ayuda del sistema
     evento.mostrarAyuda('Ayuda_Proyectos');
-    
+
     tabla.generaTablaPersonal('#data-table-tipo-proyectos', null, null, true, true);
     tabla.generaTablaPersonal('#data-table-proyectos', null, null, true, true);
 
     //Inicializa funciones de la plantilla
     App.init();
-   
+
     setGraph();
     selectTypeProyects();
     selectProyects();
@@ -31,14 +31,14 @@ $(function () {
 
 var listaGlobaldeProyectos;
 var chartDashboard, dataDashboard, optionsDashboard;
-function setGraph(){
+function setGraph() {
     google.charts.load('current', {packages: ['corechart', 'bar']});
     google.charts.setOnLoadCallback(setGraphDashboard);
 }
 
 function setGraphDashboard() {
-        
-    google.charts.load('current', {'packages':['corechart']});
+
+    google.charts.load('current', {'packages': ['corechart']});
     google.charts.setOnLoadCallback(drawChart);
 
     function drawChart() {
@@ -62,13 +62,18 @@ function setGraphDashboard() {
         google.visualization.events.addListener(chartDashboard, 'select', selectGraphProyect);
         chartDashboard.draw(dataDashboard, optionsDashboard);
     }
-    
+
     resizeGraph(optionsDashboard);
 }
 
 function resizeGraph(options){
     if (document.addEventListener) {
         window.addEventListener('resize', resizeChart);
+    } else
+    if (document.attachEvent) {
+        window.attachEvent('onresize', resizeChart);
+    } else {
+        window.resize = resizeChart;
     }
     else 
         if (document.attachEvent) {
