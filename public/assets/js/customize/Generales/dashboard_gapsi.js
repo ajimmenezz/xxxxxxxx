@@ -1,5 +1,5 @@
 $(function () {
-   //Objetos
+    //Objetos
     evento = new Base();
     websocket = new Socket();
     charts = new Charts();
@@ -16,17 +16,17 @@ $(function () {
 
     //Evento para mostrar la ayuda del sistema
     evento.mostrarAyuda('Ayuda_Proyectos');
-    
+
     tabla.generaTablaPersonal('#data-table-tipo-proyectos', null, null, true, true);
     tabla.generaTablaPersonal('#data-table-proyectos', null, null, true, true, [], null, '<frt>', false);
 
     //Inicializa funciones de la plantilla
     App.init();
-   
+
     setGraph();
     selectTypeProyects();
     selectProyects();
-/***********************************************************************/
+    /***********************************************************************/
 //    setChartA();
 //    setChartB();
 //    setChartC();
@@ -36,14 +36,14 @@ $(function () {
 });
 
 var chartDashboard, dataDashboard, optionsDashboard;
-function setGraph(){
+function setGraph() {
     google.charts.load('current', {packages: ['corechart', 'bar']});
     google.charts.setOnLoadCallback(setGraphDashboard);
 }
 
 function setGraphDashboard() {
-        
-    google.charts.load('current', {'packages':['corechart']});
+
+    google.charts.load('current', {'packages': ['corechart']});
     google.charts.setOnLoadCallback(drawChart);
 
     function drawChart() {
@@ -52,7 +52,7 @@ function setGraphDashboard() {
         dataDashboard.addColumn('string', 'Topping');
         dataDashboard.addColumn('number', 'Proyectos');
         $("#data-table-tipo-proyectos").ready(function () {
-        var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
+            var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
             for (var i = 0; i < tableInfoTypeProyects.length; i++) {
                 dataDashboard.addRows([
                     [tableInfoTypeProyects[i][1], parseInt(tableInfoTypeProyects[i][2])]
@@ -66,7 +66,7 @@ function setGraphDashboard() {
         google.visualization.events.addListener(chartDashboard, 'select', selectGraphProyect);
         chartDashboard.draw(dataDashboard, optionsDashboard);
     }
-    
+
     resizeGraph(optionsDashboard);
 }
 
@@ -82,40 +82,55 @@ function selectGraphProyect() {
     console.log(idBusqueda);
 }
 
-function selectTypeProyects(){
+function selectTypeProyects() {
     $('#data-table-tipo-proyectos tbody').on('click', 'tr', function () {
         var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().row(this).data();
+        console.log(tableInfoTypeProyects);
         var idTypeProyect = tableInfoTypeProyects[0];
         var infoTableProyects = $('#data-table-proyectos').DataTable().rows().data();
+
+        var data = {
+            'tipoProyecto': tableInfoTypeProyects[1],
+            'moneda': 'MN',
+        }
+
         for (var i = 0; i < infoTableProyects.length; i++) {
             if (infoTableProyects[i][0] !== idTypeProyect) {
-                $('.type'+infoTableProyects[i][0]).hide();
-            }else{
-                $('.type'+infoTableProyects[i][0]).show();
+                $('.type' + infoTableProyects[i][0]).hide();
+            } else {
+                $('.type' + infoTableProyects[i][0]).show();
             }
         }
     });
 }
 
-function selectProyects(){
+function selectProyects() {
     $('#data-table-proyectos tbody').on('click', 'tr', function () {
         var tableInfoProyects = $('#data-table-proyectos').DataTable().row(this).data();
         console.log(tableInfoProyects);
+        var data = {
+            'tipoProyecto': 'X4D',
+            'moneda': 'MN',
+            'proyecto': '27',
+        }
+        console.log(data);
+        evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', data, '#modal-dialogo', function (respuesta) {
+            console.log(respuesta);
+        });
     });
 }
 
-function resizeGraph(options){
+function resizeGraph(options) {
     if (document.addEventListener) {
         window.addEventListener('resize', resizeChart);
+    } else
+    if (document.attachEvent) {
+        window.attachEvent('onresize', resizeChart);
+    } else {
+        window.resize = resizeChart;
     }
-    else 
-        if (document.attachEvent) {
-            window.attachEvent('onresize', resizeChart);
-        }else {
-            window.resize = resizeChart;
-        }
-        
-    function resizeChart () {
+
+    function resizeChart() {
         chart.draw(dataDashboard, options);
     }
 }
