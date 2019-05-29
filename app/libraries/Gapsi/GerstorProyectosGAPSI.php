@@ -67,15 +67,69 @@ class GerstorProyectosGAPSI extends General {
     }
 
     private function defineParameters(array $filters) {
-
-        if (isset($filters['proyecto'])) {
-            $parameters = "AND Tipo = '" . $filters['tipoProyecto'] . "'
+        if (isset($filters['tipoProyecto']) && isset($filters['proyecto']) && isset($filters['categoria']) && isset($filters['subcategoria'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'
+                            AND dt.ID = '" . $filters['servicio'] . "'
+                            AND dc.ID = '" . $filters['categoria'] . "'
+                            AND dsc.ID = '" . $filters['subcategoria'] . "'";
+        } elseif (isset($filters['tipoProyecto']) && isset($filters['proyecto']) && isset($filters['categoria']) && isset($filters['subcategoria'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'
+                            AND dc.ID = '" . $filters['categoria'] . "'
+                            AND dsc:ID = '" . $filters['subcategoria'] . "'";
+        } elseif (isset($filters['tipoProyecto']) && isset($filters['proyecto']) && isset($filters['servicio']) && isset($filters['sucursal'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'
+                            AND dt.ID = '" . $filters['servicio'] . "'
+                            AND dr.Sucursal = '" . $filters['sucursal'] . "'";
+        } elseif (isset($filters['tipoProyecto']) && isset($filters['categoria']) && isset($filters['subcategoria'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND dc.ID = '" . $filters['categoria'] . "'
+                            AND dsc.ID = '" . $filters['subcategoria'] . "'";
+        } elseif (isset($filters['tipoProyecto']) && isset($filters['proyecto']) && isset($filters['sucursal'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'
+                            AND dr.Sucursal = '" . $filters['sucursal'] . "'";
+        } elseif (isset($filters['tipoProyecto']) && isset($filters['proyecto']) && isset($filters['categoria'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'
+                            AND dc.ID = '" . $filters['categoria'] . "'";
+        } elseif (isset($filters['tipoProyecto']) && isset($filters['proyecto']) && isset($filters['servicio'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'
+                            AND dt.ID = '" . $filters['servicio'] . "'";
+        } elseif (isset($filters['tipoProyecto']) && isset($filters['servicio']) && isset($filters['sucursal'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND dt.ID = '" . $filters['servicio'] . "'
+                            AND dr.Sucursal= '" . $filters['sucursal'] . "'";
+        } elseif (isset($filters['tipoProyecto']) && isset($filters['categoria'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND dc.ID = '" . $filters['categoria'] . "'";
+        } elseif (isset($filters['tipoProyecto']) && isset($filters['sucursal'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND dr.Sucursal = '" . $filters['sucursal'] . "'";
+        } elseif (isset($filters['tipoProyecto']) && isset($filters['servicio'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND dt.ID = '" . $filters['servicio'] . "'";
+        } elseif (isset($filters['tipoProyecto']) && isset($filters['proyecto'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'
                             AND Proyecto = '" . $filters['proyecto'] . "'";
-        } elseif (isset($filters['servicio'])) {
-            $parameters = "AND Tipo = '" . $filters['tipoProyecto'] . "'
-                            AND dr.ID = '" . $filters['servicio'] . "'";
         } else {
-            $parameters = "AND Tipo = '" . $filters['tipoProyecto'] . "'";
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND Tipo = '" . $filters['tipoProyecto'] . "'";
         }
 
         return $parameters;
