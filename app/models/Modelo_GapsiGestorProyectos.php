@@ -54,6 +54,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON dsc.Nombre = ddg.SubCategoria
                                                 INNER JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
+                                                INNER JOIN db_Tipo dti
+                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 Group by Proyecto");
@@ -81,6 +83,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON dsc.Nombre = ddg.SubCategoria
                                                 INNER JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
+                                                INNER JOIN db_Tipo dti
+                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 Group by TipoServicio");
@@ -108,6 +112,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON dsc.Nombre = ddg.SubCategoria
                                                 INNER JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
+                                                INNER JOIN db_Tipo dti
+                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 Group by Sucursal");
@@ -120,7 +126,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
     }
 
     public function getCategoriesByType(string $parameters) {
-        $query = parent::connectDBGapsi()->query("SELECT 
+        $query = parent::connectDBGapsi()->query("SELECT
+                                                    (SELECT ID FROM db_Categorias WHERE Nombre = ddg.Categoria) AS IdCategoria,
                                                      ddg.Categoria,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
@@ -134,6 +141,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON dsc.Nombre = ddg.SubCategoria
                                                 INNER JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
+                                                INNER JOIN db_Tipo dti
+                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 Group by ddg.Categoria");
@@ -160,6 +169,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON dsc.Nombre = ddg.SubCategoria
                                                 INNER JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
+                                                INNER JOIN db_Tipo dti
+                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 GROUP BY ddg.SubCategoria");
@@ -186,6 +197,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON dsc.Nombre = ddg.SubCategoria
                                                 INNER JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
+                                                INNER JOIN db_Tipo dti
+                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1 
                                                 " . $parameters . "
                                                 GROUP BY ddg.Concepto");
@@ -212,6 +225,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON dsc.Nombre = ddg.SubCategoria
                                                 INNER JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
+                                                INNER JOIN db_Tipo dti
+                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1 
                                                 " . $parameters . "
                                                 GROUP BY dr.TipoTrans");
