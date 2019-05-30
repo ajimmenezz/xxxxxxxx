@@ -4,7 +4,8 @@ namespace Librerias\Compras;
 
 use Controladores\Controller_Base_General as General;
 
-class Compras extends General {
+class Compras extends General
+{
 
     private $catalogo;
     private $gapsi;
@@ -12,19 +13,23 @@ class Compras extends General {
     private $DBSAE;
     private $DBG;
     private $usuario;
+    private $DBCompras;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->catalogo = \Librerias\Generales\Catalogo::factory();
         $this->gapsi = \Librerias\Gapsi\Catalogos::factory();
         $this->reportes = \Librerias\SAEReports\Reportes::factory();
         $this->DBSAE = \Modelos\Modelo_SAE7::factory();
         $this->DBG = \Modelos\Modelo_Gapsi::factory();
+        $this->DBCompras = \Modelos\Modelo_Compras::factory();
         $this->usuario = \Librerias\Generales\Registro_Usuario::factory();
         parent::getCI()->load->helper('date');
     }
 
-    public function mostrarFormularioOrdenCompra() {
+    public function mostrarFormularioOrdenCompra()
+    {
         $data = array();
         $ultimaClaveDocumentacion = $this->DBSAE->consultaUltimaClaveDocumentacion();
 
@@ -36,7 +41,8 @@ class Compras extends General {
         return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
     }
 
-    public function mostrarEditarOrdenCompra(array $datos) {
+    public function mostrarEditarOrdenCompra(array $datos)
+    {
         $data = array();
 
         $data = $this->datosFormularioOrdenCompra();
@@ -68,7 +74,8 @@ class Compras extends General {
         return array('formulario' => parent::getCI()->load->view('Compras/Formularios/formularioOrdenCompra', $data, TRUE), 'datos' => $data);
     }
 
-    private function datosFormularioOrdenCompra() {
+    private function datosFormularioOrdenCompra()
+    {
         $data = array();
 
         $data['proveedores'] = $this->DBSAE->consultaProveedoresSAE();
@@ -83,19 +90,22 @@ class Compras extends General {
         return $data;
     }
 
-    public function mostrarDatosProyectos(array $datos) {
+    public function mostrarDatosProyectos(array $datos)
+    {
         $data = array();
         $data['sucursales'] = $this->gapsi->sucursalesByProyecto(array('id' => $datos['id']));
         return $data;
     }
 
-    public function mostrarDatosBeneficiarios(array $datos) {
+    public function mostrarDatosBeneficiarios(array $datos)
+    {
         $data = array();
         $data['beneficiarios'] = $this->gapsi->beneficiarioByTipo($datos);
         return $data;
     }
 
-    public function consultaListaOrdenesCompra(array $datos = null) {
+    public function consultaListaOrdenesCompra(array $datos = null)
+    {
         $fecha = mdate('%Y-%m-%d', now('America/Mexico_City'));
 
         if (empty($datos)) {
@@ -124,29 +134,34 @@ class Compras extends General {
         return $consulta;
     }
 
-    public function consultaListaRequisiciones(array $datos) {
+    public function consultaListaRequisiciones(array $datos)
+    {
         $consulta = $this->DBSAE->consultaListaRequisiciones($datos['claveDocumento']);
         return $consulta;
     }
 
-    public function consultaPartidasOrdenCompraAnteriores(array $datos) {
+    public function consultaPartidasOrdenCompraAnteriores(array $datos)
+    {
         $consulta = $this->DBSAE->consultaPartidasOrdenCompraAnteriores($datos['ordenCompra']);
         return $consulta;
     }
 
-    public function consultaRequisicionesOrdenCompra(array $datos) {
+    public function consultaRequisicionesOrdenCompra(array $datos)
+    {
         $consulta = $this->DBSAE->consultaRequisicionesOrdenCompra($datos['ordenCompra']);
         return $consulta;
     }
 
-    public function guardarOrdenCompra(array $datos) {
+    public function guardarOrdenCompra(array $datos)
+    {
         $usuario = $this->usuario->getDatosUsuario();
         $datosExtra = array(
             'esquema' => $datos['esquema'],
             'tipoMoneda' => $datos['moneda'],
             'tipoCambio' => $datos['tipoCambio'],
             'descuentoFinanciero' => $datos['descuentoFinanciero'],
-            'descuento' => $datos['descuento']);
+            'descuento' => $datos['descuento']
+        );
         $arraySubtotal = $this->subtotalTablaPartidas($datos['datosTabla'], $datosExtra);
 
         $consulta = $this->DBSAE->guardarOrdenCompra($datos, $arraySubtotal);
@@ -184,7 +199,8 @@ class Compras extends General {
                 $gastoPDF = $this->reportes->generaOC(array(
                     'id' => '1',
                     'documento' => $datos['claveNuevaDocumentacion'],
-                    'idGapsi' => $idGapsi['last']));
+                    'idGapsi' => $idGapsi['last']
+                ));
 
                 if (!empty($gastoPDF)) {
                     $registroGapsi = $this->DBG->insertarArchivosGastosGapsi(array(
@@ -210,13 +226,15 @@ class Compras extends General {
         }
     }
 
-    public function actualizarOrdenCompra(array $datos) {
+    public function actualizarOrdenCompra(array $datos)
+    {
         $datosExtra = array(
             'esquema' => $datos['esquema'],
             'tipoMoneda' => $datos['moneda'],
             'tipoCambio' => $datos['tipoCambio'],
             'descuentoFinanciero' => $datos['descuentoFinanciero'],
-            'descuento' => $datos['descuento']);
+            'descuento' => $datos['descuento']
+        );
         $arraySubtotal = $this->subtotalTablaPartidas($datos['datosTabla'], $datosExtra);
 
         $consulta = $this->DBSAE->actualizarOrdenCompra($datos, $arraySubtotal);
@@ -256,40 +274,43 @@ class Compras extends General {
         }
     }
 
-    public function subtotalTablaPartidas(array $datos, array $datosExtra) {
+    public function subtotalTablaPartidas(array $datos, array $datosExtra)
+    {
         $subtotal = '0.00';
         $descuentoPartida = '0.00';
         $descripcionGapsi = '';
-        
+
         foreach ($datos as $key => $value) {
-            $subtotal = (double) $subtotal + $value['subtotalPartida'];
+            $subtotal = (double)$subtotal + $value['subtotalPartida'];
             $porcentajeDescuento = $value['subtotalPartida'] * $value['descuento'] / 100;
             $descuentoPartida = $descuentoPartida + $porcentajeDescuento;
             $descripcionGapsi = $descripcionGapsi . $value['nombreProducto'] . ', ';
         }
-        
-        $ivaGapsi = number_format($subtotal * (int) $datosExtra['esquema'] / 100, 2, ".", "");
-        $subtotalGapsi = ((($subtotal - $descuentoPartida) - ($subtotal * $datosExtra['descuento'] / 100)) - ($subtotal * $datosExtra['descuentoFinanciero'] / 100)); 
+
+        $ivaGapsi = number_format($subtotal * (int)$datosExtra['esquema'] / 100, 2, ".", "");
+        $subtotalGapsi = ((($subtotal - $descuentoPartida) - ($subtotal * $datosExtra['descuento'] / 100)) - ($subtotal * $datosExtra['descuentoFinanciero'] / 100));
         $totalGapsi = $subtotalGapsi + $ivaGapsi;
         $subtotal = $subtotal * $datosExtra['tipoCambio'];
         $descuentoPartida = $descuentoPartida * $datosExtra['tipoCambio'];
         $descuento = ($subtotal * $datosExtra['descuento'] / 100) * $datosExtra['tipoCambio'];
         $descuentoFinanciero = ($subtotal * $datosExtra['descuentoFinanciero'] / 100) * $datosExtra['tipoCambio'];
         $subtotal = ((($subtotal - $descuento) - $descuentoFinanciero) - $descuentoPartida);
-        $iva = number_format($subtotal * (int) $datosExtra['esquema'] / 100, 2, ".", "");
+        $iva = number_format($subtotal * (int)$datosExtra['esquema'] / 100, 2, ".", "");
         $total = $subtotal + $iva;
 
         return array(
-            'subtotal' => $subtotal, 
-            'iva' => $iva, 
-            'descuento' => $descuento + $descuentoPartida, 
-            'total' => $total, 
-            'descuentoFinanciero' => $descuentoFinanciero, 
+            'subtotal' => $subtotal,
+            'iva' => $iva,
+            'descuento' => $descuento + $descuentoPartida,
+            'total' => $total,
+            'descuentoFinanciero' => $descuentoFinanciero,
             'totalGapsi' => $totalGapsi,
-            'descripcionGapsi' => $descripcionGapsi);
+            'descripcionGapsi' => $descripcionGapsi
+        );
     }
 
-    public function crearPDFGastoOrdenCompra(array $datos) {
+    public function crearPDFGastoOrdenCompra(array $datos)
+    {
         $ordenCompra = $this->ordenCompraGapsi($datos['ordenCompra']);
         $idGapsi = $this->DBG->consultaIdOrdenCompra(array(
             'ordenCompra' => $ordenCompra
@@ -305,7 +326,8 @@ class Compras extends General {
             $gastoPDF = $this->reportes->generaOC(array(
                 'id' => '1',
                 'documento' => $datos['ordenCompra'],
-                'idGapsi' => $idGapsi[0]['ID']));
+                'idGapsi' => $idGapsi[0]['ID']
+            ));
 
             return '.' . $gastoPDF;
         } else {
@@ -313,23 +335,98 @@ class Compras extends General {
         }
     }
 
-    public function verificarExisteOrdenCompra(array $datos) {
+    public function verificarExisteOrdenCompra(array $datos)
+    {
         $consulta = $this->DBSAE->consultaCOMPO($datos['ordenCompra']);
         return $consulta;
     }
 
-    private function ordenCompraGapsi(string $ordenCompra) {
+    private function ordenCompraGapsi(string $ordenCompra)
+    {
         $ordenCompraResultado = $this->quitarCeros($ordenCompra);
         $ordenCompraResultado = 'OC' . $ordenCompraResultado;
 
         return $ordenCompraResultado;
     }
 
-    private function quitarCeros(string $ordenCompra) {
+    private function quitarCeros(string $ordenCompra)
+    {
         $ordenCompraResultado = str_replace('OC', '', $ordenCompra);
         $ordenCompraResultado = preg_replace('/^0+/', '', $ordenCompraResultado);
 
         return $ordenCompraResultado;
     }
 
+
+    public function getSAEProducts()
+    {
+        $products = $this->DBCompras->getSAEProductos();
+        return $products;
+    }
+
+    public function getListaMisSolicitudes(int $id = null)
+    {
+        $solicitudes = $this->DBCompras->getListaMisSolicitudes($id);
+        return $solicitudes;
+    }
+
+    public function getPartidasSolicitudCompra(int $id = null)
+    {
+        $partidas = $this->DBCompras->getPartidasSolicitudCompra($id);
+        return $partidas;
+    }
+
+    public function solicitarCompra(array $datos)
+    {
+        $resultado = $this->DBCompras->insertarSolicitudCompra($datos);
+        if ($resultado['code'] == 500) {
+            return $resultado;
+        }
+
+        $archivos = $result = null;
+        $CI = parent::getCI();
+        $carpeta = './storage/Gastos/SolicitudesCompra/' . $resultado['id'] . '/';
+        $archivos = "";
+        if (!empty($_FILES)) {
+            $archivos = setMultiplesArchivos($CI, 'archivosSolicitud', $carpeta, 'gapsi');
+            if ($archivos) {
+                $archivos = implode(',', $archivos);
+            }
+        }
+
+        $resultado = $this->DBCompras->actualizarArchivosSolicitud($resultado['id'], $archivos);
+        return $resultado;
+    }
+
+    public function formularioEditarSolicitudCompra(array $datos)
+    {
+        $solicitud = $this->getListaMisSolicitudes($datos['id'])[0];
+        $productosSolicitados = $this->getPartidasSolicitudCompra($datos['id']);
+        $productosSAE = $this->getSAEProducts();
+
+        foreach ($productosSolicitados as $key => $value) {
+            foreach ($productosSAE as $kps => $vps) {
+                if ($vps['Clave'] == $value['ClaveSAE']) {
+                    unset($productosSAE[$kps]);
+                    break;
+                }
+            }
+        }
+
+        if ($solicitud['IdEstatus'] == "9") {
+            $datos = [
+                'solicitud' => $solicitud,
+                'clientes' => $this->gapsi->getClientes(),
+                'proyectos' => $this->gapsi->proyectosByCliente(['id' => $solicitud['IdCliente']])['proyectos'],
+                'sucursales' => $this->gapsi->sucursalesByProyecto(['id' => $solicitud['IdProyecto']])['sucursales'],
+                'productosSolicitados' => $productosSolicitados,
+                'productosDisponibles' => $productosSAE,
+            ];
+
+            return [
+                'html' => parent::getCI()->load->view('Compras/Formularios/editar_solicitud_compra', $datos, TRUE),
+                'imginiciales' => explode(",", $solicitud['Archivos'])
+            ];
+        }
+    }
 }
