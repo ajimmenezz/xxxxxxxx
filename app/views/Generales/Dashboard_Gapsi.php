@@ -9,9 +9,9 @@
         <div class="panel-body">
             <div class="row">
 <!--grafica principal dashboard                -->
-                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">                        
+                <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">                        
                     <div class="row">
-                        <div id="graphDashboard" style="width: 100%; height: 100%;"></div>
+                        <div id="graphDashboard" style="width: 100%; height: 400px;  max-height:400px"></div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
@@ -21,29 +21,21 @@
                             <table id="data-table-tipo-proyectos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                 <thead>
                                     <tr>
-                                        <th class="never">idTipoProyecto</th>
+                                        <th class="never">id</th>
                                         <th class="all">Tipo Proyecto</th>
                                         <th class="all">Proyectos</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Tipo</td>
-                                        <td>10</td>
-                                    </tr><tr>
-                                        <td>1</td>
-                                        <td>Tipo</td>
-                                        <td>10</td>
-                                    </tr><tr>
-                                        <td>1</td>
-                                        <td>Tipo</td>
-                                        <td>10</td>
-                                    </tr><tr>
-                                        <td>1</td>
-                                        <td>Tipo</td>
-                                        <td>10</td>
-                                    </tr>
+                                    <?php
+                                    foreach ($datos['TiposProyectos'] as $valorTipoProyecto) {
+                                        echo "<tr>";
+                                            echo '<td>'.$valorTipoProyecto['IdTipo'].'</td>';
+                                            echo '<td>'.$valorTipoProyecto['Tipo'].'</td>';
+                                            echo '<td>'.$valorTipoProyecto['Proyectos'].'</td>';
+                                        echo "</tr>";
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -65,6 +57,7 @@
                         <table id="data-table-proyectos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                             <thead>
                                 <tr>
+                                    <th class="never">id</th>
                                     <th class="never">idProyecto</th>
                                     <th class="all">Proyecto</th>
                                     <th class="all">Gasto</th>
@@ -72,12 +65,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Proyecto X</td>
-                                    <td>10</td>
-                                    <td>20/03/19</td>
-                                </tr>
+                                <?php
+                                foreach ($datos['Proyectos'] as $valorProyecto) {
+                                    echo '<tr>';
+                                        echo '<td>'.$valorProyecto['IdTipo'].'</td>';
+                                        echo '<td>'.$valorProyecto['IdProyecto'].'</td>';
+                                        echo '<td>'.$valorProyecto['Descripcion'].'</td>';
+                                        echo '<td>'.number_format($valorProyecto['Gasto'], 2).'</td>';
+                                        echo '<td>'.$valorProyecto['FCreacion'].'</td>';
+                                    echo "</tr>";
+                                }
+                                ?>
                             </tbody>
                         </table>
                     </div>
@@ -88,4 +86,4 @@
     </div>   
 </div>
 
-<div id="dashboardGapsiFilters" class="content hidden"></div>
+<div id="dashboardGapsiFilters"></div>

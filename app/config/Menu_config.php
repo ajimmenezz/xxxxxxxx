@@ -135,7 +135,7 @@ $config['Generales'] = array(
     ),
     'Dashboard_Gapsi' => array(
         'liga' => 'Dashboard Gapsi',
-        'icono' => '',
+        'icono' => 'fa fa-line-chart',
         'Url' => '/Generales/Dashboard_Gapsi',
         'css' => array(
             'Dashboard/Dashboard'
@@ -144,21 +144,18 @@ $config['Generales'] = array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
             'parsley/src/parsley',
-            'jquery-fileUpload/css/fileinput.min',
             'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Generales/dashboard_gapsi', 'Base/Tabla', 'Base/Charts'),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Generales/dashboard_gapsi', 'Base/Tabla', 'Base/Charts'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
             'select2/dist/js/select2.min',
-            'jquery-fileUpload/js/fileinput',
-            'jquery-fileUpload/js/es',
-            'bootstrap-datepicker/js/bootstrap-datepicker',
-            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
             'moment/moment-locales.min',
             'moment/es',
-            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'masked-input/masked-input.min'
         ),
         'Permiso' => 'VGDASH'
     ),

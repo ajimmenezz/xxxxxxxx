@@ -157,7 +157,9 @@
             <div class="tab-pane fade" id="Permisos">
                 <div class="panel-body">
                     <form id="formSolicitudPermiso" class="margin-bottom-0" data-parsley-validate="true" enctype="multipart/form-data">
-                        
+                        <div class="col-md-12">
+                            <label style="color: red">Todos los campos que presentan (*) son obligatorios</label>
+                        </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Fecha de Tramite</label>
@@ -235,7 +237,7 @@
                         </div>
                         <div class="col-md-10">
                             <div id="archivoCitaIncapacidad" class="form-group" style="display: none">
-                                <label>Archivo Cita o Incapacidad *</label><br>
+                                <label>Archivo Cita o Incapacidad</label><br>
                                 <label style="color: red">Todos los archivos que se requiera adjuntar deben ser escaneados a color y en formato PDF</label>
                                 <input id="inputEvidenciaIncapacidad" name="evidenciasIncapacidad[]" type="file" multiple>
                             </div>
