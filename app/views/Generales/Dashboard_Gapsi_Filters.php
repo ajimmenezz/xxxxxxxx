@@ -50,18 +50,12 @@
                                     <thead>
                                         <tr>
                                             <th class="never">id</th>
-                                            <th class="all">Tipo</th>
-                                            <th class="all">Filtro</th>
-                                            <th class="all"></th>
+                                            <th></th>
+                                            <th class="all">Filtrado por</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Tipo Proyecto</td>
-                                            <td>Tipo Proyecto</td>
-                                            <td></td>
-                                        </tr>
+                                        
                                     </tbody>
                                 </table>
                             </div>
@@ -109,19 +103,19 @@
                                     <option value="">Seleccionar...</option>
                                     <?php
                                     foreach ($categorias as $categoria) {
-                                        echo '<option value="'.$categoria['Categoria'].'">'.$categoria['Categoria'].'</option>';
+                                        echo '<option value="'.$categoria['IdCategoria'].'">'.$categoria['Categoria'].'</option>';
                                     }
                                     ?>
                                 </select>
                             </div>
-                            <div class="form-group" id="hideSubCategoria">
+<!--                            <div class="form-group" id="hideSubCategoria">
                                 <label>SubCategoria</label>
                                 <select id="selectSubCategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
                                     <option value="">Seleccionar...</option>
                                     <?php
-                                    foreach ($subcategorias as $subcategoria) {
-                                        echo '<option value="'.$subcategoria['SubCategoria'].'">'.$subcategoria['SubCategoria'].'</option>';
-                                    }
+//                                    foreach ($subcategorias as $subcategoria) {
+//                                        echo '<option value="'.$subcategoria['SubCategoria'].'">'.$subcategoria['SubCategoria'].'</option>';
+//                                    }
                                     ?>
                                 </select>
                             </div>
@@ -130,12 +124,12 @@
                                 <select id="selectConcepto" class="form-control efectoDescuento" name="SelectConcepto" style="width: 100%">
                                     <option value="">Seleccionar...</option>
                                     <?php
-                                    foreach ($concepto as $valor) {
-                                        echo '<option value="'.$valor['Concepto'].'">'.$valor['Concepto'].'</option>';
-                                    }
+//                                    foreach ($concepto as $valor) {
+//                                        echo '<option value="'.$valor['Concepto'].'">'.$valor['Concepto'].'</option>';
+//                                    }
                                     ?>
                                 </select>
-                            </div>
+                            </div>-->
 <!--                            <div class="form-group">
                                 <label>Moneda</label>
                                 <select id="selectMoneda" class="form-control efectoDescuento" name="SelectMoneda" style="width: 100%">
@@ -305,7 +299,7 @@
                                                 <?php
                                                 foreach ($categorias as $categoria) {
                                                     echo "<tr>";
-                                                        echo '<td>1</td>';
+                                                        echo '<td>'.$categoria['IdCategoria'].'</td>';
                                                         echo '<td>'.$categoria['Categoria'].'</td>';
                                                         echo '<td>'.number_format($categoria['Gasto'], 2).'</td>';
                                                     echo "</tr>";
@@ -345,6 +339,9 @@
                                              </thead>
                                              <tbody>
                                                 <?php
+//                                                echo '<pre>';
+//                                                var_dump($subcategorias);
+//                                                echo '</pre>';
                                                 foreach ($subcategorias as $subcategoria) {
                                                     echo "<tr>";
                                                         echo '<td>1</td>';
@@ -387,6 +384,9 @@
                                              </thead>
                                              <tbody>
                                                 <?php
+//                                                echo '<pre>';
+//                                                var_dump($concepto);
+//                                                echo '</pre>';
                                                 foreach ($concepto as $valor) {
                                                     echo "<tr>";
                                                         echo '<td>1</td>';
@@ -409,106 +409,3 @@
         
     </div>   
 </div>
-
-<!--<div class="theme-panel">
-    <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn bg-green"><i class="fa fa-filter text-white"></i></a>
-    <div class="theme-panel-content" style="width:auto; height:500px; overflow:auto;">
-        <h5 class="m-t-0">Filtros</h5>
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
-tabla de filtros agregados                            
-                <div  id="tableFiltros" class="table-responsive">
-                    <table id="data-tipo-gastos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
-                        <thead>
-                            <tr>
-                                <th class="all">Filtro</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Tipo Proyecto</td>
-                            </tr>
-                            <tr>
-                                <td>Servicios<button type="button" class="close" @click="close()"><span aria-hidden="true">&times;</span></button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="col-lg-12 col-md-12 hidden-sm hidden-xs">
-                <div class="form-group">
-                    <label>Proyectos</label>
-                    <select id="selectProyecto" class="form-control efectoDescuento" name="SelectProyecto" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                        <?php
-                        foreach ($proyectos as $proyecto) {
-                            echo '<option value="'.$proyecto['IdProyecto'].'">'.$proyecto['Proyecto'].'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Servicios</label>
-                    <select id="selectServicio" class="form-control efectoDescuento" name="SelectServicio" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                        <?php
-                        foreach ($servicios as $servicio) {
-                            echo '<option value="'.$servicio['IdServicio'].'">'.$servicio['TipoServicio'].'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Sucursal</label>
-                    <select id="selectSucursal" class="form-control efectoDescuento" name="SelectSucursal" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                        <?php
-                        foreach ($sucursales as $sucursal) {
-                            echo '<option value="'.$sucursal['IdSucursal'].'">'.$sucursal['Sucursal'].'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Categoria</label>
-                    <select id="selectCategoria" class="form-control efectoDescuento" name="SelectCategoria" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                        <?php
-                        foreach ($categorias as $categoria) {
-                            echo '<option value="1">'.$categoria['Categoria'].'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>SubCategoria</label>
-                    <select id="selectSubCategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                        <?php
-                        foreach ($subcategorias as $subcategoria) {
-                            echo '<option value="1">'.$subcategoria['SubCategoria'].'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Concepto</label>
-                    <select id="selectConcepto" class="form-control efectoDescuento" name="SelectConcepto" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                        <?php
-                        foreach ($concepto as $valor) {
-                            echo '<option value="1">'.$valor['Concepto'].'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Moneda</label>
-                    <select id="selectMoneda" class="form-control efectoDescuento" name="SelectMoneda" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>-->
