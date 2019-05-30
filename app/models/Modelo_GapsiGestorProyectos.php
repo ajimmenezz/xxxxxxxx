@@ -25,11 +25,14 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
     public function getProjectTypes() {
         $query = parent::connectDBGapsi()->query("SELECT 
-                                                        dp.Tipo, 
-                                                        count(dp.ID) Proyectos,
-                                                        (SELECT ID FROM db_Tipo WHERE Nombre = dp.Tipo) AS IdTipo
-                                                  FROM db_Proyectos AS dp
-                                                  GROUP BY Tipo");
+                                                    ID AS IdTipo,
+                                                    Nombre AS Tipo,
+                                                    (SELECT 
+                                                            COUNT(DISTINCT Proyecto)
+                                                        FROM  db_Registro
+                                                        WHERE Tipo = dp.Nombre) AS Proyectos
+                                                FROM db_Tipo dp
+                                                ORDER BY dp.Nombre");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -44,15 +47,15 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     (SELECT Descripcion FROM db_Proyectos WHERE ID = dr.Proyecto) AS Proyecto,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
                                                 INNER JOIN db_TipoServicio dt
                                                 ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
+                                                LEFT JOIN db_Categorias dc
                                                 ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
+                                                LEFT JOIN db_SubCategorias dsc
                                                 ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
+                                                LEFT JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
                                                 INNER JOIN db_Tipo dti
                                                 ON dti.Nombre = dr.Tipo
@@ -73,15 +76,15 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     dr.TipoServicio,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
                                                 INNER JOIN db_TipoServicio dt
                                                 ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
+                                                LEFT JOIN db_Categorias dc
                                                 ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
+                                                LEFT JOIN db_SubCategorias dsc
                                                 ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
+                                                LEFT JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
                                                 INNER JOIN db_Tipo dti
                                                 ON dti.Nombre = dr.Tipo
@@ -102,15 +105,15 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     (SELECT Nombre FROM db_Sucursales WHERE Id = dr.Sucursal) AS Sucursal,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
                                                 INNER JOIN db_TipoServicio dt
                                                 ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
+                                                LEFT JOIN db_Categorias dc
                                                 ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
+                                                LEFT JOIN db_SubCategorias dsc
                                                 ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
+                                                LEFT JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
                                                 INNER JOIN db_Tipo dti
                                                 ON dti.Nombre = dr.Tipo
@@ -131,15 +134,15 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                      ddg.Categoria,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
                                                 INNER JOIN db_TipoServicio dt
                                                 ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
+                                                LEFT JOIN db_Categorias dc
                                                 ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
+                                                LEFT JOIN db_SubCategorias dsc
                                                 ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
+                                                LEFT JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
                                                 INNER JOIN db_Tipo dti
                                                 ON dti.Nombre = dr.Tipo
@@ -159,15 +162,15 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     ddg.SubCategoria,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
                                                 INNER JOIN db_TipoServicio dt
                                                 ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
+                                                LEFT JOIN db_Categorias dc
                                                 ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
+                                                LEFT JOIN db_SubCategorias dsc
                                                 ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
+                                                LEFT JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
                                                 INNER JOIN db_Tipo dti
                                                 ON dti.Nombre = dr.Tipo
@@ -187,15 +190,15 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 Concepto,
                                                 SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
                                                 INNER JOIN db_TipoServicio dt
                                                 ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
+                                                LEFT JOIN db_Categorias dc
                                                 ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
+                                                LEFT JOIN db_SubCategorias dsc
                                                 ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
+                                                LEFT JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
                                                 INNER JOIN db_Tipo dti
                                                 ON dti.Nombre = dr.Tipo
@@ -215,15 +218,15 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     dr.TipoTrans,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
                                                 INNER JOIN db_TipoServicio dt
                                                 ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
+                                                LEFT JOIN db_Categorias dc
                                                 ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
+                                                LEFT JOIN db_SubCategorias dsc
                                                 ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
+                                                LEFT JOIN db_SubSubCategorias dssc
                                                 ON dssc.Nombre = ddg.Concepto
                                                 INNER JOIN db_Tipo dti
                                                 ON dti.Nombre = dr.Tipo
