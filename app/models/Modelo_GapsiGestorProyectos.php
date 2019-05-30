@@ -8,13 +8,16 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
     public function getProjects() {
         $query = parent::connectDBGapsi()->query("SELECT
+                                                        DISTINCT
                                                         dp.Tipo,
                                                         dp.ID AS IdProyecto,
                                                         dp.Descripcion,
                                                         (SELECT SUM(Importe) FROM db_Registro WHERE Proyecto = dp.ID) AS Gasto,
                                                         dp.FCreacion,
                                                         (SELECT ID FROM db_Tipo WHERE Nombre = dp.Tipo) AS IdTipo
-                                                  FROM db_Proyectos dp");
+                                                  FROM db_Proyectos dp
+                                                  INNER JOIN db_Registro dr
+                                                  ON dr.Proyecto = dp.ID");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];

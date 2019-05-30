@@ -38,7 +38,7 @@ class GerstorProyectosGAPSI extends General {
     public function getProjectsInfo(array $filters) {
         $dataProjectsInfo = array();
         $this->proyectos = array();
-
+//        var_dump($filters);
         $paraemeters = $this->defineParameters($filters);
         $proyectos = $this->DBGestorProyectoGAPSI->getProjectsByType($paraemeters);
         $servicios = $this->DBGestorProyectoGAPSI->getServicesByType($paraemeters);
@@ -55,7 +55,6 @@ class GerstorProyectosGAPSI extends General {
 //        }
 //        var_dump($proyectos);
 //        var_dump($this->proyectos);
-
         $dataProjectsInfo['proyectos'] = $proyectos['query'];
         $dataProjectsInfo['servicios'] = $servicios['query'];
         $dataProjectsInfo['sucursales'] = $sucursales['query'];
@@ -63,6 +62,26 @@ class GerstorProyectosGAPSI extends General {
         $dataProjectsInfo['subcategorias'] = $subcategorias['query'];
         $dataProjectsInfo['concepto'] = $concepto['query'];
         $dataProjectsInfo['gastosCompras'] = $gastosCompras['query'];
+
+        foreach ($dataProjectsInfo['proyectos'] as $key => $value) {
+            array_push($dataProjectsInfo['proyectos'][$key], $filters['moneda']);
+        }
+        foreach ($dataProjectsInfo['servicios'] as $key => $value) {
+            array_push($dataProjectsInfo['servicios'][$key], $filters['moneda']);
+        }
+        foreach ($dataProjectsInfo['sucursales'] as $key => $value) {
+            array_push($dataProjectsInfo['sucursales'][$key], $filters['moneda']);
+        }
+        foreach ($dataProjectsInfo['categorias'] as $key => $value) {
+            array_push($dataProjectsInfo['categorias'][$key], $filters['moneda']);
+        }
+        foreach ($dataProjectsInfo['subcategorias'] as $key => $value) {
+            array_push($dataProjectsInfo['subcategorias'][$key], $filters['moneda']);
+        }
+        foreach ($dataProjectsInfo['gastosCompras'] as $key => $value) {
+            array_push($dataProjectsInfo['gastosCompras'][$key], $filters['moneda']);
+        }
+
         return array('formulario' => parent::getCI()->load->view('Generales/Dashboard_Gapsi_Filters', $dataProjectsInfo, TRUE));
     }
 
