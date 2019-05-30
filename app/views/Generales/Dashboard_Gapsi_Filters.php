@@ -49,6 +49,7 @@
                                 <table id="data-tipo-filtros" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                     <thead>
                                         <tr>
+                                            <th class="never">id</th>
                                             <th class="all">Tipo</th>
                                             <th class="all">Filtro</th>
                                             <th class="all"></th>
@@ -56,6 +57,7 @@
                                     </thead>
                                     <tbody>
                                         <tr>
+                                            <td>1</td>
                                             <td>Tipo Proyecto</td>
                                             <td>Tipo Proyecto</td>
                                             <td></td>
@@ -208,7 +210,7 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                 <div class="table-responsive">
-                                     <table id="data-tipo-serivicio" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
+                                     <table id="data-tipo-servicio" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                          <thead>
                                              <tr>
                                                  <th class="never">idSerivicio</th>
