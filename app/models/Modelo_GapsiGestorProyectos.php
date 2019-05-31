@@ -31,9 +31,14 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     ID AS IdTipo,
                                                     Nombre AS Tipo,
                                                     (SELECT 
-                                                            COUNT(DISTINCT Proyecto)
-                                                        FROM  db_Registro
-                                                        WHERE Tipo = dp.Nombre) AS Proyectos
+                                                    COUNT(DISTINCT Proyecto)
+                                                    FROM  db_Registro
+                                                        WHERE Tipo = dp.Nombre) AS Proyectos,
+                                                    (SELECT 
+                                                        SUM(Importe)
+                                                    FROM 
+                                                    db_Registro
+                                                    WHERE Tipo = dp.Nombre) AS Gasto
                                                 FROM db_Tipo dp
                                                 ORDER BY dp.Nombre");
 
@@ -76,7 +81,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
     public function getServicesByType(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT
                                                     (SELECT ID FROM db_TipoServicio WHERE Nombre = dr.TipoServicio) AS IdServicio,
-                                                    dr.TipoServicio,
+                                                    ISNULL(dr.TipoServicio, 'SIN SERVICIO') AS TipoServicio,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
@@ -93,7 +98,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
-                                                Group by TipoServicio");
+                                                Group by TipoServicio
+                                                ORDER BY TipoServicio ASC");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -105,7 +111,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
     public function getBranchOfficesByType(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT
                                                     (SELECT ID FROM db_Sucursales WHERE Id = dr.Sucursal) AS IdSucursal,
-                                                    (SELECT Nombre FROM db_Sucursales WHERE Id = dr.Sucursal) AS Sucursal,
+                                                    ISNULL((SELECT Nombre FROM db_Sucursales WHERE Id = dr.Sucursal), 'SIN SUCURSAL') AS Sucursal,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
@@ -122,7 +128,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
-                                                Group by Sucursal");
+                                                GROUP BY Sucursal
+                                                ORDER BY Sucursal");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -134,7 +141,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
     public function getCategoriesByType(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT
                                                     (SELECT ID FROM db_Categorias WHERE Nombre = ddg.Categoria) AS IdCategoria,
-                                                     ddg.Categoria,
+                                                    ISNULL(ddg.Categoria, 'SIN CATEGORIA') AS Categoria,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
@@ -151,7 +158,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
-                                                Group by ddg.Categoria");
+                                                GROUP BY ddg.Categoria
+                                                ORDER BY ddg.Categoria");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -162,7 +170,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
     public function getSubcategoryByType(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT
-                                                    ddg.SubCategoria,
+                                                    ISNULL(ddg.SubCategoria, 'SIN SUBCATEGORIA') AS SubCategoria,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
@@ -179,7 +187,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
-                                                GROUP BY ddg.SubCategoria");
+                                                GROUP BY ddg.SubCategoria
+                                                ORDER BY ddg.SubCategoria");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -190,7 +199,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
     public function getConceptByType(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT
-                                                Concepto,
+                                                ISNULL(Concepto, 'SIN CONCEPTO') AS Concepto,
                                                 SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
@@ -207,7 +216,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1 
                                                 " . $parameters . "
-                                                GROUP BY ddg.Concepto");
+                                                GROUP BY ddg.Concepto
+                                                ORDER BY ddg.Concepto");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
