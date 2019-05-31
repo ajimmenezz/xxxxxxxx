@@ -153,7 +153,7 @@ function sendEventViewFilters(data){
 
 function createDataView(){
     createElements();
-    createGraphs();
+    getDataGraphs();
     $('#btnReturnDashboardGapsi').on('click', function () {
 //        $('#dashboardGapsiFilters').empty().addClass('hidden');
 //        $('#contentDashboardGapsi').removeClass('hidden');
@@ -181,7 +181,7 @@ function createElements(){
     select.crearSelect("#selectMoneda");
 }
 
-function createGraphs(){
+function getDataGraphs(){
     $("#data-tipo-proyecto").ready(function () {
         var arrayTableFilterProyect = [];
         var infoTypeProyects = $('#data-tipo-proyecto').DataTable().rows().data();
@@ -263,8 +263,37 @@ function createDataGraph(infoChart, panel){
         dataFilter.addColumn('string', 'Topping');
         dataFilter.addColumn('number', 'Slices');
         for (var i = 0; i < infoChart.length; i++) {
+            var gastos = infoChart[i][2].split(' ');
+            var x = gastos[1].split(',');
+            var y
+            if(x.length == 1){
+                y = x[0];
+            }else{
+                if(x.length == 2){
+                    y = x[0]+x[1]
+                }else{
+                    if(x.length == 3){
+                        y = x[0]+x[1]+x[2]
+                    }else{
+                        if(x.length == 4){
+                            y = x[0]+x[1]+x[2]+x[3]
+                        }else{
+                            if(x.length == 5){
+                                y = x[0]+x[1]+x[2]+x[3]+x[4]
+                            }else{
+                                if(x.length == 6){
+                                    y = x[0]+x[1]+x[2]+x[3]+x[4]+x[5]
+                                }else{
+                                    y = x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //console.log(x+'==>'+y)
             dataFilter.addRows([
-                [infoChart[i][1], parseInt(infoChart[i][2])]
+                [infoChart[i][1], parseInt(y)]
             ]);
         }
 
@@ -354,19 +383,40 @@ function addFilterByTable(){
     });
 }
 
+var errorFilter;
 function elementsFilter(element){
     switch (element[1]){
         case 'Proyecto':
-            arrayFilters.proyecto = element[0]
+            if(element[0] !== ''){
+                arrayFilters.proyecto = element[0];
+            } else {
+                errorFilter = 'este '+element[1];
+                setTimeout(modalUndefined, 1000);
+            }
             break;
         case 'Servicio':
-            arrayFilters.servicio = element[0]
+            if(element[0] !== ''){
+                arrayFilters.servicio = element[0];
+            } else {
+                errorFilter = 'este '+element[1];
+                setTimeout(modalUndefined, 1000);
+            }
             break;
         case 'Sucursal':
-            arrayFilters.sucursal = element[0]
+            if(element[0] !== ''){
+                arrayFilters.sucursal = element[0];
+            } else {
+                errorFilter = 'esta '+element[1];
+                setTimeout(modalUndefined, 1000);
+            }
             break;
         case 'Categoria':
-            arrayFilters.categoria = element[0]
+            if(element[0] !== ''){
+                arrayFilters.categoria = element[0];
+            } else {
+                errorFilter = 'esta '+element[1];
+                setTimeout(modalUndefined, 1000);
+            }
             break;
     }
     sendFilters();
@@ -385,7 +435,7 @@ function removeTableFilter(){
 }
 
 function sendFilters(){
-    evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', arrayFilters, '#panelDashboardGapsi', function (respuesta) {
+    evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', arrayFilters, '#panelDashboardGapsiFilters', function (respuesta) {
         if (respuesta) {
             $('#dashboardGapsiFilters').empty().append(respuesta.formulario);
             createDataView();
@@ -396,5 +446,22 @@ function sendFilters(){
         } else {
             alert('Hubo un problema con la solicitud de permiso.');
         }
+    });
+}
+
+function modalUndefined(){
+    var html = '<div class="row m-t-20">\n\
+        <form id="idUndefined" class="margin-bottom-0" enctype="multipart/form-data">\n\
+            <div id="modal-dialogo" class="col-md-12 text-center">\n\
+                <h4>No hay información para '+errorFilter+'</h4><br>\n\
+                <button id="btnAceptar" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
+            </div>\n\
+        </form>\n\
+        </div>';
+    $('#btnModalConfirmar').addClass('hidden');
+    $('#btnModalAbortar').addClass('hidden');
+    evento.mostrarModal('Sin Datos', html);
+    $('#btnAceptar').on('click', function () {
+        evento.cerrarModal();
     });
 }

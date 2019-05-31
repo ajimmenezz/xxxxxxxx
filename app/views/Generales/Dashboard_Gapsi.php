@@ -24,15 +24,20 @@
                                         <th class="never">id</th>
                                         <th class="all">Tipo Proyecto</th>
                                         <th class="all">Proyectos</th>
+                                        <!--<th class="all">Gasto</th>-->
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
+//                                        echo '<pre>';
+//                                        var_dump($datos['TiposProyectos']);
+//                                        echo '</pre>';
                                     foreach ($datos['TiposProyectos'] as $valorTipoProyecto) {
                                         echo "<tr>";
                                             echo '<td>'.$valorTipoProyecto['IdTipo'].'</td>';
                                             echo '<td>'.$valorTipoProyecto['Tipo'].'</td>';
                                             echo '<td>'.$valorTipoProyecto['Proyectos'].'</td>';
+                                            //echo '<td>$ '.number_format($valorTipoProyecto['Gasto'], 2).'</td>';
                                         echo "</tr>";
                                     }
                                     ?>
@@ -71,7 +76,15 @@
                                         echo '<td>'.$valorProyecto['IdTipo'].'</td>';
                                         echo '<td>'.$valorProyecto['IdProyecto'].'</td>';
                                         echo '<td>'.$valorProyecto['Descripcion'].'</td>';
-                                        echo '<td>'.number_format($valorProyecto['Gasto'], 2).'</td>';
+//                                        if($valorProyecto['0'] == 'MN'){
+//                                            echo '<td>MN$ '.number_format($valorProyecto['Gasto'], 2).'</td>';
+//                                        }else{
+//                                            if($valor['0'] == 'USD'){
+//                                                echo '<td>US$ '.number_format($valorProyecto['Gasto'], 2).'</td>';
+//                                            }else{
+                                                echo '<td>$ '.number_format($valorProyecto['Gasto'], 2).'</td>';
+//                                            }
+//                                        }
                                         echo '<td>'.$valorProyecto['FCreacion'].'</td>';
                                     echo "</tr>";
                                 }
