@@ -760,19 +760,15 @@ class Poliza extends General {
     }
 
     public function guardarConclusionChecklist(array $datos) {
-
         $usuario = $this->usuario->getDatosUsuario();
-
         $correo = implode(",", $datos['correo']);
         $datosServicio = $this->DBST->getDatosServicio($datos['servicio']);
         $titulo = 'Se concluyo el Servicio Checklist';
-
         $host = $_SERVER['SERVER_NAME'];
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $imgFirma = $datos['img'];
         $imgFirma = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirma));
         $dataFirma = base64_decode($imgFirma);
-
         $direccionFirma = '/storage/Archivos/imagenesFirmas/Checklist/' . str_replace(' ', '_', 'Firma_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $dataFirma);
 
@@ -780,7 +776,7 @@ class Poliza extends General {
             'Estatus' => '4',
             'FechaConclusion' => $fecha,
             'Firma' => $direccionFirma,
-            'NombreFirma' => $datos['nombreFirma'],
+            'NombreFirma' => $datos['recibe'],
             'CorreoCopiaFirma' => $correo,
             'FechaFirma' => $fecha,
             'servicio' => $datos['servicio'],
@@ -800,6 +796,10 @@ class Poliza extends General {
 
         if ($actualizarServicio) {
             $this->nuevosServiciosDesdeChecklist($actualizarServicio);
+            $folio = $this->DBST->consultaFolio($datos['servicio']);
+            if ($folio !== FALSE && $usuario['IdPerfil'] == '83') {
+                $this->servicio->agregarVueltaAsociado($folio, $datos);
+            }
             foreach ($actualizarServicio as $key => $value) {
                 $this->enviarCorreoConcluido(array($value['CorreoCopiaFirma']), $titulo, $textoCorreo);
                 $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
@@ -832,7 +832,7 @@ class Poliza extends General {
             $this->paginaRevisionTecnica($revisionTecnica);
         }
 
-        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', 'Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist');
+        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf', 'Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist');
 
         $this->pdf->Output('F', $carpeta, true);
         $carpeta = substr($carpeta, 1);

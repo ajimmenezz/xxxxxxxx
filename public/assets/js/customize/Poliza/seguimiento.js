@@ -216,63 +216,55 @@ $(function () {
         var sucursal = arguments[2];
         var ticket = datosTabla[1];
 
-        servicios.mostrarModal('Firma', servicios.formConcluirServicio());
+        var htmlFirmaExtra = htmlCampoTecnicoFirma();
+
+        evento.mostrarModal('Firma', servicios.modalCampoFirmaExtra(htmlFirmaExtra, 'Firma'));
         $('#btnModalConfirmar').addClass('hidden');
 
-        var myBoardFirma = new DrawingBoard.Board('campoFirma', {
-            background: "#fff",
-            color: "#000",
-            size: 1,
-            controlsPosition: "right",
-            controls: [
-                {Navigation: {
-                        back: false,
-                        forward: false
-                    }
-                }
-            ],
-            webStorage: false
-        });
+        var myBoardFirma = servicios.campoLapiz('campoLapiz');
+        var myBoardTecnico = servicios.campoLapiz('campoLapizTecnico');
 
-        $("#tagCorreo").tagit({
-            allowSpaces: false
-        });
-
-        myBoardFirma.ev.trigger('board:reset', 'what', 'up');
-
-        $('#btnConcluirServicio').off('click');
-        $('#btnConcluirServicio').on('click', function () {
+        $('#btnGuardarFirma').off('click');
+        $('#btnGuardarFirma').on('click', function () {
             var img = myBoardFirma.getImg();
             var imgInput = (myBoardFirma.blankCanvas == img) ? '' : img;
-            if (evento.validarFormulario('#formConcluirServicioFirma')) {
-                var personaRecibe = $('#inputPersonaRecibe').val();
-                var correo = $("#tagValor").tagit("assignedTags");
+            var imgTecnico = myBoardTecnico.getImg();
+            var imgInputTecnico = (myBoardTecnico.blankCanvas == imgTecnico) ? '' : imgTecnico;
+            var personaRecibe = $('#inputRecibeFirma').val();
+            var correo = $("#tagValor").tagit("assignedTags");
+            if (personaRecibe !== '') {
                 if (correo.length > 0) {
                     if (servicios.validarCorreoArray(correo)) {
                         if (imgInput !== '') {
-                            if ($('#terminos').attr('checked')) {
-                                var dataInsertar = {'ticket': ticket, 'servicio': servicio, 'img': img, 'correo': correo, 'nombreFirma': personaRecibe, 'sucursal': sucursal};
+                            if (imgInputTecnico !== '') {
+                                if ($('#terminos').attr('checked')) {
+                                    var dataInsertar = {'ticket': ticket, 'servicio': servicio, 'img': img, imgFirmaTecnico: imgTecnico, 'correo': correo, 'recibe': personaRecibe, 'sucursal': sucursal};
 
-                                evento.enviarEvento('Seguimiento/GuardarConclusionChecklist', dataInsertar, '#modal-dialogo', function (respuesta) {
-                                    if (respuesta) {
-                                        servicios.mensajeModal('Servicio concluido.', 'Correcto');
-                                    } else {
-                                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Tienes informacion sin concluir', 3000);
-                                    }
-                                });
+                                    evento.enviarEvento('Seguimiento/GuardarConclusionChecklist', dataInsertar, '#modal-dialogo', function (respuesta) {
+                                        if (respuesta) {
+                                            servicios.mensajeModal('Servicio concluido.', 'Correcto');
+                                        } else {
+                                            evento.mostrarMensaje('.errorFirma', false, 'Tienes informacion sin concluir', 3000);
+                                        }
+                                    });
+                                } else {
+                                    evento.mostrarMensaje('.errorFirma', false, 'Debes aceptar terminos.', 3000);
+                                }
                             } else {
-                                evento.mostrarMensaje('.errorConcluirServicio', false, 'Debes aceptar terminos', 3000);
+                                evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma del Técnico.', 3000);
                             }
                         } else {
-                            evento.mostrarMensaje('.errorConcluirServicio', false, 'Debes llenar el campo Firma de conformidad.', 3000);
+                            evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma del gerente de conformidad.', 3000);
                         }
                     } else {
-                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Algun Correo no es correcto.', 3000);
+                        evento.mostrarMensaje('.errorFirma', false, 'Algun Correo no es correcto.', 3000);
 
                     }
                 } else {
-                    evento.mostrarMensaje('.errorConcluirServicio', false, 'Debe insertar al menos un correo.', 3000);
+                    evento.mostrarMensaje('.errorFirma', false, 'Debe insertar al menos un correo.', 3000);
                 }
+            } else {
+                evento.mostrarMensaje('.errorFirma', false, 'Debe escribir el nombre del gerente.', 3000);
             }
         });
     };
@@ -1179,20 +1171,20 @@ $(function () {
                         var modelo = $("#listModelosEquipoAdicional option:selected").text();
 
                         if ($("#txtEtiquetaEquipoAdicional").length) {
-                            
+
                             var regionSucursal = $("#txtRegionSucursalClave").val();
                             var clave = regionSucursal;
-                            
+
                             if ($("#listModelosEquipoAdicional").val() != '') {
                                 var linea = $("#listModelosEquipoAdicional option:selected").attr("data-linea");
                                 var sublinea = $("#listModelosEquipoAdicional option:selected").attr("data-sublinea");
                                 var area = $("#txtIdAreaClave").val();
-                                clave+= '-L' + linea + 'S' + sublinea + '-' + area + '-';
+                                clave += '-L' + linea + 'S' + sublinea + '-' + area + '-';
                                 $("#txtEtiquetaEquipoAdicional").removeAttr("disabled");
-                            }else{
+                            } else {
                                 $("#txtEtiquetaEquipoAdicional").attr("disabled", "disabled");
                             }
-                            
+
                             $("#txtEtiquetaEquipoAdicional").val(clave);
 
                             if (modelo.indexOf("COMPUTADORA") >= 0) {
@@ -1454,7 +1446,7 @@ $(function () {
                                     evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el S.O. del equipo.", 6000);
                                     return true;
                                 }
-                                
+
                                 if (data.nombreRed == "") {
                                     evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer falta el nombre de red para el equipo.", 6000);
                                     return true;
@@ -5140,18 +5132,9 @@ $(function () {
         var encargadosTI = arguments[4].informacion.listaCinemexValidadores;
         var concluirServicio = arguments[5] || false;
         var estatus = arguments[6] || false;
-        var html = '<div class="row" m-t-10">\n\
-                        <div id="divcampoLapizTecnico" class="col-md-12 text-center">\n\
-                            <div id="campoLapizTecnico"></div>\n\
-                        </div>\n\
-                    </div>\n\
-                    <div class="row m-t-20">\n\
-                        <div class="col-md-12 text-center">\n\
-                            <br>\n\
-                            <label>Firma del técnico</label><br>\n\
-                        </div>\n\
-                    </div>\n\
-                    <br>';
+
+        var html = htmlCampoTecnicoFirma();
+
         if (arguments[4].informacion.idCliente !== null) {
             idCliente = arguments[4].informacion.idCliente[0].IdCliente;
             if (idCliente === '1') {
@@ -5216,6 +5199,23 @@ $(function () {
         }
 
     };
+
+    var htmlCampoTecnicoFirma = function () {
+        var html = '<div class="row" m-t-10">\n\
+                        <div id="divcampoLapizTecnico" class="col-md-12 text-center">\n\
+                            <div id="campoLapizTecnico"></div>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div class="row m-t-20">\n\
+                        <div class="col-md-12 text-center">\n\
+                            <br>\n\
+                            <label>Firma del técnico</label><br>\n\
+                        </div>\n\
+                    </div>\n\
+                    <br>';
+
+        return html;
+    }
 
     var formularioAsignacionSolicitud = function () {
         var mensajeConfirmacion = '<div id="confirmarSolicitud"\n\
