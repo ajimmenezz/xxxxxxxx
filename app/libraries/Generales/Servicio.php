@@ -1949,7 +1949,13 @@ class Servicio extends General {
 
         $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
         $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
-        $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
+        
+        if (!empty($vueltasAnteriores)) {
+            $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
+        } else {
+            $sucursalVuelta = 'sin Vuelta';
+        }
+        
         if ($sucursalVuelta !== $nombreSucursal) {
             $this->guardarVueltaAsociados(array(
                 'servicio' => $datos['servicio'],
