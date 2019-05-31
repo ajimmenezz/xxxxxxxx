@@ -52,7 +52,7 @@ function setGraphDashboard() {
             var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
             for (var i = 0; i < tableInfoTypeProyects.length; i++) {
                 dataDashboard.addRows([
-                    [tableInfoTypeProyects[i][1], parseInt(tableInfoTypeProyects[i][2])]
+                    [tableInfoTypeProyects[i][0], parseInt(tableInfoTypeProyects[i][1])]
                 ]);
             }
         });
@@ -85,10 +85,10 @@ function resizeGraph(options){
 function selectTypeProyects(){
     $('#data-table-tipo-proyectos tbody').on('click', 'tr', function () {
         var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().row(this).data();
-        var idTypeProyect = tableInfoTypeProyects[0];
+        var typeProyect = tableInfoTypeProyects[0];
         tabla.limpiarTabla('#data-table-proyectos')
         for (var i = 0; i < listaGlobaldeProyectos.length; i++) {
-            if (listaGlobaldeProyectos[i][0] == idTypeProyect) {
+            if (listaGlobaldeProyectos[i][0] == typeProyect) {
                 tabla.agregarFila('#data-table-proyectos', listaGlobaldeProyectos[i]);
             }
         }
@@ -111,9 +111,10 @@ function selectProyects(){
         var dataSearch = {
             tipoProyecto: tipoProyecto,
             moneda: 'MN',
-            proyecto: tableInfoProyects[1]
+            proyecto: tableInfoProyects[2]
         }
-        sendEventViewFilters(dataSearch);
+        console.log(dataSearch)
+        //sendEventViewFilters(dataSearch);
     });
 }
 
@@ -122,7 +123,7 @@ function selectGraphProyect() {
     var nameProyect = dataDashboard.getValue(selectedItem.row, 0);
     var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
     for (var i = 0; i < tableInfoTypeProyects.length; i++) {
-        if(tableInfoTypeProyects[i][1] == nameProyect){
+        if(tableInfoTypeProyects[i][0] == nameProyect){
             var tipoProyecto = tableInfoTypeProyects[i][0];
         }
     }
@@ -131,7 +132,8 @@ function selectGraphProyect() {
         tipoProyecto: tipoProyecto,
         moneda: 'MN'
     }
-    sendEventViewFilters(dataSearch);
+    console.log(dataSearch)
+        //sendEventViewFilters(dataSearch);
 }
 
 function sendEventViewFilters(data){

@@ -12,7 +12,7 @@
     <div id="panelDashboardGapsiFilters" class="panel panel-inverse">
        
         <div class="panel-heading">
-            <h4 class="panel-title">Gastos</h4><?php //echo '<pre>'; var_dump($proyectos); echo '</pre>';?>
+            <h4 class="panel-title">Gastos</h4>
         </div>
         
         <div class="panel-body">
@@ -116,28 +116,6 @@
                                     ?>
                                 </select>
                             </div>
-<!--                            <div class="form-group" id="hideSubCategoria">
-                                <label>SubCategoria</label>
-                                <select id="selectSubCategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
-                                    <option value="">Seleccionar...</option>
-                                    <?php
-//                                    foreach ($subcategorias as $subcategoria) {
-//                                        echo '<option value="'.$subcategoria['SubCategoria'].'">'.$subcategoria['SubCategoria'].'</option>';
-//                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="form-group"  id="hideConcepto">
-                                <label>Concepto</label>
-                                <select id="selectConcepto" class="form-control efectoDescuento" name="SelectConcepto" style="width: 100%">
-                                    <option value="">Seleccionar...</option>
-                                    <?php
-//                                    foreach ($concepto as $valor) {
-//                                        echo '<option value="'.$valor['Concepto'].'">'.$valor['Concepto'].'</option>';
-//                                    }
-                                    ?>
-                                </select>
-                            </div>-->
 <!--                            <div class="form-group">
                                 <label>Moneda</label>
                                 <select id="selectMoneda" class="form-control efectoDescuento" name="SelectMoneda" style="width: 100%">
@@ -484,7 +462,7 @@
     </div>   
 </div>
 
-<div class="theme-panel">
+<!--<div class="theme-panel">
     <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn bg-green"><i class="fa fa-filter text-white"></i></a>
     <div class="theme-panel-content">
         <h5 class="m-t-0">Filtros de fechas</h5>
@@ -558,4 +536,4 @@
             </div>
         </div>
     </div>
-</div>
+</div>-->

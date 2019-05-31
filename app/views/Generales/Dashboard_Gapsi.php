@@ -21,23 +21,18 @@
                             <table id="data-table-tipo-proyectos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                 <thead>
                                     <tr>
-                                        <th class="never">id</th>
                                         <th class="all">Tipo Proyecto</th>
                                         <th class="all">Proyectos</th>
-                                        <!--<th class="all">Gasto</th>-->
+                                        <th class="all">Gasto</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-//                                        echo '<pre>';
-//                                        var_dump($datos['TiposProyectos']);
-//                                        echo '</pre>';
                                     foreach ($datos['TiposProyectos'] as $valorTipoProyecto) {
                                         echo "<tr>";
-                                            echo '<td>'.$valorTipoProyecto['IdTipo'].'</td>';
                                             echo '<td>'.$valorTipoProyecto['Tipo'].'</td>';
                                             echo '<td>'.$valorTipoProyecto['Proyectos'].'</td>';
-                                            //echo '<td>$ '.number_format($valorTipoProyecto['Gasto'], 2).'</td>';
+                                            echo '<td>$ '.number_format($valorTipoProyecto['Importe'], 2).'</td>';
                                         echo "</tr>";
                                     }
                                     ?>
@@ -62,7 +57,7 @@
                         <table id="data-table-proyectos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                             <thead>
                                 <tr>
-                                    <th class="never">id</th>
+                                    <th class="never">Tipo</th>
                                     <th class="never">idProyecto</th>
                                     <th class="all">Proyecto</th>
                                     <th class="all">Gasto</th>
@@ -73,7 +68,7 @@
                                 <?php
                                 foreach ($datos['Proyectos'] as $valorProyecto) {
                                     echo '<tr>';
-                                        echo '<td>'.$valorProyecto['IdTipo'].'</td>';
+                                        echo '<td>'.$valorProyecto['Tipo'].'</td>';
                                         echo '<td>'.$valorProyecto['IdProyecto'].'</td>';
                                         echo '<td>'.$valorProyecto['Descripcion'].'</td>';
 //                                        if($valorProyecto['0'] == 'MN'){
