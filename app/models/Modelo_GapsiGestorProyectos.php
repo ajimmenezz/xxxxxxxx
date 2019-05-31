@@ -55,16 +55,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                LEFT JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                LEFT JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                LEFT JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 Group by Proyecto");
@@ -84,16 +74,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                LEFT JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                LEFT JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                LEFT JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 Group by TipoServicio
@@ -114,16 +94,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                LEFT JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                LEFT JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                LEFT JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 GROUP BY Sucursal
@@ -144,16 +114,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                LEFT JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                LEFT JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                LEFT JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 GROUP BY ddg.Categoria
@@ -173,16 +133,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                LEFT JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                LEFT JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                LEFT JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 GROUP BY ddg.SubCategoria
@@ -202,16 +152,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                LEFT JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                LEFT JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                LEFT JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1 
                                                 " . $parameters . "
                                                 GROUP BY ddg.Concepto
@@ -231,16 +171,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                LEFT JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                LEFT JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                LEFT JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1 
                                                 " . $parameters . "
                                                 GROUP BY dr.TipoTrans");
