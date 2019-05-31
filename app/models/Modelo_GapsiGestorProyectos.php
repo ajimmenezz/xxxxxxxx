@@ -7,17 +7,16 @@ use Librerias\Modelos\Base as Modelo_Base;
 class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
     public function getProjects() {
-        $query = parent::connectDBGapsi()->query("SELECT
-                                                        DISTINCT
-                                                        dp.Tipo,
-                                                        dp.ID AS IdProyecto,
-                                                        dp.Descripcion,
-                                                        (SELECT SUM(Importe) FROM db_Registro WHERE Proyecto = dp.ID) AS Gasto,
-                                                        dp.FCreacion,
-                                                        (SELECT ID FROM db_Tipo WHERE Nombre = dp.Tipo) AS IdTipo
-                                                  FROM db_Proyectos dp
-                                                  INNER JOIN db_Registro dr
-                                                  ON dr.Proyecto = dp.ID");
+        $query = parent::connectDBGapsi()->query("SELECT 
+                                                    dr.Tipo,
+                                                    SUM(dr.Importe) AS Gasto,
+                                                    dr.Proyecto AS IdProyecto,
+                                                    (SELECT Descripcion FROM db_Proyectos WHERE ID = dr.Proyecto) AS Descripcion,
+                                                    (SELECT FCreacion FROM db_Proyectos WHERE ID = dr.Proyecto) AS FCreacion
+                                                    FROM db_Registro dr
+                                                    WHERE dr.Moneda = 'MN'
+                                                    GROUP BY dr.Tipo, dr.Proyecto
+                                                    ORDER BY Gasto DESC");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -28,19 +27,18 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
     public function getProjectTypes() {
         $query = parent::connectDBGapsi()->query("SELECT 
-                                                    ID AS IdTipo,
-                                                    Nombre AS Tipo,
-                                                    (SELECT 
-                                                    COUNT(DISTINCT Proyecto)
-                                                    FROM  db_Registro
-                                                        WHERE Tipo = dp.Nombre) AS Proyectos,
-                                                    (SELECT 
-                                                        SUM(Importe)
-                                                    FROM 
-                                                    db_Registro
-                                                    WHERE Tipo = dp.Nombre) AS Gasto
-                                                FROM db_Tipo dp
-                                                ORDER BY dp.Nombre");
+                                                    COUNT(*) AS Proyectos,
+                                                    Tipo,
+                                                    SUM(Importe) AS Importe
+                                                    FROM (
+                                                    SELECT 
+                                                    Tipo,
+                                                    SUM(Importe) AS Importe
+                                                    FROM db_Registro
+                                                    WHERE Moneda = 'MN'
+                                                    GROUP BY Tipo, Proyecto) AS T
+                                                    GROUP BY T.Tipo
+                                                    ORDER BY Importe DESC");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
