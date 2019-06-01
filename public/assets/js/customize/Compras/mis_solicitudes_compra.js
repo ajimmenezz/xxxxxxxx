@@ -31,11 +31,11 @@ $(function () {
         evento.enviarEvento('Compras/FormularioEditarSolicitudCompra', { id: rowData[0] }, '#panelMisSolicitudesCompra', function (respuesta) {
             $("#divFormularioSolicitarCompra").empty().append(respuesta.html);
             evento.cambiarDiv("#divMisSolicitudesCompra", "#divFormularioSolicitarCompra");
-            initEditSolicitud(respuesta);
+            initEditSolicitud(respuesta, rowData[0]);
         });
     });
 
-    function initEditSolicitud(respuesta) {
+    function initEditSolicitud(respuesta, idSolicitud) {
         select.crearSelect("#listClientes");
         select.crearSelect("#listProyectos");
         select.crearSelect("#listSucursales");
@@ -169,11 +169,25 @@ $(function () {
 
         });
 
-        file.crearUpload('#archivosSolicitud', 'Compras/GuardarCambiosSolicitudCompra', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml', 'msg'], false, respuesta.imginiciales);
+        file.crearUpload(
+            '#archivosSolicitud',
+            'Compras/GuardarCambiosSolicitudCompra',
+            ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml', 'msg'],
+            false,
+            respuesta.imginiciales,
+            'Compras/EliminarArchivosSolicitud',
+            null,
+            false,
+            0,
+            false,
+            false,
+            { 'idSolicitud': idSolicitud }
+        );
 
-        $("#brnSolicitarCompra").off("click");
-        $("#brnSolicitarCompra").on("click", function () {
+        $("#btnGuardarCambiosSolicitudCompra").off("click");
+        $("#btnGuardarCambiosSolicitudCompra").on("click", function () {
             var datosCompra = {
+                'idSolicitud': idSolicitud,
                 'idCliente': $("#listClientes").val(),
                 'cliente': $("#listClientes option:selected").text(),
                 'idProyecto': $("#listProyectos").val(),
@@ -185,13 +199,7 @@ $(function () {
                 'partidas': ''
             };
 
-            console.log($("#archivosSolicitud").val());
-
-            console.log(file.totalFiles("#archivosSolicitud"));
-            
-            console.log(file.previews("#archivosSolicitud"));
-
-            return false;
+            var previews = file.countPreviews(".file-input");
 
             var dataTable = tabla.getTableData("#data-table-productos-solicitados");
             var partidas = '[';
@@ -233,7 +241,7 @@ $(function () {
                 return false;
             }
 
-            if (datosCompra.archivos <= 0) {
+            if (datosCompra.archivos <= 0 && previews <= 0) {
                 evento.mostrarMensaje("#errorFormulario", false, "Debe adjuntar al menos un archivo.", 4000);
                 return false;
             }

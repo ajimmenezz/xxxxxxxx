@@ -180,7 +180,7 @@ $(function () {
 
         $.each(dataTable, function (k, v) {
             partidas += '{"cve":"' + v[0] + '"';
-            partidas += ',"producto":"' + v[1] + '"';
+            partidas += ',"producto":"' + v[1].replace('"','\\"') + '"';
             partidas += ',"cantidad":"' + v[2] + '"},';
         });
         if (partidas != '[') {

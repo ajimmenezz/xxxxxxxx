@@ -25,6 +25,17 @@
                     <div class="col-md-6">
                         <h3 class="m-t-10">Formulario de solicitud de compra</h3>
                     </div>
+                    <?php
+                    if (in_array($solicitud['IdEstatus'], [10, '10'])) {
+                        ?>
+                        <div class="col-md-12">
+                            <div class="alert alert-danger fade in p-5">
+                                <strong>
+                                    <?php echo $solicitud['DescEstatus']; ?>
+                                </strong>
+                            </div>
+                        </div>
+                    <?php } ?>
                     <div class="col-md-12">
                         <div class="alert alert-warning fade in p-5">
                             <strong>
@@ -184,7 +195,7 @@
         </div>
         <div class="row">
             <div class="col-md-12 text-center">
-                <a id="brnSolicitarCompra" class="btn btn-success p-l-25 p-r-25 p-t-10 p-b-10 f-w-600 f-s-15">Solicitar Compra</a>
+                <a id="btnGuardarCambiosSolicitudCompra" class="btn btn-success p-l-25 p-r-25 p-t-10 p-b-10 f-w-600 f-s-15">Guardar cambios a Solicitud</a>
             </div>
         </div>
     </div>

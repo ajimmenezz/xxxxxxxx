@@ -30,7 +30,7 @@ function Upload() {
                 type: extencion,
                 key: value,
                 caption: value.substring(value.lastIndexOf('/') + 1),
-                extra: {id: solicitud, extra: extraData}
+                extra: { id: solicitud, extra: extraData }
             });
         });
         return imagenes;
@@ -110,10 +110,10 @@ Upload.prototype.crearUpload = function () {
         },
         initialPreviewThumbTags: botonosDescargas,
         previewSettings: {
-            image: {width: '160px', height: '160px'},
-            video: {width: "160px", height: "160px"},
-            other: {width: "160px", height: "160px"},
-            object: {width: "160px", height: "160px"}
+            image: { width: '160px', height: '160px' },
+            video: { width: "160px", height: "160px" },
+            other: { width: "160px", height: "160px" },
+            object: { width: "160px", height: "160px" }
         },
         previewZoomButtonClasses: {
             toggleheader: 'hidden',
@@ -129,16 +129,16 @@ Upload.prototype.crearUpload = function () {
         },
         layoutTemplates: {
             footer: '<div class="file-thumbnail-footer">\n' +
-                    '    <div class="file-footer-caption">{caption}</div>\n' +
-                    '    {actions}\n' +
-                    '</div>',
+                '    <div class="file-footer-caption">{caption}</div>\n' +
+                '    {actions}\n' +
+                '</div>',
             actions: '<div class="file-actions">\n' +
-                    '    <div class="file-footer-buttons">\n' +
-                    '        {CUSTOM_TAG_INIT}{delete}' +
-                    '    </div>\n' +
-                    '    <div class="file-upload-indicator" title="{indicatorTitle}">{indicator}</div>\n' +
-                    '    <div class="clearfix"></div>\n' +
-                    '</div>'
+                '    <div class="file-footer-buttons">\n' +
+                '        {CUSTOM_TAG_INIT}{delete}' +
+                '    </div>\n' +
+                '    <div class="file-upload-indicator" title="{indicatorTitle}">{indicator}</div>\n' +
+                '    <div class="clearfix"></div>\n' +
+                '</div>'
         },
         deleteUrl: urlBorrar,
         deleteExtraData: function () {
@@ -222,6 +222,15 @@ Upload.prototype.previews = function (classPreview) {
         }
     });
     return archivosPreview;
+};
+
+//Get count all Previews from Id File Input
+Upload.prototype.countPreviews = function (elementId) {
+    var total = 0;
+    $(elementId).closest(".file-input").find(".file-preview-initial").each(function () {
+        total++;
+    });
+    return total;
 };
 
 Upload.prototype.descargarImagen = function (evidenciaImpericia) {
