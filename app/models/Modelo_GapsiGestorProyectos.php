@@ -7,14 +7,16 @@ use Librerias\Modelos\Base as Modelo_Base;
 class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
     public function getProjects() {
-        $query = parent::connectDBGapsi()->query("SELECT
-                                                        dp.Tipo,
-                                                        dp.ID AS IdProyecto,
-                                                        dp.Descripcion,
-                                                        (SELECT SUM(Importe) FROM db_Registro WHERE Proyecto = dp.ID) AS Gasto,
-                                                        dp.FCreacion,
-                                                        (SELECT ID FROM db_Tipo WHERE Nombre = dp.Tipo) AS IdTipo
-                                                  FROM db_Proyectos dp");
+        $query = parent::connectDBGapsi()->query("SELECT 
+                                                    dr.Tipo,
+                                                    SUM(dr.Importe) AS Gasto,
+                                                    dr.Proyecto AS IdProyecto,
+                                                    (SELECT Descripcion FROM db_Proyectos WHERE ID = dr.Proyecto) AS Descripcion,
+                                                    (SELECT FCreacion FROM db_Proyectos WHERE ID = dr.Proyecto) AS FCreacion
+                                                    FROM db_Registro dr
+                                                    WHERE dr.Moneda = 'MN'
+                                                    GROUP BY dr.Tipo, dr.Proyecto
+                                                    ORDER BY Gasto DESC");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -25,11 +27,18 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
     public function getProjectTypes() {
         $query = parent::connectDBGapsi()->query("SELECT 
-                                                        dp.Tipo, 
-                                                        count(dp.ID) Proyectos,
-                                                        (SELECT ID FROM db_Tipo WHERE Nombre = dp.Tipo) AS IdTipo
-                                                  FROM db_Proyectos AS dp
-                                                  GROUP BY Tipo");
+                                                    COUNT(*) AS Proyectos,
+                                                    Tipo,
+                                                    SUM(Importe) AS Importe
+                                                    FROM (
+                                                    SELECT 
+                                                    Tipo,
+                                                    SUM(Importe) AS Importe
+                                                    FROM db_Registro
+                                                    WHERE Moneda = 'MN'
+                                                    GROUP BY Tipo, Proyecto) AS T
+                                                    GROUP BY T.Tipo
+                                                    ORDER BY Importe DESC");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -44,18 +53,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     (SELECT Descripcion FROM db_Proyectos WHERE ID = dr.Proyecto) AS Proyecto,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 Group by Proyecto");
@@ -70,24 +69,15 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
     public function getServicesByType(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT
                                                     (SELECT ID FROM db_TipoServicio WHERE Nombre = dr.TipoServicio) AS IdServicio,
-                                                    dr.TipoServicio,
+                                                    ISNULL(dr.TipoServicio, 'SIN SERVICIO') AS TipoServicio,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
-                                                Group by TipoServicio");
+                                                Group by TipoServicio
+                                                ORDER BY TipoServicio ASC");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -99,24 +89,15 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
     public function getBranchOfficesByType(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT
                                                     (SELECT ID FROM db_Sucursales WHERE Id = dr.Sucursal) AS IdSucursal,
-                                                    (SELECT Nombre FROM db_Sucursales WHERE Id = dr.Sucursal) AS Sucursal,
+                                                    ISNULL((SELECT Nombre FROM db_Sucursales WHERE Id = dr.Sucursal), 'SIN SUCURSAL') AS Sucursal,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
-                                                Group by Sucursal");
+                                                GROUP BY Sucursal
+                                                ORDER BY Sucursal");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -128,24 +109,15 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
     public function getCategoriesByType(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT
                                                     (SELECT ID FROM db_Categorias WHERE Nombre = ddg.Categoria) AS IdCategoria,
-                                                     ddg.Categoria,
+                                                    ISNULL(ddg.Categoria, 'SIN CATEGORIA') AS Categoria,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
-                                                Group by ddg.Categoria");
+                                                GROUP BY ddg.Categoria
+                                                ORDER BY ddg.Categoria");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -156,24 +128,15 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
     public function getSubcategoryByType(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT
-                                                    ddg.SubCategoria,
+                                                    ISNULL(ddg.SubCategoria, 'SIN SUBCATEGORIA') AS SubCategoria,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1
                                                 " . $parameters . "
-                                                GROUP BY ddg.SubCategoria");
+                                                GROUP BY ddg.SubCategoria
+                                                ORDER BY ddg.SubCategoria");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -184,24 +147,15 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
     public function getConceptByType(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT
-                                                Concepto,
+                                                ISNULL(Concepto, 'SIN CONCEPTO') AS Concepto,
                                                 SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1 
                                                 " . $parameters . "
-                                                GROUP BY ddg.Concepto");
+                                                GROUP BY ddg.Concepto
+                                                ORDER BY ddg.Concepto");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -215,18 +169,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     dr.TipoTrans,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
-                                                INNER JOIN db_DetalleGasto ddg
+                                                LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.ID = dr.ID
-                                                INNER JOIN db_TipoServicio dt
-                                                ON dt.Nombre = dr.TipoServicio
-                                                INNER JOIN db_Categorias dc
-                                                ON dc.Nombre = ddg.Categoria
-                                                INNER JOIN db_SubCategorias dsc
-                                                ON dsc.Nombre = ddg.SubCategoria
-                                                INNER JOIN db_SubSubCategorias dssc
-                                                ON dssc.Nombre = ddg.Concepto
-                                                INNER JOIN db_Tipo dti
-                                                ON dti.Nombre = dr.Tipo
                                                 WHERE 1=1 
                                                 " . $parameters . "
                                                 GROUP BY dr.TipoTrans");

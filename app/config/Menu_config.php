@@ -157,7 +157,7 @@ $config['Generales'] = array(
             'parsley/src/i18n/es',
             'masked-input/masked-input.min'
         ),
-        'Permiso' => 'VGDASH'
+        'Permiso' => 'VDASHGPSI'
     ),
     'Disp-Moviles' => array(
         'liga' => 'Disp. Móviles',

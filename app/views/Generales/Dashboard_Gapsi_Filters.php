@@ -5,14 +5,14 @@
         </div>
         <div class="col-md-3 col-sm-6 col-xs-12 text-right">
             <label id="btnReturnDashboardGapsi" class="btn btn-success">
-                <i class="fa fa fa-reply"></i> Regresar
+                <i class="fa fa fa-home"></i> Regresar
             </label>  
         </div>
     </div>
     <div id="panelDashboardGapsiFilters" class="panel panel-inverse">
        
         <div class="panel-heading">
-            <h4 class="panel-title">Gastos</h4><?php //echo '<pre>'; var_dump($proyectos); echo '</pre>';?>
+            <h4 class="panel-title">Gastos</h4>
         </div>
         
         <div class="panel-body">
@@ -35,7 +35,15 @@
                                         foreach ($gastosCompras as $valor) {
                                             echo "<tr>";
                                                 echo '<td>'.$valor['TipoTrans'].'</td>';
-                                                echo '<td>'.number_format($valor['Gasto'], 2).'</td>';
+                                                if($valor['0'] == 'MN'){
+                                                    echo '<td>MN$ '.number_format($valor['Gasto'], 2).'</td>';
+                                                }else{
+                                                    if($valor['0'] == 'USD'){
+                                                        echo '<td>US$ '.number_format($valor['Gasto'], 2).'</td>';
+                                                    }else{
+                                                        echo '<td>$ '.number_format($valor['Gasto'], 2).'</td>';
+                                                    }
+                                                }
                                             echo "</tr>";
                                         }
                                         ?>
@@ -49,17 +57,13 @@
                                 <table id="data-tipo-filtros" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                     <thead>
                                         <tr>
-                                            <th class="all">Tipo</th>
-                                            <th class="all">Filtro</th>
-                                            <th class="all"></th>
+                                            <th class="never">id</th>
+                                            <th class="never"></th>
+                                            <th class="all">Filtrado por</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Tipo Proyecto</td>
-                                            <td>Tipo Proyecto</td>
-                                            <td></td>
-                                        </tr>
+                                        
                                     </tbody>
                                 </table>
                             </div>
@@ -107,29 +111,7 @@
                                     <option value="">Seleccionar...</option>
                                     <?php
                                     foreach ($categorias as $categoria) {
-                                        echo '<option value="'.$categoria['Categoria'].'">'.$categoria['Categoria'].'</option>';
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="form-group" id="hideSubCategoria">
-                                <label>SubCategoria</label>
-                                <select id="selectSubCategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
-                                    <option value="">Seleccionar...</option>
-                                    <?php
-                                    foreach ($subcategorias as $subcategoria) {
-                                        echo '<option value="'.$subcategoria['SubCategoria'].'">'.$subcategoria['SubCategoria'].'</option>';
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="form-group"  id="hideConcepto">
-                                <label>Concepto</label>
-                                <select id="selectConcepto" class="form-control efectoDescuento" name="SelectConcepto" style="width: 100%">
-                                    <option value="">Seleccionar...</option>
-                                    <?php
-                                    foreach ($concepto as $valor) {
-                                        echo '<option value="'.$valor['Concepto'].'">'.$valor['Concepto'].'</option>';
+                                        echo '<option value="'.$categoria['IdCategoria'].'">'.$categoria['Categoria'].'</option>';
                                     }
                                     ?>
                                 </select>
@@ -178,8 +160,20 @@
                                                 foreach ($proyectos as $proyecto) {
                                                     echo "<tr>";
                                                         echo '<td>'.$proyecto['IdProyecto'].'</td>';
-                                                        echo '<td>'.$proyecto['Proyecto'].'</td>';
-                                                        echo '<td>'.number_format($proyecto['Gasto'], 2).'</td>';
+                                                        if($proyecto['Proyecto'] != ''){
+                                                            echo '<td>'.$proyecto['Proyecto'].'</td>';
+                                                        }else{
+                                                            echo '<td style="color: red">SIN DATOS</td>';
+                                                        }
+                                                        if($proyecto['0'] == 'MN'){
+                                                            echo '<td>MN$ '.number_format($proyecto['Gasto'], 2).'</td>';
+                                                        }else{
+                                                            if($proyecto['0'] == 'USD'){
+                                                                echo '<td>US$ '.number_format($proyecto['Gasto'], 2).'</td>';
+                                                            }else{
+                                                                echo '<td>$ '.number_format($proyecto['Gasto'], 2).'</td>';
+                                                            }
+                                                        }
                                                     echo "</tr>";
                                                 }
                                                 ?>
@@ -208,7 +202,7 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                 <div class="table-responsive">
-                                     <table id="data-tipo-serivicio" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
+                                     <table id="data-tipo-servicio" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                          <thead>
                                              <tr>
                                                  <th class="never">idSerivicio</th>
@@ -221,8 +215,20 @@
                                             foreach ($servicios as $servicio) {
                                                 echo "<tr>";
                                                     echo '<td>'.$servicio['IdServicio'].'</td>';
-                                                    echo '<td>'.$servicio['TipoServicio'].'</td>';
-                                                    echo '<td>'.number_format($servicio['Gasto'], 2).'</td>';
+                                                    if($servicio['TipoServicio'] != ''){
+                                                        echo '<td>'.$servicio['TipoServicio'].'</td>';
+                                                    }else{
+                                                        echo '<td style="color: red">SIN DATOS</td>';
+                                                    }
+                                                    if($servicio['0'] == 'MN'){
+                                                        echo '<td>MN$ '.number_format($servicio['Gasto'], 2).'</td>';
+                                                    }else{
+                                                        if($servicio['0'] == 'USD'){
+                                                            echo '<td>US$ '.number_format($servicio['Gasto'], 2).'</td>';
+                                                        }else{
+                                                            echo '<td>$ '.number_format($servicio['Gasto'], 2).'</td>';
+                                                        }
+                                                    }
                                                 echo "</tr>";
                                             }
                                             ?>
@@ -262,8 +268,20 @@
                                                 foreach ($sucursales as $sucursal) {
                                                     echo "<tr>";
                                                         echo '<td>'.$sucursal['IdSucursal'].'</td>';
-                                                        echo '<td>'.$sucursal['Sucursal'].'</td>';
-                                                        echo '<td>'.number_format($sucursal['Gasto'], 2).'</td>';
+                                                        if($sucursal['Sucursal'] != ''){
+                                                            echo '<td>'.$sucursal['Sucursal'].'</td>';
+                                                        }else{
+                                                            echo '<td style="color: red">SIN DATOS</td>';
+                                                        }
+                                                        if($sucursal['0'] == 'MN'){
+                                                            echo '<td>MN$ '.number_format($sucursal['Gasto'], 2).'</td>';
+                                                        }else{
+                                                            if($sucursal['0'] == 'USD'){
+                                                                echo '<td>US$ '.number_format($sucursal['Gasto'], 2).'</td>';
+                                                            }else{
+                                                                echo '<td>$ '.number_format($sucursal['Gasto'], 2).'</td>';
+                                                            }
+                                                        }
                                                     echo "</tr>";
                                                 }
                                                 ?>
@@ -303,9 +321,21 @@
                                                 <?php
                                                 foreach ($categorias as $categoria) {
                                                     echo "<tr>";
-                                                        echo '<td>1</td>';
-                                                        echo '<td>'.$categoria['Categoria'].'</td>';
-                                                        echo '<td>'.number_format($categoria['Gasto'], 2).'</td>';
+                                                        echo '<td>'.$categoria['IdCategoria'].'</td>';
+                                                        if($categoria['Categoria'] != ''){
+                                                            echo '<td>'.$categoria['Categoria'].'</td>';
+                                                        }else{
+                                                            echo '<td style="color: red">SIN DATOS</td>';
+                                                        }
+                                                        if($categoria['0'] == 'MN'){
+                                                            echo '<td>MN$ '.number_format($categoria['Gasto'], 2).'</td>';
+                                                        }else{
+                                                            if($categoria['0'] == 'USD'){
+                                                                echo '<td>US$ '.number_format($categoria['Gasto'], 2).'</td>';
+                                                            }else{
+                                                                echo '<td>$ '.number_format($categoria['Gasto'], 2).'</td>';
+                                                            }
+                                                        }
                                                     echo "</tr>";
                                                 }
                                                 ?>
@@ -346,8 +376,20 @@
                                                 foreach ($subcategorias as $subcategoria) {
                                                     echo "<tr>";
                                                         echo '<td>1</td>';
-                                                        echo '<td>'.$subcategoria['SubCategoria'].'</td>';
-                                                        echo '<td>'.number_format($subcategoria['Gasto'], 2).'</td>';
+                                                        if($subcategoria['SubCategoria'] != ''){
+                                                            echo '<td>'.$subcategoria['SubCategoria'].'</td>';
+                                                        }else{
+                                                            echo '<td style="color: red">SIN DATOS</td>';
+                                                        }
+                                                        if($subcategoria['0'] == 'MN'){
+                                                            echo '<td>MN$ '.number_format($subcategoria['Gasto'], 2).'</td>';
+                                                        }else{
+                                                            if($subcategoria['0'] == 'USD'){
+                                                                echo '<td>US$ '.number_format($subcategoria['Gasto'], 2).'</td>';
+                                                            }else{
+                                                                echo '<td>$ '.number_format($subcategoria['Gasto'], 2).'</td>';
+                                                            }
+                                                        }
                                                     echo "</tr>";
                                                 }
                                                 ?>
@@ -388,8 +430,20 @@
                                                 foreach ($concepto as $valor) {
                                                     echo "<tr>";
                                                         echo '<td>1</td>';
-                                                        echo '<td>'.$valor['Concepto'].'</td>';
-                                                        echo '<td>'.number_format($valor['Gasto'], 2).'</td>';
+                                                        if($valor['Concepto'] != ''){
+                                                            echo '<td>'.$valor['Concepto'].'</td>';
+                                                        }else{
+                                                            echo '<td style="color: red">SIN DATOS</td>';
+                                                        }
+//                                                        if($valor['0'] == 'MN'){
+//                                                            echo '<td>MN$ '.number_format($valor['Gasto'], 2).'</td>';
+//                                                        }else{
+//                                                            if($valor['0'] == 'USD'){
+//                                                                echo '<td>US$ '.number_format($valor['Gasto'], 2).'</td>';
+//                                                            }else{
+                                                                echo '<td>$ '.number_format($valor['Gasto'], 2).'</td>';
+//                                                            }
+//                                                        }
                                                     echo "</tr>";
                                                 }
                                                 ?>
@@ -410,102 +464,75 @@
 
 <!--<div class="theme-panel">
     <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn bg-green"><i class="fa fa-filter text-white"></i></a>
-    <div class="theme-panel-content" style="width:auto; height:500px; overflow:auto;">
-        <h5 class="m-t-0">Filtros</h5>
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
-tabla de filtros agregados                            
-                <div  id="tableFiltros" class="table-responsive">
-                    <table id="data-tipo-gastos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
-                        <thead>
-                            <tr>
-                                <th class="all">Filtro</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Tipo Proyecto</td>
-                            </tr>
-                            <tr>
-                                <td>Servicios<button type="button" class="close" @click="close()"><span aria-hidden="true">&times;</span></button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    <div class="theme-panel-content">
+        <h5 class="m-t-0">Filtros de fechas</h5>
+        <div class="divider"></div>
+        <div class="row m-t-10">
+            <div class="col-md-12 control-label f-w-700">Desde</div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <div class='input-group date' id='desde'>
+                        <input id="xyz" type='text' class="form-control" value=""/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>                
             </div>
-            <div class="col-lg-12 col-md-12 hidden-sm hidden-xs">
+            <div class="col-md-12 control-label f-w-700">Hasta</div>
+            <div class="col-md-12">
                 <div class="form-group">
-                    <label>Proyectos</label>
-                    <select id="selectProyecto" class="form-control efectoDescuento" name="SelectProyecto" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                        <?php
-                        foreach ($proyectos as $proyecto) {
-                            echo '<option value="'.$proyecto['IdProyecto'].'">'.$proyecto['Proyecto'].'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Servicios</label>
-                    <select id="selectServicio" class="form-control efectoDescuento" name="SelectServicio" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                        <?php
-                        foreach ($servicios as $servicio) {
-                            echo '<option value="'.$servicio['IdServicio'].'">'.$servicio['TipoServicio'].'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Sucursal</label>
-                    <select id="selectSucursal" class="form-control efectoDescuento" name="SelectSucursal" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                        <?php
-                        foreach ($sucursales as $sucursal) {
-                            echo '<option value="'.$sucursal['IdSucursal'].'">'.$sucursal['Sucursal'].'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Categoria</label>
-                    <select id="selectCategoria" class="form-control efectoDescuento" name="SelectCategoria" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                        <?php
-                        foreach ($categorias as $categoria) {
-                            echo '<option value="1">'.$categoria['Categoria'].'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>SubCategoria</label>
-                    <select id="selectSubCategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                        <?php
-                        foreach ($subcategorias as $subcategoria) {
-                            echo '<option value="1">'.$subcategoria['SubCategoria'].'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Concepto</label>
-                    <select id="selectConcepto" class="form-control efectoDescuento" name="SelectConcepto" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                        <?php
-                        foreach ($concepto as $valor) {
-                            echo '<option value="1">'.$valor['Concepto'].'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Moneda</label>
-                    <select id="selectMoneda" class="form-control efectoDescuento" name="SelectMoneda" style="width: 100%">
-                        <option value="">Seleccionar...</option>
-                    </select>
-                </div>
+                    <div class='input-group date' id='hasta'>
+                        <input type='text' class="form-control" value=""/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>                
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 control-label f-w-700">Pasado</div>
+            <div class="col-md-6 col-xs-6 m-t-5 m-b-5 text-center">
+                <a href="javascript:;" id="btn-anio-pasado" class="btn btn-info btn-block btn-xs btn-date-filter">Año</a>
+            </div>
+            <div class="col-md-6 col-xs-6 m-t-5 m-b-5 text-center">
+                <a href="javascript:;" id="btn-trimestre-pasado" class="btn btn-info btn-block btn-xs btn-date-filter">Trimestre</a>
+            </div>
+            <div class="col-md-6 col-xs-6 m-t-5 m-b-5 text-center">
+                <a href="javascript:;" id="btn-mes-pasado" class="btn btn-info btn-block btn-xs btn-date-filter">Mes</a>
+            </div>
+            <div class="col-md-6 col-xs-6 m-t-5 m-b-5 text-center">
+                <a href="javascript:;" id="btn-semana-pasado" class="btn btn-info btn-block btn-xs btn-date-filter">Semana</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 control-label f-w-700">Presente</div>
+            <div class="col-md-6 col-xs-6 m-t-5 m-b-5 text-center">
+                <a href="javascript:;" id="btn-anio-presente" class="btn btn-info btn-block btn-xs btn-date-filter">Año</a>
+            </div>
+            <div class="col-md-6 col-xs-6 m-t-5 m-b-5 text-center">
+                <a href="javascript:;" id="btn-mes-presente" class="btn btn-info btn-block btn-xs btn-date-filter">Mes</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 control-label f-w-700">Anterior(es)</div>
+            <div class="col-md-6 col-xs-6 m-t-5 m-b-5 text-center">
+                <a href="javascript:;" id="btn-anio-anterior" class="btn btn-info btn-block btn-xs btn-date-filter">Año</a>
+            </div>
+            <div class="col-md-6 col-xs-6 m-t-5 m-b-5 text-center">
+                <a href="javascript:;" id="btn-trimestre-anterior" class="btn btn-info btn-block btn-xs btn-date-filter">Trimestre</a>
+            </div>
+            <div class="col-md-6 col-xs-6 m-t-5 m-b-5 text-center">
+                <a href="javascript:;" id="btn-mes-anterior" class="btn btn-info btn-block btn-xs btn-date-filter">Mes</a>
+            </div>
+            <div class="col-md-6 col-xs-6 m-t-5 m-b-5 text-center">
+                <a href="javascript:;" id="btn-semana-anterior" class="btn btn-info btn-block btn-xs btn-date-filter">7 días</a>
+            </div>
+        </div>
+        <div class="row m-t-10">
+            <div class="col-md-12">
+                <a href="#" id="btnFiltrarDashboard" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
             </div>
         </div>
     </div>

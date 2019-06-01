@@ -29,6 +29,7 @@ $(function () {
     selectProyects();
 });
 
+var arrayFilters = {};
 var listaGlobaldeProyectos;
 var chartDashboard, dataDashboard, optionsDashboard;
 function setGraph() {
@@ -51,7 +52,7 @@ function setGraphDashboard() {
             var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
             for (var i = 0; i < tableInfoTypeProyects.length; i++) {
                 dataDashboard.addRows([
-                    [tableInfoTypeProyects[i][1], parseInt(tableInfoTypeProyects[i][2])]
+                    [tableInfoTypeProyects[i][0], parseInt(tableInfoTypeProyects[i][1])]
                 ]);
             }
         });
@@ -84,10 +85,10 @@ function resizeGraph(options){
 function selectTypeProyects(){
     $('#data-table-tipo-proyectos tbody').on('click', 'tr', function () {
         var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().row(this).data();
-        var idTypeProyect = tableInfoTypeProyects[0];
+        var typeProyect = tableInfoTypeProyects[0];
         tabla.limpiarTabla('#data-table-proyectos')
         for (var i = 0; i < listaGlobaldeProyectos.length; i++) {
-            if (listaGlobaldeProyectos[i][0] == idTypeProyect) {
+            if (listaGlobaldeProyectos[i][0] == typeProyect) {
                 tabla.agregarFila('#data-table-proyectos', listaGlobaldeProyectos[i]);
             }
         }
@@ -103,35 +104,49 @@ function selectProyects(){
         var tableInfoProyects = $('#data-table-proyectos').DataTable().row(this).data();
         for (var i = 0; i < tableInfoTypeProyects.length; i++) {
             if(tableInfoTypeProyects[i][0] == tableInfoProyects[0]){
-                var tipoProyecto = tableInfoTypeProyects[i][1];
+                var tipoProyecto = tableInfoTypeProyects[i][0];
             }
         }
+        arrayFilters.tipoProyecto = tipoProyecto;
         var dataSearch = {
             tipoProyecto: tipoProyecto,
             moneda: 'MN',
-            proyecto: tableInfoProyects[1]
+            proyecto: tableInfoProyects[2]
         }
-        sendEventViewFilters(dataSearch);
+        console.log(dataSearch)
+        //sendEventViewFilters(dataSearch);
     });
 }
 
 function selectGraphProyect() {
     var selectedItem = chartDashboard.getSelection()[0];
     var nameProyect = dataDashboard.getValue(selectedItem.row, 0);
+    var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
+    for (var i = 0; i < tableInfoTypeProyects.length; i++) {
+        if(tableInfoTypeProyects[i][0] == nameProyect){
+            var tipoProyecto = tableInfoTypeProyects[i][0];
+        }
+    }
+    arrayFilters.tipoProyecto = tipoProyecto;
     var dataSearch = {
-        tipoProyecto: nameProyect,
+        tipoProyecto: tipoProyecto,
         moneda: 'MN'
     }
-    sendEventViewFilters(dataSearch);
+    console.log(dataSearch)
+        //sendEventViewFilters(dataSearch);
 }
 
 function sendEventViewFilters(data){
+    arrayFilters.moneda = 'MN';
     evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', data, '#panelDashboardGapsi', function (respuesta) {
         if (respuesta) {
             $('#dashboardGapsiFilters').removeClass('hidden').empty().append(respuesta.formulario);
             $('#contentDashboardGapsi').addClass('hidden');
             createDataView();
             eventsViewFilters();
+            $('html, body').animate({
+                scrollTop: $("#panelDashboardGapsiFilters").offset().top - 60
+            }, 600);
         } else {
             alert('Hubo un problema con la solicitud de permiso.');
         }
@@ -140,10 +155,12 @@ function sendEventViewFilters(data){
 
 function createDataView(){
     createElements();
-    createGraphs();
+    getDataGraphs();
     $('#btnReturnDashboardGapsi').on('click', function () {
-        $('#dashboardGapsiFilters').empty().addClass('hidden');
-        $('#contentDashboardGapsi').removeClass('hidden');
+//        $('#dashboardGapsiFilters').empty().addClass('hidden');
+//        $('#contentDashboardGapsi').removeClass('hidden');
+        arrayFilters = {};
+        location.reload();
     });
     
 }
@@ -151,7 +168,7 @@ function createDataView(){
 function createElements(){
     tabla.generaTablaPersonal('#data-tipo-filtros', null, null, true, true, [], null, '', false);
     tabla.generaTablaPersonal('#data-tipo-proyecto', null, null, true, true);
-    tabla.generaTablaPersonal('#data-tipo-serivicio', null, null, true, true);
+    tabla.generaTablaPersonal('#data-tipo-servicio', null, null, true, true);
     tabla.generaTablaPersonal('#data-tipo-sucursal', null, null, true, true);
     tabla.generaTablaPersonal('#data-tipo-categoria', null, null, true, true);
     tabla.generaTablaPersonal('#data-tipo-subCategoria', null, null, true, true);
@@ -166,26 +183,66 @@ function createElements(){
     select.crearSelect("#selectMoneda");
 }
 
-function createGraphs(){
+function getDataGraphs(){
     $("#data-tipo-proyecto").ready(function () {
+        var arrayTableFilterProyect = [];
         var infoTypeProyects = $('#data-tipo-proyecto').DataTable().rows().data();
         if(infoTypeProyects.length > 1){
             createDataGraph(infoTypeProyects, "chart_proyecto");
         }else{
+            arrayFilters.proyecto = infoTypeProyects[0][0];
+            arrayTableFilterProyect[0] = infoTypeProyects[0][0];
+            arrayTableFilterProyect[1] = 'proyecto'
+            arrayTableFilterProyect[2] = infoTypeProyects[0][1];
+            tabla.agregarFila('#data-tipo-filtros', arrayTableFilterProyect);
+            $("#hideProyecto").css("display","none");
             $("#cardProyectos").css("display","none");
         }
     });
-    $("#data-tipo-serivicio").ready(function () {
-        var infoTypeService = $('#data-tipo-serivicio').DataTable().rows().data();
-        createDataGraph(infoTypeService, "chart_servicios");
+    $("#data-tipo-servicio").ready(function () {
+        var arrayTableFilterService = [];
+        var infoTypeService = $('#data-tipo-servicio').DataTable().rows().data();
+        if(infoTypeService.length >1){
+            createDataGraph(infoTypeService, "chart_servicios");
+        }else{
+            arrayFilters.servicio = infoTypeService[0][0];
+            arrayTableFilterService[0] = infoTypeService[0][0];
+            arrayTableFilterService[1] = 'servicio'
+            arrayTableFilterService[2] = infoTypeService[0][1];
+            tabla.agregarFila('#data-tipo-filtros', arrayTableFilterService);
+            $("#hideServicio").css("display","none");
+            $("#cardServicios").css("display","none");
+        }
     });
     $("#data-tipo-sucursal").ready(function () {
+        var arrayTableFilterSucursal = [];
         var infoTypeSucursal = $('#data-tipo-sucursal').DataTable().rows().data();
-        createDataGraph(infoTypeSucursal, "chart_sucursal");
+        if(infoTypeSucursal.length > 1){
+            createDataGraph(infoTypeSucursal, "chart_sucursal");
+        }else{
+            arrayFilters.sucursal = infoTypeSucursal[0][0];
+            arrayTableFilterSucursal[0] = infoTypeSucursal[0][0];
+            arrayTableFilterSucursal[1] = 'sucursal'
+            arrayTableFilterSucursal[2] = infoTypeSucursal[0][1];
+            tabla.agregarFila('#data-tipo-filtros', arrayTableFilterSucursal);
+            $("#hideSucursal").css("display","none");
+            $("#cardSucursal").css("display","none");
+        }
     });
     $("#data-tipo-categoria").ready(function () {
+        var arrayTableFilterCategory = [];
         var infoTypeCategory = $('#data-tipo-categoria').DataTable().rows().data();
-        createDataGraph(infoTypeCategory, "chart_categoria");
+        if(infoTypeCategory.length >1){
+            createDataGraph(infoTypeCategory, "chart_categoria");
+        }else{
+            arrayFilters.categoria = infoTypeCategory[0][0];
+            arrayTableFilterCategory[0] = infoTypeCategory[0][0];
+            arrayTableFilterCategory[1] = 'categoria'
+            arrayTableFilterCategory[2] = infoTypeCategory[0][1];
+            tabla.agregarFila('#data-tipo-filtros', arrayTableFilterCategory);
+            $("#hideCategoria").css("display","none");
+            $("#cardCategoria").css("display","none");
+        }
     });
     $("#data-tipo-subCategoria").ready(function () {
         var infoTypeCategory = $('#data-tipo-subCategoria').DataTable().rows().data();
@@ -208,8 +265,37 @@ function createDataGraph(infoChart, panel){
         dataFilter.addColumn('string', 'Topping');
         dataFilter.addColumn('number', 'Slices');
         for (var i = 0; i < infoChart.length; i++) {
+            var gastos = infoChart[i][2].split(' ');
+            var x = gastos[1].split(',');
+            var y
+            if(x.length == 1){
+                y = x[0];
+            }else{
+                if(x.length == 2){
+                    y = x[0]+x[1]
+                }else{
+                    if(x.length == 3){
+                        y = x[0]+x[1]+x[2]
+                    }else{
+                        if(x.length == 4){
+                            y = x[0]+x[1]+x[2]+x[3]
+                        }else{
+                            if(x.length == 5){
+                                y = x[0]+x[1]+x[2]+x[3]+x[4]
+                            }else{
+                                if(x.length == 6){
+                                    y = x[0]+x[1]+x[2]+x[3]+x[4]+x[5]
+                                }else{
+                                    y = x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //console.log(x+'==>'+y)
             dataFilter.addRows([
-                [infoChart[i][1], parseInt(infoChart[i][2])]
+                [infoChart[i][1], parseInt(y)]
             ]);
         }
 
@@ -238,53 +324,146 @@ function createDataGraph(infoChart, panel){
 //}
 
 function eventsViewFilters(){
-    addTableFilterHideSelect();
+    addFilterBySelect();
+    addFilterByTable();
+    removeTableFilter();
 }
 
-function addTableFilterHideSelect(){
+function addFilterBySelect(){
     var filtro = [];
-    filtro[2] = '<button type="button" class="close"><span aria-hidden="true">&times;</span>';
     $("#selectProyecto").on('change', function () {
         var proyecto = $('#selectProyecto').val();
-        filtro[0] = 'Proyecto';
-        filtro[1] = proyecto;
-        tabla.agregarFila('#data-tipo-filtros', filtro);
-        $("#hideProyecto").css("display","none");
+        filtro[0] = proyecto;
+        filtro[1] = 'Proyecto';
+        elementsFilter(filtro);
     });
     $("#selectServicio").on('change', function () {
         var servicio = $('#selectServicio').val();
-        filtro[0] = 'Servicio';
-        filtro[1] = servicio;
-        tabla.agregarFila('#data-tipo-filtros', filtro);
-        $("#hideServicio").css("display","none");
+        filtro[0] = servicio;
+        filtro[1] = 'Servicio';
+        elementsFilter(filtro);        
     });
     $("#selectSucursal").on('change', function () {
         var sucursal = $('#selectSucursal').val();
-        filtro[0] = 'Sucursal';
-        filtro[1] = sucursal;
-        tabla.agregarFila('#data-tipo-filtros', filtro);
-        $("#hideSucursal").css("display","none");
+        filtro[0] = sucursal;
+        filtro[1] = 'Sucursal';
+        elementsFilter(filtro);        
     });
     $("#selectCategoria").on('change', function () {
         var categoria = $('#selectCategoria').val();
-        filtro[0] = 'Categoria';
-        filtro[1] = categoria;
-        tabla.agregarFila('#data-tipo-filtros', filtro);
-        $("#hideCategoria").css("display","none");
+        filtro[0] = categoria;
+        filtro[1] = 'Categoria';
+        elementsFilter(filtro);        
     });
-    $("#selectSubCategoria").on('change', function () {
-        var subCategoria = $('#selectSubCategoria').val();
-        filtro[0] = 'SubCategoria';
-        filtro[1] = subCategoria;
-        tabla.agregarFila('#data-tipo-filtros', filtro);
-        $("#hideSubCategoria").css("display","none");
+}
+
+function addFilterByTable(){
+    var filtro = [];
+    $('#data-tipo-proyecto tbody').on('click', 'tr', function(){
+        var tableProyect = $('#data-tipo-proyecto').DataTable().row(this).data();
+        filtro[0] = tableProyect[0];
+        filtro[1] = 'Proyecto';
+        elementsFilter(filtro);
     });
-    $("#selectConcepto").on('change', function () {
-        var concepto = $('#selectConcepto').val();
-        filtro[0] = 'Concepto';
-        filtro[1] = concepto;
-        tabla.agregarFila('#data-tipo-filtros', filtro);
-        $("#hideConcepto").css("display","none");
+    $('#data-tipo-servicio').on('click', 'tr', function(){
+        var tableService = $('#data-tipo-servicio').DataTable().row(this).data();
+        filtro[0] = tableService[0];
+        filtro[1] = 'Servicio';
+        elementsFilter(filtro);
     });
-    
+    $('#data-tipo-sucursal').on('click', 'tr', function(){
+        var tableSucursal = $('#data-tipo-sucursal').DataTable().row(this).data();
+        filtro[0] = tableSucursal[0];
+        filtro[1] = 'Sucursal';
+        elementsFilter(filtro);
+    });
+    $('#data-tipo-categoria').on('click', 'tr', function(){
+        var tableCategory = $('#data-tipo-categoria').DataTable().row(this).data();
+        filtro[0] = tableCategory[0];
+        filtro[1] = 'Categoria';
+        elementsFilter(filtro);
+    });
+}
+
+var errorFilter;
+function elementsFilter(element){
+    switch (element[1]){
+        case 'Proyecto':
+            if(element[0] !== ''){
+                arrayFilters.proyecto = element[0];
+            } else {
+                errorFilter = 'este '+element[1];
+                setTimeout(modalUndefined, 1000);
+            }
+            break;
+        case 'Servicio':
+            if(element[0] !== ''){
+                arrayFilters.servicio = element[0];
+            } else {
+                errorFilter = 'este '+element[1];
+                setTimeout(modalUndefined, 1000);
+            }
+            break;
+        case 'Sucursal':
+            if(element[0] !== ''){
+                arrayFilters.sucursal = element[0];
+            } else {
+                errorFilter = 'esta '+element[1];
+                setTimeout(modalUndefined, 1000);
+            }
+            break;
+        case 'Categoria':
+            if(element[0] !== ''){
+                arrayFilters.categoria = element[0];
+            } else {
+                errorFilter = 'esta '+element[1];
+                setTimeout(modalUndefined, 1000);
+            }
+            break;
+    }
+    sendFilters();
+}
+
+function removeTableFilter(){
+    $('#data-tipo-filtros tbody').on('click', 'tr', function(){
+        var tableFilter = $('#data-tipo-filtros').DataTable().row(this).data();
+        for (var key in arrayFilters) {
+            if(arrayFilters[key] == tableFilter[0] && key == tableFilter[1]){
+                delete arrayFilters[key];
+            }
+        }
+        sendFilters();
+    });
+}
+
+function sendFilters(){
+    evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', arrayFilters, '#panelDashboardGapsiFilters', function (respuesta) {
+        if (respuesta) {
+            $('#dashboardGapsiFilters').empty().append(respuesta.formulario);
+            createDataView();
+            eventsViewFilters();
+            $('html, body').animate({
+                scrollTop: $("#panelDashboardGapsiFilters").offset().top - 60
+            }, 600);
+        } else {
+            alert('Hubo un problema con la solicitud de permiso.');
+        }
+    });
+}
+
+function modalUndefined(){
+    var html = '<div class="row m-t-20">\n\
+        <form id="idUndefined" class="margin-bottom-0" enctype="multipart/form-data">\n\
+            <div id="modal-dialogo" class="col-md-12 text-center">\n\
+                <h4>No hay información para '+errorFilter+'</h4><br>\n\
+                <button id="btnAceptar" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
+            </div>\n\
+        </form>\n\
+        </div>';
+    $('#btnModalConfirmar').addClass('hidden');
+    $('#btnModalAbortar').addClass('hidden');
+    evento.mostrarModal('Sin Datos', html);
+    $('#btnAceptar').on('click', function () {
+        evento.cerrarModal();
+    });
 }
