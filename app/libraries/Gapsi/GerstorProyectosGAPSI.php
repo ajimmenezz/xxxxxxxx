@@ -89,7 +89,7 @@ class GerstorProyectosGAPSI extends General {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
                             AND Proyecto = '" . $filters['proyecto'] . "'
-                            AND dr.Servicio = '" . $filters['servicio'] . "'
+                            AND dr.TipoServicio = '" . $filters['servicio'] . "'
                             AND dr.Sucursal = '" . $filters['sucursal'] . "'
                             AND ddg.Categoria = '" . $filters['categoria'] . "'
                             AND ddg.SubCategoria = '" . $filters['subcategoria'] . "'";
@@ -97,14 +97,14 @@ class GerstorProyectosGAPSI extends General {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
                             AND Proyecto = '" . $filters['proyecto'] . "'
-                            AND dr.Servicio = '" . $filters['servicio'] . "'
+                            AND dr.TipoServicio = '" . $filters['servicio'] . "'
                             AND dr.Sucursal = '" . $filters['sucursal'] . "'
                             AND ddg.SubCategoria = '" . $filters['categoria'] . "'";
         } elseif (isset($filters['tipoProyecto']) && isset($filters['proyecto']) && isset($filters['servicio']) && isset($filters['categoria']) && isset($filters['subcategoria'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
                             AND Proyecto = '" . $filters['proyecto'] . "'
-                            AND dr.Servicio = '" . $filters['servicio'] . "'
+                            AND dr.TipoServicio = '" . $filters['servicio'] . "'
                             AND ddg.Categoria = '" . $filters['categoria'] . "'
                             AND ddg.SubCategoria = '" . $filters['subcategoria'] . "'";
         } elseif (isset($filters['tipoProyecto']) && isset($filters['proyecto']) && isset($filters['categoria']) && isset($filters['subcategoria'])) {
@@ -117,13 +117,13 @@ class GerstorProyectosGAPSI extends General {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
                             AND Proyecto = '" . $filters['proyecto'] . "'
-                            AND dr.Servicio = '" . $filters['servicio'] . "'
+                            AND dr.TipoServicio = '" . $filters['servicio'] . "'
                             AND ddg.Categoria = '" . $filters['categoria'] . "'";
         } elseif (isset($filters['tipoProyecto']) && isset($filters['proyecto']) && isset($filters['servicio']) && isset($filters['sucursal'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
                             AND Proyecto = '" . $filters['proyecto'] . "'
-                            AND dr.Servicio = '" . $filters['servicio'] . "'
+                            AND dr.TipoServicio = '" . $filters['servicio'] . "'
                             AND dr.Sucursal = '" . $filters['sucursal'] . "'";
         } elseif (isset($filters['tipoProyecto']) && isset($filters['categoria']) && isset($filters['subcategoria'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
@@ -144,11 +144,11 @@ class GerstorProyectosGAPSI extends General {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
                             AND Proyecto = '" . $filters['proyecto'] . "'
-                            AND dr.Servicio = '" . $filters['servicio'] . "'";
+                            AND dr.TipoServicio = '" . $filters['servicio'] . "'";
         } elseif (isset($filters['tipoProyecto']) && isset($filters['servicio']) && isset($filters['sucursal'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
-                            AND dr.Servicio = '" . $filters['servicio'] . "'
+                            AND dr.TipoServicio = '" . $filters['servicio'] . "'
                             AND dr.Sucursal= '" . $filters['sucursal'] . "'";
         } elseif (isset($filters['tipoProyecto']) && isset($filters['categoria'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
@@ -161,7 +161,7 @@ class GerstorProyectosGAPSI extends General {
         } elseif (isset($filters['tipoProyecto']) && isset($filters['servicio'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
-                            AND dr.Servicio = '" . $filters['servicio'] . "'";
+                            AND dr.TipoServicio = '" . $filters['servicio'] . "'";
         } elseif (isset($filters['tipoProyecto']) && isset($filters['proyecto'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
