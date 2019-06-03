@@ -57,7 +57,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ON ddg.ID = dr.ID
                                                 WHERE 1=1
                                                 " . $parameters . "
-                                                Group by Proyecto");
+                                                GROUP BY Proyecto
+                                                ORDER BY Gasto DESC");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -77,7 +78,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 Group by TipoServicio
-                                                ORDER BY TipoServicio ASC");
+                                                ORDER BY Gasto DESC");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -88,8 +89,11 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
     public function getBranchOfficesByType(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT
-                                                    (SELECT ID FROM db_Sucursales WHERE Id = dr.Sucursal) AS IdSucursal,
-                                                    ISNULL((SELECT Nombre FROM db_Sucursales WHERE Id = dr.Sucursal), 'SIN SUCURSAL') AS Sucursal,
+                                                    CASE	
+                                                        WHEN ((SELECT Nombre FROM db_Sucursales WHERE Id = dr.Sucursal) = '') THEN 'SIN NOMBRE DE SUCURSAL'
+                                                        WHEN ((SELECT Nombre FROM db_Sucursales WHERE Id = dr.Sucursal) = NULL) THEN 'SIN NOMBRE DE SUCURSAL'
+                                                        ELSE (SELECT Nombre FROM db_Sucursales WHERE Id = dr.Sucursal)
+                                                    END AS Sucursal,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
@@ -97,7 +101,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 GROUP BY Sucursal
-                                                ORDER BY Sucursal");
+                                                ORDER BY Gasto DESC");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -108,7 +112,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
     public function getCategoriesByType(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT
-                                                    (SELECT ID FROM db_Categorias WHERE Nombre = ddg.Categoria) AS IdCategoria,
                                                     ISNULL(ddg.Categoria, 'SIN CATEGORIA') AS Categoria,
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
@@ -117,7 +120,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 WHERE 1=1
                                                 " . $parameters . "
                                                 GROUP BY ddg.Categoria
-                                                ORDER BY ddg.Categoria");
+                                                ORDER BY Gasto DESC");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
@@ -155,7 +158,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 WHERE 1=1 
                                                 " . $parameters . "
                                                 GROUP BY ddg.Concepto
-                                                ORDER BY ddg.Concepto");
+                                                ORDER BY Gasto DESC");
 
         if (!empty($query)) {
             return ['code' => 200, 'query' => $query->result_array()];
