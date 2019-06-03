@@ -99,7 +99,7 @@ class GerstorProyectosGAPSI extends General {
                             AND Proyecto = '" . $filters['proyecto'] . "'
                             AND dr.TipoServicio = '" . $filters['servicio'] . "'
                             AND dr.Sucursal = '" . $filters['sucursal'] . "'
-                            AND ddg.SubCategoria = '" . $filters['categoria'] . "'";
+                            AND ddg.Categoria = '" . $filters['categoria'] . "'";
         } elseif (isset($filters['tipoProyecto']) && isset($filters['proyecto']) && isset($filters['servicio']) && isset($filters['categoria']) && isset($filters['subcategoria'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'

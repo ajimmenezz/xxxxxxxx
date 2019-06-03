@@ -301,6 +301,11 @@ class Permisos_Vacaciones extends General {
         $this->pdf->SetXY(0, 18);
         $this->pdf->SetFont("helvetica", "B", 18);
         $this->pdf->Cell(0, 0, "Control de Ausencias del Personal", 0, 0, 'C');
+        $this->pdf->SetTextColor(243,18,18);
+        $this->pdf->SetXY(165, 10);
+        $this->pdf->SetFont("helvetica", "B", 11);
+        $this->pdf->Cell(14, 0, "Falta Autorizar");
+        $this->pdf->SetTextColor(0,0,0);
         $this->pdf->SetXY(0, 27);
         $this->pdf->SetFont("helvetica", "", 9);
         $this->pdf->Cell(0, 0, "Soluciones Integrales para empresas Integrales", 0, 0, 'R');

@@ -91,7 +91,7 @@
                                                         echo '<td></td>';
                                                         break;
                                                     case '7':
-                                                        echo '<td>Autorizado</td>';
+                                                        echo '<td style="color: green">Autorizado</td>';
                                                         echo '<td></td>';
                                                         break;
                                                     case '9':
@@ -129,7 +129,7 @@
                                                         }
                                                         break;
                                                     case '10':
-                                                        echo '<td>Rechazado</td>';
+                                                        echo '<td style="color: red">Rechazado</td>';
                                                         echo '<td></td>';
                                                         break;
                                                 }

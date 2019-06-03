@@ -239,15 +239,20 @@ class Autorizar_permisos extends General{
         $tplIdx = $this->pdf->importPage(1);
         $this->pdf->useTemplate($tplIdx, 0, 0, 210, 297,true);
         
+        $this->pdf->SetXY(165, 10);
+        $this->pdf->SetTextColor(255,255,255);
+        $this->pdf->SetFont("helvetica", "B", 12);
+        $this->pdf->Cell(14, 0, "Falta Autorizar");
+        $this->pdf->SetTextColor(0,0,0);
         if ($datosFirmas['MotivoRechazo'] != ""){
             $this->pdf->SetFont('Arial','B',35);
             $this->pdf->SetTextColor(254,159,159);
-            $this->pdf->RotatedText(30,210,'R e c h a z a d o',0);
+            $this->pdf->Cell(30,210,'R e c h a z a d o');
         }
         if ($estadoPermiso == "Autorizado y Concluido por: "){
             $this->pdf->SetFont('Arial','B',35);
             $this->pdf->SetTextColor(147,240,252);
-            $this->pdf->RotatedText(30,210,'A u t o r i z a d o',0);
+            $this->pdf->Cell(30,210,'A u t o r i z a d o');
         }
         
         $this->pdf->SetFont("helvetica", "B", 11);

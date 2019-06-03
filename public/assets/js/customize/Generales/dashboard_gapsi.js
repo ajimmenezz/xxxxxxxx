@@ -26,7 +26,7 @@ $(function () {
 
     setGraph();
     selectTypeProyects();
-    selectProyects();
+    selectProyect();
 });
 
 var arrayFilters = {};
@@ -98,7 +98,7 @@ function selectTypeProyects(){
     });
 }
 
-function selectProyects(){
+function selectProyect(){
     $('#data-table-proyectos tbody').on('click', 'tr', function () {
         var tableInfoTypeProyects = $('#data-table-tipo-proyectos').DataTable().rows().data();
         var tableInfoProyects = $('#data-table-proyectos').DataTable().row(this).data();
@@ -111,10 +111,9 @@ function selectProyects(){
         var dataSearch = {
             tipoProyecto: tipoProyecto,
             moneda: 'MN',
-            proyecto: tableInfoProyects[2]
+            proyecto: tableInfoProyects[1]
         }
-        console.log(dataSearch)
-        //sendEventViewFilters(dataSearch);
+        sendEventViewFilters(dataSearch);
     });
 }
 
@@ -132,8 +131,7 @@ function selectGraphProyect() {
         tipoProyecto: tipoProyecto,
         moneda: 'MN'
     }
-    console.log(dataSearch)
-        //sendEventViewFilters(dataSearch);
+    sendEventViewFilters(dataSearch);
 }
 
 function sendEventViewFilters(data){
@@ -205,9 +203,9 @@ function getDataGraphs(){
         if(infoTypeService.length >1){
             createDataGraph(infoTypeService, "chart_servicios");
         }else{
-            arrayFilters.servicio = infoTypeService[0][0];
-            arrayTableFilterService[0] = infoTypeService[0][0];
-            arrayTableFilterService[1] = 'servicio'
+            arrayFilters.servicio = infoTypeService[0][1];
+            arrayTableFilterService[0] = infoTypeService[0][1];
+            arrayTableFilterService[1] = 'servicio';
             arrayTableFilterService[2] = infoTypeService[0][1];
             tabla.agregarFila('#data-tipo-filtros', arrayTableFilterService);
             $("#hideServicio").css("display","none");
@@ -222,7 +220,7 @@ function getDataGraphs(){
         }else{
             arrayFilters.sucursal = infoTypeSucursal[0][0];
             arrayTableFilterSucursal[0] = infoTypeSucursal[0][0];
-            arrayTableFilterSucursal[1] = 'sucursal'
+            arrayTableFilterSucursal[1] = 'sucursal';
             arrayTableFilterSucursal[2] = infoTypeSucursal[0][1];
             tabla.agregarFila('#data-tipo-filtros', arrayTableFilterSucursal);
             $("#hideSucursal").css("display","none");
@@ -235,9 +233,9 @@ function getDataGraphs(){
         if(infoTypeCategory.length >1){
             createDataGraph(infoTypeCategory, "chart_categoria");
         }else{
-            arrayFilters.categoria = infoTypeCategory[0][0];
-            arrayTableFilterCategory[0] = infoTypeCategory[0][0];
-            arrayTableFilterCategory[1] = 'categoria'
+            arrayFilters.categoria = infoTypeCategory[0][1];
+            arrayTableFilterCategory[0] = infoTypeCategory[0][1];
+            arrayTableFilterCategory[1] = 'categoria';
             arrayTableFilterCategory[2] = infoTypeCategory[0][1];
             tabla.agregarFila('#data-tipo-filtros', arrayTableFilterCategory);
             $("#hideCategoria").css("display","none");
@@ -355,6 +353,12 @@ function addFilterBySelect(){
         filtro[1] = 'Categoria';
         elementsFilter(filtro);        
     });
+    $("#selectMoneda").on('change', function () {
+        var moneda = $('#selectMoneda').val();
+        filtro[0] = moneda;
+        filtro[1] = 'Moneda';
+        elementsFilter(filtro);        
+    });
 }
 
 function addFilterByTable(){
@@ -367,7 +371,7 @@ function addFilterByTable(){
     });
     $('#data-tipo-servicio').on('click', 'tr', function(){
         var tableService = $('#data-tipo-servicio').DataTable().row(this).data();
-        filtro[0] = tableService[0];
+        filtro[0] = tableService[1];
         filtro[1] = 'Servicio';
         elementsFilter(filtro);
     });
@@ -379,7 +383,7 @@ function addFilterByTable(){
     });
     $('#data-tipo-categoria').on('click', 'tr', function(){
         var tableCategory = $('#data-tipo-categoria').DataTable().row(this).data();
-        filtro[0] = tableCategory[0];
+        filtro[0] = tableCategory[1];
         filtro[1] = 'Categoria';
         elementsFilter(filtro);
     });
@@ -389,7 +393,7 @@ var errorFilter;
 function elementsFilter(element){
     switch (element[1]){
         case 'Proyecto':
-            if(element[0] !== ''){
+            if(element[0] !== '' && element[0] !== "SIN CATEGORIA"){
                 arrayFilters.proyecto = element[0];
             } else {
                 errorFilter = 'este '+element[1];
@@ -397,7 +401,7 @@ function elementsFilter(element){
             }
             break;
         case 'Servicio':
-            if(element[0] !== ''){
+            if(element[0] !== '' && element[0] !== "SIN CATEGORIA"){
                 arrayFilters.servicio = element[0];
             } else {
                 errorFilter = 'este '+element[1];
@@ -405,7 +409,7 @@ function elementsFilter(element){
             }
             break;
         case 'Sucursal':
-            if(element[0] !== ''){
+            if(element[0] !== '' && element[0] !== "SIN CATEGORIA"){
                 arrayFilters.sucursal = element[0];
             } else {
                 errorFilter = 'esta '+element[1];
@@ -413,12 +417,15 @@ function elementsFilter(element){
             }
             break;
         case 'Categoria':
-            if(element[0] !== ''){
+            if(element[0] !== '' && element[0] !== "SIN CATEGORIA"){
                 arrayFilters.categoria = element[0];
             } else {
                 errorFilter = 'esta '+element[1];
                 setTimeout(modalUndefined, 1000);
             }
+            break;
+        case 'Moneda':
+            arrayFilters.moneda = element[0];
             break;
     }
     sendFilters();
@@ -438,6 +445,7 @@ function removeTableFilter(){
 
 function sendFilters(){
     evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', arrayFilters, '#panelDashboardGapsiFilters', function (respuesta) {
+        console.log(respuesta)
         if (respuesta) {
             $('#dashboardGapsiFilters').empty().append(respuesta.formulario);
             createDataView();
