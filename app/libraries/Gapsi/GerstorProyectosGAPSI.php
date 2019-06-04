@@ -48,12 +48,6 @@ class GerstorProyectosGAPSI extends General {
         $concepto = $this->DBGestorProyectoGAPSI->getConceptByType($paraemeters);
         $gastosCompras = $this->DBGestorProyectoGAPSI->getExpensesAndPurchasesProject($paraemeters);
 
-//        foreach ($proyectos['query'] as $key => $proyecto) {
-//            $temporal = new Proyecto($proyecto['IdProyecto']);
-//            $temporal->setSucursales();
-//            array_push($this->proyectos,$temporal);
-//        }
-
         $dataProjectsInfo['proyectos'] = $proyectos['query'];
         $dataProjectsInfo['servicios'] = $servicios['query'];
         $dataProjectsInfo['sucursales'] = $sucursales['query'];
