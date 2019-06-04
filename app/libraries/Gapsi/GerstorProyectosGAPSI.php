@@ -37,16 +37,16 @@ class GerstorProyectosGAPSI extends General {
 
     public function getProjectsInfo(array $filters) {
         $dataProjectsInfo = array();
-        $this->proyectos = array();
-
-        $paraemeters = $this->defineParameters($filters);
-        $proyectos = $this->DBGestorProyectoGAPSI->getProjectsByType($paraemeters);
-        $servicios = $this->DBGestorProyectoGAPSI->getServicesByType($paraemeters);
-        $sucursales = $this->DBGestorProyectoGAPSI->getBranchOfficesByType($paraemeters);
-        $categorias = $this->DBGestorProyectoGAPSI->getCategoriesByType($paraemeters);
-        $subcategorias = $this->DBGestorProyectoGAPSI->getSubcategoryByType($paraemeters);
-        $concepto = $this->DBGestorProyectoGAPSI->getConceptByType($paraemeters);
-        $gastosCompras = $this->DBGestorProyectoGAPSI->getExpensesAndPurchasesProject($paraemeters);
+        $parametersDate = $this->parametersDate($filters);
+        $parameters = $this->defineParameters($filters);
+        $parameters = $parameters . $parametersDate;
+        $proyectos = $this->DBGestorProyectoGAPSI->getProjectsByType($parameters);
+        $servicios = $this->DBGestorProyectoGAPSI->getServicesByType($parameters);
+        $sucursales = $this->DBGestorProyectoGAPSI->getBranchOfficesByType($parameters);
+        $categorias = $this->DBGestorProyectoGAPSI->getCategoriesByType($parameters);
+        $subcategorias = $this->DBGestorProyectoGAPSI->getSubcategoryByType($parameters);
+        $concepto = $this->DBGestorProyectoGAPSI->getConceptByType($parameters);
+        $gastosCompras = $this->DBGestorProyectoGAPSI->getExpensesAndPurchasesProject($parameters);
 
         $dataProjectsInfo['proyectos'] = $proyectos['query'];
         $dataProjectsInfo['servicios'] = $servicios['query'];
@@ -76,6 +76,18 @@ class GerstorProyectosGAPSI extends General {
         }
 
         return array('formulario' => parent::getCI()->load->view('Generales/Dashboard_Gapsi_Filters', $dataProjectsInfo, TRUE));
+    }
+
+    private function parametersDate(array $filters) {
+        if (isset($filters['fechaInicio']) && isset($filters['fechaFinal'])) {
+            $newDateBegin = date("Y-m-d", strtotime($filters['fechaInicio']));
+            $newDateEnd = date("Y-m-d", strtotime($filters['fechaFinal']));
+            $parameters = " AND FCaptura BETWEEN '" . $newDateBegin . "' AND '" . $newDateEnd . "'";
+        } else {
+            $parameters = '';
+        }
+        
+        return $parameters;
     }
 
     private function defineParameters(array $filters) {
@@ -166,10 +178,6 @@ class GerstorProyectosGAPSI extends General {
         }
 
         return $parameters;
-    }
-
-    public function getProjectInfo(array $filters) {
-        $dataProjects = $this->DBGestorProyectoGAPSI->getProjects();
     }
 
 }
