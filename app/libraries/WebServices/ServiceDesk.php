@@ -68,6 +68,7 @@ class ServiceDesk extends General {
             $json = json_decode(@file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS));
 
             if (!empty($json)) {
+                var_dump($this->Url . '/' . $folio . '?' . $this->FIELDS);
                 return file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS);
             } else {
                 return '';
@@ -200,6 +201,41 @@ class ServiceDesk extends General {
                 . '}';
         $FIELDS = "format=json&"
                 . "OPERATION_NAME=EDIT_RESOLUTION&"
+                . "INPUT_DATA=" . urlencode($input_data) . "&"
+                . "TECHNICIAN_KEY=" . $key;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL2);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $FIELDS);
+        $return = curl_exec($ch);
+        curl_close($ch);
+        $jsonDecode = json_decode($return);
+        $this->generateLogResolverSD(array($jsonDecode, $folio));
+
+        return $jsonDecode;
+    }
+    
+    public function setNoteServiceDesk(string $key, string $folio, string $datos) {
+        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/resolution/";
+
+        $nuevaResolucion = ''
+                . "<br>"
+                . $datos
+                . "<br>";
+
+        $input_data = ''
+                . '{'
+                . ' "operation": {'
+                . '     "details": {'
+                . '         "resolution": {'
+                . '             "resolutiontext": "' . $this->mres($nuevaResolucion) . '"'
+                . '         }'
+                . '     }'
+                . ' }'
+                . '}';
+        $FIELDS = "format=json&"
+                . "OPERATION_NAME=ADD_NOTE&"
                 . "INPUT_DATA=" . urlencode($input_data) . "&"
                 . "TECHNICIAN_KEY=" . $key;
         $ch = curl_init();

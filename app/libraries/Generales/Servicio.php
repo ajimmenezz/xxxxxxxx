@@ -2367,7 +2367,9 @@ class Servicio extends General {
             }
         }
 
-        $datosSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
+//        $datosSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
+        $datosSD = $this->ServiceDesk->setNoteServiceDesk($datos['servicio']);
+        var_dump($datosSD);
         if (!empty($datosSD)) {
             if ($datosSD) {
                 return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');
