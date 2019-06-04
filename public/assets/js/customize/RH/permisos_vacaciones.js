@@ -28,22 +28,20 @@ $(function () {
         format: 'yyyy-mm-dd'
     });
     $('#inputFechaDocumento').datepicker("setDate", new Date());
-    $('#inputFechaPermisoDesde').datepicker({
-        format: 'yyyy-mm-dd',
-        daysOfWeekDisabled: [0,6]
+    $('#inputFechaDesde').datetimepicker({
+        format: 'YYYY-MM-DD',
     });
     $('#selectSolicitudHora').timepicker();
 
-    $('#inputFechaPermisoDesde').on('change', function () {
-        diaDesde = $('#inputFechaPermisoDesde').val();
-        console.log(diaDesde)
-        $('#inputFechaPermisoHasta').val(diaDesde);
-        $('#inputFechaPermisoHasta').datepicker({
-            format: 'yyyy-mm-dd',
-            daysOfWeekDisabled: [0,6],
-            startDate: diaDesde,
-            maxDate: '2'
-        });
+    $('#inputFechaHasta').datetimepicker({
+        format: 'YYYY-MM-DD',
+        useCurrent: false
+    });
+    $("#inputFechaDesde").on("dp.change", function (e) {
+        $('#inputFechaHasta').data("DateTimePicker").minDate(e.date);
+    });
+    $("#inputFechaHasta").on("dp.change", function (e) {
+        $('#inputFechaDesde').data("DateTimePicker").maxDate(e.date);
     });
 
 
@@ -221,8 +219,9 @@ $(function () {
                         </div>\n\
                     </form>\n\
                     </div>';
-                $('#btnModalConfirmar').addClass('hidden');
-                $('#btnModalAbortar').addClass('hidden');
+            $('#btnModalConfirmar').addClass('hidden');
+            $('#btnModalAbortar').addClass('hidden');
+            if($('#inputDescuento').val() != 0){
                 evento.mostrarModal('Descuento aplicable', html);
                 $('#btnCancelarPermisoM').on('click', function () {
                     evento.cerrarModal();
@@ -248,6 +247,27 @@ $(function () {
                         });
                     }
                 });
+            }else{
+                if ( $('#inputEvidenciaIncapacidad').val() !== '' ) {
+                    file.enviarArchivos('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', '#panelPermisosVacaciones', data, function (respuesta) {
+                        if (respuesta !== 'otraImagen') {
+                            window.open(respuesta, '_blank');
+                            location.reload();
+                        } else {
+                            evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
+                        }
+                    });
+                } else {
+                    evento.enviarEvento('EventoPermisosVacaciones/Permisos', data, '#panelPermisosVacaciones', function (respuesta) {
+                        if (respuesta) {
+                            window.open(respuesta, '_blank');
+                            location.reload();
+                        } else {
+                            evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
+                        }
+                    });
+                }
+            }
         }
     });
 

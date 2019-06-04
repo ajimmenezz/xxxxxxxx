@@ -247,15 +247,21 @@
                                 <label for="DiaPermiso">Fecha de Ausencia *</label>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div id="inputFechaDesde" class="input-group date calendario">
-                                            <input id="inputFechaPermisoDesde" type="text" class="form-control efectoDescuento" placeholder="Desde" data-parsley-required="true"/>
-                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <div class="form-group">
+                                            <div class='input-group date' id='inputFechaDesde'>
+                                                <input id='inputFechaPermisoDesde' type='text' class="form-control"/>
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div id="inputFechaHasta" class="input-group date calendario" >
-                                            <input id="inputFechaPermisoHasta" type="text" class="form-control efectoDescuento" placeholder="Hasta"/>
-                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <div class='input-group date' id='inputFechaHasta'>
+                                            <input id='inputFechaPermisoHasta' type='text' class="form-control"/>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

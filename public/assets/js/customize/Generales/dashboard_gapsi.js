@@ -493,10 +493,10 @@ function modalUndefined(){
 
 function filterDate() {
     $('#desde').datetimepicker({
-        format: 'DD/MM/YYYY'
+        format: 'YYYY/DD/MM'
     });
     $('#hasta').datetimepicker({
-        format: 'DD/MM/YYYY',
+        format: 'YYYY/DD/MM',
         useCurrent: false //Important! See issue #1075
     });
     $("#desde").on("dp.change", function (e) {

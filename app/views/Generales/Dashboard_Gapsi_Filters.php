@@ -475,7 +475,7 @@
             <div class="col-md-12">
                 <div class="form-group">
                     <div class='input-group date' id='desde' values="">
-                        <input id='fechaComienzo' type='text' class="form-control" value="<?php echo date("d/m/Y"); ?>"/>
+                        <input id='fechaComienzo' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -486,7 +486,7 @@
             <div class="col-md-12">
                 <div class="form-group">
                     <div class='input-group date' id='hasta'>
-                        <input id='fechaFin' type='text' class="form-control" value="<?php echo date("d/m/Y"); ?>"/>
+                        <input id='fechaFin' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
