@@ -92,7 +92,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
     }
 
     public function getBranchOfficesByType(string $parameters) {
-        $query = parent::connectDBGapsi()->query("SELECT
+        $query = parent::connectDBGapsi()->query("SELECT dr.Sucursal AS idSucursal,
                                                     CASE	
                                                         WHEN ((SELECT Nombre FROM db_Sucursales WHERE Id = dr.Sucursal) = '') THEN 'SIN NOMBRE DE SUCURSAL'
                                                         WHEN ((SELECT Nombre FROM db_Sucursales WHERE Id = dr.Sucursal) = NULL) THEN 'SIN NOMBRE DE SUCURSAL'

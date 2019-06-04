@@ -89,7 +89,7 @@
                                     <option value="">Seleccionar...</option>
                                     <?php
                                     foreach ($servicios as $servicio) {
-                                        echo '<option value="'.$servicio['IdServicio'].'">'.$servicio['TipoServicio'].'</option>';
+                                        echo '<option value="'.$servicio['TipoServicio'].'">'.$servicio['TipoServicio'].'</option>';
                                     }
                                     ?>
                                 </select>
@@ -100,7 +100,7 @@
                                     <option value="">Seleccionar...</option>
                                     <?php
                                     foreach ($sucursales as $sucursal) {
-                                        echo '<option value="'.$sucursal['IdSucursal'].'">'.$sucursal['Sucursal'].'</option>';
+                                        echo '<option value="'.$sucursal['idSucursal'].'">'.$sucursal['Sucursal'].'</option>';
                                     }
                                     ?>
                                 </select>
@@ -111,7 +111,7 @@
                                     <option value="">Seleccionar...</option>
                                     <?php
                                     foreach ($categorias as $categoria) {
-                                        echo '<option value="'.$categoria['IdCategoria'].'">'.$categoria['Categoria'].'</option>';
+                                        echo '<option value="'.$categoria['Categoria'].'">'.$categoria['Categoria'].'</option>';
                                     }
                                     ?>
                                 </select>
@@ -120,6 +120,8 @@
                                 <label>Moneda</label>
                                 <select id="selectMoneda" class="form-control efectoDescuento" name="SelectMoneda" style="width: 100%">
                                     <option value="">Seleccionar...</option>
+                                    <option value="MN">Pesos</option>
+                                    <option value="USD">Dolar</option>
                                 </select>
                             </div>-->
                         </div>
@@ -267,7 +269,7 @@
                                                 <?php
                                                 foreach ($sucursales as $sucursal) {
                                                     echo "<tr>";
-                                                        echo '<td>'.$sucursal['IdSucursal'].'</td>';
+                                                        echo '<td>'.$sucursal['idSucursal'].'</td>';
                                                         if($sucursal['Sucursal'] != ''){
                                                             echo '<td>'.$sucursal['Sucursal'].'</td>';
                                                         }else{
@@ -321,7 +323,7 @@
                                                 <?php
                                                 foreach ($categorias as $categoria) {
                                                     echo "<tr>";
-                                                        echo '<td>'.$categoria['IdCategoria'].'</td>';
+                                                        echo '<td>1</td>';
                                                         if($categoria['Categoria'] != ''){
                                                             echo '<td>'.$categoria['Categoria'].'</td>';
                                                         }else{

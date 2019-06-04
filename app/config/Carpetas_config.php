@@ -122,7 +122,8 @@ $config['Secciones'] = array(
         'Ordenes-Compras' => 'Ordenes_Compra',
         'Facturas-OC' => 'Facturacion_OC',
         'Solicitud-Compra' => 'Solicitud_Compra',
-        'Mis-Solicitudes-Compra' => 'Mis_Solicitudes_Compra'
+        'Mis-Solicitudes-Compra' => 'Mis_Solicitudes_Compra',
+        'Autorizar-Solicitudes-Compra' => 'Autorizar_Solicitudes_Compra'
     ),
     'MesaDeAyuda' => array(
         'Dashboard-Mesa' => 'Dashboard',

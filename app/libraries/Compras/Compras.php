@@ -14,6 +14,7 @@ class Compras extends General
     private $DBG;
     private $usuario;
     private $DBCompras;
+    private $Correo;
 
     public function __construct()
     {
@@ -25,6 +26,7 @@ class Compras extends General
         $this->DBG = \Modelos\Modelo_Gapsi::factory();
         $this->DBCompras = \Modelos\Modelo_Compras::factory();
         $this->usuario = \Librerias\Generales\Registro_Usuario::factory();
+        $this->Correo = \Librerias\Generales\Correo::factory();
         parent::getCI()->load->helper('date');
     }
 
@@ -364,9 +366,9 @@ class Compras extends General
         return $products;
     }
 
-    public function getListaMisSolicitudes(int $id = null)
+    public function getListaMisSolicitudes(int $id = null, bool $autorizarSolicitud = false)
     {
-        $solicitudes = $this->DBCompras->getListaMisSolicitudes($id);
+        $solicitudes = $this->DBCompras->getListaMisSolicitudes($id, $autorizarSolicitud);
         return $solicitudes;
     }
 
@@ -376,6 +378,12 @@ class Compras extends General
         return $partidas;
     }
 
+    public function getListaSolicitudesPorAutorizar()
+    {
+        $solicitudes = $this->DBCompras->getListaSolicitudesPorAutorizar();
+        return $solicitudes;
+    }
+
     public function solicitarCompra(array $datos)
     {
         $resultado = $this->DBCompras->insertarSolicitudCompra($datos);
@@ -383,7 +391,8 @@ class Compras extends General
             return $resultado;
         }
 
-        $archivos = $result = null;
+        $idSolicitud = $resultado['id'];
+
         $CI = parent::getCI();
         $carpeta = './storage/Gastos/SolicitudesCompra/' . $resultado['id'] . '/';
         $archivos = "";
@@ -395,6 +404,54 @@ class Compras extends General
         }
 
         $resultado = $this->DBCompras->actualizarArchivosSolicitud($resultado['id'], $archivos);
+
+        if ($resultado['code'] == 200) {
+            $solicitud = $this->getListaMisSolicitudes($idSolicitud)[0];
+            $partidas = $this->getPartidasSolicitudCompra($idSolicitud);
+            $jefes = $this->DBCompras->getJefesByEmpleado();
+            $titulo = 'Solicitud de Compra ' . $idSolicitud;
+            $textoInicial = '<p>El usuario ' . $jefes['nombre'] . ' ha  generado una solicitud de compra con la siguiente información:</p>'
+                . '<p><strong> Cliente: </strong> ' . $solicitud['Cliente'] . '</p>'
+                . '<p><strong> Proyecto: </strong> ' . $solicitud['Proyecto'] . '</p>'
+                . '<p><strong> Sucursal: </strong> ' . $solicitud['Sucursal'] . '</p>'
+                . '<p><strong> Descripción: </strong> ' . $solicitud['Descripcion'] . '</p>'
+                . '<table style="width:90%; border-collapse: collapse;">'
+                . ' <thead>'
+                . '     <tr>'
+                . '         <th style="border: 1px solid black;">Clave</th>'
+                . '         <th style="border: 1px solid black;">Producto</th>'
+                . '         <th style="border: 1px solid black;">Cantidad</th>'
+                . '     </tr>'
+                . ' </thead>'
+                . ' <tbody>';
+            foreach ($partidas as $kp => $vp) {
+                $textoInicial .= ''
+                    . '<tr>'
+                    . ' <td style="border: 1px solid black;">' . $vp['ClaveSAE'] . '</td>'
+                    . ' <td style="border: 1px solid black;">' . $vp['DescripcionSAE'] . '</td>'
+                    . ' <td style="border: 1px solid black;">' . $vp['Cantidad'] . '</td>'
+                    . '</tr>';
+            }
+
+            $textoInicial .= ''
+                . ' </tbody>'
+                . '</table>'
+                . '';
+
+            if (!empty($jefes['jefes'])) {
+                foreach ($jefes['jefes'] as $key => $value) {
+                    $datosJefe = $this->DBCompras->getGeneralInfoByUserID($value);
+                    $texto = '<h4>Hola ' . $datosJefe['Nombre'] . '</h4>' . $textoInicial;
+                    $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+                    $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($datosJefe['EmailCorporativo']), $titulo, $mensaje);
+                }
+            } else {
+                $texto = '<h4>Hola ' . $this->usuario['Nombre'] . '</h4>' . $textoInicial;
+                $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+                $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($this->usuario['EmailCorporativo']), $titulo, $mensaje);
+            }
+        }
+
         return $resultado;
     }
 
@@ -413,7 +470,7 @@ class Compras extends General
             }
         }
 
-        if ($solicitud['IdEstatus'] == "9") {
+        if (in_array($solicitud['IdEstatus'], ["9", 9, "10", 10])) {
             $datos = [
                 'solicitud' => $solicitud,
                 'clientes' => $this->gapsi->getClientes(),
@@ -427,6 +484,229 @@ class Compras extends General
                 'html' => parent::getCI()->load->view('Compras/Formularios/editar_solicitud_compra', $datos, TRUE),
                 'imginiciales' => explode(",", $solicitud['Archivos'])
             ];
+        } else {
+            $datos = [
+                'solicitud' => $solicitud,
+                'productosSolicitados' => $productosSolicitados
+            ];
+
+            return [
+                'html' => parent::getCI()->load->view('Compras/Formularios/seguimiento_solicitud_compra', $datos, TRUE)
+            ];
         }
+    }
+
+    public function formularioAutorizarSolicitudCompra(array $datos)
+    {
+        $solicitud = $this->getListaMisSolicitudes($datos['id'], true)[0];
+        $productosSolicitados = $this->getPartidasSolicitudCompra($datos['id']);
+
+        if ($solicitud['IdEstatus'] == "9") {
+            $datos = [
+                'solicitud' => $solicitud,
+                'productosSolicitados' => $productosSolicitados,
+                'autorizar' => true
+            ];
+
+            return [
+                'html' => parent::getCI()->load->view('Compras/Formularios/seguimiento_solicitud_compra', $datos, TRUE)
+            ];
+        }
+    }
+
+    public function eliminarArchivosSolicitud(array $datos)
+    {
+        $archivos = $this->getListaMisSolicitudes($datos['extra']['idSolicitud'])[0]['Archivos'];
+        $arrayArchivos = explode(",", $archivos);
+        $nuevoArrayArchivos = [];
+
+        foreach ($arrayArchivos as $key => $value) {
+            if ($datos['key'] != $value) {
+                array_push($nuevoArrayArchivos, $value);
+            }
+        }
+
+        $nuevosArchivos = implode(",", $nuevoArrayArchivos);
+
+        $resultado = $this->DBCompras->actualizarArchivosSolicitud($datos['extra']['idSolicitud'], $nuevosArchivos);
+        if ($resultado['code'] == 200) {
+            unlink("." . $datos['key']);
+        }
+
+        return $resultado;
+    }
+
+    public function guardarCambiosSolicitudCompra(array $datos)
+    {
+        $resultado = $this->DBCompras->guardarCambiosSolicitudCompra($datos);
+        if ($resultado['code'] == 500) {
+            return $resultado;
+        }
+
+        $archivosRegistrados = explode(",", $this->getListaMisSolicitudes($datos['idSolicitud'])[0]['Archivos']);
+
+        $CI = parent::getCI();
+        $carpeta = './storage/Gastos/SolicitudesCompra/' . $resultado['id'] . '/';
+        $archivos = "";
+        if (!empty($_FILES)) {
+            $archivos = setMultiplesArchivos($CI, 'archivosSolicitud', $carpeta, 'gapsi');
+            if ($archivos) {
+                if (count($archivosRegistrados) > 0 && $archivosRegistrados[0] != '') {
+                    $archivos = array_merge($archivosRegistrados, $archivos);
+                }
+                $archivos = implode(',', $archivos);
+            }
+        } else {
+            $archivos = implode(',', $archivosRegistrados);
+        }
+
+        $resultado = $this->DBCompras->actualizarArchivosSolicitud($resultado['id'], $archivos);
+        if ($resultado['code'] == 200) {
+            $solicitud = $this->getListaMisSolicitudes($resultado['id'])[0];
+            $partidas = $this->getPartidasSolicitudCompra($resultado['id']);
+            $jefes = $this->DBCompras->getJefesByEmpleado();
+            $titulo = 'Cambios en Solicitud de Compra ' . $resultado['id'];
+            $textoInicial = '<p>El usuario ' . $jefes['nombre'] . ' ha modificado la información de una solicitud de compra por lo siguiente:</p>'
+                . '<p><strong> Cliente: </strong> ' . $solicitud['Cliente'] . '</p>'
+                . '<p><strong> Proyecto: </strong> ' . $solicitud['Proyecto'] . '</p>'
+                . '<p><strong> Sucursal: </strong> ' . $solicitud['Sucursal'] . '</p>'
+                . '<p><strong> Descripción: </strong> ' . $solicitud['Descripcion'] . '</p>'
+                . '<table style="width:90%; border-collapse: collapse;">'
+                . ' <thead>'
+                . '     <tr>'
+                . '         <th style="border: 1px solid black;">Clave</th>'
+                . '         <th style="border: 1px solid black;">Producto</th>'
+                . '         <th style="border: 1px solid black;">Cantidad</th>'
+                . '     </tr>'
+                . ' </thead>'
+                . ' <tbody>';
+            foreach ($partidas as $kp => $vp) {
+                $textoInicial .= ''
+                    . '<tr>'
+                    . ' <td style="border: 1px solid black;">' . $vp['ClaveSAE'] . '</td>'
+                    . ' <td style="border: 1px solid black;">' . $vp['DescripcionSAE'] . '</td>'
+                    . ' <td style="border: 1px solid black;">' . $vp['Cantidad'] . '</td>'
+                    . '</tr>';
+            }
+
+            $textoInicial .= ''
+                . ' </tbody>'
+                . '</table>'
+                . '';
+
+            if (!empty($jefes['jefes'])) {
+                foreach ($jefes['jefes'] as $key => $value) {
+                    $datosJefe = $this->DBCompras->getGeneralInfoByUserID($value);
+                    $texto = '<h4>Hola ' . $datosJefe['Nombre'] . '</h4>' . $textoInicial;
+                    $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+                    $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($datosJefe['EmailCorporativo']), $titulo, $mensaje);
+                }
+            } else {
+                $texto = '<h4>Hola ' . $this->usuario['Nombre'] . '</h4>' . $textoInicial;
+                $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+                $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($this->usuario['EmailCorporativo']), $titulo, $mensaje);
+            }
+        }
+
+
+        return $resultado;
+    }
+
+    public function autorizarSolicitudCompra(array $datos)
+    {
+        $resultado = $this->DBCompras->autorizarSolicitudCompra($datos);
+        if ($resultado['code'] == 200) {
+            $solicitud = $this->getListaMisSolicitudes($datos['id'])[0];
+            $datosSolicitante = $this->DBCompras->getGeneralInfoByUserID($solicitud['IdUsuario']);
+            $partidas = $this->getPartidasSolicitudCompra($datos['id']);
+            $jefes = $this->DBCompras->getJefesByEmpleado();
+            $titulo = 'Solicitud de Compra ' . $datos['id'] . ' AUTORIZADA';
+            $textoInicial = '<p>El usuario ' . $jefes['nombre'] . ' ha autorizado la solicitud de compra ' . $datos['id'] . '</p>'
+                . '<p><strong> Cliente: </strong> ' . $solicitud['Cliente'] . '</p>'
+                . '<p><strong> Proyecto: </strong> ' . $solicitud['Proyecto'] . '</p>'
+                . '<p><strong> Sucursal: </strong> ' . $solicitud['Sucursal'] . '</p>'
+                . '<p><strong> Descripción: </strong> ' . $solicitud['Descripcion'] . '</p>'
+                . '<table style="width:90%; border-collapse: collapse;">'
+                . ' <thead>'
+                . '     <tr>'
+                . '         <th style="border: 1px solid black;">Clave</th>'
+                . '         <th style="border: 1px solid black;">Producto</th>'
+                . '         <th style="border: 1px solid black;">Cantidad</th>'
+                . '     </tr>'
+                . ' </thead>'
+                . ' <tbody>';
+            foreach ($partidas as $kp => $vp) {
+                $textoInicial .= ''
+                    . '<tr>'
+                    . ' <td style="border: 1px solid black;">' . $vp['ClaveSAE'] . '</td>'
+                    . ' <td style="border: 1px solid black;">' . $vp['DescripcionSAE'] . '</td>'
+                    . ' <td style="border: 1px solid black;">' . $vp['Cantidad'] . '</td>'
+                    . '</tr>';
+            }
+
+            $textoInicial .= ''
+                . ' </tbody>'
+                . '</table>'
+                . '';
+
+            if (!empty($jefes['jefes'])) {
+                foreach ($jefes['jefes'] as $key => $value) {
+                    $datosJefe = $this->DBCompras->getGeneralInfoByUserID($value);
+                    $texto = '<h4>Hola ' . $datosJefe['Nombre'] . '</h4>' . $textoInicial;
+                    $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+                    $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($datosJefe['EmailCorporativo']), $titulo, $mensaje);
+                }
+            }        
+
+            $texto = '<h4>Hola ' . $datosSolicitante['Nombre'] . '</h4>' . $textoInicial;
+            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+            $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($datosSolicitante['EmailCorporativo']), $titulo, $mensaje);
+        }
+        return $resultado;
+    }
+
+    public function rechazarSolicitudCompra(array $datos)
+    {
+        $resultado = $this->DBCompras->rechazarSolicitudCompra($datos);
+        if ($resultado['code'] == 200) {
+            $solicitud = $this->getListaMisSolicitudes($datos['id'])[0];
+            $datosSolicitante = $this->DBCompras->getGeneralInfoByUserID($solicitud['IdUsuario']);
+            $partidas = $this->getPartidasSolicitudCompra($datos['id']);
+            $jefes = $this->DBCompras->getJefesByEmpleado();
+            $titulo = 'Solicitud de Compra ' . $datos['id'] . ' RECHAZADA';
+            $textoInicial = '<p>El usuario ' . $jefes['nombre'] . ' ha RECHAZADO la solicitud de compra ' . $datos['id'] . '</p>'
+                . '<p><strong> Rechazo: </strong> ' . $datos['motivos'] . '</p>'
+                . '<p><strong> Cliente: </strong> ' . $solicitud['Cliente'] . '</p>'
+                . '<p><strong> Proyecto: </strong> ' . $solicitud['Proyecto'] . '</p>'
+                . '<p><strong> Sucursal: </strong> ' . $solicitud['Sucursal'] . '</p>'
+                . '<p><strong> Descripción: </strong> ' . $solicitud['Descripcion'] . '</p>'
+                . '<table style="width:90%; border-collapse: collapse;">'
+                . ' <thead>'
+                . '     <tr>'
+                . '         <th style="border: 1px solid black;">Clave</th>'
+                . '         <th style="border: 1px solid black;">Producto</th>'
+                . '         <th style="border: 1px solid black;">Cantidad</th>'
+                . '     </tr>'
+                . ' </thead>'
+                . ' <tbody>';
+            foreach ($partidas as $kp => $vp) {
+                $textoInicial .= ''
+                    . '<tr>'
+                    . ' <td style="border: 1px solid black;">' . $vp['ClaveSAE'] . '</td>'
+                    . ' <td style="border: 1px solid black;">' . $vp['DescripcionSAE'] . '</td>'
+                    . ' <td style="border: 1px solid black;">' . $vp['Cantidad'] . '</td>'
+                    . '</tr>';
+            }
+
+            $textoInicial .= ''
+                . ' </tbody>'
+                . '</table>'
+                . '';
+
+            $texto = '<h4>Hola ' . $datosSolicitante['Nombre'] . '</h4>' . $textoInicial;
+            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+            $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($datosSolicitante['EmailCorporativo']), $titulo, $mensaje);
+        }
+        return $resultado;
     }
 }

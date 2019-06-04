@@ -348,8 +348,10 @@ class Secciones extends General
                 $datos['Productos'] = $this->Compras->getSAEProducts();
                 break;
             case 'Compras/Mis_Solicitudes_Compra':
-                $datos['Solicitudes'] = $this->Compras->getListaMisSolicitudes();
-                $datos['Clientes'] = $this->Gapsi->getClientes();
+                $datos['Solicitudes'] = $this->Compras->getListaMisSolicitudes();                
+                break;
+            case 'Compras/Autorizar_Solicitudes_Compra':
+                $datos['Solicitudes'] = $this->Compras->getListaSolicitudesPorAutorizar();                
                 break;
             case 'Compras/Ordenes_Compra':
                 $datos['ListaOrdenesCompra'] = $this->Compras->consultaListaOrdenesCompra();

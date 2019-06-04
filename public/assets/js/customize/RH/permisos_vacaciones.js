@@ -30,18 +30,19 @@ $(function () {
     $('#inputFechaDocumento').datepicker("setDate", new Date());
     $('#inputFechaPermisoDesde').datepicker({
         format: 'yyyy-mm-dd',
-        daysOfWeekDisabled: [0,6],
-        startDate: new Date()
+        daysOfWeekDisabled: [0,6]
     });
     $('#selectSolicitudHora').timepicker();
 
     $('#inputFechaPermisoDesde').on('change', function () {
         diaDesde = $('#inputFechaPermisoDesde').val();
+        console.log(diaDesde)
         $('#inputFechaPermisoHasta').val(diaDesde);
         $('#inputFechaPermisoHasta').datepicker({
             format: 'yyyy-mm-dd',
             daysOfWeekDisabled: [0,6],
-            startDate: diaDesde
+            startDate: diaDesde,
+            maxDate: '2'
         });
     });
 
