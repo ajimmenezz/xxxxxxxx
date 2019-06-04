@@ -30,6 +30,7 @@ $(function () {
 });
 
 var arrayFilters = {};
+var errorFilter;
 var listaGlobaldeProyectos;
 var chartDashboard, dataDashboard, optionsDashboard;
 function setGraph() {
@@ -137,16 +138,22 @@ function selectGraphProyect() {
 function sendEventViewFilters(data){
     arrayFilters.moneda = 'MN';
     evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', data, '#panelDashboardGapsi', function (respuesta) {
-        if (respuesta) {
-            $('#dashboardGapsiFilters').removeClass('hidden').empty().append(respuesta.formulario);
-            $('#contentDashboardGapsi').addClass('hidden');
-            createDataView();
-            eventsViewFilters();
-            $('html, body').animate({
-                scrollTop: $("#panelDashboardGapsiFilters").offset().top - 60
-            }, 600);
-        } else {
-            alert('Hubo un problema con la solicitud de permiso.');
+        if(respuesta.consulta.proyectos.length !== 0){
+            if (respuesta) {
+                $('#dashboardGapsiFilters').removeClass('hidden').empty().append(respuesta.formulario);
+                $('#contentDashboardGapsi').addClass('hidden');
+                createDataView();
+                eventsViewFilters();
+                filterDate();
+                $('html, body').animate({
+                    scrollTop: $("#panelDashboardGapsiFilters").offset().top - 60
+                }, 600);
+            } else {
+                alert('Hubo un problema con la solicitud de permiso.');
+            }
+        }else{
+            errorFilter = 'esta Consulta';
+            setTimeout(modalUndefined, 1000);
         }
     });
 }
@@ -389,7 +396,6 @@ function addFilterByTable(){
     });
 }
 
-var errorFilter;
 function elementsFilter(element){
     switch (element[1]){
         case 'Proyecto':
@@ -445,16 +451,25 @@ function removeTableFilter(){
 
 function sendFilters(){
     evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', arrayFilters, '#panelDashboardGapsiFilters', function (respuesta) {
-        console.log(respuesta)
-        if (respuesta) {
-            $('#dashboardGapsiFilters').empty().append(respuesta.formulario);
-            createDataView();
-            eventsViewFilters();
-            $('html, body').animate({
-                scrollTop: $("#panelDashboardGapsiFilters").offset().top - 60
-            }, 600);
-        } else {
-            alert('Hubo un problema con la solicitud de permiso.');
+        if(respuesta.consulta.proyectos.length !== 0){
+            if (respuesta) {
+                $('#dashboardGapsiFilters').empty().append(respuesta.formulario);
+                createDataView();
+                eventsViewFilters();
+                filterDate();
+                $('html, body').animate({
+                    scrollTop: $("#panelDashboardGapsiFilters").offset().top - 60
+                }, 600);
+            } else {
+                alert('Hubo un problema con la solicitud de permiso.');
+            }
+        }else{
+            errorFilter = 'esta Consulta';
+            setTimeout(modalUndefined, 1000);
+            if(arrayFilters.moneda == 'USD'){
+                arrayFilters.moneda = 'MN';
+            }else
+                arrayFilters.moneda = 'USD';
         }
     });
 }
@@ -473,5 +488,26 @@ function modalUndefined(){
     evento.mostrarModal('Sin Datos', html);
     $('#btnAceptar').on('click', function () {
         evento.cerrarModal();
+    });
+}
+
+function filterDate() {
+    $('#desde').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#hasta').datetimepicker({
+        format: 'DD/MM/YYYY',
+        useCurrent: false //Important! See issue #1075
+    });
+    $("#desde").on("dp.change", function (e) {
+        $('#hasta').data("DateTimePicker").minDate(e.date);
+    });
+    $("#hasta").on("dp.change", function (e) {
+        $('#desde').data("DateTimePicker").maxDate(e.date);
+    });
+    $("#btnFiltrarDashboard").on('click', function(){
+        arrayFilters.fechaInicio = $("#fechaComienzo").val();
+        arrayFilters.fechaFinal = $("#fechaFin").val();
+        sendFilters()
     });
 }

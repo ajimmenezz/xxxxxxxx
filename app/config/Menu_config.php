@@ -155,7 +155,8 @@ $config['Generales'] = array(
             'moment/es',
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
-            'masked-input/masked-input.min'
+            'masked-input/masked-input.min',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
         ),
         'Permiso' => 'VDASHGPSI'
     ),

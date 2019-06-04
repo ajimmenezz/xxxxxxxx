@@ -75,7 +75,7 @@ class GerstorProyectosGAPSI extends General {
             array_push($dataProjectsInfo['gastosCompras'][$key], $filters['moneda']);
         }
 
-        return array('formulario' => parent::getCI()->load->view('Generales/Dashboard_Gapsi_Filters', $dataProjectsInfo, TRUE));
+        return array('formulario' => parent::getCI()->load->view('Generales/Dashboard_Gapsi_Filters', $dataProjectsInfo, TRUE), 'consulta' => $dataProjectsInfo);
     }
 
     private function parametersDate(array $filters) {
