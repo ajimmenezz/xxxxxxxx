@@ -257,7 +257,11 @@ $route['Comprobacion/Fondo_Fijo/(:any)'] = 'Tesoreria/Controller_FondoFijo/manej
 
 /* Routers para el manejo de Localizacion */
 $route['Localizacion/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
-$route['Localizac$route[ion/Seguimiento/(:any)'] = 'Localizacion/Controller_Localizacion/manejarEvento/$1';
+$route['Localizacion/Seguimiento/(:any)'] = 'Localizacion/Controller_Localizacion/manejarEvento/$1';
+
+/* Routers para el manejo de Fondo Fijo */
+$route['FondoFijo/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
+$route['FondoFijo/Catalogos/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
 
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
