@@ -68,7 +68,6 @@ class ServiceDesk extends General {
             $json = json_decode(@file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS));
 
             if (!empty($json)) {
-                var_dump($this->Url . '/' . $folio . '?' . $this->FIELDS);
                 return file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS);
             } else {
                 return '';
@@ -215,40 +214,30 @@ class ServiceDesk extends General {
 
         return $jsonDecode;
     }
-    
+
     public function setNoteServiceDesk(string $key, string $folio, string $datos) {
-        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/resolution/";
+        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/notes/";
+        $input_data = '{operation:{details:{notes:{note:{isPublic:true,notesText:' . urlencode($datos) . '}}}}}';
+        $FIELDS = "format=json"
+                . "&OPERATION_NAME=ADD_NOTE"
+                . "&TECHNICIAN_KEY=" . $key
+                . "&INPUT_DATA=" . $input_data;
+        $data = json_decode(file_get_contents($URL2 . '?' . $FIELDS));
 
-        $nuevaResolucion = ''
-                . "<br>"
-                . $datos
-                . "<br>";
+        return $data;
+    }
 
-        $input_data = ''
-                . '{'
-                . ' "operation": {'
-                . '     "details": {'
-                . '         "resolution": {'
-                . '             "resolutiontext": "' . $this->mres($nuevaResolucion) . '"'
-                . '         }'
-                . '     }'
-                . ' }'
-                . '}';
-        $FIELDS = "format=json&"
-                . "OPERATION_NAME=ADD_NOTE&"
-                . "INPUT_DATA=" . urlencode($input_data) . "&"
-                . "TECHNICIAN_KEY=" . $key;
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $URL2);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $FIELDS);
-        $return = curl_exec($ch);
-        curl_close($ch);
-        $jsonDecode = json_decode($return);
-        $this->generateLogResolverSD(array($jsonDecode, $folio));
+    public function setWorkLogServiceDesk(string $key, string $folio, string $datos) {
+        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/worklogs/";
+        $input_data = '{operation:{details:{worklogs:{worklog:{description:"' . urlencode($datos) . '",workMinutes:1}}}}}';
+        $FIELDS = "format=json"
+                . "&OPERATION_NAME=ADD_WORKLOG"
+                . "&TECHNICIAN_KEY=" . $key
+                . "&INPUT_DATA=" . $input_data;
 
-        return $jsonDecode;
+        $data = json_decode(file_get_contents($URL2 . '?' . $FIELDS));
+
+        return $data;
     }
 
     private function generateLogResolverSD(array $dataOperationSD) {

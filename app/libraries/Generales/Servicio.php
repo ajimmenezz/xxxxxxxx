@@ -1949,13 +1949,13 @@ class Servicio extends General {
 
         $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
         $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
-        
+
         if (!empty($vueltasAnteriores)) {
             $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
         } else {
             $sucursalVuelta = 'sin Vuelta';
         }
-        
+
         if ($sucursalVuelta !== $nombreSucursal) {
             $this->guardarVueltaAsociados(array(
                 'servicio' => $datos['servicio'],
@@ -2155,7 +2155,8 @@ class Servicio extends General {
         if ($resultadoEnviarConclusion === TRUE) {
             if (!empty($cambiarEstatus)) {
                 if ($status === '4') {
-                    $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
+//                    $servicios = $this->InformacionServicios->verificarTodosServiciosFolio(array('Servicio' => $datos['Servicio']));
+//                    $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
                 }
                 return TRUE;
             } else {
@@ -2367,14 +2368,36 @@ class Servicio extends General {
             }
         }
 
-//        $datosSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
-        $datosSD = $this->ServiceDesk->setNoteServiceDesk($datos['servicio']);
-        var_dump($datosSD);
-        if (!empty($datosSD)) {
-            if ($datosSD) {
+        $datosNotasSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
+//        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+//        $folio = $this->DBS->getServicios('SELECT
+//                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
+//                                            FROM t_servicios_ticket
+//                                            WHERE Id = "' . $datos['servicio'] . '"');
+//        $avanceProblema = $this->DBP->getAdvanceService($datos['servicio']);
+//
+//        $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
+//        $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];
+//
+//        try {
+//            $datosNotasSD = $this->ServiceDesk->setNoteServiceDesk($key, $folio[0]['Folio'], strip_tags($htmlAvanceProblema));
+//            if ($datosNotasSD->operation->result->status !== 'Success') {
+//                ['code' => 400, 'error' => $datosNotasSD];
+//            }else{
+//                $datosHistorialTrabajoSD = $this->ServiceDesk->setWorkLogServiceDesk($key, $folio[0]['Folio'], strip_tags($htmlAvanceProblema));
+//                if ($datosHistorialTrabajoSD->operation->result->status !== 'Success') {
+//                    ['code' => 400, 'error' => $datosHistorialTrabajoSD];
+//                }
+//            }
+//        } catch (Exception $err) {
+//            $err;
+//        }
+
+        if (!empty($datosNotasSD)) {
+            if ($datosNotasSD) {
                 return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');
             } else {
-                return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => $datosSD);
+                return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => $datosNotasSD);
             }
         } else {
             return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');

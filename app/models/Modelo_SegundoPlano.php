@@ -36,14 +36,14 @@ class Modelo_SegundoPlano extends Base {
 
     public function getApiKeyByUser($idUser = '') {
         if ($idUser == '') {
-            $consulta = parent::connectDBPrueba()->query('select SDKey from cat_v3_usuarios where Id = 58;');
+            $consulta = parent::connectDBPrueba()->query('select SDKey from cat_v3_usuarios where Id = 2;');
         } else {
             $consulta = parent::connectDBPrueba()->query('select SDKey from cat_v3_usuarios where Id = "' . $idUser . '";');
         }
         if (!empty($consulta)) {
             $value = $consulta->result_array();
             if ($value[0]['SDKey'] === '' || $value[0]['SDKey'] === NULL) {
-                $consulta2 = parent::connectDBPrueba()->query('select SDKey from cat_v3_usuarios where Id = 58;');
+                $consulta2 = parent::connectDBPrueba()->query('select SDKey from cat_v3_usuarios where Id = 2;');
                 if (!empty($consulta2)) {
                     $value2 = $consulta2->result_array();
                     return $value2[0]['SDKey'];

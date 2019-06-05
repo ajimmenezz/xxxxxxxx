@@ -76,30 +76,7 @@ class InformacionServicios extends General {
 
         if (!empty($serviciosConcluidos)) {
             foreach ($serviciosConcluidos as $key => $value) {
-                $datos = array(
-                    'servicio' => $value['Id'],
-                    'ticket' => $value['Ticket']
-                );
-
-                if ($value['Seguimiento'] === '1') {
-                    switch ($value['IdTipoServicio']) {
-                        case '27':
-                            $html .= $this->checklist($datos);
-                            break;
-                        case '20':
-                            $html .= $this->correctivo($datos);
-                            break;
-                        case '12':
-                        case '11':
-                            $html .= $this->servicioSinDetalles($datos);
-                            break;
-                        case '5':
-                            $html .= $this->trafficService($datos);
-                            break;
-                    }
-                } else {
-                    $html .= $this->sinClasificar($datos);
-                }
+                $html .= $this->vistaHTMLServicio($value);
             }
 
             $html .= $this->avancesProblemasServicio($folio);
@@ -127,27 +104,49 @@ class InformacionServicios extends General {
         return array('html' => $html, 'estatus' => $estatus);
     }
 
+    public function vistaHTMLServicio(array $value) {
+        if ($value['Seguimiento'] === '1') {
+            switch ($value['IdTipoServicio']) {
+                case '27':
+                    $html = $this->checklist(array(
+                        'servicio' => $value['Id'],
+                        'ticket' => $value['Ticket']
+                    ));
+                    break;
+                case '20':
+                    $html = $this->correctivo(array(
+                        'servicio' => $value['Id'],
+                        'ticket' => $value['Ticket']
+                    ));
+                    break;
+                case '12':
+                case '11':
+                    $html = $this->servicioSinDetalles(array(
+                        'servicio' => $value['Id'],
+                        'ticket' => $value['Ticket']
+                    ));
+                    break;
+                case '5':
+                    $html = $this->trafficService(array(
+                        'servicio' => $value['Id'],
+                        'ticket' => $value['Ticket']
+                    ));
+                    break;
+            }
+        } else {
+            $html = $this->sinClasificar(array(
+                'servicio' => $value['Id'],
+                'ticket' => $value['Ticket']
+            ));
+        }
+
+        return $html;
+    }
+
     public function cambiarEstatusSD(array $datos) {
         $SDkey = $this->MSP->getApiKeyByUser($datos['Atiende']);
 
-        if ($datos['ServicioConcluir']) {
-            $datosExtraServicio = 'AND	tse.Id <> "' . $datos['Servicio'] . '"';
-        } else {
-            $datosExtraServicio = ' ';
-        }
-
-        $servicios = $this->DBS->consultaGeneralSeguimiento('SELECT 
-                                                                    tse.IdEstatus
-                                                            FROM t_servicios_ticket tse 
-                                                            INNER JOIN t_solicitudes tso 
-                                                            ON tse.IdSolicitud = tso.Id 
-                                                            WHERE tso.Folio = "' . $datos['Folio'] . '"'
-                . $datosExtraServicio .
-                'AND (tse.IdEstatus in (1,2,3,10,12) 
-                                                            OR(tse.IdTipoServicio = 20 
-                                                                    AND tse.IdEstatus = 4
-                                                                    AND(tse.Firma IS NULL OR tse.Firma = "")))
-                                                                    AND tse.IdTipoServicio not in (21,41)');
+        $servicios = $this->verificarTodosServiciosFolio($datos);
 
         if (isset($datos['Servicio'])) {
             $servicioLaboratorio = $this->DBS->consultaGeneralSeguimiento('SELECT
@@ -192,6 +191,29 @@ class InformacionServicios extends General {
         }
 
         return $resultadoSD;
+    }
+
+    public function verificarTodosServiciosFolio(array $datos) {
+        if ($datos['ServicioConcluir']) {
+            $datosExtraServicio = 'AND	tse.Id <> "' . $datos['Servicio'] . '"';
+        } else {
+            $datosExtraServicio = ' ';
+        }
+
+        $servicios = $this->DBS->consultaGeneralSeguimiento('SELECT 
+                                                                    tse.IdEstatus
+                                                            FROM t_servicios_ticket tse 
+                                                            INNER JOIN t_solicitudes tso 
+                                                            ON tse.IdSolicitud = tso.Id 
+                                                            WHERE tso.Folio = "' . $datos['Folio'] . '"'
+                . $datosExtraServicio .
+                'AND (tse.IdEstatus in (1,2,3,10,12) 
+                                                            OR(tse.IdTipoServicio = 20 
+                                                                    AND tse.IdEstatus = 4
+                                                                    AND(tse.Firma IS NULL OR tse.Firma = "")))
+                                                                    AND tse.IdTipoServicio not in (21,41)');
+
+        return $servicios;
     }
 
     public function guardarLogSD($resultadoSD, string $folio) {
@@ -380,11 +402,11 @@ class InformacionServicios extends General {
     }
 
     public function avancesProblemasServicio(string $folio) {
-        $host = $_SERVER['SERVER_NAME'];
         $datosAvancesProblemas = '';
-        $datosAvances = '';
-        $datosProblemas = '';
-        $contAvanceProblema = 0;
+        $datosAvances = '***AVANCES***<br>';
+        $datosProblemas = '<br><p style="color:#FF0000";>***PROBLEMAS***</p>';
+        $avancesProblemas = '';
+
         $serviciosAvancesServicios = $this->DBS->consultaGeneralSeguimiento('SELECT 
                                                                                     tsa.* 
                                                                             FROM t_servicios_avance tsa
@@ -396,9 +418,26 @@ class InformacionServicios extends General {
                                                                             ORDER BY tsa.Fecha DESC');
 
         foreach ($serviciosAvancesServicios as $value) {
-            $linkImagenes = '';
-            $tabla = '';
-            $tablaAvancesProblemas = $this->DBS->consultaGeneralSeguimiento('SELECT 
+            $avancesProblemas = $this->crearVistaAvanceProblema($value);
+            if ($avancesProblemas['tipo'] === 'Avance') {
+                $datosAvances .= $avancesProblemas['datosAvancesProblemas'];
+            } else {
+                $datosProblemas .= $avancesProblemas['datosAvancesProblemas'];
+            }
+        }
+
+        $datosAvancesProblemas = $datosProblemas . $datosAvances;
+
+        return $datosAvancesProblemas;
+    }
+
+    public function crearVistaAvanceProblema(array $datos) {
+        $host = $_SERVER['SERVER_NAME'];
+        $contAvanceProblema = 0;
+        $linkImagenes = '';
+        $tabla = '';
+        $datosAvancesProblemas = '';
+        $tablaAvancesProblemas = $this->DBS->consultaGeneralSeguimiento('SELECT 
                                                                                     *,
                                                                                 CASE IdItem 
                                                                                     WHEN 1 THEN (SELECT Equipo FROM v_equipos WHERE Id = TipoItem) 
@@ -406,60 +445,48 @@ class InformacionServicios extends General {
                                                                                     WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = TipoItem) 
                                                                                 END as EquipoMaterial 
                                                                             FROM t_servicios_avance_equipo 
-                                                                            WHERE IdAvance = "' . $value['Id'] . '"');
+                                                                            WHERE IdAvance = "' . $datos['Id'] . '"');
 
-            foreach ($tablaAvancesProblemas as $key => $valor) {
-                switch ($valor['IdItem']) {
-                    case '1':
-                        $tipoItem = 'Equipo';
-                        break;
-                    case '2':
-                        $tipoItem = 'Material';
-                        break;
-                    case '3':
-                        $tipoItem = 'Refacción';
-                }
-                if ($valor['IdItem'] === '1') {
-                    if ($value['IdTipo'] === '1') {
-                        $tabla .= "<div>" . $tipoItem . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Serie: " . $valor['Serie'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
-                    } else {
-                        $tabla .= "<div>" . $tipoItem . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
-                    }
+        foreach ($tablaAvancesProblemas as $key => $valor) {
+            switch ($valor['IdItem']) {
+                case '1':
+                    $tipoItem = 'Equipo';
+                    break;
+                case '2':
+                    $tipoItem = 'Material';
+                    break;
+                case '3':
+                    $tipoItem = 'Refacción';
+            }
+            if ($valor['IdItem'] === '1') {
+                if ($datos['IdTipo'] === '1') {
+                    $tabla .= "<div>" . $tipoItem . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Serie: " . $valor['Serie'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
                 } else {
                     $tabla .= "<div>" . $tipoItem . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
                 }
-            }
-
-
-            $archivosAvanceProblema = explode(',', $value['Archivos']);
-            foreach ($archivosAvanceProblema as $v) {
-                if ($v != '') {
-                    $contAvanceProblema++;
-                    $linkImagenes .= "<a href='http://" . $host . $v . "'>Archivo" . $contAvanceProblema . "</a> &nbsp ";
-                }
-            }
-
-            if ($value['IdTipo'] === '1') {
-                $datosAvances .= "<br><div>" . $value['Descripcion'] . "</div>" . $tabla . "<div>" . $linkImagenes . "</div>";
             } else {
-                $datosProblemas .= "<div>" . $value['Descripcion'] . "</div>" . $tabla . "<div>" . $linkImagenes . "</div><br>";
+                $tabla .= "<div>" . $tipoItem . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
             }
         }
 
-        if ($datosAvances !== '') {
-            $datosAvancesTitulo = "***AVANCES***<br>";
-        } else {
-            $datosAvancesTitulo = "";
+        $archivosAvanceProblema = explode(',', $datos['Archivos']);
+
+        foreach ($archivosAvanceProblema as $v) {
+            if ($v != '') {
+                $contAvanceProblema++;
+                $linkImagenes .= "<a href='http://" . $host . $v . "'>Archivo" . $contAvanceProblema . "</a> &nbsp ";
+            }
         }
 
-        if ($datosProblemas !== '') {
-            $datosProblemasTitulo = '<p style="color:#FF0000";>***PROBLEMAS***</p>';
+        if ($datos['IdTipo'] === '1') {
+            $tipo = 'Avance';
         } else {
-            $datosProblemasTitulo = "";
+            $tipo = 'Problema';
         }
 
-        $datosAvancesProblemas = $datosProblemasTitulo . $datosProblemas . $datosAvancesTitulo . $datosAvances;
-        return $datosAvancesProblemas;
+        $datosAvancesProblemas .= "<div>" . $datos['Descripcion'] . "</div>" . $tabla . "<div>" . $linkImagenes . "</div><br>";
+
+        return array('datosAvancesProblemas' => $datosAvancesProblemas, 'tipo' => $tipo);
     }
 
     public function getGeneralesSolicitudServicio(string $servicio) {
@@ -766,13 +793,17 @@ class InformacionServicios extends General {
                 if ($folio[0]['Folio'] !== '') {
                     if ($folio[0]['Folio'] !== '0') {
                         $descripcion = $this->MostrarDatosSD($folio[0]['Folio'], $servicio, $servicioConcluir, $key);
-
                         if ($descripcion['estatus']) {
                             $ServiceDesck = $this->ServiceDesk->setResolucionServiceDesk($key, $folio[0]['Folio'], $descripcion['html']);
-
                             if (!empty($ServiceDesck)) {
                                 if ($ServiceDesck->operation->result->status !== 'Success') {
-                                    return $ServiceDesck->operation->result->message;
+                                    $key = $this->MSP->getApiKeyByUser('2');
+                                    $ServiceDesck = $this->ServiceDesk->setResolucionServiceDesk($key, $folio[0]['Folio'], $descripcion['html']);
+                                    if ($ServiceDesck->operation->result->status !== 'Success') {
+                                        return $ServiceDesck->operation->result->message;
+                                    } else {
+                                        return TRUE;
+                                    }
                                 } else {
                                     return TRUE;
                                 }
