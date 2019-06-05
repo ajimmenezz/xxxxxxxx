@@ -1,0 +1,41 @@
+<?php
+
+use Controladores\Controller_Base as Base;
+
+class Controller_FondoFijo extends Base {
+
+    private $fondo_fijo;
+
+    public function __construct() {
+        parent::__construct();
+        $this->fondo_fijo = new \Librerias\FondoFijo\FondoFijo();
+    }
+
+    public function manejarEvento(string $evento = null) {
+        switch ($evento) {
+            case 'TiposCuenta':
+                $resultado = $this->fondo_fijo->getTiposCuenta($this->input->post());
+                break;
+            case 'AgregarTipoCuenta':
+                $resultado = $this->fondo_fijo->agregarTipoCuenta($this->input->post());
+                break;
+            case 'FormularioEditarTipo':
+                $resultado = $this->fondo_fijo->formularioEditarTipo($this->input->post());
+                break;
+            case 'EditarTipoCuenta':
+                $resultado = $this->fondo_fijo->editarTipoCuenta($this->input->post());
+                break;
+            case 'FormularioEditarMontosUsuario':
+                $resultado = $this->fondo_fijo->formularioEditarMontosUsuario($this->input->post());
+                break;
+            case 'GuardarMontos':
+                $resultado = $this->fondo_fijo->guardarMontos($this->input->post());
+                break;
+            default:
+                $resultado = FALSE;
+                break;
+        }
+        echo json_encode($resultado);
+    }
+
+}

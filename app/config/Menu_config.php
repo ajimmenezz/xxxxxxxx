@@ -20,6 +20,7 @@ $config['Modulos'] = array(
     'Compras' => array('icono' => 'fa fa-barcode'),
     'Contabilidad' => array('icono' => 'fa fa-book'),
     'Documentacion' => array('icono' => 'fa fa-folder'),
+    'Fondo Fijo' => array('icono' => 'fa fa-dollar'),
     'Facturación y Cobranza' => array('icono' => 'fa fa-book'),
     'Gapsi' => array('icono' => 'fa fa-money'),
     'Laboratorio' => array('icono' => 'fa fa-wrench'),
@@ -589,129 +590,129 @@ $config['Proyectos'] = array(
         ),
         'Permiso' => 'VSTP'
     ),
-//    'Seguimiento-Proyectos' => array(
-//        'liga' => 'Seguimiento',
-//        'icono' => 'fa fa-eye',
-//        'Url' => '/Proyectos/Seguimiento',
-//        'css' => array('Proyecto/seguimiento'),
-//        'pluginsCss' => array(
-//            'bootstrap-datepicker/css/datepicker',
-//            'bootstrap-datepicker/css/datepicker3',
-//            'jquery-fileUpload/css/fileinput.min',
-//            'DataTables/css/data-table',
-//            'select2/dist/css/select2.min',
-//            'parsley/src/parsley',
-//            'Gantt/codebase/dhtmlxgantt'
-//        ),
-//        'js' => array(
-//            'Componentes/Pagina',
-//            'Componentes/Tablas/Tabla',
-//            'Componentes/Tablas/TablaBasica',
-//            'Componentes/Tablas/TablaColumnaOculta',
-//            'Componentes/Formulario',
-//            'Componentes/Socket',
-//            'Componentes/FileUpload/Upload',
-//            'Componentes/FileUpload/FileUpload_Basico',
-//            'Componentes/Selects/Select',
-//            'Componentes/Selects/SelectBasico',
-//            'Componentes/Selects/SelectMultiple',
-//            'Componentes/Fecha',
-//            'Componentes/Inputs/Input',
-//            'Componentes/Modal/ModalBase',
-//            'Componentes/Modal/Modal',
-//            'Componentes/Modal/Alertas',
-//            'Componentes/Gantt/Gantt',
-//            'Proyectos/Paginas/PaginaProyecto',
-//            'Proyectos/Paginas/PaginaSeguimiento',
-//            'Proyectos/Controladores/Controller_Seguimiento'
-//        ),
-//        'pluginsJs' => array(
-//            'bootstrap-datepicker/js/bootstrap-datepicker',
-//            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
-//            'DataTables/js/jquery.dataTables',
-//            'DataTables/js/dataTables.responsive',
-//            'select2/dist/js/select2.min',
-//            'jquery-fileUpload/js/fileinput',
-//            'jquery-fileUpload/js/es',
-//            'parsley/dist/parsley',
-//            'parsley/src/i18n/es',
-//            'Gantt/codebase/dhtmlxgantt',
-//            'Gantt/codebase/locale/locale_es',
-//            'Gantt/codebase/ext/dhtmlxgantt_tooltip'
-//        ),
-//        'Permiso' => 'VPSE'
-//    ),
-//    'Tareas-Proyectos' => array(
-//        'liga' => 'Tareas',
-//        'icono' => 'fa fa-tasks',
-//        'Url' => '/Proyectos/TareasTecnico',
-//        'css' => array('Proyecto/tareasTecnico'),
-//        'pluginsCss' => array(
-//            'bootstrap-datepicker/css/datepicker',
-//            'bootstrap-datepicker/css/datepicker3',
-//            'jquery-fileUpload/css/fileinput.min',
-//            'DataTables/css/data-table',
-//            'select2/dist/css/select2.min',
-//            'parsley/src/parsley',
-//            'Gantt/codebase/dhtmlxgantt'
-//        ),
-//        'js' => array(
-//            'Componentes/Pagina',
-//            'Componentes/Tablas/Tabla',
-//            'Componentes/Tablas/TablaBasica',
-//            'Componentes/Tablas/TablaColumnaOculta',
-//            'Componentes/Formulario',
-//            'Componentes/Socket',
-//            'Componentes/FileUpload/Upload',
-//            'Componentes/FileUpload/FileUpload_Basico',
-//            'Componentes/Selects/Select',
-//            'Componentes/Selects/SelectBasico',
-//            'Componentes/Selects/SelectMultiple',
-//            'Componentes/Fecha',
-//            'Componentes/Inputs/Input',
-//            'Componentes/Modal/ModalBase',
-//            'Componentes/Modal/Modal',
-//            'Componentes/Modal/Alertas',
-//            'Proyectos/Paginas/PaginaProyecto',
-//            'Proyectos/Paginas/PaginaTareas',
-//            'Proyectos/Controladores/Controller_TareasTecnico'
-//        ),
-//        'pluginsJs' => array(
-//            'bootstrap-datepicker/js/bootstrap-datepicker',
-//            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
-//            'DataTables/js/jquery.dataTables',
-//            'DataTables/js/dataTables.responsive',
-//            'select2/dist/js/select2.min',
-//            'jquery-fileUpload/js/fileinput',
-//            'jquery-fileUpload/js/es',
-//            'parsley/dist/parsley',
-//            'parsley/src/i18n/es',
-//            'Gantt/codebase/dhtmlxgantt',
-//            'Gantt/codebase/locale/locale_es',
-//            'Gantt/codebase/ext/dhtmlxgantt_tooltip'
-//        ),
-//        'Permiso' => 'VTP'
-//    )
-//    'Gantt-Proyectos' => array(
-//        'liga' => 'Gantt',
-//        'icono' => 'fa fa-bar-chart',
-//        'Url' => 'javascript:;',
-//        'css' => array(),
-//        'pluginsCss' => array(),
-//        'js' => array(),
-//        'pluginsJs' => array(),
-//        'Permiso' => 'VPG'
-//    ),
-//    'Concluidos-Proyectos' => array(
-//        'liga' => 'Concluidos',
-//        'icono' => 'fa fa-check-square-o',
-//        'Url' => 'javascript:;',
-//        'css' => array(),
-//        'pluginsCss' => array(),
-//        'js' => array(),
-//        'pluginsJs' => array(),
-//        'Permiso' => 'VPC'
-//    )
+    //    'Seguimiento-Proyectos' => array(
+    //        'liga' => 'Seguimiento',
+    //        'icono' => 'fa fa-eye',
+    //        'Url' => '/Proyectos/Seguimiento',
+    //        'css' => array('Proyecto/seguimiento'),
+    //        'pluginsCss' => array(
+    //            'bootstrap-datepicker/css/datepicker',
+    //            'bootstrap-datepicker/css/datepicker3',
+    //            'jquery-fileUpload/css/fileinput.min',
+    //            'DataTables/css/data-table',
+    //            'select2/dist/css/select2.min',
+    //            'parsley/src/parsley',
+    //            'Gantt/codebase/dhtmlxgantt'
+    //        ),
+    //        'js' => array(
+    //            'Componentes/Pagina',
+    //            'Componentes/Tablas/Tabla',
+    //            'Componentes/Tablas/TablaBasica',
+    //            'Componentes/Tablas/TablaColumnaOculta',
+    //            'Componentes/Formulario',
+    //            'Componentes/Socket',
+    //            'Componentes/FileUpload/Upload',
+    //            'Componentes/FileUpload/FileUpload_Basico',
+    //            'Componentes/Selects/Select',
+    //            'Componentes/Selects/SelectBasico',
+    //            'Componentes/Selects/SelectMultiple',
+    //            'Componentes/Fecha',
+    //            'Componentes/Inputs/Input',
+    //            'Componentes/Modal/ModalBase',
+    //            'Componentes/Modal/Modal',
+    //            'Componentes/Modal/Alertas',
+    //            'Componentes/Gantt/Gantt',
+    //            'Proyectos/Paginas/PaginaProyecto',
+    //            'Proyectos/Paginas/PaginaSeguimiento',
+    //            'Proyectos/Controladores/Controller_Seguimiento'
+    //        ),
+    //        'pluginsJs' => array(
+    //            'bootstrap-datepicker/js/bootstrap-datepicker',
+    //            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+    //            'DataTables/js/jquery.dataTables',
+    //            'DataTables/js/dataTables.responsive',
+    //            'select2/dist/js/select2.min',
+    //            'jquery-fileUpload/js/fileinput',
+    //            'jquery-fileUpload/js/es',
+    //            'parsley/dist/parsley',
+    //            'parsley/src/i18n/es',
+    //            'Gantt/codebase/dhtmlxgantt',
+    //            'Gantt/codebase/locale/locale_es',
+    //            'Gantt/codebase/ext/dhtmlxgantt_tooltip'
+    //        ),
+    //        'Permiso' => 'VPSE'
+    //    ),
+    //    'Tareas-Proyectos' => array(
+    //        'liga' => 'Tareas',
+    //        'icono' => 'fa fa-tasks',
+    //        'Url' => '/Proyectos/TareasTecnico',
+    //        'css' => array('Proyecto/tareasTecnico'),
+    //        'pluginsCss' => array(
+    //            'bootstrap-datepicker/css/datepicker',
+    //            'bootstrap-datepicker/css/datepicker3',
+    //            'jquery-fileUpload/css/fileinput.min',
+    //            'DataTables/css/data-table',
+    //            'select2/dist/css/select2.min',
+    //            'parsley/src/parsley',
+    //            'Gantt/codebase/dhtmlxgantt'
+    //        ),
+    //        'js' => array(
+    //            'Componentes/Pagina',
+    //            'Componentes/Tablas/Tabla',
+    //            'Componentes/Tablas/TablaBasica',
+    //            'Componentes/Tablas/TablaColumnaOculta',
+    //            'Componentes/Formulario',
+    //            'Componentes/Socket',
+    //            'Componentes/FileUpload/Upload',
+    //            'Componentes/FileUpload/FileUpload_Basico',
+    //            'Componentes/Selects/Select',
+    //            'Componentes/Selects/SelectBasico',
+    //            'Componentes/Selects/SelectMultiple',
+    //            'Componentes/Fecha',
+    //            'Componentes/Inputs/Input',
+    //            'Componentes/Modal/ModalBase',
+    //            'Componentes/Modal/Modal',
+    //            'Componentes/Modal/Alertas',
+    //            'Proyectos/Paginas/PaginaProyecto',
+    //            'Proyectos/Paginas/PaginaTareas',
+    //            'Proyectos/Controladores/Controller_TareasTecnico'
+    //        ),
+    //        'pluginsJs' => array(
+    //            'bootstrap-datepicker/js/bootstrap-datepicker',
+    //            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+    //            'DataTables/js/jquery.dataTables',
+    //            'DataTables/js/dataTables.responsive',
+    //            'select2/dist/js/select2.min',
+    //            'jquery-fileUpload/js/fileinput',
+    //            'jquery-fileUpload/js/es',
+    //            'parsley/dist/parsley',
+    //            'parsley/src/i18n/es',
+    //            'Gantt/codebase/dhtmlxgantt',
+    //            'Gantt/codebase/locale/locale_es',
+    //            'Gantt/codebase/ext/dhtmlxgantt_tooltip'
+    //        ),
+    //        'Permiso' => 'VTP'
+    //    )
+    //    'Gantt-Proyectos' => array(
+    //        'liga' => 'Gantt',
+    //        'icono' => 'fa fa-bar-chart',
+    //        'Url' => 'javascript:;',
+    //        'css' => array(),
+    //        'pluginsCss' => array(),
+    //        'js' => array(),
+    //        'pluginsJs' => array(),
+    //        'Permiso' => 'VPG'
+    //    ),
+    //    'Concluidos-Proyectos' => array(
+    //        'liga' => 'Concluidos',
+    //        'icono' => 'fa fa-check-square-o',
+    //        'Url' => 'javascript:;',
+    //        'css' => array(),
+    //        'pluginsCss' => array(),
+    //        'js' => array(),
+    //        'pluginsJs' => array(),
+    //        'Permiso' => 'VPC'
+    //    )
 );
 
 $config['Poliza'] = array(
@@ -3048,7 +3049,7 @@ $config['Gapsi'] = array(
             'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
             'parsley/src/parsley'
         ),
-        'js' => array('Base/Base','Base/Servicio', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload','Base/Nota','Gapsi/comprobar-gastos'),
+        'js' => array('Base/Base', 'Base/Servicio', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'Base/Nota', 'Gapsi/comprobar-gastos'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
@@ -3189,7 +3190,6 @@ $config['Comprobacion'] = array(
     )
 );
 
-
 $config['Localizacion'] = array(
     'Localizacion-Dispositivos' => array(
         'liga' => 'Dispositivos',
@@ -3244,4 +3244,58 @@ $config['Calendar'] = array(
         ),
         'Permiso' => 'CLR'
     )
+);
+
+$config['Fondo Fijo'] = array(
+    'Catalogos' => array(
+        'liga' => 'Catálogos',
+        'icono' => '',
+        'Url' => '/FondoFijo/Catalogos',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'bootstrap-combobox/css/bootstrap-combobox',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'FondoFijo/catalogos'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
+            'select2/dist/js/select2.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'bootstrap-combobox/js/bootstrap-combobox'
+        ),
+        'Permiso' => 'VCCOMP'
+    ),
+    'MiFondo' => array(
+        'liga' => 'Mi Fondo',
+        'icono' => '',
+        'Url' => '/FondoFijo/MiFondo',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'jquery-fileUpload/css/fileinput.min',
+            'bootstrap-combobox/css/bootstrap-combobox',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'Comprobacion/fondo_fijo'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
+            'select2/dist/js/select2.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'bootstrap-combobox/js/bootstrap-combobox'
+        ),
+        'Permiso' => 'VUSFF'
+    ),
 );

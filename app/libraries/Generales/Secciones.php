@@ -41,6 +41,7 @@ class Secciones extends General
     private $permisosVacaciones;
     private $autorizarpermisos;
     private $GapsiProyecto;
+    private $fondoFijo;
 
     public function __construct()
     {
@@ -86,6 +87,7 @@ class Secciones extends General
         $this->permisosVacaciones = \Librerias\RH\Permisos_Vacaciones::factory();
         $this->autorizarpermisos = \Librerias\RH\Autorizar_permisos::factory();
         $this->GapsiProyecto = \Librerias\Gapsi\GerstorProyectosGAPSI::factory();
+        $this->fondoFijo = \Librerias\FondoFijo\FondoFijo::factory();
     }
 
     /*
@@ -348,10 +350,10 @@ class Secciones extends General
                 $datos['Productos'] = $this->Compras->getSAEProducts();
                 break;
             case 'Compras/Mis_Solicitudes_Compra':
-                $datos['Solicitudes'] = $this->Compras->getListaMisSolicitudes();                
+                $datos['Solicitudes'] = $this->Compras->getListaMisSolicitudes();
                 break;
             case 'Compras/Autorizar_Solicitudes_Compra':
-                $datos['Solicitudes'] = $this->Compras->getListaSolicitudesPorAutorizar();                
+                $datos['Solicitudes'] = $this->Compras->getListaSolicitudesPorAutorizar();
                 break;
             case 'Compras/Ordenes_Compra':
                 $datos['ListaOrdenesCompra'] = $this->Compras->consultaListaOrdenesCompra();
@@ -527,6 +529,10 @@ class Secciones extends General
             case 'Generales/Dashboard_Gapsi':
                 $datos['Proyectos'] = $this->GapsiProyecto->getListProjects();
                 $datos['TiposProyectos'] = $this->GapsiProyecto->getProjectTypes();
+                break;
+            case 'FondoFijo/Catalogos':
+                $datos['TiposCuenta'] = $this->fondoFijo->getTiposCuenta();
+                $datos['Usuarios'] = $this->fondoFijo->getUsuarios();
                 break;
             default:
                 break;
