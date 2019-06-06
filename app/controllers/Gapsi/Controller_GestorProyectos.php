@@ -2,13 +2,13 @@
 
 use Controladores\Controller_Base as Base;
 
-class Controller_GestorProyectos extends Base {
+class Controller_GestorProyectos  extends Base {
 
     private $gestorProyecto;
 
     public function __construct() {
         parent::__construct();
-        $this->gestorProyecto = new \Librerias\Gapsi\GerstorProyectosGAPSI();
+        $this->gestorProyecto = new \Librerias\Gapsi\GerstorProyectos();
     }
 
     public function manejarEvento(string $evento = null) {

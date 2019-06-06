@@ -6,19 +6,41 @@ use Controladores\Controller_Datos_Usuario as General;
 
 class Proyecto extends General {
 
-    private $DBProyectoGAPSI;
     private $id;
-    private $tipo;    
+    private $nombre;
+    private $tipo;   
+    private $totalTransferencia;   
+    private $fecha;
+    private $gasto;
+    private $compra;
     private $sucursales;
+    private $DBProyecto;
        
-
-    public function __construct(int $idProyecto) {
-        parent::__construct();
-        $this->DBProyectoGAPSI = \Modelos\Modelo_GapsiProyecto::factory();
-        $this->id = $idProyecto;
+    public function __construct(string $idProyecto) {
+        parent::__construct();    
+        $this->DBProyecto = \Modelos\Modelo_ProyectoGapsi::factory();
+        $this->DBProyecto->getInformacion($idProyecto);
     }        
     
-    public function setSucursales(){
-        var_dump($this->id);
+    public function getDatos() {
+        return array();
     }
+    
+    public function getDatosGenerales() {
+        return array();
+    }
+    
+    private function getGasto() {
+        return double;
+    }
+    
+    private function getCompra() {
+        return double;
+    }
+    
+    private function calcularTotalTranferencia() {
+        return double;
+    }
+    
+    
 }

@@ -40,7 +40,7 @@ class Secciones extends General
     private $ModeloDashboard;
     private $permisosVacaciones;
     private $autorizarpermisos;
-    private $GapsiProyecto;
+    private $gestorProyectos;
 
     public function __construct()
     {
@@ -85,7 +85,7 @@ class Secciones extends General
         $this->ModeloDashboard = \Modelos\Modelo_Dashboard::factory();
         $this->permisosVacaciones = \Librerias\RH\Permisos_Vacaciones::factory();
         $this->autorizarpermisos = \Librerias\RH\Autorizar_permisos::factory();
-        $this->GapsiProyecto = \Librerias\Gapsi\GerstorProyectosGAPSI::factory();
+        $this->gestorProyectos = \Librerias\Gapsi\GerstorProyectos::factory();
     }
 
     /*
@@ -525,8 +525,7 @@ class Secciones extends General
                 $datos['Software'] = $this->Catalogo->catRhHabilidadesSoftware('3');
                 break;
             case 'Generales/Dashboard_Gapsi':
-                $datos['Proyectos'] = $this->GapsiProyecto->getListProjects();
-                $datos['TiposProyectos'] = $this->GapsiProyecto->getProjectTypes();
+                $datos['Proyectos'] = $this->gestorProyectos->getDatosGeneralesProyectos();                
                 break;
             default:
                 break;
