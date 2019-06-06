@@ -950,4 +950,43 @@ class InformacionServicios extends General {
         return $descripcion;
     }
 
+    public function verifyProcess(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $datosServicios = $this->DBS->consultaGeneralSeguimiento('SELECT 
+                                            ts.Folio,
+                                            tst.Id,
+                                            tst.Ticket,
+                                            tst.IdTipoServicio,
+                                            (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tst.IdTipoServicio) Seguimiento,
+                                            tst.IdEstatus,
+                                            tst.FechaConclusion,
+                                            (SELECT Atiende FROM t_solicitudes WHERE Id = tst.IdSolicitud) Atiende
+                                        FROM t_servicios_ticket tst
+                                        INNER JOIN t_solicitudes ts
+                                            ON ts.Id = tst.IdSolicitud
+                                        WHERE tst.Id = "' . $datos['servicio'] . '"');
+        $servicios = $this->verificarTodosServiciosFolio(array('Servicio' => $datos['servicio'], 'ServicioConcluir' => TRUE, 'Folio' => $datosServicios[0]['Folio']));
+
+        if (empty($servicios)) {
+            $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
+        } else {
+
+            $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+            $htmlServicio = $this->vistaHTMLServicio($datosServicios[0]);
+            try {
+                $datosNotasSD = $this->ServiceDesk->setNoteServiceDesk($key, $datosServicios[0]['Folio'], $htmlServicio);
+                if ($datosNotasSD->operation->result->status !== 'Success') {
+                    ['code' => 400, 'error' => $datosNotasSD];
+                } else {
+                    $datosHistorialTrabajoSD = $this->ServiceDesk->setWorkLogServiceDesk($key, $datosServicios[0]['Folio'], $htmlServicio);
+                    if ($datosHistorialTrabajoSD->operation->result->status !== 'Success') {
+                        ['code' => 400, 'error' => $datosHistorialTrabajoSD];
+                    }
+                }
+            } catch (Exception $err) {
+                $err;
+            }
+        }
+    }
+
 }

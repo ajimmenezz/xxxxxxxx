@@ -2137,11 +2137,12 @@ class Servicio extends General {
     }
 
     public function cambiarEstatus(string $fecha, array $datos, array $datosExtra = NULL, string $status) {
-        $cambiarEstatus = $this->DBS->actualizarServicio('t_servicios_ticket', array(
-            'IdEstatus' => $status,
-            'FechaConclusion' => $fecha
-                ), array('Id' => $datos['servicio'])
-        );
+        var_dump($datos);
+//        $cambiarEstatus = $this->DBS->actualizarServicio('t_servicios_ticket', array(
+//            'IdEstatus' => $status,
+//            'FechaConclusion' => $fecha
+//                ), array('Id' => $datos['servicio'])
+//        );
         if ($datosExtra !== NULL) {
             if (is_array($datos['datosConcluir'])) {
                 $datosConcluir = $datos['datosConcluir'];
@@ -2153,15 +2154,17 @@ class Servicio extends General {
             $resultadoEnviarConclusion = $this->enviarCorreoConlusionPDF($datos);
         }
         if ($resultadoEnviarConclusion === TRUE) {
-            if (!empty($cambiarEstatus)) {
-                if ($status === '4') {
+            $status = "4";
+//            if (!empty($cambiarEstatus)) {
+            if ($status === '4') {
+                $resultadoSD = $this->InformacionServicios->verifyProcess($datos);
 //                    $servicios = $this->InformacionServicios->verificarTodosServiciosFolio(array('Servicio' => $datos['Servicio']));
 //                    $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
-                }
-                return TRUE;
-            } else {
-                return 'errorConcluir';
             }
+            return TRUE;
+//            } else {
+//                return 'errorConcluir';
+//            }
         } else {
             return $resultadoEnviarConclusion;
         }
@@ -2368,30 +2371,30 @@ class Servicio extends General {
             }
         }
 
-        $datosNotasSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
-//        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
-//        $folio = $this->DBS->getServicios('SELECT
-//                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
-//                                            FROM t_servicios_ticket
-//                                            WHERE Id = "' . $datos['servicio'] . '"');
-//        $avanceProblema = $this->DBP->getAdvanceService($datos['servicio']);
-//
-//        $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
-//        $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];
-//
-//        try {
-//            $datosNotasSD = $this->ServiceDesk->setNoteServiceDesk($key, $folio[0]['Folio'], strip_tags($htmlAvanceProblema));
-//            if ($datosNotasSD->operation->result->status !== 'Success') {
-//                ['code' => 400, 'error' => $datosNotasSD];
-//            }else{
-//                $datosHistorialTrabajoSD = $this->ServiceDesk->setWorkLogServiceDesk($key, $folio[0]['Folio'], strip_tags($htmlAvanceProblema));
-//                if ($datosHistorialTrabajoSD->operation->result->status !== 'Success') {
-//                    ['code' => 400, 'error' => $datosHistorialTrabajoSD];
-//                }
-//            }
-//        } catch (Exception $err) {
-//            $err;
-//        }
+//        $datosNotasSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
+        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+        $folio = $this->DBS->getServicios('SELECT
+                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
+                                            FROM t_servicios_ticket
+                                            WHERE Id = "' . $datos['servicio'] . '"');
+        $avanceProblema = $this->DBP->getAdvanceService($datos['servicio']);
+
+        $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
+        $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];
+
+        try {
+            $datosNotasSD = $this->ServiceDesk->setNoteServiceDesk($key, $folio[0]['Folio'], strip_tags($htmlAvanceProblema));
+            if ($datosNotasSD->operation->result->status !== 'Success') {
+                ['code' => 400, 'error' => $datosNotasSD];
+            }else{
+                $datosHistorialTrabajoSD = $this->ServiceDesk->setWorkLogServiceDesk($key, $folio[0]['Folio'], strip_tags($htmlAvanceProblema));
+                if ($datosHistorialTrabajoSD->operation->result->status !== 'Success') {
+                    ['code' => 400, 'error' => $datosHistorialTrabajoSD];
+                }
+            }
+        } catch (Exception $err) {
+            $err;
+        }
 
         if (!empty($datosNotasSD)) {
             if ($datosNotasSD) {

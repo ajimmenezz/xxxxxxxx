@@ -217,7 +217,7 @@ class ServiceDesk extends General {
 
     public function setNoteServiceDesk(string $key, string $folio, string $datos) {
         $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/notes/";
-        $input_data = '{operation:{details:{notes:{note:{isPublic:true,notesText:' . urlencode($datos) . '}}}}}';
+        $input_data = '{operation:{details:{notes:{note:{isPublic:true,notesText:"' . urlencode($datos) . '"}}}}}';
         $FIELDS = "format=json"
                 . "&OPERATION_NAME=ADD_NOTE"
                 . "&TECHNICIAN_KEY=" . $key
