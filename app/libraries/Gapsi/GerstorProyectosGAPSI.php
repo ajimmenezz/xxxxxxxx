@@ -3,16 +3,15 @@
 namespace Librerias\Gapsi;
 
 use Controladores\Controller_Datos_Usuario as General;
-use Librerias\Gapsi\Proyecto as Proyecto;
 
 class GerstorProyectosGAPSI extends General {
 
     private $DBGestorProyectoGAPSI;
-    private $proyectos;
 
     public function __construct() {
         parent::__construct();
         $this->DBGestorProyectoGAPSI = \Modelos\Modelo_GapsiGestorProyectos::factory();
+//        parent::getCI()->load->helper('date');
     }
 
     public function getListProjects() {
@@ -75,18 +74,16 @@ class GerstorProyectosGAPSI extends General {
             array_push($dataProjectsInfo['gastosCompras'][$key], $filters['moneda']);
         }
 
-        return array('formulario' => parent::getCI()->load->view('Generales/Dashboard_Gapsi_Filters', $dataProjectsInfo, TRUE));
+        return array('formulario' => parent::getCI()->load->view('Generales/Dashboard_Gapsi_Filters', $dataProjectsInfo, TRUE), 'consulta' => $dataProjectsInfo);
     }
 
     private function parametersDate(array $filters) {
         if (isset($filters['fechaInicio']) && isset($filters['fechaFinal'])) {
-            $newDateBegin = date("Y-m-d", strtotime($filters['fechaInicio']));
-            $newDateEnd = date("Y-m-d", strtotime($filters['fechaFinal']));
-            $parameters = " AND FCaptura BETWEEN '" . $newDateBegin . "' AND '" . $newDateEnd . "'";
+            $parameters = " AND FCaptura BETWEEN '" . $filters['fechaInicio'] . "' AND '" . $filters['fechaFinal'] . "'";
         } else {
             $parameters = '';
         }
-        
+
         return $parameters;
     }
 

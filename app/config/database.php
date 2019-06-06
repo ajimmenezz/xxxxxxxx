@@ -223,9 +223,9 @@ if ($posicion !== FALSE) {
 
 $db['Gapsi'] = array(
     'dsn' => '',
-    'hostname' => '192.168.0.30, 50742',
-    'username' => 'sa',
-    'password' => 'S1cc0b',
+    'hostname' => $hostNameGapsi,
+    'username' => $userNameGapsi,
+    'password' => $pwdGapsi,
     'database' => 'DB_9DEFD2_dbGastosSiccob',
     'dbdriver' => 'sqlsrv',
     'dbprefix' => '',

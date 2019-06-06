@@ -116,14 +116,14 @@
                                     ?>
                                 </select>
                             </div>
-<!--                            <div class="form-group">
+                            <div class="form-group">
                                 <label>Moneda</label>
                                 <select id="selectMoneda" class="form-control efectoDescuento" name="SelectMoneda" style="width: 100%">
                                     <option value="">Seleccionar...</option>
                                     <option value="MN">Pesos</option>
                                     <option value="USD">Dolar</option>
                                 </select>
-                            </div>-->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -464,7 +464,8 @@
     </div>   
 </div>
 
-<!--<div class="theme-panel">
+<br><br><br><br>
+<div class="theme-panel">
     <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn bg-green"><i class="fa fa-filter text-white"></i></a>
     <div class="theme-panel-content">
         <h5 class="m-t-0">Filtros de fechas</h5>
@@ -473,8 +474,8 @@
             <div class="col-md-12 control-label f-w-700">Desde</div>
             <div class="col-md-12">
                 <div class="form-group">
-                    <div class='input-group date' id='desde'>
-                        <input id="xyz" type='text' class="form-control" value=""/>
+                    <div class='input-group date' id='desde' values="">
+                        <input id='fechaComienzo' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -485,7 +486,7 @@
             <div class="col-md-12">
                 <div class="form-group">
                     <div class='input-group date' id='hasta'>
-                        <input type='text' class="form-control" value=""/>
+                        <input id='fechaFin' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -493,7 +494,7 @@
                 </div>                
             </div>
         </div>
-        <div class="row">
+<!--        <div class="row">
             <div class="col-md-12 control-label f-w-700">Pasado</div>
             <div class="col-md-6 col-xs-6 m-t-5 m-b-5 text-center">
                 <a href="javascript:;" id="btn-anio-pasado" class="btn btn-info btn-block btn-xs btn-date-filter">Año</a>
@@ -531,11 +532,11 @@
             <div class="col-md-6 col-xs-6 m-t-5 m-b-5 text-center">
                 <a href="javascript:;" id="btn-semana-anterior" class="btn btn-info btn-block btn-xs btn-date-filter">7 días</a>
             </div>
-        </div>
+        </div>-->
         <div class="row m-t-10">
             <div class="col-md-12">
                 <a href="#" id="btnFiltrarDashboard" class="btn btn-inverse btn-block btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
             </div>
         </div>
     </div>
-</div>-->
+</div>

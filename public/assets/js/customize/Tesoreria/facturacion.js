@@ -223,12 +223,7 @@ $(function () {
 
         $('#modalArchivoValidarVuelta').off('click');
         $('#modalArchivoValidarVuelta').on('click', function () {
-            var html = '<div class="embed-responsive embed-responsive-16by9">\n\
-                                        <iframe class="embed-responsive-item" src="' + respuesta.datos.archivo + '" allowfullscreen></iframe>\n\
-                                    </div>';
-            evento.mostrarModal('PDF', html);
-            $('#btnModalConfirmar').addClass('hidden');
-            $('#btnModalAbortar').empty().append('Cerrar');
+            window.open(respuesta.datos.archivo, '_blank');
         });
 
         $('#btnValidarVuelta').off('click');
