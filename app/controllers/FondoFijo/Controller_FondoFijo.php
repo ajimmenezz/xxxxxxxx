@@ -2,16 +2,19 @@
 
 use Controladores\Controller_Base as Base;
 
-class Controller_FondoFijo extends Base {
+class Controller_FondoFijo extends Base
+{
 
     private $fondo_fijo;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->fondo_fijo = new \Librerias\FondoFijo\FondoFijo();
     }
 
-    public function manejarEvento(string $evento = null) {
+    public function manejarEvento(string $evento = null)
+    {
         switch ($evento) {
             case 'TiposCuenta':
                 $resultado = $this->fondo_fijo->getTiposCuenta($this->input->post());
@@ -31,11 +34,22 @@ class Controller_FondoFijo extends Base {
             case 'GuardarMontos':
                 $resultado = $this->fondo_fijo->guardarMontos($this->input->post());
                 break;
+            case 'FormularioAgregarConcepto':
+                $resultado = $this->fondo_fijo->formularioAgregarConcepto($this->input->post());
+                break;
+            case 'AgregarConcepto':
+                $resultado = $this->fondo_fijo->agregarConcepto($this->input->post());
+                break;
+            case 'InhabilitarConcepto':
+                $resultado = $this->fondo_fijo->inhabilitarConcepto($this->input->post());
+                break;
+            case 'HabilitarConcepto':
+                $resultado = $this->fondo_fijo->habilitarConcepto($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
         }
         echo json_encode($resultado);
     }
-
 }

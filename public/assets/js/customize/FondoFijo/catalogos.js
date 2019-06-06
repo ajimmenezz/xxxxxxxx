@@ -22,6 +22,7 @@ $(function () {
 
     tabla.generaTablaPersonal('#table-tipos-cuenta', null, null, true, true, [[2, 'asc']]);
     tabla.generaTablaPersonal('#table-montos-usuario', null, null, true, true, [[1, 'asc']]);
+    tabla.generaTablaPersonal('#table-conceptos', null, null, true, true, [[1, 'asc']]);
 
     $("#btnAddTipoCuenta").off("click");
     $("#btnAddTipoCuenta").on("click", function () {
@@ -151,590 +152,240 @@ $(function () {
         });
     }
 
-    /************************************************************** */
-    $('#table-tipos tbody').on('dblclick', 'tr', function () {
-        let _this = this;
-        var datosTabla = $('#table-tipos').DataTable().row(_this).data();
+    $('#btnAddConcepto').off('click');
+    $('#btnAddConcepto').on('click', function () {
+        cargaFormularioAgregarConcepto(0);
+    });
+
+    $('#table-conceptos tbody').on('click', 'tr', function () {
+        var datos = $('#table-conceptos').DataTable().row(this).data();
+        cargaFormularioAgregarConcepto(datos[0], this);
+    });
+
+    function cargaFormularioAgregarConcepto() {
         var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('Catalogos/FormularioEditarTipo', datos, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Editar Tipo de Proyecto', respuesta.formulario);
-
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-                    if ($.trim($("#txtTipo").val()) !== '') {
-                        var datos = {
-                            'id': $('#idTipo').val(),
-                            'tipo': $.trim($("#txtTipo").val()),
-                            'estatus': $("#listEstatus").val()
-                        };
-                        evento.enviarEvento('Catalogos/EditarTipo', datos, '#modalEdit', function (respuesta) {
-                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-                                evento.terminarModal('#modalEdit');
-                                $('#table-tipos').DataTable().row(_this).data([respuesta.Id, respuesta.Flag, respuesta.Nombre, respuesta.Estatus]);
-                                tabla.reordenarTabla('#table-tipos', [2, 'asc']);
-                                $('#table-tipos').DataTable().page.jumpToData(respuesta.Id, 0);
-                            } else {
-                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-                            }
-                        });
-                    } else {
-                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-                    }
-                });
-
-            } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-            }
-        });
-    });
-
-    $("#btnAddConcepto").off("click");
-    $("#btnAddConcepto").on("click", function () {
-        evento.enviarEvento('Catalogos/FormularioAgregarConcepto', {}, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Agregar Concepto de Sistema', respuesta.formulario);
-
-                $("#listSistemas").combobox();
-
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-                    if ($.trim($("#txtNuevoConcepto").val()) !== '') {
-                        var datos = {
-                            'concepto': $.trim($("#txtNuevoConcepto").val()),
-                            'sistema': $("#listSistemas").val()
-                        };
-                        evento.enviarEvento('Catalogos/AgregarConcepto', datos, '#modalEdit', function (respuesta) {
-                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-                                evento.terminarModal('#modalEdit');
-                                tabla.agregarFila('#table-conceptos', [respuesta.Id, respuesta.IdSistema, respuesta.Flag, respuesta.Nombre, respuesta.Sistema, respuesta.Estatus]);
-                                tabla.reordenarTabla('#table-conceptos', [2, 'asc']);
-                                $('#table-conceptos').DataTable().page.jumpToData(respuesta.Id, 0);
-                            } else {
-                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-                            }
-                        });
-                    } else {
-                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-                    }
-                });
-
-            } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-            }
-        });
-    });
-
-    $('#table-conceptos tbody').on('dblclick', 'tr', function () {
-        let _this = this;
-        var datosTabla = $('#table-conceptos').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('Catalogos/FormularioEditarConcepto', datos, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Editar Concepto', respuesta.formulario);
-
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-                    if ($.trim($("#txtConcepto").val()) !== '') {
-                        var datos = {
-                            'id': $('#idConcepto').val(),
-                            'concepto': $.trim($("#txtConcepto").val()),
-                            'sistema': $("#listSistemas").val(),
-                            'estatus': $("#listEstatus").val()
-                        };
-                        evento.enviarEvento('Catalogos/EditarConcepto', datos, '#modalEdit', function (respuesta) {
-                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-                                evento.terminarModal('#modalEdit');
-                                $('#table-conceptos').DataTable().row(_this).data([respuesta.Id, respuesta.IdSistema, respuesta.Flag, respuesta.Nombre, respuesta.Sistema, respuesta.Estatus]);
-                                tabla.reordenarTabla('#table-conceptos', [3, 'asc']);
-                                $('#table-conceptos').DataTable().page.jumpToData(respuesta.Id, 0);
-                            } else {
-                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-                            }
-                        });
-                    } else {
-                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-                    }
-                });
-
-            } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-            }
-        });
-    });
-
-    $("#btnAddArea").off("click");
-    $("#btnAddArea").on("click", function () {
-        evento.enviarEvento('Catalogos/FormularioAgregarArea', {}, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Agregar Área por Concepto', respuesta.formulario);
-
-                $("#listConceptos").combobox();
-
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-                    if ($.trim($("#txtNuevaArea").val()) !== '') {
-                        var datos = {
-                            'area': $.trim($("#txtNuevaArea").val()),
-                            'concepto': $("#listConceptos").val()
-                        };
-                        evento.enviarEvento('Catalogos/AgregarArea', datos, '#modalEdit', function (respuesta) {
-                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-                                evento.terminarModal('#modalEdit');
-                                tabla.agregarFila('#table-areas', [respuesta.Id, respuesta.IdConcepto, respuesta.Flag, respuesta.Nombre, respuesta.Concepto, respuesta.Estatus]);
-                                tabla.reordenarTabla('#table-areas', [3, 'asc']);
-                                $('#table-areas').DataTable().page.jumpToData(respuesta.Id, 0);
-                            } else {
-                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-                            }
-                        });
-                    } else {
-                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-                    }
-                });
-
-            } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-            }
-        });
-    });
-
-    $('#table-areas tbody').on('dblclick', 'tr', function () {
-        let _this = this;
-        var datosTabla = $('#table-areas').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('Catalogos/FormularioEditarArea', datos, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Editar Área', respuesta.formulario);
-
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-                    if ($.trim($("#txtArea").val()) !== '') {
-                        var datos = {
-                            'id': $('#idArea').val(),
-                            'area': $.trim($("#txtArea").val()),
-                            'concepto': $("#listConceptos").val(),
-                            'estatus': $("#listEstatus").val()
-                        };
-                        evento.enviarEvento('Catalogos/EditarArea', datos, '#modalEdit', function (respuesta) {
-                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-                                evento.terminarModal('#modalEdit');
-                                $('#table-areas').DataTable().row(_this).data([respuesta.Id, respuesta.IdConcepto, respuesta.Flag, respuesta.Nombre, respuesta.Concepto, respuesta.Estatus]);
-                                tabla.reordenarTabla('#table-areas', [3, 'asc']);
-                                $('#table-areas').DataTable().page.jumpToData(respuesta.Id, 0);
-                            } else {
-                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-                            }
-                        });
-                    } else {
-                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-                    }
-                });
-
-            } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-            }
-        });
-    });
-
-    $("#btnAddUbicacion").off("click");
-    $("#btnAddUbicacion").on("click", function () {
-        evento.enviarEvento('Catalogos/FormularioAgregarUbicacion', {}, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Agregar Ubicación por Área', respuesta.formulario);
-
-                $("#listAreas").combobox();
-
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-                    if ($.trim($("#txtNuevaUbicacion").val()) !== '') {
-                        var datos = {
-                            'ubicacion': $.trim($("#txtNuevaUbicacion").val()),
-                            'area': $("#listAreas").val()
-                        };
-                        evento.enviarEvento('Catalogos/AgregarUbicacion', datos, '#modalEdit', function (respuesta) {
-                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-                                evento.terminarModal('#modalEdit');
-                                tabla.agregarFila('#table-ubicaciones', [respuesta.Id, respuesta.IdArea, respuesta.Flag, respuesta.Nombre, respuesta.Area, respuesta.Estatus]);
-                                tabla.reordenarTabla('#table-ubicaciones', [3, 'asc']);
-                                $('#table-ubicaciones').DataTable().page.jumpToData(respuesta.Id, 0);
-                            } else {
-                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-                            }
-                        });
-                    } else {
-                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-                    }
-                });
-
-            } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-            }
-        });
-    });
-
-    $('#table-ubicaciones tbody').on('dblclick', 'tr', function () {
-        let _this = this;
-        var datosTabla = $('#table-ubicaciones').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('Catalogos/FormularioEditarUbicacion', datos, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Editar Ubicación', respuesta.formulario);
-
-                $("#listAreas").combobox();
-
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-                    if ($.trim($("#txtUbicacion").val()) !== '') {
-                        var datos = {
-                            'id': $('#idUbicacion').val(),
-                            'ubicacion': $.trim($("#txtUbicacion").val()),
-                            'area': $("#listAreas").val(),
-                            'estatus': $("#listEstatus").val()
-                        };
-                        evento.enviarEvento('Catalogos/EditarUbicacion', datos, '#modalEdit', function (respuesta) {
-                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-                                evento.terminarModal('#modalEdit');
-                                $('#table-ubicaciones').DataTable().row(_this).data([respuesta.Id, respuesta.IdArea, respuesta.Flag, respuesta.Nombre, respuesta.Area, respuesta.Estatus]);
-                                tabla.reordenarTabla('#table-ubicaciones', [3, 'asc']);
-                                $('#table-ubicaciones').DataTable().page.jumpToData(respuesta.Id, 0);
-                            } else {
-                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-                            }
-                        });
-                    } else {
-                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-                    }
-                });
-
-            } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-            }
-        });
-    });
-
-    $("#btnAddAccesorio").off("click");
-    $("#btnAddAccesorio").on("click", function () {
-        evento.enviarEvento('Catalogos/FormularioAgregarAccesorio', {}, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Agregar Accesorio de Sistema', respuesta.formulario);
-
-                $("#listSistemas").combobox();
-
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-                    if ($.trim($("#txtNuevoAccesorio").val()) !== '') {
-                        var datos = {
-                            'accesorio': $.trim($("#txtNuevoAccesorio").val()),
-                            'sistema': $("#listSistemas").val()
-                        };
-                        evento.enviarEvento('Catalogos/AgregarAccesorio', datos, '#modalEdit', function (respuesta) {
-                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-                                evento.terminarModal('#modalEdit');
-                                tabla.agregarFila('#table-accesorios', [respuesta.Id, respuesta.IdSistema, respuesta.Flag, respuesta.Nombre, respuesta.Sistema, respuesta.Estatus]);
-                                tabla.reordenarTabla('#table-accesorios', [3, 'asc']);
-                                $('#table-accesorios').DataTable().page.jumpToData(respuesta.Id, 0);
-                            } else {
-                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-                            }
-                        });
-                    } else {
-                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-                    }
-                });
-
-            } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-            }
-        });
-    });
-
-    $('#table-accesorios tbody').on('dblclick', 'tr', function () {
-        let _this = this;
-        var datosTabla = $('#table-accesorios').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('Catalogos/FormularioEditarAccesorio', datos, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Editar Accesorio', respuesta.formulario);
-
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-                    if ($.trim($("#txtAccesorio").val()) !== '') {
-                        var datos = {
-                            'id': $('#idAccesorio').val(),
-                            'accesorio': $.trim($("#txtAccesorio").val()),
-                            'sistema': $("#listSistemas").val(),
-                            'estatus': $("#listEstatus").val()
-                        };
-                        evento.enviarEvento('Catalogos/EditarAccesorio', datos, '#modalEdit', function (respuesta) {
-                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-                                evento.terminarModal('#modalEdit');
-                                $('#table-accesorios').DataTable().row(_this).data([respuesta.Id, respuesta.IdSistema, respuesta.Flag, respuesta.Nombre, respuesta.Sistema, respuesta.Estatus]);
-                                tabla.reordenarTabla('#table-accesorios', [3, 'asc']);
-                                $('#table-accesorios').DataTable().page.jumpToData(respuesta.Id, 0);
-                            } else {
-                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-                            }
-                        });
-                    } else {
-                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer el campo está vacío.", 4000);
-                    }
-                });
-
-            } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-            }
-        });
-    });
-
-    $("#btnAddMaterial").off("click");
-    $("#btnAddMaterial").on("click", function () {
-        evento.enviarEvento('Catalogos/FormularioAgregarMaterial', {}, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Agregar Material por Accesorio', respuesta.formulario);
-
-                $("#listAccesorios").combobox();
-                $("#listMaterial").combobox();
-
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-                    if ($("#listAccesorios").val() !== '' && $("listMaterial").val() !== '') {
-                        var datos = {
-                            'accesorio': $("#listAccesorios").val(),
-                            'material': $("#listMaterial").val()
-                        };
-                        evento.enviarEvento('Catalogos/AgregarMaterial', datos, '#modalEdit', function (respuesta) {
-                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-                                evento.terminarModal('#modalEdit');
-                                tabla.agregarFila('#table-material', [respuesta.Id, respuesta.IdMaterial, respuesta.IdAccesorio, respuesta.Material, respuesta.Accesorio]);
-                                tabla.reordenarTabla('#table-material', [3, 'asc']);
-                                $('#table-material').DataTable().page.jumpToData(respuesta.Id, 0);
-                            } else {
-                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-                            }
-                        });
-                    } else {
-                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer no ha seleccionado el material o el accesorio.", 4000);
-                    }
-                });
-
-            } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-            }
-        });
-    });
-
-    $('#table-material tbody').on('dblclick', 'tr', function () {
-        let _this = this;
-        var datosTabla = $('#table-material').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('Catalogos/FormularioEditarMaterial', datos, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                evento.iniciarModal('#modalEdit', 'Editar Material', respuesta.formulario);
-
-                $("#listAccesorios").combobox();
-                $("#listMaterial").combobox();
-
-                $("#btnGuardarCambios").off("click");
-                $("#btnGuardarCambios").on("click", function () {
-                    if ($("#listAccesorios").val() !== '' && $("listMaterial").val() !== '') {
-                        var datos = {
-                            'id': $("#idMaterial").val(),
-                            'accesorio': $("#listAccesorios").val(),
-                            'material': $("#listMaterial").val()
-                        };
-                        evento.enviarEvento('Catalogos/EditarMaterial', datos, '#modalEdit', function (respuesta) {
-                            if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-                                evento.terminarModal('#modalEdit');
-                                $('#table-material').DataTable().row(_this).data([respuesta.Id, respuesta.IdMaterial, respuesta.IdAccesorio, respuesta.Material, respuesta.Accesorio]);
-                                tabla.reordenarTabla('#table-material', [3, 'asc']);
-                                $('#table-material').DataTable().page.jumpToData(respuesta.Id, 0);
-                            } else {
-                                evento.mostrarMensaje("#error-in-modal", false, respuesta.error, 4000);
-                            }
-                        });
-                    } else {
-                        evento.mostrarMensaje("#error-in-modal", false, "Al parecer no ha seleccionado el material o el accesorio.", 4000);
-                    }
-                });
-
-            } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-            }
-        });
-    });
-
-    $("#btnAddKit").off("click");
-    $("#btnAddKit").on("click", function () {
-        evento.enviarEvento('Catalogos/FormularioAgregarKit', {}, '#panel-catalogos', function (respuesta) {
-            $("#divKitMaterial").empty().append(respuesta.formulario);
-
-            $("#listMaterial").combobox();
-
-            $("#seccionCatalogos").fadeOut(400, function () {
-                $("#divKitMaterial").fadeIn(400);
-            });
-
-            $("#divKitMaterial #btnRegresar").off("click");
-            $("#divKitMaterial #btnRegresar").on("click", function () {
-                $("#divKitMaterial").fadeOut(400, function () {
-                    $("#seccionCatalogos").fadeIn(400, function () {
-                        $("#divKitMaterial").empty();
-                    });
-                });
-            });
-            initKitActions();
-        });
-    });
-
-    $('#table-kits tbody').on('dblclick', 'tr', function () {
-        let _this = this;
-        var datosTabla = $('#table-kits').DataTable().row(_this).data();
-        var datos = {
-            'id': datosTabla[0]
-        };
-        evento.enviarEvento('Catalogos/FormularioEditarKit', datos, '#panel-catalogos', function (respuesta) {
-            if (respuesta.code == 200) {
-                $("#divKitMaterial").empty().append(respuesta.formulario);
-
-                $("#listMaterial").combobox();
-
-                $("#seccionCatalogos").fadeOut(400, function () {
-                    $("#divKitMaterial").fadeIn(400);
-                });
-
-                $("#divKitMaterial #btnRegresar").off("click");
-                $("#divKitMaterial #btnRegresar").on("click", function () {
-                    $("#divKitMaterial").fadeOut(400, function () {
-                        $("#seccionCatalogos").fadeIn(400, function () {
-                            $("#divKitMaterial").empty();
-                        });
-                    });
-                });
-                initKitActions(_this);
-            } else {
-                evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
-            }
-        });
-    });
-
-    function initKitActions() {
-        var _fila = arguments[0] || false;
-        $("#btnAddMaterialKit").off("click");
-        $("#btnAddMaterialKit").on("click", function () {
-            var _idMaterial = $("#listMaterial").val();
-            var _material = $("#listMaterial option:selected").text();
-            if (_idMaterial !== '') {
-                var existe = encuentraMaterialKit(_idMaterial);
-                if (!existe) {
-                    var _html = `<tr id="tr-` + _idMaterial + `">
-                                <td>` + _material + `</td>
-                                <td><input class="form-control txtCantidadesMaterial" min="1" type="number" data-id="` + _idMaterial + `" placeholder="0" /></td>
-                                <td><button class="btn btn-danger btnDeleteMaterialKit" data-id="` + _idMaterial + `"><i class="fa fa-trash"></i></button></td>
-                            </tr>`;
-                    $("#table-material-kit tbody").prepend(_html);
-                    $(".combobox-clear").click();
-                    initActionsDeleteMaterialKit();
-                } else {
-                    evento.mostrarMensaje("#errorKitMateriales", false, 'Este material ya se encuentra en la lista del kit.', 4000);
-                }
-            } else {
-                evento.mostrarMensaje("#errorKitMateriales", false, 'Debe seleccionar un material de la lista.', 4000);
-            }
-        });
-
-        $("#btnGuardarKit").off("click");
-        $("#btnGuardarKit").on("click", function () {
-            guardarKit(_fila);
-        });
-
-        initActionsDeleteMaterialKit();
-    }
-
-
-    function encuentraMaterialKit() {
-        var _idMaterial = arguments[0];
-        var existe = false;
-        $(".txtCantidadesMaterial").each(function () {
-            if ($(this).attr("data-id") == _idMaterial) {
-                existe = true;
-            }
-        });
-        return existe;
-    }
-
-    function initActionsDeleteMaterialKit() {
-        $(".btnDeleteMaterialKit").off("click");
-        $(".btnDeleteMaterialKit").on("click", function () {
-            $("#tr-" + $(this).attr("data-id")).remove();
-        });
-    }
-
-    function guardarKit() {
-        var _fila = arguments[0] || null;
-        var _nombre = $.trim($("#txtKit").val());
-        var _material = [];
-        var _zero = false;
-        $(".txtCantidadesMaterial").each(function () {
-            var _value = $(this).attr("data-id") + ',' + $(this).val();
-            _material.push(_value);
-            if ($(this).val() <= 0) {
-                _zero = true;
-            }
-        });
-
-        if (_nombre == "") {
-            evento.mostrarMensaje("#errorKitNombre", false, 'El nombre del Kit no puede ser una cadena vacía.', 4000);
-        } else if (_material.length <= 0) {
-            evento.mostrarMensaje("#errorKitNombre", false, 'El kit debe tener al menos un material con cantidad registrada.', 4000);
-        } else if (_zero) {
-            evento.mostrarMensaje("#errorKitNombre", false, 'Uno o mas materiales del kit tienen cantidades inferiores a 1', 4000);
-        } else {
-            var datos = {
-                'idKit': $("#idKit").val(),
-                'kit': _nombre,
-                'material': _material
-            };
-            evento.enviarEvento('Catalogos/AgregarEditarKit', datos, '#panelKitMaterial', function (respuesta) {
-                if (typeof respuesta !== 'undefined' && respuesta.code == 200) {
-                    var material = '';
-                    $.each(respuesta.Material, function (k, v) {
-                        material += '<strong>' + v.Cantidad + '</strong> - ' + v.Nombre + '<br />';
-                    });
-
-                    var _row = '<tr><td>' + respuesta.Id + '</td><td>' + respuesta.Kit + '</td><td>' + material + '</td></tr>';
-
-                    if (respuesta.move == 'edit') {
-                        tabla.eliminarFila()
-                        $('#table-kits').DataTable().row(_fila).remove().draw();
-                    }
-
-                    tabla.agregarFilaHtml('#table-kits', _row);
-                    tabla.reordenarTabla('#table-kits', [1, 'asc']);
-                    $('#table-kits').DataTable().page.jumpToData(respuesta.Id, 0);
-
-                    $("#divKitMaterial").fadeOut(400, function () {
-                        $("#seccionCatalogos").fadeIn(400, function () {
-                            $("#divKitMaterial").empty();
-                        });
-                    });
-                } else {
-                    evento.mostrarMensaje("#errorKitNombre", false, respuesta.error, 4000);
-                }
-            });
+            'id': arguments[0] || 0
         }
+        var _fila = arguments[1] || '';
+        evento.enviarEvento('Catalogos/FormularioAgregarConcepto', datos, '#panel-catalogos', function (respuesta) {
+            $("#formularioConceptos").empty().append(respuesta.html);
+            evento.cambiarDiv("#listaConceptos", "#formularioConceptos");
+            select.crearSelect("select");
+            tabla.generaTablaPersonal('#table-alternativas', null, null, true, false, [], null, null, false);
+
+            initBtnDeleteAlternativas();
+
+            $("#btnAgregarAlternativa").off("click");
+            $("#btnAgregarAlternativa").on("click", function () {
+                var _datos = {
+                    'usuario': $("#listUsuariosAlternativas").val(),
+                    'usuarioString': $("#listUsuariosAlternativas option:selected").text(),
+                    'sucursal': $("#listSucursalesAlternativas").val(),
+                    'sucursalString': $("#listSucursalesAlternativas option:selected").text(),
+                    'monto': $.trim($("#txtMontoAlternativo").val())
+                }
+
+                if (_datos.monto <= 0) {
+                    evento.mostrarMensaje('#errorMessageAlternativas', false, 'El monto NO puede ser menor que 0 (cero).', 3000);
+                } else if (_datos.usuario == "" && _datos.sucursal == "") {
+                    evento.mostrarMensaje('#errorMessageAlternativas', false, 'Sebe seleccionar el usuario o la sucursal para agregar la alternativa.', 3000);
+                } else {
+                    var insertar = true;
+                    $("#table-alternativas tbody tr").each(function () {
+                        var _datosFila = $('#table-alternativas').DataTable().row(this).data();
+                        if (typeof _datosFila !== 'undefined') {
+
+                            if (_datos.usuario != "" && _datos.sucursal == "") {
+                                if (_datos.usuario == _datosFila[1] && (_datosFila[2] == "" || _datosFila[2] == "0")) {
+                                    insertar = false;
+                                    return true;
+                                }
+                            }
+
+                            if (_datos.usuario == "" && _datos.sucursal != "") {
+                                if (_datos.sucursal == _datosFila[2] && (_datosFila[1] == "" || _datosFila[1] == "0")) {
+                                    insertar = false;
+                                    return true;
+                                }
+                            }
+
+                            if (_datos.usuario != "" && _datos.sucursal != "") {
+                                if (_datos.usuario == _datosFila[1] && _datos.sucursal == _datosFila[2]) {
+                                    insertar = false;
+                                    return true;
+                                }
+                            }
+
+                        }
+                    });
+                    if (!insertar) {
+                        evento.mostrarMensaje('#errorMessageAlternativas', false, 'Ya existe una alternativa similar a la que desea agregar. Por favor revise la información.', 3000);
+                        console.log(_where);
+                    } else {
+                        _datos.usuarioString = (_datos.usuario != "") ? _datos.usuarioString : '';
+                        _datos.sucursalString = (_datos.sucursal != "") ? _datos.sucursalString : '';
+                        var htmlFila = `
+                                        <tr>
+                                            <td></td>
+                                            <td>` + _datos.usuario + `</td>
+                                            <td>` + _datos.sucursal + `</td>
+                                            <td>` + _datos.monto + `</td>
+                                            <td>` + _datos.usuarioString + `</td>
+                                            <td>` + _datos.sucursalString + `</td>
+                                            <td>$` + _datos.monto + `</td>
+                                            <td class="text-center"><span role="button" class="label label-danger text-white btnDeleteAlternativas"><i class="fa fa-trash"></i></span></td>
+                                        </tr>`;
+                        tabla.agregarFilaHtml("#table-alternativas", htmlFila);
+                        select.cambiarOpcion("#listUsuariosAlternativas", "");
+                        select.cambiarOpcion("#listSucursalesAlternativas", "");
+                        $("#txtMontoAlternativo").val("");
+                    }
+                }
+
+                initBtnDeleteAlternativas();
+            });
+
+            $("#btnGuardarConcepto").off("click");
+            $("#btnGuardarConcepto").on("click", function () {
+                if (evento.validarFormulario('#form-agregar-editar-concepto')) {
+                    var comprobantes = [];
+                    $(".checkTiposComprobante").each(function () {
+                        if ($(this).is(":checked")) {
+                            comprobantes.push($(this).val());
+                        }
+                    });
+                    var tiposCuenta = [];
+                    $(".checkTiposCuenta").each(function () {
+                        if ($(this).is(":checked")) {
+                            tiposCuenta.push($(this).val());
+                        }
+                    });
+                    var _datosAlternativos = [];
+                    var dataTable = tabla.getTableData("#table-alternativas");
+                    $.each(dataTable, function (k, v) {
+                        if (!isNaN(k)) {
+                            _datosAlternativos.push({
+                                'id': v[0],
+                                'usuario': v[1],
+                                'sucursal': v[2],
+                                'monto': v[3]
+                            });
+                        }
+                    });
+                    var _datos = {
+                        'id': datos.id,
+                        'tiposCuenta': tiposCuenta,
+                        'concepto': $.trim($("#txtConcepto").val()),
+                        'monto': $.trim($("#txtMonto").val()),
+                        'extraordinario': $("input[name='radioExtraordinario']:checked").val(),
+                        'comprobantes': comprobantes,
+                        'alternativos': _datosAlternativos
+                    }
+
+                    evento.enviarEvento('Catalogos/AgregarConcepto', _datos, '#panel-catalogos', function (respuesta) {
+                        if (respuesta.code == 200) {
+                            if (_fila != '') {
+                                tabla.eliminarFila("#table-conceptos", _fila);
+                            }
+
+                            var htmlFila = `
+                                        <tr>
+                                            <td>` + respuesta.fila.Id + `</td>
+                                            <td>` + respuesta.fila.Nombre + `</td>
+                                            <td>` + respuesta.fila.Cuentas + `</td>
+                                            <td>` + respuesta.fila.Comprobante + `</td>
+                                            <td>` + respuesta.fila.Extraordinario + `</td>
+                                            <td>$` + respuesta.fila.Monto + `</td>
+                                            <td>` + respuesta.fila.Alternativos + `</td>
+                                            <td>` + respuesta.fila.Estatus + `</td>
+                                        </tr>
+                            `;
+                            tabla.agregarFilaHtml("#table-conceptos", htmlFila);
+                            tabla.reordenarTabla("#table-conceptos", [1, 'asc']);
+                            evento.cambiarDiv("#formularioConceptos", "#listaConceptos");
+                            evento.mostrarMensaje("#errorMessage", true, 'El concepto se agregó correctamente', 3000);
+                            initBtnDeleteAlternativas();
+                        } else {
+                            evento.mostrarMensaje("#errorMessageConcepto", false, 'Error al agregar el concepto. Intente de nuevo o contacte al administrador.', 3000);
+                        }
+                    });
+                }
+            });
+
+            $("#btnInhabilitarConcepto").off("click");
+            $("#btnInhabilitarConcepto").on("click", function () {
+                $("#page-loader").removeClass('hide');
+                var _datos = {
+                    'id': $(this).attr("data-id")
+                }
+                evento.enviarEvento('Catalogos/InhabilitarConcepto', _datos, '#', function (respuesta) {
+                    if (respuesta.code == 200) {
+                        tabla.eliminarFila("#table-conceptos", _fila);
+                        var htmlFila = `
+                                        <tr>
+                                            <td>` + respuesta.fila.Id + `</td>
+                                            <td>` + respuesta.fila.Nombre + `</td>
+                                            <td>` + respuesta.fila.Cuentas + `</td>
+                                            <td>` + respuesta.fila.Comprobante + `</td>
+                                            <td>` + respuesta.fila.Extraordinario + `</td>
+                                            <td>$` + respuesta.fila.Monto + `</td>
+                                            <td>` + respuesta.fila.Alternativos + `</td>
+                                            <td>` + respuesta.fila.Estatus + `</td>
+                                        </tr>
+                            `;
+                        tabla.agregarFilaHtml("#table-conceptos", htmlFila);
+                        tabla.reordenarTabla("#table-conceptos", [1, 'asc']);
+                        evento.cambiarDiv("#formularioConceptos", "#listaConceptos");
+                        evento.mostrarMensaje("#errorMessage", true, "El concepto '" + respuesta.fila.Nombre + "' se ha inhabilitado.", 4000);
+                        $("#page-loader").addClass('hide');
+                    } else {
+                        evento.mostrarMensaje(".errorMessageConcepto", false, "Ocurrió un error al inhabilitar el Concepto. Intente de nuevo o contacte al Administrador.", 4000);
+                        $("#page-loader").addClass('hide');
+                    }
+                });
+            });
+
+            $("#btnHabilitarConcepto").off("click");
+            $("#btnHabilitarConcepto").on("click", function () {
+                $("#page-loader").removeClass('hide');
+                var _datos = {
+                    'id': $(this).attr("data-id")
+                }
+                evento.enviarEvento('Catalogos/HabilitarConcepto', _datos, '#', function (respuesta) {
+                    if (respuesta.code == 200) {
+                        tabla.eliminarFila("#table-conceptos", _fila);
+                        var htmlFila = `
+                                        <tr>
+                                            <td>` + respuesta.fila.Id + `</td>
+                                            <td>` + respuesta.fila.Nombre + `</td>
+                                            <td>` + respuesta.fila.Cuentas + `</td>
+                                            <td>` + respuesta.fila.Comprobante + `</td>
+                                            <td>` + respuesta.fila.Extraordinario + `</td>
+                                            <td>$` + respuesta.fila.Monto + `</td>
+                                            <td>` + respuesta.fila.Alternativos + `</td>
+                                            <td>` + respuesta.fila.Estatus + `</td>
+                                        </tr>
+                            `;
+                        tabla.agregarFilaHtml("#table-conceptos", htmlFila);
+                        tabla.reordenarTabla("#table-conceptos", [1, 'asc']);
+                        evento.cambiarDiv("#formularioConceptos", "#listaConceptos");
+                        evento.mostrarMensaje("#errorMessage", true, "El concepto '" + respuesta.fila.Nombre + "' se habilitó.", 4000);
+                        $("#page-loader").addClass('hide');
+                    } else {
+                        evento.mostrarMensaje(".errorMessageConcepto", false, "Ocurrió un error al habilitar el Concepto. Intente de nuevo o contacte al Administrador.", 4000);
+                        $("#page-loader").addClass('hide');
+                    }
+                });
+            });
+        });
+
+    }
+
+    function initBtnDeleteAlternativas() {
+        $(".btnDeleteAlternativas").off("click");
+        $(".btnDeleteAlternativas").on("click", function () {
+            tabla.eliminarFila("#table-alternativas", $(this).closest("tr"));
+        });
     }
 });
 

@@ -533,6 +533,7 @@ class Secciones extends General
             case 'FondoFijo/Catalogos':
                 $datos['TiposCuenta'] = $this->fondoFijo->getTiposCuenta();
                 $datos['Usuarios'] = $this->fondoFijo->getUsuarios();
+                $datos['Conceptos'] = $this->fondoFijo->getConceptos();
                 break;
             default:
                 break;

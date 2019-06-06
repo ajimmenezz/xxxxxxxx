@@ -32,6 +32,11 @@ class FondoFijo extends General
         $usuarios = $this->DB->getUsuarios();
         return $usuarios;
     }
+    public function getConceptos()
+    {
+        $conceptos = $this->DB->getConceptos();
+        return $conceptos;
+    }
 
     public function agregarTipoCuenta(array $datos)
     {
@@ -132,6 +137,49 @@ class FondoFijo extends General
             return $result;
         }
     }
+
+    public function formularioAgregarConcepto(array $datos)
+    {
+
+        $datos = [
+            'tiposCuenta' => $this->getTiposCuenta(),
+            'tiposComprobante' => $this->getTiposComprobante(),
+            'usuarios' => $this->getUsuarios(),
+            'sucursales' => $this->getSucursales(),
+            'generales' => ($datos['id'] > 0) ? $this->DB->getConceptos($datos['id'])[0] : [],
+            'alternativas' => ($datos['id'] > 0) ? $this->DB->getAlternativasByConcepto($datos['id']) : [],
+        ];
+
+        return [
+            'html' => parent::getCI()->load->view('FondoFijo/Formularios/AgregarEditarConcepto', $datos, TRUE)
+        ];
+    }
+
+    public function agregarConcepto(array $datos)
+    {
+        return $this->DB->guardarConcepto($datos);
+    }
+
+    public function getTiposComprobante()
+    {
+        return $this->DB->getTiposComprobante();
+    }
+
+    public function getSucursales()
+    {
+        return $this->DB->getSucursales();
+    }
+
+    public function inhabilitarConcepto(array $datos)
+    {
+        return $this->DB->habInhabConcepto($datos, 0);
+    }
+
+    public function habilitarConcepto(array $datos)
+    {
+        return $this->DB->habInhabConcepto($datos, 1);
+    }
+
 
 
     /************************************************************************/
