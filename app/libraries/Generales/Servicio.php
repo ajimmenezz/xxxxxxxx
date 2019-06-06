@@ -2136,7 +2136,6 @@ class Servicio extends General {
     }
 
     public function cambiarEstatus(string $fecha, array $datos, array $datosExtra = NULL, string $status) {
-        var_dump($datos);
 //        $cambiarEstatus = $this->DBS->actualizarServicio('t_servicios_ticket', array(
 //            'IdEstatus' => $status,
 //            'FechaConclusion' => $fecha
@@ -2370,7 +2369,6 @@ class Servicio extends General {
             }
         }
 
-//        $datosNotasSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
         $key = $this->MSP->getApiKeyByUser($usuario['Id']);
         $folio = $this->DBS->getServicios('SELECT
                                                 (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
@@ -2381,19 +2379,7 @@ class Servicio extends General {
         $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
         $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];
 
-        try {
-            $datosNotasSD = $this->ServiceDesk->setNoteServiceDesk($key, $folio[0]['Folio'], strip_tags($htmlAvanceProblema));
-            if ($datosNotasSD->operation->result->status !== 'Success') {
-                ['code' => 400, 'error' => $datosNotasSD];
-            }else{
-                $datosHistorialTrabajoSD = $this->ServiceDesk->setWorkLogServiceDesk($key, $folio[0]['Folio'], strip_tags($htmlAvanceProblema));
-                if ($datosHistorialTrabajoSD->operation->result->status !== 'Success') {
-                    ['code' => 400, 'error' => $datosHistorialTrabajoSD];
-                }
-            }
-        } catch (Exception $err) {
-            $err;
-        }
+        $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
 
         if (!empty($datosNotasSD)) {
             if ($datosNotasSD) {

@@ -802,7 +802,7 @@ class Poliza extends General {
             }
             foreach ($actualizarServicio as $key => $value) {
                 $this->enviarCorreoConcluido(array($value['CorreoCopiaFirma']), $titulo, $textoCorreo);
-                $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
+                $this->InformacionServicios->verifyProcess($datos);
                 return TRUE;
             }
         }

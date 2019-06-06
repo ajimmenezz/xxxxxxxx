@@ -937,16 +937,14 @@ class InformacionServicios extends General {
 
     public function checklist(array $datos) {
         $linkPdf = $this->cargarPDF($datos);
-        $descripcion = "<div>Ha concluido el Servicio Checklist</div><br/>
-                        <a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a>";
+        $descripcion = "<div>Ha concluido el Servicio Checklist</div><br/><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a>";
 
         return $descripcion;
     }
 
     public function trafficService(array $datos) {
         $linkPdf = $this->cargarPDF($datos);
-        $descripcion = "<br/><div>Se ha realizo un servicio de Tráfico</div>
-                        <a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a><br/>";
+        $descripcion = "<br/><div>Se ha realizo un servicio de Tráfico</div><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a><br/>";
         return $descripcion;
     }
 
@@ -969,23 +967,35 @@ class InformacionServicios extends General {
 
         if (empty($servicios)) {
             $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
+            return $resultadoSD;
         } else {
-
             $key = $this->MSP->getApiKeyByUser($usuario['Id']);
             $htmlServicio = $this->vistaHTMLServicio($datosServicios[0]);
-            try {
-                $datosNotasSD = $this->ServiceDesk->setNoteServiceDesk($key, $datosServicios[0]['Folio'], $htmlServicio);
-                if ($datosNotasSD->operation->result->status !== 'Success') {
-                    ['code' => 400, 'error' => $datosNotasSD];
-                } else {
-                    $datosHistorialTrabajoSD = $this->ServiceDesk->setWorkLogServiceDesk($key, $datosServicios[0]['Folio'], $htmlServicio);
-                    if ($datosHistorialTrabajoSD->operation->result->status !== 'Success') {
-                        ['code' => 400, 'error' => $datosHistorialTrabajoSD];
-                    }
+            $datosNotasSD = $this->setNoteAndWorkLog(array('key' => $key, 'folio' => $datosServicios[0]['Folio'], 'html' => $htmlServicio));
+
+            return $datosNotasSD;
+        }
+    }
+
+    public function setNoteAndWorkLog(array $data) {
+        $html = str_replace('&nbsp', '', $data['html']);
+        $html = str_replace('style="color:#FF0000";', '', $html);
+
+        try {
+            $datosNotasSD = $this->ServiceDesk->setNoteServiceDesk($data['key'], $data['folio'], $html);
+
+            if ($datosNotasSD->operation->result->status !== 'Success') {
+                ['code' => 400, 'error' => $datosNotasSD];
+            } else {
+                $datosHistorialTrabajoSD = $this->ServiceDesk->setWorkLogServiceDesk($data['key'], $data['folio'], $html);
+                if ($datosHistorialTrabajoSD->operation->result->status !== 'Success') {
+                    ['code' => 400, 'error' => $datosHistorialTrabajoSD];
                 }
-            } catch (Exception $err) {
-                $err;
             }
+
+            return TRUE;
+        } catch (Exception $err) {
+            return $err;
         }
     }
 

@@ -1379,7 +1379,7 @@ class Seguimientos extends General {
 
         $this->cambiarEstatus(array('servicio' => $datos['servicio'], 'estatus' => '3'));
         $this->cambiarEstatusServiceDesk($datos['servicio'], 'Problema');
-        $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
+        $this->InformacionServicios->verifyProcess($datos);
 
         if ($datos['operacion'] === '2') {
             $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencia_Correctivo_Autorizacion_Sin_Respaldo/';
@@ -1844,7 +1844,8 @@ class Seguimientos extends General {
         $mensajeSupervisor = $this->Correo->mensajeCorreo($titulo, $textoSupervisor);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoSupervisor[0]['CorreoSupervisor']), $titulo, $mensajeSupervisor);
 
-        $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
+//        $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
+        $this->InformacionServicios->verifyProcess($datos);
 
         if ($consulta) {
             return TRUE;
