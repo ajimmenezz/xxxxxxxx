@@ -189,7 +189,8 @@ $config['Secciones'] = array(
         'Localizacion-Dispositivos' => 'Dispositivos'
     ),
     'FondoFijo' => array(
-        'MiFondo' => 'MiFondo',        
         'Catalogos' => 'Catalogos',  
+        'Depositar' => 'Depositar',  
+        'MiFondo' => 'MiFondo',        
     ),
 );

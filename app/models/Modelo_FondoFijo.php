@@ -27,7 +27,7 @@ class Modelo_FondoFijo extends Modelo_Base
                                     " . $condicion . "
                                     order by Nombre");
         return $consulta;
-    }
+    }    
 
     public function agregarTipoCuenta(string $tipo)
     {
@@ -249,4 +249,59 @@ class Modelo_FondoFijo extends Modelo_Base
             return ['code' => 200, 'fila' => $this->getConceptos($datos['id'])[0]];
         }
     }
+
+    public function getUsuariosConFondoFijo()
+    {
+        $consulta = $this->consulta("select 
+                                    cu.Id,
+                                    nombreUsuario(cu.Id) as Nombre,
+                                    (select Nombre from cat_perfiles where Id = cu.IdPerfil) as Perfil
+                                    from cat_v3_usuarios cu
+                                    where Id > 1
+                                    and cu.Id in (select IdUsuario from cat_v3_fondofijo_montos_x_usuario_cuenta group by IdUsuario) 
+                                    and Flag = 1
+                                    order by Usuario");
+        return $consulta;
+    }
+
+    public function getTiposCuentaXUsuario(int $id)
+    {        
+        $consulta = $this->consulta("select 
+                                    Id,
+                                    Nombre
+                                    from cat_v3_fondofijo_tipos_cuenta 
+                                    where Id in (
+                                        select 
+                                        IdTipoCuenta 
+                                        from cat_v3_fondofijo_montos_x_usuario_cuenta 
+                                        where IdUsuario = '".$id."' and Monto > 0
+                                    ) and Flag = 1
+                                    order by Nombre");
+        return $consulta;
+    }
+
+    public function getMaximoMontoAutorizado(int $idUsuario, int $idTipoCuenta){
+        $consulta = $this->consulta("
+        select 
+        Monto 
+        from cat_v3_fondofijo_montos_x_usuario_cuenta 
+        where IdUSuario = '".$idUsuario."' 
+        and IdTipoCuenta = '".$idTipoCuenta."'");        
+        return $consulta[0]['Monto'];
+    }
+
+    public function getSaldo(int $idUsuario, int $idTipoCuenta){
+        $consulta = $this->consulta("
+        select 
+        Saldo 
+        from t_fondofijo_saldos 
+        where IdUSuario = '".$idUsuario."' 
+        and IdTipoCuenta = '".$idTipoCuenta."'");
+        if(!empty($consulta) && isset($consulta[0]) && isset($consulta[0]['Saldo']) && $consulta[0]['Saldo'] > 0){
+            return $consulta[0]['Saldo'];
+        }else{
+            return 0;
+        }
+    }
+
 }

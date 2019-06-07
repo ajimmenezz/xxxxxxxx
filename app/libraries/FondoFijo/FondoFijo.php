@@ -32,6 +32,7 @@ class FondoFijo extends General
         $usuarios = $this->DB->getUsuarios();
         return $usuarios;
     }
+
     public function getConceptos()
     {
         $conceptos = $this->DB->getConceptos();
@@ -179,6 +180,55 @@ class FondoFijo extends General
     {
         return $this->DB->habInhabConcepto($datos, 1);
     }
+
+    public function getUsuariosConFondoFijo()
+    {
+        $usuarios = $this->DB->getUsuariosConFondoFijo();
+        return $usuarios;
+    }
+
+    public function formularioDepositar(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'error' => 'No se ha recibido la información del usuario. Intente de nuevo'
+            ];
+        } else {
+            $data = [
+                'tiposCuenta' => $this->getTiposCuentaXUsuario($datos['id']),
+                'montos' => $this->getMontosUsuario($datos['id']),
+                'usuario' => $datos,
+            ];
+
+            return [
+                'code' => 200,
+                'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/RegistrarDeposito', $data, TRUE)
+            ];
+        }
+    }
+
+    public function getTiposCuentaXUsuario(int $id)
+    {
+        $tipos = $this->DB->getTiposCuentaXUsuario($id);
+        return $tipos;
+    }
+
+    public function montosDepositar(array $datos)
+    {
+        $montoMaximo = $this->DB->getMaximoMontoAutorizado($datos['id'], $datos['tipoCuenta']);
+        $saldo = $this->DB->getSaldo($datos['id'], $datos['tipoCuenta']);
+        $sugerido = (double)$montoMaximo - (double)$saldo;
+        return [
+            'code' => 200,
+            'montos' => [
+                'montoMaximo' => number_format($montoMaximo, 2),
+                'saldo' => number_format($saldo, 2),
+                'sugerido' => number_format($sugerido, 2)
+            ]
+        ];
+    }
+    
 
 
 

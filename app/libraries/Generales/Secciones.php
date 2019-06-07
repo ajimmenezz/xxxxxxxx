@@ -535,6 +535,9 @@ class Secciones extends General
                 $datos['Usuarios'] = $this->fondoFijo->getUsuarios();
                 $datos['Conceptos'] = $this->fondoFijo->getConceptos();
                 break;
+            case 'FondoFijo/Depositar':                
+                $datos['Usuarios'] = $this->fondoFijo->getUsuariosConFondoFijo();                
+                break;
             default:
                 break;
         }

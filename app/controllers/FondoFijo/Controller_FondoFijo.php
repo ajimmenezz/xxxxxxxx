@@ -46,6 +46,15 @@ class Controller_FondoFijo extends Base
             case 'HabilitarConcepto':
                 $resultado = $this->fondo_fijo->habilitarConcepto($this->input->post());
                 break;
+            case 'FormularioDepositar':
+                $resultado = $this->fondo_fijo->formularioDepositar($this->input->post());
+                break;
+            case 'MontosDepositar':
+                $resultado = $this->fondo_fijo->montosDepositar($this->input->post());
+                break;
+            case 'RegistrarDeposito':
+                $resultado = $this->fondo_fijo->registrarDeposito($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
