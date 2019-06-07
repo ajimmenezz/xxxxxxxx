@@ -136,7 +136,6 @@ class ServiceDesk extends General {
      */
 
     public function getFolios(string $key) {
-
         $input_data = '{"operation":{"details":{ "from": "0","limit": "5000","filterby": "All_Pending"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST_FILTERS&TECHNICIAN_KEY=' . $key;
         $datos = file_get_contents($this->Url . '?' . $this->FIELDS);

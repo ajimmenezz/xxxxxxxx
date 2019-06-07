@@ -414,7 +414,6 @@ class ServiciosTicket extends General {
                         break;
                 }
             } else if ($datosServicio['IdTipoServicio'] === '20') {
-
                 /* Aqui comienzan las lineas de seguimiento de los servicios de Correctivo */
                 switch ($datos['operacion']) {
                     /* Inicia el servicio de Correctivo */
@@ -2337,7 +2336,7 @@ class ServiciosTicket extends General {
                     $this->enviarCorreoConcluido(array($value['EmailCorporativo']), $titulo, $textoCoordinadorPoliza);
                 }
             }
-            
+
             $descripcion = "<div>" . $fecha . "</div><div>AVANCE DE SERVICIO</div><div><a href='" . $path . "'>Documento PDF</a></div>";
             $key = $this->MSP->getApiKeyByUser($usuario['Id']);
             $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $departamento[0]['Folio'], 'html' => $descripcion));

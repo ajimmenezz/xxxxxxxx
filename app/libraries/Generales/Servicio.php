@@ -2136,11 +2136,11 @@ class Servicio extends General {
     }
 
     public function cambiarEstatus(string $fecha, array $datos, array $datosExtra = NULL, string $status) {
-//        $cambiarEstatus = $this->DBS->actualizarServicio('t_servicios_ticket', array(
-//            'IdEstatus' => $status,
-//            'FechaConclusion' => $fecha
-//                ), array('Id' => $datos['servicio'])
-//        );
+        $cambiarEstatus = $this->DBS->actualizarServicio('t_servicios_ticket', array(
+            'IdEstatus' => $status,
+            'FechaConclusion' => $fecha
+                ), array('Id' => $datos['servicio'])
+        );
         if ($datosExtra !== NULL) {
             if (is_array($datos['datosConcluir'])) {
                 $datosConcluir = $datos['datosConcluir'];
@@ -2153,16 +2153,14 @@ class Servicio extends General {
         }
         if ($resultadoEnviarConclusion === TRUE) {
             $status = "4";
-//            if (!empty($cambiarEstatus)) {
-            if ($status === '4') {
-                $resultadoSD = $this->InformacionServicios->verifyProcess($datos);
-//                    $servicios = $this->InformacionServicios->verificarTodosServiciosFolio(array('Servicio' => $datos['Servicio']));
-//                    $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
+            if (!empty($cambiarEstatus)) {
+                if ($status === '4') {
+                    $resultadoSD = $this->InformacionServicios->verifyProcess($datos);
+                }
+                return TRUE;
+            } else {
+                return 'errorConcluir';
             }
-            return TRUE;
-//            } else {
-//                return 'errorConcluir';
-//            }
         } else {
             return $resultadoEnviarConclusion;
         }

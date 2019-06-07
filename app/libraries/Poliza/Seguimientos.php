@@ -1207,6 +1207,7 @@ class Seguimientos extends General {
 
                 $textoTecnico = '<p>Estimado(a) <strong>' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la solicitud de refacción a Almacén que realizo.</p><br><a href="' . $linkPDF . '">Documento PDF</a>';
                 $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Solicitud de Refacción', $textoTecnico);
+                $this->InformacionServicios->verifyProcess($datos);
 
                 return $this->consultaCorrectivosSolicitudRefaccion($datos['servicio']);
             } else {
@@ -1234,6 +1235,7 @@ class Seguimientos extends General {
                             $key = $this->MSP->getApiKeyByUser($usuario['Id']);
                             $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
                             $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
+                            $this->InformacionServicios->verifyProcess($datos);
                             $textoTI = '<p>El técnico <strong>' . $usuario['Nombre'] . ' </strong> le ha reasignado la solicitud para solicitar una Refacción.<br>Número de Solicitud: <strong>' . $verificarFolio[0]['Folio'] . '</strong>.</p><br><a href="' . $linkPDF . '">Documento PDF</a><br><p>Favor de verificar en Service Desk</p>';
                             $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud', $textoTI);
 
@@ -1296,6 +1298,7 @@ class Seguimientos extends General {
 
                 $textoTecnico = '<p>Estimado(a) <strong>' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la solicitud de equipo a Almacén que realizo.</p><br><a href="' . $linkPDF . '">Documento PDF</a>';
                 $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Solicitud de Equipo', $textoTecnico);
+                $this->InformacionServicios->verifyProcess($datos);
 
                 return $this->consultaCorrectivosSolicitudEquipo($datos['servicio']);
             } else {
@@ -1323,6 +1326,7 @@ class Seguimientos extends General {
                             $key = $this->MSP->getApiKeyByUser($usuario['Id']);
                             $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
                             $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
+                            $this->InformacionServicios->verifyProcess($datos);
                             $textoTI = '<p>El técnico <strong>' . $usuario['Nombre'] . '</strong> le ha reasignado la solicitud para solicitar un Equipo.<br>Número de Solicitud: <strong>' . $verificarFolio[0]['Folio'] . '</strong>.</p><br><a href="' . $linkPDF . '">Documento PDF</a><br><p>Favor de verificar en Service Desk</p>';
                             $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud', $textoTI);
 
@@ -1453,6 +1457,7 @@ class Seguimientos extends General {
                         if ($verificarFolio[0]['Folio'] !== '0') {
                             $key = $this->MSP->getApiKeyByUser($usuario['Id']);
                             $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], '28801', $key);
+                            $this->InformacionServicios->verifyProcess($datos);
                         }
                     }
                 }
@@ -1844,7 +1849,6 @@ class Seguimientos extends General {
         $mensajeSupervisor = $this->Correo->mensajeCorreo($titulo, $textoSupervisor);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoSupervisor[0]['CorreoSupervisor']), $titulo, $mensajeSupervisor);
 
-//        $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
         $this->InformacionServicios->verifyProcess($datos);
 
         if ($consulta) {
@@ -2021,6 +2025,7 @@ class Seguimientos extends General {
                 $dataNotificacionLogistica, $titulo, 'El usuario <b>' . $usuario['Nombre'] . '</b> a entregado un equipo.');
 
         if ($consulta) {
+            $this->InformacionServicios->verifyProcess($datos);
             return $this->DBB->consultaCorrectivoEntregasEquipo($datos['servicio']);
         } else {
             return FALSE;
@@ -2030,7 +2035,7 @@ class Seguimientos extends General {
     public function enviarSolucionCorrectivoSD(array $datos) {
         $this->enviar_Reporte_PDF($datos);
 
-        $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
+        $this->InformacionServicios->verifyProcess($datos);
 
         $verificarEstatusTicket = $this->consultaCorrectivosServiciosTicket($datos['ticket'], $datos['servicio']);
 
@@ -2498,6 +2503,8 @@ class Seguimientos extends General {
 
                         $this->DBP->insertarCorrectivosSolicitudesProblemas($datos, $datosExtra);
                         $this->asignarMultimedia($linkPDF, $folio[0]['Folio'], $key);
+                        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+                        $this->InformacionServicios->verifyProcess($datos);
                         $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
                             'IdEstatus' => '3',
                                 ), array('Id' => $datos['servicio'])
