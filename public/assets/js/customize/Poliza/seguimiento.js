@@ -426,7 +426,7 @@ $(function () {
                 $('#selectFallaComponenteDiagnosticoCorrectivo').empty().append('<option value="">Seleccionar</option>').attr('disabled', 'disabled');
                 select.cambiarOpcion('#selectFallaComponenteDiagnosticoCorrectivo', '');
 
-                evento.enviarEvento('Seguimiento/ConsultaFallasEquiposXTipoFallaYEquipo', datos, '#seguimiento-checklist', function (respuesta) {
+                evento.enviarEvento('Seguimiento/ConsultaFallasRefacionXTipoFallaChecklist', datos, '#seguimiento-checklist', function (respuesta) {
                     $.each(respuesta, function (k, v) {
                         $('#selectFallaComponenteDiagnosticoCorrectivo').append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
                     });
@@ -3167,14 +3167,10 @@ $(function () {
 
         $('#selectTipoFallaComponenteCorrectivo').on('change', function () {
             var tipoFalla = $('#selectTipoFallaComponenteCorrectivo').val();
-            var equipo = $('#selectEquipoCorrectivo').val();
-            if (equipo === '') {
-                equipo = datosGeneralesCorrectivo[0].IdModelo;
-            }
-            var dataTipoFalla = {equipo: equipo, tipoFalla: tipoFalla};
+            var dataTipoFalla = {tipoFalla: tipoFalla};
             select.cambiarOpcion('#selectFallaComponenteDiagnosticoCorrectivo', '');
             $('#selectFallaComponenteDiagnosticoCorrectivo').empty().append('<option value="">Seleccionar</option>');
-            evento.enviarEvento('Seguimiento/ConsultaFallasEquiposXTipoFallaYEquipo', dataTipoFalla, '#seccion-servicio-correctivo', function (respuesta) {
+            evento.enviarEvento('Seguimiento/ConsultaFallasRefacionXTipoFalla', dataTipoFalla, '#seccion-servicio-correctivo', function (respuesta) {
                 if (respuesta) {
                     $('#selectFallaComponenteDiagnosticoCorrectivo').removeAttr('disabled');
                     $.each(respuesta, function (key, valor) {
