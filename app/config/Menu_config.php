@@ -3311,7 +3311,7 @@ $config['Fondo Fijo'] = array(
             'bootstrap-combobox/css/bootstrap-combobox',
             'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'Comprobacion/fondo_fijo'),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'FondoFijo/mifondo'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',

@@ -199,6 +199,7 @@ class FondoFijo extends General
                 'tiposCuenta' => $this->getTiposCuentaXUsuario($datos['id']),
                 'montos' => $this->getMontosUsuario($datos['id']),
                 'usuario' => $datos,
+                'depositos' => $this->DB->getDepositos($datos['id'])
             ];
 
             return [
@@ -228,71 +229,7 @@ class FondoFijo extends General
             ]
         ];
     }
-    
 
-
-
-    /************************************************************************/
-
-    public function getFondosFijos()
-    {
-        $fondos = $this->DB->getFondosFijos();
-        return $fondos;
-    }
-
-    public function detallesFondoFijoXUsuario(array $datos)
-    {
-
-        $datos = [
-            'listaComprobaciones' => $this->DB->getDetallesFondoFijoXUsuario($datos['id']),
-            'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
-            'saldo' => $this->DB->getSaldoByUsuario($datos['id']),
-            'xautorizar' => $this->DB->getSaldoXAutorizarByUsuario($datos['id']),
-            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id']),
-            'saldoRechazado' => $this->DB->getSaldoRechazadoSinPagar($datos['id']),
-            'permisos' => array_merge($this->usuario['Permisos'], $this->usuario['PermisosAdicionales'])
-        ];
-
-        return [
-            'html' => parent::getCI()->load->view('Tesoreria/Formularios/DetallesFondoFijoXUsuario', $datos, TRUE)
-        ];
-    }
-
-    public function formularioRegistrarDeposito(array $datos)
-    {
-
-        $generalesMontoFijoUsuario = $this->DB->getFondosFijos($datos['id'])[0];
-
-        $datos = [
-            'listaComprobaciones' => $this->DB->getDetallesFondoFijoXUsuario($datos['id']),
-            'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
-            'saldo' => $this->DB->getSaldoByUsuario($datos['id']),
-            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id']),
-            'monto' => $generalesMontoFijoUsuario['MontoUsuario'],
-            'estatus' => $generalesMontoFijoUsuario['Flag'],
-            'montoSiccob' => $this->DB->getMontoDepositoSiccob($datos['id']),
-            'montoResidig' => $this->DB->getMontoDepositoResidig($datos['id']),
-            'montoGasolina' => $this->DB->getMontoDepositoGasolina($datos['id']),
-            'montoOtros' => $this->DB->getMontoDepositoOtros($datos['id']),
-            'listaSinPago' => $this->DB->getComprobacionesSinPagar($datos['id']),
-        ];
-
-        return [
-            'html' => parent::getCI()->load->view('Tesoreria/Formularios/FormularioRegistrarDeposito', $datos, TRUE)
-        ];
-    }
-
-    public function formularioAjustarGasolina(array $datos)
-    {
-        $datos = [
-            'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
-            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id'])
-        ];
-
-        return [
-            'html' => parent::getCI()->load->view('Tesoreria/Formularios/FormularioAjustarGasolina', $datos, TRUE)
-        ];
-    }
 
     public function registrarDeposito(array $datos)
     {
@@ -323,7 +260,7 @@ class FondoFijo extends General
             $titulo = 'Depósito Fondo Fijo';
             $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
                 . '<p>'
-                . ' Se ha registrado un nuevo depósito por la cantidad de <strong>$' . number_format($datos['monto'], 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifica la información mencionada ingresando al sistema'
+                . ' Se ha registrado un nuevo depósito por la cantidad de <strong>$' . number_format($datos['depositar'], 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifica la información mencionada ingresando al sistema'
                 . '</p>';
             //            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
             //            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
@@ -332,17 +269,33 @@ class FondoFijo extends General
         return $registrar;
     }
 
-    public function formularioRegistrarComprobante(array $datos)
+    public function getSaldosCuentasXUsuario(int $id)
     {
-        $datos = [
-            'conceptos' => $this->DBC->getConceptos(),
-            'tickets' => $this->DB->getTicketsByUsuario($this->usuario['Id']),
-            'sucursales' => $this->DB->getSucursales()
-        ];
+        $resultado = $this->DB->getSaldosCuentasXUsuario($id);
+        return $resultado;
+    }
 
-        return [
-            'html' => parent::getCI()->load->view('Comprobacion/Formularios/FormularioRegistrarComprobante', $datos, TRUE)
-        ];
+    public function detalleCuenta(array $datos)
+    {
+        if (!isset($datos['tipoCuenta']) || !isset($datos['usuario'])) {
+            return [
+                'code' => 500,
+                'error' => 'No se ha recibido la información de la cuenta o el usuario. Intente de nuevo'
+            ];
+        } else {
+            $data = [
+                'tipoCuenta' => $this->DB->getTiposCuenta($datos['tipoCuenta'])[0]['Nombre'],
+                'movimientos' => $this->DB->getMovimientos($datos['usuario'], $datos['tipoCuenta']),
+                'conceptos' => $this->DB->getConceptosXTipoCuenta($datos['tipoCuenta']),
+                'tickets' => $this->DB->getTicketsByUsuario($this->usuario['Id']),
+                'sucursales' => $this->DB->getSucursales()
+            ];
+
+            return [
+                'code' => 200,
+                'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/DetallesCuenta', $data, TRUE)
+            ];
+        }
     }
 
     public function cargaMontoMaximoConcepto(array $datos)
@@ -351,14 +304,12 @@ class FondoFijo extends General
         return $monto;
     }
 
-    public function cargaServiciosTicket(array $datos)
-    {
+    public function cargaServiciosTicket(array $datos) {
         $servicios = $this->DB->cargaServiciosTicket(array_merge($datos, ['usuario' => $this->usuario['Id']]));
         return $servicios;
     }
 
-    public function registrarComprobante(array $datos)
-    {
+    public function registrarComprobante(array $datos) {
         $date = date('Ymd');
         $datos['tipoComprobante'] = 3;
         $datos['xml'] = '';
@@ -460,6 +411,70 @@ class FondoFijo extends General
         }
         return $registrar;
     }
+
+
+    /************************************************************************/
+
+    public function getFondosFijos()
+    {
+        $fondos = $this->DB->getFondosFijos();
+        return $fondos;
+    }
+
+    public function detallesFondoFijoXUsuario(array $datos)
+    {
+
+        $datos = [
+            'listaComprobaciones' => $this->DB->getDetallesFondoFijoXUsuario($datos['id']),
+            'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
+            'saldo' => $this->DB->getSaldoByUsuario($datos['id']),
+            'xautorizar' => $this->DB->getSaldoXAutorizarByUsuario($datos['id']),
+            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id']),
+            'saldoRechazado' => $this->DB->getSaldoRechazadoSinPagar($datos['id']),
+            'permisos' => array_merge($this->usuario['Permisos'], $this->usuario['PermisosAdicionales'])
+        ];
+
+        return [
+            'html' => parent::getCI()->load->view('Tesoreria/Formularios/DetallesFondoFijoXUsuario', $datos, TRUE)
+        ];
+    }
+
+    public function formularioRegistrarDeposito(array $datos)
+    {
+
+        $generalesMontoFijoUsuario = $this->DB->getFondosFijos($datos['id'])[0];
+
+        $datos = [
+            'listaComprobaciones' => $this->DB->getDetallesFondoFijoXUsuario($datos['id']),
+            'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
+            'saldo' => $this->DB->getSaldoByUsuario($datos['id']),
+            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id']),
+            'monto' => $generalesMontoFijoUsuario['MontoUsuario'],
+            'estatus' => $generalesMontoFijoUsuario['Flag'],
+            'montoSiccob' => $this->DB->getMontoDepositoSiccob($datos['id']),
+            'montoResidig' => $this->DB->getMontoDepositoResidig($datos['id']),
+            'montoGasolina' => $this->DB->getMontoDepositoGasolina($datos['id']),
+            'montoOtros' => $this->DB->getMontoDepositoOtros($datos['id']),
+            'listaSinPago' => $this->DB->getComprobacionesSinPagar($datos['id']),
+        ];
+
+        return [
+            'html' => parent::getCI()->load->view('Tesoreria/Formularios/FormularioRegistrarDeposito', $datos, TRUE)
+        ];
+    }
+
+    public function formularioAjustarGasolina(array $datos)
+    {
+        $datos = [
+            'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
+            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id'])
+        ];
+
+        return [
+            'html' => parent::getCI()->load->view('Tesoreria/Formularios/FormularioAjustarGasolina', $datos, TRUE)
+        ];
+    }
+
 
     public function eliminaArchivos(array $archivos)
     {

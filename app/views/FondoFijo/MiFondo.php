@@ -1,28 +1,58 @@
-<div id="divSeleccionarCuenta" class="content">
+<div id="seccionCuentas" class="content">
     <h1 class="page-header">Mi Fondo Fijo</h1>
-    <div id="panelSeleccionarCuenta" class="panel panel-inverse">
+    <div id="panelCuentas" class="panel panel-inverse">
         <div class="panel-heading">
         </div>
         <div class="panel-body">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <h4 class="m-t-10">Selecciona cuenta de fondo fijo</h4>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="underline m-b-15 m-t-5"></div>
+            <div id="listaCuentasAsignadas">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <h4>Cuentas asignadas</h4>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="underline m-b-10"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="table-responsive">
+                            <table id="table-cuentas" class="table table-bordered table-striped table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="none">IdTipoCuenta</th>
+                                        <th class="none">IdUsuario</th>
+                                        <th class="all">Tipo Cuenta</th>
+                                        <th class="all">Saldo</th>
+                                        <th class="all">Fecha de Saldo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    if (isset($datos['Cuentas']) && !empty($datos['Cuentas'])) {
+                                        foreach ($datos['Cuentas'] as $key => $value) {
+                                            echo ""
+                                                . "<tr>"
+                                                . " <td>" . $value['IdTipoCuenta'] . "</td>"
+                                                . " <td>" . $value['IdUsuario'] . "</td>"
+                                                . " <td>" . $value['TipoCuenta'] . "</td>"
+                                                . " <td>" . $value['Saldo'] . "</td>"
+                                                . " <td>" . $value['Fecha'] . "</td>"
+                                                . "</tr>";
+                                        }
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>        
+            <div id="formularioDepositar" style="display:none"></div>
+        </div>
     </div>
 </div>
 
-<!--Empezando seccion para mostrar los detalles del fondo fijo -->
-<div id="seccionDetallesFondoFijo" class="content" style="display: none"></div>
-<!--Finalizando seccion para mostrar los detalles del fondo fijo -->
+<div id="seccionDetalleCuenta" class="content" style="display:none"></div>
 
 <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
     <div class="modal-dialog" role="document">

@@ -304,4 +304,329 @@ class Modelo_FondoFijo extends Modelo_Base
         }
     }
 
+    
+    public function registrarDeposito(array $datos) {
+        $this->iniciaTransaccion();
+
+        $saldoPrevio = $this->getSaldo($datos['id'], $datos['tipoCuenta']);
+        $saldoNuevo = (double) $saldoPrevio + (double) $datos['depositar'];
+
+        $this->insertar("t_fondofijo_movimientos", [
+            "FechaRegistro" => $this->getFecha(),
+            "FechaMovimiento" => $this->getFecha(),
+            "FechaAutorizacion" => $this->getFecha(),
+            "IdUsuarioRegistra" => $this->usuario['Id'],
+            "IdUsuarioAutoriza" => $this->usuario['Id'],
+            "IdUsuarioFondoFijo" => $datos['id'],
+            "IdTipoCuenta" => $datos['tipoCuenta'],
+            "IdTipoMovimiento" => 6,
+            "IdTipoComprobante" => 2,
+            "IdEstatus" => 7,
+            "Monto" => str_replace(",","",number_format($datos['depositar'],2)),
+            "SaldoPrevio" => str_replace(",","",number_format($saldoPrevio,2)),
+            "SaldoNuevo" => str_replace(",","",number_format($saldoNuevo,2)),                        
+            "Archivos" => $datos["archivos"]         
+        ]);
+
+        $idMovimiento = $this->ultimoId();
+
+        $idSaldo = $this->consulta("
+        select 
+        Id 
+        from t_fondofijo_saldos 
+        where IdUsuario = '".$datos['id']."' 
+        and IdTipoCuenta = '".$datos['tipoCuenta']."'");
+
+        if(isset($idSaldo[0]) && isset($idSaldo[0]['Id'])){
+            $this->actualizar("t_fondofijo_saldos",[
+                "Saldo" => str_replace(",","",number_format($saldoNuevo,2)),
+                "Fecha" => $this->getFecha(),
+                "IdUltimoMovimiento" => $idMovimiento
+            ],['Id' => $idSaldo[0]['Id']]);
+        }else{
+            $this->insertar("t_fondofijo_saldos", [
+                "IdUsuario" => $datos['id'],
+                "IdTipoCuenta" => $datos['tipoCuenta'],
+                "Saldo" => str_replace(",","",number_format($saldoNuevo,2)),
+                "Fecha" => $this->getFecha(),
+                "IdUltimoMovimiento" => $idMovimiento
+            ]);
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $deposito = [
+                'Id' => $idMovimiento,
+                'TipoCuenta' => $this->getTiposCuenta($datos['tipoCuenta'])[0]['Nombre'],
+                'Fecha' => $this->getFecha(),
+                'SaldoAnterior' => '$' . number_format((float)$saldoPrevio,2),
+                'Deposito' => '$' . number_format((float)$datos['depositar'],2),
+                'Saldo' => '$' . number_format((float)$saldoNuevo,2)
+            ];
+
+
+            $this->commitTransaccion();
+            return ['code' => 200, 'deposito' => $deposito];
+        }
+    }
+
+    public function getDepositos(int $idUsuario, int $idTipoCuenta = null){
+
+        $condicion = '';
+        if(!is_null($idTipoCuenta)){
+            $condicion = " and tfm.IdTipoCuenta = '".$idTipoCuenta."'";
+        }
+
+        $consulta = $this->consulta("select
+        tfm.Id,
+        (select Nombre from cat_v3_fondofijo_tipos_cuenta where Id = tfm.IdTipoCuenta) as TipoCuenta,
+        tfm.FechaRegistro as Fecha,
+        tfm.SaldoPrevio,
+        tfm.Monto,
+        tfm.SaldoNuevo
+        from 
+        t_fondofijo_movimientos tfm
+        where IdTipoMovimiento = 6
+        and tfm.IdEstatus = 7
+        and tfm.IdUsuarioFondoFijo = '" . $idUsuario . "'" . $condicion);
+        return $consulta;
+    }
+
+    public function getSaldosCuentasXUsuario(int $id){
+        $consulta = $this->consulta("select
+        cat.Id as IdTipoCuenta,
+        cat.Nombre as TipoCuenta,
+        montos.IdUsuario,
+        saldo.Saldo,
+        saldo.Fecha
+        from 
+        cat_v3_fondofijo_tipos_cuenta cat 
+        inner join cat_v3_fondofijo_montos_x_usuario_cuenta montos on cat.Id = montos.IdTipoCuenta
+        left join t_fondofijo_saldos saldo on cat.Id = saldo.IdTipoCuenta and montos.IdUsuario = saldo.IdUsuario
+        where montos.IdUsuario = '".$id."'");
+
+        return $consulta;
+    }
+
+    public function getMovimientos(int $idUsuario, int $idTipoCuenta){
+
+        $consulta = $this->consulta("select
+        tfm.Id,
+        (select Nombre from cat_v3_comprobacion_tipos_movimiento where Id = tfm.IdTipoMovimiento) as TipoMovimiento,
+        (select Nombre from cat_v3_comprobacion_conceptos where Id = tfm.IdConcepto) as Concepto,
+        estatus(tfm.IdEstatus) as Estatus,
+        tfm.FechaRegistro as FechaRegistro,
+        tfm.FechaAutorizacion as FechaAutorizacion,
+        tfm.SaldoPrevio,
+        tfm.Monto,
+        tfm.SaldoNuevo
+        from 
+        t_fondofijo_movimientos tfm
+        where tfm.IdUsuarioFondoFijo = '" . $idUsuario . "' 
+        and tfm.IdTipoCuenta = '".$idTipoCuenta."' 
+        order by Id desc");
+        return $consulta;
+    }
+
+    public function getConceptosXTipoCuenta(int $tipo){
+        $consulta = $this->consulta("
+        select 
+        Id,
+        Nombre,
+        TiposComprobante
+        from cat_v3_comprobacion_conceptos 
+        where concat(',',TiposCuenta,',') like '%,".$tipo.",%' 
+        and Flag = 1");
+        return $consulta;
+    }
+
+    public function getTicketsByUsuario(int $id) {
+        $consulta = $this->consulta("select 
+                                    Ticket 
+                                    from (
+                                        select 
+                                        Ticket
+                                        from t_servicios_ticket tst
+                                        where Atiende = '" . $id . "'
+                                        and IdEstatus in (1,2,3,5)
+
+                                        UNION
+
+                                        select 
+                                        Ticket
+                                        from t_servicios_ticket tst
+                                        where Atiende = '" . $id . "'
+                                        and IdEstatus = 4
+                                        and tst.FechaConclusion >= '2018-10-05 00:00:00'
+                                    ) as tf group by tf.Ticket;");
+        return $consulta;
+    }
+
+    public function cargaMontoMaximoConcepto(array $datos) {
+        $datos['destino'] = (!isset($datos['destino']) || in_array($datos['destino'], ['', 'o'])) ? '99999999999' : $datos['destino'];
+
+        $comb = '';
+        $query = "select "
+                . "Monto "
+                . "from cat_v3_comprobacion_conceptos_alternativas "
+                . "where IdUsuario = '" . $datos['usuario'] . "' "
+                . "and IdSucursal = '" . $datos['destino'] . "' "
+                . "and IdConcepto = '" . $datos['concepto'] . "' "
+                . "and Flag = 1";
+        $consulta = $this->consulta($query);
+
+        if (!empty($consulta)) {
+            $monto = $consulta[0]['Monto'];
+            $comb = 'CST';
+        } else {
+            $query = "select "
+                    . "Monto "
+                    . "from cat_v3_comprobacion_conceptos_alternativas "
+                    . "where IdUsuario = 0 "
+                    . "and IdSucursal = '" . $datos['destino'] . "' "
+                    . "and IdConcepto = '" . $datos['concepto'] . "' "
+                    . "and Flag = 1";
+            $consulta = $this->consulta($query);
+            if (!empty($consulta)) {
+                $monto = $consulta[0]['Monto'];
+                $comb = 'CS';
+            } else {
+                $query = "select "
+                        . "Monto "
+                        . "from cat_v3_comprobacion_conceptos_alternativas "
+                        . "where IdUsuario = '" . $datos['usuario'] . "' "
+                        . "and IdSucursal = 0 "
+                        . "and IdConcepto = '" . $datos['concepto'] . "' "
+                        . "and Flag = 1";
+                $consulta = $this->consulta($query);
+                if (!empty($consulta)) {
+                    $monto = $consulta[0]['Monto'];
+                    $comb = 'CT';
+                } else {
+                    $query = "select "
+                            . "Monto "
+                            . "from cat_v3_comprobacion_conceptos "
+                            . "where Id = '" . $datos['concepto'] . "' "
+                            . "and Flag = 1";
+                    $consulta = $this->consulta($query);
+                    $monto = $consulta[0]['Monto'];
+                    $comb = 'C';
+                }
+            }
+        }
+
+        return ['monto' => $monto];
+    }
+
+    public function cargaServiciosTicket(array $datos) {
+        $consulta = $this->consulta("select 
+                                    Id,
+                                    tipoServicio(tst.IdTipoServicio) as Tipo,
+                                    tst.Descripcion
+                                    from t_servicios_ticket tst 
+                                    where Ticket = '" . $datos['ticket'] . "'
+                                    and tst.Atiende = '" . $datos['usuario'] . "'");
+        return $consulta;
+    }
+
+    public function registrarComprobante(array $datos) {
+        $this->iniciaTransaccion();
+
+        $revisarUUID = $this->consulta(""
+                . "select * "
+                . "from t_fondofijo_movimientos "
+                . "where UUID = '" . $datos['cfdi']['uuid'] . "' "
+                . "and UUID <> '' "
+                . "and UUID is not null "
+                . "and IdEstatus in (7,8)");
+
+        if (!empty($revisarUUID)) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'errorBack' => 'Esta factura ya se utilizò con anterioridad. Revise su información'
+            ];
+        }
+
+        $saldoPrevio = $this->getSaldo($this->usuario['Id'], $datos['tipoCuenta']);
+        if($datos['enPresupuesto'] == 1){
+            $saldoNuevo = (double) $saldoPrevio + (double) $datos['monto'];
+        }else{
+            $saldoNuevo = $saldoPrevio;
+        }
+
+        $this->insertar("t_fondofijo_movimientos", [
+            "FechaRegistro" => $this->getFecha(),
+            "FechaMovimiento" => str_replace("T", " ", $datos['fecha']),
+            "FechaAutorizacion" => ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? $this->getFecha() : null,
+            "IdUsuarioRegistra" => $this->usuario['Id'],
+            "IdUsuarioFondoFijo" => $this->usuario['Id'],
+            "IdUsuarioAutoriza" => ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? $this->usuario['Id'] : null,
+            "IdTipoCuenta" => $datos['tipoCuenta'],
+            "IdTipoMovimiento" => 7,
+            "IdConcepto" => $datos['concepto'],
+            "IdTipoComprobante" => $datos['tipoComprobante'],
+            "IdEstatus" => ($datos['enPresupuesto'] == 1 && $datos['stringDestino'] == "") ? 7 : 8,
+            "Monto" => str_replace(",","",number_format($datos['monto'],2)),
+            "SaldoPrevio" => str_replace(",","",number_format($saldoPrevio,2)),
+            "SaldoNuevo" => str_replace(",","",number_format($saldoNuevo,2)),           
+            "IdServicio" => $datos['servicio'],
+            "IdOrigen" => $datos['origen'],
+            "IdDestino" => $datos['destino'],
+            "OrigenOtro" => $datos['stringOrigen'],
+            "DestinoOtro" => $datos['stringDestino'],
+            "Observaciones" => $datos["observaciones"],
+            "Archivos" => $datos["archivos"],
+            "EnPresupuesto" => $datos['enPresupuesto'],
+            "XML" => $datos['xml'],
+            "PDF" => $datos['pdf'],
+            "MontoConcepto" => $datos['montoMaximo'],
+            "SerieCFDI" => $datos['cfdi']['serie'],
+            "FolioCFDI" => $datos['cfdi']['folio'],
+            "UUID" => $datos['cfdi']['uuid'],
+            "Receptor" => $datos['cfdi']['receptor'],
+            "Pagado" => 0
+        ]);
+
+        $idMovimiento = $this->ultimoId();
+
+        $idSaldo = $this->consulta("
+        select 
+        Id 
+        from t_fondofijo_saldos 
+        where IdUsuario = '".$this->usuario['Id']."' 
+        and IdTipoCuenta = '".$datos['tipoCuenta']."'");
+
+        if(isset($idSaldo[0]) && isset($idSaldo[0]['Id'])){
+            $this->actualizar("t_fondofijo_saldos",[
+                "Saldo" => str_replace(",","",number_format($saldoNuevo,2)),
+                "Fecha" => $this->getFecha(),
+                "IdUltimoMovimiento" => $idMovimiento
+            ],['Id' => $idSaldo[0]['Id']]);
+        }else{
+            $this->insertar("t_fondofijo_saldos", [
+                "IdUsuario" => $datos['id'],
+                "IdTipoCuenta" => $datos['tipoCuenta'],
+                "Saldo" => str_replace(",","",number_format($saldoNuevo,2)),
+                "Fecha" => $this->getFecha(),
+                "IdUltimoMovimiento" => $idMovimiento
+            ]);
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'errorBack' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
 }
