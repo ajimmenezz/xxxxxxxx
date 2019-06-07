@@ -591,13 +591,45 @@ class InformacionServicios extends General {
 
     public function consultaCorrectivosDiagnostico(string $servicio) {
         $sentencia = 'SELECT 
-                        tcd.*,
-                        (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tcd.IdTipoDiagnostico) AS NombreTipoDiagnostico,
-                        (SELECT Nombre FROM cat_v3_tipos_falla WHERE Id = tcd.IdTipoFalla) AS NombreTipoFalla,
-                        (SELECT Nombre FROM cat_v3_fallas_equipo WHERE Id = IdFalla) AS NombreFalla,
-                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = IdComponente) AS Componente
-                        FROM t_correctivos_diagnostico tcd
-                        WHERE tcd.Id = (SELECT MAX(Id) FROM t_correctivos_diagnostico WHERE IdServicio = "' . $servicio . '" )';
+                        tcd . *,
+                        (SELECT 
+                                Nombre
+                            FROM
+                                cat_v3_tipos_diagnostico_correctivo
+                            WHERE
+                                Id = tcd.IdTipoDiagnostico) AS NombreTipoDiagnostico,
+                        (SELECT 
+                                Nombre
+                            FROM
+                                cat_v3_tipos_falla
+                            WHERE
+                                Id = tcd.IdTipoFalla) AS NombreTipoFalla,
+                        CASE tcd.IdTipoDiagnostico
+                            WHEN
+                                NULL
+                            THEN
+                                (SELECT 
+                                        Nombre
+                                    FROM
+                                        cat_v3_fallas_equipo
+                                    WHERE
+                                        Id = IdFalla)
+                            ELSE (SELECT 
+                                    Nombre
+                                FROM
+                                    cat_v3_fallas_refaccion
+                                WHERE
+                                    Id = IdFalla)
+                        END as NombreFalla,
+                        (SELECT 
+                                Nombre
+                            FROM
+                                cat_v3_componentes_equipo
+                            WHERE
+                                Id = IdComponente) AS Componente
+                    FROM
+                        t_correctivos_diagnostico tcd
+                     WHERE tcd.Id = (SELECT MAX(Id) FROM t_correctivos_diagnostico WHERE IdServicio = "' . $servicio . '" )';
 
         $consulta = $this->DBS->consultaGeneralSeguimiento($sentencia);
 
