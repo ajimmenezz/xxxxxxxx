@@ -169,6 +169,10 @@ class GerstorProyectosGAPSI extends General {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
                             AND Proyecto = '" . $filters['proyecto'] . "'";
+        } elseif (isset($filters['tipoProyecto']) && isset($filters['concepto'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND ddg.Concepto = '" . $filters['concepto'] . "'";
         } else {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'";
