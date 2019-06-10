@@ -96,5 +96,5 @@
 <!--Finaliza dashboard principal-->
 
 <!--Empieza dashboard detallado-->
-<div id="dashboardGapsiFilters"></div>
+<div id="dashboardGapsiFilters" class="hidden"></div>
 <!--Finaliza dashboard detallado-->

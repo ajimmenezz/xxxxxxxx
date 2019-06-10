@@ -2,10 +2,6 @@ $(function () {
     //Objetos
     evento = new Base();
     websocket = new Socket();
-    select = new Select();
-    charts = new Charts();
-//    tabla = new Tabla();
-
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();
 
@@ -18,15 +14,13 @@ $(function () {
     //Evento para mostrar la ayuda del sistema
     evento.mostrarAyuda('Ayuda_Proyectos');
 
-//    tabla.generaTablaPersonal('#data-table-tipo-proyectos', null, null, true, true);
-//    tabla.generaTablaPersonal('#data-table-proyectos', null, null, true, true);
-
     //Inicializa funciones de la plantilla
     App.init();
 
     //Globales
     let tablaTipoProyecto = new TablaBasica('data-table-tipo-proyectos');
     let tablaProyectos = new TablaBasica('data-table-proyectos');
+    let tablaProyecto = null;
     let tablaServicio = null;
     let tablaSucursal = null;
     let tablaCategoria = null;
@@ -47,12 +41,39 @@ $(function () {
     let datosSubCategoria = null;
     let datosConceptos = null;
 
+    let selectorProyectos = null;
+    let selectorServicios = null;
+    let selectorSucursales = null;
+    let selectorCategorias = null;
 
     let datosProyecto = Array();
 
     graficaPrincipal.inicilizarGrafica();
     setDastosProyectos();
+    graficaPrincipal.agregarListener(function(dato){
+        let data = {tipoProyecto: dato, moneda: 'MN'};
+        evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', data, '#panelDashboardGapsi', function (respuesta) {
 
+            if (respuesta.consulta.length !== 0) {
+                $('#dashboardGapsiFilters').removeClass('hidden').empty().append(respuesta.formulario);
+                $('#contentDashboardGapsi').addClass('hidden');
+
+                //ocultarElemento('Proyectos');
+                incializarDatos(respuesta.consulta);
+                incializarObjetos();
+                listenerEventosGraficas();
+
+                $('html, body').animate({
+                    scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
+                }, 600);
+
+
+            } else {
+                errorFilter = 'esta Consulta';
+                setTimeout(modalUndefined, 1000);
+            }
+        });
+    });
 
     tablaTipoProyecto.evento(function () {
         let datosfila = tablaTipoProyecto.datosFila(this);
@@ -86,9 +107,10 @@ $(function () {
                 ocultarElemento('Proyectos');
                 incializarDatos(respuesta.consulta);
                 incializarObjetos();
+                listenerEventosGraficas();
 
                 $('html, body').animate({
-                    scrollTop: $("#panelDashboardGapsiFilters").offset().top - 60
+                    scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
                 }, 600);
 
 
@@ -100,7 +122,7 @@ $(function () {
     });
 
     function incializarDatos(datos) {
-        console.log(datos);
+        //console.log(datos);
         datosProyectos = datos.proyectos;
         datosServicios = datos.servicios;
         datosSucursales = datos.sucursales;
@@ -111,23 +133,55 @@ $(function () {
 
 
     function incializarObjetos() {
+        tablaProyecto = new TablaBasica('data-tipo-proyecto');
         tablaServicio = new TablaBasica('data-tipo-servicio');
         tablaSucursal = new TablaBasica('data-tipo-sucursal');
         tablaCategoria = new TablaBasica('data-tipo-categoria');
-        tablaSubCategoria = new TablaBasica('data-tipo-subcategoria');
+        tablaSubCategoria = new TablaBasica('data-tipo-subCategoria');
         tablaConcepto = new TablaBasica('data-tipo-concepto');
+        graficaProyecto = new GraficaGoogle('chart_proyecto', filtrarDatosGraficaGoogle(datosProyectos, 'Proyecto', 'Gasto'));
         graficaServicio = new GraficaGoogle('chart_servicios', filtrarDatosGraficaGoogle(datosServicios, 'TipoServicio', 'Gasto'));
         graficaSucursal = new GraficaGoogle('chart_sucursal', filtrarDatosGraficaGoogle(datosSucursales, 'Sucursal', 'Gasto'));
         graficaCategoria = new GraficaGoogle('chart_categoria', filtrarDatosGraficaGoogle(datosCategoria, 'Categoria', 'Gasto'));
         graficaSubCategoria = new GraficaGoogle('chart_subCategoria', filtrarDatosGraficaGoogle(datosSubCategoria, 'SubCategoria', 'Gasto'));
         graficaConcepto = new GraficaGoogle('chart_concepto', filtrarDatosGraficaGoogle(datosConceptos, 'Concepto', 'Gasto'));
+        graficaProyecto.inicilizarGrafica();
         graficaServicio.inicilizarGrafica();
         graficaSucursal.inicilizarGrafica();
         graficaCategoria.inicilizarGrafica();
         graficaSubCategoria.inicilizarGrafica();
         graficaConcepto.inicilizarGrafica();
+        selectorProyectos = new SelectBasico('selectProyecto');
+        selectorServicios = new SelectBasico('selectServicio');
+        selectorSucursales = new SelectBasico('selectSucursal');
+        selectorCategorias = new SelectBasico('selectCategoria');
+        selectorProyectos.iniciarSelect();
+        selectorServicios.iniciarSelect();
+        selectorSucursales.iniciarSelect();
+        selectorCategorias.iniciarSelect();
     };
 
+    function listenerEventosGraficas(){
+        graficaProyecto.agregarListener(function (dato){
+            console.log(dato);
+        });
+        graficaServicio.agregarListener(function (dato){
+            console.log(dato);
+        });
+        graficaSucursal.agregarListener(function (dato){
+            console.log(dato);
+        });
+        graficaCategoria.agregarListener(function (dato){
+            console.log(dato);
+        });
+        graficaSubCategoria.agregarListener(function (dato){
+            console.log(dato);
+        });
+        graficaConcepto.agregarListener(function (dato){
+            console.log(dato);
+        });
+    }
+    
     function filtrarDatosGraficaGoogle(datos, clave, valor) {
         let datosFiltrados = [];
         $.each(datos, function (key, value) {
