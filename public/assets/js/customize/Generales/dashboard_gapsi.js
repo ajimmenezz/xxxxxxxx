@@ -47,32 +47,13 @@ $(function () {
     let selectorCategorias = null;
 
     let datosProyecto = Array();
+    let datosFiltros = Array();
 
     graficaPrincipal.inicilizarGrafica();
     setDastosProyectos();
     graficaPrincipal.agregarListener(function(dato){
-        let data = {tipoProyecto: dato, moneda: 'MN'};
-        evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', data, '#panelDashboardGapsi', function (respuesta) {
-
-            if (respuesta.consulta.length !== 0) {
-                $('#dashboardGapsiFilters').removeClass('hidden').empty().append(respuesta.formulario);
-                $('#contentDashboardGapsi').addClass('hidden');
-
-                //ocultarElemento('Proyectos');
-                incializarDatos(respuesta.consulta);
-                incializarObjetos();
-                listenerEventosGraficas();
-
-                $('html, body').animate({
-                    scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
-                }, 600);
-
-
-            } else {
-                errorFilter = 'esta Consulta';
-                setTimeout(modalUndefined, 1000);
-            }
-        });
+        datosFiltros = {tipoProyecto: dato, moneda: 'MN'};
+        enviarInformacionFiltros(datosFiltros);
     });
 
     tablaTipoProyecto.evento(function () {
@@ -97,28 +78,8 @@ $(function () {
 
     tablaProyectos.evento(function () {
         let datosfila = tablaProyectos.datosFila(this);
-        let data = {tipoProyecto: datosfila[0], moneda: 'MN', proyecto: datosfila[1]};
-        evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', data, '#panelDashboardGapsi', function (respuesta) {
-
-            if (respuesta.consulta.length !== 0) {
-                $('#dashboardGapsiFilters').removeClass('hidden').empty().append(respuesta.formulario);
-                $('#contentDashboardGapsi').addClass('hidden');
-
-                ocultarElemento('Proyectos');
-                incializarDatos(respuesta.consulta);
-                incializarObjetos();
-                listenerEventosGraficas();
-
-                $('html, body').animate({
-                    scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
-                }, 600);
-
-
-            } else {
-                errorFilter = 'esta Consulta';
-                setTimeout(modalUndefined, 1000);
-            }
-        });
+        datosFiltros = {tipoProyecto: datosfila[0], moneda: 'MN', proyecto: datosfila[1]};
+        enviarInformacionFiltros(datosFiltros);
     });
 
     function incializarDatos(datos) {
@@ -165,20 +126,45 @@ $(function () {
         graficaProyecto.agregarListener(function (dato){
             console.log(dato);
         });
+        tablaServicio.evento(function () {
+            let datosfila = tablaServicio.datosFila(this);
+            datosFiltros.servicio = datosfila[1];
+            enviarInformacionFiltros(datosFiltros);
+        });
         graficaServicio.agregarListener(function (dato){
-            console.log(dato);
+            datosFiltros.servicio = dato;
+            enviarInformacionFiltros(datosFiltros);
         });
         graficaSucursal.agregarListener(function (dato){
-            console.log(dato);
+            console.log(datosFiltros);
         });
         graficaCategoria.agregarListener(function (dato){
-            console.log(dato);
+            datosFiltros.categoria = dato;
+            enviarInformacionFiltros(datosFiltros);
         });
         graficaSubCategoria.agregarListener(function (dato){
             console.log(dato);
         });
         graficaConcepto.agregarListener(function (dato){
             console.log(dato);
+        });
+    }
+    
+    function enviarInformacionFiltros(datosFiltros){
+        evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', datosFiltros, '#panelDashboardGapsi', function (respuesta) {
+            if (respuesta.consulta.length !== 0) {
+                $('#dashboardGapsiFilters').removeClass('hidden').empty().append(respuesta.formulario);
+                $('#contentDashboardGapsi').addClass('hidden');
+                incializarDatos(respuesta.consulta);
+                incializarObjetos();
+                listenerEventosGraficas();
+                $('html, body').animate({
+                    scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
+                }, 600);
+            } else {
+                errorFilter = 'esta Consulta';
+                setTimeout(modalUndefined, 1000);
+            }
         });
     }
     
