@@ -46,6 +46,39 @@ class Controller_FondoFijo extends Base
             case 'HabilitarConcepto':
                 $resultado = $this->fondo_fijo->habilitarConcepto($this->input->post());
                 break;
+            case 'FormularioDepositar':
+                $resultado = $this->fondo_fijo->formularioDepositar($this->input->post());
+                break;
+            case 'MontosDepositar':
+                $resultado = $this->fondo_fijo->montosDepositar($this->input->post());
+                break;
+            case 'RegistrarDeposito':
+                $resultado = $this->fondo_fijo->registrarDeposito($this->input->post());
+                break;
+            case 'DetalleCuenta':
+                $resultado = $this->fondo_fijo->detalleCuenta($this->input->post());
+                break;
+            case 'CargaMontoMaximoConcepto':
+                $resultado = $this->fondo_fijo->cargaMontoMaximoConcepto($this->input->post());
+                break;
+            case 'CargaServiciosTicket':
+                $resultado = $this->fondo_fijo->cargaServiciosTicket($this->input->post());
+                break;
+            case 'RegistrarComprobante':
+                $resultado = $this->fondo_fijo->registrarComprobante($this->input->post());
+                break;
+            case 'DetallesMovimiento':
+                $resultado = $this->fondo_fijo->formularioDetallesMovimiento($this->input->post());
+                break;
+            case 'CancelarMovimiento':
+                $resultado = $this->fondo_fijo->cancelarMovimiento($this->input->post());
+                break;
+            case 'RechazarMovimiento':
+                $resultado = $this->fondo_fijo->rechazarMovimiento($this->input->post());
+                break;
+            case 'AutorizarMovimiento':
+                $resultado = $this->fondo_fijo->autorizarMovimiento($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

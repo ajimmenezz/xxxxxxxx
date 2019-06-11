@@ -77,7 +77,7 @@
                     <div id="listaUsuariosFondoFijo">
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12">
-                                <h4>Lista de Usuarios y Fondo Fijo</h4>
+                                <h4>Lista de Usuarios</h4>
                             </div>
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <div class="underline m-b-10"></div>

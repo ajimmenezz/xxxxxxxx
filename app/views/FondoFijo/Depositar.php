@@ -1,13 +1,19 @@
-<div id="seccionCuentas" class="content">
-    <h1 class="page-header">Mi Fondo Fijo</h1>
-    <div id="panelCuentas" class="panel panel-inverse">
+<div class="content">
+    <h1 class="page-header">Depósito a cuenta de usuario</h1>
+    <div id="panelDepositar" class="panel panel-inverse">
         <div class="panel-heading">
         </div>
         <div class="panel-body">
-            <div id="listaCuentasAsignadas">
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="errorMessage">
+                    </div>
+                </div>
+            </div>
+            <div id="listaUsuariosFondoFijo">
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                        <h4>Cuentas asignadas</h4>
+                        <h4>Lista de Usuarios</h4>
                     </div>
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="underline m-b-10"></div>
@@ -16,27 +22,23 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="table-responsive">
-                            <table id="table-cuentas" class="table table-bordered table-striped table-condensed">
+                            <table id="table-usuarios" class="table table-bordered table-striped table-condensed">
                                 <thead>
                                     <tr>
-                                        <th class="none">IdTipoCuenta</th>
-                                        <th class="none">IdUsuario</th>
-                                        <th class="all">Tipo Cuenta</th>
-                                        <th class="all">Saldo</th>
-                                        <th class="all">Fecha de Saldo</th>
+                                        <th class="none">Id</th>
+                                        <th class="all">Usuario</th>
+                                        <th class="all">Perfil</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    if (isset($datos['Cuentas']) && !empty($datos['Cuentas'])) {
-                                        foreach ($datos['Cuentas'] as $key => $value) {
+                                    if (isset($datos['Usuarios']) && !empty($datos['Usuarios'])) {
+                                        foreach ($datos['Usuarios'] as $key => $value) {
                                             echo ""
                                                 . "<tr>"
-                                                . " <td>" . $value['IdTipoCuenta'] . "</td>"
-                                                . " <td>" . $value['IdUsuario'] . "</td>"
-                                                . " <td>" . $value['TipoCuenta'] . "</td>"
-                                                . " <td>$" . number_format((float)$value['Saldo'], 2) . "</td>"                                                
-                                                . " <td>" . $value['Fecha'] . "</td>"
+                                                . " <td>" . $value['Id'] . "</td>"
+                                                . " <td>" . $value['Nombre'] . "</td>"
+                                                . " <td>" . $value['Perfil'] . "</td>"
                                                 . "</tr>";
                                         }
                                     }
@@ -51,8 +53,6 @@
         </div>
     </div>
 </div>
-
-<div id="seccionDetalleCuenta" class="content" style="display:none"></div>
 
 <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
     <div class="modal-dialog" role="document">
