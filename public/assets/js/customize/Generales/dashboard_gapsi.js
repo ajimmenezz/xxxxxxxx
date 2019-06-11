@@ -1,17 +1,10 @@
 $(function () {
-    //Objetos
+    
+    peticion = new Utileria();
+
     evento = new Base();
-    websocket = new Socket();
-    //Evento que maneja las peticiones del socket
-    websocket.socketMensaje();
-
-    //Muestra la hora en el sistema
     evento.horaServidor($('#horaServidor').val());
-
-    //Evento para cerra la session
     evento.cerrarSesion();
-
-    //Evento para mostrar la ayuda del sistema
     evento.mostrarAyuda('Ayuda_Proyectos');
 
     //Inicializa funciones de la plantilla
@@ -19,6 +12,7 @@ $(function () {
 
     //Globales
     let tablaTipoProyecto = new TablaBasica('data-table-tipo-proyectos');
+    let graficaPrincipal = new GraficaGoogle('graphDashboard', tablaTipoProyecto.datosTabla());
     let tablaProyectos = new TablaBasica('data-table-proyectos');
     let tablaProyecto = null;
     let tablaServicio = null;
@@ -26,7 +20,6 @@ $(function () {
     let tablaCategoria = null;
     let tablaSubCategoria = null;
     let tablaConcepto = null;
-    let graficaPrincipal = new GraficaGoogle('graphDashboard', tablaTipoProyecto.datosTabla());
     let graficaProyecto = null;
     let graficaServicio = null;
     let graficaSucursal = null;
@@ -45,6 +38,7 @@ $(function () {
     let selectorServicios = null;
     let selectorSucursales = null;
     let selectorCategorias = null;
+    let selectorSubCategorias = null;
 
     let datosProyecto = Array();
     let datosFiltros = Array();
@@ -55,6 +49,7 @@ $(function () {
         datosFiltros = {tipoProyecto: dato, moneda: 'MN'};
         enviarInformacionFiltros(datosFiltros);
     });
+    filtroFechas();
 
     tablaTipoProyecto.evento(function () {
         let datosfila = tablaTipoProyecto.datosFila(this);
@@ -83,7 +78,6 @@ $(function () {
     });
 
     function incializarDatos(datos) {
-        //console.log(datos);
         datosProyectos = datos.proyectos;
         datosServicios = datos.servicios;
         datosSucursales = datos.sucursales;
@@ -92,6 +86,28 @@ $(function () {
         datosConceptos = datos.concepto;
     }
 
+    function filtroFechas(){
+        $('#desde').datetimepicker({
+            format: 'YYYY/DD/MM',
+            maxDate: new Date()
+        });
+        $('#hasta').datetimepicker({
+            format: 'YYYY/DD/MM',
+            useCurrent: false,
+            maxDate: new Date()
+        });
+        $("#desde").on("dp.change", function (e) {
+            $('#hasta').data("DateTimePicker").minDate(e.date);
+        });
+        $("#hasta").on("dp.change", function (e) {
+            $('#desde').data("DateTimePicker").maxDate(e.date);
+        });
+        $("#btnFiltrarDashboard").on('click', function () {
+            datosFiltros.fechaInicio = $("#fechaComienzo").val();
+            datosFiltros.fechaFinal = $("#fechaFinal").val();
+            enviarInformacionFiltros(datosFiltros);
+        });
+    }
 
     function incializarObjetos() {
         tablaProyecto = new TablaBasica('data-tipo-proyecto');
@@ -116,15 +132,23 @@ $(function () {
         selectorServicios = new SelectBasico('selectServicio');
         selectorSucursales = new SelectBasico('selectSucursal');
         selectorCategorias = new SelectBasico('selectCategoria');
+        selectorSubCategorias = new SelectBasico('selectSubCategoria');
         selectorProyectos.iniciarSelect();
         selectorServicios.iniciarSelect();
         selectorSucursales.iniciarSelect();
         selectorCategorias.iniciarSelect();
+        selectorSubCategorias.iniciarSelect();
+        filtroFechas();
     };
 
     function listenerEventosGraficas(){
         graficaProyecto.agregarListener(function (dato){
             console.log(dato);
+        });
+        selectorServicios.evento('change', function(){
+            let dato = selectorServicios.obtenerValor();
+            datosFiltros.servicio = dato;
+            enviarInformacionFiltros(datosFiltros);
         });
         tablaServicio.evento(function () {
             let datosfila = tablaServicio.datosFila(this);
@@ -151,10 +175,12 @@ $(function () {
     }
     
     function enviarInformacionFiltros(datosFiltros){
+        //peticion.enviar('Dashboard_Gapsi/tipoProyecto', datosFiltros, )
         evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', datosFiltros, '#panelDashboardGapsi', function (respuesta) {
             if (respuesta.consulta.length !== 0) {
                 $('#dashboardGapsiFilters').removeClass('hidden').empty().append(respuesta.formulario);
                 $('#contentDashboardGapsi').addClass('hidden');
+                $('#filtroFechas').addClass('hidden');
                 incializarDatos(respuesta.consulta);
                 incializarObjetos();
                 listenerEventosGraficas();
@@ -175,32 +201,6 @@ $(function () {
         });
         return datosFiltrados;
 
-    }
-
-    function mostrarElemento(objeto = null) {
-
-        let elemento = $(`#${objeto}`);
-
-        if (!elemento.length) {
-            elemento = $(`.${objeto}`);
-        }
-
-        if (elemento.hasClass('hidden')) {
-            elemento.removeClass('hidden');
-    }
-    }
-
-    function ocultarElemento(objeto = null) {
-
-        let elemento = $(`#${objeto}`);
-
-        if (!elemento.length) {
-            elemento = $(`.${objeto}`);
-        }
-
-        if (!elemento.hasClass('hidden')) {
-            elemento.addClass('hidden');
-    }
     }
 
     function setDastosProyectos() {

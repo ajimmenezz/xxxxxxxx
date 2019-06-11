@@ -98,3 +98,33 @@
 <!--Empieza dashboard detallado-->
 <div id="dashboardGapsiFilters" class="hidden"></div>
 <!--Finaliza dashboard detallado-->
+
+<div id="filtroFechas" class="theme-panel">
+    <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn bg-green"><i class="fa fa-calendar text-white"></i></a>
+    <div class="theme-panel-content">
+        <h5 class="m-t-0">Filtros de fechas</h5>
+        <div class="form-group">
+            <label>Desde</label>
+            <div class='input-group date' id='desde' values="">
+                <input id='fechaComienzo' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Hasta</label>
+            <div class='input-group date' id='hasta'>
+                <input id='fechaFinal' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="row m-t-10">
+            <div class="col-md-12">
+                <a href="#" id="btnFiltrarDashboard" class="btn btn-inverse btn-success btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
+            </div>
+        </div>
+    </div>
+</div>

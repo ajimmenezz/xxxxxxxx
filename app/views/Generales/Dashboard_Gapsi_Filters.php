@@ -5,170 +5,186 @@
         <!-- Empieza sidebar scrollbar -->
         <div data-scrollbar="true" data-height="100%">
             <!--Empieza seccion filtros-->
-        <div class="col-md-12">
-            <div class="row">
-                <br>
-<!--                <div class="col-md-12">                       
-                    <div  id="tableGastos" class="table-responsive">
-                        <table id="data-tipo-gastos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
-                            <thead>
-                                <tr>
-                                    <th class="all">Tipo</th>
-                                    <th class="all">Costo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-//                                foreach ($gastosCompras as $valor) {
-//                                    echo "<tr>";
-//                                    echo '<td>' . $valor['TipoTrans'] . '</td>';
-//                                    if ($valor['0'] == 'MN') {
-//                                        echo '<td>MN$ ' . number_format($valor['Gasto'], 2) . '</td>';
-//                                    } else {
-//                                        if ($valor['0'] == 'USD') {
-//                                            echo '<td>US$ ' . number_format($valor['Gasto'], 2) . '</td>';
-//                                        } else {
-//                                            echo '<td>$ ' . number_format($valor['Gasto'], 2) . '</td>';
-//                                        }
-//                                    }
-//                                    echo "</tr>";
-//                                }
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>-->
-                <!--Empieza Seccion de filtros agregados -->
-                <div class="col-md-12">
-                    <div  id="seccionFiltros" class="table-responsive hidden">
-                        <table id="data-seccion-filtros" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
-                            <thead>
-                                <tr>
-                                    <th class="all">Filtrado por</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <!--Finaliza Seccion de filtros agregados -->
-            </div>
-            <!--Empieza selector modena-->
             <div class="col-md-12">
-                <div class="radio">
-                    <label style="color: #A8ACB1">
-                        <input type="radio" name="optionsRadiosMoneda" value="MN" checked />
-                        Pesos
-                    </label>
-                </div>
-                <div class="radio">
-                    <label style="color: #A8ACB1">
-                        <input type="radio" name="optionsRadiosMoneda" value="USD" />
-                        Dollar
-                    </label>
-                </div>
-            </div>
-            <!--Finaliza selector modena-->
-            <!--Empieza selector de filtros         -->
-            <div id="selectFiltros" class="row">
-                <div class="col-md-12">
-                    <div class="form-group" id="hideProyecto">
-                        <label style="color: #A8ACB1">Proyectos</label>
-                        <select id="selectProyecto" class="form-control efectoDescuento" name="SelectProyecto" style="width: 100%">
-                            <option value="">Seleccionar...</option>
-                            <?php
-                            if(count($proyectos) == 1){
-                                echo '<option value="' . $proyectos[0]['IdProyecto'] . '" selected="selected">' . $proyectos[0]['Proyecto'] . '</option>';
-                            }else{
-                                foreach ($proyectos as $proyecto) {
-                                    echo '<option value="' . $proyecto['IdProyecto'] . '">' . $proyecto['Proyecto'] . '</option>';
-                                }
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="form-group" id="hideServicio">
-                        <label style="color: #A8ACB1">Servicios</label>
-                        <select id="selectServicio" class="form-control efectoDescuento" name="SelectServicio" style="width: 100%">
-                            <option value="">Seleccionar...</option>
-                            <?php
-                            if(count($servicios) == 1){
-                                echo '<option value="' . $servicios[0]['TipoServicio'] . '" selected="selected">' . $servicios[0]['TipoServicio'] . '</option>';
-                            }else{
-                                foreach ($servicios as $servicio) {
-                                    echo '<option value="' . $servicio['TipoServicio'] . '">' . $servicio['TipoServicio'] . '</option>';
-                                }
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="form-group" id="hideSucursal">
-                        <label style="color: #A8ACB1">Sucursal</label>
-                        <select id="selectSucursal" class="form-control efectoDescuento" name="SelectSucursal" style="width: 100%">
-                            <option value="">Seleccionar...</option>
-                            <?php
-                            if(count($sucursales) == 1){
-                                echo '<option value="' . $sucursales[0]['idSucursal'] . '" selected="selected">' . $sucursales[0]['Sucursal'] . '</option>';
-                            }else{
-                                foreach ($sucursales as $sucursal) {
-                                    echo '<option value="' . $sucursal['idSucursal'] . '">' . $sucursal['Sucursal'] . '</option>';
-                                }
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="form-group" id="hideCategoria">
-                        <label style="color: #A8ACB1">Categoria</label>
-                        <select id="selectCategoria" class="form-control efectoDescuento" name="SelectCategoria" style="width: 100%">
-                            <option value="">Seleccionar...</option>
-                            <?php
-                            if(count($categorias) == 1){
-                                echo '<option value="' . $categorias[0]['Categoria'] . '" selected="selected">' . $categorias[0]['Categoria'] . '</option>';
-                            }else{
-                                foreach ($categorias as $categoria) {
-                                    echo '<option value="' . $categoria['Categoria'] . '">' . $categoria['Categoria'] . '</option>';
-                                }
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <!--Finaliza selector de filtros         -->
-            <!--Empieza filtro de fecha-->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label style="color: #A8ACB1">Desde</label>
-                        <div class='input-group date' id='desde' values="">
-                            <input id='fechaComienzo' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
+                <div class="row">
+                    <div class="col-md-12 hidden">                       
+                        <div  id="tableGastos" class="table-responsive">
+                            <table id="data-tipo-gastos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="all">Tipo</th>
+                                        <th class="all">Costo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+    //                                foreach ($gastosCompras as $valor) {
+    //                                    echo "<tr>";
+    //                                    echo '<td>' . $valor['TipoTrans'] . '</td>';
+    //                                    if ($valor['0'] == 'MN') {
+    //                                        echo '<td>MN$ ' . number_format($valor['Gasto'], 2) . '</td>';
+    //                                    } else {
+    //                                        if ($valor['0'] == 'USD') {
+    //                                            echo '<td>US$ ' . number_format($valor['Gasto'], 2) . '</td>';
+    //                                        } else {
+    //                                            echo '<td>$ ' . number_format($valor['Gasto'], 2) . '</td>';
+    //                                        }
+    //                                    }
+    //                                    echo "</tr>";
+    //                                }
+                                    ?>
+                                </tbody>
+                            </table>
                         </div>
-                    </div>                
-                </div>
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label style="color: #A8ACB1">Hasta</label>
-                        <div class='input-group date' id='hasta'>
-                            <input id='fechaFin' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
+                    </div>
+                    <!--Empieza Seccion de filtros agregados -->
+                    <div class="col-md-12">
+                        <div  id="seccionFiltros" class="table-responsive hidden">
+                            <table id="data-seccion-filtros" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="all">Filtrado por</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
                         </div>
-                    </div>                
+                    </div>
+                    <!--Finaliza Seccion de filtros agregados -->
                 </div>
-            </div>
-            <!--Finaliza filtro de fecha-->
-            <div class="row">
+                <!--Empieza selector modena-->
                 <div class="col-md-12">
-                    <a href="#" id="btnFiltrarDashboard" class="btn btn-inverse btn-success btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
+                    <div class="radio">
+                        <label style="color: #A8ACB1">
+                            <input type="radio" name="optionsRadiosMoneda" value="MN" checked />
+                            Pesos
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label style="color: #A8ACB1">
+                            <input type="radio" name="optionsRadiosMoneda" value="USD" />
+                            Dollar
+                        </label>
+                    </div>
                 </div>
+                <!--Finaliza selector modena-->
+                <!--Empieza filtro de fecha-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="divider"></div>
+                        <h5 class="m-t-0" style="color: #A8ACB1">Filtros de fechas</h5>
+                        <div class="form-group">
+                            <label style="color: #A8ACB1">Desde</label>
+                            <div class='input-group date' id='desde' values="">
+                                <input id='fechaComienzo' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>                
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label style="color: #A8ACB1">Hasta</label>
+                            <div class='input-group date' id='hasta'>
+                                <input id='fechaFinal' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>                
+                    </div>
+                    <div class="col-md-12">
+                        <a href="#" id="btnFiltrarDashboard" class="btn btn-inverse btn-success btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
+                    </div>
+                </div>
+                <!--Finaliza filtro de fecha-->
+                <!--Empieza selector de filtros -->
+                <div id="selectFiltros" class="row">
+                    <div class="col-md-12">
+                        <div class="divider"></div>
+                        <div class="form-group" id="hideProyecto">
+                            <label style="color: #A8ACB1">Proyectos</label>
+                            <select id="selectProyecto" class="form-control efectoDescuento" name="SelectProyecto" style="width: 100%">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                if(count($proyectos) == 1){
+                                    echo '<option value="' . $proyectos[0]['IdProyecto'] . '" selected="selected">' . $proyectos[0]['Proyecto'] . '</option>';
+                                }else{
+                                    foreach ($proyectos as $proyecto) {
+                                        echo '<option value="' . $proyecto['IdProyecto'] . '">' . $proyecto['Proyecto'] . '</option>';
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group" id="hideServicio">
+                            <label style="color: #A8ACB1">Servicios</label>
+                            <select id="selectServicio" class="form-control efectoDescuento" name="SelectServicio" style="width: 100%">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                if(count($servicios) == 1){
+                                    echo '<option value="' . $servicios[0]['TipoServicio'] . '" selected="selected">' . $servicios[0]['TipoServicio'] . '</option>';
+                                }else{
+                                    foreach ($servicios as $servicio) {
+                                        echo '<option value="' . $servicio['TipoServicio'] . '">' . $servicio['TipoServicio'] . '</option>';
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group" id="hideSucursal">
+                            <label style="color: #A8ACB1">Sucursal</label>
+                            <select id="selectSucursal" class="form-control efectoDescuento" name="SelectSucursal" style="width: 100%">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                if(count($sucursales) == 1){
+                                    echo '<option value="' . $sucursales[0]['idSucursal'] . '" selected="selected">' . $sucursales[0]['Sucursal'] . '</option>';
+                                }else{
+                                    foreach ($sucursales as $sucursal) {
+                                        echo '<option value="' . $sucursal['idSucursal'] . '">' . $sucursal['Sucursal'] . '</option>';
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group" id="hideCategoria">
+                            <label style="color: #A8ACB1">Categoria</label>
+                            <select id="selectCategoria" class="form-control efectoDescuento" name="SelectCategoria" style="width: 100%">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                if(count($categorias) == 1){
+                                    echo '<option value="' . $categorias[0]['Categoria'] . '" selected="selected">' . $categorias[0]['Categoria'] . '</option>';
+                                }else{
+                                    foreach ($categorias as $categoria) {
+                                        echo '<option value="' . $categoria['Categoria'] . '">' . $categoria['Categoria'] . '</option>';
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group" id="hideSubCategoria">
+                            <label style="color: #A8ACB1">Categoria</label>
+                            <select id="selectSubCategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                if(count($subcategorias) == 1){
+                                    echo '<option value="' . $subcategorias[0]['SubCategoria'] . '" selected="selected">' . $subcategorias[0]['SubCategoria'] . '</option>';
+                                }else{
+                                    foreach ($subcategorias as $subcategoria) {
+                                        echo '<option value="' . $subcategoria['SubCategoria'] . '">' . $subcategoria['SubCategoria'] . '</option>';
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!--Finaliza selector de filtros-->
+
             </div>
-        </div>
-        <!-- Termina sidebar scrollbar -->
+            <!-- Termina sidebar scrollbar -->
         </div>
         <!--Termina seccion filtros-->
     </div>
