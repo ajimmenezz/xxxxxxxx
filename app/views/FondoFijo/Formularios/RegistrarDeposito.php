@@ -46,7 +46,7 @@
     </div>
     <div class="col-md-3 col-sm-3 col-xs-12">
         <div class="form-group">
-            <label class="f-w-600 f-s-13">Depositar *</label>
+            <label class="f-w-600 f-s-13">Depositar / Ajustar *</label>
             <div class="input-group">
                 <span class="input-group-addon">$</span>
                 <input type="number" id="txtMontoDepositar" class="form-control" placeholder="0.00" disabled />
@@ -67,7 +67,7 @@
 </div>
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
-        <h4>Registro de depósitos</h4>
+        <h4>Registro de depósitos / ajustes</h4>
     </div>
     <div class="col-md-12 col-sm-12 col-xs-12 m-t-15">
         <div class="underline m-b-10"></div>
@@ -83,7 +83,7 @@
                         <th class="all">Tipo Cuenta</th>
                         <th class="all">Fecha</th>
                         <th class="all">Saldo Anterior</th>
-                        <th class="all">Depósito</th>
+                        <th class="all">Depósito / Ajuste</th>
                         <th class="all">Saldo</th>
                     </tr>
                 </thead>

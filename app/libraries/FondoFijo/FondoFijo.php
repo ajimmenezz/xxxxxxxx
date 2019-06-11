@@ -220,6 +220,9 @@ class FondoFijo extends General
         $montoMaximo = $this->DB->getMaximoMontoAutorizado($datos['id'], $datos['tipoCuenta']);
         $saldo = $this->DB->getSaldo($datos['id'], $datos['tipoCuenta']);
         $sugerido = (double)$montoMaximo - (double)$saldo;
+        if ($sugerido < 0) {
+            $sugerido = 0;
+        }
         return [
             'code' => 200,
             'montos' => [
@@ -304,12 +307,14 @@ class FondoFijo extends General
         return $monto;
     }
 
-    public function cargaServiciosTicket(array $datos) {
+    public function cargaServiciosTicket(array $datos)
+    {
         $servicios = $this->DB->cargaServiciosTicket(array_merge($datos, ['usuario' => $this->usuario['Id']]));
         return $servicios;
     }
 
-    public function registrarComprobante(array $datos) {
+    public function registrarComprobante(array $datos)
+    {
         $date = date('Ymd');
         $datos['tipoComprobante'] = 3;
         $datos['xml'] = '';
@@ -412,89 +417,21 @@ class FondoFijo extends General
         return $registrar;
     }
 
-
-    /************************************************************************/
-
-    public function getFondosFijos()
-    {
-        $fondos = $this->DB->getFondosFijos();
-        return $fondos;
-    }
-
-    public function detallesFondoFijoXUsuario(array $datos)
-    {
-
-        $datos = [
-            'listaComprobaciones' => $this->DB->getDetallesFondoFijoXUsuario($datos['id']),
-            'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
-            'saldo' => $this->DB->getSaldoByUsuario($datos['id']),
-            'xautorizar' => $this->DB->getSaldoXAutorizarByUsuario($datos['id']),
-            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id']),
-            'saldoRechazado' => $this->DB->getSaldoRechazadoSinPagar($datos['id']),
-            'permisos' => array_merge($this->usuario['Permisos'], $this->usuario['PermisosAdicionales'])
-        ];
-
-        return [
-            'html' => parent::getCI()->load->view('Tesoreria/Formularios/DetallesFondoFijoXUsuario', $datos, TRUE)
-        ];
-    }
-
-    public function formularioRegistrarDeposito(array $datos)
-    {
-
-        $generalesMontoFijoUsuario = $this->DB->getFondosFijos($datos['id'])[0];
-
-        $datos = [
-            'listaComprobaciones' => $this->DB->getDetallesFondoFijoXUsuario($datos['id']),
-            'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
-            'saldo' => $this->DB->getSaldoByUsuario($datos['id']),
-            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id']),
-            'monto' => $generalesMontoFijoUsuario['MontoUsuario'],
-            'estatus' => $generalesMontoFijoUsuario['Flag'],
-            'montoSiccob' => $this->DB->getMontoDepositoSiccob($datos['id']),
-            'montoResidig' => $this->DB->getMontoDepositoResidig($datos['id']),
-            'montoGasolina' => $this->DB->getMontoDepositoGasolina($datos['id']),
-            'montoOtros' => $this->DB->getMontoDepositoOtros($datos['id']),
-            'listaSinPago' => $this->DB->getComprobacionesSinPagar($datos['id']),
-        ];
-
-        return [
-            'html' => parent::getCI()->load->view('Tesoreria/Formularios/FormularioRegistrarDeposito', $datos, TRUE)
-        ];
-    }
-
-    public function formularioAjustarGasolina(array $datos)
-    {
-        $datos = [
-            'usuario' => $this->DB->getNombreUsuarioById($datos['id']),
-            'saldoGasolina' => $this->DB->getSaldoGasolinaByUsuario($datos['id'])
-        ];
-
-        return [
-            'html' => parent::getCI()->load->view('Tesoreria/Formularios/FormularioAjustarGasolina', $datos, TRUE)
-        ];
-    }
-
-
-    public function eliminaArchivos(array $archivos)
-    {
-        foreach ($archivos as $k => $v) {
-            try {
-                unlink('.' . $v);
-            } catch (Exception $ex) { }
-        }
-    }
-
     public function formularioDetallesMovimiento(array $datos)
     {
-        $rol = (isset($datos['rol'])) ? ['rol' => $datos['rol']] : ['rol' => 0];
+        $rolAutoriza = 0;
+        if (isset($datos['autorizaciones']) && $datos['autorizaciones'] == 1) {
+            $rolAutoriza = 1;
+        }
+
+
         $datos = [
             'generales' => $this->DB->getDetallesFondoFijoXId($datos['id'])[0],
-            'rol' => (isset($datos['rol'])) ? $datos['rol'] : 0
+            'rolAutoriza' => $rolAutoriza
         ];
 
         return [
-            'html' => parent::getCI()->load->view('Comprobacion/Formularios/FormularioDetallesMovimiento', $datos, TRUE)
+            'html' => parent::getCI()->load->view('FondoFijo/Formularios/DetallesMovimiento', $datos, TRUE)
         ];
     }
 
@@ -504,36 +441,15 @@ class FondoFijo extends General
         return $cancelar;
     }
 
+    public function pendientesXAutorizar(int $idJefe)
+    {
+        $pendientes = $this->DB->pendientesXAutorizar($idJefe);
+        return $pendientes;
+    }
+
     public function rechazarMovimiento(array $datos)
     {
         $rechazar = $this->DB->rechazarMovimiento($datos);
-
-        if ($rechazar['code'] == 200) {
-            $generalesUsuario = $this->DB->getGeneralInfoByUserID($rechazar['id']);
-            $generalesUsuarioRechaza = $this->DB->getGeneralInfoByUserID($this->usuario['Id']);
-            $generalesMovimiento = $this->DB->getDetallesFondoFijoXId($datos['id'])[0];
-
-            $titulo = 'Comprobante Rechazado - Fondo Fijo';
-            $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
-                . '<p>'
-                . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' '
-                . ' ha  rechazado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" '
-                . ' por el total de <strong>$' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> '
-                . ' correspondiente al fondo fijo. <br />'
-                . ' Observaciones: <strong>' . $datos['observaciones'] . '</strong><br />'
-                . ' Por favor verifique la información mencionada ingresando al sistema '
-                . 'o comuniquese con el usuario que rechazó el comprobante.'
-                . '</p>';
-            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
-            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
-        }
-
-        return $rechazar;
-    }
-
-    public function rechazarMovimientoCobrable(array $datos)
-    {
-        $rechazar = $this->DB->rechazarMovimientoCobrable($datos);
 
         if ($rechazar['code'] == 200) {
             $generalesUsuario = $this->DB->getGeneralInfoByUserID($rechazar['id']);
@@ -579,20 +495,32 @@ class FondoFijo extends General
         return $autorizar;
     }
 
-    public function formularioDetallesMovimientoAutorizar(array $datos)
+    /************************************************************************/
+    
+    public function rechazarMovimientoCobrable(array $datos)
     {
-        $datos = [
-            'generales' => $this->DB->getDetallesFondoFijoXId($datos['id'])[0]
-        ];
+        $rechazar = $this->DB->rechazarMovimientoCobrable($datos);
 
-        return [
-            'html' => parent::getCI()->load->view('Comprobacion/Formularios/FormularioDetallesMovimientoAutorizar', $datos, TRUE)
-        ];
-    }
+        if ($rechazar['code'] == 200) {
+            $generalesUsuario = $this->DB->getGeneralInfoByUserID($rechazar['id']);
+            $generalesUsuarioRechaza = $this->DB->getGeneralInfoByUserID($this->usuario['Id']);
+            $generalesMovimiento = $this->DB->getDetallesFondoFijoXId($datos['id'])[0];
 
-    public function ajustarGasolina(array $datos)
-    {
-        $ajustar = $this->DB->ajustarGasolina($datos);
-        return $ajustar;
+            $titulo = 'Comprobante Rechazado - Fondo Fijo';
+            $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
+                . '<p>'
+                . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' '
+                . ' ha  rechazado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" '
+                . ' por el total de <strong>$' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> '
+                . ' correspondiente al fondo fijo. <br />'
+                . ' Observaciones: <strong>' . $datos['observaciones'] . '</strong><br />'
+                . ' Por favor verifique la información mencionada ingresando al sistema '
+                . 'o comuniquese con el usuario que rechazó el comprobante.'
+                . '</p>';
+            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
+            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
+        }
+
+        return $rechazar;
     }
 }

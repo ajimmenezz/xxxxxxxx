@@ -35,7 +35,7 @@
                                                 . " <td>" . $value['IdTipoCuenta'] . "</td>"
                                                 . " <td>" . $value['IdUsuario'] . "</td>"
                                                 . " <td>" . $value['TipoCuenta'] . "</td>"
-                                                . " <td>" . $value['Saldo'] . "</td>"
+                                                . " <td>$" . number_format((float)$value['Saldo'], 2) . "</td>"                                                
                                                 . " <td>" . $value['Fecha'] . "</td>"
                                                 . "</tr>";
                                         }

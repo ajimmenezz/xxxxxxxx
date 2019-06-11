@@ -77,8 +77,8 @@ $(function () {
                 return false;
             }
 
-            if (isNaN(datos.depositar) || datos.depositar <= 0) {
-                evento.mostrarMensaje("#errorMessage", false, "El monto a depositar debe ser mayor a 0 (cero)", 4000);
+            if (isNaN(datos.depositar) || datos.depositar == 0) {
+                evento.mostrarMensaje("#errorMessage", false, "El monto a depositar ó ajustar debe ser diferente de 0 (cero)", 4000);
                 return false;
             }
 
@@ -95,6 +95,26 @@ $(function () {
                 } else {
                     evento.mostrarMensaje("#errorMessage", false, "Ocurrió un error al guardar el depósito. Por favor recargue su página y vuelva a intentarlo.", 4000);
                 }
+            });
+        });
+
+        $('#tabla-depositos tbody').on('click', 'tr', function () {
+            var datos = $('#tabla-depositos').DataTable().row(this).data();
+            evento.enviarEvento('MiFondo/DetallesMovimiento', { 'id': datos[0] }, '#panelDepositar', function (respuesta) {
+                evento.iniciarModal("#modalEdit", "Detalles del depósito / ajuste", respuesta.html);
+                $("#btnGuardarCambios").hide();
+
+                $("#btnCancelarMovimiento").off("click");
+                $("#btnCancelarMovimiento").on("click", function () {
+                    evento.enviarEvento('MiFondo/CancelarMovimiento', { 'id': datos[0] }, '#modalEdit', function (respuesta) {
+                        if (respuesta.code == 200) {
+                            evento.terminarModal("#modalEdit");
+                            filaCuenta.click();
+                        } else {
+                            evento.mostrarMensaje("#error-in-modal", false, "Ocurrió un error al cancelar el movimiento. Recargue su página e intente de nuevo.")
+                        }
+                    });
+                });
             });
         });
     }

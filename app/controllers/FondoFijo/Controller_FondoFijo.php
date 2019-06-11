@@ -67,6 +67,18 @@ class Controller_FondoFijo extends Base
             case 'RegistrarComprobante':
                 $resultado = $this->fondo_fijo->registrarComprobante($this->input->post());
                 break;
+            case 'DetallesMovimiento':
+                $resultado = $this->fondo_fijo->formularioDetallesMovimiento($this->input->post());
+                break;
+            case 'CancelarMovimiento':
+                $resultado = $this->fondo_fijo->cancelarMovimiento($this->input->post());
+                break;
+            case 'RechazarMovimiento':
+                $resultado = $this->fondo_fijo->rechazarMovimiento($this->input->post());
+                break;
+            case 'AutorizarMovimiento':
+                $resultado = $this->fondo_fijo->autorizarMovimiento($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

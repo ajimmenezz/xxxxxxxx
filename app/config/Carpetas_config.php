@@ -191,6 +191,7 @@ $config['Secciones'] = array(
     'FondoFijo' => array(
         'Catalogos' => 'Catalogos',  
         'Depositar' => 'Depositar',  
-        'MiFondo' => 'MiFondo',        
+        'MiFondo' => 'MiFondo',   
+        'Autorizar' => 'Autorizar'     
     ),
 );

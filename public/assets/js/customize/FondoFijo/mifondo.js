@@ -35,15 +35,15 @@ $(function () {
             if (respuesta.code == 200) {
                 $("#seccionDetalleCuenta").empty().append(respuesta.formulario);
                 evento.cambiarDiv("#seccionCuentas", "#seccionDetalleCuenta");
-                initDetallesCuenta(datos);
+                initDetallesCuenta(datos, _this);
             } else {
                 evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
             }
         });
     });
 
-    function initDetallesCuenta(datos) {
-        tabla.generaTablaPersonal('#table-movimientos', null, null, true, true, [[4, 'asc']]);
+    function initDetallesCuenta(datos, filaCuenta) {
+        tabla.generaTablaPersonal('#table-movimientos', null, null, true, true, [[0, 'desc']]);
         select.crearSelect("select");
         file.crearUpload('#fotosDeposito', 'MiFondo/RegistrarComprobante');
 
@@ -186,7 +186,7 @@ $(function () {
                 }
 
                 if (pasa) {
-                    file.enviarArchivos('#fotosDeposito', 'Fondo_Fijo/RegistrarComprobante', '#panelDetalleCuenta', _datos, function (respuesta) {
+                    file.enviarArchivos('#fotosDeposito', 'MiFondo/RegistrarComprobante', '#panelDetalleCuenta', _datos, function (respuesta) {
                         if (respuesta.code == 200) {
                             $("#page-loader").removeClass("hide");
                             location.reload();
@@ -197,6 +197,26 @@ $(function () {
                     });
                 }
             }
+        });
+
+        $('#table-movimientos tbody').on('click', 'tr', function () {
+            var datos = $('#table-movimientos').DataTable().row(this).data();
+            evento.enviarEvento('MiFondo/DetallesMovimiento', { 'id': datos[0] }, '#panelDetalleCuenta', function (respuesta) {
+                evento.iniciarModal("#modalEdit", "Detalles del movimiento", respuesta.html);
+                $("#btnGuardarCambios").hide();
+
+                $("#btnCancelarMovimiento").off("click");
+                $("#btnCancelarMovimiento").on("click", function () {
+                    evento.enviarEvento('MiFondo/CancelarMovimiento', { 'id': datos[0] }, '#modalEdit', function (respuesta) {
+                        if (respuesta.code == 200) {
+                            evento.terminarModal("#modalEdit");
+                            filaCuenta.click();
+                        } else {
+                            evento.mostrarMensaje("#error-in-modal", false, "Ocurrió un error al cancelar el movimiento. Recargue su página e intente de nuevo.")
+                        }
+                    });
+                });
+            });
         });
     }
 

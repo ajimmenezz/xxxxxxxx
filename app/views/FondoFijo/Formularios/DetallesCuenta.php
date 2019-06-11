@@ -41,7 +41,7 @@
                             <table id="table-movimientos" class="table table-bordered table-striped table-condensed">
                                 <thead>
                                     <tr>
-                                        <th class="none">Id</th>
+                                        <th class="all">Id</th>
                                         <th class="all">Tipo Movimiento</th>
                                         <th class="all">Concepto</th>
                                         <th class="all">Estatus</th>
@@ -64,9 +64,9 @@
                                                 . " <td>" . $value['Estatus'] . "</td>"
                                                 . " <td>" . $value['FechaRegistro'] . "</td>"
                                                 . " <td>" . $value['FechaAutorizacion'] . "</td>"
-                                                . " <td>$ " . number_format((float)$value['SaldoPrevio'], 2) . "</td>"
-                                                . " <td>$ " . number_format((float)$value['Monto'], 2) . "</td>"
-                                                . " <td>$ " . number_format((float)$value['SaldoNuevo'], 2) . "</td>"
+                                                . " <td>$" . number_format((float)$value['SaldoPrevio'], 2) . "</td>"
+                                                . " <td>$" . number_format((float)$value['Monto'], 2) . "</td>"
+                                                . " <td>$" . number_format((float)$value['SaldoNuevo'], 2) . "</td>"
                                                 . "</tr>";
                                         }
                                     }

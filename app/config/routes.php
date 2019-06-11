@@ -264,6 +264,7 @@ $route['FondoFijo/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['FondoFijo/Catalogos/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
 $route['FondoFijo/Depositar/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
 $route['FondoFijo/MiFondo/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
+$route['FondoFijo/Autorizar/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
 
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
