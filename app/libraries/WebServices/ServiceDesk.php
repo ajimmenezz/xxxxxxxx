@@ -295,7 +295,7 @@ class ServiceDesk extends General {
      * 
      */
 
-    public function d(string $key, string $estatus, string $folio) {
+    public function cambiarEstatusServiceDesk(string $key, string $estatus, string $folio) {
         $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio;
 
         $input_data = ''
