@@ -147,7 +147,7 @@ $config['Generales'] = array(
             'parsley/src/parsley',
             'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Generales/dashboard_gapsi', 'Base/Tabla', 'Base/Charts'),
+        'js' => array('Base/Base', 'Componentes/HerramientasWeb/Utileria', 'Componentes/Selects/Select', 'Componentes/Selects/SelectBasico', 'Componentes/Tablas/Tabla', 'Componentes/Tablas/TablaBasica', 'Componentes/Graficas/GraficaGoogle', 'Generales/dashboard_gapsi'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',

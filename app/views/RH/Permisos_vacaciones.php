@@ -70,7 +70,7 @@
                                                         break;
                                                 }
                                                 
-                                                if ($value['FechaAusenciaHasta'] != $value['FechaAusenciaDesde']) {
+                                                if ($value['FechaAusenciaHasta'] != $value['FechaAusenciaDesde'] && $value['FechaAusenciaHasta'] != "0000-00-00") {
                                                     echo '<td>'.$value['FechaAusenciaDesde'].' al '.$value['FechaAusenciaHasta'].'</td>';
                                                 } else {
                                                     echo '<td>'.$value['FechaAusenciaDesde'].'</td>';
@@ -249,7 +249,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <div class='input-group date' id='inputFechaDesde'>
-                                                <input id='inputFechaPermisoDesde' type='text' class="form-control"/>
+                                                <input id='inputFechaPermisoDesde' type='text' class="form-control" placeholder="Desde" data-parsley-required="true"/>
                                                 <span class="input-group-addon">
                                                     <span class="glyphicon glyphicon-calendar"></span>
                                                 </span>
@@ -258,7 +258,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class='input-group date' id='inputFechaHasta'>
-                                            <input id='inputFechaPermisoHasta' type='text' class="form-control"/>
+                                            <input id='inputFechaPermisoHasta' type='text' class="form-control" placeholder="Hasta"/>
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
                                             </span>

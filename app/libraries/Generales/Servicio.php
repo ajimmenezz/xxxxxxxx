@@ -1159,7 +1159,8 @@ class Servicio extends General {
                                                 tc.Serie,
                                                 tc.Extra
                                             FROM t_censos tc 
-                                            WHERE tc.IdServicio = "' . $servicio . '"');
+                                            WHERE tc.IdServicio = "' . $servicio . '"
+                                            ORDER BY Area, Punto ASC');
         $totalAreas = $this->DBS->getServicios('select 
                                                     areaAtencion(IdArea) as Area,
                                                     count(*) as Total
