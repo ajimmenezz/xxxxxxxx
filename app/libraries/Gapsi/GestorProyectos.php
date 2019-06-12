@@ -4,7 +4,7 @@ namespace Librerias\Gapsi;
 
 use Controladores\Controller_Datos_Usuario as General;
 
-class GerstorProyectos extends General {
+class GestorProyectos extends General {
 
     private $DBGestor;
     private $proyectos;
@@ -28,7 +28,6 @@ class GerstorProyectos extends General {
         foreach ($listaIdProyectos as $key => $proyecto) {
             $temporal = new \Librerias\Gapsi\Proyecto($proyecto['IdProyecto']);
             array_push($this->proyectos, $temporal);
-        }
-        
+        }                       
     }
 }

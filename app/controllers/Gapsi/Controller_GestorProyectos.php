@@ -8,7 +8,7 @@ class Controller_GestorProyectos  extends Base {
 
     public function __construct() {
         parent::__construct();
-        $this->gestorProyecto = new \Librerias\Gapsi\GerstorProyectos();
+        $this->gestorProyecto = new \Librerias\Gapsi\GestorProyectos();
     }
 
     public function manejarEvento(string $evento = null) {
