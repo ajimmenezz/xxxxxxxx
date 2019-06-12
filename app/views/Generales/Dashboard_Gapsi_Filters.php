@@ -2,11 +2,11 @@
        
     <div id="content" class="content">
         <div class="row">
-            <div class="col-md-9 col-sm-6 col-xs-12">
+            <div class="col-md-9 col-sm-6 col-xs-9">
                 <h1 class="page-header">Dashboard Gapsi</h1>
             </div>
-            <div class="col-md-3 col-sm-6 col-xs-12 text-right" onclick="location.reload()">
-                <label id="btnReturnDashboardGapsi" class="btn btn-warning">
+            <div class="col-md-3 col-sm-6 col-xs-3 text-right">
+                <label id="btnReturnDashboardGapsi" class="btn btn-warning" onclick="location.reload()">
                     <i class="fa fa-2x fa-home"></i>
                 </label>  
             </div>

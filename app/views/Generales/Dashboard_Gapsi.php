@@ -48,21 +48,23 @@
                 <div class="radio">
                     <label style="color: #A8ACB1">
                         <?php
-                        if ($gastosCompras[0][0] === "MN")
-                            echo '<input type="radio" name="optionsRadiosMoneda" value="MN" checked/>Peso';
-                        else
-                            echo '<input type="radio" name="optionsRadiosMoneda" value="MN"/>Peso';
+//                        if ($gastosCompras[0][0] === "MN")
+//                            echo '<input type="radio" name="optionsRadiosMoneda" value="MN" checked/>Peso';
+//                        else
+//                            echo '<input type="radio" name="optionsRadiosMoneda" value="MN"/>Peso';
                         ?>
+                        <input type="radio" name="optionsRadiosMoneda" value="MN"/>Peso
                     </label>
                 </div>
                 <div class="radio">
                     <label style="color: #A8ACB1">
                         <?php
-                        if ($gastosCompras[0][0] === "USD")
-                            echo '<input type="radio" name="optionsRadiosMoneda" value="USD" checked/>Dollar';
-                        else
-                            echo '<input type="radio" name="optionsRadiosMoneda" value="USD" />Dollar';
+//                        if ($gastosCompras[0][0] === "USD")
+//                            echo '<input type="radio" name="optionsRadiosMoneda" value="USD" checked/>Dollar';
+//                        else
+//                            echo '<input type="radio" name="optionsRadiosMoneda" value="USD" />Dollar';
                         ?>
+                        <input type="radio" name="optionsRadiosMoneda" value="USD" />Dollar
                     </label>
                 </div>
             </div>
@@ -75,7 +77,7 @@
                     <div class="form-group">
                         <label style="color: #A8ACB1">Desde</label>
                         <div class='input-group date' id='desde' values="">
-                            <input id='fechaComienzo' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
+                            <input id='fechaComienzo' type='text' class="form-control"/>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
@@ -86,7 +88,7 @@
                     <div class="form-group">
                         <label style="color: #A8ACB1">Hasta</label>
                         <div class='input-group date' id='hasta'>
-                            <input id='fechaFinal' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
+                            <input id='fechaFinal' type='text' class="form-control"/>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
@@ -107,13 +109,13 @@
                         <select id="selectProyecto" class="form-control efectoDescuento" name="SelectProyecto" style="width: 100%">
                             <option value="">Seleccionar...</option>
                             <?php
-                            if (count($proyectos) == 1) {
-                                echo '<option value="' . $proyectos[0]['IdProyecto'] . '" selected="selected">' . $proyectos[0]['Proyecto'] . '</option>';
-                            } else {
-                                foreach ($proyectos as $proyecto) {
-                                    echo '<option value="' . $proyecto['IdProyecto'] . '">' . $proyecto['Proyecto'] . '</option>';
-                                }
-                            }
+//                            if (count($proyectos) == 1) {
+//                                echo '<option value="' . $proyectos[0]['IdProyecto'] . '" selected="selected">' . $proyectos[0]['Proyecto'] . '</option>';
+//                            } else {
+//                                foreach ($proyectos as $proyecto) {
+//                                    echo '<option value="' . $proyecto['IdProyecto'] . '">' . $proyecto['Proyecto'] . '</option>';
+//                                }
+//                            }
                             ?>
                         </select>
                     </div>

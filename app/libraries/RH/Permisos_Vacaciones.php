@@ -148,7 +148,8 @@ class Permisos_Vacaciones extends General {
                 'HoraSalida' => $horaSalida,
                 'Motivo' => $datosPermisos['descripcionAusencia'],
                 'FolioDocumento' => $datosPermisos['citaFolio'],
-                'Archivo' => $archivo
+                'Archivo' => $archivo,
+                'ArchivosOriginales' => 'Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/'.$datosPermisos['evidenciaIncapacidad']
             )
 
         );
