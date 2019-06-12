@@ -164,96 +164,72 @@ $(function () {
     }
 
     function eventosObjetos() {
-        selectorProyectos.evento('change', function () {
-            listenerEventosObjetos(selectorProyectos, 'proyecto');
-        });
-        tablaProyecto.evento(function () {
-            listenerEventosObjetos(tablaProyecto, 'proyecto', this);
-        });
-        graficaProyecto.agregarListener(function (dato) {
-            listenerEventosObjetos(graficaProyecto, 'proyecto', this, dato);
-        });
-
-        selectorServicios.evento('change', function () {
-            listenerEventosObjetos(selectorServicios, 'servicio');
-        });
-        tablaServicio.evento(function () {
-            listenerEventosObjetos(tablaServicio, 'servicio', this);
-        });
-        graficaServicio.agregarListener(function (dato) {
-            listenerEventosObjetos(graficaServicio, 'servicio', this, dato);
-        });
-
-        selectorSucursales.evento('change', function () {
-            listenerEventosObjetos(selectorSucursales, 'sucursal');
-        });
-        tablaSucursal.evento(function () {
-            listenerEventosObjetos(tablaSucursal, 'sucursal', this);
-        });
-        graficaSucursal.agregarListener(function (dato) {
-            listenerEventosObjetos(graficaSucursal, 'sucursal', this, dato);
-        });
-
-        selectorCategorias.evento('change', function () {
-            listenerEventosObjetos(selectorCategorias, 'categoria');
-        });
-        tablaCategoria.evento(function () {
-            listenerEventosObjetos(tablaCategoria, 'categoria', this);
-        });
-        graficaCategoria.agregarListener(function (dato) {
-            listenerEventosObjetos(graficaCategoria, 'categoria', this, dato);
-        });
-
-        selectorSubCategorias.evento('change', function () {
-            listenerEventosObjetos(selectorSubCategorias, 'subcategoria');
-        });
-        tablaSubCategoria.evento(function () {
-            listenerEventosObjetos(tablaSubCategoria, 'subcategoria', this);
-        });
-        graficaSubCategoria.agregarListener(function (dato) {
-            listenerEventosObjetos(selectorSubCategorias, 'subcategoria', this, dato);
-        });
-
-        tablaConcepto.evento(function () {
-            listenerEventosObjetos(tablaConcepto, 'concepto', this)
-        });
-        graficaConcepto.agregarListener(function (dato) {
-            listenerEventosObjetos(selectorSubCategorias, 'concepto', this, dato);
-        });
+        listenerEventosObjetos(selectorProyectos, 'proyecto');
+        listenerEventosObjetos(tablaProyecto, 'proyecto');
+        listenerEventosObjetos(graficaProyecto, 'proyecto');
+        listenerEventosObjetos(selectorServicios, 'servicio');
+        listenerEventosObjetos(tablaServicio, 'servicio');
+        listenerEventosObjetos(graficaServicio, 'servicio');
+        listenerEventosObjetos(selectorSucursales, 'sucursal');
+        listenerEventosObjetos(tablaSucursal, 'sucursal', );
+        listenerEventosObjetos(graficaSucursal, 'sucursal');
+        listenerEventosObjetos(selectorCategorias, 'categoria');
+        listenerEventosObjetos(tablaCategoria, 'categoria');
+        listenerEventosObjetos(graficaCategoria, 'categoria');
+        listenerEventosObjetos(selectorSubCategorias, 'subcategoria');
+        listenerEventosObjetos(tablaSubCategoria, 'subcategoria');
+        listenerEventosObjetos(selectorSubCategorias, 'subcategoria');
+        listenerEventosObjetos(tablaConcepto, 'concepto');
+        listenerEventosObjetos(selectorSubCategorias, 'concepto');
     }
 
-    function listenerEventosObjetos(objeto, filtro, _this = null, dato = null) {
+    function listenerEventosObjetos(objeto, filtro) {
         let datos = null;
         if (objeto instanceof TablaBasica) {
-            datos = objeto.datosFila(_this)[0];
-            datosFiltros[filtro] = datos;
-
+            objeto.evento(function () {
+                datos = objeto.datosFila(this);
+                datosFiltros[filtro] = datos[0];
+                enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            });
         } else if (objeto instanceof SelectBasico) {
-            datos = objeto.obtenerValor();
-            datosFiltros[filtro] = datos;
-
-        } else if (objeto instanceof GraficaGoogle) {
+            selectorCategorias.evento('change', function () {
+                datos = objeto.obtenerValor();                
+                datosFiltros[filtro] = datos;                
+                enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            });
+        } else if (objeto instanceof GraficaGoogle) {            
             switch (filtro) {
                 case 'proyecto':
-                    for (var i = 0; i < datosProyectos.length; i++) {
-                        if (dato === datosProyectos[i].Proyecto) {
-                            datosFiltros[filtro] = datosProyectos[i].IdProyecto;
+                    objeto.agregarListener(function (dato) {
+                        for (var i = 0; i < datosProyectos.length; i++) {
+                            if (dato === datosProyectos[i].Proyecto) {
+                                datosFiltros[filtro] = datosProyectos[i].IdProyecto;
+                            }
                         }
-                    }
+
+                        enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+                    });
                     break;
                 case 'sucursal':
-                    for (var i = 0; i < datosSucursales.length; i++) {
-                        if (dato === datosSucursales[i].Sucursal) {
-                            datosFiltros[filtro] = datosSucursales[i].idSucursal;
+                    objeto.agregarListener(function (dato) {
+                        for (var i = 0; i < datosSucursales.length; i++) {
+                            if (dato === datosSucursales[i].Sucursal) {
+                                datosFiltros[filtro] = datosSucursales[i].idSucursal;
+                            }
                         }
-                    }
+
+                        enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+                    });
                     break
                 default:
-                    datosFiltros[filtro] = dato;
+                    objeto.agregarListener(function (dato) {
+                        datosFiltros[filtro] = dato;
+                        enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+                    });
                     break;
             }
         }
-        enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+//        enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
     }
 
     function enviarInformacionFiltros(objeto, datosFiltros) {
@@ -261,7 +237,7 @@ $(function () {
             if (respuesta.consulta.proyectos.length !== 0) {
                 setSecciones(respuesta.formulario);
                 incializarDatos(respuesta.consulta);
-                incializarObjetos();
+                incializarObjetos();                
                 eventosObjetos();
                 $('html, body').animate({
                     scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
@@ -291,6 +267,7 @@ $(function () {
         $.each(datos, function (key, value) {
             datosFiltrados.push([value[clave], value[valor]]);
         });
+        console.log(datosFiltros);
         return datosFiltrados;
 
     }
