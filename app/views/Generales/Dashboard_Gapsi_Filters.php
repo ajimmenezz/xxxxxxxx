@@ -1,7 +1,7 @@
 <div id="contentDashboardGapsiFilters" class="page-with-two-sidebar">
     
     <!-- Empieza contenido #sidebar-right -->
-    <div id="sidebar-right" class="sidebar sidebar-right">
+    <div id="sidebar-right" class="sidebar sidebar-right" style="overflow: scroll">
         <!-- Empieza sidebar scrollbar -->
         <div data-scrollbar="true" data-height="100%">
             <!--Empieza seccion filtros-->
@@ -18,20 +18,12 @@
                                 </thead>
                                 <tbody>
                                     <?php
-    //                                foreach ($gastosCompras as $valor) {
-    //                                    echo "<tr>";
-    //                                    echo '<td>' . $valor['TipoTrans'] . '</td>';
-    //                                    if ($valor['0'] == 'MN') {
-    //                                        echo '<td>MN$ ' . number_format($valor['Gasto'], 2) . '</td>';
-    //                                    } else {
-    //                                        if ($valor['0'] == 'USD') {
-    //                                            echo '<td>US$ ' . number_format($valor['Gasto'], 2) . '</td>';
-    //                                        } else {
-    //                                            echo '<td>$ ' . number_format($valor['Gasto'], 2) . '</td>';
-    //                                        }
-    //                                    }
-    //                                    echo "</tr>";
-    //                                }
+                                    foreach ($gastosCompras as $valor) {
+                                        echo "<tr>";
+                                        echo '<td>' . $valor['TipoTrans'] . '</td>';
+                                        echo '<td>$ ' . number_format($valor['Gasto'], 2) . '</td>';
+                                        echo "</tr>";
+                                    }
                                     ?>
                                 </tbody>
                             </table>
@@ -165,7 +157,7 @@
                             </select>
                         </div>
                         <div class="form-group" id="hideSubCategoria">
-                            <label style="color: #A8ACB1">Categoria</label>
+                            <label style="color: #A8ACB1">SubCategoria</label>
                             <select id="selectSubCategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
                                 <option value="">Seleccionar...</option>
                                 <?php
@@ -256,15 +248,7 @@
                                         } else {
                                             echo '<td style="color: red">SIN DATOS</td>';
                                         }
-                                        if ($proyecto['0'] == 'MN') {
-                                            echo '<td>MN$ ' . number_format($proyecto['Gasto'], 2) . '</td>';
-                                        } else {
-                                            if ($proyecto['0'] == 'USD') {
-                                                echo '<td>US$ ' . number_format($proyecto['Gasto'], 2) . '</td>';
-                                            } else {
-                                                echo '<td>$ ' . number_format($proyecto['Gasto'], 2) . '</td>';
-                                            }
-                                        }
+                                        echo '<td>$ ' . number_format($proyecto['Gasto'], 2) . '</td>';
                                         echo "</tr>";
                                     }
                                     ?>
@@ -307,21 +291,13 @@
                                     <?php
                                     foreach ($servicios as $servicio) {
                                         echo "<tr>";
-                                        echo '<td>' . $servicio['IdServicio'] . '</td>';
+                                        echo '<td>' . $servicio['TipoServicio'] . '</td>';
                                         if ($servicio['TipoServicio'] != '') {
                                             echo '<td>' . $servicio['TipoServicio'] . '</td>';
                                         } else {
                                             echo '<td style="color: red">SIN DATOS</td>';
                                         }
-                                        if ($servicio['0'] == 'MN') {
-                                            echo '<td>MN$ ' . number_format($servicio['Gasto'], 2) . '</td>';
-                                        } else {
-                                            if ($servicio['0'] == 'USD') {
-                                                echo '<td>US$ ' . number_format($servicio['Gasto'], 2) . '</td>';
-                                            } else {
-                                                echo '<td>$ ' . number_format($servicio['Gasto'], 2) . '</td>';
-                                            }
-                                        }
+                                        echo '<td>$ ' . number_format($servicio['Gasto'], 2) . '</td>';
                                         echo "</tr>";
                                     }
                                     ?>
@@ -370,15 +346,7 @@
                                         } else {
                                             echo '<td style="color: red">SIN DATOS</td>';
                                         }
-                                        if ($sucursal['0'] == 'MN') {
-                                            echo '<td>MN$ ' . number_format($sucursal['Gasto'], 2) . '</td>';
-                                        } else {
-                                            if ($sucursal['0'] == 'USD') {
-                                                echo '<td>US$ ' . number_format($sucursal['Gasto'], 2) . '</td>';
-                                            } else {
-                                                echo '<td>$ ' . number_format($sucursal['Gasto'], 2) . '</td>';
-                                            }
-                                        }
+                                        echo '<td>$ ' . number_format($sucursal['Gasto'], 2) . '</td>';
                                         echo "</tr>";
                                     }
                                     ?>
@@ -427,15 +395,7 @@
                                         } else {
                                             echo '<td style="color: red">SIN DATOS</td>';
                                         }
-                                        if ($categoria['0'] == 'MN') {
-                                            echo '<td>MN$ ' . number_format($categoria['Gasto'], 2) . '</td>';
-                                        } else {
-                                            if ($categoria['0'] == 'USD') {
-                                                echo '<td>US$ ' . number_format($categoria['Gasto'], 2) . '</td>';
-                                            } else {
-                                                echo '<td>$ ' . number_format($categoria['Gasto'], 2) . '</td>';
-                                            }
-                                        }
+                                        echo '<td>$ ' . number_format($categoria['Gasto'], 2) . '</td>';
                                         echo "</tr>";
                                     }
                                     ?>
@@ -484,15 +444,7 @@
                                         } else {
                                             echo '<td style="color: red">SIN DATOS</td>';
                                         }
-                                        if ($subcategoria['0'] == 'MN') {
-                                            echo '<td>MN$ ' . number_format($subcategoria['Gasto'], 2) . '</td>';
-                                        } else {
-                                            if ($subcategoria['0'] == 'USD') {
-                                                echo '<td>US$ ' . number_format($subcategoria['Gasto'], 2) . '</td>';
-                                            } else {
-                                                echo '<td>$ ' . number_format($subcategoria['Gasto'], 2) . '</td>';
-                                            }
-                                        }
+                                        echo '<td>$ ' . number_format($subcategoria['Gasto'], 2) . '</td>';
                                         echo "</tr>";
                                     }
                                     ?>
@@ -541,15 +493,7 @@
                                         } else {
                                             echo '<td style="color: red">SIN DATOS</td>';
                                         }
-    //                                                        if($valor['0'] == 'MN'){
-    //                                                            echo '<td>MN$ '.number_format($valor['Gasto'], 2).'</td>';
-    //                                                        }else{
-    //                                                            if($valor['0'] == 'USD'){
-    //                                                                echo '<td>US$ '.number_format($valor['Gasto'], 2).'</td>';
-    //                                                            }else{
                                         echo '<td>$ ' . number_format($valor['Gasto'], 2) . '</td>';
-    //                                                            }
-    //                                                        }
                                         echo "</tr>";
                                     }
                                     ?>

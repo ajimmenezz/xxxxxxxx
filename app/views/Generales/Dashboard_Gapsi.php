@@ -72,15 +72,7 @@
                                     echo '<td>' . $valorProyecto['Tipo'] . '</td>';
                                     echo '<td>' . $valorProyecto['IdProyecto'] . '</td>';
                                     echo '<td>' . $valorProyecto['Descripcion'] . '</td>';
-//                                        if($valorProyecto['0'] == 'MN'){
-//                                            echo '<td>MN$ '.number_format($valorProyecto['Gasto'], 2).'</td>';
-//                                        }else{
-//                                            if($valor['0'] == 'USD'){
-//                                                echo '<td>US$ '.number_format($valorProyecto['Gasto'], 2).'</td>';
-//                                            }else{
                                     echo '<td>$ ' . number_format($valorProyecto['Gasto'], 2) . '</td>';
-//                                            }
-//                                        }
                                     echo '<td>' . $valorProyecto['FCreacion'] . '</td>';
                                     echo "</tr>";
                                 }
@@ -99,7 +91,7 @@
 <div id="dashboardGapsiFilters" class="hidden"></div>
 <!--Finaliza dashboard detallado-->
 
-<div id="filtroFechas" class="theme-panel">
+<!--<div id="filtroFechas" class="theme-panel">
     <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn bg-green"><i class="fa fa-calendar text-white"></i></a>
     <div class="theme-panel-content">
         <h5 class="m-t-0">Filtros de fechas</h5>
@@ -127,4 +119,4 @@
             </div>
         </div>
     </div>
-</div>
+</div>-->
