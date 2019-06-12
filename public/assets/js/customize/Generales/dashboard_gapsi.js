@@ -90,14 +90,19 @@ $(function () {
     }
 
     function filtroFechas() {
+        let fecha = new Date();
         $('#desde').datetimepicker({
-            format: 'YYYY/DD/MM',
-            maxDate: new Date()
+            format: 'YYYY/MM/DD',
+            maxDate: new Date(),
+            minDate: new Date('07/07/2016'),
+            date: datosFiltros.fechaInicio
         });
         $('#hasta').datetimepicker({
-            format: 'YYYY/DD/MM',
+            format: 'YYYY/MM/DD',
             useCurrent: false,
-            maxDate: new Date()
+            maxDate: new Date(),
+            minDate: new Date('07/07/2016'),
+            date: datosFiltros.fechaFinal
         });
         $("#desde").on("dp.change", function (e) {
             $('#hasta').data("DateTimePicker").minDate(e.date);
@@ -108,12 +113,12 @@ $(function () {
         $("#btnFiltrarDashboard").on('click', function () {
             datosFiltros.fechaInicio = $("#fechaComienzo").val();
             datosFiltros.fechaFinal = $("#fechaFinal").val();
-            enviarInformacionFiltros('contentDashboardGapsiFilters', datosFiltros);
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
         $("input[name='optionsRadiosMoneda").click(function(){
             var radioValue = $("input[name='optionsRadiosMoneda']:checked").val();
             datosFiltros.moneda = radioValue;
-            enviarInformacionFiltros('contentDashboardGapsiFilters', datosFiltros);
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
     }
 
@@ -246,7 +251,7 @@ $(function () {
                     break;
             }
         }
-        enviarInformacionFiltros('contentDashboardGapsiFilters', datosFiltros);
+        enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
     }
 
     function enviarInformacionFiltros(objeto, datosFiltros) {

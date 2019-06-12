@@ -1,7 +1,7 @@
 <div id="contentDashboardGapsiFilters" class="page-with-two-sidebar">
     
     <!-- Empieza contenido #sidebar-right -->
-    <div id="sidebar-right" class="sidebar sidebar-right fixed">
+    <div id="sidebar-right" class="sidebar sidebar-right">
         <!-- Empieza sidebar scrollbar -->
         <div data-scrollbar="true" data-height="100%">
             <!--Empieza seccion filtros-->
@@ -77,7 +77,7 @@
                         <div class="form-group">
                             <label style="color: #A8ACB1">Desde</label>
                             <div class='input-group date' id='desde' values="">
-                                <input id='fechaComienzo' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
+                                <input id='fechaComienzo' type='text' class="form-control"/>
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-calendar"></span>
                                 </span>
@@ -88,7 +88,7 @@
                         <div class="form-group">
                             <label style="color: #A8ACB1">Hasta</label>
                             <div class='input-group date' id='hasta'>
-                                <input id='fechaFinal' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
+                                <input id='fechaFinal' type='text' class="form-control"/>
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-calendar"></span>
                                 </span>
