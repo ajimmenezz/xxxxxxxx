@@ -12,8 +12,10 @@ $(function () {
 
     //Globales
     let tablaTipoProyecto = new TablaBasica('data-table-tipo-proyectos');
+    tablaTipoProyecto.reordenarTabla(2,'desc');
     let graficaPrincipal = new GraficaGoogle('graphDashboard', tablaTipoProyecto.datosTabla());
     let tablaProyectos = new TablaBasica('data-table-proyectos');
+    tablaProyectos.reordenarTabla(3,'desc');
     let tablaProyecto = null;
     let tablaServicio = null;
     let tablaSucursal = null;
@@ -48,7 +50,7 @@ $(function () {
     setDastosProyectos();
     graficaPrincipal.agregarListener(function (dato) {
         datosFiltros = {tipoProyecto: dato, moneda: 'MN'};
-        enviarInformacionFiltros(datosFiltros);
+        enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
     });
     filtroFechas();
 
@@ -75,7 +77,7 @@ $(function () {
     tablaProyectos.evento(function () {
         let datosfila = tablaProyectos.datosFila(this);
         datosFiltros = {tipoProyecto: datosfila[0], moneda: 'MN', proyecto: datosfila[1]};
-        enviarInformacionFiltros(datosFiltros);
+        enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
     });
 
     function incializarDatos(datos) {
@@ -106,17 +108,28 @@ $(function () {
         $("#btnFiltrarDashboard").on('click', function () {
             datosFiltros.fechaInicio = $("#fechaComienzo").val();
             datosFiltros.fechaFinal = $("#fechaFinal").val();
-            enviarInformacionFiltros(datosFiltros);
+            enviarInformacionFiltros('contentDashboardGapsiFilters', datosFiltros);
+        });
+        $("input[name='optionsRadiosMoneda").click(function(){
+            var radioValue = $("input[name='optionsRadiosMoneda']:checked").val();
+            datosFiltros.moneda = radioValue;
+            enviarInformacionFiltros('contentDashboardGapsiFilters', datosFiltros);
         });
     }
 
     function incializarObjetos() {
         tablaProyecto = new TablaBasica('data-tipo-proyecto');
+        tablaProyecto.reordenarTabla(2,'desc');
         tablaServicio = new TablaBasica('data-tipo-servicio');
+        tablaServicio.reordenarTabla(2,'desc');
         tablaSucursal = new TablaBasica('data-tipo-sucursal');
+        tablaSucursal.reordenarTabla(2,'desc');
         tablaCategoria = new TablaBasica('data-tipo-categoria');
+        tablaCategoria.reordenarTabla(2,'desc');
         tablaSubCategoria = new TablaBasica('data-tipo-subCategoria');
+        tablaSubCategoria.reordenarTabla(2,'desc');
         tablaConcepto = new TablaBasica('data-tipo-concepto');
+        tablaConcepto.reordenarTabla(2,'desc');
         //tablaGastos = new TablaBasica('tableGastos');
         graficaProyecto = new GraficaGoogle('chart_proyecto', filtrarDatosGraficaGoogle(datosProyectos, 'Proyecto', 'Gasto'));
         graficaServicio = new GraficaGoogle('chart_servicios', filtrarDatosGraficaGoogle(datosServicios, 'TipoServicio', 'Gasto'));
@@ -143,6 +156,65 @@ $(function () {
         filtroFechas();
     }
 
+    function eventosObjetos() {
+        selectorProyectos.evento('change', function () {
+            listenerEventosObjetos(selectorProyectos, 'proyecto');
+        });
+        tablaProyecto.evento(function () {
+            listenerEventosObjetos(tablaProyecto, 'proyecto', this);
+        });
+        graficaProyecto.agregarListener(function (dato) {
+            listenerEventosObjetos(graficaProyecto, 'proyecto', this, dato);
+        });
+        
+        selectorServicios.evento('change', function () {
+            listenerEventosObjetos(selectorServicios, 'servicio');
+        });
+        tablaServicio.evento(function () {
+            listenerEventosObjetos(tablaServicio, 'servicio', this);
+        });
+        graficaServicio.agregarListener(function (dato) {
+            listenerEventosObjetos(graficaServicio, 'servicio', this, dato);
+        });
+        
+        selectorSucursales.evento('change', function () {
+            listenerEventosObjetos(selectorSucursales, 'sucursal');
+        });
+        tablaSucursal.evento(function () {
+            listenerEventosObjetos(tablaSucursal, 'sucursal', this);
+        });
+        graficaSucursal.agregarListener(function (dato) {
+            listenerEventosObjetos(graficaSucursal, 'sucursal', this, dato);
+        });
+        
+        selectorCategorias.evento('change', function () {
+            listenerEventosObjetos(selectorCategorias, 'categoria');
+        });
+        tablaCategoria.evento(function () {
+            listenerEventosObjetos(tablaCategoria, 'categoria', this);
+        });
+        graficaCategoria.agregarListener(function (dato) {
+            listenerEventosObjetos(graficaCategoria, 'categoria', this, dato);
+        });
+        
+        selectorSubCategorias.evento('change', function () {
+            listenerEventosObjetos(selectorSubCategorias, 'subcategoria');
+        });
+        tablaSubCategoria.evento(function () {
+            listenerEventosObjetos(tablaSubCategoria, 'subcategoria', this);
+        });
+        graficaSubCategoria.agregarListener(function (dato) {
+            listenerEventosObjetos(selectorSubCategorias, 'subcategoria', this, dato);
+        });
+        
+        tablaConcepto.evento(function(){
+            listenerEventosObjetos(tablaConcepto, 'concepto', this )
+        });
+        graficaConcepto.agregarListener(function (dato) {
+            listenerEventosObjetos(selectorSubCategorias, 'concepto', this, dato);
+        });
+    }
+    
     function listenerEventosObjetos(objeto, filtro, _this = null, dato = null) {
         let datos = null;
         if (objeto instanceof TablaBasica) {
@@ -174,79 +246,25 @@ $(function () {
                     break;
             }
         }
-        enviarInformacionFiltros(datosFiltros);
+        enviarInformacionFiltros('contentDashboardGapsiFilters', datosFiltros);
     }
 
-    function listenerEventos() {
-        selectorProyectos.evento('change', function () {
-            listenerEventosObjetos(selectorProyectos, 'proyecto');
-        });
-        tablaProyecto.evento(function () {
-            listenerEventosObjetos(tablaProyecto, 'proyecto', this);
-        });
-        graficaProyecto.agregarListener(function (dato) {
-            listenerEventosObjetos(graficaProyecto, 'proyecto', this, dato);
-        });
-        selectorServicios.evento('change', function () {
-            listenerEventosObjetos(selectorServicios, 'servicio');
-        });
-        tablaServicio.evento(function () {
-            listenerEventosObjetos(tablaServicio, 'servicio', this);
-        });
-        graficaServicio.agregarListener(function (dato) {
-            listenerEventosObjetos(graficaServicio, 'servicio', this, dato);
-        });
-        selectorSucursales.evento('change', function () {
-            listenerEventosObjetos(selectorSucursales, 'sucursal');
-        });
-        tablaSucursal.evento(function () {
-            listenerEventosObjetos(tablaSucursal, 'sucursal', this);
-        });
-        graficaSucursal.agregarListener(function (dato) {
-            listenerEventosObjetos(graficaSucursal, 'sucursal', this, dato);
-        });
-        selectorCategorias.evento('change', function () {
-            listenerEventosObjetos(selectorCategorias, 'categoria');
-        });
-        tablaCategoria.evento(function () {
-            listenerEventosObjetos(tablaCategoria, 'categoria', this);
-        });
-        graficaCategoria.agregarListener(function (dato) {
-            listenerEventosObjetos(graficaCategoria, 'categoria', this, dato);
-        });
-        selectorSubCategorias.evento('change', function () {
-            listenerEventosObjetos(selectorSubCategorias, 'subcategoria');
-        });
-        tablaSubCategoria.evento(function () {
-            listenerEventosObjetos(tablaSubCategoria, 'subcategoria', this);
-        });
-        graficaSubCategoria.agregarListener(function (dato) {
-            listenerEventosObjetos(selectorSubCategorias, 'subcategoria', this, dato);
-        });
-        tablaConcepto.evento(function(){
-            listenerEventosObjetos(tablaConcepto, 'concepto', this )
-        });
-        graficaConcepto.agregarListener(function (dato) {
-            listenerEventosObjetos(selectorSubCategorias, 'concepto', this, dato);
-        });
-        //var radioValue = $("input[name='optionsRadiosMoneda']:checked").val();
-    }
-
-    function enviarInformacionFiltros(datosFiltros) {
-        evento.enviarEvento('Dashboard_Gapsi/tipoProyecto', datosFiltros, '#panelDashboardGapsi', function (respuesta) {
-            if (respuesta.consulta.length !== 0) {
+    function enviarInformacionFiltros(objeto, datosFiltros) {
+        peticion.enviar(objeto, 'Dashboard_Gapsi/tipoProyecto', datosFiltros, function (respuesta) {
+            if (respuesta.consulta.proyectos.length !== 0) {
                 $('#dashboardGapsiFilters').removeClass('hidden').empty().append(respuesta.formulario);
                 $('#contentDashboardGapsi').addClass('hidden');
                 $('#filtroFechas').addClass('hidden');
                 incializarDatos(respuesta.consulta);
                 incializarObjetos();
-                listenerEventos();
+                eventosObjetos();
                 $('html, body').animate({
                     scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
                 }, 600);
             } else {
-                errorFilter = 'esta Consulta';
                 setTimeout(modalUndefined, 1000);
+                console.log("error")
+                console.log(datosFiltros)
             }
         });
     }
@@ -283,13 +301,12 @@ $(function () {
         return datosFiltrados;
     }
 
-});
-
-function modalUndefined() {
+    function modalUndefined() {
     var html = '<div class="row m-t-20">\n\
         <form id="idUndefined" class="margin-bottom-0" enctype="multipart/form-data">\n\
             <div id="modal-dialogo" class="col-md-12 text-center">\n\
-                <h4>No hay información para ' + errorFilter + '</h4><br>\n\
+                <h5>No hay información para esta Consulta<br>\n\
+                Revisa tus Filtros seleccionados</h5><br>\n\
                 <button id="btnAceptar" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
             </div>\n\
         </form>\n\
@@ -301,3 +318,4 @@ function modalUndefined() {
         evento.cerrarModal();
     });
 }
+});

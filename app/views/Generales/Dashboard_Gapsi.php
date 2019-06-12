@@ -87,6 +87,7 @@
 </div>
 <!--Finaliza dashboard principal-->
 
+	<script src="assets/js/page-with-two-sidebar.demo.js"></script>
 <!--Empieza dashboard detallado-->
 <div id="dashboardGapsiFilters" class="hidden"></div>
 <!--Finaliza dashboard detallado-->

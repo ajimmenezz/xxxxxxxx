@@ -1,7 +1,7 @@
 <div id="contentDashboardGapsiFilters" class="page-with-two-sidebar">
     
     <!-- Empieza contenido #sidebar-right -->
-    <div id="sidebar-right" class="sidebar sidebar-right" style="overflow: scroll">
+    <div id="sidebar-right" class="sidebar sidebar-right fixed">
         <!-- Empieza sidebar scrollbar -->
         <div data-scrollbar="true" data-height="100%">
             <!--Empieza seccion filtros-->
@@ -49,14 +49,22 @@
                 <div class="col-md-12">
                     <div class="radio">
                         <label style="color: #A8ACB1">
-                            <input type="radio" name="optionsRadiosMoneda" value="MN" checked />
-                            Pesos
+                            <?php 
+                            if($gastosCompras[0][0] === "MN")
+                                echo '<input type="radio" name="optionsRadiosMoneda" value="MN" checked/>Peso';
+                            else
+                               echo '<input type="radio" name="optionsRadiosMoneda" value="MN"/>Peso'; 
+                            ?>
                         </label>
                     </div>
                     <div class="radio">
                         <label style="color: #A8ACB1">
-                            <input type="radio" name="optionsRadiosMoneda" value="USD" />
-                            Dollar
+                            <?php 
+                            if($gastosCompras[0][0] === "USD")
+                                echo '<input type="radio" name="optionsRadiosMoneda" value="USD" checked/>Dollar';
+                            else
+                               echo '<input type="radio" name="optionsRadiosMoneda" value="USD" />Dollar'; 
+                            ?>
                         </label>
                     </div>
                 </div>
@@ -176,9 +184,9 @@
                 <!--Finaliza selector de filtros-->
 
             </div>
-            <!-- Termina sidebar scrollbar -->
+            <!-- Termina seccion filtros -->
         </div>
-        <!--Termina seccion filtros-->
+        <!--Termina sidebar scrollbar-->
     </div>
     <div class="sidebar-bg sidebar-right"></div>
     <!-- Finaliza contenido #sidebar-right -->
@@ -235,7 +243,13 @@
                                     <tr>
                                         <th class="never">idProyecto</th>
                                         <th class="all">Proyecto</th>
-                                        <th class="all">Gasto</th>
+                                        <?php
+                                        if ($proyectos[0][0] === 'MN') {
+                                            echo '<th class="all">Gasto MN</th>';
+                                        } else {
+                                            echo '<th class="all">Gasto USD</th>';
+                                        }
+                                        ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -284,7 +298,13 @@
                                     <tr>
                                         <th class="never">idSerivicio</th>
                                         <th class="all">Serivicio</th>
-                                        <th class="all">Gastos</th>
+                                        <?php
+                                        if ($servicios[0][0] === 'MN') {
+                                            echo '<th class="all">Gasto MN</th>';
+                                        } else {
+                                            echo '<th class="all">Gasto USD</th>';
+                                        }
+                                        ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -333,7 +353,13 @@
                                     <tr>
                                         <th class="never">idSucursal</th>
                                         <th class="all">Sucursal</th>
-                                        <th class="all">Gastos</th>
+                                        <?php
+                                        if ($sucursales[0][0] === 'MN') {
+                                            echo '<th class="all">Gasto MN</th>';
+                                        } else {
+                                            echo '<th class="all">Gasto USD</th>';
+                                        }
+                                        ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -382,7 +408,13 @@
                                     <tr>
                                         <th class="never">idCategoria</th>
                                         <th class="all">Categoria</th>
-                                        <th class="all">Gastos</th>
+                                        <?php
+                                        if ($categorias[0][0] === 'MN') {
+                                            echo '<th class="all">Gasto MN</th>';
+                                        } else {
+                                            echo '<th class="all">Gasto USD</th>';
+                                        }
+                                        ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -431,7 +463,13 @@
                                     <tr>
                                         <th class="never">idSubCategoria</th>
                                         <th class="all">SubCategoria</th>
-                                        <th class="all">Gastos</th>
+                                        <?php
+                                        if ($subcategorias[0][0] === 'MN') {
+                                            echo '<th class="all">Gasto MN</th>';
+                                        } else {
+                                            echo '<th class="all">Gasto USD</th>';
+                                        }
+                                        ?>
                                     </tr>
                                 </thead>
                                 <tbody>
