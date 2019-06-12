@@ -149,12 +149,17 @@
                 <div class="container-fluid">
                     <!-- Empezando mobile sidebar expand / collapse button -->
                     <div class="navbar-header">
-                        <a href="prototipo_nuevo" class="navbar-brand"><span class="fa fa-desktop"></span> ADIST</a>
                         <button type="button" class="navbar-toggle" data-click="sidebar-toggled">
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
+                        <button type="button" class="navbar-toggle pull-right hidden" data-click="right-sidebar-toggled">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a href="prototipo_nuevo" class="navbar-brand"><span class="fa fa-desktop"></span> ADIST</a>
                     </div>
                     <!-- Finalizando mobile sidebar expand / collapse button -->
 
@@ -265,6 +270,18 @@
                             <!--se eliminio barra de buquedea ya por el momento no se utiliza-->
                         </li>
                         <!--Finalizando icono de ayuda-->
+                        
+                        <!--Empezando separador -->
+                        <li data-devider="right-sidebar-toggled" class="divider hidden-xs hidden"></li>
+                        <!--Finlizando separador -->
+                        
+                        <!--Empezando boton para ocultar slider derecho -->
+                        <li class="hidden-xs">
+                            <a href="javascript:;" data-click="right-sidebar-toggled" class="f-s-14 hidden">
+                                <i class="fa fa-th"></i>
+                            </a>
+                        </li>
+                        <!--Finalizando boton para ocultar slider derecho-->
                     </ul>
                     <!-- Finalizando cabecera de navegacion derecha -->
                 </div>
