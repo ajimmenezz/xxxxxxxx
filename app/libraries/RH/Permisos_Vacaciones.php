@@ -109,7 +109,7 @@ class Permisos_Vacaciones extends General {
     public function guardarImagen($datosPermisos) {
         if (!empty($_FILES)) {
             $CI = parent::getCI();
-            $carpeta = 'Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/';
+            $carpeta = 'Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/';
             $archivos = implode(',', setMultiplesArchivos($CI, 'evidenciasIncapacidad', $carpeta));
         } else {
             return 'otraImagen';
@@ -148,7 +148,8 @@ class Permisos_Vacaciones extends General {
                 'HoraSalida' => $horaSalida,
                 'Motivo' => $datosPermisos['descripcionAusencia'],
                 'FolioDocumento' => $datosPermisos['citaFolio'],
-                'Archivo' => $archivo
+                'Archivo' => $archivo,
+                'ArchivosOriginales' => 'Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/'.$datosPermisos['evidenciaIncapacidad']
             )
 
         );

@@ -148,7 +148,16 @@ $config['Generales'] = array(
             'parsley/src/parsley',
             'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
         ),
-        'js' => array('Base/Base', 'Componentes/HerramientasWeb/Utileria', 'Componentes/Selects/Select', 'Componentes/Selects/SelectBasico', 'Componentes/Tablas/Tabla', 'Componentes/Tablas/TablaBasica', 'Componentes/Graficas/GraficaGoogle', 'Generales/dashboard_gapsi'),
+        'js' => array(
+            'Base/Base', 
+            'Componentes/HerramientasWeb/Utileria', 
+            'Componentes/Selects/Select', 
+            'Componentes/Selects/SelectBasico', 
+            'Componentes/Tablas/Tabla', 
+            'Componentes/Tablas/TablaBasica', 
+            'Componentes/Graficas/GraficaGoogle', 
+            'Generales/dashboard_gapsi',
+            'Generales/page-with-two-sidebar'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
@@ -158,7 +167,9 @@ $config['Generales'] = array(
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
             'masked-input/masked-input.min',
-            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'sparkline/jquery.sparkline',
+            'jquery-knob/js/jquery.knob'
         ),
         'Permiso' => 'VDASHGPSI'
     ),
