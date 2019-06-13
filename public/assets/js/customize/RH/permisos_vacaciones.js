@@ -28,22 +28,24 @@ $(function () {
         format: 'yyyy-mm-dd'
     });
     $('#inputFechaDocumento').datepicker("setDate", new Date());
-    $('#inputFechaPermisoDesde').datepicker({
-        format: 'yyyy-mm-dd',
-        daysOfWeekDisabled: [0,6]
+    $('#inputFechaDesde').datetimepicker({
+        format: 'YYYY-MM-DD',
+        maxDate: moment().add(1,'year'),
+        minDate: moment().add(-15,'day')
     });
     $('#selectSolicitudHora').timepicker();
 
-    $('#inputFechaPermisoDesde').on('change', function () {
-        diaDesde = $('#inputFechaPermisoDesde').val();
-        console.log(diaDesde)
-        $('#inputFechaPermisoHasta').val(diaDesde);
-        $('#inputFechaPermisoHasta').datepicker({
-            format: 'yyyy-mm-dd',
-            daysOfWeekDisabled: [0,6],
-            startDate: diaDesde,
-            maxDate: '2'
-        });
+    $('#inputFechaHasta').datetimepicker({
+        format: 'YYYY-MM-DD',
+        useCurrent: false
+    });
+    $("#inputFechaDesde").on("dp.change", function (e) {
+        $('#inputFechaHasta').data("DateTimePicker").maxDate(moment(e.date).add(1,'day'));
+        $('#inputFechaHasta').data("DateTimePicker").minDate(e.date);
+        $('#inputDescuento').val('1.17 Dias');
+    });
+    $("#inputFechaHasta").on("dp.change", function (e) {
+        $('#inputFechaDesde').data("DateTimePicker").maxDate(e.date);
     });
 
 
@@ -89,12 +91,11 @@ $(function () {
 
     $('#formSolicitudPermiso').on('change', function () {
         if($('#selectTipoAusencia').val() == 3 && $('#selectMotivoAusencia').val() == 1){
-            $('#inputDescuento').val('0');
-            $('#Permisos').on('change', function () {
-                date1 = new Date($('#inputFechaPermisoDesde').val());
-                date2 = new Date($('#inputFechaPermisoHasta').val());
-                diffTime = Math.abs(date2.getTime() - date1.getTime());
-                diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            $('#inputDescuento').val('1.17 Dias');
+            $("#inputFechaHasta").on("dp.change", function () {
+                var date1 = new Date($('#inputFechaPermisoDesde').val());
+                var date2 = new Date($('#inputFechaPermisoHasta').val());
+                var diffDays = date2.getDate('dd')-date1.getDate('dd')
                 var totalDescuentoDias;
                 switch(diffDays){
                     case 0:
@@ -103,35 +104,8 @@ $(function () {
                     case 1:
                         totalDescuentoDias = '2.34 Dias';
                         break;
-                    case 2:
-                        totalDescuentoDias = '3.51 Dias';
-                        break;
-                    case 3:
-                        totalDescuentoDias = '4.68 Dias';
-                        break;
-                    case 4:
-                        totalDescuentoDias = '5.85 Dias';
-                        break;
-                    case 5:
-                        totalDescuentoDias = '7.02 Dias';
-                        break;
-                    case 6:
-                        totalDescuentoDias = '8.19 Dias';
-                        break;
-                    case 7:
-                        totalDescuentoDias = '9.36 Dias';
-                        break;
-                    case 8:
-                        totalDescuentoDias = '10.53 Dias';
-                        break;
-                    case 9:
-                        totalDescuentoDias = '11.70 Dias';
-                        break;
-                    case 10:
-                        totalDescuentoDias = '12.87 Dias';
-                        break;
                     default:
-                        totalDescuentoDias = '12.87 Dias';
+                        totalDescuentoDias = '1.17 Dias';
                         break;
                 }
                 $('#inputDescuento').val(totalDescuentoDias);
@@ -221,8 +195,9 @@ $(function () {
                         </div>\n\
                     </form>\n\
                     </div>';
-                $('#btnModalConfirmar').addClass('hidden');
-                $('#btnModalAbortar').addClass('hidden');
+            $('#btnModalConfirmar').addClass('hidden');
+            $('#btnModalAbortar').addClass('hidden');
+            if($('#inputDescuento').val() != 0){
                 evento.mostrarModal('Descuento aplicable', html);
                 $('#btnCancelarPermisoM').on('click', function () {
                     evento.cerrarModal();
@@ -248,6 +223,27 @@ $(function () {
                         });
                     }
                 });
+            }else{
+                if ( $('#inputEvidenciaIncapacidad').val() !== '' ) {
+                    file.enviarArchivos('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', '#panelPermisosVacaciones', data, function (respuesta) {
+                        if (respuesta !== 'otraImagen') {
+                            window.open(respuesta, '_blank');
+                            location.reload();
+                        } else {
+                            evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
+                        }
+                    });
+                } else {
+                    evento.enviarEvento('EventoPermisosVacaciones/Permisos', data, '#panelPermisosVacaciones', function (respuesta) {
+                        if (respuesta) {
+                            window.open(respuesta, '_blank');
+                            location.reload();
+                        } else {
+                            evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
+                        }
+                    });
+                }
+            }
         }
     });
 
@@ -274,19 +270,23 @@ $(function () {
                             format: 'yyyy-mm-dd'
                         });
                         $('#inputFechaDocumentoAct').datepicker("setDate", new Date());
-                        $('#inputFechaPermisoDesdeAct').datepicker({
-                            format: 'yyyy-mm-dd',
-                            daysOfWeekDisabled: [0,6]
+                        $('#inputFechaDesdeAct').datetimepicker({
+                            format: 'YYYY-MM-DD',
+                            maxDate: moment().add(1,'year'),
+                            minDate: moment().add(-15,'day')
                         });
                         $('#selectSolicitudHoraAct').timepicker();
-                        $('#inputFechaPermisoHastaAct').on('click', function () {
-                            diaDesde = $('#inputFechaPermisoDesdeAct').val();
-                            $('#inputFechaPermisoHastaAct').val(diaDesde);
-                            $('#inputFechaPermisoHastaAct').datepicker({
-                                format: 'yyyy-mm-dd',
-                                daysOfWeekDisabled: [0,6],
-                                startDate: diaDesde
-                            });
+                        $('#inputFechaHastaAct').datetimepicker({
+                            format: 'YYYY-MM-DD',
+                            useCurrent: false
+                        });
+                        $("#inputFechaDesdeAct").on("dp.change", function (e) {
+                            $('#inputFechaHastaAct').data("DateTimePicker").maxDate(moment(e.date).add(1,'day'));
+                            $('#inputFechaHastaAct').data("DateTimePicker").minDate(e.date);
+                            $('#inputDescuentoAct').val('1.17 Dias');
+                        });
+                        $("#inputFechaHastaAct").on("dp.change", function (e) {
+                            $('#inputFechaDesdeAct').data("DateTimePicker").maxDate(e.date);
                         });
                         $('#selectMotivoAusenciaAct').on('change', function () {
                             if ($(this).val() == '3' || $(this).val() == '4') {
@@ -330,12 +330,11 @@ $(function () {
 
                         $('#formActualizarPermiso').on('change', function () {
                             if($('#selectTipoAusenciaAct').val() == 3 && $('#selectMotivoAusenciaAct').val() == 1){
-                                $('#inputDescuentoAct').val('0');
-                                $('#ActualizarPermiso').on('change', function () {
-                                    date1 = new Date($('#inputFechaPermisoDesdeAct').val());
-                                    date2 = new Date($('#inputFechaPermisoHastaAct').val());
-                                    diffTime = Math.abs(date2.getTime() - date1.getTime());
-                                    diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                $('#inputDescuentoAct').val('1.17 Dias');
+                                $("#inputFechaHastaAct").on("dp.change", function () {
+                                    var date1 = new Date($('#inputFechaPermisoDesdeAct').val());
+                                    var date2 = new Date($('#inputFechaPermisoHastaAct').val());
+                                    var diffDays = date2.getDate('dd')-date1.getDate('dd')
                                     var totalDescuentoDias;
                                     switch(diffDays){
                                         case 0:
@@ -343,33 +342,6 @@ $(function () {
                                             break;
                                         case 1:
                                             totalDescuentoDias = '2.34 Dias';
-                                            break;
-                                        case 2:
-                                            totalDescuentoDias = '3.51 Dias';
-                                            break;
-                                        case 3:
-                                            totalDescuentoDias = '4.68 Dias';
-                                            break;
-                                        case 4:
-                                            totalDescuentoDias = '5.85 Dias';
-                                            break;
-                                        case 5:
-                                            totalDescuentoDias = '7.02 Dias';
-                                            break;
-                                        case 6:
-                                            totalDescuentoDias = '8.19 Dias';
-                                            break;
-                                        case 7:
-                                            totalDescuentoDias = '9.36 Dias';
-                                            break;
-                                        case 8:
-                                            totalDescuentoDias = '10.53 Dias';
-                                            break;
-                                        case 9:
-                                            totalDescuentoDias = '11.70 Dias';
-                                            break;
-                                        case 10:
-                                            totalDescuentoDias = '12.87 Dias';
                                             break;
                                         default:
                                             totalDescuentoDias = '12.87 Dias';

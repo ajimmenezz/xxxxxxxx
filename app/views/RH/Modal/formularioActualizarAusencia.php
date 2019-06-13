@@ -141,29 +141,45 @@
                             <div class="col-md-6">
                                 <?php
                                 if ($datosAusencia[0]["FechaAusenciaDesde"] != "0000-00-00") {
-                                echo '<div id="inputFechaDesdeAct" class="input-group date calendario">
-                                        <input id="inputFechaPermisoDesdeAct" type="text" class="form-control" data-parsley-required="true" value="'.$datosAusencia[0]["FechaAusenciaDesde"].'"/>
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    </div>';
+                                echo '<div class="form-group">
+                                            <div class="input-group date" id="inputFechaDesdeAct">
+                                                <input id="inputFechaPermisoDesdeAct" type="text" class="form-control" value="'.$datosAusencia[0]["FechaAusenciaDesde"].'"/>
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>';
                                 } else {
-                                echo '<div id="inputFechaDesdeAct" class="input-group date calendario">
-                                        <input id="inputFechaPermisoDesdeAct" type="text" class="form-control" placeholder="Desde" data-parsley-required="true"/>
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    </div>';
+                                echo '<div class="form-group">
+                                            <div class="input-group date" id="inputFechaDesdeAct">
+                                                <input id="inputFechaPermisoDesdeAct" type="text" class="form-control" placeholder="Desde"/>
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>';
                                 }
                                 ?>
                             </div>
                             <div class="col-md-6">
                                 <?php
                                 if ($datosAusencia[0]["FechaAusenciaHasta"] != "0000-00-00") {
-                                echo '<div id="inputFechaHastaAct" class="input-group date calendario">
-                                        <input id="inputFechaPermisoHastaAct" type="text" class="form-control" value="'.$datosAusencia[0]["FechaAusenciaHasta"].'"/>
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                echo '<div class="form-group">
+                                        <div class="input-group date" id="inputFechaHastaAct">
+                                            <input id="inputFechaPermisoHastaAct" type="text" class="form-control" value="'.$datosAusencia[0]["FechaAusenciaHasta"].'"/>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
                                     </div>';
                                 } else {
-                                echo '<div id="inputFechaHastaAct" class="input-group date calendario">
-                                        <input id="inputFechaPermisoHastaAct" type="text" class="form-control" value="'.$datosAusencia[0]["FechaAusenciaDesde"].'" placeholder="Hasta"/>
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                echo '<div class="form-group">
+                                        <div class="input-group date" id="inputFechaHastaAct">
+                                            <input id="inputFechaPermisoHastaAct" type="text" class="form-control" placeholder="Hasta"/>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
                                     </div>';
                                 }
                                 ?>

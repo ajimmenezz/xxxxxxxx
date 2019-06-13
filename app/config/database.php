@@ -210,22 +210,22 @@ $db['SAE7'] = array(
 
 $posicion = strpos($_SERVER['SERVER_NAME'], 'siccob.solutions');
 
-if ($posicion !== FALSE) {
+//if ($posicion !== FALSE) {
     $hostNameGapsi = '192.168.0.30, 50742'; 
     $userNameGapsi = 'sa';
     $pwdGapsi = 'S1cc0b';    
-} else {
-    $hostNameGapsi = '127.0.0.1, 50742';    
-    $userNameGapsi = 'salocal';
-    $pwdGapsi = 'S1cc0bS.';
-}
+//} else {
+//    $hostNameGapsi = '127.0.0.1, 50742';    
+//    $userNameGapsi = 'salocal';
+//    $pwdGapsi = 'S1cc0bS.';
+//}
 
 
 $db['Gapsi'] = array(
     'dsn' => '',
-    'hostname' => '192.168.0.30, 50742',
-    'username' => 'sa',
-    'password' => 'S1cc0b',
+    'hostname' => $hostNameGapsi,
+    'username' => $userNameGapsi,
+    'password' => $pwdGapsi,
     'database' => 'DB_9DEFD2_dbGastosSiccob',
     'dbdriver' => 'sqlsrv',
     'dbprefix' => '',

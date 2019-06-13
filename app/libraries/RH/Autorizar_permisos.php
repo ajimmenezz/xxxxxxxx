@@ -78,7 +78,7 @@ class Autorizar_permisos extends General{
                     Motivo de Rechazo: <p><b>' . $datosPermiso[0]['motivoRechazo'] . '</b> </p><br><br>
                     <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Rechazado', $texto);
-        //$this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
         $this->agregarFirmasPDF($datosPermiso,$rechazado="Rechazado por: ",$resultado);
         
@@ -134,7 +134,7 @@ class Autorizar_permisos extends General{
                     Descripción: <p>' .$infoCorreo['descripcion']. '</p><br><br>
                     <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Autorizado', $texto);
-        //$this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
         $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado por: ", $motivo = array ('MotivoRechazo' => ""));
         
@@ -155,6 +155,11 @@ class Autorizar_permisos extends General{
                     'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                     );
                 break;
+            default :
+                $revisor = array (
+                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                    );
+                break;
         }
         $resultado = array_merge($estadoPermiso, $revisor);
         
@@ -164,7 +169,7 @@ class Autorizar_permisos extends General{
                     Descripción: <p>' .$infoCorreo['descripcion']. '</p><br><br>
                     <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Concluido', $texto);
-        //$this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
         $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado y Concluido por: ", $motivo = array ('MotivoRechazo' => ""));
         
@@ -239,20 +244,20 @@ class Autorizar_permisos extends General{
         $tplIdx = $this->pdf->importPage(1);
         $this->pdf->useTemplate($tplIdx, 0, 0, 210, 297,true);
         
-        $this->pdf->SetXY(165, 10);
-        $this->pdf->SetTextColor(255,255,255);
-        $this->pdf->SetFont("helvetica", "B", 12);
-        $this->pdf->Cell(14, 0, "Falta Autorizar");
-        $this->pdf->SetTextColor(0,0,0);
+        $this->pdf->SetXY(150, 2);
+        $this->pdf->SetFillColor(255, 255, 255);
+        $this->pdf->Cell(50, 20, '', 0, 0, 'C', True);
         if ($datosFirmas['MotivoRechazo'] != ""){
+            $this->pdf->SetXY(15, 200);
             $this->pdf->SetFont('Arial','B',35);
             $this->pdf->SetTextColor(254,159,159);
-            $this->pdf->Cell(30,210,'R e c h a z a d o');
+            $this->pdf->Cell(30,30,'R e c h a z a d o');
         }
         if ($estadoPermiso == "Autorizado y Concluido por: "){
+            $this->pdf->SetXY(15, 200);
             $this->pdf->SetFont('Arial','B',35);
             $this->pdf->SetTextColor(147,240,252);
-            $this->pdf->Cell(30,210,'A u t o r i z a d o');
+            $this->pdf->Cell(30,30,'A u t o r i z a d o');
         }
         
         $this->pdf->SetFont("helvetica", "B", 11);

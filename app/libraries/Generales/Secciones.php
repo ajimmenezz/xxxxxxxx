@@ -40,7 +40,8 @@ class Secciones extends General
     private $ModeloDashboard;
     private $permisosVacaciones;
     private $autorizarpermisos;
-    private $gestorProyectos;
+    private $GapsiProyecto;
+    private $fondoFijo;
 
     public function __construct()
     {
@@ -85,7 +86,8 @@ class Secciones extends General
         $this->ModeloDashboard = \Modelos\Modelo_Dashboard::factory();
         $this->permisosVacaciones = \Librerias\RH\Permisos_Vacaciones::factory();
         $this->autorizarpermisos = \Librerias\RH\Autorizar_permisos::factory();
-        $this->gestorProyectos = \Librerias\Gapsi\GestorProyectos::factory();
+        $this->GapsiProyecto = \Librerias\Gapsi\GerstorProyectosGAPSI::factory();
+        $this->fondoFijo = \Librerias\FondoFijo\FondoFijo::factory();
     }
 
     /*
@@ -152,6 +154,7 @@ class Secciones extends General
     public function getDatosPagina(string $url)
     {
         $datos = array();
+        $usuario = $this->Usuario->getDatosUsuario();
         switch ($url) {
             case 'RH/Areas':
                 $datos['ListaAreas'] = $this->Catalogo->CatAreas("3");
@@ -224,7 +227,6 @@ class Secciones extends General
                 $datos['ProyectosIniciados'] = $this->DBP->getProyectosIniciados();
                 break;
             case 'Proyectos/TareasTecnico':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['TareasTecnico'] = $this->DBP->getTareasTecnico($usuario['Id']);
                 break;
             case 'Proyectos/Catalogo':
@@ -235,7 +237,6 @@ class Secciones extends General
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('3');
                 break;
             case 'RH/Perfiles':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['Autorizacion'] = FALSE;
                 if (in_array('35', $usuario['PermisosAdicionales'])) {
                     $datos['Autorizacion'] = TRUE;
@@ -247,7 +248,6 @@ class Secciones extends General
                 $datos['ListaPerfiles'] = $this->Catalogo->catPerfiles("3");
                 break;
             case 'RH/Permisos_vacaciones':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['departamento'] = $this->permisosVacaciones->buscarDepartamento();
                 $datos['tipoAusencia'] = $this->permisosVacaciones->obtenerTiposAusencia();
                 $datos['motivoAusencia'] = $this->permisosVacaciones->obtenerMotivoAusencia();
@@ -255,7 +255,6 @@ class Secciones extends General
                 $datos['enviarCorreos'] = $this->permisosVacaciones->enviarCorreoSiccob();
                 break;
             case 'RH/Autorizar_permisos':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id']);
                 break;
             case 'Poliza':
@@ -348,10 +347,10 @@ class Secciones extends General
                 $datos['Productos'] = $this->Compras->getSAEProducts();
                 break;
             case 'Compras/Mis_Solicitudes_Compra':
-                $datos['Solicitudes'] = $this->Compras->getListaMisSolicitudes();                
+                $datos['Solicitudes'] = $this->Compras->getListaMisSolicitudes();
                 break;
             case 'Compras/Autorizar_Solicitudes_Compra':
-                $datos['Solicitudes'] = $this->Compras->getListaSolicitudesPorAutorizar();                
+                $datos['Solicitudes'] = $this->Compras->getListaSolicitudesPorAutorizar();
                 break;
             case 'Compras/Ordenes_Compra':
                 $datos['ListaOrdenesCompra'] = $this->Compras->consultaListaOrdenesCompra();
@@ -476,7 +475,6 @@ class Secciones extends General
                 $datos['proyectos'] = $this->PEV2->getProyectosespeciales();
                 break;
             case 'Proveedores/Seguimiento':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados($usuario['IdDepartamento']);
                 break;
             case 'Poliza/Catalogo_Checklist':
@@ -491,7 +489,6 @@ class Secciones extends General
                 $datos['FondoFijoXUsuario'] = $this->ModeloComprobacion->getFondosFijos();
                 break;
             case 'Comprobacion/Fondo_Fijo':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['listaComprobaciones'] = $this->ModeloTesoreria->getDetallesFondoFijoXUsuario($usuario['Id']);
                 $datos['usuario'] = $this->ModeloTesoreria->getNombreUsuarioById($usuario['Id']);
                 $datos['saldo'] = $this->ModeloTesoreria->getSaldoByUsuario($usuario['Id']);
@@ -500,7 +497,6 @@ class Secciones extends General
                 $datos['rechazado'] = $this->ModeloTesoreria->getSaldoRechazadoSinPagar($usuario['Id']);
                 break;
             case 'Comprobacion/Autorizar_Fondo_Fijo':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['listaComprobaciones'] = $this->ModeloTesoreria->getComprobacionesXAutorizar($usuario['Id']);
                 break;
             case 'Localizacion/Dispositivos':
@@ -525,7 +521,22 @@ class Secciones extends General
                 $datos['Software'] = $this->Catalogo->catRhHabilidadesSoftware('3');
                 break;
             case 'Generales/Dashboard_Gapsi':
-                $datos['Proyectos'] = $this->gestorProyectos->getDatosGeneralesProyectos();                
+                $datos['Proyectos'] = $this->GapsiProyecto->getListProjects();
+                $datos['TiposProyectos'] = $this->GapsiProyecto->getProjectTypes();
+                break;
+            case 'FondoFijo/Catalogos':
+                $datos['TiposCuenta'] = $this->fondoFijo->getTiposCuenta();
+                $datos['Usuarios'] = $this->fondoFijo->getUsuarios();
+                $datos['Conceptos'] = $this->fondoFijo->getConceptos();
+                break;
+            case 'FondoFijo/Depositar':
+                $datos['Usuarios'] = $this->fondoFijo->getUsuariosConFondoFijo();
+                break;
+            case 'FondoFijo/MiFondo':
+                $datos['Cuentas'] = $this->fondoFijo->getSaldosCuentasXUsuario($usuario['Id']);
+                break;
+            case 'FondoFijo/Autorizar':
+                $datos['Pendientes'] = $this->fondoFijo->pendientesXAutorizar($usuario['Id']);
                 break;
             default:
                 break;
