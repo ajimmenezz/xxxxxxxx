@@ -23,7 +23,7 @@ $(function () {
     let tablaCategoria = null;
     let tablaSubCategoria = null;
     let tablaConcepto = null;
-    //let tablaGastos = null;
+    let tablaGastos = null;
     let graficaProyecto = null;
     let graficaServicio = null;
     let graficaSucursal = null;
@@ -136,7 +136,7 @@ $(function () {
         tablaSubCategoria.reordenarTabla(2, 'desc');
         tablaConcepto = new TablaBasica('data-tipo-concepto');
         tablaConcepto.reordenarTabla(2, 'desc');
-        //tablaGastos = new TablaBasica('tableGastos');
+        tablaGastos = new TablaBasica('tableGastos');
         graficaProyecto = new GraficaGoogle('chart_proyecto', filtrarDatosGraficaGoogle(datosProyectos, 'Proyecto', 'Gasto'));
         graficaServicio = new GraficaGoogle('chart_servicios', filtrarDatosGraficaGoogle(datosServicios, 'TipoServicio', 'Gasto'));
         graficaSucursal = new GraficaGoogle('chart_sucursal', filtrarDatosGraficaGoogle(datosSucursales, 'Sucursal', 'Gasto'));
@@ -155,10 +155,15 @@ $(function () {
         selectorCategorias = new SelectBasico('selectCategoria');
         selectorSubCategorias = new SelectBasico('selectSubCategoria');
         selectorProyectos.iniciarSelect();
+        selectorProyectos.cargaDatosEnSelect(filtrarDatosSelects(datosProyectos, 'IdProyecto', 'Proyecto'));
         selectorServicios.iniciarSelect();
+        selectorServicios.cargaDatosEnSelect(filtrarDatosSelects(datosServicios, 'TipoServicio', 'TipoServicio'));
         selectorSucursales.iniciarSelect();
+        selectorSucursales.cargaDatosEnSelect(filtrarDatosSelects(datosSucursales, 'idSucursal', 'Sucursal'));
         selectorCategorias.iniciarSelect();
+        selectorCategorias.cargaDatosEnSelect(filtrarDatosSelects(datosCategoria, 'Categoria', 'Categoria'));
         selectorSubCategorias.iniciarSelect();
+        selectorSubCategorias.cargaDatosEnSelect(filtrarDatosSelects(datosSubCategoria, 'SubCategoria', 'SubCategoria'));
         filtroFechas();
 
     }
@@ -178,9 +183,9 @@ $(function () {
         listenerEventosObjetos(graficaCategoria, 'categoria');
         listenerEventosObjetos(selectorSubCategorias, 'subcategoria');
         listenerEventosObjetos(tablaSubCategoria, 'subcategoria');
-        listenerEventosObjetos(selectorSubCategorias, 'subcategoria');
+        listenerEventosObjetos(graficaSubCategoria, 'subcategoria');
         listenerEventosObjetos(tablaConcepto, 'concepto');
-        listenerEventosObjetos(selectorSubCategorias, 'concepto');
+        listenerEventosObjetos(graficaConcepto, 'concepto');
     }
 
     function listenerEventosObjetos(objeto, filtro) {
@@ -193,7 +198,8 @@ $(function () {
             });
         } else if (objeto instanceof SelectBasico) {
             selectorCategorias.evento('change', function () {
-                datos = objeto.obtenerValor();                
+                datos = objeto.obtenerValor();  
+                console.log(datos)
                 datosFiltros[filtro] = datos;                
                 enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
             });
@@ -239,6 +245,7 @@ $(function () {
                 incializarDatos(respuesta.consulta);
                 incializarObjetos();                
                 eventosObjetos();
+                console.log(respuesta.consulta.gastosCompras);
                 $('html, body').animate({
                     scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
                 }, 600);
@@ -267,11 +274,19 @@ $(function () {
         $.each(datos, function (key, value) {
             datosFiltrados.push([value[clave], value[valor]]);
         });
-        console.log(datosFiltros);
         return datosFiltrados;
 
     }
+    
+    function filtrarDatosSelects(datos, clave, valor) {
+        let datosFiltrados = [];
+        $.each(datos, function (key, value) {
+            datosFiltrados.push({id:value[clave], text:value[valor]});
+        });
+        return datosFiltrados;
 
+    }
+    
     function setDastosProyectos() {
         let temporal = tablaProyectos.datosTabla();
         $.each(temporal, function (key, value) {

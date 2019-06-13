@@ -5,7 +5,7 @@
         <!--Empieza seccion filtros-->
         <div class="col-md-12">
             <div class="row">
-                <div class="col-md-12 hidden">                       
+                <div class="col-md-12">                       
                     <div  id="tableGastos" class="table-responsive">
                         <table id="data-tipo-gastos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                             <thead>
@@ -16,12 +16,12 @@
                             </thead>
                             <tbody>
                                 <?php
-                                foreach ($gastosCompras as $valor) {
-                                    echo "<tr>";
-                                    echo '<td>' . $valor['TipoTrans'] . '</td>';
-                                    echo '<td>$ ' . number_format($valor['Gasto'], 2) . '</td>';
-                                    echo "</tr>";
-                                }
+//                                foreach ($gastosCompras as $valor) {
+//                                    echo "<tr>";
+//                                    echo '<td>' . $valor['TipoTrans'] . '</td>';
+//                                    echo '<td>$ ' . number_format($valor['Gasto'], 2) . '</td>';
+//                                    echo "</tr>";
+//                                }
                                 ?>
                             </tbody>
                         </table>
@@ -108,75 +108,30 @@
                         <label style="color: #A8ACB1">Proyectos</label>
                         <select id="selectProyecto" class="form-control efectoDescuento" name="SelectProyecto" style="width: 100%">
                             <option value="">Seleccionar...</option>
-                            <?php
-//                            if (count($proyectos) == 1) {
-//                                echo '<option value="' . $proyectos[0]['IdProyecto'] . '" selected="selected">' . $proyectos[0]['Proyecto'] . '</option>';
-//                            } else {
-//                                foreach ($proyectos as $proyecto) {
-//                                    echo '<option value="' . $proyecto['IdProyecto'] . '">' . $proyecto['Proyecto'] . '</option>';
-//                                }
-//                            }
-                            ?>
                         </select>
                     </div>
                     <div class="form-group" id="hideServicio">
                         <label style="color: #A8ACB1">Servicios</label>
                         <select id="selectServicio" class="form-control efectoDescuento" name="SelectServicio" style="width: 100%">
                             <option value="">Seleccionar...</option>
-                            <?php
-                            if (count($servicios) == 1) {
-                                echo '<option value="' . $servicios[0]['TipoServicio'] . '" selected="selected">' . $servicios[0]['TipoServicio'] . '</option>';
-                            } else {
-                                foreach ($servicios as $servicio) {
-                                    echo '<option value="' . $servicio['TipoServicio'] . '">' . $servicio['TipoServicio'] . '</option>';
-                                }
-                            }
-                            ?>
                         </select>
                     </div>
                     <div class="form-group" id="hideSucursal">
                         <label style="color: #A8ACB1">Sucursal</label>
                         <select id="selectSucursal" class="form-control efectoDescuento" name="SelectSucursal" style="width: 100%">
                             <option value="">Seleccionar...</option>
-                            <?php
-                            if (count($sucursales) == 1) {
-                                echo '<option value="' . $sucursales[0]['idSucursal'] . '" selected="selected">' . $sucursales[0]['Sucursal'] . '</option>';
-                            } else {
-                                foreach ($sucursales as $sucursal) {
-                                    echo '<option value="' . $sucursal['idSucursal'] . '">' . $sucursal['Sucursal'] . '</option>';
-                                }
-                            }
-                            ?>
                         </select>
                     </div>
                     <div class="form-group" id="hideCategoria">
                         <label style="color: #A8ACB1">Categoria</label>
                         <select id="selectCategoria" class="form-control efectoDescuento" name="SelectCategoria" style="width: 100%">
                             <option value="">Seleccionar...</option>
-                            <?php
-                            if (count($categorias) == 1) {
-                                echo '<option value="' . $categorias[0]['Categoria'] . '" selected="selected">' . $categorias[0]['Categoria'] . '</option>';
-                            } else {
-                                foreach ($categorias as $categoria) {
-                                    echo '<option value="' . $categoria['Categoria'] . '">' . $categoria['Categoria'] . '</option>';
-                                }
-                            }
-                            ?>
                         </select>
                     </div>
                     <div class="form-group" id="hideSubCategoria">
                         <label style="color: #A8ACB1">SubCategoria</label>
                         <select id="selectSubCategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
                             <option value="">Seleccionar...</option>
-                            <?php
-                            if (count($subcategorias) == 1) {
-                                echo '<option value="' . $subcategorias[0]['SubCategoria'] . '" selected="selected">' . $subcategorias[0]['SubCategoria'] . '</option>';
-                            } else {
-                                foreach ($subcategorias as $subcategoria) {
-                                    echo '<option value="' . $subcategoria['SubCategoria'] . '">' . $subcategoria['SubCategoria'] . '</option>';
-                                }
-                            }
-                            ?>
                         </select>
                     </div>
                 </div>
