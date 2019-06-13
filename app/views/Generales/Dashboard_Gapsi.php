@@ -15,14 +15,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-//                                foreach ($gastosCompras as $valor) {
-//                                    echo "<tr>";
-//                                    echo '<td>' . $valor['TipoTrans'] . '</td>';
-//                                    echo '<td>$ ' . number_format($valor['Gasto'], 2) . '</td>';
-//                                    echo "</tr>";
-//                                }
-                                ?>
                             </tbody>
                         </table>
                     </div>
@@ -47,23 +39,11 @@
             <div class="col-md-12">
                 <div class="radio">
                     <label style="color: #A8ACB1">
-                        <?php
-//                        if ($gastosCompras[0][0] === "MN")
-//                            echo '<input type="radio" name="optionsRadiosMoneda" value="MN" checked/>Peso';
-//                        else
-//                            echo '<input type="radio" name="optionsRadiosMoneda" value="MN"/>Peso';
-                        ?>
                         <input type="radio" name="optionsRadiosMoneda" value="MN"/>Peso
                     </label>
                 </div>
                 <div class="radio">
                     <label style="color: #A8ACB1">
-                        <?php
-//                        if ($gastosCompras[0][0] === "USD")
-//                            echo '<input type="radio" name="optionsRadiosMoneda" value="USD" checked/>Dollar';
-//                        else
-//                            echo '<input type="radio" name="optionsRadiosMoneda" value="USD" />Dollar';
-                        ?>
                         <input type="radio" name="optionsRadiosMoneda" value="USD" />Dollar
                     </label>
                 </div>

@@ -998,7 +998,7 @@ class InformacionServicios extends General {
         $servicios = $this->verificarTodosServiciosFolio(array('Servicio' => $datos['servicio'], 'ServicioConcluir' => TRUE, 'Folio' => $datosServicios[0]['Folio']));
 
         if (empty($servicios)) {
-            $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
+            $resultadoSD = $this->guardarDatosServiceDesk($datos['servicio'], TRUE);
             return $resultadoSD;
         } else {
             $key = $this->MSP->getApiKeyByUser($usuario['Id']);
