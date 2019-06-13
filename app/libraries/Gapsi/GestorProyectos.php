@@ -28,6 +28,8 @@ class GestorProyectos extends General {
         foreach ($listaIdProyectos as $key => $proyecto) {
             $temporal = new \Librerias\Gapsi\Proyecto($proyecto['IdProyecto']);
             array_push($this->proyectos, $temporal);
-        }                       
+        }
+        echo '<pre>';
+        var_dump($this->proyectos);
     }
 }

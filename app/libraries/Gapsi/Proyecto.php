@@ -30,10 +30,13 @@ class Proyecto extends General {
             $this->tipo = $value['TipoProyecto'];
             $this->fecha = $value['Fecha'];
         }
+        
+        $this->gasto = $this->DBProyecto->getGasto($idProyecto, 'MN');
+        $this->compra = $this->DBProyecto->getCompra($idProyecto, 'MN');
+        $this->totalTransferencia = $this->compra + $this->gasto;
     }
     
-    private function setSucursales() {
-        
+    private function setSucursales() {        
     }
 
     public function getDatos() {
