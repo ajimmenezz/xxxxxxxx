@@ -604,20 +604,20 @@ class InformacionServicios extends General {
                                 cat_v3_tipos_falla
                             WHERE
                                 Id = tcd.IdTipoFalla) AS NombreTipoFalla,
-                        CASE tcd.IdTipoDiagnostico
+                        CASE tcd.IdComponente
                             WHEN
-                                NULL
+                                NOT NULL
                             THEN
                                 (SELECT 
                                         Nombre
                                     FROM
-                                        cat_v3_fallas_equipo
+                                        cat_v3_fallas_refaccion
                                     WHERE
                                         Id = IdFalla)
                             ELSE (SELECT 
                                     Nombre
                                 FROM
-                                    cat_v3_fallas_refaccion
+                                    cat_v3_fallas_equipo
                                 WHERE
                                     Id = IdFalla)
                         END as NombreFalla,
@@ -629,7 +629,13 @@ class InformacionServicios extends General {
                                 Id = IdComponente) AS Componente
                     FROM
                         t_correctivos_diagnostico tcd
-                     WHERE tcd.Id = (SELECT MAX(Id) FROM t_correctivos_diagnostico WHERE IdServicio = "' . $servicio . '" )';
+                    WHERE
+                        tcd.Id = (SELECT 
+                                MAX(Id)
+                            FROM
+                                t_correctivos_diagnostico
+                            WHERE
+                                IdServicio = "' . $servicio . '" )';
 
         $consulta = $this->DBS->consultaGeneralSeguimiento($sentencia);
 

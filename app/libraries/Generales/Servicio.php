@@ -1492,13 +1492,7 @@ class Servicio extends General {
     public function getDetallesImpericiaCorrectivo(string $servicio) {
         $generalesSolicitud = $this->getGeneralesSolicitudServicio($servicio);
         $generales = $this->InformacionServicios->consultaInformacionCorrectivo($servicio);
-        $correctivosDiagnostico = $this->DBS->consultaGeneral('SELECT 
-                                                                tcd.*,
-                                                                (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tcd.IdTipoDiagnostico) AS NombreTipoDiagnostico,
-                                                                (SELECT Nombre FROM cat_v3_tipos_falla WHERE Id = tcd.IdTipoFalla) AS NombreTipoFalla,
-                                                                (SELECT Nombre FROM cat_v3_fallas_equipo WHERE Id = IdFalla) AS NombreFalla
-                                                                FROM t_correctivos_diagnostico tcd
-                                                                WHERE Id = (SELECT MAX(Id) FROM t_correctivos_diagnostico WHERE IdServicio = "' . $servicio . '" )');
+        $correctivosDiagnostico = $this->InformacionServicios->consultaCorrectivosDiagnostico($servicio);
         $detallesServicio = $this->linkDetallesServicio($servicio);
         $data = [
             'solicitud' => $generalesSolicitud,
