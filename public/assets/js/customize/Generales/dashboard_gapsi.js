@@ -46,12 +46,24 @@ $(function () {
     let selectorConcepto = null;
 
     let datosProyecto = Array();
-    let datosFiltros = Array();
+    let datosFiltros = {
+            tipoProyecto: null, 
+            moneda: null,
+            fechaInicio : null,
+            fechaFinal: null,
+            proyecto : null,
+            sucursal: null,
+            servicio : null,
+            categoria: null,
+            subcategoria : null,
+            concepto : null
+        };
 
     graficaPrincipal.inicilizarGrafica();
     setDastosProyectos();
     graficaPrincipal.agregarListener(function (dato) {
-        datosFiltros = {tipoProyecto: dato, moneda: 'MN'};
+        datosFiltros.tipoProyecto = dato;
+        datosFiltros.moneda = 'MN';
         enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
     });
     filtroFechas();
@@ -78,7 +90,9 @@ $(function () {
 
     tablaProyectos.evento(function () {
         let datosfila = tablaProyectos.datosFila(this);
-        datosFiltros = {tipoProyecto: datosfila[0], moneda: 'MN', proyecto: datosfila[1]};
+        datosFiltros.tipoProyecto = datosfila[0];
+        datosFiltros.moneda = 'MN'; 
+        datosFiltros.proyecto = datosfila[1];
         enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
     });
 
@@ -193,7 +207,7 @@ $(function () {
     }
 
     function listenerEventosObjetos(objeto, filtro) {
-        let datos = null;
+        let datos = null;        
         if (objeto instanceof TablaBasica) {
             objeto.evento(function () {
                 datos = objeto.datosFila(this);
@@ -201,9 +215,8 @@ $(function () {
                 enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
             });
         } else if (objeto instanceof SelectBasico) {
-            selectorCategorias.evento('change', function () {
-                datos = objeto.obtenerValor();  
-                console.log(datos)
+            objeto.evento('change', function () {
+                datos = objeto.obtenerValor();                 
                 datosFiltros[filtro] = datos;                
                 enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
             });
@@ -256,8 +269,6 @@ $(function () {
 
             } else {
                 setTimeout(modalUndefined, 1000);
-                console.log("error")
-                console.log(datosFiltros)
             }
         });
     }
@@ -271,6 +282,14 @@ $(function () {
         $('[data-click=right-sidebar-toggled]').removeClass('hidden');
         $('[data-devider=right-sidebar-toggled]').removeClass('hidden');
         $('[data-click=sidebar-toggled]').addClass('pull-left');
+        
+        $.each(datosFiltros, function(key,value){
+             if(value === null){
+                 peticion.mostrarElemento(key);
+             }else{
+                 peticion.ocultarElemento(key);
+             }
+        });
     }
 
     function filtrarDatosGraficaGoogle(datos, clave, valor) {
@@ -279,7 +298,6 @@ $(function () {
             datosFiltrados.push([value[clave], value[valor]]);
         });
         return datosFiltrados;
-
     }
     
     function filtrarDatosSelects(datos, clave, valor) {
@@ -288,7 +306,6 @@ $(function () {
             datosFiltrados.push({id:value[clave], text:value[valor]});
         });
         return datosFiltrados;
-
     }
     
     function setDastosProyectos() {
