@@ -42,6 +42,7 @@ class Secciones extends General
     private $autorizarpermisos;
     private $GapsiProyecto;
     private $fondoFijo;
+    private $instalaciones;
 
     public function __construct()
     {
@@ -88,6 +89,7 @@ class Secciones extends General
         $this->autorizarpermisos = \Librerias\RH\Autorizar_permisos::factory();
         $this->GapsiProyecto = \Librerias\Gapsi\GerstorProyectosGAPSI::factory();
         $this->fondoFijo = \Librerias\FondoFijo\FondoFijo::factory();
+        $this->instalaciones = \Librerias\Instalaciones\Instalaciones::factory();
     }
 
     /*
@@ -537,6 +539,9 @@ class Secciones extends General
                 break;
             case 'FondoFijo/Autorizar':
                 $datos['Pendientes'] = $this->fondoFijo->pendientesXAutorizar($usuario['Id']);
+                break;
+            case 'Instalaciones/Seguimiento':
+                $datos['Pendientes'] = $this->instalaciones->getInstalacionesPendientes($usuario['Id']);
                 break;
             default:
                 break;

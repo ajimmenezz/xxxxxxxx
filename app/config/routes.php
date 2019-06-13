@@ -266,6 +266,10 @@ $route['FondoFijo/Depositar/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEv
 $route['FondoFijo/MiFondo/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
 $route['FondoFijo/Autorizar/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
 
+/* Routers para el manejo de Instalaciones de Equipo */
+$route['Instalaciones/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
+$route['Instalaciones/Seguimiento/(:any)'] = 'Instalaciones/Controller_Instalaciones/manejarEvento/$1';
+
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
 $route['Error/(:any)'] = 'Controller_Error/$1';
