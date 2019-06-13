@@ -1949,13 +1949,13 @@ class Servicio extends General {
 
         $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
         $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
-        
+
         if (!empty($vueltasAnteriores)) {
             $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
         } else {
             $sucursalVuelta = 'sin Vuelta';
         }
-        
+
         if ($sucursalVuelta !== $nombreSucursal) {
             $this->guardarVueltaAsociados(array(
                 'servicio' => $datos['servicio'],
@@ -2153,9 +2153,10 @@ class Servicio extends General {
             $resultadoEnviarConclusion = $this->enviarCorreoConlusionPDF($datos);
         }
         if ($resultadoEnviarConclusion === TRUE) {
+            $status = "4";
             if (!empty($cambiarEstatus)) {
                 if ($status === '4') {
-                    $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
+                    $resultadoSD = $this->InformacionServicios->verifyProcess($datos);
                 }
                 return TRUE;
             } else {
@@ -2367,12 +2368,23 @@ class Servicio extends General {
             }
         }
 
-        $datosSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
-        if (!empty($datosSD)) {
-            if ($datosSD) {
+        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+        $folio = $this->DBS->getServicios('SELECT
+                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
+                                            FROM t_servicios_ticket
+                                            WHERE Id = "' . $datos['servicio'] . '"');
+        $avanceProblema = $this->DBP->getAdvanceService($datos['servicio']);
+
+        $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
+        $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];
+
+        $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
+
+        if (!empty($datosNotasSD)) {
+            if ($datosNotasSD) {
                 return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');
             } else {
-                return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => $datosSD);
+                return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => $datosNotasSD);
             }
         } else {
             return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');
