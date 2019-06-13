@@ -32,6 +32,7 @@ $config['Modulos'] = array(
     'Métodos y Procedimientos' => array('icono' => 'fa fa-shield'),
     'Minutas' => array('icono' => 'fa fa-file-text-o'),
     'Poliza' => array('icono' => 'fa fa-ticket'),
+    'Prime' => array('icono' => 'fa fa-mobile'),
     'Proveedores' => array('icono' => 'fa fa-cubes'),
     'Proyectos' => array('icono' => 'fa fa-building'),
     'Redes' => array('icono' => 'fa fa-sliders'),
@@ -3379,5 +3380,32 @@ $config['Instalaciones'] = array(
             'bootstrap-combobox/js/bootstrap-combobox'
         ),
         'Permiso' => 'VCCOMP'
+    )
+);
+
+$config['Prime'] = array(
+    'Inventario' => array(
+        'liga' => 'Inventario',
+        'icono' => '',
+        'Url' => '/Prime/Inventario',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'bootstrap-combobox/css/bootstrap-combobox',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'Prime/inventario'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
+            'select2/dist/js/select2.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'bootstrap-combobox/js/bootstrap-combobox'
+        ),
+        'Permiso' => 'VINVPR'
     )
 );

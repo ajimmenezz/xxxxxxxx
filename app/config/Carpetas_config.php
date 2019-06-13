@@ -197,4 +197,7 @@ $config['Secciones'] = array(
     'Instalaciones' => array(
         'Seguimiento' => 'Seguimiento'  
     ),
+    'Prime' => array(
+        'Inventario' => 'Inventario'  
+    ),
 );
