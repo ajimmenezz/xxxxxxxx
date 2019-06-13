@@ -1009,6 +1009,29 @@ class InformacionServicios extends General {
         }
     }
 
+    public function setHTMLService(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $datosServicios = $this->DBS->consultaGeneralSeguimiento('SELECT 
+                                            ts.Folio,
+                                            tst.Id,
+                                            tst.Ticket,
+                                            tst.IdTipoServicio,
+                                            (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tst.IdTipoServicio) Seguimiento,
+                                            tst.IdEstatus,
+                                            tst.FechaConclusion,
+                                            (SELECT Atiende FROM t_solicitudes WHERE Id = tst.IdSolicitud) Atiende
+                                        FROM t_servicios_ticket tst
+                                        INNER JOIN t_solicitudes ts
+                                            ON ts.Id = tst.IdSolicitud
+                                        WHERE tst.Id = "' . $datos['servicio'] . '"');
+
+        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+        $htmlServicio = $this->vistaHTMLServicio($datosServicios[0]);
+        $datosNotasSD = $this->setNoteAndWorkLog(array('key' => $key, 'folio' => $datosServicios[0]['Folio'], 'html' => $htmlServicio));
+
+        return $datosNotasSD;
+    }
+
     public function setNoteAndWorkLog(array $data) {
         try {
             $datosNotasSD = $this->ServiceDesk->setNoteServiceDesk($data['key'], $data['folio'], $data['html']);
