@@ -23,7 +23,6 @@ $(function () {
     let tablaCategoria = null;
     let tablaSubCategoria = null;
     let tablaConcepto = null;
-    let tablaGastos = null;
     let graficaProyecto = null;
     let graficaServicio = null;
     let graficaSucursal = null;
@@ -37,12 +36,14 @@ $(function () {
     let datosCategoria = null;
     let datosSubCategoria = null;
     let datosConceptos = null;
+    let datosCompras = null;
 
     let selectorProyectos = null;
     let selectorServicios = null;
     let selectorSucursales = null;
     let selectorCategorias = null;
     let selectorSubCategorias = null;
+    let selectorConcepto = null;
 
     let datosProyecto = Array();
     let datosFiltros = Array();
@@ -88,6 +89,7 @@ $(function () {
         datosCategoria = datos.categorias;
         datosSubCategoria = datos.subcategorias;
         datosConceptos = datos.concepto;
+        datosCompras = datos.gastosCompras;
     }
 
     function filtroFechas() {
@@ -136,7 +138,6 @@ $(function () {
         tablaSubCategoria.reordenarTabla(2, 'desc');
         tablaConcepto = new TablaBasica('data-tipo-concepto');
         tablaConcepto.reordenarTabla(2, 'desc');
-        tablaGastos = new TablaBasica('tableGastos');
         graficaProyecto = new GraficaGoogle('chart_proyecto', filtrarDatosGraficaGoogle(datosProyectos, 'Proyecto', 'Gasto'));
         graficaServicio = new GraficaGoogle('chart_servicios', filtrarDatosGraficaGoogle(datosServicios, 'TipoServicio', 'Gasto'));
         graficaSucursal = new GraficaGoogle('chart_sucursal', filtrarDatosGraficaGoogle(datosSucursales, 'Sucursal', 'Gasto'));
@@ -154,6 +155,7 @@ $(function () {
         selectorSucursales = new SelectBasico('selectSucursal');
         selectorCategorias = new SelectBasico('selectCategoria');
         selectorSubCategorias = new SelectBasico('selectSubCategoria');
+        selectorConcepto = new SelectBasico('selectConcepto');
         selectorProyectos.iniciarSelect();
         selectorProyectos.cargaDatosEnSelect(filtrarDatosSelects(datosProyectos, 'IdProyecto', 'Proyecto'));
         selectorServicios.iniciarSelect();
@@ -164,6 +166,8 @@ $(function () {
         selectorCategorias.cargaDatosEnSelect(filtrarDatosSelects(datosCategoria, 'Categoria', 'Categoria'));
         selectorSubCategorias.iniciarSelect();
         selectorSubCategorias.cargaDatosEnSelect(filtrarDatosSelects(datosSubCategoria, 'SubCategoria', 'SubCategoria'));
+        selectorConcepto.iniciarSelect();
+        selectorConcepto.cargaDatosEnSelect(filtrarDatosSelects(datosConceptos, 'Concepto', 'Concepto'));
         filtroFechas();
 
     }
@@ -245,7 +249,7 @@ $(function () {
                 incializarDatos(respuesta.consulta);
                 incializarObjetos();                
                 eventosObjetos();
-                console.log(respuesta.consulta.gastosCompras);
+                tablasFiltros();
                 $('html, body').animate({
                     scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
                 }, 600);
@@ -297,6 +301,18 @@ $(function () {
                 gasto: value[3],
                 fecha: value[4]
             });
+        });
+    }
+
+    function tablasFiltros(){
+        $("#data-tipo-gastos").find("tr:gt(0)").remove();
+        $.each(datosCompras, function (key, value) {
+            var table = document.getElementById("data-tipo-gastos");
+            var row = table.insertRow(1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            cell1.innerHTML = value.TipoTrans;
+            cell2.innerHTML = value.Gasto.toFixed(2);
         });
     }
 

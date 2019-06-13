@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-md-12">                       
                     <div  id="tableGastos" class="table-responsive">
-                        <table id="data-tipo-gastos" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
+                        <table id="data-tipo-gastos" class="table table-bordered" style="cursor:pointer; background: white" width="100%">
                             <thead>
                                 <tr>
                                     <th class="all">Tipo</th>
@@ -15,22 +15,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-//                                foreach ($gastosCompras as $valor) {
-//                                    echo "<tr>";
-//                                    echo '<td>' . $valor['TipoTrans'] . '</td>';
-//                                    echo '<td>$ ' . number_format($valor['Gasto'], 2) . '</td>';
-//                                    echo "</tr>";
-//                                }
-                                ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <!--Empieza Seccion de filtros agregados -->
                 <div class="col-md-12">
-                    <div  id="seccionFiltros" class="table-responsive hidden">
-                        <table id="data-seccion-filtros" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
+                    <div  id="seccionFiltros" class="table-responsive">
+                        <table id="data-seccion-filtros" class="table table-bordered" style="cursor:pointer; background: white" width="100%">
                             <thead>
                                 <tr>
                                     <th class="all">Filtrado por</th>
@@ -47,23 +39,11 @@
             <div class="col-md-12">
                 <div class="radio">
                     <label style="color: #A8ACB1">
-                        <?php
-//                        if ($gastosCompras[0][0] === "MN")
-//                            echo '<input type="radio" name="optionsRadiosMoneda" value="MN" checked/>Peso';
-//                        else
-//                            echo '<input type="radio" name="optionsRadiosMoneda" value="MN"/>Peso';
-                        ?>
-                        <input type="radio" name="optionsRadiosMoneda" value="MN"/>Peso
+                        <input type="radio" name="optionsRadiosMoneda" value="MN" checked/>Peso
                     </label>
                 </div>
                 <div class="radio">
                     <label style="color: #A8ACB1">
-                        <?php
-//                        if ($gastosCompras[0][0] === "USD")
-//                            echo '<input type="radio" name="optionsRadiosMoneda" value="USD" checked/>Dollar';
-//                        else
-//                            echo '<input type="radio" name="optionsRadiosMoneda" value="USD" />Dollar';
-                        ?>
                         <input type="radio" name="optionsRadiosMoneda" value="USD" />Dollar
                     </label>
                 </div>
@@ -131,6 +111,12 @@
                     <div class="form-group" id="hideSubCategoria">
                         <label style="color: #A8ACB1">SubCategoria</label>
                         <select id="selectSubCategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
+                            <option value="">Seleccionar...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="hideConcepto">
+                        <label style="color: #A8ACB1">Concepto</label>
+                        <select id="selectConcepto" class="form-control efectoDescuento" name="SelectConcepto" style="width: 100%">
                             <option value="">Seleccionar...</option>
                         </select>
                     </div>
