@@ -26,10 +26,17 @@
                     <i class="fa fa"></i> Autorizar
                 </label>&nbsp';
             }
-            if ($perfilUsuario == 37 || $perfilUsuario == 44) {
-                echo '<label id="btnConluirAutorizacion" class="btn btn-success btn-xs">
+            $fechaDoc = explode(" ", $datosAusencia[0]["FechaDocumento"]);
+            if($datosAusencia[0]["FechaAusenciaDesde"] > $fechaDoc[0] && $datosAusencia[0]['IdMotivoAusencia'] != 3 && $datosAusencia[0]['IdMotivoAusencia'] != 4){
+                echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs">
                     <i class="fa fa"></i>Autorizar y Concluir
                 </label>';
+            }else{
+                if ($perfilUsuario == 37 || $perfilUsuario == 44) {
+                    echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs">
+                        <i class="fa fa"></i>Autorizar y Concluir
+                    </label>';
+                }
             }
             ?>
         </div>

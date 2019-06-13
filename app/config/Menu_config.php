@@ -147,7 +147,16 @@ $config['Generales'] = array(
             'parsley/src/parsley',
             'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Generales/dashboard_gapsi',  'Base/Charts', 'Componentes/Tablas/Tabla','Componentes/Tablas/TablaBasica','Componentes/Graficas/GraficaGoogle'),
+        'js' => array(
+            'Base/Base', 
+            'Componentes/HerramientasWeb/Utileria', 
+            'Componentes/Selects/Select', 
+            'Componentes/Selects/SelectBasico', 
+            'Componentes/Tablas/Tabla', 
+            'Componentes/Tablas/TablaBasica', 
+            'Componentes/Graficas/GraficaGoogle', 
+            'Generales/dashboard_gapsi',
+            'Generales/page-with-two-sidebar'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
@@ -157,7 +166,9 @@ $config['Generales'] = array(
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
             'masked-input/masked-input.min',
-            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'sparkline/jquery.sparkline',
+            'jquery-knob/js/jquery.knob'
         ),
         'Permiso' => 'VDASHGPSI'
     ),
@@ -3271,6 +3282,33 @@ $config['Fondo Fijo'] = array(
         ),
         'Permiso' => 'VCCOMP'
     ),
+    'Depositar' => array(
+        'liga' => 'Depositar',
+        'icono' => '',
+        'Url' => '/FondoFijo/Depositar',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'jquery-fileUpload/css/fileinput.min',
+            'bootstrap-combobox/css/bootstrap-combobox',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'FondoFijo/depositar'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
+            'select2/dist/js/select2.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'bootstrap-combobox/js/bootstrap-combobox'
+        ),
+        'Permiso' => 'VUDFF'
+    ),
     'MiFondo' => array(
         'liga' => 'Mi Fondo',
         'icono' => '',
@@ -3284,7 +3322,7 @@ $config['Fondo Fijo'] = array(
             'bootstrap-combobox/css/bootstrap-combobox',
             'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'Comprobacion/fondo_fijo'),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'FondoFijo/mifondo'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
@@ -3297,5 +3335,32 @@ $config['Fondo Fijo'] = array(
             'bootstrap-combobox/js/bootstrap-combobox'
         ),
         'Permiso' => 'VUSFF'
+    ),
+    'Autorizar' => array(
+        'liga' => 'Autorizar',
+        'icono' => '',
+        'Url' => '/FondoFijo/Autorizar',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'jquery-fileUpload/css/fileinput.min',
+            'bootstrap-combobox/css/bootstrap-combobox',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'FondoFijo/autorizar'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
+            'select2/dist/js/select2.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'bootstrap-combobox/js/bootstrap-combobox'
+        ),
+        'Permiso' => 'VAUTFF'
     ),
 );

@@ -186,5 +186,8 @@ class Tabla {
     objetoDataTable() {
         return $(`#${this.tabla}`).DataTable();
     }
-
+    
+    reordenarTabla(column, order) {
+        $(`#${this.tabla}`).DataTable().order( [ column, order ] ).draw();
+    }
 }
