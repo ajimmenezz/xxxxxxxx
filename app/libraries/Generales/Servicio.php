@@ -2302,6 +2302,7 @@ class Servicio extends General {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $usuario = $this->Usuario->getDatosUsuario();
         $verificar = TRUE;
+        $datosNotasSD = NULL;
 
         $idConsulta = $this->DBS->setServicioId('t_servicios_avance', array(
             'IdServicio' => $datos['servicio'],
@@ -2367,12 +2368,15 @@ class Servicio extends General {
                                                 (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
                                             FROM t_servicios_ticket
                                             WHERE Id = "' . $datos['servicio'] . '"');
-        $avanceProblema = $this->DBP->getAdvanceService($datos['servicio']);
 
-        $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
-        $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];
-
-        $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
+        if ($folio[0]['Folio'] !== NULL) {
+            if ($folio[0]['Folio'] !== '0') {
+                $avanceProblema = $this->DBP->getAdvanceService($datos['servicio']);
+                $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
+                $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];
+                $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
+            }
+        }
 
         if (!empty($datosNotasSD)) {
             if ($datosNotasSD) {
