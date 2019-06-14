@@ -136,7 +136,6 @@ class ServiceDesk extends General {
      */
 
     public function getFolios(string $key) {
-
         $input_data = '{"operation":{"details":{ "from": "0","limit": "5000","filterby": "All_Pending"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST_FILTERS&TECHNICIAN_KEY=' . $key;
         $datos = file_get_contents($this->Url . '?' . $this->FIELDS);
@@ -213,6 +212,34 @@ class ServiceDesk extends General {
         $this->generateLogResolverSD(array($jsonDecode, $folio));
 
         return $jsonDecode;
+    }
+
+    public function setNoteServiceDesk(string $key, string $folio, string $datos) {
+        $html = str_replace('&nbsp', '', $datos);
+        $html = str_replace('style="color:#FF0000";', '', $datos);
+        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/notes/";
+        $input_data = '{operation:{details:{notes:{note:{isPublic:true,notesText:"' . urlencode($html) . '"}}}}}';
+        $FIELDS = "format=json"
+                . "&OPERATION_NAME=ADD_NOTE"
+                . "&TECHNICIAN_KEY=" . $key
+                . "&INPUT_DATA=" . $input_data;
+        $data = json_decode(file_get_contents($URL2 . '?' . $FIELDS));
+
+        return $data;
+    }
+
+    public function setWorkLogServiceDesk(string $key, string $folio, string $datos) {
+        $html = strip_tags($datos);
+        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/worklogs/";
+        $input_data = '{operation:{details:{worklogs:{worklog:{description:"' . urlencode($html) . '",workMinutes:1}}}}}';
+        $FIELDS = "format=json"
+                . "&OPERATION_NAME=ADD_WORKLOG"
+                . "&TECHNICIAN_KEY=" . $key
+                . "&INPUT_DATA=" . $input_data;
+
+        $data = json_decode(file_get_contents($URL2 . '?' . $FIELDS));
+
+        return $data;
     }
 
     private function generateLogResolverSD(array $dataOperationSD) {

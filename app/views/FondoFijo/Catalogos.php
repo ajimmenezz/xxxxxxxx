@@ -7,12 +7,7 @@
                     <li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>
                     <li class="active"><a href="#TiposCuenta" data-toggle="tab">Tipos de Cuenta</a></li>
                     <li class=""><a href="#Conceptos" data-toggle="tab">Conceptos</a></li>
-                    <li class=""><a href="#Montos" data-toggle="tab">Montos Por Usuario</a></li>
-                    <!--<li class=""><a href="#Areas" data-toggle="tab">Áreas por Concepto</a></li>
-                    <li class=""><a href="#Ubicaciones" data-toggle="tab">Ubicaciones por Área</a></li>
-                    <li class=""><a href="#Accesorios" data-toggle="tab">Accesorios por Sistema</a></li>
-                    <li class=""><a href="#Material" data-toggle="tab">Material por Accesorio</a></li>
-                    <li class=""><a href="#Kits" data-toggle="tab">Kits de Material</a></li> -->
+                    <li class=""><a href="#Montos" data-toggle="tab">Montos Por Usuario</a></li>                    
                     <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
                 </ul>
             </div>

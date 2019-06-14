@@ -194,4 +194,10 @@ $config['Secciones'] = array(
         'MiFondo' => 'MiFondo',   
         'Autorizar' => 'Autorizar'     
     ),
+    'Instalaciones' => array(
+        'Seguimiento' => 'Seguimiento'  
+    ),
+    'Prime' => array(
+        'Inventario' => 'Inventario'  
+    ),
 );
