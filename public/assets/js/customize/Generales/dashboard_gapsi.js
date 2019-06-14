@@ -38,12 +38,12 @@ $(function () {
     let datosConceptos = null;
     let datosCompras = null;
 
-    let selectorProyectos = null;
-    let selectorServicios = null;
-    let selectorSucursales = null;
-    let selectorCategorias = null;
-    let selectorSubCategorias = null;
-    let selectorConcepto = null;
+    let selectorproyecto = null;
+    let selectorservicio = null;
+    let selectorsucursal = null;
+    let selectorcategoria = null;
+    let selectorsubcategoria = null;
+    let selectorconcepto = null;
 
     let datosProyecto = Array();
     let datosFiltros = {
@@ -58,6 +58,7 @@ $(function () {
             subcategoria : null,
             concepto : null
         };
+    let cargaDefault = false;
 
     graficaPrincipal.inicilizarGrafica();
     setDastosProyectos();
@@ -66,7 +67,6 @@ $(function () {
         datosFiltros.moneda = 'MN';
         enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
     });
-    filtroFechas();
 
     tablaTipoProyecto.evento(function () {
         let datosfila = tablaTipoProyecto.datosFila(this);
@@ -96,6 +96,8 @@ $(function () {
         enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
     });
 
+    filtroFechas();
+    filtroMoneda();
     function incializarDatos(datos) {
         datosProyectos = datos.proyectos;
         datosServicios = datos.servicios;
@@ -109,20 +111,31 @@ $(function () {
     function filtroFechas() {
         let fecha = new Date();
         $('#desde').datetimepicker({
-            format: 'YYYY/MM/DD',
+            format: 'YYYY-MM-DD',
             maxDate: new Date(),
-            minDate: new Date('07/07/2016'),
+            minDate: new Date('2016-07-07'),
             date: datosFiltros.fechaInicio
         });
         $('#hasta').datetimepicker({
-            format: 'YYYY/MM/DD',
+            format: 'YYYY-MM-DD',
             useCurrent: false,
             maxDate: new Date(),
-            minDate: new Date('07/07/2016'),
+            minDate: new Date('2016-07-07'),
             date: datosFiltros.fechaFinal
+        });
+        $("#desde").on("click", function (e) {
+           document.getElementById('desde').style.position = 'fixed';
+        });
+        $("#hasta").on("click", function (e) {
+            console.log($("#fechaFinal").siblings().zIndex())
+//            $("#fechaFinal").siblings().position({position:'absolute'});
+            $("#fechaFinal").siblings().zIndex(20000);
+//           document.getElementById('hasta').style.zIndex = 2000;
+//           document.getElementById('hasta').style.position = 'fixed';
         });
         $("#desde").on("dp.change", function (e) {
             $('#hasta').data("DateTimePicker").minDate(e.date);
+            document.getElementById('desde').style.position = 'relative';
         });
         $("#hasta").on("dp.change", function (e) {
             $('#desde').data("DateTimePicker").maxDate(e.date);
@@ -130,6 +143,14 @@ $(function () {
         $("#btnFiltrarDashboard").on('click', function () {
             datosFiltros.fechaInicio = $("#fechaComienzo").val();
             datosFiltros.fechaFinal = $("#fechaFinal").val();
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+        });
+    }
+    
+    function filtroMoneda(){
+        $("input[name='optionsRadiosMonedaPrincipal").click(function () {
+            var radioValue = $("input[name='optionsRadiosMoneda']:checked").val();
+            datosFiltros.moneda = radioValue;
             enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
         $("input[name='optionsRadiosMoneda").click(function () {
@@ -164,44 +185,43 @@ $(function () {
         graficaCategoria.inicilizarGrafica();
         graficaSubCategoria.inicilizarGrafica();
         graficaConcepto.inicilizarGrafica();
-        selectorProyectos = new SelectBasico('selectProyecto');
-        selectorServicios = new SelectBasico('selectServicio');
-        selectorSucursales = new SelectBasico('selectSucursal');
-        selectorCategorias = new SelectBasico('selectCategoria');
-        selectorSubCategorias = new SelectBasico('selectSubCategoria');
-        selectorConcepto = new SelectBasico('selectConcepto');
-        selectorProyectos.iniciarSelect();
-        selectorProyectos.cargaDatosEnSelect(filtrarDatosSelects(datosProyectos, 'IdProyecto', 'Proyecto'));
-        selectorServicios.iniciarSelect();
-        selectorServicios.cargaDatosEnSelect(filtrarDatosSelects(datosServicios, 'TipoServicio', 'TipoServicio'));
-        selectorSucursales.iniciarSelect();
-        selectorSucursales.cargaDatosEnSelect(filtrarDatosSelects(datosSucursales, 'idSucursal', 'Sucursal'));
-        selectorCategorias.iniciarSelect();
-        selectorCategorias.cargaDatosEnSelect(filtrarDatosSelects(datosCategoria, 'Categoria', 'Categoria'));
-        selectorSubCategorias.iniciarSelect();
-        selectorSubCategorias.cargaDatosEnSelect(filtrarDatosSelects(datosSubCategoria, 'SubCategoria', 'SubCategoria'));
-        selectorConcepto.iniciarSelect();
-        selectorConcepto.cargaDatosEnSelect(filtrarDatosSelects(datosConceptos, 'Concepto', 'Concepto'));
-        filtroFechas();
-
+        selectorproyecto = new SelectBasico('selectproyecto');
+        selectorservicio = new SelectBasico('selectservicio');
+        selectorsucursal = new SelectBasico('selectsucursal');
+        selectorcategoria = new SelectBasico('selectcategoria');
+        selectorsubcategoria = new SelectBasico('selectsubcategoria');
+        selectorconcepto = new SelectBasico('selectconcepto');
+        selectorproyecto.iniciarSelect();
+        selectorproyecto.cargaDatosEnSelect(filtrarDatosSelects(datosProyectos, 'IdProyecto', 'Proyecto'));
+        selectorservicio.iniciarSelect();
+        selectorservicio.cargaDatosEnSelect(filtrarDatosSelects(datosServicios, 'TipoServicio', 'TipoServicio'));
+        selectorsucursal.iniciarSelect();
+        selectorsucursal.cargaDatosEnSelect(filtrarDatosSelects(datosSucursales, 'idSucursal', 'Sucursal'));
+        selectorcategoria.iniciarSelect();
+        selectorcategoria.cargaDatosEnSelect(filtrarDatosSelects(datosCategoria, 'Categoria', 'Categoria'));
+        selectorsubcategoria.iniciarSelect();
+        selectorsubcategoria.cargaDatosEnSelect(filtrarDatosSelects(datosSubCategoria, 'SubCategoria', 'SubCategoria'));
+        selectorconcepto.iniciarSelect();
+        selectorconcepto.cargaDatosEnSelect(filtrarDatosSelects(datosConceptos, 'Concepto', 'Concepto'));
     }
 
     function eventosObjetos() {
-        listenerEventosObjetos(selectorProyectos, 'proyecto');
+        listenerEventosObjetos(selectorproyecto, 'proyecto');
         listenerEventosObjetos(tablaProyecto, 'proyecto');
         listenerEventosObjetos(graficaProyecto, 'proyecto');
-        listenerEventosObjetos(selectorServicios, 'servicio');
+        listenerEventosObjetos(selectorservicio, 'servicio');
         listenerEventosObjetos(tablaServicio, 'servicio');
         listenerEventosObjetos(graficaServicio, 'servicio');
-        listenerEventosObjetos(selectorSucursales, 'sucursal');
+        listenerEventosObjetos(selectorsucursal, 'sucursal');
         listenerEventosObjetos(tablaSucursal, 'sucursal', );
         listenerEventosObjetos(graficaSucursal, 'sucursal');
-        listenerEventosObjetos(selectorCategorias, 'categoria');
+        listenerEventosObjetos(selectorcategoria, 'categoria');
         listenerEventosObjetos(tablaCategoria, 'categoria');
         listenerEventosObjetos(graficaCategoria, 'categoria');
-        listenerEventosObjetos(selectorSubCategorias, 'subcategoria');
+        listenerEventosObjetos(selectorsubcategoria, 'subcategoria');
         listenerEventosObjetos(tablaSubCategoria, 'subcategoria');
-        listenerEventosObjetos(graficaSubCategoria, 'subcategoria');
+        listenerEventosObjetos(graficaSubCategoria, 'subcategoria')
+        listenerEventosObjetos(selectorconcepto, 'concepto');
         listenerEventosObjetos(tablaConcepto, 'concepto');
         listenerEventosObjetos(graficaConcepto, 'concepto');
     }
@@ -212,13 +232,17 @@ $(function () {
             objeto.evento(function () {
                 datos = objeto.datosFila(this);
                 datosFiltros[filtro] = datos[0];
+                cargaDefault = true;
                 enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
             });
         } else if (objeto instanceof SelectBasico) {
             objeto.evento('change', function () {
-                datos = objeto.obtenerValor();                 
-                datosFiltros[filtro] = datos;                
-                enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+                if (!cargaDefault) {
+                    datos = objeto.obtenerValor();
+                    datosFiltros[filtro] = datos;
+                    cargaDefault = true;
+                    enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+                }
             });
         } else if (objeto instanceof GraficaGoogle) {            
             switch (filtro) {
@@ -229,7 +253,7 @@ $(function () {
                                 datosFiltros[filtro] = datosProyectos[i].IdProyecto;
                             }
                         }
-
+                        cargaDefault = true;
                         enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
                     });
                     break;
@@ -240,19 +264,19 @@ $(function () {
                                 datosFiltros[filtro] = datosSucursales[i].idSucursal;
                             }
                         }
-
+                        cargaDefault = true;
                         enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
                     });
                     break
                 default:
                     objeto.agregarListener(function (dato) {
                         datosFiltros[filtro] = dato;
+                        cargaDefault = true;
                         enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
                     });
                     break;
             }
         }
-//        enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
     }
 
     function enviarInformacionFiltros(objeto, datosFiltros) {
@@ -262,7 +286,8 @@ $(function () {
                 incializarDatos(respuesta.consulta);
                 incializarObjetos();                
                 eventosObjetos();
-                tablasFiltros();
+                tablasCostosFiltros();
+                defaultSelect();
                 $('html, body').animate({
                     scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
                 }, 600);
@@ -284,11 +309,17 @@ $(function () {
         $('[data-click=sidebar-toggled]').addClass('pull-left');
         
         $.each(datosFiltros, function(key,value){
-             if(value === null){
-                 peticion.mostrarElemento(key);
-             }else{
-                 peticion.ocultarElemento(key);
-             }
+            let objeto = 'selector'+key;
+            objeto = new SelectBasico('select'+key);
+            if(value === null){
+                peticion.mostrarElemento(key);
+                objeto.habilitarElemento();
+            }else{
+                peticion.ocultarElemento(key);
+                if(key !== 'tipoProyecto' && key !== 'moneda'){
+                    objeto.bloquearElemento();
+                }
+            }
         });
     }
 
@@ -321,16 +352,65 @@ $(function () {
         });
     }
 
-    function tablasFiltros(){
+    function tablasCostosFiltros(){
         $("#data-tipo-gastos").find("tr:gt(0)").remove();
         $.each(datosCompras, function (key, value) {
-            var table = document.getElementById("data-tipo-gastos");
-            var row = table.insertRow(1);
-            var cell1 = row.insertCell(0);
-            var cell2 = row.insertCell(1);
+            let table = document.getElementById("data-tipo-gastos");
+            let row = table.insertRow(1);
+            let cell1 = row.insertCell(0);
+            let cell2 = row.insertCell(1);
             cell1.innerHTML = value.TipoTrans;
             cell2.innerHTML = value.Gasto.toFixed(2);
         });
+        
+        $(".remover").remove();
+        $.each(datosFiltros, function (key, value) {
+            if(datosFiltros[key] !== null && datosFiltros[key] !== 'MN' && datosFiltros[key] !== 'USD' && key !== 'tipoProyecto'){
+                switch (key) {
+                    case 'proyecto':
+                        $( "#seccionFiltros" ).append('<div id="msg-filtros-'+datosFiltros[key]+'" class="alert alert-info fade in m-b-10 remover" style="color: black">\n\
+                            '+datosProyectos[0]['Proyecto']+'\n\
+                            <span class="close" data-dismiss="alert" data-filter='+datosFiltros[key]+' data-key='+key+'>&times;</span>\n\
+                        </div>');
+                        break;
+                    case 'sucursal':
+                        $( "#seccionFiltros" ).append('<div id="msg-filtros-'+datosFiltros[key]+'" class="alert alert-info fade in m-b-10 remover" style="color: black">\n\
+                            '+datosSucursales[0]['Sucursal']+'\n\
+                            <span class="close" data-dismiss="alert" data-filter='+datosFiltros[key]+' data-key='+key+'>&times;</span>\n\
+                        </div>');
+                        break;
+                    default:
+                        $( "#seccionFiltros" ).append('<div id="msg-filtros-'+datosFiltros[key]+'" class="alert alert-info fade in m-b-10 remover" style="color: black">\n\
+                            '+value+'\n\
+                            <span class="close" data-dismiss="alert" data-filter='+datosFiltros[key]+' data-key='+key+'>&times;</span>\n\
+                        </div>');
+                        break;
+                }
+            }
+        });
+        
+        $('[id*=msg-filtros-] .close').on('click', function(){
+           let llave = $(this).attr('data-key');
+           let dato = $(this).attr('data-filter');
+           $.each(datosFiltros, function (key, value) {
+               if(datosFiltros[key] == dato && key == llave){
+                   datosFiltros[key] = null;
+               }
+           });
+           enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+        });
+    }
+    
+    function defaultSelect() {        
+        if (cargaDefault) {
+            selectorproyecto.definirValor(datosFiltros['proyecto']);
+            selectorservicio.definirValor(datosFiltros['servicio']);
+            selectorsucursal.definirValor(datosFiltros['sucursal']);
+            selectorcategoria.definirValor(datosFiltros['categoria']);
+            selectorsubcategoria.definirValor(datosFiltros['subcategoria']);
+            selectorconcepto.definirValor(datosFiltros['concepto']);
+            cargaDefault = false;
+        }
     }
 
     function filtrarDatos(datos, filtros) {
@@ -347,15 +427,15 @@ $(function () {
         var html = '<div class="row m-t-20">\n\
         <form id="idUndefined" class="margin-bottom-0" enctype="multipart/form-data">\n\
             <div id="modal-dialogo" class="col-md-12 text-center">\n\
-                <h5>No hay información para esta Consulta<br>\n\
-                Revisa tus Filtros seleccionados</h5><br>\n\
+                <h5>La Información que solicita no es posible obtenerla<br>\n\
+                Contacte con el area correspondiente o vualva a intentarlo</h5><br>\n\
                 <button id="btnAceptar" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
             </div>\n\
         </form>\n\
         </div>';
         $('#btnModalConfirmar').addClass('hidden');
         $('#btnModalAbortar').addClass('hidden');
-        evento.mostrarModal('Sin Datos', html);
+        evento.mostrarModal('Error', html);
         $('#btnAceptar').on('click', function () {
             evento.cerrarModal();
         });

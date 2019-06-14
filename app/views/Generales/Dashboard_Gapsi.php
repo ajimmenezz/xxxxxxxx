@@ -4,6 +4,7 @@
     <div data-scrollbar="true" data-height="100%">
         <!--Empieza seccion filtros-->
         <div class="col-md-12">
+            <div class="col-md-12"><br></div>
             <div class="row">
                 <div class="col-md-12">                       
                     <div  id="tableGastos" class="table-responsive">
@@ -21,16 +22,7 @@
                 </div>
                 <!--Empieza Seccion de filtros agregados -->
                 <div class="col-md-12">
-                    <div  id="seccionFiltros" class="table-responsive">
-                        <table id="data-seccion-filtros" class="table table-bordered" style="cursor:pointer; background: white" width="100%">
-                            <thead>
-                                <tr>
-                                    <th class="all">Filtrado por</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                    <div  id="seccionFiltros">
                     </div>
                 </div>
                 <!--Finaliza Seccion de filtros agregados -->
@@ -39,7 +31,7 @@
             <div class="col-md-12">
                 <div class="radio">
                     <label style="color: #A8ACB1">
-                        <input type="radio" name="optionsRadiosMoneda" value="MN" checked/>Peso
+                        <input type="radio" name="optionsRadiosMoneda" value="MN" checked="checked"/>Peso
                     </label>
                 </div>
                 <div class="radio">
@@ -86,44 +78,38 @@
                     <div class="divider"></div>
                     <div class="form-group" id="hideProyecto">
                         <label style="color: #A8ACB1">Proyectos</label>
-                        <select id="selectProyecto" class="form-control efectoDescuento" name="SelectProyecto" style="width: 100%">
-                            <option value="">Seleccionar...</option>
+                        <select id="selectproyecto" class="form-control efectoDescuento" name="SelectProyecto" style="width: 100%">
                         </select>
                     </div>
                     <div class="form-group" id="hideServicio">
                         <label style="color: #A8ACB1">Servicios</label>
-                        <select id="selectServicio" class="form-control efectoDescuento" name="SelectServicio" style="width: 100%">
-                            <option value="">Seleccionar...</option>
+                        <select id="selectservicio" class="form-control efectoDescuento" name="SelectServicio" style="width: 100%">
                         </select>
                     </div>
                     <div class="form-group" id="hideSucursal">
                         <label style="color: #A8ACB1">Sucursal</label>
-                        <select id="selectSucursal" class="form-control efectoDescuento" name="SelectSucursal" style="width: 100%">
-                            <option value="">Seleccionar...</option>
+                        <select id="selectsucursal" class="form-control efectoDescuento" name="SelectSucursal" style="width: 100%">
                         </select>
                     </div>
                     <div class="form-group" id="hideCategoria">
                         <label style="color: #A8ACB1">Categoria</label>
-                        <select id="selectCategoria" class="form-control efectoDescuento" name="SelectCategoria" style="width: 100%">
-                            <option value="">Seleccionar...</option>
+                        <select id="selectcategoria" class="form-control efectoDescuento" name="SelectCategoria" style="width: 100%">
                         </select>
                     </div>
                     <div class="form-group" id="hideSubCategoria">
                         <label style="color: #A8ACB1">SubCategoria</label>
-                        <select id="selectSubCategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
-                            <option value="">Seleccionar...</option>
+                        <select id="selectsubcategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
                         </select>
                     </div>
                     <div class="form-group" id="hideConcepto">
                         <label style="color: #A8ACB1">Concepto</label>
-                        <select id="selectConcepto" class="form-control efectoDescuento" name="SelectConcepto" style="width: 100%">
-                            <option value="">Seleccionar...</option>
+                        <select id="selectconcepto" class="form-control efectoDescuento" name="SelectConcepto" style="width: 100%">
                         </select>
                     </div>
                 </div>
             </div>
             <!--Finaliza selector de filtros-->
-
+            <div class="col-md-12"><br></div>
         </div>
         <!-- Termina seccion filtros -->
     </div>
@@ -226,14 +212,29 @@
 <div id="dashboardGapsiFilters" class="hidden"></div>
 <!--Finaliza dashboard detallado-->
 
-<!--<div id="filtroFechas" class="theme-panel">
+<div id="filtroFechas" class="theme-panel" hidden>
     <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn bg-green"><i class="fa fa-calendar text-white"></i></a>
     <div class="theme-panel-content">
+        <!--Empieza selector modena-->
+        <div class="col-md-12">
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadiosMonedaPrincipal" value="MN" checked="checked"/>Peso
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadiosMonedaPrincipal" value="USD" />Dollar
+                </label>
+            </div>
+            <div class="divider"></div>
+        </div>
+        <!--Finaliza selector modena-->
         <h5 class="m-t-0">Filtros de fechas</h5>
         <div class="form-group">
             <label>Desde</label>
             <div class='input-group date' id='desde' values="">
-                <input id='fechaComienzo' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
+                <input id='fechaComienzo' type='text' class="form-control"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -242,7 +243,7 @@
         <div class="form-group">
             <label>Hasta</label>
             <div class='input-group date' id='hasta'>
-                <input id='fechaFinal' type='text' class="form-control" value="<?php echo date("Y/d/m"); ?>"/>
+                <input id='fechaFinal' type='text' class="form-control"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -254,4 +255,4 @@
             </div>
         </div>
     </div>
-</div>-->
+</div>

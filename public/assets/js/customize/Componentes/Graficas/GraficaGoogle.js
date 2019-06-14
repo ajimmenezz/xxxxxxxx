@@ -19,7 +19,7 @@ class GraficaGoogle {
         _this.google.charts.load('current', {'packages': ['corechart']});
 
         // Set a callback to run when the Google Visualization API is loaded.
-        _this.google.charts.setOnLoadCallback(function () {            
+        _this.google.charts.setOnLoadCallback(function () {
             // Create the data table.
             _this.data = new _this.google.visualization.DataTable();
             _this.data.addColumn('string', 'Topping');
@@ -38,21 +38,27 @@ class GraficaGoogle {
     establecerDatos() {
         let _this = this;
         let temporal = [];
-        $.each(_this.datos, function(key, value){
+        $.each(_this.datos, function (key, value) {
             temporal.push([value[0], parseInt(value[1])]);
-        });               
-        _this.datos = temporal;        
-    }
-    
-    agregarListener(callback){
-        let _this = this;
-        setTimeout(function(){
-            _this.google.visualization.events.addListener(_this.chart, 'select', function(){
-            let dato = _this.chart.getSelection();
-            if(dato.length > 0){
-                callback(_this.data.getValue(dato[0].row, 0));
-            }
         });
-        }, 1000);
+        _this.datos = temporal;
+    }
+
+    agregarListener(callback) {
+        let _this = this;
+        try {
+            setTimeout(function () {
+                _this.google.visualization.events.addListener(_this.chart, 'select', function () {
+                    let dato = _this.chart.getSelection();
+                    if (dato.length > 0) {
+                        callback(_this.data.getValue(dato[0].row, 0));
+                    }
+                });
+
+            }, 1000);
+        } catch (e) {
+            console.log('error de grafica');
+            _this.agregarListener(callback);
+        }
     }
 }

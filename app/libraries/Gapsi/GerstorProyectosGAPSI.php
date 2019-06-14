@@ -78,7 +78,7 @@ class GerstorProyectosGAPSI extends General {
     }
 
     private function parametersDate(array $filters) {
-        if (isset($filters['fechaInicio']) && isset($filters['fechaFinal'])) {
+        if (!empty($filters['fechaInicio']) && !empty($filters['fechaFinal'])) {
             $parameters = " AND FCaptura BETWEEN '" . $filters['fechaInicio'] . "' AND '" . $filters['fechaFinal'] . "'";
         } else {
             $parameters = '';
