@@ -22,7 +22,7 @@
             <!--Empieza Panel -->
             <div class="panel-body">
                 <!--Empieza contenido proyecto-->                        
-                <div id="Proyectos" class="row"> 
+                <div id="proyecto" class="row"> 
 
                     <!--Empieza titulo-->
                     <div class="col-md-12">
@@ -79,7 +79,7 @@
                 <!--Finaliza contenido proyecto-->  
 
                 <!--Empieza contenido Servicios-->                        
-                <div id="Servicios" class="row"> 
+                <div id="servicio" class="row"> 
 
                     <!--Empieza titulo-->
                     <div class="col-md-12">
@@ -134,7 +134,7 @@
                 <!--Finaliza contenido Servicios-->   
 
                 <!--Empieza contenido Sucursales-->                        
-                <div id="Sucursales" class="row"> 
+                <div id="sucursal" class="row"> 
 
                     <!--Empieza titulo-->
                     <div class="col-md-12">
@@ -189,7 +189,7 @@
                 <!--Finaliza contenido Sucursales-->   
 
                 <!--Empieza contenido Categoria-->                        
-                <div id="Categoria" class="row"> 
+                <div id="categoria" class="row"> 
 
                     <!--Empieza titulo-->
                     <div class="col-md-12">
@@ -244,7 +244,7 @@
                 <!--Finaliza contenido Categoria--> 
 
                 <!--Empieza contenido SubCategoria-->                        
-                <div id="SubCategoria" class="row"> 
+                <div id="subcategoria" class="row"> 
 
                     <!--Empieza titulo-->
                     <div class="col-md-12">
@@ -299,7 +299,7 @@
                 <!--Finaliza contenido SubCategoria-->  
 
                 <!--Empieza contenido Concepto-->                        
-                <div id="Concepto" class="row"> 
+                <div id="concepto" class="row"> 
 
                     <!--Empieza titulo-->
                     <div class="col-md-12">
