@@ -180,11 +180,9 @@ class ServiceDesk extends General {
 
         /* Concatena la nueva resolución con la resolución anterior */
         $nuevaResolucion = ''
-                . $stringInicio
                 . "<br>"
                 . $datos
                 . "<br>"
-                . $stringFin
                 . stripslashes(trim($datosAnterioresResolicion));
 
         $input_data = ''

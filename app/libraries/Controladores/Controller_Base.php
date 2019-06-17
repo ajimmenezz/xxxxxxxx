@@ -8,13 +8,15 @@ use CI_Controller;
  * Clase que genera la funciones necesarias para todos los controladores
  */
 
-abstract class Controller_Base extends CI_Controller {
+abstract class Controller_Base extends CI_Controller
+{
 
     protected $SECCIONES;
     protected $usuario;
     protected $DBU;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         //Limpia la el cache del pagina
         $this->output->set_header('HTTP/1.0 200 OK');
@@ -43,14 +45,15 @@ abstract class Controller_Base extends CI_Controller {
      * @param array  $datos recibe un array con datos para la pagina si no envian los datos se define como null.
      */
 
-    public function desplegarPantalla(string $page = null, array $datos = null) {
+    public function desplegarPantalla(string $page = null, array $datos = null)
+    {
         $data = array();
         $carpeta = null;
-        $usuario = $this->usuario->getDatosUsuario();        
+        $usuario = $this->usuario->getDatosUsuario();
         $url = explode('/', uri_string());
         if (isset($usuario['IdPerfil'])) {
             if (array_key_exists($url[0], $this->config->item('Secciones'))) {
-                $carpeta = uri_string();                
+                $carpeta = uri_string();
                 $this->usuario->validarSession();
                 foreach ($this->config->item('Secciones') as $key => $value) {
                     if ($key === $url[0]) {
@@ -70,7 +73,7 @@ abstract class Controller_Base extends CI_Controller {
                                 $data['horaServidor'] = $this->getHora();
                                 $data['datosUsuario'] = $this->DBU->consultaTRHPersonal(array('IdUsuario' => $usuario['Id']));
                                 $this->load->view('Plantillas/Cabecera', $data);
-                                $this->load->view('Plantillas/Menu', $data);                                                                
+                                $this->load->view('Plantillas/Menu', $data);
                                 $this->load->view($carpeta, $data);
                                 $this->load->view('Plantillas/Pie');
                             } else {
@@ -98,7 +101,7 @@ abstract class Controller_Base extends CI_Controller {
             $this->load->view($carpeta, $data);
         } elseif ($page === 'Error_Clave') {
             $this->mostrarError('409', 'Error para validar clave', 'No se puede validar la clave de recuperación, favor de reportarlo al área de sistemas');
-        } else {
+        } else {                        
             $this->mostrarError('408', 'Sessión Caducada', 'Su session a terminado de forma automatica por falta de interactividad. Favor de volver a loguearse');
         }
     }
@@ -109,13 +112,16 @@ abstract class Controller_Base extends CI_Controller {
      * @return string regresa el formato de la fecha
      */
 
-    private function getFecha() {
+    private function getFecha()
+    {
         //se define zona horaria
         date_default_timezone_set('America/Mexico_City');
 
         //establece la localizacion
-        $meses = array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+        $meses = array(
+            'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        );
 
         $dias = array('Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado');
 
@@ -134,7 +140,8 @@ abstract class Controller_Base extends CI_Controller {
      * @return string Regresa el formato de la hora actual del servidor
      */
 
-    private function getHora() {
+    private function getHora()
+    {
         //se define zona horaria
         date_default_timezone_set('America/Mexico_City');
 
@@ -147,7 +154,9 @@ abstract class Controller_Base extends CI_Controller {
      * Muestra el error  de la pagina
      */
 
-    private function mostrarError(string $nuemeroError, string $titulo = null, string $descripcion = null) {
+    private function mostrarError(string $nuemeroError, string $titulo = null, string $descripcion = null)
+    {
+        show_404();
         $data = array();
         $carpeta = 'errors/personalizado/error_general';
         $data['title'] = strtoupper($nuemeroError);
@@ -158,5 +167,4 @@ abstract class Controller_Base extends CI_Controller {
         );
         $this->load->view($carpeta, $data);
     }
-
 }
