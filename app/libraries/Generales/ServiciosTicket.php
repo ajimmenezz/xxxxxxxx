@@ -2443,14 +2443,17 @@ class ServiciosTicket extends General {
         return $data;
     }
 
-    public function setStatusSD(string $folio) {
+    public function setStatusSD(string $folio = NULL) {
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->MSP->getApiKeyByUser($usuario['Id']);
-        $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
+        
+        if (!empty($folio)) {
+            $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
 
-        if (!isset($datosSD->operation->result->status)) {
-            if ($datosSD->STATUS !== 'Problema') {
-                $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $folio);
+            if (!isset($datosSD->operation->result->status)) {
+                if ($datosSD->STATUS !== 'Problema') {
+                    $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $folio);
+                }
             }
         }
     }
