@@ -34,19 +34,29 @@ $(function () {
             if (respuesta.code == 200) {
                 $("#seccionFormulario").empty().append(respuesta.formulario);
                 evento.cambiarDiv("#seccionPendientes", "#seccionFormulario");
-                initSeguimiento(datos.id);
+                initSeguimiento(datos);
             } else {
                 evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
             }
         });
     });
 
-    function initSeguimiento(servicio) {
+    function initSeguimiento(datos) {
         $("#btnIniciarServicio").off("click");
         $("#btnIniciarServicio").on("click", function () {
-            
+            evento.enviarEvento('Seguimiento/IniciarInstalacion', datos, '#panelSeguimiento45', function (respuesta) {
+                if (respuesta.code == 200) {
+                    $("#seccionFormulario").empty().append(respuesta.formulario);
+                    evento.cambiarDiv("#seccionPendientes", "#seccionFormulario");
+                    initSeguimiento(datos);
+                } else {
+                    evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.error, 4000);
+                }
+            });
         });
     }
+
+    /******************************************************************** */
 
     function initDetallesCuenta(datos, filaCuenta) {
         tabla.generaTablaPersonal('#table-movimientos', null, null, true, true, [[0, 'desc']]);

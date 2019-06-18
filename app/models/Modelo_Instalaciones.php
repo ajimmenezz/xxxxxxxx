@@ -70,6 +70,27 @@ class Modelo_Instalaciones extends Modelo_Base
         return $consulta;
     }
 
+    public function iniciarInstalacion(int $servicio)
+    {
+        $this->iniciaTransaccion();
+
+        $this->actualizar("t_servicios_ticket", [
+            'IdEstatus' => 2,
+            'FechaInicio' => $this->getFecha()
+        ], ['Id' => $servicio]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
     /********************************************************************** */
 
 

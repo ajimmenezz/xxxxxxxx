@@ -45,12 +45,27 @@ class Instalaciones extends General
                     break;
             }
 
-
-
             return [
                 'code' => 200,
                 'formulario' => parent::getCI()->load->view('Instalaciones/Formularios/Seguimiento-' . $data['generales']['IdTipoServicio'], $data, TRUE)
             ];
+        }
+    }
+
+    public function iniciarInstalacion(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+            ];
+        } else {
+            $iniciar = $this->DB->iniciarInstalacion($datos['id']);
+            if ($iniciar['code'] != 200) {
+                return $iniciar;
+            } else {
+                return $this->formularioSeguimientoInstalacion($datos);
+            }
         }
     }
 

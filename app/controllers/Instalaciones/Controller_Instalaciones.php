@@ -19,6 +19,9 @@ class Controller_Instalaciones extends Base
             case 'SeguimientoInstalacion':
                 $resultado = $this->instalaciones->formularioSeguimientoInstalacion($this->input->post());
                 break;
+            case 'IniciarInstalacion':
+                $resultado = $this->instalaciones->iniciarInstalacion($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
