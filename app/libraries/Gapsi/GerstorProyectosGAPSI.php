@@ -11,11 +11,13 @@ class GerstorProyectosGAPSI extends General {
     public function __construct() {
         parent::__construct();
         $this->DBGestorProyectoGAPSI = \Modelos\Modelo_GapsiGestorProyectos::factory();
-//        parent::getCI()->load->helper('date');
     }
 
-    public function getListProjects() {
-        $dataProjects = $this->DBGestorProyectoGAPSI->getProjects();
+    public function getListProjects(array $filters = []) {
+        $parametersDate = $this->parametersDate($filters);
+        $parameters = $this->parametersCurrency($filters);
+        $parameters = $parameters . $parametersDate;
+        $dataProjects = $this->DBGestorProyectoGAPSI->getProjects($parameters);
 
         if ($dataProjects['code'] === 200) {
             return $dataProjects['query'];
@@ -24,8 +26,11 @@ class GerstorProyectosGAPSI extends General {
         }
     }
 
-    public function getProjectTypes() {
-        $dataProjects = $this->DBGestorProyectoGAPSI->getProjectTypes();
+    public function getProjectTypes(array $filters = []) {
+        $parametersDate = $this->parametersDate($filters);
+        $parameters = $this->parametersCurrency($filters);
+        $parameters = $parameters . $parametersDate;
+        $dataProjects = $this->DBGestorProyectoGAPSI->getProjectTypes($parameters);
 
         if ($dataProjects['code'] === 200) {
             return $dataProjects['query'];
@@ -82,6 +87,16 @@ class GerstorProyectosGAPSI extends General {
             $parameters = " AND FCaptura BETWEEN '" . $filters['fechaInicio'] . "' AND '" . $filters['fechaFinal'] . "'";
         } else {
             $parameters = '';
+        }
+
+        return $parameters;
+    }
+
+    private function parametersCurrency(array $filters) {
+        if (!empty($filters['moneda'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'";
+        } else {
+            $parameters = "AND Moneda = 'MN'";
         }
 
         return $parameters;
