@@ -48,7 +48,7 @@
                     <h5 class="m-t-0" style="color: #A8ACB1">Filtros de fechas</h5>
                     <div class="form-group">
                         <label style="color: #A8ACB1">Desde</label>
-                        <div class='input-group date' id='desde' values="">
+                        <div class='input-group date' id='desde'>
                             <input id='fechaComienzo' type='text' class="form-control"/>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
@@ -60,7 +60,7 @@
                     <div class="form-group">
                         <label style="color: #A8ACB1">Hasta</label>
                         <div class='input-group date' id='hasta'>
-                            <input id='fechaFinal' type='text' class="form-control"/>
+                            <input id='fechaFin' type='text' class="form-control"/>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>

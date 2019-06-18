@@ -136,9 +136,9 @@ $(function () {
         month = fecha.getMonth() + 1;
         $('#hastaPrincipal').datepicker('setDate', year + "-" + month);
         $("#btnFiltrarDashboardPrincipal").on('click', function () {
-            datosFiltros.fechaInicio = $("#fechaComienzoPrincipal").val();
-            datosFiltros.fechaFinal = $("#fechaFinalPrincipal").val();
-            //enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            datosFiltros.fechaInicio = $("#fechaComienzoPrincipal").val()+"T00:00:00.000";
+            datosFiltros.fechaFinal = $("#fechaFinalPrincipal").val()+"T23:59:59.999";
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
         
         $('#desde').datepicker({
@@ -152,8 +152,8 @@ $(function () {
             endDate: fecha
         });
         $("#btnFiltrarDashboard").on('click', function () {
-            datosFiltros.fechaInicio = $("#fechaComienzo").val();
-            datosFiltros.fechaFinal = $("#fechaFinal").val();
+            datosFiltros.fechaInicio = $("#fechaComienzo").val()+"T00:00:00.000";
+            datosFiltros.fechaFinal = $("#fechaFin").val()+"T23:59:59.999";
             enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
     }
@@ -162,7 +162,7 @@ $(function () {
         $("input[name='optionsRadiosMonedaPrincipal").click(function () {
             var radioValueFiltrosP = $("input[name='optionsRadiosMonedaPrincipal']:checked").val();
             datosFiltros.moneda = radioValueFiltrosP;
-//            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
         $("input[name='optionsRadiosMoneda").click(function () {
             var radioValueFiltros = $("input[name='optionsRadiosMoneda']:checked").val();
@@ -330,7 +330,8 @@ $(function () {
         if (datosFiltros.fechaInicio === null) {
             $('#desde').datepicker('setDate', '2016-07-07');
         } else {
-            $('#desde').datepicker('setDate', datosFiltros.fechaInicio);
+            var nuevaFecha = datosFiltros['fechaInicio'].split('T');
+            $('#desde').datepicker('setDate', nuevaFecha[0]);
         }
         if (datosFiltros.fechaFinal === null) {
             let year, month;
@@ -338,7 +339,8 @@ $(function () {
             month = fecha.getMonth() + 1;
             $('#hasta').datepicker('setDate', year + "-" + month);
         } else {
-            $('#hasta').datepicker('setDate', datosFiltros.fechaFinal);
+            var nuevaFecha = datosFiltros['fechaFinal'].split('T');
+            $('#hasta').datepicker('setDate', nuevaFecha[0]);
         }
     }
 
@@ -384,7 +386,8 @@ $(function () {
 
         $(".remover").remove();
         $.each(datosFiltros, function (key, value) {
-            if (datosFiltros[key] !== null && datosFiltros[key] !== 'MN' && datosFiltros[key] !== 'USD' && key !== 'tipoProyecto') {
+            if (datosFiltros[key] !== null && datosFiltros[key] !== 'MN' && datosFiltros[key] !== 'USD' 
+                    && key !== 'fechaInicio' && key !== 'fechaFinal') {
                 switch (key) {
                     case 'proyecto':
                         $("#seccionFiltros").append('<div id="msg-filtros-' + datosFiltros[key] + '" class="alert alert-info fade in m-b-12 remover" style="color: black">\n\
