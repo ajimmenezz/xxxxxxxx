@@ -389,6 +389,11 @@ $(function () {
             if (datosFiltros[key] !== null && datosFiltros[key] !== 'MN' && datosFiltros[key] !== 'USD' 
                     && key !== 'fechaInicio' && key !== 'fechaFinal') {
                 switch (key) {
+                    case 'tipoProyecto':
+                        $("#seccionFiltros").append('<div id="msg-filtros-' + datosFiltros[key] + '" class="alert alert-info fade in m-b-12 remover" style="color: black">\n\
+                            ' + value + '\n\
+                        </div>');
+                        break;
                     case 'proyecto':
                         $("#seccionFiltros").append('<div id="msg-filtros-' + datosFiltros[key] + '" class="alert alert-info fade in m-b-12 remover" style="color: black">\n\
                             ' + datosProyectos[0]['Proyecto'] + '\n\
