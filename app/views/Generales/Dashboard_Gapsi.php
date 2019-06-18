@@ -226,7 +226,7 @@
 <div id="dashboardGapsiFilters" class="hidden"></div>
 <!--Finaliza dashboard detallado-->
 
-<div id="filtroFechas" class="theme-panel" hidden>
+<div id="filtroFechas" class="theme-panel">
     <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn bg-green"><i class="fa fa-calendar text-white"></i></a>
     <div class="theme-panel-content">
         <!--Empieza selector modena-->
@@ -247,8 +247,8 @@
         <h5 class="m-t-0">Filtros de fechas</h5>
         <div class="form-group">
             <label>Desde</label>
-            <div class='input-group date' id='desde' values="">
-                <input id='fechaComienzo' type='text' class="form-control"/>
+            <div class='input-group date' id='desdePrincipal' values="">
+                <input id='fechaComienzoPrincipal' type='text' class="form-control"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -256,8 +256,8 @@
         </div>
         <div class="form-group">
             <label>Hasta</label>
-            <div class='input-group date' id='hasta'>
-                <input id='fechaFinal' type='text' class="form-control"/>
+            <div class='input-group date' id='hastaPrincipal'>
+                <input id='fechaFinalPrincipal' type='text' class="form-control"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -265,7 +265,7 @@
         </div>
         <div class="row m-t-10">
             <div class="col-md-12">
-                <a href="#" id="btnFiltrarDashboard" class="btn btn-inverse btn-success btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
+                <a href="#" id="btnFiltrarDashboardPrincipal" class="btn btn-inverse btn-success btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
             </div>
         </div>
     </div>

@@ -59,13 +59,22 @@ $(function () {
         concepto: null
     };
     let anterioresFiltros;
+    let fecha = new Date();
     let radioValue = $("input[name='optionsRadiosMonedaPrincipal']:checked").val();
 
-    graficaPrincipal.inicilizarGrafica({title: 'Moneda en '+radioValue, titleTextStyle:{fontSize:18,bold:true,italic:true}, is3D: true});
+    graficaPrincipal.inicilizarGrafica({
+        title: 'Moneda en ' + radioValue,
+        titleTextStyle: {
+            fontSize: 18,
+            bold: true,
+            italic: true
+        },
+        is3D: true
+    });
     setDastosProyectos();
     graficaPrincipal.agregarListener(function (dato) {
         datosFiltros.tipoProyecto = dato;
-        datosFiltros.moneda = 'MN';
+        datosFiltros.moneda = $("input[name='optionsRadiosMonedaPrincipal']:checked").val();
         enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
     });
 
@@ -93,7 +102,7 @@ $(function () {
     tablaProyectos.evento(function () {
         let datosfila = tablaProyectos.datosFila(this);
         datosFiltros.tipoProyecto = datosfila[0];
-        datosFiltros.moneda = 'MN';
+        datosFiltros.moneda = $("input[name='optionsRadiosMonedaPrincipal']:checked").val();
         datosFiltros.proyecto = datosfila[1];
         enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
     });
@@ -111,50 +120,49 @@ $(function () {
     }
 
     function filtroFechas() {
-        let fecha = new Date();
+        $('#desdePrincipal').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: new Date('2016-07-08'),
+            endDate: fecha
+        });
+        $('#desdePrincipal').datepicker('setDate', '2016-07-07');
+        $('#hastaPrincipal').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: new Date('2016-07-08'),
+            endDate: fecha
+        });
+        let year, month;
+        year = fecha.getFullYear();
+        month = fecha.getMonth() + 1;
+        $('#hastaPrincipal').datepicker('setDate', year + "-" + month);
+        $("#btnFiltrarDashboardPrincipal").on('click', function () {
+            datosFiltros.fechaInicio = $("#fechaComienzoPrincipal").val();
+            datosFiltros.fechaFinal = $("#fechaFinalPrincipal").val();
+            //enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+        });
+        
         $('#desde').datepicker({
             format: 'yyyy-mm-dd',
-            maxDate: fecha,
-            startDate: new Date('2016-07-07')
-            //date: datosFiltros.fechaInicio
+            startDate: new Date('2016-07-08'),
+            endDate: fecha
         });
-//        $('#hasta').datetimepicker({
-//            format: 'YYYY-MM-DD',
-//            useCurrent: false,
-//            maxDate: new Date(),
-//            minDate: new Date('2016-07-07'),
-//            date: datosFiltros.fechaFinal
-//        });
-//        $("#desde").on("click", function (e) {
-//           document.getElementById('desde').style.position = 'fixed';
-//        });
-//        $("#hasta").on("click", function (e) {
-//            console.log($("#fechaFinal").siblings().zIndex())
-////            $("#fechaFinal").siblings().position({position:'absolute'});
-//            $("#fechaFinal").siblings().zIndex(20000);
-////           document.getElementById('hasta').style.zIndex = 2000;
-////           document.getElementById('hasta').style.position = 'fixed';
-//        });
-//        $("#desde").on("dp.change", function (e) {
-//            $('#hasta').data("DateTimePicker").minDate(e.date);
-//            document.getElementById('desde').style.position = 'relative';
-//        });
-//        $("#hasta").on("dp.change", function (e) {
-//            $('#desde').data("DateTimePicker").maxDate(e.date);
-//        });
+        $('#hasta').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: new Date('2016-07-08'),
+            endDate: fecha
+        });
         $("#btnFiltrarDashboard").on('click', function () {
-//            datosFiltros.fechaInicio = $("#fechaComienzo").val();
-            console.log($("#fechaComienzo").val());
-//            datosFiltros.fechaFinal = $("#fechaFinal").val();
-//            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            datosFiltros.fechaInicio = $("#fechaComienzo").val();
+            datosFiltros.fechaFinal = $("#fechaFinal").val();
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
     }
 
-    function filtroMoneda(){
+    function filtroMoneda() {
         $("input[name='optionsRadiosMonedaPrincipal").click(function () {
-            var radioValueFiltros = $("input[name='optionsRadiosMoneda']:checked").val();
-            datosFiltros.moneda = radioValueFiltros;
-            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            var radioValueFiltrosP = $("input[name='optionsRadiosMonedaPrincipal']:checked").val();
+            datosFiltros.moneda = radioValueFiltrosP;
+//            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
         $("input[name='optionsRadiosMoneda").click(function () {
             var radioValueFiltros = $("input[name='optionsRadiosMoneda']:checked").val();
@@ -318,6 +326,20 @@ $(function () {
                 }
             }
         });
+
+        if (datosFiltros.fechaInicio === null) {
+            $('#desde').datepicker('setDate', '2016-07-07');
+        } else {
+            $('#desde').datepicker('setDate', datosFiltros.fechaInicio);
+        }
+        if (datosFiltros.fechaFinal === null) {
+            let year, month;
+            year = fecha.getFullYear();
+            month = fecha.getMonth() + 1;
+            $('#hasta').datepicker('setDate', year + "-" + month);
+        } else {
+            $('#hasta').datepicker('setDate', datosFiltros.fechaFinal);
+        }
     }
 
     function filtrarDatosGraficaGoogle(datos, clave, valor) {
@@ -411,16 +433,21 @@ $(function () {
     function modalUndefined() {
         var html = '<div class="row m-t-20">\n\
         <form id="idUndefined" class="margin-bottom-0" enctype="multipart/form-data">\n\
-            <div id="modal-dialogo" class="col-md-12 text-center">\n\
-                <h4>La Información que solicita no es posible obtenerla<br>\n\
-                Contacte con el area correspondiente o vualva a intentarlo</h4><br>\n\
-                <button id="btnAceptar" type="button" class="btn btn-sm btn-warning"><i class="fa fa-exclamation-triangle"></i> Aceptar</button>\n\
+            <div id="modal-dialogo" class="col-md-12">\n\
+                <div class="col-md-3" style="text-align: right;">\n\
+                    <i class="fa fa-exclamation-triangle fa-4x text-warning"></i>\n\
+                </div>\n\
+                <div class="col-md-9">\n\
+                    <h4>La Información que solicita no es posible obtenerla<br>\n\
+                    Contacte con el área correspondiente o vuelva a intentarlo</h4><br>\n\
+                    <button id="btnAceptar" type="button" class="btn btn-sm btn-warning">Aceptar</button>\n\
+                </div>\n\
             </div>\n\
         </form>\n\
         </div>';
         $('#btnModalConfirmar').addClass('hidden');
         $('#btnModalAbortar').addClass('hidden');
-        evento.mostrarModal('Error', html);
+        evento.mostrarModal('Fallo la solicitud', html);
         $('#btnAceptar').on('click', function () {
             evento.cerrarModal();
             datosFiltros = JSON.parse(JSON.stringify(anterioresFiltros));
