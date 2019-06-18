@@ -208,7 +208,7 @@
                                     echo '<td>' . $valorProyecto['Descripcion'] . '</td>';
                                     echo '<td>$ ' . number_format($valorProyecto['Gasto'], 2) . '</td>';
                                     echo '<td>' . $valorProyecto['FCreacion'] . '</td>';
-                                    echo '<td>----</td>';
+                                    echo '<td>' . $valorProyecto['FCreacion'] . '</td>';
                                     echo "</tr>";
                                 }
                                 ?>

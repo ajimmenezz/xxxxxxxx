@@ -80,6 +80,7 @@ $(function () {
                 value.id,
                 value.nombre,
                 value.gasto,
+                value.fecha,
                 value.fecha
             ]);
         });
