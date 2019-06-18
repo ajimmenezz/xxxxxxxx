@@ -50,7 +50,7 @@ $(function () {
 
                 $('#btnIniciarServicio').on('click', function () {
                     var data = {servicio: servicio, operacion: '1'};
-                    evento.enviarEvento('Seguimiento/Servicio_Datos', data, '#panelSeguimientoAdministracion', function (respuesta) {
+                    evento.enviarEvento('Seguimiento/Servicio_Datos', data, '#modal-dialogo', function (respuesta) {
                         evento.cerrarModal();
                         data = {servicio: servicio, operacion: '2'};
                         cargarFormularioSeguimiento(data, datos, '#panelSeguimientoAdministracion');
