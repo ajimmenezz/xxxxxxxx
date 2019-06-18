@@ -31,7 +31,7 @@
             <div class="col-md-12">
                 <div class="radio">
                     <label style="color: #A8ACB1">
-                        <input type="radio" name="optionsRadiosMoneda" value="MN" checked="checked"/>Peso
+                        <input type="radio" name="optionsRadiosMoneda" value="MN"/>Peso
                     </label>
                 </div>
                 <div class="radio">
@@ -76,32 +76,32 @@
             <div id="selectFiltros" class="row">
                 <div class="col-md-12">
                     <div class="divider"></div>
-                    <div class="form-group" id="hideProyecto">
+                    <div class="form-group" id="hideproyecto">
                         <label style="color: #A8ACB1">Proyectos</label>
                         <select id="selectproyecto" class="form-control efectoDescuento" name="SelectProyecto" style="width: 100%">
                         </select>
                     </div>
-                    <div class="form-group" id="hideServicio">
+                    <div class="form-group" id="hideservicio">
                         <label style="color: #A8ACB1">Servicios</label>
                         <select id="selectservicio" class="form-control efectoDescuento" name="SelectServicio" style="width: 100%">
                         </select>
                     </div>
-                    <div class="form-group" id="hideSucursal">
+                    <div class="form-group" id="hidesucursal">
                         <label style="color: #A8ACB1">Sucursal</label>
                         <select id="selectsucursal" class="form-control efectoDescuento" name="SelectSucursal" style="width: 100%">
                         </select>
                     </div>
-                    <div class="form-group" id="hideCategoria">
+                    <div class="form-group" id="hidecategoria">
                         <label style="color: #A8ACB1">Categoria</label>
                         <select id="selectcategoria" class="form-control efectoDescuento" name="SelectCategoria" style="width: 100%">
                         </select>
                     </div>
-                    <div class="form-group" id="hideSubCategoria">
+                    <div class="form-group" id="hidecubcategoria">
                         <label style="color: #A8ACB1">SubCategoria</label>
                         <select id="selectsubcategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
                         </select>
                     </div>
-                    <div class="form-group" id="hideConcepto">
+                    <div class="form-group" id="hideconcepto">
                         <label style="color: #A8ACB1">Concepto</label>
                         <select id="selectconcepto" class="form-control efectoDescuento" name="SelectConcepto" style="width: 100%">
                         </select>
@@ -145,7 +145,13 @@
                                 <tr>
                                     <th class="all">Tipo Proyecto</th>
                                     <th class="all">Proyectos</th>
-                                    <th class="all">Gasto</th>
+                                    <?php
+//                                    if ($datos['TiposProyectos'][0] === 'MN') {
+                                        echo '<th class="all">Gasto MN</th>';
+//                                    } else {
+//                                        echo '<th class="all">Gasto USD</th>';
+//                                    }
+                                    ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -182,8 +188,15 @@
                                     <th class="never">Tipo</th>
                                     <th class="never">idProyecto</th>
                                     <th class="all">Proyecto</th>
-                                    <th class="all">Gasto</th>
+                                    <?php
+//                                    if ($datos['Proyectos'][0] === 'MN') {
+                                        echo '<th class="all">Gasto MN</th>';
+//                                    } else {
+//                                        echo '<th class="all">Gasto USD</th>';
+//                                    }
+                                    ?>
                                     <th class="all">Fecha Inicio</th>
+                                    <th class="all">Último movimiento</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -195,6 +208,7 @@
                                     echo '<td>' . $valorProyecto['Descripcion'] . '</td>';
                                     echo '<td>$ ' . number_format($valorProyecto['Gasto'], 2) . '</td>';
                                     echo '<td>' . $valorProyecto['FCreacion'] . '</td>';
+                                    echo '<td>----</td>';
                                     echo "</tr>";
                                 }
                                 ?>

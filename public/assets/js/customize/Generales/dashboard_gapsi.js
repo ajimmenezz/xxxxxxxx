@@ -47,20 +47,21 @@ $(function () {
 
     let datosProyecto = Array();
     let datosFiltros = {
-            tipoProyecto: null, 
-            moneda: null,
-            fechaInicio : null,
-            fechaFinal: null,
-            proyecto : null,
-            sucursal: null,
-            servicio : null,
-            categoria: null,
-            subcategoria : null,
-            concepto : null
-        };
-    let cargaDefault = false;
+        tipoProyecto: null,
+        moneda: null,
+        fechaInicio: null,
+        fechaFinal: null,
+        proyecto: null,
+        sucursal: null,
+        servicio: null,
+        categoria: null,
+        subcategoria: null,
+        concepto: null
+    };
+    let anterioresFiltros;
+    let radioValue = $("input[name='optionsRadiosMonedaPrincipal']:checked").val();
 
-    graficaPrincipal.inicilizarGrafica();
+    graficaPrincipal.inicilizarGrafica({title: 'Moneda en '+radioValue, titleTextStyle:{fontSize:18,bold:true,italic:true}, is3D: true});
     setDastosProyectos();
     graficaPrincipal.agregarListener(function (dato) {
         datosFiltros.tipoProyecto = dato;
@@ -91,7 +92,7 @@ $(function () {
     tablaProyectos.evento(function () {
         let datosfila = tablaProyectos.datosFila(this);
         datosFiltros.tipoProyecto = datosfila[0];
-        datosFiltros.moneda = 'MN'; 
+        datosFiltros.moneda = 'MN';
         datosFiltros.proyecto = datosfila[1];
         enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
     });
@@ -110,52 +111,53 @@ $(function () {
 
     function filtroFechas() {
         let fecha = new Date();
-        $('#desde').datetimepicker({
-            format: 'YYYY-MM-DD',
-            maxDate: new Date(),
-            minDate: new Date('2016-07-07'),
-            date: datosFiltros.fechaInicio
+        $('#desde').datepicker({
+            format: 'yyyy-mm-dd',
+            maxDate: fecha,
+            startDate: new Date('2016-07-07')
+            //date: datosFiltros.fechaInicio
         });
-        $('#hasta').datetimepicker({
-            format: 'YYYY-MM-DD',
-            useCurrent: false,
-            maxDate: new Date(),
-            minDate: new Date('2016-07-07'),
-            date: datosFiltros.fechaFinal
-        });
-        $("#desde").on("click", function (e) {
-           document.getElementById('desde').style.position = 'fixed';
-        });
-        $("#hasta").on("click", function (e) {
-            console.log($("#fechaFinal").siblings().zIndex())
-//            $("#fechaFinal").siblings().position({position:'absolute'});
-            $("#fechaFinal").siblings().zIndex(20000);
-//           document.getElementById('hasta').style.zIndex = 2000;
-//           document.getElementById('hasta').style.position = 'fixed';
-        });
-        $("#desde").on("dp.change", function (e) {
-            $('#hasta').data("DateTimePicker").minDate(e.date);
-            document.getElementById('desde').style.position = 'relative';
-        });
-        $("#hasta").on("dp.change", function (e) {
-            $('#desde').data("DateTimePicker").maxDate(e.date);
-        });
+//        $('#hasta').datetimepicker({
+//            format: 'YYYY-MM-DD',
+//            useCurrent: false,
+//            maxDate: new Date(),
+//            minDate: new Date('2016-07-07'),
+//            date: datosFiltros.fechaFinal
+//        });
+//        $("#desde").on("click", function (e) {
+//           document.getElementById('desde').style.position = 'fixed';
+//        });
+//        $("#hasta").on("click", function (e) {
+//            console.log($("#fechaFinal").siblings().zIndex())
+////            $("#fechaFinal").siblings().position({position:'absolute'});
+//            $("#fechaFinal").siblings().zIndex(20000);
+////           document.getElementById('hasta').style.zIndex = 2000;
+////           document.getElementById('hasta').style.position = 'fixed';
+//        });
+//        $("#desde").on("dp.change", function (e) {
+//            $('#hasta').data("DateTimePicker").minDate(e.date);
+//            document.getElementById('desde').style.position = 'relative';
+//        });
+//        $("#hasta").on("dp.change", function (e) {
+//            $('#desde').data("DateTimePicker").maxDate(e.date);
+//        });
         $("#btnFiltrarDashboard").on('click', function () {
-            datosFiltros.fechaInicio = $("#fechaComienzo").val();
-            datosFiltros.fechaFinal = $("#fechaFinal").val();
-            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+//            datosFiltros.fechaInicio = $("#fechaComienzo").val();
+            console.log($("#fechaComienzo").val());
+//            datosFiltros.fechaFinal = $("#fechaFinal").val();
+//            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
     }
-    
+
     function filtroMoneda(){
         $("input[name='optionsRadiosMonedaPrincipal").click(function () {
-            var radioValue = $("input[name='optionsRadiosMoneda']:checked").val();
-            datosFiltros.moneda = radioValue;
+            var radioValueFiltros = $("input[name='optionsRadiosMoneda']:checked").val();
+            datosFiltros.moneda = radioValueFiltros;
             enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
         $("input[name='optionsRadiosMoneda").click(function () {
-            var radioValue = $("input[name='optionsRadiosMoneda']:checked").val();
-            datosFiltros.moneda = radioValue;
+            var radioValueFiltros = $("input[name='optionsRadiosMoneda']:checked").val();
+            datosFiltros.moneda = radioValueFiltros;
             enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
     }
@@ -227,24 +229,20 @@ $(function () {
     }
 
     function listenerEventosObjetos(objeto, filtro) {
-        let datos = null;        
+        let datos = null;
         if (objeto instanceof TablaBasica) {
             objeto.evento(function () {
                 datos = objeto.datosFila(this);
                 datosFiltros[filtro] = datos[0];
-                cargaDefault = true;
                 enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
             });
         } else if (objeto instanceof SelectBasico) {
             objeto.evento('change', function () {
-                if (!cargaDefault) {
-                    datos = objeto.obtenerValor();
-                    datosFiltros[filtro] = datos;
-                    cargaDefault = true;
-                    enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
-                }
+                datos = objeto.obtenerValor();
+                datosFiltros[filtro] = datos;
+                enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
             });
-        } else if (objeto instanceof GraficaGoogle) {            
+        } else if (objeto instanceof GraficaGoogle) {
             switch (filtro) {
                 case 'proyecto':
                     objeto.agregarListener(function (dato) {
@@ -253,7 +251,6 @@ $(function () {
                                 datosFiltros[filtro] = datosProyectos[i].IdProyecto;
                             }
                         }
-                        cargaDefault = true;
                         enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
                     });
                     break;
@@ -264,14 +261,12 @@ $(function () {
                                 datosFiltros[filtro] = datosSucursales[i].idSucursal;
                             }
                         }
-                        cargaDefault = true;
                         enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
                     });
                     break
                 default:
                     objeto.agregarListener(function (dato) {
                         datosFiltros[filtro] = dato;
-                        cargaDefault = true;
                         enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
                     });
                     break;
@@ -284,16 +279,17 @@ $(function () {
             if (respuesta.consulta.proyectos.length !== 0) {
                 setSecciones(respuesta.formulario);
                 incializarDatos(respuesta.consulta);
-                incializarObjetos();                
+                incializarObjetos();
                 eventosObjetos();
                 tablasCostosFiltros();
-                defaultSelect();
+                $("input[name='optionsRadiosMoneda'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
+                anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
                 $('html, body').animate({
                     scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
                 }, 600);
 
             } else {
-                setTimeout(modalUndefined, 1000);
+                modalUndefined();
             }
         });
     }
@@ -307,17 +303,17 @@ $(function () {
         $('[data-click=right-sidebar-toggled]').removeClass('hidden');
         $('[data-devider=right-sidebar-toggled]').removeClass('hidden');
         $('[data-click=sidebar-toggled]').addClass('pull-left');
-        
-        $.each(datosFiltros, function(key,value){
-            let objeto = 'selector'+key;
-            objeto = new SelectBasico('select'+key);
-            if(value === null){
+
+        $.each(datosFiltros, function (key, value) {
+            if (value === null) {
                 peticion.mostrarElemento(key);
-                objeto.habilitarElemento();
-            }else{
+                if (key !== 'tipoProyecto' && key !== 'moneda') {
+                    peticion.mostrarElemento('hide' + key)
+                }
+            } else {
                 peticion.ocultarElemento(key);
-                if(key !== 'tipoProyecto' && key !== 'moneda'){
-                    objeto.bloquearElemento();
+                if (key !== 'tipoProyecto' && key !== 'moneda') {
+                    peticion.ocultarElemento('hide' + key)
                 }
             }
         });
@@ -330,15 +326,15 @@ $(function () {
         });
         return datosFiltrados;
     }
-    
+
     function filtrarDatosSelects(datos, clave, valor) {
         let datosFiltrados = [];
         $.each(datos, function (key, value) {
-            datosFiltrados.push({id:value[clave], text:value[valor]});
+            datosFiltrados.push({id: value[clave], text: value[valor]});
         });
         return datosFiltrados;
     }
-    
+
     function setDastosProyectos() {
         let temporal = tablaProyectos.datosTabla();
         $.each(temporal, function (key, value) {
@@ -352,7 +348,7 @@ $(function () {
         });
     }
 
-    function tablasCostosFiltros(){
+    function tablasCostosFiltros() {
         $("#data-tipo-gastos").find("tr:gt(0)").remove();
         $.each(datosCompras, function (key, value) {
             let table = document.getElementById("data-tipo-gastos");
@@ -362,55 +358,43 @@ $(function () {
             cell1.innerHTML = value.TipoTrans;
             cell2.innerHTML = value.Gasto.toFixed(2);
         });
-        
+
         $(".remover").remove();
         $.each(datosFiltros, function (key, value) {
-            if(datosFiltros[key] !== null && datosFiltros[key] !== 'MN' && datosFiltros[key] !== 'USD' && key !== 'tipoProyecto'){
+            if (datosFiltros[key] !== null && datosFiltros[key] !== 'MN' && datosFiltros[key] !== 'USD' && key !== 'tipoProyecto') {
                 switch (key) {
                     case 'proyecto':
-                        $( "#seccionFiltros" ).append('<div id="msg-filtros-'+datosFiltros[key]+'" class="alert alert-info fade in m-b-10 remover" style="color: black">\n\
-                            '+datosProyectos[0]['Proyecto']+'\n\
-                            <span class="close" data-dismiss="alert" data-filter='+datosFiltros[key]+' data-key='+key+'>&times;</span>\n\
+                        $("#seccionFiltros").append('<div id="msg-filtros-' + datosFiltros[key] + '" class="alert alert-info fade in m-b-12 remover" style="color: black">\n\
+                            ' + datosProyectos[0]['Proyecto'] + '\n\
+                            <span class="close" data-dismiss="alert" data-filter="' + datosFiltros[key] + '" data-key="' + key + '">&times;</span>\n\
                         </div>');
                         break;
                     case 'sucursal':
-                        $( "#seccionFiltros" ).append('<div id="msg-filtros-'+datosFiltros[key]+'" class="alert alert-info fade in m-b-10 remover" style="color: black">\n\
-                            '+datosSucursales[0]['Sucursal']+'\n\
-                            <span class="close" data-dismiss="alert" data-filter='+datosFiltros[key]+' data-key='+key+'>&times;</span>\n\
+                        $("#seccionFiltros").append('<div id="msg-filtros-' + datosFiltros[key] + '" class="alert alert-info fade in m-b-12 remover" style="color: black">\n\
+                            ' + datosSucursales[0]['Sucursal'] + '\n\
+                            <span class="close" data-dismiss="alert" data-filter="' + datosFiltros[key] + '" data-key="' + key + '">&times;</span>\n\
                         </div>');
                         break;
                     default:
-                        $( "#seccionFiltros" ).append('<div id="msg-filtros-'+datosFiltros[key]+'" class="alert alert-info fade in m-b-10 remover" style="color: black">\n\
-                            '+value+'\n\
-                            <span class="close" data-dismiss="alert" data-filter='+datosFiltros[key]+' data-key='+key+'>&times;</span>\n\
+                        $("#seccionFiltros").append('<div id="msg-filtros-' + datosFiltros[key] + '" class="alert alert-info fade in m-b-12 remover" style="color: black">\n\
+                            ' + value + '\n\
+                            <span class="close" data-dismiss="alert" data-filter="' + datosFiltros[key] + '" data-key="' + key + '">&times;</span>\n\
                         </div>');
                         break;
                 }
             }
         });
-        
-        $('[id*=msg-filtros-] .close').on('click', function(){
-           let llave = $(this).attr('data-key');
-           let dato = $(this).attr('data-filter');
-           $.each(datosFiltros, function (key, value) {
-               if(datosFiltros[key] == dato && key == llave){
-                   datosFiltros[key] = null;
-               }
-           });
-           enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+
+        $('[id*=msg-filtros-] .close').on('click', function () {
+            let llave = $(this).attr('data-key');
+            let dato = $(this).attr('data-filter');
+            $.each(datosFiltros, function (key, value) {
+                if (datosFiltros[key] == dato && key == llave) {
+                    datosFiltros[key] = null;
+                }
+            });
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
-    }
-    
-    function defaultSelect() {        
-        if (cargaDefault) {
-            selectorproyecto.definirValor(datosFiltros['proyecto']);
-            selectorservicio.definirValor(datosFiltros['servicio']);
-            selectorsucursal.definirValor(datosFiltros['sucursal']);
-            selectorcategoria.definirValor(datosFiltros['categoria']);
-            selectorsubcategoria.definirValor(datosFiltros['subcategoria']);
-            selectorconcepto.definirValor(datosFiltros['concepto']);
-            cargaDefault = false;
-        }
     }
 
     function filtrarDatos(datos, filtros) {
@@ -427,9 +411,9 @@ $(function () {
         var html = '<div class="row m-t-20">\n\
         <form id="idUndefined" class="margin-bottom-0" enctype="multipart/form-data">\n\
             <div id="modal-dialogo" class="col-md-12 text-center">\n\
-                <h5>La Información que solicita no es posible obtenerla<br>\n\
-                Contacte con el area correspondiente o vualva a intentarlo</h5><br>\n\
-                <button id="btnAceptar" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
+                <h4>La Información que solicita no es posible obtenerla<br>\n\
+                Contacte con el area correspondiente o vualva a intentarlo</h4><br>\n\
+                <button id="btnAceptar" type="button" class="btn btn-sm btn-warning"><i class="fa fa-exclamation-triangle"></i> Aceptar</button>\n\
             </div>\n\
         </form>\n\
         </div>';
@@ -438,6 +422,8 @@ $(function () {
         evento.mostrarModal('Error', html);
         $('#btnAceptar').on('click', function () {
             evento.cerrarModal();
+            datosFiltros = JSON.parse(JSON.stringify(anterioresFiltros));
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
     }
 });

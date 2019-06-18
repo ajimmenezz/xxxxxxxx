@@ -9,7 +9,7 @@ class GraficaGoogle {
         this.data = null;
     }
 
-    inicilizarGrafica() {
+    inicilizarGrafica(opciones = null) {
         let _this = this;
         let nombre = this.nombre;
         _this.google = google;
@@ -26,7 +26,13 @@ class GraficaGoogle {
             _this.data.addColumn('number', 'Slices');
             _this.data.addRows(_this.datos);
             // Set chart options
-            var options = {is3D: true};
+            if (opciones !== null) {
+                var options = opciones;
+            } else {
+                var options = {
+                    is3D: true
+                };
+            }
 
             // Instantiate and draw our chart, passing in some options.
             _this.chart = new _this.google.visualization.PieChart(document.getElementById(nombre));

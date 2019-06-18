@@ -1,5 +1,5 @@
 <div id="contentDashboardGapsiFilters">
-       
+
     <div id="content" class="content">
         <div class="row">
             <div class="col-md-9 col-sm-6 col-xs-9">
@@ -27,7 +27,13 @@
                     <!--Empieza titulo-->
                     <div class="col-md-12">
                         <div class="form-group">
-                            <h4 class="m-t-10">Proyectos</h4>
+                            <?php
+                            if ($proyectos[0][0] === 'MN') {
+                                echo '<h4 class="m-t-10">Proyectos  MN</h4>';
+                            } else {
+                                echo '<h4 class="m-t-10">Proyectos  USD</h4>';
+                            }
+                            ?>
                             <div class="underline m-b-15 m-t-15"></div>
                         </div> 
                     </div>
@@ -84,7 +90,13 @@
                     <!--Empieza titulo-->
                     <div class="col-md-12">
                         <div class="form-group">
-                            <h4 class="m-t-10">Servicios</h4>
+                            <?php
+                            if ($servicios[0][0] === 'MN') {
+                                echo '<h4 class="m-t-10">Servicios  MN</h4>';
+                            } else {
+                                echo '<h4 class="m-t-10">Servicios  USD</h4>';
+                            }
+                            ?>
                             <div class="underline m-b-15 m-t-15"></div>
                         </div> 
                     </div>
@@ -139,7 +151,13 @@
                     <!--Empieza titulo-->
                     <div class="col-md-12">
                         <div class="form-group">
-                            <h4 class="m-t-10">Sucursales</h4>
+                            <?php
+                            if ($sucursales[0][0] === 'MN') {
+                                echo '<h4 class="m-t-10">Sucursales  MN</h4>';
+                            } else {
+                                echo '<h4 class="m-t-10">Sucursales  USD</h4>';
+                            }
+                            ?>
                             <div class="underline m-b-15 m-t-15"></div>
                         </div> 
                     </div>
@@ -194,7 +212,13 @@
                     <!--Empieza titulo-->
                     <div class="col-md-12">
                         <div class="form-group">
-                            <h4 class="m-t-10">Categoria</h4>
+                            <?php
+                            if ($categorias[0][0] === 'MN') {
+                                echo '<h4 class="m-t-10">Categoria  MN</h4>';
+                            } else {
+                                echo '<h4 class="m-t-10">Categoria  USD</h4>';
+                            }
+                            ?>
                             <div class="underline m-b-15 m-t-15"></div>
                         </div> 
                     </div>
@@ -249,7 +273,13 @@
                     <!--Empieza titulo-->
                     <div class="col-md-12">
                         <div class="form-group">
-                            <h4 class="m-t-10">SubCategoria</h4>
+                            <?php
+                            if ($subcategorias[0][0] === 'MN') {
+                                echo '<h4 class="m-t-10">SubCategoria  MN</h4>';
+                            } else {
+                                echo '<h4 class="m-t-10">SubCategoria  USD</h4>';
+                            }
+                            ?>
                             <div class="underline m-b-15 m-t-15"></div>
                         </div> 
                     </div>
@@ -304,6 +334,13 @@
                     <!--Empieza titulo-->
                     <div class="col-md-12">
                         <div class="form-group">
+                            <?php
+//                            if ($subcategorias[0][0] === 'MN') {
+//                                echo '<h4 class="m-t-10">SubCategoria  MN</h4>';
+//                            } else {
+//                                echo '<h4 class="m-t-10">SubCategoria  USD</h4>';
+//                            }
+                            ?>
                             <h4 class="m-t-10">Concepto</h4>
                             <div class="underline m-b-15 m-t-15"></div>
                         </div> 
@@ -322,7 +359,13 @@
                                     <tr>
                                         <th class="never">idConcepto</th>
                                         <th class="all">Concepto</th>
-                                        <th class="all">Gastos</th>
+                                            <?php
+//                                        if ($subcategorias[0][0] === 'MN') {
+//                                            echo '<th class="all">Gasto MN</th>';
+//                                        } else {
+                                            echo '<th class="all">Gasto</th>';
+//                                        }
+                                            ?>
                                     </tr>
                                 </thead>
                                 <tbody>
