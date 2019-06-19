@@ -17,6 +17,7 @@ $(function () {
     let graficaPrincipal = new GraficaGoogle('graphDashboard', tablaTipoProyecto.datosTabla());
     let tablaProyectos = new TablaBasica('data-table-proyectos');
     tablaProyectos.reordenarTabla(3, 'desc');
+    let graficaPrincipalUSD = null;
     let tablaProyecto = null;
     let tablaServicio = null;
     let tablaSucursal = null;
@@ -203,6 +204,27 @@ $(function () {
             ]);
         });
         setDastosProyectos();
+        if (datosFiltros['moneda'] !== 'MN') {
+            $('#graficaMN').addClass('hidden');
+            $('#graficaUSD').removeClass('hidden');
+            graficaPrincipalUSD = new GraficaGoogle('graphDashboardUSD', tablaTipoProyecto.datosTabla());
+            graficaPrincipalUSD.inicilizarGrafica({
+                title: 'Moneda en ' + datosFiltros['moneda'],
+                titleTextStyle: {
+                    fontSize: 18,
+                    bold: true,
+                    italic: true
+                },
+                is3D: true
+            });
+            graficaPrincipalUSD.agregarListener(function (dato) {
+                datosFiltros.tipoProyecto = dato;
+                enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
+            });
+        } else {
+            $('#graficaMN').removeClass('hidden');
+            $('#graficaUSD').addClass('hidden');
+        }
     }
 
     function incializarObjetos() {
@@ -407,7 +429,6 @@ $(function () {
                 fechaFin: value[5]
             });
         });
-        console.log(tablaProyectos.datosTabla())
     }
 
     function tablasCostosFiltros() {
@@ -501,8 +522,8 @@ $(function () {
             }
         });
     }
-    
-    function formatoNumero(numero){
+
+    function formatoNumero(numero) {
         var temporalEntero, entero, decimal;
         numero += '';
         temporalEntero = numero.split('.');

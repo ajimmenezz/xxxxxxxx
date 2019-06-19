@@ -335,13 +335,12 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <?php
-//                            if ($subcategorias[0][0] === 'MN') {
-//                                echo '<h4 class="m-t-10">SubCategoria  MN</h4>';
-//                            } else {
-//                                echo '<h4 class="m-t-10">SubCategoria  USD</h4>';
-//                            }
+                            if ($subcategorias[0][0] === 'MN') {
+                                echo '<h4 class="m-t-10">Concepto MN</h4>';
+                            } else {
+                                echo '<h4 class="m-t-10">Concepto  USD</h4>';
+                            }
                             ?>
-                            <h4 class="m-t-10">Concepto</h4>
                             <div class="underline m-b-15 m-t-15"></div>
                         </div> 
                     </div>
@@ -359,13 +358,13 @@
                                     <tr>
                                         <th class="never">idConcepto</th>
                                         <th class="all">Concepto</th>
-                                            <?php
-//                                        if ($subcategorias[0][0] === 'MN') {
-//                                            echo '<th class="all">Gasto MN</th>';
-//                                        } else {
+                                        <?php
+                                        if ($subcategorias[0][0] === 'MN') {
+                                            echo '<th class="all">Gasto MN</th>';
+                                        } else {
                                             echo '<th class="all">Gasto</th>';
-//                                        }
-                                            ?>
+                                        }
+                                        ?>
                                     </tr>
                                 </thead>
                                 <tbody>

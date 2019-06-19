@@ -131,9 +131,14 @@
         <div class="panel-body">
             <div class="row">
                 <!--grafica principal dashboard                -->
-                <div class="col-md-7">                        
+                <div id="graficaMN" class="col-md-7">                        
                     <div class="row">
-                        <div id="graphDashboard" style="width: 100%; height: 400px;  max-height:400px"></div>
+                        <div id="graphDashboard" style="width: 100%; height: 400px;  max-height:400px"></div>                        
+                    </div>
+                </div>
+                <div id="graficaUSD" class="col-md-7 hidden">                        
+                    <div class="row">
+                        <div id="graphDashboardUSD" style="width: 100%; height: 400px;  max-height:400px"></div>                        
                     </div>
                 </div>
                 <div class="col-md-5">
@@ -147,7 +152,7 @@
                                     <th class="all">Proyectos</th>
                                     <?php
 //                                    if ($datos['TiposProyectos'][0] === 'MN') {
-                                        echo '<th class="all">Gasto MN</th>';
+                                        echo '<th class="all">Gasto</th>';
 //                                    } else {
 //                                        echo '<th class="all">Gasto USD</th>';
 //                                    }
@@ -190,7 +195,7 @@
                                     <th class="all">Proyecto</th>
                                     <?php
 //                                    if ($datos['Proyectos'][0] === 'MN') {
-                                        echo '<th class="all">Gasto MN</th>';
+                                        echo '<th class="all">Gasto</th>';
 //                                    } else {
 //                                        echo '<th class="all">Gasto USD</th>';
 //                                    }
