@@ -44,6 +44,11 @@
     </div>
     <div class="tab-content">
         <div class="panel-body">
+            <?php
+            if(($datosAusencia[0]['IdMotivoAusencia'] == '3' || $datosAusencia[0]['IdMotivoAusencia'] == '4') && $datosAusencia[0]["ArchivosOriginales"] == ''){
+                echo '<label style="color: red">Sin archivo de cita o incapacidad</label>';
+            }
+            ?>
             <form id="formRevisarPermiso" class="margin-bottom-0" data-parsley-validate="true" enctype="multipart/form-data">
                 
                 <div class="col-md-3">
