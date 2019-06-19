@@ -145,6 +145,11 @@
                     </div>
                 </div>
                 <div class="col-md-5">
+                    <!--<pre>-->
+                    <?php
+//                    var_dump($datos['Proyectos']['TiposProyectos']);
+                    ?>
+                    <!--</pre>-->
                     <!--<div class="row">-->
                     <div class="table-responsive">
                         <!--tabla de los tipos de proyectos                            -->
@@ -158,11 +163,13 @@
                             </thead>
                             <tbody>
                                 <?php
-                                foreach ($datos['TiposProyectos'] as $valorTipoProyecto) {
+                                var_dump($datos['Proyectos']['TiposProyectos']);
+                                foreach ($datos['Proyectos']['TiposProyectos'] as $key => $value) {
+                                    foreach ($value as $name => $valor)
                                     echo "<tr>";
-                                    echo '<td>' . $valorTipoProyecto['Tipo'] . '</td>';
-                                    echo '<td>' . $valorTipoProyecto['Proyectos'] . '</td>';
-                                    echo '<td>$ ' . number_format($valorTipoProyecto['Importe'], 2) . '</td>';
+                                    echo '<td>' . $name . '</td>';
+                                    echo '<td>' . $valor[$name] . '</td>';
+                                    echo '<td>$ ' . number_format($valor['Total'], 2) . '</td>';
                                     echo "</tr>";
                                 }
                                 ?>
@@ -196,15 +203,15 @@
                             </thead>
                             <tbody>
                                 <?php
-                                foreach ($datos['Proyectos'] as $valorProyecto) {
-                                    echo '<tr>';
-                                    echo '<td>' . $valorProyecto['Tipo'] . '</td>';
-                                    echo '<td>' . $valorProyecto['IdProyecto'] . '</td>';
-                                    echo '<td>' . $valorProyecto['Descripcion'] . '</td>';
-                                    echo '<td>$ ' . number_format($valorProyecto['Gasto'], 2) . '</td>';
-                                    echo '<td>' . $valorProyecto['FCreacion'] . '</td>';
-                                    echo "</tr>";
-                                }
+//                                foreach ($datos['Proyectos'] as $valorProyecto) {
+//                                    echo '<tr>';
+//                                    echo '<td>' . $valorProyecto['Tipo'] . '</td>';
+//                                    echo '<td>' . $valorProyecto['IdProyecto'] . '</td>';
+//                                    echo '<td>' . $valorProyecto['Descripcion'] . '</td>';
+//                                    echo '<td>$ ' . number_format($valorProyecto['Gasto'], 2) . '</td>';
+//                                    echo '<td>' . $valorProyecto['FCreacion'] . '</td>';
+//                                    echo "</tr>";
+//                                }
                                 ?>
                             </tbody>
                         </table>

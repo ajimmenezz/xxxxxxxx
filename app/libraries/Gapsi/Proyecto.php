@@ -36,6 +36,15 @@ class Proyecto extends General {
         $this->totalTransferencia = $this->compra + $this->gasto;
     }
     
+    public function getType() {
+        return $this->tipo;
+    }
+    
+    public function getTotal() {
+        return $this->totalTransferencia;
+    }
+
+
     private function setSucursales() {        
     }
 
