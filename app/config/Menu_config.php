@@ -3378,6 +3378,7 @@ $config['Instalaciones'] = array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
             'parsley/src/parsley',
+            'jquery-fileUpload/css/fileinput.min',
             'bootstrap-combobox/css/bootstrap-combobox',
             'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
         ),
@@ -3387,6 +3388,8 @@ $config['Instalaciones'] = array(
             'DataTables/js/dataTables.responsive',
             'DataTables/js/dataTables.jumpToData',
             'select2/dist/js/select2.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
             'bootstrap-combobox/js/bootstrap-combobox',

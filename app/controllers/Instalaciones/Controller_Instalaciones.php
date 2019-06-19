@@ -40,6 +40,24 @@ class Controller_Instalaciones extends Base
             case 'GuardarRetiradosLexmark':
                 $resultado = $this->instalaciones->guardarRetiradosLexmark($this->input->post());
                 break;            
+            case 'SubirArchivoInstalacion':
+                $resultado = $this->instalaciones->subirArchivoInstalacion($this->input->post());
+                break;            
+            case 'SubirArchivoRetiro':
+                $resultado = $this->instalaciones->subirArchivoRetiro($this->input->post());
+                break;            
+            case 'EvidenciasInstalacion':
+                $resultado = $this->instalaciones->evidenciasInstalacion($this->input->post());
+                break;            
+            case 'EvidenciasRetiro':
+                $resultado = $this->instalaciones->evidenciasRetiro($this->input->post());
+                break;            
+            case 'EliminarEvidenciaInstalacion':
+                $resultado = $this->instalaciones->eliminarEvidenciaInstalacion($this->input->post());
+                break;            
+            case 'EliminarEvidenciaRetiro':
+                $resultado = $this->instalaciones->eliminarEvidenciaRetiro($this->input->post());
+                break;            
             default:
                 $resultado = FALSE;
                 break;

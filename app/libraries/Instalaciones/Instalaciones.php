@@ -48,6 +48,8 @@ class Instalaciones extends General
 
             $generales['IdCliente'] = $cliente['Id'];
 
+            $evidenciasInstalacion = $this->DB->getEvidenciasInstalacion($datos['id']);
+
             $data = [
                 'generales' => $generales,
                 'clientes' => $this->cliente->get()['result'],
@@ -194,6 +196,110 @@ class Instalaciones extends General
             ];
         } else {
             return $this->DB->guardarRetiradosLexmark($datos);
+        }
+    }
+
+    public function subirArchivoInstalacion(array $datos)
+    {
+        $archivos = null;
+        $CI = parent::getCI();
+        $carpeta = 'instalaciones/ ' . $datos['id'] . '/';
+
+        $archivos = '';
+        if (!empty($_FILES)) {
+            $archivos = setMultiplesArchivos($CI, 'archivosInstalacion', $carpeta);
+            if ($archivos) {
+                $archivos = implode(',', $archivos);
+            }
+        }
+
+        $datos = array_merge($datos, ['archivos' => $archivos]);
+        $registrar = $this->DB->registrarArchivosInstalacion($datos);
+        return $registrar;
+    }
+
+    public function subirArchivoRetiro(array $datos)
+    {
+        $archivos = null;
+        $CI = parent::getCI();
+        $carpeta = 'retiros/ ' . $datos['id'] . '/';
+
+        $archivos = '';
+        if (!empty($_FILES)) {
+            $archivos = setMultiplesArchivos($CI, 'archivosRetiro', $carpeta);
+            if ($archivos) {
+                $archivos = implode(',', $archivos);
+            }
+        }
+
+        $datos = array_merge($datos, ['archivos' => $archivos]);
+        $registrar = $this->DB->registrarArchivosRetiro($datos);
+        return $registrar;
+    }
+
+    public function evidenciasInstalacion(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+            ];
+        } else {
+            $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
+            $evidenciasInstalacion = $this->DB->getEvidenciasInstalacion($datos['id']);
+
+            return [
+                'code' => 200,
+                'message' => 'Success',
+                'evidenciasInstalacion' => $this->DB->getTiposEvidencia($generales['IdTipoServicio'], $datos['id']),
+                'infoEvidenciasInstalacion' => $evidenciasInstalacion
+            ];
+        }
+    }
+
+    public function evidenciasRetiro(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+            ];
+        } else {
+            $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
+            $evidenciasRetiro = $this->DB->getEvidenciasRetiro($datos['id']);
+
+            return [
+                'code' => 200,
+                'message' => 'Success',
+                'evidenciasRetiro' => $this->DB->getTiposEvidenciaRetiro($generales['IdTipoServicio'], $datos['id']),
+                'infoEvidenciasRetiro' => $evidenciasRetiro
+            ];
+        }
+    }
+
+    public function eliminarEvidenciaInstalacion(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'error' => 'No se ha recibido la información del archivo. Intente de nuevo'
+            ];
+        } else {
+            $eliminar = $this->DB->eliminarEvidenciaInstalacion($datos['id']);
+            return $eliminar;
+        }
+    }
+
+    public function eliminarEvidenciaRetiro(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'error' => 'No se ha recibido la información del archivo. Intente de nuevo'
+            ];
+        } else {
+            $eliminar = $this->DB->eliminarEvidenciaRetiro($datos['id']);
+            return $eliminar;
         }
     }
 }

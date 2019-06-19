@@ -91,12 +91,190 @@ $(function () {
             }
         });
 
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            switch (target) {
+                case "#EvidenciasInstalacion":
+                    cargaEvidenciasInstalacion(datos);
+                    break;
+                case "#EvidenciasRetiro":
+                    cargaEvidenciasRetiro(datos);
+                    break;
+            }
+        });
+
         switch (tipoInstalacion) {
             case 45: case '45':
                 initInstalacionLexmark(datos);
                 break;
         }
 
+    }
+
+    function cargaEvidenciasInstalacion(datos) {
+        file.crearUpload('#archivosInstalacion', 'Seguimiento/SubirArchivoInstalacion');
+        file.habilitar("#archivosInstalacion");
+
+        evento.enviarEvento('Seguimiento/EvidenciasInstalacion', datos, '#panelSeguimiento', function (respuesta) {
+            if (respuesta.code == 200) {
+                select.destruirSelect("#listTiposEvidenciaInstalacion");
+                $("#listTiposEvidenciaInstalacion").empty().append('<option value="">Selecciona...</option>');
+
+                $.each(respuesta.evidenciasInstalacion, function (k, v) {
+                    $("#listTiposEvidenciaInstalacion").append('<option value="' + v.Id + '">' + v.Nombre + '</option>')
+                });
+
+                select.crearSelect("#listTiposEvidenciaInstalacion");
+
+                $("#divEvidenciasInstalacion").empty();
+
+                $.each(respuesta.infoEvidenciasInstalacion, function (k, v) {
+                    $("#divEvidenciasInstalacion").append(`
+                    <div class="col-md-3 text-center p-10">
+                        <div class="image-inner">
+                            <a href="`+ v.Archivo + `" data-lightbox="gallery-group-instalacion">
+                                <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="`+ v.Archivo + `" alt="` + v.Evidencia + `">
+                            </a>
+                            <a data-id="`+ v.Id + `" class="btn btn-block btn-danger btn-xs f-w-600 btnEliminarEvidenciaInstalacion">Eliminar Archivo</a>
+                            <p class="image-caption f-w-600 f-s-14">`+ v.Evidencia + `</p>
+                        </div>
+                    </div>
+                    `);
+                });
+
+                $(".btnEliminarEvidenciaInstalacion").off("click");
+                $(".btnEliminarEvidenciaInstalacion").on("click", function () {
+                    var id = $(this).attr("data-id");
+                    evento.enviarEvento('Seguimiento/EliminarEvidenciaInstalacion', { 'id': id }, '#panelSeguimiento', function (respuesta) {
+                        if (respuesta.code == 200) {
+                            cargaEvidenciasInstalacion(datos);
+                        } else {
+                            evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                        }
+                    });
+                });
+
+                $("#btnSubirEvidenciaInstalacion").off("click");
+                $("#btnSubirEvidenciaInstalacion").on("click", function () {
+                    subirEvidenciasInstalacion(datos);
+                });
+
+            } else {
+                evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+            }
+        });
+    }
+
+    function cargaEvidenciasRetiro(datos) {
+        file.crearUpload('#archivosRetiro', 'Seguimiento/SubirArchivoRetiro');
+        file.habilitar("#archivosRetiro");
+
+        evento.enviarEvento('Seguimiento/EvidenciasRetiro', datos, '#panelSeguimiento', function (respuesta) {
+            if (respuesta.code == 200) {
+                select.destruirSelect("#listTiposEvidenciaRetiro");
+                $("#listTiposEvidenciaRetiro").empty().append('<option value="">Selecciona...</option>');
+
+                $.each(respuesta.evidenciasRetiro, function (k, v) {
+                    $("#listTiposEvidenciaRetiro").append('<option value="' + v.Id + '">' + v.Nombre + '</option>')
+                });
+
+                select.crearSelect("#listTiposEvidenciaRetiro");
+
+                $("#divEvidenciasRetiro").empty();
+
+                $.each(respuesta.infoEvidenciasRetiro, function (k, v) {
+                    $("#divEvidenciasRetiro").append(`
+                    <div class="col-md-3 text-center p-10">
+                        <div class="image-inner">
+                            <a href="`+ v.Archivo + `" data-lightbox="gallery-group-retiro">
+                                <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="`+ v.Archivo + `" alt="` + v.Evidencia + `">
+                            </a>
+                            <a data-id="`+ v.Id + `" class="btn btn-block btn-danger btn-xs f-w-600 btnEliminarEvidenciaRetiro">Eliminar Archivo</a>
+                            <p class="image-caption f-w-600 f-s-14">`+ v.Evidencia + `</p>
+                        </div>
+                    </div>
+                    `);
+                });
+
+                $(".btnEliminarEvidenciaRetiro").off("click");
+                $(".btnEliminarEvidenciaRetiro").on("click", function () {
+                    var id = $(this).attr("data-id");
+                    evento.enviarEvento('Seguimiento/EliminarEvidenciaRetiro', { 'id': id }, '#panelSeguimiento', function (respuesta) {
+                        if (respuesta.code == 200) {
+                            cargaEvidenciasRetiro(datos);
+                        } else {
+                            evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                        }
+                    });
+                });
+
+                $("#btnSubirEvidenciaRetiro").off("click");
+                $("#btnSubirEvidenciaRetiro").on("click", function () {
+                    subirEvidenciasRetiro(datos);
+                });
+
+            } else {
+                evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+            }
+        });
+    }
+
+    function subirEvidenciasInstalacion(datos) {
+        var data = datos;
+        data.evidencia = $("#listTiposEvidenciaInstalacion").val();
+        data.archivos = $("#archivosInstalacion").val();
+
+        var error = '';
+        if (data.evidencia == "") {
+            error = "El Tipo de Evidencia es un campo obligatorio";
+        } else if (data.archivos == "") {
+            error = "Los archivos adjuntos son un campo obligatorio";
+        }
+
+        if (error != '') {
+            evento.mostrarMensaje("#errorMessageSeguimiento", false, error, 4000);
+        } else {
+            file.enviarArchivos('#archivosInstalacion', 'Seguimiento/SubirArchivoInstalacion', '#panelSeguimiento', data, function (respuesta) {
+                if (respuesta.code == 200) {
+                    evento.mostrarMensaje("#errorMessageSeguimiento", true, respuesta.message, 4000);
+                    file.limpiar("#archivosInstalacion");
+                    file.destruir("#archivosInstalacion");
+                    $("#archivosInstalacion").val('');
+                    cargaEvidenciasInstalacion(datos);
+                } else {
+                    evento.mostrarMensaje("#errorMessageSeguimiento", false, "Ocurrió el siguiente error al guardar el archivo. " + respuesta.message, 4000);
+                }
+            });
+        }
+    }
+
+    function subirEvidenciasRetiro(datos) {
+        var data = datos;
+        data.evidencia = $("#listTiposEvidenciaRetiro").val();
+        data.archivos = $("#archivosRetiro").val();
+
+        var error = '';
+        if (data.evidencia == "") {
+            error = "El Tipo de Evidencia es un campo obligatorio";
+        } else if (data.archivos == "") {
+            error = "Los archivos adjuntos son un campo obligatorio";
+        }
+
+        if (error != '') {
+            evento.mostrarMensaje("#errorMessageSeguimiento", false, error, 4000);
+        } else {
+            file.enviarArchivos('#archivosRetiro', 'Seguimiento/SubirArchivoRetiro', '#panelSeguimiento', data, function (respuesta) {
+                if (respuesta.code == 200) {
+                    evento.mostrarMensaje("#errorMessageSeguimiento", true, respuesta.message, 4000);
+                    file.limpiar("#archivosRetiro");
+                    file.destruir("#archivosRetiro");
+                    $("#archivosRetiro").val('');
+                    cargaEvidenciasRetiro(datos);
+                } else {
+                    evento.mostrarMensaje("#errorMessageSeguimiento", false, "Ocurrió el siguiente error al guardar el archivo. " + respuesta.message, 4000);
+                }
+            });
+        }
     }
 
     function initInstalacionLexmark(datos) {

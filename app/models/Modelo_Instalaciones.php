@@ -3,6 +3,7 @@
 namespace Modelos;
 
 use Librerias\Modelos\Base as Modelo_Base;
+use Ratchet\Wamp\Exception;
 
 class Modelo_Instalaciones extends Modelo_Base
 {
@@ -359,7 +360,7 @@ class Modelo_Instalaciones extends Modelo_Base
         }
 
         $result = [
-            'impresora' => $impresora            
+            'impresora' => $impresora
         ];
 
         if ($this->estatusTransaccion() === FALSE) {
@@ -374,6 +375,196 @@ class Modelo_Instalaciones extends Modelo_Base
                 'code' => 200,
                 'message' => "Información Correcta",
                 'result' => $result
+            ];
+        }
+    }
+
+    public function getTiposEvidencia(int $tipoServicio, int $servicio = null)
+    {
+        $condicion = '';
+        if (!is_null($servicio)) {
+            $condicion = " and Id not in ((select IdEvidencia from t_instalaciones_evidencias where IdServicio = '" . $servicio . "'))";
+        }
+        $consulta = $this->consulta("
+        select 
+        Id, 
+        Nombre 
+        from cat_v3_instalaciones_evidencias 
+        where Flag = 1 " . $condicion . " order by Nombre");
+        return $consulta;
+    }
+
+    public function getTiposEvidenciaRetiro(int $tipoServicio, int $servicio = null)
+    {
+        $condicion = '';
+        if (!is_null($servicio)) {
+            $condicion = " and Id not in ((select IdEvidencia from t_retiros_evidencias where IdServicio = '" . $servicio . "'))";
+        }
+        $consulta = $this->consulta("
+        select 
+        Id, 
+        Nombre 
+        from cat_v3_retiros_evidencias 
+        where Flag = 1 " . $condicion . " order by Nombre");
+        return $consulta;
+    }
+
+    public function registrarArchivosInstalacion(array $datos)
+    {
+        $this->iniciaTransaccion();
+
+        $registroEvidencia = $this->consulta("
+        select * 
+        from t_instalaciones_evidencias 
+        where IdServicio = '" . $datos['id'] . "' 
+        and IdEvidencia = '" . $datos['evidencia'] . "'");
+
+        if (!empty($registroEvidencia) && isset($registroEvidencia[0]) && isset($registroEvidencia[0]['Id'])) {
+            $this->actualizar("t_instalaciones_evidencias", [
+                'Archivo' => $datos['archivos']
+            ], ['Id' => $datos['id']]);
+        } else {
+            $this->insertar("t_instalaciones_evidencias", [
+                'IdServicio' => $datos['id'],
+                'IdEvidencia' => $datos['evidencia'],
+                'Archivo' => $datos['archivos']
+            ]);
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Se ha agregado una nueva evidencia a la instalación"
+            ];
+        }
+    }
+
+    public function registrarArchivosRetiro(array $datos)
+    {
+        $this->iniciaTransaccion();
+
+        $registroEvidencia = $this->consulta("
+        select * 
+        from t_retiros_evidencias 
+        where IdServicio = '" . $datos['id'] . "' 
+        and IdEvidencia = '" . $datos['evidencia'] . "'");
+
+        if (!empty($registroEvidencia) && isset($registroEvidencia[0]) && isset($registroEvidencia[0]['Id'])) {
+            $this->actualizar("t_retiros_evidencias", [
+                'Archivo' => $datos['archivos']
+            ], ['Id' => $datos['id']]);
+        } else {
+            $this->insertar("t_retiros_evidencias", [
+                'IdServicio' => $datos['id'],
+                'IdEvidencia' => $datos['evidencia'],
+                'Archivo' => $datos['archivos']
+            ]);
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Se ha agregado una nueva evidencia a la instalación"
+            ];
+        }
+    }
+
+    public function getEvidenciasInstalacion(int $servicio)
+    {
+        $consulta = $this->consulta("
+        select 
+        Id, 
+        IdEvidencia,
+        Archivo,
+        (select Nombre from cat_v3_instalaciones_evidencias where Id = IdEvidencia) as Evidencia
+        from t_instalaciones_evidencias ");
+        return $consulta;
+    }
+
+    public function getEvidenciasRetiro(int $servicio)
+    {
+        $consulta = $this->consulta("
+        select 
+        Id, 
+        IdEvidencia,
+        Archivo,
+        (select Nombre from cat_v3_retiros_evidencias where Id = IdEvidencia) as Evidencia
+        from t_retiros_evidencias ");
+        return $consulta;
+    }
+
+    public function eliminarEvidenciaInstalacion(int $id)
+    {
+        $this->iniciaTransaccion();
+
+        $archivo = $this->consulta("select Archivo from t_instalaciones_evidencias where Id = '" . $id . "'");
+
+        $this->eliminar("t_instalaciones_evidencias", ['Id' => $id]);
+
+        if (unlink('.' . $archivo[0]['Archivo'])) { } else {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => 'No se ha podido eliminar el archivo'
+            ];
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Se ha eliminado la evidencia de la instalación"
+            ];
+        }
+    }
+
+    public function eliminarEvidenciaRetiro(int $id)
+    {
+        $this->iniciaTransaccion();
+
+        $archivo = $this->consulta("select Archivo from t_retiros_evidencias where Id = '" . $id . "'");
+
+        $this->eliminar("t_retiros_evidencias", ['Id' => $id]);
+
+        if (unlink('.' . $archivo[0]['Archivo'])) { } else {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => 'No se ha podido eliminar el archivo'
+            ];
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Se ha eliminado la evidencia del retiro"
             ];
         }
     }

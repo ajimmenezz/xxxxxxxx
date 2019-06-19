@@ -21,6 +21,8 @@
                             ?>
                             <li class="f-w-600 f-s-14"><a href="#Instalados" data-toggle="tab">Equipos Instalados</a></li>
                             <li class="f-w-600 f-s-14"><a href="#Retirados" data-toggle="tab">Equipos Retirados</a></li>
+                            <li class="f-w-600 f-s-14"><a href="#EvidenciasInstalacion" data-toggle="tab">Evidencias Instalación</a></li>
+                            <li class="f-w-600 f-s-14"><a href="#EvidenciasRetiro" data-toggle="tab">Evidencias Retiro</a></li>
                         <?php
                     }
                     ?>
@@ -305,7 +307,7 @@
                                             <label class="f-w-600 f-s-14">Serie*:</label>
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
-                                                <input id="txtSerieImpRetirada" type="text" class="form-control f-w-600 f-s-14" placeholder="Serial Number" value="" />
+                                                <input id="txtSerieSupresor" type="text" class="form-control f-w-600 f-s-14" placeholder="Serial Number" value="" />
                                             </div>
                                         </div>
                                     </div>
@@ -424,6 +426,112 @@
                                 </a>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="EvidenciasInstalacion">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Subir Evidencias de Instalación</h4>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="underline"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 bg-silver-lighter">
+                                <div class="row m-t-10">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Tipo de Evidencia*:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-file"></i></span>
+                                                <select id="listTiposEvidenciaInstalacion" class="form-control" style="width:100%">
+                                                    <option value="">Selecciona . . .</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Adjuntar Archivo*:</label>
+                                            <input id="archivosInstalacion" name="archivosInstalacion[]" type="file" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-25">
+                            <div class="col-md-12 text-center">
+                                <a id="btnSubirEvidenciaInstalacion" class="btn btn-success f-s-15 f-w-600 p-t-10 p-b-10 p-l-15 p-r-15">
+                                    <i class="fa fa-cloud-upload"></i> Subir Archivo
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Evidencias de Instalación</h4>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="underline"></div>
+                            </div>
+                        </div>
+                        <div class="row" id="divEvidenciasInstalacion"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="EvidenciasRetiro">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Subir Evidencias de Retiro</h4>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="underline"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 bg-silver-lighter">
+                                <div class="row m-t-10">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Tipo de Evidencia*:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-file"></i></span>
+                                                <select id="listTiposEvidenciaRetiro" class="form-control" style="width:100%">
+                                                    <option value="">Selecciona . . .</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Adjuntar Archivo*:</label>
+                                            <input id="archivosRetiro" name="archivosRetiro[]" type="file" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-25">
+                            <div class="col-md-12 text-center">
+                                <a id="btnSubirEvidenciaRetiro" class="btn btn-success f-s-15 f-w-600 p-t-10 p-b-10 p-l-15 p-r-15">
+                                    <i class="fa fa-cloud-upload"></i> Subir Archivo
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Evidencias de Retiro</h4>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="underline"></div>
+                            </div>
+                        </div>
+                        <div class="row" id="divEvidenciasRetiro"></div>
                     </div>
                 </div>
             </div>
