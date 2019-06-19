@@ -136,11 +136,11 @@ $(function () {
         month = fecha.getMonth() + 1;
         $('#hastaPrincipal').datepicker('setDate', year + "-" + month);
         $("#btnFiltrarDashboardPrincipal").on('click', function () {
-            datosFiltros.fechaInicio = $("#fechaComienzoPrincipal").val()+"T00:00:00.000";
-            datosFiltros.fechaFinal = $("#fechaFinalPrincipal").val()+"T23:59:59.999";
-            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            datosFiltros.fechaInicio = $("#fechaComienzoPrincipal").val() + "T00:00:00.000";
+            datosFiltros.fechaFinal = $("#fechaFinalPrincipal").val() + "T23:59:59.999";
+            enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
         });
-        
+
         $('#desde').datepicker({
             format: 'yyyy-mm-dd',
             startDate: new Date('2016-07-08'),
@@ -152,8 +152,8 @@ $(function () {
             endDate: fecha
         });
         $("#btnFiltrarDashboard").on('click', function () {
-            datosFiltros.fechaInicio = $("#fechaComienzo").val()+"T00:00:00.000";
-            datosFiltros.fechaFinal = $("#fechaFin").val()+"T23:59:59.999";
+            datosFiltros.fechaInicio = $("#fechaComienzo").val() + "T00:00:00.000";
+            datosFiltros.fechaFinal = $("#fechaFin").val() + "T23:59:59.999";
             enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
     }
@@ -162,13 +162,49 @@ $(function () {
         $("input[name='optionsRadiosMonedaPrincipal").click(function () {
             var radioValueFiltrosP = $("input[name='optionsRadiosMonedaPrincipal']:checked").val();
             datosFiltros.moneda = radioValueFiltrosP;
-            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
         });
         $("input[name='optionsRadiosMoneda").click(function () {
             var radioValueFiltros = $("input[name='optionsRadiosMoneda']:checked").val();
             datosFiltros.moneda = radioValueFiltros;
             enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
+    }
+
+    function enviarFiltrosPrincipal(objeto, datosFiltros) {
+        peticion.enviar(objeto, 'Dashboard_Gapsi/filtroPrincipal', datosFiltros, function (respuesta) {
+            if (respuesta.tipoProyectos.length !== 0) {
+                anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
+                actualizarObjetosPrincipal(respuesta);
+            } else {
+                modalUndefined();
+            }
+        });
+    }
+    
+    function actualizarObjetosPrincipal(respuesta){
+        tablaTipoProyecto.limpiartabla();
+        $.each(respuesta.tipoProyectos, function (key, value) {
+            tablaTipoProyecto.agregarDatosFila([
+                value.Tipo,
+                value.Proyectos,
+                '$ '+value.Importe
+            ]);
+        });
+        tablaProyectos.limpiartabla();
+        $.each(respuesta.listaProyectos, function (key, value) {
+            tablaProyectos.agregarDatosFila([
+                value.Tipo,
+                value.IdProyecto,
+                value.Descripcion,
+                '$ '+value.Gasto,
+                value.FCreacion,
+                value.UltimoRegistro
+            ]);
+        });
+        console.log(respuesta)
+//        graficaPrincipal = new GraficaGoogle('chart_proyecto', filtrarDatosGraficaGoogle(respuesta.tipoProyectos, 'Tipo', 'Proyectos'));
+//        graficaPrincipal.inicilizarGrafica();
     }
 
     function incializarObjetos() {
@@ -386,7 +422,7 @@ $(function () {
 
         $(".remover").remove();
         $.each(datosFiltros, function (key, value) {
-            if (datosFiltros[key] !== null && datosFiltros[key] !== 'MN' && datosFiltros[key] !== 'USD' 
+            if (datosFiltros[key] !== null && datosFiltros[key] !== 'MN' && datosFiltros[key] !== 'USD'
                     && key !== 'fechaInicio' && key !== 'fechaFinal') {
                 switch (key) {
                     case 'tipoProyecto':
@@ -459,7 +495,9 @@ $(function () {
         $('#btnAceptar').on('click', function () {
             evento.cerrarModal();
             datosFiltros = JSON.parse(JSON.stringify(anterioresFiltros));
-            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            if (datosFiltros.tipoProyecto !== null) {
+                enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            }
         });
     }
 });
