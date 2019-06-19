@@ -12,7 +12,13 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     SUM(dr.Importe) AS Gasto,
                                                     dr.Proyecto AS IdProyecto,
                                                     (SELECT Descripcion FROM db_Proyectos WHERE ID = dr.Proyecto) AS Descripcion,
-                                                    (SELECT FCreacion FROM db_Proyectos WHERE ID = dr.Proyecto) AS FCreacion
+                                                    (SELECT FCreacion FROM db_Proyectos WHERE ID = dr.Proyecto) AS FCreacion,
+                                                    (SELECT
+                                                            top 1 FCaptura
+                                                      FROM db_Registro
+                                                      WHERE Proyecto = dr.Proyecto
+                                                      AND Tipo = dr.Tipo
+                                                      ORDER BY FCaptura DESC) AS UltimoRegistro
                                                     FROM db_Registro dr
                                                     WHERE 1=1
                                                     AND dr.StatusConciliacion = 'Conciliado'
