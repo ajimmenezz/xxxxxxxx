@@ -90,7 +90,7 @@ $(function () {
                 value.nombre,
                 value.gasto,
                 value.fecha,
-                value.fecha
+                value.fechaFin
             ]);
         });
 
@@ -181,14 +181,14 @@ $(function () {
             }
         });
     }
-    
-    function actualizarObjetosPrincipal(respuesta){
+
+    function actualizarObjetosPrincipal(respuesta) {
         tablaTipoProyecto.limpiartabla();
         $.each(respuesta.tipoProyectos, function (key, value) {
             tablaTipoProyecto.agregarDatosFila([
                 value.Tipo,
                 value.Proyectos,
-                '$ '+value.Importe
+                '$ ' + formatoNumero(value.Importe.toFixed(2))
             ]);
         });
         tablaProyectos.limpiartabla();
@@ -197,14 +197,12 @@ $(function () {
                 value.Tipo,
                 value.IdProyecto,
                 value.Descripcion,
-                '$ '+value.Gasto,
+                '$ ' + formatoNumero(value.Gasto.toFixed(2)),
                 value.FCreacion,
                 value.UltimoRegistro
             ]);
         });
-        console.log(respuesta)
-//        graficaPrincipal = new GraficaGoogle('chart_proyecto', filtrarDatosGraficaGoogle(respuesta.tipoProyectos, 'Tipo', 'Proyectos'));
-//        graficaPrincipal.inicilizarGrafica();
+        setDastosProyectos();
     }
 
     function incializarObjetos() {
@@ -398,15 +396,18 @@ $(function () {
 
     function setDastosProyectos() {
         let temporal = tablaProyectos.datosTabla();
+        datosProyecto = Array();
         $.each(temporal, function (key, value) {
             datosProyecto.push({
                 id: value[1],
                 nombre: value[2],
                 tipo: value[0],
                 gasto: value[3],
-                fecha: value[4]
+                fecha: value[4],
+                fechaFin: value[5]
             });
         });
+        console.log(tablaProyectos.datosTabla())
     }
 
     function tablasCostosFiltros() {
@@ -499,5 +500,18 @@ $(function () {
                 enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
             }
         });
+    }
+    
+    function formatoNumero(numero){
+        var temporalEntero, entero, decimal;
+        numero += '';
+        temporalEntero = numero.split('.');
+        entero = temporalEntero[0];
+        decimal = temporalEntero.length > 1 ? '.' + temporalEntero[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(entero)) {
+            entero = entero.replace(rgx, '$1' + ',' + '$2');
+        }
+        return entero + decimal;
     }
 });

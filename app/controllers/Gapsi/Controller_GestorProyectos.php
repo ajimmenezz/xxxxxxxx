@@ -19,6 +19,10 @@ class Controller_GestorProyectos extends Base {
             case 'infoProyecto':
                 $resultado = $this->gestorProyecto->getProjectInfo($this->input->post());
                 break;
+            case 'filtroPrincipal':
+                $resultado['listaProyectos'] = $this->gestorProyecto->getListProjects($this->input->post());
+                $resultado['tipoProyectos'] = $this->gestorProyecto->getProjectTypes($this->input->post());
+                break;
         }
         
         echo json_encode($resultado);
