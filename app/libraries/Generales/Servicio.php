@@ -1741,7 +1741,6 @@ class Servicio extends General {
                 }
             } else {
                 $this->crearImangenFirma($datos, $datos['datosConcluir']);
-
                 if (isset($datos['datosConcluir']['estatus'])) {
                     $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
                 } else {
@@ -2147,10 +2146,11 @@ class Servicio extends General {
             $resultadoEnviarConclusion = $this->enviarCorreoConlusionPDF($datos);
         }
         if ($resultadoEnviarConclusion === TRUE) {
-            $status = "4";
             if (!empty($cambiarEstatus)) {
                 if ($status === '4') {
-                    $resultadoSD = $this->InformacionServicios->verifyProcess($datos);
+                    $this->InformacionServicios->verifyProcess($datos);
+                }else{
+                    $this->InformacionServicios->setHTMLService($datos);
                 }
                 return TRUE;
             } else {
