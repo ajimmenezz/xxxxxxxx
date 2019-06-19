@@ -22,6 +22,24 @@ class Controller_Instalaciones extends Base
             case 'IniciarInstalacion':
                 $resultado = $this->instalaciones->iniciarInstalacion($this->input->post());
                 break;
+            case 'SucursalesXCliente':
+                $resultado = $this->instalaciones->getSucursalesXCliente($this->input->post());
+                break;
+            case 'GuardarSucursalServicio':
+                $resultado = $this->instalaciones->guardarSucursalServicio($this->input->post());
+                break;
+            case 'InstaladosLexmark':
+                $resultado = $this->instalaciones->instaladosLexmark($this->input->post());
+                break;
+            case 'GuardarInstaladosLexmark':
+                $resultado = $this->instalaciones->guardarInstaladosLexmark($this->input->post());
+                break;            
+            case 'RetiradosLexmark':
+                $resultado = $this->instalaciones->retiradosLexmark($this->input->post());
+                break;            
+            case 'GuardarRetiradosLexmark':
+                $resultado = $this->instalaciones->guardarRetiradosLexmark($this->input->post());
+                break;            
             default:
                 $resultado = FALSE;
                 break;

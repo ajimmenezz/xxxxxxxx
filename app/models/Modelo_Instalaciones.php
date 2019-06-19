@@ -64,12 +64,6 @@ class Modelo_Instalaciones extends Modelo_Base
         return $consulta;
     }
 
-    public function getClientes()
-    {
-        $consulta = $this->consulta("select Id, Nombre from cat_v3_clientes order by Nombre");
-        return $consulta;
-    }
-
     public function iniciarInstalacion(int $servicio)
     {
         $this->iniciaTransaccion();
@@ -88,6 +82,299 @@ class Modelo_Instalaciones extends Modelo_Base
         } else {
             $this->commitTransaccion();
             return ['code' => 200];
+        }
+    }
+
+    public function guardarSucursalServicio(int $servicio, int $sucursal)
+    {
+        $this->iniciaTransaccion();
+
+        $this->actualizar("t_servicios_ticket", [
+            'IdSucursal' => $sucursal,
+        ], ['Id' => $servicio]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Cambios guardados"
+            ];
+        }
+    }
+
+    public function guardarInstaladosLexmark(array $datos)
+    {
+        $this->iniciaTransaccion();
+
+        $registroImpresora = $this->consulta("
+        select 
+        * 
+        from t_instalaciones_equipos 
+        where IdServicio = '" . $datos['servicio'] . "' 
+        and IdModelo = '655'");
+        if (!empty($registroImpresora) && isset($registroImpresora[0]) && isset($registroImpresora[0]['Id'])) {
+            $this->actualizar("t_instalaciones_equipos", [
+                'IdArea' => $datos['instalados']['impresora']['area'],
+                'Punto' => $datos['instalados']['impresora']['punto'],
+                'Serie' => $datos['instalados']['impresora']['serie']
+            ], ['Id' => $registroImpresora[0]['Id']]);
+
+            $registroAdicionalesImp = $this->consulta("
+            select * 
+            from t_instalaciones_adicionales_45 
+            where IdInstalacion = '" . $registroImpresora[0]['Id'] . "'");
+            if (!empty($registroAdicionalesImp) && isset($registroAdicionalesImp[0]) && isset($registroAdicionalesImp[0]['Id'])) {
+                $this->actualizar("t_instalaciones_adicionales_45", [
+                    'IP' => $datos['instalados']['impresora']['ip'],
+                    'MAC' => $datos['instalados']['impresora']['mac']
+                ], ['IdInstalacion' => $registroImpresora[0]['Id']]);
+            } else {
+                $this->insertar("t_instalaciones_adicionales_45", [
+                    'IdInstalacion' => $registroImpresora[0]['Id'],
+                    'IP' => $datos['instalados']['impresora']['ip'],
+                    'MAC' => $datos['instalados']['impresora']['mac']
+                ]);
+            }
+        } else {
+            $this->insertar("t_instalaciones_equipos", [
+                'IdServicio' => $datos['servicio'],
+                'IdModelo' => 655,
+                'IdArea' => $datos['instalados']['impresora']['area'],
+                'Punto' => $datos['instalados']['impresora']['punto'],
+                'Serie' => $datos['instalados']['impresora']['serie']
+            ]);
+            $id = $this->ultimoId();
+            $this->insertar("t_instalaciones_adicionales_45", [
+                'IdInstalacion' => $id,
+                'IP' => $datos['instalados']['impresora']['ip'],
+                'MAC' => $datos['instalados']['impresora']['mac']
+            ]);
+        }
+
+
+        $registroSupresor = $this->consulta("
+        select 
+        * 
+        from t_instalaciones_equipos 
+        where IdServicio = '" . $datos['servicio'] . "' 
+        and IdModelo = '654'");
+        if (!empty($registroSupresor) && isset($registroSupresor[0]) && isset($registroSupresor[0]['Id'])) {
+            $this->actualizar("t_instalaciones_equipos", [
+                'IdArea' => $datos['instalados']['supresor']['area'],
+                'Punto' => $datos['instalados']['supresor']['punto'],
+                'Serie' => $datos['instalados']['supresor']['serie']
+            ], ['Id' => $registroSupresor[0]['Id']]);
+        } else {
+            $this->insertar("t_instalaciones_equipos", [
+                'IdServicio' => $datos['servicio'],
+                'IdModelo' => 654,
+                'IdArea' => $datos['instalados']['supresor']['area'],
+                'Punto' => $datos['instalados']['supresor']['punto'],
+                'Serie' => $datos['instalados']['supresor']['serie']
+            ]);
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Cambios guardados"
+            ];
+        }
+    }
+
+    public function getEquiposInstaladosLexmark(int $servicio)
+    {
+        $this->iniciaTransaccion();
+
+        $consulta = $this->consulta("select 
+        tie.IdArea,
+        tie.Punto,
+        tie.Serie,
+        tia.IP,
+        tia.MAC
+        from t_instalaciones_equipos tie
+        left join t_instalaciones_adicionales_45 tia on tie.Id = tia.IdInstalacion
+        where tie.IdServicio = '" . $servicio . "' and IdModelo= 655");
+
+        $impresora = [
+            'IdArea' => '',
+            'Punto' => '',
+            'Serie' => '',
+            'IP' => '',
+            'MAC' => ''
+        ];
+        if (!empty($consulta) && isset($consulta[0])) {
+            $impresora = $consulta[0];
+        }
+
+        $consulta = $this->consulta("select 
+        tie.IdArea,
+        tie.Punto,
+        tie.Serie        
+        from t_instalaciones_equipos tie        
+        where tie.IdServicio = '" . $servicio . "' and tie.IdModelo= 654");
+
+        $supresor = [
+            'IdArea' => '',
+            'Punto' => '',
+            'Serie' => ''
+        ];
+
+        if (!empty($consulta) && isset($consulta[0])) {
+            $supresor = $consulta[0];
+        }
+
+        $result = [
+            'impresora' => $impresora,
+            'supresor' => $supresor
+        ];
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Información Correcta",
+                'result' => $result
+            ];
+        }
+    }
+
+    public function getModelosKyocera()
+    {
+        $consulta = $this->consulta("select
+        cme.Id,
+        linea(lineaByModelo(cme.Id)) as Linea,
+        sublinea(sublineaByModelo(cme.Id)) as Sublinea,
+        marca(cme.Marca) as Marca,
+        cme.Nombre
+        from cat_v3_modelos_equipo cme
+        where cme.Marca in (51,92)");
+        return $consulta;
+    }
+
+    public function getKyocerasCensadas(int $sucursal)
+    {
+        $consulta = $this->consulta("select 
+        Id,
+        IdArea,
+        Punto,
+        IdModelo,
+        Serie,
+        modelo(IdModelo) as Modelo
+        from t_censos tc
+        where IdServicio = (
+            select MAX(Id) 
+            from t_servicios_ticket 
+            where IdSucursal = 27
+            and IdEstatus = 4 
+            and IdTipoServicio = 11
+        ) and tc.IdModelo in (
+            select 	Id from cat_v3_modelos_equipo where Marca in (51,92)
+        )");
+        return $consulta;
+    }
+
+    public function getEstatusRetiro()
+    {
+        $consulta = $this->consulta("select Id, Nombre from cat_v3_estatus where Id in (42,43,44,45)");
+        return $consulta;
+    }
+
+    public function guardarRetiradosLexmark(array $datos)
+    {
+        $this->iniciaTransaccion();
+
+        $registroImpresora = $this->consulta("
+        select 
+        * 
+        from t_retiros_equipos 
+        where IdServicio = '" . $datos['servicio'] . "'");
+        if (!empty($registroImpresora) && isset($registroImpresora[0]) && isset($registroImpresora[0]['Id'])) {
+            $this->actualizar("t_retiros_equipos", [
+                'IdModelo' => $datos['retirados']['impresora']['modelo'],
+                'IdEstatus' => $datos['retirados']['impresora']['estatus'],
+                'Serie' => $datos['retirados']['impresora']['serie']
+            ], ['Id' => $registroImpresora[0]['Id']]);
+        } else {
+            $this->insertar("t_retiros_equipos", [
+                'IdServicio' => $datos['servicio'],
+                'IdModelo' => $datos['retirados']['impresora']['modelo'],
+                'IdEstatus' => $datos['retirados']['impresora']['estatus'],
+                'Serie' => $datos['retirados']['impresora']['serie']
+            ]);
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Cambios guardados"
+            ];
+        }
+    }
+
+    public function getImpresoraRetirada(int $servicio)
+    {
+        $this->iniciaTransaccion();
+
+        $consulta = $this->consulta("select 
+        tre.IdModelo,
+        tre.IdEstatus,
+        tre.Serie
+        from t_retiros_equipos tre        
+        where tre.IdServicio = '" . $servicio . "'");
+
+        $impresora = [
+            'IdModelo' => '',
+            'IdEstatus' => '',
+            'Serie' => ''
+        ];
+        if (!empty($consulta) && isset($consulta[0])) {
+            $impresora = $consulta[0];
+        }
+
+        $result = [
+            'impresora' => $impresora            
+        ];
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Información Correcta",
+                'result' => $result
+            ];
         }
     }
 
