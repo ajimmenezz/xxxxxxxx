@@ -296,7 +296,7 @@ class Modelo_Instalaciones extends Modelo_Base
         marca(cme.Marca) as Marca,
         cme.Nombre
         from cat_v3_modelos_equipo cme
-        where cme.Marca in (51,92)");
+        where cme.Marca in (51,92,134)");
         return $consulta;
     }
 
@@ -523,7 +523,7 @@ class Modelo_Instalaciones extends Modelo_Base
         IdEvidencia,
         Archivo,
         (select Nombre from cat_v3_instalaciones_evidencias where Id = IdEvidencia) as Evidencia
-        from t_instalaciones_evidencias where IdServicio = '" . $servicio. "'");
+        from t_instalaciones_evidencias where IdServicio = '" . $servicio . "'");
         return $consulta;
     }
 
@@ -535,7 +535,7 @@ class Modelo_Instalaciones extends Modelo_Base
         IdEvidencia,
         Archivo,
         (select Nombre from cat_v3_retiros_evidencias where Id = IdEvidencia) as Evidencia
-        from t_retiros_evidencias where IdServicio = '" . $servicio. "'");
+        from t_retiros_evidencias where IdServicio = '" . $servicio . "'");
         return $consulta;
     }
 
