@@ -176,19 +176,25 @@ class Modelo_Instalaciones extends Modelo_Base
         where IdServicio = '" . $datos['servicio'] . "' 
         and IdModelo = '654'");
         if (!empty($registroSupresor) && isset($registroSupresor[0]) && isset($registroSupresor[0]['Id'])) {
-            $this->actualizar("t_instalaciones_equipos", [
-                'IdArea' => $datos['instalados']['supresor']['area'],
-                'Punto' => $datos['instalados']['supresor']['punto'],
-                'Serie' => $datos['instalados']['supresor']['serie']
-            ], ['Id' => $registroSupresor[0]['Id']]);
+            if ($datos['instalados']['supresor']['serie'] == '' || $datos['instalados']['supresor']['area'] == '') {
+                $this->eliminar("t_instalaciones_equipos", ['Id' => $registroSupresor[0]['Id']]);
+            } else {
+                $this->actualizar("t_instalaciones_equipos", [
+                    'IdArea' => $datos['instalados']['supresor']['area'],
+                    'Punto' => $datos['instalados']['supresor']['punto'],
+                    'Serie' => $datos['instalados']['supresor']['serie']
+                ], ['Id' => $registroSupresor[0]['Id']]);
+            }
         } else {
-            $this->insertar("t_instalaciones_equipos", [
-                'IdServicio' => $datos['servicio'],
-                'IdModelo' => 654,
-                'IdArea' => $datos['instalados']['supresor']['area'],
-                'Punto' => $datos['instalados']['supresor']['punto'],
-                'Serie' => $datos['instalados']['supresor']['serie']
-            ]);
+            if ($datos['instalados']['supresor']['serie'] != '' || $datos['instalados']['supresor']['area'] != '') {
+                $this->insertar("t_instalaciones_equipos", [
+                    'IdServicio' => $datos['servicio'],
+                    'IdModelo' => 654,
+                    'IdArea' => $datos['instalados']['supresor']['area'],
+                    'Punto' => $datos['instalados']['supresor']['punto'],
+                    'Serie' => $datos['instalados']['supresor']['serie']
+                ]);
+            }
         }
 
         if ($this->estatusTransaccion() === FALSE) {

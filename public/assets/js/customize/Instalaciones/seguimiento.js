@@ -732,12 +732,6 @@ $(function () {
                 error = 'El contador debe ser un número de 0 en adelante y es un campo obligatorio';
             }
 
-            else if (instalados.supresor.serie == "") {
-                error = 'El número de serie del supresor es un campo obligatorio'
-            } else if (instalados.supresor.area == "") {
-                error = 'La ubicación del supresor es un campo obligatorio'
-            }
-
             if (error != '') {
                 evento.mostrarMensaje("#errorMessageSeguimiento", false, error, 4000);
                 return false;
@@ -749,6 +743,7 @@ $(function () {
                 evento.enviarEvento('Seguimiento/GuardarInstaladosLexmark', data, '#panelSeguimiento', function (respuesta) {
                     if (respuesta.code == 200) {
                         evento.mostrarMensaje("#errorMessageSeguimiento", true, respuesta.message, 4000);
+                        cargaInstaladosLexmark(datos);
                     } else {
                         evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
                     }

@@ -652,37 +652,61 @@ class Instalaciones extends General
          ********* SUPRESOR INSTALADO *********
          **************************************/
 
-        $this->pdf->SetFillColor(191, 191, 191);
+        $x = 10;
+        $y = 95;
 
-        $this->pdf->SetXY(10, 95);
-        $this->pdf->SetFont("helvetica", "BI", 13);
-        $this->pdf->Cell(13, 15, "#2", 1, 0, 'C', true);
+        if ($instalados['supresor']['Area'] != '') {
 
-        $this->pdf->SetFillColor(217, 217, 217);
-        $this->pdf->SetFont("helvetica", "BI", 9);
+            $this->pdf->SetFillColor(191, 191, 191);
 
-        $this->pdf->SetXY(23, 95);
-        $this->pdf->Cell(36, 5, utf8_decode("Ubicación:"), 1, 0, 'R', true);
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(10, 95);
+            $this->pdf->SetFont("helvetica", "BI", 13);
+            $this->pdf->Cell(13, 15, "#2", 1, 0, 'C', true);
 
-        $this->pdf->SetXY(23, 100);
-        $this->pdf->Cell(36, 5, utf8_decode("Modelo de Equipo:"), 1, 0, 'R');
+            $this->pdf->SetFillColor(217, 217, 217);
+            $this->pdf->SetFont("helvetica", "BI", 9);
 
-        $this->pdf->SetXY(23, 105);
-        $this->pdf->Cell(36, 5, utf8_decode("Número de Serie:"), 1, 0, 'R', true);
+            $x = 23;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(23, 95);
+            $this->pdf->Cell(36, 5, utf8_decode("Ubicación:"), 1, 0, 'R', true);
 
-        $this->pdf->SetFont("helvetica", "", 9);
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(23, 100);
+            $this->pdf->Cell(36, 5, utf8_decode("Modelo de Equipo:"), 1, 0, 'R');
 
-        $this->pdf->SetXY(59, 95);
-        $this->pdf->Cell(0, 5, utf8_decode($instalados['supresor']['Area'] . ' ' . $instalados['supresor']['Punto']), 1, 0, 'L', true);
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(23, 105);
+            $this->pdf->Cell(36, 5, utf8_decode("Número de Serie:"), 1, 0, 'R', true);
 
-        $this->pdf->SetXY(59, 100);
-        $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['supresor']['Modelo'])), 1, 0, 'L');
+            $this->pdf->SetFont("helvetica", "", 9);
 
-        $this->pdf->SetXY(59, 105);
-        $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['supresor']['Serie'])), 1, 0, 'L', true);
+            $x = 59;
+            $y -= 10;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(59, 95);
+            $this->pdf->Cell(0, 5, utf8_decode($instalados['supresor']['Area'] . ' ' . $instalados['supresor']['Punto']), 1, 0, 'L', true);
 
-        $this->pdf->SetXY(10, 110);
-        $this->pdf->Cell(0, 2, "", 1, 0, 'C');
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(59, 100);
+            $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['supresor']['Modelo'])), 1, 0, 'L');
+
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(59, 105);
+            $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['supresor']['Serie'])), 1, 0, 'L', true);
+
+            $x = 10;
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(10, 110);
+            $this->pdf->Cell(0, 2, "", 1, 0, 'C');
+            $y += 2;
+        }
 
         /******************************************** 
          ********* SECCIÓN EQUIPOS RETIRADOS *********
@@ -691,9 +715,11 @@ class Instalaciones extends General
         $this->pdf->SetFillColor(31, 56, 100);
         $this->pdf->SetTextColor(255, 255, 255);
 
-        $this->pdf->SetXY(10, 112);
+
+        $this->pdf->SetXY($x, $y);
         $this->pdf->SetFont("helvetica", "BI", 10);
         $this->pdf->Cell(0, 6, utf8_decode("Equipos Retirados"), 1, 0, 'L', true);
+        $y += 6;
 
         $this->pdf->SetFillColor(191, 191, 191);
         $this->pdf->SetTextColor(10, 10, 10);
@@ -702,42 +728,50 @@ class Instalaciones extends General
          * ******IMPRESORA RETIRADA *********
          *************************************/
 
-        $this->pdf->SetXY(10, 118);
+        $this->pdf->SetXY($x, $y);
         $this->pdf->SetFont("helvetica", "BI", 13);
         $this->pdf->Cell(13, 15, "#1", 1, 0, 'C', true);
+        $x += 13;
 
         $this->pdf->SetFillColor(217, 217, 217);
         $this->pdf->SetFont("helvetica", "BI", 9);
 
-        $this->pdf->SetXY(23, 118);
+        $this->pdf->SetXY($x, $y);
         $this->pdf->Cell(36, 5, utf8_decode("Modelo del Equipo:"), 1, 0, 'R', true);
+        $y += 5;
 
-        $this->pdf->SetXY(23, 123);
+        $this->pdf->SetXY($x, $y);
         $this->pdf->Cell(36, 5, utf8_decode("Número de Serie:"), 1, 0, 'R');
+        $y += 5;
 
-        $this->pdf->SetXY(23, 128);
+        $this->pdf->SetXY($x, $y);
         $this->pdf->Cell(36, 5, utf8_decode("Estado del Equipo:"), 1, 0, 'R', true);
+        $y -= 10;
 
         $this->pdf->SetFont("helvetica", "", 9);
 
-        $this->pdf->SetXY(59, 118);
+        $x += 36;
+        $this->pdf->SetXY($x, $y);
         $this->pdf->Cell(0, 5, strtoupper(utf8_decode($retirados['impresora']['Modelo'])), 1, 0, 'L', true);
+        $y += 5;
 
-        $this->pdf->SetXY(59, 123);
+        $this->pdf->SetXY($x, $y);
         $this->pdf->Cell(0, 5, strtoupper(utf8_decode($retirados['impresora']['Serie'])), 1, 0, 'L');
+        $y += 5;
 
-        $this->pdf->SetXY(59, 128);
+        $this->pdf->SetXY($x, $y);
         $this->pdf->Cell(0, 5, strtoupper(utf8_decode($retirados['impresora']['Estatus'])), 1, 0, 'L', true);
+        $y += 5;
 
-        $this->pdf->SetXY(10, 133);
+        $x = 10;
+        $this->pdf->SetXY($x, $y);
         $this->pdf->Cell(0, 2, "", 1, 0, 'C');
+        $y+=2;
 
         /************************************************* 
          ********* SECCIÓN EVIDENCIAS INSTALACION *********
          **************************************************/
-
-        $x = 10;
-        $y = 135;
+        
         $totalEvidencias = count($evidenciasInstalacion);
         if ($totalEvidencias > 0) {
 
