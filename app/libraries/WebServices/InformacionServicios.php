@@ -1041,14 +1041,18 @@ class InformacionServicios extends General {
 
     public function setNoteAndWorkLog(array $data) {
         try {
-            $datosNotasSD = $this->ServiceDesk->setNoteServiceDesk($data['key'], $data['folio'], $data['html']);
+            if (!empty($data['folio'])) {
+                if ($data['folio'] !== '0') {
+                    $datosNotasSD = $this->ServiceDesk->setNoteServiceDesk($data['key'], $data['folio'], $data['html']);
 
-            if ($datosNotasSD->operation->result->status !== 'Success') {
-                ['code' => 400, 'error' => $datosNotasSD];
-            } else {
-                $datosHistorialTrabajoSD = $this->ServiceDesk->setWorkLogServiceDesk($data['key'], $data['folio'], $data['html']);
-                if ($datosHistorialTrabajoSD->operation->result->status !== 'Success') {
-                    ['code' => 400, 'error' => $datosHistorialTrabajoSD];
+                    if ($datosNotasSD->operation->result->status !== 'Success') {
+                        ['code' => 400, 'error' => $datosNotasSD];
+                    } else {
+                        $datosHistorialTrabajoSD = $this->ServiceDesk->setWorkLogServiceDesk($data['key'], $data['folio'], $data['html']);
+                        if ($datosHistorialTrabajoSD->operation->result->status !== 'Success') {
+                            ['code' => 400, 'error' => $datosHistorialTrabajoSD];
+                        }
+                    }
                 }
             }
 
