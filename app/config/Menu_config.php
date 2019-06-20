@@ -3397,7 +3397,7 @@ $config['Instalaciones'] = array(
             'masked-input/masked-input.min',
             'DrawingBoard/js/drawingboard.min',
         ),
-        'Permiso' => 'VCCOMP'
+        'Permiso' => 'VIEQ'
     )
 );
 

@@ -215,7 +215,17 @@ $(function () {
 
                 });
 
-
+                $("#btnConcluirServicio").off("click");
+                $("#btnConcluirServicio").on("click", function () {
+                    evento.enviarEvento('Seguimiento/ConcluirServicio', { 'id': datos.id }, '#panelSeguimiento', function (respuesta) {
+                        if (respuesta.code == 200) {
+                            window.open(respuesta.ruta);
+                            location.reload();
+                        } else {
+                            evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                        }
+                    });
+                });
 
             } else {
                 evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);

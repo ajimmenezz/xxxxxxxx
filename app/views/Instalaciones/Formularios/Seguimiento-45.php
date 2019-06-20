@@ -378,7 +378,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12 bg-silver-lighter">
-                                <div class="row m-t-10">
+                                <div class="row m-t-10 hidden">
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="f-w-600 f-s-14">Impresoras en complejo:</label>

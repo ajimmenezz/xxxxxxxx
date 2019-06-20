@@ -720,4 +720,27 @@ class Modelo_Instalaciones extends Modelo_Base
         from t_servicios_Ticket tst where Id = '" . $servicio . "'");
         return $consulta;
     }
+
+    public function concluirServicio(int $servicio)
+    {
+        $this->iniciaTransaccion();
+
+        $this->actualizar("t_servicios_ticket", [
+            'IdEstatus' => 4,
+            'FechaConclusion' => $this->getFecha()
+        ], ['Id' => $servicio]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200
+            ];
+        }
+    }
 }

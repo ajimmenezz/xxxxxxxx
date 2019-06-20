@@ -76,6 +76,9 @@ class Controller_Instalaciones extends Base
             case 'GuardaFirma':
                 $resultado = $this->instalaciones->guardaFirma($this->input->post());
                 break;
+            case 'ConcluirServicio':
+                $resultado = $this->instalaciones->concluirServicio($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

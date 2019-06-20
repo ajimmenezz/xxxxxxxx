@@ -38,7 +38,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
             $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
@@ -79,7 +79,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
             $iniciar = $this->DB->iniciarInstalacion($datos['id']);
@@ -96,7 +96,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del cliente. Intente de nuevo'
+                'message' => 'No se ha recibido la información del cliente. Intente de nuevo'
             ];
         } else {
             $sucursales = $this->sucursal->get(null, 1, $datos['id']);
@@ -109,10 +109,17 @@ class Instalaciones extends General
         if (!isset($datos['id']) || !isset($datos['sucursal'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio o la sucursal. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio o la sucursal. Intente de nuevo'
             ];
         } else {
-            $result = $this->DB->guardarSucursalServicio($datos['id'], $datos['sucursal']);
+            if ($this->tieneFirmas($datos['id'])) {
+                $result = [
+                    'code' => 500,
+                    'message' => 'Los cambios no son permitidos debido a que el incidente ya fué firmado'
+                ];
+            } else {
+                $result = $this->DB->guardarSucursalServicio($datos['id'], $datos['sucursal']);
+            }
             return $result;
         }
     }
@@ -122,7 +129,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
             $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
@@ -152,7 +159,7 @@ class Instalaciones extends General
         if (!isset($datos['servicio']) || !isset($datos['instalados'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio y los equipos instalados. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio y los equipos instalados. Intente de nuevo'
             ];
         } else {
             return $this->DB->guardarInstaladosLexmark($datos);
@@ -164,7 +171,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
             $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
@@ -197,7 +204,7 @@ class Instalaciones extends General
         if (!isset($datos['servicio']) || !isset($datos['retirados'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio y el equipo retirado. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio y el equipo retirado. Intente de nuevo'
             ];
         } else {
             return $this->DB->guardarRetiradosLexmark($datos);
@@ -247,7 +254,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
             $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
@@ -268,7 +275,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
             $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
@@ -289,7 +296,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del archivo. Intente de nuevo'
+                'message' => 'No se ha recibido la información del archivo. Intente de nuevo'
             ];
         } else {
             $eliminar = $this->DB->eliminarEvidenciaInstalacion($datos['id']);
@@ -302,7 +309,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del archivo. Intente de nuevo'
+                'message' => 'No se ha recibido la información del archivo. Intente de nuevo'
             ];
         } else {
             $eliminar = $this->DB->eliminarEvidenciaRetiro($datos['id']);
@@ -315,7 +322,7 @@ class Instalaciones extends General
         if (!isset($datos['servicio']) || !isset($datos['clave']) || !isset($datos['producto']) || !isset($datos['cantidad'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio o del producto. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio o del producto. Intente de nuevo'
             ];
         } else {
             $guardar = $this->DB->guardarMaterial($datos);
@@ -328,7 +335,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del producto. Intente de nuevo'
+                'message' => 'No se ha recibido la información del producto. Intente de nuevo'
             ];
         } else {
             $eliminar = $this->DB->eliminarMaterial($datos);
@@ -341,7 +348,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
             $data = [
@@ -363,7 +370,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
             $generales = $this->DB->getGeneralesServicio($datos['id']);
@@ -384,7 +391,7 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
             $data = [
@@ -403,7 +410,7 @@ class Instalaciones extends General
         if (!isset($datos['servicio']) || !isset($datos['firma']) || !isset($datos['tipo'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio o la firma. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio o la firma. Intente de nuevo'
             ];
         } else {
             $img = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $datos['firma']));
@@ -418,6 +425,29 @@ class Instalaciones extends General
             file_put_contents('.' . $url, $data);
 
             return $this->DB->guardarFirma($datos, $url);
+        }
+    }
+
+    public function concluirServicio(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del archivo. Intente de nuevo'
+            ];
+        } else {
+            $generales = $this->DB->getGeneralesServicio($datos['id']);
+            $ruta = '';
+            switch ($generales[0]['IdTipoServicio']) {
+                case 45:
+                case '45':
+                    $ruta = $this->exportar45($datos['id']);
+                    break;
+            }
+
+            $concluir = $this->DB->concluirServicio($datos['id']);
+            $concluir = array_merge($concluir, ['ruta' => $ruta]);
+            return $concluir;
         }
     }
 
@@ -940,7 +970,7 @@ class Instalaciones extends General
         }
 
 
-        $carpeta = $this->pdf->definirArchivo('instalaciones/' . $servicio . '/PDF/', 'Instalación');
+        $carpeta = $this->pdf->definirArchivo('instalaciones/' . $servicio . '/PDF/', 'Instalación Imp. Lexmark ' . $generales['Sucursal']);
         $this->pdf->Output('F', $carpeta, true);
         $carpeta = substr($carpeta, 1);
         return $carpeta;

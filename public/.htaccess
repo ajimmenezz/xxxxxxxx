@@ -4,3 +4,5 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php?/$1 [L]
 
+RewriteCond %{REQUEST_URI} ^/storage/Archivos/(.*)$
+RewriteRule ^storage/Archivos/(.*)$ http://storage.siccob.solutions/storage/Archivos/$1?t=%{TIME} [R,NC,L]

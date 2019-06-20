@@ -108,6 +108,15 @@ if (!empty($faltantes)) {
             </div>
         </div>
 
-    <?php
+        <?php
+        if (!is_null($datosFirma['gerente']) && $datosFirma['gerente'] != '' && !is_null($datosFirma['firmaTecnico']) && $datosFirma['firmaTecnico'] != '') {
+            ?>
+            <div class="row m-t-20">
+                <div class="col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8 col-xs-offset-0 col-xs-12 text-center">
+                    <a id="btnConcluirServicio" class="btn btn-success btn-block p-t-5 p-b-5 p-r-10 p-l-10 f-w-600 f-s-15"><i class="fa fa-save"> </i> Concluir Servicio</a>
+                </div>
+            </div>
+        <?php
+    }
 }
 ?>
