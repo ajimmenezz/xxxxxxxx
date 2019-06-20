@@ -717,7 +717,7 @@ class Modelo_Instalaciones extends Modelo_Base
         FechaFirma,
         nombreUsuario(tst.IdTecnicoFirma) as Tecnico,
         FirmaTecnico
-        from t_servicios_Ticket tst where Id = '" . $servicio . "'");
+        from t_servicios_ticket tst where Id = '" . $servicio . "'");
         return $consulta;
     }
 
