@@ -523,7 +523,7 @@ class Modelo_Instalaciones extends Modelo_Base
         IdEvidencia,
         Archivo,
         (select Nombre from cat_v3_instalaciones_evidencias where Id = IdEvidencia) as Evidencia
-        from t_instalaciones_evidencias ");
+        from t_instalaciones_evidencias where IdServicio = '" . $servicio. "'");
         return $consulta;
     }
 
@@ -535,7 +535,7 @@ class Modelo_Instalaciones extends Modelo_Base
         IdEvidencia,
         Archivo,
         (select Nombre from cat_v3_retiros_evidencias where Id = IdEvidencia) as Evidencia
-        from t_retiros_evidencias ");
+        from t_retiros_evidencias where IdServicio = '" . $servicio. "'");
         return $consulta;
     }
 
