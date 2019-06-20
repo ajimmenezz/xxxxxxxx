@@ -291,7 +291,7 @@
                                             <label class="f-w-600 f-s-14">Versión de Firmware*:</label>
                                             <div class="input-group">
                                                 <span class="input-group-addon">FW</i></span>
-                                                <input id="txtFirmwareImpresora" type="text" class="form-control f-w-600 f-s-14" placeholder="FW5.3.23" value="" />
+                                                <input id="txtFirmwareImpresora" type="text" class="form-control f-w-600 f-s-14" placeholder="MXTGM.052.026" value="" />
                                             </div>
                                         </div>
                                     </div>
