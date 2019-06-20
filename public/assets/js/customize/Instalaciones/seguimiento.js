@@ -172,9 +172,14 @@ $(function () {
 
                     if (error != '') {
                         evento.mostrarMensaje("#errorMessageSeguimiento", false, error, 4000);
+                        return false;
                     } else {
                         evento.enviarEvento('Seguimiento/GuardaFirma', data, '#panelSeguimiento', function (respuesta) {
-
+                            if (respuesta.code == 200) {
+                                cargaFirmas(datos);
+                            } else {
+                                evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                            }
                         });
                     }
 
@@ -197,9 +202,14 @@ $(function () {
 
                     if (error != '') {
                         evento.mostrarMensaje("#errorMessageSeguimiento", false, error, 4000);
+                        return false;
                     } else {
                         evento.enviarEvento('Seguimiento/GuardaFirma', data, '#panelSeguimiento', function (respuesta) {
-
+                            if (respuesta.code == 200) {
+                                cargaFirmas(datos);
+                            } else {
+                                evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                            }
                         });
                     }
 
@@ -390,6 +400,10 @@ $(function () {
                     });
 
                 });
+
+                if (respuesta.firmas) {
+                    $('#data-table-productos-solicitados tbody').off('click', 'tr');
+                }
             } else {
                 evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
             }
@@ -458,6 +472,12 @@ $(function () {
                     subirEvidenciasInstalacion(datos);
                 });
 
+                if (respuesta.firmas) {
+                    $("#divFormularioEvidenciasInstalacion, .btnEliminarEvidenciaInstalacion").addClass("hidden");
+                } else {
+                    $("#divFormularioEvidenciasInstalacion, .btnEliminarEvidenciaInstalacion").removeClass("hidden");
+                }
+
             } else {
                 evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
             }
@@ -511,6 +531,12 @@ $(function () {
                 $("#btnSubirEvidenciaRetiro").on("click", function () {
                     subirEvidenciasRetiro(datos);
                 });
+
+                if (respuesta.firmas) {
+                    $("#divFormularioEvidenciasRetiro, .btnEliminarEvidenciaRetiro").addClass("hidden");
+                } else {
+                    $("#divFormularioEvidenciasRetiro, .btnEliminarEvidenciaRetiro").removeClass("hidden");
+                }
 
             } else {
                 evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
@@ -646,6 +672,14 @@ $(function () {
                 $("#txtContadorImpresora").val(respuesta.instalados.impresora.Contador);
                 $("#txtSerieSupresor").val(respuesta.instalados.supresor.Serie);
 
+                if (respuesta.firmas) {
+                    $("#txtSerieImpresora,#txtIPImpresora,#txtMACImpresora, #txtFirmwareImpresora,#txtContadorImpresora,#txtSerieSupresor,#listUbicacionesImpresora,#listUbicacionesSupresor").attr("disabled", "disabled");
+                    $("#btnGuardarInstalados").addClass("hidden");
+                } else {
+                    $("#txtSerieImpresora,#txtIPImpresora,#txtMACImpresora, #txtFirmwareImpresora,#txtContadorImpresora,#txtSerieSupresor,#listUbicacionesImpresora,#listUbicacionesSupresor").removeAttr("disabled");
+                    $("#btnGuardarInstalados").removeClass("hidden");
+                }
+
             } else {
                 evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
             }
@@ -749,6 +783,14 @@ $(function () {
                 select.crearSelect("#listImpresorasEnComplejo");
                 select.crearSelect("#listImpresorasRetiro");
                 select.crearSelect("#listEstatusImpresoraRetirada");
+
+                if (respuesta.firmas) {
+                    $("#txtSerieImpresoraRetirada,#listImpresorasEnComplejo,#listImpresorasRetiro, #listEstatusImpresoraRetirada").attr("disabled", "disabled");
+                    $("#btnGuardarRetirados").addClass("hidden");
+                } else {
+                    $("#txtSerieImpresoraRetirada,#listImpresorasEnComplejo,#listImpresorasRetiro, #listEstatusImpresoraRetirada").removeAttr("disabled");
+                    $("#btnGuardarRetirados").removeClass("hidden");
+                }
 
             } else {
                 evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);

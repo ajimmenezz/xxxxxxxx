@@ -60,7 +60,7 @@
                                         <label class="f-w-600 f-s-14">Solicitud:</label>
                                         <div class="input-group">
                                             <span class="input-group-addon">#</span>
-                                            <label class="f-s-14 form-control">234242</label>
+                                            <label class="f-s-14 form-control"><?php echo $generales['IdSolicitud']; ?></label>
                                         </div>
                                     </div>
                                 </div>
@@ -69,7 +69,7 @@
                                         <label class="f-w-600 f-s-14">Incidente SD:</label>
                                         <div class="input-group">
                                             <span class="input-group-addon">SD</span>
-                                            <input type="text" class="form-control bg-white text-inverse f-w-600 f-s-14" value="462342" disabled="disabled" />
+                                            <input type="text" class="form-control bg-white text-inverse f-w-600 f-s-14" value="<?php echo $generales['SD']; ?>" disabled="disabled" />
                                             <div class="input-group-btn">
                                                 <button type="button" class="btn btn-info"><i class="fa fa-edit"></i></button>
                                                 <button type="button" class="btn btn-warning"><i class="fa fa-info-circle"></i></button>
@@ -82,7 +82,7 @@
                                         <label class="f-w-600 f-s-14">Ticket:</label>
                                         <div class="input-group">
                                             <span class="input-group-addon">#</span>
-                                            <label class="f-s-14 form-control">3424242</label>
+                                            <label class="f-s-14 form-control"><?php echo $generales['Ticket']; ?></label>
                                         </div>
                                     </div>
                                 </div>
@@ -91,7 +91,7 @@
                                         <label class="f-w-600 f-s-14">Servicio:</label>
                                         <div class="input-group">
                                             <span class="input-group-addon">#</span>
-                                            <label class="f-s-14 form-control">234242</label>
+                                            <label class="f-s-14 form-control"><?php echo $generales['Id']; ?></label>
                                         </div>
                                     </div>
                                 </div>
@@ -102,7 +102,7 @@
                                         <label class="f-w-600 f-s-14">Solicita:</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-child"></i></span>
-                                            <label class="f-s-14 form-control">Alonso Jiménez</label>
+                                            <label class="f-s-14 form-control"><?php echo $generales['Solicita']; ?></label>
                                         </div>
                                     </div>
                                 </div>
@@ -111,7 +111,7 @@
                                         <label class="f-w-600 f-s-14">Atiende:</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-male"></i></span>
-                                            <label class="f-s-14 form-control">Alonso Jiménez</label>
+                                            <label class="f-s-14 form-control"><?php echo $generales['Atiende']; ?></label>
                                         </div>
                                     </div>
                                 </div>
@@ -122,7 +122,7 @@
                                         <label class="f-w-600 f-s-14">Fecha Solicitud:</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-calendar-o"></i></span>
-                                            <label class="f-s-14 form-control">2019/06/17 11:00</label>
+                                            <label class="f-s-14 form-control"><?php echo $generales['FechaSolicitud']; ?></label>
                                         </div>
                                     </div>
                                 </div>
@@ -131,7 +131,7 @@
                                         <label class="f-w-600 f-s-14">Fecha Creación Servicio:</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-calendar-o"></i></span>
-                                            <label class="f-s-14 form-control">2019/06/17 11:00</label>
+                                            <label class="f-s-14 form-control"><?php echo $generales['FechaCreacion']; ?></label>
                                         </div>
                                     </div>
                                 </div>
@@ -140,7 +140,7 @@
                                         <label class="f-w-600 f-s-14">Fecha Inicio Servicio:</label>
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <label class="f-s-14 form-control">2019/06/17 11:00</label>
+                                            <label class="f-s-14 form-control"><?php echo $generales['FechaInicio']; ?></label>
                                         </div>
                                     </div>
                                 </div>
@@ -455,44 +455,46 @@
                 </div>
                 <div class="tab-pane fade" id="EvidenciasInstalacion">
                     <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h4>Subir Evidencias de Instalación</h4>
+                        <div id="divFormularioEvidenciasInstalacion">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>Subir Evidencias de Instalación</h4>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="underline"></div>
+                                </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="underline"></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 bg-silver-lighter">
-                                <div class="row m-t-10">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Tipo de Evidencia*:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-file"></i></span>
-                                                <select id="listTiposEvidenciaInstalacion" class="form-control" style="width:100%">
-                                                    <option value="">Selecciona . . .</option>
-                                                </select>
+                            <div class="row">
+                                <div class="col-md-12 bg-silver-lighter">
+                                    <div class="row m-t-10">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="f-w-600 f-s-14">Tipo de Evidencia*:</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><i class="fa fa-file"></i></span>
+                                                    <select id="listTiposEvidenciaInstalacion" class="form-control" style="width:100%">
+                                                        <option value="">Selecciona . . .</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="f-w-600 f-s-14">Adjuntar Archivo*:</label>
+                                                <input id="archivosInstalacion" name="archivosInstalacion[]" type="file" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Adjuntar Archivo*:</label>
-                                            <input id="archivosInstalacion" name="archivosInstalacion[]" type="file" />
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
-                        <div class="row m-t-25">
-                            <div class="col-md-12 text-center">
-                                <a id="btnSubirEvidenciaInstalacion" class="btn btn-success f-s-15 f-w-600 p-t-10 p-b-10 p-l-15 p-r-15">
-                                    <i class="fa fa-cloud-upload"></i> Subir Archivo
-                                </a>
+                            <div class="row m-t-25">
+                                <div class="col-md-12 text-center">
+                                    <a id="btnSubirEvidenciaInstalacion" class="btn btn-success f-s-15 f-w-600 p-t-10 p-b-10 p-l-15 p-r-15">
+                                        <i class="fa fa-cloud-upload"></i> Subir Archivo
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -508,44 +510,46 @@
                 </div>
                 <div class="tab-pane fade" id="EvidenciasRetiro">
                     <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h4>Subir Evidencias de Retiro</h4>
+                        <div id="divFormularioEvidenciasRetiro">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>Subir Evidencias de Retiro</h4>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="underline"></div>
+                                </div>
                             </div>
-                            <div class="col-md-12">
-                                <div class="underline"></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 bg-silver-lighter">
-                                <div class="row m-t-10">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Tipo de Evidencia*:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-file"></i></span>
-                                                <select id="listTiposEvidenciaRetiro" class="form-control" style="width:100%">
-                                                    <option value="">Selecciona . . .</option>
-                                                </select>
+                            <div class="row">
+                                <div class="col-md-12 bg-silver-lighter">
+                                    <div class="row m-t-10">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="f-w-600 f-s-14">Tipo de Evidencia*:</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><i class="fa fa-file"></i></span>
+                                                    <select id="listTiposEvidenciaRetiro" class="form-control" style="width:100%">
+                                                        <option value="">Selecciona . . .</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="f-w-600 f-s-14">Adjuntar Archivo*:</label>
+                                                <input id="archivosRetiro" name="archivosRetiro[]" type="file" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Adjuntar Archivo*:</label>
-                                            <input id="archivosRetiro" name="archivosRetiro[]" type="file" />
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
-                        <div class="row m-t-25">
-                            <div class="col-md-12 text-center">
-                                <a id="btnSubirEvidenciaRetiro" class="btn btn-success f-s-15 f-w-600 p-t-10 p-b-10 p-l-15 p-r-15">
-                                    <i class="fa fa-cloud-upload"></i> Subir Archivo
-                                </a>
+                            <div class="row m-t-25">
+                                <div class="col-md-12 text-center">
+                                    <a id="btnSubirEvidenciaRetiro" class="btn btn-success f-s-15 f-w-600 p-t-10 p-b-10 p-l-15 p-r-15">
+                                        <i class="fa fa-cloud-upload"></i> Subir Archivo
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div class="row">

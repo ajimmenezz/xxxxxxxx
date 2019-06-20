@@ -8,7 +8,13 @@
 </div>
 <ul class="nav nav-pills">
     <li class="active"><a href="#MaterialesUtilizados" data-toggle="tab">Materiales Utilizados</a></li>
-    <li><a href="#MaterialesDisponibles" data-toggle="tab">Materiales disponibles</a></li>
+    <?php
+    if (!$firmas) {
+        ?>
+        <li><a href="#MaterialesDisponibles" data-toggle="tab">Materiales disponibles</a></li>
+    <?php
+}
+?>
 </ul>
 <div class="tab-content">
     <div class="tab-pane fade active in" id="MaterialesUtilizados">
@@ -40,31 +46,37 @@
             </table>
         </div>
     </div>
-    <div class="tab-pane fade" id="MaterialesDisponibles">
-        <div class="table-responsive">
-            <table id="data-table-sae-products" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-                <thead>
-                    <tr>
-                        <th class="all">Clave</th>
-                        <th class="all">Producto</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    if (isset($productosSAE) && count($productosSAE) > 0) {
-                        foreach ($productosSAE as $key => $value) {
-                            if (!in_array($value['Clave'], $materiales['claves'])) {
-                                echo '
+    <?php
+    if (!$firmas) {
+        ?>
+        <div class="tab-pane fade" id="MaterialesDisponibles">
+            <div class="table-responsive">
+                <table id="data-table-sae-products" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="all">Clave</th>
+                            <th class="all">Producto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        if (isset($productosSAE) && count($productosSAE) > 0) {
+                            foreach ($productosSAE as $key => $value) {
+                                if (!in_array($value['Clave'], $materiales['claves'])) {
+                                    echo '
                                 <tr>
                                     <td>' . $value['Clave'] . '</td>
                                     <td>' . $value['Nombre'] . '</td>                                                    
                                 </tr>';
+                                }
                             }
                         }
-                    }
-                    ?>
-                </tbody>
-            </table>
+                        ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    <?php
+}
+?>
 </div>

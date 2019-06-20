@@ -43,9 +43,11 @@ class Modelo_Instalaciones extends Modelo_Base
     public function getGeneralesServicio(int $servicio)
     {
         $consulta = $this->consulta("select 
-        tst.Id,
+        tst.Id,        
+        folioByServicio(tst.Id) as SD,
         tst.Ticket,
         nombreUsuario(tst.Atiende) as Atiende,
+        (select FechaCreacion from t_solicitudes where Id = tst.IdSolicitud) as FechaSolicitud,
         tst.FechaCreacion,
         tst.FechaInicio,
         tst.Descripcion,
@@ -704,5 +706,18 @@ class Modelo_Instalaciones extends Modelo_Base
                 'message' => "Firma agregada"
             ];
         }
+    }
+
+    public function getFirmasServicio(int $servicio)
+    {
+        $consulta = $this->consulta("
+        select 
+        Firma,
+        NombreFirma as Gerente,
+        FechaFirma,
+        nombreUsuario(tst.IdTecnicoFirma) as Tecnico,
+        FirmaTecnico
+        from t_servicios_Ticket tst where Id = '" . $servicio . "'");
+        return $consulta;
     }
 }

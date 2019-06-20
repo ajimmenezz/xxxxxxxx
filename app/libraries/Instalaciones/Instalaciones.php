@@ -138,7 +138,8 @@ class Instalaciones extends General
                     'code' => 200,
                     'message' => 'Success',
                     'ubicaciones' => $ubicaciones,
-                    'instalados' => $instalados['result']
+                    'instalados' => $instalados['result'],
+                    'firmas' => $this->tieneFirmas($datos['id'])
                 ];
             } else {
                 return $instalados;
@@ -182,7 +183,8 @@ class Instalaciones extends General
                     'censadas' => $censadas,
                     'modelos' => $this->DB->getModelosKyocera(),
                     'estatus' => $this->DB->getEstatusRetiro(),
-                    'retirada' => $retirada['result']
+                    'retirada' => $retirada['result'],
+                    'firmas' => $this->tieneFirmas($datos['id'])
                 ];
             } else {
                 return $retirada;
@@ -255,7 +257,8 @@ class Instalaciones extends General
                 'code' => 200,
                 'message' => 'Success',
                 'evidenciasInstalacion' => $this->DB->getTiposEvidencia($generales['IdTipoServicio'], $datos['id']),
-                'infoEvidenciasInstalacion' => $evidenciasInstalacion
+                'infoEvidenciasInstalacion' => $evidenciasInstalacion,
+                'firmas' => $this->tieneFirmas($datos['id'])
             ];
         }
     }
@@ -275,7 +278,8 @@ class Instalaciones extends General
                 'code' => 200,
                 'message' => 'Success',
                 'evidenciasRetiro' => $this->DB->getTiposEvidenciaRetiro($generales['IdTipoServicio'], $datos['id']),
-                'infoEvidenciasRetiro' => $evidenciasRetiro
+                'infoEvidenciasRetiro' => $evidenciasRetiro,
+                'firmas' => $this->tieneFirmas($datos['id'])
             ];
         }
     }
@@ -342,12 +346,14 @@ class Instalaciones extends General
         } else {
             $data = [
                 'materiales' => $this->DB->materialesUtilizados($datos['id']),
-                'productosSAE' => $this->productosSAE->getFromAdist()
+                'productosSAE' => $this->productosSAE->getFromAdist(),
+                'firmas' => $this->tieneFirmas($datos['id'])
             ];
 
             return [
                 'code' => 200,
-                'formulario' => parent::getCI()->load->view('Instalaciones/Formularios/Materiales', $data, TRUE)
+                'formulario' => parent::getCI()->load->view('Instalaciones/Formularios/Materiales', $data, TRUE),
+                'firmas' => $data['firmas']
             ];
         }
     }
@@ -381,7 +387,10 @@ class Instalaciones extends General
                 'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
-            $data = [];
+            $data = [
+                'firmas' => $this->DB->getFirmasServicio($datos['id']),
+                'faltantes' => $this->validarInformacionLexmark($datos['id'])
+            ];
             return [
                 'code' => 200,
                 'formulario' => parent::getCI()->load->view('Instalaciones/Formularios/Firmas', $data, TRUE)
@@ -412,6 +421,74 @@ class Instalaciones extends General
         }
     }
 
+    private function tieneFirmas(int $servicio)
+    {
+        $firmas = $this->DB->getFirmasServicio($servicio)[0];
+        if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '') || (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function validarInformacionLexmark(int $servicio)
+    {
+        $generales = $this->DB->getGeneralesServicio($servicio)[0];
+        $instalados =  $this->DB->getEquiposInstaladosLexmark($servicio)['result'];
+        $retirados = $this->DB->getImpresoraRetirada($servicio)['result'];
+        $evidenciasInstalacion = $this->DB->getTiposEvidencia($generales['IdTipoServicio'], $servicio);
+        $evidenciasRetiro = $this->DB->getTiposEvidenciaRetiro($generales['IdTipoServicio'], $servicio);
+
+        $errores = [];
+
+        if (!isset($generales['IdSucursal']) || !is_numeric($generales['IdSucursal']) || $generales['IdSucursal'] <= 0) {
+            array_push($errores, "No se ha seleccionado una sucursal");
+        }
+        if ($instalados['impresora']['IdArea'] == '') {
+            array_push($errores, "Falta la ubicación de la impresora instalada.");
+        }
+        if ($instalados['impresora']['Serie'] == '') {
+            array_push($errores, "Falta la Serie de la impresora instalada.");
+        }
+        if ($instalados['impresora']['IP'] == '') {
+            array_push($errores, "Falta la IP de la impresora instalada.");
+        }
+        if ($instalados['impresora']['MAC'] == '') {
+            array_push($errores, "Falta la MAC de la impresora instalada.");
+        }
+        if ($instalados['impresora']['Firmware'] == '') {
+            array_push($errores, "Falta el Firmware de la impresora instalada.");
+        }
+        if ($instalados['impresora']['Contador'] == '') {
+            array_push($errores, "Falta el Contador de copias de la impresora instalada.");
+        }
+        if ($instalados['supresor']['IdArea'] == '') {
+            array_push($errores, "Falta la ubicación del supresor instalado.");
+        }
+        if ($instalados['supresor']['Serie'] == '') {
+            array_push($errores, "Falta la Serie del supresor instalado.");
+        }
+        if ($retirados['impresora']['IdModelo'] == '') {
+            array_push($errores, "Falta el modelo de la impresora retirada.");
+        }
+        if ($retirados['impresora']['IdEstatus'] == '') {
+            array_push($errores, "Falta el estado de la impresora retirada.");
+        }
+        if ($retirados['impresora']['Serie'] == '') {
+            array_push($errores, "Falta la serie de la impresora retirada.");
+        }
+
+        foreach ($evidenciasInstalacion as $key => $value) {
+            array_push($errores, "Falta evidencia de instalación: " . $value['Nombre']);
+        }
+
+        foreach ($evidenciasRetiro as $key => $value) {
+            array_push($errores, "Falta evidencia de retiro: " . $value['Nombre']);
+        }
+
+        return $errores;
+    }
+
     private function exportar45(int $servicio)
     {
         $generales = $this->DB->getGeneralesServicio($servicio)[0];
@@ -420,6 +497,7 @@ class Instalaciones extends General
         $evidenciasInstalacion = $this->evidenciasInstalacion(['id' => $servicio])['infoEvidenciasInstalacion'];
         $evidenciasRetiro = $this->evidenciasRetiro(['id' => $servicio])['infoEvidenciasRetiro'];
         $materiales = $this->DB->materialesUtilizados($servicio)['lista'];
+        $firmas = $this->DB->getFirmasServicio($servicio)[0];
 
         /******************************* 
          * *****HEADERS DE PDF *********
@@ -799,6 +877,66 @@ class Instalaciones extends General
                 $y += 5;
                 $fill = !$fill;
             }
+        }
+
+
+        /********************************** 
+         ********* SECCIÓN FIRMAS *********
+         **********************************/
+
+        if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '') || (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '')) {
+            if (($y + 56) > 276) {
+                $this->pdf->AddPage();
+                $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+                $x = 10;
+                $y = 32;
+            }
+
+            $this->pdf->SetFillColor(31, 56, 100);
+            $this->pdf->SetTextColor(255, 255, 255);
+
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->SetFont("helvetica", "BI", 10);
+            $this->pdf->Cell(0, 6, utf8_decode("Firmas del Servicio"), 1, 0, 'L', true);
+            $y += 6;
+
+            $this->pdf->SetFont("helvetica", "B", 9);
+            $this->pdf->SetTextColor(10, 10, 10);
+
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 40, "", 1, 0, 'C');
+            $gerente = '';
+            if (!is_null($firmas['Firma']) && $firmas['Firma'] != '') {
+                $this->pdf->Image('.' . $firmas['Firma'], $x + 7.5, $y + 2.5, 80, 35, pathinfo($firmas['Firma'], PATHINFO_EXTENSION));
+                $gerente = utf8_decode($firmas['Gerente']);
+            }
+
+            $x += 95;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 40, "", 1, 0, 'C');
+            $tecnico = '';
+            if (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '') {
+                $this->pdf->Image('.' . $firmas['FirmaTecnico'], $x + 7.5, $y + 2.5, 80, 35, pathinfo($firmas['FirmaTecnico'], PATHINFO_EXTENSION));
+                $tecnico = utf8_decode($firmas['Tecnico']);
+            }
+
+            $this->pdf->SetFillColor(217, 217, 217);
+
+            $x = 10;
+            $y += 40;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 5, $gerente, 1, 0, 'C', true);
+            $x += 95;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 5, $tecnico, 1, 0, 'C', true);
+
+            $x = 10;
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 5, "Gerente Cinemex", 1, 0, 'C', true);
+            $x += 95;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 5, utf8_decode("Técnico Siccob / Lexmark"), 1, 0, 'C', true);
         }
 
 
