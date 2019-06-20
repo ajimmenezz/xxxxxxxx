@@ -494,13 +494,7 @@ class Instalaciones extends General
         }
         if ($instalados['impresora']['Contador'] == '') {
             array_push($errores, "Falta el Contador de copias de la impresora instalada.");
-        }
-        if ($instalados['supresor']['IdArea'] == '') {
-            array_push($errores, "Falta la ubicación del supresor instalado.");
-        }
-        if ($instalados['supresor']['Serie'] == '') {
-            array_push($errores, "Falta la Serie del supresor instalado.");
-        }
+        }        
         if ($retirados['impresora']['IdModelo'] == '') {
             array_push($errores, "Falta el modelo de la impresora retirada.");
         }
