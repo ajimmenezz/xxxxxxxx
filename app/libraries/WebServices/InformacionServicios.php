@@ -139,7 +139,7 @@ class InformacionServicios extends General {
     }
 
     public function cambiarEstatusSD(array $datos) {
-        $SDkey = $this->MSP->getApiKeyByUser($datos['Atiende']);
+        $SDkey = $this->getApiKeyByUser($datos['Atiende']);
 
         $servicios = $this->verificarTodosServiciosFolio($datos);
 
@@ -271,7 +271,7 @@ class InformacionServicios extends General {
 
         $linkPdf = $this->cargarPDF($datos);
         $usuario = $this->Usuario->getDatosUsuario();
-        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+        $key = $this->getApiKeyByUser($usuario['Id']);
 
         if ($informacionDiagnostico !== FALSE) {
             if ($informacionDiagnostico[0]['IdTipoDiagnostico'] === '4') {
@@ -420,15 +420,15 @@ class InformacionServicios extends General {
                 $datosProblemas .= $avancesProblemas['datosAvancesProblemas'];
             }
         }
-        
-        if($datosAvances == '***AVANCES***<br>'){
+
+        if ($datosAvances == '***AVANCES***<br>') {
             $datosAvances = '';
         }
-        
-        if($datosProblemas == '<br><p style="color:#FF0000";>***PROBLEMAS***</p>'){
+
+        if ($datosProblemas == '<br><p style="color:#FF0000";>***PROBLEMAS***</p>') {
             $datosProblemas = '';
         }
-        
+
         $datosAvancesProblemas = $datosProblemas . $datosAvances;
 
         return $datosAvancesProblemas;
@@ -820,7 +820,7 @@ class InformacionServicios extends General {
 
     public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE) {
         $informacionSolicitud = $this->getGeneralesSolicitudServicio($servicio);
-        $key = $this->MSP->getApiKeyByUser($informacionSolicitud['atiende']);
+        $key = $this->getApiKeyByUser($informacionSolicitud['atiende']);
         $folio = $this->DBS->consultaGeneralSeguimiento('SELECT 
                                             ts.Folio 
                                         FROM t_servicios_ticket tst
@@ -837,7 +837,6 @@ class InformacionServicios extends General {
                             $ServiceDesck = $this->ServiceDesk->setResolucionServiceDesk($key, $folio[0]['Folio'], $descripcion['html']);
                             if (!empty($ServiceDesck)) {
                                 if ($ServiceDesck->operation->result->status !== 'Success') {
-                                    $key = $this->MSP->getApiKeyByUser('2');
                                     $ServiceDesck = $this->ServiceDesk->setResolucionServiceDesk($key, $folio[0]['Folio'], $descripcion['html']);
                                     if ($ServiceDesck->operation->result->status !== 'Success') {
                                         return $ServiceDesck->operation->result->message;
@@ -908,7 +907,7 @@ class InformacionServicios extends General {
     public function datosSD(string $solicitud) {
         $data = array();
         $usuario = $this->Usuario->getDatosUsuario();
-        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+        $key = $this->getApiKeyByUser($usuario['Id']);
         $dataFolio = $this->DBS->consultaGeneralSeguimiento('SELECT Folio FROM t_solicitudes WHERE Id = "' . $solicitud . '"');
 
         if (!empty($dataFolio[0]['Folio'])) {
@@ -1009,7 +1008,7 @@ class InformacionServicios extends General {
             $resultadoSD = $this->guardarDatosServiceDesk($datos['servicio'], TRUE);
             return $resultadoSD;
         } else {
-            $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+            $key = $this->getApiKeyByUser($usuario['Id']);
             $htmlServicio = $this->vistaHTMLServicio($datosServicios[0]);
             $datosNotasSD = $this->setNoteAndWorkLog(array('key' => $key, 'folio' => $datosServicios[0]['Folio'], 'html' => $htmlServicio));
 
@@ -1033,7 +1032,7 @@ class InformacionServicios extends General {
                                             ON ts.Id = tst.IdSolicitud
                                         WHERE tst.Id = "' . $datos['servicio'] . '"');
 
-        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+        $key = $this->getApiKeyByUser($usuario['Id']);
         $htmlServicio = $this->vistaHTMLServicio($datosServicios[0]);
         $datosNotasSD = $this->setNoteAndWorkLog(array('key' => $key, 'folio' => $datosServicios[0]['Folio'], 'html' => $htmlServicio));
 
@@ -1057,6 +1056,18 @@ class InformacionServicios extends General {
         } catch (Exception $err) {
             return $err;
         }
+    }
+
+    public function getApiKeyByUser(string $usuario) {
+        $key = $this->MSP->getApiKeyByUser($usuario);
+        $result = $this->ServiceDesk->getTecnicosSD($key);
+        $result = json_decode($result);
+
+        if ($result->operation->result->status !== 'Success') {
+            $key = $this->MSP->getApiKeyByUser('2');
+        }
+
+        return $key;
     }
 
 }
