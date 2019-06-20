@@ -31,12 +31,7 @@ class InformacionServicios extends General {
 
     public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key) {
         $html = '';
-        $usuario = $this->Usuario->getDatosUsuario();
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $estatus = TRUE;
-
-        $html .= '<div>' . $usuario['Nombre'] . '</div>';
-        $html .= '<div>' . $fecha . '</div>';
 
         if ($servicioConcluir) {
             $union = 'SELECT 
@@ -251,14 +246,14 @@ class InformacionServicios extends General {
             foreach ($archivosSolucion as $value) {
                 if ($value != '') {
                     $contSolucion++;
-                    $linkImagenesSolucion .= "<a href='http://" . $host . $value . "'>Archivo" . $contSolucion . "</a> &nbsp ";
+                    $linkImagenesSolucion .= "<a href='http://" . $host . $value . "' target='_blank'>Archivo" . $contSolucion . "</a> &nbsp ";
                 }
             }
 
             $path = $this->cargarPDF($datos);
             $descripcionConclusionSD = '<div>Descripción: ' . $datosDescripcionConclusion[0]['DescripcionServicio'] . '</div>';
             $descripcion = $datosDescripcionConclusion[0]['Sucursal'] . ' ' . $infoServicio[0]['TipoServicio'] . ' se concluyo con exito';
-            $datosResolucion = '<br>' . $descripcion . $descripcionConclusionSD . $linkImagenesSolucion . "<div><a href='" . $path . "'>Documento PDF</a></div>";
+            $datosResolucion = '<br>' . $descripcion . $descripcionConclusionSD . $linkImagenesSolucion . "<div><a href='" . $path . "' target='_blank'>Documento PDF</a></div>";
         }
         return $datosResolucion;
     }
@@ -295,7 +290,7 @@ class InformacionServicios extends General {
             $archivosDiagnostico = explode(',', $informacionDiagnostico[0]['Evidencias']);
             foreach ($archivosDiagnostico as $value) {
                 $contDiagnostico++;
-                $linkImagenesDiagnostico .= "<a href='http://" . $host . $value . "'>Archivo" . $contDiagnostico . "</a> &nbsp";
+                $linkImagenesDiagnostico .= "<a href='http://" . $host . $value . "' target='_blank'>Archivo" . $contDiagnostico . "</a> &nbsp";
             }
 
             $correctivoSoluciones = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_soluciones WHERE IdServicio = "' . $datos['servicio'] . '" ORDER BY Id DESC LIMIT 1');
@@ -313,7 +308,7 @@ class InformacionServicios extends General {
                         $archivosSolucion = explode(',', $correctivoSoluciones[0]['Evidencias']);
                         foreach ($archivosSolucion as $value) {
                             $contSolucion++;
-                            $linkImagenesSolucion .= "<a href='http://" . $host . $value . "'>Archivo" . $contSolucion . "</a> &nbsp ";
+                            $linkImagenesSolucion .= "<a href='http://" . $host . $value . "' target='_blank'>Archivo" . $contSolucion . "</a> &nbsp ";
                         }
                         $solucionDiv = "<div>***SOLUCIÓN***</div><div>" . $tituloSolucion . " &nbsp Tipo de Solución: " . $solucion[0]['Solucion'] . "</div><div>Observaciones: " . $correctivoSoluciones[0]['Observaciones'] . "</div>" . "<div>" . $linkImagenesSolucion . "</div>";
                         break;
@@ -332,7 +327,7 @@ class InformacionServicios extends General {
                         $archivosSolucion = explode(',', $correctivoSoluciones[0]['Evidencias']);
                         foreach ($archivosSolucion as $value) {
                             $contSolucion++;
-                            $linkImagenesSolucion .= "<a href='http://" . $host . $value . "'>Archivo" . $contSolucion . "</a> &nbsp ";
+                            $linkImagenesSolucion .= "<a href='http://" . $host . $value . "' target='_blank'>Archivo" . $contSolucion . "</a> &nbsp ";
                         }
                         $solucionDiv = "<div>***SOLUCIÓN***</div><div>" . $tituloSolucion . "</div>" . $refaccion . "<div>Observaciones: " . $correctivoSoluciones[0]['Observaciones'] . "</div>" . "<div>" . $linkImagenesSolucion . "</div>";
                         break;
@@ -347,7 +342,7 @@ class InformacionServicios extends General {
                         $archivosSolucion = explode(',', $correctivoSoluciones[0]['Evidencias']);
                         foreach ($archivosSolucion as $value) {
                             $contSolucion++;
-                            $linkImagenesSolucion .= "<a href='http://" . $host . $value . "'>Archivo" . $contSolucion . "</a> &nbsp ";
+                            $linkImagenesSolucion .= "<a href='http://" . $host . $value . "' target='_blank'>Archivo" . $contSolucion . "</a> &nbsp ";
                         }
                         $solucionDiv = "<div>***SOLUCIÓN***</div><div>" . $tituloSolucion . " &nbsp Equipo: " . $solucion[0]['Equipo'] . "</div><div>Serie: " . $solucion[0]['Serie'] . "<div>Observaciones: " . $correctivoSoluciones[0]['Observaciones'] . "</div>" . "<div>" . $linkImagenesSolucion . "</div>";
                         break;
@@ -396,7 +391,7 @@ class InformacionServicios extends General {
 
         $path = $this->cargarPDF($datos);
         $descripcion = $datosDescripcionConclusion[0]['Sucursal'] . ' ' . $infoServicio[0]['TipoServicio'] . ' se concluyo con exito';
-        $datosResolucion = '<br>' . $descripcion . "<div><a href='" . $path . "'>Documento PDF</a></div>";
+        $datosResolucion = '<br>' . $descripcion . "<div><a href='" . $path . "' target='_blank'>Documento PDF</a></div>";
 
         return $datosResolucion;
     }
@@ -425,7 +420,15 @@ class InformacionServicios extends General {
                 $datosProblemas .= $avancesProblemas['datosAvancesProblemas'];
             }
         }
-
+        
+        if($datosAvances == '***AVANCES***<br>'){
+            $datosAvances = '';
+        }
+        
+        if($datosProblemas == '<br><p style="color:#FF0000";>***PROBLEMAS***</p>'){
+            $datosProblemas = '';
+        }
+        
         $datosAvancesProblemas = $datosProblemas . $datosAvances;
 
         return $datosAvancesProblemas;
@@ -474,7 +477,7 @@ class InformacionServicios extends General {
         foreach ($archivosAvanceProblema as $v) {
             if ($v != '') {
                 $contAvanceProblema++;
-                $linkImagenes .= "<a href='http://" . $host . $v . "'>Archivo" . $contAvanceProblema . "</a> &nbsp ";
+                $linkImagenes .= "<a href='http://" . $host . $v . "' target='_blank'>Archivo" . $contAvanceProblema . "</a> &nbsp ";
             }
         }
 
@@ -817,7 +820,6 @@ class InformacionServicios extends General {
 
     public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE) {
         $informacionSolicitud = $this->getGeneralesSolicitudServicio($servicio);
-        $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->MSP->getApiKeyByUser($informacionSolicitud['atiende']);
         $folio = $this->DBS->consultaGeneralSeguimiento('SELECT 
                                             ts.Folio 

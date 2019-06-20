@@ -147,7 +147,7 @@ $config['Generales'] = array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
             'parsley/src/parsley',
-            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
+            'bootstrap-datepicker/css/datepicker'
         ),
         'js' => array(
             'Base/Base',
@@ -169,7 +169,7 @@ $config['Generales'] = array(
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
             'masked-input/masked-input.min',
-            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'bootstrap-datepicker/js/bootstrap-datepicker',
             'sparkline/jquery.sparkline',
             'jquery-knob/js/jquery.knob'
         ),

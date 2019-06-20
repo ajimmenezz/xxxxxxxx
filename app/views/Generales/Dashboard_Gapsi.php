@@ -31,7 +31,7 @@
             <div class="col-md-12">
                 <div class="radio">
                     <label style="color: #A8ACB1">
-                        <input type="radio" name="optionsRadiosMoneda" value="MN" checked="checked"/>Peso
+                        <input type="radio" name="optionsRadiosMoneda" value="MN"/>Peso
                     </label>
                 </div>
                 <div class="radio">
@@ -48,7 +48,7 @@
                     <h5 class="m-t-0" style="color: #A8ACB1">Filtros de fechas</h5>
                     <div class="form-group">
                         <label style="color: #A8ACB1">Desde</label>
-                        <div class='input-group date' id='desde' values="">
+                        <div class='input-group date' id='desde'>
                             <input id='fechaComienzo' type='text' class="form-control"/>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
@@ -60,7 +60,7 @@
                     <div class="form-group">
                         <label style="color: #A8ACB1">Hasta</label>
                         <div class='input-group date' id='hasta'>
-                            <input id='fechaFinal' type='text' class="form-control"/>
+                            <input id='fechaFin' type='text' class="form-control"/>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
@@ -76,32 +76,32 @@
             <div id="selectFiltros" class="row">
                 <div class="col-md-12">
                     <div class="divider"></div>
-                    <div class="form-group" id="hideProyecto">
+                    <div class="form-group" id="hideproyecto">
                         <label style="color: #A8ACB1">Proyectos</label>
                         <select id="selectproyecto" class="form-control efectoDescuento" name="SelectProyecto" style="width: 100%">
                         </select>
                     </div>
-                    <div class="form-group" id="hideServicio">
+                    <div class="form-group" id="hideservicio">
                         <label style="color: #A8ACB1">Servicios</label>
                         <select id="selectservicio" class="form-control efectoDescuento" name="SelectServicio" style="width: 100%">
                         </select>
                     </div>
-                    <div class="form-group" id="hideSucursal">
+                    <div class="form-group" id="hidesucursal">
                         <label style="color: #A8ACB1">Sucursal</label>
                         <select id="selectsucursal" class="form-control efectoDescuento" name="SelectSucursal" style="width: 100%">
                         </select>
                     </div>
-                    <div class="form-group" id="hideCategoria">
+                    <div class="form-group" id="hidecategoria">
                         <label style="color: #A8ACB1">Categoria</label>
                         <select id="selectcategoria" class="form-control efectoDescuento" name="SelectCategoria" style="width: 100%">
                         </select>
                     </div>
-                    <div class="form-group" id="hideSubCategoria">
+                    <div class="form-group" id="hidecubcategoria">
                         <label style="color: #A8ACB1">SubCategoria</label>
                         <select id="selectsubcategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
                         </select>
                     </div>
-                    <div class="form-group" id="hideConcepto">
+                    <div class="form-group" id="hideconcepto">
                         <label style="color: #A8ACB1">Concepto</label>
                         <select id="selectconcepto" class="form-control efectoDescuento" name="SelectConcepto" style="width: 100%">
                         </select>
@@ -131,9 +131,14 @@
         <div class="panel-body">
             <div class="row">
                 <!--grafica principal dashboard                -->
-                <div class="col-md-7">                        
+                <div id="graficaMN" class="col-md-7">                        
                     <div class="row">
-                        <div id="graphDashboard" style="width: 100%; height: 400px;  max-height:400px"></div>
+                        <div id="graphDashboard" style="width: 100%; height: 400px;  max-height:400px"></div>                        
+                    </div>
+                </div>
+                <div id="graficaUSD" class="col-md-7 hidden">                        
+                    <div class="row">
+                        <div id="graphDashboardUSD" style="width: 100%; height: 400px;  max-height:400px"></div>                        
                     </div>
                 </div>
                 <div class="col-md-5">
@@ -145,7 +150,13 @@
                                 <tr>
                                     <th class="all">Tipo Proyecto</th>
                                     <th class="all">Proyectos</th>
-                                    <th class="all">Gasto</th>
+                                    <?php
+//                                    if ($datos['TiposProyectos'][0] === 'MN') {
+                                        echo '<th class="all">Gasto</th>';
+//                                    } else {
+//                                        echo '<th class="all">Gasto USD</th>';
+//                                    }
+                                    ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -182,8 +193,15 @@
                                     <th class="never">Tipo</th>
                                     <th class="never">idProyecto</th>
                                     <th class="all">Proyecto</th>
-                                    <th class="all">Gasto</th>
+                                    <?php
+//                                    if ($datos['Proyectos'][0] === 'MN') {
+                                        echo '<th class="all">Gasto</th>';
+//                                    } else {
+//                                        echo '<th class="all">Gasto USD</th>';
+//                                    }
+                                    ?>
                                     <th class="all">Fecha Inicio</th>
+                                    <th class="all">Último movimiento</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -195,6 +213,7 @@
                                     echo '<td>' . $valorProyecto['Descripcion'] . '</td>';
                                     echo '<td>$ ' . number_format($valorProyecto['Gasto'], 2) . '</td>';
                                     echo '<td>' . $valorProyecto['FCreacion'] . '</td>';
+                                    echo '<td>' . $valorProyecto['UltimoRegistro'] . '</td>';
                                     echo "</tr>";
                                 }
                                 ?>
@@ -212,7 +231,7 @@
 <div id="dashboardGapsiFilters" class="hidden"></div>
 <!--Finaliza dashboard detallado-->
 
-<div id="filtroFechas" class="theme-panel" hidden>
+<div id="filtroFechas" class="theme-panel">
     <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn bg-green"><i class="fa fa-calendar text-white"></i></a>
     <div class="theme-panel-content">
         <!--Empieza selector modena-->
@@ -233,8 +252,8 @@
         <h5 class="m-t-0">Filtros de fechas</h5>
         <div class="form-group">
             <label>Desde</label>
-            <div class='input-group date' id='desde' values="">
-                <input id='fechaComienzo' type='text' class="form-control"/>
+            <div class='input-group date' id='desdePrincipal' values="">
+                <input id='fechaComienzoPrincipal' type='text' class="form-control"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -242,8 +261,8 @@
         </div>
         <div class="form-group">
             <label>Hasta</label>
-            <div class='input-group date' id='hasta'>
-                <input id='fechaFinal' type='text' class="form-control"/>
+            <div class='input-group date' id='hastaPrincipal'>
+                <input id='fechaFinalPrincipal' type='text' class="form-control"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -251,7 +270,7 @@
         </div>
         <div class="row m-t-10">
             <div class="col-md-12">
-                <a href="#" id="btnFiltrarDashboard" class="btn btn-inverse btn-success btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
+                <a href="#" id="btnFiltrarDashboardPrincipal" class="btn btn-inverse btn-success btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
             </div>
         </div>
     </div>

@@ -121,15 +121,19 @@
                 </div>
                 <div class="col-md-10">
                     <?php
-                    if ($datosAusencia[0]["FolioDocumento"] != "") {
+                    if ($datosAusencia[0]["ArchivosOriginales"] !== '') {
+                    echo '<div id="archivoCitaIncapacidadAct" class="form-group">
+                        <label class="f-w-600 f-s-13">Archivo Cita o Incapacidad</label>
+                        <div id="" class="evidencia">
+                            <a class="m-l-5 m-r-5" href="' . $datosAusencia[0]["ArchivosOriginales"] . '" data-lightbox="image-' . $datosAusencia[0]["ArchivosOriginales"] . '">
+                                <img src="' . $datosAusencia[0]["ArchivosOriginales"] . '" style="max-height:115px !important;" />
+                            </a>
+                        </div>
+                    </div>';
+                    }else{
                     echo '<div id="archivoCitaIncapacidadAct" class="form-group">
                         <label>Archivo Cita o Incapacidad</label>
                         <input id="inputEvidenciaIncapacidadAct" name="evidenciasIncapacidadAct[]" type="file" multiple data-parsley-required="true">
-                    </div>';
-                    }else{
-                    echo '<div id="archivoCitaIncapacidadAct" class="form-group" style="display: none">
-                        <label>Archivo Cita o Incapacidad</label>
-                        <input id="inputEvidenciaIncapacidadAct" name="evidenciasIncapacidadAct[]" type="file" multiple>
                     </div>';
                     }
                     ?>
