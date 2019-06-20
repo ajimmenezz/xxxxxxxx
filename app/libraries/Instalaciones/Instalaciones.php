@@ -29,6 +29,9 @@ class Instalaciones extends General
 
     public function getInstalacionesPendientes(int $idUsuario = null)
     {
+        if (in_array(317, $this->usuario['Permisos']) || in_array(317, $this->usuario['PermisosAdicionales'])) {
+            $idUsuario = null;
+        }
         $pendientes = $this->DB->getInstalacionesPendientes($idUsuario);
         return $pendientes;
     }
@@ -766,12 +769,12 @@ class Instalaciones extends General
         $x = 10;
         $this->pdf->SetXY($x, $y);
         $this->pdf->Cell(0, 2, "", 1, 0, 'C');
-        $y+=2;
+        $y += 2;
 
         /************************************************* 
          ********* SECCIÓN EVIDENCIAS INSTALACION *********
          **************************************************/
-        
+
         $totalEvidencias = count($evidenciasInstalacion);
         if ($totalEvidencias > 0) {
 
