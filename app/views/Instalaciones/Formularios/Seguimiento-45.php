@@ -3,8 +3,11 @@
         <h1 class="page-header">Seguimiento Instalación</h1>
     </div>
     <div class="col-md-6 col-xs-6 text-right">
-        <label id="btnRegresar" class="btn btn-success">
-            <i class="fa fa fa-reply"></i> Regresar
+        <label id="btnPdf" class="btn btn-danger f-w-600">
+            <i class="fa fa-file-pdf-o"></i> Exportar
+        </label>
+        <label id="btnRegresar" class="btn btn-success f-w-600">
+            <i class="fa fa-reply"></i> Regresar
         </label>
     </div>
 </div>
@@ -23,6 +26,8 @@
                             <li class="f-w-600 f-s-14"><a href="#Retirados" data-toggle="tab">Equipos Retirados</a></li>
                             <li class="f-w-600 f-s-14"><a href="#EvidenciasInstalacion" data-toggle="tab">Evidencias Instalación</a></li>
                             <li class="f-w-600 f-s-14"><a href="#EvidenciasRetiro" data-toggle="tab">Evidencias Retiro</a></li>
+                            <li class="f-w-600 f-s-14"><a href="#Materiales" data-toggle="tab">Materiales</a></li>
+                            <li class="f-w-600 f-s-14"><a href="#Firmas" data-toggle="tab">Firmas y Cierre</a></li>
                         <?php
                     }
                     ?>
@@ -280,6 +285,26 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Versión de Firmware*:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">FW</i></span>
+                                                <input id="txtFirmwareImpresora" type="text" class="form-control f-w-600 f-s-14" placeholder="FW5.3.23" value="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Contador Actual*:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
+                                                <input id="txtContadorImpresora" type="number" class="form-control f-w-600 f-s-14" placeholder="0" value="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row m-t-25">
@@ -532,6 +557,18 @@
                             </div>
                         </div>
                         <div class="row" id="divEvidenciasRetiro"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="Materiales">
+                    <div class="panel-body">
+                        <div id="divMateriales">
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="Firmas">
+                    <div class="panel-body">
+                        <div id="divFirmas">
+                        </div>
                     </div>
                 </div>
             </div>

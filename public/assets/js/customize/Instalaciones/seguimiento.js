@@ -100,6 +100,12 @@ $(function () {
                 case "#EvidenciasRetiro":
                     cargaEvidenciasRetiro(datos);
                     break;
+                case "#Materiales":
+                    cargaMateriales(datos);
+                    break;
+                case "#Firmas":
+                    cargaFirmas(datos);
+                    break;
             }
         });
 
@@ -111,8 +117,301 @@ $(function () {
 
     }
 
+    function cargaFirmas(datos) {
+        evento.enviarEvento('Seguimiento/CargaFirmas', datos, '#panelSeguimiento', function (respuesta) {
+            if (respuesta.code == 200) {
+                $("#divFirmas").empty().append(respuesta.formulario);
+                var firmaGerente = new DrawingBoard.Board("firmaGerente", {
+                    background: "#fff",
+                    color: "#000",
+                    size: 1,
+                    controlsPosition: "right",
+                    controls: [
+                        {
+                            Navigation: {
+                                back: false,
+                                forward: false
+                            }
+                        }
+                    ],
+                    webStorage: false
+                });
+                var firmaTecnico = new DrawingBoard.Board("firmaTecnico", {
+                    background: "#fff",
+                    color: "#000",
+                    size: 1,
+                    controlsPosition: "right",
+                    controls: [
+                        {
+                            Navigation: {
+                                back: false,
+                                forward: false
+                            }
+                        }
+                    ],
+                    webStorage: false
+                });
+
+                $("#btnGuardarFirmaGerente").off("click");
+                $("#btnGuardarFirmaGerente").on("click", function () {
+                    var img = firmaGerente.getImg();
+                    var imgInput = (firmaGerente.blankCanvas == img) ? '' : img;
+                    var data = {
+                        'servicio': datos.id,
+                        'nombre': $.trim($("#txtNombreGerente").val()),
+                        'firma': imgInput,
+                        'tipo': 'gerente'
+                    };
+
+                    var error = '';
+                    if (data.nombre == "") {
+                        error = 'El nombre del gerente es un campo obligatorio.';
+                    } else if (data.firma == "") {
+                        error = 'El campo de Firma del gerente es obligatorio.';
+                    }
+
+                    if (error != '') {
+                        evento.mostrarMensaje("#errorMessageSeguimiento", false, error, 4000);
+                    } else {
+                        evento.enviarEvento('Seguimiento/GuardaFirma', data, '#panelSeguimiento', function (respuesta) {
+
+                        });
+                    }
+
+                });
+
+                $("#btnGuardarFirmaTecnico").off("click");
+                $("#btnGuardarFirmaTecnico").on("click", function () {
+                    var img = firmaTecnico.getImg();
+                    var imgInput = (firmaTecnico.blankCanvas == img) ? '' : img;
+                    var data = {
+                        'servicio': datos.id,
+                        'firma': imgInput,
+                        'tipo': 'tecnico'
+                    };
+
+                    var error = '';
+                    if (data.firma == "") {
+                        error = 'El campo de Firma del gerente es obligatorio.';
+                    }
+
+                    if (error != '') {
+                        evento.mostrarMensaje("#errorMessageSeguimiento", false, error, 4000);
+                    } else {
+                        evento.enviarEvento('Seguimiento/GuardaFirma', data, '#panelSeguimiento', function (respuesta) {
+
+                        });
+                    }
+
+                });
+
+
+
+            } else {
+                evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+            }
+        });
+    }
+
+    function cargaMateriales(datos) {
+        evento.enviarEvento('Seguimiento/CargaMateriales', datos, '#panelSeguimiento', function (respuesta) {
+            if (respuesta.code == 200) {
+                $("#divMateriales").empty().append(respuesta.formulario);
+                tabla.generaTablaPersonal('#data-table-sae-products', null, null, true, true, [[1, 'asc']]);
+                tabla.generaTablaPersonal('#data-table-productos-solicitados', null, null, true, true, [[1, 'asc']]);
+
+                $('#data-table-sae-products tbody').on('click', 'tr', function () {
+                    var _fila = this;
+                    var datosTabla = $('#data-table-sae-products').DataTable().row(this).data();
+                    var _html = `
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="f-w-600 f-s-14">Clave:</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+                                    <label class="f-s-14 form-control">`+ datosTabla[0] + `</label>
+                                </div>
+                            </div>                                        
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="f-w-600 f-s-14">Producto:</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-cubes"></i></span>
+                                    <label class="f-s-14 form-control">`+ datosTabla[1] + `</label>
+                                </div>
+                            </div>                    
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="f-w-600 f-s-14">Cantidad *:</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
+                                    <input class="form-control" id="cantidadProducto" type="number" min=1 value="" />
+                                </div>
+                            </div>                    
+                        </div>
+                    </div>`;
+
+                    evento.iniciarModal("#modalEdit", "Agregar producto", _html);
+
+                    setTimeout(function () { $("#cantidadProducto").blur().focus(); }, 600);
+
+                    $('#cantidadProducto').keyup(function (e) {
+                        if (e.keyCode == 13) {
+                            $("#btnGuardarCambios").trigger("click");
+                        }
+                    });
+
+                    $("#btnGuardarCambios").off("click");
+                    $("#btnGuardarCambios").on("click", function () {
+                        var cantidad = $.trim($("#cantidadProducto").val());
+                        if (isNaN(cantidad) || cantidad <= 0) {
+                            evento.mostrarMensaje("#errorModal", false, "La cantidad debe ser númerica y mayor a 0", 3000);
+                        } else {
+                            var data = {
+                                'servicio': datos.id,
+                                'clave': datosTabla[0],
+                                'producto': datosTabla[1],
+                                'cantidad': cantidad
+                            };
+                            evento.enviarEvento('Seguimiento/GuardarMaterial', data, '#modalEdit', function (respuesta) {
+                                if (respuesta.code == 200) {
+                                    evento.terminarModal("#modalEdit");
+                                    tabla.agregarFila("#data-table-productos-solicitados", [respuesta.id, data.clave, data.producto, data.cantidad]);
+                                    tabla.eliminarFila("#data-table-sae-products", _fila);
+                                    tabla.reordenarTabla("#data-table-sae-products", [1, 'asc']);
+                                    evento.mostrarMensaje("#errorMessageSeguimiento", true, respuesta.message, 4000);
+                                } else {
+                                    evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                                }
+                            });
+                        }
+                    });
+
+                });
+
+                $('#data-table-productos-solicitados tbody').on('click', 'tr', function () {
+                    var _fila = this;
+                    var datosFila = $('#data-table-productos-solicitados').DataTable().row(this).data();
+                    var _html = `
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="f-w-600 f-s-14">Clave:</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+                                    <label class="f-s-14 form-control">`+ datosFila[1] + `</label>
+                                </div>
+                            </div>                                        
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="f-w-600 f-s-14">Producto:</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-cubes"></i></span>
+                                    <label class="f-s-14 form-control">`+ datosFila[2] + `</label>
+                                </div>
+                            </div>                    
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="f-w-600 f-s-14">Cantidad *:</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
+                                    <input class="form-control" id="cantidadProductoSolicitado" type="number" min=1 value="`+ datosFila[3] + `" />
+                                </div>
+                            </div>                    
+                        </div>
+                    </div>
+                    <div class="row">                    
+                        <div class="col-md-12">
+                        <input type="hidden" id="hiddenIdMaterial" value="`+ datosFila[0] + `" />
+                            <a class="btn btn-danger" id="btnQuitarProducto">Quitar producto</a>                            
+                        </div>
+                    </div>`;
+
+                    evento.iniciarModal("#modalEdit", "Producto solicitado", _html);
+
+                    setTimeout(function () { $("#cantidadProductoSolicitado").blur().focus().select(); }, 600);
+
+                    $('#cantidadProductoSolicitado').keyup(function (e) {
+                        if (e.keyCode == 13) {
+                            $("#btnGuardarCambios").trigger("click");
+                        }
+                    });
+
+                    $("#btnGuardarCambios").off("click");
+                    $("#btnGuardarCambios").on("click", function () {
+
+                        var data = {
+                            'id': $("#hiddenIdMaterial").val(),
+                            'servicio': datos.id,
+                            'clave': datosFila[1],
+                            'producto': datosFila[2],
+                            'cantidad': $.trim($("#cantidadProductoSolicitado").val())
+                        };
+
+                        if (isNaN(data.cantidad)) {
+                            evento.mostrarMensaje("#errorModal", false, "La cantidad debe ser númerica", 3000);
+                        } else if (data.cantidad <= 0) {
+                            eliminarProductoSolicitado(data.id, _fila, [data.clave, data.producto]);
+                        } else {
+                            evento.enviarEvento('Seguimiento/GuardarMaterial', data, '#modalEdit', function (respuesta) {
+                                if (respuesta.code == 200) {
+                                    console.log(data);
+                                    evento.terminarModal("#modalEdit");
+                                    tabla.eliminarFila("#data-table-productos-solicitados", _fila);
+                                    tabla.agregarFila("#data-table-productos-solicitados", [data.id, data.clave, data.producto, data.cantidad]);
+                                    tabla.reordenarTabla("#data-table-productos-solicitados", [2, 'asc']);
+                                    evento.mostrarMensaje("#errorMessageSeguimiento", true, respuesta.message, 4000);
+                                } else {
+                                    evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                                }
+                            });
+                        }
+
+
+                    });
+
+                    $("#btnQuitarProducto").off("click");
+                    $("#btnQuitarProducto").on("click", function () {
+                        var idProducto = $("#hiddenIdMaterial").val();
+                        eliminarProductoSolicitado(idProducto, _fila, [datosFila[1], datosFila[2]]);
+                    });
+
+                });
+            } else {
+                evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+            }
+        });
+    }
+
+    function eliminarProductoSolicitado(id, fila, datosFila) {
+        evento.enviarEvento('Seguimiento/EliminarMaterial', { 'id': id }, '#modalEdit', function (respuesta) {
+            if (respuesta.code == 200) {
+                evento.terminarModal("#modalEdit");
+                tabla.eliminarFila("#data-table-productos-solicitados", fila);
+                tabla.agregarFila("#data-table-sae-products", datosFila);
+                tabla.reordenarTabla("#data-table-sae-products", [1, 'asc']);
+                evento.mostrarMensaje("#errorMessageSeguimiento", true, respuesta.message, 4000);
+            } else {
+                evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+            }
+        });
+    }
+
     function cargaEvidenciasInstalacion(datos) {
-        file.crearUpload('#archivosInstalacion', 'Seguimiento/SubirArchivoInstalacion');
+        file.crearUpload('#archivosInstalacion', 'Seguimiento/SubirArchivoInstalacion', ['jpg', 'jpeg', 'gif', 'png']);
         file.habilitar("#archivosInstalacion");
 
         evento.enviarEvento('Seguimiento/EvidenciasInstalacion', datos, '#panelSeguimiento', function (respuesta) {
@@ -166,7 +465,7 @@ $(function () {
     }
 
     function cargaEvidenciasRetiro(datos) {
-        file.crearUpload('#archivosRetiro', 'Seguimiento/SubirArchivoRetiro');
+        file.crearUpload('#archivosRetiro', 'Seguimiento/SubirArchivoRetiro', ['jpg', 'jpeg', 'gif', 'png']);
         file.habilitar("#archivosRetiro");
 
         evento.enviarEvento('Seguimiento/EvidenciasRetiro', datos, '#panelSeguimiento', function (respuesta) {
@@ -291,6 +590,25 @@ $(function () {
                     break;
             }
         });
+
+        $("#btnPdf").off("click");
+        $("#btnPdf").on("click", function () {
+            exportPdf(datos.id);
+        });
+    }
+
+    function exportPdf(servicio) {
+        $("#btnPdf").off("click");
+        evento.enviarEvento('Seguimiento/ExportarInstalacion', { 'id': servicio }, '#panelSeguimiento', function (respuesta) {
+            if (respuesta.code == 200) {
+                window.open(respuesta.ruta);
+            } else {
+                evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+            }
+            $("#btnPdf").on("click", function () {
+                exportPdf(servicio);
+            });
+        });
     }
 
     function cargaInstaladosLexmark(datos) {
@@ -324,6 +642,8 @@ $(function () {
                 $("#txtSerieImpresora").val(respuesta.instalados.impresora.Serie);
                 $("#txtIPImpresora").val(respuesta.instalados.impresora.IP);
                 $("#txtMACImpresora").val(respuesta.instalados.impresora.MAC);
+                $("#txtFirmwareImpresora").val(respuesta.instalados.impresora.Firmware);
+                $("#txtContadorImpresora").val(respuesta.instalados.impresora.Contador);
                 $("#txtSerieSupresor").val(respuesta.instalados.supresor.Serie);
 
             } else {
@@ -339,7 +659,9 @@ $(function () {
                 'area': $("#listUbicacionesImpresora option:selected").attr("data-area"),
                 'punto': $("#listUbicacionesImpresora option:selected").attr("data-punto"),
                 'ip': $.trim($("#txtIPImpresora").val()),
-                'mac': $.trim($("#txtMACImpresora").val())
+                'mac': $.trim($("#txtMACImpresora").val()),
+                'firmware': $.trim($("#txtFirmwareImpresora").val()),
+                'contador': $.trim($("#txtContadorImpresora").val())
             };
 
             instalados.supresor = {
@@ -360,7 +682,13 @@ $(function () {
                 error = 'La IP de la impresora no tiene el formato necesario'
             } else if (instalados.impresora.mac == "" || !macFormat.test(instalados.impresora.mac)) {
                 error = 'La MAC de la impresora no tiene el formato necesario'
-            } else if (instalados.supresor.serie == "") {
+            } else if (instalados.impresora.firmware == "") {
+                error = 'El Firmware de la impresora es un campo obligatorio';
+            } else if (instalados.impresora.contador == "" || isNaN(instalados.impresora.contador)) {
+                error = 'El contador debe ser un número de 0 en adelante y es un campo obligatorio';
+            }
+
+            else if (instalados.supresor.serie == "") {
                 error = 'El número de serie del supresor es un campo obligatorio'
             } else if (instalados.supresor.area == "") {
                 error = 'La ubicación del supresor es un campo obligatorio'

@@ -3380,7 +3380,8 @@ $config['Instalaciones'] = array(
             'parsley/src/parsley',
             'jquery-fileUpload/css/fileinput.min',
             'bootstrap-combobox/css/bootstrap-combobox',
-            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'DrawingBoard/css/drawingboard.min',
         ),
         'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'Instalaciones/seguimiento'),
         'pluginsJs' => array(
@@ -3394,6 +3395,7 @@ $config['Instalaciones'] = array(
             'parsley/src/i18n/es',
             'bootstrap-combobox/js/bootstrap-combobox',
             'masked-input/masked-input.min',
+            'DrawingBoard/js/drawingboard.min',
         ),
         'Permiso' => 'VCCOMP'
     )

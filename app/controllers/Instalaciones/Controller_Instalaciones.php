@@ -33,31 +33,49 @@ class Controller_Instalaciones extends Base
                 break;
             case 'GuardarInstaladosLexmark':
                 $resultado = $this->instalaciones->guardarInstaladosLexmark($this->input->post());
-                break;            
+                break;
             case 'RetiradosLexmark':
                 $resultado = $this->instalaciones->retiradosLexmark($this->input->post());
-                break;            
+                break;
             case 'GuardarRetiradosLexmark':
                 $resultado = $this->instalaciones->guardarRetiradosLexmark($this->input->post());
-                break;            
+                break;
             case 'SubirArchivoInstalacion':
                 $resultado = $this->instalaciones->subirArchivoInstalacion($this->input->post());
-                break;            
+                break;
             case 'SubirArchivoRetiro':
                 $resultado = $this->instalaciones->subirArchivoRetiro($this->input->post());
-                break;            
+                break;
             case 'EvidenciasInstalacion':
                 $resultado = $this->instalaciones->evidenciasInstalacion($this->input->post());
-                break;            
+                break;
             case 'EvidenciasRetiro':
                 $resultado = $this->instalaciones->evidenciasRetiro($this->input->post());
-                break;            
+                break;
             case 'EliminarEvidenciaInstalacion':
                 $resultado = $this->instalaciones->eliminarEvidenciaInstalacion($this->input->post());
-                break;            
+                break;
             case 'EliminarEvidenciaRetiro':
                 $resultado = $this->instalaciones->eliminarEvidenciaRetiro($this->input->post());
-                break;            
+                break;
+            case 'GuardarMaterial':
+                $resultado = $this->instalaciones->guardarMaterial($this->input->post());
+                break;
+            case 'CargaMateriales':
+                $resultado = $this->instalaciones->cargaMateriales($this->input->post());
+                break;
+            case 'EliminarMaterial':
+                $resultado = $this->instalaciones->eliminarMaterial($this->input->post());
+                break;
+            case 'ExportarInstalacion':
+                $resultado = $this->instalaciones->exportarInstalacion($this->input->post());
+                break;
+            case 'CargaFirmas':
+                $resultado = $this->instalaciones->cargaFirmas($this->input->post());
+                break;
+            case 'GuardaFirma':
+                $resultado = $this->instalaciones->guardaFirma($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
