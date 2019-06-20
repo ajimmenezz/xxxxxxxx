@@ -1459,7 +1459,7 @@ class Solicitud extends General {
 
     public function editarFolio(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-        $key = $this->SegundoPlano->getApiKeyByUser($usuario['Id']);
+        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
         $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array('Folio' => $datos['folio']), array('Id' => $datos['solicitud']));
         
         if (!empty($consulta)) {
@@ -1527,7 +1527,7 @@ class Solicitud extends General {
 
     public function reasignarFolioSD(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-        $key = $this->SegundoPlano->getApiKeyByUser($usuario['Id']);
+        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
         $folio = $this->DBS->consultaGral("SELECT folioByServicio('" . $datos['servicio'] . "') as Folio ");
         if ($folio[0]['Folio'] != '') {
             $this->ServiceDesk->reasignarFolioSD($folio[0]['Folio'], $datos['personalSD'], $key);
