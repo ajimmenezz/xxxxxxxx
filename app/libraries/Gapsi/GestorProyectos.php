@@ -16,7 +16,6 @@ class GestorProyectos extends General {
     }
 
     public function getDatosGeneralesProyectos() {
-        echo '<pre>';
         $listaIdProyectos = $this->DBGestor->getListaProyectos();
         $this->crearProyectos($listaIdProyectos);
         $this->getlistTypeProyects();
@@ -48,7 +47,6 @@ class GestorProyectos extends General {
             }
             array_push($temporal,array($typeProject['Nombre'] =>$gasto, 'Total' => $totalProyectos));
         }        
-            var_dump($temporal);
         $this->typeProyects = $temporal;
     }
 
