@@ -79,6 +79,9 @@ class Controller_Instalaciones extends Base
             case 'ConcluirServicio':
                 $resultado = $this->instalaciones->concluirServicio($this->input->post());
                 break;
+            case 'InstaladosAntenas':
+                $resultado = $this->instalaciones->instaladosAntenas($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

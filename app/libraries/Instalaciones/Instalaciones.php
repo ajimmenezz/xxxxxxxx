@@ -454,6 +454,38 @@ class Instalaciones extends General
         }
     }
 
+    public function instaladosAntenas(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
+            ];
+        } else {
+            $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
+            $ubicaciones = [];
+            if ($generales['IdSucursal'] != '') {
+                $ubicaciones = $this->sucursal->ubicacionesCenso($generales['IdSucursal']);
+            }
+
+            $instalados = $this->DB->getEquiposInstaladosLexmark($datos['id']);
+
+            if ($instalados['code'] == 200) {
+                return [
+                    'code' => 200,
+                    'message' => 'Success',
+                    'ubicaciones' => $ubicaciones,
+                    'instalados' => $instalados['result'],
+                    'firmas' => $this->tieneFirmas($datos['id'])
+                ];
+            } else {
+                return $instalados;
+            }
+        }
+    }
+
+
+
     private function tieneFirmas(int $servicio)
     {
         $firmas = $this->DB->getFirmasServicio($servicio)[0];
@@ -494,7 +526,7 @@ class Instalaciones extends General
         }
         if ($instalados['impresora']['Contador'] == '') {
             array_push($errores, "Falta el Contador de copias de la impresora instalada.");
-        }        
+        }
         if ($retirados['impresora']['IdModelo'] == '') {
             array_push($errores, "Falta el modelo de la impresora retirada.");
         }
@@ -515,6 +547,8 @@ class Instalaciones extends General
 
         return $errores;
     }
+
+
 
     private function exportar45(int $servicio)
     {

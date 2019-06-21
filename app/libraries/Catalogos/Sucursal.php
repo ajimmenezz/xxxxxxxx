@@ -26,5 +26,5 @@ class Sucursal extends General
     {
         $ubicaciones = $this->DB->ubicacionesCenso($sucursal);
         return $ubicaciones;
-    }
+    }    
 }

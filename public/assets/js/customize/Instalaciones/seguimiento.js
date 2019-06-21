@@ -113,6 +113,10 @@ $(function () {
             case 45: case '45':
                 initInstalacionLexmark(datos);
                 break;
+
+            case 48: case '48':
+                initInstalacionAntenas(datos);
+                break;
         }
 
     }
@@ -838,6 +842,131 @@ $(function () {
             }
         });
 
+    }
+
+    function initInstalacionAntenas(datos) {
+        $.mask.definitions['h'] = "[A-Fa-f0-9]";
+        $("#txtMACImpresora").mask("hh:hh:hh:hh:hh:hh");
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            switch (target) {
+                case "#Instalados":
+                    cargaInstaladosAntenas(datos);
+                    break;
+                case "#Retirados":
+                    cargaRetiradosLexmark(datos);
+                    break;
+            }
+        });
+
+        $("#btnPdf").off("click");
+        $("#btnPdf").on("click", function () {
+            exportPdf(datos.id);
+        });
+    }
+
+    function cargaInstaladosAntenas(datos) {
+        evento.enviarEvento('Seguimiento/InstaladosAntenas', datos, '#panelSeguimiento', function (respuesta) {
+            if (respuesta.code == 200) {
+                select.destruirSelect("#listUbicacionesAntena1");                
+                $("#listUbicacionesAntena1").empty().append('<option data-area="" data-punto="">Selecciona...</option>');
+                var selectedUbicacionAnt = '';                
+
+                $.each(respuesta.ubicaciones.result, function (k, v) {
+                    for (var i = 1; i <= v.Puntos; i++) {
+                        selectedUbicacionImp = '';
+                        selectedUbicacionSup = '';
+                        if (v.IdArea == respuesta.instalados.impresora.IdArea && i == respuesta.instalados.impresora.Punto) {
+                            selectedUbicacionImp = ' selected = "selected" ';
+                        }
+
+                        $("#listUbicacionesImpresora").append('<option data-area="' + v.IdArea + '" data-punto="' + i + '" ' + selectedUbicacionImp + '>' + v.Area + ' ' + i + '</option>')
+
+                        if (v.IdArea == respuesta.instalados.supresor.IdArea && i == respuesta.instalados.supresor.Punto) {
+                            selectedUbicacionSup = ' selected = "selected" ';
+                        }
+
+                        $("#listUbicacionesSupresor").append('<option data-area="' + v.IdArea + '" data-punto="' + i + '" ' + selectedUbicacionSup + '>' + v.Area + ' ' + i + '</option>')
+                    }
+                });
+                select.crearSelect("#listUbicacionesImpresora");
+                select.crearSelect("#listUbicacionesSupresor");
+
+                $("#txtSerieImpresora").val(respuesta.instalados.impresora.Serie);
+                $("#txtIPImpresora").val(respuesta.instalados.impresora.IP);
+                $("#txtMACImpresora").val(respuesta.instalados.impresora.MAC);
+                $("#txtFirmwareImpresora").val(respuesta.instalados.impresora.Firmware);
+                $("#txtContadorImpresora").val(respuesta.instalados.impresora.Contador);
+                $("#txtSerieSupresor").val(respuesta.instalados.supresor.Serie);
+
+                if (respuesta.firmas) {
+                    $("#txtSerieImpresora,#txtIPImpresora,#txtMACImpresora, #txtFirmwareImpresora,#txtContadorImpresora,#txtSerieSupresor,#listUbicacionesImpresora,#listUbicacionesSupresor").attr("disabled", "disabled");
+                    $("#btnGuardarInstalados").addClass("hidden");
+                } else {
+                    $("#txtSerieImpresora,#txtIPImpresora,#txtMACImpresora, #txtFirmwareImpresora,#txtContadorImpresora,#txtSerieSupresor,#listUbicacionesImpresora,#listUbicacionesSupresor").removeAttr("disabled");
+                    $("#btnGuardarInstalados").removeClass("hidden");
+                }
+
+            } else {
+                evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+            }
+        });
+
+        $("#btnGuardarInstalados").off("click");
+        $("#btnGuardarInstalados").on("click", function () {
+            var instalados = {};
+            instalados.impresora = {
+                'serie': $.trim($("#txtSerieImpresora").val()),
+                'area': $("#listUbicacionesImpresora option:selected").attr("data-area"),
+                'punto': $("#listUbicacionesImpresora option:selected").attr("data-punto"),
+                'ip': $.trim($("#txtIPImpresora").val()),
+                'mac': $.trim($("#txtMACImpresora").val()),
+                'firmware': $.trim($("#txtFirmwareImpresora").val()),
+                'contador': $.trim($("#txtContadorImpresora").val())
+            };
+
+            instalados.supresor = {
+                'serie': $.trim($("#txtSerieSupresor").val()),
+                'area': $("#listUbicacionesSupresor option:selected").attr("data-area"),
+                'punto': $("#listUbicacionesSupresor option:selected").attr("data-punto")
+            };
+
+            var ipFormat = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/);
+            var macFormat = new RegExp(/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/);
+
+            var error = '';
+            if (instalados.impresora.serie == "") {
+                error = 'El número de serie de la impresora es un campo obligatorio'
+            } else if (instalados.impresora.area == "") {
+                error = 'La ubicación de la impresora es un campo obligatorio'
+            } else if (instalados.impresora.ip == "" || !ipFormat.test(instalados.impresora.ip)) {
+                error = 'La IP de la impresora no tiene el formato necesario'
+            } else if (instalados.impresora.mac == "" || !macFormat.test(instalados.impresora.mac)) {
+                error = 'La MAC de la impresora no tiene el formato necesario'
+            } else if (instalados.impresora.firmware == "") {
+                error = 'El Firmware de la impresora es un campo obligatorio';
+            } else if (instalados.impresora.contador == "" || isNaN(instalados.impresora.contador)) {
+                error = 'El contador debe ser un número de 0 en adelante y es un campo obligatorio';
+            }
+
+            if (error != '') {
+                evento.mostrarMensaje("#errorMessageSeguimiento", false, error, 4000);
+                return false;
+            } else {
+                var data = {
+                    servicio: datos.id,
+                    instalados: instalados
+                }
+                evento.enviarEvento('Seguimiento/GuardarInstaladosLexmark', data, '#panelSeguimiento', function (respuesta) {
+                    if (respuesta.code == 200) {
+                        evento.mostrarMensaje("#errorMessageSeguimiento", true, respuesta.message, 4000);
+                        cargaInstaladosLexmark(datos);
+                    } else {
+                        evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                    }
+                });
+            }
+        });
     }
 
 });
