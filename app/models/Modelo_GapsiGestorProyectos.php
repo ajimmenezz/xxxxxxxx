@@ -74,7 +74,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         ORDER BY FCaptura ASC) AS FCaptura
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
@@ -105,7 +105,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         ORDER BY FCaptura ASC) AS FCaptura
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
@@ -139,7 +139,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         ORDER BY FCaptura ASC) AS FCaptura
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
@@ -169,7 +169,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         ORDER BY FCaptura ASC) AS FCaptura
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
@@ -199,7 +199,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         ORDER BY FCaptura ASC) AS FCaptura
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
@@ -229,7 +229,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         ORDER BY FCaptura ASC) AS FCaptura
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
@@ -249,7 +249,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
