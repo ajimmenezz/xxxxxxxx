@@ -19,7 +19,7 @@ $(function () {
     //Evento para mostrar la ayuda del sistema
     evento.mostrarAyuda('Ayuda_Proyectos');
 
-    file.crearUpload('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', ['pdf']);
+    file.crearUpload('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', ['pdf'], false, [], '', null, false, 1);
     tabla.generaTablaPersonal('#data-table-permisos-ausencia', null, null, true, true);
     //Inicializa funciones de la plantilla
     App.init();
@@ -53,7 +53,6 @@ $(function () {
     $('#selectMotivoAusencia').on('change', function () {
         if ($(this).val() == '3' || $(this).val() == '4') {
             $("#citaFolio").css("display","block");
-            $('#inputCitaFolio').attr('data-parsley-required', 'true');
             $("#archivoCitaIncapacidad").css("display","block");
             $("#descripcionAusencia").css("display","none");
             $('#textareaMotivoSolicitudPermiso').attr('data-parsley-required', 'false');
@@ -62,7 +61,6 @@ $(function () {
             $("#descripcionAusencia").css("display","block");
             $('#textareaMotivoSolicitudPermiso').attr('data-parsley-required', 'true');
             $("#citaFolio").css("display","none");
-            $('#inputCitaFolio').attr('data-parsley-required', 'false');
             $('#inputCitaFolio').val('');
             $("#archivoCitaIncapacidad").css("display","none");
             file.limpiar('#inputEvidenciaIncapacidad');

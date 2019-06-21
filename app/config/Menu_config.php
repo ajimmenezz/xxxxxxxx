@@ -23,6 +23,7 @@ $config['Modulos'] = array(
     'Fondo Fijo' => array('icono' => 'fa fa-dollar'),
     'Facturación y Cobranza' => array('icono' => 'fa fa-book'),
     'Gapsi' => array('icono' => 'fa fa-money'),
+    'Instalaciones' => array('icono' => 'fa fa-wrench'),
     'Laboratorio' => array('icono' => 'fa fa-wrench'),
     'Localizacion' => array('icono' => 'fa fa-map-marker'),
     'Logistica' => array('icono' => 'fa fa-pie-chart'),
@@ -31,6 +32,7 @@ $config['Modulos'] = array(
     'Métodos y Procedimientos' => array('icono' => 'fa fa-shield'),
     'Minutas' => array('icono' => 'fa fa-file-text-o'),
     'Poliza' => array('icono' => 'fa fa-ticket'),
+    'Prime' => array('icono' => 'fa fa-mobile'),
     'Proveedores' => array('icono' => 'fa fa-cubes'),
     'Proyectos' => array('icono' => 'fa fa-building'),
     'Redes' => array('icono' => 'fa fa-sliders'),
@@ -145,18 +147,19 @@ $config['Generales'] = array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
             'parsley/src/parsley',
-            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
+            'bootstrap-datepicker/css/datepicker'
         ),
         'js' => array(
-            'Base/Base', 
-            'Componentes/HerramientasWeb/Utileria', 
-            'Componentes/Selects/Select', 
-            'Componentes/Selects/SelectBasico', 
-            'Componentes/Tablas/Tabla', 
-            'Componentes/Tablas/TablaBasica', 
-            'Componentes/Graficas/GraficaGoogle', 
+            'Base/Base',
+            'Componentes/HerramientasWeb/Utileria',
+            'Componentes/Selects/Select',
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Tablas/Tabla',
+            'Componentes/Tablas/TablaBasica',
+            'Componentes/Graficas/GraficaGoogle',
             'Generales/dashboard_gapsi',
-            'Generales/page-with-two-sidebar'),
+            'Generales/page-with-two-sidebar'
+        ),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
@@ -166,7 +169,7 @@ $config['Generales'] = array(
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
             'masked-input/masked-input.min',
-            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'bootstrap-datepicker/js/bootstrap-datepicker',
             'sparkline/jquery.sparkline',
             'jquery-knob/js/jquery.knob'
         ),
@@ -3363,4 +3366,64 @@ $config['Fondo Fijo'] = array(
         ),
         'Permiso' => 'VAUTFF'
     ),
+);
+
+$config['Instalaciones'] = array(
+    'Seguimiento' => array(
+        'liga' => 'Seguimiento',
+        'icono' => '',
+        'Url' => '/Instalaciones/Seguimiento',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'jquery-fileUpload/css/fileinput.min',
+            'bootstrap-combobox/css/bootstrap-combobox',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'DrawingBoard/css/drawingboard.min',
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'Instalaciones/seguimiento'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
+            'select2/dist/js/select2.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'bootstrap-combobox/js/bootstrap-combobox',
+            'masked-input/masked-input.min',
+            'DrawingBoard/js/drawingboard.min',
+        ),
+        'Permiso' => 'VIEQ'
+    )
+);
+
+$config['Prime'] = array(
+    'Inventario' => array(
+        'liga' => 'Inventario',
+        'icono' => '',
+        'Url' => '/Prime/Inventario',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'bootstrap-combobox/css/bootstrap-combobox',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'Prime/inventario'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'DataTables/js/dataTables.jumpToData',
+            'select2/dist/js/select2.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'bootstrap-combobox/js/bootstrap-combobox'
+        ),
+        'Permiso' => 'VINVPR'
+    )
 );

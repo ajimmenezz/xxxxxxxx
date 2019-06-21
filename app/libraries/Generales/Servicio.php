@@ -1454,7 +1454,7 @@ class Servicio extends General {
 
         if (!empty($generalesSolicitud['folio'])) {
             if ($generalesSolicitud['folio'] !== '' || $generalesSolicitud['folio'] !== '0') {
-                $key = $this->MSP->getApiKeyByUser($generalesSolicitud['atiende']);
+                $key = $this->InformacionServicios->getApiKeyByUser($generalesSolicitud['atiende']);
                 $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $generalesSolicitud['folio']);
                 if (isset($informacionSD->SHORTDESCRIPTION)) {
                     $detallesSD = $informacionSD->SHORTDESCRIPTION;
@@ -1492,13 +1492,7 @@ class Servicio extends General {
     public function getDetallesImpericiaCorrectivo(string $servicio) {
         $generalesSolicitud = $this->getGeneralesSolicitudServicio($servicio);
         $generales = $this->InformacionServicios->consultaInformacionCorrectivo($servicio);
-        $correctivosDiagnostico = $this->DBS->consultaGeneral('SELECT 
-                                                                tcd.*,
-                                                                (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tcd.IdTipoDiagnostico) AS NombreTipoDiagnostico,
-                                                                (SELECT Nombre FROM cat_v3_tipos_falla WHERE Id = tcd.IdTipoFalla) AS NombreTipoFalla,
-                                                                (SELECT Nombre FROM cat_v3_fallas_equipo WHERE Id = IdFalla) AS NombreFalla
-                                                                FROM t_correctivos_diagnostico tcd
-                                                                WHERE Id = (SELECT MAX(Id) FROM t_correctivos_diagnostico WHERE IdServicio = "' . $servicio . '" )');
+        $correctivosDiagnostico = $this->InformacionServicios->consultaCorrectivosDiagnostico($servicio);
         $detallesServicio = $this->linkDetallesServicio($servicio);
         $data = [
             'solicitud' => $generalesSolicitud,
@@ -1747,7 +1741,6 @@ class Servicio extends General {
                 }
             } else {
                 $this->crearImangenFirma($datos, $datos['datosConcluir']);
-
                 if (isset($datos['datosConcluir']['estatus'])) {
                     $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
                 } else {
@@ -1949,13 +1942,13 @@ class Servicio extends General {
 
         $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
         $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
-        
+
         if (!empty($vueltasAnteriores)) {
             $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
         } else {
             $sucursalVuelta = 'sin Vuelta';
         }
-        
+
         if ($sucursalVuelta !== $nombreSucursal) {
             $this->guardarVueltaAsociados(array(
                 'servicio' => $datos['servicio'],
@@ -2155,7 +2148,9 @@ class Servicio extends General {
         if ($resultadoEnviarConclusion === TRUE) {
             if (!empty($cambiarEstatus)) {
                 if ($status === '4') {
-                    $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
+                    $this->InformacionServicios->verifyProcess($datos);
+                }else{
+                    $this->InformacionServicios->setHTMLService($datos);
                 }
                 return TRUE;
             } else {
@@ -2307,6 +2302,7 @@ class Servicio extends General {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $usuario = $this->Usuario->getDatosUsuario();
         $verificar = TRUE;
+        $datosNotasSD = NULL;
 
         $idConsulta = $this->DBS->setServicioId('t_servicios_avance', array(
             'IdServicio' => $datos['servicio'],
@@ -2367,12 +2363,26 @@ class Servicio extends General {
             }
         }
 
-        $datosSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
-        if (!empty($datosSD)) {
-            if ($datosSD) {
+        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
+        $folio = $this->DBS->getServicios('SELECT
+                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
+                                            FROM t_servicios_ticket
+                                            WHERE Id = "' . $datos['servicio'] . '"');
+
+        if ($folio[0]['Folio'] !== NULL) {
+            if ($folio[0]['Folio'] !== '0') {
+                $avanceProblema = $this->DBP->getAdvanceService($datos['servicio']);
+                $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
+                $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];
+                $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
+            }
+        }
+
+        if (!empty($datosNotasSD)) {
+            if ($datosNotasSD) {
                 return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');
             } else {
-                return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => $datosSD);
+                return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => $datosNotasSD);
             }
         } else {
             return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');
@@ -2633,7 +2643,7 @@ class Servicio extends General {
         );
 
         if ($consulta) {
-            $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+            $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
             $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
 
             if (isset($informacionSD->SHORTDESCRIPTION)) {
@@ -2755,7 +2765,7 @@ class Servicio extends General {
             </div>
             </div>';
 
-        $key = $this->MSP->getApiKeyByUser($generalesSolicitud[0]['Atiende']);
+        $key = $this->InformacionServicios->getApiKeyByUser($generalesSolicitud[0]['Atiende']);
         $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
         if (isset($informacionSD->SHORTDESCRIPTION)) {
             $detallesSD = $informacionSD->SHORTDESCRIPTION;

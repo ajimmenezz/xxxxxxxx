@@ -1476,13 +1476,7 @@ class ServiciosTicket extends General {
                             'servicio' => $datos['servicio'],
                             'folio' => $datosDescripcionConclusion[0]['Folio']));
 
-                        $solicitudesConcluidas = $this->DBST->consultaGeneral('SELECT 
-                                                                                tso.IdEstatus                                                                        
-                                                                            FROM t_solicitudes tso 
-                                                                            WHERE tso.Folio = "' . $datosDescripcionConclusion[0]['Folio'] . '"
-                                                                            AND tso.IdEstatus IN(10,5,2,1)');
-                        $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
-
+                        $resultadoSD = $this->InformacionServicios->verifyProcess($datos);
                         if ($resultadoSD === TRUE) {
                             return TRUE;
                         } else {
@@ -1557,7 +1551,7 @@ class ServiciosTicket extends General {
         );
 
         if ($consulta) {
-            $key = $this->MSP->getApiKeyByUser($datos['atiende']);
+            $key = $this->InformacionServicios->getApiKeyByUser($datos['atiende']);
             $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $datos['folio']);
 
             if (isset($informacionSD->SHORTDESCRIPTION)) {
@@ -2333,6 +2327,7 @@ class ServiciosTicket extends General {
 
         if ($consulta) {
             $departamento = $this->DBST->getServicios('SELECT 
+                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio,
                                                 (SELECT IdDepartamento FROM cat_v3_servicios_departamento WHERE Id = tst.IdTipoServicio) IdDepartamento
                                             FROM 
                                             t_servicios_ticket tst
@@ -2348,13 +2343,16 @@ class ServiciosTicket extends General {
                 $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoSupervisor[0]['CorreoSupervisor']), $titulo, $mensajeSupervisor);
 
                 $correoCordinadorPoliza = $this->DBST->getServicios('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 46');
-                $textoCoordinadorPoliza = '<p><strong>Cordinador de Poliza,</strong> se le ha mandado el documento de la conclusión del servicio que realizo el personal ' . $usuario['Nombre'] . '.</p>' . $linkPDF . $descripcionConclusion;
+                $textoCoordinadorPoliza = '<p><strong>Cordinador de Poliza,</strong> se le ha mandado el documento de la conclusión del servicio que realizo el personal ' . $usuario['Nombre'] . '.</p>' . $PDF;
                 foreach ($correoCordinadorPoliza as $key => $value) {
                     $this->enviarCorreoConcluido(array($value['EmailCorporativo']), $titulo, $textoCoordinadorPoliza);
                 }
             }
+
             $descripcion = "<div>" . $fecha . "</div><div>AVANCE DE SERVICIO</div><div><a href='" . $path . "'>Documento PDF</a></div>";
-            $this->guardarDatosServiceDesk($descripcion, $datos['servicio']);
+            $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
+            $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $departamento[0]['Folio'], 'html' => $descripcion));
+
             return $this->consultaDocumentacioFirmadaServicio($datos['servicio']);
         } else {
             return FALSE;
@@ -2445,14 +2443,17 @@ class ServiciosTicket extends General {
         return $data;
     }
 
-    public function setStatusSD(string $folio) {
+    public function setStatusSD(string $folio = NULL) {
         $usuario = $this->Usuario->getDatosUsuario();
-        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
-        $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
+        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
+        
+        if (!empty($folio)) {
+            $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
 
-        if (!isset($datosSD->operation->result->status)) {
-            if ($datosSD->STATUS !== 'Problema') {
-                $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $folio);
+            if (!isset($datosSD->operation->result->status)) {
+                if ($datosSD->STATUS !== 'Problema') {
+                    $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $folio);
+                }
             }
         }
     }

@@ -2346,7 +2346,7 @@ class Modelo_Poliza extends Modelo_Base {
             $idMovementInventoryTransfer = parent::connectDBPrueba()->insert_id();
 
             $inquiryQueryUpdated = $this->consulta('SELECT * FROM t_inventario WHERE Id = "' . $value . '"');
-            
+
             $dataMovementInventoryEntry = array(
                 'IdMovimientoEnlazado' => $idMovementInventoryTransfer,
                 'IdTipoMovimiento' => '3',
@@ -2381,6 +2381,20 @@ class Modelo_Poliza extends Modelo_Base {
                 from t_servicios_ticket tst
                 where tst.IdServicioOrigen = '" . $service . "'
                 and tst.IdTipoServicio = 41");
+
+        return $answerQuery;
+    }
+
+    public function getAdvanceService(string $service) {
+        $answerQuery = $this->consulta("SELECT 
+                                            tsa . *
+                                        FROM
+                                            t_servicios_avance tsa
+                                                INNER JOIN
+                                            t_servicios_ticket tst ON tsa.IdServicio = tst.Id
+                                        WHERE IdServicio = '" . $service . "'
+                                        ORDER BY Id DESC
+                                        LIMIT 1");
 
         return $answerQuery;
     }

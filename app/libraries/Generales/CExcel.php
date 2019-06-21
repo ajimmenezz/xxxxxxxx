@@ -158,6 +158,9 @@ class CExcel {
             case 'sub-small':
                 return $this->sty_subtitulos_small;
                 break;
+            case 'gen-inventario':
+                return $this->sty_generales_inventario;
+                break;
             case 'total':
                 return $this->sty_totales;
                 break;
@@ -231,6 +234,18 @@ class CExcel {
         ),
         'alignment' => array(
             'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER
+        )
+    );
+    public $sty_generales_inventario = array(
+        'font' => array(
+            'name' => 'Calibri',
+            'bold' => true,
+            'size' => 11,
+            'color' => array('rgb' => '44546A')
+        ),
+        'alignment' => array(
+            'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
             'vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER
         )
     );

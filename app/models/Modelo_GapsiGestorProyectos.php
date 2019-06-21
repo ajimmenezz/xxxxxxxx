@@ -6,16 +6,23 @@ use Librerias\Modelos\Base as Modelo_Base;
 
 class Modelo_GapsiGestorProyectos extends Modelo_Base {
 
-    public function getProjects() {
+    public function getProjects(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT 
                                                     dr.Tipo,
                                                     SUM(dr.Importe) AS Gasto,
                                                     dr.Proyecto AS IdProyecto,
                                                     (SELECT Descripcion FROM db_Proyectos WHERE ID = dr.Proyecto) AS Descripcion,
-                                                    (SELECT FCreacion FROM db_Proyectos WHERE ID = dr.Proyecto) AS FCreacion
+                                                    (SELECT FCreacion FROM db_Proyectos WHERE ID = dr.Proyecto) AS FCreacion,
+                                                    (SELECT
+                                                            top 1 FCaptura
+                                                      FROM db_Registro
+                                                      WHERE Proyecto = dr.Proyecto
+                                                      AND Tipo = dr.Tipo
+                                                      ORDER BY FCaptura DESC) AS UltimoRegistro
                                                     FROM db_Registro dr
-                                                    WHERE dr.Moneda = 'MN'
+                                                    WHERE 1=1
                                                     AND dr.StatusConciliacion = 'Conciliado'
+                                                    " . $parameters . "
                                                     GROUP BY dr.Tipo, dr.Proyecto
                                                     ORDER BY Gasto DESC");
 
@@ -26,7 +33,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
         }
     }
 
-    public function getProjectTypes() {
+    public function getProjectTypes(string $parameters) {
         $query = parent::connectDBGapsi()->query("SELECT 
                                                     COUNT(*) AS Proyectos,
                                                     Tipo,
@@ -36,8 +43,9 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     Tipo,
                                                     SUM(Importe) AS Importe
                                                     FROM db_Registro
-                                                    WHERE Moneda = 'MN'
+                                                    WHERE 1=1
                                                     AND StatusConciliacion = 'Conciliado'
+                                                    " . $parameters . "
                                                     GROUP BY Tipo, Proyecto) AS T
                                                     GROUP BY T.Tipo
                                                     ORDER BY Importe DESC");
@@ -66,7 +74,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         ORDER BY FCaptura ASC) AS FCaptura
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
@@ -97,7 +105,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         ORDER BY FCaptura ASC) AS FCaptura
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
@@ -131,7 +139,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         ORDER BY FCaptura ASC) AS FCaptura
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
@@ -161,7 +169,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         ORDER BY FCaptura ASC) AS FCaptura
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
@@ -191,7 +199,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         ORDER BY FCaptura ASC) AS FCaptura
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
@@ -221,7 +229,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         ORDER BY FCaptura ASC) AS FCaptura
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
@@ -241,7 +249,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     SUM(dr.Importe) AS Gasto
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
-                                                ON ddg.ID = dr.ID
+                                                ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
                                                 AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
