@@ -82,6 +82,9 @@ class Controller_Instalaciones extends Base
             case 'InstaladosAntenas':
                 $resultado = $this->instalaciones->instaladosAntenas($this->input->post());
                 break;
+            case 'GuardarAntena':
+                $resultado = $this->instalaciones->guardarAntena($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

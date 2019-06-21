@@ -264,7 +264,7 @@
                                             <label class="f-w-600 f-s-14">MAC Address*:</label>
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="fa fa-sitemap"></i></span>
-                                                <input id="txtMACImpresora1" type="text" class="form-control f-w-600 f-s-14" placeholder="00:11:22:33:44:55" value="" />
+                                                <input id="txtMACAntena1" type="text" class="form-control f-w-600 f-s-14" placeholder="00:11:22:33:44:55" value="" />
                                             </div>
                                         </div>
                                     </div>
@@ -313,7 +313,7 @@
                                             <label class="f-w-600 f-s-14">Número del Switch*:</label>
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
-                                                <input id="txtContadorImpresora" type="number" class="form-control f-w-600 f-s-14" placeholder="0" value="" />
+                                                <input id="txtNumeroSwitch1" type="number" class="form-control f-w-600 f-s-14" placeholder="0" value="" />
                                             </div>
                                         </div>
                                     </div>
@@ -322,15 +322,136 @@
                                             <label class="f-w-600 f-s-14">Número del Puerto en Switch*:</label>
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
-                                                <input id="txtContadorImpresora" type="number" class="form-control f-w-600 f-s-14" placeholder="0" value="" />
+                                                <input id="txtPuertoSwitch1" type="number" class="form-control f-w-600 f-s-14" placeholder="0" value="" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row m-b-15">
                                     <div class="col-md-12 text-center">
-                                        <a id="btnGuardarInstalados" class="btn btn-success btn-xs f-s-15 f-w-600 p-l-20 p-r-20">
+                                        <a data-id="1" class="btnGuardarAntena btn btn-success btn-xs f-s-15 f-w-600 p-l-20 p-r-20">
                                             <i class="fa fa-save"></i> Guardar Antena 1
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-20">
+                            <div class="col-md-12">
+                                <h5>Información de la antena 2</h5>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="underline"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 bg-silver-lighter">
+                                <div class="row m-t-10">
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Modelo de la antena:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-wifi"></i></span>
+                                                <select id="listModelosAntenas2" class="form-control" style="width:100%">
+                                                    <option value="">Selecciona . . .</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Serie de la antena*:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+                                                <input id="txtSerieAntena2" type="text" class="form-control f-w-600 f-s-14" placeholder="Serial Number" value="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Ubicación de la antena*:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
+                                                <select id="listUbicacionesAntena2" class="form-control" style="width:100%">
+                                                    <option value="">Selecciona . . .</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">MAC Address*:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-sitemap"></i></span>
+                                                <input id="txtMACAntena2" type="text" class="form-control f-w-600 f-s-14" placeholder="00:11:22:33:44:55" value="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">¿Ocupa POE?*:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-flash"></i></span>
+                                                <div class="form-control">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="poe2" value="0" checked="">
+                                                        No
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="poe2" value="1">
+                                                        Si
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="divSeriePoe2" class="col-md-4 col-sm-4 col-xs-12 hidden">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Serie POE*:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+                                                <input id="txtSeriePOE2" type="text" class="form-control f-w-600 f-s-14" placeholder="C1811659300" value="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Modelo del Switch*:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-download"></i></span>
+                                                <select id="listModelosSwitch2" class="form-control" style="width:100%">
+                                                    <option value="">Selecciona . . .</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Número del Switch*:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
+                                                <input id="txtNumeroSwitch2" type="number" class="form-control f-w-600 f-s-14" placeholder="0" value="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="f-w-600 f-s-14">Número del Puerto en Switch*:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
+                                                <input id="txtPuertoSwitch2" type="number" class="form-control f-w-600 f-s-14" placeholder="0" value="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row m-b-15">
+                                    <div class="col-md-12 text-center">
+                                        <a data-id="2" class="btnGuardarAntena btn btn-success btn-xs f-s-15 f-w-600 p-l-20 p-r-20">
+                                            <i class="fa fa-save"></i> Guardar Antena 2
                                         </a>
                                     </div>
                                 </div>

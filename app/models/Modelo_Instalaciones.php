@@ -19,9 +19,9 @@ class Modelo_Instalaciones extends Modelo_Base
 
     public function getInstalacionesPendientes(int $idUsuario = null)
     {
-        $condicion = "";
+        $condicion = " and IdEstatus in (1,2,3,4,10) ";
         if (!is_null($idUsuario)) {
-            $condicion = " and tst.Atiende = '" . $idUsuario . "'";
+            $condicion = " and IdEstatus in (1,2,3,10) and tst.Atiende = '" . $idUsuario . "'";
         }
 
         $consulta = $this->consulta("select
@@ -36,7 +36,7 @@ class Modelo_Instalaciones extends Modelo_Base
         
         from t_servicios_ticket tst
         where IdTipoServicio in (select Id from cat_v3_servicios_departamento where Instalacion = 1 and Flag = 1)
-        and IdEstatus in (1,2,3,10) " . $condicion);
+        " . $condicion);
         return $consulta;
     }
 
@@ -60,6 +60,7 @@ class Modelo_Instalaciones extends Modelo_Base
         tst.IdEstatus,
         tst.IdTipoServicio,
         sucursal(tst.IdSucursal) as Sucursal, 
+        (select IdCliente from cat_v3_sucursales where Id = tst.IdSucursal) as IdCliente,
         cliente((select IdCliente from cat_v3_sucursales where Id = tst.IdSucursal)) as Cliente       
         from t_servicios_ticket tst
         inner join t_solicitudes ts on tst.IdSolicitud = ts.Id
@@ -746,6 +747,162 @@ class Modelo_Instalaciones extends Modelo_Base
             $this->commitTransaccion();
             return [
                 'code' => 200
+            ];
+        }
+    }
+
+    public function getModelosAntenas()
+    {
+        $consulta = $this->consulta("
+        select
+        cme.Id,
+        marca(cme.Marca) as Marca,
+        cme.Nombre
+        from cat_v3_modelos_equipo cme
+        where sublineaByModelo(cme.Id) in (17)
+        and Flag = 1
+        order by Marca, Nombre");
+        return $consulta;
+    }
+
+    public function getModelosSwitch()
+    {
+        $consulta = $this->consulta("
+        select
+        cme.Id,
+        marca(cme.Marca) as Marca,
+        cme.Nombre
+        from cat_v3_modelos_equipo cme
+        where sublineaByModelo(cme.Id) in (28)
+        and Flag = 1
+        order by Marca, Nombre");
+        return $consulta;
+    }
+
+    public function guardarAntena(array $datos)
+    {
+        $this->iniciaTransaccion();
+
+        $consulta = $this->consulta("
+        select 
+        MIN(tie.Id) as A1,
+        MAX(tie.Id) as A2
+        from t_instalaciones_equipos tie
+        where tie.IdServicio = '" . $datos['servicio'] . "'");
+
+        $registroAntena1 = $consulta[0]['A1'];
+        $registroAntena2 = $consulta[0]['A2'];
+
+        if ($registroAntena1 == $registroAntena2) {
+            $registroAntena2 = null;
+        }
+
+        $accion = '';
+        $registroActualizar = 0;
+
+        if ($registroAntena1 == '' || is_null($registroAntena1)) {
+            $accion = 'insertar';
+        } else if ($datos['posicion'] == 1 && $registroAntena1 > 0) {
+            $accion = 'actualizar';
+            $registroActualizar = $registroAntena1;
+        } else if ($datos['posicion'] == 2 && $registroAntena1 > 0 && ($registroAntena2 == '' || is_null($registroAntena2))) {
+            $accion = 'insertar';
+        } else if ($datos['posicion'] == 2 && $registroAntena1 > 0 && $registroAntena2 > 0) {
+            $accion = 'actualizar';
+            $registroActualizar = $registroAntena2;
+        }
+
+        if ($accion == 'insertar') {
+            $this->insertar("t_instalaciones_equipos", [
+                'IdServicio' => $datos['servicio'],
+                'IdModelo' => $datos['antena']['modelo'],
+                'IdArea' => $datos['antena']['ubicacion'],
+                'Punto' => 0,
+                'Serie' => $datos['antena']['serie'],
+            ]);
+
+            $id = $this->ultimoId();
+
+            $this->insertar("t_instalaciones_adicionales_48", [
+                'IdInstalacion' => $id,
+                'MAC' => $datos['antena']['mac'],
+                'POE' => $datos['antena']['poe'],
+                'SeriePOE' => ($datos['antena']['poe'] == 1) ? $datos['antena']['seriePoe'] : '',
+                'IdModeloSwitch' => $datos['antena']['modeloSwitch'],
+                'NumeroSwitch' => $datos['antena']['numeroSwitch'],
+                'PuertoSwitch' => $datos['antena']['puertoSwitch']
+            ]);
+        } else if ($accion == "actualizar") {
+            $this->actualizar("t_instalaciones_equipos", [
+                'IdModelo' => $datos['antena']['modelo'],
+                'IdArea' => $datos['antena']['ubicacion'],
+                'Serie' => $datos['antena']['serie'],
+            ], [
+                'Id' => $registroActualizar
+            ]);
+
+            $this->actualizar("t_instalaciones_adicionales_48", [
+                'MAC' => $datos['antena']['mac'],
+                'POE' => $datos['antena']['poe'],
+                'SeriePOE' => ($datos['antena']['poe'] == 1) ? $datos['antena']['seriePoe'] : '',
+                'IdModeloSwitch' => $datos['antena']['modeloSwitch'],
+                'NumeroSwitch' => $datos['antena']['numeroSwitch'],
+                'PuertoSwitch' => $datos['antena']['puertoSwitch']
+            ], ['IdInstalacion' => $registroActualizar]);
+        }
+
+
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Cambios guardados"
+            ];
+        }
+    }
+
+    public function getAntenasInstaladas(int $servicio)
+    {
+        $this->iniciaTransaccion();
+
+        $consulta = $this->consulta("select 
+        tie.Id,
+        tie.IdModelo,
+        tie.IdArea,
+        tie.Serie,
+        tia.MAC,
+        tia.POE,
+        tia.SeriePOE,
+        tia.IdModeloSwitch,
+        tia.NumeroSwitch,
+        tia.PuertoSwitch,
+        modelo(tie.IdModelo) as Modelo,
+        areaAtencion(tie.IdArea) as Ubicacion,
+        modelo(tia.IdModeloSwitch) as ModeloSwitch
+        from t_instalaciones_equipos tie
+        left join t_instalaciones_adicionales_48 tia on tie.Id = tia.IdInstalacion
+        where IdServicio = '" . $servicio . "'
+        order by tie.Id");
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Información Correcta",
+                'result' => $consulta
             ];
         }
     }

@@ -846,7 +846,8 @@ $(function () {
 
     function initInstalacionAntenas(datos) {
         $.mask.definitions['h'] = "[A-Fa-f0-9]";
-        $("#txtMACImpresora").mask("hh:hh:hh:hh:hh:hh");
+        $("#txtMACAntena1").mask("hh:hh:hh:hh:hh:hh");
+        $("#txtMACAntena2").mask("hh:hh:hh:hh:hh:hh");
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             var target = $(e.target).attr("href");
             switch (target) {
@@ -866,87 +867,122 @@ $(function () {
     }
 
     function cargaInstaladosAntenas(datos) {
+        $('input[type=radio][name=poe1]').off("change");
+        $('input[type=radio][name=poe1]').on("change", function () {
+            if (this.value == '1') {
+                $('#divSeriePoe1').removeClass("hidden");
+            }
+            else if (this.value == '0') {
+                $("#divSeriePoe1").addClass("hidden");
+                $("#txtSeriePOE1").val('');
+            }
+        });
+
+        $('input[type=radio][name=poe2]').off("change");
+        $('input[type=radio][name=poe2]').on("change", function () {
+            if (this.value == '1') {
+                $('#divSeriePoe2').removeClass("hidden");
+            }
+            else if (this.value == '0') {
+                $("#divSeriePoe2").addClass("hidden");
+                $("#txtSeriePOE2").val('');
+            }
+        });
+
         evento.enviarEvento('Seguimiento/InstaladosAntenas', datos, '#panelSeguimiento', function (respuesta) {
             if (respuesta.code == 200) {
-                select.destruirSelect("#listUbicacionesAntena1");                
-                $("#listUbicacionesAntena1").empty().append('<option data-area="" data-punto="">Selecciona...</option>');
-                var selectedUbicacionAnt = '';                
+
+                $("#listModelosAntenas1, #listModelosAntenas2, #listUbicacionesAntena1, #listUbicacionesAntena2, #listModelosSwitch1, #listModelosSwitch2").empty().append('<option value="">Selecciona . . .</option>');
+
+                $.each(respuesta.antenas, function (k, v) {
+                    $("#listModelosAntenas1, #listModelosAntenas2").append('<option value="' + v.Id + '">' + v.Marca + ' ' + v.Nombre + '</option>');
+                });
 
                 $.each(respuesta.ubicaciones.result, function (k, v) {
-                    for (var i = 1; i <= v.Puntos; i++) {
-                        selectedUbicacionImp = '';
-                        selectedUbicacionSup = '';
-                        if (v.IdArea == respuesta.instalados.impresora.IdArea && i == respuesta.instalados.impresora.Punto) {
-                            selectedUbicacionImp = ' selected = "selected" ';
-                        }
-
-                        $("#listUbicacionesImpresora").append('<option data-area="' + v.IdArea + '" data-punto="' + i + '" ' + selectedUbicacionImp + '>' + v.Area + ' ' + i + '</option>')
-
-                        if (v.IdArea == respuesta.instalados.supresor.IdArea && i == respuesta.instalados.supresor.Punto) {
-                            selectedUbicacionSup = ' selected = "selected" ';
-                        }
-
-                        $("#listUbicacionesSupresor").append('<option data-area="' + v.IdArea + '" data-punto="' + i + '" ' + selectedUbicacionSup + '>' + v.Area + ' ' + i + '</option>')
-                    }
+                    $("#listUbicacionesAntena1, #listUbicacionesAntena2").append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
                 });
-                select.crearSelect("#listUbicacionesImpresora");
-                select.crearSelect("#listUbicacionesSupresor");
 
-                $("#txtSerieImpresora").val(respuesta.instalados.impresora.Serie);
-                $("#txtIPImpresora").val(respuesta.instalados.impresora.IP);
-                $("#txtMACImpresora").val(respuesta.instalados.impresora.MAC);
-                $("#txtFirmwareImpresora").val(respuesta.instalados.impresora.Firmware);
-                $("#txtContadorImpresora").val(respuesta.instalados.impresora.Contador);
-                $("#txtSerieSupresor").val(respuesta.instalados.supresor.Serie);
+                $.each(respuesta.switch, function (k, v) {
+                    $("#listModelosSwitch1, #listModelosSwitch2").append('<option value="' + v.Id + '">' + v.Marca + ' ' + v.Nombre + '</option>');
+                });
 
-                if (respuesta.firmas) {
-                    $("#txtSerieImpresora,#txtIPImpresora,#txtMACImpresora, #txtFirmwareImpresora,#txtContadorImpresora,#txtSerieSupresor,#listUbicacionesImpresora,#listUbicacionesSupresor").attr("disabled", "disabled");
-                    $("#btnGuardarInstalados").addClass("hidden");
-                } else {
-                    $("#txtSerieImpresora,#txtIPImpresora,#txtMACImpresora, #txtFirmwareImpresora,#txtContadorImpresora,#txtSerieSupresor,#listUbicacionesImpresora,#listUbicacionesSupresor").removeAttr("disabled");
-                    $("#btnGuardarInstalados").removeClass("hidden");
+                if (respuesta.instalados.length <= 0) {
+                    select.cambiarOpcion("#listModelosAntenas1", "");
+                    select.cambiarOpcion("#listModelosAntenas2", "");
+                    select.cambiarOpcion("#listUbicacionesAntena1", "");
+                    select.cambiarOpcion("#listUbicacionesAntena2", "");
+                    select.cambiarOpcion("#listModelosSwitch1", "");
+                    select.cambiarOpcion("#listModelosSwitch2", "");
+
+                    $("#txtSerieAntena1,#txtMACAntena1,#txtNumeroSwitch1,#txtPuertoSwitch1,#txtSeriePOE1,#txtSerieAntena2,#txtMACAntena2,#txtNumeroSwitch2,#txtPuertoSwitch2,#txtSeriePOE2").val("");
+                    $('input[type=radio][name=poe1][value="0"]').attr("checked", "checked");
+                    $('input[type=radio][name=poe2][value="0"]').attr("checked", "checked");
+                    $('input[type=radio][name=poe1]').change();
+                    $('input[type=radio][name=poe2]').trigger("change");
                 }
 
+                $.each(respuesta.instalados, function (kNA, vAntena) {
+                    var numAnt = kNA + 1;
+                    select.cambiarOpcion("#listModelosAntenas" + numAnt, vAntena.IdModelo);
+                    select.cambiarOpcion("#listUbicacionesAntena" + numAnt, vAntena.IdArea);
+                    select.cambiarOpcion("#listModelosSwitch" + numAnt, vAntena.IdModeloSwitch);
+
+                    $("#txtSerieAntena" + numAnt).val(vAntena.Serie);
+                    $("#txtMACAntena" + numAnt).val(vAntena.MAC);
+                    $("#txtNumeroSwitch" + numAnt).val(vAntena.NumeroSwitch);
+                    $("#txtPuertoSwitch" + numAnt).val(vAntena.PuertoSwitch);
+                    $('input[type=radio][name=poe' + numAnt + '][value="' + vAntena.POE + '"]').attr("checked", "checked");
+                    $('input[type=radio][name=poe' + numAnt + ']').trigger("change");
+                    $("#txtSeriePOE" + numAnt).val(vAntena.SeriePOE);
+
+                    if (respuesta.firmas) {
+                        $("#txtSerieAntena" + numAnt + ",#txtMACAntena" + numAnt + ",#txtNumeroSwitch" + numAnt + ",#txtPuertoSwitch" + numAnt + ",#txtSeriePOE" + numAnt + ",#listModelosAntenas" + numAnt + ",#listUbicacionesAntena" + numAnt + ",#listModelosSwitch" + numAnt + ",#input[type=radio][name=poe" + numAnt + "]").attr("disabled", "disabled");
+                        $(".btnGuardarAntena").addClass("hidden");
+                    } else {
+                        $("#txtSerieAntena" + numAnt + ",#txtMACAntena" + numAnt + ",#txtNumeroSwitch" + numAnt + ",#txtPuertoSwitch" + numAnt + ",#txtSeriePOE" + numAnt + ",#listModelosAntenas" + numAnt + ",#listUbicacionesAntena" + numAnt + ",#listModelosSwitch" + numAnt + ",#input[type=radio][name=poe" + numAnt + "]").removeAttr("disabled");
+                        $(".btnGuardarAntena").removeClass("hidden");
+                    }
+                });
             } else {
                 evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
             }
         });
 
-        $("#btnGuardarInstalados").off("click");
-        $("#btnGuardarInstalados").on("click", function () {
-            var instalados = {};
-            instalados.impresora = {
-                'serie': $.trim($("#txtSerieImpresora").val()),
-                'area': $("#listUbicacionesImpresora option:selected").attr("data-area"),
-                'punto': $("#listUbicacionesImpresora option:selected").attr("data-punto"),
-                'ip': $.trim($("#txtIPImpresora").val()),
-                'mac': $.trim($("#txtMACImpresora").val()),
-                'firmware': $.trim($("#txtFirmwareImpresora").val()),
-                'contador': $.trim($("#txtContadorImpresora").val())
+        $(".btnGuardarAntena").off("click");
+        $(".btnGuardarAntena").on("click", function () {
+            var id = $(this).attr("data-id");
+            var antena = {
+                'modelo': $("#listModelosAntenas" + id).val(),
+                'serie': $.trim($("#txtSerieAntena" + id).val()),
+                'ubicacion': $("#listUbicacionesAntena" + id).val(),
+                'mac': $.trim($("#txtMACAntena" + id).val()),
+                'poe': $('input[type=radio][name=poe' + id + ']:checked').val(),
+                'seriePoe': $.trim($("#txtSeriePOE" + id).val()),
+                'modeloSwitch': $("#listModelosSwitch" + id).val(),
+                'numeroSwitch': $.trim($("#txtNumeroSwitch" + id).val()),
+                'puertoSwitch': $.trim($("#txtPuertoSwitch" + id).val())
             };
 
-            instalados.supresor = {
-                'serie': $.trim($("#txtSerieSupresor").val()),
-                'area': $("#listUbicacionesSupresor option:selected").attr("data-area"),
-                'punto': $("#listUbicacionesSupresor option:selected").attr("data-punto")
-            };
-
-            var ipFormat = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/);
             var macFormat = new RegExp(/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/);
 
             var error = '';
-            if (instalados.impresora.serie == "") {
-                error = 'El número de serie de la impresora es un campo obligatorio'
-            } else if (instalados.impresora.area == "") {
-                error = 'La ubicación de la impresora es un campo obligatorio'
-            } else if (instalados.impresora.ip == "" || !ipFormat.test(instalados.impresora.ip)) {
-                error = 'La IP de la impresora no tiene el formato necesario'
-            } else if (instalados.impresora.mac == "" || !macFormat.test(instalados.impresora.mac)) {
-                error = 'La MAC de la impresora no tiene el formato necesario'
-            } else if (instalados.impresora.firmware == "") {
-                error = 'El Firmware de la impresora es un campo obligatorio';
-            } else if (instalados.impresora.contador == "" || isNaN(instalados.impresora.contador)) {
-                error = 'El contador debe ser un número de 0 en adelante y es un campo obligatorio';
+            if (antena.modelo == "") {
+                error = 'El modelo de la antena es un campo obligatorio.';
+            }
+            else if (antena.serie == "") {
+                error = 'El número de serie de la antena es un campo obligatorio.';
+            } else if (antena.ubicacion == "") {
+                error = 'La ubicación de la antena es un campo obligatorio.';
+            } else if (antena.mac == "" || !macFormat.test(antena.mac)) {
+                error = 'La MAC de la antena no tiene el formato necesario';
+            } else if (antena.poe == "1" && antena.seriePoe == '') {
+                error = 'El número de serie del POE es obligatorio';
+            } else if (antena.modeloSwitch == '') {
+                error = 'El modelo del switch es obligatorio';
+            } else if (antena.numeroSwitch == "" || isNaN(antena.numeroSwitch)) {
+                error = 'El número de Switch debe ser un número de 1 en adelante y es un campo obligatorio';
+            } else if (antena.puertoSwitch == "" || isNaN(antena.puertoSwitch)) {
+                error = 'El puerto de Switch debe ser un número de 1 en adelante y es un campo obligatorio';
             }
 
             if (error != '') {
@@ -954,18 +990,20 @@ $(function () {
                 return false;
             } else {
                 var data = {
-                    servicio: datos.id,
-                    instalados: instalados
+                    'servicio': datos.id,
+                    'posicion': id,
+                    'antena': antena
                 }
-                evento.enviarEvento('Seguimiento/GuardarInstaladosLexmark', data, '#panelSeguimiento', function (respuesta) {
+                evento.enviarEvento('Seguimiento/GuardarAntena', data, '#panelSeguimiento', function (respuesta) {
                     if (respuesta.code == 200) {
                         evento.mostrarMensaje("#errorMessageSeguimiento", true, respuesta.message, 4000);
-                        cargaInstaladosLexmark(datos);
+                        cargaInstaladosAntenas(datos);
                     } else {
                         evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
                     }
                 });
             }
+
         });
     }
 

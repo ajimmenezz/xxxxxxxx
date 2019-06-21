@@ -12,6 +12,7 @@ class Instalaciones extends General
     private $usuario;
     private $cliente;
     private $sucursal;
+    private $area;
     private $productosSAE;
     private $pdf;
 
@@ -23,6 +24,7 @@ class Instalaciones extends General
         $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
         $this->cliente = \Librerias\Catalogos\Cliente::factory();
         $this->sucursal = \Librerias\Catalogos\Sucursal::factory();
+        $this->area = \Librerias\Catalogos\AreaAtencion::factory();
         $this->productosSAE = \Librerias\Catalogos\ProductosSAE::factory();
         $this->pdf = new \Librerias\Generales\PDFAux();
     }
@@ -465,25 +467,41 @@ class Instalaciones extends General
             $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
             $ubicaciones = [];
             if ($generales['IdSucursal'] != '') {
-                $ubicaciones = $this->sucursal->ubicacionesCenso($generales['IdSucursal']);
+                $ubicaciones = $this->area->get(null, 1, $generales['IdCliente']);
             }
 
-            $instalados = $this->DB->getEquiposInstaladosLexmark($datos['id']);
+            $modelosAntenas = $this->DB->getModelosAntenas();
+            $modelosSwitch = $this->DB->getModelosSwitch();
 
-            if ($instalados['code'] == 200) {
+            $antenasInstaladas = $this->DB->getAntenasInstaladas($datos['id']);
+
+            if ($antenasInstaladas['code'] == 200) {
                 return [
                     'code' => 200,
                     'message' => 'Success',
                     'ubicaciones' => $ubicaciones,
-                    'instalados' => $instalados['result'],
+                    'antenas' => $modelosAntenas,
+                    'switch' => $modelosSwitch,
+                    'instalados' => $antenasInstaladas['result'],
                     'firmas' => $this->tieneFirmas($datos['id'])
                 ];
             } else {
-                return $instalados;
+                return $antenasInstaladas;
             }
         }
     }
 
+    public function guardarAntena(array $datos)
+    {
+        if (!isset($datos['servicio']) || !isset($datos['antena'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio y la antena. Intente de nuevo'
+            ];
+        } else {
+            return $this->DB->guardarAntena($datos);
+        }
+    }
 
 
     private function tieneFirmas(int $servicio)
