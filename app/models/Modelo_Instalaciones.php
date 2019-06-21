@@ -19,9 +19,9 @@ class Modelo_Instalaciones extends Modelo_Base
 
     public function getInstalacionesPendientes(int $idUsuario = null)
     {
-        $condicion = "";
+        $condicion = " and IdEstatus in (1,2,3,4,10) ";
         if (!is_null($idUsuario)) {
-            $condicion = " and tst.Atiende = '" . $idUsuario . "'";
+            $condicion = " and IdEstatus in (1,2,3,10) and tst.Atiende = '" . $idUsuario . "'";
         }
 
         $consulta = $this->consulta("select
@@ -36,7 +36,7 @@ class Modelo_Instalaciones extends Modelo_Base
         
         from t_servicios_ticket tst
         where IdTipoServicio in (select Id from cat_v3_servicios_departamento where Instalacion = 1 and Flag = 1)
-        and IdEstatus in (1,2,3,10) " . $condicion);
+        " . $condicion);
         return $consulta;
     }
 
