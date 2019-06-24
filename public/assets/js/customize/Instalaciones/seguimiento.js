@@ -113,6 +113,10 @@ $(function () {
             case 45: case '45':
                 initInstalacionLexmark(datos);
                 break;
+
+            case 48: case '48':
+                initInstalacionAntenas(datos);
+                break;
         }
 
     }
@@ -838,6 +842,257 @@ $(function () {
             }
         });
 
+    }
+
+    function initInstalacionAntenas(datos) {
+        $.mask.definitions['h'] = "[A-Fa-f0-9]";
+        $("#txtMACAntena1").mask("hh:hh:hh:hh:hh:hh");
+        $("#txtMACAntena2").mask("hh:hh:hh:hh:hh:hh");
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            switch (target) {
+                case "#Instalados":
+                    cargaInstaladosAntenas(datos);
+                    break;
+                case "#Retirados":
+                    cargaRetiradosLexmark(datos);
+                    break;
+            }
+        });
+
+        $("#btnPdf").off("click");
+        $("#btnPdf").on("click", function () {
+            exportPdf(datos.id);
+        });
+    }
+
+    function cargaInstaladosAntenas(datos) {
+        $('input[type=radio][name=poe1]').off("change");
+        $('input[type=radio][name=poe1]').on("change", function () {
+            if (this.value == '1') {
+                $('#divSeriePoe1').removeClass("hidden");
+            }
+            else if (this.value == '0') {
+                $("#divSeriePoe1").addClass("hidden");
+                $("#txtSeriePOE1").val('');
+            }
+        });
+
+        $('input[type=radio][name=poe2]').off("change");
+        $('input[type=radio][name=poe2]').on("change", function () {
+            if (this.value == '1') {
+                $('#divSeriePoe2').removeClass("hidden");
+            }
+            else if (this.value == '0') {
+                $("#divSeriePoe2").addClass("hidden");
+                $("#txtSeriePOE2").val('');
+            }
+        });
+
+        $(".btnEliminarAntena").off("click");
+        $(".btnEliminarAntena").on("click", function () {
+            var id = $(this).attr("data-id");
+            evento.enviarEvento('Seguimiento/EliminarAntena', { 'id': id }, '#panelSeguimiento', function (respuesta) {
+                if (respuesta.code == 200) {
+                    cargaInstaladosAntenas(datos);
+                } else {
+                    evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                }
+            });
+        });
+
+        select.cambiarOpcion("#listModelosAntenas1", "");
+        select.cambiarOpcion("#listModelosAntenas2", "");
+        select.cambiarOpcion("#listUbicacionesAntena1", "");
+        select.cambiarOpcion("#listUbicacionesAntena2", "");
+        select.cambiarOpcion("#listModelosSwitch1", "");
+        select.cambiarOpcion("#listModelosSwitch2", "");
+
+        $("#txtSerieAntena1,#txtMACAntena1,#txtNumeroSwitch1,#txtPuertoSwitch1,#txtSeriePOE1,#txtSerieAntena2,#txtMACAntena2,#txtNumeroSwitch2,#txtPuertoSwitch2,#txtSeriePOE2").val("");
+        $('input[type=radio][name=poe1][value="0"]').attr("checked", "checked");
+        $('input[type=radio][name=poe2][value="0"]').attr("checked", "checked");
+        $("#divSeriePoe1, #divSeriePoe2").addClass("hidden");
+        $("#txtSeriePOE1, #txtSeriePOE2").val('');
+        $(".divEliminarAntena").addClass("hidden");
+        $(".btnEliminarAntena").attr("data-id", "");
+        $("#liEvidenciasAntena1, #liEvidenciasAntena2").addClass("hidden");
+        $("#liGeneralesAntena1, #liGeneralesAntena2").click();
+
+        evento.enviarEvento('Seguimiento/InstaladosAntenas', datos, '#panelSeguimiento', function (respuesta) {
+            if (respuesta.code == 200) {
+
+                $("#listModelosAntenas1, #listModelosAntenas2, #listUbicacionesAntena1, #listUbicacionesAntena2, #listModelosSwitch1, #listModelosSwitch2").empty().append('<option value="">Selecciona . . .</option>');
+
+                $.each(respuesta.antenas, function (k, v) {
+                    $("#listModelosAntenas1, #listModelosAntenas2").append('<option value="' + v.Id + '">' + v.Marca + ' ' + v.Nombre + '</option>');
+                });
+
+                $.each(respuesta.ubicaciones.result, function (k, v) {
+                    $("#listUbicacionesAntena1, #listUbicacionesAntena2").append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                });
+
+                $.each(respuesta.switch, function (k, v) {
+                    $("#listModelosSwitch1, #listModelosSwitch2").append('<option value="' + v.Id + '">' + v.Marca + ' ' + v.Nombre + '</option>');
+                });
+
+                $.each(respuesta.instalados, function (kNA, vAntena) {
+                    var numAnt = kNA + 1;
+
+                    $("#liEvidenciasAntena" + numAnt).removeClass("hidden");
+
+                    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                        var target = $(e.target).attr("href");
+                        switch (target) {
+                            case "#evidencias-antena" + numAnt:
+                                cargaEvidenciasXEquipo(datos, vAntena.Id, target);
+                                break;
+                        }
+                    });
+
+
+                    $("#divEliminarAntena" + numAnt).removeClass('hidden');
+                    $("#btnEliminarAntena" + numAnt).attr("data-id", vAntena.Id);
+                    select.cambiarOpcion("#listModelosAntenas" + numAnt, vAntena.IdModelo);
+                    select.cambiarOpcion("#listUbicacionesAntena" + numAnt, vAntena.IdArea);
+                    select.cambiarOpcion("#listModelosSwitch" + numAnt, vAntena.IdModeloSwitch);
+
+                    $("#txtSerieAntena" + numAnt).val(vAntena.Serie);
+                    $("#txtMACAntena" + numAnt).val(vAntena.MAC);
+                    $("#txtNumeroSwitch" + numAnt).val(vAntena.NumeroSwitch);
+                    $("#txtPuertoSwitch" + numAnt).val(vAntena.PuertoSwitch);
+                    $('input[type=radio][name=poe' + numAnt + '][value="' + vAntena.POE + '"]').attr("checked", "checked");
+                    $('input[type=radio][name=poe' + numAnt + '][value="' + vAntena.POE + '"]').click().trigger("change");
+                    $("#txtSeriePOE" + numAnt).val(vAntena.SeriePOE);
+
+                });
+
+                if (respuesta.firmas) {
+                    $("#txtSerieAntena1,#txtSerieAntena2,#txtMACAntena1,#txtMACAntena2,#txtNumeroSwitch1,#txtNumeroSwitch2,#txtPuertoSwitch1,#txtPuertoSwitch2,#txtSeriePOE1,#txtSeriePOE2,#listModelosAntenas1,#listModelosAntenas2,#listUbicacionesAntena1,#listUbicacionesAntena2,#listModelosSwitch1,#listModelosSwitch2,input[type=radio][name=poe1],input[type=radio][name=poe2]").attr("disabled", "disabled");
+                    $(".btnGuardarAntena").addClass("hidden");
+                } else {
+                    $("#txtSerieAntena1,#txtSerieAntena2,#txtMACAntena1,#txtMACAntena2,#txtNumeroSwitch1,#txtNumeroSwitch2,#txtPuertoSwitch1,#txtPuertoSwitch2,#txtSeriePOE1,#txtSeriePOE2,#listModelosAntenas1,#listModelosAntenas2,#listUbicacionesAntena1,#listUbicacionesAntena2,#listModelosSwitch1,#listModelosSwitch2,input[type=radio][name=poe1],input[type=radio][name=poe2]").removeAttr("disabled");
+                    $(".btnGuardarAntena").removeClass("hidden");
+                }
+            } else {
+                evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+            }
+        });
+
+        $(".btnGuardarAntena").off("click");
+        $(".btnGuardarAntena").on("click", function () {
+            var id = $(this).attr("data-id");
+            var antena = {
+                'modelo': $("#listModelosAntenas" + id).val(),
+                'serie': $.trim($("#txtSerieAntena" + id).val()),
+                'ubicacion': $("#listUbicacionesAntena" + id).val(),
+                'mac': $.trim($("#txtMACAntena" + id).val()),
+                'poe': $('input[type=radio][name=poe' + id + ']:checked').val(),
+                'seriePoe': $.trim($("#txtSeriePOE" + id).val()),
+                'modeloSwitch': $("#listModelosSwitch" + id).val(),
+                'numeroSwitch': $.trim($("#txtNumeroSwitch" + id).val()),
+                'puertoSwitch': $.trim($("#txtPuertoSwitch" + id).val())
+            };
+
+            var macFormat = new RegExp(/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/);
+
+            var error = '';
+            if (antena.modelo == "") {
+                error = 'El modelo de la antena es un campo obligatorio.';
+            }
+            else if (antena.serie == "") {
+                error = 'El número de serie de la antena es un campo obligatorio.';
+            } else if (antena.ubicacion == "") {
+                error = 'La ubicación de la antena es un campo obligatorio.';
+            } else if (antena.mac == "" || !macFormat.test(antena.mac)) {
+                error = 'La MAC de la antena no tiene el formato necesario';
+            } else if (antena.poe == "1" && antena.seriePoe == '') {
+                error = 'El número de serie del POE es obligatorio';
+            } else if (antena.modeloSwitch == '') {
+                error = 'El modelo del switch es obligatorio';
+            } else if (antena.numeroSwitch == "" || isNaN(antena.numeroSwitch)) {
+                error = 'El número de Switch debe ser un número de 1 en adelante y es un campo obligatorio';
+            } else if (antena.puertoSwitch == "" || isNaN(antena.puertoSwitch)) {
+                error = 'El puerto de Switch debe ser un número de 1 en adelante y es un campo obligatorio';
+            }
+
+            if (error != '') {
+                evento.mostrarMensaje("#errorMessageSeguimiento", false, error, 4000);
+                return false;
+            } else {
+                var data = {
+                    'servicio': datos.id,
+                    'posicion': id,
+                    'antena': antena
+                }
+                evento.enviarEvento('Seguimiento/GuardarAntena', data, '#panelSeguimiento', function (respuesta) {
+                    if (respuesta.code == 200) {
+                        evento.mostrarMensaje("#errorMessageSeguimiento", true, respuesta.message, 4000);
+                        cargaInstaladosAntenas(datos);
+                    } else {
+                        evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                    }
+                });
+            }
+
+        });
+    }
+
+    function cargaEvidenciasXEquipo(datos, IdEquipo, divTarget) {
+        evento.enviarEvento('Seguimiento/EvidenciasXEquipo', { 'id': datos.id, 'instalacion': IdEquipo }, '#panelSeguimiento', function (respuesta) {
+            if (respuesta.code == 200) {
+                $(divTarget).empty().append(respuesta.formulario);
+                file.crearUpload('#evidenciaEquipo' + IdEquipo, 'Seguimiento/SubirArchivoInstalacionEquipo', ['jpg', 'jpeg', 'gif', 'png']);
+
+                $("#btnSubirEvidenciaEquipo" + IdEquipo).off("click");
+                $("#btnSubirEvidenciaEquipo" + IdEquipo).on("click", function () {
+                    var data = {
+                        'id': datos.id,
+                        'instalacion': IdEquipo,
+                        'evidencia': $("#listTiposEvidenciaEquipo" + IdEquipo).val(),
+                        'archivos': $("#evidenciaEquipo" + IdEquipo).val()
+                    };
+
+                    var error = '';
+                    if (data.evidencia == "") {
+                        error = "El Tipo de Evidencia es un campo obligatorio";
+                    } else if (data.archivos == "") {
+                        error = "Los archivos adjuntos son un campo obligatorio";
+                    }
+
+                    if (error != '') {
+                        evento.mostrarMensaje("#divErrorEvidenciaEquipo" + IdEquipo, false, error, 4000);
+                    } else {
+                        file.enviarArchivos('#evidenciaEquipo' + IdEquipo, 'Seguimiento/SubirArchivoInstalacionEquipo', '#panelSeguimiento', data, function (respuesta) {
+                            if (respuesta.code == 200) {
+                                evento.mostrarMensaje("#errorMessageSeguimiento", true, respuesta.message, 4000);
+                                file.limpiar('#evidenciaEquipo' + IdEquipo);
+                                file.destruir('#evidenciaEquipo' + IdEquipo);
+                                $('#evidenciaEquipo' + IdEquipo).val('');
+                                cargaEvidenciasXEquipo(datos, IdEquipo, divTarget);
+                            } else {
+                                evento.mostrarMensaje("#errorMessageSeguimiento", false, "Ocurrió el siguiente error al guardar el archivo. " + respuesta.message, 4000);
+                            }
+                        });
+                    }
+                });
+
+                $(".btnEliminarEvidenciaInstalacionEquipo").off("click");
+                $(".btnEliminarEvidenciaInstalacionEquipo").on("click", function () {
+                    var id = $(this).attr("data-id");
+                    evento.enviarEvento('Seguimiento/EliminarEvidenciaInstalacionEquipo', { 'id': id }, '#panelSeguimiento', function (respuesta) {
+                        if (respuesta.code == 200) {
+                            cargaEvidenciasXEquipo(datos, IdEquipo, divTarget);
+                        } else {
+                            evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                        }
+                    });
+                });
+
+            } else {
+                $(divTarget).empty();
+                evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+            }
+        });
     }
 
 });
