@@ -261,5 +261,29 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
             return ['code' => 400];
         }
     }
+    
+    public function getProjectRecords(string $parameters) {
+        $query = parent::connectDBGapsi()->query("SELECT 
+                                                    dr.TipoTrans,
+                                                    (SELECT Descripcion FROM db_Proyectos WHERE ID = dr.Proyecto) AS Proyecto,
+                                                    dr.Tipo,
+                                                    dr.TipoServicio,
+                                                    dr.Beneficiario,
+                                                    dr.Importe,
+                                                    dr.Moneda,
+                                                    dr.FCaptura
+                                                FROM db_Registro AS dr
+                                                LEFT JOIN db_DetalleGasto ddg
+                                                ON ddg.Gasto = dr.ID
+                                                WHERE 1=1
+                                                AND dr.StatusConciliacion = 'Conciliado'
+                                                " . $parameters);
+
+        if (!empty($query)) {
+            return ['code' => 200, 'query' => $query->result_array()];
+        } else {
+            return ['code' => 400];
+        }
+    }
 
 }

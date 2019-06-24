@@ -196,4 +196,18 @@ class GerstorProyectosGAPSI extends General {
         return $parameters;
     }
 
+    public function getProjectRecords(array $filters) {
+        $dataRecords = array();
+        $parametersDate = $this->parametersDate($filters);
+        $parameters = $this->defineParameters($filters);
+        $parameters = $parameters . $parametersDate;
+        $dataRecords = $this->DBGestorProyectoGAPSI->getProjectRecords($parameters);
+
+        if ($dataRecords['code'] === 200) {
+            return $dataProjects['query'];
+        } else {
+            return ['code' => 400];
+        }
+    }
+
 }
