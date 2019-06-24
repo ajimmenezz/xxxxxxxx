@@ -5,10 +5,12 @@ use Controladores\Controller_Base as Base;
 class Controller_GestorProyectos extends Base {
 
     private $gestorProyecto;
+    private $catalogo;
 
     public function __construct() {
         parent::__construct();
         $this->gestorProyecto = new \Librerias\Gapsi\GerstorProyectosGAPSI();
+        $this->catalogo = \Librerias\Gapsi\Catalogos::factory();
     }
 
     public function manejarEvento(string $evento = null) {
@@ -16,11 +18,14 @@ class Controller_GestorProyectos extends Base {
             case 'tipoProyecto':
                 $resultado = $this->gestorProyecto->getProjectsInfo($this->input->post());
                 break;
-            case 'infoProyecto':
-                $resultado = $this->gestorProyecto->getProjectInfo($this->input->post());
+            case 'infoRegistro':
+                $resultado = $this->catalogo->detallesGasto($this->input->post('idRegistro'));
+                break;
+            case 'listaRegistros':
+                $resultado = $this->gestorProyecto->getProjectRecords($this->input->post());
                 break;
         }
-        
+
         echo json_encode($resultado);
     }
 
