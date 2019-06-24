@@ -414,16 +414,16 @@ class Modelo_Instalaciones extends Modelo_Base
 
     public function getTiposEvidencia(int $tipoServicio, int $servicio = null)
     {
-        $condicion = '';
+        $condicion = " and IdTipoServicio = '" . $tipoServicio . "' ";
         if (!is_null($servicio)) {
-            $condicion = " and Id not in ((select IdEvidencia from t_instalaciones_evidencias where IdServicio = '" . $servicio . "'))";
+            $condicion .= " and Id not in ((select IdEvidencia from t_instalaciones_evidencias where IdServicio = '" . $servicio . "'))";
         }
         $consulta = $this->consulta("
         select 
         Id, 
         Nombre 
         from cat_v3_instalaciones_evidencias 
-        where Flag = 1 " . $condicion . " order by Nombre");
+        where Flag = 1 and XEquipo = 0 " . $condicion . " order by Nombre");
         return $consulta;
     }
 
@@ -455,7 +455,7 @@ class Modelo_Instalaciones extends Modelo_Base
         if (!empty($registroEvidencia) && isset($registroEvidencia[0]) && isset($registroEvidencia[0]['Id'])) {
             $this->actualizar("t_instalaciones_evidencias", [
                 'Archivo' => $datos['archivos']
-            ], ['Id' => $datos['id']]);
+            ], ['Id' => $registroEvidencia[0]['Id']]);
         } else {
             $this->insertar("t_instalaciones_evidencias", [
                 'IdServicio' => $datos['id'],
@@ -492,7 +492,7 @@ class Modelo_Instalaciones extends Modelo_Base
         if (!empty($registroEvidencia) && isset($registroEvidencia[0]) && isset($registroEvidencia[0]['Id'])) {
             $this->actualizar("t_retiros_evidencias", [
                 'Archivo' => $datos['archivos']
-            ], ['Id' => $datos['id']]);
+            ], ['Id' => $registroEvidencia[0]['Id']]);
         } else {
             $this->insertar("t_retiros_evidencias", [
                 'IdServicio' => $datos['id'],
@@ -868,6 +868,42 @@ class Modelo_Instalaciones extends Modelo_Base
         }
     }
 
+    public function eliminarAntena(array $datos)
+    {
+        $this->iniciaTransaccion();
+
+        $archivosBorrar = [];
+        $evidencias = $this->consulta("select
+        Archivo
+        from t_instalaciones_evidencias_equipo 
+        where IdInstalacion = '" . $datos['id'] . "'");
+        foreach ($evidencias as $key => $value) {
+            array_push($archivosBorrar, $value['Archivo']);
+        }
+
+        $this->eliminar("t_instalaciones_evidencias_equipo", ['IdInstalacion' => $datos['id']]);
+        $this->eliminar("t_instalaciones_adicionales_48", ['IdInstalacion' => $datos['id']]);
+        $this->eliminar("t_instalaciones_equipos", ['Id' => $datos['id']]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            foreach ($archivosBorrar as $key => $value) {
+                unlink('.' . $value);
+            }
+
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Antena eliminada"
+            ];
+        }
+    }
+
     public function getAntenasInstaladas(int $servicio)
     {
         $this->iniciaTransaccion();
@@ -903,6 +939,122 @@ class Modelo_Instalaciones extends Modelo_Base
                 'code' => 200,
                 'message' => "Información Correcta",
                 'result' => $consulta
+            ];
+        }
+    }
+
+    public function getEquiposInstalados(int $servicio)
+    {
+        $consulta = $this->consulta("
+        select
+        tie.*,
+        modelo(tie.IdModelo) as Equipo,
+        marca(marcaByModelo(tie.IdModelo)) as Marca,
+        (select Nombre from cat_v3_modelos_equipo where Id = tie.IdModelo) as Modelo,
+        areaAtencion(tie.IdArea) as Area
+        from 
+        t_instalaciones_equipos tie
+        where IdServicio = '" . $servicio . "'
+        order by Id");
+        return $consulta;
+    }
+
+    public function getEvidenciasRequeridasXEquipo(int $tipoServicio, int $idInstalacion)
+    {
+        $consulta = $this->consulta("
+        select 
+        cie.Id,
+        cie.Nombre
+        from cat_v3_instalaciones_evidencias cie
+        where cie.IdTipoServicio = '" . $tipoServicio . "'
+        and cie.XEquipo = 1
+        and cie.Flag = 1
+        and cie.Id not in (
+                        select 
+                        IdEvidencia 
+                        from t_instalaciones_evidencias_equipo 
+                        where IdInstalacion = '" . $idInstalacion . "')");
+        return $consulta;
+    }
+
+    public function getEvidenciasXEquipoInstalado(int $instalacion)
+    {
+        $consulta = $this->consulta("
+        select
+        tiee.Id,
+        tiee.Archivo,
+        cie.Nombre as Evidencia
+        from t_instalaciones_equipos tie 
+        inner join t_instalaciones_evidencias_equipo tiee on tie.Id = tiee.IdInstalacion
+        inner join cat_v3_instalaciones_evidencias cie on tiee.IdEvidencia = cie.Id    
+        where tie.Id = '" . $instalacion . "'");
+        return $consulta;
+    }
+
+    public function registrarArchivosInstalacionEquipo(array $datos)
+    {
+        $this->iniciaTransaccion();
+
+        $registroEvidencia = $this->consulta("
+        select * 
+        from t_instalaciones_evidencias_equipo 
+        where IdInstalacion = '" . $datos['instalacion'] . "' 
+        and IdEvidencia = '" . $datos['evidencia'] . "'");
+
+        if (!empty($registroEvidencia) && isset($registroEvidencia[0]) && isset($registroEvidencia[0]['Id'])) {
+            $this->actualizar("t_instalaciones_evidencias_equipo", [
+                'Archivo' => $datos['archivos']
+            ], ['Id' => $registroEvidencia[0]['Id']]);
+        } else {
+            $this->insertar("t_instalaciones_evidencias_equipo", [
+                'IdInstalacion' => $datos['instalacion'],
+                'IdEvidencia' => $datos['evidencia'],
+                'Archivo' => $datos['archivos']
+            ]);
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Se ha agregado una nueva evidencia a la instalación"
+            ];
+        }
+    }
+
+    public function eliminarEvidenciaInstalacionEquipo(int $id)
+    {
+        $this->iniciaTransaccion();
+
+        $archivo = $this->consulta("select Archivo from t_instalaciones_evidencias_equipo where Id = '" . $id . "'");
+
+        $this->eliminar("t_instalaciones_evidencias_equipo", ['Id' => $id]);
+
+        if (unlink('.' . $archivo[0]['Archivo'])) { } else {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => 'No se ha podido eliminar el archivo'
+            ];
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => "Se ha eliminado la evidencia de la instalación del equipo"
             ];
         }
     }

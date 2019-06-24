@@ -889,6 +889,35 @@ $(function () {
             }
         });
 
+        $(".btnEliminarAntena").off("click");
+        $(".btnEliminarAntena").on("click", function () {
+            var id = $(this).attr("data-id");
+            evento.enviarEvento('Seguimiento/EliminarAntena', { 'id': id }, '#panelSeguimiento', function (respuesta) {
+                if (respuesta.code == 200) {
+                    cargaInstaladosAntenas(datos);
+                } else {
+                    evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                }
+            });
+        });
+
+        select.cambiarOpcion("#listModelosAntenas1", "");
+        select.cambiarOpcion("#listModelosAntenas2", "");
+        select.cambiarOpcion("#listUbicacionesAntena1", "");
+        select.cambiarOpcion("#listUbicacionesAntena2", "");
+        select.cambiarOpcion("#listModelosSwitch1", "");
+        select.cambiarOpcion("#listModelosSwitch2", "");
+
+        $("#txtSerieAntena1,#txtMACAntena1,#txtNumeroSwitch1,#txtPuertoSwitch1,#txtSeriePOE1,#txtSerieAntena2,#txtMACAntena2,#txtNumeroSwitch2,#txtPuertoSwitch2,#txtSeriePOE2").val("");
+        $('input[type=radio][name=poe1][value="0"]').attr("checked", "checked");
+        $('input[type=radio][name=poe2][value="0"]').attr("checked", "checked");
+        $("#divSeriePoe1, #divSeriePoe2").addClass("hidden");
+        $("#txtSeriePOE1, #txtSeriePOE2").val('');
+        $(".divEliminarAntena").addClass("hidden");
+        $(".btnEliminarAntena").attr("data-id", "");
+        $("#liEvidenciasAntena1, #liEvidenciasAntena2").addClass("hidden");
+        $("#liGeneralesAntena1, #liGeneralesAntena2").click();
+
         evento.enviarEvento('Seguimiento/InstaladosAntenas', datos, '#panelSeguimiento', function (respuesta) {
             if (respuesta.code == 200) {
 
@@ -906,23 +935,23 @@ $(function () {
                     $("#listModelosSwitch1, #listModelosSwitch2").append('<option value="' + v.Id + '">' + v.Marca + ' ' + v.Nombre + '</option>');
                 });
 
-                if (respuesta.instalados.length <= 0) {
-                    select.cambiarOpcion("#listModelosAntenas1", "");
-                    select.cambiarOpcion("#listModelosAntenas2", "");
-                    select.cambiarOpcion("#listUbicacionesAntena1", "");
-                    select.cambiarOpcion("#listUbicacionesAntena2", "");
-                    select.cambiarOpcion("#listModelosSwitch1", "");
-                    select.cambiarOpcion("#listModelosSwitch2", "");
-
-                    $("#txtSerieAntena1,#txtMACAntena1,#txtNumeroSwitch1,#txtPuertoSwitch1,#txtSeriePOE1,#txtSerieAntena2,#txtMACAntena2,#txtNumeroSwitch2,#txtPuertoSwitch2,#txtSeriePOE2").val("");
-                    $('input[type=radio][name=poe1][value="0"]').attr("checked", "checked");
-                    $('input[type=radio][name=poe2][value="0"]').attr("checked", "checked");
-                    $('input[type=radio][name=poe1]').change();
-                    $('input[type=radio][name=poe2]').trigger("change");
-                }
-
                 $.each(respuesta.instalados, function (kNA, vAntena) {
                     var numAnt = kNA + 1;
+
+                    $("#liEvidenciasAntena" + numAnt).removeClass("hidden");
+
+                    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                        var target = $(e.target).attr("href");
+                        switch (target) {
+                            case "#evidencias-antena" + numAnt:
+                                cargaEvidenciasXEquipo(datos, vAntena.Id, target);
+                                break;
+                        }
+                    });
+
+
+                    $("#divEliminarAntena" + numAnt).removeClass('hidden');
+                    $("#btnEliminarAntena" + numAnt).attr("data-id", vAntena.Id);
                     select.cambiarOpcion("#listModelosAntenas" + numAnt, vAntena.IdModelo);
                     select.cambiarOpcion("#listUbicacionesAntena" + numAnt, vAntena.IdArea);
                     select.cambiarOpcion("#listModelosSwitch" + numAnt, vAntena.IdModeloSwitch);
@@ -932,17 +961,18 @@ $(function () {
                     $("#txtNumeroSwitch" + numAnt).val(vAntena.NumeroSwitch);
                     $("#txtPuertoSwitch" + numAnt).val(vAntena.PuertoSwitch);
                     $('input[type=radio][name=poe' + numAnt + '][value="' + vAntena.POE + '"]').attr("checked", "checked");
-                    $('input[type=radio][name=poe' + numAnt + ']').trigger("change");
+                    $('input[type=radio][name=poe' + numAnt + '][value="' + vAntena.POE + '"]').click().trigger("change");
                     $("#txtSeriePOE" + numAnt).val(vAntena.SeriePOE);
 
-                    if (respuesta.firmas) {
-                        $("#txtSerieAntena" + numAnt + ",#txtMACAntena" + numAnt + ",#txtNumeroSwitch" + numAnt + ",#txtPuertoSwitch" + numAnt + ",#txtSeriePOE" + numAnt + ",#listModelosAntenas" + numAnt + ",#listUbicacionesAntena" + numAnt + ",#listModelosSwitch" + numAnt + ",#input[type=radio][name=poe" + numAnt + "]").attr("disabled", "disabled");
-                        $(".btnGuardarAntena").addClass("hidden");
-                    } else {
-                        $("#txtSerieAntena" + numAnt + ",#txtMACAntena" + numAnt + ",#txtNumeroSwitch" + numAnt + ",#txtPuertoSwitch" + numAnt + ",#txtSeriePOE" + numAnt + ",#listModelosAntenas" + numAnt + ",#listUbicacionesAntena" + numAnt + ",#listModelosSwitch" + numAnt + ",#input[type=radio][name=poe" + numAnt + "]").removeAttr("disabled");
-                        $(".btnGuardarAntena").removeClass("hidden");
-                    }
                 });
+
+                if (respuesta.firmas) {
+                    $("#txtSerieAntena1,#txtSerieAntena2,#txtMACAntena1,#txtMACAntena2,#txtNumeroSwitch1,#txtNumeroSwitch2,#txtPuertoSwitch1,#txtPuertoSwitch2,#txtSeriePOE1,#txtSeriePOE2,#listModelosAntenas1,#listModelosAntenas2,#listUbicacionesAntena1,#listUbicacionesAntena2,#listModelosSwitch1,#listModelosSwitch2,input[type=radio][name=poe1],input[type=radio][name=poe2]").attr("disabled", "disabled");
+                    $(".btnGuardarAntena").addClass("hidden");
+                } else {
+                    $("#txtSerieAntena1,#txtSerieAntena2,#txtMACAntena1,#txtMACAntena2,#txtNumeroSwitch1,#txtNumeroSwitch2,#txtPuertoSwitch1,#txtPuertoSwitch2,#txtSeriePOE1,#txtSeriePOE2,#listModelosAntenas1,#listModelosAntenas2,#listUbicacionesAntena1,#listUbicacionesAntena2,#listModelosSwitch1,#listModelosSwitch2,input[type=radio][name=poe1],input[type=radio][name=poe2]").removeAttr("disabled");
+                    $(".btnGuardarAntena").removeClass("hidden");
+                }
             } else {
                 evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
             }
@@ -1004,6 +1034,64 @@ $(function () {
                 });
             }
 
+        });
+    }
+
+    function cargaEvidenciasXEquipo(datos, IdEquipo, divTarget) {
+        evento.enviarEvento('Seguimiento/EvidenciasXEquipo', { 'id': datos.id, 'instalacion': IdEquipo }, '#panelSeguimiento', function (respuesta) {
+            if (respuesta.code == 200) {
+                $(divTarget).empty().append(respuesta.formulario);
+                file.crearUpload('#evidenciaEquipo' + IdEquipo, 'Seguimiento/SubirArchivoInstalacionEquipo', ['jpg', 'jpeg', 'gif', 'png']);
+
+                $("#btnSubirEvidenciaEquipo" + IdEquipo).off("click");
+                $("#btnSubirEvidenciaEquipo" + IdEquipo).on("click", function () {
+                    var data = {
+                        'id': datos.id,
+                        'instalacion': IdEquipo,
+                        'evidencia': $("#listTiposEvidenciaEquipo" + IdEquipo).val(),
+                        'archivos': $("#evidenciaEquipo" + IdEquipo).val()
+                    };
+
+                    var error = '';
+                    if (data.evidencia == "") {
+                        error = "El Tipo de Evidencia es un campo obligatorio";
+                    } else if (data.archivos == "") {
+                        error = "Los archivos adjuntos son un campo obligatorio";
+                    }
+
+                    if (error != '') {
+                        evento.mostrarMensaje("#divErrorEvidenciaEquipo" + IdEquipo, false, error, 4000);
+                    } else {
+                        file.enviarArchivos('#evidenciaEquipo' + IdEquipo, 'Seguimiento/SubirArchivoInstalacionEquipo', '#panelSeguimiento', data, function (respuesta) {
+                            if (respuesta.code == 200) {
+                                evento.mostrarMensaje("#errorMessageSeguimiento", true, respuesta.message, 4000);
+                                file.limpiar('#evidenciaEquipo' + IdEquipo);
+                                file.destruir('#evidenciaEquipo' + IdEquipo);
+                                $('#evidenciaEquipo' + IdEquipo).val('');
+                                cargaEvidenciasXEquipo(datos, IdEquipo, divTarget);
+                            } else {
+                                evento.mostrarMensaje("#errorMessageSeguimiento", false, "Ocurrió el siguiente error al guardar el archivo. " + respuesta.message, 4000);
+                            }
+                        });
+                    }
+                });
+
+                $(".btnEliminarEvidenciaInstalacionEquipo").off("click");
+                $(".btnEliminarEvidenciaInstalacionEquipo").on("click", function () {
+                    var id = $(this).attr("data-id");
+                    evento.enviarEvento('Seguimiento/EliminarEvidenciaInstalacionEquipo', { 'id': id }, '#panelSeguimiento', function (respuesta) {
+                        if (respuesta.code == 200) {
+                            cargaEvidenciasXEquipo(datos, IdEquipo, divTarget);
+                        } else {
+                            evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+                        }
+                    });
+                });
+
+            } else {
+                $(divTarget).empty();
+                evento.mostrarMensaje("#errorMessageSeguimiento", false, respuesta.message, 4000);
+            }
         });
     }
 
