@@ -15,9 +15,10 @@ class Proyecto extends General {
     private $compra;
     private $sucursales;
     private $DBProyecto;
+    private $ultimoMovimiento;
 
     public function __construct(string $idProyecto) {
-        parent::__construct();        
+        parent::__construct();
         $this->DBProyecto = \Modelos\Modelo_ProyectoGapsi::factory();
         $this->setDatos($idProyecto);
     }
@@ -30,26 +31,33 @@ class Proyecto extends General {
             $this->tipo = $value['TipoProyecto'];
             $this->fecha = $value['Fecha'];
         }
-        
+
         $this->gasto = $this->DBProyecto->getGasto($idProyecto, 'MN');
         $this->compra = $this->DBProyecto->getCompra($idProyecto, 'MN');
         $this->totalTransferencia = $this->compra + $this->gasto;
+        $this->ultimoMovimiento = $this->DBProyecto->getUltimoMovimiento($idProyecto);
     }
-    
+
     public function getType() {
         return $this->tipo;
     }
-    
+
     public function getTotal() {
         return $this->totalTransferencia;
     }
 
-
-    private function setSucursales() {        
+    private function setSucursales() {
+        
     }
 
     public function getDatos() {
-        return $this->tipo;
+        return array(
+            'id' => $this->id,  
+            'nombre' => $this->nombre, 
+            'fechaCreacion' => $this->fecha, 
+            'tipo' => $this->tipo, 
+            'ultimoMovimiento' => $this->ultimoMovimiento, 
+            'totalTransferencia' => $this->totalTransferencia);
     }
 
     public function getDatosGenerales() {
@@ -67,5 +75,6 @@ class Proyecto extends General {
     private function calcularTotalTranferencia() {
         return double;
     }
+    
 
 }

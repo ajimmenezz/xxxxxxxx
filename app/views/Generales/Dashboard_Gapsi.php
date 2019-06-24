@@ -200,15 +200,16 @@
                             </thead>
                             <tbody>
                                 <?php
-//                                foreach ($datos['Proyectos'] as $valorProyecto) {
-//                                    echo '<tr>';
-//                                    echo '<td>' . $valorProyecto['Tipo'] . '</td>';
-//                                    echo '<td>' . $valorProyecto['IdProyecto'] . '</td>';
-//                                    echo '<td>' . $valorProyecto['Descripcion'] . '</td>';
-//                                    echo '<td>$ ' . number_format($valorProyecto['Gasto'], 2) . '</td>';
-//                                    echo '<td>' . $valorProyecto['FCreacion'] . '</td>';
-//                                    echo "</tr>";
-//                                }
+                                foreach ($datos['Datos']['Proyectos'] as $valorProyecto) {
+                                    echo '<tr>';
+                                    echo '<td>' . $valorProyecto['Tipo'] . '</td>';
+                                    echo '<td>' . $valorProyecto['IdProyecto'] . '</td>';
+                                    echo '<td>' . $valorProyecto['Descripcion'] . '</td>';
+                                    echo '<td>$ ' . number_format($valorProyecto['Gasto'], 2) . '</td>';
+                                    echo '<td>' . $valorProyecto['FCreacion'] . '</td>';
+                                    echo '<td>' . $valorProyecto['UltimoMovimiento'] . '</td>';
+                                    echo "</tr>";
+                                }
                                 ?>
                             </tbody>
                         </table>

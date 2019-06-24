@@ -19,7 +19,8 @@ class GestorProyectos extends General {
         $listaIdProyectos = $this->DBGestor->getListaProyectos();
         $this->crearProyectos($listaIdProyectos);
         $this->getlistTypeProyects();
-        return array('TiposProyectos' => $this->typeProyects, 'Proyectos' => $this->proyectos);
+        $listaProyectos = $this->getlistProyects();
+        return array('TiposProyectos' => $this->typeProyects, 'Proyectos' => $listaProyectos);
     }
 
     private function crearProyectos(array $listaIdProyectos) {
@@ -32,7 +33,6 @@ class GestorProyectos extends General {
 
     private function getlistTypeProyects() {
         $temporal = array();
-
         $this->typeProyects = $this->DBGestor->getListTypeProyects();
 
         foreach ($this->typeProyects as $typeProject) {
@@ -42,12 +42,27 @@ class GestorProyectos extends General {
                 $type = $proyecto->getType();
                 if ($typeProject['Nombre'] === $type) {
                     $gasto += $proyecto->getTotal();
-                    $totalProyectos++;                    
+                    $totalProyectos++;
                 }
             }
-            array_push($temporal,array($typeProject['Nombre'] =>$gasto, 'Total' => $totalProyectos));
-        }        
+            array_push($temporal, array($typeProject['Nombre'] => $gasto, 'Total' => $totalProyectos));
+        }
         $this->typeProyects = $temporal;
+    }
+
+    private function getlistProyects() {
+        $temporal = array();
+
+        foreach ($this->proyectos as $projects) {
+            array_push($temporal, array(
+                'IdProyecto' => $projects->getDatos()['id'],
+                'Descripcion' => $projects->getDatos()['nombre'],
+                'Gasto' => $projects->getDatos()['totalTransferencia'],
+                'FCreacion' => $projects->getDatos()['fechaCreacion'],
+                'UltimoMovimiento' => $projects->getDatos()['ultimoMovimiento'],
+                'Tipo' => $projects->getDatos()['tipo']));
+        }
+        return $temporal;
     }
 
     public function getDatosProyectos() {
