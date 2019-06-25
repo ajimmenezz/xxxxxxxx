@@ -68,19 +68,34 @@ class Sucursal extends Modelo_Base
 
         $this->iniciaTransaccion();
 
-        $consulta = $this->consulta("
-        select 
+        $consulta = $this->consulta("select 
         tcp.IdArea,
-        max(tcp.Punto) as Puntos,
+        tcp.Puntos,
         areaAtencion(tcp.IdArea) as Area
-        from t_censos tcp
-        where tcp.IdServicio = (
+        from t_censos_puntos tcp
+        where IdServicio = (
                                 select MAX(Id) 
                                 from t_servicios_ticket 
                                 where IdSucursal = '" . $id . "'
                                 and IdEstatus not in (1,6)
                                 and IdTipoServicio = 11
-        ) group by tcp.IdArea");
+        )");
+
+        if (empty($consulta)) {
+            $consulta = $this->consulta("
+            select 
+            tcp.IdArea,
+            max(tcp.Punto) as Puntos,
+            areaAtencion(tcp.IdArea) as Area
+            from t_censos tcp
+            where tcp.IdServicio = (
+                                    select MAX(Id) 
+                                    from t_servicios_ticket 
+                                    where IdSucursal = '" . $id . "'
+                                    and IdEstatus not in (1,6)
+                                    and IdTipoServicio = 11
+            ) group by tcp.IdArea");
+        }
 
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();
