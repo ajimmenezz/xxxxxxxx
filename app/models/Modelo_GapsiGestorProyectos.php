@@ -263,7 +263,8 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
     }
     
     public function getProjectRecords(string $parameters) {
-        $query = parent::connectDBGapsi()->query("SELECT 
+        $query = parent::connectDBGapsi()->query("SELECT
+                                                    dr.ID,
                                                     dr.TipoTrans,
                                                     (SELECT Descripcion FROM db_Proyectos WHERE ID = dr.Proyecto) AS Proyecto,
                                                     dr.Tipo,
