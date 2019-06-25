@@ -79,6 +79,24 @@ class Controller_Instalaciones extends Base
             case 'ConcluirServicio':
                 $resultado = $this->instalaciones->concluirServicio($this->input->post());
                 break;
+            case 'InstaladosAntenas':
+                $resultado = $this->instalaciones->instaladosAntenas($this->input->post());
+                break;
+            case 'GuardarAntena':
+                $resultado = $this->instalaciones->guardarAntena($this->input->post());
+                break;
+            case 'EliminarAntena':
+                $resultado = $this->instalaciones->eliminarAntena($this->input->post());
+                break;
+            case 'EvidenciasXEquipo':
+                $resultado = $this->instalaciones->evidenciasXEquipo($this->input->post());
+                break;
+            case 'SubirArchivoInstalacionEquipo':
+                $resultado = $this->instalaciones->subirArchivoInstalacionEquipo($this->input->post());
+                break;
+            case 'EliminarEvidenciaInstalacionEquipo':
+                $resultado = $this->instalaciones->eliminarEvidenciaInstalacionEquipo($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
