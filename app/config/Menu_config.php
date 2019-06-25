@@ -152,6 +152,7 @@ $config['Generales'] = array(
         'js' => array(
             'Base/Base', 
             'Componentes/HerramientasWeb/Utileria', 
+            'Componentes/HerramientasWeb/Alertas',
             'Componentes/Selects/Select', 
             'Componentes/Selects/SelectBasico', 
             'Componentes/Tablas/Tabla', 

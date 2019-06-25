@@ -29,9 +29,9 @@
                         <div class="form-group">
                             <?php
                             if ($proyectos[0][0] === 'MN') {
-                                echo '<h4 class="m-t-10">Proyectos  MN</h4>';
+                                echo '<h4 class="m-t-10">Proyectos en Pesos</h4>';
                             } else {
-                                echo '<h4 class="m-t-10">Proyectos  USD</h4>';
+                                echo '<h4 class="m-t-10">Proyectos en Dolares</h4>';
                             }
                             ?>
                             <div class="underline m-b-15 m-t-15"></div>
@@ -92,9 +92,9 @@
                         <div class="form-group">
                             <?php
                             if ($servicios[0][0] === 'MN') {
-                                echo '<h4 class="m-t-10">Servicios  MN</h4>';
+                                echo '<h4 class="m-t-10">Servicios en Pesos</h4>';
                             } else {
-                                echo '<h4 class="m-t-10">Servicios  USD</h4>';
+                                echo '<h4 class="m-t-10">Servicios en Dolares</h4>';
                             }
                             ?>
                             <div class="underline m-b-15 m-t-15"></div>
@@ -113,7 +113,7 @@
                                 <thead>
                                     <tr>
                                         <th class="never">idSerivicio</th>
-                                        <th class="all">Serivicio</th>
+                                        <th class="all">Servicio</th>
                                         <?php
                                         if ($servicios[0][0] === 'MN') {
                                             echo '<th class="all">Gasto MN</th>';
@@ -153,9 +153,9 @@
                         <div class="form-group">
                             <?php
                             if ($sucursales[0][0] === 'MN') {
-                                echo '<h4 class="m-t-10">Sucursales  MN</h4>';
+                                echo '<h4 class="m-t-10">Sucursales en Pesos</h4>';
                             } else {
-                                echo '<h4 class="m-t-10">Sucursales  USD</h4>';
+                                echo '<h4 class="m-t-10">Sucursales en Dolares</h4>';
                             }
                             ?>
                             <div class="underline m-b-15 m-t-15"></div>
@@ -214,9 +214,9 @@
                         <div class="form-group">
                             <?php
                             if ($categorias[0][0] === 'MN') {
-                                echo '<h4 class="m-t-10">Categoria  MN</h4>';
+                                echo '<h4 class="m-t-10">Categoria en Pesos</h4>';
                             } else {
-                                echo '<h4 class="m-t-10">Categoria  USD</h4>';
+                                echo '<h4 class="m-t-10">Categoria en Dolares</h4>';
                             }
                             ?>
                             <div class="underline m-b-15 m-t-15"></div>
@@ -275,9 +275,9 @@
                         <div class="form-group">
                             <?php
                             if ($subcategorias[0][0] === 'MN') {
-                                echo '<h4 class="m-t-10">SubCategoria  MN</h4>';
+                                echo '<h4 class="m-t-10">SubCategoria en Pesos</h4>';
                             } else {
-                                echo '<h4 class="m-t-10">SubCategoria  USD</h4>';
+                                echo '<h4 class="m-t-10">SubCategoria en Dolares</h4>';
                             }
                             ?>
                             <div class="underline m-b-15 m-t-15"></div>
@@ -336,9 +336,9 @@
                         <div class="form-group">
                             <?php
                             if ($subcategorias[0][0] === 'MN') {
-                                echo '<h4 class="m-t-10">Concepto MN</h4>';
+                                echo '<h4 class="m-t-10">Concepto en Pesos</h4>';
                             } else {
-                                echo '<h4 class="m-t-10">Concepto  USD</h4>';
+                                echo '<h4 class="m-t-10">Concepto en Dolares</h4>';
                             }
                             ?>
                             <div class="underline m-b-15 m-t-15"></div>

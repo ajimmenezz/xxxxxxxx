@@ -20,10 +20,19 @@
                         </table>
                     </div>
                 </div>
+                <!--Empieza Seccion de detalles -->
+                <div class="col-md-12">
+                    <p>
+                        <a id="verDetalles" href="javascript:;" class="btn btn-primary btn-block hidden">Ver Detalles <i class="fa fa-angle-double-right"></i></a>
+                    </p>
+                    <p>
+                        <a id="ocultarDetalles" href="javascript:;" class="btn btn-primary btn-block hidden">Ocultar Detalles <i class="fa fa-angle-double-left"></i></a>
+                    </p>
+                </div>
+                <!--Finaliza Seccion de detalles -->
                 <!--Empieza Seccion de filtros agregados -->
                 <div class="col-md-12">
-                    <div  id="seccionFiltros">
-                    </div>
+                    <div  id="seccionFiltros"></div>
                 </div>
                 <!--Finaliza Seccion de filtros agregados -->
             </div>
@@ -96,7 +105,7 @@
                         <select id="selectcategoria" class="form-control efectoDescuento" name="SelectCategoria" style="width: 100%">
                         </select>
                     </div>
-                    <div class="form-group" id="hidecubcategoria">
+                    <div class="form-group" id="hidesubcategoria">
                         <label style="color: #A8ACB1">SubCategoria</label>
                         <select id="selectsubcategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
                         </select>
@@ -152,7 +161,7 @@
                                     <th class="all">Proyectos</th>
                                     <?php
 //                                    if ($datos['TiposProyectos'][0] === 'MN') {
-                                        echo '<th class="all">Gasto</th>';
+                                    echo '<th class="all">Gasto</th>';
 //                                    } else {
 //                                        echo '<th class="all">Gasto USD</th>';
 //                                    }
@@ -195,7 +204,7 @@
                                     <th class="all">Proyecto</th>
                                     <?php
 //                                    if ($datos['Proyectos'][0] === 'MN') {
-                                        echo '<th class="all">Gasto</th>';
+                                    echo '<th class="all">Gasto</th>';
 //                                    } else {
 //                                        echo '<th class="all">Gasto USD</th>';
 //                                    }
@@ -227,10 +236,15 @@
 </div>
 <!--Finaliza dashboard principal-->
 
-<!--Empieza dashboard detallado-->
+<!--Empieza dashboard filtros-->
 <div id="dashboardGapsiFilters" class="hidden"></div>
-<!--Finaliza dashboard detallado-->
+<!--Finaliza dashboard filtros-->
 
+<!--Empieza dashboard detalles-->
+<div id="dashboardGapsiDetalles" class="hidden"></div>
+<!--Finaliza dashboard detalles-->
+
+<!--Empieza panel filtros principal-->
 <div id="filtroFechas" class="theme-panel">
     <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn bg-green"><i class="fa fa-calendar text-white"></i></a>
     <div class="theme-panel-content">
@@ -250,6 +264,7 @@
         </div>
         <!--Finaliza selector modena-->
         <h5 class="m-t-0">Filtros de fechas</h5>
+        <!--Empieza filtro Fecha-->
         <div class="form-group">
             <label>Desde</label>
             <div class='input-group date' id='desdePrincipal' values="">
@@ -262,12 +277,13 @@
         <div class="form-group">
             <label>Hasta</label>
             <div class='input-group date' id='hastaPrincipal'>
-                <input id='fechaFinalPrincipal' type='text' class="form-control"/>
+                <input id='fechaFinPrincipal' type='text' class="form-control"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
             </div>
         </div>
+        <!--Finaliza filtro Fecha-->
         <div class="row m-t-10">
             <div class="col-md-12">
                 <a href="#" id="btnFiltrarDashboardPrincipal" class="btn btn-inverse btn-success btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
@@ -275,3 +291,4 @@
         </div>
     </div>
 </div>
+<!--Finaliza panel filtros principal-->

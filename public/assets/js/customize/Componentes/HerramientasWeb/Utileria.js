@@ -3,7 +3,8 @@ class Utileria {
     constructor(){
         //this.alerta = new Alertas('modal-alerta-error');
     }
-    
+  
+    //Evento de petición
     enviar(objeto = null, url, datos = {}, callback = null){
         let _this = this;
 
