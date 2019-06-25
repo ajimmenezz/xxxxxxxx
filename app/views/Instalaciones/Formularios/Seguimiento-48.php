@@ -23,9 +23,7 @@
                         if ($generales['IdEstatus'] != 1) {
                             ?>
                             <li class="f-w-600 f-s-14"><a href="#Instalados" data-toggle="tab">Equipos Instalados</a></li>
-                            <li class="f-w-600 f-s-14"><a href="#Retirados" data-toggle="tab">Equipos Retirados</a></li>
                             <li class="f-w-600 f-s-14"><a href="#EvidenciasInstalacion" data-toggle="tab">Evidencias Instalación</a></li>
-                            <li class="f-w-600 f-s-14"><a href="#EvidenciasRetiro" data-toggle="tab">Evidencias Retiro</a></li>
                             <li class="f-w-600 f-s-14"><a href="#Materiales" data-toggle="tab">Materiales</a></li>
                             <li class="f-w-600 f-s-14"><a href="#Firmas" data-toggle="tab">Firmas y Cierre</a></li>
                         <?php
@@ -219,7 +217,7 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <h5>Información de la Impresora</h5>
+                                <h5>Información de la antena 1</h5>
                             </div>
                             <div class="col-md-12">
                                 <div class="underline"></div>
@@ -227,228 +225,278 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12 bg-silver-lighter">
-                                <div class="row m-t-10">
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Modelo:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-print"></i></span>
-                                                <label class="f-s-14 form-control">Impresora Lexmark MX521</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Serie*:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
-                                                <input id="txtSerieImpresora" type="text" class="form-control f-w-600 f-s-14" placeholder="Serial Number" value="" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Ubicación*:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
-                                                <select id="listUbicacionesImpresora" class="form-control" style="width:100%">
-                                                    <option value="">Selecciona . . .</option>
-                                                    <?php
-                                                    if (isset($areas) && count($areas) > 0) {
-                                                        foreach ($areas as $key => $value) {
-                                                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
-                                                        }
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">IP Address*:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-sitemap"></i></span>
-                                                <input id="txtIPImpresora" type="text" class="form-control f-w-600 f-s-14" placeholder="192.168.0.10" value="" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">MAC Address*:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-sitemap"></i></span>
-                                                <input id="txtMACImpresora" type="text" class="form-control f-w-600 f-s-14" placeholder="00:11:22:33:44:55" value="" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Versión de Firmware*:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon">FW</i></span>
-                                                <input id="txtFirmwareImpresora" type="text" class="form-control f-w-600 f-s-14" placeholder="MXTGM.052.026" value="" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Contador Actual*:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
-                                                <input id="txtContadorImpresora" type="number" class="form-control f-w-600 f-s-14" placeholder="0" value="" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row m-t-25">
-                            <div class="col-md-12">
-                                <h5>Información de supresor de picos</h5>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="underline"></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 bg-silver-lighter">
-                                <div class="row m-t-10">
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Modelo:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-plug"></i></span>
-                                                <label class="f-s-14 form-control">Supresor de Picos Tripp Lite ISOBAR6 </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Serie*:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
-                                                <input id="txtSerieSupresor" type="text" class="form-control f-w-600 f-s-14" placeholder="Serial Number" value="" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Ubicación*:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
-                                                <select id="listUbicacionesSupresor" class="form-control" style="width:100%">
-                                                    <option value="">Selecciona . . .</option>
-                                                    <?php
-                                                    if (isset($areas) && count($areas) > 0) {
-                                                        foreach ($areas as $key => $value) {
-                                                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
-                                                        }
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row m-t-25">
-                            <div class="col-md-12 text-center">
-                                <a id="btnGuardarInstalados" class="btn btn-success f-s-15 f-w-600 p-t-10 p-b-10 p-l-15 p-r-15">
-                                    <i class="fa fa-save"></i> Guardar
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="Retirados">
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h5>Impresora Retirada</h5>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="underline"></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 bg-silver-lighter">
-                                <div class="row m-t-10 hidden">
+                                <div id="divEliminarAntena1" class="row m-t-10 divEliminarAntena hidden">
                                     <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Impresoras en complejo:</label>
-                                            <select id="listImpresorasEnComplejo" class="form-control" style="width:100%">
-                                                <option value="">Selecciona . . .</option>
-                                                <?php
-                                                if (isset($impresorasCensadas) && count($impresorasCensadas) > 0) {
-                                                    foreach ($impresorasCensadas as $key => $value) {
-                                                        echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
-                                                    }
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
+                                        <a id="btnEliminarAntena1" data-id="" class="btn btn-xs btn-danger btnEliminarAntena pull-right"><i class="fa fa-trash"></i></a>
                                     </div>
                                 </div>
                                 <div class="row m-t-10">
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Modelo:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-print"></i></span>
-                                                <select id="listImpresorasRetiro" class="form-control" style="width:100%">
-                                                    <option value="">Selecciona . . .</option>
-                                                    <?php
-                                                    if (isset($kyocera) && count($kyocera) > 0) {
-                                                        foreach ($kyocera as $key => $value) {
-                                                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
-                                                        }
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Serie*:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
-                                                <input id="txtSerieImpresoraRetirada" type="text" class="form-control f-w-600 f-s-14" placeholder="Serial Number" value="" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-4 col-xs-12">
-                                        <div class="form-group">
-                                            <label class="f-w-600 f-s-14">Estatus*:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
-                                                <select id="listEstatusImpresoraRetirada" class="form-control" style="width:100%">
-                                                    <option value="">Selecciona . . .</option>
-                                                    <?php
-                                                    if (isset($estatusRetiro) && count($estatusRetiro) > 0) {
-                                                        foreach ($estatusRetiro as $key => $value) {
-                                                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
-                                                        }
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                        </div>
+                                    <div class="col-md-12">
+                                        <ul class="nav nav-tabs">
+                                            <li id="liGeneralesAntena1" class="active"><a href="#generales-antena1" data-toggle="tab" aria-expanded="true">Info. Antena</a></li>
+                                            <li id="liEvidenciasAntena1" class=""><a href="#evidencias-antena1" data-toggle="tab" aria-expanded="false">Evidencias Instalación</a></li>
+                                        </ul>
                                     </div>
                                 </div>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active in" id="generales-antena1">
+                                        <div class="row m-t-10">
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Modelo de la antena:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-wifi"></i></span>
+                                                        <select id="listModelosAntenas1" class="form-control" style="width:100%">
+                                                            <option value="">Selecciona . . .</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Serie de la antena*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+                                                        <input id="txtSerieAntena1" type="text" class="form-control f-w-600 f-s-14" placeholder="Serial Number" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Ubicación de la antena*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
+                                                        <select id="listUbicacionesAntena1" class="form-control" style="width:100%">
+                                                            <option value="">Selecciona . . .</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">MAC Address*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-sitemap"></i></span>
+                                                        <input id="txtMACAntena1" type="text" class="form-control f-w-600 f-s-14" placeholder="00:11:22:33:44:55" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">¿Ocupa POE?*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-flash"></i></span>
+                                                        <div class="form-control">
+                                                            <label class="radio-inline">
+                                                                <input type="radio" name="poe1" value="0" checked="">
+                                                                No
+                                                            </label>
+                                                            <label class="radio-inline">
+                                                                <input type="radio" name="poe1" value="1">
+                                                                Si
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="divSeriePoe1" class="col-md-4 col-sm-4 col-xs-12 hidden">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Serie POE*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+                                                        <input id="txtSeriePOE1" type="text" class="form-control f-w-600 f-s-14" placeholder="C1811659300" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Modelo del Switch*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-download"></i></span>
+                                                        <select id="listModelosSwitch1" class="form-control" style="width:100%">
+                                                            <option value="">Selecciona . . .</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Número del Switch*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
+                                                        <input id="txtNumeroSwitch1" type="number" class="form-control f-w-600 f-s-14" placeholder="0" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Número del Puerto en Switch*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
+                                                        <input id="txtPuertoSwitch1" type="number" class="form-control f-w-600 f-s-14" placeholder="0" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row m-b-15">
+                                            <div class="col-md-12 text-center">
+                                                <a data-id="1" class="btnGuardarAntena btn btn-success btn-xs f-s-15 f-w-600 p-l-20 p-r-20">
+                                                    <i class="fa fa-save"></i> Guardar Antena 1
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="evidencias-antena1">
+
+                                    </div>
+                                </div>
+
+
                             </div>
                         </div>
-                        <div class="row m-t-25">
-                            <div class="col-md-12 text-center">
-                                <a id="btnGuardarRetirados" class="btn btn-success f-s-15 f-w-600 p-t-10 p-b-10 p-l-15 p-r-15">
-                                    <i class="fa fa-save"></i> Guardar
-                                </a>
+                        <div class="row m-t-20">
+                            <div class="col-md-12">
+                                <h5>Información de la antena 2</h5>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="underline"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 bg-silver-lighter">
+                                <div id="divEliminarAntena2" class="row m-t-10 divEliminarAntena hidden">
+                                    <div class="col-md-12">
+                                        <a id="btnEliminarAntena2" data-id="" class="btn btn-xs btn-danger btnEliminarAntena pull-right"><i class="fa fa-trash"></i></a>
+                                    </div>
+                                </div>
+                                <div class="row m-t-10">
+                                    <div class="col-md-12">
+                                        <ul class="nav nav-tabs">
+                                            <li id="liGeneralesAntena2" class="active"><a href="#generales-antena2" data-toggle="tab" aria-expanded="true">Info. Antena</a></li>
+                                            <li id="liEvidenciasAntena2" class=""><a href="#evidencias-antena2" data-toggle="tab" aria-expanded="false">Evidencias Instalación</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active in" id="generales-antena2">
+                                        <div class="row m-t-10">
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Modelo de la antena:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-wifi"></i></span>
+                                                        <select id="listModelosAntenas2" class="form-control" style="width:100%">
+                                                            <option value="">Selecciona . . .</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Serie de la antena*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+                                                        <input id="txtSerieAntena2" type="text" class="form-control f-w-600 f-s-14" placeholder="Serial Number" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Ubicación de la antena*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
+                                                        <select id="listUbicacionesAntena2" class="form-control" style="width:100%">
+                                                            <option value="">Selecciona . . .</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">MAC Address*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-sitemap"></i></span>
+                                                        <input id="txtMACAntena2" type="text" class="form-control f-w-600 f-s-14" placeholder="00:11:22:33:44:55" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">¿Ocupa POE?*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-flash"></i></span>
+                                                        <div class="form-control">
+                                                            <label class="radio-inline">
+                                                                <input type="radio" name="poe2" value="0" checked="">
+                                                                No
+                                                            </label>
+                                                            <label class="radio-inline">
+                                                                <input type="radio" name="poe2" value="1">
+                                                                Si
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="divSeriePoe2" class="col-md-4 col-sm-4 col-xs-12 hidden">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Serie POE*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+                                                        <input id="txtSeriePOE2" type="text" class="form-control f-w-600 f-s-14" placeholder="C1811659300" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Modelo del Switch*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-download"></i></span>
+                                                        <select id="listModelosSwitch2" class="form-control" style="width:100%">
+                                                            <option value="">Selecciona . . .</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Número del Switch*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
+                                                        <input id="txtNumeroSwitch2" type="number" class="form-control f-w-600 f-s-14" placeholder="0" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="f-w-600 f-s-14">Número del Puerto en Switch*:</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
+                                                        <input id="txtPuertoSwitch2" type="number" class="form-control f-w-600 f-s-14" placeholder="0" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row m-b-15">
+                                            <div class="col-md-12 text-center">
+                                                <a data-id="2" class="btnGuardarAntena btn btn-success btn-xs f-s-15 f-w-600 p-l-20 p-r-20">
+                                                    <i class="fa fa-save"></i> Guardar Antena 2
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="evidencias-antena2">
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -506,61 +554,6 @@
                             </div>
                         </div>
                         <div class="row" id="divEvidenciasInstalacion"></div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="EvidenciasRetiro">
-                    <div class="panel-body">
-                        <div id="divFormularioEvidenciasRetiro">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h4>Subir Evidencias de Retiro</h4>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="underline"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12 bg-silver-lighter">
-                                    <div class="row m-t-10">
-                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <div class="form-group">
-                                                <label class="f-w-600 f-s-14">Tipo de Evidencia*:</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-addon"><i class="fa fa-file"></i></span>
-                                                    <select id="listTiposEvidenciaRetiro" class="form-control" style="width:100%">
-                                                        <option value="">Selecciona . . .</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                            <div class="form-group">
-                                                <label class="f-w-600 f-s-14">Adjuntar Archivo*:</label>
-                                                <input id="archivosRetiro" name="archivosRetiro[]" type="file" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row m-t-25">
-                                <div class="col-md-12 text-center">
-                                    <a id="btnSubirEvidenciaRetiro" class="btn btn-success f-s-15 f-w-600 p-t-10 p-b-10 p-l-15 p-r-15">
-                                        <i class="fa fa-cloud-upload"></i> Subir Archivo
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h4>Evidencias de Retiro</h4>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="underline"></div>
-                            </div>
-                        </div>
-                        <div class="row" id="divEvidenciasRetiro"></div>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="Materiales">

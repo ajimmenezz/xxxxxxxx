@@ -1551,7 +1551,7 @@ class ServiciosTicket extends General {
         );
 
         if ($consulta) {
-            $key = $this->MSP->getApiKeyByUser($datos['atiende']);
+            $key = $this->InformacionServicios->getApiKeyByUser($datos['atiende']);
             $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $datos['folio']);
 
             if (isset($informacionSD->SHORTDESCRIPTION)) {
@@ -2350,7 +2350,7 @@ class ServiciosTicket extends General {
             }
 
             $descripcion = "<div>" . $fecha . "</div><div>AVANCE DE SERVICIO</div><div><a href='" . $path . "'>Documento PDF</a></div>";
-            $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+            $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
             $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $departamento[0]['Folio'], 'html' => $descripcion));
 
             return $this->consultaDocumentacioFirmadaServicio($datos['servicio']);
@@ -2445,7 +2445,7 @@ class ServiciosTicket extends General {
 
     public function setStatusSD(string $folio = NULL) {
         $usuario = $this->Usuario->getDatosUsuario();
-        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
         
         if (!empty($folio)) {
             $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio);

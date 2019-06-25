@@ -150,7 +150,7 @@
                         <div id="graphDashboardUSD" style="width: 100%; height: 400px;  max-height:400px"></div>                        
                     </div>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-5">                   
                     <!--<div class="row">-->
                     <div class="table-responsive">
                         <!--tabla de los tipos de proyectos                            -->
@@ -159,17 +159,11 @@
                                 <tr>
                                     <th class="all">Tipo Proyecto</th>
                                     <th class="all">Proyectos</th>
-                                    <?php
-//                                    if ($datos['TiposProyectos'][0] === 'MN') {
-                                    echo '<th class="all">Gasto</th>';
-//                                    } else {
-//                                        echo '<th class="all">Gasto USD</th>';
-//                                    }
-                                    ?>
+                                    <th class="all">Gasto</th>                                    
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
+                                <?php                                
                                 foreach ($datos['TiposProyectos'] as $valorTipoProyecto) {
                                     echo "<tr>";
                                     echo '<td>' . $valorTipoProyecto['Tipo'] . '</td>';

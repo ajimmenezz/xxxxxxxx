@@ -538,7 +538,7 @@ class Seguimientos extends General {
 
     public function consultaCorrectivoTI() {
         $usuario = $this->Usuario->getDatosUsuario();
-        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
         $listaTI = $this->ServiceDesk->consultarDepartamentoTI($key);
 
         return $listaTI;
@@ -1232,7 +1232,7 @@ class Seguimientos extends General {
                                 }
                             }
 
-                            $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+                            $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                             $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
                             $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
                             $this->InformacionServicios->setHTMLService($datos);
@@ -1323,7 +1323,7 @@ class Seguimientos extends General {
                                 }
                             }
 
-                            $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+                            $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                             $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
                             $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
                             $this->InformacionServicios->setHTMLService($datos);
@@ -1455,7 +1455,7 @@ class Seguimientos extends General {
                 if ($verificarFolio[0]['Folio'] !== NULL) {
                     if ($verificarFolio[0]['Folio'] !== '') {
                         if ($verificarFolio[0]['Folio'] !== '0') {
-                            $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+                            $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                             $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], '28801', $key);
                             $this->InformacionServicios->setHTMLService($datos);
                         }
@@ -2414,7 +2414,7 @@ class Seguimientos extends General {
             if ($folio[0]['Folio'] !== NULL) {
                 if ($folio[0]['Folio'] !== '') {
                     if ($folio[0]['Folio'] !== '0') {
-                        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+                        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                         $this->ServiceDesk->cambiarEstatusServiceDesk($key, $estatus, $folio[0]['Folio']);
                     }
                 }
@@ -2490,7 +2490,7 @@ class Seguimientos extends General {
             if ($folio[0]['Folio'] !== NULL) {
                 if ($folio[0]['Folio'] !== '') {
                     if ($folio[0]['Folio'] !== '0') {
-                        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+                        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
 
                         $datosExtra = array(
                             'Usuario' => $usuario['Id'],
@@ -2503,7 +2503,7 @@ class Seguimientos extends General {
 
                         $this->DBP->insertarCorrectivosSolicitudesProblemas($datos, $datosExtra);
                         $this->asignarMultimedia($linkPDF, $folio[0]['Folio'], $key);
-                        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+                        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                         $this->InformacionServicios->setHTMLService($datos);
                         $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
                             'IdEstatus' => '3',
@@ -5187,7 +5187,7 @@ class Seguimientos extends General {
         $dataShowFormHtmlView = array();
         $user = $this->Usuario->getDatosUsuario();
         $consultationServiceAndRequest = $this->DBP->consultationServiceAndRequest($dataToGenerateTheViewForTheGuide['idService']);
-        $key = $this->MSP->getApiKeyByUser($user['Id']);
+        $key = $this->InformacionServicios->getApiKeyByUser($user['Id']);
 
         $dataShowFormHtmlView['TIList'] = $this->ServiceDesk->consultarDepartamentoTI($key);
         $dataShowFormHtmlView['orderNumber'] = 'Ticket - ' . $consultationServiceAndRequest[0]['Ticket'] . ', Folio - ' . $consultationServiceAndRequest[0]['Folio'];
@@ -5367,7 +5367,7 @@ class Seguimientos extends General {
         $viewHtml = '';
 
         $dataService = $this->DBP->consultationServiceAndRequest($dataSendTextSD['service']);
-        $key = $this->MSP->getApiKeyByUser($user['Id']);
+        $key = $this->InformacionServicios->getApiKeyByUser($user['Id']);
         $descriptionService = $this->InformacionServicios->MostrarDatosSD($dataService[0]['Folio'], $dataSendTextSD['service'], FALSE, $key);
         if ($descriptionService['estatus']) {
             $viewHtml .= $descriptionService['html'];

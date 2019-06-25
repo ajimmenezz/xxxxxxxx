@@ -1,6 +1,6 @@
 <div id="seccionPendientes" class="content">
     <h1 class="page-header">Seguimiento Instalaciones</h1>
-    <div id="panelSeguimiento" class="panel panel-inverse">
+    <div id="panelListaInstalaciones" class="panel panel-inverse">
         <div class="panel-heading">
         </div>
         <div class="panel-body">

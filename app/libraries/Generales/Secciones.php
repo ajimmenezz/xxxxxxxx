@@ -525,6 +525,7 @@ class Secciones extends General
                 $datos['Software'] = $this->Catalogo->catRhHabilidadesSoftware('3');
                 break;
             case 'Generales/Dashboard_Gapsi':
+//                $datos['Datos'] = $this->GapsiProyecto->getDatosGeneralesProyectos();
                 $datos['Proyectos'] = $this->GapsiProyecto->getListProjects();
                 $datos['TiposProyectos'] = $this->GapsiProyecto->getProjectTypes();
                 break;

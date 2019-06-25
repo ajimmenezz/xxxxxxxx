@@ -10,6 +10,11 @@ class Instalaciones extends General
     private $DB;
     private $Correo;
     private $usuario;
+    private $cliente;
+    private $sucursal;
+    private $area;
+    private $productosSAE;
+    private $pdf;
 
     public function __construct()
     {
@@ -17,10 +22,18 @@ class Instalaciones extends General
         $this->DB = \Modelos\Modelo_Instalaciones::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
         $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
+        $this->cliente = \Librerias\Catalogos\Cliente::factory();
+        $this->sucursal = \Librerias\Catalogos\Sucursal::factory();
+        $this->area = \Librerias\Catalogos\AreaAtencion::factory();
+        $this->productosSAE = \Librerias\Catalogos\ProductosSAE::factory();
+        $this->pdf = new \Librerias\Generales\PDFAux();
     }
 
     public function getInstalacionesPendientes(int $idUsuario = null)
     {
+        if (in_array(317, $this->usuario['Permisos']) || in_array(317, $this->usuario['PermisosAdicionales'])) {
+            $idUsuario = null;
+        }
         $pendientes = $this->DB->getInstalacionesPendientes($idUsuario);
         return $pendientes;
     }
@@ -30,12 +43,25 @@ class Instalaciones extends General
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del servicio. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
+            $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
+            $cliente = [
+                'IdCliente' => null
+            ];
+            if ($generales['IdSucursal'] != '') {
+                $sucursal = $this->sucursal->get($generales['IdSucursal'])['result'][0];
+                $cliente = $this->cliente->get($sucursal['IdCliente'])['result'][0];
+            }
+
+            $generales['IdCliente'] = $cliente['Id'];
+
             $data = [
-                'generales' => $this->DB->getGeneralesServicio($datos['id'])[0],
-                'clientes' => $this->DB->getClientes()
+                'generales' => $generales,
+                'clientes' => $this->cliente->get()['result'],
+                'sucursales' => $this->sucursal->get(null, 1, $cliente['Id'])['result'],
+                'productosSAE' => $this->productosSAE->getFromAdist()
             ];
 
             switch ($data['generales']['IdTipoServicio']) {
@@ -45,501 +71,1412 @@ class Instalaciones extends General
                     break;
             }
 
-
-
             return [
                 'code' => 200,
-                'formulario' => parent::getCI()->load->view('Instalaciones/Formularios/Seguimiento-' . $data['generales']['IdTipoServicio'], $data, TRUE)
+                'formulario' => parent::getCI()->load->view('Instalaciones/Formularios/Seguimiento-' . $data['generales']['IdTipoServicio'], $data, TRUE),
+                'tipoInstalacion' => $data['generales']['IdTipoServicio']
             ];
         }
     }
 
-    /****************************************************************************************** */
-
-    public function getTiposCuenta()
-    {
-        $tipos = $this->DB->getTiposCuenta();
-        return $tipos;
-    }
-
-    public function getUsuarios()
-    {
-        $usuarios = $this->DB->getUsuarios();
-        return $usuarios;
-    }
-
-    public function getConceptos()
-    {
-        $conceptos = $this->DB->getConceptos();
-        return $conceptos;
-    }
-
-    public function agregarTipoCuenta(array $datos)
-    {
-        if (!isset($datos['tipo'])) {
-            return [
-                'code' => 500,
-                'error' => 'No se ha recibido la información del Tipo de Cuenta. Intente de nuevo'
-            ];
-        } else {
-            $insert = $this->DB->agregarTipoCuenta(mb_strtoupper($datos['tipo']));
-            if (!is_null($insert['id'])) {
-                return [
-                    'code' => 200,
-                    'id' => $insert['id'],
-                    'tipo' => mb_strtoupper($datos['tipo'])
-                ];
-            } else {
-                return [
-                    'code' => 500,
-                    'error' => 'No se ha podido guardar la información en la Base de Datos. ' . $insert['error']
-                ];
-            }
-        }
-    }
-
-    public function editarTipoCuenta(array $datos)
-    {
-        if (!isset($datos['tipo']) || !isset($datos['id']) || !isset($datos['estatus'])) {
-            return [
-                'code' => 500,
-                'error' => 'No se ha recibido la información completa. Intente de nuevo.'
-            ];
-        } else {
-            $result = $this->DB->editarTipoCuenta($datos);
-            if (!empty($result['datos'])) {
-                return array_merge(['code' => 200], $result['datos'][0]);
-            } else {
-                return [
-                    'code' => 500,
-                    'error' => 'No se ha podido guardar la información en la Base de Datos. ' . $result['error']
-                ];
-            }
-        }
-    }
-
-    public function formularioEditarMontosUsuario(array $datos)
+    public function iniciarInstalacion(array $datos)
     {
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del usuario. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
-            $data = [
-                'tiposCuenta' => $this->getTiposCuenta(),
-                'montos' => $this->getMontosUsuario($datos['id']),
-                'usuario' => $datos,
-            ];
-
-            return [
-                'code' => 200,
-                'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/EditarMontosUsuario', $data, TRUE)
-            ];
+            $iniciar = $this->DB->iniciarInstalacion($datos['id']);
+            if ($iniciar['code'] != 200) {
+                return $iniciar;
+            } else {
+                return $this->formularioSeguimientoInstalacion($datos);
+            }
         }
     }
 
-    public function getMontosUsuario(int $id)
+    public function getSucursalesXCliente(array $datos)
     {
-        $montos = $this->DB->getMontosUsuario($id);
-        return $montos;
-    }
-
-    public function guardarMontos(array $datos)
-    {
-        if (!isset($datos['id']) || !isset($datos['montos'])) {
+        if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información completa. Intente de nuevo.'
+                'message' => 'No se ha recibido la información del cliente. Intente de nuevo'
             ];
         } else {
-            $result = $this->DB->guardarMontos($datos);
+            $sucursales = $this->sucursal->get(null, 1, $datos['id']);
+            return $sucursales;
+        }
+    }
+
+    public function guardarSucursalServicio(array $datos)
+    {
+        if (!isset($datos['id']) || !isset($datos['sucursal'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio o la sucursal. Intente de nuevo'
+            ];
+        } else {
+            if ($this->tieneFirmas($datos['id'])) {
+                $result = [
+                    'code' => 500,
+                    'message' => 'Los cambios no son permitidos debido a que el incidente ya fué firmado'
+                ];
+            } else {
+                $result = $this->DB->guardarSucursalServicio($datos['id'], $datos['sucursal']);
+            }
             return $result;
         }
     }
 
-    public function formularioAgregarConcepto(array $datos)
-    {
-
-        $datos = [
-            'tiposCuenta' => $this->getTiposCuenta(),
-            'tiposComprobante' => $this->getTiposComprobante(),
-            'usuarios' => $this->getUsuarios(),
-            'sucursales' => $this->getSucursales(),
-            'generales' => ($datos['id'] > 0) ? $this->DB->getConceptos($datos['id'])[0] : [],
-            'alternativas' => ($datos['id'] > 0) ? $this->DB->getAlternativasByConcepto($datos['id']) : [],
-        ];
-
-        return [
-            'html' => parent::getCI()->load->view('FondoFijo/Formularios/AgregarEditarConcepto', $datos, TRUE)
-        ];
-    }
-
-    public function agregarConcepto(array $datos)
-    {
-        return $this->DB->guardarConcepto($datos);
-    }
-
-    public function getTiposComprobante()
-    {
-        return $this->DB->getTiposComprobante();
-    }
-
-    public function getSucursales()
-    {
-        return $this->DB->getSucursales();
-    }
-
-    public function inhabilitarConcepto(array $datos)
-    {
-        return $this->DB->habInhabConcepto($datos, 0);
-    }
-
-    public function habilitarConcepto(array $datos)
-    {
-        return $this->DB->habInhabConcepto($datos, 1);
-    }
-
-    public function getUsuariosConFondoFijo()
-    {
-        $usuarios = $this->DB->getUsuariosConFondoFijo();
-        return $usuarios;
-    }
-
-    public function formularioDepositar(array $datos)
+    public function instaladosLexmark(array $datos)
     {
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
-                'error' => 'No se ha recibido la información del usuario. Intente de nuevo'
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
             ];
         } else {
-            $data = [
-                'tiposCuenta' => $this->getTiposCuentaXUsuario($datos['id']),
-                'montos' => $this->getMontosUsuario($datos['id']),
-                'usuario' => $datos,
-                'depositos' => $this->DB->getDepositos($datos['id'])
-            ];
+            $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
+            $ubicaciones = [];
+            if ($generales['IdSucursal'] != '') {
+                $ubicaciones = $this->sucursal->ubicacionesCenso($generales['IdSucursal']);
+            }
 
+            $instalados = $this->DB->getEquiposInstaladosLexmark($datos['id']);
+
+            if ($instalados['code'] == 200) {
+                return [
+                    'code' => 200,
+                    'message' => 'Success',
+                    'ubicaciones' => $ubicaciones,
+                    'instalados' => $instalados['result'],
+                    'firmas' => $this->tieneFirmas($datos['id'])
+                ];
+            } else {
+                return $instalados;
+            }
+        }
+    }
+
+    public function guardarInstaladosLexmark(array $datos)
+    {
+        if (!isset($datos['servicio']) || !isset($datos['instalados'])) {
             return [
-                'code' => 200,
-                'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/RegistrarDeposito', $data, TRUE)
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio y los equipos instalados. Intente de nuevo'
             ];
+        } else {
+            return $this->DB->guardarInstaladosLexmark($datos);
         }
     }
 
-    public function getTiposCuentaXUsuario(int $id)
+    public function retiradosLexmark(array $datos)
     {
-        $tipos = $this->DB->getTiposCuentaXUsuario($id);
-        return $tipos;
-    }
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
+            ];
+        } else {
+            $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
 
-    public function montosDepositar(array $datos)
-    {
-        $montoMaximo = $this->DB->getMaximoMontoAutorizado($datos['id'], $datos['tipoCuenta']);
-        $saldo = $this->DB->getSaldo($datos['id'], $datos['tipoCuenta']);
-        $sugerido = (double)$montoMaximo - (double)$saldo;
-        if ($sugerido < 0) {
-            $sugerido = 0;
+            $censadas = [];
+            if ($generales['IdSucursal'] != '') {
+                $censadas = $this->DB->getKyocerasCensadas($generales['IdSucursal']);
+            }
+
+            $retirada = $this->DB->getImpresoraRetirada($datos['id']);
+
+            if ($retirada['code'] == 200) {
+                return [
+                    'code' => 200,
+                    'message' => 'Success',
+                    'censadas' => $censadas,
+                    'modelos' => $this->DB->getModelosKyocera(),
+                    'estatus' => $this->DB->getEstatusRetiro(),
+                    'retirada' => $retirada['result'],
+                    'firmas' => $this->tieneFirmas($datos['id'])
+                ];
+            } else {
+                return $retirada;
+            }
         }
-        return [
-            'code' => 200,
-            'montos' => [
-                'montoMaximo' => number_format($montoMaximo, 2),
-                'saldo' => number_format($saldo, 2),
-                'sugerido' => number_format($sugerido, 2)
-            ]
-        ];
     }
 
-
-    public function registrarDeposito(array $datos)
+    public function guardarRetiradosLexmark(array $datos)
     {
-        $date = date('Ymd');
-        $returnArray = [
-            'code' => 400,
-            'error' => ""
-        ];
+        if (!isset($datos['servicio']) || !isset($datos['retirados'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio y el equipo retirado. Intente de nuevo'
+            ];
+        } else {
+            return $this->DB->guardarRetiradosLexmark($datos);
+        }
+    }
 
+    public function subirArchivoInstalacion(array $datos)
+    {
         $archivos = null;
         $CI = parent::getCI();
-        $carpeta = 'comprobaciones/fondo_fijo/' . $date . '/';
+        $carpeta = 'instalaciones/' . $datos['id'] . '/';
 
         $archivos = '';
         if (!empty($_FILES)) {
-            $archivos = setMultiplesArchivos($CI, 'fotosDeposito', $carpeta);
+            $archivos = setMultiplesArchivos($CI, 'archivosInstalacion', $carpeta);
             if ($archivos) {
                 $archivos = implode(',', $archivos);
             }
         }
 
         $datos = array_merge($datos, ['archivos' => $archivos]);
-
-        $registrar = $this->DB->registrarDeposito($datos);
-
-        if ($registrar['code'] == 200) {
-            $generalesUsuario = $this->DB->getGeneralInfoByUserID($datos['id']);
-            $titulo = 'Depósito Fondo Fijo';
-            $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
-                . '<p>'
-                . ' Se ha registrado un nuevo depósito por la cantidad de <strong>$' . number_format($datos['depositar'], 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifica la información mencionada ingresando al sistema'
-                . '</p>';
-            //            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
-            //            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
-        }
-
+        $registrar = $this->DB->registrarArchivosInstalacion($datos);
         return $registrar;
     }
 
-    public function getSaldosCuentasXUsuario(int $id)
+    public function subirArchivoRetiro(array $datos)
     {
-        $resultado = $this->DB->getSaldosCuentasXUsuario($id);
-        return $resultado;
-    }
-
-    public function detalleCuenta(array $datos)
-    {
-        if (!isset($datos['tipoCuenta']) || !isset($datos['usuario'])) {
-            return [
-                'code' => 500,
-                'error' => 'No se ha recibido la información de la cuenta o el usuario. Intente de nuevo'
-            ];
-        } else {
-            $data = [
-                'tipoCuenta' => $this->DB->getTiposCuenta($datos['tipoCuenta'])[0]['Nombre'],
-                'movimientos' => $this->DB->getMovimientos($datos['usuario'], $datos['tipoCuenta']),
-                'conceptos' => $this->DB->getConceptosXTipoCuenta($datos['tipoCuenta']),
-                'tickets' => $this->DB->getTicketsByUsuario($this->usuario['Id']),
-                'sucursales' => $this->DB->getSucursales()
-            ];
-
-            return [
-                'code' => 200,
-                'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/DetallesCuenta', $data, TRUE)
-            ];
-        }
-    }
-
-    public function cargaMontoMaximoConcepto(array $datos)
-    {
-        $monto = $this->DB->cargaMontoMaximoConcepto(array_merge($datos, ['usuario' => $this->usuario['Id']]));
-        return $monto;
-    }
-
-    public function cargaServiciosTicket(array $datos)
-    {
-        $servicios = $this->DB->cargaServiciosTicket(array_merge($datos, ['usuario' => $this->usuario['Id']]));
-        return $servicios;
-    }
-
-    public function registrarComprobante(array $datos)
-    {
-        $date = date('Ymd');
-        $datos['tipoComprobante'] = 3;
-        $datos['xml'] = '';
-        $datos['pdf'] = '';
-
         $archivos = null;
         $CI = parent::getCI();
-        $carpeta = 'comprobaciones/fondo_fijo/' . $date . '/';
+        $carpeta = 'retiros/' . $datos['id'] . '/';
 
         $archivos = '';
-        $archivosAux = [];
-
-        $datosXML = [
-            'serie' => '',
-            'folio' => '',
-            'receptor' => '',
-            'fecha' => '',
-            'total' => '',
-            'uuid' => '',
-            'version' => '1'
-        ];
-
-
         if (!empty($_FILES)) {
-            $archivos = setMultiplesArchivos($CI, 'fotosDeposito', $carpeta);
-            $archivosAux = $archivos;
-            $archivosFact = $archivos;
-
-            $countXML = 0;
-            $countPdf = 0;
-            foreach ($archivos as $key => $value) {
-                $extension = pathinfo($value, PATHINFO_EXTENSION);
-                if ($extension === 'pdf') {
-                    $datos['pdf'] = $value;
-                    unset($archivosFact[$key]);
-                    $countPdf++;
-                    if ($countPdf > 1) {
-                        $this->eliminaArchivos($archivos);
-                        return ['code' => 500, 'errorBack' => 'Se seleccionaron más de 1 PDF. Por favor verifique sus archivos.'];
-                    }
-                }
-
-                if ($extension === 'xml') {
-                    $datos['xml'] = $value;
-                    unset($archivosFact[$key]);
-                    $countXML++;
-                    if ($countXML > 1) {
-                        $this->eliminaArchivos($archivos);
-                        return ['code' => 500, 'errorBack' => 'Se seleccionaron más de 1 XML. Por favor verifique sus archivos.'];
-                    }
-
-                    $this->cfdi = new CFDI();
-                    $this->cfdi->cargaXml(getcwd() . $value);
-                    $resultado = $this->cfdi->validar($datos['monto']);
-
-                    if ($resultado['code'] != 200) {
-                        $this->eliminaArchivos($archivos);
-                        return [
-                            'code' => $resultado['code'],
-                            'errorBack' => $resultado['error']
-                        ];
-                    } else {
-                        $datosXML = $resultado['data'];
-                    }
-                }
-            }
-
-            $tiposComprobante = explode(",", $datos['tiposComprobante']);
-
-            if ($tiposComprobante[0] == 1 && count($tiposComprobante) == 1) {
-                if ($countXML <= 0) {
-                    $this->eliminaArchivos($archivos);
-                    return ['code' => 500, 'errorBack' => 'Es necesario el archivo XML para comprobar este tipo de gastos.'];
-                } else if ($countPdf <= 0) {
-                    $this->eliminaArchivos($archivos);
-                    return ['code' => 500, 'errorBack' => 'Es necesario el archivo PDF para comprobar este tipo de gastos.'];
-                }
-            }
-
-            if ($countXML > 0 && $countPdf <= 0) {
-                $this->eliminaArchivos($archivos);
-                return ['code' => 500, 'errorBack' => 'Falta el archivo PDF de la factura.'];
-            }
-
-            if ($countXML == 1 && $countPdf == 1) {
-                $datos['tipoComprobante'] = 1;
-                $archivos = implode(',', $archivosFact);
-            } else {
-                $datos['tipoComprobante'] = 2;
+            $archivos = setMultiplesArchivos($CI, 'archivosRetiro', $carpeta);
+            if ($archivos) {
                 $archivos = implode(',', $archivos);
             }
         }
 
-        $datos = array_merge($datos, ['archivos' => $archivos], ['cfdi' => $datosXML]);
-
-        $registrar = $this->DB->registrarComprobante($datos);
-        if ($registrar['code'] != 200) {
-            $this->eliminaArchivos($archivosAux);
-        }
+        $datos = array_merge($datos, ['archivos' => $archivos]);
+        $registrar = $this->DB->registrarArchivosRetiro($datos);
         return $registrar;
     }
 
-    public function formularioDetallesMovimiento(array $datos)
+    public function evidenciasInstalacion(array $datos)
     {
-        $rolAutoriza = 0;
-        if (isset($datos['autorizaciones']) && $datos['autorizaciones'] == 1) {
-            $rolAutoriza = 1;
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
+            ];
+        } else {
+            $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
+            $evidenciasInstalacion = $this->DB->getEvidenciasInstalacion($datos['id']);
+
+            return [
+                'code' => 200,
+                'message' => 'Success',
+                'evidenciasInstalacion' => $this->DB->getTiposEvidencia($generales['IdTipoServicio'], $datos['id']),
+                'infoEvidenciasInstalacion' => $evidenciasInstalacion,
+                'firmas' => $this->tieneFirmas($datos['id'])
+            ];
+        }
+    }
+
+    public function evidenciasRetiro(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
+            ];
+        } else {
+            $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
+            $evidenciasRetiro = $this->DB->getEvidenciasRetiro($datos['id']);
+
+            return [
+                'code' => 200,
+                'message' => 'Success',
+                'evidenciasRetiro' => $this->DB->getTiposEvidenciaRetiro($generales['IdTipoServicio'], $datos['id']),
+                'infoEvidenciasRetiro' => $evidenciasRetiro,
+                'firmas' => $this->tieneFirmas($datos['id'])
+            ];
+        }
+    }
+
+    public function eliminarEvidenciaInstalacion(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del archivo. Intente de nuevo'
+            ];
+        } else {
+            $eliminar = $this->DB->eliminarEvidenciaInstalacion($datos['id']);
+            return $eliminar;
+        }
+    }
+
+    public function eliminarEvidenciaRetiro(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del archivo. Intente de nuevo'
+            ];
+        } else {
+            $eliminar = $this->DB->eliminarEvidenciaRetiro($datos['id']);
+            return $eliminar;
+        }
+    }
+
+    public function guardarMaterial(array $datos)
+    {
+        if (!isset($datos['servicio']) || !isset($datos['clave']) || !isset($datos['producto']) || !isset($datos['cantidad'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio o del producto. Intente de nuevo'
+            ];
+        } else {
+            $guardar = $this->DB->guardarMaterial($datos);
+            return $guardar;
+        }
+    }
+
+    public function eliminarMaterial(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del producto. Intente de nuevo'
+            ];
+        } else {
+            $eliminar = $this->DB->eliminarMaterial($datos);
+            return $eliminar;
+        }
+    }
+
+    public function cargaMateriales(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
+            ];
+        } else {
+            $data = [
+                'materiales' => $this->DB->materialesUtilizados($datos['id']),
+                'productosSAE' => $this->productosSAE->getFromAdist(),
+                'firmas' => $this->tieneFirmas($datos['id'])
+            ];
+
+            return [
+                'code' => 200,
+                'formulario' => parent::getCI()->load->view('Instalaciones/Formularios/Materiales', $data, TRUE),
+                'firmas' => $data['firmas']
+            ];
+        }
+    }
+
+    public function exportarInstalacion(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
+            ];
+        } else {
+            $generales = $this->DB->getGeneralesServicio($datos['id']);
+            $ruta = '';
+            switch ($generales[0]['IdTipoServicio']) {
+                case 45:
+                case '45':
+                    $ruta = $this->exportar45($datos['id']);
+                    break;
+                case 48:
+                case '48':
+                    $ruta = $this->exportar48($datos['id']);
+                    break;
+            }
+
+            return ['code' => 200, 'ruta' => $ruta];
+        }
+    }
+
+    public function cargaFirmas(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
+            ];
+        } else {
+            $data = [
+                'firmas' => $this->DB->getFirmasServicio($datos['id']),
+                'faltantes' => $this->validarInformacionByServicio($datos['id'])
+            ];
+            return [
+                'code' => 200,
+                'formulario' => parent::getCI()->load->view('Instalaciones/Formularios/Firmas', $data, TRUE)
+            ];
+        }
+    }
+
+    public function guardaFirma(array $datos)
+    {
+        if (!isset($datos['servicio']) || !isset($datos['firma']) || !isset($datos['tipo'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio o la firma. Intente de nuevo'
+            ];
+        } else {
+            $img = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $datos['firma']));
+            $data = base64_decode($img);
+
+            if (!file_exists('./storage/Archivos/instalaciones/' . $datos['servicio'] . '/firmas')) {
+                mkdir('./storage/Archivos/instalaciones/' . $datos['servicio'] . '/firmas', 0755, true);
+            }
+
+            $url = '/storage/Archivos/instalaciones/' . $datos['servicio'] . '/firmas/' . $datos['tipo'] . '.png';
+
+            file_put_contents('.' . $url, $data);
+
+            return $this->DB->guardarFirma($datos, $url);
+        }
+    }
+
+    public function concluirServicio(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del archivo. Intente de nuevo'
+            ];
+        } else {
+            $generales = $this->DB->getGeneralesServicio($datos['id']);
+            $ruta = '';
+            switch ($generales[0]['IdTipoServicio']) {
+                case 45:
+                case '45':
+                    $ruta = $this->exportar45($datos['id']);
+                    break;
+            }
+
+            $concluir = $this->DB->concluirServicio($datos['id']);
+            $concluir = array_merge($concluir, ['ruta' => $ruta]);
+            return $concluir;
+        }
+    }
+
+    public function instaladosAntenas(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio. Intente de nuevo'
+            ];
+        } else {
+            $generales = $this->DB->getGeneralesServicio($datos['id'])[0];
+            $ubicaciones = [];
+            if ($generales['IdSucursal'] != '') {
+                $ubicaciones = $this->area->get(null, 1, $generales['IdCliente']);
+            }
+
+            $modelosAntenas = $this->DB->getModelosAntenas();
+            $modelosSwitch = $this->DB->getModelosSwitch();
+
+            $antenasInstaladas = $this->DB->getAntenasInstaladas($datos['id']);
+
+            if ($antenasInstaladas['code'] == 200) {
+                return [
+                    'code' => 200,
+                    'message' => 'Success',
+                    'ubicaciones' => $ubicaciones,
+                    'antenas' => $modelosAntenas,
+                    'switch' => $modelosSwitch,
+                    'instalados' => $antenasInstaladas['result'],
+                    'firmas' => $this->tieneFirmas($datos['id'])
+                ];
+            } else {
+                return $antenasInstaladas;
+            }
+        }
+    }
+
+    public function guardarAntena(array $datos)
+    {
+        if (!isset($datos['servicio']) || !isset($datos['antena'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio y la antena. Intente de nuevo'
+            ];
+        } else {
+            return $this->DB->guardarAntena($datos);
+        }
+    }
+
+    public function eliminarAntena(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información de la antena. Intente de nuevo'
+            ];
+        } else {
+            return $this->DB->eliminarAntena($datos);
+        }
+    }
+
+    public function evidenciasXEquipo(array $datos)
+    {
+        if (!isset($datos['id']) || !isset($datos['instalacion'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del servicio o equipo. Intente de nuevo'
+            ];
+        } else {
+            $data = [
+                'firmas' => $this->DB->getFirmasServicio($datos['id']),
+                'evidencias' => $this->getEvidenciasXEquipoInstalado($datos['id'], $datos['instalacion']),
+                'instalacion' => $datos['instalacion']
+            ];
+            return [
+                'code' => 200,
+                'formulario' => parent::getCI()->load->view('Instalaciones/Formularios/EvidenciasXEquipo', $data, TRUE)
+            ];
+        }
+    }
+
+    public function subirArchivoInstalacionEquipo(array $datos)
+    {
+        $archivos = null;
+        $CI = parent::getCI();
+        $carpeta = 'instalaciones/' . $datos['id'] . '/instalacion-' . $datos['instalacion'] . '/';
+
+        $archivos = '';
+        if (!empty($_FILES)) {
+            $archivos = setMultiplesArchivos($CI, 'evidenciaEquipo' . $datos['instalacion'], $carpeta);
+            if ($archivos) {
+                $archivos = implode(',', $archivos);
+            }
         }
 
+        $datos = array_merge($datos, ['archivos' => $archivos]);
+        $registrar = $this->DB->registrarArchivosInstalacionEquipo($datos);
+        return $registrar;
+    }
 
-        $datos = [
-            'generales' => $this->DB->getDetallesFondoFijoXId($datos['id'])[0],
-            'rolAutoriza' => $rolAutoriza
-        ];
+    public function eliminarEvidenciaInstalacionEquipo(array $datos)
+    {
+        if (!isset($datos['id'])) {
+            return [
+                'code' => 500,
+                'message' => 'No se ha recibido la información del archivo. Intente de nuevo'
+            ];
+        } else {
+            $eliminar = $this->DB->eliminarEvidenciaInstalacionEquipo($datos['id']);
+            return $eliminar;
+        }
+    }
+
+    private function validarInformacionByServicio(int $servicio)
+    {
+        $generales = $this->DB->getGeneralesServicio($servicio)[0];
+
+        switch ($generales['IdTipoServicio']) {
+            case 45:
+            case '45':
+                return $this->validarInformacionLexmark($servicio);
+                break;
+            case 48:
+            case '48':
+                return $this->validarInformacionAntenas($servicio);
+                break;
+            default:
+                return ['No se encuentra la información para validar el servicio'];
+                break;
+        }
+    }
+
+
+    private function tieneFirmas(int $servicio)
+    {
+        $firmas = $this->DB->getFirmasServicio($servicio)[0];
+        if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '') || (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function validarInformacionLexmark(int $servicio)
+    {
+        $generales = $this->DB->getGeneralesServicio($servicio)[0];
+        $instalados =  $this->DB->getEquiposInstaladosLexmark($servicio)['result'];
+        $retirados = $this->DB->getImpresoraRetirada($servicio)['result'];
+        $evidenciasInstalacion = $this->DB->getTiposEvidencia($generales['IdTipoServicio'], $servicio);
+        $evidenciasRetiro = $this->DB->getTiposEvidenciaRetiro($generales['IdTipoServicio'], $servicio);
+
+        $errores = [];
+
+        if (!isset($generales['IdSucursal']) || !is_numeric($generales['IdSucursal']) || $generales['IdSucursal'] <= 0) {
+            array_push($errores, "No se ha seleccionado una sucursal");
+        }
+        if ($instalados['impresora']['IdArea'] == '') {
+            array_push($errores, "Falta la ubicación de la impresora instalada.");
+        }
+        if ($instalados['impresora']['Serie'] == '') {
+            array_push($errores, "Falta la Serie de la impresora instalada.");
+        }
+        if ($instalados['impresora']['IP'] == '') {
+            array_push($errores, "Falta la IP de la impresora instalada.");
+        }
+        if ($instalados['impresora']['MAC'] == '') {
+            array_push($errores, "Falta la MAC de la impresora instalada.");
+        }
+        if ($instalados['impresora']['Firmware'] == '') {
+            array_push($errores, "Falta el Firmware de la impresora instalada.");
+        }
+        if ($instalados['impresora']['Contador'] == '') {
+            array_push($errores, "Falta el Contador de copias de la impresora instalada.");
+        }
+        if ($retirados['impresora']['IdModelo'] == '') {
+            array_push($errores, "Falta el modelo de la impresora retirada.");
+        }
+        if ($retirados['impresora']['IdEstatus'] == '') {
+            array_push($errores, "Falta el estado de la impresora retirada.");
+        }
+        if ($retirados['impresora']['Serie'] == '') {
+            array_push($errores, "Falta la serie de la impresora retirada.");
+        }
+
+        foreach ($evidenciasInstalacion as $key => $value) {
+            array_push($errores, "Falta evidencia de instalación: " . $value['Nombre']);
+        }
+
+        foreach ($evidenciasRetiro as $key => $value) {
+            array_push($errores, "Falta evidencia de retiro: " . $value['Nombre']);
+        }
+
+        return $errores;
+    }
+
+    private function validarInformacionAntenas(int $servicio)
+    {
+        $generales = $this->DB->getGeneralesServicio($servicio)[0];
+        $instalados =  $this->DB->getEquiposInstalados($servicio);
+
+        $errores = [];
+
+        if (!isset($generales['IdSucursal']) || !is_numeric($generales['IdSucursal']) || $generales['IdSucursal'] <= 0) {
+            array_push($errores, "No se ha seleccionado una sucursal");
+        } else if (count($instalados) <= 0) {
+            array_push($errores, "Al menos debe exisitr información de una antena instalada.");
+        }
+
+        foreach ($instalados as $key => $value) {
+            $value['Id'];
+            $evidenciasRequeridas = $this->DB->getEvidenciasRequeridasXEquipo($generales['IdTipoServicio'], $value['Id']);
+            foreach ($evidenciasRequeridas as $k => $v) {
+                array_push($errores, "Falta Evidencia: " . $v['Nombre'] . " del Equipo " . $value['Marca'] . " " . $value['Modelo'] . " SN:" . $value['Serie']);
+            }
+        }
+
+        return $errores;
+    }
+
+    private function getEvidenciasXEquipoInstalado(int $servicio, int $idInstalacion)
+    {
+        $generales = $this->DB->getGeneralesServicio($servicio)[0];
+        $evidenciasRequeridas = $this->DB->getEvidenciasRequeridasXEquipo($generales['IdTipoServicio'], $idInstalacion);
+        $evidenciasXEquipoInstalado = $this->DB->getEvidenciasXEquipoInstalado($idInstalacion);
 
         return [
-            'html' => parent::getCI()->load->view('FondoFijo/Formularios/DetallesMovimiento', $datos, TRUE)
+            'evidenciasRequeridas' => $evidenciasRequeridas,
+            'evidenciasXEquipoInstalado' => $evidenciasXEquipoInstalado
         ];
     }
 
-    public function cancelarMovimiento(array $datos)
+
+
+    private function exportar45(int $servicio)
     {
-        $cancelar = $this->DB->cancelarMovimiento($datos);
-        return $cancelar;
-    }
+        $generales = $this->DB->getGeneralesServicio($servicio)[0];
+        $instalados = $this->DB->getEquiposInstaladosLexmark($servicio)['result'];
+        $retirados = $this->DB->getImpresoraRetirada($servicio)['result'];
+        $evidenciasInstalacion = $this->evidenciasInstalacion(['id' => $servicio])['infoEvidenciasInstalacion'];
+        $evidenciasRetiro = $this->evidenciasRetiro(['id' => $servicio])['infoEvidenciasRetiro'];
+        $materiales = $this->DB->materialesUtilizados($servicio)['lista'];
+        $firmas = $this->DB->getFirmasServicio($servicio)[0];
 
-    public function pendientesXAutorizar(int $idJefe)
-    {
-        $pendientes = $this->DB->pendientesXAutorizar($idJefe);
-        return $pendientes;
-    }
+        /******************************* 
+         * *****HEADERS DE PDF *********
+         ********************************/
+        $this->pdf->AddPage();
+        $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+        $this->pdf->SetXY(0, 13);
+        $this->pdf->SetFont("helvetica", "B", 15);
+        $this->pdf->Cell(0, 0, utf8_decode("Resumen de Instalación Imp. Lexmark"), 0, 0, 'C');
 
-    public function rechazarMovimiento(array $datos)
-    {
-        $rechazar = $this->DB->rechazarMovimiento($datos);
+        $this->pdf->SetXY(0, 20);
+        $this->pdf->SetFont("helvetica", "I", 13);
+        $this->pdf->Cell(0, 0, utf8_decode($generales['Sucursal']), 0, 0, 'C');
 
-        if ($rechazar['code'] == 200) {
-            $generalesUsuario = $this->DB->getGeneralInfoByUserID($rechazar['id']);
-            $generalesUsuarioRechaza = $this->DB->getGeneralInfoByUserID($this->usuario['Id']);
-            $generalesMovimiento = $this->DB->getDetallesFondoFijoXId($datos['id'])[0];
+        $this->pdf->SetXY(0, 27);
+        $this->pdf->SetFont("helvetica", "I", 13);
+        $this->pdf->Cell(0, 0, date("Y/m/d", strtotime($generales['FechaInicio'])), 0, 0, 'C');
 
-            $titulo = 'Comprobante Rechazado - Fondo Fijo';
-            $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
-                . '<p>'
-                . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' '
-                . ' ha  rechazado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" '
-                . ' por el total de <strong>$' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> '
-                . ' correspondiente al fondo fijo. <br />'
-                . ' Observaciones: <strong>' . $datos['observaciones'] . '</strong><br />'
-                . ' Por favor verifique la información mencionada ingresando al sistema '
-                . 'o comuniquese con el usuario que rechazó el comprobante.'
-                . '</p>';
-            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
-            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
+
+        /************************************* 
+         * *****SECCIÓN INFO GENERAL *********
+         **************************************/
+        $this->pdf->SetFillColor(31, 56, 100);
+        $this->pdf->SetTextColor(255, 255, 255);
+
+        $this->pdf->SetXY(10, 36);
+        $this->pdf->SetFont("helvetica", "BI", 10);
+        $this->pdf->Cell(0, 6, utf8_decode("Información General"), 1, 0, 'L', true);
+
+        $this->pdf->SetFillColor(217, 217, 217);
+        $this->pdf->SetTextColor(10, 10, 10);
+
+        $this->pdf->SetXY(10, 42);
+        $this->pdf->SetFont("helvetica", "BI", 9);
+        $this->pdf->Cell(25, 5, "Cliente:", 1, 0, 'R', true);
+
+        $this->pdf->SetXY(35, 42);
+        $this->pdf->SetFont("helvetica", "", 9);
+        $this->pdf->Cell(0, 5, utf8_decode($generales['Cliente']), 1, 0, 'L', true);
+
+        $this->pdf->SetXY(10, 47);
+        $this->pdf->SetFont("helvetica", "BI", 9);
+        $this->pdf->Cell(25, 5, "Sucursal:", 1, 0, 'R');
+
+        $this->pdf->SetXY(35, 47);
+        $this->pdf->SetFont("helvetica", "", 9);
+        $this->pdf->Cell(0, 5, utf8_decode($generales['Sucursal']), 1, 0, 'L');
+
+        /******************************************* 
+         * ******HEADER EQUIPOS INSTALADOS *********
+         ********************************************/
+
+        $this->pdf->SetFillColor(31, 56, 100);
+        $this->pdf->SetTextColor(255, 255, 255);
+
+        $this->pdf->SetXY(10, 52);
+        $this->pdf->SetFont("helvetica", "BI", 10);
+        $this->pdf->Cell(0, 6, utf8_decode("Equipos Instalados"), 1, 0, 'L', true);
+
+        $this->pdf->SetFillColor(191, 191, 191);
+        $this->pdf->SetTextColor(10, 10, 10);
+
+        /************************************* 
+         * ******IMPRESORA INSTALADA *********
+         **************************************/
+        $this->pdf->SetXY(10, 58);
+        $this->pdf->SetFont("helvetica", "BI", 13);
+        $this->pdf->Cell(13, 35, "#1", 1, 0, 'C', true);
+
+        $this->pdf->SetFillColor(217, 217, 217);
+        $this->pdf->SetFont("helvetica", "BI", 9);
+
+        $this->pdf->SetXY(23, 58);
+        $this->pdf->Cell(36, 5, utf8_decode("Ubicación:"), 1, 0, 'R', true);
+
+        $this->pdf->SetXY(23, 63);
+        $this->pdf->Cell(36, 5, utf8_decode("Modelo de Equipo:"), 1, 0, 'R');
+
+        $this->pdf->SetXY(23, 68);
+        $this->pdf->Cell(36, 5, utf8_decode("Número de Serie:"), 1, 0, 'R', true);
+
+        $this->pdf->SetXY(23, 73);
+        $this->pdf->Cell(36, 5, utf8_decode("IP Asignada:"), 1, 0, 'R');
+
+        $this->pdf->SetXY(23, 78);
+        $this->pdf->Cell(36, 5, utf8_decode("MAC Address:"), 1, 0, 'R', true);
+
+        $this->pdf->SetXY(23, 83);
+        $this->pdf->Cell(36, 5, utf8_decode("Firmware:"), 1, 0, 'R');
+
+        $this->pdf->SetXY(23, 88);
+        $this->pdf->Cell(36, 5, utf8_decode("Contador:"), 1, 0, 'R', true);
+
+
+        $this->pdf->SetFont("helvetica", "", 9);
+
+        $this->pdf->SetXY(59, 58);
+        $this->pdf->Cell(0, 5, utf8_decode($instalados['impresora']['Area'] . ' ' . $instalados['impresora']['Punto']), 1, 0, 'L', true);
+
+        $this->pdf->SetXY(59, 63);
+        $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['impresora']['Modelo'])), 1, 0, 'L');
+
+        $this->pdf->SetXY(59, 68);
+        $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['impresora']['Serie'])), 1, 0, 'L', true);
+
+        $this->pdf->SetXY(59, 73);
+        $this->pdf->Cell(0, 5, utf8_decode($instalados['impresora']['IP']), 1, 0, 'L');
+
+        $this->pdf->SetXY(59, 78);
+        $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['impresora']['MAC'])), 1, 0, 'L', true);
+
+        $this->pdf->SetXY(59, 83);
+        $this->pdf->Cell(0, 5, utf8_decode($instalados['impresora']['Firmware']), 1, 0, 'L');
+
+        $this->pdf->SetXY(59, 88);
+        $this->pdf->Cell(0, 5, utf8_decode($instalados['impresora']['Contador']), 1, 0, 'L', true);
+
+        $this->pdf->SetXY(10, 93);
+        $this->pdf->Cell(0, 2, "", 1, 0, 'C');
+
+        /************************************* 
+         ********* SUPRESOR INSTALADO *********
+         **************************************/
+
+        $x = 10;
+        $y = 95;
+
+        if ($instalados['supresor']['Area'] != '') {
+
+            $this->pdf->SetFillColor(191, 191, 191);
+
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(10, 95);
+            $this->pdf->SetFont("helvetica", "BI", 13);
+            $this->pdf->Cell(13, 15, "#2", 1, 0, 'C', true);
+
+            $this->pdf->SetFillColor(217, 217, 217);
+            $this->pdf->SetFont("helvetica", "BI", 9);
+
+            $x = 23;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(23, 95);
+            $this->pdf->Cell(36, 5, utf8_decode("Ubicación:"), 1, 0, 'R', true);
+
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(23, 100);
+            $this->pdf->Cell(36, 5, utf8_decode("Modelo de Equipo:"), 1, 0, 'R');
+
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(23, 105);
+            $this->pdf->Cell(36, 5, utf8_decode("Número de Serie:"), 1, 0, 'R', true);
+
+            $this->pdf->SetFont("helvetica", "", 9);
+
+            $x = 59;
+            $y -= 10;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(59, 95);
+            $this->pdf->Cell(0, 5, utf8_decode($instalados['supresor']['Area'] . ' ' . $instalados['supresor']['Punto']), 1, 0, 'L', true);
+
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(59, 100);
+            $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['supresor']['Modelo'])), 1, 0, 'L');
+
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(59, 105);
+            $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['supresor']['Serie'])), 1, 0, 'L', true);
+
+            $x = 10;
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            // $this->pdf->SetXY(10, 110);
+            $this->pdf->Cell(0, 2, "", 1, 0, 'C');
+            $y += 2;
         }
 
-        return $rechazar;
-    }
+        /******************************************** 
+         ********* SECCIÓN EQUIPOS RETIRADOS *********
+         *********************************************/
 
-    public function autorizarMovimiento(array $datos)
-    {
-        $autorizar = $this->DB->autorizarMovimiento($datos);
+        $this->pdf->SetFillColor(31, 56, 100);
+        $this->pdf->SetTextColor(255, 255, 255);
 
-        if ($autorizar['code'] == 200) {
-            $generalesUsuario = $this->DB->getGeneralInfoByUserID($autorizar['id']);
-            $generalesUsuarioRechaza = $this->DB->getGeneralInfoByUserID($this->usuario['Id']);
-            $generalesMovimiento = $this->DB->getDetallesFondoFijoXId($datos['id'])[0];
 
-            $titulo = 'Comprobante Autorizado - Fondo Fijo';
-            $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
-                . '<p>'
-                . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' ha autorizado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" por el total de $' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifique la información mencionada ingresando al sistema.'
-                . '</p>';
-            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
-            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->SetFont("helvetica", "BI", 10);
+        $this->pdf->Cell(0, 6, utf8_decode("Equipos Retirados"), 1, 0, 'L', true);
+        $y += 6;
+
+        $this->pdf->SetFillColor(191, 191, 191);
+        $this->pdf->SetTextColor(10, 10, 10);
+
+        /************************************ 
+         * ******IMPRESORA RETIRADA *********
+         *************************************/
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->SetFont("helvetica", "BI", 13);
+        $this->pdf->Cell(13, 15, "#1", 1, 0, 'C', true);
+        $x += 13;
+
+        $this->pdf->SetFillColor(217, 217, 217);
+        $this->pdf->SetFont("helvetica", "BI", 9);
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(36, 5, utf8_decode("Modelo del Equipo:"), 1, 0, 'R', true);
+        $y += 5;
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(36, 5, utf8_decode("Número de Serie:"), 1, 0, 'R');
+        $y += 5;
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(36, 5, utf8_decode("Estado del Equipo:"), 1, 0, 'R', true);
+        $y -= 10;
+
+        $this->pdf->SetFont("helvetica", "", 9);
+
+        $x += 36;
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(0, 5, strtoupper(utf8_decode($retirados['impresora']['Modelo'])), 1, 0, 'L', true);
+        $y += 5;
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(0, 5, strtoupper(utf8_decode($retirados['impresora']['Serie'])), 1, 0, 'L');
+        $y += 5;
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(0, 5, strtoupper(utf8_decode($retirados['impresora']['Estatus'])), 1, 0, 'L', true);
+        $y += 5;
+
+        $x = 10;
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(0, 2, "", 1, 0, 'C');
+        $y += 2;
+
+        /************************************************* 
+         ********* SECCIÓN EVIDENCIAS INSTALACION *********
+         **************************************************/
+
+        $totalEvidencias = count($evidenciasInstalacion);
+        if ($totalEvidencias > 0) {
+
+            $this->pdf->SetFillColor(31, 56, 100);
+            $this->pdf->SetTextColor(255, 255, 255);
+
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->SetFont("helvetica", "BI", 10);
+            $this->pdf->Cell(0, 6, utf8_decode("Evidencias de Instalación"), 1, 0, 'L', true);
+            $y += 6;
+
+            $filas = ceil($totalEvidencias / 4);
+
+            $this->pdf->SetTextColor(10, 10, 10);
+
+
+            $indice = 0;
+            for ($f = 1; $f <= $filas; $f++) {
+
+                if (($y + 50) > 276) {
+                    $this->pdf->AddPage();
+                    $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+                    $x = 10;
+                    $y = 32;
+                    $this->pdf->SetTextColor(255, 255, 255);
+                    $this->pdf->SetXY($x, $y);
+                    $this->pdf->Cell(0, 6, utf8_decode("Evidencias de Instalación"), 1, 0, 'L', true);
+                    $y += 6;
+                }
+
+                $this->pdf->SetXY($x, $y);
+                for ($i = 1; $i <= 4; $i++) {
+                    $evidencia = "";
+                    $link = "";
+
+                    if (isset($evidenciasInstalacion[$indice])) {
+                        $evidencia = $evidenciasInstalacion[$indice]['Evidencia'];
+                        $url = $evidenciasInstalacion[$indice]['Archivo'];
+                        $link = 'Link To Image';
+                        $this->pdf->Image('.' . $url, $x + 2.5, $y + 2.5, 42.5, 40, pathinfo($url, PATHINFO_EXTENSION), $url);
+                    }
+
+                    $this->pdf->SetTextColor(100, 100, 100);
+                    $this->pdf->Cell(47.5, 45, $link, 1, 0, 'C');
+                    $y += 45;
+                    $this->pdf->SetXY($x, $y);
+                    $this->pdf->SetFont("helvetica", "BI", 8);
+                    $this->pdf->SetTextColor(20, 20, 20);
+                    $this->pdf->Cell(47.5, 5, utf8_decode($evidencia), 1, 0, 'C');
+                    $x += 47.5;
+                    $y -= 45;
+                    $this->pdf->SetXY($x, $y);
+                    if ($i == 4) {
+                        $x = 10;
+                        $y += 50;
+                    }
+                    $indice++;
+                }
+            }
         }
 
-        return $autorizar;
-    }
+        /********************************************* 
+         ********* SECCIÓN EVIDENCIAS RETIRO *********
+         *********************************************/
 
-    /************************************************************************/
+        $totalEvidencias = count($evidenciasRetiro);
+        if ($totalEvidencias > 0) {
 
-    public function rechazarMovimientoCobrable(array $datos)
-    {
-        $rechazar = $this->DB->rechazarMovimientoCobrable($datos);
+            if (($y + 56) > 276) {
+                $this->pdf->AddPage();
+                $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+                $x = 10;
+                $y = 32;
+            }
 
-        if ($rechazar['code'] == 200) {
-            $generalesUsuario = $this->DB->getGeneralInfoByUserID($rechazar['id']);
-            $generalesUsuarioRechaza = $this->DB->getGeneralInfoByUserID($this->usuario['Id']);
-            $generalesMovimiento = $this->DB->getDetallesFondoFijoXId($datos['id'])[0];
+            $this->pdf->SetFillColor(31, 56, 100);
+            $this->pdf->SetTextColor(255, 255, 255);
 
-            $titulo = 'Comprobante Rechazado - Fondo Fijo';
-            $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
-                . '<p>'
-                . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' '
-                . ' ha  rechazado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" '
-                . ' por el total de <strong>$' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> '
-                . ' correspondiente al fondo fijo. <br />'
-                . ' Observaciones: <strong>' . $datos['observaciones'] . '</strong><br />'
-                . ' Por favor verifique la información mencionada ingresando al sistema '
-                . 'o comuniquese con el usuario que rechazó el comprobante.'
-                . '</p>';
-            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
-            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->SetFont("helvetica", "BI", 10);
+            $this->pdf->Cell(0, 6, utf8_decode("Evidencias de Retiro"), 1, 0, 'L', true);
+            $y += 6;
+
+            $filas = ceil($totalEvidencias / 4);
+
+            $this->pdf->SetTextColor(10, 10, 10);
+
+
+            $indice = 0;
+            for ($f = 1; $f <= $filas; $f++) {
+
+                if (($y + 50) > 276) {
+                    $this->pdf->AddPage();
+                    $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+                    $x = 10;
+                    $y = 32;
+                    $this->pdf->SetTextColor(255, 255, 255);
+                    $this->pdf->SetXY($x, $y);
+                    $this->pdf->Cell(0, 6, utf8_decode("Evidencias de Retiro"), 1, 0, 'L', true);
+                    $y += 6;
+                }
+
+                $this->pdf->SetXY($x, $y);
+                for ($i = 1; $i <= 4; $i++) {
+                    $evidencia = "";
+                    $link = "";
+
+                    if (isset($evidenciasRetiro[$indice])) {
+                        $evidencia = $evidenciasRetiro[$indice]['Evidencia'];
+                        $url = $evidenciasRetiro[$indice]['Archivo'];
+                        $link = 'Link To Image';
+                        $this->pdf->Image('.' . $url, $x + 2.5, $y + 2.5, 42.5, 40, pathinfo($url, PATHINFO_EXTENSION), $url);
+                    }
+
+                    $this->pdf->SetTextColor(100, 100, 100);
+                    $this->pdf->Cell(47.5, 45, $link, 1, 0, 'C');
+                    $y += 45;
+                    $this->pdf->SetXY($x, $y);
+                    $this->pdf->SetFont("helvetica", "BI", 8);
+                    $this->pdf->SetTextColor(20, 20, 20);
+                    $this->pdf->Cell(47.5, 5, utf8_decode($evidencia), 1, 0, 'C');
+                    $x += 47.5;
+                    $y -= 45;
+                    $this->pdf->SetXY($x, $y);
+                    if ($i == 4) {
+                        $x = 10;
+                        $y += 50;
+                    }
+                    $indice++;
+                }
+            }
         }
 
-        return $rechazar;
+        /************************************************* 
+         ********* SECCIÓN MATERIALES UTILIZADOS *********
+         *************************************************/
+
+        $totalMateriales = count($materiales);
+        if ($totalMateriales > 0) {
+            if (($y + 11) > 276) {
+                $this->pdf->AddPage();
+                $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+                $x = 10;
+                $y = 32;
+            }
+
+            $this->pdf->SetFillColor(31, 56, 100);
+            $this->pdf->SetTextColor(255, 255, 255);
+
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->SetFont("helvetica", "BI", 10);
+            $this->pdf->Cell(0, 6, utf8_decode("Materiales Utilizados"), 1, 0, 'L', true);
+            $y += 6;
+
+            $this->pdf->SetFillColor(217, 217, 217);
+            $this->pdf->SetFont("helvetica", "B", 9);
+            $this->pdf->SetTextColor(10, 10, 10);
+            $fill = true;
+            foreach ($materiales as $key => $value) {
+                $this->pdf->SetXY($x, $y);
+                $this->pdf->Cell(20, 5, $value['Cantidad'], 1, 0, 'C', $fill);
+                $x += 20;
+                $this->pdf->SetXY($x, $y);
+                $this->pdf->Cell(0, 5, $value['Producto'], 1, 0, 'L', $fill);
+
+                $x = 10;
+                $y += 5;
+                $fill = !$fill;
+            }
+        }
+
+
+        /********************************** 
+         ********* SECCIÓN FIRMAS *********
+         **********************************/
+
+        if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '') || (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '')) {
+            if (($y + 56) > 276) {
+                $this->pdf->AddPage();
+                $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+                $x = 10;
+                $y = 32;
+            }
+
+            $this->pdf->SetFillColor(31, 56, 100);
+            $this->pdf->SetTextColor(255, 255, 255);
+
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->SetFont("helvetica", "BI", 10);
+            $this->pdf->Cell(0, 6, utf8_decode("Firmas del Servicio"), 1, 0, 'L', true);
+            $y += 6;
+
+            $this->pdf->SetFont("helvetica", "B", 9);
+            $this->pdf->SetTextColor(10, 10, 10);
+
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 40, "", 1, 0, 'C');
+            $gerente = '';
+            if (!is_null($firmas['Firma']) && $firmas['Firma'] != '') {
+                $this->pdf->Image('.' . $firmas['Firma'], $x + 7.5, $y + 2.5, 80, 35, pathinfo($firmas['Firma'], PATHINFO_EXTENSION));
+                $gerente = utf8_decode($firmas['Gerente']);
+            }
+
+            $x += 95;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 40, "", 1, 0, 'C');
+            $tecnico = '';
+            if (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '') {
+                $this->pdf->Image('.' . $firmas['FirmaTecnico'], $x + 7.5, $y + 2.5, 80, 35, pathinfo($firmas['FirmaTecnico'], PATHINFO_EXTENSION));
+                $tecnico = utf8_decode($firmas['Tecnico']);
+            }
+
+            $this->pdf->SetFillColor(217, 217, 217);
+
+            $x = 10;
+            $y += 40;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 5, $gerente, 1, 0, 'C', true);
+            $x += 95;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 5, $tecnico, 1, 0, 'C', true);
+
+            $x = 10;
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 5, "Gerente Cinemex", 1, 0, 'C', true);
+            $x += 95;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 5, utf8_decode("Técnico Siccob / Lexmark"), 1, 0, 'C', true);
+        }
+
+
+        $carpeta = $this->pdf->definirArchivo('instalaciones/' . $servicio . '/PDF/', 'Instalación Imp. Lexmark ' . $generales['Sucursal']);
+        $this->pdf->Output('F', $carpeta, true);
+        $carpeta = substr($carpeta, 1);
+        return $carpeta;
+    }
+
+    private function exportar48(int $servicio)
+    {
+        $generales = $this->DB->getGeneralesServicio($servicio)[0];
+        $instalados = $this->DB->getEquiposInstalados($servicio);        
+        // $evidenciasInstalacion = $this->evidenciasInstalacion(['id' => $servicio])['infoEvidenciasInstalacion'];        
+        $materiales = $this->DB->materialesUtilizados($servicio)['lista'];
+        $firmas = $this->DB->getFirmasServicio($servicio)[0];
+
+        /******************************* 
+         * *****HEADERS DE PDF *********
+         ********************************/
+        $this->pdf->AddPage();
+        $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+        $this->pdf->SetXY(0, 13);
+        $this->pdf->SetFont("helvetica", "B", 15);
+        $this->pdf->Cell(0, 0, utf8_decode("Resumen de Instalación Imp. Lexmark"), 0, 0, 'C');
+
+        $this->pdf->SetXY(0, 20);
+        $this->pdf->SetFont("helvetica", "I", 13);
+        $this->pdf->Cell(0, 0, utf8_decode($generales['Sucursal']), 0, 0, 'C');
+
+        $this->pdf->SetXY(0, 27);
+        $this->pdf->SetFont("helvetica", "I", 13);
+        $this->pdf->Cell(0, 0, date("Y/m/d", strtotime($generales['FechaInicio'])), 0, 0, 'C');
+
+
+        /************************************* 
+         * *****SECCIÓN INFO GENERAL *********
+         **************************************/
+        $this->pdf->SetFillColor(31, 56, 100);
+        $this->pdf->SetTextColor(255, 255, 255);
+
+        $this->pdf->SetXY(10, 36);
+        $this->pdf->SetFont("helvetica", "BI", 10);
+        $this->pdf->Cell(0, 6, utf8_decode("Información General"), 1, 0, 'L', true);
+
+        $this->pdf->SetFillColor(217, 217, 217);
+        $this->pdf->SetTextColor(10, 10, 10);
+
+        $this->pdf->SetXY(10, 42);
+        $this->pdf->SetFont("helvetica", "BI", 9);
+        $this->pdf->Cell(25, 5, "Cliente:", 1, 0, 'R', true);
+
+        $this->pdf->SetXY(35, 42);
+        $this->pdf->SetFont("helvetica", "", 9);
+        $this->pdf->Cell(0, 5, utf8_decode($generales['Cliente']), 1, 0, 'L', true);
+
+        $this->pdf->SetXY(10, 47);
+        $this->pdf->SetFont("helvetica", "BI", 9);
+        $this->pdf->Cell(25, 5, "Sucursal:", 1, 0, 'R');
+
+        $this->pdf->SetXY(35, 47);
+        $this->pdf->SetFont("helvetica", "", 9);
+        $this->pdf->Cell(0, 5, utf8_decode($generales['Sucursal']), 1, 0, 'L');
+
+        /******************************************* 
+         * ******HEADER EQUIPOS INSTALADOS *********
+         ********************************************/
+
+        $this->pdf->SetFillColor(31, 56, 100);
+        $this->pdf->SetTextColor(255, 255, 255);
+
+        $this->pdf->SetXY(10, 52);
+        $this->pdf->SetFont("helvetica", "BI", 10);
+        $this->pdf->Cell(0, 6, utf8_decode("Equipos Instalados"), 1, 0, 'L', true);
+
+        $this->pdf->SetFillColor(191, 191, 191);
+        $this->pdf->SetTextColor(10, 10, 10);
+
+        /************************************* 
+         ********ANTENAS INSTALADAS* *********
+         **************************************/
+        $this->pdf->SetXY(10, 58);
+        $this->pdf->SetFont("helvetica", "BI", 13);
+        $this->pdf->Cell(13, 35, "#1", 1, 0, 'C', true);
+
+        $this->pdf->SetFillColor(217, 217, 217);
+        $this->pdf->SetFont("helvetica", "BI", 9);
+
+        $this->pdf->SetXY(23, 58);
+        $this->pdf->Cell(36, 5, utf8_decode("Ubicación:"), 1, 0, 'R', true);
+
+        $this->pdf->SetXY(23, 63);
+        $this->pdf->Cell(36, 5, utf8_decode("Modelo de Equipo:"), 1, 0, 'R');
+
+        $this->pdf->SetXY(23, 68);
+        $this->pdf->Cell(36, 5, utf8_decode("Número de Serie:"), 1, 0, 'R', true);
+
+        $this->pdf->SetXY(23, 73);
+        $this->pdf->Cell(36, 5, utf8_decode("IP Asignada:"), 1, 0, 'R');
+
+        $this->pdf->SetXY(23, 78);
+        $this->pdf->Cell(36, 5, utf8_decode("MAC Address:"), 1, 0, 'R', true);
+
+        $this->pdf->SetXY(23, 83);
+        $this->pdf->Cell(36, 5, utf8_decode("Firmware:"), 1, 0, 'R');
+
+        $this->pdf->SetXY(23, 88);
+        $this->pdf->Cell(36, 5, utf8_decode("Contador:"), 1, 0, 'R', true);
+
+
+        // $this->pdf->SetFont("helvetica", "", 9);
+
+        // $this->pdf->SetXY(59, 58);
+        // $this->pdf->Cell(0, 5, utf8_decode($instalados['impresora']['Area'] . ' ' . $instalados['impresora']['Punto']), 1, 0, 'L', true);
+
+        // $this->pdf->SetXY(59, 63);
+        // $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['impresora']['Modelo'])), 1, 0, 'L');
+
+        // $this->pdf->SetXY(59, 68);
+        // $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['impresora']['Serie'])), 1, 0, 'L', true);
+
+        // $this->pdf->SetXY(59, 73);
+        // $this->pdf->Cell(0, 5, utf8_decode($instalados['impresora']['IP']), 1, 0, 'L');
+
+        // $this->pdf->SetXY(59, 78);
+        // $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['impresora']['MAC'])), 1, 0, 'L', true);
+
+        // $this->pdf->SetXY(59, 83);
+        // $this->pdf->Cell(0, 5, utf8_decode($instalados['impresora']['Firmware']), 1, 0, 'L');
+
+        // $this->pdf->SetXY(59, 88);
+        // $this->pdf->Cell(0, 5, utf8_decode($instalados['impresora']['Contador']), 1, 0, 'L', true);
+
+        $this->pdf->SetXY(10, 93);
+        $this->pdf->Cell(0, 2, "", 1, 0, 'C');
+
+        /************************************************* 
+         ********* SECCIÓN EVIDENCIAS INSTALACION *********
+         **************************************************/
+
+        // $totalEvidencias = count($evidenciasInstalacion);
+        // if ($totalEvidencias > 0) {
+
+        //     $this->pdf->SetFillColor(31, 56, 100);
+        //     $this->pdf->SetTextColor(255, 255, 255);
+
+        //     $this->pdf->SetXY($x, $y);
+        //     $this->pdf->SetFont("helvetica", "BI", 10);
+        //     $this->pdf->Cell(0, 6, utf8_decode("Evidencias de Instalación"), 1, 0, 'L', true);
+        //     $y += 6;
+
+        //     $filas = ceil($totalEvidencias / 4);
+
+        //     $this->pdf->SetTextColor(10, 10, 10);
+
+
+        //     $indice = 0;
+        //     for ($f = 1; $f <= $filas; $f++) {
+
+        //         if (($y + 50) > 276) {
+        //             $this->pdf->AddPage();
+        //             $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+        //             $x = 10;
+        //             $y = 32;
+        //             $this->pdf->SetTextColor(255, 255, 255);
+        //             $this->pdf->SetXY($x, $y);
+        //             $this->pdf->Cell(0, 6, utf8_decode("Evidencias de Instalación"), 1, 0, 'L', true);
+        //             $y += 6;
+        //         }
+
+        //         $this->pdf->SetXY($x, $y);
+        //         for ($i = 1; $i <= 4; $i++) {
+        //             $evidencia = "";
+        //             $link = "";
+
+        //             if (isset($evidenciasInstalacion[$indice])) {
+        //                 $evidencia = $evidenciasInstalacion[$indice]['Evidencia'];
+        //                 $url = $evidenciasInstalacion[$indice]['Archivo'];
+        //                 $link = 'Link To Image';
+        //                 $this->pdf->Image('.' . $url, $x + 2.5, $y + 2.5, 42.5, 40, pathinfo($url, PATHINFO_EXTENSION), $url);
+        //             }
+
+        //             $this->pdf->SetTextColor(100, 100, 100);
+        //             $this->pdf->Cell(47.5, 45, $link, 1, 0, 'C');
+        //             $y += 45;
+        //             $this->pdf->SetXY($x, $y);
+        //             $this->pdf->SetFont("helvetica", "BI", 8);
+        //             $this->pdf->SetTextColor(20, 20, 20);
+        //             $this->pdf->Cell(47.5, 5, utf8_decode($evidencia), 1, 0, 'C');
+        //             $x += 47.5;
+        //             $y -= 45;
+        //             $this->pdf->SetXY($x, $y);
+        //             if ($i == 4) {
+        //                 $x = 10;
+        //                 $y += 50;
+        //             }
+        //             $indice++;
+        //         }
+        //     }
+        // }
+
+        /************************************************* 
+         ********* SECCIÓN MATERIALES UTILIZADOS *********
+         *************************************************/
+        $x = 10;
+        $y = 93;
+        $totalMateriales = count($materiales);
+        if ($totalMateriales > 0) {
+            if (($y + 11) > 276) {
+                $this->pdf->AddPage();
+                $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+                $x = 10;
+                $y = 32;
+            }
+
+            $this->pdf->SetFillColor(31, 56, 100);
+            $this->pdf->SetTextColor(255, 255, 255);
+
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->SetFont("helvetica", "BI", 10);
+            $this->pdf->Cell(0, 6, utf8_decode("Materiales Utilizados"), 1, 0, 'L', true);
+            $y += 6;
+
+            $this->pdf->SetFillColor(217, 217, 217);
+            $this->pdf->SetFont("helvetica", "B", 9);
+            $this->pdf->SetTextColor(10, 10, 10);
+            $fill = true;
+            foreach ($materiales as $key => $value) {
+                $this->pdf->SetXY($x, $y);
+                $this->pdf->Cell(20, 5, $value['Cantidad'], 1, 0, 'C', $fill);
+                $x += 20;
+                $this->pdf->SetXY($x, $y);
+                $this->pdf->Cell(0, 5, $value['Producto'], 1, 0, 'L', $fill);
+
+                $x = 10;
+                $y += 5;
+                $fill = !$fill;
+            }
+        }
+
+
+        /********************************** 
+         ********* SECCIÓN FIRMAS *********
+         **********************************/
+
+        if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '') || (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '')) {
+            if (($y + 56) > 276) {
+                $this->pdf->AddPage();
+                $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+                $x = 10;
+                $y = 32;
+            }
+
+            $this->pdf->SetFillColor(31, 56, 100);
+            $this->pdf->SetTextColor(255, 255, 255);
+
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->SetFont("helvetica", "BI", 10);
+            $this->pdf->Cell(0, 6, utf8_decode("Firmas del Servicio"), 1, 0, 'L', true);
+            $y += 6;
+
+            $this->pdf->SetFont("helvetica", "B", 9);
+            $this->pdf->SetTextColor(10, 10, 10);
+
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 40, "", 1, 0, 'C');
+            $gerente = '';
+            if (!is_null($firmas['Firma']) && $firmas['Firma'] != '') {
+                $this->pdf->Image('.' . $firmas['Firma'], $x + 7.5, $y + 2.5, 80, 35, pathinfo($firmas['Firma'], PATHINFO_EXTENSION));
+                $gerente = utf8_decode($firmas['Gerente']);
+            }
+
+            $x += 95;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 40, "", 1, 0, 'C');
+            $tecnico = '';
+            if (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '') {
+                $this->pdf->Image('.' . $firmas['FirmaTecnico'], $x + 7.5, $y + 2.5, 80, 35, pathinfo($firmas['FirmaTecnico'], PATHINFO_EXTENSION));
+                $tecnico = utf8_decode($firmas['Tecnico']);
+            }
+
+            $this->pdf->SetFillColor(217, 217, 217);
+
+            $x = 10;
+            $y += 40;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 5, $gerente, 1, 0, 'C', true);
+            $x += 95;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 5, $tecnico, 1, 0, 'C', true);
+
+            $x = 10;
+            $y += 5;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 5, "Gerente Cinemex", 1, 0, 'C', true);
+            $x += 95;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(95, 5, utf8_decode("Técnico Siccob / Lexmark"), 1, 0, 'C', true);
+        }
+
+
+        $carpeta = $this->pdf->definirArchivo('instalaciones/' . $servicio . '/PDF/', 'Instalación Imp. Lexmark ' . $generales['Sucursal']);
+        $this->pdf->Output('F', $carpeta, true);
+        $carpeta = substr($carpeta, 1);
+        return $carpeta;
     }
 }
