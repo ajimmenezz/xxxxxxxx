@@ -204,7 +204,7 @@ class GerstorProyectosGAPSI extends General {
         $dataRecords = $this->DBGestorProyectoGAPSI->getProjectRecords($parameters);
 
         if ($dataRecords['code'] === 200) {
-            return $dataProjects['query'];
+            return array('formulario' => parent::getCI()->load->view('Generales/Dashboard_Gapsi_Detalles', $dataRecords['query'], TRUE), 'consulta' => $dataRecords['query']);
         } else {
             return ['code' => 400];
         }
