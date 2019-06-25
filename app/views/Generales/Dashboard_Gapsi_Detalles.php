@@ -58,10 +58,26 @@
                                         <th class="all">Beneficiario</th>
                                         <th class="all">Importe</th>
                                         <th class="all">Moneda</th>
+                                        <th class="all">Tipo</th>
                                         <th class="all">Fecha</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php
+                                    foreach ($query as $valor) {
+                                        echo "<tr>";
+                                            echo '<td>' . $valor['ID'] . '</td>';
+                                            echo '<td>' . $valor['Proyecto'] . '</td>';
+                                            echo '<td>' . $valor['Tipo'] . '</td>';
+                                            echo '<td>' . $valor['TipoServicio'] . '</td>';
+                                            echo '<td>' . $valor['Beneficiario'] . '</td>';
+                                            echo '<td>' . $valor['Importe'] . '</td>';
+                                            echo '<td>' . $valor['Moneda'] . '</td>';
+                                            echo '<td>' . $valor['TipoTrans'] . '</td>';
+                                            echo '<td>' . $valor['FCaptura'] . '</td>';
+                                        echo "</tr>";
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>

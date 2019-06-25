@@ -26,7 +26,7 @@ $(function () {
         },
         is3D: true
     });
-    
+
     let graficaPrincipalUSD = null;
     let tablaProyecto = null;
     let tablaServicio = null;
@@ -61,7 +61,7 @@ $(function () {
     let datosProyecto = Array();
     let datosFiltros = {
         tipoProyecto: null,
-        moneda: null,
+        moneda: 'MN',
         fechaInicio: null,
         fechaFinal: null,
         proyecto: null,
@@ -84,7 +84,7 @@ $(function () {
         concepto: null
     };
     let fecha = new Date();
-    
+
     filtroFechas();
     filtroMoneda();
     setDastosProyectos();
@@ -102,7 +102,7 @@ $(function () {
             });
         });
     }
-    
+
     tablaTipoProyecto.evento(function () {
         let datosfila = tablaTipoProyecto.datosFila(this);
         let datosFiltradosProyecto = null;
@@ -122,7 +122,7 @@ $(function () {
             scrollTop: $("#titulo-tabla-proyectos").offset().top - 60
         }, 600);
     });
-    
+
     function filtrarDatos(datos, filtros) {
         let datosFiltrados = [];
         $.each(datos, function (key, value) {
@@ -132,7 +132,7 @@ $(function () {
         });
         return datosFiltrados;
     }
-    
+
     graficaPrincipal.agregarListener(function (dato) {
         datosFiltros.tipoProyecto = dato;
         datosFiltros.moneda = datosFiltros['moneda'];
@@ -159,7 +159,7 @@ $(function () {
             endDate: fecha
         });
         $('#desdePrincipal').datepicker('setDate', '2016-07-07');
-        $('#hastaPrincipal').datepicker('setDate', fecha.getFullYear +'-'+ fecha.getMonth() + 1);
+        $('#hastaPrincipal').datepicker('setDate', fecha.getFullYear + '-' + fecha.getMonth() + 1);
         $("#btnFiltrarDashboardPrincipal").on('click', function () {
             datosFiltros.fechaInicio = $('#fechaComienzoPrincipal').val() + "T00:00:00.000";
             datosFiltros.fechaFinal = $('#fechaFinPrincipal').val() + "T23:59:59.999";
@@ -324,15 +324,8 @@ $(function () {
         if (objeto instanceof TablaBasica) {
             objeto.evento(function () {
                 datos = objeto.datosFila(this);
-                switch (objeto['tabla']) {
-                    case 'data-table-detalles':
-                        modalDetalles(datos);
-                        break;
-                    default:
-                        datosFiltros[filtro] = datos[0];
-                        enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
-                        break;
-                }
+                datosFiltros[filtro] = datos[0];
+                enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
             });
         } else if (objeto instanceof SelectBasico) {
             objeto.evento('change', function () {
@@ -391,7 +384,7 @@ $(function () {
             }
         });
     }
-    
+
     function incializarDatos(datos) {
         datosProyectos = datos.proyectos;
         datosServicios = datos.servicios;
@@ -433,7 +426,7 @@ $(function () {
             $('#desde').datepicker('setDate', nuevaFecha[0]);
         }
         if (datosFiltros.fechaFinal === null) {
-            $('#hasta').datepicker('setDate', fecha.getFullYear +'-'+ fecha.getMonth() + 1);
+            $('#hasta').datepicker('setDate', fecha.getFullYear + '-' + fecha.getMonth() + 1);
         } else {
             var nuevaFecha = datosFiltros['fechaFinal'].split('T');
             $('#hasta').datepicker('setDate', nuevaFecha[0]);
@@ -490,13 +483,13 @@ $(function () {
                 }
             }
         });
-        
-        if(datosCategoria.length === 1 && datosFiltros['categoria'] === null){
+
+        if (datosCategoria.length === 1 && datosFiltros['categoria'] === null) {
             peticion.ocultarElemento('categoria');
             peticion.ocultarElemento('hidecategoria');
             alertaFiltros.iniciarAlerta('msg-categoria', datosCategoria['0']['Categoria']);
         }
-        if(datosSubCategoria.length === 1 && datosFiltros['subcategoria'] === null){
+        if (datosSubCategoria.length === 1 && datosFiltros['subcategoria'] === null) {
             peticion.ocultarElemento('subcategoria');
             peticion.ocultarElemento('hidesubcategoria');
             alertaFiltros.iniciarAlerta('msg-categoria', datosSubCategoria['0']['SubCategoria']);
@@ -519,11 +512,17 @@ $(function () {
     }
 
     function seccionDetalles() {
-        $('#dashboardGapsiDetalles').removeClass('hidden');
-        $('#dashboardGapsiFilters').addClass('hidden');
-        $('#verDetalles').addClass('hidden');
-        $('#ocultarDetalles').removeClass('hidden');
-
+        peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/listaRegistros', datosFiltros, function (respuesta) {
+            $('#dashboardGapsiDetalles').removeClass('hidden').empty().append(respuesta.formulario);
+            $('#dashboardGapsiFilters').addClass('hidden');
+            $('#verDetalles').addClass('hidden');
+            $('#ocultarDetalles').removeClass('hidden');
+            tablaDetalles = new TablaBasica('data-table-detalles');
+            tablaDetalles.evento(function(){
+                let claveDetalle = tablaDetalles.datosFila(this)[0];
+                modalDetalles(claveDetalle);
+            });
+        });
         $('#ocultarDetalles').on('click', function () {
             $('#dashboardGapsiDetalles').addClass('hidden');
             $('#dashboardGapsiFilters').removeClass('hidden');
@@ -532,8 +531,10 @@ $(function () {
         });
     }
 
-    function modalDetalles(infoDetalle) {
-        console.log('llamar modal')
+    function modalDetalles(clave) {
+        peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/infoRegistro', {'idRegistro':parseInt(clave)}, function (respuesta) {
+            console.log(respuesta)
+        });
     }
 
     function modalUndefined() {
@@ -559,7 +560,7 @@ $(function () {
             datosFiltros = JSON.parse(JSON.stringify(anterioresFiltros));
             if (datosFiltros.tipoProyecto !== null) {
                 enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
-            }else{
+            } else {
                 enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
             }
         });
