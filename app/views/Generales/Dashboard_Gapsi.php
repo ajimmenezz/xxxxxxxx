@@ -155,11 +155,11 @@
                             </thead>
                             <tbody>
                                 <?php                                
-                                foreach ($datos['Datos']['TiposProyectos'] as $key => $value) {                               
+                                foreach ($datos['TiposProyectos'] as $valorTipoProyecto) {
                                     echo "<tr>";
-                                    echo '<td>' . key($value) . '</td>';
-                                    echo '<td>' . $value['Total'] . '</td>';
-                                    echo '<td>$ ' . number_format($value[key($value)], 2) . '</td>';
+                                    echo '<td>' . $valorTipoProyecto['Tipo'] . '</td>';
+                                    echo '<td>' . $valorTipoProyecto['Proyectos'] . '</td>';
+                                    echo '<td>$ ' . number_format($valorTipoProyecto['Importe'], 2) . '</td>';
                                     echo "</tr>";
                                 }
                                 ?>
@@ -200,15 +200,16 @@
                             </thead>
                             <tbody>
                                 <?php
-//                                foreach ($datos['Proyectos'] as $valorProyecto) {
-//                                    echo '<tr>';
-//                                    echo '<td>' . $valorProyecto['Tipo'] . '</td>';
-//                                    echo '<td>' . $valorProyecto['IdProyecto'] . '</td>';
-//                                    echo '<td>' . $valorProyecto['Descripcion'] . '</td>';
-//                                    echo '<td>$ ' . number_format($valorProyecto['Gasto'], 2) . '</td>';
-//                                    echo '<td>' . $valorProyecto['FCreacion'] . '</td>';
-//                                    echo "</tr>";
-//                                }
+                                foreach ($datos['Proyectos'] as $valorProyecto) {
+                                    echo '<tr>';
+                                    echo '<td>' . $valorProyecto['Tipo'] . '</td>';
+                                    echo '<td>' . $valorProyecto['IdProyecto'] . '</td>';
+                                    echo '<td>' . $valorProyecto['Descripcion'] . '</td>';
+                                    echo '<td>$ ' . number_format($valorProyecto['Gasto'], 2) . '</td>';
+                                    echo '<td>' . $valorProyecto['FCreacion'] . '</td>';
+                                    echo '<td>' . $valorProyecto['UltimoRegistro'] . '</td>';
+                                    echo "</tr>";
+                                }
                                 ?>
                             </tbody>
                         </table>
