@@ -21,8 +21,10 @@ class Modelo_GestorProyectos extends Modelo_Base {
     }
 
     public function getListTypeProyects() {
-        
-        $consulta = parent::connectDBGapsi()->query("select Nombre from dbo.db_Tipo");
+        $consulta = parent::connectDBGapsi()->query("SELECT 
+                                                        Tipo AS Nombre
+                                                    FROM db_Registro
+                                                    GROUP BY Tipo");
         
         if (!empty($consulta)) {
             return $consulta->result_array();

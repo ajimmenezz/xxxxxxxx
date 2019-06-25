@@ -45,8 +45,12 @@ class GestorProyectos extends General {
                     $totalProyectos++;
                 }
             }
-            array_push($temporal, array($typeProject['Nombre'] => $gasto, 'Total' => $totalProyectos));
+            
+            if ($totalProyectos !== 0) {
+                array_push($temporal, array($typeProject['Nombre'] => $gasto, 'Total' => $totalProyectos));
+            }
         }
+        
         $this->typeProyects = $temporal;
     }
 
