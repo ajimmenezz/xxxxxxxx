@@ -494,6 +494,11 @@ $(function () {
             peticion.ocultarElemento('hidesubcategoria');
             alertaFiltros.iniciarAlerta('msg-categoria', datosSubCategoria['0']['SubCategoria']);
         }
+        if (datosConceptos.length === 1 && datosFiltros['concepto'] === null) {
+            peticion.ocultarElemento('concepto');
+            peticion.ocultarElemento('hideconcepto');
+            alertaFiltros.iniciarAlerta('msg-concepto', datosSubCategoria['0']['Concepto']);
+        }
 
         $('[id*=msg-] .close').on('click', function () {
             let llave = $(this).attr('data-value');
@@ -518,11 +523,12 @@ $(function () {
             $('#verDetalles').addClass('hidden');
             $('#ocultarDetalles').removeClass('hidden');
             tablaDetalles = new TablaBasica('data-table-detalles');
-            tablaDetalles.evento(function(){
+            tablaDetalles.evento(function () {
                 let claveDetalle = tablaDetalles.datosFila(this)[0];
                 modalDetalles(claveDetalle);
             });
         });
+
         $('#ocultarDetalles').on('click', function () {
             $('#dashboardGapsiDetalles').addClass('hidden');
             $('#dashboardGapsiFilters').removeClass('hidden');
@@ -532,7 +538,7 @@ $(function () {
     }
 
     function modalDetalles(clave) {
-        peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/infoRegistro', {'idRegistro':parseInt(clave)}, function (respuesta) {
+        peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/infoRegistro', {'idRegistro': clave}, function (respuesta) {
             console.log(respuesta)
         });
     }
