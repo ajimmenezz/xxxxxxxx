@@ -306,24 +306,7 @@ class Catalogos extends General {
         $prefix = 'Gastos/' . $data['id'] . '/PAG/';
 
         $pagosArray = [];
-        try {
-            $pagos = $this->S3->listObjects([
-                'Bucket' => 'gapsi',
-                'Prefix' => $prefix
-            ]);
 
-            $pagos = $pagos->toArray();
-
-            $pagos = (isset($pagos['Contents'])) ? $pagos['Contents'] : [];
-
-            foreach ($pagos as $key => $value) {
-                if ($value['Key'] != $prefix) {
-                    array_push($pagosArray, 'https://s3-us-west-2.amazonaws.com/gapsi/' . $value['Key']);
-                }
-            }
-        } catch (Exception $ex) {
-            
-        }
         $pagos = $this->S3->listObjects([
             'Bucket' => 'gapsi',
             'Prefix' => $prefix
@@ -772,7 +755,7 @@ class Catalogos extends General {
 
         foreach ($datos as $k => $nodoReceptor) {
             if (isset($nodoReceptor['Rfc'])) {
-                if (in_array($nodoReceptor['Rfc'], ['SSO0101179Z7', 'RSD130305DI7', 'RRC130605555'])) {
+                if (in_array($nodoReceptor['Rfc'], ['SSO0101179Z7', 'RSD130305DI7','RRC130605555'])) {
                     
                 } else {
                     $arrayReturn['code'] = 400;

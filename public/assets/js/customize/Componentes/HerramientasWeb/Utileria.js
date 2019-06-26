@@ -1,9 +1,10 @@
 class Utileria {
-    
-    constructor(){
+
+    constructor() {
+        this.evento = new Base();
         //this.alerta = new Alertas('modal-alerta-error');
     }
-  
+
     //Evento de petición
     enviar(objeto = null, url, datos = {}, callback = null){
         let _this = this;
@@ -43,12 +44,20 @@ class Utileria {
                     throw 'Sin atrapar el Error: ' + jqXHR.responseText;
                 }
             } catch (exception) {
-                //_this.alerta.mostrarAlerta('Error', `Surgio un problema de comunicación con el servidor`);
-                alert('Error', `Surgio un problema de comunicación con el servidor`);
+                $('#btnModalConfirmar').addClass('hidden');
+                _this.evento.mostrarModal('Error en el Servidor', '<div id="modal-dialogo" class="col-md-12">\n\
+                    <div class="col-md-3" style="text-align: right;">\n\
+                        <i class="fa fa-exclamation-triangle fa-4x text-danger"></i>\n\
+                    </div>\n\
+                    <div class="col-md-9">\n\
+                        <h4>No Existe la información que solicita. Contacte con el administrador</h4>\n\
+                    </div>\n\
+                </div>');
+                console.log('Error', `Surgio un problema de comunicación con el servidor`);
             }
         });
     }
-    
+
     empezarPantallaCargando(objeto) {
         let panel = $(`#${objeto}`);
         let cuerpo;
@@ -90,7 +99,7 @@ class Utileria {
             $('#iconCargando').remove();
         }
     }
-    
+
     errorServidor(data) {
         if (data.hasOwnProperty('Error')) {
             this.enviarPagina(data.Error);
@@ -98,15 +107,15 @@ class Utileria {
             console.log('mensaje error de el servidor');
         }
     }
-    
+
     enviarPagina(url = null) {
         if (typeof url === null) {
             window.location.href = "Logout";
         } else {
             window.location.href = url;
-        }
     }
-    
+    }
+
     //Plugin Elementos
     mostrarElemento(objeto = null) {
         let elemento = $(`#${objeto}`);
@@ -117,7 +126,7 @@ class Utileria {
 
         if (elemento.hasClass('hidden')) {
             elemento.removeClass('hidden');
-        }
+    }
     }
 
     ocultarElemento(objeto = null) {
@@ -129,7 +138,7 @@ class Utileria {
 
         if (!elemento.hasClass('hidden')) {
             elemento.addClass('hidden');
-        }
+    }
     }
 }
 

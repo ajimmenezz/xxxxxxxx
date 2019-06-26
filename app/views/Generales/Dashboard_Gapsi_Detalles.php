@@ -93,5 +93,5 @@
 </div>
 <!--Finaliza Detalles de COncepto-->
 <!--Empezando seccion para la captura del inventario por sala-->
-<div id="divFormularioGasto" class="content" style="display:none"></div>
+<div id="divFormularioDetalles" class="content" style="display:none"></div>
 <!--Finalizando seccion para la captura del inventario por sala-->
