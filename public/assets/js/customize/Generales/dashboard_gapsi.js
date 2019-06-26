@@ -538,7 +538,7 @@ $(function () {
     }
 
     function modalDetalles(clave) {
-        peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/infoRegistro', {'idRegistro': clave}, function (respuesta) {
+        peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/infoRegistro', {'id':parseInt(clave)}, function (respuesta) {
             console.log(respuesta)
         });
     }
