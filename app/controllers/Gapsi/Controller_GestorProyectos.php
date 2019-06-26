@@ -19,7 +19,7 @@ class Controller_GestorProyectos extends Base {
                 $resultado = $this->gestorProyecto->getProjectsInfo($this->input->post());
                 break;
             case 'infoRegistro':
-                $resultado = $this->catalogo->detallesGasto($this->input->post('idRegistro'));
+                $resultado = $this->catalogo->cargaGasto($this->input->post());
                 break;
             case 'listaRegistros':
                 $resultado = $this->gestorProyecto->getProjectRecords($this->input->post());
