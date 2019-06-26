@@ -164,6 +164,8 @@ class Modelo_Gapsi extends Modelo_Base {
     }
 
     public function getMisGastos() {
+        ini_set('memory_limit', '2048M');
+
         $condicion = '';
         $todos = true;
         if (!in_array(284, $this->usuario['Permisos'])) {
