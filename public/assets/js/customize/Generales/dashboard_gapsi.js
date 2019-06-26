@@ -468,17 +468,17 @@ $(function () {
                     && key !== 'fechaInicio' && key !== 'fechaFinal') {
                 switch (key) {
                     case 'tipoProyecto':
-                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], value);
+                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], value, key);
                         break;
                     case 'proyecto':
-                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], datosProyectos[0]['Proyecto'], 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
+                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], datosProyectos[0]['Proyecto'], key, 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
                         $('#verDetalles').removeClass('hidden');
                         break;
                     case 'sucursal':
-                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], datosSucursales[0]['Sucursal'], 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
+                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], datosSucursales[0]['Sucursal'], key, 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
                         break;
                     default:
-                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], value, 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
+                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], value, key, 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
                         break;
                 }
             }
@@ -487,17 +487,17 @@ $(function () {
         if (datosCategoria.length === 1 && datosFiltros['categoria'] === null) {
             peticion.ocultarElemento('categoria');
             peticion.ocultarElemento('hidecategoria');
-            alertaFiltros.iniciarAlerta('msg-categoria', datosCategoria['0']['Categoria']);
+            alertaFiltros.iniciarAlerta('msg-categoria', datosCategoria['0']['Categoria'], 'categoria');
         }
         if (datosSubCategoria.length === 1 && datosFiltros['subcategoria'] === null) {
             peticion.ocultarElemento('subcategoria');
             peticion.ocultarElemento('hidesubcategoria');
-            alertaFiltros.iniciarAlerta('msg-categoria', datosSubCategoria['0']['SubCategoria']);
+            alertaFiltros.iniciarAlerta('msg-categoria', datosSubCategoria['0']['SubCategoria'], 'subcategoria');
         }
         if (datosConceptos.length === 1 && datosFiltros['concepto'] === null) {
             peticion.ocultarElemento('concepto');
             peticion.ocultarElemento('hideconcepto');
-            alertaFiltros.iniciarAlerta('msg-concepto', datosSubCategoria['0']['Concepto']);
+            alertaFiltros.iniciarAlerta('msg-concepto', datosSubCategoria['0']['Concepto'], 'concepto');
         }
 
         $('[id*=msg-] .close').on('click', function () {
@@ -538,6 +538,7 @@ $(function () {
     }
 
     function modalDetalles(clave) {
+            console.log(clave)
         peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/infoRegistro', {'id':parseInt(clave)}, function (respuesta) {
             console.log(respuesta)
         });

@@ -33,12 +33,12 @@
                             <div class="underline m-b-15 m-t-15"></div>
                         </div> 
                     </div>
-                    <div class="col-md-1 col-sm-1 col-xs-1">
+                    <div class="col-md-1 col-sm-1 col-xs-1" hidden>
                         <label id="descargaExcel" class="btn btn-white">
                             <i class="fa fa-2x fa-file-excel-o text-success"></i>
                         </label>  
                     </div>
-                    <div class="col-md-1 col-sm-1 col-xs-1">
+                    <div class="col-md-1 col-sm-1 col-xs-1" hidden>
                         <label id="descargaExcel" class="btn btn-white">
                             <i class="fa fa-2x fa-file-pdf-o text-danger"></i>
                         </label>  
@@ -92,3 +92,6 @@
     </div>
 </div>
 <!--Finaliza Detalles de COncepto-->
+<!--Empezando seccion para la captura del inventario por sala-->
+<div id="divFormularioGasto" class="content" style="display:none"></div>
+<!--Finalizando seccion para la captura del inventario por sala-->
