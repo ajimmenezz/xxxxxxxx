@@ -8,10 +8,11 @@ class Alertas {
     iniciarAlerta() {
         var id = arguments[0];
         var contenido = arguments[1] || '&nbsp;';
-        var atributos = arguments[2] || null;
-        var colorAlert = arguments[3] || 'info';
-        var colorTexto = arguments[4] || 'black';
-        var icono = arguments[5] || 'fa-times';
+        var subContenido = arguments[2] || '';
+        var atributos = arguments[3] || null;
+        var colorAlert = arguments[4] || 'info';
+        var colorTexto = arguments[5] || 'black';
+        var icono = arguments[6] || 'fa-times';
         var span = '';
         
         if(atributos !== null){
@@ -25,6 +26,7 @@ class Alertas {
                                 class="alert alert-' + colorAlert + ' fade in m-b-12 remover" \n\
                                 style="color: ' + colorTexto + '">\n\
                             ' + contenido + '\n\
+                            <small>'+subContenido+'</small>\n\
                             ' + span + '\n\
                         </div>');
     }

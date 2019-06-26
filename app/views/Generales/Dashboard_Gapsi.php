@@ -45,7 +45,7 @@
                 </div>
                 <div class="radio">
                     <label style="color: #A8ACB1">
-                        <input type="radio" name="optionsRadiosMoneda" value="USD" />Dollar
+                        <input type="radio" name="optionsRadiosMoneda" value="USD" />Dolar
                     </label>
                 </div>
             </div>
@@ -251,7 +251,7 @@
             </div>
             <div class="radio">
                 <label>
-                    <input type="radio" name="optionsRadiosMonedaPrincipal" value="USD" />Dollar
+                    <input type="radio" name="optionsRadiosMonedaPrincipal" value="USD" />Dolar
                 </label>
             </div>
             <div class="divider"></div>
