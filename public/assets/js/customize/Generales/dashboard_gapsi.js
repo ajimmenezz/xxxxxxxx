@@ -148,34 +148,20 @@ $(function () {
     });
 
     function filtroFechas() {
-        $('#desdePrincipal').datepicker({
+        $('.input-daterange').datepicker({
+            autoclose: true,
             format: 'yyyy-mm-dd',
             startDate: new Date('2016-07-08'),
             endDate: fecha
         });
-        $('#hastaPrincipal').datepicker({
-            format: 'yyyy-mm-dd',
-            startDate: new Date('2016-07-08'),
-            endDate: fecha
-        });
-        $('#desdePrincipal').datepicker('setDate', '2016-07-07');
-        $('#hastaPrincipal').datepicker('setDate', fecha.getFullYear + '-' + fecha.getMonth() + 1);
+        $('#fechaComienzoPrincipal').datepicker('setDate', '2016-07-07');
+        $('#fechaFinPrincipal').datepicker('setDate', fecha.getFullYear() + '-' + fecha.getMonth() + 1);
         $("#btnFiltrarDashboardPrincipal").on('click', function () {
             datosFiltros.fechaInicio = $('#fechaComienzoPrincipal').val() + "T00:00:00.000";
             datosFiltros.fechaFinal = $('#fechaFinPrincipal').val() + "T23:59:59.999";
             enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
         });
 
-        $('#desde').datepicker({
-            format: 'yyyy-mm-dd',
-            startDate: new Date('2016-07-08'),
-            endDate: fecha
-        });
-        $('#hasta').datepicker({
-            format: 'yyyy-mm-dd',
-            startDate: new Date('2016-07-08'),
-            endDate: fecha
-        });
         $("#btnFiltrarDashboard").on('click', function () {
             datosFiltros.fechaInicio = $("#fechaComienzo").val() + "T00:00:00.000";
             datosFiltros.fechaFinal = $("#fechaFin").val() + "T23:59:59.999";
@@ -198,11 +184,12 @@ $(function () {
 
     function enviarFiltrosPrincipal(objeto, datosFiltros) {
         peticion.enviar(objeto, 'Dashboard_Gapsi/filtroPrincipal', datosFiltros, function (respuesta) {
+            $("input[name='optionsRadiosMonedaPrincipal'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
             if (respuesta.tipoProyectos.length !== 0) {
                 anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
                 actualizarObjetosPrincipal(respuesta);
             } else {
-                modalUndefined();
+                modalUndefined(1);
             }
         });
     }
@@ -380,7 +367,7 @@ $(function () {
                 }, 600);
 
             } else {
-                modalUndefined();
+                modalUndefined(2);
             }
         });
     }
@@ -420,16 +407,16 @@ $(function () {
         });
 
         if (datosFiltros.fechaInicio === null) {
-            $('#desde').datepicker('setDate', '2016-07-07');
+            $('#fechaComienzo').datepicker('setDate', '2016-07-07');
         } else {
             var nuevaFecha = datosFiltros['fechaInicio'].split('T');
-            $('#desde').datepicker('setDate', nuevaFecha[0]);
+            $('#fechaComienzo').datepicker('setDate', nuevaFecha[0]);
         }
         if (datosFiltros.fechaFinal === null) {
-            $('#hasta').datepicker('setDate', fecha.getFullYear + '-' + fecha.getMonth() + 1);
+            $('#fechaFin').datepicker('setDate', fecha.getFullYear + '-' + fecha.getMonth() + 1);
         } else {
             var nuevaFecha = datosFiltros['fechaFinal'].split('T');
-            $('#hasta').datepicker('setDate', nuevaFecha[0]);
+            $('#fechaFin').datepicker('setDate', nuevaFecha[0]);
         }
     }
 
@@ -468,17 +455,17 @@ $(function () {
                     && key !== 'fechaInicio' && key !== 'fechaFinal') {
                 switch (key) {
                     case 'tipoProyecto':
-                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], value);
+                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], value, '<br>' + key);
                         break;
                     case 'proyecto':
-                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], datosProyectos[0]['Proyecto'], 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
+                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], datosProyectos[0]['Proyecto'], '<br>' + key, 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
                         $('#verDetalles').removeClass('hidden');
                         break;
                     case 'sucursal':
-                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], datosSucursales[0]['Sucursal'], 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
+                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], datosSucursales[0]['Sucursal'], '<br>' + key, 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
                         break;
                     default:
-                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], value, 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
+                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], value, '<br>' + key, 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
                         break;
                 }
             }
@@ -487,12 +474,17 @@ $(function () {
         if (datosCategoria.length === 1 && datosFiltros['categoria'] === null) {
             peticion.ocultarElemento('categoria');
             peticion.ocultarElemento('hidecategoria');
-            alertaFiltros.iniciarAlerta('msg-categoria', datosCategoria['0']['Categoria']);
+            alertaFiltros.iniciarAlerta('msg-categoria', datosCategoria['0']['Categoria'], '<br>categoria');
         }
         if (datosSubCategoria.length === 1 && datosFiltros['subcategoria'] === null) {
             peticion.ocultarElemento('subcategoria');
             peticion.ocultarElemento('hidesubcategoria');
-            alertaFiltros.iniciarAlerta('msg-categoria', datosSubCategoria['0']['SubCategoria']);
+            alertaFiltros.iniciarAlerta('msg-categoria', datosSubCategoria['0']['SubCategoria'], '<br>subcategoria');
+        }
+        if (datosConceptos.length === 1 && datosFiltros['concepto'] === null) {
+            peticion.ocultarElemento('concepto');
+            peticion.ocultarElemento('hideconcepto');
+            alertaFiltros.iniciarAlerta('msg-concepto', datosSubCategoria['0']['Concepto'], '<br>concepto');
         }
 
         $('[id*=msg-] .close').on('click', function () {
@@ -517,12 +509,22 @@ $(function () {
             $('#dashboardGapsiFilters').addClass('hidden');
             $('#verDetalles').addClass('hidden');
             $('#ocultarDetalles').removeClass('hidden');
+            $('html, body').animate({
+                scrollTop: $("#dashboardDetallesConcepto").offset().top - 40
+            }, 600);
             tablaDetalles = new TablaBasica('data-table-detalles');
-            tablaDetalles.evento(function(){
+            tablaDetalles.evento(function () {
                 let claveDetalle = tablaDetalles.datosFila(this)[0];
                 modalDetalles(claveDetalle);
             });
+            $('#descargaPDF').on('click', function () {
+                console.log("Genera PDF")
+//                peticion.enviar('panelDashboardGapsiFilters', '', datosFiltros, function (respuesta) {
+//                    
+//                });
+            });
         });
+
         $('#ocultarDetalles').on('click', function () {
             $('#dashboardGapsiDetalles').addClass('hidden');
             $('#dashboardGapsiFilters').removeClass('hidden');
@@ -532,12 +534,22 @@ $(function () {
     }
 
     function modalDetalles(clave) {
-        peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/infoRegistro', {'id':parseInt(clave)}, function (respuesta) {
-            console.log(respuesta)
-        });
+        try {
+            peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/infoRegistro', {'id': clave}, function (respuesta) {
+                $("#divFormularioDetalles").empty().append(respuesta.html);
+                evento.cambiarDiv("#dashboardDetallesConcepto", "#divFormularioDetalles");
+                $('.btn-group').addClass('hidden');
+                $('html, body').animate({
+                    scrollTop: $("#dashboardDetallesConcepto").offset().top - 50
+                }, 600);
+            });
+        } catch (e) {
+            console.log(e);
+            modalUndefined(3);
+        }
     }
 
-    function modalUndefined() {
+    function modalUndefined(clave) {
         var html = '<div class="row m-t-20">\n\
         <form id="idUndefined" class="margin-bottom-0" enctype="multipart/form-data">\n\
             <div id="modal-dialogo" class="col-md-12">\n\
@@ -558,10 +570,16 @@ $(function () {
         $('#btnAceptar').on('click', function () {
             evento.cerrarModal();
             datosFiltros = JSON.parse(JSON.stringify(anterioresFiltros));
-            if (datosFiltros.tipoProyecto !== null) {
-                enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
-            } else {
-                enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
+            switch (clave) {
+                case 1:
+                    enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
+                    break;
+                case 2:
+                    enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+                    break;
+                default:
+                    console.log(clave);
+                    break;
             }
         });
     }

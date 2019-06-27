@@ -45,36 +45,27 @@
                 </div>
                 <div class="radio">
                     <label style="color: #A8ACB1">
-                        <input type="radio" name="optionsRadiosMoneda" value="USD" />Dollar
+                        <input type="radio" name="optionsRadiosMoneda" value="USD" />Dolar
                     </label>
                 </div>
             </div>
             <!--Finaliza selector modena-->
             <!--Empieza filtro de fecha-->
             <div class="row">
-                <div class="col-md-12">
-                    <div class="divider"></div>
-                    <h5 class="m-t-0" style="color: #A8ACB1">Filtros de fechas</h5>
-                    <div class="form-group">
-                        <label style="color: #A8ACB1">Desde</label>
-                        <div class='input-group date' id='desde'>
-                            <input id='fechaComienzo' type='text' class="form-control"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                        </div>
-                    </div>                
-                </div>
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label style="color: #A8ACB1">Hasta</label>
-                        <div class='input-group date' id='hasta'>
-                            <input id='fechaFin' type='text' class="form-control"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                        </div>
-                    </div>                
+                <div class="input-group input-daterange">
+                    <div class="col-md-12">
+                        <input id="fechaComienzo" name="startDate" type="text" class="form-control"> 
+                        <span class="input-group-addon">
+                            <label>Desde <span class="glyphicon glyphicon-calendar"></span></label>
+                        </span>
+                        <br>
+                    </div>
+                    <div class="col-md-12">
+                        <input id="fechaFin" name="endDate" type="text" class="form-control">
+                        <span class="input-group-addon">
+                            <label>Hasta <span class="glyphicon glyphicon-calendar"></span></label>
+                        </span>
+                    </div>
                 </div>
                 <div class="col-md-12">
                     <a href="#" id="btnFiltrarDashboard" class="btn btn-inverse btn-success btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
@@ -163,7 +154,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php                                
+                                <?php
                                 foreach ($datos['TiposProyectos'] as $valorTipoProyecto) {
                                     echo "<tr>";
                                     echo '<td>' . $valorTipoProyecto['Tipo'] . '</td>';
@@ -251,7 +242,7 @@
             </div>
             <div class="radio">
                 <label>
-                    <input type="radio" name="optionsRadiosMonedaPrincipal" value="USD" />Dollar
+                    <input type="radio" name="optionsRadiosMonedaPrincipal" value="USD" />Dolar
                 </label>
             </div>
             <div class="divider"></div>
@@ -259,21 +250,18 @@
         <!--Finaliza selector modena-->
         <h5 class="m-t-0">Filtros de fechas</h5>
         <!--Empieza filtro Fecha-->
-        <div class="form-group">
-            <label>Desde</label>
-            <div class='input-group date' id='desdePrincipal' values="">
-                <input id='fechaComienzoPrincipal' type='text' class="form-control"/>
+        <div class="input-group input-daterange">
+            <div class="col-md-12">
+                <input id="fechaComienzoPrincipal" name="startDate" type="text" class="form-control"> 
                 <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
+                    <label>Desde <span class="glyphicon glyphicon-calendar"></span></label>
                 </span>
+                <br>
             </div>
-        </div>
-        <div class="form-group">
-            <label>Hasta</label>
-            <div class='input-group date' id='hastaPrincipal'>
-                <input id='fechaFinPrincipal' type='text' class="form-control"/>
+            <div class="col-md-12">
+                <input id="fechaFinPrincipal" name="endDate" type="text" class="form-control">
                 <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
+                    <label>Hasta <span class="glyphicon glyphicon-calendar"></span></label>
                 </span>
             </div>
         </div>
