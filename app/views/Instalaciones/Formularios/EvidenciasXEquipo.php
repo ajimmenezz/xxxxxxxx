@@ -51,7 +51,7 @@
 ?>
 <div class="row">
     <div class="col-md-12">
-        <h4>Evidencias de Instalación Antena 1</h4>
+        <h4>Evidencias de Instalación Antena</h4>
     </div>
     <div class="col-md-12">
         <div class="underline"></div>
