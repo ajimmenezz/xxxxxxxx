@@ -148,38 +148,20 @@ $(function () {
     });
 
     function filtroFechas() {
-        $('#desdePrincipal').datepicker({
+        $('.input-daterange').datepicker({
             autoclose: true,
             format: 'yyyy-mm-dd',
             startDate: new Date('2016-07-08'),
             endDate: fecha
         });
-        $('#hastaPrincipal').datepicker({
-            autoclose: true,
-            format: 'yyyy-mm-dd',
-            startDate: new Date('2016-07-08'),
-            endDate: fecha
-        });
-        $('#desdePrincipal').datepicker('setDate', '2016-07-07');
-        $('#hastaPrincipal').datepicker('setDate', fecha.getFullYear + '-' + fecha.getMonth() + 1);
+        $('#fechaComienzoPrincipal').datepicker('setDate', '2016-07-07');
+        $('#fechaFinPrincipal').datepicker('setDate', fecha.getFullYear() + '-' + fecha.getMonth() + 1);
         $("#btnFiltrarDashboardPrincipal").on('click', function () {
             datosFiltros.fechaInicio = $('#fechaComienzoPrincipal').val() + "T00:00:00.000";
             datosFiltros.fechaFinal = $('#fechaFinPrincipal').val() + "T23:59:59.999";
             enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
         });
 
-        $('#desde').datepicker({
-            autoclose: true,
-            format: 'yyyy-mm-dd',
-            startDate: new Date('2016-07-08'),
-            endDate: fecha
-        });
-        $('#hasta').datepicker({
-            autoclose: true,
-            format: 'yyyy-mm-dd',
-            startDate: new Date('2016-07-08'),
-            endDate: fecha
-        });
         $("#btnFiltrarDashboard").on('click', function () {
             datosFiltros.fechaInicio = $("#fechaComienzo").val() + "T00:00:00.000";
             datosFiltros.fechaFinal = $("#fechaFin").val() + "T23:59:59.999";
@@ -202,6 +184,7 @@ $(function () {
 
     function enviarFiltrosPrincipal(objeto, datosFiltros) {
         peticion.enviar(objeto, 'Dashboard_Gapsi/filtroPrincipal', datosFiltros, function (respuesta) {
+            $("input[name='optionsRadiosMonedaPrincipal'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
             if (respuesta.tipoProyectos.length !== 0) {
                 anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
                 actualizarObjetosPrincipal(respuesta);
@@ -424,16 +407,16 @@ $(function () {
         });
 
         if (datosFiltros.fechaInicio === null) {
-            $('#desde').datepicker('setDate', '2016-07-07');
+            $('#fechaComienzo').datepicker('setDate', '2016-07-07');
         } else {
             var nuevaFecha = datosFiltros['fechaInicio'].split('T');
-            $('#desde').datepicker('setDate', nuevaFecha[0]);
+            $('#fechaComienzo').datepicker('setDate', nuevaFecha[0]);
         }
         if (datosFiltros.fechaFinal === null) {
-            $('#hasta').datepicker('setDate', fecha.getFullYear + '-' + fecha.getMonth() + 1);
+            $('#fechaFin').datepicker('setDate', fecha.getFullYear + '-' + fecha.getMonth() + 1);
         } else {
             var nuevaFecha = datosFiltros['fechaFinal'].split('T');
-            $('#hasta').datepicker('setDate', nuevaFecha[0]);
+            $('#fechaFin').datepicker('setDate', nuevaFecha[0]);
         }
     }
 
@@ -534,6 +517,12 @@ $(function () {
                 let claveDetalle = tablaDetalles.datosFila(this)[0];
                 modalDetalles(claveDetalle);
             });
+            $('#descargaPDF').on('click', function () {
+                console.log("Genera PDF")
+//                peticion.enviar('panelDashboardGapsiFilters', '', datosFiltros, function (respuesta) {
+//                    
+//                });
+            });
         });
 
         $('#ocultarDetalles').on('click', function () {
@@ -549,6 +538,7 @@ $(function () {
             peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/infoRegistro', {'id': clave}, function (respuesta) {
                 $("#divFormularioDetalles").empty().append(respuesta.html);
                 evento.cambiarDiv("#dashboardDetallesConcepto", "#divFormularioDetalles");
+                $('.btn-group').addClass('hidden');
                 $('html, body').animate({
                     scrollTop: $("#dashboardDetallesConcepto").offset().top - 50
                 }, 600);

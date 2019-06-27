@@ -38,8 +38,8 @@
                             <i class="fa fa-2x fa-file-excel-o text-success"></i>
                         </label>  
                     </div>
-                    <div class="col-md-1 col-sm-1 col-xs-1" hidden>
-                        <label id="descargaExcel" class="btn btn-white">
+                    <div class="col-md-1 col-sm-1 col-xs-1">
+                        <label id="descargaPDF" class="btn btn-white">
                             <i class="fa fa-2x fa-file-pdf-o text-danger"></i>
                         </label>  
                     </div>
