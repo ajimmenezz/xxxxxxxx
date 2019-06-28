@@ -22,11 +22,14 @@ class Controller_GestorProyectos extends Base {
                 $resultado = $this->catalogo->cargaGasto($this->input->post());
                 break;
             case 'listaRegistros':
-                $resultado = $this->gestorProyecto->getProjectRecords($this->input->post());
+                $resultado = $this->gestorProyecto->htmlProjectRecords($this->input->post());
                 break;
             case 'filtroPrincipal':
                 $resultado['listaProyectos'] = $this->gestorProyecto->getListProjects($this->input->post());
                 $resultado['tipoProyectos'] = $this->gestorProyecto->getProjectTypes($this->input->post());
+                break;
+            case 'PDFDetalles':
+                $resultado['listaProyectos'] = $this->gestorProyecto->getDetailsList($this->input->post());
                 break;
         }
 
