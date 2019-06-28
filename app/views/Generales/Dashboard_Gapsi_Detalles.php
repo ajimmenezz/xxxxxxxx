@@ -13,7 +13,7 @@
             </div>
         </div>
         <!--Finaliza encabezado detalles-->
-        <div id="panelDashboardGapsiFilters" class="panel panel-inverse">
+        <div id="panelDashboardGapsiDetails" class="panel panel-inverse">
 
             <!--Empieza titulo pagina-->
             <div class="panel-heading">                

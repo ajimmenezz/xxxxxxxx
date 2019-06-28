@@ -171,7 +171,7 @@ $(function () {
         $("#btnFiltrarDashboardPrincipal").on('click', function () {
             datosFiltros.fechaInicio = $('#fechaComienzoPrincipal').val() + "T00:00:00.000";
             datosFiltros.fechaFinal = $('#fechaFinPrincipal').val() + "T23:59:59.999";
-            enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
+            enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
         });
 
         $("#btnFiltrarDashboard").on('click', function () {
@@ -185,7 +185,7 @@ $(function () {
         $("input[name='optionsRadiosMonedaPrincipal").click(function () {
             var radioValueFiltrosP = $("input[name='optionsRadiosMonedaPrincipal']:checked").val();
             datosFiltros.moneda = radioValueFiltrosP;
-            enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
+            enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
         });
         $("input[name='optionsRadiosMoneda").click(function () {
             var radioValueFiltros = $("input[name='optionsRadiosMoneda']:checked").val();
@@ -530,7 +530,7 @@ $(function () {
                 modalDetalles(claveDetalle);
             });
             $('#descargaPDF').on('click', function () {
-                peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/PDFDetalles', datosFiltros, function (respuesta) {
+                peticion.enviar('panelDashboardGapsiDetails', 'Dashboard_Gapsi/PDFDetalles', datosFiltros, function (respuesta) {
                     window.open(respuesta.listaProyectos, '_blank');
                 });
             });
@@ -583,7 +583,7 @@ $(function () {
             datosFiltros = JSON.parse(JSON.stringify(anterioresFiltros));
             switch (clave) {
                 case 1:
-                    enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
+                    enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
                     break;
                 case 2:
                     enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
