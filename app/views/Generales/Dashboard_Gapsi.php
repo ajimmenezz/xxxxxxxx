@@ -55,14 +55,14 @@
                 <div class="input-group input-daterange">
                     <div class="col-md-12">
                         <input id="fechaComienzo" name="startDate" type="text" class="form-control"> 
-                        <span class="input-group-addon">
+                        <span class="input-group-addon calendarDesde">
                             <label>Desde <span class="glyphicon glyphicon-calendar"></span></label>
                         </span>
                         <br>
                     </div>
                     <div class="col-md-12">
                         <input id="fechaFin" name="endDate" type="text" class="form-control">
-                        <span class="input-group-addon">
+                        <span class="input-group-addon calendarHasta">
                             <label>Hasta <span class="glyphicon glyphicon-calendar"></span></label>
                         </span>
                     </div>
@@ -253,14 +253,14 @@
         <div class="input-group input-daterange">
             <div class="col-md-12">
                 <input id="fechaComienzoPrincipal" name="startDate" type="text" class="form-control"> 
-                <span class="input-group-addon">
+                <span class="input-group-addon calendarDesdePrincipal">
                     <label>Desde <span class="glyphicon glyphicon-calendar"></span></label>
                 </span>
                 <br>
             </div>
             <div class="col-md-12">
                 <input id="fechaFinPrincipal" name="endDate" type="text" class="form-control">
-                <span class="input-group-addon">
+                <span class="input-group-addon calendarHastaPrincipal">
                     <label>Hasta <span class="glyphicon glyphicon-calendar"></span></label>
                 </span>
             </div>

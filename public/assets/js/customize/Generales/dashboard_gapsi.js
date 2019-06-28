@@ -154,6 +154,18 @@ $(function () {
             startDate: new Date('2016-07-08'),
             endDate: fecha
         });
+        $('.calendarDesdePrincipal').click(function () {
+            $("#fechaComienzoPrincipal").datepicker('show');
+        });
+        $('.calendarHastaPrincipal').click(function () {
+            $("#fechaFinPrincipal").datepicker('show');
+        });
+        $('.calendarDesde').click(function () {
+            $("#fechaComienzo").datepicker('show');
+        });
+        $('.calendarHasta').click(function () {
+            $("#fechaFin").datepicker('show');
+        });
         $('#fechaComienzoPrincipal').datepicker('setDate', '2016-07-07');
         $('#fechaFinPrincipal').datepicker('setDate', fecha.getFullYear() + '-' + fecha.getMonth() + 1);
         $("#btnFiltrarDashboardPrincipal").on('click', function () {
