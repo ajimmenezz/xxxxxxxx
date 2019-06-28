@@ -530,10 +530,9 @@ $(function () {
                 modalDetalles(claveDetalle);
             });
             $('#descargaPDF').on('click', function () {
-                console.log("Genera PDF")
-//                peticion.enviar('panelDashboardGapsiFilters', '', datosFiltros, function (respuesta) {
-//                    
-//                });
+                peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/PDFDetalles', datosFiltros, function (respuesta) {
+                    window.open(respuesta.listaProyectos, '_blank');
+                });
             });
         });
 

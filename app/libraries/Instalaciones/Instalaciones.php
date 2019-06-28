@@ -452,6 +452,10 @@ class Instalaciones extends General
                 case '45':
                     $ruta = $this->exportar45($datos['id']);
                     break;
+                case 48:
+                case '48':
+                    $ruta = $this->exportar48($datos['id']);
+                    break;
             }
 
             $concluir = $this->DB->concluirServicio($datos['id']);
@@ -528,7 +532,7 @@ class Instalaciones extends General
             ];
         } else {
             $data = [
-                'firmas' => $this->DB->getFirmasServicio($datos['id']),
+                'firmas' => $this->tieneFirmas($datos['id']),
                 'evidencias' => $this->getEvidenciasXEquipoInstalado($datos['id'], $datos['instalacion']),
                 'instalacion' => $datos['instalacion']
             ];
@@ -1185,8 +1189,7 @@ class Instalaciones extends General
     private function exportar48(int $servicio)
     {
         $generales = $this->DB->getGeneralesServicio($servicio)[0];
-        $instalados = $this->DB->getEquiposInstalados($servicio);        
-        // $evidenciasInstalacion = $this->evidenciasInstalacion(['id' => $servicio])['infoEvidenciasInstalacion'];        
+        $instalados = $this->DB->getAntenasInstaladas($servicio)['result'];
         $materiales = $this->DB->materialesUtilizados($servicio)['lista'];
         $firmas = $this->DB->getFirmasServicio($servicio)[0];
 
@@ -1214,28 +1217,59 @@ class Instalaciones extends General
         $this->pdf->SetFillColor(31, 56, 100);
         $this->pdf->SetTextColor(255, 255, 255);
 
-        $this->pdf->SetXY(10, 36);
+        $x = 10;
+        $y = 36;
+
+        $this->pdf->SetXY($x, $y);
         $this->pdf->SetFont("helvetica", "BI", 10);
         $this->pdf->Cell(0, 6, utf8_decode("Información General"), 1, 0, 'L', true);
 
         $this->pdf->SetFillColor(217, 217, 217);
         $this->pdf->SetTextColor(10, 10, 10);
 
-        $this->pdf->SetXY(10, 42);
         $this->pdf->SetFont("helvetica", "BI", 9);
+
+
+        $y += 6;
+        $this->pdf->SetXY($x, $y);
         $this->pdf->Cell(25, 5, "Cliente:", 1, 0, 'R', true);
 
-        $this->pdf->SetXY(35, 42);
-        $this->pdf->SetFont("helvetica", "", 9);
-        $this->pdf->Cell(0, 5, utf8_decode($generales['Cliente']), 1, 0, 'L', true);
-
-        $this->pdf->SetXY(10, 47);
-        $this->pdf->SetFont("helvetica", "BI", 9);
+        $y += 5;
+        $this->pdf->SetXY($x, $y);
         $this->pdf->Cell(25, 5, "Sucursal:", 1, 0, 'R');
 
-        $this->pdf->SetXY(35, 47);
+        $y += 5;
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(25, 5, "Fecha:", 1, 0, 'R', true);
+
+        $y += 5;
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(25, 5, "Ticket:", 1, 0, 'R');
+
         $this->pdf->SetFont("helvetica", "", 9);
+
+        $x = 35;
+        $y -= 15;
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(0, 5, utf8_decode($generales['Cliente']), 1, 0, 'L', true);
+
+        $y += 5;
+        $this->pdf->SetXY($x, $y);
         $this->pdf->Cell(0, 5, utf8_decode($generales['Sucursal']), 1, 0, 'L');
+
+        $y += 5;
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(0, 5, utf8_decode($generales['FechaInicio']), 1, 0, 'L', true);
+
+        $y += 5;
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(0, 5, utf8_decode($generales['Ticket']), 1, 0, 'L');
+
+        $x = 10;
+        $y += 5;
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell(0, 2, "", 1, 0, 'C', true);
 
         /******************************************* 
          * ******HEADER EQUIPOS INSTALADOS *********
@@ -1244,9 +1278,12 @@ class Instalaciones extends General
         $this->pdf->SetFillColor(31, 56, 100);
         $this->pdf->SetTextColor(255, 255, 255);
 
-        $this->pdf->SetXY(10, 52);
+        $x = 10;
+        $y += 2;
+        $this->pdf->SetXY($x, $y);
         $this->pdf->SetFont("helvetica", "BI", 10);
         $this->pdf->Cell(0, 6, utf8_decode("Equipos Instalados"), 1, 0, 'L', true);
+        $y += 6;
 
         $this->pdf->SetFillColor(191, 191, 191);
         $this->pdf->SetTextColor(10, 10, 10);
@@ -1254,134 +1291,186 @@ class Instalaciones extends General
         /************************************* 
          ********ANTENAS INSTALADAS* *********
          **************************************/
-        $this->pdf->SetXY(10, 58);
-        $this->pdf->SetFont("helvetica", "BI", 13);
-        $this->pdf->Cell(13, 35, "#1", 1, 0, 'C', true);
 
-        $this->pdf->SetFillColor(217, 217, 217);
-        $this->pdf->SetFont("helvetica", "BI", 9);
+        $contInstalados = 0;
+        foreach ($instalados as $key => $value) {
+            $contInstalados++;
 
-        $this->pdf->SetXY(23, 58);
-        $this->pdf->Cell(36, 5, utf8_decode("Ubicación:"), 1, 0, 'R', true);
+            if (($y + 45) > 276) {
+                $this->pdf->AddPage();
+                $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+                $x = 10;
+                $y = 32;
+                $this->pdf->SetFillColor(31, 56, 100);
+                $this->pdf->SetTextColor(255, 255, 255);
+                $this->pdf->SetFont("helvetica", "BI", 10);
+                $this->pdf->SetXY($x, $y);
+                $this->pdf->Cell(0, 6, utf8_decode("Equipos Instalados"), 1, 0, 'L', true);
+                $y += 6;
+            }
 
-        $this->pdf->SetXY(23, 63);
-        $this->pdf->Cell(36, 5, utf8_decode("Modelo de Equipo:"), 1, 0, 'R');
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->SetFont("helvetica", "BI", 13);
+            $this->pdf->Cell(13, 45, "#" . $contInstalados, 1, 0, 'C', true);
 
-        $this->pdf->SetXY(23, 68);
-        $this->pdf->Cell(36, 5, utf8_decode("Número de Serie:"), 1, 0, 'R', true);
-
-        $this->pdf->SetXY(23, 73);
-        $this->pdf->Cell(36, 5, utf8_decode("IP Asignada:"), 1, 0, 'R');
-
-        $this->pdf->SetXY(23, 78);
-        $this->pdf->Cell(36, 5, utf8_decode("MAC Address:"), 1, 0, 'R', true);
-
-        $this->pdf->SetXY(23, 83);
-        $this->pdf->Cell(36, 5, utf8_decode("Firmware:"), 1, 0, 'R');
-
-        $this->pdf->SetXY(23, 88);
-        $this->pdf->Cell(36, 5, utf8_decode("Contador:"), 1, 0, 'R', true);
+            $this->pdf->SetFillColor(217, 217, 217);
+            $this->pdf->SetFont("helvetica", "BI", 9);
 
 
-        // $this->pdf->SetFont("helvetica", "", 9);
+            $this->pdf->SetFillColor(217, 217, 217);
+            $this->pdf->SetFont("helvetica", "B", 9);
+            $this->pdf->SetTextColor(10, 10, 10);
 
-        // $this->pdf->SetXY(59, 58);
-        // $this->pdf->Cell(0, 5, utf8_decode($instalados['impresora']['Area'] . ' ' . $instalados['impresora']['Punto']), 1, 0, 'L', true);
+            $x = 23;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(36, 5, utf8_decode("Ubicación:"), 1, 0, 'R', true);
+            $y += 5;
 
-        // $this->pdf->SetXY(59, 63);
-        // $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['impresora']['Modelo'])), 1, 0, 'L');
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(36, 5, utf8_decode("Modelo de Equipo:"), 1, 0, 'R');
+            $y += 5;
 
-        // $this->pdf->SetXY(59, 68);
-        // $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['impresora']['Serie'])), 1, 0, 'L', true);
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(36, 5, utf8_decode("Número de Serie:"), 1, 0, 'R', true);
+            $y += 5;
 
-        // $this->pdf->SetXY(59, 73);
-        // $this->pdf->Cell(0, 5, utf8_decode($instalados['impresora']['IP']), 1, 0, 'L');
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(36, 5, utf8_decode("MAC Address:"), 1, 0, 'R');
+            $y += 5;
 
-        // $this->pdf->SetXY(59, 78);
-        // $this->pdf->Cell(0, 5, strtoupper(utf8_decode($instalados['impresora']['MAC'])), 1, 0, 'L', true);
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(36, 5, utf8_decode("Ocupa POE:"), 1, 0, 'R', true);
+            $y += 5;
 
-        // $this->pdf->SetXY(59, 83);
-        // $this->pdf->Cell(0, 5, utf8_decode($instalados['impresora']['Firmware']), 1, 0, 'L');
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(36, 5, utf8_decode("Serie POE:"), 1, 0, 'R');
+            $y += 5;
 
-        // $this->pdf->SetXY(59, 88);
-        // $this->pdf->Cell(0, 5, utf8_decode($instalados['impresora']['Contador']), 1, 0, 'L', true);
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(36, 5, utf8_decode("Modelo de Switch:"), 1, 0, 'R', true);
+            $y += 5;
 
-        $this->pdf->SetXY(10, 93);
-        $this->pdf->Cell(0, 2, "", 1, 0, 'C');
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(36, 5, utf8_decode("Número de Switch:"), 1, 0, 'R');
+            $y += 5;
 
-        /************************************************* 
-         ********* SECCIÓN EVIDENCIAS INSTALACION *********
-         **************************************************/
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(36, 5, utf8_decode("Puerto de Switch:"), 1, 0, 'R', true);
+            $y += 5;
 
-        // $totalEvidencias = count($evidenciasInstalacion);
-        // if ($totalEvidencias > 0) {
+            $this->pdf->SetFont("helvetica", "", 9);
 
-        //     $this->pdf->SetFillColor(31, 56, 100);
-        //     $this->pdf->SetTextColor(255, 255, 255);
+            $x = 59;
+            $y -= 45;
 
-        //     $this->pdf->SetXY($x, $y);
-        //     $this->pdf->SetFont("helvetica", "BI", 10);
-        //     $this->pdf->Cell(0, 6, utf8_decode("Evidencias de Instalación"), 1, 0, 'L', true);
-        //     $y += 6;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(0, 5, utf8_decode($value['Ubicacion']), 1, 0, 'L', true);
+            $y += 5;
 
-        //     $filas = ceil($totalEvidencias / 4);
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(0, 5, strtoupper(utf8_decode($value['Modelo'])), 1, 0, 'L');
+            $y += 5;
 
-        //     $this->pdf->SetTextColor(10, 10, 10);
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(0, 5, utf8_decode($value['Serie']), 1, 0, 'L', true);
+            $y += 5;
 
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(0, 5, strtoupper(utf8_decode($value['MAC'])), 1, 0, 'L');
+            $y += 5;
 
-        //     $indice = 0;
-        //     for ($f = 1; $f <= $filas; $f++) {
+            $ocupaPOE = 'NO';
+            $seriePOE = '';
+            if ($value['POE'] == 1) {
+                $ocupaPOE = 'SI';
+                $seriePOE = $value['SeriePOE'];
+            }
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(0, 5, utf8_decode($ocupaPOE), 1, 0, 'L', true);
+            $y += 5;
 
-        //         if (($y + 50) > 276) {
-        //             $this->pdf->AddPage();
-        //             $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
-        //             $x = 10;
-        //             $y = 32;
-        //             $this->pdf->SetTextColor(255, 255, 255);
-        //             $this->pdf->SetXY($x, $y);
-        //             $this->pdf->Cell(0, 6, utf8_decode("Evidencias de Instalación"), 1, 0, 'L', true);
-        //             $y += 6;
-        //         }
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(0, 5, strtoupper(utf8_decode($seriePOE)), 1, 0, 'L');
+            $y += 5;
 
-        //         $this->pdf->SetXY($x, $y);
-        //         for ($i = 1; $i <= 4; $i++) {
-        //             $evidencia = "";
-        //             $link = "";
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(0, 5, utf8_decode($value['ModeloSwitch']), 1, 0, 'L', true);
+            $y += 5;
 
-        //             if (isset($evidenciasInstalacion[$indice])) {
-        //                 $evidencia = $evidenciasInstalacion[$indice]['Evidencia'];
-        //                 $url = $evidenciasInstalacion[$indice]['Archivo'];
-        //                 $link = 'Link To Image';
-        //                 $this->pdf->Image('.' . $url, $x + 2.5, $y + 2.5, 42.5, 40, pathinfo($url, PATHINFO_EXTENSION), $url);
-        //             }
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(0, 5, strtoupper(utf8_decode($value['NumeroSwitch'])), 1, 0, 'L');
+            $y += 5;
 
-        //             $this->pdf->SetTextColor(100, 100, 100);
-        //             $this->pdf->Cell(47.5, 45, $link, 1, 0, 'C');
-        //             $y += 45;
-        //             $this->pdf->SetXY($x, $y);
-        //             $this->pdf->SetFont("helvetica", "BI", 8);
-        //             $this->pdf->SetTextColor(20, 20, 20);
-        //             $this->pdf->Cell(47.5, 5, utf8_decode($evidencia), 1, 0, 'C');
-        //             $x += 47.5;
-        //             $y -= 45;
-        //             $this->pdf->SetXY($x, $y);
-        //             if ($i == 4) {
-        //                 $x = 10;
-        //                 $y += 50;
-        //             }
-        //             $indice++;
-        //         }
-        //     }
-        // }
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(0, 5, utf8_decode($value['PuertoSwitch']), 1, 0, 'L', true);
+            $y += 5;
+            $x = 10;
+
+            $evidenciasInstalacion = $this->DB->getEvidenciasXEquipoInstalado($value['Id']);
+            $totalEvidencias = count($evidenciasInstalacion);
+            if ($totalEvidencias > 0) {
+                $filas = ceil($totalEvidencias / 4);
+
+                $indice = 0;
+                for ($f = 1; $f <= $filas; $f++) {
+
+                    if (($y + 50) > 276) {
+                        $this->pdf->AddPage();
+                        $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
+                        $x = 10;
+                        $y = 32;
+                        $this->pdf->SetFillColor(31, 56, 100);
+                        $this->pdf->SetTextColor(255, 255, 255);
+                        $this->pdf->SetFont("helvetica", "BI", 10);
+                        $this->pdf->SetXY($x, $y);
+                        $this->pdf->Cell(0, 6, utf8_decode("Equipos Instalados"), 1, 0, 'L', true);
+                        $y += 6;
+                    }
+
+                    $this->pdf->SetXY($x, $y);
+                    for ($i = 1; $i <= 4; $i++) {
+                        $evidencia = "";
+                        $link = "";
+
+                        if (isset($evidenciasInstalacion[$indice])) {
+                            $evidencia = $evidenciasInstalacion[$indice]['Evidencia'];
+                            $url = $evidenciasInstalacion[$indice]['Archivo'];
+                            $link = 'Link To Image';
+                            $this->pdf->Image('.' . $url, $x + 2.5, $y + 2.5, 42.5, 40, pathinfo($url, PATHINFO_EXTENSION), $url);
+                        }
+
+                        $this->pdf->SetTextColor(100, 100, 100);
+                        $this->pdf->Cell(47.5, 45, $link, 1, 0, 'C');
+                        $y += 45;
+                        $this->pdf->SetXY($x, $y);
+                        $this->pdf->SetFont("helvetica", "BI", 8);
+                        $this->pdf->SetTextColor(20, 20, 20);
+                        $this->pdf->Cell(47.5, 5, utf8_decode($evidencia), 1, 0, 'C');
+                        $x += 47.5;
+                        $y -= 45;
+                        $this->pdf->SetXY($x, $y);
+                        if ($i == 4) {
+                            $x = 10;
+                            $y += 50;
+                        }
+                        $indice++;
+                    }
+                }
+            }
+
+            $x = 10;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(0, 2, "", 1, 0, 'C');
+            $y += 2;
+        }
 
         /************************************************* 
          ********* SECCIÓN MATERIALES UTILIZADOS *********
          *************************************************/
         $x = 10;
-        $y = 93;
         $totalMateriales = count($materiales);
         if ($totalMateriales > 0) {
-            if (($y + 11) > 276) {
+            if (($y + 13) > 276) {
                 $this->pdf->AddPage();
                 $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
                 $x = 10;
@@ -1405,12 +1494,17 @@ class Instalaciones extends General
                 $this->pdf->Cell(20, 5, $value['Cantidad'], 1, 0, 'C', $fill);
                 $x += 20;
                 $this->pdf->SetXY($x, $y);
-                $this->pdf->Cell(0, 5, $value['Producto'], 1, 0, 'L', $fill);
+                $this->pdf->Cell(0, 5, utf8_decode($value['Producto']), 1, 0, 'L', $fill);
 
                 $x = 10;
                 $y += 5;
                 $fill = !$fill;
             }
+
+            $x = 10;
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell(0, 2, "", 1, 0, 'C');
+            $y += 2;
         }
 
 
