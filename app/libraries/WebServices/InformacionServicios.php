@@ -202,10 +202,7 @@ class InformacionServicios extends General {
                                                             ON tse.IdSolicitud = tso.Id 
                                                             WHERE tso.Folio = "' . $datos['Folio'] . '"'
                 . $datosExtraServicio .
-                'AND (tse.IdEstatus in (1,2,3,10,12) 
-                                                            OR(tse.IdTipoServicio = 20 
-                                                                    AND tse.IdEstatus = 4
-                                                                    AND(tse.Firma IS NULL OR tse.Firma = "")))
+                'AND tse.IdEstatus in (1,2,3,10,12)
                                                                     AND tse.IdTipoServicio not in (21,41)');
 
         return $servicios;
@@ -1002,6 +999,7 @@ class InformacionServicios extends General {
                                         INNER JOIN t_solicitudes ts
                                             ON ts.Id = tst.IdSolicitud
                                         WHERE tst.Id = "' . $datos['servicio'] . '"');
+
         $servicios = $this->verificarTodosServiciosFolio(array('Servicio' => $datos['servicio'], 'ServicioConcluir' => TRUE, 'Folio' => $datosServicios[0]['Folio']));
 
         if (empty($servicios)) {
