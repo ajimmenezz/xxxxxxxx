@@ -366,6 +366,7 @@ $(function () {
 
     function enviarInformacionFiltros(objeto, datosFiltros) {
         peticion.enviar(objeto, 'Dashboard_Gapsi/tipoProyecto', datosFiltros, function (respuesta) {
+            console.log(respuesta.consulta)
             if (respuesta.consulta.proyectos.length !== 0) {
                 incializarDatos(respuesta.consulta);
                 setSecciones(respuesta.formulario);
@@ -456,7 +457,7 @@ $(function () {
             let cell1 = row.insertCell(0);
             let cell2 = row.insertCell(1);
             cell1.innerHTML = value.TipoTrans;
-            cell2.innerHTML = value.Gasto.toFixed(2);
+            cell2.innerHTML = formatoNumero(value.Gasto.toFixed(2));
         });
 
         alertaFiltros.quitarAlert();

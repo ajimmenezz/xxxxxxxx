@@ -113,6 +113,13 @@ class GerstorProyectosGAPSI extends General {
                             AND dr.Sucursal = '" . $filters['sucursal'] . "'
                             AND ddg.Categoria = '" . $filters['categoria'] . "'
                             AND ddg.SubCategoria = '" . $filters['subcategoria'] . "'";
+        } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['sucursal']) && !empty($filters['categoria']) && !empty($filters['subcategoria'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'
+                            AND dr.Sucursal = '" . $filters['sucursal'] . "'
+                            AND ddg.Categoria = '" . $filters['categoria'] . "'
+                            AND ddg.SubCategoria = '" . $filters['subcategoria'] . "'";
         } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['servicio']) && !empty($filters['sucursal']) && !empty($filters['categoria'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
@@ -120,6 +127,13 @@ class GerstorProyectosGAPSI extends General {
                             AND dr.TipoServicio = '" . $filters['servicio'] . "'
                             AND dr.Sucursal = '" . $filters['sucursal'] . "'
                             AND ddg.Categoria = '" . $filters['categoria'] . "'";
+        } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['servicio']) && !empty($filters['sucursal']) && !empty($filters['concepto'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'
+                            AND dr.TipoServicio = '" . $filters['servicio'] . "'
+                            AND dr.Sucursal = '" . $filters['sucursal'] . "'
+                            AND ddg.Concepto = '" . $filters['concepto'] . "'";
         } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['servicio']) && !empty($filters['categoria']) && !empty($filters['subcategoria'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
@@ -129,7 +143,7 @@ class GerstorProyectosGAPSI extends General {
                             AND ddg.SubCategoria = '" . $filters['subcategoria'] . "'";
         } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['categoria']) && !empty($filters['subcategoria'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
-                            AND dr.Tipo '" . $filters['tipoProyecto'] . "'
+                            AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
                             AND Proyecto = '" . $filters['proyecto'] . "'
                             AND ddg.Categoria = '" . $filters['categoria'] . "'
                             AND ddg.SubCategoria = '" . $filters['subcategoria'] . "'";
@@ -138,6 +152,12 @@ class GerstorProyectosGAPSI extends General {
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
                             AND Proyecto = '" . $filters['proyecto'] . "'
                             AND dr.TipoServicio = '" . $filters['servicio'] . "'
+                            AND ddg.Categoria = '" . $filters['categoria'] . "'";
+        } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['sucursal']) && !empty($filters['categoria'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'
+                            AND dr.Sucursal = '" . $filters['sucursal'] . "'
                             AND ddg.Categoria = '" . $filters['categoria'] . "'";
         } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['servicio']) && !empty($filters['sucursal'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
