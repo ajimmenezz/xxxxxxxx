@@ -67,4 +67,17 @@ class Modelo_ProyectoGapsi extends Modelo_Base {
         return $ultimoMovimiento;
     }
 
+    public function getSucursales(array $datosProyecto) {
+        $consulta = parent::connectDBGapsi()->query("SELECT                                                                                                      
+                                                        Sucursal
+                                                    FROM db_Registro
+                                                    where Proyecto = '" . $datosProyecto['idProyecto'] . "'
+                                                    and StatusConciliacion = 'Conciliado' 
+                                                    and Moneda = '" . $datosProyecto['moneda'] . "'");
+        if (!empty($consulta)) {
+            return $consulta->result_array();
+        }
+        return array();
+    }
+
 }

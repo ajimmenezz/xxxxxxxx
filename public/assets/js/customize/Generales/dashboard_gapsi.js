@@ -84,6 +84,7 @@ $(function () {
         let datosFiltradosProyecto = null;
         tablaProyectos.limpiartabla();
         datosFiltradosProyecto = filtrarDatos(datosProyecto, {condicion: 'tipo', valor: datosfila[0]});
+        console.log(datosFiltradosProyecto);
         $.each(datosFiltradosProyecto, function (key, value) {
             tablaProyectos.agregarDatosFila([
                 value.tipo,
@@ -340,7 +341,8 @@ $(function () {
     }
 
     function enviarInformacionFiltros(objeto, datosFiltros) {
-        peticion.enviar(objeto, 'Dashboard_Gapsi/tipoProyecto', datosFiltros, function (respuesta) {
+        console.log(datosFiltros);
+        peticion.enviar(objeto, 'Dashboard_Gapsi/getDatosProyectos', datosFiltros, function (respuesta) {
             if (respuesta.consulta.proyectos.length !== 0) {
                 setSecciones(respuesta.formulario);
                 incializarDatos(respuesta.consulta);

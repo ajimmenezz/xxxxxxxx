@@ -8,7 +8,8 @@ class Controller_GestorProyectos extends Base {
 
     public function __construct() {
         parent::__construct();
-        $this->gestorProyecto = new \Librerias\Gapsi\GerstorProyectosGAPSI();
+//        $this->gestorProyecto = new \Librerias\Gapsi\GerstorProyectosGAPSI();
+        $this->gestorProyecto = new \Librerias\Gapsi\GestorProyectos();
     }
 
     public function manejarEvento(string $evento = null) {
@@ -23,8 +24,11 @@ class Controller_GestorProyectos extends Base {
                 $resultado['listaProyectos'] = $this->gestorProyecto->getListProjects($this->input->post());
                 $resultado['tipoProyectos'] = $this->gestorProyecto->getProjectTypes($this->input->post());
                 break;
+            case 'getDatosProyectos':
+                $resultado = $this->gestorProyecto->getInfoProyecto($this->input->post());
+                break;
         }
-        
+
         echo json_encode($resultado);
     }
 
