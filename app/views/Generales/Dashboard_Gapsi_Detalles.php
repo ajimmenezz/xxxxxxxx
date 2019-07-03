@@ -74,7 +74,7 @@
                                             echo '<td>' . $valor['Importe'] . '</td>';
                                             echo '<td>' . $valor['Moneda'] . '</td>';
                                             echo '<td>' . $valor['TipoTrans'] . '</td>';
-                                            echo '<td>' . $valor['FCaptura'] . '</td>';
+                                            echo '<td>' . $valor['Fecha'] . '</td>';
                                         echo "</tr>";
                                     }
                                     ?>
