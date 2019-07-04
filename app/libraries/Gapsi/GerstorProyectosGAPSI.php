@@ -86,7 +86,7 @@ class GerstorProyectosGAPSI extends General {
 
     private function parametersDate(array $filters) {
         if (!empty($filters['fechaInicio']) && !empty($filters['fechaFinal'])) {
-            $parameters = " AND FCaptura BETWEEN '" . $filters['fechaInicio'] . "' AND '" . $filters['fechaFinal'] . "'";
+            $parameters = " AND Fecha BETWEEN '" . $filters['fechaInicio'] . "' AND '" . $filters['fechaFinal'] . "'";
         } else {
             $parameters = '';
         }
@@ -262,7 +262,7 @@ class GerstorProyectosGAPSI extends General {
                         $records['Importe'],
                         $records['Moneda'],
                         $records['TipoTrans'],
-                        $records['FCaptura']),
+                        $records['Fecha']),
                 ));
             }
             
