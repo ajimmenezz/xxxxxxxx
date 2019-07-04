@@ -57,6 +57,8 @@ $(function () {
     let selectorsubcategoria = null;
     let selectorconcepto = null;
     let tablaDetalles = null;
+    let totalGastoTipoProyectos = 0;
+    let totalGastoProyectosP = 0;
     let totalGastoProyectos = 0;
     let totalGastoServicios = 0;
     let totalGastoSucursales = 0;
@@ -95,6 +97,7 @@ $(function () {
     filtroMoneda();
     setDastosProyectos();
     function setDastosProyectos() {
+        let total = 0;
         let temporal = tablaProyectos.datosTabla();
         datosProyecto = Array();
         $.each(temporal, function (key, value) {
@@ -106,12 +109,21 @@ $(function () {
                 fecha: value[4],
                 fechaFin: value[5]
             });
+            let valorGasto = value[3].split(' ')[1].split(',');
+            let concatena = '';
+            $.each(valorGasto, function (key, value) {
+                concatena += value;
+            });
+            total += parseFloat(concatena);
         });
+        totalGastoTipoProyectos = total;
+        $("#gastoTipoProyectos").text("$" + formatoNumero(totalGastoTipoProyectos.toFixed(2)));
     }
 
     tablaTipoProyecto.evento(function () {
         let datosfila = tablaTipoProyecto.datosFila(this);
         let datosFiltradosProyecto = null;
+        let total = 0;
         tablaProyectos.limpiartabla();
         datosFiltradosProyecto = filtrarDatos(datosProyecto, {condicion: 'tipo', valor: datosfila[0]});
         $.each(datosFiltradosProyecto, function (key, value) {
@@ -123,7 +135,15 @@ $(function () {
                 value.fecha,
                 value.fechaFin
             ]);
+            let valorGasto = value.gasto.split(' ')[1].split(',');
+            let concatena = '';
+            $.each(valorGasto, function (key, value) {
+                concatena += value;
+            });
+            total += parseFloat(concatena);
         });
+        totalGastoProyectosP = total;
+        $("#gastoProyectos").text("Gasto total: $" + formatoNumero(totalGastoProyectosP.toFixed(2)));
         $('html, body').animate({
             scrollTop: $("#titulo-tabla-proyectos").offset().top - 60
         }, 600);
@@ -421,7 +441,7 @@ $(function () {
         $("#gastoCategoria").text("$" + formatoNumero(totalGastoCategoria.toFixed(2)));
         $("#gastoSubCategoria").text("$" + formatoNumero(totalGastoSubCategoria.toFixed(2)));
         $("#gastoConcepto").text("$" + formatoNumero(totalGastoConceptos.toFixed(2)));
-        if ($("#proyecto").hasClass("hidden") && $("#servicio").hasClass("hidden") && $("#sucursal").hasClass("hidden") && 
+        if ($("#proyecto").hasClass("hidden") && $("#servicio").hasClass("hidden") && $("#sucursal").hasClass("hidden") &&
                 $("#categoria").hasClass("hidden") && $("#subcategoria").hasClass("hidden") && $("#concepto").hasClass("hidden")) {
             seccionDetalles();
         }
