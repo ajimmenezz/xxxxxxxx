@@ -17,26 +17,29 @@ class Proyecto extends General {
     private $DBProyecto;
     private $ultimoMovimiento;
 
-    public function __construct(string $idProyecto) {
+    public function __construct(array $datosProyecto) {
         parent::__construct();
         $this->DBProyecto = \Modelos\Modelo_ProyectoGapsi::factory();
-        $this->setDatos($idProyecto);
+        $this->setDatos($datosProyecto);
     }
 
-    private function setDatos(string $idProyecto) {
-        $this->id = $idProyecto;
-        $datosProyecto = $this->DBProyecto->getInformacion($idProyecto);
-        foreach ($datosProyecto as $key => $value) {
+    private function setDatos(array $datosProyecto) {
+        $this->id = $datosProyecto['idProyecto'];
+        $proyecto = $this->DBProyecto->getInformacion($datosProyecto);
+        foreach ($proyecto as $key => $value) {
             $this->nombre = $value['Nombre'];
             $this->tipo = $value['TipoProyecto'];
             $this->fecha = $value['Fecha'];
         }
 
-        $this->gasto = $this->DBProyecto->getGasto($idProyecto, 'MN');
-        $this->compra = $this->DBProyecto->getCompra($idProyecto, 'MN');
+        $this->gasto = $this->DBProyecto->getGasto($datosProyecto['idProyecto'], $datosProyecto['moneda']);
+        $this->compra = $this->DBProyecto->getCompra($datosProyecto['idProyecto'], $datosProyecto['moneda']);
         $this->totalTransferencia = $this->compra + $this->gasto;
-        $this->ultimoMovimiento = $this->DBProyecto->getUltimoMovimiento($idProyecto);
-        $this->crearSucursales(array('idProyecto' => $idProyecto, 'moneda' => 'MN'));
+        $this->ultimoMovimiento = $this->DBProyecto->getUltimoMovimiento($datosProyecto['idProyecto']);
+
+        if (isset($datosProyecto['datosExtra'])) {
+            $this->crearSucursales($datosProyecto);
+        }
     }
 
     public function getType() {
@@ -80,13 +83,13 @@ class Proyecto extends General {
 
     private function crearSucursales(array $datosProyecto) {
         $this->sucursales = array();
-        $listaSucursales = $this->DBProyecto->getSucursales(array('idProyecto' => $datosProyecto['idProyecto'], 'moneda' => $datosProyecto['moneda']));
+        $listaSucursales = $this->DBProyecto->getSucursales($datosProyecto);
 
         foreach ($listaSucursales as $key => $sucursal) {
-            $temporal = new \Librerias\Gapsi\Sucursal($sucursal['Sucursal']);
+            var_dump($sucursal);
+            $temporal = new \Librerias\Gapsi\Sucursal($sucursal['Sucursal'], $datosProyecto);
             array_push($this->sucursales, $temporal->getDatos());
         }
-
     }
 
 }

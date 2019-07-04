@@ -6,13 +6,13 @@ use Librerias\Modelos\Base as Modelo_Base;
 
 class Modelo_ProyectoGapsi extends Modelo_Base {
 
-    public function getInformacion(string $idProyecto) {
+    public function getInformacion(array $datosProyecto) {
         $consulta = parent::connectDBGapsi()->query("SELECT                                                                                                         
                                                         Descripcion AS Nombre,
                                                         FCreacion As Fecha,
                                                         Tipo As TipoProyecto
                                                     FROM db_Proyectos
-                                                    where ID = " . $idProyecto);
+                                                    where ID = " . $datosProyecto['idProyecto']);
         if (!empty($consulta)) {
             return $consulta->result_array();
         }
@@ -71,9 +71,11 @@ class Modelo_ProyectoGapsi extends Modelo_Base {
         $consulta = parent::connectDBGapsi()->query("SELECT                                                                                                      
                                                         Sucursal
                                                     FROM db_Registro
-                                                    where Proyecto = '" . $datosProyecto['idProyecto'] . "'
-                                                    and StatusConciliacion = 'Conciliado' 
-                                                    and Moneda = '" . $datosProyecto['moneda'] . "'");
+                                                    WHERE Proyecto = '" . $datosProyecto['idProyecto'] . "'
+                                                    AND Tipo = '" . $datosProyecto['tipoProyecto'] . "'
+                                                    AND Moneda = '" . $datosProyecto['moneda'] . "'
+                                                    AND StatusConciliacion = 'Conciliado'
+                                                    GROUP BY Sucursal");
         if (!empty($consulta)) {
             return $consulta->result_array();
         }

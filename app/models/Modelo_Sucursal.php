@@ -18,14 +18,26 @@ class Modelo_Sucursal extends Modelo_Base {
         return array();
     }
 
-    public function getGasto(string $idSucursal, string $moneda) {
+    public function getGasto(string $idSucursal, array $datosProyecto) {
         $gasto = null;
-        $consulta = parent::connectDBGapsi()->query("select 
+        var_dump("SELECT 
                                                         sum(Importe) as Gasto 
-                                                    from db_Registro 
-                                                    where Sucursal = " . $idSucursal . " 
-                                                    and StatusConciliacion = 'Conciliado' 
-                                                    and Moneda = '" . $moneda . "'");
+                                                    FROM db_Registro 
+                                                    WHERE Sucursal = " . $idSucursal . " 
+                                                    AND StatusConciliacion = 'Conciliado' 
+                                                    AND Tipo = '" . $datosProyecto['tipoProyecto'] . "'
+                                                    AND Moneda = '" . $datosProyecto['moneda'] . "'
+                                                    AND TipoTrans = 'GASTO'
+                                                    GROUP BY Sucursal");
+        $consulta = parent::connectDBGapsi()->query("SELECT 
+                                                        sum(Importe) as Gasto 
+                                                    FROM db_Registro 
+                                                    WHERE Sucursal = " . $idSucursal . " 
+                                                    AND StatusConciliacion = 'Conciliado' 
+                                                    AND Tipo = '" . $datosProyecto['tipoProyecto'] . "'
+                                                    AND Moneda = '" . $datosProyecto['moneda'] . "'
+                                                    AND TipoTrans = 'GASTO'
+                                                    GROUP BY Sucursal");
         if (!empty($consulta)) {
             foreach ($consulta->result_array() as $key => $value) {
                 $gasto = $value['Gasto'];
@@ -34,14 +46,26 @@ class Modelo_Sucursal extends Modelo_Base {
         return $gasto;
     }
 
-    public function getCompra(string $idSucursal, string $moneda) {
+    public function getCompra(string $idSucursal, array $datosProyecto) {
         $compra = null;
-        $consulta = parent::connectDBGapsi()->query("select 
+        var_dump("SELECT 
                                                         sum(Importe) as Compra 
-                                                    from db_Registro 
-                                                    where Proyecto = " . $idSucursal . " 
+                                                    FROM db_Registro 
+                                                    WHERE Sucursal = " . $idSucursal . " 
                                                     and StatusConciliacion = 'Conciliado' 
-                                                    and Moneda = '" . $moneda . "'");
+                                                    AND Tipo = '" . $datosProyecto['tipoProyecto'] . "'
+                                                    AND Moneda = '" . $datosProyecto['moneda'] . "'
+                                                    AND TipoTrans = 'COMPRA'
+                                                    GROUP BY Sucursal");
+        $consulta = parent::connectDBGapsi()->query("SELECT 
+                                                        sum(Importe) as Compra 
+                                                    FROM db_Registro 
+                                                    WHERE Sucursal = " . $idSucursal . " 
+                                                    and StatusConciliacion = 'Conciliado' 
+                                                    AND Tipo = '" . $datosProyecto['tipoProyecto'] . "'
+                                                    AND Moneda = '" . $datosProyecto['moneda'] . "'
+                                                    AND TipoTrans = 'COMPRA'
+                                                    GROUP BY Sucursal");
         if (!empty($consulta)) {
             foreach ($consulta->result_array() as $key => $value) {
                 $compra = $value['Compra'];

@@ -14,21 +14,21 @@ class Sucursal extends General {
     private $servicios;
     private $dbSucursal;
 
-    public function __construct(string $idSucursal) {
+    public function __construct(string $idSucursal, array $datosProyecto) {
         parent::__construct();
         $this->dbSucursal = \Modelos\Modelo_Sucursal::factory();
-        $this->setDatos($idSucursal);
+        $this->setDatos($idSucursal, $datosProyecto);
     }
 
-    public function setDatos(string $idSucursal) {
+    public function setDatos(string $idSucursal, array $datosProyecto) {
         $this->id = $idSucursal;
         $datosSucursal = $this->dbSucursal->getInformacion($idSucursal);
         foreach ($datosSucursal as $key => $value) {
             $this->nombre = $value['Nombre'];
         }
 
-        $this->gasto = $this->dbSucursal->getGasto($idSucursal, 'MN');
-        $this->compra = $this->dbSucursal->getCompra($idSucursal, 'MN');
+        $this->gasto = $this->dbSucursal->getGasto($idSucursal, $datosProyecto);
+        $this->compra = $this->dbSucursal->getCompra($idSucursal, $datosProyecto);
         $this->totalTransferencia = $this->compra + $this->gasto;
 //        $this->ultimoMovimiento = $this->DBProyecto->getUltimoMovimiento($idProyecto);
     }

@@ -26,7 +26,7 @@ class GestorProyectos extends General {
     private function crearProyectos(array $listaIdProyectos) {
         $this->proyectos = array();
         foreach ($listaIdProyectos as $key => $proyecto) {
-            $temporal = new \Librerias\Gapsi\Proyecto($proyecto['IdProyecto']);
+            $temporal = new \Librerias\Gapsi\Proyecto(array('idProyecto' => $proyecto['IdProyecto'], 'moneda' => 'MN'));
             array_push($this->proyectos, $temporal);
         }
     }
@@ -74,14 +74,12 @@ class GestorProyectos extends General {
     }
 
     public function getInfoProyecto(array $dataProject) {
-//        $listaIdProyectos = $this->DBGestor->getListaProyectos();
-        $proyecto = $this->crearProyecto($dataProject['proyecto']);
-//        var_dump($proyecto->getDatos());
-//        foreach ($proyecto as $projects) {
-//            var_dump($projects->getSucursales());
-//        }
-//        $this->getlistTypeProyects();
-//        $listaProyectos = $this->getlistProyects();
+        $proyecto = $this->crearProyecto(array(
+            'idProyecto' => $dataProject['proyecto'], 
+            'tipoProyecto' => $dataProject['tipoProyecto'],
+            'moneda' => $dataProject['moneda'],
+            'datosExtra' => TRUE));
+
         $dataProjectsInfo['proyectos'] = $proyecto->getDatos();
         $dataProjectsInfo['servicios'] = [];
         $dataProjectsInfo['sucursales'] = $proyecto->getDatos()['sucursales'];
@@ -93,8 +91,8 @@ class GestorProyectos extends General {
         return array('formulario' => parent::getCI()->load->view('Generales/Dashboard_Gapsi_Filters', $dataProjectsInfo, TRUE), 'consulta' => $dataProjectsInfo);
     }
 
-    private function crearProyecto(string $projectID) {
-        $proyecto = new \Librerias\Gapsi\Proyecto($projectID);
+    private function crearProyecto(array $datosProyecto) {
+        $proyecto = new \Librerias\Gapsi\Proyecto($datosProyecto);
         return $proyecto;
     }
 
