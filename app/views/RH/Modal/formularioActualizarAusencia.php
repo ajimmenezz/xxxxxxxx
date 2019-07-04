@@ -121,7 +121,7 @@
                 </div>
                 <div class="col-md-10">
                     <?php
-                    if ($datosAusencia[0]["ArchivosOriginales"] !== '') {
+                    if ($datosAusencia[0]["ArchivosOriginales"] !== '' && ($datosAusencia[0]["IdTipoAusencia"] == 3 || $datosAusencia[0]["IdTipoAusencia"] == 4)) {
                     echo '<div id="archivoCitaIncapacidadAct" class="form-group">
                         <label class="f-w-600 f-s-13">Archivo Cita o Incapacidad</label>
                         <div id="" class="evidencia">

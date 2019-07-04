@@ -26,7 +26,7 @@
 
                     <!--Empieza titulo-->
                     <div class="col-md-12">
-                        <div class="form-group">
+                        <div class="col-md-6">
                             <?php
                             if ($proyectos[0][0] === 'MN') {
                                 echo '<h4 class="m-t-10">Proyectos en Pesos</h4>';
@@ -34,8 +34,13 @@
                                 echo '<h4 class="m-t-10">Proyectos en Dolares</h4>';
                             }
                             ?>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="m-t-10" style="text-align: right;">Gasto total: <label id="gastoProyecto"></label></h4>
+                        </div>
+                        <div class="col-md-12">
                             <div class="underline m-b-15 m-t-15"></div>
-                        </div> 
+                        </div>
                     </div>
                     <!--Finaliza titulo-->
 
@@ -89,7 +94,8 @@
 
                     <!--Empieza titulo-->
                     <div class="col-md-12">
-                        <div class="form-group">
+                        <br>
+                        <div class="col-md-6">
                             <?php
                             if ($servicios[0][0] === 'MN') {
                                 echo '<h4 class="m-t-10">Servicios en Pesos</h4>';
@@ -97,8 +103,13 @@
                                 echo '<h4 class="m-t-10">Servicios en Dolares</h4>';
                             }
                             ?>
-                            <div class="underline m-b-15 m-t-15"></div>
                         </div> 
+                        <div class="col-md-6">
+                            <h4 class="m-t-10" style="text-align: right;">Gasto total: <label id="gastoServicio"></label></h4>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="underline m-b-15 m-t-15"></div>
+                        </div>
                     </div>
                     <!--Finaliza titulo-->
                     <!--Empieza grafica-->
@@ -150,7 +161,8 @@
 
                     <!--Empieza titulo-->
                     <div class="col-md-12">
-                        <div class="form-group">
+                        <br>
+                        <div class="col-md-6">
                             <?php
                             if ($sucursales[0][0] === 'MN') {
                                 echo '<h4 class="m-t-10">Sucursales en Pesos</h4>';
@@ -158,8 +170,13 @@
                                 echo '<h4 class="m-t-10">Sucursales en Dolares</h4>';
                             }
                             ?>
-                            <div class="underline m-b-15 m-t-15"></div>
                         </div> 
+                        <div class="col-md-6">
+                            <h4 class="m-t-10" style="text-align: right;">Gasto total: <label id="gastoSucursal"></label></h4>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="underline m-b-15 m-t-15"></div>
+                        </div>
                     </div>
                     <!--Finaliza titulo-->
                     <!--Empieza grafica-->
@@ -211,7 +228,8 @@
 
                     <!--Empieza titulo-->
                     <div class="col-md-12">
-                        <div class="form-group">
+                        <br>
+                        <div class="col-md-6">
                             <?php
                             if ($categorias[0][0] === 'MN') {
                                 echo '<h4 class="m-t-10">Categoria en Pesos</h4>';
@@ -219,8 +237,13 @@
                                 echo '<h4 class="m-t-10">Categoria en Dolares</h4>';
                             }
                             ?>
-                            <div class="underline m-b-15 m-t-15"></div>
                         </div> 
+                        <div class="col-md-6">
+                            <h4 class="m-t-10" style="text-align: right;">Gasto total: <label id="gastoCategoria"></label></h4>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="underline m-b-15 m-t-15"></div>
+                        </div>
                     </div>
                     <!--Finaliza titulo-->
                     <!--Empieza grafica-->
@@ -272,7 +295,8 @@
 
                     <!--Empieza titulo-->
                     <div class="col-md-12">
-                        <div class="form-group">
+                        <br>
+                        <div class="col-md-6">
                             <?php
                             if ($subcategorias[0][0] === 'MN') {
                                 echo '<h4 class="m-t-10">SubCategoria en Pesos</h4>';
@@ -280,8 +304,13 @@
                                 echo '<h4 class="m-t-10">SubCategoria en Dolares</h4>';
                             }
                             ?>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="m-t-10" style="text-align: right;">Gasto total: <label id="gastoSubCategoria"></label></h4>
+                        </div>
+                        <div class="col-md-12">
                             <div class="underline m-b-15 m-t-15"></div>
-                        </div> 
+                        </div>
                     </div>
                     <!--Finaliza titulo-->
                     <!--Empieza grafica-->
@@ -333,7 +362,8 @@
 
                     <!--Empieza titulo-->
                     <div class="col-md-12">
-                        <div class="form-group">
+                        <br>
+                        <div class="col-md-6">
                             <?php
                             if ($subcategorias[0][0] === 'MN') {
                                 echo '<h4 class="m-t-10">Concepto en Pesos</h4>';
@@ -341,8 +371,13 @@
                                 echo '<h4 class="m-t-10">Concepto en Dolares</h4>';
                             }
                             ?>
-                            <div class="underline m-b-15 m-t-15"></div>
                         </div> 
+                        <div class="col-md-6">
+                            <h4 class="m-t-10" style="text-align: right;">Gasto total: <label id="gastoConcepto"></label></h4>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="underline m-b-15 m-t-15"></div>
+                        </div>
                     </div>
                     <!--Finaliza titulo-->
                     <!--Empieza grafica-->
@@ -358,13 +393,13 @@
                                     <tr>
                                         <th class="never">idConcepto</th>
                                         <th class="all">Concepto</th>
-                                        <?php
-                                        if ($subcategorias[0][0] === 'MN') {
-                                            echo '<th class="all">Gasto MN</th>';
-                                        } else {
-                                            echo '<th class="all">Gasto</th>';
-                                        }
-                                        ?>
+                                            <?php
+                                            if ($subcategorias[0][0] === 'MN') {
+                                                echo '<th class="all">Gasto MN</th>';
+                                            } else {
+                                                echo '<th class="all">Gasto</th>';
+                                            }
+                                            ?>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -57,6 +57,12 @@ $(function () {
     let selectorsubcategoria = null;
     let selectorconcepto = null;
     let tablaDetalles = null;
+    let totalGastoProyectos = 0;
+    let totalGastoServicios = 0;
+    let totalGastoSucursales = 0;
+    let totalGastoCategoria = 0;
+    let totalGastoSubCategoria = 0;
+    let totalGastoConceptos = 0;
 
     let datosProyecto = Array();
     let datosFiltros = {
@@ -366,13 +372,13 @@ $(function () {
 
     function enviarInformacionFiltros(objeto, datosFiltros) {
         peticion.enviar(objeto, 'Dashboard_Gapsi/tipoProyecto', datosFiltros, function (respuesta) {
-            console.log(respuesta.consulta)
             if (respuesta.consulta.proyectos.length !== 0) {
                 incializarDatos(respuesta.consulta);
                 setSecciones(respuesta.formulario);
                 incializarObjetos();
                 eventosObjetos();
                 tablasCostosFiltros();
+                costosTotales();
                 $("input[name='optionsRadiosMoneda'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
                 anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
                 $('html, body').animate({
@@ -387,18 +393,45 @@ $(function () {
 
     function incializarDatos(datos) {
         datosProyectos = datos.proyectos;
+        totalGastoProyectos = gastoTotal(datosProyectos);
         datosServicios = datos.servicios;
+        totalGastoServicios = gastoTotal(datosServicios);
         datosSucursales = datos.sucursales;
+        totalGastoSucursales = gastoTotal(datosSucursales);
         datosCategoria = datos.categorias;
+        totalGastoCategoria = gastoTotal(datosCategoria);
         datosSubCategoria = datos.subcategorias;
+        totalGastoSubCategoria = gastoTotal(datosSubCategoria);
         datosConceptos = datos.concepto;
+        totalGastoConceptos = gastoTotal(datosConceptos);
         datosCompras = datos.gastosCompras;
+    }
+
+    function gastoTotal(datos) {
+        let total = 0;
+        $.each(datos, function (key, value) {
+            total += value.Gasto;
+        });
+        return total;
+    }
+    function costosTotales() {
+        $("#gastoProyecto").text("$" + formatoNumero(totalGastoProyectos.toFixed(2)));
+        $("#gastoServicio").text("$" + formatoNumero(totalGastoServicios.toFixed(2)));
+        $("#gastoSucursal").text("$" + formatoNumero(totalGastoSucursales.toFixed(2)));
+        $("#gastoCategoria").text("$" + formatoNumero(totalGastoCategoria.toFixed(2)));
+        $("#gastoSubCategoria").text("$" + formatoNumero(totalGastoSubCategoria.toFixed(2)));
+        $("#gastoConcepto").text("$" + formatoNumero(totalGastoConceptos.toFixed(2)));
+        if ($("#proyecto").hasClass("hidden") && $("#servicio").hasClass("hidden") && $("#sucursal").hasClass("hidden") && 
+                $("#categoria").hasClass("hidden") && $("#subcategoria").hasClass("hidden") && $("#concepto").hasClass("hidden")) {
+            seccionDetalles();
+        }
     }
 
     function setSecciones(formulario) {
         $('#dashboardGapsiFilters').removeClass('hidden').empty().append(formulario);
         $('#contentDashboardGapsi').addClass('hidden');
         $('#filtroFechas').addClass('hidden');
+        $('#dashboardGapsiDetalles').addClass('hidden');
         $('#page-container').addClass('page-with-two-sidebar');
         $('#sidebar-right').removeClass('hidden');
         $('[data-click=right-sidebar-toggled]').removeClass('hidden');
