@@ -75,7 +75,7 @@ class GestorProyectos extends General {
 
     public function getInfoProyecto(array $dataProject) {
         $proyecto = $this->crearProyecto(array(
-            'idProyecto' => $dataProject['proyecto'], 
+            'idProyecto' => $dataProject['proyecto'],
             'tipoProyecto' => $dataProject['tipoProyecto'],
             'moneda' => $dataProject['moneda'],
             'datosExtra' => TRUE));
@@ -94,6 +94,24 @@ class GestorProyectos extends General {
     private function crearProyecto(array $datosProyecto) {
         $proyecto = new \Librerias\Gapsi\Proyecto($datosProyecto);
         return $proyecto;
+    }
+
+    public function getDatosTipoProyecto(array $datosProyectos) {
+        $listaIdProyectos = $this->DBGestor->getListaProyectos($datosProyectos);
+
+        $this->crearProyectos($listaIdProyectos);
+        $listaProyectos = $this->getlistProyects();
+        var_dump($this->proyectos);
+
+        $dataProjectsInfo['proyectos'] = $listaProyectos;
+        $dataProjectsInfo['servicios'] = [];
+        $dataProjectsInfo['sucursales'] = $this->proyectos->getDatos()['sucursales'];
+        $dataProjectsInfo['categorias'] = [];
+        $dataProjectsInfo['subcategorias'] = [];
+        $dataProjectsInfo['concepto'] = [];
+        $dataProjectsInfo['gastosCompras'] = [];
+//
+        return array('formulario' => parent::getCI()->load->view('Generales/Dashboard_Gapsi_Filters', $dataProjectsInfo, TRUE), 'consulta' => $dataProjectsInfo);
     }
 
 }

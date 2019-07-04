@@ -86,7 +86,6 @@ class Proyecto extends General {
         $listaSucursales = $this->DBProyecto->getSucursales($datosProyecto);
 
         foreach ($listaSucursales as $key => $sucursal) {
-            var_dump($sucursal);
             $temporal = new \Librerias\Gapsi\Sucursal($sucursal['Sucursal'], $datosProyecto);
             array_push($this->sucursales, $temporal->getDatos());
         }

@@ -76,7 +76,7 @@ $(function () {
     graficaPrincipal.agregarListener(function (dato) {
         datosFiltros.tipoProyecto = dato;
         datosFiltros.moneda = $("input[name='optionsRadiosMonedaPrincipal']:checked").val();
-        enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
+        enviarInformacionFiltrosTipoProyectos('panelDashboardGapsi', datosFiltros);
     });
 
     tablaTipoProyecto.evento(function () {
@@ -343,6 +343,27 @@ $(function () {
     function enviarInformacionFiltros(objeto, datosFiltros) {
         console.log(datosFiltros);
         peticion.enviar(objeto, 'Dashboard_Gapsi/getDatosProyectos', datosFiltros, function (respuesta) {
+            if (respuesta.consulta.proyectos.length !== 0) {
+                setSecciones(respuesta.formulario);
+                incializarDatos(respuesta.consulta);
+                incializarObjetos();
+                eventosObjetos();
+                tablasCostosFiltros();
+                $("input[name='optionsRadiosMoneda'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
+                anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
+                $('html, body').animate({
+                    scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
+                }, 600);
+
+            } else {
+                modalUndefined();
+            }
+        });
+    }
+    
+    function enviarInformacionFiltrosTipoProyectos(objeto, datosFiltros) {
+        console.log(datosFiltros);
+        peticion.enviar(objeto, 'Dashboard_Gapsi/getDatosTipoProyecto', datosFiltros, function (respuesta) {
             if (respuesta.consulta.proyectos.length !== 0) {
                 setSecciones(respuesta.formulario);
                 incializarDatos(respuesta.consulta);
