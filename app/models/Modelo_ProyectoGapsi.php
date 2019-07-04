@@ -67,7 +67,7 @@ class Modelo_ProyectoGapsi extends Modelo_Base {
         return $ultimoMovimiento;
     }
 
-    public function getSucursales(array $datosProyecto) {
+    public function getIdSucursales(array $datosProyecto) {
         $consulta = parent::connectDBGapsi()->query("SELECT                                                                                                      
                                                         Sucursal
                                                     FROM db_Registro

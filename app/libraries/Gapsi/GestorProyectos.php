@@ -57,14 +57,8 @@ class GestorProyectos extends General {
     private function getlistProyects() {
         $temporal = array();
 
-        foreach ($this->proyectos as $projects) {
-            array_push($temporal, array(
-                'IdProyecto' => $projects->getDatos()['IdProyecto'],
-                'Descripcion' => $projects->getDatos()['Proyecto'],
-                'Gasto' => $projects->getDatos()['Gasto'],
-                'FCreacion' => $projects->getDatos()['FCaptura'],
-                'UltimoMovimiento' => $projects->getDatos()['UltimoMovimiento'],
-                'Tipo' => $projects->getDatos()['tipo']));
+        foreach ($this->proyectos as $project) {
+            array_push($temporal, array($project->getDatos()));
         }
         return $temporal;
     }
