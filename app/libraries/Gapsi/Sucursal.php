@@ -16,13 +16,14 @@ class Sucursal extends General {
 
     public function __construct(string $idSucursal) {
         parent::__construct();
+        $this->id = $idSucursal;
         $this->dbSucursal = \Modelos\Modelo_Sucursal::factory();
-        $this->setDatos($idSucursal);
+        $this->setDatos();
     }
 
-    public function setDatos(string $idSucursal) {
-        $this->id = $idSucursal;
-        $datosSucursal = $this->dbSucursal->getInformacion($idSucursal);
+    public function setDatos() {
+        
+        $datosSucursal = $this->dbSucursal->getInformacion($this->id);
         foreach ($datosSucursal as $key => $value) {
             $this->nombre = $value['Nombre'];
         }
