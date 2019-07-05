@@ -57,7 +57,8 @@ $(function () {
         servicio: null,
         categoria: null,
         subcategoria: null,
-        concepto: null
+        concepto: null,
+        sistema: null
     };
     let anterioresFiltros;
     let fecha = new Date();
@@ -106,6 +107,7 @@ $(function () {
         datosFiltros.tipoProyecto = datosfila[0];
         datosFiltros.moneda = $("input[name='optionsRadiosMonedaPrincipal']:checked").val();
         datosFiltros.proyecto = datosfila[1];
+        datosFiltros.sistema = 'Adist';
         enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
     });
 
