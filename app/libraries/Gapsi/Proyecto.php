@@ -54,21 +54,17 @@ class Proyecto extends General {
         return $this->sucursales;
     }
 
-    public function getDatos() {
+    public function getDatosGenerales() {
         return array(
-            'IdProyecto' => $this->id,
-            'Proyecto' => $this->nombre,
-            'FCaptura' => $this->fecha,
+            'idProyecto' => $this->id,
+            'proyecto' => $this->nombre,
+            'fechaCreacion' => $this->fecha,
             'tipo' => $this->tipo,
-            'UltimoMovimiento' => $this->ultimoMovimiento,
-            'Gasto' => $this->totalTransferencia,
+            'ultimoMovimiento' => $this->ultimoMovimiento,
+            'gasto' => $this->totalTransferencia,
             'sucursales' => $this->sucursales);
     }
-
-    public function getDatosGenerales() {
-        return array();
-    }
-
+    
     private function getGasto() {
         return double;
     }

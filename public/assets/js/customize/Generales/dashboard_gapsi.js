@@ -342,7 +342,7 @@ $(function () {
 
     function enviarInformacionFiltros(objeto, datosFiltros) {
         console.log(datosFiltros);
-        peticion.enviar(objeto, 'Dashboard_Gapsi/getDatosProyectos', datosFiltros, function (respuesta) {
+        peticion.enviar(objeto, 'Dashboard_Gapsi/Proyecto/informacion_General', datosFiltros, function (respuesta) {
             if (respuesta.consulta.proyectos.length !== 0) {
                 setSecciones(respuesta.formulario);
                 incializarDatos(respuesta.consulta);
