@@ -51,7 +51,7 @@ class Proyecto extends General {
         return $this->sucursales;
     }
 
-    public function getDatos() {
+    public function getDatosGenerales() {
         return array(
             'idProyecto' => $this->id,
             'proyecto' => $this->nombre,
@@ -61,11 +61,7 @@ class Proyecto extends General {
             'gasto' => $this->totalTransferencia,
             'sucursales' => $this->sucursales);
     }
-
-    public function getDatosGenerales() {
-        return array();
-    }
-
+    
     private function getGasto() {
         return double;
     }

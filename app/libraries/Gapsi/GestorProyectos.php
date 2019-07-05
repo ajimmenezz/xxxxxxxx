@@ -58,7 +58,7 @@ class GestorProyectos extends General {
         $temporal = array();
 
         foreach ($this->proyectos as $project) {
-            array_push($temporal, array($project->getDatos()));
+            array_push($temporal, array($project->getDatosGenerales()));
         }
         return $temporal;
     }
@@ -76,9 +76,9 @@ class GestorProyectos extends General {
 //        }
 //        $this->getlistTypeProyects();
 //        $listaProyectos = $this->getlistProyects();
-        $dataProjectsInfo['proyectos'] = $proyecto->getDatos();
+        $dataProjectsInfo['proyectos'] = $proyecto->getDatosGenerales();
         $dataProjectsInfo['servicios'] = [];
-        $dataProjectsInfo['sucursales'] = $proyecto->getDatos()['sucursales'];
+        $dataProjectsInfo['sucursales'] = $proyecto->getDatosGenerales()['sucursales'];
         $dataProjectsInfo['categorias'] = [];
         $dataProjectsInfo['subcategorias'] = [];
         $dataProjectsInfo['concepto'] = [];
