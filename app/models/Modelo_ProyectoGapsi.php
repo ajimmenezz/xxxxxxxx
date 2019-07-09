@@ -6,13 +6,13 @@ use Librerias\Modelos\Base as Modelo_Base;
 
 class Modelo_ProyectoGapsi extends Modelo_Base {
 
-    public function getInformacion(array $datosProyecto) {
+    public function getInformacion(string $idProyecto) {
         $consulta = parent::connectDBGapsi()->query("SELECT                                                                                                         
                                                         Descripcion AS Nombre,
                                                         FCreacion As Fecha,
                                                         Tipo As TipoProyecto
                                                     FROM db_Proyectos
-                                                    where ID = " . $datosProyecto['idProyecto']);
+                                                    where ID = " . $idProyecto);
         if (!empty($consulta)) {
             return $consulta->result_array();
         }
@@ -72,7 +72,66 @@ class Modelo_ProyectoGapsi extends Modelo_Base {
                                                         Sucursal
                                                     FROM db_Registro
                                                     where Proyecto = '" . $idProyecto . "'
-                                                    and StatusConciliacion = 'Conciliado'");
+                                                    and StatusConciliacion = 'Conciliado'
+                                                    GROUP BY Sucursal");
+        if (!empty($consulta)) {
+            return $consulta->result_array();
+        }
+        return array();
+    }
+
+    public function getServicios(string $idProyecto) {
+        $consulta = parent::connectDBGapsi()->query("SELECT                                                                                                      
+                                                        TipoServicio
+                                                    FROM db_Registro
+                                                    where Proyecto = '" . $idProyecto . "'
+                                                    and StatusConciliacion = 'Conciliado'
+                                                    GROUP BY TipoServicio");
+        if (!empty($consulta)) {
+            return $consulta->result_array();
+        }
+        return array();
+    }
+    
+    public function getCategorias(string $idProyecto) {
+        $consulta = parent::connectDBGapsi()->query("SELECT                                                                                                      
+                                                        ddg.Categoria
+                                                    FROM db_Registro AS dr
+                                                    INNER JOIN db_DetalleGasto ddg
+                                                    ON ddg.Gasto = dr.ID
+                                                    WHERE dr.Proyecto = '" . $idProyecto . "'
+                                                    AND dr.StatusConciliacion = 'Conciliado'
+                                                    GROUP BY ddg.Categoria");
+        if (!empty($consulta)) {
+            return $consulta->result_array();
+        }
+        return array();
+    }
+    
+    public function getSubcategorias(string $idProyecto) {
+        $consulta = parent::connectDBGapsi()->query("SELECT                                                                                                      
+                                                        ddg.SubCategoria
+                                                    FROM db_Registro AS dr
+                                                    INNER JOIN db_DetalleGasto ddg
+                                                    ON ddg.Gasto = dr.ID
+                                                    WHERE dr.Proyecto = '" . $idProyecto . "'
+                                                    AND dr.StatusConciliacion = 'Conciliado'
+                                                    GROUP BY ddg.SubCategoria");
+        if (!empty($consulta)) {
+            return $consulta->result_array();
+        }
+        return array();
+    }
+    
+    public function getConceptos(string $idProyecto) {
+        $consulta = parent::connectDBGapsi()->query("SELECT                                                                                                      
+                                                        ddg.Concepto
+                                                    FROM db_Registro AS dr
+                                                    INNER JOIN db_DetalleGasto ddg
+                                                    ON ddg.Gasto = dr.ID
+                                                    WHERE dr.Proyecto = '" . $idProyecto . "'
+                                                    AND dr.StatusConciliacion = 'Conciliado'
+                                                    GROUP BY ddg.Concepto");
         if (!empty($consulta)) {
             return $consulta->result_array();
         }

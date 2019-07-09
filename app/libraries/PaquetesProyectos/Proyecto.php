@@ -19,4 +19,12 @@ interface Proyecto {
     public function getCompra();
 
     public function calcularTotalTranferencia();
+
+    public function getServicios();
+
+    public function getCategorias();
+
+    public function getSubcategorias();
+
+    public function getConceptos();
 }

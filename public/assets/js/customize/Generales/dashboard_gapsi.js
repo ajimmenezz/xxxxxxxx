@@ -107,19 +107,20 @@ $(function () {
         datosFiltros.tipoProyecto = datosfila[0];
         datosFiltros.moneda = $("input[name='optionsRadiosMonedaPrincipal']:checked").val();
         datosFiltros.proyecto = datosfila[1];
-        datosFiltros.sistema = 'Adist';
+        datosFiltros.sistema = 'Gapsi';
         enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
     });
 
     filtroFechas();
     filtroMoneda();
     function incializarDatos(datos) {
+        console.log(datos.proyectos);
         datosProyectos = datos.proyectos;
         datosServicios = datos.servicios;
         datosSucursales = datos.sucursales;
         datosCategoria = datos.categorias;
         datosSubCategoria = datos.subcategorias;
-        datosConceptos = datos.concepto;
+        datosConceptos = datos.conceptos;
         datosCompras = datos.gastosCompras;
     }
 
@@ -244,7 +245,7 @@ $(function () {
         tablaConcepto = new TablaBasica('data-tipo-concepto');
         tablaConcepto.reordenarTabla(2, 'desc');
         graficaProyecto = new GraficaGoogle('chart_proyecto', filtrarDatosGraficaGoogle(datosProyectos, 'Proyecto', 'Gasto'));
-        graficaServicio = new GraficaGoogle('chart_servicios', filtrarDatosGraficaGoogle(datosServicios, 'TipoServicio', 'Gasto'));
+        graficaServicio = new GraficaGoogle('chart_servicios', filtrarDatosGraficaGoogle(datosServicios, 'Servicio', 'Gasto'));
         graficaSucursal = new GraficaGoogle('chart_sucursal', filtrarDatosGraficaGoogle(datosSucursales, 'Sucursal', 'Gasto'));
         graficaCategoria = new GraficaGoogle('chart_categoria', filtrarDatosGraficaGoogle(datosCategoria, 'Categoria', 'Gasto'));
         graficaSubCategoria = new GraficaGoogle('chart_subCategoria', filtrarDatosGraficaGoogle(datosSubCategoria, 'SubCategoria', 'Gasto'));
@@ -264,7 +265,7 @@ $(function () {
         selectorproyecto.iniciarSelect();
         selectorproyecto.cargaDatosEnSelect(filtrarDatosSelects(datosProyectos, 'IdProyecto', 'Proyecto'));
         selectorservicio.iniciarSelect();
-        selectorservicio.cargaDatosEnSelect(filtrarDatosSelects(datosServicios, 'TipoServicio', 'TipoServicio'));
+        selectorservicio.cargaDatosEnSelect(filtrarDatosSelects(datosServicios, 'idServicio', 'Servicio'));
         selectorsucursal.iniciarSelect();
         selectorsucursal.cargaDatosEnSelect(filtrarDatosSelects(datosSucursales, 'idSucursal', 'Sucursal'));
         selectorcategoria.iniciarSelect();
@@ -362,9 +363,8 @@ $(function () {
             }
         });
     }
-    
+
     function enviarInformacionFiltrosTipoProyectos(objeto, datosFiltros) {
-        console.log(datosFiltros);
         peticion.enviar(objeto, 'Dashboard_Gapsi/getDatosTipoProyecto', datosFiltros, function (respuesta) {
             if (respuesta.consulta.proyectos.length !== 0) {
                 setSecciones(respuesta.formulario);
@@ -479,7 +479,7 @@ $(function () {
                         break;
                     case 'proyecto':
                         $("#seccionFiltros").append('<div id="msg-filtros-' + datosFiltros[key] + '" class="alert alert-info fade in m-b-12 remover" style="color: black">\n\
-                            ' + datosProyectos[0]['Proyecto'] + '\n\
+                            ' + datosProyectos['proyecto'] + '\n\
                             <span class="close" data-dismiss="alert" data-filter="' + datosFiltros[key] + '" data-key="' + key + '">&times;</span>\n\
                         </div>');
                         break;

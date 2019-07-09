@@ -14,6 +14,7 @@ class Proyecto extends General {
     private $gasto;
     private $compra;
     private $idSucursales;
+    private $servicios;
     private $DBProyecto;
     private $ultimoMovimiento;
 
@@ -25,21 +26,21 @@ class Proyecto extends General {
 
     private function setDatos(array $datosProyecto) {
         $this->id = $datosProyecto['idProyecto'];
-        $proyecto = $this->DBProyecto->getInformacion($datosProyecto);
+        $proyecto = $this->DBProyecto->getInformacion($this->id);
         foreach ($proyecto as $key => $value) {
             $this->nombre = $value['Nombre'];
             $this->tipo = $value['TipoProyecto'];
             $this->fecha = $value['Fecha'];
         }
 
-        $this->gasto = $this->DBProyecto->getGasto($datosProyecto['idProyecto'], $datosProyecto['moneda']);
-        $this->compra = $this->DBProyecto->getCompra($datosProyecto['idProyecto'], $datosProyecto['moneda']);
+        $this->gasto = $this->DBProyecto->getGasto($datosProyecto['idProyecto'], 'MN');
+        $this->compra = $this->DBProyecto->getCompra($datosProyecto['idProyecto'], 'MN');
         $this->totalTransferencia = $this->compra + $this->gasto;
         $this->ultimoMovimiento = $this->DBProyecto->getUltimoMovimiento($datosProyecto['idProyecto']);
 
-        if (isset($datosProyecto['datosExtra'])) {
-            $this->crearSucursales($datosProyecto);
-        }
+//        if (isset($datosProyecto['datosExtra'])) {
+//            $this->crearSucursales($datosProyecto);
+//        }
     }
 
     public function getType() {
@@ -50,7 +51,7 @@ class Proyecto extends General {
         return $this->totalTransferencia;
     }
 
-    public function getIdSucursalesGapsi() {        
+    public function getIdSucursales() {
         $this->idSucursales = $this->DBProyecto->getIdSucursales($this->id);
         return $this->idSucursales;
     }
@@ -62,10 +63,9 @@ class Proyecto extends General {
             'fechaCreacion' => $this->fecha,
             'tipo' => $this->tipo,
             'ultimoMovimiento' => $this->ultimoMovimiento,
-            'gasto' => $this->totalTransferencia,
-            'sucursales' => $this->idSucursales);
+            'gasto' => $this->totalTransferencia);
     }
-    
+
     private function getGasto() {
         return double;
     }
@@ -86,6 +86,11 @@ class Proyecto extends General {
             $temporal = new \Librerias\Gapsi\Sucursal($sucursal['Sucursal']);
             array_push($this->idSucursales, $temporal->getDatos());
         }
+    }
+
+    public function getServicios() {
+        $this->servicios = $this->DBProyecto->getServicios($this->id);
+        return $this->servicios;
     }
 
 }

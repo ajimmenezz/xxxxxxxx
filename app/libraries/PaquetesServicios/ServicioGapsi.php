@@ -1,25 +1,27 @@
 <?php
 
-namespace Librerias\Gapsi;
+namespace Librerias\PaquetesServicios;
 
-class Concepto {
+use Librerias\PaquetesServicios\Servicio as Servicio;
+
+class ServicioGapsi implements Servicio {
 
     private $id;
     private $nombre;
     private $totalTransferencia;
     private $gasto;
     private $compra;
-    private $DBConcepto;
+    private $DBServicio;
 
-    public function __construct(string $subcategoria) {
-        $this->nombre = $subcategoria;
-        $this->DBConcepto = \Modelos\Modelo_Gapsi_Concepto::factory();
+    public function __construct(string $servicio) {
+        $this->nombre = $servicio;
+        $this->DBServicio = \Modelos\Modelo_Gapsi_Servicio::factory();
         $this->setDatos();
     }
 
     public function setDatos() {
-        $datosConcepto = $this->DBConcepto->getInformacion($this->nombre);
-        foreach ($datosConcepto as $key => $value) {
+        $datosServicio = $this->DBServicio->getInformacion($this->nombre);
+        foreach ($datosServicio as $key => $value) {
             $this->id = $value['ID'];
         }
     }
@@ -32,18 +34,17 @@ class Concepto {
 
     public function getDatos() {
         return array(
-            'idConcepto' => $this->id,
-            'Concepto' => $this->nombre,
+            'idServicio' => $this->id,
+            'Servicio' => $this->nombre,
             'Gasto' => $this->totalTransferencia);
     }
 
     public function setCompra(array $filtros) {
-        $this->compra = $this->DBConcepto->getCompra($this->nombre, $filtros);
+        $this->compra = $this->DBServicio->getCompra($this->nombre, $filtros);
     }
 
     public function setGasto(array $filtros) {
-
-        $this->gasto = $this->DBConcepto->getGasto($this->nombre, $filtros);
+        $this->gasto = $this->DBServicio->getGasto($this->nombre, $filtros);
     }
 
 }

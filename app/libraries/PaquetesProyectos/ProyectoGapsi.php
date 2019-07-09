@@ -14,6 +14,10 @@ class ProyectoGapsi implements Proyecto {
     private $gasto;
     private $compra;
     private $idSucursales;
+    private $servicios;
+    private $categorias;
+    private $subcategorias;
+    private $conceptos;
     private $DBProyecto;
     private $ultimoMovimiento;
 
@@ -33,8 +37,8 @@ class ProyectoGapsi implements Proyecto {
 
         $this->gasto = $this->DBProyecto->getGasto($idProyecto, 'MN');
         $this->compra = $this->DBProyecto->getCompra($idProyecto, 'MN');
-        $this->totalTransferencia = $this->compra + $this->gasto;
         $this->ultimoMovimiento = $this->DBProyecto->getUltimoMovimiento($idProyecto);
+        $this->calcularTotalTranferencia();
     }
 
     public function getIdSucursales() {
@@ -43,23 +47,50 @@ class ProyectoGapsi implements Proyecto {
     }
 
     public function calcularTotalTranferencia() {
-        
+        $this->totalTransferencia = $this->compra + $this->gasto;
+        return $this->totalTransferencia;
     }
 
     public function getCompra() {
-        
-    }
-
-    public function getDatosGenerales() {
-        
+        return $this->compra;
     }
 
     public function getGasto() {
-        
+        return $this->gasto;
+    }
+
+    public function getDatosGenerales() {
+        return array(
+            'idProyecto' => $this->id,
+            'proyecto' => $this->nombre,
+            'fechaCreacion' => $this->fecha,
+            'tipo' => $this->tipo,
+            'ultimoMovimiento' => $this->ultimoMovimiento,
+            'gasto' => $this->totalTransferencia);
     }
 
     public function getType() {
         
+    }
+
+    public function getServicios() {
+        $this->servicios = $this->DBProyecto->getServicios($this->id);
+        return $this->servicios;
+    }
+
+    public function getCategorias() {
+        $this->categorias = $this->DBProyecto->getCategorias($this->id);
+        return $this->categorias;
+    }
+
+    public function getSubcategorias() {
+        $this->subcategorias = $this->DBProyecto->getSubcategorias($this->id);
+        return $this->subcategorias;
+    }
+
+    public function getConceptos() {
+        $this->conceptos = $this->DBProyecto->getConceptos($this->id);
+        return $this->conceptos;
     }
 
 }

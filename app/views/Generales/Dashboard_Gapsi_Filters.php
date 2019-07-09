@@ -28,7 +28,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <?php
-                            if ($proyectos[0][0] === 'MN') {
+                            if ($proyectos[0]['moneda'] === 'MN') {
                                 echo '<h4 class="m-t-10">Proyectos  MN</h4>';
                             } else {
                                 echo '<h4 class="m-t-10">Proyectos  USD</h4>';
@@ -54,7 +54,7 @@
                                         <th class="never">idProyecto</th>
                                         <th class="all">Proyecto</th>
                                         <?php
-                                        if ($proyectos[0][0] === 'MN') {
+                                        if ($proyectos[0]['moneda'] === 'MN') {
                                             echo '<th class="all">Gasto MN</th>';
                                         } else {
                                             echo '<th class="all">Gasto USD</th>';
@@ -91,7 +91,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <?php
-                            if ($servicios[0][0] === 'MN') {
+                            if ($proyectos['moneda'] === 'MN') {
                                 echo '<h4 class="m-t-10">Servicios  MN</h4>';
                             } else {
                                 echo '<h4 class="m-t-10">Servicios  USD</h4>';
@@ -113,9 +113,9 @@
                                 <thead>
                                     <tr>
                                         <th class="never">idSerivicio</th>
-                                        <th class="all">Serivicio</th>
+                                        <th class="all">Servicio</th>
                                         <?php
-                                        if ($servicios[0][0] === 'MN') {
+                                        if ($proyectos['moneda'] === 'MN') {
                                             echo '<th class="all">Gasto MN</th>';
                                         } else {
                                             echo '<th class="all">Gasto USD</th>';
@@ -127,9 +127,9 @@
                                     <?php
                                     foreach ($servicios as $servicio) {
                                         echo "<tr>";
-                                        echo '<td>' . $servicio['TipoServicio'] . '</td>';
-                                        if ($servicio['TipoServicio'] != '') {
-                                            echo '<td>' . $servicio['TipoServicio'] . '</td>';
+                                        echo '<td>' . $servicio['idServicio'] . '</td>';
+                                        if ($servicio['Servicio'] != '') {
+                                            echo '<td>' . $servicio['Servicio'] . '</td>';
                                         } else {
                                             echo '<td style="color: red">SIN DATOS</td>';
                                         }
@@ -152,7 +152,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <?php
-                            if ($sucursales[0][0] === 'MN') {
+                            if ($proyectos['moneda'] === 'MN') {
                                 echo '<h4 class="m-t-10">Sucursales  MN</h4>';
                             } else {
                                 echo '<h4 class="m-t-10">Sucursales  USD</h4>';
@@ -176,7 +176,7 @@
                                         <th class="never">idSucursal</th>
                                         <th class="all">Sucursal</th>
                                         <?php
-                                        if ($sucursales[0][0] === 'MN') {
+                                        if ($proyectos['moneda'] === 'MN') {
                                             echo '<th class="all">Gasto MN</th>';
                                         } else {
                                             echo '<th class="all">Gasto USD</th>';
@@ -213,7 +213,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <?php
-                            if ($categorias[0][0] === 'MN') {
+                            if ($proyectos['moneda'] === 'MN') {
                                 echo '<h4 class="m-t-10">Categoria  MN</h4>';
                             } else {
                                 echo '<h4 class="m-t-10">Categoria  USD</h4>';
@@ -237,7 +237,7 @@
                                         <th class="never">idCategoria</th>
                                         <th class="all">Categoria</th>
                                         <?php
-                                        if ($categorias[0][0] === 'MN') {
+                                        if ($proyectos['moneda'] === 'MN') {
                                             echo '<th class="all">Gasto MN</th>';
                                         } else {
                                             echo '<th class="all">Gasto USD</th>';
@@ -274,7 +274,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <?php
-                            if ($subcategorias[0][0] === 'MN') {
+                            if ($proyectos['moneda'] === 'MN') {
                                 echo '<h4 class="m-t-10">SubCategoria  MN</h4>';
                             } else {
                                 echo '<h4 class="m-t-10">SubCategoria  USD</h4>';
@@ -298,7 +298,7 @@
                                         <th class="never">idSubCategoria</th>
                                         <th class="all">SubCategoria</th>
                                         <?php
-                                        if ($subcategorias[0][0] === 'MN') {
+                                        if ($proyectos['moneda'] === 'MN') {
                                             echo '<th class="all">Gasto MN</th>';
                                         } else {
                                             echo '<th class="all">Gasto USD</th>';
@@ -310,9 +310,9 @@
                                     <?php
                                     foreach ($subcategorias as $subcategoria) {
                                         echo "<tr>";
-                                        echo '<td>' . $subcategoria['SubCategoria'] . '</td>';
-                                        if ($subcategoria['SubCategoria'] != '') {
-                                            echo '<td>' . $subcategoria['SubCategoria'] . '</td>';
+                                        echo '<td>' . $subcategoria['Subcategoria'] . '</td>';
+                                        if ($subcategoria['Subcategoria'] != '') {
+                                            echo '<td>' . $subcategoria['Subcategoria'] . '</td>';
                                         } else {
                                             echo '<td style="color: red">SIN DATOS</td>';
                                         }
@@ -335,7 +335,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <?php
-                            if ($subcategorias[0][0] === 'MN') {
+                            if ($proyectos['moneda'] === 'MN') {
                                 echo '<h4 class="m-t-10">Concepto MN</h4>';
                             } else {
                                 echo '<h4 class="m-t-10">Concepto  USD</h4>';
@@ -358,18 +358,18 @@
                                     <tr>
                                         <th class="never">idConcepto</th>
                                         <th class="all">Concepto</th>
-                                        <?php
-                                        if ($subcategorias[0][0] === 'MN') {
-                                            echo '<th class="all">Gasto MN</th>';
-                                        } else {
-                                            echo '<th class="all">Gasto</th>';
-                                        }
-                                        ?>
+                                            <?php
+                                            if ($proyectos['moneda'] === 'MN') {
+                                                echo '<th class="all">Gasto MN</th>';
+                                            } else {
+                                                echo '<th class="all">Gasto</th>';
+                                            }
+                                            ?>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach ($concepto as $valor) {
+                                    foreach ($conceptos as $valor) {
                                         echo "<tr>";
                                         echo '<td>' . $valor['Concepto'] . '</td>';
                                         if ($valor['Concepto'] != '') {

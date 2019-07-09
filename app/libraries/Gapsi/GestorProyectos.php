@@ -26,7 +26,7 @@ class GestorProyectos extends General {
     private function crearProyectos(array $listaIdProyectos) {
         $this->proyectos = array();
         foreach ($listaIdProyectos as $key => $proyecto) {
-            $temporal = new \Librerias\Gapsi\Proyecto(array('idProyecto' => $proyecto['IdProyecto'], 'moneda' => 'MN'));
+            $temporal = new \Librerias\Gapsi\Proyecto(array('idProyecto' => $proyecto['IdProyecto']));
             array_push($this->proyectos, $temporal);
         }
     }

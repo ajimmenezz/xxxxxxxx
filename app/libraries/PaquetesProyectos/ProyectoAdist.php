@@ -18,7 +18,7 @@ class ProyectoAdist implements Proyecto {
     private $ultimoMovimiento;
 
     public function __construct(string $idProyecto) {
-        echo 'Hola soy Adist mi id es '. $idProyecto;
+        echo 'Hola soy Adist mi id es ' . $idProyecto;
     }
 
     public function calcularTotalTranferencia() {
@@ -38,7 +38,7 @@ class ProyectoAdist implements Proyecto {
     }
 
     public function getIdSucursales() {
-        return array(1,2,3,4,5);
+        return array(1, 2, 3, 4, 5);
     }
 
     public function getType() {
@@ -46,6 +46,22 @@ class ProyectoAdist implements Proyecto {
     }
 
     public function setDatos(string $idProyecto) {
+        
+    }
+
+    public function getServicios() {
+        
+    }
+
+    public function getCategorias() {
+        
+    }
+
+    public function getSubcategorias() {
+        
+    }
+
+    public function getConceptos() {
         
     }
 

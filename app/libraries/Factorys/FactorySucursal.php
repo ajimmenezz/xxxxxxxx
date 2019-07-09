@@ -2,24 +2,23 @@
 
 namespace Librerias\Factorys;
 
-use Librerias\PaquetesProyectos\ProyectoGapsi as Gapsi;
-use Librerias\PaquetesProyectos\ProyectoAdist as Adist;
+use Librerias\PaquetesSucursales\SucursalGapsi as Gapsi;
+use Librerias\PaquetesSucursales\SucursalAdist as Adist;
 
 class FactorySucursal {
     
-    private $proyecto;    
+    private $sucursal;    
     
     public function __construct() {        
     }
     
-    public function getProject(string $tipo, string $idProyecto) {
-        
+    public function getSucursal(string $tipo, string $idSucursal) {
         switch ($tipo) {
             case 'Adist':
-                $this->proyecto = new Adist($idProyecto);
+                $this->sucursal = new Adist($idSucursal);
                 break;
             case 'Gapsi':
-                $this->proyecto = new Gapsi($idProyecto);
+                $this->sucursal = new Gapsi($idSucursal);
                 break;
 
             default:
@@ -27,6 +26,6 @@ class FactorySucursal {
                 break;
         }
         
-        return $this->proyecto;
+        return $this->sucursal;
     }
 }
