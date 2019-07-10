@@ -13,7 +13,7 @@
             </div>
         </div>
         <!--Finaliza encabezado detalles-->
-        <div id="panelDashboardGapsiFilters" class="panel panel-inverse">
+        <div id="panelDashboardGapsiDetails" class="panel panel-inverse">
 
             <!--Empieza titulo pagina-->
             <div class="panel-heading">                
@@ -74,7 +74,7 @@
                                             echo '<td>' . $valor['Importe'] . '</td>';
                                             echo '<td>' . $valor['Moneda'] . '</td>';
                                             echo '<td>' . $valor['TipoTrans'] . '</td>';
-                                            echo '<td>' . $valor['FCaptura'] . '</td>';
+                                            echo '<td>' . $valor['Fecha'] . '</td>';
                                         echo "</tr>";
                                     }
                                     ?>

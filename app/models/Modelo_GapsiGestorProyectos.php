@@ -14,11 +14,11 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     (SELECT Descripcion FROM db_Proyectos WHERE ID = dr.Proyecto) AS Descripcion,
                                                     (SELECT FCreacion FROM db_Proyectos WHERE ID = dr.Proyecto) AS FCreacion,
                                                     (SELECT
-                                                            top 1 FCaptura
+                                                            top 1 Fecha
                                                       FROM db_Registro
                                                       WHERE Proyecto = dr.Proyecto
                                                       AND Tipo = dr.Tipo
-                                                      ORDER BY FCaptura DESC) AS UltimoRegistro
+                                                      ORDER BY Fecha DESC) AS UltimoRegistro
                                                     FROM db_Registro dr
                                                     WHERE 1=1
                                                     AND dr.StatusConciliacion = 'Conciliado'
@@ -63,7 +63,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     (SELECT Descripcion FROM db_Proyectos WHERE ID = dr.Proyecto) AS Proyecto,
                                                     SUM(ddg.Monto) AS Gasto,
                                                     (SELECT
-                                                            TOP 1 min(dr.FCaptura) AS FCaptura
+                                                            TOP 1 min(dr.Fecha) AS Fecha
                                                         FROM db_Registro AS dr
                                                         LEFT JOIN db_DetalleGasto AS ddg
                                                         ON ddg.ID = dr.ID
@@ -71,7 +71,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         AND dr.StatusConciliacion = 'Conciliado'
                                                         " . $parameters . "
                                                         GROUP BY Proyecto
-                                                        ORDER BY FCaptura ASC) AS FCaptura
+                                                        ORDER BY Fecha ASC) AS Fecha
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
@@ -94,7 +94,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     ISNULL(dr.TipoServicio, 'SIN SERVICIO') AS TipoServicio,
                                                     SUM(ddg.Monto) AS Gasto,
                                                     (SELECT
-                                                            TOP 1 min(dr.FCaptura) AS FCaptura
+                                                            TOP 1 min(dr.Fecha) AS Fecha
                                                         FROM db_Registro AS dr
                                                         LEFT JOIN db_DetalleGasto AS ddg
                                                         ON ddg.ID = dr.ID
@@ -102,7 +102,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         AND dr.StatusConciliacion = 'Conciliado'
                                                         " . $parameters . "
                                                         Group by TipoServicio
-                                                        ORDER BY FCaptura ASC) AS FCaptura
+                                                        ORDER BY Fecha ASC) AS Fecha
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
@@ -128,7 +128,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     END AS Sucursal,
                                                     SUM(ddg.Monto) AS Gasto,
                                                     (SELECT
-                                                            TOP 1 min(dr.FCaptura) AS FCaptura
+                                                            TOP 1 min(dr.Fecha) AS Fecha
                                                         FROM db_Registro AS dr
                                                         LEFT JOIN db_DetalleGasto AS ddg
                                                         ON ddg.ID = dr.ID
@@ -136,7 +136,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         AND dr.StatusConciliacion = 'Conciliado'
                                                         " . $parameters . "
                                                         GROUP BY Sucursal
-                                                        ORDER BY FCaptura ASC) AS FCaptura
+                                                        ORDER BY Fecha ASC) AS Fecha
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
@@ -158,7 +158,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     ISNULL(ddg.Categoria, 'SIN CATEGORIA') AS Categoria,
                                                     SUM(ddg.Monto) AS Gasto,
                                                     (SELECT
-                                                            TOP 1 min(dr.FCaptura) AS FCaptura
+                                                            TOP 1 min(dr.Fecha) AS Fecha
                                                         FROM db_Registro AS dr
                                                         LEFT JOIN db_DetalleGasto AS ddg
                                                         ON ddg.ID = dr.ID
@@ -166,7 +166,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         AND dr.StatusConciliacion = 'Conciliado'
                                                         " . $parameters . "
                                                         GROUP BY ddg.Categoria
-                                                        ORDER BY FCaptura ASC) AS FCaptura
+                                                        ORDER BY Fecha ASC) AS Fecha
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
@@ -188,7 +188,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     ISNULL(ddg.SubCategoria, 'SIN SUBCATEGORIA') AS SubCategoria,
                                                     SUM(ddg.Monto) AS Gasto,
                                                     (SELECT
-                                                            TOP 1 min(dr.FCaptura) AS FCaptura
+                                                            TOP 1 min(dr.Fecha) AS Fecha
                                                         FROM db_Registro AS dr
                                                         LEFT JOIN db_DetalleGasto AS ddg
                                                         ON ddg.ID = dr.ID
@@ -196,7 +196,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         AND dr.StatusConciliacion = 'Conciliado'
                                                         " . $parameters . "
                                                         GROUP BY ddg.SubCategoria
-                                                        ORDER BY FCaptura ASC) AS FCaptura
+                                                        ORDER BY Fecha ASC) AS Fecha
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
@@ -218,7 +218,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 ISNULL(Concepto, 'SIN CONCEPTO') AS Concepto,
                                                 SUM(ddg.Monto) AS Gasto,
                                                 (SELECT
-                                                            TOP 1 min(dr.FCaptura) AS FCaptura
+                                                            TOP 1 min(dr.Fecha) AS Fecha
                                                         FROM db_Registro AS dr
                                                         LEFT JOIN db_DetalleGasto AS ddg
                                                         ON ddg.ID = dr.ID
@@ -226,7 +226,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         AND dr.StatusConciliacion = 'Conciliado'
                                                         " . $parameters . "
                                                         GROUP BY ddg.Concepto
-                                                        ORDER BY FCaptura ASC) AS FCaptura
+                                                        ORDER BY Fecha ASC) AS Fecha
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
@@ -272,7 +272,7 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     dr.Beneficiario,
                                                     dr.Importe,
                                                     dr.Moneda,
-                                                    dr.FCaptura
+                                                    dr.Fecha
                                                 FROM db_Registro AS dr
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID

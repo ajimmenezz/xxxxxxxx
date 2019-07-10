@@ -57,6 +57,14 @@ $(function () {
     let selectorsubcategoria = null;
     let selectorconcepto = null;
     let tablaDetalles = null;
+    let totalGastoTipoProyectos = 0;
+    let totalGastoProyectosP = 0;
+    let totalGastoProyectos = 0;
+    let totalGastoServicios = 0;
+    let totalGastoSucursales = 0;
+    let totalGastoCategoria = 0;
+    let totalGastoSubCategoria = 0;
+    let totalGastoConceptos = 0;
 
     let datosProyecto = Array();
     let datosFiltros = {
@@ -89,6 +97,7 @@ $(function () {
     filtroMoneda();
     setDastosProyectos();
     function setDastosProyectos() {
+        let total = 0;
         let temporal = tablaProyectos.datosTabla();
         datosProyecto = Array();
         $.each(temporal, function (key, value) {
@@ -100,12 +109,21 @@ $(function () {
                 fecha: value[4],
                 fechaFin: value[5]
             });
+            let valorGasto = value[3].split(' ')[1].split(',');
+            let concatena = '';
+            $.each(valorGasto, function (key, value) {
+                concatena += value;
+            });
+            total += parseFloat(concatena);
         });
+        totalGastoTipoProyectos = total;
+        $("#gastoTipoProyectos").text("$" + formatoNumero(totalGastoTipoProyectos.toFixed(2)));
     }
 
     tablaTipoProyecto.evento(function () {
         let datosfila = tablaTipoProyecto.datosFila(this);
         let datosFiltradosProyecto = null;
+        let total = 0;
         tablaProyectos.limpiartabla();
         datosFiltradosProyecto = filtrarDatos(datosProyecto, {condicion: 'tipo', valor: datosfila[0]});
         $.each(datosFiltradosProyecto, function (key, value) {
@@ -117,7 +135,15 @@ $(function () {
                 value.fecha,
                 value.fechaFin
             ]);
+            let valorGasto = value.gasto.split(' ')[1].split(',');
+            let concatena = '';
+            $.each(valorGasto, function (key, value) {
+                concatena += value;
+            });
+            total += parseFloat(concatena);
         });
+        totalGastoProyectosP = total;
+        $("#gastoProyectos").text("Gasto total: $" + formatoNumero(totalGastoProyectosP.toFixed(2)));
         $('html, body').animate({
             scrollTop: $("#titulo-tabla-proyectos").offset().top - 60
         }, 600);
@@ -154,12 +180,24 @@ $(function () {
             startDate: new Date('2016-07-08'),
             endDate: fecha
         });
+        $('.calendarDesdePrincipal').click(function () {
+            $("#fechaComienzoPrincipal").datepicker('show');
+        });
+        $('.calendarHastaPrincipal').click(function () {
+            $("#fechaFinPrincipal").datepicker('show');
+        });
+        $('.calendarDesde').click(function () {
+            $("#fechaComienzo").datepicker('show');
+        });
+        $('.calendarHasta').click(function () {
+            $("#fechaFin").datepicker('show');
+        });
         $('#fechaComienzoPrincipal').datepicker('setDate', '2016-07-07');
         $('#fechaFinPrincipal').datepicker('setDate', fecha.getFullYear() + '-' + fecha.getMonth() + 1);
         $("#btnFiltrarDashboardPrincipal").on('click', function () {
             datosFiltros.fechaInicio = $('#fechaComienzoPrincipal').val() + "T00:00:00.000";
             datosFiltros.fechaFinal = $('#fechaFinPrincipal').val() + "T23:59:59.999";
-            enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
+            enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
         });
 
         $("#btnFiltrarDashboard").on('click', function () {
@@ -173,7 +211,7 @@ $(function () {
         $("input[name='optionsRadiosMonedaPrincipal").click(function () {
             var radioValueFiltrosP = $("input[name='optionsRadiosMonedaPrincipal']:checked").val();
             datosFiltros.moneda = radioValueFiltrosP;
-            enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
+            enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
         });
         $("input[name='optionsRadiosMoneda").click(function () {
             var radioValueFiltros = $("input[name='optionsRadiosMoneda']:checked").val();
@@ -360,6 +398,7 @@ $(function () {
                 incializarObjetos();
                 eventosObjetos();
                 tablasCostosFiltros();
+                costosTotales();
                 $("input[name='optionsRadiosMoneda'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
                 anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
                 $('html, body').animate({
@@ -374,18 +413,45 @@ $(function () {
 
     function incializarDatos(datos) {
         datosProyectos = datos.proyectos;
+        totalGastoProyectos = gastoTotal(datosProyectos);
         datosServicios = datos.servicios;
+        totalGastoServicios = gastoTotal(datosServicios);
         datosSucursales = datos.sucursales;
+        totalGastoSucursales = gastoTotal(datosSucursales);
         datosCategoria = datos.categorias;
+        totalGastoCategoria = gastoTotal(datosCategoria);
         datosSubCategoria = datos.subcategorias;
+        totalGastoSubCategoria = gastoTotal(datosSubCategoria);
         datosConceptos = datos.concepto;
+        totalGastoConceptos = gastoTotal(datosConceptos);
         datosCompras = datos.gastosCompras;
+    }
+
+    function gastoTotal(datos) {
+        let total = 0;
+        $.each(datos, function (key, value) {
+            total += value.Gasto;
+        });
+        return total;
+    }
+    function costosTotales() {
+        $("#gastoProyecto").text("$" + formatoNumero(totalGastoProyectos.toFixed(2)));
+        $("#gastoServicio").text("$" + formatoNumero(totalGastoServicios.toFixed(2)));
+        $("#gastoSucursal").text("$" + formatoNumero(totalGastoSucursales.toFixed(2)));
+        $("#gastoCategoria").text("$" + formatoNumero(totalGastoCategoria.toFixed(2)));
+        $("#gastoSubCategoria").text("$" + formatoNumero(totalGastoSubCategoria.toFixed(2)));
+        $("#gastoConcepto").text("$" + formatoNumero(totalGastoConceptos.toFixed(2)));
+        if ($("#proyecto").hasClass("hidden") && $("#servicio").hasClass("hidden") && $("#sucursal").hasClass("hidden") &&
+                $("#categoria").hasClass("hidden") && $("#subcategoria").hasClass("hidden") && $("#concepto").hasClass("hidden")) {
+            seccionDetalles();
+        }
     }
 
     function setSecciones(formulario) {
         $('#dashboardGapsiFilters').removeClass('hidden').empty().append(formulario);
         $('#contentDashboardGapsi').addClass('hidden');
         $('#filtroFechas').addClass('hidden');
+        $('#dashboardGapsiDetalles').addClass('hidden');
         $('#page-container').addClass('page-with-two-sidebar');
         $('#sidebar-right').removeClass('hidden');
         $('[data-click=right-sidebar-toggled]').removeClass('hidden');
@@ -444,7 +510,7 @@ $(function () {
             let cell1 = row.insertCell(0);
             let cell2 = row.insertCell(1);
             cell1.innerHTML = value.TipoTrans;
-            cell2.innerHTML = value.Gasto.toFixed(2);
+            cell2.innerHTML = formatoNumero(value.Gasto.toFixed(2));
         });
 
         alertaFiltros.quitarAlert();
@@ -518,10 +584,9 @@ $(function () {
                 modalDetalles(claveDetalle);
             });
             $('#descargaPDF').on('click', function () {
-                console.log("Genera PDF")
-//                peticion.enviar('panelDashboardGapsiFilters', '', datosFiltros, function (respuesta) {
-//                    
-//                });
+                peticion.enviar('panelDashboardGapsiDetails', 'Dashboard_Gapsi/PDFDetalles', datosFiltros, function (respuesta) {
+                    window.open(respuesta.listaProyectos, '_blank');
+                });
             });
         });
 
@@ -572,7 +637,7 @@ $(function () {
             datosFiltros = JSON.parse(JSON.stringify(anterioresFiltros));
             switch (clave) {
                 case 1:
-                    enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
+                    enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
                     break;
                 case 2:
                     enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);

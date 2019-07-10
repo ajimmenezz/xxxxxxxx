@@ -55,14 +55,14 @@
                 <div class="input-group input-daterange">
                     <div class="col-md-12">
                         <input id="fechaComienzo" name="startDate" type="text" class="form-control"> 
-                        <span class="input-group-addon">
+                        <span class="input-group-addon calendarDesde">
                             <label>Desde <span class="glyphicon glyphicon-calendar"></span></label>
                         </span>
                         <br>
                     </div>
                     <div class="col-md-12">
                         <input id="fechaFin" name="endDate" type="text" class="form-control">
-                        <span class="input-group-addon">
+                        <span class="input-group-addon calendarHasta">
                             <label>Hasta <span class="glyphicon glyphicon-calendar"></span></label>
                         </span>
                     </div>
@@ -131,6 +131,11 @@
         <div class="panel-body">
             <div class="row">
                 <!--grafica principal dashboard                -->
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-md-12">
+                        <h4 class="m-t-10" style="text-align: right;">Gasto total: <label id="gastoTipoProyectos"></label></h4>
+                    </div>
+                </div>
                 <div id="graficaMN" class="col-md-7">                        
                     <div class="row">
                         <div id="graphDashboard" style="width: 100%; height: 400px;  max-height:400px"></div>                        
@@ -171,10 +176,15 @@
             </div>
             <div class="row  m-t-30">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">                        
-                    <div class="form-group">
+                    <div class="col-md-6">
                         <h3 class="m-t-10" id="titulo-tabla-proyectos">Proyectos</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="m-t-10" style="text-align: right;"><label id="gastoProyectos"></label></h4>
+                    </div>
+                    <div class="col-md-12">
                         <div class="underline m-b-15 m-t-15"></div>
-                    </div>    
+                    </div>
                 </div> 
             </div>            
             <div class="row">
@@ -253,14 +263,14 @@
         <div class="input-group input-daterange">
             <div class="col-md-12">
                 <input id="fechaComienzoPrincipal" name="startDate" type="text" class="form-control"> 
-                <span class="input-group-addon">
+                <span class="input-group-addon calendarDesdePrincipal">
                     <label>Desde <span class="glyphicon glyphicon-calendar"></span></label>
                 </span>
                 <br>
             </div>
             <div class="col-md-12">
                 <input id="fechaFinPrincipal" name="endDate" type="text" class="form-control">
-                <span class="input-group-addon">
+                <span class="input-group-addon calendarHastaPrincipal">
                     <label>Hasta <span class="glyphicon glyphicon-calendar"></span></label>
                 </span>
             </div>

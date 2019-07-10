@@ -34,6 +34,13 @@ $(function () {
         minDate: moment().add(-15,'day')
     });
     $('#selectSolicitudHora').timepicker();
+    $('#selectSolicitudHora').on("change", function(){
+        var dia =  $(this).val().split(' ');
+        if(dia[0] < '09:00' && dia[1] == 'AM')
+            $('#selectSolicitudHora').val('09:00 AM')
+        if(dia[0] > '07:00' && dia[1] == 'PM')
+            $('#selectSolicitudHora').val('07:00 PM')
+    });
 
     $('#inputFechaHasta').datetimepicker({
         format: 'YYYY-MM-DD',
@@ -42,7 +49,6 @@ $(function () {
     $("#inputFechaDesde").on("dp.change", function (e) {
         $('#inputFechaHasta').data("DateTimePicker").maxDate(moment(e.date).add(1,'day'));
         $('#inputFechaHasta').data("DateTimePicker").minDate(e.date);
-        $('#inputDescuento').val('1.17 Dias');
     });
     $("#inputFechaHasta").on("dp.change", function (e) {
         $('#inputFechaDesde').data("DateTimePicker").maxDate(e.date);
@@ -89,24 +95,28 @@ $(function () {
 
     $('#formSolicitudPermiso').on('change', function () {
         if($('#selectTipoAusencia').val() == 3 && $('#selectMotivoAusencia').val() == 1){
-            $('#inputDescuento').val('1.17 Dias');
-            $("#inputFechaHasta").on("dp.change", function () {
-                var date1 = new Date($('#inputFechaPermisoDesde').val());
-                var date2 = new Date($('#inputFechaPermisoHasta').val());
-                var diffDays = date2.getDate('dd')-date1.getDate('dd')
-                var totalDescuentoDias;
-                switch(diffDays){
-                    case 0:
-                        totalDescuentoDias = '1.17 Dias';
-                        break;
-                    case 1:
-                        totalDescuentoDias = '2.34 Dias';
-                        break;
-                    default:
-                        totalDescuentoDias = '1.17 Dias';
-                        break;
-                }
-                $('#inputDescuento').val(totalDescuentoDias);
+            $('#Permisos').on('change', function () {
+                $("#inputFechaDesde").on("dp.change", function () {
+                    $('#inputDescuento').val('1.17 Dias');
+                });
+                $("#inputFechaHasta").on("dp.change", function () {
+                    var date1 = new Date($('#inputFechaPermisoDesde').val());
+                    var date2 = new Date($('#inputFechaPermisoHasta').val());
+                    var diffDays = date2.getDate('dd')-date1.getDate('dd')
+                    var totalDescuentoDias;
+                    switch(diffDays){
+                        case 0:
+                            totalDescuentoDias = '1.17 Dias';
+                            break;
+                        case 1:
+                            totalDescuentoDias = '2.34 Dias';
+                            break;
+                        default:
+                            totalDescuentoDias = '1.17 Dias';
+                            break;
+                    }
+                    $('#inputDescuento').val(totalDescuentoDias);
+                });
             });
         }
         if($('#selectTipoAusencia').val() == 1 && $('#selectMotivoAusencia').val() == 1){
@@ -274,6 +284,13 @@ $(function () {
                             minDate: moment().add(-15,'day')
                         });
                         $('#selectSolicitudHoraAct').timepicker();
+                        $('#selectSolicitudHoraAct').on("change", function(){
+                            var dia =  $(this).val().split(' ');
+                            if(dia[0] < '09:00' && dia[1] == 'AM')
+                                $('#selectSolicitudHoraAct').val('09:00 AM')
+                            if(dia[0] > '07:00' && dia[1] == 'PM')
+                                $('#selectSolicitudHoraAct').val('07:00 PM')
+                        });
                         $('#inputFechaHastaAct').datetimepicker({
                             format: 'YYYY-MM-DD',
                             useCurrent: false
@@ -295,6 +312,7 @@ $(function () {
                                 $("#descripcionAusenciaAct").css("display","none");
                                 $('#textareaMotivoSolicitudPermisoAct').attr('data-parsley-required', 'false');
                                 $('#textareaMotivoSolicitudPermisoAct').val('');
+                                $("#archivoCitaIncapacidadAct").css("display","block");
                             }else{
                                 $("#descripcionAusenciaAct").css("display","block");
                                 $('#textareaMotivoSolicitudPermisoAct').attr('data-parsley-required', 'true');

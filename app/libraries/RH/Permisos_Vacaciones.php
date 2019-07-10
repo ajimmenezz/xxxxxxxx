@@ -229,7 +229,21 @@ class Permisos_Vacaciones extends General {
     }
 
     public function revisarActualizarPermiso($datosPermisos) {
-
+        if ($datosPermisos['evidenciaIncapacidad'] !== "") {
+            $nombreArchivo = explode("\\", $datosPermisos['evidenciaIncapacidad']);
+            $divideNombreArchivo = preg_split("/[\s-]+/", $nombreArchivo[2]);
+            $concatenaNombre = "";
+            if (count($divideNombreArchivo) < 2) {
+                $evidencia = 'Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/' . $divideNombreArchivo[0];
+            } else {
+                for ($i = 0; $i < count($divideNombreArchivo); $i++) {
+                    $concatenaNombre .= $divideNombreArchivo[$i] . '_';
+                }
+                $evidencia = 'Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/' . substr($concatenaNombre, 0, -1);
+            }
+        }else{
+            $evidencia = "";
+        }
         switch ($datosPermisos['tipoAusencia']) {
             case '1':
                 $horaEntrada = $datosPermisos['horaAusencia'];
@@ -254,7 +268,8 @@ class Permisos_Vacaciones extends General {
             'HoraEntrada' => $horaEntrada,
             'HoraSalida' => $horaSalida,
             'Motivo' => $datosPermisos['descripcionAusencia'],
-            'FolioDocumento' => $datosPermisos['citaFolio']
+            'FolioDocumento' => $datosPermisos['citaFolio'],
+            'ArchivosOriginales' => $evidencia
                 ), array('Id' => $datosPermisos['idPermiso']));
     }
 
@@ -434,7 +449,11 @@ class Permisos_Vacaciones extends General {
         $this->pdf->RoundedRect(75, 100, 60, 6, 1, '1234');
         $this->pdf->SetXY(75, 104);
         $this->pdf->SetFont("helvetica", "", 10);
-        $this->pdf->Cell(0, 0, utf8_decode($datosPermisos["fechaPermisoHasta"]));
+        if ($datosPermisos['citaFolio'] != "") {
+            $this->pdf->Cell(0, 0, utf8_decode($datosPermisos["fechaPermisoHasta"]));
+        } else {
+            $this->pdf->Cell(0, 0, utf8_decode("   ----------"));
+        }
 
         switch ($datosPermisos['tipoAusencia']) {
 
