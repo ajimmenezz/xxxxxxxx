@@ -33,8 +33,6 @@ class Controller_Proyecto extends CI_Controller {
         $this->proyecto = $this->factoryProyecto->getProject($this->datosFiltro['sistema'], $this->datosFiltro['proyecto']);
         $this->setSucursales();
         $this->setServicios();
-        $this->setCategorias();
-        $this->setSubcategorias();
         $this->setConceptos();
 
         $datosProyectosInfo['proyectos'] = $this->proyecto->getDatosGenerales();
@@ -73,39 +71,36 @@ class Controller_Proyecto extends CI_Controller {
         }
     }
 
-    private function setCategorias() {
-        $listaCategorias = null;
-        $listaCategorias = $this->proyecto->getCategorias();
-        $this->categorias = array();
-
-        foreach ($listaCategorias as $key => $categoria) {
-            $categoria = new Categoria($categoria['Categoria']);
-            $categoria->calcularTotalTranferencia($this->datosFiltro);
-            array_push($this->categorias, $categoria->getDatos());
-        }
-    }
-
-    private function setSubcategorias() {
-        $listaSubcategorias = null;
-        $listaSubcategorias = $this->proyecto->getSubcategorias();
-        $this->subcategorias = array();
-
-        foreach ($listaSubcategorias as $key => $subcategoria) {
-            $subcategoria = new Subcategoria($subcategoria['SubCategoria']);
-            $subcategoria->calcularTotalTranferencia($this->datosFiltro);
-            array_push($this->subcategorias, $subcategoria->getDatos());
-        }
-    }
-
     private function setConceptos() {
+        $this->conceptos = array();
+        $this->categorias = array();
+        $this->subcategorias = array();
         $listaConceptos = null;
         $listaConceptos = $this->proyecto->getConceptos();
-        $this->conceptos = array();
+        $listaCategorias = null;
+        $listaCategorias = $this->proyecto->getCategorias();
+        $listaSubcategorias = null;
+        $listaSubcategorias = $this->proyecto->getSubcategorias();
 
-        foreach ($listaConceptos as $key => $concepto) {
-            $concepto = new Concepto($concepto['Concepto']);
-            $concepto->calcularTotalTranferencia($this->datosFiltro);
-            array_push($this->conceptos, $concepto->getDatos());
+        foreach ($listaConceptos as $key => $valueConcepto) {
+            $concepto = new Concepto();
+            $concepto->setDatosConcepto($valueConcepto['Concepto']);
+            $concepto->calcularTotalTranferenciaConcepto($this->datosFiltro);
+            array_push($this->conceptos, $concepto->getDatosConcepto());
+        }
+
+        foreach ($listaCategorias as $key => $valueCategoria) {
+            $categoria = new Concepto();
+            $categoria->setDatosCategoria($valueCategoria['Categoria']);
+            $categoria->calcularTotalTranferenciaCategoria($this->datosFiltro);
+            array_push($this->categorias, $categoria->getDatosCategoria());
+        }
+
+        foreach ($listaSubcategorias as $key => $valueSubcategoria) {
+            $subcategoria = new Concepto();
+            $subcategoria->setDatosSubcategoria($valueSubcategoria['SubCategoria']);
+            $subcategoria->calcularTotalTranferenciaSubcategoria($this->datosFiltro);
+            array_push($this->subcategorias, $subcategoria->getDatosSubcategoria());
         }
     }
 
