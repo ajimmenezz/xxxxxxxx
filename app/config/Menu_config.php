@@ -150,13 +150,14 @@ $config['Generales'] = array(
             'bootstrap-datepicker/css/datepicker'
         ),
         'js' => array(
-            'Base/Base',
-            'Componentes/HerramientasWeb/Utileria',
-            'Componentes/Selects/Select',
-            'Componentes/Selects/SelectBasico',
-            'Componentes/Tablas/Tabla',
-            'Componentes/Tablas/TablaBasica',
-            'Componentes/Graficas/GraficaGoogle',
+            'Base/Base', 
+            'Componentes/HerramientasWeb/Utileria', 
+            'Componentes/HerramientasWeb/Alertas',
+            'Componentes/Selects/Select', 
+            'Componentes/Selects/SelectBasico', 
+            'Componentes/Tablas/Tabla', 
+            'Componentes/Tablas/TablaBasica', 
+            'Componentes/Graficas/GraficaGoogle', 
             'Generales/dashboard_gapsi',
             'Generales/page-with-two-sidebar'
         ),

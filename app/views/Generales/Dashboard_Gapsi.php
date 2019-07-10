@@ -20,10 +20,19 @@
                         </table>
                     </div>
                 </div>
+                <!--Empieza Seccion de detalles -->
+                <div class="col-md-12">
+                    <p>
+                        <a id="verDetalles" href="javascript:;" class="btn btn-primary btn-block hidden">Ver Detalles <i class="fa fa-angle-double-right"></i></a>
+                    </p>
+                    <p>
+                        <a id="ocultarDetalles" href="javascript:;" class="btn btn-primary btn-block hidden">Ocultar Detalles <i class="fa fa-angle-double-left"></i></a>
+                    </p>
+                </div>
+                <!--Finaliza Seccion de detalles -->
                 <!--Empieza Seccion de filtros agregados -->
                 <div class="col-md-12">
-                    <div  id="seccionFiltros">
-                    </div>
+                    <div  id="seccionFiltros"></div>
                 </div>
                 <!--Finaliza Seccion de filtros agregados -->
             </div>
@@ -36,36 +45,27 @@
                 </div>
                 <div class="radio">
                     <label style="color: #A8ACB1">
-                        <input type="radio" name="optionsRadiosMoneda" value="USD" />Dollar
+                        <input type="radio" name="optionsRadiosMoneda" value="USD" />Dolar
                     </label>
                 </div>
             </div>
             <!--Finaliza selector modena-->
             <!--Empieza filtro de fecha-->
             <div class="row">
-                <div class="col-md-12">
-                    <div class="divider"></div>
-                    <h5 class="m-t-0" style="color: #A8ACB1">Filtros de fechas</h5>
-                    <div class="form-group">
-                        <label style="color: #A8ACB1">Desde</label>
-                        <div class='input-group date' id='desde'>
-                            <input id='fechaComienzo' type='text' class="form-control"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                        </div>
-                    </div>                
-                </div>
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label style="color: #A8ACB1">Hasta</label>
-                        <div class='input-group date' id='hasta'>
-                            <input id='fechaFin' type='text' class="form-control"/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                        </div>
-                    </div>                
+                <div class="input-group input-daterange">
+                    <div class="col-md-12">
+                        <input id="fechaComienzo" name="startDate" type="text" class="form-control"> 
+                        <span class="input-group-addon calendarDesde">
+                            <label>Desde <span class="glyphicon glyphicon-calendar"></span></label>
+                        </span>
+                        <br>
+                    </div>
+                    <div class="col-md-12">
+                        <input id="fechaFin" name="endDate" type="text" class="form-control">
+                        <span class="input-group-addon calendarHasta">
+                            <label>Hasta <span class="glyphicon glyphicon-calendar"></span></label>
+                        </span>
+                    </div>
                 </div>
                 <div class="col-md-12">
                     <a href="#" id="btnFiltrarDashboard" class="btn btn-inverse btn-success btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
@@ -96,7 +96,7 @@
                         <select id="selectcategoria" class="form-control efectoDescuento" name="SelectCategoria" style="width: 100%">
                         </select>
                     </div>
-                    <div class="form-group" id="hidecubcategoria">
+                    <div class="form-group" id="hidesubcategoria">
                         <label style="color: #A8ACB1">SubCategoria</label>
                         <select id="selectsubcategoria" class="form-control efectoDescuento" name="SelectSubCategoria" style="width: 100%">
                         </select>
@@ -131,6 +131,11 @@
         <div class="panel-body">
             <div class="row">
                 <!--grafica principal dashboard                -->
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-md-12">
+                        <h4 class="m-t-10" style="text-align: right;">Gasto total: <label id="gastoTipoProyectos"></label></h4>
+                    </div>
+                </div>
                 <div id="graficaMN" class="col-md-7">                        
                     <div class="row">
                         <div id="graphDashboard" style="width: 100%; height: 400px;  max-height:400px"></div>                        
@@ -154,7 +159,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php                                
+                                <?php
                                 foreach ($datos['Datos']['TiposProyectos'] as $key => $value) {                               
                                     echo "<tr>";
                                     echo '<td>' . key($value) . '</td>';
@@ -171,10 +176,15 @@
             </div>
             <div class="row  m-t-30">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">                        
-                    <div class="form-group">
+                    <div class="col-md-6">
                         <h3 class="m-t-10" id="titulo-tabla-proyectos">Proyectos</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="m-t-10" style="text-align: right;"><label id="gastoProyectos"></label></h4>
+                    </div>
+                    <div class="col-md-12">
                         <div class="underline m-b-15 m-t-15"></div>
-                    </div>    
+                    </div>
                 </div> 
             </div>            
             <div class="row">
@@ -221,10 +231,15 @@
 </div>
 <!--Finaliza dashboard principal-->
 
-<!--Empieza dashboard detallado-->
+<!--Empieza dashboard filtros-->
 <div id="dashboardGapsiFilters" class="hidden"></div>
-<!--Finaliza dashboard detallado-->
+<!--Finaliza dashboard filtros-->
 
+<!--Empieza dashboard detalles-->
+<div id="dashboardGapsiDetalles" class="hidden"></div>
+<!--Finaliza dashboard detalles-->
+
+<!--Empieza panel filtros principal-->
 <div id="filtroFechas" class="theme-panel">
     <a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn bg-green"><i class="fa fa-calendar text-white"></i></a>
     <div class="theme-panel-content">
@@ -237,31 +252,30 @@
             </div>
             <div class="radio">
                 <label>
-                    <input type="radio" name="optionsRadiosMonedaPrincipal" value="USD" />Dollar
+                    <input type="radio" name="optionsRadiosMonedaPrincipal" value="USD" />Dolar
                 </label>
             </div>
             <div class="divider"></div>
         </div>
         <!--Finaliza selector modena-->
         <h5 class="m-t-0">Filtros de fechas</h5>
-        <div class="form-group">
-            <label>Desde</label>
-            <div class='input-group date' id='desdePrincipal' values="">
-                <input id='fechaComienzoPrincipal' type='text' class="form-control"/>
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
+        <!--Empieza filtro Fecha-->
+        <div class="input-group input-daterange">
+            <div class="col-md-12">
+                <input id="fechaComienzoPrincipal" name="startDate" type="text" class="form-control"> 
+                <span class="input-group-addon calendarDesdePrincipal">
+                    <label>Desde <span class="glyphicon glyphicon-calendar"></span></label>
+                </span>
+                <br>
+            </div>
+            <div class="col-md-12">
+                <input id="fechaFinPrincipal" name="endDate" type="text" class="form-control">
+                <span class="input-group-addon calendarHastaPrincipal">
+                    <label>Hasta <span class="glyphicon glyphicon-calendar"></span></label>
                 </span>
             </div>
         </div>
-        <div class="form-group">
-            <label>Hasta</label>
-            <div class='input-group date' id='hastaPrincipal'>
-                <input id='fechaFinalPrincipal' type='text' class="form-control"/>
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
-                </span>
-            </div>
-        </div>
+        <!--Finaliza filtro Fecha-->
         <div class="row m-t-10">
             <div class="col-md-12">
                 <a href="#" id="btnFiltrarDashboardPrincipal" class="btn btn-inverse btn-success btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
@@ -269,3 +283,4 @@
         </div>
     </div>
 </div>
+<!--Finaliza panel filtros principal-->

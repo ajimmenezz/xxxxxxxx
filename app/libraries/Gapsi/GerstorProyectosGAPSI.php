@@ -7,10 +7,12 @@ use Controladores\Controller_Datos_Usuario as General;
 class GerstorProyectosGAPSI extends General {
 
     private $DBGestorProyectoGAPSI;
+    private $pdf;
 
     public function __construct() {
         parent::__construct();
         $this->DBGestorProyectoGAPSI = \Modelos\Modelo_GapsiGestorProyectos::factory();
+        $this->pdf = new \Librerias\Generales\PDFAux();
     }
 
     public function getListProjects(array $filters = []) {
@@ -84,7 +86,7 @@ class GerstorProyectosGAPSI extends General {
 
     private function parametersDate(array $filters) {
         if (!empty($filters['fechaInicio']) && !empty($filters['fechaFinal'])) {
-            $parameters = " AND FCaptura BETWEEN '" . $filters['fechaInicio'] . "' AND '" . $filters['fechaFinal'] . "'";
+            $parameters = " AND Fecha BETWEEN '" . $filters['fechaInicio'] . "' AND '" . $filters['fechaFinal'] . "'";
         } else {
             $parameters = '';
         }
@@ -111,6 +113,13 @@ class GerstorProyectosGAPSI extends General {
                             AND dr.Sucursal = '" . $filters['sucursal'] . "'
                             AND ddg.Categoria = '" . $filters['categoria'] . "'
                             AND ddg.SubCategoria = '" . $filters['subcategoria'] . "'";
+        } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['sucursal']) && !empty($filters['categoria']) && !empty($filters['subcategoria'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'
+                            AND dr.Sucursal = '" . $filters['sucursal'] . "'
+                            AND ddg.Categoria = '" . $filters['categoria'] . "'
+                            AND ddg.SubCategoria = '" . $filters['subcategoria'] . "'";
         } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['servicio']) && !empty($filters['sucursal']) && !empty($filters['categoria'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
@@ -118,6 +127,13 @@ class GerstorProyectosGAPSI extends General {
                             AND dr.TipoServicio = '" . $filters['servicio'] . "'
                             AND dr.Sucursal = '" . $filters['sucursal'] . "'
                             AND ddg.Categoria = '" . $filters['categoria'] . "'";
+        } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['servicio']) && !empty($filters['sucursal']) && !empty($filters['concepto'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'
+                            AND dr.TipoServicio = '" . $filters['servicio'] . "'
+                            AND dr.Sucursal = '" . $filters['sucursal'] . "'
+                            AND ddg.Concepto = '" . $filters['concepto'] . "'";
         } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['servicio']) && !empty($filters['categoria']) && !empty($filters['subcategoria'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
@@ -127,7 +143,7 @@ class GerstorProyectosGAPSI extends General {
                             AND ddg.SubCategoria = '" . $filters['subcategoria'] . "'";
         } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['categoria']) && !empty($filters['subcategoria'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
-                            AND dr.Tipo '" . $filters['tipoProyecto'] . "'
+                            AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
                             AND Proyecto = '" . $filters['proyecto'] . "'
                             AND ddg.Categoria = '" . $filters['categoria'] . "'
                             AND ddg.SubCategoria = '" . $filters['subcategoria'] . "'";
@@ -136,6 +152,12 @@ class GerstorProyectosGAPSI extends General {
                             AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
                             AND Proyecto = '" . $filters['proyecto'] . "'
                             AND dr.TipoServicio = '" . $filters['servicio'] . "'
+                            AND ddg.Categoria = '" . $filters['categoria'] . "'";
+        } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['sucursal']) && !empty($filters['categoria'])) {
+            $parameters = "AND Moneda = '" . $filters['moneda'] . "'
+                            AND dr.Tipo = '" . $filters['tipoProyecto'] . "'
+                            AND Proyecto = '" . $filters['proyecto'] . "'
+                            AND dr.Sucursal = '" . $filters['sucursal'] . "'
                             AND ddg.Categoria = '" . $filters['categoria'] . "'";
         } elseif (!empty($filters['tipoProyecto']) && !empty($filters['proyecto']) && !empty($filters['servicio']) && !empty($filters['sucursal'])) {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'
@@ -194,6 +216,83 @@ class GerstorProyectosGAPSI extends General {
         }
 
         return $parameters;
+    }
+
+    public function getProjectRecords(array $filters) {
+        $dataRecords = array();
+        $parametersDate = $this->parametersDate($filters);
+        $parameters = $this->defineParameters($filters);
+        $parameters = $parameters . $parametersDate;
+        $dataRecords = $this->DBGestorProyectoGAPSI->getProjectRecords($parameters);
+        return $dataRecords;
+    }
+
+    public function htmlProjectRecords(array $filters) {
+        $dataRecords = $this->getProjectRecords($filters);
+        if ($dataRecords['code'] === 200) {
+            return array('formulario' => parent::getCI()->load->view('Generales/Dashboard_Gapsi_Detalles', $dataRecords, TRUE), 'consulta' => $dataRecords);
+        } else {
+            return ['code' => 400];
+        }
+    }
+
+    public function getDetailsList(array $filters) {
+        $dataRecords = $this->getProjectRecords($filters);
+
+        if ($dataRecords['code'] === 200) {
+            $this->pdf->AddPage();
+            $this->pdf->subTitulo('Detalles');
+
+            foreach ($dataRecords['query'] as $key => $records) {
+                $this->BasicTable(array(
+                    'Clave Gasto',
+                    'Proyecto',
+                    'Tipo Proyecto',
+                    'Servicio',
+                    'Beneficiario',
+                    'Importe',
+                    'Moneda',
+                    'Tipo',
+                    'Fecha'), array(
+                    array($records['ID'],
+                        $records['Proyecto'],
+                        $records['Tipo'],
+                        $records['TipoServicio'],
+                        $records['Beneficiario'],
+                        $records['Importe'],
+                        $records['Moneda'],
+                        $records['TipoTrans'],
+                        $records['Fecha']),
+                ));
+            }
+            
+            $carpeta = $this->pdf->definirArchivo('Gapsi/PDF', 'Lista de Registros');
+            $this->pdf->Output('F', $carpeta, true);
+            $carpeta = substr($carpeta, 1);
+
+            return $carpeta;
+        } else {
+            return ['code' => 400];
+        }
+    }
+
+    public function BasicTable($header, $data) {
+        $this->pdf->Ln();
+        $ancho = ($this->pdf->GetPageWidth() - 20) / count($header);
+        // Cabecera
+        foreach ($header as $col) {
+            $this->pdf->SetFont("Helvetica", "B", 6);
+            $this->pdf->Cell($ancho, 2, utf8_decode($col), 0);
+        }
+        $this->pdf->Ln();
+        // Datos
+        foreach ($data as $row) {
+            foreach ($row as $col) {
+                $this->pdf->SetFont("Helvetica", "", 4);
+                $this->pdf->Cell($ancho, 4, utf8_decode($col), 0);
+            }
+            $this->pdf->Ln();
+        }
     }
 
 }

@@ -23,7 +23,7 @@
     <div class="tab-content" id="ActualizarPermiso">
         <div class="panel-body">
             <form id="formActualizarPermiso" class="margin-bottom-0" data-parsley-validate="true" enctype="multipart/form-data">
-                
+
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Fecha Documento</label>
@@ -34,8 +34,8 @@
                     <div class="form-group">
                         <label>Nombre</label>
                         <?php
-                        echo 
-                        '<input type="text" class="form-control" id="inputNombreAct" style="width: 100%" disabled value="'.$datosAusencia[0]["Nombre"].'"/>';
+                        echo
+                        '<input type="text" class="form-control" id="inputNombreAct" style="width: 100%" disabled value="' . $datosAusencia[0]["Nombre"] . '"/>';
                         ?>
                     </div>
                 </div>
@@ -43,8 +43,8 @@
                     <div class="form-group">
                         <label>Departamento</label>
                         <?php
-                        echo 
-                        '<input type="text" class="form-control" id="inputDepartamentoAct" style="width: 100%" disabled value="'.$datosAusencia[0]["Departamento"].'"/>';
+                        echo
+                        '<input type="text" class="form-control" id="inputDepartamentoAct" style="width: 100%" disabled value="' . $datosAusencia[0]["Departamento"] . '"/>';
                         ?>
                     </div>
                 </div>
@@ -52,8 +52,8 @@
                     <div class="form-group">
                         <label>Puesto</label>
                         <?php
-                        echo 
-                        '<input type="text" class="form-control" id="inputPuestoAct" style="width: 100%" disabled value="'.$datosAusencia[0]["Puesto"].'"/>';
+                        echo
+                        '<input type="text" class="form-control" id="inputPuestoAct" style="width: 100%" disabled value="' . $datosAusencia[0]["Puesto"] . '"/>';
                         ?>
                     </div>
                 </div>
@@ -61,15 +61,15 @@
                     <div class="form-group">
                         <label>Tipo de Ausencia *</label>
                         <select id="selectTipoAusenciaAct" class="form-control" name="SelectTipoAusenciaAct" style="width: 100%" data-parsley-required="true">
-                        <?php
-                        foreach ($tiposAusencia as $tipoAusencia) {
-                            if ($datosAusencia[0]["IdTipoAusencia"] == $tipoAusencia['Id']) {
-                                echo '<option value="'.$tipoAusencia['Id'].'" selected="selected">'.$tipoAusencia['Nombre'].'</option>';
-                            }else{
-                                echo '<option value="'.$tipoAusencia['Id'].'">'.$tipoAusencia['Nombre'].'</option>';
+                            <?php
+                            foreach ($tiposAusencia as $tipoAusencia) {
+                                if ($datosAusencia[0]["IdTipoAusencia"] == $tipoAusencia['Id']) {
+                                    echo '<option value="' . $tipoAusencia['Id'] . '" selected="selected">' . $tipoAusencia['Nombre'] . '</option>';
+                                } else {
+                                    echo '<option value="' . $tipoAusencia['Id'] . '">' . $tipoAusencia['Nombre'] . '</option>';
+                                }
                             }
-                        }
-                        ?>
+                            ?>
                         </select>
                     </div>
                 </div>
@@ -77,27 +77,27 @@
                     <div class="form-group">
                         <label>Motivo Ausencia *</label>
                         <select id="selectMotivoAusenciaAct" class="form-control" name="SelectMotivoAusenciaAct" data-parsley-required="true" style="width: 100%" data-parsley-required="true">
-                        <?php
-                        foreach ($motivosAusencia as $motivoAusencia) {
-                            if ($datosAusencia[0]["IdMotivoAusencia"] == $motivoAusencia['Id']) {
-                                echo '<option value="'.$motivoAusencia['Id'].'" selected="selected">'.$motivoAusencia['Nombre'].'</option>';
-                            }else{
-                                echo '<option value="'.$motivoAusencia['Id'].'">'.$motivoAusencia['Nombre'].'</option>';
+                            <?php
+                            foreach ($motivosAusencia as $motivoAusencia) {
+                                if ($datosAusencia[0]["IdMotivoAusencia"] == $motivoAusencia['Id']) {
+                                    echo '<option value="' . $motivoAusencia['Id'] . '" selected="selected">' . $motivoAusencia['Nombre'] . '</option>';
+                                } else {
+                                    echo '<option value="' . $motivoAusencia['Id'] . '">' . $motivoAusencia['Nombre'] . '</option>';
+                                }
                             }
-                        }
-                        ?>
+                            ?>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <?php
                     if ($datosAusencia[0]["FolioDocumento"] != "") {
-                    echo '<div id="citaFolioAct" class="form-group">
+                        echo '<div id="citaFolioAct" class="form-group">
                             <label>Cita o Folio *</label>
-                            <input type="text" class="form-control" id="inputCitaFolioAct" style="width: 100%" value="'.$datosAusencia[0]["FolioDocumento"].'"/>
+                            <input type="text" class="form-control" id="inputCitaFolioAct" style="width: 100%" value="' . $datosAusencia[0]["FolioDocumento"] . '"/>
                         </div>';
-                    }else{
-                    echo '<div id="citaFolioAct" class="form-group" style="display: none">
+                    } else {
+                        echo '<div id="citaFolioAct" class="form-group" style="display: none">
                             <label>Cita o Folio *</label>
                             <input type="text" class="form-control" id="inputCitaFolioAct" style="width: 100%"/>
                         </div>';
@@ -107,12 +107,12 @@
                 <div class="col-md-10">
                     <?php
                     if ($datosAusencia[0]["Motivo"] != "") {
-                    echo '<div id="descripcionAusenciaAct" class="form-group">
+                        echo '<div id="descripcionAusenciaAct" class="form-group">
                         <label>Descripción de Ausencia *</label>
-                        <textarea id="textareaMotivoSolicitudPermisoAct" class="form-control" name="descripcionAusenciaAct" rows="3">'.$datosAusencia[0]["Motivo"].'</textarea>
+                        <textarea id="textareaMotivoSolicitudPermisoAct" class="form-control" name="descripcionAusenciaAct" rows="3">' . $datosAusencia[0]["Motivo"] . '</textarea>
                     </div>';
-                    }else{
-                    echo '<div id="descripcionAusenciaAct" class="form-group" style="display: none">
+                    } else {
+                        echo '<div id="descripcionAusenciaAct" class="form-group" style="display: none">
                         <label>Descripción de Ausencia *</label>
                         <textarea id="textareaMotivoSolicitudPermisoAct" class="form-control" name="descripcionAusenciaAct" rows="3"></textarea>
                     </div>';
@@ -121,20 +121,22 @@
                 </div>
                 <div class="col-md-10">
                     <?php
-                    if ($datosAusencia[0]["ArchivosOriginales"] !== '') {
-                    echo '<div id="archivoCitaIncapacidadAct" class="form-group">
-                        <label class="f-w-600 f-s-13">Archivo Cita o Incapacidad</label>
-                        <div id="" class="evidencia">
-                            <a class="m-l-5 m-r-5" href="' . $datosAusencia[0]["ArchivosOriginales"] . '" data-lightbox="image-' . $datosAusencia[0]["ArchivosOriginales"] . '">
-                                <img src="' . $datosAusencia[0]["ArchivosOriginales"] . '" style="max-height:115px !important;" />
-                            </a>
-                        </div>
-                    </div>';
+                    if ($datosAusencia[0]["IdMotivoAusencia"] == 3 || $datosAusencia[0]["IdMotivoAusencia"] == 4) {
+                        if($datosAusencia[0]["ArchivosOriginales"] == '') {
+                                echo '<div id="archivoCitaIncapacidadAct" class="form-group">
+                                    <label>Archivo Cita o Incapacidad</label>
+                                    <input id="inputEvidenciaIncapacidadAct" name="evidenciasIncapacidadAct[]" type="file" multiple data-parsley-required="true">
+                                </div>';
+                        } else {
+                            echo '<div id="archivoCitaIncapacidadAct" class="thumbnail-pic m-5 p-5">
+                                <a class="imagenesSolicitud" target="_blank" href="' . $datosAusencia[0]["ArchivosOriginales"] . '"><img src="/assets/img/Iconos/pdf_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>
+                                </div>';
+                        }
                     }else{
-                    echo '<div id="archivoCitaIncapacidadAct" class="form-group">
-                        <label>Archivo Cita o Incapacidad</label>
-                        <input id="inputEvidenciaIncapacidadAct" name="evidenciasIncapacidadAct[]" type="file" multiple data-parsley-required="true">
-                    </div>';
+                        echo '<div id="archivoCitaIncapacidadAct" class="form-group" style="display: none">
+                                <label>Archivo Cita o Incapacidad</label>
+                                <input id="inputEvidenciaIncapacidadAct" name="evidenciasIncapacidadAct[]" type="file" multiple data-parsley-required="true">
+                            </div>';
                     }
                     ?>
                 </div>
@@ -145,16 +147,16 @@
                             <div class="col-md-6">
                                 <?php
                                 if ($datosAusencia[0]["FechaAusenciaDesde"] != "0000-00-00") {
-                                echo '<div class="form-group">
+                                    echo '<div class="form-group">
                                             <div class="input-group date" id="inputFechaDesdeAct">
-                                                <input id="inputFechaPermisoDesdeAct" type="text" class="form-control" value="'.$datosAusencia[0]["FechaAusenciaDesde"].'"/>
+                                                <input id="inputFechaPermisoDesdeAct" type="text" class="form-control" value="' . $datosAusencia[0]["FechaAusenciaDesde"] . '"/>
                                                 <span class="input-group-addon">
                                                     <span class="glyphicon glyphicon-calendar"></span>
                                                 </span>
                                             </div>
                                         </div>';
                                 } else {
-                                echo '<div class="form-group">
+                                    echo '<div class="form-group">
                                             <div class="input-group date" id="inputFechaDesdeAct">
                                                 <input id="inputFechaPermisoDesdeAct" type="text" class="form-control" placeholder="Desde"/>
                                                 <span class="input-group-addon">
@@ -168,16 +170,16 @@
                             <div class="col-md-6">
                                 <?php
                                 if ($datosAusencia[0]["FechaAusenciaHasta"] != "0000-00-00") {
-                                echo '<div class="form-group">
+                                    echo '<div class="form-group">
                                         <div class="input-group date" id="inputFechaHastaAct">
-                                            <input id="inputFechaPermisoHastaAct" type="text" class="form-control" value="'.$datosAusencia[0]["FechaAusenciaHasta"].'"/>
+                                            <input id="inputFechaPermisoHastaAct" type="text" class="form-control" value="' . $datosAusencia[0]["FechaAusenciaHasta"] . '"/>
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
                                             </span>
                                         </div>
                                     </div>';
                                 } else {
-                                echo '<div class="form-group">
+                                    echo '<div class="form-group">
                                         <div class="input-group date" id="inputFechaHastaAct">
                                             <input id="inputFechaPermisoHastaAct" type="text" class="form-control" placeholder="Hasta"/>
                                             <span class="input-group-addon">
@@ -198,7 +200,7 @@
                             echo '<div id="bloqueHorarioAct" class="form-group">
                                     <label id="labelHoraAct">Hora de Entrada</label>
                                     <div class="input-group bootstrap-timepicker timepicker">
-                                        <input id="selectSolicitudHoraAct" type="text" class="form-control input-small" value="'.$datosAusencia[0]["HoraEntrada"].'">
+                                        <input id="selectSolicitudHoraAct" type="text" class="form-control input-small" value="' . $datosAusencia[0]["HoraEntrada"] . '">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
                                     </div>
                                 </div>';
@@ -207,7 +209,7 @@
                             echo '<div id="bloqueHorarioAct" class="form-group">
                                     <label id="labelHoraAct">Hora de Salida</label>
                                     <div class="input-group bootstrap-timepicker timepicker">
-                                        <input id="selectSolicitudHoraAct" type="text" class="form-control input-small" value="'.$datosAusencia[0]["HoraSalida"].'">
+                                        <input id="selectSolicitudHoraAct" type="text" class="form-control input-small" value="' . $datosAusencia[0]["HoraSalida"] . '">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
                                     </div>
                                 </div>';
@@ -234,17 +236,17 @@
                 echo '<div class="col-md-3">
                     <div class="form-group" style="display: none">
                         <label>Oculto</label>
-                        <input class="form-control" id="idPermisoAct" value="'.$datosAusencia[0]["Id"].'"/>
+                        <input class="form-control" id="idPermisoAct" value="' . $datosAusencia[0]["Id"] . '"/>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group" style="display: none">
                         <label>Archivo</label>
-                        <input class="form-control" id="archivoPDF" value="'.$datosAusencia[0]["Archivo"].'"/>
+                        <input class="form-control" id="archivoPDF" value="' . $datosAusencia[0]["Archivo"] . '"/>
                     </div>
                 </div>';
                 ?>
-                
+
                 <!--Empezando mensaje--> 
                 <div class="row">
                     <div class="col-md-12">
@@ -269,6 +271,6 @@
             </form>
         </div>        
     </div>
-    
+
 </div>
 <!-- Finalizando panel Actualizar Permiso-->   

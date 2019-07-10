@@ -212,12 +212,22 @@ class Solicitud extends General {
                     $folio = ',Folio = folioByServicio("' . $servicio . '")';
                 }
             } else {
-                if ($datos['folio'] !== '') {
-                    $folio = ',Folio = ' . $datos['folio'];
+                if (isset($datos['folio'])) {
+                    if ($datos['folio'] !== '') {
+                        $folio = ',Folio = ' . $datos['folio'];
+                    } else {
+                        $folio = '';
+                    }
                 } else {
                     $folio = '';
                 }
                 $servicio = '';
+            }
+
+            if (isset($datos['sucursal'])) {
+                $sucursal = $datos['sucursal'];
+            } else {
+                $sucursal = NULL;
             }
 
             $solicitudNueva = 'insert t_solicitudes set 
@@ -229,7 +239,7 @@ class Solicitud extends General {
                 FechaCreacion = now(),
                 Solicita = ' . $usuario['Id'] . ', 
                 IdServicioOrigen = "' . $servicio . '", 
-                IdSucursal = "' . $datos['sucursal'] . '"'
+                IdSucursal = "' . $sucursal . '"'
                     . $folio;
         }
 
@@ -259,15 +269,23 @@ class Solicitud extends General {
         //Guarda los detalles de la solicitud segun el tipo de solicitud
         if ($datos['tipo'] === '3' || $datos['tipo'] === '4') {
             if ($this->setSolicitudInterna($numeroSolicitud, $datos['descripcion'], $datos['asunto'], $archivos)) {
-                if ($datos['folio'] !== '') {
-                    $stringFolio = '<br>Folio: <b class="f-s-16">' . $datos['folio'] . '</b>';
+                if (isset($datos['folio'])) {
+                    if ($datos['folio'] !== '') {
+                        $stringFolio = '<br>Folio: <b class="f-s-16">' . $datos['folio'] . '</b>';
+                    } else {
+                        $stringFolio = '';
+                    }
                 } else {
                     $stringFolio = '';
                 }
 
-                if ($datos['sucursal'] !== '') {
-                    $consultaSucursal = $this->DBS->getSolicitudes('SELECT Nombre FROM cat_v3_sucursales WHERE Id = "' . $datos['sucursal'] . '"');
-                    $stringSucursal = '<br>Sucursal: <b class="f-s-16">' . $consultaSucursal[0]['Nombre'] . '</b>';
+                if (isset($datos['sucursal'])) {
+                    if ($datos['sucursal'] !== '') {
+                        $consultaSucursal = $this->DBS->getSolicitudes('SELECT Nombre FROM cat_v3_sucursales WHERE Id = "' . $datos['sucursal'] . '"');
+                        $stringSucursal = '<br>Sucursal: <b class="f-s-16">' . $consultaSucursal[0]['Nombre'] . '</b>';
+                    } else {
+                        $stringSucursal = '';
+                    }
                 } else {
                     $stringSucursal = '';
                 }
@@ -582,7 +600,7 @@ class Solicitud extends General {
             }
         } else {
             $ticket = $datos['ticket'];
-            
+
             if ($ticket <= 0 || $ticket > 400000) {
                 return false;
             } else {
@@ -657,8 +675,8 @@ class Solicitud extends General {
         $data['remitente'] = $datos['remitente'];
         $data['tipo'] = $datos['tipo'];
         $data['descripcion'] = $datos['descripcion'];
-        
-        if(isset($datos['idSolicitud'])){
+
+        if (isset($datos['idSolicitud'])) {
             $data['idSolicitud'] = $datos['idSolicitud'];
         }
 
@@ -1461,7 +1479,7 @@ class Solicitud extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
         $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array('Folio' => $datos['folio']), array('Id' => $datos['solicitud']));
-        
+
         if (!empty($consulta)) {
             $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $datos['folio']);
             $datosSD = $this->InformacionServicios->datosSD($datos['solicitud']);

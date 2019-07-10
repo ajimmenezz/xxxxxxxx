@@ -270,8 +270,8 @@
                         <div class="col-md-3">                    
                             <div id="bloqueHorario" class="form-group" style="display: none;">
                                 <label id="labelHora"></label>
-                                <div class="input-group bootstrap-timepicker timepicker">
-                                    <input id="selectSolicitudHora" type="text" class="form-control input-small efectoDescuento">
+                                <div id="selectHora" class="input-group bootstrap-timepicker timepicker">
+                                    <input id="selectSolicitudHora" type="text" class="form-control input-small">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
                                 </div>
                             </div>
