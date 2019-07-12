@@ -1109,7 +1109,9 @@ class InformacionServicios extends General
     private function getServiciosByFolio($folio)
     {
         $consulta = $this->DBS->consulta("select 
-        Id 
+        tst.Id,
+		tst.IdTipoServicio,
+		(select Seguimiento from cat_v3_servicios_departamento where Id = tst.IdTipoServicio) as HasSeguimiento
         from t_servicios_ticket tst
         where IdSolicitud in (
             select 
@@ -1190,7 +1192,7 @@ class InformacionServicios extends General
         left join t_correctivos_solicitudes_refaccion tcsr
         on tcsr.Id = (select MAX(Id) from t_correctivos_solicitudes_refaccion where IdServicio = tcp.IdServicio)
         left join t_correctivos_solicitudes_equipo tcse
-        on tcse.Id = (select MAX(Id) from t_correctivos_solicitudes_equipo where IdServicio = tcp.IdServicio)
+        on tcse.Id = (select MAX(Id) from t_correctivos_solicitudes_equipo where IdServicioOrigen = tcp.IdServicio)
         left join t_correctivos_garantia_respaldo tcgr
         on tcgr.Id = (select MAX(Id) from t_correctivos_garantia_respaldo where IdServicio = tcp.IdServicio)
         where tcp.IdServicio = '" . $id . "'
@@ -1206,8 +1208,9 @@ class InformacionServicios extends General
         (select Nombre from cat_v3_soluciones_equipo where Id = tcsse.IdSolucionEquipo) as SolucionSinEquipo,
         modelo(tcsc.IdModelo) as EquipoCambio,
         tcsc.Serie as SerieCambio,
-        tcsr.*,
-        tcsr.Cantidad as CantidadRefaccion
+        (select Nombre from cat_v3_componentes_equipo where Id = tcsr.IdRefaccion) as Refaccion,
+        tcsr.Cantidad as CantidadRefaccion,
+        tcs.Evidencias
         from t_correctivos_soluciones tcs
         left join t_correctivos_solucion_sin_equipo tcsse on tcs.Id = tcsse.IdSolucionCorrectivo
         left join t_correctivos_solucion_cambio tcsc 
@@ -1215,6 +1218,17 @@ class InformacionServicios extends General
         left join t_correctivos_solucion_refaccion tcsr on tcsr.IdSolucionCorrectivo = tcs.Id
         where tcs.IdServicio = '" . $id . "'
         order by tcs.Id desc limit 1");
+        return $consulta;
+    }
+
+    private function getResolucionSinClasificarForPDF(int $id)
+    {
+        $consulta = $this->DBS->consulta("select 
+        Descripcion,
+        Archivos as Evidencias,
+        Fecha
+        from t_servicios_generales 
+        where IdServicio = '" . $id . "'");
         return $consulta;
     }
 
@@ -1260,25 +1274,19 @@ class InformacionServicios extends General
                     $this->setCellValue(0, 5, $generales['Atiende'], 'L');
                     $this->setCoordinates(10);
 
-                    switch ($generales['IdTipoServicio']) {
-                        case 20:
-                        case '20':
-                            $this->setPDFContentCorrectivo($generales['Id'], $datos);
-                            break;
+                    if ($v['HasSeguimiento'] == 0) {
+                        $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
+                    } else {
+
+                        switch ($generales['IdTipoServicio']) {
+                            case 20:
+                            case '20':
+                                $this->setPDFContentCorrectivo($generales['Id'], $datos);
+                                break;
+                        }
                     }
                     $this->setCoordinates(10, $this->y + 10);
                 }
-
-
-
-
-
-
-
-
-
-
-
 
                 $carpeta = $this->pdf->definirArchivo('SDPDF/' . substr($datos['folio'], 0, 3) . '/', $datos['folio']);
                 $this->pdf->Output('F', $carpeta, true);
@@ -1290,6 +1298,75 @@ class InformacionServicios extends General
         }
     }
 
+    private function setPDFContentSinSeguimiento(int $id, array $datos)
+    {
+        $resolucion = $this->getResolucionSinClasificarForPDF($id);
+        $this->setResolucionSinClasificarPDF($resolucion, $datos);
+    }
+
+    private function setResolucionSinClasificarPDF($resolucion, $datos)
+    {
+        if (isset($resolucion[0])) {
+            $resolucion = $resolucion[0];
+            if (($this->y + 26) > 276) {
+                $this->setHeaderPDF($datos['folio']);
+            }
+            $this->setCoordinates(10);
+            $this->setStyleHeader();
+            $this->setHeaderValue("Documentación del Servicio");
+
+            $this->setStyleMinisubtitle();
+            $this->setCoordinates(35);
+            $this->setMulticellValue(0, 4, $resolucion['Descripcion'], 'J', true);
+
+            $heightMulti = $this->pdf->GetY() - $this->y;
+
+            $this->setCoordinates(10);
+
+            $this->setStyleTitle();
+            $this->setCellValue(25, $heightMulti, "Resolución:", 'R', true);
+
+            $this->setCoordinates(10, $this->pdf->GetY());
+
+            $evidencias = explode(",", $resolucion['Evidencias']);
+            $totalEvidencias = count($evidencias);
+            if ($totalEvidencias > 0) {
+
+                $filas = ceil($totalEvidencias / 4);
+
+                $indice = 0;
+                for ($f = 1; $f <= $filas; $f++) {
+                    if (($this->y + 45) > 276) {
+                        $this->setHeaderPDF($datos['folio']);
+                        $this->setStyleHeader();
+                        $this->setHeaderValue("Documentación del Servicio");
+                    }
+
+                    $this->setCoordinates(10);
+
+                    for ($i = 1; $i <= 4; $i++) {
+                        if (isset($evidencias[$indice])) {
+                            $url = $evidencias[$indice];
+                            $image = $url;
+                            if (!in_array(pathinfo($url, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
+                                $image = '/assets/img/Iconos/no-thumbnail.jpg';
+                            }
+                            $this->pdf->Image('.' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), $url);
+                        }
+
+                        $this->setCoordinates($this->x + 47.5);
+
+                        if ($i == 4) {
+                            $this->setCoordinates(10, $this->y + 45);
+                        }
+                        $indice++;
+                    }
+                }
+            }
+        }
+    }
+
+
     private function setPDFContentCorrectivo(int $id, array $datos)
     {
         $diagnostico = $this->getDiagnosticoCorrectivoForPDF($id);
@@ -1299,6 +1376,7 @@ class InformacionServicios extends General
         $this->setProblemaCorrectivoPDF($problema, $datos);
 
         $solucion = $this->getSolucionCorrectivoForPDF($id);
+        $this->setSolucionCorrectivoPDF($solucion, $datos);
     }
 
     private function setDiagnosticoCorrectivoPDF($diagnostico, $datos)
@@ -1363,7 +1441,11 @@ class InformacionServicios extends General
                 for ($i = 1; $i <= 4; $i++) {
                     if (isset($evidencias[$indice])) {
                         $url = $evidencias[$indice];
-                        $this->pdf->Image('.' . $url, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($url, PATHINFO_EXTENSION), $url);
+                        $image = $url;
+                        if (!in_array(pathinfo($url, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
+                            $image = '/assets/img/Iconos/no-thumbnail.jpg';
+                        }
+                        $this->pdf->Image('.' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), $url);
                     }
 
                     $this->setCoordinates($this->x + 47.5);
@@ -1451,6 +1533,107 @@ class InformacionServicios extends General
         }
     }
 
+    private function setSolucionCorrectivoPDF($solucion, $datos)
+    {
+        if (isset($solucion[0])) {
+            $solucion = $solucion[0];
+            if (($this->y + 16) > 276) {
+                $this->setHeaderPDF($datos['folio']);
+            }
+            $this->setCoordinates(10);
+            $this->setStyleHeader();
+            $this->setHeaderValue("Solución del Servicio");
+
+            $this->setStyleTitle();
+            $this->setCellValue(25, 5, "Tipo:", 'R', true);
+            $this->setStyleSubtitle();
+            $this->setCoordinates(35, $this->y - 5);
+            $this->setCellValue(0, 5, $solucion['TipoSolucion'], 'L', true);
+
+            switch ($solucion['IdTipoSolucion']) {
+                case 1:
+                case '1':
+                    $this->setCoordinates(10);
+
+                    $this->setStyleTitle();
+                    $this->setCellValue(25, 5, "Solución:", 'R');
+
+                    $this->setStyleSubtitle();
+                    $this->setCoordinates(35, $this->y - 5);
+                    $this->setCellValue(0, 5, $solucion['SolucionSinEquipo'], 'L');
+                    break;
+                case 2:
+                case '2':
+                    $this->setCoordinates(10);
+
+                    $this->setStyleTitle();
+                    $this->setCellValue(25, 5, "Refacción:", 'R');
+                    $this->setCoordinates(130, $this->y - 5);
+                    $this->setCellValue(25, 5, "Cantidad:", 'R');
+
+                    $this->setCoordinates(10);
+
+                    $this->setStyleSubtitle();
+                    $this->setCoordinates(35, $this->y - 5);
+                    $this->setCellValue(95, 5, $solucion['Refaccion'], 'L');
+                    $this->setCoordinates(155, $this->y - 5);
+                    $this->setCellValue(0, 5, $solucion['CantidadRefaccion'], 'L');
+                    break;
+                case 3:
+                case '3':
+                    $this->setCoordinates(10);
+                    $this->setStyleTitle();
+                    $this->setCellValue(25, 5, "Equipo:", 'R');
+                    $this->setCoordinates(130, $this->y - 5);
+                    $this->setCellValue(25, 5, "Serie:", 'R');
+
+                    $this->setCoordinates(10);
+
+                    $this->setStyleSubtitle();
+                    $this->setCoordinates(35, $this->y - 5);
+                    $this->setCellValue(95, 5, $solucion['EquipoCambio'], 'L');
+                    $this->setCoordinates(155, $this->y - 5);
+                    $this->setCellValue(0, 5, $solucion['SerieCambio'], 'L');
+                    break;
+            }
+
+            $evidencias = explode(",", $solucion['Evidencias']);
+            $totalEvidencias = count($evidencias);
+            if ($totalEvidencias > 0) {
+
+                $filas = ceil($totalEvidencias / 4);
+
+                $indice = 0;
+                for ($f = 1; $f <= $filas; $f++) {
+                    if (($this->y + 45) > 276) {
+                        $this->setHeaderPDF($datos['folio']);
+                        $this->setStyleHeader();
+                        $this->setHeaderValue("Solución del Servicio");
+                    }
+
+                    $this->setCoordinates(10);
+
+                    for ($i = 1; $i <= 4; $i++) {
+                        if (isset($evidencias[$indice])) {
+                            $url = $evidencias[$indice];
+                            $image = $url;
+                            if (!in_array(pathinfo($url, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
+                                $image = '/assets/img/Iconos/no-thumbnail.jpg';
+                            }
+                            $this->pdf->Image('.' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), $url);
+                        }
+                        $this->setCoordinates($this->x + 47.5);
+
+                        if ($i == 4) {
+                            $this->setCoordinates(10, $this->y + 45);
+                        }
+                        $indice++;
+                    }
+                }
+            }
+        }
+    }
+
     private function setHeaderPDF(int $folio)
     {
         $this->pdf->AddPage();
@@ -1482,6 +1665,12 @@ class InformacionServicios extends General
     {
         $this->pdf->SetTextColor(10, 10, 10);
         $this->pdf->SetFont("helvetica", "", 9);
+    }
+
+    private function setStyleMinisubtitle()
+    {
+        $this->pdf->SetTextColor(10, 10, 10);
+        $this->pdf->SetFont("helvetica", "", 7);
     }
 
     private function setFillGray()
@@ -1525,5 +1714,16 @@ class InformacionServicios extends General
         $this->pdf->Cell($width, $height, utf8_decode($value), 1, 0, $align, $trueFill);
         $this->y += $height;
         $this->setCoordinates();
+    }
+
+    private function setMulticellValue($width, $height, string $value, string $align, bool $fill = false, bool $trueFill = true)
+    {
+        if ($fill) {
+            $this->setFillGray();
+        } else {
+            $this->setFillWhite();
+        }
+
+        $this->pdf->MultiCell($width, $height, utf8_decode($value), 1, $align, $trueFill);
     }
 }
