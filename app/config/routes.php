@@ -124,7 +124,7 @@ $route['Generales/ServiceDesk/(:any)'] = 'Generales/Controller_ServiceDesk/manej
 $route['Generales/Dispositivos/(:any)'] = 'Generales/Controller_Dispositivos/manejarEvento/$1';
 $route['Generales/Dashboard/(:any)'] = 'Generales/Controller_Dashboard/manejarEvento/$1';
 //$route['Generales/Dashboard_Gapsi/(:any)'] = 'Gapsi/Controller_GestorProyectos/manejarEvento/$1';
-$route['Generales/Dashboard_Gapsi/Proyecto/informacion_General'] = 'Gapsi/Controller_Proyecto/getDatosProyecto';
+$route['Generales/Dashboard_Gapsi/Proyecto/informacion_General'] = 'V2/Gapsi/Controller_Proyecto/getDatosProyecto';
 
 /* Routers para el manejo de páginas de PhantomJS */
 $route['Phantom/Servicio/(:any)'] = 'Phantom/Controller_Phantom/servicioPhantom/$1';

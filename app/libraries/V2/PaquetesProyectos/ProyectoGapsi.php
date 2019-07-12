@@ -1,8 +1,8 @@
 <?php
 
-namespace Librerias\PaquetesProyectos;
+namespace Librerias\V2\PaquetesProyectos;
 
-use Librerias\PaquetesProyectos\Proyecto as Proyecto;
+use Librerias\V2\PaquetesProyectos\Proyecto as Proyecto;
 
 class ProyectoGapsi implements Proyecto {
 

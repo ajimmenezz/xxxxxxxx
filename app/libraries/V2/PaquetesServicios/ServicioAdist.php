@@ -1,8 +1,8 @@
 <?php
 
-namespace Librerias\PaquetesServicios;
+namespace Librerias\V2\PaquetesServicios;
 
-use Librerias\PaquetesServicios\Sevicio as Servicio;
+use Librerias\V2\PaquetesServicios\Sevicio as Servicio;
 
 class ServicioAdist implements Servicio {
 

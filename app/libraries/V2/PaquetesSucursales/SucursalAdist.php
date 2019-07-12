@@ -1,8 +1,8 @@
 <?php
 
-namespace Librerias\PaquetesSucursales;
+namespace Librerias\V2\PaquetesSucursales;
 
-use Librerias\PaquetesSucursales\Sucursal as Sucursal;
+use Librerias\V2\PaquetesSucursales\Sucursal as Sucursal;
 
 class SucursalAdist implements Sucursal {
 

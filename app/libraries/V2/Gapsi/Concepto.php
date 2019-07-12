@@ -1,6 +1,6 @@
 <?php
 
-namespace Librerias\Gapsi;
+namespace Librerias\V2\Gapsi;
 
 class Concepto {
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Librerias\PaquetesServicios;
+namespace Librerias\V2\PaquetesServicios;
 
-use Librerias\PaquetesServicios\Servicio as Servicio;
+use Librerias\V2\PaquetesServicios\Servicio as Servicio;
 
 class ServicioGapsi implements Servicio {
 
