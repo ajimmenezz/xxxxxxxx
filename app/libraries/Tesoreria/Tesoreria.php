@@ -323,8 +323,8 @@ class Tesoreria extends General {
 
             if ($facturasGuardadas) {
                 $this->elimarArchivoFactura($archivos);
-                $proximoPago = date("d-m-Y", strtotime("next Friday"));
-                $texto = '<p>El pago de la factura de los tickets <strong>' . $datos['tickets'] . '</strong> que ha realizado, se hará el viernes  <strong>' . $proximoPago . '</strong>.';
+
+                $texto = '<p>Se programara el pago de la factura de los tickets <strong>' . $datos['tickets'] . '</strong> que ha realizado, cuando sea validado por el supervisor.';
                 $mensaje = $this->correo->mensajeCorreo('Fecha de Pago', $texto);
                 $this->correo->enviarCorreo('notificaciones@siccob.solutions', array($usuario['EmailCorporativo']), 'Fecha de Pago', $mensaje);
                 return $this->poliza->resumenVueltasAsociadosFolio();
