@@ -1,14 +1,10 @@
 $(function () {
     
     var evento = new Base();
-    var websocket = new Socket();
     var select = new Select();
     var file = new Upload();
     this.calendario = new Fecha();
     var tabla = new Tabla();
-
-    //Evento que maneja las peticiones del socket
-    websocket.socketMensaje();
 
     //Muestra la hora en el sistema
     evento.horaServidor($('#horaServidor').val());
@@ -57,6 +53,8 @@ $(function () {
 
     //evento que activa los campos inputCitaFolio, descripcionAusencia
     $('#selectMotivoAusencia').on('change', function () {
+        let dato = $('option:selected', this).attr('data-msg');
+        $('#inputObservaciones').val(dato);
         if ($(this).val() == '3' || $(this).val() == '4') {
             $("#citaFolio").css("display","block");
             $("#archivoCitaIncapacidad").css("display","block");
@@ -83,13 +81,20 @@ $(function () {
             case '1':
                 $("#bloqueHorario").css("display","block");
                 $('#labelHora').text('Hora de Entrada');
+                $("#bloqueFechaHasta").css("display","none");
                 break;
             case '2':
                 $("#bloqueHorario").css("display","block");
                 $('#labelHora').text('Hora de Salida');
+                $("#bloqueFechaHasta").css("display","none");
+                break;
+            case '3':
+                $("#bloqueHorario").css("display","none");
+                $("#bloqueFechaHasta").css("display","block");
                 break;
             default:
                 $("#bloqueHorario").css("display","none");
+                $("#bloqueFechaHasta").css("display","none");
         }
     });
 
@@ -476,7 +481,7 @@ $(function () {
                                     pdf: $('#archivoPDF').val(),
                                     descuentoPermiso: $('#inputDescuentoAct').val()
                                 }
-                                if ( $('#inputCitaFolioAct').val() != '' ) {
+                                if ( $('#selectMotivoAusenciaAct').val() == '3' ||$('#selectMotivoAusenciaAct').val() == '4' ) {
                                     evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermisoArchivo', dataActualizar, '#panelPermisosVacaciones', function (respuesta) {
                                         if (respuesta !== 'otraImagen') {
                                             location.reload();
@@ -486,6 +491,7 @@ $(function () {
                                         }
                                     });
                                 } else {
+                                    dataActualizar['evidenciaIncapacidad'] = "";
                                     evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermiso', dataActualizar, '#panelPermisosVacaciones', function (respuesta) {
                                         if (respuesta) {
                                             location.reload();

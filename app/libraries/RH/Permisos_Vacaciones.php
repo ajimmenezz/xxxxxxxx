@@ -28,7 +28,7 @@ class Permisos_Vacaciones extends General {
     }
 
     public function obtenerMotivoAusencia() {
-        return $this->DBS->consultaGral('SELECT Id, Nombre FROM cat_v3_motivos_ausencia_personal WHERE Flag = 1');
+        return $this->DBS->consultaGral('SELECT Id, Nombre, Observaciones FROM cat_v3_motivos_ausencia_personal WHERE Flag = 1');
     }
 
     public function obtenerPermisosAusencia($idUsuario) {
@@ -72,7 +72,7 @@ class Permisos_Vacaciones extends General {
 
         $idPermisoGenerado = $this->ajustarInformacionDBS($datosPermisos, $documento);
 
-        $this->enviarCorreoPermiso($datosPermisos, $asunto = "Generado", $carpeta);
+        //$this->enviarCorreoPermiso($datosPermisos, $asunto = "Generado", $carpeta);
 
         $carpetaFolio = $this->agregarFolioPDF($idPermisoGenerado[0]['LAST_INSERT_ID()']);
 
@@ -101,8 +101,10 @@ class Permisos_Vacaciones extends General {
                 $tplIdx = $this->pdf->importPage($i);
                 $this->pdf->useTemplate($tplIdx, 10, 0, 190);
             }
-        } catch (\setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException $ex) {
-            $ex->getMessage();
+        } catch (\InvalidArgumentException $ex) {
+            $this->pdf->AddPage();
+            $this->pdf->SetFont("helvetica", "B", 11);
+            $this->pdf->Cell(14, 0, "Error al Adjuntar el Archivo");
         }
     }
 
@@ -197,7 +199,7 @@ class Permisos_Vacaciones extends General {
 
         $this->revisarActualizarPermiso($datosPermisos);
 
-        $this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
+        //$this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
 
         $carpetaFolio = $this->agregarFolioPDF($datosPermisos['idPermiso']);
 
@@ -221,7 +223,7 @@ class Permisos_Vacaciones extends General {
         $this->revisarActualizarPermiso($datosPermisos);
 
 
-        $this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
+        //$this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
 
         $carpetaFolio = $this->agregarFolioPDF($datosPermisos['idPermiso']);
 
@@ -229,17 +231,18 @@ class Permisos_Vacaciones extends General {
     }
 
     public function revisarActualizarPermiso($datosPermisos) {
-        if ($datosPermisos['evidenciaIncapacidad'] !== "") {
+        if ($datosPermisos['evidenciaIncapacidad'] !== "" && ($datosPermisos['motivoAusencia'] =='3' || $datosPermisos['motivoAusencia'] == '4')) {
             $nombreArchivo = explode("\\", $datosPermisos['evidenciaIncapacidad']);
             $divideNombreArchivo = preg_split("/[\s-]+/", $nombreArchivo[2]);
             $concatenaNombre = "";
+            $idUsuario = explode("/", $datosPermisos['pdf']);
             if (count($divideNombreArchivo) < 2) {
-                $evidencia = 'Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/' . $divideNombreArchivo[0];
+                $evidencia = 'Permisos_Ausencia/' . $idUsuario[1] . '/evidenciasMedicas/' . $divideNombreArchivo[0];
             } else {
                 for ($i = 0; $i < count($divideNombreArchivo); $i++) {
                     $concatenaNombre .= $divideNombreArchivo[$i] . '_';
                 }
-                $evidencia = 'Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/' . substr($concatenaNombre, 0, -1);
+                $evidencia = 'Permisos_Ausencia/' . $idUsuario[1] . '/evidenciasMedicas/' . substr($concatenaNombre, 0, -1);
             }
         }else{
             $evidencia = "";
