@@ -192,6 +192,22 @@ class Solicitud extends General {
             }
         }
 
+        if (empty($datos['fechaProgramada'])) {
+            $fechaProgramada = NULL;
+            $textoNoficacionFechaProgramada = '';
+        } else {
+            $fechaProgramada = $datos['fechaProgramada'];
+            $textoNoficacionFechaProgramada = ' Atender después del día  ' . $datos['fechaProgramada'] . '.';
+        }
+
+        if (empty($datos['fechaLimiteAtencion'])) {
+            $fechaLimiteAtencion = NULL;
+            $textoNotificacionFechaLimite = '';
+        } else {
+            $fechaLimiteAtencion = $datos['fechaLimiteAtencion'];
+            $textoNotificacionFechaLimite = ' La fecha límite para atender es ' . $datos['fechaLimiteAtencion'] . '.';
+        }
+
         //Se genera la solicitud donde se define si es por SD o por un usuario
         if (!empty($sistemaExterno)) {
             $solicitudNueva = 'insert t_solicitudes set
@@ -239,8 +255,11 @@ class Solicitud extends General {
                 FechaCreacion = now(),
                 Solicita = ' . $usuario['Id'] . ', 
                 IdServicioOrigen = "' . $servicio . '", 
-                IdSucursal = "' . $sucursal . '"'
+                IdSucursal = "' . $sucursal . '",
+                FechaTentativa = "' . $fechaProgramada . '",
+                FechaLimite = "' . $fechaLimiteAtencion . '"'
                     . $folio;
+            
         }
 
         $this->eliminarSolicitudSinDatos();
@@ -301,7 +320,7 @@ class Solicitud extends General {
                     'tipo' => '3',
                     'descripcion' => 'Se ha generado la solicitud <b class="f-s-16">' . $numeroSolicitud . '</b> la cual requiere de su pronta atención.',
                     'titulo' => 'Nueva Solicitud',
-                    'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> levantó la solicitud <b class="f-s-16">' . $numeroSolicitud . '</b>.' . $stringFolio . $stringSucursal . '
+                    'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> levantó la solicitud <b class="f-s-16">' . $numeroSolicitud . '</b>.' . $stringFolio . $stringSucursal . $textoNoficacionFechaProgramada . $textoNotificacionFechaLimite . '
                                     <br>' . $linkDetallesSolicitud . '<br><br>
                                     Asunto: <p><b>' . $datos['asunto'] . '</b> </p><br>
                                     Con la siguiente descripción:<br> <p><b>' . $datos['descripcion'] . '</b> </p><br>
@@ -321,7 +340,7 @@ class Solicitud extends General {
                         'tipo' => '3',
                         'descripcion' => 'Se ha generado la solicitud <b class="f-s-16">' . $numeroSolicitud . '</b> al Área de compras.',
                         'titulo' => 'Nueva Solicitud para Compras',
-                        'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> levantó la solicitud <b class="f-s-16">' . $numeroSolicitud . '</b>.' . $stringFolio . $stringSucursal . '<br>
+                        'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> levantó la solicitud <b class="f-s-16">' . $numeroSolicitud . '</b>.' . $stringFolio . $stringSucursal . $textoNoficacionFechaProgramada . $textoNotificacionFechaLimite . '<br>
                          Con la siguiente descripción:<br> <p><b>' . $datos['descripcion'] . '</b> </p><br>
                          Favor de anticiparse.'
                     ));
