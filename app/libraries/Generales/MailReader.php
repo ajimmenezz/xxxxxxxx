@@ -163,7 +163,14 @@ class MailReader
         <a href="' . $url . '" target="_blank">' . $url . '</a>';
 
         $bodyMail = $this->Correo->mensajeCorreo($titulo, $texto);
-        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', ['ajimenez@siccob.com.mx'], $titulo, $bodyMail);
+        $mails = [
+            'osoto@siccob.com.mx',
+            'aserrano@siccob.com.mx',
+            'gayala@siccob.com.mx',
+            'vmojica@siccob.com.mx',
+            'ajimenez@siccob.com.mx'
+        ];
+        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $mails, $titulo, $bodyMail);
     }
 
     private function createMarkvisionReport(array $infoPrinters)
