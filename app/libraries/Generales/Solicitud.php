@@ -197,7 +197,7 @@ class Solicitud extends General {
             $textoNoficacionFechaProgramada = '';
         } else {
             $fechaProgramada = $datos['fechaProgramada'];
-            $textoNoficacionFechaProgramada = ' Atender después del día  ' . $datos['fechaProgramada'] . '.';
+            $textoNoficacionFechaProgramada = ' Atender después del día <b>' . $datos['fechaProgramada'] . '</b>.';
         }
 
         if (empty($datos['fechaLimiteAtencion'])) {
@@ -205,7 +205,7 @@ class Solicitud extends General {
             $textoNotificacionFechaLimite = '';
         } else {
             $fechaLimiteAtencion = $datos['fechaLimiteAtencion'];
-            $textoNotificacionFechaLimite = ' La fecha límite para atender es ' . $datos['fechaLimiteAtencion'] . '.';
+            $textoNotificacionFechaLimite = ' La fecha límite para atender es <b>' . $datos['fechaLimiteAtencion'] . '</b>.';
         }
 
         //Se genera la solicitud donde se define si es por SD o por un usuario
@@ -259,7 +259,6 @@ class Solicitud extends General {
                 FechaTentativa = "' . $fechaProgramada . '",
                 FechaLimite = "' . $fechaLimiteAtencion . '"'
                     . $folio;
-            
         }
 
         $this->eliminarSolicitudSinDatos();
@@ -924,9 +923,7 @@ class Solicitud extends General {
             }
         }
 
-
         if (!empty($_FILES)) {
-
             $archivos = setMultiplesArchivos($CI, 'evidenciasSolicitud', $carpeta);
 
             foreach ($archivos as $key => $value) {
@@ -942,14 +939,19 @@ class Solicitud extends General {
             }
 
             $consulta = $this->DBS->actualizarSolicitud(
-                    't_solicitudes_internas', array('Descripcion' => $datos['descripcion'], 'Asunto' => $datos['asunto'], 'Evidencias' => $archivos), array('IdSolicitud' => $datos['solicitud']));
+                    't_solicitudes_internas', array(
+                'Descripcion' => $datos['descripcion'],
+                'Asunto' => $datos['asunto'],
+                'Evidencias' => $archivos), array('IdSolicitud' => $datos['solicitud']));
 
             if (!empty($consulta)) {
                 $actualizacion = TRUE;
             }
         } else {
             $consulta = $this->DBS->actualizarSolicitud(
-                    't_solicitudes_internas', array('Descripcion' => $datos['descripcion'], 'Asunto' => $datos['asunto'],), array('IdSolicitud' => $datos['solicitud']));
+                    't_solicitudes_internas', array(
+                'Descripcion' => $datos['descripcion'],
+                'Asunto' => $datos['asunto']), array('IdSolicitud' => $datos['solicitud']));
 
             if (!empty($consulta)) {
                 $actualizacion = TRUE;
@@ -957,23 +959,42 @@ class Solicitud extends General {
         }
 
         $consultaSolicitud = $this->DBS->actualizarSolicitud(
-                't_solicitudes', array('Folio' => $datos['folio'], 'IdSucursal' => $datos['sucursal']), array('Id' => $datos['solicitud']));
+                't_solicitudes', array(
+            'Folio' => $datos['folio'],
+            'IdSucursal' => $datos['sucursal'],
+            'FechaCreacion' => $fecha,
+            'FechaTentativa' => $datos['fechaProgramada'],
+            'FechaLimite' => $datos['fechaLimiteAtencion']), array('Id' => $datos['solicitud']));
 
         if (!empty($consultaSolicitud)) {
             $actualizacion = TRUE;
         }
 
         if ($actualizacion) {
+
+            if (empty($datos['fechaProgramada'])) {
+                $textoNoficacionFechaProgramada = '';
+            } else {
+                $textoNoficacionFechaProgramada = ' Atender después del día <b>' . $datos['fechaProgramada'] . '</b>.';
+            }
+
+            if (empty($datos['fechaLimiteAtencion'])) {
+                $textoNotificacionFechaLimite = '';
+            } else {
+                $textoNotificacionFechaLimite = ' La fecha límite para atender es <b>' . $datos['fechaLimiteAtencion'] . '</b>.';
+            }
+            
             $this->enviarNotificacion(array(
                 'Departamento' => $datos['departamento'],
                 'remitente' => $usuario['Id'],
                 'tipo' => '4',
                 'descripcion' => 'Se ha actualizado la solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> la cual requiere de su pronta atención.',
                 'titulo' => 'Solicitud Actualizada',
-                'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> actualizo la solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b>.<br>
+                'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> actualizo la solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b>.' . $textoNoficacionFechaProgramada . $textoNotificacionFechaLimite . '<br>
                         El cual puedo haber reasignado el area o modificado la información de la solicitud.<br>
                         Favor de validar la nueva actualización.'
             ));
+
             return $this->getSolicitudesGeneradas();
         } else {
             return FALSE;

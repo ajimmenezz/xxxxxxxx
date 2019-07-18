@@ -356,18 +356,31 @@ $config['Solicitudes'] = array(
             'bootstrap-datepicker/css/datepicker3',
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
+            'jquery-tag-it/css/jquery.tagit',
+            'parsley/src/parsley',
             'jquery-fileUpload/css/fileinput.min',
-            'parsley/src/parsley'
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min',
+            'DrawingBoard/css/drawingboard.min',
+            'jquery-tag-it/css/jquery.tagit'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Base/fileUpload', 'Base/Nota', 'Base/Servicio', 'Generales/solicitud_generadas'),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Fecha', 'Base/Tabla', 'Base/fileUpload', 'Base/Nota', 'Base/Servicio', 'Generales/solicitud_generadas'),
         'pluginsJs' => array(
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
             'select2/dist/js/select2.min',
+            'jquery-tag-it/js/tag-it.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
             'jquery-fileUpload/js/fileinput',
             'jquery-fileUpload/js/es',
-            'parsley/dist/parsley',
-            'parsley/src/i18n/es'
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
+            'DrawingBoard/js/drawingboard.min',
+            'masked-input/masked-input.min',
+            'jquery-tag-it/js/tag-it.min'
         ),
         'Permiso' => 'VGSG'
     ),
