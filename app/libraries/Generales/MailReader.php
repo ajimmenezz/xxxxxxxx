@@ -164,10 +164,10 @@ class MailReader
 
         $bodyMail = $this->Correo->mensajeCorreo($titulo, $texto);
         $mails = [
-            'osoto@siccob.com.mx',
-            'aserrano@siccob.com.mx',
-            'gayala@siccob.com.mx',
-            'vmojica@siccob.com.mx',
+            // 'osoto@siccob.com.mx',
+            // 'aserrano@siccob.com.mx',
+            // 'gayala@siccob.com.mx',
+            // 'vmojica@siccob.com.mx',
             'ajimenez@siccob.com.mx'
         ];
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $mails, $titulo, $bodyMail);
@@ -180,32 +180,34 @@ class MailReader
 
         $arrayTitulos = [
             'IP',
+            'Estado Impresora',
+            'Estado',
             'Sucursal',
             'Capacidad Total',
             'Nivel Actual'
         ];
-        $arrayWidth = [20, 35, 20, 20];
-        $arrayAlign = ['', '', 'center', 'center'];
+        $arrayWidth = [20, 25, 25, 35, 20, 20];
+        $arrayAlign = ['', '', '', '', 'center', 'center'];
 
         $this->Excel->createSheet('Red Status', 0);
         $this->Excel->setActiveSheet(0);
         $this->Excel->setTableSubtitles('A', 3, $arrayTitulos);
         $this->Excel->setColumnsWidth('A', $arrayWidth);
-        $this->Excel->setTableTitle("A1", "D1", "Detalle Focos Rojos", array('titulo'));
+        $this->Excel->setTableTitle("A1", "F1", "Detalle Focos Rojos", array('titulo'));
         $this->Excel->setTableContent('A', 3, $infoPrinters['red'], true, $arrayAlign);
 
         $this->Excel->createSheet('Yellow Status', 1);
         $this->Excel->setActiveSheet(1);
         $this->Excel->setTableSubtitles('A', 3, $arrayTitulos);
         $this->Excel->setColumnsWidth('A', $arrayWidth);
-        $this->Excel->setTableTitle("A1", "D1", "Detalle Focos Amarillo", array('titulo'));
+        $this->Excel->setTableTitle("A1", "F1", "Detalle Focos Amarillo", array('titulo'));
         $this->Excel->setTableContent('A', 3, $infoPrinters['yellow'], true, $arrayAlign);
 
         $this->Excel->createSheet('Green Status', 2);
         $this->Excel->setActiveSheet(2);
         $this->Excel->setTableSubtitles('A', 3, $arrayTitulos);
         $this->Excel->setColumnsWidth('A', $arrayWidth);
-        $this->Excel->setTableTitle("A1", "D1", "Detalle Focos Verdes", array('titulo'));
+        $this->Excel->setTableTitle("A1", "F1", "Detalle Focos Verdes", array('titulo'));
         $this->Excel->setTableContent('A', 3, $infoPrinters['green'], true, $arrayAlign);
 
         $this->Excel->setActiveSheet(0);
