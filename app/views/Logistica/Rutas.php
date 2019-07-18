@@ -52,7 +52,7 @@
                         </div>
                         <!--Finalizando Separador-->
 
-                        <div class="row"
+                        <div class="row">
                              <form class="margin-bottom-0" id="formBuscarRutas" data-parsley-validate="true" >
                                 <div id="fechaNueva" class="col-xs-6 col-md-3 m-t-10">
                                     <div class="form-group">

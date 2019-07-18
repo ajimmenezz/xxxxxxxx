@@ -9,6 +9,7 @@ $(function () {
     var select = new Select();
     var file = new Upload();
     var servicios = new Servicio();
+    var calendario = new Fecha();
 
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();
@@ -24,6 +25,14 @@ $(function () {
 
     //Creando input de evidencias
     file.crearUpload('#inputEvidenciasSolicitud', 'Solicitud/Nueva_solicitud');
+
+    $('#inputProgramada').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss'
+    });
+    
+    $('#inputLimiteAtencion').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss'
+    });
 
     //Obteniendo los datos de los departamentos    
     evento.enviarEvento('Solicitud/Solicitud_CatDepartamentos', {}, '', function (respuesta) {
@@ -77,8 +86,10 @@ $(function () {
     //Generar nueva solicitud
     $('#btnGenerarSolicitud').on('click', function () {
         var correo = $("#tagValor").tagit("assignedTags");
+        calendario.crearFecha('.calendario');
         var verificarCorreo;
         var verificarSucursal;
+        var verificarFechas;
 
         if (correo.length > 0) {
             if (servicios.validarCorreoArray(correo)) {
@@ -100,39 +111,50 @@ $(function () {
             verificarSucursal = true;
         }
 
+        if ($('#inputProgramada').val() !== '' && $('#inputLimiteAtencion').val() !== '') {
+            verificarFechas = false;
+        } else {
+            verificarFechas = true;
+        }
+
         if (evento.validarFormulario('#formNuevaSolicitud')) {
             if (verificarCorreo) {
                 if (verificarSucursal) {
-                    var data = {
-                        tipo: '3',
-                        departamento: $('#selectDepartamentoSolicitud').val(),
-                        prioridad: $('#selectPrioridadSolicitud').val(),
-                        descripcion: $('#textareaDescripcionSolicitud').val(),
-                        asunto: $('#inputAsuntoSolicitud').val(),
-                        correo: correo,
-                        folio: $('#inputFolioSolicitud').val(),
-                        sucursal: $('#selectSucursalSolicitud').val()};
-                    
-                    file.enviarArchivos('#inputEvidenciasSolicitud', 'Solicitud/Nueva_solicitud', '#panelNuevaSolicitud', data, function (respuesta) {
-                        if (respuesta !== 'otraImagen') {
-                            evento.mostrarModal('Numero de solicitud',
-                                    '<div class="row">\n\
+                    if (verificarFechas) {
+                        var data = {
+                            tipo: '3',
+                            departamento: $('#selectDepartamentoSolicitud').val(),
+                            prioridad: $('#selectPrioridadSolicitud').val(),
+                            descripcion: $('#textareaDescripcionSolicitud').val(),
+                            asunto: $('#inputAsuntoSolicitud').val(),
+                            correo: correo,
+                            folio: $('#inputFolioSolicitud').val(),
+                            sucursal: $('#selectSucursalSolicitud').val(),
+                            fechaProgramada: $('#inputProgramada').val(),
+                            fechaLimiteAtencion: $('#inputLimiteAtencion').val()};
+                        file.enviarArchivos('#inputEvidenciasSolicitud', 'Solicitud/Nueva_solicitud', '#panelNuevaSolicitud', data, function (respuesta) {
+                            if (respuesta !== 'otraImagen') {
+                                evento.mostrarModal('Numero de solicitud',
+                                        '<div class="row">\n\
                                         <div class="col-md-12 text-center">\n\
                                             <h5>Se genero la solicitud <b>' + respuesta + '</b></h5>\n\
                                         </div>\n\
                                     </div>');
-                            $("#tagValor").tagit("removeAll");
-                            select.cambiarOpcion('#selectParsonalSolicitud', '');
-                            $('#btnModalConfirmar').addClass('hidden');
-                            $('#btnModalAbortar').empty().append('Cerrar');
-                        } else {
-                            evento.mostrarMensaje('.errorSolicitudNueva', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
-                        }
+                                $("#tagValor").tagit("removeAll");
+                                select.cambiarOpcion('#selectParsonalSolicitud', '');
+                                $('#btnModalConfirmar').addClass('hidden');
+                                $('#btnModalAbortar').empty().append('Cerrar');
+                            } else {
+                                evento.mostrarMensaje('.errorSolicitudNueva', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
+                            }
 
-                        $('#btnModalAbortar').on('click', function () {
-                            $('#btnCancelarNuevaSolicitud').trigger('click');
+                            $('#btnModalAbortar').on('click', function () {
+                                $('#btnCancelarNuevaSolicitud').trigger('click');
+                            });
                         });
-                    });
+                    } else {
+                        evento.mostrarMensaje('.errorSolicitudNueva', false, 'Debe seleccionar solo una fecha.', 3000);
+                    }
                 } else {
                     evento.mostrarMensaje('.errorSolicitudNueva', false, 'Debe seleccionar una sucursal.', 3000);
                 }
