@@ -213,7 +213,7 @@ class MailReader
         $time = date("ymd_H_i_s");
         $nombreArchivo = 'Informe_Estatus_Markvision_' . $time . '.xlsx';
         $nombreArchivo = trim($nombreArchivo);
-        $ruta = 'storage/Archivos/Markvision/' . $nombreArchivo;
+        $ruta = 'storage/Archivos/MarkVision/' . $nombreArchivo;
 
         //Guarda la hoja envíandole la ruta y el nombre del archivo que se va a guardar.
         $this->Excel->saveFile($ruta);
