@@ -219,7 +219,7 @@ class FondoFijo extends General
     {
         $montoMaximo = $this->DB->getMaximoMontoAutorizado($datos['id'], $datos['tipoCuenta']);
         $saldo = $this->DB->getSaldo($datos['id'], $datos['tipoCuenta']);
-        $sugerido = (double)$montoMaximo - (double)$saldo;
+        $sugerido = (float) $montoMaximo - (float) $saldo;
         if ($sugerido < 0) {
             $sugerido = 0;
         }
@@ -496,7 +496,7 @@ class FondoFijo extends General
     }
 
     /************************************************************************/
-    
+
     public function rechazarMovimientoCobrable(array $datos)
     {
         $rechazar = $this->DB->rechazarMovimientoCobrable($datos);
@@ -522,5 +522,14 @@ class FondoFijo extends General
         }
 
         return $rechazar;
+    }
+
+    public function eliminaArchivos(array $archivos)
+    {
+        foreach ($archivos as $k => $v) {
+            try {
+                unlink('.' . $v);
+            } catch (Exception $ex) { }
+        }
     }
 }
