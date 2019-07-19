@@ -354,7 +354,6 @@ class ServiceDesk extends General {
         $input_data = '{"operation":{"details":{"department":""}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
         $data = json_decode(file_get_contents($this->UrlUsers . '?' . $this->FIELDS));
-        echo $this->UrlUsers . '?' . $this->FIELDS;
         $returnArray = [];
         $i = 0;
 
