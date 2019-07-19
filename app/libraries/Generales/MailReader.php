@@ -164,10 +164,10 @@ class MailReader
 
         $bodyMail = $this->Correo->mensajeCorreo($titulo, $texto);
         $mails = [
-            // 'osoto@siccob.com.mx',
-            // 'aserrano@siccob.com.mx',
-            // 'gayala@siccob.com.mx',
-            // 'vmojica@siccob.com.mx',
+            'osoto@siccob.com.mx',
+            'aserrano@siccob.com.mx',
+            'gayala@siccob.com.mx',
+            'vmojica@siccob.com.mx',
             'ajimenez@siccob.com.mx'
         ];
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $mails, $titulo, $bodyMail);
@@ -180,6 +180,30 @@ class MailReader
 
         $arrayTitulos = [
             'IP',
+            'Sucursal',
+            'Impresiones Totales',
+            'Días de Operación',
+            'Fecha de Instalación',
+            'Promedio Diario Impresiones',
+            'Impresiones Restantes Aproximadas',
+            'Cantidad de Toner',
+            'Porcentaje de Toner',
+            'Días Cubiertos',
+            'Fecha Tentativa de Cambio',
+            'Fecha Tentativa Envío (-5 días)'
+        ];
+        $arrayWidth = [15, 30, 15, 15, 15, 21, 30, 15, 15, 15, 18, 21];
+        $arrayAlign = ['', '', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'];
+
+        $this->Excel->createSheet('Proyección', 0);
+        $this->Excel->setActiveSheet(0);
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
+        $this->Excel->setColumnsWidth('A', $arrayWidth);        
+        $this->Excel->setTableContent('A', 1, $infoPrinters['proyeccion'], true, $arrayAlign);
+
+
+        $arrayTitulos = [
+            'IP',
             'Estado Impresora',
             'Estado',
             'Sucursal',
@@ -189,22 +213,22 @@ class MailReader
         $arrayWidth = [20, 25, 25, 35, 20, 20];
         $arrayAlign = ['', '', '', '', 'center', 'center'];
 
-        $this->Excel->createSheet('Red Status', 0);
-        $this->Excel->setActiveSheet(0);
+        $this->Excel->createSheet('Red Status', 1);
+        $this->Excel->setActiveSheet(1);
         $this->Excel->setTableSubtitles('A', 3, $arrayTitulos);
         $this->Excel->setColumnsWidth('A', $arrayWidth);
         $this->Excel->setTableTitle("A1", "F1", "Detalle Focos Rojos", array('titulo'));
         $this->Excel->setTableContent('A', 3, $infoPrinters['red'], true, $arrayAlign);
 
-        $this->Excel->createSheet('Yellow Status', 1);
-        $this->Excel->setActiveSheet(1);
+        $this->Excel->createSheet('Yellow Status', 2);
+        $this->Excel->setActiveSheet(2);
         $this->Excel->setTableSubtitles('A', 3, $arrayTitulos);
         $this->Excel->setColumnsWidth('A', $arrayWidth);
         $this->Excel->setTableTitle("A1", "F1", "Detalle Focos Amarillo", array('titulo'));
         $this->Excel->setTableContent('A', 3, $infoPrinters['yellow'], true, $arrayAlign);
 
-        $this->Excel->createSheet('Green Status', 2);
-        $this->Excel->setActiveSheet(2);
+        $this->Excel->createSheet('Green Status', 3);
+        $this->Excel->setActiveSheet(3);
         $this->Excel->setTableSubtitles('A', 3, $arrayTitulos);
         $this->Excel->setColumnsWidth('A', $arrayWidth);
         $this->Excel->setTableTitle("A1", "F1", "Detalle Focos Verdes", array('titulo'));

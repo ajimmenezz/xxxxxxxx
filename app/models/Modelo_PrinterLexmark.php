@@ -99,6 +99,49 @@ class Modelo_PrinterLexmark extends Modelo_Base
             }
         }
 
+        $consultaProyeccion = $this->consulta("
+        select
+        tf.IP,
+        tf.Sucursal,
+        tf.Impresiones as ImpresionesTotales,
+        DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion)) as DiasTotales,
+        if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion) as FechaInstalacion,
+        CEILING(tf.ImpresionesPromedioDiarias) ImpPromedioDiarias,
+        tf.ImpresionesRestantes,
+        tf.CapacidadCartuchoNegro as CapacidadToner,
+        tf.NivelCartuchoNegro / 100 as PorcentajeRestante,
+        FLOOR(tf.ImpresionesRestantes / tf.ImpresionesPromedioDiarias) as DiasCubiertos,
+        DATE_ADD(now(),INTERVAL FLOOR(tf.ImpresionesRestantes / tf.ImpresionesPromedioDiarias) DAY) as FechaTentativaCambio,
+        DATE_ADD(now(),INTERVAL FLOOR(tf.ImpresionesRestantes / tf.ImpresionesPromedioDiarias) - 5 DAY) as FechaTentativaEnvio
+        from (
+            select
+            tld.IP,
+            tld.Contacto as Sucursal,
+            tld.CarasCargadas as Impresiones,	
+            (tld.CapacidadCartuchoNegro * tld.NivelCartuchoNegro) / 100 as ImpresionesRestantes,
+            tld.CarasCargadas / DATEDIFF(now(),tld.FechaInstalacion) as ImpresionesPromedioDiarias,	
+            (
+                select
+                FechaConclusion
+                from t_servicios_ticket where Id = (
+                    select 
+                    IdServicio
+                    from t_instalaciones_equipos where Id = (
+                        select
+                        IdInstalacion
+                        from
+                        t_instalaciones_adicionales_45
+                        where IP = tld.IP limit 1
+                    )
+                )
+            ) as FechaInstalacion,	
+            tld.FechaInstalacion as FechaInstalacionMV,
+            tld.CapacidadCartuchoNegro,
+            tld.NivelCartuchoNegro
+            from t_lecturas_reporte_markvision_detalle tld
+            where tld.IdLectura = (select MAX(Id) from t_lecturas_reporte_markvision)
+        ) as tf");        
+
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();
             return [
@@ -113,7 +156,8 @@ class Modelo_PrinterLexmark extends Modelo_Base
                 'printersToNotification' => [
                     'red' => $redPrinters,
                     'yellow' => $yellowPrinters,
-                    'green' => $greenPrinters
+                    'green' => $greenPrinters,
+                    'proyeccion' => $consultaProyeccion
                 ]
             ];
         }
