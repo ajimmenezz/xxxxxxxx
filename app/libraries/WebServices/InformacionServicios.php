@@ -26,7 +26,7 @@ class InformacionServicios extends General {
         $this->ServiceDesk = \Librerias\WebServices\ServiceDesk::factory();
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
         $this->MSD = \Modelos\Modelo_ServiceDesk::factory();
-        $this->pdf = new \Librerias\Generales\PDFAux();
+        $this->pdf = new PDFAux();
     }
 
     public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key) {
