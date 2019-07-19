@@ -342,7 +342,7 @@ class Controller_SegundoPlano extends \CI_Controller {
                         }
                     }
 
-//                    $correos = ['ajimenez@siccob.com.mx'];
+                    $correos = ['ajimenez@siccob.com.mx'];
                     $texto = '<p>Se ha generado una solicitud automática ligada al Folio: <strong>' . $arrayInsert['Folio'] . '</strong>.</p>'
                             . '<p><strong>Solicitante:</strong> ' . $details->REQUESTER . ' </p>'
                             . '<p><strong>Asunto:</strong> ' . $arrayInsertAsunto['Asunto'] . ' </p>'
