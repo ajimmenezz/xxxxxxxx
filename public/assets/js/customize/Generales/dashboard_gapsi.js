@@ -11,11 +11,12 @@ $(function () {
     App.init();
     PageWithTwoSidebar.init();
 
+
     //Globales
     let tablaTipoProyecto = new TablaBasica('data-table-tipo-proyectos');
-    let tablaProyectos = new TablaBasica('data-table-proyectos');
-    let graficaPrincipal = new GraficaGoogle('graphDashboard', tablaTipoProyecto.datosTabla());
     tablaTipoProyecto.reordenarTabla(2, 'desc');
+    let graficaPrincipal = new GraficaGoogle('graphDashboard', tablaTipoProyecto.datosTabla());
+    let tablaProyectos = new TablaBasica('data-table-proyectos');
     tablaProyectos.reordenarTabla(3, 'desc');
     graficaPrincipal.inicilizarGrafica({
         title: 'Moneda en Pesos',
@@ -170,6 +171,7 @@ $(function () {
         datosFiltros.tipoProyecto = datosfila[0];
         datosFiltros.proyecto = datosfila[1];
         datosFiltros.moneda = datosFiltros['moneda'];
+        datosFiltros.sistema = 'Gapsi';
         enviarInformacionFiltros('panelDashboardGapsi', datosFiltros);
     });
 
@@ -395,7 +397,7 @@ $(function () {
     }
 
     function enviarInformacionFiltros(objeto, datosFiltros) {
-        peticion.enviar(objeto, 'Dashboard_Gapsi/tipoProyecto', datosFiltros, function (respuesta) {
+        peticion.enviar(objeto, 'Dashboard_Gapsi/Proyecto/informacion_General', datosFiltros, function (respuesta) {
             if (respuesta.consulta.proyectos.length !== 0) {
                 incializarDatos(respuesta.consulta);
                 setSecciones(respuesta.formulario);
@@ -426,7 +428,7 @@ $(function () {
         totalGastoCategoria = gastoTotal(datosCategoria);
         datosSubCategoria = datos.subcategorias;
         totalGastoSubCategoria = gastoTotal(datosSubCategoria);
-        datosConceptos = datos.concepto;
+        datosConceptos = datos.conceptos;
         totalGastoConceptos = gastoTotal(datosConceptos);
         datosCompras = datos.gastosCompras;
     }
@@ -528,7 +530,7 @@ $(function () {
                         alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], value, '<br>' + key);
                         break;
                     case 'proyecto':
-                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], datosProyectos[0]['Proyecto'], '<br>' + key, 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
+                        alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], datosProyectos['proyecto'], '<br>' + key, 'data-msg="' + datosFiltros[key] + '" data-value="' + key + '"');
                         $('#verDetalles').removeClass('hidden');
                         break;
                     case 'sucursal':
