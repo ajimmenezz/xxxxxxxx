@@ -161,7 +161,7 @@ class Tesoreria extends General {
         return array('formulario' => parent::getCI()->load->view('/Tesoreria/Formularios/FormularioValidarVuelta', $data, TRUE), 'datos' => $data);
     }
 
-    public function formularioPago(array $datos) {       
+    public function formularioPago(array $datos) {
         $rutaActual = getcwd();
         $data = array();
         $data['datosFactura'] = $this->DBT->consultaFacturaOutsourcingDocumantacion($datos['id']);
@@ -553,6 +553,21 @@ class Tesoreria extends General {
 
     public function combinarFacturasActivas() {
         
+    }
+
+    public function mostrarFacturasSemanaAnterior(array $datos) {
+//        var_dump($datos);
+        $consulta = $this->DBT->facturasTesoreria();
+//        $date = strtotime(date("Y-m-d"));
+//        $first = strtotime('last Sunday');
+//        var_dump(date('Y-m-d', $first));
+        var_dump($datos['fechaSemana'],strtotime("last Friday"));
+//        var_dump(date("Y-m-d", strtotime("last Friday")));
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
     }
 
 }

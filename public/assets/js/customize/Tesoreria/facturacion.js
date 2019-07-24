@@ -106,6 +106,18 @@ $(function () {
         }
     });
 
+    $('#btnSemanaAnterior').off('click');
+    $('#btnSemanaAnterior').on('click', function () {
+        console.log('pumas');
+        $('#btnSemanaActual').removeClass('active');
+        var fechaSemana = $('#data-table-facturas-tesoreria').DataTable().data()[0][3];
+        var data = {fechaSemana: fechaSemana};
+        evento.enviarEvento('Facturacion/MostrarFacturasSemanaAnterior', data, '#panelFacturacionTesoreria', function (respuesta) {
+//            console.log(respuesta);
+//            recargandoTablaFacturasPago(respuesta);
+        });
+    });
+
     var cargarSeccionFacturacion = function () {
         var respuesta = arguments[0];
         $('#listaFacturas').addClass('hidden');

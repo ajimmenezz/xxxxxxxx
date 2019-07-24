@@ -81,6 +81,22 @@ class Modelo_Tesoreria extends Modelo_Base {
                                         GROUP BY tfod.XML');
         return $consulta;
     }
+    
+    public function facturasTesoreria() {
+        $consulta = $this->consulta('SELECT 
+                                        tfod.Id,
+                                        nombreUsuario(tfod.IdUsuario) Tecnico,
+                                        nombreUsuario(tfo.IdSupervisor) Autoriza,
+                                        tfod.Fecha,
+                                        tfod.MontoFactura,
+                                            estatus(tfo.IdEstatus)
+                                    FROM
+                                        t_facturacion_outsourcing_documentacion tfod
+                                            INNER JOIN
+                                        t_facturacion_outsourcing tfo ON tfod.IdVuelta = tfo.Id
+                                    GROUP BY tfod.XML');
+        return $consulta;
+    }
 
     public function consultaFacturaOutsourcingDocumantacion(string $idFactura) {
         $consulta = $this->consulta('SELECT 
