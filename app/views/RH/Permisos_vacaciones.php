@@ -1,7 +1,7 @@
 <!-- Empezando #contenido -->
 <div id="contentPermisosVacaciones" class="content">
     <!-- Empezando titulo de la pagina -->
-    <h1 class="page-header">Permisos y vacaciones</h1>
+    <h1 class="page-header">Permisos Ausencia</h1>
     <!-- Finalizando titulo de la pagina -->
 
     <!-- Empezando panel Servicios-->
@@ -22,7 +22,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="table-responsive">
-                            <table id="data-table-permisos-ausencia" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
+                            <table id="table-permisos-ausencia" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">
                                 <thead>
                                     <tr>
                                         <th class="never">IdPermiso</th>
@@ -44,32 +44,8 @@
                                             echo "<tr>";
                                                 echo '<td>'.$value['Id'].'</td>';
                                                 echo '<td>'.$value['FechaDocumento'].'</td>';
-                                                switch ($value['IdTipoAusencia']){
-                                                    case '1':
-                                                        echo '<td>Llegada Tarde</td>';
-                                                        break;
-                                                    case '2':
-                                                        echo '<td>Salida Temprano</td>';
-                                                        break;
-                                                    case '3':
-                                                        echo '<td>No Asistirá</td>';
-                                                        break;
-                                                }
-                                                switch ($value['IdMotivoAusencia']){
-                                                    case '1':
-                                                        echo '<td>Personal</td>';
-                                                        break;
-                                                    case '2':
-                                                        echo '<td>Trabajo/Comisión</td>';
-                                                        break;
-                                                    case '3':
-                                                        echo '<td>IMSS Cita Médica</td>';
-                                                        break;
-                                                 case '4':
-                                                        echo '<td>IMSS Incapacidad</td>';
-                                                        break;
-                                                }
-                                                
+                                                echo '<td>'.$value['IdTipoAusencia'].'</td>';
+                                                echo '<td>'.$value['IdMotivoAusencia'].'</td>';                                                
                                                 if ($value['FechaAusenciaHasta'] != $value['FechaAusenciaDesde'] && $value['FechaAusenciaHasta'] != "0000-00-00") {
                                                     echo '<td>'.$value['FechaAusenciaDesde'].' al '.$value['FechaAusenciaHasta'].'</td>';
                                                 } else {
@@ -170,12 +146,6 @@
                             <div class="underline m-b-15 m-t-15"></div>
                         </div>
                         <div class="col-md-12" style="display: none">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Fecha de Tramite</label>
-                                    <input type="text" class="form-control date" id="inputFechaDocumento" style="width: 100%" disabled/>
-                                </div>
-                            </div>
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label>Nombre</label>
@@ -237,12 +207,12 @@
                         <div class="col-md-6">                    
                             <div id="observaciones" class="form-group">
                                 <label>Observaciones</label>
-                                <input type="text" class="form-control" id="inputObservaciones" style="width: 100%" disabled/>
+                                <input id="inputObservaciones" type="text" class="form-control" style="width: 100%" disabled/>
                             </div>
                         </div>
-                        <div class="col-md-9">
-                            <div id="descripcionAusencia" class="form-group" style="display: none">
-                                <label>Descripción de Ausencia *</label>
+                        <div class="col-md-12">
+                            <div id="descripcionAusencia" class="form-group">
+                                <label>Descripción de Motivos *</label>
                                 <textarea id="textareaMotivoSolicitudPermiso" class="form-control" name="descripcionAusencia" placeholder="Ingresa el motivo u observaciones de su ausencia... " rows="3"></textarea>
                             </div>
                         </div>

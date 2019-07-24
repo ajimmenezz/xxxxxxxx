@@ -8,6 +8,7 @@ $(function () {
     evento.mostrarAyuda('Ayuda_Proyectos');
     App.init();
     
+    /**Empieza sección de eventos para el catalogo de Asistencia**/
     $('#agregarMotivo').on('click', function(){
         console.log('agregarMotivo');
     });
@@ -21,5 +22,20 @@ $(function () {
     $('#eliminarMotivo').on('click', function(){
         console.log('eliminarMotivo');
     });
+    /**Finaliza sección de eventos para el catalogo de Asistencia**/
+    
+    
+    /**Empieza sección de eventos para el catalogo de Motivos de Rechazo**/
+    $('#agregarRechazo').on('click', function(){
+        console.log('agregarRechazo');
+    });
+    $('#editarRechazo').on('click', function(){
+        console.log('editarRechazo');
+    });
+    $('#eliminarRechazo').on('click', function(){
+        console.log('eliminarRechazo');
+    });
+    
+    /**Finaliza sección de eventos para el catalogo de Motivos de Rechazo**/
     
 });

@@ -195,15 +195,19 @@ $(function () {
         $('#fechaComienzoPrincipal').datepicker('setDate', '2016-07-07');
         $('#fechaFinPrincipal').datepicker('setDate', fecha.getFullYear() + '-' + fecha.getMonth() + 1);
         $("#btnFiltrarDashboardPrincipal").on('click', function () {
-            datosFiltros.fechaInicio = $('#fechaComienzoPrincipal').val() + "T00:00:00.000";
-            datosFiltros.fechaFinal = $('#fechaFinPrincipal').val() + "T23:59:59.999";
-            enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
+            if(evento.validarFormulario('#filtroFechaPrincipal')){
+                datosFiltros.fechaInicio = $('#fechaComienzoPrincipal').val() + "T00:00:00.000";
+                datosFiltros.fechaFinal = $('#fechaFinPrincipal').val() + "T23:59:59.999";
+                enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
+            }
         });
 
         $("#btnFiltrarDashboard").on('click', function () {
-            datosFiltros.fechaInicio = $("#fechaComienzo").val() + "T00:00:00.000";
-            datosFiltros.fechaFinal = $("#fechaFin").val() + "T23:59:59.999";
-            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            if(evento.validarFormulario('#filtroFecha')){
+                datosFiltros.fechaInicio = $("#fechaComienzo").val() + "T00:00:00.000";
+                datosFiltros.fechaFinal = $("#fechaFin").val() + "T23:59:59.999";
+                enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            }
         });
     }
 

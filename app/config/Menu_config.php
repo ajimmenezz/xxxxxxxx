@@ -1419,7 +1419,7 @@ $config['RH'] = array(
         'Permiso' => 'VRHRP'
     ),
     'Permisosvacaciones-RH' => array(
-        'liga' => 'Permisos y vacaciones',
+        'liga' => 'Permisos',
         'icono' => '',
         'Url' => '/RH/Permisos_vacaciones',
         'css' => array(),
@@ -1445,6 +1445,20 @@ $config['RH'] = array(
             'moment/moment-locales.min',
             'moment/es',
             'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
+        ),
+        'Permiso' => 'VRHPV'
+    ),
+    'Catalogo-Permisos-RH' => array(
+        'liga' => 'Catálogo de Permisos',
+        'icono' => '',
+        'Url' => '/RH/catalogo_permisos',
+        'css' => array(),
+        'pluginsCss' => array(
+        ),
+        'js' => array('Base/Base', 
+            'Componentes/HerramientasWeb/Utileria',
+            'RH/catalogo_permisos'),
+        'pluginsJs' => array(
         ),
         'Permiso' => 'VRHPV'
     ),
@@ -1904,6 +1918,29 @@ $config['Redes'] = array(
             'jquery-tag-it/js/tag-it.min'
         ),
         'Permiso' => 'VRESE'
+    ),
+    'Seguimiento-GeneralRedes' => array(
+        'liga' => 'Seguimiento CE',
+        'icono' => '',
+        'Url' => '/Redes/SeguimientoCE',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'parsley/src/parsley'
+        ),
+        'js' => array('Base/Base', 
+            'Componentes/HerramientasWeb/Utileria',
+            'Componentes/HerramientasWeb/Modal',
+            'Componentes/Tablas/Tabla', 
+            'Componentes/Tablas/TablaBasica',
+            'Redes/SeguimientoCE'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es'
+        ),
+        'Permiso' => 'VRHPV'
     )
 );
 
