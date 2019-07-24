@@ -7,16 +7,19 @@ use Controladores\Controller_Base as Base;
  *
  * @author Alberto
  */
-class Controller_ServiceDesk extends Base {
+class Controller_ServiceDesk extends Base
+{
 
     private $InformacionServicios;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
     }
 
-    public function manejarEvento(string $evento = null) {
+    public function manejarEvento(string $evento = null)
+    {
         switch ($evento) {
             case 'ValidarServicio':
                 $resultado = $this->InformacionServicios->validarServicio($this->input->post());
@@ -30,11 +33,13 @@ class Controller_ServiceDesk extends Base {
             case 'CatalogoUsuariosSD':
                 $resultado = $this->InformacionServicios->catalogoSD();
                 break;
+            case 'PdfFromFolio':
+                $resultado = $this->InformacionServicios->pdfFromFolio($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
         }
         echo json_encode($resultado);
     }
-
 }

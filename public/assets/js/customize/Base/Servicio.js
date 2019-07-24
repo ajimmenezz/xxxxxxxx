@@ -71,10 +71,10 @@ Servicio.prototype.nuevoServicio = function () {
             var descripcion = $('#inputDescripcionServicio').val();
             var now = new Date();
             var fecha = moment(now).format();
-            
+
             resource = {
                 "summary": "Atención a ticket",
-                "description": "Nuevo servicio.Se a agregado para su atención del ticket "+ ticketCalendario.Ticket +" con la siguiente descripcion " + descripcion,
+                "description": "Nuevo servicio.Se a agregado para su atención del ticket " + ticketCalendario.Ticket + " con la siguiente descripcion " + descripcion,
                 "location": "Ciudad de México, CDMX",
                 "start": {
                     "dateTime": now,
@@ -93,7 +93,7 @@ Servicio.prototype.nuevoServicio = function () {
                     }]
             };
 //            console.log(resource);
-            handleClientLoad(resource,true);
+            handleClientLoad(resource, true);
         };
 
         $('#btnCancelarServicio').on('click', function () {
@@ -409,8 +409,8 @@ Servicio.prototype.ServicioSinClasificar = function () {
                 });
             } else {
                 var data = {servicio: servicio};
-                _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, panel, function (respuesta) {
-                    if (respuesta === true) {
+//                _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, panel, function (respuesta) {
+//                    if (respuesta === true) {
                         _this.validarTecnicoPoliza();
 
                         var html = '<div class="row" m-t-10">\n\
@@ -430,10 +430,10 @@ Servicio.prototype.ServicioSinClasificar = function () {
                         $('#btnModalConfirmar').off('click');
                         _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
                         _this.validarCamposFirma(ticket, servicio, true, true, '4');
-                    } else {
-                        _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
-                    }
-                });
+//                    } else {
+//                        _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
+//                    }
+//                });
             }
         } else {
             _this.mostrarMensaje('.errorGeneralServicioSinClasificar', false, 'Debes llenar el campo Descripción.', 3000);

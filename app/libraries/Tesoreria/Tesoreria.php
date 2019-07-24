@@ -3,6 +3,8 @@
 namespace Librerias\Tesoreria;
 
 use Controladores\Controller_Datos_Usuario as General;
+use FPDF;
+use setasign\Fpdi;
 
 class Tesoreria extends General {
 
@@ -20,6 +22,7 @@ class Tesoreria extends General {
         $this->poliza = \Librerias\Poliza\Poliza::factory();
         $this->correo = \Librerias\Generales\Correo::factory();
         parent::getCI()->load->helper('date');
+        libxml_use_internal_errors(true);
     }
 
     public function validarPuesto() {
@@ -64,6 +67,18 @@ class Tesoreria extends General {
                                 <div class="col-md-6">
                                     <div class="form-group text-right">
                                         <a href="javascript:;" class="btn btn-success btn-lg " id="btnSubirFactura"><i class="fa fa-cloud-upload"></i> Subir Factura</a>
+                                        <a href="javascript:;" class="btn btn-danger btn-lg " id="btnCombinarFacturas"><i class="fa fa-file-pdf-o"></i> Combinar facturas</a>
+                                    </div>
+                                </div>
+                            </div>';
+        } else if (in_array('275', $usuario['PermisosAdicionales']) || in_array('275', $usuario['Permisos'])) {
+            $htmlTitulo = '<div class="row">
+                                <div class="col-md-6">
+                                    <h3 class="m-t-10">' . $titulo . '</h3>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group text-right">                                        
+                                        <a href="javascript:;" class="btn btn-success btn-lg " id="btnGenerarPdf"><i class="fa fa-pdf"></i> Combinar facturas</a>
                                     </div>
                                 </div>
                             </div>';
@@ -146,7 +161,7 @@ class Tesoreria extends General {
         return array('formulario' => parent::getCI()->load->view('/Tesoreria/Formularios/FormularioValidarVuelta', $data, TRUE), 'datos' => $data);
     }
 
-    public function formularioPago(array $datos) {
+    public function formularioPago(array $datos) {       
         $rutaActual = getcwd();
         $data = array();
         $data['datosFactura'] = $this->DBT->consultaFacturaOutsourcingDocumantacion($datos['id']);
@@ -268,6 +283,8 @@ class Tesoreria extends General {
             $extencion = pathinfo($value, PATHINFO_EXTENSION);
             if ($nombreExtencion !== $extencion) {
                 if ($extencion === 'xml') {
+                    libxml_use_internal_errors(true);
+
                     $xml = simplexml_load_file($rutaActual . $value);
 
                     $arrayComprobante = (array) $xml->xpath('//cfdi:Comprobante');
@@ -306,8 +323,8 @@ class Tesoreria extends General {
 
             if ($facturasGuardadas) {
                 $this->elimarArchivoFactura($archivos);
-                $proximoPago = date("d-m-Y", strtotime("next Friday"));
-                $texto = '<p>El pago de la factura de los tickets <strong>' . $datos['tickets'] . '</strong> que ha realizado, se hará el viernes  <strong>' . $proximoPago . '</strong>.';
+
+                $texto = '<p>Se programara el pago de la factura de los tickets <strong>' . $datos['tickets'] . '</strong> que ha realizado, cuando sea validado por el supervisor.';
                 $mensaje = $this->correo->mensajeCorreo('Fecha de Pago', $texto);
                 $this->correo->enviarCorreo('notificaciones@siccob.solutions', array($usuario['EmailCorporativo']), 'Fecha de Pago', $mensaje);
                 return $this->poliza->resumenVueltasAsociadosFolio();
@@ -480,18 +497,32 @@ class Tesoreria extends General {
 
     public function totalVueltasFactura(array $datos) {
         $totalFactura = 0;
+        $iva = $this->ivaOutsorcing();
 
         foreach ($datos as $k => $v) {
-            $montoIvaVuelta = number_format($v['Monto'] * 16 / 100, 2);
+            $montoIvaVuelta = number_format($v['Monto'] * $iva / 100, 2);
             $montoIvaVuelta = str_replace(',', '', $montoIvaVuelta);
-            $totalIvaMontoVuelta = $v['Monto'] + (float)$montoIvaVuelta;
-            $viaticoIvaVuelta = number_format($v['Viatico'] * 16 / 100, 2);
+            $totalIvaMontoVuelta = $v['Monto'] + (float) $montoIvaVuelta;
+            $viaticoIvaVuelta = number_format($v['Viatico'] * $iva / 100, 2);
             $viaticoIvaVuelta = str_replace(',', '', $viaticoIvaVuelta);
-            $totalIvaViaticoVuelta = $v['Viatico'] + (float)$viaticoIvaVuelta;
+            $totalIvaViaticoVuelta = $v['Viatico'] + (float) $viaticoIvaVuelta;
             $sumaMontoViatico = $totalIvaMontoVuelta + $totalIvaViaticoVuelta;
             $totalFactura = $totalFactura + $sumaMontoViatico;
         }
+
         return (float) $totalFactura;
+    }
+
+    public function ivaOutsorcing() {
+        $usuario = $this->Usuario->getDatosUsuario();
+
+        if ($usuario['Id'] === '119') {
+            $iva = 8;
+        } else {
+            $iva = 16;
+        }
+
+        return $iva;
     }
 
     public function evidenciaPagoFactura(array $datos) {
@@ -499,25 +530,29 @@ class Tesoreria extends General {
 
         return $evidenciaPago;
     }
-    
+
     public function verificarReabrirVuelta() {
         $usuario = $this->Usuario->getDatosUsuario();
 
         if (in_array('299', $usuario['PermisosAdicionales']) || in_array('299', $usuario['Permisos'])) {
             return TRUE;
-        }else{
+        } else {
             return FALSE;
         }
-    }   
-    
+    }
+
     public function reabrirVuelta(array $datos) {
         $consulta = $this->DBT->cambiarEstatusTablaFacturacionOutsourcing($datos);
-        
-        if(!empty($consulta)){
+
+        if (!empty($consulta)) {
             return TRUE;
-        }else{
+        } else {
             return FALSE;
         }
-    }        
+    }
+
+    public function combinarFacturasActivas() {
+        
+    }
 
 }

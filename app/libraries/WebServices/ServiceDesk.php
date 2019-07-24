@@ -14,12 +14,14 @@ class ServiceDesk extends General {
     private $Url;
     private $FIELDS;
     private $UrlUsers;
+    private $modeloServiceDesck;
 
     public function __construct() {
         parent::__construct();
         ini_set('max_execution_time', 300);
         $this->Url = "http://mesadeayuda.cinemex.net:8080/sdpapi/request";
         $this->UrlUsers = "http://mesadeayuda.cinemex.net:8080/sdpapi/requester/";
+        $this->modeloServiceDesck = \Modelos\Modelo_ServiceDesk::factory();
     }
 
     /*
@@ -134,7 +136,6 @@ class ServiceDesk extends General {
      */
 
     public function getFolios(string $key) {
-
         $input_data = '{"operation":{"details":{ "from": "0","limit": "5000","filterby": "All_Pending"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST_FILTERS&TECHNICIAN_KEY=' . $key;
         $datos = file_get_contents($this->Url . '?' . $this->FIELDS);
@@ -179,11 +180,9 @@ class ServiceDesk extends General {
 
         /* Concatena la nueva resolución con la resolución anterior */
         $nuevaResolucion = ''
-                . $stringInicio
                 . "<br>"
                 . $datos
                 . "<br>"
-                . $stringFin
                 . stripslashes(trim($datosAnterioresResolicion));
 
         $input_data = ''
@@ -207,8 +206,52 @@ class ServiceDesk extends General {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $FIELDS);
         $return = curl_exec($ch);
         curl_close($ch);
+        $jsonDecode = json_decode($return);
+        $this->generateLogResolverSD(array($jsonDecode, $folio));
 
-        return json_decode($return);
+        return $jsonDecode;
+    }
+
+    public function setNoteServiceDesk(string $key, string $folio, string $datos) {
+        $html = str_replace('&nbsp', '', $datos);
+        $html = str_replace('style="color:#FF0000";', '', $datos);
+        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/notes/";
+        $input_data = '{operation:{details:{notes:{note:{isPublic:true,notesText:"' . urlencode($html) . '"}}}}}';
+        $FIELDS = "format=json"
+                . "&OPERATION_NAME=ADD_NOTE"
+                . "&TECHNICIAN_KEY=" . $key
+                . "&INPUT_DATA=" . $input_data;
+        $data = json_decode(file_get_contents($URL2 . '?' . $FIELDS));
+
+        return $data;
+    }
+
+    public function setWorkLogServiceDesk(string $key, string $folio, string $datos) {
+        $html = strip_tags($datos);
+        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/worklogs/";
+        $input_data = '{operation:{details:{worklogs:{worklog:{description:"' . urlencode($html) . '",workMinutes:1}}}}}';
+        $FIELDS = "format=json"
+                . "&OPERATION_NAME=ADD_WORKLOG"
+                . "&TECHNICIAN_KEY=" . $key
+                . "&INPUT_DATA=" . $input_data;
+
+        $data = json_decode(file_get_contents($URL2 . '?' . $FIELDS));
+
+        return $data;
+    }
+
+    private function generateLogResolverSD(array $dataOperationSD) {
+        if ($dataOperationSD[0]->operation->result->status !== 'Success') {
+            $user = $this->Usuario->getDatosUsuario();
+            $date = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $dataToInsert = array(
+                'IdUsuario' => $user['Id'],
+                'Fecha' => $date,
+                'Codigo' => $dataOperationSD[0]->operation->result->status,
+                'Mensaje' => $dataOperationSD[0]->operation->result->message,
+                'Folio' => $dataOperationSD[1]);
+            $this->modeloServiceDesck->saveLogUpgradeSD($dataToInsert);
+        }
     }
 
     public function setResolucionServiceDesk2(string $key, string $folio, string $datos) {

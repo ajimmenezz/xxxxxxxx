@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
   | -------------------------------------------------------------------
@@ -188,7 +188,7 @@ $db['SAE'] = array(
 $db['SAE7'] = array(
     'dsn' => '',
     'hostname' => '192.168.0.7, 49161', //Produccion
-//    'hostname' => '192.168.0.35, 51051', //Pruebas
+    //    'hostname' => '192.168.0.35, 51051', //Pruebas
     'username' => 'adist',
     'password' => 'course3Goose,',
     'database' => 'SAE7EMPRESA3',
@@ -208,11 +208,24 @@ $db['SAE7'] = array(
     'save_queries' => TRUE
 );
 
+$posicion = strpos($_SERVER['SERVER_NAME'], 'siccob.solutions');
+
+//if ($posicion !== FALSE) {
+    $hostNameGapsi = '192.168.0.30, 50742'; 
+    $userNameGapsi = 'sa';
+    $pwdGapsi = 'S1cc0b';    
+//} else {
+//    $hostNameGapsi = '127.0.0.1, 50742';    
+//    $userNameGapsi = 'salocal';
+//    $pwdGapsi = 'S1cc0bS.';
+//}
+
+
 $db['Gapsi'] = array(
     'dsn' => '',
-    'hostname' => '192.168.0.30, 50742',
-    'username' => 'sa',
-    'password' => 'S1cc0b',
+    'hostname' => $hostNameGapsi,
+    'username' => $userNameGapsi,
+    'password' => $pwdGapsi,
     'database' => 'DB_9DEFD2_dbGastosSiccob',
     'dbdriver' => 'sqlsrv',
     'dbprefix' => '',

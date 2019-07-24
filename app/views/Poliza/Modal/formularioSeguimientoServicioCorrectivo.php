@@ -1,7 +1,7 @@
 <!-- Empezando titulo de la pagina -->
 <div class="row">
     <div class="col-md-6 col-xs-6">
-        <h1 class="page-header">Seguimiento Poliza</h1>
+        <h1 class="page-header">Seguimiento Póliza</h1>
         <input type="hidden" value="<?php echo $servicio; ?>" id="hiddenServicio" />
     </div>
     <div class="col-md-6 col-xs-6 text-right">

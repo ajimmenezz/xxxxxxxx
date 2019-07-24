@@ -205,6 +205,17 @@ class Modelo_Tesoreria extends Modelo_Base {
 
         return $consulta;
     }
+    
+    public function vueltasFacturasOutsourcingServicio(string $servicio) {
+        $consulta = $this->consulta('SELECT 
+                                            Vuelta
+                                        FROM
+                                        t_facturacion_outsourcing
+                                        WHERE IdServicio = "' . $servicio . '"
+                                        ORDER BY Id DESC LIMIT 1');
+
+        return $consulta;
+    }
 
     public function guardarViaticosOutsourcing(array $datos) {
         foreach ($datos['viaticos'] as $value) {
@@ -395,7 +406,7 @@ class Modelo_Tesoreria extends Modelo_Base {
                                     t_comprobacion_fondo_fijo tcff
                                     left join cat_v3_comprobacion_conceptos ccc on tcff.IdConcepto = ccc.Id
                                     where tcff.IdUsuarioFF = '" . $id . "'
-                                    and tcff.Fecha >= DATE_FORMAT(DATE_SUB(now(),INTERVAL 2 MONTH),'%Y-%m-%d')
+                                    and tcff.Fecha >= DATE_FORMAT(DATE_SUB(now(),INTERVAL 6 MONTH),'%Y-%m-%d')
                                     order by tcff.FechaAutorizacion desc");
         return $consulta;
     }

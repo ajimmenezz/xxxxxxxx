@@ -13,10 +13,17 @@
             foreach ($datosSolicitudGuia as $value) {
                 $disabled = 'disabled';
                 $hidden = 'hidden';
-                $hiddenContrario = '';
-                $comentario = $value['ComentarioDeGuia'];
+                $comentario = $value['ComentariosSolicitud'];
                 $archivos = $value['ArchivosEnvio'];
                 $archivosSolicitud = $value['ArchivosSolicitud'];
+                $guia = $value['Guia'];
+                
+                if (empty($archivosSolicitud)) {
+                    $hiddenContrario = 'hidden';
+                } else {
+                    $hiddenContrario = '';
+                }
+                $informacionSolicitudGuia = $value['InformacionSolicitudGuia'];
             }
         } else {
             $disabled = "";
@@ -25,6 +32,8 @@
             $archivos = "";
             $archivosSolicitud = "";
             $hiddenContrario = "hidden";
+            $informacionSolicitudGuia = "";
+            $guia = "";
         }
 
         if ($formularioEditable) {
@@ -35,7 +44,7 @@
             $botonesEditables = 'hidden';
         }
 
-        if ($estatus['IdEstatus'] === '4' && $estatus['Flag'] === '0') {
+        if ($estatus['IdEstatus'] === '37' && $estatus['Flag'] === '1') {
             $botonesEditables = 'hidden';
             $camposEditables = 'disabled';
         }
@@ -45,8 +54,20 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
+                            <label class="f-w-600 f-s-13">Información para generar guía *</label>
+                            <textarea class="form-control" id="txtInformacionGuia" rows="10" <?php echo $camposEditables; ?> disabled><?php echo $informacionSolicitudGuia ?></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="f-w-600 f-s-13">Guía *</label>
+                            <input id="txtGuia" type="text" class="form-control" placeholder="<?php echo $guia; ?>" <?php echo $camposEditables; ?>/>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
                             <label class="f-w-600 f-s-13">Comentarios de la solicitud *</label>
-                            <textarea class="form-control" id="txtComentariosGuia" rows="5" placeholder="<?php echo $comentario ?>" <?php echo $camposEditables ?>></textarea>
+                            <textarea class="form-control" id="txtComentariosGuia" rows="5" placeholder="<?php echo $comentario; ?>" <?php echo $camposEditables ?>></textarea>
                         </div>
                     </div>
                     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -77,7 +98,7 @@
                 <div class="row <?php echo $botonesEditables ?>">
                     <div class="col-md-12 col-sm-12 col-xs-12 text-center">
                         <a id="btnGuardarProblema" class="btn btn-sm btn-danger m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-save"></i> Guardar Problema</a>
-                        <a id="btnGuardarSolicitud" class="btn btn-sm btn-primary m-t-10 m-l-10 f-w-600 f-s-13"><i class="fa fa-save"></i> Guardar Solicitud</a>
+                        <a id="btnGuardarSolicitud" class="btn btn-sm btn-primary m-t-10 m-l-10 f-w-600 f-s-13"><i class="fa fa-save"></i> Guardar Solicitud de Guía</a>
                     </div>
                 </div>
             </fieldset>

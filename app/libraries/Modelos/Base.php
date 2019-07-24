@@ -2,7 +2,8 @@
 
 namespace Librerias\Modelos;
 
-class Base {
+class Base
+{
 
     static $DB_Adist3;
     static $DB_Adist2;
@@ -14,9 +15,8 @@ class Base {
     static $DB_Sicsa;
     private $consulta;
 
-    public function __construct() {
-        
-    }
+    public function __construct()
+    { }
 
     /*
      * Realiza la conexion a la base de datos pruebas
@@ -24,7 +24,8 @@ class Base {
      * @return object regresa la instancia del base de datos
      */
 
-    static public function connectDBPrueba() {
+    static public function connectDBPrueba()
+    {
         if (empty(self::$DB_prueba)) {
             self::$DB_prueba = get_instance()->load->database('pruebas', TRUE);
         }
@@ -37,7 +38,8 @@ class Base {
      * @return object regresa la instancia del base de datos
      */
 
-    static public function connectDBAdist2() {
+    static public function connectDBAdist2()
+    {
         if (empty(self::$DB_Adist2)) {
             self::$DB_Adist2 = get_instance()->load->database('adist2', TRUE);
         }
@@ -50,7 +52,8 @@ class Base {
      * @return object regresa la instancia del base de datos
      */
 
-    static public function connectDBAdist2P() {
+    static public function connectDBAdist2P()
+    {
         if (empty(self::$DB_Adist2P)) {
             self::$DB_Adist2P = get_instance()->load->database('pruebasAdist2', TRUE);
         }
@@ -63,7 +66,8 @@ class Base {
      * @return object regresa la instancia del base de datos
      */
 
-    static public function connectDBAdist3() {
+    static public function connectDBAdist3()
+    {
         if (empty(self::$DB_Adist3)) {
             self::$DB_Adist3 = get_instance()->load->database('adist3', TRUE);
         }
@@ -76,7 +80,8 @@ class Base {
      * @return object regresa la instancia del base de datos
      */
 
-    static public function connectDBSAE() {
+    static public function connectDBSAE()
+    {
         if (empty(self::$DB_SAE)) {
             self::$DB_SAE = get_instance()->load->database('SAE', TRUE);
         }
@@ -89,21 +94,24 @@ class Base {
      * @return object regresa la instancia del base de datos
      */
 
-    static public function connectDBSAE7() {
+    static public function connectDBSAE7()
+    {
         if (empty(self::$DB_SAE7)) {
             self::$DB_SAE7 = get_instance()->load->database('SAE7', TRUE);
         }
         return self::$DB_SAE7;
     }
 
-    static public function connectDBGapsi() {
+    static public function connectDBGapsi()
+    {
         if (empty(self::$DB_Gapsi)) {
             self::$DB_Gapsi = get_instance()->load->database('Gapsi', TRUE);
         }
         return self::$DB_Gapsi;
     }
 
-    static public function connectDBSicsa() {
+    static public function connectDBSicsa()
+    {
         if (empty(self::$DB_Sicsa)) {
             self::$DB_Sicsa = get_instance()->load->database('Sicsa', TRUE);
         }
@@ -121,7 +129,8 @@ class Base {
      *
      */
 
-    public function encontrar($table, $where = null, $limit = null, $offset = null) {
+    public function encontrar($table, $where = null, $limit = null, $offset = null)
+    {
         if (isset($where)) {
             $this->consulta = self::connectDBPrueba()->where($where)->get($table, $limit, $offset);
             if ($this->consulta) {
@@ -136,7 +145,8 @@ class Base {
     }
 
     //Inserta registro 
-    public function insertar($table, array $data) {
+    public function insertar($table, array $data)
+    {
         if (!empty($data)) {
             self::connectDBPrueba()->insert($table, $data);
             return self::connectDBPrueba()->affected_rows();
@@ -145,7 +155,8 @@ class Base {
     }
 
     //Actualiza el registro
-    public function actualizar(string $table, array $data, array $where = null) {
+    public function actualizar(string $table, array $data, array $where = null)
+    {
         if (!empty($data)) {
             if (!empty($where)) {
                 self::connectDBPrueba()->where($where);
@@ -157,7 +168,8 @@ class Base {
     }
 
     //Elimina un registro
-    public function eliminar($table, array $where) {
+    public function eliminar($table, array $where)
+    {
         self::connectDBPrueba()->delete($table, $where);
         return self::connectDBPrueba()->affected_rows();
     }
@@ -169,7 +181,8 @@ class Base {
      * @return array regresa el resultado de la consulta como un array o array vacio si no genera la consulta.
      */
 
-    public function consulta(string $consulta) {
+    public function consulta(string $consulta)
+    {
         $this->consulta = self::connectDBPrueba()->query($consulta);
         return $this->consulta->result_array();
     }
@@ -178,7 +191,8 @@ class Base {
      * Obtiene la cantidad de filas que regresa la consulta
      */
 
-    public function getCantidad() {
+    public function getCantidad()
+    {
         return $this->consulta->num_rows();
     }
 
@@ -188,7 +202,8 @@ class Base {
      * @return array regresa un codigo y un mensaje del error.
      */
 
-    public function tipoError() {
+    public function tipoError()
+    {
         return self::connectDBPrueba()->error();
     }
 
@@ -197,47 +212,58 @@ class Base {
      * 
      */
 
-    static public function factory($driver = null) {
+    static public function factory($driver = null)
+    {
         return new static($driver);
     }
 
-    public function iniciaTransaccion() {
+    public function iniciaTransaccion()
+    {
         self::connectDBPrueba()->trans_start();
     }
 
-    public function terminaTransaccion() {
+    public function terminaTransaccion()
+    {
         self::connectDBPrueba()->trans_complete();
     }
 
-    public function commitTransaccion() {
+    public function commitTransaccion()
+    {
         self::connectDBPrueba()->trans_commit();
     }
 
-    public function roolbackTransaccion() {
+    public function roolbackTransaccion()
+    {
         self::connectDBPrueba()->trans_rollback();
     }
 
-    public function estatusTransaccion() {
+    public function estatusTransaccion()
+    {
         return self::connectDBPrueba()->trans_status();
     }
-    
-    public function iniciaTransaccionSAE() {
+
+    public function iniciaTransaccionSAE()
+    {
         self::connectDBSAE7()->trans_start();
     }
 
-    public function terminaTransaccionSAE() {
+    public function terminaTransaccionSAE()
+    {
         self::connectDBSAE7()->trans_complete();
     }
 
-    public function commitTransaccionSAE() {
+    public function commitTransaccionSAE()
+    {
         self::connectDBSAE7()->trans_commit();
     }
 
-    public function roolbackTransaccionSAE() {
+    public function roolbackTransaccionSAE()
+    {
         self::connectDBSAE7()->trans_rollback();
     }
 
-    public function estatusTransaccionSAE() {
+    public function estatusTransaccionSAE()
+    {
         return self::connectDBSAE7()->trans_status();
     }
 
@@ -248,31 +274,43 @@ class Base {
      * @return array regresa el resultado de la consulta como un array o array vacio si no genera la consulta.
      */
 
-    public function consultaAD2(string $consulta) {
-        $this->consulta = self::connectDBAdist2()->query($consulta);
-        return $this->consulta->result_array();
+    public function consultaAD2(string $consulta)
+    {
+        $host = $_SERVER['SERVER_NAME'];
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $this->consulta = self::connectDBAdist2()->query($consulta);
+            return $this->consulta->result_array();
+        } else {
+            $this->consulta = self::connectDBAdist2P()->query($consulta);
+            return $this->consulta->result_array();
+        }
     }
 
-    public function queryBolean(string $consulta) {
+    public function queryBolean(string $consulta)
+    {
         $this->consulta = self::connectDBPrueba()->query($consulta);
         return $this->consulta;
     }
 
-    public function limpiarFuncion() {
+    public function limpiarFuncion()
+    {
         mysqli_next_result(self::connectDBPrueba()->conn_id);
     }
 
-    public function ultimoId() {
+    public function ultimoId()
+    {
         return self::connectDBPrueba()->insert_id();
     }
 
-    public function getFecha() {
+    public function getFecha()
+    {
         $this->consulta = self::connectDBPrueba()->query("select NOW() as Fecha");
         $data = $this->consulta->result_array();
         return $data[0]['Fecha'];
     }
 
-    public function getGeneralInfoByUserID(int $id) {
+    public function getGeneralInfoByUserID(int $id)
+    {
         $this->consulta = self::connectDBPrueba()->query("select 
                                                             nombreUsuario(Id) as Nombre,
                                                             Email,
@@ -283,4 +321,9 @@ class Base {
         return $data[0];
     }
 
+    public function consultaGapsi(string $consulta)
+    {
+        $this->consulta = self::connectDBGapsi()->query($consulta);
+        return $this->consulta->result_array();
+    }
 }

@@ -68,6 +68,9 @@ class Controller_Tesoreria extends Base {
             case 'reabrirVuelta':
                 $resultado = $this->tesoreria->reabrirVuelta($this->input->post());
                 break;
+            case 'CombinarFacturasActivas':
+                $resultado = $this->tesoreria->combinarFacturasActivas();
+                break;
             default:
                 $resultado = FALSE;
                 break;

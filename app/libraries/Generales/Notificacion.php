@@ -42,7 +42,7 @@ class Notificacion extends General {
         return $this->DBN->getNotificaciones($usuario['Id']);
     }
 
-    /*
+    /* gi
      * Se encarga de solicitar actualizar la notificacion como vista
      * 
      */
@@ -65,19 +65,11 @@ class Notificacion extends General {
 
         if (empty($usuario)) {
             if ($datos['departamento'] === '11') {
-                $data = $this->DBN->consultaNotificacion('SELECT 
-                                                        cvu.Id as IdUsuario,
-                                                        nombreUsuario(cvu.Id) AS Nombre,
-                                                        cvu.Usuario,
-                                                        cp.Nombre as Perfil, 
-                                                        cvu.EmailCorporativo, 
-                                                        cvu.SDKey, 
-                                                        cp.IdDepartamento 
-                                                    FROM cat_v3_usuarios cvu 
-                                                    INNER JOIN cat_perfiles cp ON cp.Id = cvu.IdPerfil 
-                                                    WHERE cp.IdDepartamento = 11
-                                                    AND cp.Nivel IN(3,4)
-                                                    AND cvu.flag = 1');
+                if (isset($datos['idSolicitud'])) {
+                    $data = $this->defineUsersPolicy(array('idSolicitud' => $datos['idSolicitud']));
+                } else {
+                    $data = $dataUsuersPolicy = $this->DBN->showSupervisorsPolicyCoordinator();
+                }
             } else {
                 $data = $this->Catalogo->catUsuarios('3', array('Flag' => '1'), array('IdDepartamento' => $datos['departamento']));
             }
@@ -95,11 +87,24 @@ class Notificacion extends General {
                 'Descripcion' => $datos['descripcion'],
                 'Flag' => '1'
             ));
+
             if (!empty($consulta)) {
                 $cuerpo = $this->Correo->mensajeCorreo($asunto, $mensaje);
                 $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($value['EmailCorporativo']), $asunto, $cuerpo);
             }
         }
+    }
+
+    private function defineUsersPolicy(array $dataToDefinePolicyUsers) {
+        $idSucursalRequest = $this->DBN->showIdSucursalTableSolicitudes($dataToDefinePolicyUsers['idSolicitud']);
+
+        if ($idSucursalRequest[0]['IdSucursal'] === '0') {
+            $dataUsuersPolicy = $this->DBN->showSupervisorsPolicyCoordinator();
+        } else {
+            $dataUsuersPolicy = $this->DBN->showSupervisorAndBranchTechnician($dataToDefinePolicyUsers['idSolicitud']);
+        }
+
+        return $dataUsuersPolicy;
     }
 
     public function enviarNotificacionEspecifica(array $datos, string $asunto, string $mensaje) {

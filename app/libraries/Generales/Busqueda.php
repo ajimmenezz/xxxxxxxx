@@ -528,18 +528,16 @@ class Busqueda extends General {
                     return parent::getCI()->load->view("Generales/Modal/detallesServicio_20", $data, TRUE);
                     break;
                 case '5': case 5:
-                    $datosTrafico = $this->DBB->getGeneralesServicio5($servicio)[0];
-
+                    $datosTrafico = $this->DBB->getGeneralesServicio5($servicio);
                     $data = [
                         /* Datos generales del tráfico */
-                        'datos' => $datosTrafico,
+                        'datos' => $datosTrafico[0],
                         /* Detalles de items del tráfico */
                         'items' => $this->DBB->getItemsServicio5($servicio),
                         /* Detalles del envío. En caso de no ser envío, este parámetro no retorna nada */
-                        'envio' => $this->DBB->getEnvioServicio5($servicio)[0],
-                        'htmlDocumentacion' => $this->getEvidenciasTrafico($datosTrafico['IdTipoTrafico'], $servicio)
+                        'envio' => $this->DBB->getEnvioServicio5($servicio),
+                        'htmlDocumentacion' => $this->getEvidenciasTrafico($datosTrafico[0]['IdTipoTrafico'], $servicio)
                     ];
-
                     return parent::getCI()->load->view("Generales/Modal/detallesServicio_5", $data, TRUE);
                     break;
             }

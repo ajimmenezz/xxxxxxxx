@@ -268,7 +268,7 @@ class Notas extends General {
                                                             tnso.Fecha
                                                     FROM t_notas_solicitudes tnso 
                                                     WHERE tnso.IdSolicitud = "' . $idSolicitud . '")
-                                                    AS TABLAS ORDER BY TABLAS.Fecha DESC');
+                                                    AS TABLAS ORDER BY TABLAS.Fecha ASC');
     }
 
 }

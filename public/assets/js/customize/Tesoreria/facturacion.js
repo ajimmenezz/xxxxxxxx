@@ -37,6 +37,14 @@ $(function () {
         });
     });
 
+    $('#btnCombinarFacturas').off('click');
+    $('#btnCombinarFacturas').on('click', function () {
+        var data = {};
+        evento.enviarEvento('Facturacion/CombinarFacturasActivas', data, '#panelFacturacionTesoreria', function (respuesta) {
+            console.log(respuesta);
+        });
+    });
+
     $('#data-table-facturas-poliza tbody').on('click', 'tr', function () {
         var datosTabla = $('#data-table-facturas-poliza').DataTable().row(this).data();
 
@@ -66,7 +74,7 @@ $(function () {
                         evento.mostrarModal('Advertencia', modalMensaje);
                         var idVuelta = datosTabla[0];
                         var data = {idVuelta: idVuelta, estatus: '8'};
-                        
+
                         $('#btnAceptarConfirmacion').on('click', function () {
                             evento.enviarEvento('Facturacion/reabrirVuelta', data, '#modal-dialogo', function (respuesta) {
                                 if (respuesta) {
@@ -215,12 +223,7 @@ $(function () {
 
         $('#modalArchivoValidarVuelta').off('click');
         $('#modalArchivoValidarVuelta').on('click', function () {
-            var html = '<div class="embed-responsive embed-responsive-16by9">\n\
-                                        <iframe class="embed-responsive-item" src="' + respuesta.datos.archivo + '" allowfullscreen></iframe>\n\
-                                    </div>';
-            evento.mostrarModal('PDF', html);
-            $('#btnModalConfirmar').addClass('hidden');
-            $('#btnModalAbortar').empty().append('Cerrar');
+            window.open(respuesta.datos.archivo, '_blank');
         });
 
         $('#btnValidarVuelta').off('click');
@@ -242,12 +245,7 @@ $(function () {
 
         $('#modalArchivoFacturaPDF').off('click');
         $('#modalArchivoFacturaPDF').on('click', function () {
-            var html = '<div class="embed-responsive embed-responsive-16by9">\n\
-                                        <iframe class="embed-responsive-item" src="' + evidenciaPDF + '" allowfullscreen></iframe>\n\
-                                    </div>';
-            evento.mostrarModal('PDF', html);
-            $('#btnModalConfirmar').addClass('hidden');
-            $('#btnModalAbortar').empty().append('Cerrar');
+            window.open(evidenciaPDF, '_blank');
         });
 
         $('#modalArchivoFacturaXML').off('click');

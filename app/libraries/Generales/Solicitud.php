@@ -212,12 +212,22 @@ class Solicitud extends General {
                     $folio = ',Folio = folioByServicio("' . $servicio . '")';
                 }
             } else {
-                if ($datos['folio'] !== '') {
-                    $folio = ',Folio = ' . $datos['folio'];
+                if (isset($datos['folio'])) {
+                    if ($datos['folio'] !== '') {
+                        $folio = ',Folio = ' . $datos['folio'];
+                    } else {
+                        $folio = '';
+                    }
                 } else {
                     $folio = '';
                 }
                 $servicio = '';
+            }
+
+            if (isset($datos['sucursal'])) {
+                $sucursal = $datos['sucursal'];
+            } else {
+                $sucursal = NULL;
             }
 
             $solicitudNueva = 'insert t_solicitudes set 
@@ -229,7 +239,7 @@ class Solicitud extends General {
                 FechaCreacion = now(),
                 Solicita = ' . $usuario['Id'] . ', 
                 IdServicioOrigen = "' . $servicio . '", 
-                IdSucursal = "' . $datos['sucursal'] . '"'
+                IdSucursal = "' . $sucursal . '"'
                     . $folio;
         }
 
@@ -259,15 +269,23 @@ class Solicitud extends General {
         //Guarda los detalles de la solicitud segun el tipo de solicitud
         if ($datos['tipo'] === '3' || $datos['tipo'] === '4') {
             if ($this->setSolicitudInterna($numeroSolicitud, $datos['descripcion'], $datos['asunto'], $archivos)) {
-                if ($datos['folio'] !== '') {
-                    $stringFolio = '<br>Folio: <b class="f-s-16">' . $datos['folio'] . '</b>';
+                if (isset($datos['folio'])) {
+                    if ($datos['folio'] !== '') {
+                        $stringFolio = '<br>Folio: <b class="f-s-16">' . $datos['folio'] . '</b>';
+                    } else {
+                        $stringFolio = '';
+                    }
                 } else {
                     $stringFolio = '';
                 }
 
-                if ($datos['sucursal'] !== '') {
-                    $consultaSucursal = $this->DBS->getSolicitudes('SELECT Nombre FROM cat_v3_sucursales WHERE Id = "' . $datos['sucursal'] . '"');
-                    $stringSucursal = '<br>Sucursal: <b class="f-s-16">' . $consultaSucursal[0]['Nombre'] . '</b>';
+                if (isset($datos['sucursal'])) {
+                    if ($datos['sucursal'] !== '') {
+                        $consultaSucursal = $this->DBS->getSolicitudes('SELECT Nombre FROM cat_v3_sucursales WHERE Id = "' . $datos['sucursal'] . '"');
+                        $stringSucursal = '<br>Sucursal: <b class="f-s-16">' . $consultaSucursal[0]['Nombre'] . '</b>';
+                    } else {
+                        $stringSucursal = '';
+                    }
                 } else {
                     $stringSucursal = '';
                 }
@@ -287,7 +305,8 @@ class Solicitud extends General {
                                     <br>' . $linkDetallesSolicitud . '<br><br>
                                     Asunto: <p><b>' . $datos['asunto'] . '</b> </p><br>
                                     Con la siguiente descripción:<br> <p><b>' . $datos['descripcion'] . '</b> </p><br>
-                                    Favor de atender en breve.'
+                                    Favor de atender en breve.',
+                    'idSolicitud' => $numeroSolicitud
                 ));
                 $texto = '<p>Estimado(a) <strong>' . $solicitante['Nombre'] . ',</strong> se le ha mandado la información de la solicitud que ha creado.<br>Número de solicitud: <strong>' . $numeroSolicitud . '</strong>.' . $stringFolio . $stringSucursal . '</p></b>' . $linkDetallesSolicitud . '<br><br>
                             Asunto: <p><b>' . $datos['asunto'] . '</b> </p><br><br>
@@ -581,7 +600,7 @@ class Solicitud extends General {
             }
         } else {
             $ticket = $datos['ticket'];
-            
+
             if ($ticket <= 0 || $ticket > 400000) {
                 return false;
             } else {
@@ -656,6 +675,10 @@ class Solicitud extends General {
         $data['remitente'] = $datos['remitente'];
         $data['tipo'] = $datos['tipo'];
         $data['descripcion'] = $datos['descripcion'];
+
+        if (isset($datos['idSolicitud'])) {
+            $data['idSolicitud'] = $datos['idSolicitud'];
+        }
 
         $this->Notificacion->setNuevaNotificacion($data, $datos['titulo'], $datos['mensaje'], $atiende);
 
@@ -1454,12 +1477,9 @@ class Solicitud extends General {
 
     public function editarFolio(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-        if (isset($usuario['SDKey'])) {
-            $key = ($usuario['SDKey'] === '') ? '1C97619A-2376-4F39-BC91-9B4B21FBA0A5' : $usuario['SDKey'];
-        } else {
-            $key = '1C97619A-2376-4F39-BC91-9B4B21FBA0A5';
-        }
+        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
         $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array('Folio' => $datos['folio']), array('Id' => $datos['solicitud']));
+
         if (!empty($consulta)) {
             $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $datos['folio']);
             $datosSD = $this->InformacionServicios->datosSD($datos['solicitud']);
@@ -1525,7 +1545,7 @@ class Solicitud extends General {
 
     public function reasignarFolioSD(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-        $key = $this->SegundoPlano->getApiKeyByUser($usuario['Id']);
+        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
         $folio = $this->DBS->consultaGral("SELECT folioByServicio('" . $datos['servicio'] . "') as Folio ");
         if ($folio[0]['Folio'] != '') {
             $this->ServiceDesk->reasignarFolioSD($folio[0]['Folio'], $datos['personalSD'], $key);
@@ -1539,7 +1559,7 @@ class Solicitud extends General {
                                             Id,
                                             Nombre
                                         FROM cat_v3_clientes
-                                        WHERE Id IN(1,4,12,18)');
+                                        WHERE Id IN(1,4,12,18,20)');
     }
 
     public function sucursalesCliente(array $datos) {

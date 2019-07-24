@@ -28,7 +28,7 @@ class Modelo_Sicsa extends Modelo_Base {
                 . "db_DetCotizacion "
                 . "(Cotizacion, CVE_ART, Cantidad, Descripcion, Complejo, ServiceDesk, Observaciones, CategoriaFalla, FallaEspecifica, LinkFalla) "
                 . "VALUES "
-                . "('" . $ultimo . "', '" . $datos['CVE'] . "', 1, '" . $datos['Articulo'] . "', '" . $datos['Complejo'] . "', '" . $datos['SD'] . "', '" . $datos['Observaciones'] . "', '" . $datos['Categoria'] . "', '" . $datos['Falla'] . "', '" . $datos['Link'] . "')";
+                . "('" . $ultimo . "', '" . $datos['CVE'] . "', " . $datos['Cantidad'] . ", '" . $datos['Articulo'] . "', '" . $datos['Complejo'] . "', '" . $datos['SD'] . "', '" . $datos['Observaciones'] . "', '" . $datos['Categoria'] . "', '" . $datos['Falla'] . "', '" . $datos['Link'] . "')";
 
         parent::connectDBSicsa()->query($query);
 

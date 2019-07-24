@@ -1,5 +1,5 @@
 <!-- Empezando titulo de la pagina -->
-<h1 class="page-header">Seguimiento Poliza</h1>
+<h1 class="page-header">Seguimiento Póliza</h1>
 <!-- Finalizando titulo de la pagina -->
 <input type="hidden" value="<?php echo $servicio; ?>" id="hiddenServicio" />
 <div id="seccion-servicio-mantemiento" class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">

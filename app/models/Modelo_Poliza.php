@@ -674,7 +674,6 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function mostrarRevisionPunto(array $datos) {
-
         $consulta = $this->consulta("SELECT
                                         tcrp.Id,
                                         tcrp.IdServicio,
@@ -940,10 +939,12 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
-                                    INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo");
+                                    INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
+                                    WHERE tea.IdEstatus NOT IN('31')");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -973,6 +974,7 @@ class Modelo_Poliza extends Modelo_Base {
                                             WHERE
                                                 cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM
                                         t_equipos_allab tea
@@ -1005,12 +1007,13 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE tea.IdUsuario = '" . $usuario . "'
-                                    AND tea.IdEstatus != '36'");
+                                    AND tea.IdEstatus != '31'");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1030,6 +1033,7 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
@@ -1054,14 +1058,15 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4' , '12', '26', '27', '30', '31','32','33','34')
-                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '30', '31', '34') OR tea.IdEstatus = '38' AND Flag = '0'
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '30', '32','33','34','36','37','39')
+                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '30', '34', '36') OR tea.IdEstatus = '38' AND Flag = '0'
                                     END)");
 
         if (!empty($consulta)) {
@@ -1092,6 +1097,7 @@ class Modelo_Poliza extends Modelo_Base {
                                             WHERE
                                                 cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT 
                                                 Nombre
                                             FROM
@@ -1106,11 +1112,11 @@ class Modelo_Poliza extends Modelo_Base {
                                         v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                         (CASE
-                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4' , '12', '28', '29', '30', '32', '33', '34')
+                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4', '12', '28', '29', '30', '32', '33', '34', '36', '39')
                                             WHEN
                                                 tea.IdTipoMovimiento = '3'
                                             THEN
-                                                tea.IdEstatus = '2' AND Flag = 0 OR tea.IdEstatus = '38'
+                                                tea.IdEstatus = '2' AND Flag = 0 OR tea.IdEstatus IN ('38','30','36', '41')
                                                     AND (SELECT 
                                                         IdEstatus
                                                     FROM
@@ -1137,14 +1143,16 @@ class Modelo_Poliza extends Modelo_Base {
                                         tea.IdEstatus,
                                         (SELECT cve.Nombre FROM cat_v3_estatus cve WHERE cve.Id = tea.IdEstatus) as NombreEstatus,
                                         tea.IdRefaccion,
+                                        (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tea.IdRefaccion) AS Refaccion,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento WHERE Id = tea.IdTipoMovimiento) TipoMovimiento
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','39') OR tea.IdEstatus = '2' AND Flag = '1'
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','36','39') OR tea.IdEstatus = '2' AND Flag = '1' OR tea.IdEstatus = '12' AND Flag = '0'
                                         WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','29','33','39') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '0'
+                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('41')
                                     END)");
 
         if (!empty($consulta)) {
@@ -1169,6 +1177,9 @@ class Modelo_Poliza extends Modelo_Base {
                                         (SELECT cveatm.Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS TipoMovimiento,
                                         CONCAT(tst.Id,' - ',tst.Descripcion) AS Servicio,
                                         CONCAT(trp.Nombres,' ',trp.ApMaterno) AS NombrePersonal,
+                                        (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tcd.IdTipoDiagnostico) AS TipoDiagnostico,
+                                        (SELECT Nombre FROM cat_v3_tipos_falla WHERE Id = tcd.IdTipoFalla) AS TipoFalla,
+                                        (SELECT Nombre FROM cat_v3_fallas_equipo WHERE Id= tcd.IdFalla) AS Falla,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS Movimiento,
                                         ve.Equipo" . $valor . "
                                         ,'Lectura'
@@ -1180,8 +1191,10 @@ class Modelo_Poliza extends Modelo_Base {
                                             t_rh_personal trp ON trp.IdUsuario = tea.IdPersonalValida
                                     INNER JOIN
                                             v_equipos ve ON ve.Id = tea.IdModelo" . $condicion . "
+                                    INNER JOIN
+                                            t_correctivos_diagnostico tcd ON tcd.IdServicio = tea.IdServicio
                                     WHERE 
-                                            IdServicio = '" . $datos['idServicio'] . "'");
+                                            tea.IdServicio = '" . $datos['idServicio'] . "'");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1191,16 +1204,16 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function consultaSolicitudGuiaTecnico(int $idServicio) {
-        $datosServcio = $this->estatusAllab($idServicio);
+        $datosServicio = $this->estatusAllab($idServicio);
 
-        if (!empty($datosServcio)) {
+        if (!empty($datosServicio)) {
             $consultaGuia = $this->consulta("SELECT 
                                                 teaet.*,
                                                 (SELECT Nombre FROM cat_v3_paqueterias cvp WHERE cvp.Id = teaet.IdPaqueteria) AS Paqueteria
                                             FROM
                                                 t_equipos_allab_envio_tecnico teaet
                                             WHERE 
-                                                    IdRegistro = '" . $datosServcio['Id'] . "'");
+                                                    IdRegistro = '" . $datosServicio['Id'] . "'");
             if (!empty($consultaGuia)) {
                 return $consultaGuia;
             } else {
@@ -1263,7 +1276,11 @@ class Modelo_Poliza extends Modelo_Base {
                                         teael.IdSucursal,
                                         teael.Recibe,
                                         teael.ArchivosEntrega,
-                                        teael.FechaRecepcion
+                                        teael.FechaRecepcion,
+                                        teael.CuentaSiccob,
+                                        teael.IdUsuarioTransito,
+                                        teael.IdPaqueteria,
+                                        nombreUsuario(teael.IdUsuarioTransito) Chofer
                                     FROM
                                         t_equipos_allab_envio_logistica teael
                                     WHERE 
@@ -1274,7 +1291,6 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function actualizaInventariosMovimientosXConslusionCorrectivo(int $id) {
-
         $this->iniciaTransaccion();
 
         /* Obtiene la última solución del correctivo y el tipo de solución */
@@ -1605,6 +1621,65 @@ class Modelo_Poliza extends Modelo_Base {
             'IdEstatus' => '4',
                 ), array('IdRegistro' => $datos['id']));
 
+        $consultaLaboratorioRefacciones = $this->consulta('SELECT 
+                                                                tearlr.IdInventario,
+                                                                ti.*
+                                                            FROM
+                                                                t_equipos_allab_revision_laboratorio_refacciones tearlr
+                                                                    INNER JOIN
+                                                                t_equipos_allab_revision_laboratorio tearl
+                                                                    ON tearlr.IdRevision = tearl.Id
+                                                                    INNER JOIN
+                                                                t_inventario ti ON tearlr.IdInventario = ti.Id
+                                                                    WHERE tearl.IdRegistro = " ' . $datos['id'] . ' "
+                                                                    AND Flag = "1"');
+
+        foreach ($consultaLaboratorioRefacciones as $key => $value) {
+            $this->actualizar('t_inventario', array('IdEstatus' => '40'), ['Id' => $value['IdInventario']]);
+
+            $arrayMovimientoInventarioSalida = array(
+                'IdTipoMovimiento' => '4',
+                'IdServicio' => $datos['idServicio'],
+                'IdAlmacen' => $value['IdAlmacen'],
+                'IdTipoProducto' => '2',
+                'IdProducto' => $value['IdInventario'],
+                'IdEstatus' => '17',
+                'IdUsuario' => $datos['idUsuario'],
+                'Cantidad' => $value['Cantidad'],
+                'Serie' => $value['Serie'],
+                'Fecha' => $datos['fecha']);
+
+            $this->insertar('t_movimientos_inventario', $arrayMovimientoInventarioSalida);
+
+            $idMovimientoInventarioSalida = parent::connectDBPrueba()->insert_id();
+
+            $arrayTablaInventario = array(
+                'IdAlmacen' => $value['IdAlmacen'],
+                'IdTipoProducto' => '2',
+                'IdProducto' => $value['IdInventario'],
+                'IdEstatus' => '22',
+                'Cantidad' => $value['Cantidad'],
+                'Serie' => $value['Serie']
+            );
+
+            $this->insertar('t_inventario', $arrayTablaInventario);
+
+            $arrayMovimientoInventarioEntrada = array(
+                'IdMovimientoEnlazado' => $idMovimientoInventarioSalida,
+                'IdTipoMovimiento' => '5',
+                'IdServicio' => $datos['idServicio'],
+                'IdAlmacen' => $value['IdAlmacen'],
+                'IdTipoProducto' => '2',
+                'IdProducto' => $value['IdInventario'],
+                'IdEstatus' => '22',
+                'IdUsuario' => $datos['idUsuario'],
+                'Cantidad' => $value['Cantidad'],
+                'Serie' => $value['Serie'],
+                'Fecha' => $datos['fecha']);
+
+            $this->insertar('t_movimientos_inventario', $arrayMovimientoInventarioEntrada);
+        }
+
         $this->cambiarEsatus($datos);
 
         $this->terminaTransaccion();
@@ -1737,7 +1812,7 @@ class Modelo_Poliza extends Modelo_Base {
         $this->actualizar('t_equipos_allab_recepciones', array('IdEstatus' => $datos['idEstatus'],
             'IdUsuario' => $datos['idUsuario'],
             'Fecha' => $datos['fecha'],
-            'Archivos' => $datos['archivos']), array('IdRegistro' => $datos['id']));
+            'Archivos' => $datos['archivos']), array('IdRegistro' => $datos['id'], 'IdDepartamento' => $datos['idDepartamento']));
         $this->cambiarEsatus($datos);
 
         $this->terminaTransaccion();
@@ -1761,13 +1836,15 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function consultaTicketsUsuario(array $datos) {
-        $consulta = $this->consulta('SELECT 
-                                        Ticket
+        $consulta = $this->consulta('SELECT
+                                        tst.Ticket
                                     FROM
-                                        t_servicios_ticket
+                                        t_servicios_ticket tst
                                     WHERE
-                                        Atiende = "' . $datos['usuario'] . '"
-                                    AND IdEstatus = "' . $datos['estatus'] . '"');
+                                        tst.Atiende = "' . $datos['usuario'] . '"
+                                    AND tst.IdEstatus = "' . $datos['estatus'] . '"
+                                    AND tst.Id NOT IN (SELECT IdServicio FROM t_equipos_allab WHERE IdServicio = tst.Id)
+                                    GROUP BY Ticket');
         return $consulta;
     }
 
@@ -1781,7 +1858,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         t_servicios_ticket tst
                                         INNER JOIN t_correctivos_generales tcg on tst.Id = tcg.IdServicio
                                     WHERE
-                                        Ticket = "' . $datos['ticket'] . '"');
+                                        Ticket = "' . $datos['ticket'] . '"
+                                    AND tst.Id NOT IN (SELECT IdServicio FROM t_equipos_allab WHERE IdServicio = tst.Id)');
         return $consulta;
     }
 
@@ -1817,9 +1895,11 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function consultaEquiposAllab(int $idServicio = null) {
-
         if (!empty($idServicio)) {
-            $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "'");
+            $consulta = $this->consulta("SELECT
+                                             *, nombreUsuario(IdUsuario) NombreUsuario 
+                                         FROM t_equipos_allab 
+                                         WHERE IdServicio = '" . $idServicio . "'");
         } else {
             $consulta = $this->consulta("SELECT * FROM t_equipos_allab");
         }
@@ -1922,11 +2002,33 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function consultaComponentesEquipoInvetario(array $datos) {
-        $equipoDanado = $this->consulta('SELECT 
-                                            ce.Id, ce.IdModelo, ce.Nombre
-                                        FROM
-                                            cat_v3_componentes_equipo ce
-                                        WHERE ce.IdModelo = "' . $datos['idModelo'] . '"');
+        $equipoDanado = $this->consulta('select 
+                                            ti.Id,
+                                            ti.Serie,
+                                                ti.IdProducto,
+                                            (SELECT 
+                                                    Nombre
+                                                FROM
+                                                    cat_v3_componentes_equipo
+                                                WHERE
+                                                    Id = IdProducto) AS Nombre
+                                        from
+                                            t_inventario ti
+                                        INNER JOIN cat_v3_componentes_equipo cvce
+                                                ON ti.IdProducto = cvce.Id
+                                        where
+                                            ti.IdAlmacen in (select 
+                                                    Id
+                                                from
+                                                    cat_v3_almacenes_virtuales
+                                                where
+                                                    IdResponsable = "' . $datos['idUsuario'] . '"
+                                                        or (IdTipoAlmacen = 1
+                                                        and IdReferenciaAlmacen = "' . $datos['idUsuario'] . '"))
+                                                and ti.IdTipoProducto = "2"
+                                                and ti.IdEstatus = 17
+                                                and ti.Bloqueado = 0
+                                                        and cvce.IdModelo = "' . $datos['idModelo'] . '"');
 
         return $equipoDanado;
     }
@@ -1942,6 +2044,8 @@ class Modelo_Poliza extends Modelo_Base {
             'Cantidad' => $datos['cantidad'],
             'Flag' => $datos['flag']
         ));
+
+        $this->actualizar('t_inventario', array('Bloqueado' => '1'), ['Id' => $datos['idInvetario']]);
 
         $this->cambiarEsatus($datos);
 
@@ -1959,12 +2063,15 @@ class Modelo_Poliza extends Modelo_Base {
         $equipoDanado = $this->consulta('SELECT 
                                                 tearlr.Id,
                                                 tearlr.Cantidad,
-                                                (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tearlr.IdInventario) AS Nombre
+                                                tearlr.IdInventario,
+                                                (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = ti.IdProducto) AS Nombre
                                          FROM t_equipos_allab_revision_laboratorio_refacciones tearlr
                                         INNER JOIN t_equipos_allab_revision_laboratorio tearl
                                         ON tearl.Id = tearlr.IdRevision
                                         INNER JOIN t_equipos_allab tea
                                         ON tea.Id = tearl.IdRegistro
+                                        INNER JOIN t_inventario ti
+                                        ON tearlr.IdInventario = ti.Id
                                         WHERE tea.IdServicio = " ' . $idServicio . ' "
                                         AND tearlr.Flag = "1"');
 
@@ -1973,6 +2080,7 @@ class Modelo_Poliza extends Modelo_Base {
 
     public function flagearRefaccionUtilizada(array $datos) {
         $resultado = $this->actualizar('t_equipos_allab_revision_laboratorio_refacciones', array('Flag' => $datos['flag']), ['Id' => $datos['id']]);
+        $this->actualizar('t_inventario', array('Bloqueado' => '0'), ['Id' => $datos['idInventario']]);
 
         if (!empty($resultado)) {
             return TRUE;
@@ -1994,10 +2102,12 @@ class Modelo_Poliza extends Modelo_Base {
         return $equipoDanado;
     }
 
-    public function insertarEnvioLogistica(array $datos) {
+    public function insertarEnvioLogistica(array $datos, array $datosEstatus) {
         $this->iniciaTransaccion();
 
         $this->insertar('t_equipos_allab_envio_logistica', $datos);
+        $this->cambiarEsatus($datosEstatus);
+
 
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
@@ -2112,7 +2222,6 @@ class Modelo_Poliza extends Modelo_Base {
 
         $this->cambiarEsatus($datosEstatus);
 
-
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
             $this->roolbackTransaccion();
@@ -2157,6 +2266,137 @@ class Modelo_Poliza extends Modelo_Base {
                                             tea.IdServicio = "' . $datos['idServicio'] . '"');
 
         return $consulta;
+    }
+
+    public function consultPostByProfiles(string $idProfile, string $idTechnical) {
+        $answerQuery = $this->consulta("SELECT 
+                                        EmailCorporativo
+                                    FROM
+                                        cat_v3_usuarios cvu
+                                    WHERE
+                                        cvu.IdPerfil IN(" . $idProfile . ")
+                                    OR cvu.Id = '" . $idTechnical . "'");
+
+        return $answerQuery;
+    }
+
+    public function consultSupervisorAndTechnicalMail(string $idTechnical) {
+        $answerQuery = $this->consulta("(SELECT 
+                                            cvu.EmailCorporativo
+                                        FROM
+                                            cat_v3_usuarios cvu
+                                        WHERE cvu.Id = '" . $idTechnical . "')
+                                        UNION
+                                        SELECT 
+                                            (SELECT 
+                                                    EmailCorporativo
+                                                FROM
+                                                    cat_v3_usuarios
+                                                WHERE
+                                                    Id = cvrc.IdResponsableInterno) EmailCorporativo
+                                        FROM
+                                            cat_v3_usuarios cvu
+                                                INNER JOIN
+                                            t_servicios_ticket tst ON tst.Atiende = cvu.Id
+                                                INNER JOIN
+                                            cat_v3_sucursales cvs ON cvs.Id = tst.IdSucursal
+                                                INNER JOIN
+                                            cat_v3_regiones_cliente cvrc ON cvrc.Id = cvs.IdRegionCliente
+                                        WHERE
+                                            cvu.Id = '" . $idTechnical . "'
+                                        GROUP BY cvrc.IdResponsableInterno");
+
+        return $answerQuery;
+    }
+
+    public function consultationServiceAndRequest(string $service) {
+        $answerQuery = $this->consulta("SELECT 
+                                            ts.Ticket,
+                                                ts.Folio
+                                        FROM
+                                            t_servicios_ticket tst
+                                        INNER JOIN t_solicitudes ts ON ts.Id = tst.IdSolicitud
+                                        WHERE
+                                            tst.Id = '" . $service . "'");
+
+        return $answerQuery;
+    }
+
+    public function transparencyFromLaboratoryToEarehouse(array $dataTransparencyFromLaboratoryToEarehouse, array $dataStatus) {
+        $this->iniciaTransaccion();
+
+        foreach ($dataTransparencyFromLaboratoryToEarehouse['listaProductos'] as $key => $value) {
+            $inquiryQuery = $this->consulta('SELECT * FROM t_inventario WHERE Id = "' . $value . '"');
+
+            $dataMovementInventoryTransfer = array(
+                'IdTipoMovimiento' => '2',
+                'IdServicio' => $dataTransparencyFromLaboratoryToEarehouse['idServicio'],
+                'IdAlmacen' => $inquiryQuery[0]['IdAlmacen'],
+                'IdTipoProducto' => $inquiryQuery[0]['IdTipoProducto'],
+                'IdProducto' => $value,
+                'IdEstatus' => '17',
+                'IdUsuario' => $dataTransparencyFromLaboratoryToEarehouse['idUsuario'],
+                'Cantidad' => $inquiryQuery[0]['Cantidad'],
+                'Serie' => $inquiryQuery[0]['Serie'],
+                'Fecha' => $dataTransparencyFromLaboratoryToEarehouse['fecha']);
+            $this->actualizar('t_inventario', array('IdAlmacen' => '58'), ['Id' => $value]);
+            $this->insertar('t_movimientos_inventario', $dataMovementInventoryTransfer);
+
+
+            $idMovementInventoryTransfer = parent::connectDBPrueba()->insert_id();
+
+            $inquiryQueryUpdated = $this->consulta('SELECT * FROM t_inventario WHERE Id = "' . $value . '"');
+
+            $dataMovementInventoryEntry = array(
+                'IdMovimientoEnlazado' => $idMovementInventoryTransfer,
+                'IdTipoMovimiento' => '3',
+                'IdServicio' => $dataTransparencyFromLaboratoryToEarehouse['idServicio'],
+                'IdAlmacen' => $inquiryQueryUpdated[0]['IdAlmacen'],
+                'IdTipoProducto' => $inquiryQueryUpdated[0]['IdTipoProducto'],
+                'IdProducto' => $value,
+                'IdEstatus' => '17',
+                'IdUsuario' => $dataTransparencyFromLaboratoryToEarehouse['idUsuario'],
+                'Cantidad' => $inquiryQueryUpdated[0]['Cantidad'],
+                'Serie' => $inquiryQueryUpdated[0]['Serie'],
+                'Fecha' => $dataTransparencyFromLaboratoryToEarehouse['fecha']);
+
+            $this->insertar('t_movimientos_inventario', $dataMovementInventoryEntry);
+        }
+
+        $this->cambiarEsatus($dataStatus);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function previousQuoteQuery(string $service) {
+        $answerQuery = $this->consulta("select
+                count(*) as Total
+                from t_servicios_ticket tst
+                where tst.IdServicioOrigen = '" . $service . "'
+                and tst.IdTipoServicio = 41");
+
+        return $answerQuery;
+    }
+
+    public function getAdvanceService(string $service) {
+        $answerQuery = $this->consulta("SELECT 
+                                            tsa . *
+                                        FROM
+                                            t_servicios_avance tsa
+                                                INNER JOIN
+                                            t_servicios_ticket tst ON tsa.IdServicio = tst.Id
+                                        WHERE IdServicio = '" . $service . "'
+                                        ORDER BY Id DESC
+                                        LIMIT 1");
+
+        return $answerQuery;
     }
 
 }

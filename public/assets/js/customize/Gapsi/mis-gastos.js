@@ -50,7 +50,7 @@ $(function () {
                 }
                 evento.enviarEvento('Gasto/ProyectosByCliente', datos, '#panelFormularioGasto', function (respuesta) {
                     $.each(respuesta.proyectos, function (k, v) {
-                        $("#listProyectos").append('<option data-tipo="' + v.Tipo + '" value="' + v.ID + '">' + v.Nombre + '</option>')
+                        $("#listProyectos").append('<option data-tipo="' + v.Tipo + '" value="' + v.ID + '">' + v.Tipo + ' - ' + v.Nombre + '</option>')
                     });
                     $("#listProyectos").removeAttr("disabled");
                 });
@@ -118,6 +118,27 @@ $(function () {
             } else {
                 $("#listCategoria").attr("disabled", "disabled");
                 select.cambiarOpcion("#listCategoria", '');
+            }
+        });
+
+        if ($("#checkCredito").is(":checked")) {
+            $("#fechaCredito").removeAttr("disabled");
+            $("#fechaCredito").attr("data-parsley-required", "true");
+        } else {
+            $("#fechaCredito").attr("disabled", "disabled");
+            $("#fechaCredito").attr("data-parsley-required", "false");
+            $("#fechaCredito").val("");
+        }
+
+        $("#checkCredito").on("click");
+        $("#checkCredito").on("click", function () {
+            if ($(this).is(":checked")) {
+                $("#fechaCredito").removeAttr("disabled");
+                $("#fechaCredito").attr("data-parsley-required", "true");
+            } else {
+                $("#fechaCredito").attr("disabled", "disabled");
+                $("#fechaCredito").attr("data-parsley-required", "false");
+                $("#fechaCredito").val("");
             }
         });
 
@@ -207,6 +228,8 @@ $(function () {
                         'TipoTrans': $("#listTipoTrasnferencia option:selected").text(),
                         'TipoServicio': $("#listTiposServicio option:selected").text(),
                         'OC': $.trim($("#txtOC").val()),
+                        'Credito': ($("#checkCredito").is(":checked")) ? 1 : 0,
+                        'FechaCredito': $("#fechaCredito").val(),
                         'Descripcion': $("#txtDescripcion").val(),
                         'Importe': total,
                         'Observaciones': $("#txtObservaciones").val(),

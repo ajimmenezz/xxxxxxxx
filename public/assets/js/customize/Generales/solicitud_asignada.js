@@ -161,7 +161,7 @@ $(function () {
                                     var fila = [];
                                     if (typeof respuesta === 'object') {
                                         var numeroTicket = respuesta.ticket;
-                                        eventoCalendario(numeroTicket);
+//                                        eventoCalendario(numeroTicket);
                                         evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12 text-center">\n\
                                                                     <div class="form-group">\n\
@@ -191,43 +191,43 @@ $(function () {
                         }
                     });
 
-                    //crear un evento en calendario
-                    var eventoCalendario = function () {
-                        var ticketCalendario = arguments[0];
-                        var atiende = $('#selectAtiendeServicio option:selected').text();
-                        var tipoServicio = $('#selectServicioDepartamento option:selected').text();
-                        var sucursal = $('#selectSucursal option:selected').text();
-                        var emailCorporativo = $('#selectAtiendeServicio option:selected').attr('data');
-                        var descripcion = $('#inputDescripcionServicio').val();
-                        var now = new Date();
-                        today = now.toISOString();
-
-                        resource = {
-                            "summary": "Atención a ticket",
-                            "description": "Nuevo servicio. Se a agregado para su atención del ticket " + ticketCalendario + " con la siguiente descripcion " + descripcion,
-                            "location": sucursal,
-                            "timeZone": "America/Mexico_City",
-                            "start": {
-                                "dateTime": now
-                            },
-                            "end": {
-                                "dateTime": now
-                            },
-                            "attendees": [
-                                {
-                                    "email": emailCorporativo,
-                                    "displayName": atiende,
-                                    "organizer": false,
-                                    "self": false,
-                                    "resource": false,
-                                    "optional": false,
-                                    "responseStatus": "accepted"
-                                }],
-                            "colorId": "4"
-
-                        };
-                        handleClientLoad(resource, true);
-                    };
+//                    //crear un evento en calendario
+//                    var eventoCalendario = function () {
+//                        var ticketCalendario = arguments[0];
+//                        var atiende = $('#selectAtiendeServicio option:selected').text();
+//                        var tipoServicio = $('#selectServicioDepartamento option:selected').text();
+//                        var sucursal = $('#selectSucursal option:selected').text();
+//                        var emailCorporativo = $('#selectAtiendeServicio option:selected').attr('data');
+//                        var descripcion = $('#inputDescripcionServicio').val();
+//                        var now = new Date();
+//                        today = now.toISOString();
+//
+//                        resource = {
+//                            "summary": "Atención a ticket",
+//                            "description": "Nuevo servicio. Se a agregado para su atención del ticket " + ticketCalendario + " con la siguiente descripcion " + descripcion,
+//                            "location": sucursal,
+//                            "timeZone": "America/Mexico_City",
+//                            "start": {
+//                                "dateTime": now
+//                            },
+//                            "end": {
+//                                "dateTime": now
+//                            },
+//                            "attendees": [
+//                                {
+//                                    "email": emailCorporativo,
+//                                    "displayName": atiende,
+//                                    "organizer": false,
+//                                    "self": false,
+//                                    "resource": false,
+//                                    "optional": false,
+//                                    "responseStatus": "accepted"
+//                                }],
+//                            "colorId": "4"
+//
+//                        };
+//                        handleClientLoad(resource, true);
+//                    };
 
                     //Evento de select personal para seleccionar su area y departamento
                     $('#selectReasignarParsonal').on('change', function () {
@@ -923,7 +923,7 @@ $(function () {
                         var fila = [];
                         if (typeof respuesta === 'object') {
                             var numeroTicket = respuesta.ticket;
-                            eventoCalendario(numeroTicket);
+//                            eventoCalendario(numeroTicket);
                             evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12 text-center">\n\
                                                                     <div class="form-group">\n\
@@ -954,42 +954,42 @@ $(function () {
         });
 
         //crear un evento en calendario
-        var eventoCalendario = function () {
-            var ticketCalendario = arguments[0];
-            var atiende = $('#selectAtiendeServicio option:selected').text();
-            var tipoServicio = $('#selectServicioDepartamento option:selected').text();
-            var sucursal = $('#selectSucursal option:selected').text();
-            var emailCorporativo = $('#selectAtiendeServicio option:selected').attr('data');
-            var descripcion = $('#inputDescripcionServicio').val();
-            var now = new Date();
-            today = now.toISOString();
-
-            resource = {
-                "summary": "Atención a ticket",
-                "description": "Nuevo servicio. Se a agregado para su atención del ticket " + ticketCalendario + " con la siguiente descripcion " + descripcion,
-                "location": sucursal,
-                "timeZone": "America/Mexico_City",
-                "start": {
-                    "dateTime": now
-                },
-                "end": {
-                    "dateTime": now
-                },
-                "attendees": [
-                    {
-                        "email": emailCorporativo,
-                        "displayName": atiende,
-                        "organizer": false,
-                        "self": false,
-                        "resource": false,
-                        "optional": false,
-                        "responseStatus": "accepted"
-                    }],
-                "colorId": "4"
-
-            };
-            handleClientLoad(resource, true);
-        };
+//        var eventoCalendario = function () {
+//            var ticketCalendario = arguments[0];
+//            var atiende = $('#selectAtiendeServicio option:selected').text();
+//            var tipoServicio = $('#selectServicioDepartamento option:selected').text();
+//            var sucursal = $('#selectSucursal option:selected').text();
+//            var emailCorporativo = $('#selectAtiendeServicio option:selected').attr('data');
+//            var descripcion = $('#inputDescripcionServicio').val();
+//            var now = new Date();
+//            today = now.toISOString();
+//
+//            resource = {
+//                "summary": "Atención a ticket",
+//                "description": "Nuevo servicio. Se a agregado para su atención del ticket " + ticketCalendario + " con la siguiente descripcion " + descripcion,
+//                "location": sucursal,
+//                "timeZone": "America/Mexico_City",
+//                "start": {
+//                    "dateTime": now
+//                },
+//                "end": {
+//                    "dateTime": now
+//                },
+//                "attendees": [
+//                    {
+//                        "email": emailCorporativo,
+//                        "displayName": atiende,
+//                        "organizer": false,
+//                        "self": false,
+//                        "resource": false,
+//                        "optional": false,
+//                        "responseStatus": "accepted"
+//                    }],
+//                "colorId": "4"
+//
+//            };
+//            handleClientLoad(resource, true);
+//        };
 
         //Evento de select personal para seleccionar su area y departamento
         $('#selectReasignarParsonal').on('change', function () {

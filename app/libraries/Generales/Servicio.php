@@ -122,8 +122,7 @@ class Servicio extends General {
                     $htmlDocumentacion .= ''
                             . '<div class="row">'
                             . ' <div class="col-md-6 col-xs-12">'
-                            . '     <h6>Fecha y Hora de Envío</h6>'
-                            . '     <h5>' . $fechaEnvio . '</h5>'
+                            . '     <h6>Fecha y Hora de Envío</h6> <h5>' . $fechaEnvio . '</h5>'
                             . ' </div>'
                             . '</div>';
                     if (in_array($documentacion[0]['IdTipoEnvio'], [2, 3, '2', '3'])) {
@@ -619,8 +618,12 @@ class Servicio extends General {
                 }
 
                 $htmlDocumentacion .= ''
-                        . '     <h6><strong>Fecha y Hora de Envío</strong></h6>'
-                        . '     <h5>' . $fechaEnvio . '</h5>'
+                        . '     <table class="table table-condensed">'
+                        . '         <tr>'
+                        . '             <th style="' . $style['th-50'] . '"><h6><strong>Fecha y Hora de Envío</strong></h6></th>'
+                        . '             <th style="' . $style['th-50'] . '"><h5>' . $fechaEnvio . '</h5></th>'
+                        . '         </tr>'
+                        . '     </table>'
                         . '     <h4>Información de Entrega</h4>'
                         . '     <div class="underline"></div>'
                         . '     <table class="table table-condensed">'
@@ -637,17 +640,16 @@ class Servicio extends General {
                         . '         </tr>'
                         . '         <tr>'
                         . '             <td colspan="2"><h5>' . $comentariosEntrega . '</h5></td>'
-                        . '         </tr>'
-                        . '         <tr>'
-                        . '             <th style="' . $style['th'] . '" colspan="2"><h6><strong>Evidencia de Entrega</strong></h6></th>'
-                        . '         </tr>'
-                        . '         <tr>'
-                        . '             <td colspan="2">' . $htmlArchivosTexto . '</td>'
-                        . '         </tr>'
-                        . '     </table>';
-
-
-
+                        . '         </tr>';
+                if ($htmlArchivosTexto !== '') {
+                    $htmlDocumentacion .= '<tr>'
+                            . '             <th style="' . $style['th'] . '" colspan="2"><h6><strong>Evidencia de Entrega</strong></h6></th>'
+                            . '         </tr>'
+                            . '         <tr>'
+                            . '             <td colspan="2">' . $htmlArchivosTexto . '</td>'
+                            . '         </tr>';
+                };
+                $htmlDocumentacion .= '     </table>';
                 break;
         }
 
@@ -656,18 +658,6 @@ class Servicio extends General {
                 . ' <h4>Información del Servicio</h4>'
                 . ' <div class="underline" style="width:132%"></div>'
                 . '     <table class="table table-condensed">'
-                . '         <tr>'
-                . '             <th style="' . $style['th-25'] . '"><h6><strong># Solicitud</strong></h6></th>'
-                . '             <th style="' . $style['th-25'] . '"><h6><strong>Solicitante</strong></h6></th>'
-                . '             <th style="' . $style['th-25'] . '"><h6><strong>Fecha de Solicitud</strong></h6></th>'
-                . '             <th style="' . $style['th-25'] . '"><h6><strong>Estatus de Solicitud</strong></h6></th>'
-                . '         </tr>'
-                . '         <tr>'
-                . '             <td style="' . $style['td-25'] . '"><h5>' . $DS_solicitud . '</h5></td>'
-                . '             <td style="' . $style['td-25'] . '"><h5>' . $DS_solicitante . '</h5></td>'
-                . '             <td style="' . $style['td-25'] . '"><h5>' . $DS_fechaSolicitud . '</h5></td>'
-                . '             <td style="' . $style['td-25'] . '"><h5>' . $DS_estatusSolicitud . '</h5></td>'
-                . '         </tr>'
                 . '         <tr>'
                 . '             <th colspan="4">'
                 . '                 <h6><strong>Descripción de Solicitud</strong></h6>'
@@ -694,14 +684,6 @@ class Servicio extends General {
                 . '         <tr>'
                 . '             <td colspan="4"><h5>' . $DS_descripcionServicio . '</h5></td>'
                 . '         </tr>'
-                . '         <tr>'
-                . '             <th colspan="2"><h6><strong>Tiempo de Solicitud</strong></h6></th>'
-                . '             <th colspan="2"><h6><strong>Tipo de Servicio</strong></h6></th>'
-                . '         </tr>'
-                . '         <tr>'
-                . '             <td colspan="2"><h5>' . $DS_tiempoSolicitud . ' hrs</h5></td>'
-                . '             <td colspan="2"><h5>' . $DS_tiempoServicio . ' hrs</h5></td>'
-                . '         </tr>'
                 . '     </table>'
                 . ' <h4>Información General del tráfico</h4>'
                 . ' <div class="underline"></div>'
@@ -722,30 +704,37 @@ class Servicio extends General {
                 . '             <td style="' . $style['td-50'] . '"><h5>' . $origen . '</h5></td>'
                 . '             <td style="' . $style['td-50'] . '"><h5>' . $destino . '</h5></td>'
                 . '         </tr>'
-                . '     </table>'
-                . ' <h4>Documentación del servicio.</h4>'
-                . ' <div class="underline"></div>'
-                . $htmlDocumentacion
-                . '</div>';
+                . '     </table>';
 
-        $html .= ''
-                . '<div style="page-break-before: always;"></div>'
-                . '<div class="divTablas">'
-                . ' <h4>Detalle de Items</h4>'
-                . ' <div class="underline"></div>'
-                . '     <table id="data-table-detalle-items" class="table table-hover table-striped table-bordered no-wrap ">'
-                . '         <thead>'
-                . '             <tr>'
-                . '                 <th class="' . $style['th'] . '">Item</th>'
-                . '                 <th class="' . $style['th'] . '">Serie</th>'
-                . '                 <th class="' . $style['th'] . '">Cantidad</th>'
-                . '             </tr>'
-                . '         </thead>'
-                . '         <tbody>'
-                . '         ' . $optionEquipos
-                . '         </tbody>'
-                . '     </table>'
-                . '</div>';
+        if ($htmlDocumentacion !== '') {
+            $html .= ' <h4>Documentación del servicio.</h4>'
+                    . ' <div class="underline"></div>'
+                    . $htmlDocumentacion;
+        }
+
+        $html .= '</div>';
+
+        if ($optionEquipos !== '') {
+            $html .= ''
+                    . '<div style="page-break-before: always;"></div>'
+                    . '<div class="divTablas">'
+                    . ' <h4>Detalle de Items</h4>'
+                    . ' <div class="underline"></div>'
+                    . '     <table id="data-table-detalle-items" class="table table-hover table-striped table-bordered no-wrap ">'
+                    . '         <thead>'
+                    . '             <tr>'
+                    . '                 <th class="' . $style['th'] . '">Item</th>'
+                    . '                 <th class="' . $style['th'] . '">Serie</th>'
+                    . '                 <th class="' . $style['th'] . '">Cantidad</th>'
+                    . '             </tr>'
+                    . '         </thead>'
+                    . '         <tbody>'
+                    . '         ' . $optionEquipos
+                    . '         </tbody>'
+                    . '     </table>'
+                    . '</div>';
+        }
+
         $html .= $htmlArchivosE . $htmlArchivos;
         if (count($notasPdf) > 0) {
             $html .= '<div style="page-break-after:always;">'
@@ -1465,7 +1454,7 @@ class Servicio extends General {
 
         if (!empty($generalesSolicitud['folio'])) {
             if ($generalesSolicitud['folio'] !== '' || $generalesSolicitud['folio'] !== '0') {
-                $key = $this->MSP->getApiKeyByUser($generalesSolicitud['atiende']);
+                $key = $this->InformacionServicios->getApiKeyByUser($generalesSolicitud['atiende']);
                 $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $generalesSolicitud['folio']);
                 if (isset($informacionSD->SHORTDESCRIPTION)) {
                     $detallesSD = $informacionSD->SHORTDESCRIPTION;
@@ -1503,13 +1492,7 @@ class Servicio extends General {
     public function getDetallesImpericiaCorrectivo(string $servicio) {
         $generalesSolicitud = $this->getGeneralesSolicitudServicio($servicio);
         $generales = $this->InformacionServicios->consultaInformacionCorrectivo($servicio);
-        $correctivosDiagnostico = $this->DBS->consultaGeneral('SELECT 
-                                                                tcd.*,
-                                                                (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tcd.IdTipoDiagnostico) AS NombreTipoDiagnostico,
-                                                                (SELECT Nombre FROM cat_v3_tipos_falla WHERE Id = tcd.IdTipoFalla) AS NombreTipoFalla,
-                                                                (SELECT Nombre FROM cat_v3_fallas_equipo WHERE Id = IdFalla) AS NombreFalla
-                                                                FROM t_correctivos_diagnostico tcd
-                                                                WHERE Id = (SELECT MAX(Id) FROM t_correctivos_diagnostico WHERE IdServicio = "' . $servicio . '" )');
+        $correctivosDiagnostico = $this->InformacionServicios->consultaCorrectivosDiagnostico($servicio);
         $detallesServicio = $this->linkDetallesServicio($servicio);
         $data = [
             'solicitud' => $generalesSolicitud,
@@ -1649,6 +1632,32 @@ class Servicio extends General {
                                                                         tst.IdTipoServicio
                                                                     FROM t_servicios_ticket tst WHERE tst.Id = "' . $datos['servicio'] . '"');
 
+
+        $tipoServicio = $verificarServicioSinClaficar[0]['IdTipoServicio'];
+
+        if (in_array($tipoServicio, [11, '11'])) {
+            $consultaPuntosCensos = $this->DBS->consulta("select * from t_censos_puntos where IdServicio = '" . $datos['servicio'] . "'");
+            if (!empty($consultaPuntosCensos)) {
+                foreach ($consultaPuntosCensos as $key => $value) {
+                    $this->DBS->queryBolean(""
+                            . "delete "
+                            . "from t_censos "
+                            . "where IdServicio = '" . $value['IdServicio'] . "' "
+                            . "and IdArea = '" . $value['IdArea'] . "' "
+                            . "and Punto > " . $value['Puntos']);
+                }
+            }
+
+            $this->DBS->queryBolean("delete
+                                    from t_censos
+                                    where IdServicio = '" . $value['IdServicio'] . "'
+                                    and IdArea not in (
+                                                    select 
+                                                    IdArea 
+                                                    from t_censos_puntos 
+                                                    where IdServicio = '" . $value['IdServicio'] . "')");
+        }
+
         if (!empty($datos['sucursal'])) {
             $this->DBS->actualizarServicio('t_servicios_ticket', array('IdSucursal' => $datos['sucursal']), array('Id' => $datos['servicio']));
         }
@@ -1732,7 +1741,6 @@ class Servicio extends General {
                 }
             } else {
                 $this->crearImangenFirma($datos, $datos['datosConcluir']);
-
                 if (isset($datos['datosConcluir']['estatus'])) {
                     $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
                 } else {
@@ -1934,7 +1942,13 @@ class Servicio extends General {
 
         $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
         $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
-        $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
+
+        if (!empty($vueltasAnteriores)) {
+            $sucursalVuelta = str_replace(" PLATINO", "", $vueltasAnteriores[0]['Nombre']);
+        } else {
+            $sucursalVuelta = 'sin Vuelta';
+        }
+
         if ($sucursalVuelta !== $nombreSucursal) {
             $this->guardarVueltaAsociados(array(
                 'servicio' => $datos['servicio'],
@@ -2134,7 +2148,9 @@ class Servicio extends General {
         if ($resultadoEnviarConclusion === TRUE) {
             if (!empty($cambiarEstatus)) {
                 if ($status === '4') {
-                    $resultadoSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio'], TRUE);
+                    $this->InformacionServicios->verifyProcess($datos);
+                }else{
+                    $this->InformacionServicios->setHTMLService($datos);
                 }
                 return TRUE;
             } else {
@@ -2286,6 +2302,7 @@ class Servicio extends General {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $usuario = $this->Usuario->getDatosUsuario();
         $verificar = TRUE;
+        $datosNotasSD = NULL;
 
         $idConsulta = $this->DBS->setServicioId('t_servicios_avance', array(
             'IdServicio' => $datos['servicio'],
@@ -2346,12 +2363,26 @@ class Servicio extends General {
             }
         }
 
-        $datosSD = $this->InformacionServicios->guardarDatosServiceDesk($datos['servicio']);
-        if (!empty($datosSD)) {
-            if ($datosSD) {
+        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
+        $folio = $this->DBS->getServicios('SELECT
+                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
+                                            FROM t_servicios_ticket
+                                            WHERE Id = "' . $datos['servicio'] . '"');
+
+        if ($folio[0]['Folio'] !== NULL) {
+            if ($folio[0]['Folio'] !== '0') {
+                $avanceProblema = $this->DBP->getAdvanceService($datos['servicio']);
+                $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
+                $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];
+                $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
+            }
+        }
+
+        if (!empty($datosNotasSD)) {
+            if ($datosNotasSD) {
                 return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');
             } else {
-                return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => $datosSD);
+                return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => $datosNotasSD);
             }
         } else {
             return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');
@@ -2424,7 +2455,7 @@ class Servicio extends General {
                             tnso.Nota,
                         tnso.Fecha
                     FROM t_notas_solicitudes tnso 
-                    WHERE tnso.IdSolicitud = '" . $idSolicitud . "') AS TABLAS ORDER BY TABLAS.Fecha DESC";
+                    WHERE tnso.IdSolicitud = '" . $idSolicitud . "') AS TABLAS ORDER BY TABLAS.Fecha ASC";
         return $this->DBS->consultaGeneral($sentencia);
     }
 
@@ -2612,7 +2643,7 @@ class Servicio extends General {
         );
 
         if ($consulta) {
-            $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+            $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
             $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
 
             if (isset($informacionSD->SHORTDESCRIPTION)) {
@@ -2734,7 +2765,7 @@ class Servicio extends General {
             </div>
             </div>';
 
-        $key = $this->MSP->getApiKeyByUser($generalesSolicitud[0]['Atiende']);
+        $key = $this->InformacionServicios->getApiKeyByUser($generalesSolicitud[0]['Atiende']);
         $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
         if (isset($informacionSD->SHORTDESCRIPTION)) {
             $detallesSD = $informacionSD->SHORTDESCRIPTION;
@@ -2834,13 +2865,35 @@ class Servicio extends General {
                                             FROM t_servicios_ticket
                                             WHERE Id = "' . $datos['servicio'] . '"');
 
-        $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio[0]['Folio']);
+        if ($folio[0]['Folio'] !== NULL) {
+            if ($folio[0]['Folio'] !== '0') {
+                $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio[0]['Folio']);
 
-        if (empty($vueltasFacturasOutsourcing)) {
-            $vuelta = '1';
+                if (empty($vueltasFacturasOutsourcing)) {
+                    $vuelta = '1';
+                } else {
+                    $numeroVuelta = (int) $vueltasFacturasOutsourcing[0]['Vuelta'];
+                    $vuelta = $numeroVuelta + 1;
+                }
+            } else {
+                $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($datos['servicio']);
+
+                if (empty($vueltasFacturasOutsourcingServicio)) {
+                    $vuelta = '1';
+                } else {
+                    $numeroVuelta = (int) $vueltasFacturasOutsourcingServicio[0]['Vuelta'];
+                    $vuelta = $numeroVuelta + 1;
+                }
+            }
         } else {
-            $numeroVuelta = (int) $vueltasFacturasOutsourcing[0]['Vuelta'];
-            $vuelta = $numeroVuelta + 1;
+            $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($datos['servicio']);
+
+            if (empty($vueltasFacturasOutsourcingServicio)) {
+                $vuelta = '1';
+            } else {
+                $numeroVuelta = (int) $vueltasFacturasOutsourcingServicio[0]['Vuelta'];
+                $vuelta = $numeroVuelta + 1;
+            }
         }
 
         $idFacturacionOutSourcing = $this->DBS->setServicioId('t_facturacion_outsourcing', array(

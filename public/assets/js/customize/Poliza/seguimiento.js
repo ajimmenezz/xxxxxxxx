@@ -216,63 +216,55 @@ $(function () {
         var sucursal = arguments[2];
         var ticket = datosTabla[1];
 
-        servicios.mostrarModal('Firma', servicios.formConcluirServicio());
+        var htmlFirmaExtra = htmlCampoTecnicoFirma();
+
+        evento.mostrarModal('Firma', servicios.modalCampoFirmaExtra(htmlFirmaExtra, 'Firma'));
         $('#btnModalConfirmar').addClass('hidden');
 
-        var myBoardFirma = new DrawingBoard.Board('campoFirma', {
-            background: "#fff",
-            color: "#000",
-            size: 1,
-            controlsPosition: "right",
-            controls: [
-                {Navigation: {
-                        back: false,
-                        forward: false
-                    }
-                }
-            ],
-            webStorage: false
-        });
+        var myBoardFirma = servicios.campoLapiz('campoLapiz');
+        var myBoardTecnico = servicios.campoLapiz('campoLapizTecnico');
 
-        $("#tagCorreo").tagit({
-            allowSpaces: false
-        });
-
-        myBoardFirma.ev.trigger('board:reset', 'what', 'up');
-
-        $('#btnConcluirServicio').off('click');
-        $('#btnConcluirServicio').on('click', function () {
+        $('#btnGuardarFirma').off('click');
+        $('#btnGuardarFirma').on('click', function () {
             var img = myBoardFirma.getImg();
             var imgInput = (myBoardFirma.blankCanvas == img) ? '' : img;
-            if (evento.validarFormulario('#formConcluirServicioFirma')) {
-                var personaRecibe = $('#inputPersonaRecibe').val();
-                var correo = $("#tagValor").tagit("assignedTags");
+            var imgTecnico = myBoardTecnico.getImg();
+            var imgInputTecnico = (myBoardTecnico.blankCanvas == imgTecnico) ? '' : imgTecnico;
+            var personaRecibe = $('#inputRecibeFirma').val();
+            var correo = $("#tagValor").tagit("assignedTags");
+            if (personaRecibe !== '') {
                 if (correo.length > 0) {
                     if (servicios.validarCorreoArray(correo)) {
                         if (imgInput !== '') {
-                            if ($('#terminos').attr('checked')) {
-                                var dataInsertar = {'ticket': ticket, 'servicio': servicio, 'img': img, 'correo': correo, 'nombreFirma': personaRecibe, 'sucursal': sucursal};
+                            if (imgInputTecnico !== '') {
+                                if ($('#terminos').attr('checked')) {
+                                    var dataInsertar = {'ticket': ticket, 'servicio': servicio, 'img': img, imgFirmaTecnico: imgTecnico, 'correo': correo, 'recibe': personaRecibe, 'sucursal': sucursal};
 
-                                evento.enviarEvento('Seguimiento/GuardarConclusionChecklist', dataInsertar, '#modal-dialogo', function (respuesta) {
-                                    if (respuesta) {
-                                        servicios.mensajeModal('Servicio concluido.', 'Correcto');
-                                    } else {
-                                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Tienes informacion sin concluir', 3000);
-                                    }
-                                });
+                                    evento.enviarEvento('Seguimiento/GuardarConclusionChecklist', dataInsertar, '#modal-dialogo', function (respuesta) {
+                                        if (respuesta) {
+                                            servicios.mensajeModal('Servicio concluido.', 'Correcto');
+                                        } else {
+                                            evento.mostrarMensaje('.errorFirma', false, 'Tienes informacion sin concluir', 3000);
+                                        }
+                                    });
+                                } else {
+                                    evento.mostrarMensaje('.errorFirma', false, 'Debes aceptar terminos.', 3000);
+                                }
                             } else {
-                                evento.mostrarMensaje('.errorConcluirServicio', false, 'Debes aceptar terminos', 3000);
+                                evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma del Técnico.', 3000);
                             }
                         } else {
-                            evento.mostrarMensaje('.errorConcluirServicio', false, 'Debes llenar el campo Firma de conformidad.', 3000);
+                            evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma del gerente de conformidad.', 3000);
                         }
                     } else {
-                        evento.mostrarMensaje('.errorConcluirServicio', false, 'Algun Correo no es correcto.', 3000);
+                        evento.mostrarMensaje('.errorFirma', false, 'Algun Correo no es correcto.', 3000);
 
                     }
                 } else {
-                    evento.mostrarMensaje('.errorConcluirServicio', false, 'Debe insertar al menos un correo.', 3000);
+                    evento.mostrarMensaje('.errorFirma', false, 'Debe insertar al menos un correo.', 3000);
                 }
+            } else {
+                evento.mostrarMensaje('.errorFirma', false, 'Debe escribir el nombre del gerente.', 3000);
             }
         });
     };
@@ -1071,10 +1063,461 @@ $(function () {
         tabla.generaTablaPersonal('#data-table-censo-modelos', null, null, true, true);
         var columnas = servicios.datosTablaDocumentacionFirmada();
         tabla.generaTablaPersonal('#data-table-documetacion-firmada', respuesta.documentacionFirmada, columnas, null, null, [[0, 'desc']]);
+        $("#contentAreaPuntos").empty();
+        $("#contentEquiposPunto").empty();
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            switch (target) {
+                case "#AreaPuntos":
+                    cargaAreasPuntosCenso(respuesta.servicio);
+                    break;
+                case "#EquiposPunto":
+                    cargaEquiposPuntoCenso(respuesta.servicio);
+                    break;
+            }
+        });
+
 
         $("#divNotasServicio").slimScroll({height: '400px'});
         nota.initButtons({servicio: datosTabla[0]}, 'Seguimiento');
     };
+
+    function cargaEquiposPuntoCenso() {
+        var servicio = arguments[0];
+        $("#formularioCapturaCenso").empty().hide();
+        $("#contentEquiposPunto").show();
+        evento.enviarEvento('Seguimiento/CargaEquiposPuntoCenso', {'servicio': servicio}, '#seccion-servicio-censo', function (respuesta) {
+            $("#contentEquiposPunto").empty().append(respuesta.html);
+
+            $(".btnPuntoArea").off("click");
+            $(".btnPuntoArea").on("click", function () {
+                var buttonPuntoArea = $(this);
+                var data = {
+                    'servicio': servicio,
+                    'area': $(this).attr("data-area"),
+                    'punto': $(this).attr("data-punto")
+                };
+                evento.enviarEvento('Seguimiento/CargaFormularioCapturaCenso', data, '#seccion-servicio-censo', function (respuesta) {
+                    $("#formularioCapturaCenso").empty().append(respuesta.html);
+                    $("#formularioCapturaCenso").show();
+                    $("#contentEquiposPunto").hide();
+
+                    $(".btnCancelarCapturaCenso").off("click");
+                    $(".btnCancelarCapturaCenso").on("click", function () {
+                        $("#formularioCapturaCenso").empty().hide();
+                        $("#contentEquiposPunto").show();
+                    });
+
+                    $(".existeModelosEstandar").off("click");
+                    $(".existeModelosEstandar").on("click", function () {
+                        var fila = $(this).closest("tr.registroEquiposEstandar");
+                        if ($(this).is(":checked")) {
+                            fila.find(".listModelosEstandar").removeAttr("disabled");
+                            fila.find(".serieModelosEstandar").removeAttr("disabled");
+                            fila.find(".ilegibleModelosEstandar").removeAttr("disabled");
+                            fila.find(".danadoModelosEstandar").removeAttr("disabled");
+                            fila.removeClass("table-border-red").addClass("table-border-green");
+                        } else {
+                            fila.find(".listModelosEstandar").attr('disabled', true);
+                            fila.find(".serieModelosEstandar").attr('disabled', true);
+                            fila.find(".ilegibleModelosEstandar").attr('disabled', true);
+                            fila.find(".danadoModelosEstandar").attr('disabled', true);
+                            fila.removeClass("table-border-green").addClass("table-border-red");
+                        }
+                    });
+
+                    $(".ilegibleModelosEstandar").off("click");
+                    $(".ilegibleModelosEstandar").on("click", function () {
+                        var fila = $(this).closest("tr.registroEquiposEstandar");
+                        var campoSerie = fila.find(".serieModelosEstandar");
+                        if ($(this).is(":checked")) {
+                            campoSerie.attr("disabled", true);
+                            campoSerie.val("ILEGIBLE");
+                        } else {
+                            campoSerie.removeAttr("disabled");
+                            campoSerie.val("");
+                        }
+                    });
+
+                    $("#checkIlegibleEquipoAdicional").off("click");
+                    $("#checkIlegibleEquipoAdicional").on("click", function () {
+                        var campoSerie = $("#txtSerieEquipoAdicional");
+                        if ($(this).is(":checked")) {
+                            campoSerie.attr("disabled", true);
+                            campoSerie.val("ILEGIBLE");
+                        } else {
+                            campoSerie.removeAttr("disabled");
+                            campoSerie.val("");
+                        }
+                    });
+
+                    $(".ilegibleEquiposAdicionales").off("click");
+                    $(".ilegibleEquiposAdicionales").on("click", function () {
+                        var fila = $(this).closest("tr.registrosAdicionales");
+                        var campoSerie = fila.find(".serieEquiposAdicionales");
+                        if ($(this).is(":checked")) {
+                            campoSerie.attr("disabled", true);
+                            campoSerie.val("ILEGIBLE");
+                        } else {
+                            campoSerie.removeAttr("disabled");
+                            campoSerie.val("");
+                        }
+                    });
+
+                    select.crearSelect("#listModelosEquipoAdicional");
+
+                    $("#listModelosEquipoAdicional").on("change", function () {
+                        var modelo = $("#listModelosEquipoAdicional option:selected").text();
+
+                        if ($("#txtEtiquetaEquipoAdicional").length) {
+
+                            var regionSucursal = $("#txtRegionSucursalClave").val();
+                            var clave = regionSucursal;
+
+                            if ($("#listModelosEquipoAdicional").val() != '') {
+                                var linea = $("#listModelosEquipoAdicional option:selected").attr("data-linea");
+                                var sublinea = $("#listModelosEquipoAdicional option:selected").attr("data-sublinea");
+                                var area = $("#txtIdAreaClave").val();
+                                clave += '-L' + linea + 'S' + sublinea + '-' + area + '-';
+                                $("#txtEtiquetaEquipoAdicional").removeAttr("disabled");
+                            } else {
+                                $("#txtEtiquetaEquipoAdicional").attr("disabled", "disabled");
+                            }
+
+                            $("#txtEtiquetaEquipoAdicional").val(clave);
+
+                            if (modelo.indexOf("COMPUTADORA") >= 0) {
+                                $("#txtMACEquipoAdicional").removeAttr("disabled");
+                                $("#listSOEquipoAdicional").removeAttr("disabled");
+                                $("#txtNombreRedEquipoAdicional").removeAttr("disabled");
+                                $("#listRQEquipoAdicional").removeAttr("disabled");
+                            } else {
+                                $("#txtMACEquipoAdicional").val("");
+                                $("#txtMACEquipoAdicional").attr("disabled", "disabled");
+                                $("#listSOEquipoAdicional").val("");
+                                $("#listSOEquipoAdicional").attr("disabled", "disabled");
+                                $("#txtNombreRedEquipoAdicional").val("");
+                                $("#txtNombreRedEquipoAdicional").attr("disabled", "disabled");
+                                $("#listRQEquipoAdicional").val("");
+                                $("#listRQEquipoAdicional").attr("disabled", "disabled");
+                            }
+                        }
+
+                    });
+
+                    $(".listModelosEquiposAdicionales").on("change", function () {
+                        var modelo = $("option:selected", this).text();
+                        var fila = $(this).closest("tr.registrosAdicionales");
+                        if (fila.find(".macEquiposAdicionales").length) {
+                            var campoMAC = fila.find(".macEquiposAdicionales");
+                            var campoSO = fila.find(".listSOEquiposAdicionales");
+                            var campoNombreRed = fila.find(".nombreRedEquiposAdicionales")
+                            var campoRQ = fila.find(".listRQEquiposAdicionales")
+                            if (modelo.indexOf("COMPUTADORA") >= 0) {
+                                campoMAC.removeAttr("disabled");
+                                campoSO.removeAttr("disabled");
+                                campoNombreRed.removeAttr("disabled");
+                                campoRQ.removeAttr("disabled");
+                            } else {
+                                campoMAC.val("");
+                                campoMAC.attr("disabled", "disabled");
+                                campoSO.val("");
+                                campoSO.attr("disabled", "disabled");
+                                campoNombreRed.val("");
+                                campoNombreRed.attr("disabled", "disabled");
+                                campoRQ.val("");
+                                campoRQ.attr("disabled", "disabled");
+                            }
+                        }
+
+                    });
+
+
+                    $(".btnGuardarCapturaCenso").off("click");
+                    $(".btnGuardarCapturaCenso").on("click", function () {
+
+                        data = {
+                            'servicio': servicio,
+                            'area': data.area,
+                            'punto': data.punto,
+                            'nuevosEstandar': [],
+                            'activosEstandar': []
+                        }
+
+                        $(".registroEquiposEstandar").each(function () {
+                            var fila = $(this);
+                            if (fila.hasClass('registroNuevo')) {
+                                var checkExiste = fila.find(".existeModelosEstandar");
+                                if (checkExiste.is(":checked")) {
+                                    var datosEquipo = {
+                                        'modelo': fila.find(".listModelosEstandar").val(),
+                                        'serie': fila.find(".serieModelosEstandar").val(),
+                                        'ilegible': (fila.find(".ilegibleModelosEstandar").is(":checked")) ? 1 : 0,
+                                        'existe': 1,
+                                        'danado': (fila.find(".danadoModelosEstandar").is(":checked")) ? 1 : 0,
+                                    };
+                                    if (datosEquipo.modelo == "") {
+                                        evento.mostrarMensaje(".divErrorCapturaCensoEstandar", false, "Falta seleccionar el modelo en alguno de sus registros. Desmarque la casilla 'Existe' en caso de que el equipo no exista", 6000);
+                                        return true;
+                                    }
+
+                                    if (datosEquipo.serie == "" && datosEquipo.ilegible == 0) {
+                                        evento.mostrarMensaje(".divErrorCapturaCensoEstandar", false, "Falta el número de serie en alguno de sus registros. Marque la casilla 'Ilegible' en caso de que la serie no sea alcanzable o no se encuentre en el equipo.", 6000);
+                                        return true;
+                                    }
+
+                                    data.nuevosEstandar.push(datosEquipo);
+                                }
+                            } else if (fila.hasClass('registroActivo')) {
+                                var datosEquipo = {
+                                    'id': fila.attr("data-id"),
+                                    'modelo': fila.find(".listModelosEstandar").val(),
+                                    'serie': fila.find(".serieModelosEstandar").val(),
+                                    'ilegible': (fila.find(".ilegibleModelosEstandar").is(":checked")) ? 1 : 0,
+                                    'existe': (fila.find(".existeModelosEstandar").is(":checked")) ? 1 : 0,
+                                    'danado': (fila.find(".danadoModelosEstandar").is(":checked")) ? 1 : 0,
+                                };
+
+                                if (datosEquipo.existe == 1 && datosEquipo.modelo == "") {
+                                    evento.mostrarMensaje(".divErrorCapturaCensoEstandar", false, "Falta seleccionar el modelo en alguno de sus registros. Desmarque la casilla 'Existe' en caso de que el equipo no exista", 6000);
+                                    return true;
+                                }
+
+                                if (datosEquipo.existe == 1 && datosEquipo.serie == "" && datosEquipo.ilegible == 0) {
+                                    evento.mostrarMensaje(".divErrorCapturaCensoEstandar", false, "Falta el número de serie en alguno de sus registros. Marque la casilla 'Ilegible' en caso de que la serie no sea alcanzable o no se encuentre en el equipo.", 6000);
+                                    return true;
+                                }
+                                data.activosEstandar.push(datosEquipo);
+                            }
+                        });
+
+                        evento.enviarEvento('Seguimiento/GuardaEquiposPuntoCenso', data, '#seccion-servicio-censo', function (respuesta) {
+                            if (respuesta.code == 200) {
+                                cargaEquiposPuntoCenso(servicio);
+                            } else {
+                                evento.mostrarMensaje(".divErrorCapturaCensoEstandar", false, "Ocurrió un error al guardar los registros. Por favor contácte al administrador.", 6000);
+                            }
+                        });
+                    });
+
+                    $("#btnAgregarEquipoAdicional").off("click");
+                    $("#btnAgregarEquipoAdicional").on("click", function () {
+                        data = {
+                            'servicio': servicio,
+                            'area': data.area,
+                            'punto': data.punto,
+                            'modelo': $("#listModelosEquipoAdicional").val(),
+                            'modeloTexto': $("#listModelosEquipoAdicional option:selected").text(),
+                            'serie': $.trim($("#txtSerieEquipoAdicional").val()),
+                            'ilegible': $("#checkIlegibleEquipoAdicional").is(":checked") ? 1 : 0,
+                            'danado': $("#checkDanadoEquipoAdicional").is(":checked") ? 1 : 0,
+                            'etiqueta': ($("#txtEtiquetaEquipoAdicional").length) ? $("#txtEtiquetaEquipoAdicional").val() : '',
+                            'estado': ($("#listEstadosEquipoAdicional").length) ? $("#listEstadosEquipoAdicional").val() : '',
+                            'mac': ($("#txtMACEquipoAdicional").length) ? $("#txtMACEquipoAdicional").val() : '',
+                            'so': ($("#listSOEquipoAdicional").length) ? $("#listSOEquipoAdicional").val() : '',
+                            'nombreRed': ($("#txtNombreRedEquipoAdicional").length) ? $("#txtNombreRedEquipoAdicional").val() : '',
+                            'rq': ($("#listRQEquipoAdicional").length) ? $("#listRQEquipoAdicional").val() : ''
+                        }
+
+                        if (data.modelo == "") {
+                            evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el modelo para agregar el equipo.", 4000);
+                            return true;
+                        }
+
+                        if (data.serie == "" && data.ilegible == 0) {
+                            evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta el número de serie. Marque la casilla 'Ilegible' en caso de que la serie no sea alcanzable o no se encuentre en el equipo.", 6000);
+                            return true;
+                        }
+
+                        if ($("#txtEtiquetaEquipoAdicional").length) {
+                            var regexEtiqueta = /^[0-9]{3}-[A-Z]{3}[0-9]{3}-L[0-9]?[0-9]?[0-9]S[0-9]?[0-9]?[0-9]-[0-9]?[0-9]{2}-[0-9]?[0-9]?[0-9]?[0-9]$/;
+                            if (data.etiqueta == "" || !regexEtiqueta.test(data.etiqueta)) {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer hay un error con el formato de la etiqueta.", 6000);
+                                return true;
+                            }
+
+                            if (data.estado == "") {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el estado del equipo.", 6000);
+                                return true;
+                            }
+
+                            if (data.modeloTexto.indexOf("COMPUTADORA") >= 0) {
+                                var regexMacAddress = /^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/;
+                                if (data.mac == "" || !regexMacAddress.test(data.mac)) {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer hay un error con el formato de la MAC Address", 6000);
+                                    return true;
+                                }
+
+                                if (data.so == "") {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el S.O. del equipo.", 6000);
+                                    return true;
+                                }
+                                if (data.nombreRed == "") {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer falta el nombre de red para el equipo.", 6000);
+                                    return true;
+                                }
+
+                                if (data.rq == "") {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el estatus del software RQ", 6000);
+                                    return true;
+                                }
+                            }
+                        }
+
+                        evento.enviarEvento('Seguimiento/GuardarEquipoAdicionalCenso', data, '#seccion-servicio-censo', function (respuesta) {
+                            if (respuesta.code == 200) {
+                                buttonPuntoArea.click();
+                            } else {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Error:" + respuesta.error + ". <br />Por favor contácte al administrador.", 6000);
+                            }
+                        });
+
+                    });
+
+                    $(".btnEliminarEquiposAdicionalesCenso").off("click");
+                    $(".btnEliminarEquiposAdicionalesCenso").on("click", function () {
+                        var fila = $(this).closest("tr.registrosAdicionales");
+                        var datos = {
+                            'id': $(this).attr("data-id")
+                        };
+                        evento.enviarEvento('Seguimiento/EliminarEquiposAdicionalesCenso', datos, '#seccion-servicio-censo', function (respuesta) {
+                            if (respuesta.code == 200) {
+                                fila.remove();
+                            } else {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Ocurrió un error al eliminar el equipo. Por favor contácte al administrador.", 6000);
+                            }
+                        });
+
+                    });
+
+                    $(".btnGuardarCambiosEquiposAdicionalesCenso").off("click");
+                    $(".btnGuardarCambiosEquiposAdicionalesCenso").on("click", function () {
+                        var fila = $(this).closest("tr.registrosAdicionales");
+                        data = {
+                            'servicio': servicio,
+                            'area': data.area,
+                            'punto': data.punto,
+                            'id': fila.attr("data-id"),
+                            'modelo': fila.find(".listModelosEquiposAdicionales").val(),
+                            'modeloTexto': fila.find(".listModelosEquiposAdicionales option:selected").text(),
+                            'serie': fila.find(".serieEquiposAdicionales").val(),
+                            'ilegible': (fila.find(".ilegibleEquiposAdicionales").is(":checked")) ? 1 : 0,
+                            'existe': 1,
+                            'danado': (fila.find(".danadoEquiposAdicionales").is(":checked")) ? 1 : 0,
+                            'etiqueta': (fila.find(".etiquetaEquiposAdicionales").length) ? fila.find(".etiquetaEquiposAdicionales").val() : '',
+                            'estado': (fila.find(".listEstadosEquiposAdicionales").length) ? fila.find(".listEstadosEquiposAdicionales").val() : '',
+                            'mac': (fila.find(".macEquiposAdicionales").length) ? fila.find(".macEquiposAdicionales").val() : '',
+                            'so': (fila.find(".listSOEquiposAdicionales").length) ? fila.find(".listSOEquiposAdicionales").val() : '',
+                            'nombreRed': (fila.find(".nombreRedEquiposAdicionales").length) ? fila.find(".nombreRedEquiposAdicionales").val() : '',
+                            'rq': (fila.find(".listRQEquiposAdicionales").length) ? fila.find(".listRQEquiposAdicionales").val() : ''
+                        }
+
+                        if (data.modelo == "") {
+                            evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el modelo.", 4000);
+                            return true;
+                        }
+
+                        if (data.serie == "" && datosEquipo.ilegible == 0) {
+                            evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta el número de serie. Marque la casilla 'Ilegible' en caso de que la serie no sea alcanzable o no se encuentre en el equipo.", 6000);
+                            return true;
+                        }
+
+                        if ($("#txtEtiquetaEquipoAdicional").length) {
+                            var regexEtiqueta = /^[0-9]{3}-[A-Z]{3}[0-9]{3}-L[0-9]?[0-9]?[0-9]S[0-9]?[0-9]?[0-9]-[0-9]?[0-9]{2}-[0-9]?[0-9]?[0-9]?[0-9]$/;
+                            if (data.etiqueta == "" || !regexEtiqueta.test(data.etiqueta)) {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer hay un error con el formato de la etiqueta.", 6000);
+                                return true;
+                            }
+
+                            if (data.estado == "") {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el estado del equipo.", 6000);
+                                return true;
+                            }
+
+                            if (data.modeloTexto.indexOf("COMPUTADORA") >= 0) {
+                                var regexMacAddress = /^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/;
+                                if (data.mac == "" || !regexMacAddress.test(data.mac)) {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer hay un error con el formato de la MAC Address", 6000);
+                                    return true;
+                                }
+
+                                if (data.so == "") {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el S.O. del equipo.", 6000);
+                                    return true;
+                                }
+
+                                if (data.nombreRed == "") {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Al parecer falta el nombre de red para el equipo.", 6000);
+                                    return true;
+                                }
+
+                                if (data.rq == "") {
+                                    evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Falta seleccionar el estatus del software RQ", 6000);
+                                    return true;
+                                }
+                            }
+                        }
+
+                        evento.enviarEvento('Seguimiento/GuardaCambiosEquiposAdicionalesCenso', data, '#seccion-servicio-censo', function (respuesta) {
+                            if (respuesta.code == 200) {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", true, "Todos los cambios han sido guardados.", 4000);
+                            } else {
+                                evento.mostrarMensaje(".divErrorEquipoAdicional", false, "Error:" + respuesta.error + ".<br />Por favor contácte al administrador.", 6000);
+                            }
+                        });
+                    });
+                });
+            });
+        });
+    }
+
+    function cargaAreasPuntosCenso() {
+        var servicio = arguments[0];
+        evento.enviarEvento('Seguimiento/CargaAreasPuntosCenso', {'servicio': servicio}, '#seccion-servicio-censo', function (respuesta) {
+            $("#contentAreaPuntos").empty().append(respuesta.html);
+
+            $("#btnAgregarAreaPuntos").off("click");
+            $("#btnAgregarAreaPuntos").on("click", function () {
+                var data = {
+                    'servicio': servicio,
+                    'area': $("#listAreasAtencion").val(),
+                    'puntos': $.trim($("#txtCantidadPuntos").val())
+                };
+
+                if (data.area == "" || parseInt(data.puntos) <= 0) {
+                    evento.mostrarMensaje(".divError", false, "El área y puntos son obligatorios", 4000);
+                } else {
+                    evento.enviarEvento('Seguimiento/AgregaAreaPuntosCenso', data, '#seccion-servicio-censo', function (respuesta) {
+                        if (respuesta.code == 200) {
+                            cargaAreasPuntosCenso(servicio);
+                        } else {
+                            evento.mostrarMensaje(".divError", false, "Ocurrió un error al guardar la información.", 4000);
+                        }
+                    });
+                }
+            });
+
+            $(".btnGuardarCambiosAreasPuntos").off("click");
+            $(".btnGuardarCambiosAreasPuntos").on("click", function () {
+                var areasPuntos = [];
+                $(".cantidadPuntosAreas").each(function () {
+                    areasPuntos.push({
+                        'Id': $(this).attr("data-id"),
+                        'Cantidad': $.trim($(this).val())
+                    });
+                });
+
+                evento.enviarEvento('Seguimiento/GuardaCambiosAreasPuntos', {'areasPuntos': areasPuntos}, '#seccion-servicio-censo', function (respuesta) {
+                    if (respuesta.code == 200) {
+                        cargaAreasPuntosCenso(servicio);
+                    } else {
+                        evento.mostrarMensaje(".divError", false, "Ocurrió un error al guardar la información.", 4000);
+                    }
+                });
+            });
+        });
+    }
 
     var eventosParaSeccionSeguimientoCenso = function () {
         var datosTabla = arguments[0];
@@ -1113,12 +1556,13 @@ $(function () {
         });
 
         $('#btnConcluirServicioCenso').on('click', function (e) {
-            var datosTablaModelos = $('#data-table-censo-modelos').DataTable().rows().data();
-            if (datosTablaModelos.length > 0) {
-                concluirServicioCenso(datosTablaModelos, datosTabla);
-            } else {
-                evento.mostrarMensaje('.errorDatosGeneralesCenso', false, 'Para guardar los Censos debe haber agregado un registro en la tabla un Censo en la pestaña Datos.', 5000);
-            }
+            concluirServicioCenso([], datosTabla);
+//            var datosTablaModelos = $('#data-table-censo-modelos').DataTable().rows().data();
+//            if (datosTablaModelos.length > 0) {
+//                concluirServicioCenso(datosTablaModelos, datosTabla);
+//            } else {
+//                evento.mostrarMensaje('.errorDatosGeneralesCenso', false, 'Para guardar los Censos debe haber agregado un registro en la tabla un Censo en la pestaña Datos.', 5000);
+//            }
         });
 
         //Evento encargado de eliminar un fila de la tabla censos
@@ -1188,7 +1632,8 @@ $(function () {
         if (respuesta.informacionDatosGenerales.length > 0) {
             select.cambiarOpcion('#selectSucursales', respuesta.informacionDatosGenerales[0].IdSucursal);
             $('#selectSucursales').attr('disabled', 'disabled');
-            $('[href=#Datos]').parent('li').removeClass('hidden');
+            $('[href=#AreaPuntos]').parent('li').removeClass('hidden');
+            $('[href=#EquiposPunto]').parent('li').removeClass('hidden');
         } else {
             if (respuesta.datosServicio.IdSucursal !== null) {
                 select.cambiarOpcion('#selectSucursales', respuesta.datosServicio.IdSucursal);
@@ -1204,12 +1649,14 @@ $(function () {
         if (sucursal !== '' && descripcion !== '') {
             var data = {servicio: datosTabla[0], sucursal: sucursal, descripcion: descripcion};
             evento.enviarEvento('Seguimiento/GuardarDatosGeneralesCenso', data, '#seccion-servicio-censo', function (respuesta) {
-                recargandoTablaCensoModelos(respuesta, 'Datos guardados correctamente.', '.errorDatosGeneralesCenso');
+//                recargandoTablaCensoModelos(respuesta, 'Datos guardados correctamente.', '.errorDatosGeneralesCenso');
+                console.log(respuesta);
                 $('#selectSucursales').attr('disabled', 'disabled');
-                $('[href=#Datos]').parent('li').removeClass('hidden');
+                $('[href=#AreaPuntos]').parent('li').removeClass('hidden');
+                $('[href=#EquiposPunto]').parent('li').removeClass('hidden');
             });
         } else {
-            evento.mostrarMensaje('.errorDatosGeneralesCenso', false, 'Debes llenar todos los campos para poder agregar el Equipo.', 3000)
+            evento.mostrarMensaje('.errorDatosGeneralesCenso', false, 'Debes llenar todos los campos para poder guardar la información', 3000)
         }
     };
 
@@ -4685,18 +5132,9 @@ $(function () {
         var encargadosTI = arguments[4].informacion.listaCinemexValidadores;
         var concluirServicio = arguments[5] || false;
         var estatus = arguments[6] || false;
-        var html = '<div class="row" m-t-10">\n\
-                        <div id="divcampoLapizTecnico" class="col-md-12 text-center">\n\
-                            <div id="campoLapizTecnico"></div>\n\
-                        </div>\n\
-                    </div>\n\
-                    <div class="row m-t-20">\n\
-                        <div class="col-md-12 text-center">\n\
-                            <br>\n\
-                            <label>Firma del técnico</label><br>\n\
-                        </div>\n\
-                    </div>\n\
-                    <br>';
+
+        var html = htmlCampoTecnicoFirma();
+
         if (arguments[4].informacion.idCliente !== null) {
             idCliente = arguments[4].informacion.idCliente[0].IdCliente;
             if (idCliente === '1') {
@@ -4761,6 +5199,23 @@ $(function () {
         }
 
     };
+
+    var htmlCampoTecnicoFirma = function () {
+        var html = '<div class="row" m-t-10">\n\
+                        <div id="divcampoLapizTecnico" class="col-md-12 text-center">\n\
+                            <div id="campoLapizTecnico"></div>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div class="row m-t-20">\n\
+                        <div class="col-md-12 text-center">\n\
+                            <br>\n\
+                            <label>Firma del técnico</label><br>\n\
+                        </div>\n\
+                    </div>\n\
+                    <br>';
+
+        return html;
+    }
 
     var formularioAsignacionSolicitud = function () {
         var mensajeConfirmacion = '<div id="confirmarSolicitud"\n\
@@ -5148,7 +5603,7 @@ $(function () {
     $('#fechaRecepcionTecnico').datetimepicker({
         format: 'YYYY-MM-DD HH:mm:ss'
     });
-    
+
     //obtener valor fecha
     $("#fechaValidacion").find("input").val();
     $("#fechaEnvio").find("input").val();
@@ -5157,14 +5612,14 @@ $(function () {
     $("#fechaRecepcionLogistica").find("input").val();
     $("#fechaRecepcion").find("input").val();
     $("#fechaRecepcionTecnico").find("input").val();
-    
+
     //radio inputs valor
     $('input:radio[name=optionsRadios]:checked').val();
-    
+
     //tablas
     tabla.generaTablaPersonal('#lista-equipos-enviados-solicitados', null, null, true, true, [[0, 'desc']]);
     tabla.generaTablaPersonal('#listaRefaccionUtilizada', null, null, true, true, [[0, 'desc']]);
-    
+
     //Iniciar input archivos
     file.crearUpload('#archivosProblemaGuia', 'Seguimiento/subirProblema');
     file.crearUpload('#evidenciaEnvio', 'Seguimiento/subirEvidenciaEnvio');

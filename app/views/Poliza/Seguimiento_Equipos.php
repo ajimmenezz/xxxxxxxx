@@ -2,7 +2,7 @@
     <input type="hidden" id="IdPerfil" />
     <div class="row">
         <div class="col-md-6 col-sm-6 col-xs-12">
-            <h1 class="page-header">Seguimiento Equipos Almecén o Solicitados</h1>
+            <h1 class="page-header">Seguimiento Equipos Almacén o Solicitados</h1>
         </div>
         <div class="col-md-6 col-xs-6 text-right">
             <label class="btnRegresarTabla btn btn-success hidden">
@@ -12,7 +12,7 @@
     </div>
     <div id="panelTablaEquiposEnviados" class="panel panel-inverse">
         <div class="panel-heading">    
-            <h4 class="panel-title">Seguimiento Equipos Almecén o Solicitados</h4>
+            <h4 class="panel-title">Seguimiento Equipos Almacén o Solicitados</h4>
         </div>
         <div class="panel-body">
             <div class="row">
@@ -22,7 +22,7 @@
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <div class="form-group text-right" id="botonNuevoValidacion">
                         <?php $botonNuevo = ($datos['permisoNuevoRegistro']) ? "" : "hidden"; ?>
-                        <a href="javascript:;" class="btn btn-success <?php echo $botonNuevo; ?>" id="agregarEquipo"><i class="fa fa-plus"></i> Nuevo</a>
+                        <a href="javascript:;" class="btn btn-success <?php echo $botonNuevo; ?>" id="agregarEquipo"><i class="fa fa-plus"></i> Nueva Solicitud</a>
                     </div>
                 </div>
             </div>
@@ -53,6 +53,7 @@
                                     <th class="all">Fecha</th>
                                     <th class="never">IdEstatus</th>
                                     <th class="all">Estatus</th>
+                                    <th class="never">IdRefaccion</th>
                                     <th class="all">Refaccion</th>
                                     <th class="all">Tipo Movimiento</th>
                                 </tr>
@@ -71,6 +72,7 @@
                                         echo '<td>' . $value['IdEstatus'] . '</td>';
                                         echo '<td>' . $value['NombreEstatus'] . '</td>';
                                         echo '<td>' . $value['IdRefaccion'] . '</td>';
+                                        echo '<td>' . $value['Refaccion'] . '</td>';
                                         echo '<td>' . $value['TipoMovimiento'] . '</td>';
                                         echo '</tr>';
                                     }
@@ -96,4 +98,39 @@
     <div id="seccionFormulariosSinGuia" class="hidden"></div>
     <div id="seccionFormulariosGuia" class="hidden"></div>
     <div id="seccionFormulariosValidacion" class="hidden"></div>
+</div>
+
+<div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <div id="error-in-modal"></div>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
+                <button type="button" id="btnGuardarCambios" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalSolicitarCotizacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <div id="error-in-modal"></div>
+                <button id="btnCancelarSolicitarCotizacion" type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
+                <button id="btnAceptarSolicitarCotizacion" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Solicitar</button>
+            </div>
+        </div>
+    </div>
 </div>

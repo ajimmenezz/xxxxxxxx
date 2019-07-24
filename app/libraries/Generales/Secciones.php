@@ -4,7 +4,8 @@ namespace Librerias\Generales;
 
 use Controladores\Controller_Datos_Usuario as General;
 
-class Secciones extends General {
+class Secciones extends General
+{
 
     private $Catalogo;
     private $Notificacion;
@@ -39,8 +40,13 @@ class Secciones extends General {
     private $ModeloDashboard;
     private $permisosVacaciones;
     private $autorizarpermisos;
+    private $GapsiProyecto;
+    private $fondoFijo;
+    private $instalaciones;
+    private $prime;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         parent::getCI()->config->load('Menu_config');
         parent::getCI()->config->load('Pagina_config');
@@ -59,7 +65,7 @@ class Secciones extends General {
         $this->Seguimiento = \Librerias\Logistica\Seguimiento::factory();
         $this->Poliza = \Librerias\Poliza\Poliza::factory();
         $this->Seguimientos = \Librerias\Poliza\Seguimientos::factory();
-//        $this->DB_Adist2 = \Modelos\Modelo_DB_Adist2::factory(); Este objeto se estara utilizando para proyectos
+        //        $this->DB_Adist2 = \Modelos\Modelo_DB_Adist2::factory(); Este objeto se estara utilizando para proyectos
         $this->DBP = \Modelos\Modelo_Proyectos::factory();
         $this->DBC = \Modelos\Modelo_Catalogo_Proyectos::factory();
         $this->DashboardGeneral = \Librerias\Generales\Dashboard::factory();
@@ -78,10 +84,14 @@ class Secciones extends General {
         $this->ModeloTesoreria = \Modelos\Modelo_Tesoreria::factory();
         $this->Compras = \Librerias\Compras\Compras::factory();
         $this->PerfilUsuario = \Librerias\RH\Perfil_Usuario::factory();
-//        $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
+        //        $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
         $this->ModeloDashboard = \Modelos\Modelo_Dashboard::factory();
         $this->permisosVacaciones = \Librerias\RH\Permisos_Vacaciones::factory();
         $this->autorizarpermisos = \Librerias\RH\Autorizar_permisos::factory();
+        $this->GapsiProyecto = \Librerias\Gapsi\GestorProyectos::factory();
+        $this->fondoFijo = \Librerias\FondoFijo\FondoFijo::factory();
+        $this->instalaciones = \Librerias\Instalaciones\Instalaciones::factory();
+        $this->prime = \Librerias\Prime\Inventario::factory();
     }
 
     /*
@@ -91,7 +101,8 @@ class Secciones extends General {
      * @return array regresa la lista de menu y modulos para el usuario
      */
 
-    public function getSecciones(array $usuario) {
+    public function getSecciones(array $usuario)
+    {
         $menu = array();
         $permisos = array();
         $catalogo = null;
@@ -131,7 +142,8 @@ class Secciones extends General {
      * Se encarga de obtener la notificaciones del usuario.
      */
 
-    public function getNotificaciones(string $usuario) {
+    public function getNotificaciones(string $usuario)
+    {
         return $this->Notificacion->getNotificacionesMenuCabecera($usuario);
     }
 
@@ -143,8 +155,10 @@ class Secciones extends General {
      *  
      */
 
-    public function getDatosPagina(string $url) {
+    public function getDatosPagina(string $url)
+    {
         $datos = array();
+        $usuario = $this->Usuario->getDatosUsuario();
         switch ($url) {
             case 'RH/Areas':
                 $datos['ListaAreas'] = $this->Catalogo->CatAreas("3");
@@ -197,7 +211,7 @@ class Secciones extends General {
                 $datos['TodasTareas'] = $this->DBP2->tienePermisoTodasTareas();
                 break;
             case 'Proyectos/Nuevo':
-//                $datos['Clientes'] = $this->DBP->getClientes();
+                //                $datos['Clientes'] = $this->DBP->getClientes();
                 $datos['Sistemas'] = $this->DBP->getSistemas();
                 $datos['Tipo'] = $this->DBP->getTiposProyecto();
                 $datos['Complejos'] = $this->DBP->getSucursales();
@@ -217,7 +231,6 @@ class Secciones extends General {
                 $datos['ProyectosIniciados'] = $this->DBP->getProyectosIniciados();
                 break;
             case 'Proyectos/TareasTecnico':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['TareasTecnico'] = $this->DBP->getTareasTecnico($usuario['Id']);
                 break;
             case 'Proyectos/Catalogo':
@@ -228,7 +241,6 @@ class Secciones extends General {
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('3');
                 break;
             case 'RH/Perfiles':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['Autorizacion'] = FALSE;
                 if (in_array('35', $usuario['PermisosAdicionales'])) {
                     $datos['Autorizacion'] = TRUE;
@@ -240,14 +252,13 @@ class Secciones extends General {
                 $datos['ListaPerfiles'] = $this->Catalogo->catPerfiles("3");
                 break;
             case 'RH/Permisos_vacaciones':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['departamento'] = $this->permisosVacaciones->buscarDepartamento();
                 $datos['tipoAusencia'] = $this->permisosVacaciones->obtenerTiposAusencia();
                 $datos['motivoAusencia'] = $this->permisosVacaciones->obtenerMotivoAusencia();
                 $datos['permisosAusencias'] = $this->permisosVacaciones->obtenerPermisosAusencia($usuario['Id']);
+                $datos['enviarCorreos'] = $this->permisosVacaciones->enviarCorreoSiccob();
                 break;
             case 'RH/Autorizar_permisos':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id']);
                 break;
             case 'Poliza':
@@ -334,6 +345,16 @@ class Secciones extends General {
                 break;
             case 'Compras/Seguimiento':
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('15');
+                break;
+            case 'Compras/Solicitud_Compra':
+                $datos['Clientes'] = $this->Gapsi->getClientes();
+                $datos['Productos'] = $this->Compras->getSAEProducts();
+                break;
+            case 'Compras/Mis_Solicitudes_Compra':
+                $datos['Solicitudes'] = $this->Compras->getListaMisSolicitudes();
+                break;
+            case 'Compras/Autorizar_Solicitudes_Compra':
+                $datos['Solicitudes'] = $this->Compras->getListaSolicitudesPorAutorizar();
                 break;
             case 'Compras/Ordenes_Compra':
                 $datos['ListaOrdenesCompra'] = $this->Compras->consultaListaOrdenesCompra();
@@ -458,7 +479,6 @@ class Secciones extends General {
                 $datos['proyectos'] = $this->PEV2->getProyectosespeciales();
                 break;
             case 'Proveedores/Seguimiento':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados($usuario['IdDepartamento']);
                 break;
             case 'Poliza/Catalogo_Checklist':
@@ -473,7 +493,6 @@ class Secciones extends General {
                 $datos['FondoFijoXUsuario'] = $this->ModeloComprobacion->getFondosFijos();
                 break;
             case 'Comprobacion/Fondo_Fijo':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['listaComprobaciones'] = $this->ModeloTesoreria->getDetallesFondoFijoXUsuario($usuario['Id']);
                 $datos['usuario'] = $this->ModeloTesoreria->getNombreUsuarioById($usuario['Id']);
                 $datos['saldo'] = $this->ModeloTesoreria->getSaldoByUsuario($usuario['Id']);
@@ -482,7 +501,6 @@ class Secciones extends General {
                 $datos['rechazado'] = $this->ModeloTesoreria->getSaldoRechazadoSinPagar($usuario['Id']);
                 break;
             case 'Comprobacion/Autorizar_Fondo_Fijo':
-                $usuario = $this->Usuario->getDatosUsuario();
                 $datos['listaComprobaciones'] = $this->ModeloTesoreria->getComprobacionesXAutorizar($usuario['Id']);
                 break;
             case 'Localizacion/Dispositivos':
@@ -506,6 +524,31 @@ class Secciones extends General {
                 $datos['Sistemas'] = $this->Catalogo->catRhHabilidadesSistema('3');
                 $datos['Software'] = $this->Catalogo->catRhHabilidadesSoftware('3');
                 break;
+            case 'Generales/Dashboard_Gapsi':
+                $datos['Datos'] = $this->GapsiProyecto->getDatosGeneralesProyectos(array('moneda' => 'MN'));
+//                $datos['Proyectos'] = $this->GapsiProyecto->getListProjects();
+//                $datos['TiposProyectos'] = $this->GapsiProyecto->getProjectTypes();
+                break;
+            case 'FondoFijo/Catalogos':
+                $datos['TiposCuenta'] = $this->fondoFijo->getTiposCuenta();
+                $datos['Usuarios'] = $this->fondoFijo->getUsuarios();
+                $datos['Conceptos'] = $this->fondoFijo->getConceptos();
+                break;
+            case 'FondoFijo/Depositar':
+                $datos['Usuarios'] = $this->fondoFijo->getUsuariosConFondoFijo();
+                break;
+            case 'FondoFijo/MiFondo':
+                $datos['Cuentas'] = $this->fondoFijo->getSaldosCuentasXUsuario($usuario['Id']);
+                break;
+            case 'FondoFijo/Autorizar':
+                $datos['Pendientes'] = $this->fondoFijo->pendientesXAutorizar($usuario['Id']);
+                break;
+            case 'Instalaciones/Seguimiento':
+                $datos['Pendientes'] = $this->instalaciones->getInstalacionesPendientes($usuario['Id']);
+                break;
+            case 'Prime/Inventario':
+                $datos['Sucursales'] = $this->prime->getSucursalesPrime();
+                break;
             default:
                 break;
         }
@@ -517,7 +560,8 @@ class Secciones extends General {
      * 
      */
 
-    public function getAlcance($tipoProyecto, $idProyecto) {
+    public function getAlcance($tipoProyecto, $idProyecto)
+    {
         $data = array();
         $indice = array();
         $data['tipoProyecto'] = $tipoProyecto;
@@ -556,8 +600,8 @@ class Secciones extends General {
      * 
      */
 
-    public function getAyuda(string $ayuda) {
+    public function getAyuda(string $ayuda)
+    {
         return array('informacion' => parent::getCI()->load->view('Ayuda/' . $ayuda, '', TRUE));
     }
-
 }

@@ -123,6 +123,8 @@ $route['Generales/Buscar/(:any)'] = 'Generales/Controller_Buscar/manejarEvento/$
 $route['Generales/ServiceDesk/(:any)'] = 'Generales/Controller_ServiceDesk/manejarEvento/$1';
 $route['Generales/Dispositivos/(:any)'] = 'Generales/Controller_Dispositivos/manejarEvento/$1';
 $route['Generales/Dashboard/(:any)'] = 'Generales/Controller_Dashboard/manejarEvento/$1';
+//$route['Generales/Dashboard_Gapsi/(:any)'] = 'Gapsi/Controller_GestorProyectos/manejarEvento/$1';
+$route['Generales/Dashboard_Gapsi/Proyecto/informacion_General'] = 'V2/Gapsi/Controller_Proyecto/getDatosProyecto';
 
 /* Routers para el manejo de páginas de PhantomJS */
 $route['Phantom/Servicio/(:any)'] = 'Phantom/Controller_Phantom/servicioPhantom/$1';
@@ -258,6 +260,25 @@ $route['Comprobacion/Fondo_Fijo/(:any)'] = 'Tesoreria/Controller_FondoFijo/manej
 $route['Localizacion/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Localizacion/Seguimiento/(:any)'] = 'Localizacion/Controller_Localizacion/manejarEvento/$1';
 
+/* Routers para el manejo de Fondo Fijo */
+$route['FondoFijo/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
+$route['FondoFijo/Catalogos/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
+$route['FondoFijo/Depositar/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
+$route['FondoFijo/MiFondo/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
+$route['FondoFijo/Autorizar/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
+
+/* Routers para el manejo de Instalaciones de Equipo */
+$route['Instalaciones/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
+$route['Instalaciones/Seguimiento/(:any)'] = 'Instalaciones/Controller_Instalaciones/manejarEvento/$1';
+
+/* Routers para el manejo de Instalaciones de Equipo */
+$route['Prime/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
+$route['Prime/Inventario/(:any)'] = 'Prime/Controller_Inventario/manejarEvento/$1';
+
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
 $route['Error/(:any)'] = 'Controller_Error/$1';
+
+
+/* Routers para dashboard gpasi gastos */
+//$route['Localizacion/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';

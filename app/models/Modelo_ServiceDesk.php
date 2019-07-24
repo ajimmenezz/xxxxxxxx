@@ -43,4 +43,9 @@ class Modelo_ServiceDesk extends Modelo_Base {
         return $consulta;
     }
 
+    public function saveLogUpgradeSD(array $dataToInsert) {
+        $answerQuery = $this->insertar('t_log_actualizacion_sd', $dataToInsert);
+        return $answerQuery;
+    }
+
 }

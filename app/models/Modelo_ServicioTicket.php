@@ -716,10 +716,10 @@ class Modelo_ServicioTicket extends Modelo_Base {
         $host = $_SERVER['SERVER_NAME'];
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $consulta = parent::connectDBAdist2()->query($query);
+            //$consulta = parent::connectDBAdist2()->query($query);
             return parent::connectDBAdist2()->insert_id();
         } else {
-            $consulta = parent::connectDBAdist3()->query($query);
+            //$consulta = parent::connectDBAdist3()->query($query);
             return parent::connectDBAdist3()->insert_id();
         }
     }

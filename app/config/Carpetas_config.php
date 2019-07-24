@@ -26,7 +26,8 @@ $config['Secciones'] = array(
         'Solicitud-Editar' => 'Solicitud_Editar',
         'Minuta_Resumen' => 'Minuta_Resumen',
         'Archivo_Nuevo' => 'Archivo_Nuevo',
-        'Archivo_Resumen' => 'Archivo_Resumen'
+        'Archivo_Resumen' => 'Archivo_Resumen',
+        'Dashboard_Gapsi' => 'Dashboard_Gapsi'
     ),
     'Administrador' => array(
         'Dashboard-Administrador' => 'Dashboard',
@@ -68,6 +69,7 @@ $config['Secciones'] = array(
         'Seguimiento-RH' => 'Seguimiento',
         'Catalogo-Perfil' => 'Catalogos_Perfil',
         'Permisosvacaciones-RH' => 'Permisos_vacaciones',
+        'Catalogo-Permisos-RH' => 'catalogo_permisos',
         'AutorizarPermisos-RH' => 'Autorizar_permisos'
     ),
     'Capacitacion' => array(
@@ -98,7 +100,8 @@ $config['Secciones'] = array(
     ),
     'Redes' => array(
         'Dashboard-Redes' => 'Dashboard',
-        'Seguimiento-Redes' => 'Seguimiento'
+        'Seguimiento-Redes' => 'Seguimiento',
+        'Seguimiento-GeneralRedes' => 'SeguimientoCE'
     ),
     'Salas4D' => array(
         'Dashboard-Salas4D' => 'Dashboard',
@@ -119,7 +122,10 @@ $config['Secciones'] = array(
         'Dashboard-Co' => 'Dashboard',
         'Seguimiento-Compras' => 'Seguimiento',
         'Ordenes-Compras' => 'Ordenes_Compra',
-        'Facturas-OC' => 'Facturacion_OC'
+        'Facturas-OC' => 'Facturacion_OC',
+        'Solicitud-Compra' => 'Solicitud_Compra',
+        'Mis-Solicitudes-Compra' => 'Mis_Solicitudes_Compra',
+        'Autorizar-Solicitudes-Compra' => 'Autorizar_Solicitudes_Compra'
     ),
     'MesaDeAyuda' => array(
         'Dashboard-Mesa' => 'Dashboard',
@@ -183,5 +189,17 @@ $config['Secciones'] = array(
     ),
     'Localizacion' => array(
         'Localizacion-Dispositivos' => 'Dispositivos'
-    )
+    ),
+    'FondoFijo' => array(
+        'Catalogos' => 'Catalogos',  
+        'Depositar' => 'Depositar',  
+        'MiFondo' => 'MiFondo',   
+        'Autorizar' => 'Autorizar'     
+    ),
+    'Instalaciones' => array(
+        'Seguimiento' => 'Seguimiento'  
+    ),
+    'Prime' => array(
+        'Inventario' => 'Inventario'  
+    ),
 );

@@ -44,6 +44,7 @@ $(function () {
         select.crearSelect('#listSucursal');
         select.crearSelect('#listRefaccionUtil');
         select.crearSelect('#listDondeRecibe');
+        select.crearSelect('#listChofer');
 
 
         //obtener valor fecha
@@ -59,6 +60,7 @@ $(function () {
 
         //tablas
         tabla.generaTablaPersonal('#listaRefaccionUtilizada', null, null, true, true, [[0, 'desc']]);
+        tabla.generaTablaPersonal('#listaRefaccionUtilizadaLaboratorio', null, null, true, true, [[0, 'desc']]);
         tabla.generaTablaPersonal('#lista-solicitud-producto', null, null, true, true);
 
         //Iniciar input archivos
@@ -112,14 +114,11 @@ $(function () {
         var datos = {"idServicio": idServicio, 'IdRefaccion': IdRefaccion, 'idEstatus': idEstatus};
 
         evento.enviarEvento('Seguimiento/VistaPorPerfil', datos, panel, function (respuesta) {
-            console.log(respuesta);
-
             vistasDeFormularios(respuesta);
             incioEtiquetas();
             eventosGenerales(idTabla, idServicio);
             eventosComentarios(idTabla, idServicio);
             cargaComentariosAdjuntos(idTabla, respuesta.formularioHistorialRefaccion);
-
         });
     };
 
@@ -138,6 +137,23 @@ $(function () {
 
         if ($.inArray('306', respuesta.permisos) !== -1 || $.inArray('306', respuesta.permisosAdicionales) !== -1 || $.inArray('307', respuesta.permisos) !== -1 || $.inArray('307', respuesta.permisosAdicionales) !== -1) {
             bloquerTodosCampos();
+        }
+
+        if (respuesta.formularioEnvioSeguimientoLog !== undefined) {
+            if (respuesta.formularioEnvioSeguimientoLog.datos !== undefined) {
+                if (respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog !== null) {
+                    var $radiosTipoEnvio = $('input[name="radioTipoEnvio"]');
+                    if (respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].IdUsuarioTransito !== null) {
+                        $radiosTipoEnvio.filter('[value=0]').attr('checked', true);
+                    } else {
+                        $radiosTipoEnvio.filter('[value=1]').attr('checked', true);
+                    }
+                    $('input[name="radioTipoEnvio"]').attr("disabled", "disabled");
+                    var $radiosCuenta = $('input[name="radioCuenta"]');
+                    $radiosCuenta.filter('[value=' + respuesta.formularioEnvioSeguimientoLog.datos.informacionEnvioLog[0].CuentaSiccob + ']').attr('checked', true);
+                    $('input[name="radioCuenta"]').attr("disabled", "disabled");
+                }
+            }
         }
     };
 
@@ -169,44 +185,48 @@ $(function () {
 
         $("#listaTicket").on("change", function () {
             select.cambiarOpcion("#listaServicio", '');
-            $("#listaServicio").empty().append('<option value="">Seleccionar...</option>');
             if ($(this).val() !== '') {
                 var datos = {
                     'ticket': $(this).val()
                 }
 
                 evento.enviarEvento('Seguimiento/ConsultaServiciosTecnico', datos, '#panelValidacion', function (respuesta) {
+                    $('#listaServicio').empty().append('<option value="" data-idModelo = "" data-serie="">Seleccionar</option>').attr('disabled', 'disabled');
+
                     $.each(respuesta, function (k, v) {
                         $("#listaServicio").append('<option value="' + v.Id + '" data-idModelo = "' + v.IdModelo + '" data-serie="' + v.Serie + '">' + v.Id + ' - ' + v.Descripcion + '</option>');
                     });
                     $("#listaServicio").removeAttr("disabled");
                 });
             } else {
+                $("#listaServicio").empty().append('<option value="">Seleccionar...</option>');
                 $("#listaServicio").attr("disabled", "disabled");
             }
         });
 
         $("#listaServicio").on("change", function () {
+            var servicioSeleccionado = $('#listaServicio option:selected').attr('data-idModelo');
 
-            var servicioSeleccionado = $(this).find(':selected').attr('data-idModelo');
-            var datos = {'idModelo': servicioSeleccionado};
+            if (servicioSeleccionado !== '') {
+                var datos = {'idModelo': servicioSeleccionado};
 
-            select.cambiarOpcion('#listaTipoPersonal', '');
-            evento.enviarEvento('Seguimiento/MostrarEquipoDanado', datos, panel, function (respuesta) {
-
-                if (respuesta.length > 0) {
-                    $.each(respuesta, function (k, v) {
-                        $('#equipoEnviado').empty().attr({"value": v.Equipo, "data-IdEquipo": v.Id});
-                    });
-                    $('#listaTipoPersonal').removeAttr('disabled');
-                }
-            });
-
-            if ($(this).val() !== '') {
-                $("#listaTipoPersonal").removeAttr("disabled");
-            } else {
                 select.cambiarOpcion('#listaTipoPersonal', '');
-                $("#listaTipoPersonal").attr("disabled", "disabled");
+                evento.enviarEvento('Seguimiento/MostrarEquipoDanado', datos, '#panelValidacion', function (respuesta) {
+
+                    if (respuesta.length > 0) {
+                        $.each(respuesta, function (k, v) {
+                            $('#equipoEnviado').empty().attr({"value": v.Equipo, "data-IdEquipo": v.Id});
+                        });
+                        $('#listaTipoPersonal').removeAttr('disabled');
+                    }
+                });
+
+                if ($(this).val() !== '') {
+                    $("#listaTipoPersonal").removeAttr("disabled");
+                } else {
+                    select.cambiarOpcion('#listaTipoPersonal', '');
+                    $("#listaTipoPersonal").attr("disabled", "disabled");
+                }
             }
         });
 
@@ -214,9 +234,10 @@ $(function () {
             var seleccionado = $('#listaTipoPersonal option:selected').val();
             var datos = {'idTipoPersonal': seleccionado};
 
-            $('#listaNombrePersonal').empty().append('<option value="">Seleccionar</option>');
+            $('#listaNombrePersonal').empty().append('<option value="">Seleccionar</option>').attr('disabled', 'disabled');
+
             select.cambiarOpcion('#listaNombrePersonal', '');
-            evento.enviarEvento('Seguimiento/MostrarNombrePersonalValida', datos, panel, function (respuesta) {
+            evento.enviarEvento('Seguimiento/MostrarNombrePersonalValida', datos, '#panelValidacion', function (respuesta) {
                 if (respuesta) {
                     $.each(respuesta, function (k, v) {
                         $('#listaNombrePersonal').append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
@@ -358,6 +379,11 @@ $(function () {
             var fecha = $('#fechaValidacion').val();
             var evidencia = $('#evidenciaEnvioGuia').val();
             var idServicio = $('#inputServicio').attr('data-idServicio');
+
+            if (guia === '') {
+                guia = $('#guiaColocada').val();
+            }
+            
             var datos = {'IdPaqueteria': paqueteria, 'Guia': guia, 'Fecha': fecha, 'idServicio': idServicio};
 
             if (evento.validarFormulario('#formEnvioAlmacen')) {
@@ -376,7 +402,6 @@ $(function () {
                         eventosComentarios(respuesta.idTabla, respuesta.idServicio);
                     });
                 }
-
             } else {
                 evento.mostrarMensaje("#errorFormularioEnvio", false, "Ingresa los datos solicitados", 4000);
             }
@@ -491,15 +516,14 @@ $(function () {
         $('#btnAgregarRefaccion').off('click');
         $('#btnAgregarRefaccion').on('click', function () {
             var arrayCampos = [
-                {'objeto': '#listRefaccionUtil', 'mensajeError': 'Falta seleccionar la Refacción utilizada.'},
-                {'objeto': '#cantidadRefaccion', 'mensajeError': 'Falta escribir la cantidad.'}
+                {'objeto': '#listRefaccionUtil', 'mensajeError': 'Falta seleccionar la Refacción utilizada.'}
             ];
 
             var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorAgregarRefaccion');
 
             if (camposFormularioValidados) {
                 var idInventario = $('#listRefaccionUtil').val();
-                var cantidad = $('#cantidadRefaccion').val();
+                var cantidad = '1';
                 var data = {
                     'id': idTabla,
                     'idInvetario': idInventario,
@@ -512,6 +536,10 @@ $(function () {
                         $('#cantidadRefaccion').val('');
                         select.cambiarOpcion('#listRefaccionUtil', '');
                         recargandoTablaRefaccionesUtilizadas(respuesta.datos);
+                        $("#listRefaccionUtil").empty().append('<option value="">Seleccionar...</option>');
+                        $.each(respuesta.componentesEquipo, function (k, v) {
+                            $("#listRefaccionUtil").append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                        });
                         evento.mostrarMensaje("#errorAgregarRefaccion", true, 'Refacción agregada correctamente.', 4000);
                     } else {
                         evento.mostrarMensaje("#errorAgregarRefaccion", false, respuesta.mensaje, 4000);
@@ -543,42 +571,85 @@ $(function () {
 
         $('#btnGuardarEnvioLogistica').off('click');
         $('#btnGuardarEnvioLogistica').on('click', function () {
-            var arrayCampos = [
-                {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
-                {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
-                {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'}
-            ];
+            var tipoEnvio = $('input[name=radioTipoEnvio]:checked').val();
+            if (tipoEnvio === '1') {
+                var paqueteria = $('#listPaqueteria option:selected').val();
+                if (paqueteria === '2') {
+                    var cuenta = $('input[name=radioCuenta]:checked').val();
+                    var arrayCampos = [
+                        {'objeto': 'input[name=radioTipoEnvio]:checked', 'mensajeError': 'Falta seleccionar tipo de envió'},
+                        {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
+                        {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
+                        {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'},
+                        {'objeto': 'input[name=radioCuenta]:checked', 'mensajeError': 'Falta seleccionar el tipo de cuenta'}
+                    ];
+                    var datos = {
+                        'id': idTabla,
+                        'idServicio': idServicio,
+                        'paqueteria': $('#listPaqueteria').val(),
+                        'guia': $('#guiaLogistica').val(),
+                        'fechaEnvio': $('#fechaEnvio').val(),
+                        'cuenta': cuenta,
+                        'tipoEnvio': tipoEnvio
+                    }
+                } else {
+                    var arrayCampos = [
+                        {'objeto': 'input[name=radioTipoEnvio]:checked', 'mensajeError': 'Falta seleccionar tipo de envió'},
+                        {'objeto': '#listPaqueteria', 'mensajeError': 'Falta seleccionar la paqueteria utilizada.'},
+                        {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'},
+                        {'objeto': '#guiaLogistica', 'mensajeError': 'Falta la guía.'}
+                    ];
+                    var datos = {
+                        'id': idTabla,
+                        'idServicio': idServicio,
+                        'paqueteria': $('#listPaqueteria').val(),
+                        'guia': $('#guiaLogistica').val(),
+                        'fechaEnvio': $('#fechaEnvio').val(),
+                        'tipoEnvio': tipoEnvio
+                    }
+                }
+            } else {
+                var arrayCampos = [
+                    {'objeto': 'input[name=radioTipoEnvio]:checked', 'mensajeError': 'Falta seleccionar tipo de envió'},
+                    {'objeto': '#listChofer', 'mensajeError': 'Falta seleccionar el chofer.'},
+                    {'objeto': '#fechaEnvio', 'mensajeError': 'Falta seleccionar la fecha.'}
+                ];
+                var datos = {
+                    'id': idTabla,
+                    'idServicio': idServicio,
+                    'chofer': $('#listChofer').val(),
+                    'fechaEnvio': $('#fechaEnvio').val(),
+                    'tipoEnvio': tipoEnvio
+                }
+            }
 
             var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorFormularioEnvioLogistica');
 
             if (camposFormularioValidados) {
                 var evidencia = $('#evidenciaEnvio').val();
-                var datos = {
-                    'id': idTabla,
-                    'idServicio': idServicio,
-                    'paqueteria': $('#listPaqueteria').val(),
-                    'guia': $('#guiaLogistica').val(),
-                    'fechaEnvio': $('#fechaEnvio').val()
-                }
 
                 if (evidencia !== '' || evidencia !== undefined) {
                     file.enviarArchivos('#evidenciaEnvio', 'Seguimiento/GuardarEnvioLogistica', '#panelEnvioSeguimientoLog', datos, function (respuesta) {
-                        $('#divSeguimientoEntrega').removeClass('hidden');
-                        $('#divBotonGuardarEntrega').removeClass('hidden');
-                        $('#listPaqueteria').attr('disabled', 'disabled');
-                        $('#fechaEnvio').attr('disabled', 'disabled');
-                        $('#guiaLogistica').attr('disabled', 'disabled');
-                        $('#btnGuardarEnvioLogistica').addClass('disabled');
+                        if (respuesta.code === 200) {
+                            $('#divSeguimientoEntrega').removeClass('hidden');
+                            $('#divBotonGuardarEntrega').removeClass('hidden');
+                            $('#listPaqueteria').attr('disabled', 'disabled');
+                            $('#fechaEnvio').attr('disabled', 'disabled');
+                            $('#guiaLogistica').attr('disabled', 'disabled');
+                            $('#btnGuardarEnvioLogistica').addClass('disabled');
+                        }
                     });
                 } else {
                     evento.enviarEvento('Seguimiento/GuardarEnvioLogistica', datos, panel, function (respuesta) {
-                        $('#divSeguimientoEntrega').removeClass('hidden');
-                        $('#divBotonGuardarEntrega').removeClass('hidden');
-                        $('#listPaqueteria').attr('disabled', 'disabled');
-                        $('#fechaEnvio').attr('disabled', 'disabled');
-                        $('#guiaLogistica').attr('disabled', 'disabled');
-                        $('#btnGuardarEnvioLogistica').addClass('disabled');
-                        file.deshabilitar('#evidenciaEnvio');
+                        if (respuesta.code === 200) {
+                            $('#divSeguimientoEntrega').removeClass('hidden');
+                            $('#divBotonGuardarEntrega').removeClass('hidden');
+                            $('#listPaqueteria').attr('disabled', 'disabled');
+                            $('#fechaEnvio').attr('disabled', 'disabled');
+                            $('#guiaLogistica').attr('disabled', 'disabled');
+                            $('#btnGuardarEnvioLogistica').addClass('disabled');
+                            file.deshabilitar('#evidenciaEnvio');
+                        }
                     });
                 }
             }
@@ -633,8 +704,10 @@ $(function () {
                 file.enviarArchivos('#evidenciaEntregaLog', 'Seguimiento/GuardarEntregaLogistica', '#panelEnvioSeguimientoLog', datos, function (respuesta) {
                     vistasDeFormularios(respuesta.datos);
                     incioEtiquetas();
-                    eventosGenerales(respuesta.idTabla);
-                    eventosComentarios(respuesta.idTabla);
+                    eventosGenerales(idTabla, respuesta.idServicio);
+                    eventosComentarios(idTabla, respuesta.idServicio);
+                    cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+                    recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                 });
             }
 
@@ -642,16 +715,38 @@ $(function () {
 
         $('#solicitarGuia').off('click');
         $('#solicitarGuia').on('click', function () {
-            var data = {'id': idTabla, 'idServicio': idServicio};
-            evento.enviarEvento('Seguimiento/SolicitarGuia', data, '#panelEnvioConGuia', function (respuesta) {
-                if (respuesta.code === 200) {
-                    vistasDeFormularios(respuesta.datos);
-                    incioEtiquetas();
-                    eventosGenerales(idTabla, respuesta.idServicio);
-                    eventosComentarios(idTabla, respuesta.idServicio);
-                    cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
-                }
+            var dataToShowTheForm = {
+                'idService': idServicio
+            }
+            evento.enviarEvento('Seguimiento/MostrarFormularioInformacionGeneracionGuia', dataToShowTheForm, '#panelEnvioConGuia', function (respuesta) {
+                evento.iniciarModal('#modalEdit', 'Información para generar guía', respuesta.modal);
+                select.crearSelect('#lista-TI');
+
+                $("#inputNumeroCajas").bind('keyup mouseup', function () {
+                    createChecklistInformation();
+                });
+
+                $('#btnGuardarCambios').off('click');
+                $('#btnGuardarCambios').on('click', function () {
+                    var informationGuide = creatingInformationGenerateGuide();
+
+                    var data = {'id': idTabla, 'idServicio': idServicio, informationGuide: informationGuide};
+                    evento.enviarEvento('Seguimiento/SolicitarGuia', data, '#modalEdit', function (respuesta) {
+                        if (respuesta.code === 200) {
+                            vistasDeFormularios(respuesta.datos);
+                            incioEtiquetas();
+                            eventosGenerales(idTabla, respuesta.idServicio);
+                            eventosComentarios(idTabla, respuesta.idServicio);
+                            cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+                            recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
+                            evento.cerrarModal();
+                            evento.terminarModal('#modalEdit');
+                        }
+                    });
+                });
             });
+
+
         });
 
         $('#btnGuardarProblema').off('click');
@@ -675,8 +770,10 @@ $(function () {
                 file.enviarArchivos('#archivosProblemaGuia', 'Seguimiento/GuardarProblemaGuiaLogistica', '#panelAsignacionGuia', datos, function (respuesta) {
                     vistasDeFormularios(respuesta.datos);
                     incioEtiquetas();
-                    eventosGenerales(respuesta.idTabla);
-                    eventosComentarios(respuesta.idTabla);
+                    eventosGenerales(idTabla, respuesta.idServicio);
+                    eventosComentarios(idTabla, respuesta.idServicio);
+                    cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+                    recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                 });
             }
         });
@@ -684,6 +781,7 @@ $(function () {
         $('#btnGuardarSolicitud').off('click');
         $('#btnGuardarSolicitud').on('click', function () {
             var arrayCampos = [
+                {'objeto': '#txtGuia', 'mensajeError': 'Falta escribir la Guía.'},
                 {'objeto': '#txtComentariosGuia', 'mensajeError': 'Falta escribir comentarios.'},
                 {'objeto': '#archivosProblemaGuia', 'mensajeError': 'Falta seleccionar la evidencia.'}
             ];
@@ -694,6 +792,7 @@ $(function () {
                 var datos = {
                     'id': idTabla,
                     'idServicio': idServicio,
+                    'guia': $('#txtGuia').val(),
                     'comentarios': $('#txtComentariosGuia').val(),
                     'idEstatus': 37,
                     'flag': '1'
@@ -702,8 +801,10 @@ $(function () {
                 file.enviarArchivos('#archivosProblemaGuia', 'Seguimiento/GuardarProblemaGuiaLogistica', '#panelAsignacionGuia', datos, function (respuesta) {
                     vistasDeFormularios(respuesta.datos);
                     incioEtiquetas();
-                    eventosGenerales(respuesta.idTabla);
-                    eventosComentarios(respuesta.idTabla);
+                    eventosGenerales(idTabla, respuesta.idServicio);
+                    eventosComentarios(idTabla, respuesta.idServicio);
+                    cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+                    recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                 });
             }
         });
@@ -737,6 +838,8 @@ $(function () {
             if (listaIds.length > 0) {
                 var data = {'listaProductos': listaIds, 'id': idTabla, 'idServicio': idServicio, 'idEstatus': '38', 'flag': '1'};
                 terminarSeleccion(data, idTabla);
+            } else {
+                evento.mostrarMensaje("#errorSolicitudProducto", false, 'Seleccione un producto.', 4000);
             }
         });
 
@@ -745,9 +848,145 @@ $(function () {
             if (listaIds.length > 0) {
                 var data = {'listaProductos': listaIds, 'id': idTabla, 'idServicio': idServicio, 'idEstatus': '38', 'flag': '0'};
                 terminarSeleccion(data, idTabla);
+            } else {
+                evento.mostrarMensaje("#errorSolicitudProducto", false, 'Seleccione un producto.', 4000);
             }
         });
+
+        $('#listaRefaccionUtilizada tbody').on('click', 'tr', function () {
+            var datos = $('#listaRefaccionUtilizada').DataTable().row(this).data();
+            if (datos !== undefined) {
+                var data = {'id': datos[0], 'idInventario': datos[3], 'idServicio': idServicio};
+                evento.enviarEvento('Seguimiento/EliminarRefacionUtilizada', data, '#panelLaboratorioHistorial', function (respuesta) {
+                    if (respuesta.code === 200) {
+                        recargandoTablaRefaccionesUtilizadas(respuesta.datos);
+                        $("#listRefaccionUtil").empty().append('<option value="">Seleccionar...</option>');
+                        $.each(respuesta.componentesEquipo, function (k, v) {
+                            $("#listRefaccionUtil").append('<option value="' + v.Id + '">' + v.Nombre + '</option>');
+                        });
+                        evento.mostrarMensaje("#errorAgregarRefaccion", true, 'Refacción eliminada correctamente.', 4000);
+                    } else {
+                        evento.mostrarMensaje("#errorAgregarRefaccion", false, respuesta.mensaje, 4000);
+                    }
+                });
+            }
+        });
+
+        $('#solicitarLaboratorio').off('click');
+        $('#solicitarLaboratorio').on('click', function () {
+            var data = {'idServicio': idServicio};
+            botonSolicitarLaboratorio(data, idTabla);
+        });
+
+        $('#btnTerminarSeleccionLaboratorio').off('click');
+        $('#btnTerminarSeleccionLaboratorio').on('click', function () {
+            if (listaIds.length > 0) {
+                var data = {'listaProductos': listaIds, 'id': idTabla, 'idServicio': idServicio, 'idEstatus': '2', 'flag': '0'};
+                botonTerminarSeleccionLaboratorio(data);
+            } else {
+                evento.mostrarMensaje("#errorSolicitudProducto", false, 'Seleccione un producto.', 4000);
+            }
+        });
+
+        $('#listPaqueteria').on('change', function () {
+            $('input[name="radioCuenta"]').attr('checked', false);
+
+            var seleccionado = $('#listPaqueteria option:selected').val();
+
+            if (seleccionado === '2') {
+                $('#divCuentas').removeClass('hidden');
+            } else {
+                $('#divCuentas').addClass('hidden');
+            }
+        });
+
+        $('.tipoEnvio').on('change', function () {
+            var tipoEnvio = $('input[name=radioTipoEnvio]:checked').val();
+
+            if (tipoEnvio === '1') {
+                $('#divPaqueteria').removeClass('hidden');
+                $('#divLogistica').addClass('hidden');
+            } else {
+                $('#divLogistica').removeClass('hidden');
+                $('#divPaqueteria').addClass('hidden');
+            }
+        });
+
+        $('#btnSolicitarCotizacionRevisionLaboratorio').off('click');
+        $('#btnSolicitarCotizacionRevisionLaboratorio').on('click', function () {
+            var data = {
+                'servicio': idServicio,
+                'estatus': 29
+            }
+            mandarCotizacion(data, idTabla, '#panelLaboratorioHistorial');
+        });
+
+        $('#solicitarCotizacion').off('click');
+        $('#solicitarCotizacion').on('click', function () {
+            var data = {
+                'servicio': idServicio,
+                'estatus': 2
+            }
+            mandarCotizacion(data, idTabla, '#panelValidacionExistencia');
+        });
+
     };
+
+    var mandarCotizacion = function () {
+        var data = arguments[0];
+        var idTabla = arguments[1];
+        var panel = arguments[2];
+
+        evento.enviarEvento('Seguimiento/crearDatosCotizarOpcionRevision', data, panel, function (respuesta) {
+            evento.iniciarModal('#modalSolicitarCotizacion', 'Solicitar Cotización', respuesta.modal);
+            $('input[type=radio][name=cotizacion]').change(function () {
+                switch (this.value) {
+                    case '1':
+                        $('#equipoCompleto').removeClass('hidden');
+                        $('#componentes').addClass('hidden');
+                        break;
+                    case '2':
+                        $('#componentes').removeClass('hidden');
+                        $('#equipoCompleto').addClass('hidden');
+                        break;
+
+                }
+            });
+            $("#btnAceptarSolicitarCotizacion").off("click");
+            $("#btnAceptarSolicitarCotizacion").on("click", function () {
+                var radioValue = $("input[name='cotizacion']:checked").val();
+                var datosCotizarComp = [];
+
+                var informacionCotizacion = $('#data-table-solicitar-componentes').DataTable().rows().data();
+                for (var index = 0; index < informacionCotizacion.length; index++) {
+                    datosCotizarComp.push({'componente': informacionCotizacion[index][0], 'cantidad': document.getElementById("inputCantidad" + index).value});
+                }
+                if (radioValue == 1) {
+                    data['componentes'] = '';
+                    datosCotizar = {'servicio': data};
+                } else {
+                    data['componentes'] = datosCotizarComp;
+                    datosCotizar = {'servicio': data};
+                }
+                evento.enviarEvento('Seguimiento/enviarDatosCotizarOpcionRevision', datosCotizar, panel, function (respuesta) {
+                    if (respuesta) {
+                        location.reload();
+                    } else {
+                        evento.mostrarMensaje('.errorModalSolicitarCotizacion', false, 'Hubo un problema con la solicitud.', 3000);
+                    }
+                });
+            });
+        });
+        /*evento.enviarEvento('Seguimiento/crearDatosCotizarOpcionRevision', data, panel, function (respuesta) {
+         if (respuesta.code === 200) {
+         vistasDeFormularios(respuesta.datos);
+         incioEtiquetas();
+         eventosGenerales(idTabla, respuesta.idServicio);
+         eventosComentarios(idTabla, respuesta.idServicio);
+         cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+         }
+         });*/
+    }
 
     var terminarSeleccion = function () {
         var data = arguments[0];
@@ -789,11 +1028,39 @@ $(function () {
                 incioEtiquetas();
                 eventosGenerales(respuesta.idTabla, respuesta.idServicio);
                 eventosComentarios(respuesta.idTabla, respuesta.idServicio);
+                recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
             } else {
                 evento.mostrarMensaje("#errorFormularioValidacion", false, respuesta.mensaje, 4000);
             }
         });
     };
+
+    var botonSolicitarLaboratorio = function () {
+        var data = arguments[0];
+        var idTabla = arguments[1];
+
+        evento.enviarEvento('Seguimiento/SolicitarRefaccionLaboratorio', data, '#panelValidacionExistencia', function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(idTabla, respuesta.idServicio);
+                eventosComentarios(idTabla, respuesta.idServicio);
+            }
+        });
+    }
+
+    var botonTerminarSeleccionLaboratorio = function () {
+        var data = arguments[0];
+
+        evento.enviarEvento('Seguimiento/AsignarRefaccionAlmacen', data, '#panelValidacionExistencia', function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(data.idTabla, respuesta.idServicio);
+                eventosComentarios(data.idTabla, respuesta.idServicio);
+            }
+        });
+    }
 
     var validarEquipo = function () {
         var seleccionEquipo = $('#listaSolicitarEquipo option:selected').val();
@@ -806,8 +1073,6 @@ $(function () {
             evento.mostrarMensaje("#errorFormularioValidacion", false, "Selecciona el equipo solicitado", 4000);
         }
     };
-
-    // termina nuevo
 
     var eventosComentarios = function () {
         var idTabla = arguments[0];
@@ -1067,7 +1332,7 @@ $(function () {
         tabla.limpiarTabla('#listaRefaccionUtilizada');
 
         $.each(refaccionesUtilizadas, function (key, item) {
-            tabla.agregarFila('#listaRefaccionUtilizada', [item.Id, item.Nombre, item.Cantidad]);
+            tabla.agregarFila('#listaRefaccionUtilizada', [item.Id, item.Nombre, item.Cantidad, item.IdInventario]);
         });
     };
 
@@ -1075,8 +1340,137 @@ $(function () {
         tabla.limpiarTabla('#lista-equipos-enviados-solicitados');
 
         $.each(equipoEnviadosSolicitados, function (key, item) {
-            tabla.agregarFila('#lista-equipos-enviados-solicitados', [item.Id, item.IdServicio, item.Ticket, item.NombreSucursal, item.Equipo, item.FechaValidacion, item.IdEstatus, item.NombreEstatus, item.IdRefaccion, item.TipoMovimiento]);
+            tabla.agregarFila('#lista-equipos-enviados-solicitados', [item.Id, item.IdServicio, item.Ticket, item.NombreSucursal, item.Equipo, item.FechaValidacion, item.IdEstatus, item.NombreEstatus, item.IdRefaccion, item.Refaccion, item.TipoMovimiento]);
         });
     };
 
+    var terminarSeleccion = function () {
+        var data = arguments[0];
+        var idTabla = arguments[1];
+
+        evento.enviarEvento('Seguimiento/GuardarSolicitudProducto', data, '#panelValidacionExistencia', function (respuesta) {
+            if (respuesta.code === 200) {
+                vistasDeFormularios(respuesta.datos);
+                incioEtiquetas();
+                eventosGenerales(idTabla, respuesta.idServicio);
+                eventosComentarios(idTabla, respuesta.idServicio);
+                cargaComentariosAdjuntos(idTabla, respuesta.datos.formularioHistorialRefaccion);
+            }
+        });
+    }
+
+    var createChecklistInformation = function () {
+        var cantidad = $("#inputNumeroCajas").val();
+        var campos = $("#formInformationBoxes").children('div.classForm').length;
+        var contador = 0;
+
+        if (cantidad !== campos) {
+            if (cantidad < campos) {
+                contador = 0;
+                $("#formInformationBoxes > div.classForm").each(function () {
+                    var _this = $(this);
+                    contador++;
+                    if (contador > cantidad) {
+                        _this.remove();
+                    }
+                });
+            } else {
+                for (var i = 0; i < cantidad; i++) {
+                    if (!$("#formInformationBoxes").children('div.classForm').eq(i).length) {
+                        $("#formInformationBoxes").append(htmlViewFormBoxes(i));
+                    }
+                }
+            }
+        }
+    }
+
+    var htmlViewFormBoxes = function (contador) {
+        var html = `<div class="classForm">
+                        <div class="row m-t-5">
+                            <div class="col-md-2 col-sm-2 col-xs-12">
+                                <div class="form-grup">
+                                    <label class="f-w-600">Caja</label>
+                                    <input type="text" value="#` + (contador + 1) + `" disabled="disabled" class="form-control f-s-16 text-center" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-5">
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <label class="f-w-600">Peso *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="info-peso-` + (contador + 1) + `" data-parsley-required="true"/>
+                                    <span class="input-group-addon">kg</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <label class="f-w-600">Largo *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="info-largo-` + (contador + 1) + `" data-parsley-required="true"/>
+                                    <span class="input-group-addon">cm</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <label class="f-w-600">Ancho *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="info-ancho-` + (contador + 1) + `" data-parsley-required="true"/>
+                                    <span class="input-group-addon">cm</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <label class="f-w-600">Alto *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="info-alto-` + (contador + 1) + `" data-parsley-required="true"/>
+                                    <span class="input-group-addon">cm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+        return html;
+    }
+
+    var creatingInformationGenerateGuide = function () {
+        var dataToValidateForm = [
+            {'objeto': '#inputOrigen', 'mensajeError': 'Falta escribir origen.'},
+            {'objeto': '#inputDestino', 'mensajeError': 'Falta escribir destino.'},
+            {'objeto': '#lista-TI', 'mensajeError': 'Falta seleccionar personal de TI que autoriza.'},
+            {'objeto': '#inputNumeroCajas', 'mensajeError': 'Falta el no. de cajas.'}
+        ];
+
+        var validatedFormsFields = evento.validarCamposObjetos(dataToValidateForm, '#errorFormularioInformacionGeneracionGuia');
+        if (validatedFormsFields) {
+            if ($('#inputNumeroCajas').val() > 0) {
+                if (evento.validarFormulario('#formInformationBoxes')) {
+                    var noIncidente = $('#inputNoIncidente').val();
+                    var nombreTecnico = $('#inputNombreTecnico').val();
+                    var origen = $('#inputOrigen').val();
+                    var destino = $('#inputDestino').val();
+                    var personalAutoriza = $('#lista-TI').val();
+                    var numeroCajas = $('#inputNumeroCajas').val();
+                    var textoInformacionGuia = 'No. Incidente: ' + noIncidente + '\n';
+                    textoInformacionGuia += 'Persona que solicita: ' + nombreTecnico + '\n';
+                    textoInformacionGuia += 'Origen: ' + origen + '\n';
+                    textoInformacionGuia += 'Destino: ' + destino + '\n';
+                    textoInformacionGuia += 'Personal de TI que autoriza: ' + personalAutoriza + '\n';
+                    textoInformacionGuia += 'No. Cajas: ' + numeroCajas + '\n';
+
+                    for (var i = 1; i <= numeroCajas; i++) {
+                        var peso = $('#info-peso-' + i).val();
+                        var largo = $('#info-largo-' + i).val();
+                        var ancho = $('#info-ancho-' + i).val();
+                        var alto = $('#info-alto-' + i).val();
+
+                        textoInformacionGuia += 'Caja: ' + i + '\n';
+                        textoInformacionGuia += 'Peso: ' + peso + 'kg \n';
+                        textoInformacionGuia += 'Largo: ' + largo + 'cm \n';
+                        textoInformacionGuia += 'Ancho: ' + ancho + 'cm \n';
+                        textoInformacionGuia += 'Alto: ' + alto + 'cm \n';
+                    }
+
+                    return textoInformacionGuia;
+                }
+            } else {
+                evento.mostrarMensaje("#errorFormularioInformacionGeneracionGuia", false, 'El campo de no. cajas deber ser positivo', 4000);
+            }
+        }
+    }
 });

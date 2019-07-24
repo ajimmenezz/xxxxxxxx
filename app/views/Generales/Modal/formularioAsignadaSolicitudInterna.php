@@ -143,7 +143,7 @@
                         <option value="">Seleccionar</option>
                         <?php
                         foreach ($servicios as $key => $value) {
-                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . ' (' . $value['Departamento'] . ')</option>';
                         }
                         ?>
                     </select>                            

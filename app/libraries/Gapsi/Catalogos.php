@@ -89,6 +89,9 @@ class Catalogos extends General {
 
     public function solicitarGasto(array $datos) {
         $resultado = $this->DB->solicitarGasto($datos);
+        if ($resultado['code'] == 508) {
+            return $resultado;
+        }
         $last = ($resultado['code'] == 200) ? $resultado['last'] . '/' : '';
 
         $archivos = $result = null;
@@ -319,7 +322,7 @@ class Catalogos extends General {
             }
         }
 
-        $editable = ($gasto['usuario'] == $this->usuario['Id'] && in_array($gasto['gasto']['Status'], ['Requiere Autorizacion', 'Solicitado'])) ? true : false;
+        $editable = ($gasto['usuario'] == $this->usuario['Id'] && in_array($gasto['gasto']['Status'], ['Requiere Autorizacion', 'Solicitado', 'Rechazado'])) ? true : false;
 
         $datos = [
             'Clientes' => $this->getClientes(),
@@ -598,10 +601,10 @@ class Catalogos extends General {
             $respuesta = $this->comprobarXML($archivosComprobantes);
             if ($respuesta === true) {
                 $archivos = setMultiplesArchivos($CI, 'inputArchivoComprobante', $carpeta, 'gapsi');
-                $respuesta = $this->validarComprobanteGastos($monto, $archivos, $datos);                
+                $respuesta = $this->validarComprobanteGastos($monto, $archivos, $datos);
             }
         } else {
-            $archivos = setMultiplesArchivos($CI, 'inputArchivoComprobante', $carpeta,'gapsi');
+            $archivos = setMultiplesArchivos($CI, 'inputArchivoComprobante', $carpeta, 'gapsi');
             return $this->cambiarNombre($archivos, $idRegistro);
 //            $respuesta = $this->DB->registrarSinXML($datos);
         }
@@ -752,7 +755,7 @@ class Catalogos extends General {
 
         foreach ($datos as $k => $nodoReceptor) {
             if (isset($nodoReceptor['Rfc'])) {
-                if ($nodoReceptor['Rfc'] === 'SSO0101179Z7') {
+                if (in_array($nodoReceptor['Rfc'], ['SSO0101179Z7', 'RSD130305DI7','RRC130605555'])) {
                     
                 } else {
                     $arrayReturn['code'] = 400;
@@ -772,7 +775,7 @@ class Catalogos extends General {
         $contador = 0;
 
         foreach ($archivos as $key => $ruta) {
-            
+
             $rutaArchivo = "." . $ruta;
             if (file_exists($rutaArchivo)) {
                 $extension = explode(".", $ruta);
@@ -786,7 +789,7 @@ class Catalogos extends General {
                     if (rename($rutaArchivo, $nuevoNombre1)) {
                         $respuestaArchivo = ['code' => 200, 'errorBack' => 'Comprobante de pago Registrado'];
                     } else {
-                        $respuestaArchivo =  ['code' => 500, 'errorBack' => 'El comprobante no se ha registrado correctamente'];
+                        $respuestaArchivo = ['code' => 500, 'errorBack' => 'El comprobante no se ha registrado correctamente'];
                     }
                 }
             } else {
@@ -795,7 +798,7 @@ class Catalogos extends General {
         }
         return $respuestaArchivo;
     }
-    
+
     public function actualizarComprobacion($datos) {
 
         $consulta = $this->DB->consultaRegistro($datos);
@@ -807,13 +810,13 @@ class Catalogos extends General {
             return ['code' => 500, "error" => "Necesitas registrar comprobantes"];
         }
     }
-    
+
     public function terminarComprobante($datos) {
         $consulta = $this->DB->consultaRegistro($datos);
-        
-        if($consulta){
+
+        if ($consulta) {
             return ['code' => 200, "error" => true];
-        }else{
+        } else {
             return ['code' => 500, "error" => "No es posible teminar comprobacion"];
         }
     }

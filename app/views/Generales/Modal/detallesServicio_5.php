@@ -6,11 +6,6 @@
     </div>
 </div>
 <div class="row">
-    <!--        <div class="col-md-12">
-                <pre>
-    <?php // var_dump($datos); ?>
-                </pre>
-            </div>-->
     <div class="col-md-4 col-sm-4 col-xs-12">
         <h5 class="f-w-700">Id del Servicio</h5>
         <pre><?php echo $datos['Id']; ?></pre>
@@ -121,13 +116,13 @@ if (!in_array($datos['Firma'], ['', NULL])) {
 </div>
 <?php
 if ($datos['IdTipoTrafico'] == 1) {
-    if ($envio['TipoEnvio'] !== '') {
+    if ($envio[0]['TipoEnvio'] !== '') {
         ?>
-<div class="row">
-    <div class="col-md-4 col-sm-4 col-xs-12">
-        
-    </div>
-</div>
+        <div class="row">
+            <div class="col-md-4 col-sm-4 col-xs-12">
+
+            </div>
+        </div>
         <?php
     }
 } else {
