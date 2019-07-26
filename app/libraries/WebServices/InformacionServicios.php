@@ -605,23 +605,19 @@ class InformacionServicios extends General {
                                 cat_v3_tipos_falla
                             WHERE
                                 Id = tcd.IdTipoFalla) AS NombreTipoFalla,
-                        CASE tcd.IdComponente
-                            WHEN
-                                NOT NULL
-                            THEN
-                                (SELECT 
-                                        Nombre
-                                    FROM
-                                        cat_v3_fallas_refaccion
-                                    WHERE
-                                        Id = IdFalla)
-                            ELSE (SELECT 
+                        IF(tcd.IdComponente IS NULL,
+                            (SELECT 
                                     Nombre
                                 FROM
                                     cat_v3_fallas_equipo
                                 WHERE
-                                    Id = IdFalla)
-                        END as NombreFalla,
+                                    Id = IdFalla),
+                            (SELECT 
+                                    Nombre
+                                FROM
+                                    cat_v3_fallas_refaccion
+                                WHERE
+                                    Id = IdFalla)) AS NombreFalla,
                         (SELECT 
                                 Nombre
                             FROM
