@@ -1,18 +1,28 @@
 <div class="row m-t-20">
-    <div class="col-md-12">
+    <div class="col-md-7">
         <h3 class="m-t-10">Facturas Pendientes de Pago</h3>
     </div>
-    <!--Empezando Separador-->
+    <div class="col-md-5">
+        <div class="alert alert-info">
+            <i class=""fa fa-info-circle fa-fw></i>
+            <div id="divFecha"></div>
+        </div>
+    </div>
+</div>
+<!--Empezando Separador-->
+<div class="row">
     <div class="col-md-12">
         <div class="underline m-b-15 m-t-15"></div>
     </div>
 </div>
 
-<div class="row m-b-15 text-right">
-    <div class="btn-group">
-        <button id="btnSemanaAnterior" class="btn btn-white">Semana anterior</button>
-        <button id="btnSemanaActual" class="btn btn-white active">Esta semana</button>
-        <button id="btnSemanaSeguiente" class="btn btn-white">Proxima semana</button>
+<div class="row m-b-15">
+    <div class="col-md-12  text-right">
+        <div class="btn-group">
+            <button id="btnSemanaAnterior" class="btn btn-white"><i class="fa fa-chevron-left"></i> Semana anterior</button>
+            <button id="btnSemanaActual" class="btn btn-white active">Esta semana</button>
+            <button id="btnSemanaSeguiente" class="btn btn-white">Semana siguiente <i class="fa fa-chevron-right"></i></button>
+        </div>
     </div>
 </div>
 
@@ -24,6 +34,7 @@
                 <th class="all">Técnico</th>
                 <th class="all">Autorizado por</th>
                 <th class="all">Fecha</th>
+                <th class="all">Estatus</th>
             </tr>
         </thead>
         <tbody>
@@ -36,6 +47,7 @@
                     echo '<td>' . $value['Tecnico'] . '</td>';
                     echo '<td>' . $value['Autoriza'] . '</td>';
                     echo '<td>' . $value['Fecha'] . '</td>';
+                    echo '<td>' . $value['Estatus'] . '</td>';
                     echo '</tr>';
                 }
             }

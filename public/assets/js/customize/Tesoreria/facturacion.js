@@ -108,13 +108,40 @@ $(function () {
 
     $('#btnSemanaAnterior').off('click');
     $('#btnSemanaAnterior').on('click', function () {
-        console.log('pumas');
         $('#btnSemanaActual').removeClass('active');
-        var fechaSemana = $('#data-table-facturas-tesoreria').DataTable().data()[0][3];
-        var data = {fechaSemana: fechaSemana};
-        evento.enviarEvento('Facturacion/MostrarFacturasSemanaAnterior', data, '#panelFacturacionTesoreria', function (respuesta) {
-//            console.log(respuesta);
-//            recargandoTablaFacturasPago(respuesta);
+        if ($('#data-table-facturas-tesoreria').DataTable().data()[0] !== undefined) {
+            var fechaSemana = $('#data-table-facturas-tesoreria').DataTable().data()[0][3];
+            var data = {fechaSemana: fechaSemana};
+            evento.enviarEvento('Facturacion/MostrarFacturasSemanaAnterior', data, '#panelFacturacionTesoreria', function (respuesta) {
+                recargandoTablaFacturasPago(respuesta.consulta);
+                var textoFecha = 'Las facturas mostradas son del día <strong>' + respuesta.fechaSegunda + '</strong> al día <strong>' + respuesta.fechaPrimera + '</strong>.'
+                $('#divFecha').empty().append(textoFecha);
+            });
+        } else {
+            evento.enviarEvento('Facturacion/MostrarFacturasSemana', {}, '#panelFacturacionTesoreria', function (respuesta) {
+                recargandoTablaFacturasPago(respuesta);
+            });
+        }
+    });
+
+    $('#btnSemanaSeguiente').off('click');
+    $('#btnSemanaSeguiente').on('click', function () {
+        $('#btnSemanaActual').removeClass('active');
+        if ($('#data-table-facturas-tesoreria').DataTable().data()[0] !== undefined) {
+            var fechaSemana = $('#data-table-facturas-tesoreria').DataTable().data()[0][3];
+            var data = {fechaSemana: fechaSemana};
+            evento.enviarEvento('Facturacion/MostrarFacturasSemanaSiguiente', data, '#panelFacturacionTesoreria', function (respuesta) {
+                recargandoTablaFacturasPago(respuesta.consulta);
+                var textoFecha = 'Las facturas mostradas son del día <strong>' + respuesta.fechaSegunda + '</strong> al día <strong>' + respuesta.fechaPrimera + '</strong>.'
+                $('#divFecha').empty().append(textoFecha);
+            });
+        }
+    });
+
+    $('#btnSemanaActual').off('click');
+    $('#btnSemanaActual').on('click', function () {
+        evento.enviarEvento('Facturacion/MostrarFacturasSemana', {}, '#panelFacturacionTesoreria', function (respuesta) {
+            recargandoTablaFacturasPago(respuesta);
         });
     });
 
@@ -381,9 +408,11 @@ $(function () {
         var respuesta = arguments[0];
 
         tabla.limpiarTabla('#data-table-facturas-tesoreria');
-        $.each(respuesta, function (key, valor) {
-            tabla.agregarFila('#data-table-facturas-tesoreria', [valor.Id, valor.Tecnico, valor.Autoriza, valor.Fecha, valor.MontoFactura], true);
-        });
+        if (respuesta !== undefined) {
+            $.each(respuesta, function (key, valor) {
+                tabla.agregarFila('#data-table-facturas-tesoreria', [valor.Id, valor.Tecnico, valor.Autoriza, valor.Fecha, valor.Estatus], true);
+            });
+        }
     };
 
     var botonRegresarFacturacion = function () {

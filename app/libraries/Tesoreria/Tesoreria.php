@@ -556,13 +556,38 @@ class Tesoreria extends General {
     }
 
     public function mostrarFacturasSemanaAnterior(array $datos) {
-//        var_dump($datos);
-        $consulta = $this->DBT->facturasTesoreria();
-//        $date = strtotime(date("Y-m-d"));
-//        $first = strtotime('last Sunday');
-//        var_dump(date('Y-m-d', $first));
-        var_dump($datos['fechaSemana'],strtotime("last Friday"));
-//        var_dump(date("Y-m-d", strtotime("last Friday")));
+        $viernes = date("Y-m-d", strtotime("last Friday", strtotime($datos['fechaSemana'])));
+        $viernesAnterior = date("Y-m-d", strtotime("last Friday", strtotime($viernes)));
+
+        $consulta = $this->DBT->facturasTesoreria(array(
+            'viernes' => $viernes,
+            'viernesAnterior' => $viernesAnterior));
+
+        if (!empty($consulta)) {
+            return array('consulta' => $consulta, 'fechaPrimera' => $viernes, 'fechaSegunda' => $viernesAnterior);
+        } else {
+            return array('consulta' => FALSE, 'fechaPrimera' => $viernesSiguiente, 'fechaSegunda' => $viernes);
+        }
+    }
+
+    public function mostrarFacturasSemanaSiguiente(array $datos) {
+        $viernes = date("Y-m-d", strtotime("next Friday", strtotime($datos['fechaSemana'])));
+        $viernesSiguiente = date("Y-m-d", strtotime("next Friday", strtotime($viernes)));
+
+        $consulta = $this->DBT->facturasTesoreria(array(
+            'viernes' => $viernesSiguiente,
+            'viernesAnterior' => $viernes));
+
+        if (!empty($consulta)) {
+            return array('consulta' => $consulta, 'fechaPrimera' => $viernesSiguiente, 'fechaSegunda' => $viernes);
+        } else {
+            return array('consulta' => FALSE, 'fechaPrimera' => $viernesSiguiente, 'fechaSegunda' => $viernes);
+        }
+    }
+
+    public function mostrarFacturasSemana() {
+        $consulta = $this->DBT->facturasTesoreriaPago();
+
         if (!empty($consulta)) {
             return $consulta;
         } else {

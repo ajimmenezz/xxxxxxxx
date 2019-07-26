@@ -62,7 +62,8 @@ class Modelo_Tesoreria extends Modelo_Base {
                                             nombreUsuario(tfod.IdUsuario) Tecnico,
                                             nombreUsuario(tfo.IdSupervisor) Autoriza,
                                             tfod.Fecha,
-                                            tfod.MontoFactura
+                                            tfod.MontoFactura,
+                                            estatus(tfo.IdEstatus) AS Estatus
                                         FROM t_facturacion_outsourcing_documentacion tfod
                                         INNER JOIN t_facturacion_outsourcing tfo
                                         ON tfod.IdVuelta = tfo.Id
@@ -81,19 +82,21 @@ class Modelo_Tesoreria extends Modelo_Base {
                                         GROUP BY tfod.XML');
         return $consulta;
     }
-    
-    public function facturasTesoreria() {
+
+    public function facturasTesoreria(array $datos) {
         $consulta = $this->consulta('SELECT 
                                         tfod.Id,
                                         nombreUsuario(tfod.IdUsuario) Tecnico,
                                         nombreUsuario(tfo.IdSupervisor) Autoriza,
                                         tfod.Fecha,
                                         tfod.MontoFactura,
-                                            estatus(tfo.IdEstatus)
+                                        estatus(tfo.IdEstatus) AS Estatus
                                     FROM
                                         t_facturacion_outsourcing_documentacion tfod
                                             INNER JOIN
                                         t_facturacion_outsourcing tfo ON tfod.IdVuelta = tfo.Id
+                                        WHERE
+                                        tfod.Fecha BETWEEN "' . $datos['viernesAnterior'] . '" AND "' . $datos['viernes'] . '"
                                     GROUP BY tfod.XML');
         return $consulta;
     }
@@ -221,7 +224,7 @@ class Modelo_Tesoreria extends Modelo_Base {
 
         return $consulta;
     }
-    
+
     public function vueltasFacturasOutsourcingServicio(string $servicio) {
         $consulta = $this->consulta('SELECT 
                                             Vuelta
@@ -923,8 +926,6 @@ class Modelo_Tesoreria extends Modelo_Base {
                     "FechaAutorizacion" => $this->getFecha(),
                     "IdUsuarioAutoriza" => $this->usuario['Id']
                 ]);
-                
-                
             } else {
                 $saldo = $this->getSaldoByUsuario($generales['IdUsuarioFF']);
                 $saldoGasolina = $this->getSaldoGasolinaByUsuario($generales['IdUsuarioFF']);
