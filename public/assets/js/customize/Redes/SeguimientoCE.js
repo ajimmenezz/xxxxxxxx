@@ -2,44 +2,90 @@ $(function () {
 
     peticion = new Utileria();
     modal = new Modal();
-    
+
     evento = new Base();
     evento.horaServidor($('#horaServidor').val());
     evento.cerrarSesion();
     evento.mostrarAyuda('Ayuda_Proyectos');
     App.init();
-    
+
+    let tablaPrincipal = new TablaBasica('table-ServiciosGeneralesRedes');
     let tablaNodos = new TablaBasica('table-nodo');
     let tablaMateriales = new TablaBasica('table-material');
     let tablaAgregarMateriales = new TablaBasica('table-materalNodo');
-    
+    let datoServicio = {
+        id: null,
+        folio: null,
+        ticket: null,
+        servicio: null
+    }
+
+    tablaPrincipal.evento(function () {
+        let datosFila = tablaPrincipal.datosFila(this);
+        let tamañoDatosFila = 0;
+        $.each(datosFila, function () {
+            tamañoDatosFila += 1;
+        });
+        datoServicio.id = datosFila[0];
+        datoServicio.folio = datosFila[1];
+        datoServicio.ticket = datosFila[2];
+        datoServicio.servicio = datosFila[3];
+        if (datosFila[tamañoDatosFila - 1] === "ABIERTO") {
+            modal.mostrarModal('Iniciar Servicio', '<h3>¿Quieres atender el servicio?</h3>');
+            $('#btnModalConfirmar').on('click', function () {
+                peticion.enviar('contentServiciosGeneralesRedes0', 'CONTROLLER', datoServicio, function (respuesta) {
+                    modal.cerrarModal();
+                    console.log(respuesta)
+                });
+            });
+        } else {
+            $('#contentServiciosGeneralesRedes').addClass('hidden');
+            $('#contentServiciosRedes').removeClass('hidden');
+            if (datosFila[1] != 0 && datosFila[1] != null) {
+                $('#addFolio').val(datosFila[1]);
+                elementosAgregarFolio();
+                elementosGuerdarFolio();
+            }
+            $('html, body').animate({
+                scrollTop: $("#contentServiciosRedes").offset().top - 50
+            }, 600);
+        }
+    });
+
     /**Empiezan eventos de botones del encabezado**/
     $('#btnRegresar').on('click', function () {
-        console.log('btnRegresar')
+        location.reload();
     });
 
     $('#btnEditarServicio').on('click', function () {
         console.log('btnEditarServicio')
     });
     $('#btnAgregarFolio').on('click', function () {
+        elementosAgregarFolio();
+    });
+
+    function elementosAgregarFolio() {
         $('#infoServicio').removeClass('col-md-12');
         $('#infoServicio').addClass('col-md-6');
         $('#btnAgregarFolio').addClass('hidden');
         $('#agregarFolio').removeClass('hidden');
-    });
+    }
     /**Finalizan eventos de botones del encabezado**/
 
     /**Empiezan eventos de botones para folio**/
     $('#guardarFolio').on('click', function () {
         if (evento.validarFormulario('#folio')) {
             let folio = $('#addFolio').val();
-            $('#infoFolio').removeClass('hidden');
-            $('#editarFolio').removeClass('hidden');
-            $('#eliminarFolio').removeClass('hidden');
-            $('#guardarFolio').addClass('hidden');
-            $('#cancelarFolio').addClass('hidden');
+            elementosGuerdarFolio();
         }
     });
+    function elementosGuerdarFolio() {
+        $('#infoFolio').removeClass('hidden');
+        $('#editarFolio').removeClass('hidden');
+        $('#eliminarFolio').removeClass('hidden');
+        $('#guardarFolio').addClass('hidden');
+        $('#cancelarFolio').addClass('hidden');
+    }
     $('#editarFolio').on('click', function () {
         console.log('editarFolio')
     });

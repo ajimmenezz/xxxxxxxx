@@ -44,6 +44,7 @@ class Secciones extends General
     private $fondoFijo;
     private $instalaciones;
     private $prime;
+    private $seccionCE;
 
     public function __construct()
     {
@@ -92,6 +93,7 @@ class Secciones extends General
         $this->fondoFijo = \Librerias\FondoFijo\FondoFijo::factory();
         $this->instalaciones = \Librerias\Instalaciones\Instalaciones::factory();
         $this->prime = \Librerias\Prime\Inventario::factory();
+        $this->seccionCE = \Librerias\V2\PaquetesTicket\GestorServicios::factory();
     }
 
     /*
@@ -548,6 +550,10 @@ class Secciones extends General
                 break;
             case 'Prime/Inventario':
                 $datos['Sucursales'] = $this->prime->getSucursalesPrime();
+                break;
+            case 'Redes/SeguimientoCE':
+                $datos['servicios'] = $this->seccionCE->getDatosServicios();
+                $datos['rol'] = $this->seccionCE->getRol();
                 break;
             default:
                 break;

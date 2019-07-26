@@ -23,17 +23,52 @@
                     <table id="table-ServiciosGeneralesRedes" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
                         <thead>
                             <tr>
-                                <th class="all">Ticket</th>
+                                <th class="never">Id</th>
+                                <th class="all">Folio</th>
+                                <th class="never">Ticket</th>
+                                <th class="never">Solicitud</th>
                                 <th class="all">Servicio</th>
-                                <th class="all"></th>
+                                <th class="all">Fecha de Creación</th>
+                                <?php
+                                if ($datos['rol'] == "Jefe") {
+                                    echo '<th class="all">Técnico</th>';
+                                }
+                                ?>
+                                <th class="all">Descripción</th>
+                                <th class="all">Estatus</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th>Platino</th>
-                                <th>Platino</th>
-                                <th>Platino</th>
-                            </tr>
+                            <?php
+                            foreach ($datos['servicios'] as $valor) {
+                                if ($datos['rol'] == "Jefe") {
+                                    foreach ($valor as $dato) {
+                                        echo '<tr>
+                                                <th>' . $dato['Id'] . '</th>
+                                                <th>' . $dato['Folio'] . '</th>
+                                                <th>' . $dato['Ticket'] . '</th>
+                                                <th>' . $dato['IdSolicitud'] . '</th>
+                                                <th>' . $dato['TipoServicio'] . '</th>
+                                                <th>' . $dato['FechaCreacion'] . '</th>
+                                                <th>' . $dato['Atiende'] . '</th>
+                                                <th>' . $dato['Descripcion'] . '</th>
+                                                <th>' . $dato['Estatus'] . '</th>
+                                            </tr>';
+                                    }
+                                }else{
+                                    echo '<tr>
+                                            <th>' . $valor['Id'] . '</th>
+                                            <th>' . $valor['Folio'] . '</th>
+                                            <th>' . $valor['Ticket'] . '</th>
+                                            <th>' . $valor['IdSolicitud'] . '</th>
+                                            <th>' . $valor['TipoServicio'] . '</th>
+                                            <th>' . $valor['FechaCreacion'] . '</th>
+                                            <th>' . $valor['Descripcion'] . '</th>
+                                            <th>' . $valor['Estatus'] . '</th>
+                                        </tr>';
+                                }
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -46,7 +81,7 @@
 </div>
 
 
-<div id="contentServiciosRedes">
+<div id="contentServiciosRedes" class="hidden">
     <!--Empieza contenido general-->
     <div id="content" class="content">
         <div id="panelServiciosGeneralesRedes" class="panel panel-inverse">
