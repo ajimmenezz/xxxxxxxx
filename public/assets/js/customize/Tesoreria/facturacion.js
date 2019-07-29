@@ -108,49 +108,48 @@ $(function () {
 
     $('#btnSemanaAnterior').off('click');
     $('#btnSemanaAnterior').on('click', function () {
+        var fechaInicial = $('#divFecha').attr('data-fecha-inicial');
+        var data = {fechaInicial: fechaInicial};
+        
         $('#btnSemanaActual').removeClass('active');
-        if ($('#data-table-facturas-tesoreria').DataTable().data()[0] !== undefined) {
-            var fechaSemana = $('#data-table-facturas-tesoreria').DataTable().data()[0][3];
-            var data = {fechaSemana: fechaSemana};
-            evento.enviarEvento('Facturacion/MostrarFacturasSemanaAnterior', data, '#panelFacturacionTesoreria', function (respuesta) {
-                recargandoTablaFacturasPago(respuesta.consulta);
-                var textoFecha = 'Las facturas mostradas son del día <strong>' + respuesta.fechaSegunda + '</strong> al día <strong>' + respuesta.fechaPrimera + '</strong>.'
-                $('#divFecha').empty().append(textoFecha);
-            });
-        } else {
-            evento.enviarEvento('Facturacion/MostrarFacturasSemana', {}, '#panelFacturacionTesoreria', function (respuesta) {
-                recargandoTablaFacturasPago(respuesta);
-            });
-        }
+        evento.enviarEvento('Facturacion/MostrarFacturasSemanaAnterior', data, '#panelFacturacionTesoreria', function (respuesta) {
+            recargandoTablaFacturasPago(respuesta.consulta);
+            recargarFechasFiltros(respuesta[0]);
+        });
     });
 
     $('#btnSemanaSeguiente').off('click');
     $('#btnSemanaSeguiente').on('click', function () {
+        var fechaFinal = $('#divFecha').attr('data-fecha-final');
+        var data = {fechaFinal: fechaFinal};
+        
         $('#btnSemanaActual').removeClass('active');
-        if ($('#data-table-facturas-tesoreria').DataTable().data()[0] !== undefined) {
-            var fechaSemana = $('#data-table-facturas-tesoreria').DataTable().data()[0][3];
-            var data = {fechaSemana: fechaSemana};
-            evento.enviarEvento('Facturacion/MostrarFacturasSemanaSiguiente', data, '#panelFacturacionTesoreria', function (respuesta) {
-                recargandoTablaFacturasPago(respuesta.consulta);
-                var textoFecha = 'Las facturas mostradas son del día <strong>' + respuesta.fechaSegunda + '</strong> al día <strong>' + respuesta.fechaPrimera + '</strong>.'
-                $('#divFecha').empty().append(textoFecha);
-            });
-        }
+        evento.enviarEvento('Facturacion/MostrarFacturasSemanaSiguiente', data, '#panelFacturacionTesoreria', function (respuesta) {
+            recargandoTablaFacturasPago(respuesta.consulta);
+            recargarFechasFiltros(respuesta[0]);
+        });
     });
 
     $('#btnSemanaActual').off('click');
     $('#btnSemanaActual').on('click', function () {
         evento.enviarEvento('Facturacion/MostrarFacturasSemana', {}, '#panelFacturacionTesoreria', function (respuesta) {
-            recargandoTablaFacturasPago(respuesta);
+            recargandoTablaFacturasPago(respuesta.consulta);
+            recargarFechasFiltros(respuesta[0]);
         });
     });
+
+    var recargarFechasFiltros = function (respuesta) {
+        var textoFecha = 'Del día <strong>' + respuesta['fechaInicial'] + '</strong> al día <strong>' + respuesta['fechaFinal'] + '</strong>.'
+        $('#divFecha').empty().append(textoFecha);
+        $('#divFecha').attr('data-fecha-inicial', respuesta['fechaInicial']);
+        $('#divFecha').attr('data-fecha-final', respuesta['fechaFinal']);
+    }
 
     var cargarSeccionFacturacion = function () {
         var respuesta = arguments[0];
         $('#listaFacturas').addClass('hidden');
         $('#seccionProcesoFacturacion').removeClass('hidden').empty().append(respuesta.formulario);
         $('#btnRegresarFacturacionTesoreria').removeClass('hidden');
-
     }
 
     var cargarElementosFormularioSubirFactura = function () {

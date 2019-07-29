@@ -5,7 +5,8 @@
     <div class="col-md-5">
         <div class="alert alert-info">
             <i class=""fa fa-info-circle fa-fw></i>
-            <div id="divFecha"></div>
+            <div id="divFecha" data-fecha-inicial='<?php echo $facturasTesoreriaPago[0]['fechaInicial']; ?>' data-fecha-final='<?php echo $facturasTesoreriaPago[0]['fechaFinal']; ?>'>
+                Del día <strong><?php echo $facturasTesoreriaPago[0]['fechaInicial']; ?></strong> al día <strong><?php echo $facturasTesoreriaPago[0]['fechaFinal']; ?></strong>.</div>
         </div>
     </div>
 </div>

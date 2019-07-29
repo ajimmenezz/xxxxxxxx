@@ -556,43 +556,50 @@ class Tesoreria extends General {
     }
 
     public function mostrarFacturasSemanaAnterior(array $datos) {
-        $viernes = date("Y-m-d", strtotime("last Friday", strtotime($datos['fechaSemana'])));
-        $viernesAnterior = date("Y-m-d", strtotime("last Friday", strtotime($viernes)));
-
-        $consulta = $this->DBT->facturasTesoreria(array(
-            'viernes' => $viernes,
-            'viernesAnterior' => $viernesAnterior));
+        $fechasFiltros = $this->filtrosSemanaAnterior($datos['fechaInicial']);
+        $consulta = $this->DBT->facturasTesoreria($fechasFiltros);
 
         if (!empty($consulta)) {
-            return array('consulta' => $consulta, 'fechaPrimera' => $viernes, 'fechaSegunda' => $viernesAnterior);
+            return array('consulta' => $consulta, $fechasFiltros);
         } else {
-            return array('consulta' => FALSE, 'fechaPrimera' => $viernesSiguiente, 'fechaSegunda' => $viernes);
+            return array('consulta' => FALSE, $fechasFiltros);
         }
     }
 
     public function mostrarFacturasSemanaSiguiente(array $datos) {
-        $viernes = date("Y-m-d", strtotime("next Friday", strtotime($datos['fechaSemana'])));
-        $viernesSiguiente = date("Y-m-d", strtotime("next Friday", strtotime($viernes)));
-
-        $consulta = $this->DBT->facturasTesoreria(array(
-            'viernes' => $viernesSiguiente,
-            'viernesAnterior' => $viernes));
+        $fechaFiltros = $this->filtrosSemanaSiguiente($datos['fechaFinal']);
+        $consulta = $this->DBT->facturasTesoreria($fechaFiltros);
 
         if (!empty($consulta)) {
-            return array('consulta' => $consulta, 'fechaPrimera' => $viernesSiguiente, 'fechaSegunda' => $viernes);
+            return array('consulta' => $consulta, $fechaFiltros);
         } else {
-            return array('consulta' => FALSE, 'fechaPrimera' => $viernesSiguiente, 'fechaSegunda' => $viernes);
+            return array('consulta' => FALSE, $fechaFiltros);
         }
     }
 
     public function mostrarFacturasSemana() {
         $consulta = $this->DBT->facturasTesoreriaPago();
+        $fechaFiltros = array('fechaInicial' => $consulta[0]['fechaInicial'], 'fechaFinal' => $consulta[0]['fechaFinal']);
 
         if (!empty($consulta)) {
-            return $consulta;
+            return array('consulta' => $consulta, $fechaFiltros);
         } else {
-            return FALSE;
+            return array('consulta' => FALSE, $fechaFiltros);
         }
+    }
+
+    private function filtrosSemanaAnterior(string $fecha) {
+        $fechaInicial = date("Y-m-d", strtotime("-7 day", strtotime($fecha)));
+        $fechaFinal = date("Y-m-d", strtotime("-0 day", strtotime($fecha)));
+
+        return array('fechaInicial' => $fechaInicial . ' 16:01:00', 'fechaFinal' => $fechaFinal . ' 16:00:00');
+    }
+
+    private function filtrosSemanaSiguiente(string $fecha) {
+        $fechaInicial = date("Y-m-d", strtotime("-0 day", strtotime($fecha)));
+        $fechaFinal = date("Y-m-d", strtotime("+7 day", strtotime($fecha)));
+
+        return array('fechaInicial' => $fechaInicial . ' 16:01:00', 'fechaFinal' => $fechaFinal . ' 16:00:00');
     }
 
 }
