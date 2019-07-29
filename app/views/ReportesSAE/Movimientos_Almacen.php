@@ -5,7 +5,7 @@
     <!-- Finalizando titulo de la pagina -->
 
     <div id="seccion-movimientos-almacenes-SAE" class="panel panel-inverse borde-sombra">
-        <!--Empezando cabecera del panel-->        
+        <!--Empezando cabecera del panel-->
         <div class="panel-heading">
             <div class="panel-heading-btn">
                 <div class="btn-group">
@@ -18,7 +18,7 @@
                 </div>
             </div>
             <h4 class="panel-title">Movimientos en Almacenes</h4>
-        </div>        
+        </div>
         <!--Finalizando cabecera del panel-->
         <!--Empezando cuerpo del panel-->
         <div class="panel-body">
@@ -40,7 +40,7 @@
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
                         </div>
-                    </div>  
+                    </div>
                 </div>
                 <div class="col-md-4 col-sm-5 col-xs-12">
                     <div class="form-group">
@@ -51,9 +51,17 @@
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
                         </div>
-                    </div>     
+                    </div>
                 </div>
                 <div class="col-md-4 col-sm-5 col-xs-12">
+                    <div class="form-group">
+                        <label>Producto o clave *</label>
+                        <input class="form-control" type="text" id="txtArticulo" placeholder="bobina" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6 col-xs-offset-0 col-xs-12">
                     <div class="form-group">
                         <label style="color: transparent !important;">*</label>
                         <a id="btnFiltrarMovimientos" class="btn btn-info btn-block f-s-13 f-w-600">Filtrar Movimientos</a>
