@@ -106,11 +106,11 @@ class Modelo_PrinterLexmark extends Modelo_Base
         tf.Impresiones as ImpresionesTotales,
         DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion)) as DiasTotales,
         if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion) as FechaInstalacion,
-        tf.Impresiones / DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion)) as ImpresionesPromedioDiarias,        
+        ceil(tf.Impresiones / DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion))) as ImpresionesPromedioDiarias,        
         tf.ImpresionesRestantes,
         tf.CapacidadCartuchoNegro as CapacidadToner,
         tf.NivelCartuchoNegro / 100 as PorcentajeRestante,
-        FLOOR(tf.ImpresionesRestantes / tf.Impresiones / DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion))) as DiasCubiertos,
+        FLOOR(tf.ImpresionesRestantes / (tf.Impresiones / DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion)))) as DiasCubiertos,
         DATE_ADD(now(),INTERVAL FLOOR(tf.ImpresionesRestantes / tf.Impresiones / DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion))) DAY) as FechaTentativaCambio,
         DATE_ADD(now(),INTERVAL FLOOR(tf.ImpresionesRestantes / tf.Impresiones / DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion))) - 5 DAY) as FechaTentativaEnvio
         from (
