@@ -164,10 +164,10 @@ class MailReader
 
         $bodyMail = $this->Correo->mensajeCorreo($titulo, $texto);
         $mails = [
-            'osoto@siccob.com.mx',
-            'aserrano@siccob.com.mx',
-            'gayala@siccob.com.mx',
-            'vmojica@siccob.com.mx',
+            // 'osoto@siccob.com.mx',
+            // 'aserrano@siccob.com.mx',
+            // 'gayala@siccob.com.mx',
+            // 'vmojica@siccob.com.mx',
             'ajimenez@siccob.com.mx'
         ];
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $mails, $titulo, $bodyMail);

@@ -106,20 +106,19 @@ class Modelo_PrinterLexmark extends Modelo_Base
         tf.Impresiones as ImpresionesTotales,
         DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion)) as DiasTotales,
         if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion) as FechaInstalacion,
-        CEILING(tf.ImpresionesPromedioDiarias) ImpPromedioDiarias,
+        tf.Impresiones / DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion)) as ImpresionesPromedioDiarias,        
         tf.ImpresionesRestantes,
         tf.CapacidadCartuchoNegro as CapacidadToner,
         tf.NivelCartuchoNegro / 100 as PorcentajeRestante,
-        FLOOR(tf.ImpresionesRestantes / tf.ImpresionesPromedioDiarias) as DiasCubiertos,
-        DATE_ADD(now(),INTERVAL FLOOR(tf.ImpresionesRestantes / tf.ImpresionesPromedioDiarias) DAY) as FechaTentativaCambio,
-        DATE_ADD(now(),INTERVAL FLOOR(tf.ImpresionesRestantes / tf.ImpresionesPromedioDiarias) - 5 DAY) as FechaTentativaEnvio
+        FLOOR(tf.ImpresionesRestantes / tf.Impresiones / DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion))) as DiasCubiertos,
+        DATE_ADD(now(),INTERVAL FLOOR(tf.ImpresionesRestantes / tf.Impresiones / DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion))) DAY) as FechaTentativaCambio,
+        DATE_ADD(now(),INTERVAL FLOOR(tf.ImpresionesRestantes / tf.Impresiones / DATEDIFF(now(),if(tf.FechaInstalacion is null or tf.FechaInstalacion = '',tf.FechaInstalacionMV,tf.FechaInstalacion))) - 5 DAY) as FechaTentativaEnvio
         from (
             select
             tld.IP,
             tld.Contacto as Sucursal,
             tld.CarasCargadas as Impresiones,	
-            (tld.CapacidadCartuchoNegro * tld.NivelCartuchoNegro) / 100 as ImpresionesRestantes,
-            tld.CarasCargadas / DATEDIFF(now(),tld.FechaInstalacion) as ImpresionesPromedioDiarias,	
+            (tld.CapacidadCartuchoNegro * tld.NivelCartuchoNegro) / 100 as ImpresionesRestantes,            
             (
                 select
                 FechaConclusion
