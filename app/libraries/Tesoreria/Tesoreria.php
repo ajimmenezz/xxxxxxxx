@@ -161,7 +161,7 @@ class Tesoreria extends General {
         return array('formulario' => parent::getCI()->load->view('/Tesoreria/Formularios/FormularioValidarVuelta', $data, TRUE), 'datos' => $data);
     }
 
-    public function formularioPago(array $datos) {       
+    public function formularioPago(array $datos) {
         $rutaActual = getcwd();
         $data = array();
         $data['datosFactura'] = $this->DBT->consultaFacturaOutsourcingDocumantacion($datos['id']);
@@ -553,6 +553,53 @@ class Tesoreria extends General {
 
     public function combinarFacturasActivas() {
         
+    }
+
+    public function mostrarFacturasSemanaAnterior(array $datos) {
+        $fechasFiltros = $this->filtrosSemanaAnterior($datos['fechaInicial']);
+        $consulta = $this->DBT->facturasTesoreria($fechasFiltros);
+
+        if (!empty($consulta)) {
+            return array('consulta' => $consulta, $fechasFiltros);
+        } else {
+            return array('consulta' => FALSE, $fechasFiltros);
+        }
+    }
+
+    public function mostrarFacturasSemanaSiguiente(array $datos) {
+        $fechaFiltros = $this->filtrosSemanaSiguiente($datos['fechaFinal']);
+        $consulta = $this->DBT->facturasTesoreria($fechaFiltros);
+
+        if (!empty($consulta)) {
+            return array('consulta' => $consulta, $fechaFiltros);
+        } else {
+            return array('consulta' => FALSE, $fechaFiltros);
+        }
+    }
+
+    public function mostrarFacturasSemana() {
+        $consulta = $this->DBT->facturasTesoreriaPago();
+        $fechaFiltros = array('fechaInicial' => $consulta[0]['fechaInicial'], 'fechaFinal' => $consulta[0]['fechaFinal']);
+
+        if (!empty($consulta)) {
+            return array('consulta' => $consulta, $fechaFiltros);
+        } else {
+            return array('consulta' => FALSE, $fechaFiltros);
+        }
+    }
+
+    private function filtrosSemanaAnterior(string $fecha) {
+        $fechaInicial = date("Y-m-d", strtotime("-7 day", strtotime($fecha)));
+        $fechaFinal = date("Y-m-d", strtotime("-0 day", strtotime($fecha)));
+
+        return array('fechaInicial' => $fechaInicial . ' 16:01:00', 'fechaFinal' => $fechaFinal . ' 16:00:00');
+    }
+
+    private function filtrosSemanaSiguiente(string $fecha) {
+        $fechaInicial = date("Y-m-d", strtotime("-0 day", strtotime($fecha)));
+        $fechaFinal = date("Y-m-d", strtotime("+7 day", strtotime($fecha)));
+
+        return array('fechaInicial' => $fechaInicial . ' 16:01:00', 'fechaFinal' => $fechaFinal . ' 16:00:00');
     }
 
 }

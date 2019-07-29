@@ -71,6 +71,15 @@ class Controller_Tesoreria extends Base {
             case 'CombinarFacturasActivas':
                 $resultado = $this->tesoreria->combinarFacturasActivas();
                 break;
+            case 'MostrarFacturasSemanaAnterior':
+                $resultado = $this->tesoreria->mostrarFacturasSemanaAnterior($this->input->post());
+                break;
+            case 'MostrarFacturasSemanaSiguiente':
+                $resultado = $this->tesoreria->mostrarFacturasSemanaSiguiente($this->input->post());
+                break;
+            case 'MostrarFacturasSemana':
+                $resultado = $this->tesoreria->mostrarFacturasSemana();
+                break;
             default:
                 $resultado = FALSE;
                 break;

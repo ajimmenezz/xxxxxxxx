@@ -106,12 +106,50 @@ $(function () {
         }
     });
 
+    $('#btnSemanaAnterior').off('click');
+    $('#btnSemanaAnterior').on('click', function () {
+        var fechaInicial = $('#divFecha').attr('data-fecha-inicial');
+        var data = {fechaInicial: fechaInicial};
+        
+        $('#btnSemanaActual').removeClass('active');
+        evento.enviarEvento('Facturacion/MostrarFacturasSemanaAnterior', data, '#panelFacturacionTesoreria', function (respuesta) {
+            recargandoTablaFacturasPago(respuesta.consulta);
+            recargarFechasFiltros(respuesta[0]);
+        });
+    });
+
+    $('#btnSemanaSeguiente').off('click');
+    $('#btnSemanaSeguiente').on('click', function () {
+        var fechaFinal = $('#divFecha').attr('data-fecha-final');
+        var data = {fechaFinal: fechaFinal};
+        
+        $('#btnSemanaActual').removeClass('active');
+        evento.enviarEvento('Facturacion/MostrarFacturasSemanaSiguiente', data, '#panelFacturacionTesoreria', function (respuesta) {
+            recargandoTablaFacturasPago(respuesta.consulta);
+            recargarFechasFiltros(respuesta[0]);
+        });
+    });
+
+    $('#btnSemanaActual').off('click');
+    $('#btnSemanaActual').on('click', function () {
+        evento.enviarEvento('Facturacion/MostrarFacturasSemana', {}, '#panelFacturacionTesoreria', function (respuesta) {
+            recargandoTablaFacturasPago(respuesta.consulta);
+            recargarFechasFiltros(respuesta[0]);
+        });
+    });
+
+    var recargarFechasFiltros = function (respuesta) {
+        var textoFecha = 'Del día <strong>' + respuesta['fechaInicial'] + '</strong> al día <strong>' + respuesta['fechaFinal'] + '</strong>.'
+        $('#divFecha').empty().append(textoFecha);
+        $('#divFecha').attr('data-fecha-inicial', respuesta['fechaInicial']);
+        $('#divFecha').attr('data-fecha-final', respuesta['fechaFinal']);
+    }
+
     var cargarSeccionFacturacion = function () {
         var respuesta = arguments[0];
         $('#listaFacturas').addClass('hidden');
         $('#seccionProcesoFacturacion').removeClass('hidden').empty().append(respuesta.formulario);
         $('#btnRegresarFacturacionTesoreria').removeClass('hidden');
-
     }
 
     var cargarElementosFormularioSubirFactura = function () {
@@ -369,9 +407,11 @@ $(function () {
         var respuesta = arguments[0];
 
         tabla.limpiarTabla('#data-table-facturas-tesoreria');
-        $.each(respuesta, function (key, valor) {
-            tabla.agregarFila('#data-table-facturas-tesoreria', [valor.Id, valor.Tecnico, valor.Autoriza, valor.Fecha, valor.MontoFactura], true);
-        });
+        if (respuesta !== undefined) {
+            $.each(respuesta, function (key, valor) {
+                tabla.agregarFila('#data-table-facturas-tesoreria', [valor.Id, valor.Tecnico, valor.Autoriza, valor.Fecha, valor.Estatus], true);
+            });
+        }
     };
 
     var botonRegresarFacturacion = function () {
