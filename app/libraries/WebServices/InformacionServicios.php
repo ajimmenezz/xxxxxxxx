@@ -935,7 +935,8 @@ class InformacionServicios extends General
 
         if (!empty($dataFolio[0]['Folio'])) {
             $datosSD = $this->ServiceDesk->getDetallesFolio($key, $dataFolio[0]['Folio']);
-            $datosResolucionSD = json_decode($this->ServiceDesk->getResolucionFolio($key, $dataFolio[0]['Folio']));
+//            $datosResolucionSD = json_decode($this->ServiceDesk->getResolucionFolio($key, $dataFolio[0]['Folio']));
+            $datosResolucionSD = $this->ServiceDesk->getResolucionFolio($key, $dataFolio[0]['Folio']);
 
             if (!empty($datosResolucionSD)) {
                 if ($datosResolucionSD->operation->result->status === 'Success') {
@@ -1097,7 +1098,7 @@ class InformacionServicios extends General
     {
         $key = $this->MSP->getApiKeyByUser($usuario);
         $result = $this->ServiceDesk->getTecnicosSD($key);
-        $result = json_decode($result);
+//        $result = json_decode($result);
 
         if ($result->operation->result->status !== 'Success') {
             $key = $this->MSP->getApiKeyByUser('2');

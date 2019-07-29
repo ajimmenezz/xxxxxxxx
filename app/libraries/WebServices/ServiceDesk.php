@@ -15,6 +15,7 @@ class ServiceDesk extends General {
     private $FIELDS;
     private $UrlUsers;
     private $modeloServiceDesck;
+    private $error;
 
     public function __construct() {
         parent::__construct();
@@ -24,15 +25,41 @@ class ServiceDesk extends General {
         $this->modeloServiceDesck = \Modelos\Modelo_ServiceDesk::factory();
     }
 
+    private function getErrorPHP($errno, $errstr, $errfile, $errline) {
+        $this->error = array();
+        switch ($errno) {
+            case E_WARNING:
+                $this->error['tipo'] = 'Warning';
+                $this->error['codigo'] = 'ESD001';
+                $this->error['error'] = $errstr;
+                $this->error['archivo'] = $errfile . ': linea : ' . $errline;
+                break;
+            case E_NOTICE:
+                $this->error['tipo'] = 'Notice';
+                $this->error['codigo'] = 'ESD002';
+                $this->error['error'] = $errstr;
+                $this->error['archivo'] = $errfile . ': linea : ' . $errline;
+                break;
+        }
+        throw new \Exception();
+    }
+
     /*
      * Encargado de obtener todos lo folios asiganados al tecnico
      * 
      */
 
     public function getFoliosTecnico(string $key) {
-        $input_data = '{"operation":{"details":{ "from": "0","limit": "5000","filterby": "All_Pending_User"}}}';
-        $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUESTS&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
-        return file_get_contents($this->Url . '?' . $this->FIELDS);
+        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
+        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
+        try {
+            $input_data = '{"operation":{"details":{ "from": "0","limit": "5000","filterby": "All_Pending_User"}}}';
+            $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUESTS&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
+            return json_decode(file_get_contents($this->Url . '?' . $this->FIELDS));
+        } catch (\Exception $ex) {
+            return $this->error;
+        }
+        restore_error_handler();
     }
 
     /*
@@ -41,20 +68,15 @@ class ServiceDesk extends General {
      */
 
     public function getDetallesFolio(string $key, string $folio) {
-        $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST&TECHNICIAN_KEY=' . $key;
-        if (stristr($this->Url . '/' . $folio . '?' . $this->FIELDS, 'HTTP request failed!') === FALSE) {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $this->Url . '/' . $folio . '?' . $this->FIELDS);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->FIELDS);
-            $return = curl_exec($ch);
-            curl_close($ch);
-
-            return json_decode($return);
-        } else {
-            return '';
+        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
+        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
+        try {
+            $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST&TECHNICIAN_KEY=' . $key;
+            return json_decode(file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS));
+        } catch (\Exception $ex) {
+            return $this->error;
         }
+        restore_error_handler();
     }
 
     /*
@@ -63,18 +85,15 @@ class ServiceDesk extends General {
      */
 
     public function getResolucionFolio(string $key, string $folio) {
-        $this->FIELDS = 'format=json&OPERATION_NAME=GET_RESOLUTION&TECHNICIAN_KEY=' . $key;
-        if (stristr($this->Url . '/' . $folio . '?' . $this->FIELDS, 'HTTP request failed!') === FALSE) {
-            $json = json_decode(@file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS));
-
-            if (!empty($json)) {
-                return file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS);
-            } else {
-                return '';
-            }
-        } else {
-            return '';
+        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
+        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
+        try {
+            $this->FIELDS = 'format=json&OPERATION_NAME=GET_RESOLUTION&TECHNICIAN_KEY=' . $key;
+            return json_decode(file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS));
+        } catch (\Exception $ex) {
+            return $this->error;
         }
+        restore_error_handler();
     }
 
     /*
@@ -83,18 +102,17 @@ class ServiceDesk extends General {
      */
 
     public function getTecnicosSD(string $key) {
-        $Url2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/technician";
-        $input_data = '{"operation":{"details":{ "parameter": { "name":"department", "value" : ""}}}}';
-        $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $Url2 . '?' . $this->FIELDS);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->FIELDS);
-        $return = curl_exec($ch);
-        curl_close($ch);
-        return $return;
+        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
+        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
+        try {
+            $Url2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/technician";
+            $input_data = '{"operation":{"details":{ "parameter": { "name":"department", "value" : ""}}}}';
+            $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
+            return json_decode(file_get_contents($Url2 . '/?' . $this->FIELDS));
+        } catch (\Exception $ex) {
+            return $this->error;
+        }
+        restore_error_handler();
     }
 
     /*
