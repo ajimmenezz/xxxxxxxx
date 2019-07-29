@@ -552,8 +552,7 @@ class Secciones extends General
                 $datos['Sucursales'] = $this->prime->getSucursalesPrime();
                 break;
             case 'Redes/SeguimientoCE':
-                $datos['servicios'] = $this->seccionCE->getDatosServicios();
-                $datos['rol'] = $this->seccionCE->getRol();
+                $datos['infoServicios'] = $this->seccionCE->getDatosServicios();
                 break;
             default:
                 break;

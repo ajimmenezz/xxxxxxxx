@@ -30,7 +30,7 @@
                                 <th class="all">Servicio</th>
                                 <th class="all">Fecha de Creación</th>
                                 <?php
-                                if ($datos['rol'] == "Jefe") {
+                                if ($datos['infoServicios']['rol'] == "Jefe") {
                                     echo '<th class="all">Técnico</th>';
                                 }
                                 ?>
@@ -40,8 +40,8 @@
                         </thead>
                         <tbody>
                             <?php
-                            foreach ($datos['servicios'] as $valor) {
-                                if ($datos['rol'] == "Jefe") {
+                            foreach ($datos['infoServicios']['servicios'] as $valor) {
+                                if ($datos['infoServicios']['rol'] == "Jefe") {
                                     foreach ($valor as $dato) {
                                         echo '<tr>
                                                 <th>' . $dato['Id'] . '</th>
@@ -55,7 +55,7 @@
                                                 <th>' . $dato['Estatus'] . '</th>
                                             </tr>';
                                     }
-                                }else{
+                                } else {
                                     echo '<tr>
                                             <th>' . $valor['Id'] . '</th>
                                             <th>' . $valor['Folio'] . '</th>
@@ -282,7 +282,7 @@
                                     <i class="fa fa-toggle-off"></i> Sin Material
                                 </label>
                                 <label id="btnConMaterial" class="btn btn-primary btn-xs hidden">
-                                    Con Material <i class="fa fa-toggle-off fa-rotate-180"></i>
+                                    <i class="fa fa-toggle-off fa-rotate-180"></i> Con Material
                                 </label>
                             </div>
                             <h4>Datos de solución</h4>
@@ -450,14 +450,23 @@
                     </div>
                 </div>
                 <!--Finaliza seccion Nodos-->
-                <div id="eliminarNodo" class="hidden">
-                    <div class="form-group">
-                        <label>Swith</label>
-                        <select id="selectSwith" class="form-control" style="width: 100%" data-parsley-required="true">
-                            <option value="">Seleccionar</option>
-                        </select>
+                <!--Empieza seccion de botones-->
+                <div id="botones" class="text-center">
+                    <div class="col-md-12">
+                        <br><br>
+                        <div class="col-md-6">
+                            <label id="btnGuardar" class="btn btn-success">
+                                GUARDAR
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label id="btnConcluir" class="btn btn-danger">
+                                CONCLUIR
+                            </label>
+                        </div>
                     </div>
                 </div>
+                <!--Finaliza seccion de botones-->
             </div>
             <!--Finaliza Panel -->
         </div>

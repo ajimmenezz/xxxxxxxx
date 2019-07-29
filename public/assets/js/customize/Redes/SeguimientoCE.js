@@ -32,11 +32,9 @@ $(function () {
         datoServicio.servicio = datosFila[3];
         if (datosFila[tamañoDatosFila - 1] === "ABIERTO") {
             modal.mostrarModal('Iniciar Servicio', '<h3>¿Quieres atender el servicio?</h3>');
-            $('#btnModalConfirmar').on('click', function () {
-                peticion.enviar('contentServiciosGeneralesRedes0', 'CONTROLLER', datoServicio, function (respuesta) {
-                    modal.cerrarModal();
-                    console.log(respuesta)
-                });
+            $('#btnAceptar').on('click', function () {
+                atenderServicio(datoServicio);
+                
             });
         } else {
             $('#contentServiciosGeneralesRedes').addClass('hidden');
@@ -51,6 +49,13 @@ $(function () {
             }, 600);
         }
     });
+    
+    function atenderServicio(datoServicio){
+        peticion.enviar('contentServiciosGeneralesRedes0', 'CONTROLLER', datoServicio, function (respuesta) {
+                    modal.cerrarModal();
+                    console.log(respuesta)
+                });
+    }
 
     /**Empiezan eventos de botones del encabezado**/
     $('#btnRegresar').on('click', function () {
@@ -158,7 +163,7 @@ $(function () {
     $('#btnAgregarNodo').on('click', function () {
         let contenthtml = $('#materialNodo').html();
         modal.mostrarModal('Material', contenthtml);
-        $('#btnModalConfirmar').on('click', function () {
+        $('#btnAceptar').on('click', function () {
             modal.cerrarModal();
             console.log('btnAgregarNodo')
         });
@@ -171,26 +176,23 @@ $(function () {
     $('#editarNodo').on('click', function () {
         let contenthtml = $('#formAgregarNodo').html();
         modal.mostrarModal('Actualizar Nodo', contenthtml);
-        $('#btnModalConfirmar').on('click', function () {
+        $('#btnAceptar').on('click', function () {
             modal.cerrarModal();
             console.log('editarNodo')
-        });
-        $('#btnModalAbortar').on('click', function () {
-            modal.cerrarModal();
         });
     });
     $('#editarMaterial').on('click', function () {
         let contenthtml = $('#materialNodo').html();
         modal.mostrarModal('Material', contenthtml);
-        $('#btnModalConfirmar').on('click', function () {
+        $('#btnAceptar').on('click', function () {
             modal.cerrarModal();
             console.log('editarMaterial')
         });
     });
     $('#eliminarNodo').on('click', function () {
-        modal.mostrarModal('Eliminar Nodo', 'Al eliminar el nodo se borrara toda la información del material y de las evidencias<br>\n\
-                                            ¿Estas seguro de querer eliminar el nodo?');
-        $('#btnModalConfirmar').on('click', function () {
+        modal.mostrarModal('Eliminar Nodo', '<h4>Al eliminar el nodo se borrara toda la información del material y de las evidencias<br>\n\
+                                            ¿Estas seguro de querer eliminar el nodo?</h4>');
+        $('#btnAceptar').on('click', function () {
             modal.cerrarModal();
             console.log('eliminarNodo')
         });

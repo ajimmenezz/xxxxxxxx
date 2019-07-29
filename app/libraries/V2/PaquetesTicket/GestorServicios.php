@@ -15,16 +15,12 @@ Class GestorServicios {
         $rol = Usuario::getRol();
         
         if($rol == "Jefe"){
-            $servicios = $this->DBServicios->getServicios($idUsuario);
+            $informacion['servicios'] = $this->DBServicios->getServicios($idUsuario);
         }else{
-            $servicios = $this->DBServicios->getServiciosDeTecnico($idUsuario);
+            $informacion['servicios'] = $this->DBServicios->getServiciosDeTecnico($idUsuario);
         }
-        return $servicios;
-    }
-    
-    public function getRol() {
-        $rol = Usuario::getRol();
-        return $rol;
+        $informacion['rol'] = $rol;
+        return $informacion;
     }
     
     static public function factory($driver = null) {
