@@ -19,6 +19,8 @@ Class Modelo_GestorServicio extends Modelo_Base {
                 $datosServicio = $this->getServiciosDeTecnico($value['Id']);
                 array_push($totalServicios, $datosServicio);
             }
+            $miServicio = $this->getServiciosDeTecnico($idJefe);
+            array_push($totalServicios, $miServicio);
         } else {
             array_push($totalServicios, array(
                 'Error' => '404'

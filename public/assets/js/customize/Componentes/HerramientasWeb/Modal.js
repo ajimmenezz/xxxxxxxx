@@ -13,7 +13,7 @@ class Modal {
         $('#modal-dialogo .modal-title').empty().append(titulo).addClass(alinearTitulo);
         $('#modal-dialogo .modal-body').empty().append(contenido).addClass(alinearContenido);
         $('#modal-dialogo .modal-footer').empty().append('<a id="btnAceptar" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>\n\
-                                            <a id="btnCerrar" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"> Cerrar</a>').addClass(alinearContenido);
+                                            <a id="btnCerrar" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"> Cerrar</a>').addClass(alinearTitulo);
         
         $('#btnModalConfirmar').addClass('hidden');
         $('#btnModalAbortar').addClass('hidden');
