@@ -21,21 +21,18 @@ Class Usuario {
     }
     
     static public function getId() {
-        self::setDatos();
-        $rol = self::$datos['Id'];
-        return $rol;
+        self::setDatos();        
+        return self::$datos['Id'];
     }
     
     static public function getIdJefe() {
-        self::setDatos();
-        $rol = self::$datos['IdJefe'];
-        return $rol;
+        self::setDatos();        
+        return self::$datos['IdJefe'];
     }
     
     static public function getRol() {
-        self::setDatos();
-        $rol = self::$datos['Rol'];
-        return $rol;
+        self::setDatos();        
+        return self::$datos['Rol'];
     }
     
 }
