@@ -1,5 +1,5 @@
 <?php
-namespace Librerias\V2\PaquetesGenerales;
+namespace Librerias\V2\PaquetesGenerales\Utilerias;
 use CI_Controller;
 
 Class Usuario {
