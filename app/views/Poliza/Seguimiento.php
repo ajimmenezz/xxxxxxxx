@@ -21,19 +21,35 @@
                 <div class="col-md-12">
                     <div class="errorListaPoliza"></div>
                 </div>
-                <!--Finalizando Error-->
-                <div class="col-md-12">  
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <h3 class="m-t-10">Lista General de Tickets y Tareas Pendientes</h3>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="underline m-b-15 m-t-15"></div>
-                        </div>
-                        <!--Finalizando Separador-->
-                    </div>    
-                </div> 
             </div>
+
+            <div class="row">
+                <!--Finalizando Error-->
+                <div class="col-md-6">  
+                    <h3 class="m-t-10">Lista General de Tickets y Tareas Pendientes</h3>
+                </div>
+                <div class="col-xs-12 col-md-3 text-right">
+                    <a href="javascript:;" class="btn btn-info m-r-5 " id="btnMostrarServicios"><i class="fa fa-refresh"></i> Mostrar todos los tickets</a>
+                </div>
+                <div class="col-xs-12 col-md-3">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="inputBuscarFolio" placeholder="Folio"/>
+                            <span class="input-group-addon">
+                                <a href="javascript:;" class="btn btn-default btn-xs" id="btnBuscarFolio"><i class="fa fa-search"></i></a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="underline m-b-15 m-t-15"></div>
+                </div>
+                <!--Finalizando Separador-->
+            </div> 
+
             <div class="table-responsive">
                 <table id="data-table-poliza" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                     <thead>
@@ -62,7 +78,7 @@
                                 echo '<td>' . $value['Descripcion'] . '</td>';
                                 echo '<td>' . $value['NombreEstatus'] . '</td>';
                                 echo '<td>' . $value['IdEstatus'] . '</td>';
-                                ($value['Folio'] === '0') ? $folio = '' : $folio = $value['Folio']; 
+                                ($value['Folio'] === '0') ? $folio = '' : $folio = $value['Folio'];
                                 echo '<td>' . $folio . '</td>';
                                 echo '</tr>';
                             }

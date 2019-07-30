@@ -1,3 +1,12 @@
+<?php
+if (!empty($facturasTesoreriaPago)) {
+    $fechaInicial = $facturasTesoreriaPago[0]['fechaInicial'];
+    $fechaFinal = $facturasTesoreriaPago[0]['fechaFinal'];
+} else {
+    $fechaInicial = $facturasTesoreriaPagoJueves[0]['fechaInicial'];
+    $fechaFinal = $facturasTesoreriaPagoJueves[0]['fechaFinal'];
+}
+?>
 <div class="row m-t-20">
     <div class="col-md-7">
         <h3 class="m-t-10">Facturas Pendientes de Pago</h3>
@@ -5,8 +14,8 @@
     <div class="col-md-5">
         <div class="alert alert-info">
             <i class=""fa fa-info-circle fa-fw></i>
-            <div id="divFecha" data-fecha-inicial='<?php echo $facturasTesoreriaPago[0]['fechaInicial']; ?>' data-fecha-final='<?php echo $facturasTesoreriaPago[0]['fechaFinal']; ?>'>
-                Del día <strong><?php echo $facturasTesoreriaPago[0]['fechaInicial']; ?></strong> al día <strong><?php echo $facturasTesoreriaPago[0]['fechaFinal']; ?></strong>.</div>
+            <div id="divFecha" data-fecha-inicial='<?php echo $fechaInicial; ?>' data-fecha-final='<?php echo $fechaFinal; ?>'>
+                Del día <strong><?php echo $fechaInicial; ?></strong> al día <strong><?php echo $fechaFinal; ?></strong>.</div>
         </div>
     </div>
 </div>

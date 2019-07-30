@@ -76,6 +76,16 @@ class Modelo_Tesoreria extends Modelo_Base {
                                     GROUP BY tfod.XML');
         return $consulta;
     }
+    
+    public function facturasTesoreriaPagoJueves() {
+        $consulta = $this->consulta('SELECT 
+                                        fechaJuevesAnterior() AS fechaInicial,
+                                        fechaJuevesSiguiente() AS fechaFinal
+                                    FROM
+                                        t_facturacion_outsourcing_documentacion tfod
+                                        LIMIT 1');
+        return $consulta;
+    }
 
     public function facturasTesoreria(array $datos) {
         $consulta = $this->consulta('SELECT 
