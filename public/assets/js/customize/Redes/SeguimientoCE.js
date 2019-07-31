@@ -70,7 +70,7 @@ $(function () {
     });
 
     function atenderServicio(datoServicioTabla) {
-        peticion.enviar('contentServiciosGeneralesRedes0', 'CONTROLLER', datoServicioTabla, function (respuesta) {
+        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/atender', datoServicioTabla, function (respuesta) {
             modal.cerrarModal();
             console.log(respuesta)
         });
