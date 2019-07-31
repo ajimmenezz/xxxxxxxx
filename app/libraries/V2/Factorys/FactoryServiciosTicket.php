@@ -1,17 +1,31 @@
 <?php
 namespace Librerias\V2\Factorys;
-use Librerias\V2\PaquetesTickets\Interfaces\Servicio as Servicio;
-
+use Librerias\V2\PaquetesServicios\Servicio as Servicio;
+use Librerias\V2\PaquetesTicket\ServicioGeneralRedes as GeneralRedes;
 class FactoryServiciosTicket
 {
     private $instancia ;
+    private $servicio;
     
+    public function __contruct()
+    {
+        
+    }
     public function getInstancia(){
         
     }
-    
-    public function getServicio($tipo,$Servicio){
+
+    public function getServicio(string $tipo,string $idServicio){
         
+        switch ($tipo)
+        {
+            case 'ServicioGeneralRedes':
+                $this->servicio= new GeneralRedes();
+                break;
+        }
+
+        return $this->servicio;
     }
+    
 }
 

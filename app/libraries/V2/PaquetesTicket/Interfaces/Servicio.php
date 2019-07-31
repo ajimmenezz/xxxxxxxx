@@ -1,18 +1,16 @@
 <?php
 namespace Librerias\V2\PaquetesTicket\Interfaces;
 
-class Servicio
+
+interface Servicio
 {
-    public function setDatos()
-    {
-        
-    }
-    public function getDatos()
-    {
-        
-    }
-    public function setFolioServiceDesk(string $folio)
-    {
-        
-    }
+    
+    public function __construct(string $idServicio);
+   
+    public function setDatos();
+    
+    public function getDatos();
+   
+    public function setFolioServiceDesk(string $folio);
+
 }
