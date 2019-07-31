@@ -26,7 +26,7 @@ class ServiceDesk extends General {
     }
 
     private function getErrorPHP($errno, $errstr, $errfile, $errline) {
-        var_dump('cachando la excepcion');
+//        var_dump('cachando la excepcion');
         $this->error = array();
         switch ($errno) {
             case E_WARNING:
@@ -180,58 +180,126 @@ class ServiceDesk extends General {
      */
 
     public function setResolucionServiceDesk(string $key, string $folio, string $datos) {
-        $resolicionesAnteriores = json_decode($this->getResolucionFolio($key, $folio));
-        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/resolution/";
-        if (!empty($resolicionesAnteriores->operation->Details->RESOLUTION)) {
-            $datosAnterioresResolicion = $resolicionesAnteriores->operation->Details->RESOLUTION;
-        } else {
-            $datosAnterioresResolicion = '';
+//        $resolicionesAnteriores = json_decode($this->getResolucionFolio($key, $folio));
+//        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/resolution/";
+//        $ch = curl_init();
+//        curl_setopt($ch, CURLOPT_URL, $URL2);
+//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//        curl_setopt($ch, CURLOPT_POST, true);
+//        curl_setopt($ch, CURLOPT_POSTFIELDS, $FIELDS);
+//        $return = curl_exec($ch);
+//        curl_close($ch);
+//        $jsonDecode = json_decode($return);
+//        $this->generateLogResolverSD(array($jsonDecode, $folio));
+//        return $jsonDecode;
+
+        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
+        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
+        try {
+            $resolicionesAnteriores = $this->getResolucionFolio($key, $folio);
+            $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/resolution/";
+
+            if (!empty($resolicionesAnteriores->operation->Details->RESOLUTION)) {
+                $datosAnterioresResolicion = $resolicionesAnteriores->operation->Details->RESOLUTION;
+            } else {
+                $datosAnterioresResolicion = '';
+            }
+
+            $stringInicio = '*****BEGIN SICCOB RESOLUTION*****';
+            $stringFin = '*****END SICCOB RESOLUTION*****';
+            $posInicio = strpos($datosAnterioresResolicion, $stringInicio);
+
+            if ($posInicio !== false) {
+                $posFin = strpos($datosAnterioresResolicion, $stringFin) + 30;
+                $longitud = ($posFin - $posInicio) + 1;
+                $stringRemove = substr($datosAnterioresResolicion, $posInicio, $longitud);
+                $datosAnterioresResolicion = str_replace($stringRemove, '', $datosAnterioresResolicion);
+            }
+
+            /* Concatena la nueva resolución con la resolución anterior */
+            $nuevaResolucion = ''
+                    . "<br>"
+                    . $datos
+                    . "<br>"
+                    . stripslashes(trim($datosAnterioresResolicion));
+
+            $input_data = 'pumas';
+//            $input_data = ''
+//                    . '{'
+//                    . ' "operation": {'
+//                    . '     "details": {'
+//                    . '         "resolution": {'
+//                    . '             "resolutiontext": "' . $this->mres($nuevaResolucion) . '"'
+//                    . '         }'
+//                    . '     }'
+//                    . ' }'
+//                    . '}';
+            $this->FIELDS = "format=json&"
+                    . "OPERATION_NAME=EDIT_RESOLUTION&"
+                    . "INPUT_DATA=" . urlencode($input_data) . "&"
+                    . "TECHNICIAN_KEY=" . $key;
+//            var_dump($URL2 . '?' . $FIELDS);
+            return json_decode(file_get_contents($URL2 . '?' . $this->FIELDS));
+        } catch (\Exception $ex) {
+            var_dump('error');
+            return $this->error;
         }
-
-        $stringInicio = '*****BEGIN SICCOB RESOLUTION*****';
-        $stringFin = '*****END SICCOB RESOLUTION*****';
-        $posInicio = strpos($datosAnterioresResolicion, $stringInicio);
-
-        if ($posInicio !== false) {
-            $posFin = strpos($datosAnterioresResolicion, $stringFin) + 30;
-            $longitud = ($posFin - $posInicio) + 1;
-            $stringRemove = substr($datosAnterioresResolicion, $posInicio, $longitud);
-            $datosAnterioresResolicion = str_replace($stringRemove, '', $datosAnterioresResolicion);
-        }
-
-        /* Concatena la nueva resolución con la resolución anterior */
-        $nuevaResolucion = ''
-                . "<br>"
-                . $datos
-                . "<br>"
-                . stripslashes(trim($datosAnterioresResolicion));
-
-        $input_data = ''
-                . '{'
-                . ' "operation": {'
-                . '     "details": {'
-                . '         "resolution": {'
-                . '             "resolutiontext": "' . $this->mres($nuevaResolucion) . '"'
-                . '         }'
-                . '     }'
-                . ' }'
-                . '}';
-        $FIELDS = "format=json&"
-                . "OPERATION_NAME=EDIT_RESOLUTION&"
-                . "INPUT_DATA=" . urlencode($input_data) . "&"
-                . "TECHNICIAN_KEY=" . $key;
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $URL2);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $FIELDS);
-        $return = curl_exec($ch);
-        curl_close($ch);
-        $jsonDecode = json_decode($return);
-        $this->generateLogResolverSD(array($jsonDecode, $folio));
-
-        return $jsonDecode;
+        restore_error_handler();
     }
+
+//    public function setResolucionServiceDesk(string $key, string $folio, string $datos) {
+//        $resolicionesAnteriores = json_decode($this->getResolucionFolio($key, $folio));
+//        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/resolution/";
+//        if (!empty($resolicionesAnteriores->operation->Details->RESOLUTION)) {
+//            $datosAnterioresResolicion = $resolicionesAnteriores->operation->Details->RESOLUTION;
+//        } else {
+//            $datosAnterioresResolicion = '';
+//        }
+//
+//        $stringInicio = '*****BEGIN SICCOB RESOLUTION*****';
+//        $stringFin = '*****END SICCOB RESOLUTION*****';
+//        $posInicio = strpos($datosAnterioresResolicion, $stringInicio);
+//
+//        if ($posInicio !== false) {
+//            $posFin = strpos($datosAnterioresResolicion, $stringFin) + 30;
+//            $longitud = ($posFin - $posInicio) + 1;
+//            $stringRemove = substr($datosAnterioresResolicion, $posInicio, $longitud);
+//            $datosAnterioresResolicion = str_replace($stringRemove, '', $datosAnterioresResolicion);
+//        }
+//
+//        /* Concatena la nueva resolución con la resolución anterior */
+//        $nuevaResolucion = ''
+//                . "<br>"
+//                . $datos
+//                . "<br>"
+//                . stripslashes(trim($datosAnterioresResolicion));
+//
+//        $input_data = ''
+//                . '{'
+//                . ' "operation": {'
+//                . '     "details": {'
+//                . '         "resolution": {'
+//                . '             "resolutiontext": "' . $this->mres($nuevaResolucion) . '"'
+//                . '         }'
+//                . '     }'
+//                . ' }'
+//                . '}';
+//        $FIELDS = "format=json&"
+//                . "OPERATION_NAME=EDIT_RESOLUTION&"
+//                . "INPUT_DATA=" . urlencode($input_data) . "&"
+//                . "TECHNICIAN_KEY=" . $key;
+//        $ch = curl_init();
+//        curl_setopt($ch, CURLOPT_URL, $URL2);
+//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//        curl_setopt($ch, CURLOPT_POST, true);
+//        curl_setopt($ch, CURLOPT_POSTFIELDS, $FIELDS);
+//        $return = curl_exec($ch);
+//        curl_close($ch);
+//        $jsonDecode = json_decode($return);
+//        $this->generateLogResolverSD(array($jsonDecode, $folio));
+//
+//        return $jsonDecode;
+//    }
 
     public function setNoteServiceDesk(string $key, string $folio, string $datos) {
         $html = str_replace('&nbsp', '', $datos);
