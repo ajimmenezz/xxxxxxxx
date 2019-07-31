@@ -10,6 +10,7 @@ $(function () {
     App.init();
 
     let tablaPrincipal = new TablaBasica('table-ServiciosGeneralesRedes');
+    
     let tablaNodos = null;
     let tablaMateriales = null;
     let tablaAgregarMateriales = null;
@@ -17,6 +18,7 @@ $(function () {
     let selectArea = null;
     let selectSwitch = null;
     let selectMaterial = null;
+    
     let datoServicioTabla = {
         id: null,
         folio: null,
@@ -24,10 +26,6 @@ $(function () {
         servicio: null
     }
     let datoServicioGral = {
-        id: null,
-        folio: null,
-        ticket: null,
-        servicio: null,
         sucursal: null,
         observaciones: null
     }
@@ -203,9 +201,9 @@ $(function () {
     $('#btnAgregarNodo').on('click', function () {
         let contenthtml = $('#materialNodo').html();
         if (evento.validarFormulario('#formDatosNodo')) {
-            nodo.area = $('#selectArea').val();
+            nodo.area = selectArea.obtenerValor();
             nodo.nodo = $('#inputNodo').val();
-            nodo.switch = $('#selectSwith').val();
+            nodo.switch = selectSwitch.obtenerValor();
             nodo.numSwitch = $('#inputNumSwith').val();
             modal.mostrarModal('Material', contenthtml);
             $('#btnAceptar').on('click', function () {
@@ -249,7 +247,7 @@ $(function () {
     /**Empiezan seccion de botonos generales**/
     $('#btnGuardar').on('click', function () {
         if (evento.validarFormulario('#formDatosSolucion')) {
-            datoServicioGral.sucursal = $('#selectSucursal').val();
+            datoServicioGral.sucursal = selectSucursal.obtenerValor();
             datoServicioGral.observaciones = $('#textareaObservaciones').val();
             console.log(datoServicioGral)
         }

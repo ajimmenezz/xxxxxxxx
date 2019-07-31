@@ -362,7 +362,8 @@
                                         <div class="form-group">
                                             <label>Area</label>
                                             <select id="selectArea" class="form-control" style="width: 100%" data-parsley-required="true">
-                                                <option value="1">Seleccionar</option>
+                                                <option value="">Seleccionar</option>
+                                                <option value="prueba">Prueba</option>
                                             </select>
                                         </div>
                                     </div>
@@ -376,7 +377,8 @@
                                         <div class="form-group">
                                             <label>Switch</label>
                                             <select id="selectSwith" class="form-control" style="width: 100%" data-parsley-required="true">
-                                                <option value="2">Seleccionar</option>
+                                                <option value="">Seleccionar</option>
+                                                <option value="prueba">Prueba</option>
                                             </select>
                                         </div>
                                     </div>
@@ -528,6 +530,7 @@
                     <label>Material</label>
                     <select id="selectMaterial" class="form-control" style="width: 100%" data-parsley-required="true">
                         <option value="">Seleccionar</option>
+                        <option value="prueba">Prueba</option>
                     </select>
                 </div>
             </div>
@@ -540,7 +543,7 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label>Cantidad Utilizar</label>
-                    <input id="materialUtilizar" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                    <input id="materialUtilizar" type="number" class="form-control" style="width: 100%" data-parsley-required="true"/>
                 </div>
             </div>
             <div class="col-md-1">
