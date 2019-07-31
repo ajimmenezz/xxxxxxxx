@@ -5,7 +5,7 @@ class ServiceDesk
 {
     private $url;
     
-    public static function getDatos($folio)
+    public static function getDatos(string $folio)
     {
         
     }

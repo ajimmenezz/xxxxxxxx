@@ -14,7 +14,7 @@ class ServicioGeneralRedes
         
     }
     
-    public function setFolioServiceDesk($folio)
+    public function setFolioServiceDesk(string $folio)
     {
         
     }

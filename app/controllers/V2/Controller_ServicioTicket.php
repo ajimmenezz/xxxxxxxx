@@ -8,11 +8,11 @@ class Controller_ServicioTicket
      private $servicio;
      private $serviceDesk;
      
-     public function atenderServicio($datos)
+     public function atenderServicio(array $datos)
      {
-         
+        vardump($datos);
      }
-     public function guardarFolio($datos)
+     public function guardarFolio(array $datos)
      {
          
      }
