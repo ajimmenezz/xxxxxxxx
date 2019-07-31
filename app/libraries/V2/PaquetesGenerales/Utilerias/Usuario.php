@@ -1,5 +1,5 @@
 <?php
-namespace Librerias\V2\PaquetesGenerales;
+namespace Librerias\V2\PaquetesGenerales\Utilerias;
 use CI_Controller;
 
 Class Usuario {
@@ -21,18 +21,21 @@ Class Usuario {
     }
     
     static public function getId() {
-        self::setDatos();        
-        return self::$datos['Id'];
+        self::setDatos();
+        $rol = self::$datos['Id'];
+        return $rol;
     }
     
     static public function getIdJefe() {
-        self::setDatos();        
-        return self::$datos['IdJefe'];
+        self::setDatos();
+        $rol = self::$datos['IdJefe'];
+        return $rol;
     }
     
     static public function getRol() {
-        self::setDatos();        
-        return self::$datos['Rol'];
+        self::setDatos();
+        $rol = self::$datos['Rol'];
+        return $rol;
     }
     
 }

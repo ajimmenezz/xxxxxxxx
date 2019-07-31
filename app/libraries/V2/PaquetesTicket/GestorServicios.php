@@ -1,13 +1,14 @@
 <?php
 namespace Librerias\V2\PaquetesTicket;
 
-use Librerias\V2\PaquetesGenerales\Usuario as Usuario;
+use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
+use Modelos\Modelo_GestorServicio as ModeloServicio;
 
 Class GestorServicios {
     private $DBServicios;
     
     public function __construct() {
-        $this->DBServicios = \Modelos\Modelo_GestorServicio::factory();
+        $this->DBServicios = new ModeloServicio();
     }
     
     public function getDatosServicios() {

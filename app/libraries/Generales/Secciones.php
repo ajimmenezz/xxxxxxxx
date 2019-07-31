@@ -45,6 +45,8 @@ class Secciones extends General
     private $instalaciones;
     private $prime;
     private $seccionCE;
+    
+    private $gestorProyectos;
 
     public function __construct()
     {
