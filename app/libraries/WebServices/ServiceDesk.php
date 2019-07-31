@@ -26,6 +26,7 @@ class ServiceDesk extends General {
     }
 
     private function getErrorPHP($errno, $errstr, $errfile, $errline) {
+        var_dump('cachando la excepcion');
         $this->error = array();
         switch ($errno) {
             case E_WARNING:
@@ -41,7 +42,7 @@ class ServiceDesk extends General {
                 $this->error['archivo'] = $errfile . ': linea : ' . $errline;
                 break;
         }
-        throw new \Exception();
+        throw new \Exception('Error para ingresar al SD');
     }
 
     /*
@@ -68,12 +69,14 @@ class ServiceDesk extends General {
      */
 
     public function getDetallesFolio(string $key, string $folio) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
         set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
+        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
+
         try {
             $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST&TECHNICIAN_KEY=' . $key;
             return json_decode(file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS));
         } catch (\Exception $ex) {
+            var_dump($ex->getMessage());
             return $this->error;
         }
         restore_error_handler();

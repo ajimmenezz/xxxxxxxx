@@ -22,10 +22,10 @@ class Controller_Tester extends Base {
         switch ($evento) {
             case 'informacionSD':
                 $datos = $this->input->post();
-//                $resultado = $this->SD->getDetallesFolio($datos['key'], $datos['folio']);                                
+                $resultado = $this->SD->getDetallesFolio($datos['key'], $datos['folio']);                                
 //                $resultado = $this->SD->getFoliosTecnico($datos['key'], $datos['folio']);                                
 //                $resultado = $this->SD->getResolucionFolio($datos['key'], $datos['folio']);                                
-                $resultado = $this->SD->getTecnicosSD($datos['key']);                                
+//                $resultado = $this->SD->getTecnicosSD($datos['key']);                                
                 break;            
             default:
                 $resultado = FALSE;
