@@ -1,8 +1,8 @@
 <?php
 
 use Controladores\Controller_Base as Base;
-
 use Librerias\WebServices\ServiceDesk as SD;
+
 /**
  * Description of Controller_Solicitud
  *
@@ -14,19 +14,23 @@ class Controller_Tester extends Base {
     private $SD;
 
     public function __construct() {
-        parent::__construct();        
+        parent::__construct();
     }
 
     public function manejarEvento(string $evento = null) {
         $this->SD = new SD();
         switch ($evento) {
             case 'informacionSD':
-                $datos = $this->input->post();
-                $resultado = $this->SD->getDetallesFolio($datos['key'], $datos['folio']);                                
+                try {
+                    $datos = $this->input->post();
+                    $resultado = $this->SD->getDetallesFolio($datos['key'], $datos['folio']);
 //                $resultado = $this->SD->getFoliosTecnico($datos['key'], $datos['folio']);                                
 //                $resultado = $this->SD->getResolucionFolio($datos['key'], $datos['folio']);                                
 //                $resultado = $this->SD->getTecnicosSD($datos['key']);                                
-                break;            
+                } catch (\Exception $ex) {                    
+                    $resultado = $ex->getMessage();
+                }
+                break;
             default:
                 $resultado = FALSE;
                 break;

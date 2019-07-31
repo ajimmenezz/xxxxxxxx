@@ -26,7 +26,6 @@ class ServiceDesk extends General {
     }
 
     private function getErrorPHP($errno, $errstr, $errfile, $errline) {
-//        var_dump('cachando la excepcion');
         $this->error = array();
         switch ($errno) {
             case E_WARNING:
@@ -43,6 +42,20 @@ class ServiceDesk extends General {
                 break;
         }
         throw new \Exception('Error para ingresar al SD');
+    }
+
+    private function validarError(\stdClass $datos) {
+        $estatus = null;
+        $message = null;
+        if (property_exists($datos, 'operation')) {
+            $estatus = $datos->operation->result->status;
+            $message = $datos->operation->result->message;
+        }
+
+        if ($estatus == 'Failed') {
+            $this->error['algo'] = $message;
+            throw new \Exception('Hubo un error con Service Desk detalle:' . $message);
+        }
     }
 
     /*
@@ -71,15 +84,11 @@ class ServiceDesk extends General {
     public function getDetallesFolio(string $key, string $folio) {
         set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-
-        try {
-            $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST&TECHNICIAN_KEY=' . $key;
-            return json_decode(file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS));
-        } catch (\Exception $ex) {
-            var_dump($ex->getMessage());
-            return $this->error;
-        }
+        $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST&TECHNICIAN_KEY=' . $key;
+        $datosSD = json_decode(file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS));
+        $this->validarError($datosSD);
         restore_error_handler();
+        return $datosSD;        
     }
 
     /*
