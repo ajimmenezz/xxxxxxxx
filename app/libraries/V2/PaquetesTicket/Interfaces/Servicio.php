@@ -11,7 +11,7 @@ class Servicio
     {
         
     }
-    public function setFolioServiceDesk($folio)
+    public function setFolioServiceDesk(string $folio)
     {
         
     }
