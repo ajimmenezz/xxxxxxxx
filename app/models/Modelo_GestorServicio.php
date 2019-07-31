@@ -25,10 +25,13 @@ Class Modelo_GestorServicio extends Base {
                     'Error' => '404'
                 ));
             }
-//        } catch (\Exception $ex) {
-//            var_dump($ex->getMessage());
-//        }
-
+            $miServicio = $this->getServiciosDeTecnico($idJefe);
+            array_push($totalServicios, $miServicio);
+        } else {
+            array_push($totalServicios, array(
+                'Error' => '404'
+            ));
+        }
         return $totalServicios;
     }
 

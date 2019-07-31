@@ -278,10 +278,10 @@
                         <!--Empieza Titulo solucion-->
                         <div class="col-md-12 row">
                             <div class="panel-heading-btn">
-                                <label id="btnSinMaterial" class="btn btn-default btn-xs">
+                                <label id="btnSinMaterial" class="btn btn-default btn-xs hidden">
                                     <i class="fa fa-toggle-off"></i> Sin Material
                                 </label>
-                                <label id="btnConMaterial" class="btn btn-primary btn-xs hidden">
+                                <label id="btnConMaterial" class="btn btn-primary btn-xs">
                                     <i class="fa fa-toggle-off fa-rotate-180"></i> Con Material
                                 </label>
                             </div>
@@ -291,20 +291,23 @@
                         <!--Finaliza Titulo solucion-->
                         <!--Empieza contenido de solucion-->
                         <div class="col-md-12">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Sucursal</label>
-                                    <select id="selectSucursal" class="form-control" style="width: 100%">
-                                        <option value="">Seleccionar</option>
-                                    </select>
+                            <form id="formDatosSolucion" data-parsley-validate="true" enctype="multipart/form-data">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Sucursal</label>
+                                        <select id="selectSucursal" class="form-control" style="width: 100%" data-parsley-required="true">
+                                            <option value="">Seleccionar</option>
+                                            <option value="prueba">Prueba</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Observaciones</label>
-                                    <textarea id="textareaObservaciones" class="form-control" rows="4"></textarea>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Observaciones</label>
+                                        <textarea id="textareaObservaciones" class="form-control" rows="4" data-parsley-required="true"></textarea>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                         <!--Finaliza contenido de solucion-->
                     </div>
@@ -337,7 +340,7 @@
                 </div>
                 <!--Finaliza seccion de Solucion y Problemas-->
                 <!--Empieza seccion Nodos-->
-                <div class="col-md-12">
+                <div id="conMaterial" class="col-md-12">
                     <!--Empieza Titulo tabla nodos-->
                     <div class="col-md-12">
                         <div class="panel-heading-btn">
@@ -351,46 +354,48 @@
                     </div>
                     <!--Finaliza Titulo tabla nodos-->
                     <div id="vistaNodos">
-                        <!--Empieza seccion agregar nodo-->
-                        <div class="col-md-12">
-                            <form id="formAgregarNodo" class="margin-bottom-0" data-parsley-validate="true">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Area</label>
-                                        <select id="selectArea" class="form-control" style="width: 100%" data-parsley-required="true">
-                                            <option value="">Seleccionar</option>
-                                        </select>
+                        <div id="datosNodo">
+                            <!--Empieza seccion agregar nodo-->
+                            <div class="col-md-12">
+                                <form id="formDatosNodo" class="margin-bottom-0" data-parsley-validate="true">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Area</label>
+                                            <select id="selectArea" class="form-control" style="width: 100%" data-parsley-required="true">
+                                                <option value="1">Seleccionar</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>Nodo</label>
-                                        <input id="selectNodo" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Nodo</label>
+                                            <input id="inputNodo" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Swith</label>
-                                        <select id="selectSwith" class="form-control" style="width: 100%" data-parsley-required="true">
-                                            <option value="">Seleccionar</option>
-                                        </select>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Switch</label>
+                                            <select id="selectSwith" class="form-control" style="width: 100%" data-parsley-required="true">
+                                                <option value="2">Seleccionar</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>Número de Swith</label>
-                                        <input id="selectNumSwith" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label># de Switch</label>
+                                            <input id="inputNumSwith" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                        </div>
                                     </div>
+                                </form>
+                                <div class="col-md-1">
+                                    <br>
+                                    <label id="btnAgregarNodo" class="btn btn-success">
+                                        <i class="fa fa-plus"></i>
+                                    </label>
                                 </div>
-                            </form>
-                            <div class="col-md-1">
-                                <br>
-                                <label id="btnAgregarNodo" class="btn btn-success">
-                                    <i class="fa fa-plus"></i>
-                                </label>
                             </div>
+                            <!--Finaliza seccion agregar nodo-->
                         </div>
-                        <!--Finaliza seccion agregar nodo-->
                         <!--Empieza tabla de nodos-->
                         <div class="col-md-12">
                             <div class="table-responsive">
@@ -450,6 +455,35 @@
                     </div>
                 </div>
                 <!--Finaliza seccion Nodos-->
+
+                <!--Empieza seccion de evidencias-->
+                <div id="sinMaterial" class="col-md-12 hidden">
+                    <!--Empieza Titulo de evidencias-->
+                    <div class="col-md-12">
+                        <h4>Evidencias</h4>
+                        <div class="underline m-b-15 m-t-15"></div>
+                    </div>
+                    <!--Finaliza Titulo de evidencias-->
+                    <div id="vistaEvidencias">
+                        <!--Empieza seccion agregar evidencia-->
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label id="addEvidencia" class="btn btn-success">
+                                    <i class="fa fa-plus"></i> EVIDENCIA
+                                </label>
+                            </div>
+                            <div class="col-md-12">
+                                <br>
+                                <div class="form-group">
+                                    <textarea id="textareaObservaciones" class="form-control" rows="8"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Finaliza seccion agregar evidencia-->
+                    </div>
+                </div>
+                <!--Finaliza seccion de evidencias-->
+
                 <!--Empieza seccion de botones-->
                 <div id="botones" class="text-center">
                     <div class="col-md-12">
@@ -467,6 +501,16 @@
                     </div>
                 </div>
                 <!--Finaliza seccion de botones-->
+                <!--Segmento de modal reportar-->
+                <div id="segReportar" class="hidden">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Descripción del Problema</label>
+                            <textarea id="textareaDescProblema" class="form-control" rows="4" data-parsley-required="true"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <!--Segmento de modal reportar-->
             </div>
             <!--Finaliza Panel -->
         </div>
@@ -476,73 +520,75 @@
 
 <!--Empezando seccion para material nodo-->
 <div id="materialNodo" class="content hidden" >
-    <!--Empieza seccion agregar Material-->
-    <div class="col-md-12">
-        <div class="col-md-5">
-            <div class="form-group">
-                <label>Material</label>
-                <select id="selectMaterial" class="form-control" style="width: 100%" data-parsley-required="true">
-                    <option value="">Seleccionar</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="form-group">
-                <label>Cantidad Disponible</label>
-                <input id="materialDisponible" class="form-control" style="width: 100%" data-parsley-required="true" disabled/>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="form-group">
-                <label>Cantidad Utilizar</label>
-                <input id="materialUtilizar" class="form-control" style="width: 100%" data-parsley-required="true"/>
-            </div>
-        </div>
-        <div class="col-md-1">
-            <br>
-            <label id="btnAgregarMaterialNodo" class="btn btn-success">
-                <i class="fa fa-plus"></i>
-            </label>
-        </div>
-    </div>
-    <!--Finaliza seccion agregar Material-->
-    <!--Empieza tabla de material nodos-->
-    <div class="col-md-12">
-        <div class="table-responsive">
-            <table id="table-materalNodo" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
-                <thead>
-                    <tr>
-                        <th class="all">Material</th>
-                        <th class="all">Cantidad</th>
-                        <th class="all">Accion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>Cable UTP</th>
-                        <th>300 m</th>
-                        <th style="text-align: center">
-                            <i id="eliminarMateralNodo" class="fa fa-2x fa-trash-o text-danger"></i>
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <!--Finaliza tabla de material nodos-->
-    <!--Empieza seccion de evidencia-->
-    <div class="col-md-12">
+    <form id="formMaterial" data-parsley-validate="true" enctype="multipart/form-data">
+        <!--Empieza seccion agregar Material-->
         <div class="col-md-12">
-            <label id="btnAgregarEvidenciaNodo" class="btn btn-success">
-                <i class="fa fa-plus"> Evidencia</i>
-            </label>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label>Material</label>
+                    <select id="selectMaterial" class="form-control" style="width: 100%" data-parsley-required="true">
+                        <option value="">Seleccionar</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Cantidad Disponible</label>
+                    <input id="materialDisponible" class="form-control" style="width: 100%" data-parsley-required="true" disabled/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Cantidad Utilizar</label>
+                    <input id="materialUtilizar" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <br>
+                <label id="btnAgregarMaterialNodo" class="btn btn-success">
+                    <i class="fa fa-plus"></i>
+                </label>
+            </div>
         </div>
+        <!--Finaliza seccion agregar Material-->
+        <!--Empieza tabla de material nodos-->
         <div class="col-md-12">
-            <br>
-            <textarea id="textareaDescripcion" class="form-control" rows="3" disabled></textarea>
-            <br>
+            <div class="table-responsive">
+                <table id="table-materialNodo" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="all">Material</th>
+                            <th class="all">Cantidad</th>
+                            <th class="all">Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Cable UTP</th>
+                            <th>300 m</th>
+                            <th style="text-align: center">
+                                <i id="eliminarMaterialNodo" class="fa fa-2x fa-trash-o text-danger"></i>
+                            </th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-    <!--Finaliza seccion de evidencia-->
+        <!--Finaliza tabla de material nodos-->
+        <!--Empieza seccion de evidencia-->
+        <div class="col-md-12">
+            <div class="col-md-12">
+                <label id="btnAgregarEvidenciaNodo" class="btn btn-success">
+                    <i class="fa fa-plus"> Evidencia</i>
+                </label>
+            </div>
+            <div class="col-md-12">
+                <br>
+                <textarea id="textareaDescripcion" class="form-control" rows="3" disabled></textarea>
+                <br>
+            </div>
+        </div>
+        <!--Finaliza seccion de evidencia-->
+    </form>
 </div>
 <!--Finalizando seccion para material nodo-->
