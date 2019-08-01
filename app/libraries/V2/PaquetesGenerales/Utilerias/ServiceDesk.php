@@ -1,12 +1,13 @@
 <?php
+
 namespace Librerias\V2\PaquetesGenerales\Utilerias;
 
-class ServiceDesk
-{
+class ServiceDesk {
+
     private $url;
-    
-    public static function getDatos(string $folio)
-    {
+
+    public static function getDatos(string $folio) {
         
     }
+
 }
