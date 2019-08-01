@@ -146,6 +146,7 @@ $config['Generales'] = array(
         'pluginsCss' => array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
+            
             'parsley/src/parsley',
             'bootstrap-datepicker/css/datepicker'
         ),
@@ -1926,17 +1927,21 @@ $config['Redes'] = array(
         'css' => array(),
         'pluginsCss' => array(
             'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
             'parsley/src/parsley'
         ),
         'js' => array('Base/Base', 
             'Componentes/HerramientasWeb/Utileria',
             'Componentes/HerramientasWeb/Modal',
+            'Componentes/Selects/Select', 
+            'Componentes/Selects/SelectBasico',
             'Componentes/Tablas/Tabla', 
             'Componentes/Tablas/TablaBasica',
             'Redes/SeguimientoCE'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
             'parsley/dist/parsley',
             'parsley/src/i18n/es'
         ),

@@ -3,9 +3,8 @@ class Modal {
     mostrarModal() {
         var titulo = arguments[0] || '';
         var contenido = arguments[1] || '';
-        var botones = arguments[2] || false;
-        var alinearContenido = arguments[3] || 'text-center';
-        var alinearTitulo = arguments[4] || 'text-center';
+        var alinearContenido = arguments[2] || 'text-center';
+        var alinearTitulo = arguments[3] || 'text-center';
 
         $('#modal-dialogo').modal({
             backdrop: 'static',
@@ -13,11 +12,11 @@ class Modal {
         });
         $('#modal-dialogo .modal-title').empty().append(titulo).addClass(alinearTitulo);
         $('#modal-dialogo .modal-body').empty().append(contenido).addClass(alinearContenido);
+        $('#modal-dialogo .modal-footer').empty().append('<a id="btnAceptar" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>\n\
+                                            <a id="btnCerrar" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"> Cerrar</a>').addClass(alinearTitulo);
         
-        if(botones){
-            $('#btnModalConfirmar').addClass('hidden');
-            $('#btnModalAbortar').addClass('hidden');
-        }
+        $('#btnModalConfirmar').addClass('hidden');
+        $('#btnModalAbortar').addClass('hidden');
     }
     
     btnAceptar(idElemento, callback = null){
