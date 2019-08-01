@@ -1,7 +1,9 @@
 
 <!--Comenzando contenido-->
 <div id="contentCatalogoAusencia" class="content">
-    <?php var_dump($datos);?>
+<!--    <pre>
+        <?php // var_dump($datos); ?>
+    </pre>-->
     <!-- Comenzando titulo de la pagina -->
     <h1 class="page-header">Catálogo de Permisos</h1>
     <!-- Finalizando titulo de la pagina -->
