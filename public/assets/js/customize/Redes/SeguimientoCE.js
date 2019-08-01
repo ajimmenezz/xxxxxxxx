@@ -10,7 +10,7 @@ $(function () {
     App.init();
 
     let tablaPrincipal = new TablaBasica('table-ServiciosGeneralesRedes');
-    
+
     let tablaNodos = null;
     let tablaMateriales = null;
     let tablaAgregarMateriales = null;
@@ -18,7 +18,8 @@ $(function () {
     let selectArea = null;
     let selectSwitch = null;
     let selectMaterial = null;
-    
+    let evidenciaMaterial = null;
+
     let datoServicioTabla = {
         id: null,
         folio: null,
@@ -32,7 +33,7 @@ $(function () {
     let  nodo = {
         area: null,
         nodo: null,
-        switch: null,
+        switch : null,
         numSwitch: null
     }
 
@@ -73,8 +74,8 @@ $(function () {
             console.log(respuesta)
         });
     }
-    
-    function iniciarObjetos(){
+
+    function iniciarObjetos() {
         tablaNodos = new TablaBasica('table-nodo');
         tablaMateriales = new TablaBasica('table-material');
         tablaAgregarMateriales = new TablaBasica('table-materialNodo');
@@ -82,6 +83,7 @@ $(function () {
         selectArea = new SelectBasico('selectArea');
         selectSwitch = new SelectBasico('selectSwith');
         selectMaterial = new SelectBasico('selectMaterial');
+        evidenciaMaterial = new FileUpload_Basico('agregarEvidenciaNodo');
         selectSucursal.iniciarSelect();
         selectArea.iniciarSelect();
         selectSwitch.iniciarSelect();
@@ -199,17 +201,48 @@ $(function () {
     /**Finalizan eventos de botones para datos y problemas**/
 
     $('#btnAgregarNodo').on('click', function () {
-        let contenthtml = $('#materialNodo').html();
         if (evento.validarFormulario('#formDatosNodo')) {
             nodo.area = selectArea.obtenerValor();
             nodo.nodo = $('#inputNodo').val();
             nodo.switch = selectSwitch.obtenerValor();
             nodo.numSwitch = $('#inputNumSwith').val();
-            modal.mostrarModal('Material', contenthtml);
-            $('#btnAceptar').on('click', function () {
-                modal.cerrarModal();
-                console.log('btnAgregarNodo')
-            });
+            document.getElementById('btnAgregarNodo').setAttribute('href', '#modalMaterialNodo');
+        }
+    });
+    $('#btnAgregarMaterialNodo').on('click', function () {
+        if (evento.validarFormulario('#formMaterial')) {
+            tablaAgregarMateriales.agregarDatosFila([
+                selectMaterial.obtenerValor(),
+                $('#materialUtilizar').val(),
+                '<th>\n\
+                    <i class="fa fa-2x fa-trash-o text-danger eliminarMaterialNodo"></i>\n\
+                </th>'
+            ]);
+        }
+        $(document).on("click", ".eliminarMaterialNodo", function () {
+            var indexDelAgent = $(this).index('.deleteIcon');
+            //modal.mostrarModal('Eliminar Material', '<h4>Se Eliminará este material de la lista<br>\n\
+             //                               ¿Estas seguro de esto?</h4>');
+            //$('#btnAceptar').on('click', function () {
+                //modal.cerrarModal();
+                console.log(indexDelAgent)
+                //tablaAgregarMateriales.eliminarFila(indexDelAgent);
+            //});
+            
+        });
+//        tablaAgregarMateriales.evento(function () {
+//            let _this = this;
+//            modal.mostrarModal('Eliminar Material', '<h4>Se Eliminará este material de la lista<br>\n\
+//                                            ¿Estas seguro de esto?</h4>');
+//            $('#btnAceptar').on('click', function () {
+//                modal.cerrarModal();
+//                tablaAgregarMateriales.eliminarFila(_this);
+//            });
+//        });
+    });
+    $('#btnAceptarM').on('click', function () {
+        if (evento.validarFormulario('#formEvidenciaMaterial')) {
+            console.log('agregar tabla de nodos');
         }
     });
 
@@ -218,21 +251,16 @@ $(function () {
         console.log('evidenciaNodo')
     });
     $('#editarNodo').on('click', function () {
-        let contenthtml = $('#datosNodo').html();
-        modal.mostrarModal('Actualizar Nodo', contenthtml);
-        $('#btnAceptar').on('click', function () {
-            modal.cerrarModal();
-            console.log('editarNodo')
-        });
+        document.getElementById('editarNodo').setAttribute('href', '#modalEditarNodo');
     });
-    $('#editarMaterial').on('click', function () {
-        let contenthtml = $('#materialNodo').html();
-        modal.mostrarModal('Material', contenthtml);
-        $('#btnAceptar').on('click', function () {
-            modal.cerrarModal();
-            console.log('editarMaterial')
-        });
-    });
+//    $('#editarMaterial').on('click', function () {
+//        let contenthtml = $('#materialNodo').html();
+//        modal.mostrarModal('Material', contenthtml);
+//        $('#btnAceptar').on('click', function () {
+//            modal.cerrarModal();
+//            console.log('editarMaterial')
+//        });
+//    });
     $('#eliminarNodo').on('click', function () {
         modal.mostrarModal('Eliminar Nodo', '<h4>Al eliminar el nodo se borrara toda la información del material y de las evidencias<br>\n\
                                             ¿Estas seguro de querer eliminar el nodo?</h4>');

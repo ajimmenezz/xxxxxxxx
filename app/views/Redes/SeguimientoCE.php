@@ -391,9 +391,7 @@
                                 </form>
                                 <div class="col-md-1">
                                     <br>
-                                    <label id="btnAgregarNodo" class="btn btn-success">
-                                        <i class="fa fa-plus"></i>
-                                    </label>
+                                    <a id="btnAgregarNodo" href="#" class="btn btn-sm btn-success" data-toggle="modal"><i class="fa fa-plus"></i></a>
                                 </div>
                             </div>
                             <!--Finaliza seccion agregar nodo-->
@@ -420,9 +418,9 @@
                                             <th>5</th>
                                             <th style="text-align: center"><i id="evidenciaNodo" class="fa fa-2x fa-file"></i></th>
                                             <th style="text-align: center">
-                                                <i id="editarNodo" data-toggle="tooltip" data-placement="top" data-title="Editar Nodo" class="fa fa-2x fa-pencil"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <i id="editarMaterial" data-toggle="tooltip" data-placement="top" data-title="Editar Material" class="fa fa-2x fa-file-photo-o text-warning"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <i id="eliminarNodo" data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i>
+                                                <a id="editarNodo" href="#" class="btn btn-sm btn-white" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Nodo" class="fa fa-2x fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <a id="editarMaterial" href="#" class="btn btn-sm btn-white" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Material" class="fa fa-2x fa-file-photo-o text-warning"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <a id="eliminarNodo" href="#" class="btn btn-sm btn-white" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i></a>
                                             </th>
                                         </tr>
                                     </tbody>
@@ -521,77 +519,149 @@
 </div>
 
 <!--Empezando seccion para material nodo-->
-<div id="materialNodo" class="content hidden" >
-    <form id="formMaterial" data-parsley-validate="true" enctype="multipart/form-data">
-        <!--Empieza seccion agregar Material-->
-        <div class="col-md-12">
-            <div class="col-md-5">
-                <div class="form-group">
-                    <label>Material</label>
-                    <select id="selectMaterial" class="form-control" style="width: 100%" data-parsley-required="true">
-                        <option value="">Seleccionar</option>
-                        <option value="prueba">Prueba</option>
-                    </select>
-                </div>
+<div id="modalMaterialNodo" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Material</h4>
             </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label>Cantidad Disponible</label>
-                    <input id="materialDisponible" class="form-control" style="width: 100%" data-parsley-required="true" disabled/>
-                </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <form id="formMaterial" data-parsley-validate="true" enctype="multipart/form-data">
+                    <!--Empieza seccion agregar Material-->
+                    <div class="col-md-12">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label>Material</label>
+                                <select id="selectMaterial" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar</option>
+                                    <option value="prueba">Prueba</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Cantidad Disponible</label>
+                                <input id="materialDisponible" class="form-control" style="width: 100%" disabled/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Cantidad Utilizar</label>
+                                <input id="materialUtilizar" type="number" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <br>
+                            <label id="btnAgregarMaterialNodo" class="btn btn-success">
+                                <i class="fa fa-plus"></i>
+                            </label>
+                        </div>
+                    </div>
+                    <!--Finaliza seccion agregar Material-->
+                </form>
+                <form id="formEvidenciaMaterial" data-parsley-validate="true" enctype="multipart/form-data">
+                    <!--Empieza tabla de material nodos-->
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table id="table-materialNodo" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="all">Material</th>
+                                        <th class="all">Cantidad</th>
+                                        <th class="all">Accion</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="text-align: center">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!--Finaliza tabla de material nodos-->
+                    <!--Empieza seccion de evidencia-->
+                    <div class="col-md-12">
+                        <div id="archivoCitaIncapacidad" class="form-group">
+                            <label>Evidencia</label><br>
+                            <input id="agregarEvidenciaNodo" name="agregarEvidenciaNodo[]" type="file" multiple data-parsley-required="true">
+                        </div>
+                    </div>
+                    <!--Finaliza seccion de evidencia-->
+                </form>
             </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label>Cantidad Utilizar</label>
-                    <input id="materialUtilizar" type="number" class="form-control" style="width: 100%" data-parsley-required="true"/>
-                </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptarM" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCerrarM" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
             </div>
-            <div class="col-md-1">
-                <br>
-                <label id="btnAgregarMaterialNodo" class="btn btn-success">
-                    <i class="fa fa-plus"></i>
-                </label>
-            </div>
+            <!--Finaliza pie del modal-->
         </div>
-        <!--Finaliza seccion agregar Material-->
-        <!--Empieza tabla de material nodos-->
-        <div class="col-md-12">
-            <div class="table-responsive">
-                <table id="table-materialNodo" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
-                    <thead>
-                        <tr>
-                            <th class="all">Material</th>
-                            <th class="all">Cantidad</th>
-                            <th class="all">Accion</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th>Cable UTP</th>
-                            <th>300 m</th>
-                            <th style="text-align: center">
-                                <i id="eliminarMaterialNodo" class="fa fa-2x fa-trash-o text-danger"></i>
-                            </th>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <!--Finaliza tabla de material nodos-->
-        <!--Empieza seccion de evidencia-->
-        <div class="col-md-12">
-            <div class="col-md-12">
-                <label id="btnAgregarEvidenciaNodo" class="btn btn-success">
-                    <i class="fa fa-plus"> Evidencia</i>
-                </label>
-            </div>
-            <div class="col-md-12">
-                <br>
-                <textarea id="textareaDescripcion" class="form-control" rows="3" disabled></textarea>
-                <br>
-            </div>
-        </div>
-        <!--Finaliza seccion de evidencia-->
-    </form>
+    </div>
 </div>
 <!--Finalizando seccion para material nodo-->
+
+<!--Empezando modal editar nodo-->
+<div id="modalEditarNodo" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Actualizar Nodo</h4>
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <!--Empieza seccion edicion nodo-->
+                <div class="col-md-12">
+                    <form id="formEdicionNodo" class="margin-bottom-0" data-parsley-validate="true">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Area</label>
+                                <select id="selectEdicionArea" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar</option>
+                                    <option value="prueba">Prueba</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Nodo</label>
+                                <input id="inputEdicionNodo" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Switch</label>
+                                <select id="selectEdicionSwith" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar</option>
+                                    <option value="prueba">Prueba</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label># de Switch</label>
+                                <input id="inputEdicionNumSwith" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-md-1">
+                        <br>
+                        <a id="btnEdicionNodo" href="#" class="btn btn-sm btn-success" data-toggle="modal"><i class="fa fa-2x fa-arrow-circle-up"></i></a>
+                    </div>
+                </div>
+                <!--Finaliza seccion edicion nodo-->
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptarAM" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCerrarAM" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>
+<!--Finalizando modal editar nodo-->
