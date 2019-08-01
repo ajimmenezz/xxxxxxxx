@@ -261,6 +261,11 @@ class Secciones extends General
             case 'RH/Autorizar_permisos':
                 $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id']);
                 break;
+            case 'RH/Catalogos_Permisos':
+                  $datos['TipoAsencia'] = array('ausencia');
+                  $datos['TipoRechazo'] = array('rechazo');
+//                $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id']);
+                break;
             case 'Poliza':
                 $datos['TiposProyectos'] = $this->DBPO->getTiposProyecto();
                 $datos['ProyectosSinAtender'] = $this->DBPO->getProyectosSinAtender();

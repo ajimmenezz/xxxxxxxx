@@ -1451,7 +1451,7 @@ $config['RH'] = array(
     'Catalogo-Permisos-RH' => array(
         'liga' => 'Catálogo de Permisos',
         'icono' => '',
-        'Url' => '/RH/catalogo_permisos',
+        'Url' => '/RH/Catalogos_Permisos',
         'css' => array(),
         'pluginsCss' => array(
         ),
