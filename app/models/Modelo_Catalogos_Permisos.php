@@ -13,9 +13,7 @@ class Modelo_Catalogos_Permisos extends Base {
     public function getRegistros(string $tabla) {
         try {
             $consulta = $this->consulta('select
-                                        Id,
-                                        Nombre,
-                                        Flag
+                                       *
                                     from ' . $tabla . '');
             return $consulta;
         } catch (\Exception $ex) {
