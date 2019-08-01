@@ -201,7 +201,26 @@
                         <div class="row">
                             <div id="inputEvidencias" class="col-md-12"></div>
                         </div>
-                        <!--Finalizando input para evidencias -->                        
+                        <!--Finalizando input para evidencias -->   
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Fecha programada</label>
+                                    <div id="Fecha" class="input-group date">
+                                        <input id="inputProgramada"  type="text" class="form-control" placeholder="Fecha" value=""/><span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    </div>                                           
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Fecha límite de atención</label>
+                                    <div id="FechaLimite" class="input-group date">
+                                        <input id="inputLimiteAtencion"  type="text" class="form-control" placeholder="Fecha" value=""/><span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    </div>                                           
+                                </div>
+                            </div>
+                        </div>
 
                         <!--Empezando botones -->
                         <div class="row m-t-15">

@@ -311,7 +311,7 @@ class Modelo_FondoFijo extends Modelo_Base
         $this->iniciaTransaccion();
 
         $saldoPrevio = $this->getSaldo($datos['id'], $datos['tipoCuenta']);
-        $saldoNuevo = (double)$saldoPrevio + (double)$datos['depositar'];
+        $saldoNuevo = (float) $saldoPrevio + (float) $datos['depositar'];
 
         $this->insertar("t_fondofijo_movimientos", [
             "FechaRegistro" => $this->getFecha(),
@@ -366,9 +366,9 @@ class Modelo_FondoFijo extends Modelo_Base
                 'Id' => $idMovimiento,
                 'TipoCuenta' => $this->getTiposCuenta($datos['tipoCuenta'])[0]['Nombre'],
                 'Fecha' => $this->getFecha(),
-                'SaldoAnterior' => '$' . number_format((float)$saldoPrevio, 2),
-                'Deposito' => '$' . number_format((float)$datos['depositar'], 2),
-                'Saldo' => '$' . number_format((float)$saldoNuevo, 2)
+                'SaldoAnterior' => '$' . number_format((float) $saldoPrevio, 2),
+                'Deposito' => '$' . number_format((float) $datos['depositar'], 2),
+                'Saldo' => '$' . number_format((float) $saldoNuevo, 2)
             ];
 
 
@@ -397,6 +397,23 @@ class Modelo_FondoFijo extends Modelo_Base
         where IdTipoMovimiento = 6
         and tfm.IdEstatus = 7
         and tfm.IdUsuarioFondoFijo = '" . $idUsuario . "'" . $condicion);
+        return $consulta;
+    }
+
+    public function getComprobaciones(int $idUsuario)
+    {
+        $consulta = $this->consulta("select 
+        tfm.Id,
+        (select Nombre from cat_v3_fondofijo_tipos_cuenta where Id = tfm.IdTipoCuenta) as TipoCuenta,
+        (select Nombre from cat_v3_comprobacion_conceptos where Id = tfm.IdConcepto) as Concepto,
+        ABS(tfm.Monto) as Monto,
+        estatus(tfm.IdEstatus) as Estatus,
+        tfm.FechaRegistro,
+        tfm.FechaAutorizacion
+        from t_fondofijo_movimientos tfm
+        where tfm.IdUsuarioFondoFijo = '" . $idUsuario . "'
+        and tfm.IdTipoMovimiento = 7
+        and tfm.FechaRegistro >= DATE_SUB(now(),INTERVAL 1 MONTH)");
         return $consulta;
     }
 
@@ -577,7 +594,7 @@ class Modelo_FondoFijo extends Modelo_Base
 
         $saldoPrevio = $this->getSaldo($this->usuario['Id'], $datos['tipoCuenta']);
         if ($datos['enPresupuesto'] == 1) {
-            $saldoNuevo = (double)$saldoPrevio + (double)$datos['monto'];
+            $saldoNuevo = (float) $saldoPrevio + (float) $datos['monto'];
         } else {
             $saldoNuevo = $saldoPrevio;
         }
@@ -714,7 +731,7 @@ class Modelo_FondoFijo extends Modelo_Base
         if ($generales['IdEstatus'] == 7) {
 
             $saldoPrevio = $this->getSaldo($generales['IdUsuarioFondoFijo'], $generales['IdTipoCuenta']);
-            $saldoNuevo = (double)$saldoPrevio + abs((double)$generales['Monto']);
+            $saldoNuevo = (float) $saldoPrevio + abs((float) $generales['Monto']);
 
             $this->insertar("t_fondofijo_movimientos", [
                 "FechaRegistro" => $this->getFecha(),
@@ -844,7 +861,7 @@ class Modelo_FondoFijo extends Modelo_Base
 
         $generales = $this->getDetallesFondoFijoXId($datos['id'])[0];
         $saldoPrevio = $this->getSaldo($generales['IdUsuarioFondoFijo'], $generales['IdTipoCuenta']);
-        $saldoNuevo = (double)$saldoPrevio + (double)$generales['Monto'];
+        $saldoNuevo = (float) $saldoPrevio + (float) $generales['Monto'];
 
         $this->actualizar("t_fondofijo_movimientos", [
             "IdEstatus" => 7,

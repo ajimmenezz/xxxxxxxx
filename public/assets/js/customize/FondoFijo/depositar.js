@@ -45,6 +45,7 @@ $(function () {
     function initDepositar(datos) {
         file.crearUpload('#fotosDeposito', 'Depositar/RegistrarDeposito', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf']);
         tabla.generaTablaPersonal('#tabla-depositos', null, null, true, true, [[2, 'desc']]);
+        tabla.generaTablaPersonal('#tabla-comprobacion', null, null, true, true, [[0, 'desc']]);
 
         datos.tipoCuenta = '';
         $("#listTiposCuenta").on("change", function () {
@@ -100,20 +101,29 @@ $(function () {
 
         $('#tabla-depositos tbody').on('click', 'tr', function () {
             var datos = $('#tabla-depositos').DataTable().row(this).data();
-            evento.enviarEvento('MiFondo/DetallesMovimiento', { 'id': datos[0] }, '#panelDepositar', function (respuesta) {
-                evento.iniciarModal("#modalEdit", "Detalles del depósito / ajuste", respuesta.html);
-                $("#btnGuardarCambios").hide();
+            mostrarDetallesMovimiento(datos);
+        });
 
-                $("#btnCancelarMovimiento").off("click");
-                $("#btnCancelarMovimiento").on("click", function () {
-                    evento.enviarEvento('MiFondo/CancelarMovimiento', { 'id': datos[0] }, '#modalEdit', function (respuesta) {
-                        if (respuesta.code == 200) {
-                            evento.terminarModal("#modalEdit");
-                            filaCuenta.click();
-                        } else {
-                            evento.mostrarMensaje("#error-in-modal", false, "Ocurrió un error al cancelar el movimiento. Recargue su página e intente de nuevo.")
-                        }
-                    });
+        $('#tabla-comprobacion tbody').on('click', 'tr', function () {
+            var datos = $('#tabla-comprobacion').DataTable().row(this).data();
+            mostrarDetallesMovimiento(datos);
+        });
+    }
+
+    function mostrarDetallesMovimiento(datos) {
+        evento.enviarEvento('MiFondo/DetallesMovimiento', { 'id': datos[0], 'tesoreria': 1 }, '#panelDepositar', function (respuesta) {
+            evento.iniciarModal("#modalEdit", "Detalles del depósito / ajuste", respuesta.html);
+            $("#btnGuardarCambios").hide();
+
+            $("#btnCancelarMovimiento").off("click");
+            $("#btnCancelarMovimiento").on("click", function () {
+                evento.enviarEvento('MiFondo/CancelarMovimiento', { 'id': datos[0] }, '#modalEdit', function (respuesta) {
+                    if (respuesta.code == 200) {
+                        evento.terminarModal("#modalEdit");
+                        filaCuenta.click();
+                    } else {
+                        evento.mostrarMensaje("#error-in-modal", false, "Ocurrió un error al cancelar el movimiento. Recargue su página e intente de nuevo.")
+                    }
                 });
             });
         });

@@ -186,6 +186,14 @@ Servicio.prototype.nuevaSolicitud = function () {
         //Creando input de evidencias
         _this.file.crearUpload('#inputEvidenciasSolicitud', '/Generales/Solicitud/Nueva_solicitud');
 
+        $('#inputProgramada').datetimepicker({
+            format: 'YYYY-MM-DD HH:mm:ss'
+        });
+
+        $('#inputLimiteAtencion').datetimepicker({
+            format: 'YYYY-MM-DD HH:mm:ss'
+        });
+
         $('#botonesExtra').addClass('hidden');
 
         //Evento de select area que activa departamento
@@ -224,42 +232,56 @@ Servicio.prototype.nuevaSolicitud = function () {
         });
 
         $("#btnGenerarSolicitud").empty().append('Generar Solicitud').on("click", function () {
+            var verificarFechas;
+
+            if ($('#inputProgramada').val() !== '' && $('#inputLimiteAtencion').val() !== '') {
+                verificarFechas = false;
+            } else {
+                verificarFechas = true;
+            }
+
             if (evento.validarFormulario('#formNuevaSolicitud')) {
-                var data = {
-                    ticket: ticket,
-                    tipo: '3',
-                    departamento: $('#selectDepartamentoSolicitud').val(),
-                    prioridad: $('#selectPrioridadSolicitud').val(),
-                    descripcion: $('#textareaDescripcionSolicitud').val(),
-                    asunto: $('#inputAsuntoSolicitud').val(),
-                    servicio: $("#hiddenServicio").val(),
-                    personalSD: $("#selectPersonalSD").val(),
-                    folio: $('#inputFolioSolicitud').val(),
-                    sucursal: $('#selectSucursalSolicitud').val()
-                };
-                _this.file.enviarArchivos('#inputEvidenciasSolicitud', '/Generales/Solicitud/Nueva_solicitud', '#panelNuevaSolicitud', data, function (respuesta) {
-                    if (respuesta) {
-                        if (data.personalSD != "") {
-                            evento.enviarEvento('/Generales/Solicitud/ReasignarFolioSD', data, null, function (respuesta) {
+                if (verificarFechas) {
+                    var data = {
+                        ticket: ticket,
+                        tipo: '3',
+                        departamento: $('#selectDepartamentoSolicitud').val(),
+                        prioridad: $('#selectPrioridadSolicitud').val(),
+                        descripcion: $('#textareaDescripcionSolicitud').val(),
+                        asunto: $('#inputAsuntoSolicitud').val(),
+                        servicio: $("#hiddenServicio").val(),
+                        personalSD: $("#selectPersonalSD").val(),
+                        folio: $('#inputFolioSolicitud').val(),
+                        sucursal: $('#selectSucursalSolicitud').val(),
+                        fechaProgramada: $('#inputProgramada').val(),
+                        fechaLimiteAtencion: $('#inputLimiteAtencion').val()
+                    };
+                    _this.file.enviarArchivos('#inputEvidenciasSolicitud', '/Generales/Solicitud/Nueva_solicitud', '#panelNuevaSolicitud', data, function (respuesta) {
+                        if (respuesta) {
+                            if (data.personalSD != "") {
+                                evento.enviarEvento('/Generales/Solicitud/ReasignarFolioSD', data, null, function (respuesta) {
 
-                            });
-                        }
+                                });
+                            }
 
-                        $("#modal-dialogo .modal-body").empty().append('<div class="row">\n\
+                            $("#modal-dialogo .modal-body").empty().append('<div class="row">\n\
                                         <div class="col-md-12 text-center">\n\
                                             <h5>Se genero la solicitud <b>' + respuesta + '</b></h5>\n\
                                         </div>\n\
                                     </div>');
-                        $('#btnModalConfirmar').addClass('hidden');
-                        $('#btnModalAbortar').empty().append('Cerrar').removeClass('hidden');
-                    } else {
-                        evento.mostrarMensaje('#errorSolicitudNueva', false, 'No se pudo generar la solicitud vuelva a intentarlo', 3000);
-                    }
+                            $('#btnModalConfirmar').addClass('hidden');
+                            $('#btnModalAbortar').empty().append('Cerrar').removeClass('hidden');
+                        } else {
+                            evento.mostrarMensaje('.errorSolicitudNueva', false, 'No se pudo generar la solicitud vuelva a intentarlo', 3000);
+                        }
 
-                    $('#btnModalAbortar').on('click', function () {
-                        $('#btnCancelarNuevaSolicitud').trigger('click');
+                        $('#btnModalAbortar').on('click', function () {
+                            $('#btnCancelarNuevaSolicitud').trigger('click');
+                        });
                     });
-                });
+                }
+            } else {
+                evento.mostrarMensaje('.errorSolicitudNueva', false, 'Debe seleccionar solo una fecha.', 3000);
             }
         });
 
@@ -411,9 +433,9 @@ Servicio.prototype.ServicioSinClasificar = function () {
                 var data = {servicio: servicio};
 //                _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, panel, function (respuesta) {
 //                    if (respuesta === true) {
-                        _this.validarTecnicoPoliza();
+                _this.validarTecnicoPoliza();
 
-                        var html = '<div class="row" m-t-10">\n\
+                var html = '<div class="row" m-t-10">\n\
                                         <div id="col-md-12 text-center">\n\
                                             <div id="campoLapizTecnico"></div>\n\
                                         </div>\n\
@@ -426,10 +448,10 @@ Servicio.prototype.ServicioSinClasificar = function () {
                                     </div>\n\
                                     <br>';
 
-                        $('#btnModalConfirmar').addClass('hidden');
-                        $('#btnModalConfirmar').off('click');
-                        _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
-                        _this.validarCamposFirma(ticket, servicio, true, true, '4');
+                $('#btnModalConfirmar').addClass('hidden');
+                $('#btnModalConfirmar').off('click');
+                _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
+                _this.validarCamposFirma(ticket, servicio, true, true, '4');
 //                    } else {
 //                        _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
 //                    }
