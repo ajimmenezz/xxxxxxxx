@@ -34,7 +34,7 @@ $(function () {
     let  nodo = {
         area: null,
         nodo: null,
-        switch: null,
+        switch : null,
         numSwitch: null
     }
 
@@ -70,13 +70,14 @@ $(function () {
     });
 
     function atenderServicio(datoServicioTabla) {
-        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/atender', datoServicioTabla, function (respuesta) {
+        console.log(datoServicioTabla);
+        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
             modal.cerrarModal();
             console.log(respuesta)
         });
     }
-    
-    function iniciarObjetos(){
+
+    function iniciarObjetos() {
         tablaNodos = new TablaBasica('table-nodo');
         tablaMateriales = new TablaBasica('table-material');
         tablaAgregarMateriales = new TablaBasica('table-materialNodo');

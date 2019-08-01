@@ -7,7 +7,8 @@ class Controller_ServicioTicket extends CI_Controller {
 
     private $factory;
     private $servicio;
-    private $serviceDesk;
+
+//    private $serviceDesk;
 
     public function __construct() {
         parent::__construct();
@@ -16,13 +17,20 @@ class Controller_ServicioTicket extends CI_Controller {
     }
 
     public function atenderServicio() {
-        $datosServicio = $this->input->post(['id']); //Descomentar cuando se manden datos
-        $this->servicio = $this->factory->getServicio('GeneralRedes', $datosServicio['id'] = 3);
+        $datosServicio = $this->input->post(); //Descomentar cuando se manden datos
+//        var_dump($datosServicio);
+        $this->servicio = $this->factory->getServicio('GeneralRedes', $datosServicio['id']);
         $resultado = $this->servicio->getdatos();
+//        var_dump($resultado['folio']);
+        if (!empty($resultado['folio'])) {
+            $datosServiceDesk = $this->serviceDesk->getDetallesFolio($resultado['folio']);
+        }
+//        var_dump(json_encode($datosServiceDesk));
         echo '<pre>';
         echo json_encode($resultado);
         echo '</pre>';
     }
+
     public function guardarFolio(array $datos) {
         
     }
