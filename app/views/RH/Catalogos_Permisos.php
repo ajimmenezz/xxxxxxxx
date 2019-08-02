@@ -115,20 +115,22 @@
                         <div class="col-md-12">
                             <h4 class="m-t-10">Generar Motivo de Rechazo</h4>
                         </div>
-                        <div class="col-md-12">
-                            <div class="col-md-8 col-sm-8 col-xs-8">
-                                <div class="form-group">
-                                    <label>Motivo</label>
-                                    <input id="inputMotivoRechazo" type="text" class="form-control" style="width: 100%"/>
+                        <form id="formAgregarRechazo" data-parsley-validate="true" enctype="multipart/form-data">
+                            <div class="col-md-12">
+                                <div class="col-md-8 col-sm-8 col-xs-8">
+                                    <div class="form-group">
+                                        <label>Motivo</label>
+                                        <input id="inputMotivoRechazo" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1 col-xs-1">
+                                    <br>
+                                    <label id="agregarRechazo" class="btn btn-white" data-toggle="tooltip" data-placement="top" data-title="Agregar" >
+                                        <i class="fa fa-2x fa-plus text-success"></i>
+                                    </label>  
                                 </div>
                             </div>
-                            <div class="col-md-1 col-sm-1 col-xs-1">
-                                <br>
-                                <label id="agregarRechazo" class="btn btn-white" data-toggle="tooltip" data-placement="top" data-title="Agregar" >
-                                    <i class="fa fa-2x fa-plus text-success"></i>
-                                </label>  
-                            </div>
-                        </div>
+                        </form>
                     </div>
                     <!--Finaliza apartado para generar un rechazo-->
                     <div class="col-md-12">
