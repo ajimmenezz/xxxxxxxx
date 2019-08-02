@@ -7,25 +7,31 @@ class Controller_ServicioTicket extends CI_Controller {
 
     private $factory;
     private $servicio;
+    private $datos;
 
 //    private $serviceDesk;
 
     public function __construct() {
         parent::__construct();
-        $this->factory = new FactoryServiciosTicket();        
+        $this->factory = new FactoryServiciosTicket();
     }
 
     public function atenderServicio() {
+        $this->datos = array();
         $datosServicio = $this->input->post();
         $this->servicio = $this->factory->getServicio('GeneralRedes', $datosServicio['id']);
-        $resultado = $this->servicio->getdatos();
+        $this->datos = $this->servicio->getdatos();
+        $this->setDetallesFolio();
+//        echo '<pre>';
+//        var_dump($this->datos);
+//        echo '</pre>';
+        echo json_encode($this->datos);
+    }
 
-        if (!empty($resultado['folio'])) {
-            $datosServiceDesk = ServiceDesk::getDetallesFolio($resultado['folio']);
+    private function setDetallesFolio() {
+        if (!empty($this->datos['folio'])) {
+            $this->datos['detallesFolio'] = ServiceDesk::getDetallesFolio($this->datos['folio']);
         }
-        echo '<pre>';
-        echo json_encode($resultado);
-        echo '</pre>';
     }
 
     public function guardarFolio(array $datos) {
