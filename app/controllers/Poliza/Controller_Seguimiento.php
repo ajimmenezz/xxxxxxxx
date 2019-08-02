@@ -9,6 +9,7 @@ class Controller_Seguimiento extends Base {
     private $notas;
     private $ServiciosGeneral;
     private $Catalogo;
+    private $ServiciosTicket;
 
     public function __construct() {
         parent::__construct();
@@ -18,6 +19,7 @@ class Controller_Seguimiento extends Base {
         $this->ServiciosGeneral = \Librerias\Generales\Servicio::factory();
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();
         $this->Poliza = \Librerias\Poliza\Poliza::factory();
+        $this->ServiciosTicket = \Librerias\Generales\ServiciosTicket::factory();
     }
 
     /*
@@ -394,6 +396,10 @@ class Controller_Seguimiento extends Base {
                 break;
             case 'enviarDatosCotizarOpcionRevision':
                 $resultado = $this->Seguimientos->checkInsertSicsa($this->input->post());
+                break;
+            case 'MostrarServicios':
+                $servicios = array('serviciosAsignados' => $this->ServiciosTicket->getServiciosAsignados($this->input->post('departamento'), $this->input->post('folio')));
+                $resultado = $servicios;
                 break;
             default:
                 $resultado = FALSE;

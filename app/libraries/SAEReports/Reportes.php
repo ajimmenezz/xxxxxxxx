@@ -7,13 +7,15 @@ ini_set('max_execution_time', 3600);
 use Controladores\Controller_Datos_Usuario as General;
 use Librerias\Generales\PDF as PDF;
 
-class Reportes extends General {
+class Reportes extends General
+{
 
     private $DBSAE;
     private $Excel;
     private $pdf;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->DBSAE = \Modelos\Modelo_SAE7::factory();
         $this->Excel = new \Librerias\Generales\CExcel();
@@ -22,14 +24,16 @@ class Reportes extends General {
 
     /* Encargado de regresar los almacenes virtuales de SAE */
 
-    public function getAlamacenesSAE(array $datos = null) {
+    public function getAlamacenesSAE(array $datos = null)
+    {
         $consulta = $this->DBSAE->getAlmacenesSAE();
         return $consulta;
     }
 
     /* Encargado de regresar los el inventario del almacen virtual de SAE */
 
-    public function getInventarioAlamacenSAE(array $datos = null) {
+    public function getInventarioAlamacenSAE(array $datos = null)
+    {
         if (!isset($datos['desde'])) {
             $condicion = " where FECHAELAB BETWEEN DATEADD(week, -1, GETDATE()) and GETDATE() ";
         } else {
@@ -61,11 +65,22 @@ class Reportes extends General {
         return $data;
     }
 
-    public function getMovimientosAlmacenesSAE(array $datos = null) {
+    public function getMovimientosAlmacenesSAE(array $datos = null)
+    {
         if (!isset($datos['desde'])) {
             $condicion = " where FECHAELAB BETWEEN DATEADD(week, -1, GETDATE()) and GETDATE() ";
         } else {
             $condicion = " where FECHAELAB BETWEEN '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 23:59:59' ";
+        }
+
+        if (isset($datos['texto']) && $datos['texto'] != '') {
+            $condicion .= " 
+            and (
+                productos.CVE_ART like '%" . $datos['texto'] . "%' 
+                or productos.DESCR like '%" . $datos['texto'] . "%'
+                or productos.CVE_ART like '%" . strtoupper($datos['texto']) . "%' 
+                or productos.DESCR like '%" . strtoupper($datos['texto']) . "%'
+            ) ";
         }
 
         $data['movimientos'] = $this->DBSAE->consultaBDSAE("select
@@ -92,7 +107,8 @@ class Reportes extends General {
         return $data;
     }
 
-    public function exportaInventarioAlamacenSAE(array $datos = null) {
+    public function exportaInventarioAlamacenSAE(array $datos = null)
+    {
         $info = $datos['info'];
         $movimientos = $datos['movimientos'];
 
@@ -108,7 +124,8 @@ class Reportes extends General {
             'Línea',
             'Unidad',
             'Existencias',
-            'Costo'];
+            'Costo'
+        ];
         //Envía el arreglo de los subtitulos a la hoja activa.
         $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
         //Arreglo con el ancho por columna.
@@ -147,7 +164,8 @@ class Reportes extends General {
             'Unidad Venta',
             'Existencia',
             'Fecha',
-            'Movimiento Enlazado'];
+            'Movimiento Enlazado'
+        ];
         $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
         $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
         $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
@@ -167,7 +185,8 @@ class Reportes extends General {
         return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
     }
 
-    public function exportaMovimientosAlmacenesSAE(array $datos = null) {
+    public function exportaMovimientosAlmacenesSAE(array $datos = null)
+    {
         $movimientos = $datos['movimientos'];
 
         /* Begin Hoja 2 */
@@ -189,7 +208,8 @@ class Reportes extends General {
             'Unidad Venta',
             'Existencia',
             'Fecha',
-            'Movimiento Enlazado'];
+            'Movimiento Enlazado'
+        ];
         $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
         $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
         $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
@@ -209,7 +229,8 @@ class Reportes extends General {
         return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
     }
 
-    public function exportaReporteComprasSAE(array $datos = null) {
+    public function exportaReporteComprasSAE(array $datos = null)
+    {
         $compras = isset($datos['compras']) ? $datos['compras'] : [];
         $existencias = isset($datos['existencias']) ? $datos['existencias'] : [];
         $movimientos = isset($datos['movimientos']) ? $datos['movimientos'] : [];
@@ -232,7 +253,8 @@ class Reportes extends General {
             'Línea',
             'Cantidad',
             'Precio',
-            'Total'];
+            'Total'
+        ];
         //Envía el arreglo de los subtitulos a la hoja activa.
         $this->Excel->setTableSubtitles('A', 1, $arrayTitulosCompras);
         //Arreglo con el ancho por columna. 
@@ -257,7 +279,8 @@ class Reportes extends General {
             'Clave Artículo',
             'Artículo',
             'Almacén Virtual',
-            'Existencias'];
+            'Existencias'
+        ];
         $this->Excel->setTableSubtitles('A', 1, $arrayTitulosExistencias);
         $arrayWidthExistencias = [18, 33.71, 34.14, 15];
         $this->Excel->setColumnsWidth('A', $arrayWidthExistencias);
@@ -284,7 +307,8 @@ class Reportes extends General {
             'Unidad Venta',
             'Existencia',
             'Fecha',
-            'Movimiento Enlazado'];
+            'Movimiento Enlazado'
+        ];
         $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
         $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
         $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
@@ -303,7 +327,8 @@ class Reportes extends General {
         return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
     }
 
-    public function exportaReporteComprasSAEProyecto(array $datos = null) {
+    public function exportaReporteComprasSAEProyecto(array $datos = null)
+    {
         $compras = $datos['compras'];
 
         /* Begin Hoja 1 */
@@ -332,7 +357,8 @@ class Reportes extends General {
             'Precio Unitario',
             'Moneda',
             'Tipo Cambio',
-            'Total Partida'];
+            'Total Partida'
+        ];
         //Envía el arreglo de los subtitulos a la hoja activa.
         $this->Excel->setTableSubtitles('A', 1, $arrayTitulosCompras);
         //Arreglo con el ancho por columna.
@@ -361,7 +387,8 @@ class Reportes extends General {
         return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
     }
 
-    public function exportaReporteRemisiones(array $datos = null) {
+    public function exportaReporteRemisiones(array $datos = null)
+    {
         $compras = $datos['compras'];
 
         /* Begin Hoja 1 */
@@ -385,7 +412,8 @@ class Reportes extends General {
             'Fecha Documento',
             'Fecha Entrada',
             'Fecha Venta',
-            'Fecha Cancelación'];
+            'Fecha Cancelación'
+        ];
         //Envía el arreglo de los subtitulos a la hoja activa.
         $this->Excel->setTableSubtitles('A', 1, $arrayTitulosCompras);
         //Arreglo con el ancho por columna.
@@ -414,7 +442,8 @@ class Reportes extends General {
         return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
     }
 
-    public function getBuscarProductosCompras(array $datos = null) {
+    public function getBuscarProductosCompras(array $datos = null)
+    {
         $consulta = $this->DBSAE->consultaBDSAE("SELECT CVE_ART as Clave, DESCR as Nombre
                                                 FROM SAE7EMPRESA3.dbo.INVE03 as Productos
                                                 WHERE Productos.CVE_ART LIKE '%" . strtoupper($datos['producto']) . "%'
@@ -424,7 +453,8 @@ class Reportes extends General {
         return $consulta;
     }
 
-    public function mostrarReporteComprasSAE(array $datos) {
+    public function mostrarReporteComprasSAE(array $datos)
+    {
         $data = array();
         $nuevoListaProductos = array();
 
@@ -492,7 +522,8 @@ class Reportes extends General {
         return array('formulario' => parent::getCI()->load->view('ReportesSAE/Modal/ReporteComprasSAE', $data, TRUE), 'datos' => $data);
     }
 
-    public function mostrarReporteComprasSAEProyecto(array $datos) {
+    public function mostrarReporteComprasSAEProyecto(array $datos)
+    {
         $claves = explode(",", $datos['claves']);
 
         $condicion = " where compras.FECHAELAB between '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 00:00:00' and (1 <> 1";
@@ -540,7 +571,8 @@ class Reportes extends General {
         return array('formulario' => parent::getCI()->load->view('ReportesSAE/Modal/ReporteComprasSAEProyecto', $data, TRUE), 'datos' => $data);
     }
 
-    public function mostrarReporteRemisiones(array $datos) {
+    public function mostrarReporteRemisiones(array $datos)
+    {
         $condicion = " where remision.FECHAELAB between '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 23:59:59' ";
 
         $query = "select
@@ -572,7 +604,8 @@ class Reportes extends General {
         return array('formulario' => parent::getCI()->load->view('ReportesSAE/Modal/ReporteRemisiones', $data, TRUE), 'datos' => $data);
     }
 
-    public function generaOC(array $datos) {
+    public function generaOC(array $datos)
+    {
         $_SESSION['datosOC'] = $datos;
 
         $proveedor = $this->DBSAE->consultaBDSAE("select
@@ -760,19 +793,21 @@ class Reportes extends General {
         $carpeta = substr($carpeta, 1);
         return $carpeta;
     }
-
 }
 
-class PDFOC extends PDF {
+class PDFOC extends PDF
+{
 
     private $contenidoHeader;
 
-    public function __construct($contenido = '', $orientation = 'P', $unit = 'mm', $size = 'Letter') {
+    public function __construct($contenido = '', $orientation = 'P', $unit = 'mm', $size = 'Letter')
+    {
         parent::__construct($orientation, $unit, $size);
         $this->contenidoHeader = $contenido;
     }
 
-    public function Header($datos = []) {
+    public function Header($datos = [])
+    {
         $this->SetFont('Helvetica', '', 8.4);
         $this->Image('./assets/img/siccob-logo.png', 10, 10, 21, 21, 'PNG');
         $this->SetXY(25, 12);
@@ -797,7 +832,8 @@ class PDFOC extends PDF {
         $this->SetXY(10, 40);
     }
 
-    public function subTitulo(string $titulo) {
+    public function subTitulo(string $titulo)
+    {
         $this->Ln();
         $this->SetFont("helvetica", "", 9);
         $this->Cell(0, 10, utf8_decode($titulo));
@@ -805,7 +841,8 @@ class PDFOC extends PDF {
         $this->Line($this->GetX(), $this->GetY(), $this->GetPageWidth() - 10, $this->GetY());
     }
 
-    public function Footer() {
+    public function Footer()
+    {
         $fecha = date('d/m/Y');
         // Go to 1.5 cm from bottom
         $this->SetY(-15);
@@ -816,7 +853,8 @@ class PDFOC extends PDF {
         $this->Cell(68, 10, utf8_decode('Página ') . $this->PageNo(), 0, 0, 'R');
     }
 
-    public function CheckPageBreak($h) {
+    public function CheckPageBreak($h)
+    {
         //If the height h would cause an overflow, add a new page immediately
         if ($this->GetY() + $h > $this->PageBreakTrigger) {
             $this->AddPage($this->CurOrientation);
@@ -826,7 +864,8 @@ class PDFOC extends PDF {
     }
 
     // Tabla simple
-    public function BasicTable($header, $data) {
+    public function BasicTable($header, $data)
+    {
         $this->Ln(3);
         $ancho = ($this->GetPageWidth() - 20) / count($header);
         // Cabecera
@@ -845,7 +884,8 @@ class PDFOC extends PDF {
         }
     }
 
-    public function multiceldaConTitulo($titulo, $txt) {
+    public function multiceldaConTitulo($titulo, $txt)
+    {
         $this->Ln();
         $this->SetFont("Helvetica", "B", 9);
         $this->Cell(0, 7, utf8_decode($titulo));
@@ -854,7 +894,8 @@ class PDFOC extends PDF {
         $this->MultiCell(0, 7, utf8_decode($txt));
     }
 
-    public function imagenConTiuloYSubtitulo($url, $titulo, $subtitulo, $y) {
+    public function imagenConTiuloYSubtitulo($url, $titulo, $subtitulo, $y)
+    {
         $this->Ln();
         $this->SetFont("Helvetica", "B", 9);
         $this->Cell(0, 7, $titulo, 0, 0, 'C');
@@ -867,7 +908,8 @@ class PDFOC extends PDF {
         $this->Cell(0, 7, $subtitulo, 0, 0, 'C');
     }
 
-    public function tablaImagenes(array $imagenes) {
+    public function tablaImagenes(array $imagenes)
+    {
         $this->Ln(7);
         $countFilas = ((count($imagenes) / 4) < 0.5) ? round(count($imagenes) / 4, 0, PHP_ROUND_HALF_UP) + 1 : ceil(count($imagenes) / 4);
         $columna = 0;
@@ -909,10 +951,10 @@ class PDFOC extends PDF {
         }
         $this->SetY($y);
     }
-
 }
 
-class NumeroALetras {
+class NumeroALetras
+{
 
     private static $UNIDADES = [
         '',
@@ -960,7 +1002,8 @@ class NumeroALetras {
         'NOVECIENTOS '
     ];
 
-    public static function convertir($number, $moneda = '', $centimos = '', $forzarCentimos = false) {
+    public static function convertir($number, $moneda = '', $centimos = '', $forzarCentimos = false)
+    {
         $converted = '';
         $decimales = '';
         if (($number < 0) || ($number > 999999999)) {
@@ -1012,7 +1055,8 @@ class NumeroALetras {
         return $valor_convertido;
     }
 
-    private static function convertGroup($n) {
+    private static function convertGroup($n)
+    {
         $output = '';
         if ($n == '100') {
             $output = "CIEN ";
@@ -1031,5 +1075,4 @@ class NumeroALetras {
         }
         return $output;
     }
-
 }

@@ -6,6 +6,7 @@ $(function () {
     var select = new Select();
     var file = new Upload();
     var nota = new Nota();
+    var calendario = new Fecha();
 
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();
@@ -68,6 +69,22 @@ $(function () {
             $('#inputFolioSolicitud').val(respuesta.datos.Folio);
             select.setOpcionesSelect('#selectDepartamentoSolicitud', respuesta.departamentos, $('#selectAreasSolicitud').val(), 'IdArea');
             select.cambiarOpcion('#selectDepartamentoSolicitud', respuesta.datos.IdDepartamento);
+
+            if (respuesta.datos.FechaTentativa === '0000-00-00 00:00:00') {
+                respuesta.datos.FechaTentativa = '';
+            }
+
+            if (respuesta.datos.FechaLimite === '0000-00-00 00:00:00') {
+                respuesta.datos.FechaLimite = '';
+            }
+
+            $('#inputProgramada').datetimepicker({
+                format: 'YYYY-MM-DD HH:mm:ss'
+            }).val(respuesta.datos.FechaTentativa);
+
+            $('#inputLimiteAtencion').datetimepicker({
+                format: 'YYYY-MM-DD HH:mm:ss'
+            }).val(respuesta.datos.FechaLimite);
 
             $('#selectAreasSolicitud').on('change', function () {
                 if ($(this).val() !== '' && $(this).val() !== 'sinArea') {
@@ -284,6 +301,7 @@ $(function () {
 
     //Actualizar Solicitud
     $('#btnActualizarSolicitud').on('click', function () {
+        var verificarFechas;
         var data = {
             solicitud: $('#informacionSolicitud').attr('data-solicitud'),
             operacion: '1',
@@ -292,40 +310,53 @@ $(function () {
             descripcion: $('#textareaDescripcionSolicitud').val(),
             asunto: $('#inputAsuntoSolicitudGeneradas').val(),
             folio: $('#inputFolioSolicitud').val(),
-            sucursal: $('#selectSucursalSolicitudGeneradas').val()};
+            sucursal: $('#selectSucursalSolicitudGeneradas').val(),
+            fechaProgramada: $('#inputProgramada').val(),
+            fechaLimiteAtencion: $('#inputLimiteAtencion').val()};
+
+        if ($('#inputProgramada').val() !== '' && $('#inputLimiteAtencion').val() !== '') {
+            verificarFechas = false;
+        } else {
+            verificarFechas = true;
+        }
+
         if (evento.validarFormulario('#formActualizarSolicitud')) {
-            file.enviarArchivos('#inputEvidenciasSolicitud', 'Solicitud/Solicitud_Actualizar', '#informacionSolicitud', data, function (respuesta) {
-                $('#btnModalConfirmar').addClass('hidden');
-                $('#btnModalAbortar').empty().append('Cerrar');
-                if (respuesta.solicitudes) {
-                    evento.mostrarModal('Actaulización Exitosa', '<div class="row"><div class="col-md-12 text-center">Se actualizó con éxito la información.</div></div>');
-                    tabla.limpiarTabla('#data-table-solicitudes-generadas');
-                    if (respuesta.solicitudes.length > 0) {
-                        $.each(respuesta.solicitudes, function (indice, item) {
-                            var colorBandera = '';
-                            switch (item.IdPrioridad) {
-                                case '0':
-                                    colorBandera = 'text-default';
-                                    break;
-                                case '1':
-                                    colorBandera = 'text-danger';
-                                    break;
-                                case '2':
-                                    colorBandera = 'text-warning';
-                                    break;
-                                case '3':
-                                    colorBandera = 'text-success';
-                                    break;
-                            }
-                            var celda = '<i class="fa fa-2x fa-flag fa-inverse ' + colorBandera + '"></i>';
-                            tabla.agregarFila('#data-table-solicitudes-generadas', [item.Numero, item.Asunto, item.Ticket, item.Departamento, item.Fecha, item.Estatus, celda]);
-                        });
+            if (verificarFechas) {
+                file.enviarArchivos('#inputEvidenciasSolicitud', 'Solicitud/Solicitud_Actualizar', '#informacionSolicitud', data, function (respuesta) {
+                    $('#btnModalConfirmar').addClass('hidden');
+                    $('#btnModalAbortar').empty().append('Cerrar');
+                    if (respuesta.solicitudes) {
+                        evento.mostrarModal('Actaulización Exitosa', '<div class="row"><div class="col-md-12 text-center">Se actualizó con éxito la información.</div></div>');
+                        tabla.limpiarTabla('#data-table-solicitudes-generadas');
+                        if (respuesta.solicitudes.length > 0) {
+                            $.each(respuesta.solicitudes, function (indice, item) {
+                                var colorBandera = '';
+                                switch (item.IdPrioridad) {
+                                    case '0':
+                                        colorBandera = 'text-default';
+                                        break;
+                                    case '1':
+                                        colorBandera = 'text-danger';
+                                        break;
+                                    case '2':
+                                        colorBandera = 'text-warning';
+                                        break;
+                                    case '3':
+                                        colorBandera = 'text-success';
+                                        break;
+                                }
+                                var celda = '<i class="fa fa-2x fa-flag fa-inverse ' + colorBandera + '"></i>';
+                                tabla.agregarFila('#data-table-solicitudes-generadas', [item.Numero, item.Asunto, item.Ticket, item.Departamento, item.Fecha, item.Estatus, celda]);
+                            });
+                        }
+                    } else {
+                        evento.mostrarModal('Error de Actualización', '<div class="row"><div class="col-md-12 text-center">No se pudo actualizar la información por favor de volver a intentarlo.</div></div>');
                     }
-                } else {
-                    evento.mostrarModal('Error de Actualización', '<div class="row"><div class="col-md-12 text-center">No se pudo actualizar la información por favor de volver a intentarlo.</div></div>');
-                }
-                $('#btnCerrarActualizarSolicitud').trigger('click');
-            });
+                    $('#btnCerrarActualizarSolicitud').trigger('click');
+                });
+            } else {
+                evento.mostrarModal('Error de Actualización', '<div class="row"><div class="col-md-12 text-center">Debe seleccionar solo una fecha.</div></div>');
+            }
         }
     });
 

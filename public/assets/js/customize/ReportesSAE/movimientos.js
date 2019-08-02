@@ -22,16 +22,17 @@ $(function () {
 
     //Creando tabla de areas
     tabla.generaTablaPersonal('#data-table-movimientos-sae', null, null, true, true, [[0, 'desc']]);
-    
+
     fecha.rangoFechas('#desdeMovimientos', '#hastaMovimientos');
 
     $('#btnFiltrarMovimientos').off('click');
     $("#btnFiltrarMovimientos").on("click", function () {
         var desde = $("#txtDesdeMovimientos").val();
         var hasta = $("#txtHastaMovimientos").val();
+        var texto = $.trim($("#txtArticulo").val());
         if (desde !== '') {
             if (hasta !== '') {
-                var data = {desde: desde, hasta: hasta};
+                var data = { desde: desde, hasta: hasta, texto: texto };
                 recargarReporteMovimientos(data);
             } else {
                 evento.mostrarMensaje('#errorMovimientosAlmacenes', false, 'Debe llenar el campo Hasta.', 3000);
@@ -49,17 +50,17 @@ $(function () {
             });
         });
     };
-    
-    $("#btnExportarExcel").on("click", function () {        
-        var movimientos = $('#data-table-movimientos-sae').DataTable().rows({search: 'applied'}).data();        
-        var realMovimientos = new Array();        
+
+    $("#btnExportarExcel").on("click", function () {
+        var movimientos = $('#data-table-movimientos-sae').DataTable().rows({ search: 'applied' }).data();
+        var realMovimientos = new Array();
         $.each(movimientos, function (k, v) {
             if (!isNaN(k)) {
                 realMovimientos.push(v);
             }
         });
-        var data = {            
-            movimientos: realMovimientos            
+        var data = {
+            movimientos: realMovimientos
         };
         evento.enviarEvento('Compras/exportaMovimientosAlmacenesSAE', data, '#seccion-movimientos-almacenes-SAE', function (respuesta) {
             window.open(respuesta.ruta, '_blank');
