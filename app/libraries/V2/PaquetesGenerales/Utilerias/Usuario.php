@@ -2,7 +2,7 @@
 
 namespace Librerias\V2\PaquetesGenerales\Utilerias;
 
-use CI_Controller;
+use \CI_Controller;
 
 Class Usuario {
 
@@ -11,15 +11,16 @@ Class Usuario {
 
     static private function setCI() {
         if (empty(self::$CI)) {
-            self::$CI =& get_instance();
+            self::$CI =& get_instance();           
         }
+        self::$CI->load->library('session');
     }
 
     static private function setDatos() {
         self::setCI();
         if (empty(self::$datos)) {
             self::$datos = self::$CI->session->userdata();
-        }
+        }        
     }
 
     static public function getId() {

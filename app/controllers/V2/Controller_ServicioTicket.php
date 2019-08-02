@@ -12,20 +12,17 @@ class Controller_ServicioTicket extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->factory = new FactoryServiciosTicket();
-        $this->serviceDesk = new ServiceDesk();
+        $this->factory = new FactoryServiciosTicket();        
     }
 
     public function atenderServicio() {
-        $datosServicio = $this->input->post(); //Descomentar cuando se manden datos
-//        var_dump($datosServicio);
+        $datosServicio = $this->input->post();
         $this->servicio = $this->factory->getServicio('GeneralRedes', $datosServicio['id']);
         $resultado = $this->servicio->getdatos();
-//        var_dump($resultado['folio']);
+
         if (!empty($resultado['folio'])) {
-            $datosServiceDesk = $this->serviceDesk->getDetallesFolio($resultado['folio']);
+            $datosServiceDesk = ServiceDesk::getDetallesFolio($resultado['folio']);
         }
-//        var_dump(json_encode($datosServiceDesk));
         echo '<pre>';
         echo json_encode($resultado);
         echo '</pre>';
