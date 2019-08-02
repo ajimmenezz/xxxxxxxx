@@ -24,4 +24,8 @@ class Catalogo_Rechazo_Permisos implements Catalogo{
         return $this->registros;
     }
 
+    public function setRegistro(array $datos) {
+        return 'Nuevo registro rechazo';
+    }
+
 }
