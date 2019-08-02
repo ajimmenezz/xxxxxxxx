@@ -1478,14 +1478,27 @@ $config['RH'] = array(
     'Catalogo-Permisos-RH' => array(
         'liga' => 'Catálogo de Permisos',
         'icono' => '',
-        'Url' => '/RH/catalogo_permisos',
+        'Url' => '/RH/Catalogos_Permisos',
         'css' => array(),
         'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'parsley/src/parsley',
+            'select2/dist/css/select2.min',
         ),
         'js' => array('Base/Base', 
             'Componentes/HerramientasWeb/Utileria',
+            'Componentes/HerramientasWeb/Modal',
+            'Componentes/Tablas/Tabla', 
+            'Componentes/Tablas/TablaBasica',
+            'Componentes/Selects/Select', 
+            'Componentes/Selects/SelectBasico',
             'RH/catalogo_permisos'),
         'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'select2/dist/js/select2.min',
+            'DataTables/js/dataTables.responsive',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es'
         ),
         'Permiso' => 'VRHPV'
     ),

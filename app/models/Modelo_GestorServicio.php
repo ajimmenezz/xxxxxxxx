@@ -12,20 +12,27 @@ Class Modelo_GestorServicio extends Base {
 
     public function getServicios($idJefe) {
         $totalServicios = array();
-        $trabajadores = $this->consulta("SELECT Id FROM `cat_v3_usuarios` WHERE IdJefe = '" . $idJefe . "'");
+        try {
+            $trabajadores = $this->consulta("SELECT Id FROM `cat_v3_usuarios` WHERE IdJefe = '" . $idJefe . "'");
 
-        if (!empty($trabajadores)) {
-            foreach ($trabajadores as $value) {
-                $datosServicio = $this->getServiciosDeTecnico($value['Id']);
-                array_push($totalServicios, $datosServicio);
+            if (!empty($trabajadores)) {
+                foreach ($trabajadores as $value) {
+                    $datosServicio = $this->getServiciosDeTecnico($value['Id']);
+                    
+                    array_push($totalServicios, $datosServicio);
+                }
+                $miServicio = $this->getServiciosDeTecnico($idJefe);
+                array_push($totalServicios, $miServicio);
+            } else {
+                array_push($totalServicios, array(
+                    'Error' => '404'
+                ));
             }
-            $miServicio = $this->getServiciosDeTecnico($idJefe);
-            array_push($totalServicios, $miServicio);
-        } else {
-            array_push($totalServicios, array(
-                'Error' => '404'
-            ));
+            
+         } catch (\Exception $ex) {
+            var_dump($ex->getMessage());
         }
+
         return $totalServicios;
     }
 

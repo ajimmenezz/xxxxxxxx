@@ -6,14 +6,14 @@ class Modelo_Base
     private $nombreBD;
     static $DB = array();
 
-    public function __construct(string $db) {
+    public function __construct(string $db = 'pruebas') {
         $this->nombreBD = $db;
         if (empty(self::$DB[$db])) {
             self::$DB[$db] = get_instance()->load->database($db, TRUE);
         }
         return self::$DB[$db];
     }
-
+    
     public function query(string $query) {
         if ($consulta = self::$DB[$this->nombreBD]->simple_query($query)) {
             return $consulta;
