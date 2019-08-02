@@ -12,8 +12,8 @@ $(function () {
     let tablaMotivoAusencia = new TablaBasica('table-catalogo-ausencia');
     let tablaMotivoRechazo = new TablaBasica('table-catalogo-rechazos');
     let selectEstatus = new SelectBasico('selectEditarEstado');
-    let datosMotivo = {
-        motivo: null,
+    let datos = {
+        nombre: null,
         observaciones: null
     }
     selectEstatus.iniciarSelect();
@@ -21,9 +21,9 @@ $(function () {
     /**Empieza sección de eventos para el catalogo de Asistencia**/
     $('#agregarMotivo').on('click', function () {
         if (evento.validarFormulario('#formAgregarMotivo')) {
-            datosMotivo.motivo = $('#inputMotivo').val();
-            datosMotivo.observaciones = $('#inputObservaciones').val();
-            peticion.enviar('panelCatalogoAusencia', 'Catalogos_Permisos/Nuevo_Registro/Motivos', datosMotivo, function (respuesta) {
+            datos.nombre = $('#inputMotivo').val();
+            datos.observaciones = $('#inputObservaciones').val();
+            peticion.enviar('panelCatalogoAusencia', 'Catalogos_Permisos/Nuevo_Registro/Motivo', datos, function (respuesta) {
                 console.log(respuesta);
             });
             limpiarCampos();
@@ -47,7 +47,10 @@ $(function () {
     });
     $('#btnAceptarEdicion').on('click', function () {
         if (evento.validarFormulario('#formEditarMotivo')) {
-            console.log('peticion para guardar cambios')
+            console.log('peticion para guardar cambios');
+            peticion.enviar('panelCatalogoAusencia', 'Catalogos_Permisos/Actualizar_Registro/Motivo', datos, function (respuesta) {
+
+            });
         }
     });
     /**Finaliza sección de eventos para el catalogo de Asistencia**/
@@ -56,8 +59,9 @@ $(function () {
     /**Empieza sección de eventos para el catalogo de Motivos de Rechazo**/
     $('#agregarRechazo').on('click', function () {
         if (evento.validarFormulario('#formAgregarRechazo')) {
-            datosMotivo.motivo = $('#inputMotivoRechazo').val();
-            peticion.enviar('panelCatalogoAusencia', 'Catalogos_Permisos/Nuevo_Registro/Rechazos', datosMotivo, function (respuesta) {
+            datos.nombre = $('#inputMotivoRechazo').val();
+            datos.observaciones = 'Aqui van las observaciones';
+            peticion.enviar('panelCatalogoAusencia', 'Catalogos_Permisos/Nuevo_Registro/Rechazo', datos, function (respuesta) {
                 console.log(respuesta);
             });
             limpiarCampos();
@@ -65,6 +69,9 @@ $(function () {
     });
     $('#editarRechazo').on('click', function () {
         console.log('editarRechazo');
+        peticion.enviar('panelCatalogoAusencia', 'Catalogos_Permisos/Actualizar_Registro/Rechazo', datos, function (respuesta) {
+
+        });
     });
     /**Finaliza sección de eventos para el catalogo de Motivos de Rechazo**/
 

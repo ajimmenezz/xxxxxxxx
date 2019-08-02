@@ -144,7 +144,8 @@ $route['RH/EventoCatalogoDepartamento/(:any)'] = 'RH/Controller_Departamentos/ma
 $route['RH/Seguimiento/(:any)'] = 'RH/Controller_Seguimiento/manejarEvento/$1';
 $route['RH/EventoCatalogosPerfil/(:any)'] = 'RH/Controller_Catalogos_Perfil/manejarEvento/$1';
 $route['RH/EventoPermisosVacaciones/(:any)'] = 'RH/Controller_PermisosVacaciones/manejarEvento/$1';
-$route['RH/Catalogos_Permisos/Nuevo_Registro/(:any)'] = 'RH/Controller_Catalogos/nuevoRegistro/$1';
+$route['RH/Catalogos_Permisos/Nuevo_Registro/(:any)'] = 'V2/Controller_Catalogos/nuevoRegistro/$1';
+$route['RH/Catalogos_Permisos/Actualizar_Registro/(:any)'] = 'V2/Controller_Catalogos/actualizarRegistro/$1';
 
 /* Routers para el manejo de la seccion Capacitacion */
 $route['Capacitacion/(:any)'] = 'Capacitacion/Controller_Capacitacion/desplegarPantalla/$1';
