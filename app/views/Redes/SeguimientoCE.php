@@ -499,14 +499,14 @@
                     <div class="col-md-12">
                         <br><br>
                         <div class="col-md-6">
-                            <label id="btnGuardar" class="btn btn-success">
+                            <a id="btnGuardar" class="btn btn-success">
                                 GUARDAR
-                            </label>
+                            </a>
                         </div>
                         <div class="col-md-6">
-                            <label id="btnConcluir" class="btn btn-danger">
+                            <a href="#modalConcluir" class="btn btn-danger" data-toggle="modal">
                                 CONCLUIR
-                            </label>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -708,3 +708,60 @@
     </div>
 </div>
 <!--Finaliza modal de evidencia-->
+
+<!--Empieza modal de conclucion-->
+<div id="modalConcluir" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Concluir</h4>
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <!--Empieza seccion del cliente-->
+                <div class="col-md-12">
+                    <form id="formAgregarCliente" data-parsley-validate="true" enctype="multipart/form-data">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Nombre Cliente</label>
+                                    <input id="inputCliente" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="f-s-14 f-w-600 m-t-10">Firma del Técnico (Siccob o Lexmark) * :</label>
+                                <div class="input-group m-b-10">
+                                    <span class="input-group-addon"><i class="fa fa-child"></i></span>
+                                    <label class="form-control"></label>
+                                </div>
+                                <div class="image-inner">
+                                    <a class="text-center" href="" data-lightbox="gallery-group-firmas">
+                                        <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="" alt="Firma Técnico">
+                                    </a>                                                
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Firma Cliente</label>
+                                    <input id="inputFirmaCliente" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!--Finaliza seccion del cliente-->
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnResumen" class="btn btn-sm btn-info"><i class="fa fa-info-circle"></i> Resumen</a>
+                <a id="btnConcluir" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> Continuar</a>
+                <a class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cancelar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>
+<!--Finaliza modal de conclucion-->

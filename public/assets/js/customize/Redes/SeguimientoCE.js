@@ -279,11 +279,16 @@ $(function () {
         }
     });
     $('#btnConcluir').on('click', function () {
-        
+        if (evento.validarFormulario('#formAgregarCliente')) {
+            console.log('btnConcluir');
+        }
     });
     /**Finalizan seccion de botonos generales**/
-    
+
     function verBotonConcluir() {
         let datosNodo = tablaNodos.datosTabla();
+        if (datosNodo.length == 0) {
+            $('#btnConcluir').attr("disabled", true);
+        }
     }
 });
