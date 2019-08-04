@@ -682,18 +682,13 @@
             </div>
             <!--Finaliza titulo del modal-->
             <!--Empieza cuerpo del modal-->
-            <div class="modal-body">
+            <div class="modal-body text-center">
                 <!--Empieza seccion de evidencia-->
-                <div class="panel" data-sortable-id="ui-media-object-3">
-                    <div class="panel-body">
-                        <div class="media media-lg">
-                            <a class="media-left" href="javascript:;">
-                                <img src="../public/storage/Archivos/gallery-1.jpg" alt="" class="media-object" />
-                            </a>
-                            <div class="media-body">
-                                <h4 class="media-heading">Media heading</h4>
-                            </div>
-                        </div>
+                <div class="col-md-12">
+                     <div class="image-inner">
+                        <a class="text-center" href="" data-lightbox="gallery-group-evidencia">
+                            <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="">
+                        </a>                                                
                     </div>
                 </div>
                 <!--Finaliza seccion de evidencia-->
