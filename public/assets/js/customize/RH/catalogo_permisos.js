@@ -14,7 +14,8 @@ $(function () {
     let selectEstatus = new SelectBasico('selectEditarEstado');
     let datos = {
         nombre: null,
-        observaciones: null
+        observaciones: null,
+        estado: null
     }
     selectEstatus.iniciarSelect();
 
@@ -25,6 +26,7 @@ $(function () {
             datos.observaciones = $('#inputObservaciones').val();
             peticion.enviar('panelCatalogoAusencia', 'Catalogos_Permisos/Nuevo_Registro/Motivo', datos, function (respuesta) {
                 console.log(respuesta);
+//                location.reload();
             });
             limpiarCampos();
         }
@@ -32,24 +34,28 @@ $(function () {
     $('#limpiarCampos').on('click', function () {
         limpiarCampos();
     });
-    $('.editarMotivo').on('click', function () {
-        let estado, row = $(this).closest("tr");
-        let datosFila = tablaMotivoAusencia.datosFila(row);
-        modal.mostrarModalBotonTabla("editarMotivo", '#modalEditarMotivo');
-        $('#inputEditarMotivo').val(datosFila[1]);
-        $('#inputEditarObservaciones').val(datosFila[2]);
-        if (datosFila[3] == 'Habilitado') {
-            estado = 1;
-        } else {
-            estado = 2;
-        }
-        selectEstatus.definirValor(estado);
+    tablaMotivoAusencia.evento(function () {
+        $('.editarMotivo').on('click', function () {
+            let estado, row = $(this).closest("tr");
+            let datosFila = tablaMotivoAusencia.datosFila(row);
+            modal.mostrarModalBotonTabla("editarMotivo", '#modalEditarMotivo');
+            $('#inputEditarMotivo').val(datosFila[1]);
+            $('#inputEditarObservaciones').val(datosFila[2]);
+            if (datosFila[3] == 'Habilitado') {
+                estado = 1;
+            } else {
+                estado = 2;
+            }
+            selectEstatus.definirValor(estado);
+        });
     });
     $('#btnAceptarEdicion').on('click', function () {
         if (evento.validarFormulario('#formEditarMotivo')) {
-            console.log('peticion para guardar cambios');
+            datos.nombre = $('#inputEditarMotivo').val();
+            datos.observaciones = $('#inputEditarObservaciones').val();
+            datos.estado = selectEstatus.obtenerValor();
             peticion.enviar('panelCatalogoAusencia', 'Catalogos_Permisos/Actualizar_Registro/Motivo', datos, function (respuesta) {
-
+                console.log(respuesta);
             });
         }
     });
