@@ -73,9 +73,18 @@ $(function () {
 
             datos.depositar = parseFloat($.trim($("#txtMontoDepositar").val()));
 
+            var dateFormat = new RegExp(/^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])$/);
+
+            datos.fecha = $.trim($("#txtDate").val());
+
             if (datos.tipoCuenta == "") {
                 evento.mostrarMensaje("#errorMessage", false, "Debe seleccionar un tipo de cuenta", 4000);
                 return false;
+            }
+
+            if (datos.fecha == "" || !dateFormat.test(datos.fecha)) {
+                evento.mostrarMensaje("#errorMessage", false, "El formato de la fecha de depósito no es válido", 4000);
+                return false;                
             }
 
             if (isNaN(datos.depositar) || datos.depositar == 0) {
