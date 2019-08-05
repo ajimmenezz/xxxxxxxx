@@ -30,5 +30,13 @@ class ServiceDesk {
         $datosSD = json_decode(file_get_contents(self::$url . '/' . $folio . '?' . self::$FIELDS));
         return $datosSD;
     }
+    
+    static public function getNotas(string $folio) { 
+        self::setVariables();
+        $key = Usuario::getAPIKEY();
+        self::$FIELDS = 'format=json&OPERATION_NAME=GET_NOTES&TECHNICIAN_KEY=' . $key;
+        $datosSD = json_decode(file_get_contents(self::$url . '/' . $folio . '/notes/?' . self::$FIELDS));
+        return $datosSD;
+    }
 
 }

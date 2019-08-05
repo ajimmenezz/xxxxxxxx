@@ -71,7 +71,12 @@ $(function () {
 
     function atenderServicio(datoServicioTabla) {
         console.log(datoServicioTabla);
-        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
+//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
+//            modal.cerrarModal();
+//            console.log(respuesta)
+//        });
+        console.log(datoServicioTabla);
+        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/ActualizarFolio', {id: datoServicioTabla.id, folio: '12'}, function (respuesta) {
             modal.cerrarModal();
             console.log(respuesta)
         });

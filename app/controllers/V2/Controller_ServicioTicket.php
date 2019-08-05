@@ -17,25 +17,43 @@ class Controller_ServicioTicket extends CI_Controller {
     }
 
     public function atenderServicio() {
+        $this->getServicios();
+        $this->datos['sucursales'] = $this->servicio->getSucursales();
+
+        echo json_encode($this->datos);
+    }
+
+    private function setInformacionFolio(string $folio) {
+        $this->datos['detallesFolio'] = ServiceDesk::getDetallesFolio($folio);
+        $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
+    }
+
+    public function getInformacionFolio() {
+        $this->getServicios();
+
+        echo json_encode($this->datos);
+    }
+
+    private function getServicios() {
         $this->datos = array();
         $datosServicio = $this->input->post();
         $this->servicio = $this->factory->getServicio('GeneralRedes', $datosServicio['id']);
         $this->datos = $this->servicio->getdatos();
-        $this->setDetallesFolio();
-//        echo '<pre>';
-//        var_dump($this->datos);
-//        echo '</pre>';
-        echo json_encode($this->datos);
-    }
-
-    private function setDetallesFolio() {
         if (!empty($this->datos['folio'])) {
-            $this->datos['detallesFolio'] = ServiceDesk::getDetallesFolio($this->datos['folio']);
+            $this->setInformacionFolio($this->datos['folio']);
         }
     }
 
-    public function guardarFolio(array $datos) {
-        
+    public function actualizarFolio() {
+        $this->getServicios();
+        $respuesta = $this->servicio->setFolioServiceDesk($this->input->post('folio'));
+        if (!empty($respuesta)) {
+            $this->setInformacionFolio($this->input->post('folio'));
+            return $this->datos;
+        } else {
+            return FALSE;
+        }
+//        var_dump($respuesta);
     }
 
 }

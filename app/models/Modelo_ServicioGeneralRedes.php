@@ -56,8 +56,17 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
         return $consulta;
     }
 
-    public function setFolioServiceDesk(string $idServicio) {
-        
+    public function setFolioServiceDesk(array $datosServicio) {
+        $cosulta = array();
+        try {
+            $servicio = $this->getDatosServicio($datosServicio['idServicio']);
+            $consulta = $this->actualizar('UPDATE t_solicitudes
+                                            SET Folio = "' . $datosServicio['folio'] . '" 
+                                            WHERE Id = "' . $servicio[0]['IdSolicitud'] . '"');
+        } catch (Exception $exc) {
+            var_dump($ex->getMessage());
+        }
+        return $consulta;
     }
 
 }

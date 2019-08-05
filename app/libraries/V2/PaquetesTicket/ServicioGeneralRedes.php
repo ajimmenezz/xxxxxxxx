@@ -31,28 +31,24 @@ class ServicioGeneralRedes implements Servicio {
             'Solicita' => $this->datos[0]['Solicita'],
             'DescripcionSolicitud' => $this->datos[0]['DescripcionSolicitud']);
 
-        $this->setSucursales();
-
         $this->datos = array(
             'informacionServicio' => $informacionServicio,
-            'folio' => $folio,
-            'sucursales' => $this->getSucursales());
+            'folio' => $folio);
     }
 
     public function getDatos() {
-        return $this->datos; //['FechaCreacion'];
-    }
-
-    public function setSucursales() {
-        $this->sucursales = $this->DBServiciosGeneralRedes->getSucursal('1');
+        return $this->datos;
     }
 
     public function getSucursales() {
+        $this->sucursales = $this->DBServiciosGeneralRedes->getSucursal('1');
         return $this->sucursales;
     }
 
     public function setFolioServiceDesk(string $folio) {
-        
+        var_dump($folio);
+        $respuesta = $this->DBServiciosGeneralRedes->setFolioServiceDesk(array('idServicio' => $this->id, 'folio' => $folio));
+        return $respuesta;
     }
 
 }

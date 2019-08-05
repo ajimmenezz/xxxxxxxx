@@ -191,6 +191,7 @@ $route['Salas4D/EventoCatalogos/(:any)'] = 'Salas4D/Controller_Catalogos/manejar
 $route['Redes/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Redes/Seguimiento/(:any)'] = 'Redes/Controller_Seguimiento/manejarEvento/$1';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/Atender'] = 'V2/Controller_ServicioTicket/atenderServicio';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/ActualizarFolio'] = 'V2/Controller_ServicioTicket/actualizarFolio';
 
 /* Routers para el manejo de MesaDeAyuda */
 $route['MesaDeAyuda/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
