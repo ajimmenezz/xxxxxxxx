@@ -283,7 +283,8 @@ class Secciones extends General
                 $datos['ListaClientes'] = $this->Catalogo->catClientes("3");
                 break;
             case 'Administrador/Sucursales':
-                $datos['ListaSucursales'] = $this->Catalogo->catSucursales("3");
+                $datos['ListaSucursales'] = $this->Catalogo->catSucursales("3");                
+                $datos['Perfil'] = $usuario['IdPerfil'];
                 break;
             case 'Administrador/Proveedores':
                 $datos['ListaProveedores'] = $this->Catalogo->catProveedores("3");
