@@ -34,7 +34,7 @@ $(function () {
                 var nombre = $('#inputNombreAlmacen').val();
                 var responsable = $('#listResponsableAlmacen').val();
                 var activacion;
-                var data = {nombre: nombre, responsable: responsable};
+                var data = { nombre: nombre, responsable: responsable };
                 if (evento.validarFormulario('#formNuevoAlmacen')) {
                     evento.enviarEvento('Catalogo/NuevoAlmacen', data, '#seccionAlmacenes', function (respuesta) {
                         if (respuesta instanceof Array || respuesta instanceof Object) {
@@ -153,7 +153,7 @@ $(function () {
             var id = $.trim($("#txtSerie").val());
             $("#divResult").hide();
             if (id !== '') {
-                evento.enviarEvento('Catalogo/MostrarHistorialEquipo', {id: id}, '#panelHistorialEquipo', function (respuesta) {
+                evento.enviarEvento('Catalogo/MostrarHistorialEquipo', { id: id }, '#panelHistorialEquipo', function (respuesta) {
                     tabla.limpiarTabla('#data-table-movimientos');
                     $.each(respuesta, function (k, v) {
                         tabla.agregarFila('#data-table-movimientos', [v.Movimiento, v.Almacen, v.TipoProducto, v.Producto, v.Serie, v.Estatus, v.Usuario, v.Fecha]);
@@ -225,7 +225,7 @@ $(function () {
                 $("#btnGuargarDeshuesoEquipo").off("click");
                 $("#btnGuargarDeshuesoEquipo").on("click", function () {
                     if (evento.validarFormulario("#formularioSeriesCaptureComponentes")) {
-                        var data = {'componentes': [], 'idInventario': _datos['datos'][0]};
+                        var data = { 'componentes': [], 'idInventario': _datos['datos'][0] };
 
                         var sinSerie = 0;
                         $(".serie-componente-deshueso").each(function () {
@@ -283,7 +283,7 @@ $(function () {
         var datos = {
             'data': data
         }
-        var respuesta = {'estatus': 200};
+        var respuesta = { 'estatus': 200 };
         evento.enviarEvento('Catalogo/GuardarComponentesDeshueso', datos, '#panelDeshuesarEquipo', function (respuesta) {
             if (respuesta.estatus == 200) {
                 $("#divListaComponentesDeshuesar #btnRegresar").click();
@@ -528,6 +528,8 @@ $(function () {
                             _optionsEstatus += '<option value="' + v.Id + '">' + v.Nombre + '</option>';
                         });
 
+                        initCambiarEstatusProductos();
+
                         $("#divAgregarProducto").empty().append(respuesta.html);
                         $("#divInventarioAlmacen").fadeOut(400, function () {
                             $("#divAgregarProducto").fadeIn(400);
@@ -599,7 +601,7 @@ $(function () {
                                                         <div class="col-md-5 col-sm-5 col-xs-12">
                                                             <div class="form-group">
                                                                 <label class="f-w-600">Estatus *</label>
-                                                                <select id="list-info-estatus-` + (i + 1) + `" class="form-control" data-parsley-required="true">
+                                                                <select id="list-info-estatus-` + (i + 1) + `" class="form-control listEstatusProductos" data-parsley-required="true">
                                                                     <option value="">Selecciona . . .</option>
                                                                     ` + _optionsEstatus + `
                                                                 </select>
@@ -609,6 +611,7 @@ $(function () {
                                             $("#formularioSeriesCapture").append(html);
                                         }
                                     }
+                                    initCambiarEstatusProductos();
                                 }
                             }
                         });
@@ -715,6 +718,14 @@ $(function () {
             }
         });
     });
+
+    function initCambiarEstatusProductos() {
+        $(".btnMarcarEstatusAll").off("click");
+        $(".btnMarcarEstatusAll").on("click", function () {
+            var estatus = $(this).attr("data-id");
+            $(".listEstatusProductos").val(estatus);
+        });
+    }
 
     function revisaSeriesDuplicadas() {
         var datos = {
