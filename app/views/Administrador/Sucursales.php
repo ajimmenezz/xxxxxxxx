@@ -1,5 +1,5 @@
 <!-- Empezando #contenido -->
-<div id="content" class="content">
+<div id="content" class="content">    
     <!-- Empezando titulo de la pagina -->
     <h1 class="page-header">Catálogo <small>de Sucursales</small></h1>
     <!-- Finalizando titulo de la pagina -->
@@ -41,11 +41,15 @@
                                 </div>
                                 <div class="col-md-6 col-xs-6">
                                     <div class="form-group text-right">
-                                        <a href="javascript:;" class="btn btn-success btn-lg " id="btnAgregarSucursal"><i class="fa fa-plus"></i> Agregar</a>
+                                        <?php                                        
+                                        if ($datos['PermisoAgregarSucursal']) {
+                                            echo '<a href="javascript:;" class="btn btn-success btn-lg " id="btnAgregarSucursal"><i class="fa fa-plus"></i> Agregar</a>';
+                                        }
+                                        ?>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!--Empezando Separador-->
                             <div class="row">
                                 <div class="col-md-12">
@@ -80,37 +84,37 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            foreach ($datos['ListaSucursales'] as $key => $value) {
-                                echo '<tr>';
-                                echo '<td>' . $value['Id'] . '</td>';
-                                echo '<td>' . $value['Nombre'] . '</td>';
-                                echo '<td>' . $value['Cliente'] . '</td>';
-                                if ($value['IdRegionCliente'] !== '0') {
-                                    echo '<td>' . $value['Region'] . '</td>';
-                                } else {
-                                    echo '<td>  </td>';
-                                }
-                                echo '<td>' . $value['Responsable'] . '</td>';
-                                echo '<td>' . $value['UnidadNegocio'] . '</td>';
-                                echo '<td>' . $value['Pais'] . '</td>';
-                                echo '<td>' . $value['Estado'] . '</td>';
-                                echo '<td>' . $value['Municipio'] . '</td>';
-                                echo '<td>' . $value['CP'] . '</td>';
-                                echo '<td>' . $value['Calle'] . '</td>';
-                                echo '<td>' . $value['NoInt'] . '</td>';
-                                echo '<td>' . $value['NoExt'] . '</td>';
-                                echo '<td>' . $value['Telefono1'] . '</td>';
-                                echo '<td>' . $value['Telefono2'] . '</td>';
-                                if ($value['Flag'] === '1') {
-                                    echo '<td data-flag="' . $value['Flag'] . '">Activo</td>';
-                                } else {
-                                    echo '<td data-flag="' . $value['Flag'] . '">Inactivo</td>';
-                                }
-                                echo '<td>' . $value['NombreCinemex'] . '</td>';
-                                echo '</tr>';
-                            }
-                            ?>                                        
+<?php
+foreach ($datos['ListaSucursales'] as $key => $value) {
+    echo '<tr>';
+    echo '<td>' . $value['Id'] . '</td>';
+    echo '<td>' . $value['Nombre'] . '</td>';
+    echo '<td>' . $value['Cliente'] . '</td>';
+    if ($value['IdRegionCliente'] !== '0') {
+        echo '<td>' . $value['Region'] . '</td>';
+    } else {
+        echo '<td>  </td>';
+    }
+    echo '<td>' . $value['Responsable'] . '</td>';
+    echo '<td>' . $value['UnidadNegocio'] . '</td>';
+    echo '<td>' . $value['Pais'] . '</td>';
+    echo '<td>' . $value['Estado'] . '</td>';
+    echo '<td>' . $value['Municipio'] . '</td>';
+    echo '<td>' . $value['CP'] . '</td>';
+    echo '<td>' . $value['Calle'] . '</td>';
+    echo '<td>' . $value['NoInt'] . '</td>';
+    echo '<td>' . $value['NoExt'] . '</td>';
+    echo '<td>' . $value['Telefono1'] . '</td>';
+    echo '<td>' . $value['Telefono2'] . '</td>';
+    if ($value['Flag'] === '1') {
+        echo '<td data-flag="' . $value['Flag'] . '">Activo</td>';
+    } else {
+        echo '<td data-flag="' . $value['Flag'] . '">Inactivo</td>';
+    }
+    echo '<td>' . $value['NombreCinemex'] . '</td>';
+    echo '</tr>';
+}
+?>                                        
                         </tbody>
                     </table>
                 </div>
