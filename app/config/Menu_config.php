@@ -1500,7 +1500,7 @@ $config['RH'] = array(
             'parsley/dist/parsley',
             'parsley/src/i18n/es'
         ),
-        'Permiso' => 'VRHPV'
+        'Permiso' => 'VCPARH'
     ),
     'AutorizarPermisos-RH' => array(
         'liga' => 'Autorizar Permisos',
@@ -1530,7 +1530,7 @@ $config['RH'] = array(
             'parsley/src/i18n/es',
             'masked-input/masked-input.min'
         ),
-        'Permiso' => 'VRHPV'
+        'Permiso' => 'VAPARH'
     )
 );
 
