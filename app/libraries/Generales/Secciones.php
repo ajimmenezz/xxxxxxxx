@@ -4,8 +4,7 @@ namespace Librerias\Generales;
 
 use Controladores\Controller_Datos_Usuario as General;
 
-class Secciones extends General
-{
+class Secciones extends General {
 
     private $Catalogo;
     private $Notificacion;
@@ -45,8 +44,7 @@ class Secciones extends General
     private $instalaciones;
     private $prime;
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         parent::getCI()->config->load('Menu_config');
         parent::getCI()->config->load('Pagina_config');
@@ -101,8 +99,7 @@ class Secciones extends General
      * @return array regresa la lista de menu y modulos para el usuario
      */
 
-    public function getSecciones(array $usuario)
-    {
+    public function getSecciones(array $usuario) {
         $menu = array();
         $permisos = array();
         $catalogo = null;
@@ -142,8 +139,7 @@ class Secciones extends General
      * Se encarga de obtener la notificaciones del usuario.
      */
 
-    public function getNotificaciones(string $usuario)
-    {
+    public function getNotificaciones(string $usuario) {
         return $this->Notificacion->getNotificacionesMenuCabecera($usuario);
     }
 
@@ -155,8 +151,7 @@ class Secciones extends General
      *  
      */
 
-    public function getDatosPagina(string $url)
-    {
+    public function getDatosPagina(string $url) {
         $datos = array();
         $usuario = $this->Usuario->getDatosUsuario();
         switch ($url) {
@@ -284,6 +279,10 @@ class Secciones extends General
                 break;
             case 'Administrador/Sucursales':
                 $datos['ListaSucursales'] = $this->Catalogo->catSucursales("3");
+                $datos['PermisoAgregarSucursal'] = false;                            
+                if (in_array('318', $usuario['PermisosAdicionales'])||in_array('318', $usuario['Permisos'])) {
+                    $datos['PermisoAgregarSucursal'] = true;
+                }
                 break;
             case 'Administrador/Proveedores':
                 $datos['ListaProveedores'] = $this->Catalogo->catProveedores("3");
@@ -560,8 +559,7 @@ class Secciones extends General
      * 
      */
 
-    public function getAlcance($tipoProyecto, $idProyecto)
-    {
+    public function getAlcance($tipoProyecto, $idProyecto) {
         $data = array();
         $indice = array();
         $data['tipoProyecto'] = $tipoProyecto;
@@ -600,8 +598,8 @@ class Secciones extends General
      * 
      */
 
-    public function getAyuda(string $ayuda)
-    {
+    public function getAyuda(string $ayuda) {
         return array('informacion' => parent::getCI()->load->view('Ayuda/' . $ayuda, '', TRUE));
     }
+
 }
