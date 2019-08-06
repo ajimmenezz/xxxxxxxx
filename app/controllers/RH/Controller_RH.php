@@ -36,6 +36,9 @@ class Controller_RH extends Base {
             case 'ActualizarDatosPersonal':
                 $resultado = $this->perfilUsuario->guardarDatosPersonal($this->input->post());
                 break;
+            case 'BajaPersonal':
+                $resultado = $this->personal->bajaPersonal($this->input->post());
+                break;
         }
         echo json_encode($resultado);
     }

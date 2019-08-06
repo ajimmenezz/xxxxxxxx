@@ -23,17 +23,52 @@
                     <table id="table-ServiciosGeneralesRedes" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
                         <thead>
                             <tr>
-                                <th class="all">Ticket</th>
+                                <th class="never">Id</th>
+                                <th class="all">Folio</th>
+                                <th class="never">Ticket</th>
+                                <th class="never">Solicitud</th>
                                 <th class="all">Servicio</th>
-                                <th class="all"></th>
+                                <th class="all">Fecha de Creación</th>
+                                <?php
+                                if ($datos['infoServicios']['rol'] == "Jefe") {
+                                    echo '<th class="all">Técnico</th>';
+                                }
+                                ?>
+                                <th class="all">Descripción</th>
+                                <th class="all">Estatus</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th>Platino</th>
-                                <th>Platino</th>
-                                <th>Platino</th>
-                            </tr>
+                            <?php
+                            foreach ($datos['infoServicios']['servicios'] as $valor) {
+                                if ($datos['infoServicios']['rol'] == "Jefe") {
+                                    foreach ($valor as $dato) {
+                                        echo '<tr>
+                                                <th>' . $dato['Id'] . '</th>
+                                                <th>' . $dato['Folio'] . '</th>
+                                                <th>' . $dato['Ticket'] . '</th>
+                                                <th>' . $dato['IdSolicitud'] . '</th>
+                                                <th>' . $dato['TipoServicio'] . '</th>
+                                                <th>' . $dato['FechaCreacion'] . '</th>
+                                                <th>' . $dato['Atiende'] . '</th>
+                                                <th>' . $dato['Descripcion'] . '</th>
+                                                <th>' . $dato['Estatus'] . '</th>
+                                            </tr>';
+                                    }
+                                } else {
+                                    echo '<tr>
+                                            <th>' . $valor['Id'] . '</th>
+                                            <th>' . $valor['Folio'] . '</th>
+                                            <th>' . $valor['Ticket'] . '</th>
+                                            <th>' . $valor['IdSolicitud'] . '</th>
+                                            <th>' . $valor['TipoServicio'] . '</th>
+                                            <th>' . $valor['FechaCreacion'] . '</th>
+                                            <th>' . $valor['Descripcion'] . '</th>
+                                            <th>' . $valor['Estatus'] . '</th>
+                                        </tr>';
+                                }
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -46,7 +81,7 @@
 </div>
 
 
-<div id="contentServiciosRedes">
+<div id="contentServiciosRedes" class="hidden">
     <!--Empieza contenido general-->
     <div id="content" class="content">
         <div id="panelServiciosGeneralesRedes" class="panel panel-inverse">
@@ -188,41 +223,23 @@
                                     <label id="menosDetallesFolio" class="hidden" style="cursor:pointer">- Menos Detalles</label>
                                     <div id="detallesFolio" class="hidden">
                                         <div class="col-md-12 row">
-                                            <ul class="nav nav-pills">
-                                                <li class="active"><a href="#nav-pills-tab-1" data-toggle="tab">Pills Tab 1</a></li>
-                                                <li><a href="#nav-pills-tab-2" data-toggle="tab">Pills Tab 2</a></li>
-                                            </ul>
                                             <div class="tab-content" style="background: #F9EAC6">
-                                                <div id="nav-pills-tab-1" class="tab-pane fade active in">
-                                                    <div id="accordion" class="panel-group">
-                                                        <div class="panel panel-inverse overflow-hidden">
-                                                            <div class="panel-heading">
-                                                                <h3 class="panel-title">
-                                                                    <a class="accordion-toggle accordion-toggle-styled collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSeven">
-                                                                        <i class="fa fa-plus-circle pull-right"></i> 
-                                                                        Collapsible Group Item
-                                                                    </a>
-                                                                </h3>
-                                                            </div>
-                                                            <div id="collapseSeven" class="panel-collapse collapse">
-                                                                <div class="panel-body">
-                                                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                                                                </div>
+                                                <div id="accordion" class="panel-group">
+                                                    <div class="panel panel-inverse overflow-hidden">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">
+                                                                <a class="accordion-toggle accordion-toggle-styled collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSeven">
+                                                                    <i class="fa fa-plus-circle pull-right"></i> 
+                                                                    Nota
+                                                                </a>
+                                                            </h3>
+                                                        </div>
+                                                        <div id="collapseSeven" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid.
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div id="nav-pills-tab-2" class="tab-pane">
-                                                    <h3 class="m-t-10">Nav Pills Tab 2</h3>
-                                                    <p>
-                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                                                        Integer ac dui eu felis hendrerit lobortis. Phasellus elementum, nibh eget adipiscing porttitor, 
-                                                        est diam sagittis orci, a ornare nisi quam elementum tortor. 
-                                                        Proin interdum ante porta est convallis dapibus dictum in nibh. 
-                                                        Aenean quis massa congue metus mollis fermentum eget et tellus. 
-                                                        Aenean tincidunt, mauris ut dignissim lacinia, nisi urna consectetur sapien, 
-                                                        nec eleifend orci eros id lectus.
-                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -243,11 +260,11 @@
                         <!--Empieza Titulo solucion-->
                         <div class="col-md-12 row">
                             <div class="panel-heading-btn">
-                                <label id="btnSinMaterial" class="btn btn-default btn-xs">
+                                <label id="btnSinMaterial" class="btn btn-default btn-xs hidden">
                                     <i class="fa fa-toggle-off"></i> Sin Material
                                 </label>
-                                <label id="btnConMaterial" class="btn btn-primary btn-xs hidden">
-                                    Con Material <i class="fa fa-toggle-off fa-rotate-180"></i>
+                                <label id="btnConMaterial" class="btn btn-primary btn-xs">
+                                    <i class="fa fa-toggle-off fa-rotate-180"></i> Con Material
                                 </label>
                             </div>
                             <h4>Datos de solución</h4>
@@ -256,20 +273,23 @@
                         <!--Finaliza Titulo solucion-->
                         <!--Empieza contenido de solucion-->
                         <div class="col-md-12">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Sucursal</label>
-                                    <select id="selectSucursal" class="form-control" style="width: 100%">
-                                        <option value="">Seleccionar</option>
-                                    </select>
+                            <form id="formDatosSolucion" data-parsley-validate="true" enctype="multipart/form-data">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Sucursal</label>
+                                        <select id="selectSucursal" class="form-control" style="width: 100%" data-parsley-required="true">
+                                            <option value="">Seleccionar</option>
+                                            <option value="prueba">Prueba</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Observaciones</label>
-                                    <textarea id="textareaObservaciones" class="form-control" rows="4"></textarea>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Observaciones</label>
+                                        <textarea id="textareaObservaciones" class="form-control" rows="4" data-parsley-required="true"></textarea>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                         <!--Finaliza contenido de solucion-->
                     </div>
@@ -302,7 +322,7 @@
                 </div>
                 <!--Finaliza seccion de Solucion y Problemas-->
                 <!--Empieza seccion Nodos-->
-                <div class="col-md-12">
+                <div id="conMaterial" class="col-md-12">
                     <!--Empieza Titulo tabla nodos-->
                     <div class="col-md-12">
                         <div class="panel-heading-btn">
@@ -316,52 +336,55 @@
                     </div>
                     <!--Finaliza Titulo tabla nodos-->
                     <div id="vistaNodos">
-                        <!--Empieza seccion agregar nodo-->
-                        <div class="col-md-12">
-                            <form id="formAgregarNodo" class="margin-bottom-0" data-parsley-validate="true">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Area</label>
-                                        <select id="selectArea" class="form-control" style="width: 100%" data-parsley-required="true">
-                                            <option value="">Seleccionar</option>
-                                        </select>
+                        <div id="datosNodo">
+                            <!--Empieza seccion agregar nodo-->
+                            <div class="col-md-12">
+                                <form id="formDatosNodo" class="margin-bottom-0" data-parsley-validate="true">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Area</label>
+                                            <select id="selectArea" class="form-control" style="width: 100%" data-parsley-required="true">
+                                                <option value="">Seleccionar</option>
+                                                <option value="prueba">Prueba</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>Nodo</label>
-                                        <input id="selectNodo" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Nodo</label>
+                                            <input id="inputNodo" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Swith</label>
-                                        <select id="selectSwith" class="form-control" style="width: 100%" data-parsley-required="true">
-                                            <option value="">Seleccionar</option>
-                                        </select>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Switch</label>
+                                            <select id="selectSwith" class="form-control" style="width: 100%" data-parsley-required="true">
+                                                <option value="">Seleccionar</option>
+                                                <option value="prueba">Prueba</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>Número de Swith</label>
-                                        <input id="selectNumSwith" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label># de Switch</label>
+                                            <input id="inputNumSwith" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                        </div>
                                     </div>
+                                </form>
+                                <div class="col-md-1">
+                                    <br>
+                                    <a id="btnAgregarNodo" href="#" class="btn btn-sm btn-success" data-toggle="modal"><i class="fa fa-plus"></i></a>
                                 </div>
-                            </form>
-                            <div class="col-md-1">
-                                <br>
-                                <label id="btnAgregarNodo" class="btn btn-success">
-                                    <i class="fa fa-plus"></i>
-                                </label>
                             </div>
+                            <!--Finaliza seccion agregar nodo-->
                         </div>
-                        <!--Finaliza seccion agregar nodo-->
                         <!--Empieza tabla de nodos-->
                         <div class="col-md-12">
                             <div class="table-responsive">
                                 <table id="table-nodo" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
                                     <thead>
                                         <tr>
+                                            <th class="never">id</th>
                                             <th class="all">Sucursal</th>
                                             <th class="all">Nodo</th>
                                             <th class="all">Switch</th>
@@ -372,15 +395,42 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <th>Platino</th>
-                                            <th>Platino</th>
-                                            <th>Platino</th>
-                                            <th>5</th>
-                                            <th style="text-align: center"><i id="evidenciaNodo" class="fa fa-2x fa-file"></i></th>
+                                            <th class="all id">1</th>
+                                            <th class="all sucursal">Platino</th>
+                                            <th class="all nodo">Platino</th>
+                                            <th class="all switch">Platino</th>
+                                            <th class="all numSwitch">5</th>
+                                            <th class="all" style="text-align: center"><a href="#" class="btn btn-sm btn-white evidenciaNodo" data-toggle="modal"><i class="fa fa-2x fa-file"></i></a></th>
                                             <th style="text-align: center">
-                                                <i id="editarNodo" data-toggle="tooltip" data-placement="top" data-title="Editar Nodo" class="fa fa-2x fa-pencil"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <i id="editarMaterial" data-toggle="tooltip" data-placement="top" data-title="Editar Material" class="fa fa-2x fa-file-photo-o text-warning"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <i id="eliminarNodo" data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i>
+                                                <a id="editarNodo" href="#" class="btn btn-sm btn-white editarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Nodo" class="fa fa-2x fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <a id="editarMaterial" href="#" class="btn btn-sm btn-white editarMaterial" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Material" class="fa fa-2x fa-file-photo-o text-warning"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <a href="#" class="btn btn-sm btn-white eliminarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i></a>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th class="all id">2</th>
+                                            <th class="all sucursal">Platino2</th>
+                                            <th class="all nodo">Platino2</th>
+                                            <th class="all switch">Platino2</th>
+                                            <th class="all numSwitch">5</th>
+                                            <th class="all" style="text-align: center"><a href="#" class="btn btn-sm btn-white evidenciaNodo" data-toggle="modal"><i class="fa fa-2x fa-file"></i></a></th>
+                                            <th style="text-align: center">
+                                                <a id="editarNodo" href="#" class="btn btn-sm btn-white editarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Nodo" class="fa fa-2x fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <a id="editarMaterial" href="#" class="btn btn-sm btn-white editarMaterial" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Material" class="fa fa-2x fa-file-photo-o text-warning"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <a href="#" class="btn btn-sm btn-white eliminarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i></a>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th class="all id">3</th>
+                                            <th class="all sucursal">Platino3</th>
+                                            <th class="all nodo">Platino3</th>
+                                            <th class="all switch">Platino3</th>
+                                            <th class="all numSwitch">5</th>
+                                            <th class="all" style="text-align: center"><a href="#" class="btn btn-sm btn-white evidenciaNodo" data-toggle="modal"><i class="fa fa-2x fa-file"></i></a></th>
+                                            <th style="text-align: center">
+                                                <a id="editarNodo" href="#" class="btn btn-sm btn-white editarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Nodo" class="fa fa-2x fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <a id="editarMaterial" href="#" class="btn btn-sm btn-white editarMaterial" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Material" class="fa fa-2x fa-file-photo-o text-warning"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <a href="#" class="btn btn-sm btn-white eliminarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i></a>
                                             </th>
                                         </tr>
                                     </tbody>
@@ -415,14 +465,62 @@
                     </div>
                 </div>
                 <!--Finaliza seccion Nodos-->
-                <div id="eliminarNodo" class="hidden">
-                    <div class="form-group">
-                        <label>Swith</label>
-                        <select id="selectSwith" class="form-control" style="width: 100%" data-parsley-required="true">
-                            <option value="">Seleccionar</option>
-                        </select>
+
+                <!--Empieza seccion de evidencias-->
+                <div id="sinMaterial" class="col-md-12 hidden">
+                    <!--Empieza Titulo de evidencias-->
+                    <div class="col-md-12">
+                        <h4>Evidencias</h4>
+                        <div class="underline m-b-15 m-t-15"></div>
+                    </div>
+                    <!--Finaliza Titulo de evidencias-->
+                    <div id="vistaEvidencias">
+                        <!--Empieza seccion agregar evidencia-->
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label id="addEvidencia" class="btn btn-success">
+                                    <i class="fa fa-plus"></i> EVIDENCIA
+                                </label>
+                            </div>
+                            <div class="col-md-12">
+                                <br>
+                                <div class="form-group">
+                                    <textarea id="textareaObservaciones" class="form-control" rows="8"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Finaliza seccion agregar evidencia-->
                     </div>
                 </div>
+                <!--Finaliza seccion de evidencias-->
+
+                <!--Empieza seccion de botones-->
+                <div id="botones" class="text-center">
+                    <div class="col-md-12">
+                        <br><br>
+                        <div class="col-md-6">
+                            <label id="btnGuardar" class="btn btn-success">
+                                GUARDAR
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label id="btnConcluir" class="btn btn-danger">
+                                CONCLUIR
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!--Finaliza seccion de botones-->
+                <!--Segmento de modal reportar-->
+                <div id="segReportar" class="hidden">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Descripción del Problema</label>
+                            <textarea id="textareaDescProblema" class="form-control" rows="4" data-parsley-required="true"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <!--Segmento de modal reportar-->
             </div>
             <!--Finaliza Panel -->
         </div>
@@ -431,74 +529,182 @@
 </div>
 
 <!--Empezando seccion para material nodo-->
-<div id="materialNodo" class="content hidden" >
-    <!--Empieza seccion agregar Material-->
-    <div class="col-md-12">
-        <div class="col-md-5">
-            <div class="form-group">
-                <label>Material</label>
-                <select id="selectMaterial" class="form-control" style="width: 100%" data-parsley-required="true">
-                    <option value="">Seleccionar</option>
-                </select>
+<div id="modalMaterialNodo" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Material</h4>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="form-group">
-                <label>Cantidad Disponible</label>
-                <input id="materialDisponible" class="form-control" style="width: 100%" data-parsley-required="true" disabled/>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <form id="formMaterial" data-parsley-validate="true" enctype="multipart/form-data">
+                    <!--Empieza seccion agregar Material-->
+                    <div class="col-md-12">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label>Material</label>
+                                <select id="selectMaterial" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar</option>
+                                    <option value="prueba">Prueba</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Cantidad Disponible</label>
+                                <input id="materialDisponible" class="form-control" style="width: 100%" disabled/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Cantidad Utilizar</label>
+                                <input id="materialUtilizar" type="number" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <br>
+                            <label id="btnAgregarMaterialNodo" class="btn btn-success">
+                                <i class="fa fa-plus"></i>
+                            </label>
+                        </div>
+                    </div>
+                    <!--Finaliza seccion agregar Material-->
+                </form>
+                <form id="formEvidenciaMaterial" data-parsley-validate="true" enctype="multipart/form-data">
+                    <!--Empieza tabla de material nodos-->
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table id="table-materialNodo" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="all">Material</th>
+                                        <th class="all">Cantidad</th>
+                                        <th class="all">Accion</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="text-align: center">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!--Finaliza tabla de material nodos-->
+                    <!--Empieza seccion de evidencia-->
+                    <div class="col-md-12">
+                        <div id="archivoCitaIncapacidad" class="form-group">
+                            <label>Evidencia</label><br>
+                            <input id="agregarEvidenciaNodo" name="agregarEvidenciaNodo[]" type="file" multiple data-parsley-required="true">
+                        </div>
+                    </div>
+                    <!--Finaliza seccion de evidencia-->
+                </form>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="form-group">
-                <label>Cantidad Utilizar</label>
-                <input id="materialUtilizar" class="form-control" style="width: 100%" data-parsley-required="true"/>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptarM" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCerrarM" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
             </div>
-        </div>
-        <div class="col-md-1">
-            <br>
-            <label id="btnAgregarMaterialNodo" class="btn btn-success">
-                <i class="fa fa-plus"></i>
-            </label>
+            <!--Finaliza pie del modal-->
         </div>
     </div>
-    <!--Finaliza seccion agregar Material-->
-    <!--Empieza tabla de material nodos-->
-    <div class="col-md-12">
-        <div class="table-responsive">
-            <table id="table-materalNodo" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
-                <thead>
-                    <tr>
-                        <th class="all">Material</th>
-                        <th class="all">Cantidad</th>
-                        <th class="all">Accion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>Cable UTP</th>
-                        <th>300 m</th>
-                        <th style="text-align: center">
-                            <i id="eliminarMateralNodo" class="fa fa-2x fa-trash-o text-danger"></i>
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <!--Finaliza tabla de material nodos-->
-    <!--Empieza seccion de evidencia-->
-    <div class="col-md-12">
-        <div class="col-md-12">
-            <label id="btnAgregarEvidenciaNodo" class="btn btn-success">
-                <i class="fa fa-plus"> Evidencia</i>
-            </label>
-        </div>
-        <div class="col-md-12">
-            <br>
-            <textarea id="textareaDescripcion" class="form-control" rows="3" disabled></textarea>
-            <br>
-        </div>
-    </div>
-    <!--Finaliza seccion de evidencia-->
 </div>
 <!--Finalizando seccion para material nodo-->
+
+<!--Empezando modal editar nodo-->
+<div id="modalEditarNodo" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Actualizar Nodo</h4>
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <!--Empieza seccion edicion nodo-->
+                <div class="col-md-12">
+                    <form id="formEdicionNodo" class="margin-bottom-0" data-parsley-validate="true">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Area</label>
+                                <select id="selectEdicionArea" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar</option>
+                                    <option value="prueba">Prueba</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Nodo</label>
+                                <input id="inputEdicionNodo" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Switch</label>
+                                <select id="selectEdicionSwith" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar</option>
+                                    <option value="prueba">Prueba</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label># de Switch</label>
+                                <input id="inputEdicionNumSwith" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!--Finaliza seccion edicion nodo-->
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptarAM" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCerrarAM" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>
+<!--Finalizando modal editar nodo-->
+
+<!--Empieza modal de evidencia-->
+<div id="modalEvidencia" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Evidencia</h4>
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <!--Empieza seccion de evidencia-->
+                <div class="panel" data-sortable-id="ui-media-object-3">
+                    <div class="panel-body">
+                        <div class="media media-lg">
+                            <a class="media-left" href="javascript:;">
+                                <img src="../public/storage/Archivos/gallery-1.jpg" alt="" class="media-object" />
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading">Media heading</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Finaliza seccion de evidencia-->
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnCerrarAM" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>
+<!--Finaliza modal de evidencia-->

@@ -43,12 +43,19 @@ class Secciones extends General {
     private $fondoFijo;
     private $instalaciones;
     private $prime;
+    private $seccionCE;
+    private $factoryCatalogos;
+    private $CatalogoMotivosPermiso;
+    private $CatalogoRechazoPermiso;
+    
+    
+    private $gestorProyectos;
 
     public function __construct() {
         parent::__construct();
         parent::getCI()->config->load('Menu_config');
         parent::getCI()->config->load('Pagina_config');
-
+        
         $this->Personal = \Librerias\Generales\Usuario::factory();
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();
         $this->Notificacion = \Librerias\Generales\Notificacion::factory();
@@ -90,6 +97,11 @@ class Secciones extends General {
         $this->fondoFijo = \Librerias\FondoFijo\FondoFijo::factory();
         $this->instalaciones = \Librerias\Instalaciones\Instalaciones::factory();
         $this->prime = \Librerias\Prime\Inventario::factory();
+        $this->seccionCE = \Librerias\V2\PaquetesTicket\GestorServicios::factory();
+        
+        $this->factoryCatalogos = new \Librerias\V2\Factorys\FactoryCatalogos();
+        $this->CatalogoMotivosPermiso = $this->factoryCatalogos->getCatalogo('CatalogoMotivoPermisos');
+        $this->CatalogoRechazoPermiso = $this->factoryCatalogos->getCatalogo('CatalogoRechazoPermisos');
     }
 
     /*
@@ -255,6 +267,11 @@ class Secciones extends General {
                 break;
             case 'RH/Autorizar_permisos':
                 $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id']);
+                break;
+            case 'RH/Catalogos_Permisos':
+                  $datos['TipoMotivo'] = $this->CatalogoMotivosPermiso->getDatos();
+                  $datos['TipoRechazo'] = $this->CatalogoRechazoPermiso->getDatos();
+//                $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id']);
                 break;
             case 'Poliza':
                 $datos['TiposProyectos'] = $this->DBPO->getTiposProyecto();
@@ -547,6 +564,9 @@ class Secciones extends General {
                 break;
             case 'Prime/Inventario':
                 $datos['Sucursales'] = $this->prime->getSucursalesPrime();
+                break;
+            case 'Redes/SeguimientoCE':
+                $datos['infoServicios'] = $this->seccionCE->getDatosServicios();
                 break;
             default:
                 break;

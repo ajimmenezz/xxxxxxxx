@@ -146,6 +146,7 @@ $config['Generales'] = array(
         'pluginsCss' => array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
+            
             'parsley/src/parsley',
             'bootstrap-datepicker/css/datepicker'
         ),
@@ -1477,14 +1478,27 @@ $config['RH'] = array(
     'Catalogo-Permisos-RH' => array(
         'liga' => 'Catálogo de Permisos',
         'icono' => '',
-        'Url' => '/RH/catalogo_permisos',
+        'Url' => '/RH/Catalogos_Permisos',
         'css' => array(),
         'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'parsley/src/parsley',
+            'select2/dist/css/select2.min',
         ),
         'js' => array('Base/Base', 
             'Componentes/HerramientasWeb/Utileria',
+            'Componentes/HerramientasWeb/Modal',
+            'Componentes/Tablas/Tabla', 
+            'Componentes/Tablas/TablaBasica',
+            'Componentes/Selects/Select', 
+            'Componentes/Selects/SelectBasico',
             'RH/catalogo_permisos'),
         'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'select2/dist/js/select2.min',
+            'DataTables/js/dataTables.responsive',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es'
         ),
         'Permiso' => 'VRHPV'
     ),
@@ -1952,17 +1966,26 @@ $config['Redes'] = array(
         'css' => array(),
         'pluginsCss' => array(
             'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'jquery-fileUpload/css/fileinput.min',
             'parsley/src/parsley'
         ),
         'js' => array('Base/Base', 
             'Componentes/HerramientasWeb/Utileria',
             'Componentes/HerramientasWeb/Modal',
+            'Componentes/Selects/Select', 
+            'Componentes/Selects/SelectBasico',
             'Componentes/Tablas/Tabla', 
             'Componentes/Tablas/TablaBasica',
+            'Componentes/FileUpload/Upload',
+            'Componentes/FileUpload/FileUpload_Basico',
             'Redes/SeguimientoCE'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
             'parsley/dist/parsley',
             'parsley/src/i18n/es'
         ),
