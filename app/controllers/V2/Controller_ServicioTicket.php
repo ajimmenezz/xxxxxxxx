@@ -8,19 +8,21 @@ class Controller_ServicioTicket extends CI_Controller {
     private $factory;
     private $servicio;
     private $datos;
+  
 
 //    private $serviceDesk;
 
     public function __construct() {
         parent::__construct();
         $this->factory = new FactoryServiciosTicket();
+        $this->serviceDesk= new ServiceDesk;
     }
 
     public function atenderServicio() {
         $this->getServicios();
         $this->datos['sucursales'] = $this->servicio->getSucursales();
-
         echo json_encode($this->datos);
+        
     }
 
     private function setInformacionFolio(string $folio) {
@@ -30,7 +32,6 @@ class Controller_ServicioTicket extends CI_Controller {
 
     public function getInformacionFolio() {
         $this->getServicios();
-
         echo json_encode($this->datos);
     }
 
@@ -53,7 +54,21 @@ class Controller_ServicioTicket extends CI_Controller {
         } else {
             return FALSE;
         }
-//        var_dump($respuesta);
+        
+    
     }
+    public function guardarFolio()
+    {
+       $idServicio="1";
+       $folio=55;
+//       $folio=$this->post('folio');$
+//       $idServicio=$this->post('idServicio');
+        $this->servicio=$this->factory->getServicio('GeneralRedes',$idServicio);//3
+        $this->servicio->setFolioServiceDesk($folio);
+        $this->datos['detallesFolio'] = ServiceDesk::getDetallesFolio($folio);
+        $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
+        var_dump($this->datos);
+    }
+    
 
 }

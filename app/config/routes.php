@@ -192,6 +192,7 @@ $route['Redes/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Redes/Seguimiento/(:any)'] = 'Redes/Controller_Seguimiento/manejarEvento/$1';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/Atender'] = 'V2/Controller_ServicioTicket/atenderServicio';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/ActualizarFolio'] = 'V2/Controller_ServicioTicket/actualizarFolio';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/GuardarFolio'] = 'V2/Controller_ServicioTicket/guardarFolio';
 
 /* Routers para el manejo de MesaDeAyuda */
 $route['MesaDeAyuda/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';

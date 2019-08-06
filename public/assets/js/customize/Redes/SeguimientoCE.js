@@ -71,15 +71,15 @@ $(function () {
 
     function atenderServicio(datoServicioTabla) {
         console.log(datoServicioTabla);
-//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
-//            modal.cerrarModal();
-//            console.log(respuesta)
-//        });
-        console.log(datoServicioTabla);
-        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/ActualizarFolio', {id: datoServicioTabla.id, folio: '12'}, function (respuesta) {
+        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
             modal.cerrarModal();
             console.log(respuesta)
         });
+//        console.log(datoServicioTabla);
+//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/ActualizarFolio', {id: datoServicioTabla.id, folio: '12'}, function (respuesta) {
+//            modal.cerrarModal();
+//            console.log(respuesta)
+//        });
     }
 
     function iniciarObjetos() {
@@ -121,6 +121,13 @@ $(function () {
         if (evento.validarFormulario('#folio')) {
             let folio = $('#addFolio').val();
             elementosGuardarFolio();
+            console.log("Guardar folio");
+            console.log(folio);
+            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/GuardarFolio', folio, function (respuesta) {
+                modal.cerrarModal();
+                console.log("Entró bien");
+                console.log(respuesta);
+            });
         }
     });
     function elementosGuardarFolio() {
