@@ -19,12 +19,11 @@ class FactoryCatalogos {
     }
     
     public function getCatalogo(string $tipo) {
-        var_dump(Usuario::getId());
         switch ($tipo) {
             case 'CatalogoMotivoPermisos':
-                
                 $this->catalogo= new Motivos();
                 break;
+            
             case 'CatalogoRechazoPermisos':
                 $this->catalogo= new Rechazos();
                 break;

@@ -73,7 +73,7 @@ class Permisos_Vacaciones extends General {
 
         $idPermisoGenerado = $this->ajustarInformacionDBS($datosPermisos, $documento);
 
-        //$this->enviarCorreoPermiso($datosPermisos, $asunto = "Generado", $carpeta);
+        $this->enviarCorreoPermiso($datosPermisos, $asunto = "Generado", $carpeta);
 
         $carpetaFolio = $this->agregarFolioPDF($idPermisoGenerado[0]['LAST_INSERT_ID()']);
 
@@ -200,7 +200,7 @@ class Permisos_Vacaciones extends General {
 
         $this->revisarActualizarPermiso($datosPermisos);
 
-        //$this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
+        $this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
 
         $carpetaFolio = $this->agregarFolioPDF($datosPermisos['idPermiso']);
 
@@ -224,7 +224,7 @@ class Permisos_Vacaciones extends General {
         $this->revisarActualizarPermiso($datosPermisos);
 
 
-        //$this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
+        $this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
 
         $carpetaFolio = $this->agregarFolioPDF($datosPermisos['idPermiso']);
 
@@ -300,17 +300,41 @@ class Permisos_Vacaciones extends General {
         }
         switch ($datosPermisos['motivoAusencia']) {
             case '1':
-                $texto .= 'con motivo Personal';
+                $texto .= 'CONSULTA MEDICO IMSS';
                 break;
             case '2':
-                $texto .= 'con motivo Trabajo/Comisión';
+                $texto .= 'CONSULTA DENTISTA IMSS';
                 break;
             case '3':
-                $texto .= 'con motivo IMSS Cita Médica';
+                $texto .= 'PERMISOS POR RAZONES DE TRABAJO EXTERNO';
                 break;
             case '4':
-                $texto .= 'con motivo IMSS Incapacidad';
+                $texto .= 'PERMISOS POR CURSOS DE CAPACITACION';
                 break;
+            case '5':
+                $texto .= 'ASUNTOS PERSONALES';
+                break;
+            case '6':
+                $texto .= 'CONSULTA MEDICO PARTICULAR';
+                break;
+            case '7':
+                $texto .= 'CONSULTA DENTISTA PARTICULAR';
+                break;
+            case '8':
+                $texto .= 'INCAPACIDAD IMSS DEL TRABAJADOR';
+                break;
+            case '9':
+                $texto .= 'CONSULTA MEDICO O DENTISTA IMSS';
+                break;
+            case '10':
+                $texto .= 'CONSULTA MEDICO IMSS';
+                break;
+            case '11':
+                $texto .= 'CONSULTA MEDICO PARTICULAR';
+                break;
+            case '12':
+                $texto .= 'CONSULTA DENTISTA PARTICULAR';
+                break;	
         }
         $texto .= ' para el día ' . $datosPermisos['fechaPermisoDesde'] . '</p><br><br>
                     <a href="http://adist/' . $carpeta . '">Archivo</a>';
@@ -408,17 +432,41 @@ class Permisos_Vacaciones extends General {
         $this->pdf->SetFont("helvetica", "", 10);
         switch ($datosPermisos['motivoAusencia']) {
             case '1':
-                $this->pdf->Cell(0, 0, utf8_decode("Personal"));
+                $this->pdf->Cell(0, 0, utf8_decode('CONSULTA MEDICO IMSS'));
                 break;
             case '2':
-                $this->pdf->Cell(0, 0, utf8_decode("Trabajo/Comisión"));
+                $this->pdf->Cell(0, 0, utf8_decode('CONSULTA DENTISTA IMSS'));
                 break;
             case '3':
-                $this->pdf->Cell(0, 0, utf8_decode("IMSS Cita Médica"));
+                $this->pdf->Cell(0, 0, utf8_decode('PERMISOS POR RAZONES DE TRABAJO EXTERNO'));
                 break;
             case '4':
-                $this->pdf->Cell(0, 0, utf8_decode("IMSS Incapacidad"));
+                $this->pdf->Cell(0, 0, utf8_decode('PERMISOS POR CURSOS DE CAPACITACION'));
                 break;
+            case '5':
+                $this->pdf->Cell(0, 0, utf8_decode('ASUNTOS PERSONALES'));
+                break;
+            case '6':
+                $this->pdf->Cell(0, 0, utf8_decode('CONSULTA MEDICO PARTICULAR'));
+                break;
+            case '7':
+                $this->pdf->Cell(0, 0, utf8_decode('CONSULTA DENTISTA PARTICULAR'));
+                break;
+            case '8':
+                $this->pdf->Cell(0, 0, utf8_decode('INCAPACIDAD IMSS DEL TRABAJADOR'));
+                break;
+            case '9':
+                $this->pdf->Cell(0, 0, utf8_decode('CONSULTA MEDICO O DENTISTA IMSS'));
+                break;
+            case '10':
+                $this->pdf->Cell(0, 0, utf8_decode('CONSULTA MEDICO IMSS'));
+                break;
+            case '11':
+                $this->pdf->Cell(0, 0, utf8_decode('CONSULTA MEDICO PARTICULAR'));
+                break;
+            case '12':
+                $this->pdf->Cell(0, 0, utf8_decode('CONSULTA DENTISTA PARTICULAR'));
+                break;	
         }
 
         $this->pdf->SetXY(140, 80);
@@ -513,19 +561,19 @@ class Permisos_Vacaciones extends General {
                     break;
             }
         }
-        $this->pdf->SetXY(130, 158);
-        $this->pdf->SetFont('Arial', 'B', 9);
-        $this->pdf->SetTextColor(243, 18, 18);
-        $this->pdf->Cell(30, 0, utf8_decode("EL DESCUENTO POR PERMISO SERA DE:"));
-        $this->pdf->SetTextColor(0, 0, 0);
-        $this->pdf->RoundedRect(133, 160, 60, 6, 1, '1234');
-        $this->pdf->SetXY(133, 163);
-        $this->pdf->SetFont("helvetica", "", 10);
-        if ($datosPermisos['descuentoPermiso'] != "") {
-            $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['descuentoPermiso']));
-        } else {
-            $this->pdf->Cell(0, 0, "   ----------");
-        }
+//        $this->pdf->SetXY(130, 158);
+//        $this->pdf->SetFont('Arial', 'B', 9);
+//        $this->pdf->SetTextColor(243, 18, 18);
+//        $this->pdf->Cell(30, 0, utf8_decode("EL DESCUENTO POR PERMISO SERA DE:"));
+//        $this->pdf->SetTextColor(0, 0, 0);
+//        $this->pdf->RoundedRect(133, 160, 60, 6, 1, '1234');
+//        $this->pdf->SetXY(133, 163);
+//        $this->pdf->SetFont("helvetica", "", 10);
+//        if ($datosPermisos['descuentoPermiso'] != "") {
+//            $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['descuentoPermiso']));
+//        } else {
+//            $this->pdf->Cell(0, 0, "   ----------");
+//        }
 
         //pie de documento
         $this->pdf->SetFont("helvetica", "", 7);

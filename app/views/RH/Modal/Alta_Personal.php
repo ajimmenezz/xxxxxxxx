@@ -41,6 +41,11 @@
                     src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif" />
             </div>
             <div class="tab-pane fade active in" id="nav-tab-informormacion-personal">
+                <div class="panel-heading-btn">
+                    <label id="quitarPersonal" class="btn btn-sm btn-white">
+                        <i class="fa fa-2x fa-times text-danger"></i>
+                    </label> 
+                </div>
                 <h3 class="m-t-10">Información Personal</h3>
                 <!--Empezando Separador-->
                 <div class="col-md-12">

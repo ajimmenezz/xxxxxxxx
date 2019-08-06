@@ -233,12 +233,6 @@
                     }
                     ?>
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Descuento</label>
-                        <input type="text" class="form-control date" id="inputDescuentoAct" style="width: 100%" disabled/>
-                    </div>
-                </div>
                 <?php
                 echo '<div class="col-md-3">
                     <div class="form-group" style="display: none">

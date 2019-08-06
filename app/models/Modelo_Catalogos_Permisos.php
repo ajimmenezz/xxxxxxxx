@@ -29,10 +29,10 @@ class Modelo_Catalogos_Permisos extends Base {
 
     public function actualizarRegistro(string $tabla, array $datos) {
         $this->actualizar('UPDATE '.$tabla.
-                            ' SET Nombre = '.$datos['nombre'].
-                            ' Observaciones = '.$datos['observaciones'].
-                            ' Flag = '.$datos['flag']. 
-                            ' where Id = '.$datos['id']);
+                            ' SET Nombre = "'.$datos['nombre'].'", 
+                            Observaciones = "'.$datos['observaciones'].'", 
+                            Flag = "'.$datos['flag'].'" 
+                            where Id = "'.$datos['id'].'"');
     }
 
 }
