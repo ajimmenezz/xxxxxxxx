@@ -3,14 +3,17 @@
 namespace Librerias\Administrador;
 
 use Controladores\Controller_Base_General as General;
+use \Librerias\Generales\Registro_Usuario as Usuario;
 
 class Administrador extends General {
 
     private $catalogo;
+    private $usuario;
 
     public function __construct() {
         parent::__construct();
         $this->catalogo = \Librerias\Generales\Catalogo::factory();
+        $this->usuario = Usuario::factory();
         parent::getCI()->load->helper('date');
     }
 
@@ -31,6 +34,8 @@ class Administrador extends General {
 
     public function mostrarFormularioSucursales(array $datos) {
         $data = array();
+        $usuario = $this->usuario->getDatosUsuario();
+        $data['idPerfil'] = $usuario['IdPerfil'];
         $data['usuarios'] = $this->catalogo->catUsuarios("3", array('Flag' => '1'));
         $data['clientes'] = $this->catalogo->catClientes("3", array('Flag' => '1'));
         $data['regiones'] = $this->catalogo->catRegionesCliente("3", array('Flag' => '1'));
