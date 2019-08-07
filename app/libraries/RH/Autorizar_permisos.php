@@ -9,12 +9,14 @@ class Autorizar_permisos extends General{
     private $DBS;
     private $Correo;
     private $pdf;
+    private $Excel;
 
     public function __construct() {
         parent::__construct();
         $this->DBS = \Modelos\Modelo_Solicitud::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
         $this->pdf = new PDFI();
+        $this->Excel = new \Librerias\Generales\CExcel();
     }
     
     public function buscarSubordinados(int $idUsuario){
@@ -307,5 +309,80 @@ class Autorizar_permisos extends General{
         $this->pdf->Output('F', $carpeta, true);
     }
     
+    public function exportExcel() {
+        $permisos = $this->DBS->consultaGral('SELECT 
+                                                nombreUsuario(tpa.IdUsuario) AS Nombre,
+                                                CASE tpa.IdEstatus
+                                                        WHEN 6 THEN "Cancelado"
+                                                    WHEN 7 THEN "Autorizado"
+                                                        WHEN 9 THEN "Pendiente por Autorizar"
+                                                        WHEN 10 then "Rechazado"
+                                                END as Estatus,
+                                                CASE tpa.IdTipoAusencia
+                                                        WHEN 1 THEN "Llegada tarde"
+                                                    WHEN 2 THEN "Salida Temprano"
+                                                        WHEN 3 THEN "No asistirá"
+                                                END as TipoAusencia,
+                                                cmap.Nombre AS MotivoAusencia,
+                                                tpa.FechaDocumento,
+                                                tpa.Motivo,
+                                                tpa.FolioDocumento,
+                                                tpa.FechaAusenciaDesde,
+                                                tpa.FechaAusenciaHasta,
+                                                tpa.HoraEntrada,
+                                                tpa.HoraSalida,
+                                                ctrap.Nombre AS TipoRechazo,
+                                                nombreUsuario(tpa.IdUsuarioJefe) AS Jefe,
+                                                tpa.FechaAutorizacionJefe,
+                                                nombreUsuario(tpa.IdUsuarioRH) AS RecursosHumanos,
+                                                tpa.FechaAutorizacionRH,
+                                                nombreUsuario(tpa.IdUsuarioContabilidad) AS Contador,
+                                                tpa.FechaAutorizacionContabilidad
+                                            FROM t_permisos_ausencia_rh AS tpa
+                                            INNER JOIN cat_v3_motivos_ausencia_personal AS cmap ON tpa.IdMotivoAusencia = cmap.Id
+                                            LEFT JOIN cat_v3_tipos_rechazos_ausencia_personal AS ctrap ON tpa.IdRechazo = ctrap.Id');
+        
+        $this->Excel->createSheet('Permisos', 0);
+        $this->Excel->setActiveSheet(0);
+        $arrayTitulos = 
+            ['Personal',
+            'Estado',
+            'Tipo Ausencia',
+            'Motivo Ausencia',
+            'Fecha de Tramite',
+            'Motivo',
+            'Folio IMSS',
+            'Fecha de Ausencia (Desde)',
+            'Fecha de Ausencia (Hasta)',
+            'Hora de Entrada',
+            'Hora de Salida',
+            'Tipo de Rechazo',
+            'Jefe Directo',
+            'Fecha Revisión Jefe',
+            'Recursos Humanos',
+            'Fecha Revisión RH',
+            'Contabilidad',
+            'Fecha Revisión Contabilidad'];
+        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
+        $arrayWidth = [30, 20, 20, 20, 15, 40, 15, 15, 15, 15, 15, 30, 30, 15, 30, 15, 30, 15];
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $this->Excel->setTableTitle("A1", "L1", "Permisos Ausencia", array('titulo'));
+        $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'];
+
+        $this->Excel->setTableContent('A', 2, $permisos, true, $arrayAlign);
+
+        $time = date("ymd_H_i_s");
+        $nombreArchivo = 'Reporte_Permisos_Ausencia_' . $time . '.xlsx';
+        $nombreArchivo = trim($nombreArchivo);
+        $ruta = '../public/storage/Archivos/RH/Reportes/' . $nombreArchivo;
+        
+        $path = "../public/storage/Archivos/RH/Reportes";
+        if(!is_dir($path)){
+            mkdir($path, 755, true);
+        }
+        $this->Excel->saveFile($ruta);
+        
+        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/RH/Reportes/' . $nombreArchivo ];
+    }
 }
 

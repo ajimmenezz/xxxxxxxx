@@ -90,4 +90,9 @@ $(function () {
         });
     });
     
+    $('#btnExcel').on('click', function () {
+        evento.enviarEvento('EventoPermisosVacaciones/exportarExcel', null, '#modal-dialogo', function (respuesta) {
+            window.open(respuesta.ruta, '_blank');
+        });
+    });
 });
