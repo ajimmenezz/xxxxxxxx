@@ -169,7 +169,16 @@ class Modelo_Gapsi extends Modelo_Base {
         $condicion = '';
         $todos = true;
         if (!in_array(284, $this->usuario['Permisos'])) {
-            $condicion = " and IdUsuario = '" . $this->usuario['Id'] . "' ";
+            $arrayTrabajadores = array();
+            $stringIds = '';
+            $trabajadores = $this->consulta("SELECT Id FROM `cat_v3_usuarios` WHERE IdJefe = '" . $this->usuario['Id'] . "'");
+            if (!empty($trabajadores)) {
+                foreach ($trabajadores as $key => $value) {
+                    array_push($arrayTrabajadores, $value['Id']);
+                }
+                $stringIds = implode(",", $arrayTrabajadores);
+            }
+            $condicion = " and IdUsuario IN ('" . $this->usuario['Id'] . "','" . $stringIds . "')";
             $todos = false;
         }
 
