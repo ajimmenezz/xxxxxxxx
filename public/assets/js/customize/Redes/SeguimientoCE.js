@@ -119,13 +119,11 @@ $(function () {
     /**Empiezan eventos de botones para folio**/
     $('#guardarFolio').on('click', function () {
         if (evento.validarFormulario('#folio')) {
-            let folio = $('#addFolio').val();
+            let dato = {folio: $('#addFolio').val()};
             elementosGuardarFolio();
-            console.log("Guardar folio");
-            console.log(folio);
-            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/GuardarFolio', folio, function (respuesta) {
+      
+            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/GuardarFolio', dato, function (respuesta) {
                 modal.cerrarModal();
-                console.log("Entró bien");
                 console.log(respuesta);
             });
         }

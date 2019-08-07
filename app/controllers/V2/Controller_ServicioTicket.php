@@ -3,6 +3,7 @@
 use Librerias\V2\Factorys\FactoryServiciosTicket as FactoryServiciosTicket;
 use Librerias\V2\PaquetesGenerales\Utilerias\ServiceDesk as ServiceDesk;
 
+
 class Controller_ServicioTicket extends CI_Controller {
 
     private $factory;
@@ -10,12 +11,14 @@ class Controller_ServicioTicket extends CI_Controller {
     private $datos;
   
 
-//    private $serviceDesk;
+   private $idServicio;
 
     public function __construct() {
         parent::__construct();
         $this->factory = new FactoryServiciosTicket();
         $this->serviceDesk= new ServiceDesk;
+  
+        
     }
 
     public function atenderServicio() {
@@ -38,6 +41,7 @@ class Controller_ServicioTicket extends CI_Controller {
     private function getServicios() {
         $this->datos = array();
         $datosServicio = $this->input->post();
+        $this->idServicio=$datosServicio['id'];
         $this->servicio = $this->factory->getServicio('GeneralRedes', $datosServicio['id']);
         $this->datos = $this->servicio->getdatos();
         if (!empty($this->datos['folio'])) {
@@ -54,21 +58,37 @@ class Controller_ServicioTicket extends CI_Controller {
         } else {
             return FALSE;
         }
-        
-    
     }
     public function guardarFolio()
     {
-       $idServicio="1";
-       $folio=55;
-//       $folio=$this->post('folio');$
-//       $idServicio=$this->post('idServicio');
-        $this->servicio=$this->factory->getServicio('GeneralRedes',$idServicio);//3
-        $this->servicio->setFolioServiceDesk($folio);
-        $this->datos['detallesFolio'] = ServiceDesk::getDetallesFolio($folio);
-        $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
-        var_dump($this->datos);
+        $datosServicio = $this->input->post();
+        $datosServicio['idServicio']=176;
+        $this->servicio=$this->factory->getServicio('GeneralRedes',$datosServicio['idServicio']);
+        $this->datos=$this->servicio->getDatos();
+        $this->servicio->setFolioServiceDesk($datosServicio['folio']);
     }
     
+    public function mostrarMaterial() {
+
+    }
+    public function mostrarNodos()
+    {
+        
+    }
+    public function registrarNodo()
+    {
+
+    }
+    public function editarNodo() {
+        
+    }
+    
+    public function eliminarMaterialNodo() {
+        
+    }
+    
+    public function eliminarNodo() {
+        
+    }
 
 }

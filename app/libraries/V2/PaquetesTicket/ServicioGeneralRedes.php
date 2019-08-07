@@ -26,8 +26,6 @@ class ServicioGeneralRedes implements Servicio {
         $this->DBServiciosGeneralRedes = new Modelo();
         $this->id = $idServicio;
         $this->setDatos();
-            
-        $this->getDatos();
     }
 
     public function setDatos() {
