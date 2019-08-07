@@ -3,14 +3,17 @@
 namespace Librerias\Administrador;
 
 use Controladores\Controller_Base_General as General;
+use \Librerias\Generales\Registro_Usuario as Usuario;
 
 class Administrador extends General {
 
     private $catalogo;
+    private $usuario;
 
     public function __construct() {
         parent::__construct();
         $this->catalogo = \Librerias\Generales\Catalogo::factory();
+        $this->usuario = Usuario::factory();
         parent::getCI()->load->helper('date');
     }
 
@@ -30,13 +33,30 @@ class Administrador extends General {
     }
 
     public function mostrarFormularioSucursales(array $datos) {
-        $data = array();
+        $data = array();        
+        $usuario = $this->usuario->getDatosUsuario();        
+        $data['habilitar'] = 'disabled';                
+        $data['permisoEditar'] = false;                
         $data['usuarios'] = $this->catalogo->catUsuarios("3", array('Flag' => '1'));
         $data['clientes'] = $this->catalogo->catClientes("3", array('Flag' => '1'));
         $data['regiones'] = $this->catalogo->catRegionesCliente("3", array('Flag' => '1'));
         $data['unidadesNegocio'] = $this->catalogo->catUnidadeNegocio("3", array('Flag' => '1'));
         $data['paises'] = $this->catalogo->catLocalidades("1");
+
+        foreach ($usuario['Permisos'] as $value) {
+            if ($value === '318') {
+                $data['habilitar'] = '';
+                $data['permisoEditar'] = true;
+            }
+        }
         
+        foreach ($usuario['PermisosAdicionales'] as $value) {
+            if ($value === '318') {
+                $data['habilitar'] = '';
+                $data['permisoEditar'] = true;
+            }
+        }        
+
         if (!empty($datos)) {
             $data['ids'] = $this->catalogo->catConsultaGeneral('SELECT 
                                                                     b.Id AS IdCliente,

@@ -9,8 +9,18 @@
         <!--Empezando cabecera del panel-->
         <div class="panel-heading">
             <div id="botonesExtra" class="panel-heading-btn">
+                <?php
+                if ($usuario["IdPerfil"] == 37 || $usuario["IdPerfil"] == 21) {
+                    echo '<label id="btnExcel" class="btn btn-success btn-xs hidden">
+                            <i class="fa fa-file-excel-o"></i>
+                        </label>';
+                }
+                ?>
+                <label id="btnExcel" class="btn btn-success btn-xs">
+                            <i class="fa fa-file-excel-o"></i>
+                        </label>
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>                            
-                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
             </div>
             <h4 class="panel-title">Autorizar Permisos</h4>
         </div>
@@ -55,16 +65,40 @@
                                             }
                                             switch ($valores['IdMotivoAusencia']){
                                                 case '1':
-                                                    echo '<td>Personal</td>';
+                                                    echo '<td>CONSULTA MEDICO IMSS</td>';
                                                     break;
                                                 case '2':
-                                                    echo '<td>Trabajo/Comisión</td>';
+                                                    echo '<td>CONSULTA DENTISTA IMSS</td>';
                                                     break;
                                                 case '3':
-                                                    echo '<td>IMSS Cita Médica</td>';
+                                                    echo '<td>PERMISOS POR RAZONES DE TRABAJO EXTERNO</td>';
                                                     break;
                                                 case '4':
-                                                    echo '<td>IMSS Incapacidad</td>';
+                                                    echo '<td>PERMISOS POR CURSOS DE CAPACITACION</td>';
+                                                    break;
+                                                case '5':
+                                                    echo '<td>ASUNTOS PERSONALES</td>';
+                                                    break;
+                                                case '6':
+                                                    echo '<td>CONSULTA MEDICO PARTICULAR</td>';
+                                                    break;
+                                                case '7':
+                                                    echo '<td>CONSULTA DENTISTA PARTICULAR</td>';
+                                                    break;
+                                                case '8':
+                                                    echo '<td>INCAPACIDAD IMSS DEL TRABAJADOR</td>';
+                                                    break;
+                                                case '9':
+                                                    echo '<td>CONSULTA MEDICO O DENTISTA IMSS</td>';
+                                                    break;
+                                                case '10':
+                                                    echo '<td>CONSULTA MEDICO IMSS</td>';
+                                                    break;
+                                                case '11':
+                                                    echo '<td>CONSULTA MEDICO PARTICULAR</td>';
+                                                    break;
+                                                case '12':
+                                                    echo '<td>CONSULTA DENTISTA PARTICULAR</td>';
                                                     break;
                                             }
                                             if ($valores['FechaAusenciaHasta'] != $valores['FechaAusenciaDesde'] && $valores['FechaAusenciaHasta'] != "0000-00-00") {

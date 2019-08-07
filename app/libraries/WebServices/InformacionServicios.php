@@ -3,6 +3,7 @@
 namespace Librerias\WebServices;
 
 use Controladores\Controller_Datos_Usuario as General;
+use Librerias\Generales\PDF as PDF;
 
 class InformacionServicios extends General {
 
@@ -25,7 +26,7 @@ class InformacionServicios extends General {
         $this->ServiceDesk = \Librerias\WebServices\ServiceDesk::factory();
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
         $this->MSD = \Modelos\Modelo_ServiceDesk::factory();
-        $this->pdf = new \Librerias\Generales\PDFAux();
+        $this->pdf = new PDFAux();
     }
 
     public function MostrarDatosSD(string $folio) {
@@ -551,23 +552,19 @@ class InformacionServicios extends General {
                                 cat_v3_tipos_falla
                             WHERE
                                 Id = tcd.IdTipoFalla) AS NombreTipoFalla,
-                        CASE tcd.IdComponente
-                            WHEN
-                                NOT NULL
-                            THEN
-                                (SELECT 
-                                        Nombre
-                                    FROM
-                                        cat_v3_fallas_refaccion
-                                    WHERE
-                                        Id = IdFalla)
-                            ELSE (SELECT 
+                        IF(tcd.IdComponente IS NULL,
+                            (SELECT 
                                     Nombre
                                 FROM
                                     cat_v3_fallas_equipo
                                 WHERE
-                                    Id = IdFalla)
-                        END as NombreFalla,
+                                    Id = IdFalla),
+                            (SELECT 
+                                    Nombre
+                                FROM
+                                    cat_v3_fallas_refaccion
+                                WHERE
+                                    Id = IdFalla)) AS NombreFalla,
                         (SELECT 
                                 Nombre
                             FROM
@@ -1664,6 +1661,21 @@ class InformacionServicios extends General {
         }
 
         $this->pdf->MultiCell($width, $height, utf8_decode($value), 1, $align, $trueFill);
+    }
+
+}
+
+class PDFAux extends PDF {
+
+    function Footer() {
+        $fecha = date('d/m/Y');
+        // Go to 1.5 cm from bottom
+        $this->SetY(-15);
+        // Select Arial italic 8
+        $this->SetFont('Helvetica', 'I', 10);
+        // Print centered page number
+        $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
+        $this->Cell(68, 10, utf8_decode('Página ') . $this->PageNo(), 0, 0, 'R');
     }
 
 }

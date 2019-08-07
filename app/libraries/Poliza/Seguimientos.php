@@ -5616,4 +5616,8 @@ class Seguimientos extends General {
         return $viewHtml;
     }
 
+    public function buscarFolio($datos) {
+        var_dump($datos);
+    }
+
 }

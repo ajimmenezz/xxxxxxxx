@@ -81,10 +81,10 @@
             </div>
         </div>
     <?php
-}
+    }
 
-if ($generales['Origen'] !== "" && !is_null($generales['Origen'])) {
-    ?>
+    if ($generales['Origen'] !== "" && !is_null($generales['Origen'])) {
+        ?>
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
                 <label class="f-s-13 f-w-600">Origen</label>
@@ -92,10 +92,10 @@ if ($generales['Origen'] !== "" && !is_null($generales['Origen'])) {
             </div>
         </div>
     <?php
-}
+    }
 
-if ($generales['Destino'] != "" && !is_null($generales['Destino'])) {
-    ?>
+    if ($generales['Destino'] != "" && !is_null($generales['Destino'])) {
+        ?>
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
                 <label class="f-s-13 f-w-600">Destino</label>
@@ -103,9 +103,9 @@ if ($generales['Destino'] != "" && !is_null($generales['Destino'])) {
             </div>
         </div>
     <?php
-}
-if ($generales['Observaciones'] != '' && !is_null($generales['Observaciones'])) {
-    ?>
+    }
+    if ($generales['Observaciones'] != '' && !is_null($generales['Observaciones'])) {
+        ?>
 
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
@@ -115,8 +115,8 @@ if ($generales['Observaciones'] != '' && !is_null($generales['Observaciones'])) 
         </div>
 
     <?php
-}
-?>
+    }
+    ?>
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label class="f-s-13 f-w-600">Tipo de Comprobante</label>
@@ -143,11 +143,11 @@ if ($generales['Observaciones'] != '' && !is_null($generales['Observaciones'])) 
             </div>
         </div>
     <?php
-}
+    }
 
-if ($generales['Archivos'] != '' && !is_null($generales['Archivos'])) {
-    $archivos = explode(",", $generales['Archivos']);
-    ?>
+    if ($generales['Archivos'] != '' && !is_null($generales['Archivos'])) {
+        $archivos = explode(",", $generales['Archivos']);
+        ?>
         <div class="col-md-12 col-sm-12 col-xs-12">
             <?php
             foreach ($archivos as $key => $value) {
@@ -180,50 +180,52 @@ if ($generales['Archivos'] != '' && !is_null($generales['Archivos'])) {
             ?>
         </div>
     <?php
-}
-?>
+    }
+    ?>
 </div>
 <?php
-if ($generales['IdTipoMovimiento'] == 7 && !in_array($generales['IdEstatus'], [6, 10, '6', '10']) && (!isset($rolAutoriza) || $rolAutoriza == 0)) {
-    ?>
-    <div class="row m-t-10">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-            <a id="btnCancelarMovimiento" class="btn btn-danger btn-block">Cancelar Movimiento</a>
-        </div>
-    </div>
-
-<?php
-}
-
-if (isset($rolAutoriza) && $rolAutoriza == 1) {
-    ?>
-    <div class="row m-t-20">
-        <div class="col-md-12 underline"></div>
-    </div>
-    <div class="row m-t-20">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-            <div class="form-group">
-                <label class="f-w-600 f-s-15">Observaciones:</label>
-                <textarea class="form-control" placeholder="Escribe aqui las observaciones de la autorización o el rechazo" id="txtObservacionesAutorizacion"></textarea>
-                <div id="errorAutorizacion"></div>
+if (!isset($rolTesoreria) || $rolTesoreria == 0) {
+    if ($generales['IdTipoMovimiento'] == 7 && !in_array($generales['IdEstatus'], [6, 10, '6', '10']) && (!isset($rolAutoriza) || $rolAutoriza == 0)) {
+        ?>
+        <div class="row m-t-10">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <a id="btnCancelarMovimiento" class="btn btn-danger btn-block">Cancelar Movimiento</a>
             </div>
         </div>
-    </div>
-    <div class="row m-t-5">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-            <a id="btnAutorizarMovimiento" class="btn btn-success btn-block f-s-15 f-w-600">Autorizar Movimiento</a>
+
+    <?php
+    }
+
+    if (isset($rolAutoriza) && $rolAutoriza == 1) {
+        ?>
+        <div class="row m-t-20">
+            <div class="col-md-12 underline"></div>
         </div>
-    </div>
-    <div class="row m-t-20">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-            <a id="btnRechazarMovimiento" class="btn btn-warning btn-block f-s-15 f-w-600">Rechazar Movimiento</a>
+        <div class="row m-t-20">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label class="f-w-600 f-s-15">Observaciones:</label>
+                    <textarea class="form-control" placeholder="Escribe aqui las observaciones de la autorización o el rechazo" id="txtObservacionesAutorizacion"></textarea>
+                    <div id="errorAutorizacion"></div>
+                </div>
+            </div>
         </div>
-    </div>
-    <!--<div class="row m-t-20">
+        <div class="row m-t-5">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <a id="btnAutorizarMovimiento" class="btn btn-success btn-block f-s-15 f-w-600">Autorizar Movimiento</a>
+            </div>
+        </div>
+        <div class="row m-t-20">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <a id="btnRechazarMovimiento" class="btn btn-warning btn-block f-s-15 f-w-600">Rechazar Movimiento</a>
+            </div>
+        </div>
+        <!--<div class="row m-t-20">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <a id="btnRechazarMovimientoCobrable" class="btn btn-danger btn-block f-s-15 f-w-600">Rechazar Movimiento (Con cobro)</a>
                 </div>
             </div>-->
-<?php
+    <?php
+    }
 }
 ?>

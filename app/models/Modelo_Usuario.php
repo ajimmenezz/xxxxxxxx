@@ -372,4 +372,14 @@ class Modelo_Usuario extends Modelo_Base {
         return $consulta;
     }
 
+    public function bajaUsuarios(array $datos) {
+        $consulta = $this->insertar('t_altas_bajas_personal', [
+            'IdUsuario' => $datos['IdUsuario'],
+            'IdPersonal' => $datos['IdPersonal'],
+            'IdEstatus' => '47',
+            'Fecha' => $datos['Fecha'],
+            'FechaEstatus' => $datos['FechaEstatus']
+        ]);       
+        return $consulta;
+    }
 }

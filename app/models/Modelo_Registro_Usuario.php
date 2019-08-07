@@ -80,6 +80,7 @@ class Modelo_Registro_Usuario extends Modelo_Base {
             $datos['IdPerfil'] = $value['IdPerfil'];
             $datos['PermisosAdicionales'] = explode(',', $value['PermisosAdicionales']);
             $datos['SDKey'] = $value['SDKey'];
+            $datos['IdJefe'] = $value['IdJefe'];
         }
 
         $perfil = $this->consulta('
@@ -112,6 +113,12 @@ class Modelo_Registro_Usuario extends Modelo_Base {
         foreach ($datos['Permisos'] as $value2) {
             $permiso = $this->consulta('SELECT Permiso FROM cat_v3_permisos WHERE Id = "' . $value2 . '"');
             array_push($datos['PermisosString'], $permiso[0]['Permiso']);
+        }
+        $subordinados = $this->consulta('SELECT COUNT(*) AS Total FROM `cat_v3_usuarios` WHERE IdJefe = "' . $datos['Id'] . '"');
+        if($subordinados[0]['Total'] > 0) {
+            $datos['Rol'] = "Jefe";
+        } else {
+            $datos['Rol'] = "Trabajador";
         }
         return $datos;
     }

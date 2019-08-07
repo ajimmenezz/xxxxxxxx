@@ -45,6 +45,7 @@ $(function () {
     function initDepositar(datos) {
         file.crearUpload('#fotosDeposito', 'Depositar/RegistrarDeposito', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf']);
         tabla.generaTablaPersonal('#tabla-depositos', null, null, true, true, [[2, 'desc']]);
+        tabla.generaTablaPersonal('#tabla-comprobacion', null, null, true, true, [[0, 'desc']]);
 
         datos.tipoCuenta = '';
         $("#listTiposCuenta").on("change", function () {
@@ -72,9 +73,18 @@ $(function () {
 
             datos.depositar = parseFloat($.trim($("#txtMontoDepositar").val()));
 
+            var dateFormat = new RegExp(/^\d\d\d\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])$/);
+
+            datos.fecha = $.trim($("#txtDate").val());
+
             if (datos.tipoCuenta == "") {
                 evento.mostrarMensaje("#errorMessage", false, "Debe seleccionar un tipo de cuenta", 4000);
                 return false;
+            }
+
+            if (datos.fecha == "" || !dateFormat.test(datos.fecha)) {
+                evento.mostrarMensaje("#errorMessage", false, "El formato de la fecha de depósito no es válido", 4000);
+                return false;                
             }
 
             if (isNaN(datos.depositar) || datos.depositar == 0) {
@@ -100,20 +110,29 @@ $(function () {
 
         $('#tabla-depositos tbody').on('click', 'tr', function () {
             var datos = $('#tabla-depositos').DataTable().row(this).data();
-            evento.enviarEvento('MiFondo/DetallesMovimiento', { 'id': datos[0] }, '#panelDepositar', function (respuesta) {
-                evento.iniciarModal("#modalEdit", "Detalles del depósito / ajuste", respuesta.html);
-                $("#btnGuardarCambios").hide();
+            mostrarDetallesMovimiento(datos);
+        });
 
-                $("#btnCancelarMovimiento").off("click");
-                $("#btnCancelarMovimiento").on("click", function () {
-                    evento.enviarEvento('MiFondo/CancelarMovimiento', { 'id': datos[0] }, '#modalEdit', function (respuesta) {
-                        if (respuesta.code == 200) {
-                            evento.terminarModal("#modalEdit");
-                            filaCuenta.click();
-                        } else {
-                            evento.mostrarMensaje("#error-in-modal", false, "Ocurrió un error al cancelar el movimiento. Recargue su página e intente de nuevo.")
-                        }
-                    });
+        $('#tabla-comprobacion tbody').on('click', 'tr', function () {
+            var datos = $('#tabla-comprobacion').DataTable().row(this).data();
+            mostrarDetallesMovimiento(datos);
+        });
+    }
+
+    function mostrarDetallesMovimiento(datos) {
+        evento.enviarEvento('MiFondo/DetallesMovimiento', { 'id': datos[0], 'tesoreria': 1 }, '#panelDepositar', function (respuesta) {
+            evento.iniciarModal("#modalEdit", "Detalles del depósito / ajuste", respuesta.html);
+            $("#btnGuardarCambios").hide();
+
+            $("#btnCancelarMovimiento").off("click");
+            $("#btnCancelarMovimiento").on("click", function () {
+                evento.enviarEvento('MiFondo/CancelarMovimiento', { 'id': datos[0] }, '#modalEdit', function (respuesta) {
+                    if (respuesta.code == 200) {
+                        evento.terminarModal("#modalEdit");
+                        filaCuenta.click();
+                    } else {
+                        evento.mostrarMensaje("#error-in-modal", false, "Ocurrió un error al cancelar el movimiento. Recargue su página e intente de nuevo.")
+                    }
                 });
             });
         });

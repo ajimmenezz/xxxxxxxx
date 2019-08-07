@@ -157,6 +157,7 @@ $config['Generales'] = array(
         'pluginsCss' => array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
+            
             'parsley/src/parsley',
             'bootstrap-datepicker/css/datepicker'
         ),
@@ -1456,7 +1457,7 @@ $config['RH'] = array(
         'Permiso' => 'VRHRP'
     ),
     'Permisosvacaciones-RH' => array(
-        'liga' => 'Permisos y vacaciones',
+        'liga' => 'Permisos',
         'icono' => '',
         'Url' => '/RH/Permisos_vacaciones',
         'css' => array(),
@@ -1484,6 +1485,33 @@ $config['RH'] = array(
             'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
         ),
         'Permiso' => 'VRHPV'
+    ),
+    'Catalogo-Permisos-RH' => array(
+        'liga' => 'Catálogo de Permisos',
+        'icono' => '',
+        'Url' => '/RH/Catalogos_Permisos',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'parsley/src/parsley',
+            'select2/dist/css/select2.min',
+        ),
+        'js' => array('Base/Base', 
+            'Componentes/HerramientasWeb/Utileria',
+            'Componentes/HerramientasWeb/Modal',
+            'Componentes/Tablas/Tabla', 
+            'Componentes/Tablas/TablaBasica',
+            'Componentes/Selects/Select', 
+            'Componentes/Selects/SelectBasico',
+            'RH/catalogo_permisos'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'select2/dist/js/select2.min',
+            'DataTables/js/dataTables.responsive',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es'
+        ),
+        'Permiso' => 'VCPARH'
     ),
     'AutorizarPermisos-RH' => array(
         'liga' => 'Autorizar Permisos',
@@ -1513,7 +1541,7 @@ $config['RH'] = array(
             'parsley/src/i18n/es',
             'masked-input/masked-input.min'
         ),
-        'Permiso' => 'VRHPV'
+        'Permiso' => 'VAPARH'
     )
 );
 
@@ -1941,6 +1969,38 @@ $config['Redes'] = array(
             'jquery-tag-it/js/tag-it.min'
         ),
         'Permiso' => 'VRESE'
+    ),
+    'Seguimiento-GeneralRedes' => array(
+        'liga' => 'Seguimiento CE',
+        'icono' => '',
+        'Url' => '/Redes/SeguimientoCE',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'jquery-fileUpload/css/fileinput.min',
+            'parsley/src/parsley'
+        ),
+        'js' => array('Base/Base', 
+            'Componentes/HerramientasWeb/Utileria',
+            'Componentes/HerramientasWeb/Modal',
+            'Componentes/Selects/Select', 
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Tablas/Tabla', 
+            'Componentes/Tablas/TablaBasica',
+            'Componentes/FileUpload/Upload',
+            'Componentes/FileUpload/FileUpload_Basico',
+            'Redes/SeguimientoCE'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es'
+        ),
+        'Permiso' => 'VRHPV'
     )
 );
 

@@ -61,7 +61,16 @@ class ServiciosTicket extends General {
      * 
      */
 
-    public function getServiciosAsignados(string $departamento) {
+    public function getServiciosAsignados(string $departamento, string $folio = NULL) {
+        if (!empty($folio)) {
+            $whereFolio = 'AND Folio = "' . $folio . '"';
+            $routinQueryAll = 'call getServiciosAreaByDepartamentoFolio("' . $departamento . '", "' . $folio . '")';
+            $routinQuerySupervisor = 'call getServiciosByDepartamentoFolio("' . $departamento . '", "' . $folio . '")';
+        } else {
+            $whereFolio = '';
+            $routinQueryAll = 'call getServiciosAreaByDepartamento("' . $departamento . '")';
+            $routinQuerySupervisor = 'call getServiciosByDepartamento("' . $departamento . '")';
+        }
         //En el arreglo se agregan los perfiles que van a poder ver todas los servicios del departamento.
 //        $perfilGerente = array('1', '2', '3', '4');
         $perfilGerente = [];
@@ -83,13 +92,12 @@ class ServiciosTicket extends General {
             $permisosCompletosTodosServiciosDepartamento = TRUE;
         }
 
-
         if ($permisosCompletosTodosServicios === TRUE) {
-            $consulta = $this->DBST->getServicios('call getServiciosAreaByDepartamento("' . $departamento . '")');
+            $consulta = $this->DBST->getServicios($routinQueryAll);
             $this->DBST->limpiarFuncion();
             return $consulta;
         } else if ($permisosCompletosTodosServiciosDepartamento === TRUE || in_array('STSXX' . $departamento, $usuario['PermisosString'])) {
-            $consulta = $this->DBST->getServicios('call getServiciosByDepartamento("' . $departamento . '")');
+            $consulta = $this->DBST->getServicios($routinQuerySupervisor);
             $this->DBST->limpiarFuncion();
             return $consulta;
         } else {
@@ -108,7 +116,11 @@ class ServiciosTicket extends General {
                 (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
             from t_servicios_ticket tst inner join cat_v3_servicios_departamento csd
             on tst.IdTipoServicio = csd.Id or tst.IdTipoServicio = 9
-            where tst.IdEstatus in (1,2,3,10,12) and tst.IdTipoServicio in (11,12) group by tst.Id desc ';
+            INNER JOIN t_solicitudes AS ts
+            ON ts.Id = tst.IdSolicitud
+            where tst.IdEstatus in (1,2,3,10,12)
+            ' . $whereFolio . '
+            and tst.IdTipoServicio in (11,12) group by tst.Id desc ';
             $queryUnionLogistica = 'union
             select
                 tst.Id,								
@@ -123,7 +135,10 @@ class ServiciosTicket extends General {
                 (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
             from t_servicios_ticket tst inner join cat_v3_servicios_departamento csd
             on tst.IdTipoServicio = csd.Id or tst.IdTipoServicio = 9
-            where tst.IdEstatus in (1,2,3,10,12) 
+            INNER JOIN t_solicitudes AS ts
+            ON ts.Id = tst.IdSolicitud
+            where tst.IdEstatus in (1,2,3,10,12)
+            ' . $whereFolio . '
             and (csd.IdDepartamento = 5 or tst.IdTipoServicio = 9) group by tst.Id desc ';
 
             if (in_array('76', $usuario['PermisosAdicionales'])) {
@@ -152,8 +167,11 @@ class ServiciosTicket extends General {
                 (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
             from t_servicios_ticket tst inner join cat_v3_servicios_departamento csd
             on tst.IdTipoServicio = csd.Id or tst.IdTipoServicio = 9
+            INNER JOIN t_solicitudes AS ts
+            ON ts.Id = tst.IdSolicitud
             where tst.Atiende = ' . $usuario['Id'] . '
-            and tst.IdEstatus in (1,2,3,10,12) 
+            and tst.IdEstatus in (1,2,3,10,12)
+            ' . $whereFolio . '
             and (csd.IdDepartamento = ' . $departamento . ' or tst.IdTipoServicio = 9) group by tst.Id desc '
                             . $queryUnion);
         }

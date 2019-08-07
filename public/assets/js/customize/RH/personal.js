@@ -145,6 +145,42 @@ $(function () {
             select.cambiarOpcion('#selectActualizarEstadoCivilUsuario', respuesta.datos.datosPersonal[0].IdEstadoCivil);
             select.cambiarOpcion('#selectActualizarSexoUsuario', respuesta.datos.datosPersonal[0].IdSexo);
 
+            $('#quitarPersonal').on('click', function () {
+                $('#btnModalConfirmar').addClass('hidden');
+                $('#btnModalAbortar').addClass('hidden');
+                let html = '<div class="row m-t-20">\n\
+                                <div class="col-md-12 text-center">\n\
+                                    <button id="btnBajaPersonal" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
+                                    <button id="btnCancelarBaja" type="button" class="btn btn-sm btn-danger"><i class="fa fa-times"></i> Cerrar</button>\n\
+                                </div>\n\
+                            </div>';
+                evento.mostrarModal('Baja de Personal', '<h4 class="text-center">¿Estas seguro de dar de baja ha esta persona?</h4><br>\n\
+                                    <div class="col-md-4"></div>\n\
+                                    <div class="col-md-4">\n\
+                                        <div class="form-group">\n\
+                                            <div id="inputFechaBajaPersonal" class="input-group date calendario" >\n\
+                                                <input id="inputFechaBaja" type="text" class="form-control nuevoProyecto" placeholder="Fecha de baja" />\n\
+                                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>\n\
+                                            </div>\n\
+                                        </div>\n\
+                                    </div>'+html);
+                $('#btnModalAbortar').off('click');
+                $('#btnModalConfirmar').off('click');
+                calendario.crearFecha('.calendario');
+                $('#btnCancelarBaja').on('click', function (){
+                    evento.cerrarModal();
+                });
+                $('#btnBajaPersonal').on('click', function (){
+                    var dataUser = {id: datos[0], fechaBaja: $('#inputFechaBaja').val()};
+                    evento.enviarEvento('EventoAltaPersonal/BajaPersonal', dataUser, '#seccionPersonal', function (respuesta) {
+                        if(respuesta){
+                            location.reload();
+                        }else{
+                            evento.mostrarModal('Error','Ocurrio un problema en la consulta, intenta otra vez');
+                        }
+                    });
+                });
+            });
             //Evento que actualizar al personal
             $('#btnactualizarPersonal').on('click', function () {
                 if (evento.validarFormulario('#formNuevoPersonal')) {

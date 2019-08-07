@@ -42,6 +42,9 @@ class Controller_PermisosVacaciones extends Base {
             case 'ConluirAutorizacion':
                 $resultado = $this->autorizar->conluirAutorizacion($this->input->post());
                 break;
+            case 'exportarExcel':
+                $resultado = $this->autorizar->exportExcel();
+                break;
         }
         echo json_encode($resultado);
     }

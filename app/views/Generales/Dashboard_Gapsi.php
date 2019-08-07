@@ -52,21 +52,21 @@
             <!--Finaliza selector modena-->
             <!--Empieza filtro de fecha-->
             <div class="row">
-                <div class="input-group input-daterange">
+                <form id="filtroFecha" data-parsley-validate="true" class="input-group input-daterange">
                     <div class="col-md-12">
-                        <input id="fechaComienzo" name="startDate" type="text" class="form-control"> 
+                        <input id="fechaComienzo" class="form-control" data-parsley-required="true"> 
                         <span class="input-group-addon calendarDesde">
                             <label>Desde <span class="glyphicon glyphicon-calendar"></span></label>
                         </span>
                         <br>
                     </div>
                     <div class="col-md-12">
-                        <input id="fechaFin" name="endDate" type="text" class="form-control">
+                        <input id="fechaFin" class="form-control" data-parsley-required="true">
                         <span class="input-group-addon calendarHasta">
                             <label>Hasta <span class="glyphicon glyphicon-calendar"></span></label>
                         </span>
                     </div>
-                </div>
+                </form>
                 <div class="col-md-12">
                     <a href="#" id="btnFiltrarDashboard" class="btn btn-inverse btn-success btn-sm"><i class="fa fa-refresh m-r-3"></i> Filtrar información</a>
                 </div>
@@ -260,21 +260,21 @@
         <!--Finaliza selector modena-->
         <h5 class="m-t-0">Filtros de fechas</h5>
         <!--Empieza filtro Fecha-->
-        <div class="input-group input-daterange">
+        <form id="filtroFechaPrincipal" data-parsley-validate="true" class="input-group input-daterange">
             <div class="col-md-12">
-                <input id="fechaComienzoPrincipal" name="startDate" type="text" class="form-control"> 
+                <input id="fechaComienzoPrincipal" class="form-control" data-parsley-required="true"> 
                 <span class="input-group-addon calendarDesdePrincipal">
                     <label>Desde <span class="glyphicon glyphicon-calendar"></span></label>
                 </span>
                 <br>
             </div>
             <div class="col-md-12">
-                <input id="fechaFinPrincipal" name="endDate" type="text" class="form-control">
+                <input id="fechaFinPrincipal" class="form-control" data-parsley-required="true">
                 <span class="input-group-addon calendarHastaPrincipal">
                     <label>Hasta <span class="glyphicon glyphicon-calendar"></span></label>
                 </span>
             </div>
-        </div>
+        </form>
         <!--Finaliza filtro Fecha-->
         <div class="row m-t-10">
             <div class="col-md-12">

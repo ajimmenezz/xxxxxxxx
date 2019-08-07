@@ -70,6 +70,7 @@ $config['Secciones'] = array(
         'Seguimiento-RH' => 'Seguimiento',
         'Catalogo-Perfil' => 'Catalogos_Perfil',
         'Permisosvacaciones-RH' => 'Permisos_vacaciones',
+        'Catalogo-Permisos-RH' => 'Catalogos_Permisos',
         'AutorizarPermisos-RH' => 'Autorizar_permisos'
     ),
     'Capacitacion' => array(
@@ -100,7 +101,8 @@ $config['Secciones'] = array(
     ),
     'Redes' => array(
         'Dashboard-Redes' => 'Dashboard',
-        'Seguimiento-Redes' => 'Seguimiento'
+        'Seguimiento-Redes' => 'Seguimiento',
+        'Seguimiento-GeneralRedes' => 'SeguimientoCE'
     ),
     'Salas4D' => array(
         'Dashboard-Salas4D' => 'Dashboard',

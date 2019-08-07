@@ -4,8 +4,7 @@ namespace Librerias\Generales;
 
 use Controladores\Controller_Datos_Usuario as General;
 
-class Secciones extends General
-{
+class Secciones extends General {
 
     private $Catalogo;
     private $Notificacion;
@@ -44,13 +43,19 @@ class Secciones extends General
     private $fondoFijo;
     private $instalaciones;
     private $prime;
+    private $seccionCE;
+    private $factoryCatalogos;
+    private $CatalogoMotivosPermiso;
+    private $CatalogoRechazoPermiso;
+    
+    
+    private $gestorProyectos;
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         parent::getCI()->config->load('Menu_config');
         parent::getCI()->config->load('Pagina_config');
-
+        
         $this->Personal = \Librerias\Generales\Usuario::factory();
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();
         $this->Notificacion = \Librerias\Generales\Notificacion::factory();
@@ -92,6 +97,11 @@ class Secciones extends General
         $this->fondoFijo = \Librerias\FondoFijo\FondoFijo::factory();
         $this->instalaciones = \Librerias\Instalaciones\Instalaciones::factory();
         $this->prime = \Librerias\Prime\Inventario::factory();
+        $this->seccionCE = \Librerias\V2\PaquetesTicket\GestorServicios::factory();
+        
+        $this->factoryCatalogos = new \Librerias\V2\Factorys\FactoryCatalogos();
+        $this->CatalogoMotivosPermiso = $this->factoryCatalogos->getCatalogo('CatalogoMotivoPermisos');
+        $this->CatalogoRechazoPermiso = $this->factoryCatalogos->getCatalogo('CatalogoRechazoPermisos');
     }
 
     /*
@@ -101,8 +111,7 @@ class Secciones extends General
      * @return array regresa la lista de menu y modulos para el usuario
      */
 
-    public function getSecciones(array $usuario)
-    {
+    public function getSecciones(array $usuario) {
         $menu = array();
         $permisos = array();
         $catalogo = null;
@@ -142,8 +151,7 @@ class Secciones extends General
      * Se encarga de obtener la notificaciones del usuario.
      */
 
-    public function getNotificaciones(string $usuario)
-    {
+    public function getNotificaciones(string $usuario) {
         return $this->Notificacion->getNotificacionesMenuCabecera($usuario);
     }
 
@@ -155,8 +163,7 @@ class Secciones extends General
      *  
      */
 
-    public function getDatosPagina(string $url)
-    {
+    public function getDatosPagina(string $url) {
         $datos = array();
         $usuario = $this->Usuario->getDatosUsuario();
         switch ($url) {
@@ -261,6 +268,11 @@ class Secciones extends General
             case 'RH/Autorizar_permisos':
                 $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id']);
                 break;
+            case 'RH/Catalogos_Permisos':
+                  $datos['TipoMotivo'] = $this->CatalogoMotivosPermiso->getDatos();
+                  $datos['TipoRechazo'] = $this->CatalogoRechazoPermiso->getDatos();
+//                $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id']);
+                break;
             case 'Poliza':
                 $datos['TiposProyectos'] = $this->DBPO->getTiposProyecto();
                 $datos['ProyectosSinAtender'] = $this->DBPO->getProyectosSinAtender();
@@ -284,6 +296,10 @@ class Secciones extends General
                 break;
             case 'Administrador/Sucursales':
                 $datos['ListaSucursales'] = $this->Catalogo->catSucursales("3");
+                $datos['PermisoAgregarSucursal'] = false;                            
+                if (in_array('318', $usuario['PermisosAdicionales'])||in_array('318', $usuario['Permisos'])) {
+                    $datos['PermisoAgregarSucursal'] = true;
+                }
                 break;
             case 'Administrador/Proveedores':
                 $datos['ListaProveedores'] = $this->Catalogo->catProveedores("3");
@@ -549,6 +565,9 @@ class Secciones extends General
             case 'Prime/Inventario':
                 $datos['Sucursales'] = $this->prime->getSucursalesPrime();
                 break;
+            case 'Redes/SeguimientoCE':
+                $datos['infoServicios'] = $this->seccionCE->getDatosServicios();
+                break;
             default:
                 break;
         }
@@ -560,8 +579,7 @@ class Secciones extends General
      * 
      */
 
-    public function getAlcance($tipoProyecto, $idProyecto)
-    {
+    public function getAlcance($tipoProyecto, $idProyecto) {
         $data = array();
         $indice = array();
         $data['tipoProyecto'] = $tipoProyecto;
@@ -600,8 +618,8 @@ class Secciones extends General
      * 
      */
 
-    public function getAyuda(string $ayuda)
-    {
+    public function getAyuda(string $ayuda) {
         return array('informacion' => parent::getCI()->load->view('Ayuda/' . $ayuda, '', TRUE));
     }
+
 }
