@@ -9,7 +9,7 @@ class Modelo_Base {
     private $nombreBD;
     static $DB = array();
 
-    public function __construct($db) {
+    public function __construct(string $db) {
         $this->nombreBD = $db;
         if (empty(self::$DB[$db])) {
             self::$DB[$db] = get_instance()->load->database($db, TRUE);

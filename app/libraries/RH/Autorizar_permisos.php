@@ -18,18 +18,39 @@ class Autorizar_permisos extends General{
     }
     
     public function buscarSubordinados(int $idUsuario){
-        return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, cu.Nombre, tpar.IdTipoAusencia, 
-                tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida
-                from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
-                where tpar.IdEstatus = 9 and ((cu.IdJefe = '.$idUsuario.') and tpar.IdUsuarioJefe is null) 
-                or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 21 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is null) 
-                or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 37 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null and tpar.IdUsuarioContabilidad is null) 
-                or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 44 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null 
-                and tpar.IdUsuarioContabilidad is not null and tpar.IdUsuarioDireccion is null)');
+        switch ($idUsuario) {
+            case '21':
+                return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, cu.Nombre, tpar.IdTipoAusencia, 
+                            tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida
+                            from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
+                            where tpar.IdEstatus = 9');
+                break;
+            case '37':
+                return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, cu.Nombre, tpar.IdTipoAusencia, 
+                            tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida
+                            from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
+                            where tpar.IdEstatus = 9');
+                break;
+            default:
+                return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, cu.Nombre, tpar.IdTipoAusencia, 
+                    tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida
+                    from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
+                    where tpar.IdEstatus = 9 and ((cu.IdJefe = '.$idUsuario.') and tpar.IdUsuarioJefe is null) 
+                    or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 21 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is null) 
+                    or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 37 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null and tpar.IdUsuarioContabilidad is null) 
+                    or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 44 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null 
+                    and tpar.IdUsuarioContabilidad is not null and tpar.IdUsuarioDireccion is null)');
+                break;
+        }
+    }
+    
+    public function motivosRechazo() {
+        return $this->DBS->consultaGral('select * from cat_v3_tipos_rechazos_ausencia_personal');
     }
     
     public function revisarPermiso(array $datosPermiso){
         $informacionPermisoAusencia['perfilUsuario'] = $datosPermiso['perfilUsuario'];
+        $informacionPermisoAusencia['motivosRechazo'] = $this->motivosRechazo();
         $informacionPermisoAusencia['datosAusencia'] = $this->DBS->consultaGral('SELECT tpa.FechaDocumento, CONCAT(trp.Nombres, " ",trp.ApPaterno, " ",trp.ApMaterno) AS Nombre,
                  cp.Nombre AS Puesto, cds.Nombre AS Departamento, tpa.Id, IdEstatus, IdTipoAusencia, IdMotivoAusencia, FechaAusenciaDesde, FechaAusenciaHasta, 
                  HoraEntrada, HoraSalida, Motivo, FolioDocumento, Archivo, ArchivosOriginales, IdUsuarioJefe FROM t_permisos_ausencia_rh AS tpa 
@@ -47,25 +68,25 @@ class Autorizar_permisos extends General{
             case 21:
                 $revisor = array (
                     'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'MotivoRechazo' => $datosPermiso[0]['motivoRechazo']
+                    'IdRechazo' => $datosPermiso[0]['motivoRechazo']
                     );
                 break;
             case 37:
                 $revisor = array (
                     'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'MotivoRechazo' => $datosPermiso[0]['motivoRechazo']
+                    'IdRechazo' => $datosPermiso[0]['motivoRechazo']
                     );
                 break;
             case 44:
                 $revisor = array (
                     'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'MotivoRechazo' => $datosPermiso[0]['motivoRechazo']
+                    'IdRechazo' => $datosPermiso[0]['motivoRechazo']
                     );
                 break;
             default :
                 $revisor = array (
                     'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'MotivoRechazo' => $datosPermiso[0]['motivoRechazo']
+                    'IdRechazo' => $datosPermiso[0]['motivoRechazo']
                     );
                 break;
         }
@@ -73,8 +94,7 @@ class Autorizar_permisos extends General{
         
         $infoCorreo = $this->informacionCorreo($datosPermiso['idPermiso']);
         $texto = '<p>Estimado(a) <strong>' .$infoCorreo[0]['Nombre']. ',</strong> se ha <strong>Rechazado</strong> el permiso de ausencia.</p><br><br>
-                    Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' '.$infoCorreo['motivoAusencia'].' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
-                    Descripción: <p>' .$infoCorreo['descripcion']. '</p><br><br>
+                    Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
                     Motivo de Rechazo: <p><b>' . $datosPermiso[0]['motivoRechazo'] . '</b> </p><br><br>
                     <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Rechazado', $texto);
@@ -130,8 +150,7 @@ class Autorizar_permisos extends General{
         
         $infoCorreo = $this->informacionCorreo($datosPermiso['idPermiso']);
         $texto = '<p>El permiso de ausencia de <strong>' .$infoCorreo[0]['Nombre']. ',</strong> ha sido previamente <strong>Autorizado</strong>, se requiere su concentimiento o rechazo.</p><br><br>
-                    Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' '.$infoCorreo['motivoAusencia'].' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
-                    Descripción: <p>' .$infoCorreo['descripcion']. '</p><br><br>
+                    Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
                     <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Autorizado', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
@@ -165,8 +184,7 @@ class Autorizar_permisos extends General{
         
         $infoCorreo = $this->informacionCorreo($datosPermiso['idPermiso']);
         $texto = '<p>Estimado(a) <strong>' .$infoCorreo[0]['Nombre']. ',</strong> se ha <strong>Autorizado</strong> el permiso de ausencia.</p><br><br>
-                    Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' '.$infoCorreo['motivoAusencia'].' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
-                    Descripción: <p>' .$infoCorreo['descripcion']. '</p><br><br>
+                    Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
                     <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Concluido', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
@@ -199,34 +217,8 @@ class Autorizar_permisos extends General{
                 );
                 break;
         }
-        switch ($solicitante[0]['IdMotivoAusencia']){
-            case '1':
-                $motivoAusencia = array (
-                    'motivoAusencia' => 'con motivo Personal',
-                    'descripcion' => $solicitante[0]['Motivo']
-                );
-                break;
-            case '2':
-                $motivoAusencia = array (
-                    'motivoAusencia' => 'con motivo Trabajo/Comisión',
-                    'descripcion' => $solicitante[0]['Motivo']
-                );
-                break;
-            case '3':
-                $motivoAusencia = array (
-                    'motivoAusencia' => 'con motivo IMSS Cita Médica',
-                    'descripcion' => $solicitante[0]['FolioDocumento']
-                );
-                break;
-            case '4':
-                $motivoAusencia = array (
-                    'motivoAusencia' => 'con motivo IMSS Incapacidad',
-                    'descripcion' => $solicitante[0]['FolioDocumento']
-                );
-                break;
-        }
         $resultado = array_merge($solicitante, $tipoAusencia);
-        $arregloDatos = array_merge($resultado, $motivoAusencia);
+        $arregloDatos = array_merge($resultado);
         return $arregloDatos;
     }
     
@@ -269,7 +261,7 @@ class Autorizar_permisos extends General{
                 if ($datosFirmas['MotivoRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
                     $this->pdf->SetXY(15, 200);
-                    $this->pdf->MultiCell(190, 4, utf8_decode($datosFirmas['MotivoRechazo']));
+                    $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
                 }
                 break;
             case 37:
@@ -278,7 +270,7 @@ class Autorizar_permisos extends General{
                 if ($datosFirmas['MotivoRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
                     $this->pdf->SetXY(15, 205);
-                    $this->pdf->MultiCell(190, 4, utf8_decode($datosFirmas['MotivoRechazo']));
+                    $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
                 }
                 break;
             case 44:
@@ -287,7 +279,7 @@ class Autorizar_permisos extends General{
                 if ($datosFirmas['MotivoRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
                     $this->pdf->SetXY(15, 210);
-                    $this->pdf->MultiCell(190, 4, utf8_decode($datosFirmas['MotivoRechazo']));
+                    $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
                 }
                 break;
             default :
@@ -296,7 +288,7 @@ class Autorizar_permisos extends General{
                 if ($datosFirmas['MotivoRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
                     $this->pdf->SetXY(15, 195);
-                    $this->pdf->MultiCell(190, 4, utf8_decode($datosFirmas['MotivoRechazo']));
+                    $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
                 }
                 break;
         }

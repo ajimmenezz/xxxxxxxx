@@ -41,9 +41,8 @@
                                 </div>
                                 <div class="col-md-6 col-xs-6">
                                     <div class="form-group text-right">
-                                        <?php
-                                        $permisos = array('46','42','2','3','4');
-                                        if (in_array($datos['Perfil'], $permisos)) {
+                                        <?php                                        
+                                        if ($datos['PermisoAgregarSucursal']) {
                                             echo '<a href="javascript:;" class="btn btn-success btn-lg " id="btnAgregarSucursal"><i class="fa fa-plus"></i> Agregar</a>';
                                         }
                                         ?>

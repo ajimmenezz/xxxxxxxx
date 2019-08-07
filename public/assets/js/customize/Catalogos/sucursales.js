@@ -17,7 +17,7 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
-    var idPerfil = null;
+    var permisoEditar = null;
     //Evento que permite actualizar la sucursal
     $('#data-table-sucursales tbody').on('click', 'tr', function () {
         var datos = $('#data-table-sucursales').DataTable().row(this).data();
@@ -35,7 +35,7 @@ $(function () {
         var datos = arguments[1] || null;
 
         evento.enviarEvento('EventoCatalogoSucursales/MostrarFormularioSucursales', data, '#seccionSucursales', function (respuesta) {
-            idPerfil = respuesta.datos.idPerfil;
+            permisoEditar = respuesta.datos.permisoEditar;            
             iniciarElementosFormulario(respuesta, datos);
             cargarEventosFormulario(respuesta, datos);
         });
@@ -87,7 +87,7 @@ $(function () {
             if ($('#selectActualizarPaisSucursales').val() != '') {
                 select.setOpcionesSelectAjax('#selectActualizarPaisSucursales', ['EventoCatalogoSucursales/SelectEstados', null], ['#selectActualizarEstadoSucursales', 'IdPais'], function (respuesta) {
                     if (respuesta) {
-                        if (idPerfil !== '39') {
+                        if (permisoEditar) {
                             $('#selectActualizarEstadoSucursales').removeAttr('disabled');
                         }
                         if (typeof data !== 'undefined') {
@@ -112,7 +112,7 @@ $(function () {
             if ($('#selectActualizarEstadoSucursales').val() != '') {
                 select.setOpcionesSelectAjax('#selectActualizarEstadoSucursales', ['EventoCatalogoSucursales/SelectMunicipios', null], ['#selectActualizarMunicipioSucursales', 'IdEstado'], function (respuesta) {
                     if (respuesta) {
-                        if (idPerfil !== '39') {
+                        if (permisoEditar) {
                             $('#selectActualizarMunicipioSucursales').removeAttr('disabled');
                         }
                         if (typeof data !== 'undefined') {
@@ -137,7 +137,7 @@ $(function () {
             if ($('#selectActualizarMunicipioSucursales').val() != '') {
                 select.setOpcionesSelectAjax('#selectActualizarMunicipioSucursales', ['EventoCatalogoSucursales/SelectColonias', null], ['#selectActualizarColoniaSucursales', 'IdMunicipio'], function (respuesta) {
                     if (respuesta) {
-                        if (idPerfil !== '39') {
+                        if (permisoEditar) {
                             $('#selectActualizarColoniaSucursales').removeAttr('disabled');
                         }
                         if (typeof data !== 'undefined') {
@@ -221,7 +221,7 @@ $(function () {
             $('#selectActualizarEstadoSucursales').val('').trigger('change');
             $('#selectActualizarMunicipioSucursales').val('').trigger('change');
             $('#selectActualizarColoniaSucursales').val('').trigger('change');
-            if (idPerfil !== '39') {
+            if (permisoEditar) {
                 $('#selectActualizarPaisSucursales').removeAttr('disabled');
             }
             $('#inputActualizarCPSucursales').val('');

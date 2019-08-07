@@ -113,7 +113,7 @@ class Utileria {
             window.location.href = "Logout";
         } else {
             window.location.href = url;
-    }
+        }
     }
 
     //Plugin Elementos
@@ -126,7 +126,7 @@ class Utileria {
 
         if (elemento.hasClass('hidden')) {
             elemento.removeClass('hidden');
-    }
+        }
     }
 
     ocultarElemento(objeto = null) {
@@ -138,7 +138,7 @@ class Utileria {
 
         if (!elemento.hasClass('hidden')) {
             elemento.addClass('hidden');
-    }
+        }
     }
 }
 

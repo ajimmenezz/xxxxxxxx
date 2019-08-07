@@ -24,13 +24,13 @@
         <div class="panel-body">
             <form id="formActualizarPermiso" class="margin-bottom-0" data-parsley-validate="true" enctype="multipart/form-data">
 
-                <div class="col-md-3">
+                <div class="col-md-3 hidden">
                     <div class="form-group">
                         <label>Fecha Documento</label>
                         <input type="text" class="form-control date" id="inputFechaDocumentoAct" style="width: 100%" disabled/>
                     </div>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-8 hidden">
                     <div class="form-group">
                         <label>Nombre</label>
                         <?php
@@ -39,7 +39,7 @@
                         ?>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 hidden">
                     <div class="form-group">
                         <label>Departamento</label>
                         <?php
@@ -48,7 +48,7 @@
                         ?>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 hidden">
                     <div class="form-group">
                         <label>Puesto</label>
                         <?php
@@ -91,12 +91,19 @@
                 </div>
                 <div class="col-md-4">
                     <?php
-                    if ($datosAusencia[0]["FolioDocumento"] != "") {
-                        echo '<div id="citaFolioAct" class="form-group">
-                            <label>Cita o Folio *</label>
-                            <input type="text" class="form-control" id="inputCitaFolioAct" style="width: 100%" value="' . $datosAusencia[0]["FolioDocumento"] . '"/>
-                        </div>';
-                    } else {
+                    if ($datosAusencia[0]["IdMotivoAusencia"] == 1 || $datosAusencia[0]["IdMotivoAusencia"] == 2 || $datosAusencia[0]["IdMotivoAusencia"] == 6 || $datosAusencia[0]["IdMotivoAusencia"] == 7 || $datosAusencia[0]["IdMotivoAusencia"] == 8 || $datosAusencia[0]["IdMotivoAusencia"] == 9 || $datosAusencia[0]["IdMotivoAusencia"] == 11 || $datosAusencia[0]["IdMotivoAusencia"] == 12) {
+                        if ($datosAusencia[0]["FolioDocumento"] != "") {
+                            echo '<div id="citaFolioAct" class="form-group">
+                                <label>Cita o Folio *</label>
+                                <input type="text" class="form-control" id="inputCitaFolioAct" style="width: 100%" value="' . $datosAusencia[0]["FolioDocumento"] . '"/>
+                            </div>';
+                        } else {
+                            echo '<div id="citaFolioAct" class="form-group">
+                                <label>Cita o Folio *</label>
+                                <input type="text" class="form-control" id="inputCitaFolioAct" style="width: 100%"/>
+                            </div>';
+                        }
+                    }else {
                         echo '<div id="citaFolioAct" class="form-group" style="display: none">
                             <label>Cita o Folio *</label>
                             <input type="text" class="form-control" id="inputCitaFolioAct" style="width: 100%"/>
@@ -112,7 +119,7 @@
                         <textarea id="textareaMotivoSolicitudPermisoAct" class="form-control" name="descripcionAusenciaAct" rows="3">' . $datosAusencia[0]["Motivo"] . '</textarea>
                     </div>';
                     } else {
-                        echo '<div id="descripcionAusenciaAct" class="form-group" style="display: none">
+                        echo '<div id="descripcionAusenciaAct" class="form-group">
                         <label>Descripción de Ausencia *</label>
                         <textarea id="textareaMotivoSolicitudPermisoAct" class="form-control" name="descripcionAusenciaAct" rows="3"></textarea>
                     </div>';
@@ -121,7 +128,7 @@
                 </div>
                 <div class="col-md-10">
                     <?php
-                    if ($datosAusencia[0]["IdMotivoAusencia"] == 3 || $datosAusencia[0]["IdMotivoAusencia"] == 4) {
+                    if ($datosAusencia[0]["IdMotivoAusencia"] == 1 || $datosAusencia[0]["IdMotivoAusencia"] == 2 || $datosAusencia[0]["IdMotivoAusencia"] == 6 || $datosAusencia[0]["IdMotivoAusencia"] == 7 || $datosAusencia[0]["IdMotivoAusencia"] == 8 || $datosAusencia[0]["IdMotivoAusencia"] == 9 || $datosAusencia[0]["IdMotivoAusencia"] == 11 || $datosAusencia[0]["IdMotivoAusencia"] == 12) {
                         if($datosAusencia[0]["ArchivosOriginales"] == '') {
                                 echo '<div id="archivoCitaIncapacidadAct" class="form-group">
                                     <label>Archivo Cita o Incapacidad</label>
@@ -225,12 +232,6 @@
                             break;
                     }
                     ?>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Descuento</label>
-                        <input type="text" class="form-control date" id="inputDescuentoAct" style="width: 100%" disabled/>
-                    </div>
                 </div>
                 <?php
                 echo '<div class="col-md-3">
