@@ -2,10 +2,13 @@
 namespace Librerias\V2\Factorys;
 use Librerias\V2\PaquetesServicios\Servicio as Servicio;
 use Librerias\V2\PaquetesTicket\ServicioGeneralRedes as GeneralRedes;
+use Librerias\V2\PaquetesTicket\Nodos as Nodos;
+
 class FactoryServiciosTicket
 {
     private $instancia ;
     private $servicio;
+    private $nodo;
     
     public function __contruct()
     {
@@ -24,6 +27,10 @@ class FactoryServiciosTicket
                 break;
         }
         return $this->servicio;
+    }
+    public function setNodos(array $datos)
+    {
+        $this->nodo=new Nodos($datos);
     }
     
 }

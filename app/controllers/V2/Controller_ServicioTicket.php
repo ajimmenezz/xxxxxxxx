@@ -2,6 +2,7 @@
 
 use Librerias\V2\Factorys\FactoryServiciosTicket as FactoryServiciosTicket;
 use Librerias\V2\PaquetesGenerales\Utilerias\ServiceDesk as ServiceDesk;
+use Librerias\V2\PaquetesTicket\Material as Material;
 
 
 class Controller_ServicioTicket extends CI_Controller {
@@ -9,6 +10,7 @@ class Controller_ServicioTicket extends CI_Controller {
     private $factory;
     private $servicio;
     private $datos;
+    private $material;
   
 
    private $idServicio;
@@ -17,6 +19,7 @@ class Controller_ServicioTicket extends CI_Controller {
         parent::__construct();
         $this->factory = new FactoryServiciosTicket();
         $this->serviceDesk= new ServiceDesk;
+        
   
         
     }
@@ -62,22 +65,23 @@ class Controller_ServicioTicket extends CI_Controller {
     public function guardarFolio()
     {
         $datosServicio = $this->input->post();
-        $datosServicio['idServicio']=176;
+        
         $this->servicio=$this->factory->getServicio('GeneralRedes',$datosServicio['idServicio']);
         $this->datos=$this->servicio->getDatos();
         $this->servicio->setFolioServiceDesk($datosServicio['folio']);
     }
     
     public function mostrarMaterial() {
-
+        $this->material = new Material($idTecnico);
     }
     public function mostrarNodos()
     {
-        
+       
     }
     public function registrarNodo()
     {
-
+        $datos=$this->input->post();
+        $this->material->setNodos($datos);
     }
     public function editarNodo() {
         
