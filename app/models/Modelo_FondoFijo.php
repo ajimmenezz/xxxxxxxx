@@ -388,7 +388,7 @@ class Modelo_FondoFijo extends Modelo_Base
         $consulta = $this->consulta("select
         tfm.Id,
         (select Nombre from cat_v3_fondofijo_tipos_cuenta where Id = tfm.IdTipoCuenta) as TipoCuenta,
-        tfm.FechaRegistro as Fecha,
+        tfm.FechaMovimiento as Fecha,
         tfm.SaldoPrevio,
         tfm.Monto,
         tfm.SaldoNuevo
