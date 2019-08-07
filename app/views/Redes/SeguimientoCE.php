@@ -119,24 +119,24 @@
                         <div class="col-md-12 row">
                             <div class="col-md-12">
                                 <div class="col-md-8">
-                                    <label>Fecha de Servicio: </label>
+                                    <label>Fecha de Servicio: <label class="semi-bold" id="fechaServicio"></label></label>
                                 </div>
                                 <div class="col-md-4">
-                                    <label>Ticket: </label>
+                                    <label>Ticket: <label class="semi-bold" id="ticket"></label></label>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-8">
-                                    <label>Atendido por: </label>
+                                    <label>Atendido por: <label class="semi-bold" id="atendido"></label></label>
                                 </div>
                                 <div class="col-md-4">
-                                    <label>Solicitud: </label>
+                                    <label>Solicitud: <label class="semi-bold" id="solicitud"></label></label>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Descripción del Servicio</label>
-                                    <textarea id="textareaDescripcion" class="form-control" rows="2" disabled></textarea>
+                                    <textarea id="textareaDescripcion" class="form-control semi-bold" rows="2" disabled></textarea>
                                 </div>
                             </div>
                         </div>
@@ -148,16 +148,16 @@
                                 <div id="detallesServicio" class="hidden">
                                     <div class="col-md-12">
                                         <div class="col-md-8">
-                                            <label>Solicita: </label>
+                                            <label>Solicita: <label class="semi-bold" id="solicitaS"></label></label>
                                         </div>
                                         <div class="col-md-4">
-                                            <label>Fecha Solicitud: </label>
+                                            <label>Fecha Solicitud: <label class="semi-bold" id="fechaSolicitud"></label></label>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Descripción Solicitud</label>
-                                            <textarea id="textareaDescripcion" class="form-control" rows="2" disabled></textarea>
+                                            <textarea id="textareaDescripcionS" class="form-control semi-bold" rows="2" disabled></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -278,8 +278,6 @@
                                     <div class="form-group">
                                         <label>Sucursal</label>
                                         <select id="selectSucursal" class="form-control" style="width: 100%" data-parsley-required="true">
-                                            <option value="">Seleccionar</option>
-                                            <option value="prueba">Prueba</option>
                                         </select>
                                     </div>
                                 </div>

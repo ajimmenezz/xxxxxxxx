@@ -12,17 +12,16 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
 
     public function getDatosServicio(string $idServicio) {
         $consulta = array();
-        try{            
-            $consulta = $this->consulta('
-                                        select 
+        try {
+            $consulta = $this->consulta('select 
                                             serviciosTicket.FechaCreacion,
                                             serviciosTicket.Ticket,
-                                            usuario(serviciosTicket.Atiende) as atentidoPor,
+                                            usuario(serviciosTicket.Atiende) as Atiende,
                                             serviciosTicket.IdSolicitud,
                                             serviciosTicket.Descripcion,
-                                            usuario(serviciosTicket.Solicita) as solicitadoPor,
-                                            solicitudes.FechaCreacion as fechaSolicitud,
-                                            solicitudesInternas.Descripcion as descripcionSolicitud,
+                                            usuario(serviciosTicket.Solicita) as Solicita,
+                                            solicitudes.FechaCreacion as FechaSolicitud,
+                                            solicitudesInternas.Descripcion as DescripcionSolicitud,
                                             solicitudes.Folio
                                         from 
                                                 t_servicios_ticket serviciosTicket
@@ -35,31 +34,39 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
                                         on
                                                 solicitudes.Id=solicitudesInternas.IdSolicitud
                                         where
-                                                serviciosTicket.Id=' . $idServicio);
+                                                serviciosTicket.Id = ' . $idServicio);
         } catch (\Exception $ex) {
             var_dump($ex->getMessage());
         }
         return $consulta;
     }
-    public function getSucursal()
-    {
-        $consulta=array();
-        try
-        {
-           $consulta=$this->consulta('select                    
+
+    public function getSucursal(string $idCliente) {
+        $consulta = array();
+        try {
+            $consulta = $this->consulta('select                    
                                          id, 
-                                         Nombre 
+                                         Nombre as text
                                       from 
-                                         cat_v3_sucursales;' ); 
+                                         cat_v3_sucursales
+                                        WHERE IdCliente = "' . $idCliente . '"');
         } catch (Exception $ex) {
             var_dump($ex->getMessage());
         }
         return $consulta;
-        
     }
 
-    public function setFolioServiceDesk(string $idServicio) {
-        
+    public function setFolioServiceDesk(array $datosServicio) {
+        $cosulta = array();
+        try {
+            $servicio = $this->getDatosServicio($datosServicio['idServicio']);
+            $consulta = $this->actualizar('UPDATE t_solicitudes
+                                            SET Folio = "' . $datosServicio['folio'] . '" 
+                                            WHERE Id = "' . $servicio[0]['IdSolicitud'] . '"');
+        } catch (Exception $exc) {
+            var_dump($ex->getMessage());
+        }
+        return $consulta;
     }
 
 }
