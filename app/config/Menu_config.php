@@ -57,7 +57,8 @@ $config['Generales'] = array(
         'pluginsCss' => array(),
         'js' => array('Base/Base', 'Base/Socket', 'Generales/tester'),
         'pluginsJs' => array(),
-        'Permiso' => 'VGTESTER'
+//        'Permiso' => 'VGTESTER'
+        'Permiso' => 'VGDASH'
     ),
     'Dashboard-Siccob' => array(
         'liga' => 'Dashboard General',

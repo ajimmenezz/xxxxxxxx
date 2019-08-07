@@ -27,6 +27,7 @@ class ServiceDesk extends General {
 
     private function getErrorPHP($errno, $errstr, $errfile, $errline) {
         $this->error = array();
+
         switch ($errno) {
             case E_WARNING:
                 $this->error['tipo'] = 'Warning';
@@ -41,11 +42,25 @@ class ServiceDesk extends General {
                 $this->error['archivo'] = $errfile . ': linea : ' . $errline;
                 break;
         }
+
         throw new \Exception('Error para ingresar al SD');
     }
 
+    private function getDatosSD(string $url) {
+        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
+        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
+        $datosSD = json_decode(file_get_contents($url));
+
+        if ($datosSD === NULL) {
+            throw new \Exception('Error para ingresar al SD');
+        }
+
+        restore_error_handler();
+
+        return $datosSD;
+    }
+
     private function validarError(\stdClass $datos) {
-//        var_dump($datos);
         $estatus = null;
         $message = null;
 
@@ -62,7 +77,6 @@ class ServiceDesk extends General {
     }
 
     private function textoError(string $error) {
-//        var_dump($error);
         switch ($error) {
             case 'API key received is not associated to any technician. Authentication failed.':
                 $textoError = 'La clave API recibida no está asociada a ningún técnico. Autenticación fallida.';
@@ -70,11 +84,16 @@ class ServiceDesk extends General {
             case 'Invalid requestID in given URL':
                 $textoError = 'El folio proporcionado no es correcto.';
                 break;
+            case 'Technician key in the request is invalid. Unable to authenticate.':
+                $textoError = 'La clave del técnico en la solicitud no es válida. Imposible de autenticar.';
+                break;
+            case 'Error when validating URL - Invalid URL for the requested operation.':
+                $textoError = 'URL no válida para la operación solicitada.';
+                break;
             default :
                 $textoError = 'Error para ingresar al SD.';
                 break;
         }
-
         return $textoError;
     }
 
@@ -93,13 +112,10 @@ class ServiceDesk extends General {
      */
 
     public function getFoliosTecnico(string $key) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $input_data = '{"operation":{"details":{ "from": "0","limit": "5000","filterby": "All_Pending_User"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUESTS&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
-        $datosSD = json_decode(file_get_contents($this->Url . '?' . $this->FIELDS));
+        $datosSD = $this->getDatosSD($this->Url . '?' . $this->FIELDS);
         $this->validarError($datosSD);
-        restore_error_handler();
         return $datosSD;
     }
 
@@ -109,12 +125,9 @@ class ServiceDesk extends General {
      */
 
     public function getDetallesFolio(string $key, string $folio) {
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST&TECHNICIAN_KEY=' . $key;
-        $datosSD = json_decode(file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS));
+        $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '?' . $this->FIELDS);
         $this->validarError($datosSD);
-        restore_error_handler();
         return $datosSD;
     }
 
@@ -124,12 +137,9 @@ class ServiceDesk extends General {
      */
 
     public function getResolucionFolio(string $key, string $folio) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_RESOLUTION&TECHNICIAN_KEY=' . $key;
-        $datosSD = json_decode(file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS));
+        $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '?' . $this->FIELDS);
         $this->validarError($datosSD);
-        restore_error_handler();
         return $datosSD;
     }
 
@@ -139,14 +149,11 @@ class ServiceDesk extends General {
      */
 
     public function getTecnicosSD(string $key) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $Url2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/technician";
         $input_data = '{"operation":{"details":{ "parameter": { "name":"department", "value" : ""}}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
-        $datosSD = json_decode(file_get_contents($Url2 . '/?' . $this->FIELDS));
+        $datosSD = $this->getDatosSD($Url2 . '/?' . $this->FIELDS);
         $this->validarError($datosSD);
-        restore_error_handler();
         return $datosSD;
     }
 
@@ -156,13 +163,10 @@ class ServiceDesk extends General {
      */
 
     public function reasignarFolioSD(string $folio, string $tecnico, string $key) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $input_data = '{"operation":{"details":{"technicianid":"' . $tecnico . '"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=ASSIGN_REQUEST&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
-        $datosSD = json_decode(file_get_contents($this->Url . '/' . $folio . '?' . $this->FIELDS));
+        $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '?' . $this->FIELDS);
         $this->validarError($datosSD);
-        restore_error_handler();
         return $datosSD;
     }
 
@@ -172,13 +176,10 @@ class ServiceDesk extends General {
      */
 
     public function resolucionFolioSD(string $folio, string $tecnico, string $key, string $descripcion) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $input_data = '{"operation":{"details":{"resolution":{"resolutiontext":"' . $descripcion . '"}}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=EDIT_RESOLUTION&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
-        $datosSD = json_decode(file_get_contents($this->Url . '/' . $folio . '/resolution?' . $this->FIELDS));
+        $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '/resolution?' . $this->FIELDS);
         $this->validarError($datosSD);
-        restore_error_handler();
         return $datosSD;
     }
 
@@ -188,8 +189,6 @@ class ServiceDesk extends General {
      */
 
     public function getFolios(string $key) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $input_data = '{"operation":{"details":{ "from": "0","limit": "5000","filterby": "All_Pending"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST_FILTERS&TECHNICIAN_KEY=' . $key;
         $datos = file_get_contents($this->Url . '?' . $this->FIELDS);
@@ -204,9 +203,8 @@ class ServiceDesk extends General {
 
         $input_data = '{"operation":{"details":{ "from": "0","limit": "5000","filterby": "' . $IdFiltro . '"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUESTS&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
-        $datosSD = json_decode(file_get_contents($this->Url . '?' . $this->FIELDS));
+        $datosSD = $this->getDatosSD($this->Url . '?' . $this->FIELDS);
         $this->validarError($datosSD);
-        restore_error_handler();
         return $datosSD;
     }
 
@@ -216,143 +214,51 @@ class ServiceDesk extends General {
      */
 
     public function setResolucionServiceDesk(string $key, string $folio, string $datos) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
-
-        $resolicionesAnteriores = $this->getResolucionFolio($key, $folio);
-        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/resolution/";
-
-        if (!empty($resolicionesAnteriores->operation->Details->RESOLUTION)) {
-            $datosAnterioresResolicion = $resolicionesAnteriores->operation->Details->RESOLUTION;
-        } else {
-            $datosAnterioresResolicion = '';
-        }
-
-        $stringInicio = '*****BEGIN SICCOB RESOLUTION*****';
-        $stringFin = '*****END SICCOB RESOLUTION*****';
-        $posInicio = strpos($datosAnterioresResolicion, $stringInicio);
-
-        if ($posInicio !== false) {
-            $posFin = strpos($datosAnterioresResolicion, $stringFin) + 30;
-            $longitud = ($posFin - $posInicio) + 1;
-            $stringRemove = substr($datosAnterioresResolicion, $posInicio, $longitud);
-            $datosAnterioresResolicion = str_replace($stringRemove, '', $datosAnterioresResolicion);
-        }
-
-        /* Concatena la nueva resolución con la resolución anterior */
-        $nuevaResolucion = ''
-                . "<br>"
-                . $datos
-                . "<br>"
-                . stripslashes(trim($datosAnterioresResolicion));
-
         $input_data = ''
                 . '{'
                 . ' "operation": {'
                 . '     "details": {'
                 . '         "resolution": {'
-                . '             "resolutiontext": "' . $this->mres($nuevaResolucion) . '"'
+                . '             "resolutiontext": "' . $this->mres($datos) . '"'
                 . '         }'
                 . '     }'
                 . ' }'
                 . '}';
+
         $this->FIELDS = "format=json&"
                 . "OPERATION_NAME=EDIT_RESOLUTION&"
                 . "INPUT_DATA=" . urlencode($input_data) . "&"
                 . "TECHNICIAN_KEY=" . $key;
-//        var_dump($URL2 . '?' . $this->FIELDS);
-        $datosSD = json_decode(file_get_contents($URL2 . '?' . $this->FIELDS));
-//        var_dump($datosSD);
-//        $this->generateLogResolverSD(array($datosSD, $folio));
+        $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '/resolution/?' . $this->FIELDS);
         $this->validarError($datosSD);
-        restore_error_handler();
+        $this->generateLogResolverSD(array($datosSD, $folio));
         return $datosSD;
     }
 
-//    public function setResolucionServiceDesk(string $key, string $folio, string $datos) {
-//        $resolicionesAnteriores = json_decode($this->getResolucionFolio($key, $folio));
-//        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/resolution/";
-//        if (!empty($resolicionesAnteriores->operation->Details->RESOLUTION)) {
-//            $datosAnterioresResolicion = $resolicionesAnteriores->operation->Details->RESOLUTION;
-//        } else {
-//            $datosAnterioresResolicion = '';
-//        }
-//
-//        $stringInicio = '*****BEGIN SICCOB RESOLUTION*****';
-//        $stringFin = '*****END SICCOB RESOLUTION*****';
-//        $posInicio = strpos($datosAnterioresResolicion, $stringInicio);
-//
-//        if ($posInicio !== false) {
-//            $posFin = strpos($datosAnterioresResolicion, $stringFin) + 30;
-//            $longitud = ($posFin - $posInicio) + 1;
-//            $stringRemove = substr($datosAnterioresResolicion, $posInicio, $longitud);
-//            $datosAnterioresResolicion = str_replace($stringRemove, '', $datosAnterioresResolicion);
-//        }
-//
-//        /* Concatena la nueva resolución con la resolución anterior */
-//        $nuevaResolucion = ''
-//                . "<br>"
-//                . $datos
-//                . "<br>"
-//                . stripslashes(trim($datosAnterioresResolicion));
-//
-//        $input_data = ''
-//                . '{'
-//                . ' "operation": {'
-//                . '     "details": {'
-//                . '         "resolution": {'
-//                . '             "resolutiontext": "' . $this->mres($nuevaResolucion) . '"'
-//                . '         }'
-//                . '     }'
-//                . ' }'
-//                . '}';
-//        $FIELDS = "format=json&"
-//                . "OPERATION_NAME=EDIT_RESOLUTION&"
-//                . "INPUT_DATA=" . urlencode($input_data) . "&"
-//                . "TECHNICIAN_KEY=" . $key;
-//        $ch = curl_init();
-//        curl_setopt($ch, CURLOPT_URL, $URL2);
-//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//        curl_setopt($ch, CURLOPT_POST, true);
-//        curl_setopt($ch, CURLOPT_POSTFIELDS, $FIELDS);
-//        $return = curl_exec($ch);
-//        curl_close($ch);
-//        $jsonDecode = json_decode($return);
-//        $this->generateLogResolverSD(array($jsonDecode, $folio));
-//
-//        return $jsonDecode;
-//    }
-
     public function setNoteServiceDesk(string $key, string $folio, string $datos) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $html = str_replace('&nbsp', '', $datos);
         $html = str_replace('style="color:#FF0000";', '', $datos);
         $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/notes/";
-        $input_data = '{operation:{details:{notes:{note:{isPublic:true,notesText:"' . urlencode($html) . '"}}}}}';
+        $input_data = '{operation:{details:{notes:{note:{isPublic:true,notesText:"' . $this->mres($html) . '"}}}}}';
         $FIELDS = "format=json"
                 . "&OPERATION_NAME=ADD_NOTE"
                 . "&TECHNICIAN_KEY=" . $key
-                . "&INPUT_DATA=" . $input_data;
-        $datosSD = json_decode(file_get_contents($URL2 . '?' . $FIELDS));
+                . "&INPUT_DATA=" . urlencode($input_data);
+        $datosSD = $this->getDatosSD($URL2 . '?' . $FIELDS);
         $this->validarError($datosSD);
-        restore_error_handler();
         return $datosSD;
     }
 
     public function setWorkLogServiceDesk(string $key, string $folio, string $datos) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $html = strip_tags($datos);
         $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/worklogs/";
-        $input_data = '{operation:{details:{worklogs:{worklog:{description:"' . urlencode($html) . '",workMinutes:1}}}}}';
+        $input_data = '{operation:{details:{worklogs:{worklog:{description:"' . $this->mres($html) . '",workMinutes:1}}}}}';
         $FIELDS = "format=json"
                 . "&OPERATION_NAME=ADD_WORKLOG"
                 . "&TECHNICIAN_KEY=" . $key
-                . "&INPUT_DATA=" . $input_data;
-        $datosSD = json_decode(file_get_contents($URL2 . '?' . $FIELDS));
+                . "&INPUT_DATA=" . urlencode($input_data);
+        $datosSD = $this->getDatosSD($URL2 . '?' . $FIELDS);
         $this->validarError($datosSD);
-        restore_error_handler();
         return $datosSD;
     }
 
@@ -383,8 +289,6 @@ class ServiceDesk extends General {
      */
 
     public function nombreUsuarioServiceDesk(string $key, string $idUsuario) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $url2 = 'http://mesadeayuda.cinemex.net:8080/sdpapi/requester/?format=json&OPERATION_NAME=GET_ALL&INPUT_DATA={%22operation%22:{%22details%22:{%22department%22:%22Soporte%20TI%22}}}&TECHNICIAN_KEY=' . $key;
         $stringUsuarios = file_get_contents($url2);
         $objetoUsuarios = json_decode($stringUsuarios);
@@ -397,7 +301,6 @@ class ServiceDesk extends General {
             }
         }
 
-        restore_error_handler();
         return $nombreUsuario;
     }
 
@@ -407,14 +310,12 @@ class ServiceDesk extends General {
      */
 
     public function cambiarEstatusServiceDesk(string $key, string $estatus, string $folio) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio;
         $input_data = ''
                 . '{'
                 . ' "operation": {'
                 . '     "details": {'
-                . '             "status": ' . $estatus
+                . '             "status": ' . $this->mres($estatus)
                 . '     }'
                 . ' }'
                 . '}';
@@ -422,9 +323,9 @@ class ServiceDesk extends General {
                 . "OPERATION_NAME=EDIT_REQUEST&"
                 . "INPUT_DATA=" . urlencode($input_data) . "&"
                 . "TECHNICIAN_KEY=" . $key;
-        $datosSD = json_decode(file_get_contents($URL2 . '?' . $FIELDS));
+
+        $datosSD = $this->getDatosSD($URL2 . '?' . $FIELDS);
         $this->validarError($datosSD);
-        restore_error_handler();
         return $datosSD;
     }
 
@@ -434,11 +335,9 @@ class ServiceDesk extends General {
      */
 
     public function consultarDepartamentoTI(string $key) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $input_data = '{"operation":{"details":{"department":""}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
-        $datosSD = json_decode(file_get_contents($this->UrlUsers . '?' . $this->FIELDS));
+        $datosSD = $this->getDatosSD($this->UrlUsers . '?' . $this->FIELDS);
         $this->validarError($datosSD);
         $returnArray = [];
         $i = 0;
@@ -450,15 +349,12 @@ class ServiceDesk extends General {
             $i++;
         }
 
-        restore_error_handler();
         return $returnArray;
     }
 
     public function getViewId(string $viewname, string $key) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST_FILTERS&TECHNICIAN_KEY=' . $key;
-        $datosSD = json_decode(file_get_contents($this->Url . '?' . $this->FIELDS));
+        $datosSD = $this->getDatosSD($this->Url . '?' . $this->FIELDS);
         $this->validarError($datosSD);
         $viewid = '';
         foreach ($datosSD->operation->Details as $key => $value) {
@@ -466,19 +362,16 @@ class ServiceDesk extends General {
                 $viewid = $value->VIEWID;
             }
         }
-        restore_error_handler();
         return $viewid;
     }
 
     public function getRequestsByFilter(string $viewId, string $key, int $resolucionAux = 1) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $_key = $key;
         $usuarios = $this->consultarDepartamentoTI($_key);
 
         $input_data = '{"operation":{"details":{"from":"0","limit":"2000","filterby":"' . $viewId . '"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUESTS&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $_key;
-        $data = json_decode(file_get_contents($this->Url . '?' . $this->FIELDS));
+        $data = $this->getDatosSD($this->Url . '?' . $this->FIELDS);
         $this->validarError($data);
         $returnArray = [];
 
@@ -507,21 +400,16 @@ class ServiceDesk extends General {
                     'resolver' => $resolver
                 ]);
             }
-            restore_error_handler();
             return $returnArray;
         } else {
-            restore_error_handler();
             return $data->operation->details;
         }
     }
 
     public function getRequestDetails($_id, $_key) {
-        set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
-        set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST&TECHNICIAN_KEY=' . $_key;
-        $datoSD = json_decode(file_get_contents($this->Url . '/' . $_id . '?' . $this->FIELDS));
+        $datosSD = $this->getDatosSD($this->Url . '/' . $_id . '?' . $this->FIELDS);
         $this->validarError($datosSD);
-        restore_error_handler();
         return $datosSD;
     }
 

@@ -2033,16 +2033,19 @@ class Seguimientos extends General {
     }
 
     public function enviarSolucionCorrectivoSD(array $datos) {
-        $this->enviar_Reporte_PDF($datos);
+        try {
+            $this->InformacionServicios->verifyProcess($datos);
 
-        $this->InformacionServicios->verifyProcess($datos);
+            $verificarEstatusTicket = $this->consultaCorrectivosServiciosTicket($datos['ticket'], $datos['servicio']);
 
-        $verificarEstatusTicket = $this->consultaCorrectivosServiciosTicket($datos['ticket'], $datos['servicio']);
-
-        if (!empty($verificarEstatusTicket)) {
-            return 'faltanServicios';
-        } else {
-            return 'serviciosConcluidos';
+            $this->enviar_Reporte_PDF($datos);
+            if (!empty($verificarEstatusTicket)) {
+                return array('code' => 200, 'message' => 'faltanServicios');
+            } else {
+                return array('code' => 200, 'message' => 'serviciosConcluidos');
+            }
+        } catch (\Exception $ex) {
+            return array('code' => 400, 'message' => $ex->getMessage());
         }
     }
 
@@ -5250,7 +5253,7 @@ class Seguimientos extends General {
 
         if ($idSD !== '') {
             $dataService = $this->DBP->consultationServiceAndRequest($dataToCreateEmailList['idService']);
-            $reassignment = json_decode($this->ServiceDesk->reasignarFolioSD($dataService[0]['Folio'], $idSD, $user['SDKey']));
+            $reassignment = $this->ServiceDesk->reasignarFolioSD($dataService[0]['Folio'], $idSD, $user['SDKey']);
         }
 
         return $reassignment;
