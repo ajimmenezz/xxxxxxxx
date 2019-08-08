@@ -46,7 +46,7 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
         try {
             $consulta = $this->consulta('select                    
                                          id, 
-                                         Nombre 
+                                         Nombre as text
                                       from 
                                          cat_v3_sucursales
                                         WHERE IdCliente = "' . $idCliente . '"');

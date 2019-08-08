@@ -108,3 +108,48 @@
         </div>
     </div>
 </div>
+<div class="row m-t-20">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <h4>Registro de comprobación</h4>
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12 m-t-15">
+        <div class="underline m-b-10"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="table-responsive">
+            <table id="tabla-comprobacion" class="table table-bordered table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th class="none">Id</th>
+                        <th class="all">Tipo Cuenta</th>
+                        <th class="all">Concepto</th>
+                        <th class="all">Monto</th>
+                        <th class="all">Estatus</th>
+                        <th class="all">Fecha Registro</th>
+                        <th class="all">Fecha Autorización</th>                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if (isset($comprobaciones) && !empty($comprobaciones)) {
+                        foreach ($comprobaciones as $key => $value) {
+                            echo ""
+                                . "<tr>"
+                                . " <td>" . $value['Id'] . "</td>"
+                                . " <td>" . $value['TipoCuenta'] . "</td>"
+                                . " <td>" . $value['Concepto'] . "</td>"                                                                
+                                . " <td>$ " . number_format((float)$value['Monto'], 2) . "</td>"
+                                . " <td>" . $value['Estatus'] . "</td>"                                                                                                
+                                . " <td>" . $value['FechaRegistro'] . "</td>"                                                                                                
+                                . " <td>" . $value['FechaAutorizacion'] . "</td>"                                                                                                
+                                . "</tr>";
+                        }
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

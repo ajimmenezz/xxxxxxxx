@@ -1,7 +1,7 @@
 $(function () {
 
-    peticion = new Utileria();
-    modal = new Modal();
+    let peticion = new Utileria();
+    let modal = new Modal();
 
     evento = new Base();
     evento.horaServidor($('#horaServidor').val());
@@ -10,6 +10,7 @@ $(function () {
     App.init();
 
     let tablaPrincipal = new TablaBasica('table-ServiciosGeneralesRedes');
+
     let tablaNodos = null;
     let tablaMateriales = null;
     let tablaAgregarMateriales = null;
@@ -17,17 +18,12 @@ $(function () {
     let selectArea = null;
     let selectSwitch = null;
     let selectMaterial = null;
+    let evidenciaMaterial = null;
+
     let datoServicioTabla = {
-        id: null,
-        folio: null,
-        ticket: null,
-        servicio: null
+        id: null
     }
     let datoServicioGral = {
-        id: null,
-        folio: null,
-        ticket: null,
-        servicio: null,
         sucursal: null,
         observaciones: null
     }
@@ -39,38 +35,56 @@ $(function () {
     }
 
     tablaPrincipal.evento(function () {
-        let datosFila = tablaPrincipal.datosFila(this);
-        let tamañoDatosFila = 0;
+        let tamañoDatosFila = 0, datosFila = tablaPrincipal.datosFila(this);
         $.each(datosFila, function () {
             tamañoDatosFila += 1;
         });
         datoServicioTabla.id = datosFila[0];
-        datoServicioTabla.folio = datosFila[1];
-        datoServicioTabla.ticket = datosFila[2];
-        datoServicioTabla.servicio = datosFila[3];
         if (datosFila[tamañoDatosFila - 1] === "ABIERTO") {
-            modal.mostrarModal('Iniciar Servicio', '<h3>¿Quieres atender el servicio?</h3>');
+            modal.mostrarModalBasico('Iniciar Servicio', '<h3>¿Quieres atender el servicio?</h3>');
             $('#btnAceptar').on('click', function () {
-                atenderServicio(datoServicioTabla);
-
+                peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
+                    modal.cerrarModal();
+                    cambioVista(datosFila[1]);
+                    cargarElementosServicio(respuesta);
+                });
             });
         } else {
-            $('#contentServiciosGeneralesRedes').addClass('hidden');
-            $('#contentServiciosRedes').removeClass('hidden');
-            if (datosFila[1] != 0 && datosFila[1] != null) {
-                $('#addFolio').val(datosFila[1]);
-                elementosAgregarFolio();
-                elementosGuardarFolio();
-                iniciarObjetos();
-            }
-            $('html, body').animate({
-                scrollTop: $("#contentServiciosRedes").offset().top - 50
-            }, 600);
+            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
+                cambioVista(datosFila[1]);
+                cargarElementosServicio(respuesta);
+            });
         }
     });
 
+    function cambioVista(folio) {
+        $('#contentServiciosGeneralesRedes').addClass('hidden');
+        $('#contentServiciosRedes').removeClass('hidden');
+        if (folio != 0 && folio != null) {
+            $('#addFolio').val(folio);
+            elementosAgregarFolio();
+            elementosInfoFolio();
+        }
+        iniciarObjetos();
+        verBotonConcluir();
+        $('html, body').animate({
+            scrollTop: $("#contentServiciosRedes").offset().top - 50
+        }, 600);
+    }
+
+    function cargarElementosServicio(datosServicio) {
+        selectSucursal.cargaDatosEnSelect(datosServicio.sucursales);
+        $("#fechaServicio").text(datosServicio.FechaCreacion);
+        $("#ticket").text(datosServicio.Ticket);
+        $("#atendido").text(datosServicio.Atiende);
+        $("#solicitud").text(datosServicio.idSolicitud);
+        $("#textareaDescripcion").text(datosServicio.Descripcion);
+        $("#solicitaS").text(datosServicio.Solicita);
+        $("#fechaSolicitud").text(datosServicio.FechaSolicitud);
+        $("#textareaDescripcionS").text(datosServicio.descripcionSolicitud);
+    }
+/*********************************************************************************************************************************************/
     function atenderServicio(datoServicioTabla) {
-        console.log(datoServicioTabla);
         peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
             modal.cerrarModal();
             console.log(respuesta)
@@ -90,6 +104,7 @@ $(function () {
         selectArea = new SelectBasico('selectArea');
         selectSwitch = new SelectBasico('selectSwith');
         selectMaterial = new SelectBasico('selectMaterial');
+        evidenciaMaterial = new FileUpload_Basico('agregarEvidenciaNodo');
         selectSucursal.iniciarSelect();
         selectArea.iniciarSelect();
         selectSwitch.iniciarSelect();
@@ -119,16 +134,15 @@ $(function () {
     /**Empiezan eventos de botones para folio**/
     $('#guardarFolio').on('click', function () {
         if (evento.validarFormulario('#folio')) {
-            let dato = {folio: $('#addFolio').val()};
-            elementosGuardarFolio();
-      
+            let dato = {folio: $('#addFolio').val(), idServicio: datoServicioTabla};
             peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/GuardarFolio', dato, function (respuesta) {
-                modal.cerrarModal();
+                //modal.cerrarModal();
+                //elementosInfoFolio();
                 console.log(respuesta);
             });
         }
     });
-    function elementosGuardarFolio() {
+    function elementosInfoFolio() {
         $('#infoFolio').removeClass('hidden');
         $('#editarFolio').removeClass('hidden');
         $('#eliminarFolio').removeClass('hidden');
@@ -194,7 +208,7 @@ $(function () {
     $('#btnReportar').on('click', function () {
         let contentReportar = $('#segReportar').html();
         let contentEvidencia = $('#vistaEvidencias').html();
-        modal.mostrarModal('Definir Problema', contentReportar + contentEvidencia, 'text-left');
+        modal.mostrarModalBasico('Definir Problema', contentReportar + contentEvidencia, 'text-left');
         console.log('btnReportar')
     });
     $('#btnVerMaterial').on('click', function () {
@@ -212,46 +226,72 @@ $(function () {
     /**Finalizan eventos de botones para datos y problemas**/
 
     $('#btnAgregarNodo').on('click', function () {
-        let contenthtml = $('#materialNodo').html();
         if (evento.validarFormulario('#formDatosNodo')) {
-            nodo.area = $('#selectArea').val();
+            nodo.area = selectArea.obtenerValor();
             nodo.nodo = $('#inputNodo').val();
-            nodo.switch = $('#selectSwith').val();
+            nodo.switch = selectSwitch.obtenerValor();
             nodo.numSwitch = $('#inputNumSwith').val();
-            modal.mostrarModal('Material', contenthtml);
+            document.getElementById('btnAgregarNodo').setAttribute('href', '#modalMaterialNodo');
+        }
+    });
+    $('#btnAgregarMaterialNodo').on('click', function () {
+        if (evento.validarFormulario('#formMaterial')) {
+            tablaAgregarMateriales.agregarDatosFila([
+                selectMaterial.obtenerValor(),
+                $('#materialUtilizar').val(),
+                '<th>\n\
+                    <i class="fa fa-2x fa-trash-o text-danger eliminarMaterialNodo"></i>\n\
+                </th>'
+            ]);
+        }
+        $(".eliminarMaterialNodo").on('click', function () {
+            let row = $(this).closest("tr");
+            modal.mostrarModalBasico('Eliminar Material', '<h4>Se Eliminará este material de la lista<br>\n\
+                                            ¿Estas seguro de esto?</h4>');
             $('#btnAceptar').on('click', function () {
                 modal.cerrarModal();
-                console.log('btnAgregarNodo')
+                tablaAgregarMateriales.eliminarFila(row);
             });
+        });
+    });
+    $('#btnAceptarM').on('click', function () {
+        if (evento.validarFormulario('#formEvidenciaMaterial')) {
+            console.log('agregar tabla de nodos');
         }
     });
 
     /**Empiezan eventos de botones para la tabla de nodos**/
-    $('#evidenciaNodo').on('click', function () {
-        console.log('evidenciaNodo')
+    $('.evidenciaNodo').on('click', function () {
+        modal.mostrarModalBotonTabla("evidenciaNodo", '#modalEvidencia');
+        let row = $(this).closest("tr");
     });
-    $('#editarNodo').on('click', function () {
-        let contenthtml = $('#datosNodo').html();
-        modal.mostrarModal('Actualizar Nodo', contenthtml);
-        $('#btnAceptar').on('click', function () {
-            modal.cerrarModal();
-            console.log('editarNodo')
-        });
+    $('.editarNodo').on('click', function () {
+        let row, sucursal, nodo, switk, numSwitk;
+        modal.mostrarModalBotonTabla("editarNodo", '#modalEditarNodo');
+        row = $(this).closest("tr");
+
+        sucursal = row.find(".sucursal").text();
+        $('#inputEdicionNodo').val(row.find(".nodo").text());
+        switk = row.find(".switch").text();
+        $('#inputEdicionNumSwith').val(row.find(".numSwitch").text());
     });
-    $('#editarMaterial').on('click', function () {
-        let contenthtml = $('#materialNodo').html();
-        modal.mostrarModal('Material', contenthtml);
-        $('#btnAceptar').on('click', function () {
-            modal.cerrarModal();
-            console.log('editarMaterial')
-        });
+    $('#btnAceptarAM').on('click', function () {
+        if (evento.validarFormulario('#formEdicionNodo')) {
+            document.getElementById('btnAceptarAM').setAttribute('data-dismiss', 'modal');
+            console.log('actualiza nodo')
+        }
     });
-    $('#eliminarNodo').on('click', function () {
-        modal.mostrarModal('Eliminar Nodo', '<h4>Al eliminar el nodo se borrara toda la información del material y de las evidencias<br>\n\
+    $('.editarMaterial').on('click', function () {
+        modal.mostrarModalBotonTabla("editarMaterial", '#modalMaterialNodo');
+        let row = $(this).closest("tr");
+    });
+    $('.eliminarNodo').on('click', function () {
+        let row = $(this).closest("tr");
+        modal.mostrarModalBasico('Eliminar Nodo', '<h4>Al eliminar el nodo se borrara toda la información del material y de las evidencias<br>\n\
                                             ¿Estas seguro de querer eliminar el nodo?</h4>');
         $('#btnAceptar').on('click', function () {
             modal.cerrarModal();
-            console.log('eliminarNodo')
+            tablaNodos.eliminarFila(row);
         });
     });
     /**Finalizan eventos de botones para la tabla de nodos**/
@@ -260,16 +300,22 @@ $(function () {
     /**Empiezan seccion de botonos generales**/
     $('#btnGuardar').on('click', function () {
         if (evento.validarFormulario('#formDatosSolucion')) {
-            datoServicioGral.sucursal = $('#selectSucursal').val();
+            datoServicioGral.sucursal = selectSucursal.obtenerValor();
             datoServicioGral.observaciones = $('#textareaObservaciones').val();
             console.log(datoServicioGral)
         }
     });
     $('#btnConcluir').on('click', function () {
-        if (evento.validarFormulario('#formDatosSolucion')) {
-            console.log("btnConcluir")
+        if (evento.validarFormulario('#formAgregarCliente')) {
+            console.log('btnConcluir');
         }
     });
     /**Finalizan seccion de botonos generales**/
 
+    function verBotonConcluir() {
+        let datosNodo = tablaNodos.datosTabla();
+        if (datosNodo.length == 0) {
+            $('#btnConcluir').attr("disabled", true);
+        }
+    }
 });

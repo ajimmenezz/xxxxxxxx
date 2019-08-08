@@ -33,6 +33,7 @@ class ServicioGeneralRedes implements Servicio {
         
         $this->folioSolicitud = $this->consulta[0]['Folio'];
         $this->fechaCreacion = $this->consulta[0]['FechaCreacion'];
+        $this->fechaSolicitud = $this->consulta[0]['FechaSolicitud'];
         $this->ticket = $this->consulta[0]['Ticket'];
         $this->atiende = $this->consulta[0]['Atiende'];
         $this->idSolicitud = $this->consulta[0]['IdSolicitud'];
@@ -50,6 +51,7 @@ class ServicioGeneralRedes implements Servicio {
                      "idSolicitud"=>$this->idSolicitud,
                      "Descripcion"=>$this->descripcion,
                      "Solicita"=>$this->solicita,
+                     "FechaSolicitud"=> $this->fechaSolicitud,
                      "descripcionSolicitud"=>$this->descripcionSolicitud
                      );
     }

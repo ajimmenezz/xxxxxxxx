@@ -199,7 +199,8 @@ class FondoFijo extends General
                 'tiposCuenta' => $this->getTiposCuentaXUsuario($datos['id']),
                 'montos' => $this->getMontosUsuario($datos['id']),
                 'usuario' => $datos,
-                'depositos' => $this->DB->getDepositos($datos['id'])
+                'depositos' => $this->DB->getDepositos($datos['id']),
+                'comprobaciones' => $this->DB->getComprobaciones($datos['id'])
             ];
 
             return [
@@ -219,7 +220,7 @@ class FondoFijo extends General
     {
         $montoMaximo = $this->DB->getMaximoMontoAutorizado($datos['id'], $datos['tipoCuenta']);
         $saldo = $this->DB->getSaldo($datos['id'], $datos['tipoCuenta']);
-        $sugerido = (double)$montoMaximo - (double)$saldo;
+        $sugerido = (float) $montoMaximo - (float) $saldo;
         if ($sugerido < 0) {
             $sugerido = 0;
         }
@@ -424,10 +425,15 @@ class FondoFijo extends General
             $rolAutoriza = 1;
         }
 
+        $rolTesoreria = 0;
+        if (isset($datos['tesoreria']) && $datos['tesoreria'] == 1) {
+            $rolTesoreria = 1;
+        }
 
         $datos = [
             'generales' => $this->DB->getDetallesFondoFijoXId($datos['id'])[0],
-            'rolAutoriza' => $rolAutoriza
+            'rolAutoriza' => $rolAutoriza,
+            'rolTesoreria' => $rolTesoreria
         ];
 
         return [
@@ -496,7 +502,7 @@ class FondoFijo extends General
     }
 
     /************************************************************************/
-    
+
     public function rechazarMovimientoCobrable(array $datos)
     {
         $rechazar = $this->DB->rechazarMovimientoCobrable($datos);
@@ -522,5 +528,14 @@ class FondoFijo extends General
         }
 
         return $rechazar;
+    }
+
+    public function eliminaArchivos(array $archivos)
+    {
+        foreach ($archivos as $k => $v) {
+            try {
+                unlink('.' . $v);
+            } catch (Exception $ex) { }
+        }
     }
 }

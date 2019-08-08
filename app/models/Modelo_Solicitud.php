@@ -106,7 +106,9 @@ class Modelo_Solicitud extends Modelo_Base {
                  usuario(ts.Solicita) as NombreSolicita,
                 ts.IdEstatus,
                 ts.IdSucursal,
-                (SELECT IdCliente FROM cat_v3_sucursales WHERE Id = ts.IdSucursal) IdCliente
+                (SELECT IdCliente FROM cat_v3_sucursales WHERE Id = ts.IdSucursal) IdCliente,
+                ts.FechaTentativa,
+                ts.FechaLimite
             from t_solicitudes as ts 
             inner join cat_v3_usuarios as cvu 
             on ts.Solicita = cvu.Id
@@ -126,6 +128,8 @@ class Modelo_Solicitud extends Modelo_Base {
                 $datos['IdEstatus'] = $value['IdEstatus'];
                 $datos['IdSucursal'] = $value['IdSucursal'];
                 $datos['IdCliente'] = $value['IdCliente'];
+                $datos['FechaTentativa'] = $value['FechaTentativa'];
+                $datos['FechaLimite'] = $value['FechaLimite'];
                 $datos['detalles'] = $this->getInformacionDetalladaSolicitud($solicitud, $datos['TipoSolicitud']);
             }
             return $datos;

@@ -1,5 +1,9 @@
+
 <!--Comenzando contenido-->
 <div id="contentCatalogoAusencia" class="content">
+<!--    <pre>
+    <?php //var_dump($datos); ?>
+    </pre>-->
     <!-- Comenzando titulo de la pagina -->
     <h1 class="page-header">Catálogo de Permisos</h1>
     <!-- Finalizando titulo de la pagina -->
@@ -27,30 +31,32 @@
                         <div class="col-md-12">
                             <h4 class="m-t-10">Generar Motivo de Asistencia</h4>
                         </div>
-                        <div class="col-md-12">
-                            <div class="col-md-4 col-sm-4 col-xs-4">
-                                <div class="form-group">
-                                    <label>Motivo</label>
-                                    <input id="inputMotivo" type="text" class="form-control" style="width: 100%"/>
+                        <form id="formAgregarMotivo" data-parsley-validate="true" enctype="multipart/form-data">
+                            <div class="col-md-12">
+                                <div class="col-md-4 col-sm-4 col-xs-4">
+                                    <div class="form-group">
+                                        <label>Motivo</label>
+                                        <input id="inputMotivo" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-4">
+                                    <label>Observaciones</label>
+                                    <input id="inputObservaciones" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                </div>
+                                <div class="col-md-1 col-sm-1 col-xs-1">
+                                    <br>
+                                    <label id="agregarMotivo" class="btn btn-white" data-toggle="tooltip" data-placement="top" data-title="Agregar" >
+                                        <i class="fa fa-2x fa-plus text-success"></i>
+                                    </label>  
+                                </div>
+                                <div class="col-md-1 col-sm-1 col-xs-1">
+                                    <br>
+                                    <label id="limpiarCampos" class="btn btn-white" data-toggle="tooltip" data-placement="top" data-title="Limpiar Campos">
+                                        <i class="fa fa-2x fa-times text-danger"></i>
+                                    </label>  
                                 </div>
                             </div>
-                            <div class="col-md-6 col-sm-6 col-xs-4">
-                                <label>Observaciones</label>
-                                <input id="inputObservaciones" type="text" class="form-control" style="width: 100%"/>
-                            </div>
-                            <div class="col-md-1 col-sm-1 col-xs-1">
-                                <br>
-                                <label id="agregarMotivo" class="btn btn-white" data-toggle="tooltip" data-placement="top" data-title="Agregar" >
-                                    <i class="fa fa-2x fa-plus text-success"></i>
-                                </label>  
-                            </div>
-                            <div class="col-md-1 col-sm-1 col-xs-1">
-                                <br>
-                                <label id="limpiarCampos" class="btn btn-white" data-toggle="tooltip" data-placement="top" data-title="Limpiar Campos">
-                                    <i class="fa fa-2x fa-times text-danger"></i>
-                                </label>  
-                            </div>
-                        </div>
+                        </form>
                     </div>
                     <!--Finaliza apartado para generar un motivo-->
                     <div class="col-md-12">
@@ -70,16 +76,26 @@
                                             <th class="never">Id</th>
                                             <th class="all">Motivo</th>
                                             <th class="all">Observaciones</th>
+                                            <th class="all">Estado</th>
                                             <th class="all"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <th>1</th>
-                                            <th>CONSULTA MEDICO IMSS</th>
-                                            <th>JUSTIFICADO PRESENTANDO COMPROBANTES SEGÚN POLITICAS DE ASISTENCIA</th>
-                                            <th style="text-align: center"><i id="editarMotivo" data-toggle="tooltip" data-placement="top" data-title="Editar" class="fa fa-2x fa-pencil"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i id="eliminarMotivo" data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i></th>
-                                        </tr>
+                                        <?php
+                                        foreach ($datos["TipoMotivo"] as $value) {
+                                            echo '<tr>
+                                                    <th class="all id">' . $value["Id"] . '</th>
+                                                    <th class="all motivo">' . $value["Nombre"] . '</th>
+                                                    <th class="all observaciones">' . $value["Observaciones"] . '</th>';
+                                            if ($value["Flag"] == 1) {
+                                                echo '<th class="all flag">Habilitado</th>';
+                                            } else {
+                                                echo '<th class="all flag">Deshabilitado</th>';
+                                            }
+                                            echo '<th style="text-align: center"><a href="#" class="btn btn-sm btn-white editarMotivo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar" class="fa fa-2x fa-pencil"></i></a></th>
+                                                </tr>';
+                                        }
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -135,11 +151,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <th>1</th>
-                                            <th>No</th>
-                                            <th style="text-align: center"><i id="editarRechazo" data-toggle="tooltip" data-placement="top" data-title="Editar" class="fa fa-2x fa-pencil"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i id="eliminarRechazo" data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i></th>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -157,3 +168,55 @@
     <!-- Finalizando panel CatalogoAusencia-->
 </div>
 <!--Finalizando contenido-->
+
+<!--Empieza modal de editar-->
+<div id="modalEditarMotivo" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title"></h4>
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <!--Empieza seccion de edición-->
+                <form id="formEditarMotivo" data-parsley-validate="true" enctype="multipart/form-data">
+                    <div class="col-md-12">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <label>Motivo</label>
+                                <input id="inputEditarMotivo" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <label>Estado</label>
+                                <select id="selectEditarEstado" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar</option>
+                                    <option value="1">Habilitado</option>
+                                    <option value="2">Deshabilitado</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Observaciones</label>
+                            <textarea id="inputEditarObservaciones" class="form-control" rows="4" style="width: 100%" data-parsley-required="true"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <!--Finaliza seccion de edición-->
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptarEdicion" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCerrarEdicion" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>
+<!--Finaliza modal de editar-->
