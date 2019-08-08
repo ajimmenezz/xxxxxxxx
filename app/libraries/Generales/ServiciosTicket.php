@@ -1199,70 +1199,86 @@ class ServiciosTicket extends General {
      */
 
     public function servicioCancelar(array $datos) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $data = array(
-            'IdEstatus' => '6'
-        );
-        $consulta = $this->DBST->actualizarServicio('t_servicios_ticket', $data, array('Id' => $datos['servicio']));
-        if (!empty($consulta)) {
+        try {
+            $usuario = $this->Usuario->getDatosUsuario();
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
             $data = array(
-                'IdUsuario' => $usuario['Id'],
-                'IdEstatus' => '6',
-                'IdServicio' => $datos['servicio'],
-                'Nota' => $datos['Descripcion'],
-                'Fecha' => $fecha
+                'IdEstatus' => '6'
             );
-            $verificarEstatusTicket = $this->DBST->consultaGeneral('SELECT 
+            $verificarEstatusServicio = $this->DBST->consultaGeneral('SELECT 
+                                                                tst.IdEstatus
+                                                            FROM t_servicios_ticket tst
+                                                            WHERE tst.Id = "' . $datos['servicio'] . '"');
+
+            if (!in_array('6', $verificarEstatusServicio) ||
+                    !in_array('4', $verificarEstatusServicio) ||
+                    !in_array('10', $verificarEstatusServicio) ||
+                    !in_array('5', $verificarEstatusServicio)) {
+                $consulta = $this->DBST->actualizarServicio('t_servicios_ticket', $data, array('Id' => $datos['servicio']));
+                if (!empty($consulta)) {
+                    $data = array(
+                        'IdUsuario' => $usuario['Id'],
+                        'IdEstatus' => '6',
+                        'IdServicio' => $datos['servicio'],
+                        'Nota' => $datos['Descripcion'],
+                        'Fecha' => $fecha
+                    );
+                    $verificarEstatusTicket = $this->DBST->consultaGeneral('SELECT 
                                                                 IdEstatus,
                                                                 IdSolicitud
                                                             FROM t_servicios_ticket tst
                                                             WHERE Ticket = ' . $datos['ticket'] . '
                                                             AND IdEstatus IN(10,5,2,1)');
-            if (!$verificarEstatusTicket) {
-                $serviciosConcluidos = FALSE;
-                $serviciosConcluidosCancelados = $this->DBST->consultaGeneral('SELECT 
+                    if (!$verificarEstatusTicket) {
+                        $serviciosConcluidos = FALSE;
+                        $serviciosConcluidosCancelados = $this->DBST->consultaGeneral('SELECT 
                                                                 IdEstatus,
                                                                 IdSolicitud
                                                             FROM t_servicios_ticket tst
                                                             WHERE Ticket = ' . $datos['ticket'] . '
                                                             AND IdEstatus IN(4,6)');
-                foreach ($serviciosConcluidosCancelados as $key => $value) {
-                    if ($value['IdEstatus'] === '4') {
-                        $serviciosConcluidos = TRUE;
+                        foreach ($serviciosConcluidosCancelados as $key => $value) {
+                            if ($value['IdEstatus'] === '4') {
+                                $serviciosConcluidos = TRUE;
+                            }
+                        }
+
+                        if ($serviciosConcluidos) {
+                            $estatusSolicitud = '4';
+                        } else {
+                            $estatusSolicitud = '6';
+                        }
+
+                        $this->DBST->actualizarServicio('t_solicitudes', array(
+                            'IdEstatus' => $estatusSolicitud,
+                            'FechaConclusion' => $fecha
+                                ), array('Id' => $serviciosConcluidosCancelados[0]['IdSolicitud']));
+                        $this->DBST->concluirTicketAdist2(array(
+                            'Estatus' => 'CONCLUIDO',
+                            'Flag' => '1',
+                            'F_Cierre' => '0',
+                            'Id_Orden' => $datos['ticket']
+                        ));
                     }
-                }
-
-                if ($serviciosConcluidos) {
-                    $estatusSolicitud = '4';
+                    $notas = $this->DBST->setNuevoElemento('t_notas_servicio', $data);
+                    if (!empty($notas)) {
+                        $serviciosAsignados = $this->getServiciosAsignados($usuario['IdDepartamento']);
+                        if (!empty($serviciosAsignados)) {
+                            return $serviciosAsignados;
+                        } else {
+                            return array();
+                        }
+                    } else {
+                        return FALSE;
+                    }
                 } else {
-                    $estatusSolicitud = '6';
-                }
-
-                $this->DBST->actualizarServicio('t_solicitudes', array(
-                    'IdEstatus' => $estatusSolicitud,
-                    'FechaConclusion' => $fecha
-                        ), array('Id' => $serviciosConcluidosCancelados[0]['IdSolicitud']));
-                $this->DBST->concluirTicketAdist2(array(
-                    'Estatus' => 'CONCLUIDO',
-                    'Flag' => '1',
-                    'F_Cierre' => '0',
-                    'Id_Orden' => $datos['ticket']
-                ));
-            }
-            $notas = $this->DBST->setNuevoElemento('t_notas_servicio', $data);
-            if (!empty($notas)) {
-                $serviciosAsignados = $this->getServiciosAsignados($usuario['IdDepartamento']);
-                if ($serviciosAsignados) {
-                    return $serviciosAsignados;
-                } else {
-                    return array();
+                    return FALSE;
                 }
             } else {
-                return FALSE;
+                throw new Exception('No puede concelar este servicio por el estatus que se encu');
             }
-        } else {
-            return FALSE;
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
         }
     }
 

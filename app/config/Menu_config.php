@@ -248,7 +248,7 @@ $config['Generales'] = array(
             'jquery-tag-it/css/jquery.tagit',
             'parsley/src/parsley'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Tabla', 'Base/Fecha', 'Base/Select', 'Generales/buscar'),
+        'js' => array('Base/Base', 'Base/fileUpload', 'Base/Socket', 'Base/Tabla', 'Base/Nota', 'Base/Fecha', 'Base/Servicio', 'Base/Select', 'Generales/buscar'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',

@@ -292,12 +292,14 @@
                         Acciones <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
+                        <li id="btnCancelarServicioSeguimiento"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
                         <li id="btnExportarPdf" data-id-servicio=""><a href="#"><i class="fa fa-file-pdf-o"></i> Exportar Pdf</a></li>
+                        <li id="btnReasignarServicio"><a href="#"><i class="fa fa-mail-reply-all"></i> Reasignar Servicio</a></li>
                         <?php
                         if (in_array('177', $usuario['PermisosAdicionales']) || in_array('177', $usuario['Permisos']) ||
                                 in_array('182', $usuario['PermisosAdicionales']) || in_array('182', $usuario['Permisos'])) {
                             ?>
-                            <li id="btnRechazarServicioConcluido" class="hidden" data-id-servicio=""><a href="#"><i class="fa fa-mail-reply-all"></i> Reabrir Servicio</a></li>                        
+                            <li id="btnRechazarServicioConcluido" class="hidden" data-id-servicio=""><a href="#"><i class="fa fa-times-circle"></i> Rechazar Servicio</a></li>                        
                             <?php
                         }
                         if (in_array('217', $usuario['Permisos'])) {

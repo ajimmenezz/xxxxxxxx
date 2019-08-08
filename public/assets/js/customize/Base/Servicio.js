@@ -136,6 +136,7 @@ Servicio.prototype.cancelarServicio = function () {
                     var descripcion = $('#inputDescripcionServicioCancelar').val();
                     var dataServicio = {Descripcion: descripcion, servicio: data['servicio'], ticket: data['ticket']};
                     _this.enviarEvento(eventoServicioCancelar, dataServicio, '#modal-dialogo', function (respuesta) {
+                        console.log(respuesta);
                         if (respuesta instanceof Array) {
                             _this.mensajeModal('Se cancelo correctamente el servicio', 'Correcto');
                         } else {
