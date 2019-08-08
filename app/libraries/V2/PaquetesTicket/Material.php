@@ -8,6 +8,7 @@ class Material{
     private $DBServicioGeneralRedes;
     private $id;
     public function __construct($idTecnico) {
+        var_dump($idTecnico);
         $this->DBServicioGeneralRedes=new Modelo();
         $this->id=$idTecnico;
         $this->getMaterialTecnico();
@@ -42,10 +43,32 @@ class Material{
                         equiposSae.id=tInv.IdTipoProducto
                 where 
                         tInv.IdEstatus=17
+                AND 
+                        tInv.Cantidad>0
                 AND     
-                        usuario.id="+$this->id+"
-                        ;";
+                        usuario.id=".$this->id;
+        var_dump($query);
         $consulta=$this->DBServicioGeneralRedes->consulta($query);
+        var_dump($consulta);
+        
+    }
+    public function setMaterial($datos) {
+        $consulta= array();
+        foreach ($array as $query =>$datos) {
+            $query="INSERT INTO
+                            t_redes_material
+                                        (idNodo,idMaterialTecnico,Cantidad)
+                            VALUES
+                                        (".$datos['nodo']['idNodo'].",".$datos['idMaterial'].",".$datos['Material']['Cantidad'].")";
+        }
+        try {
+            $consulta=$this->DBServicioGeneralRedes->insertarMaterial($query);
+            
+        } catch (Exception $ex) {
+            $ex->getMessage($ex);
+        }
+    }
+    public function setMovimiento($datos) {
         
     }
     

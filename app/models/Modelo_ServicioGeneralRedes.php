@@ -68,5 +68,25 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
         }
         return $consulta;
     }
+    public function insertarMaterial($query) {
+        var_dump($query);
+        $consulta= array();
+        try
+        {
+            foreach ($array as $key => $query) {
+                $consulta = $this->insertar($query);
+                var_dump($consulta);
+            }
+        
+        } catch (Exception $ex) {
+            $ex->getMessage();
+        }
+        return $consulta;
+    }
+    public function eliminarNodo($delete) {
+        $consulta=$this->borrar($delete);
+    }
+        
+        
 
 }
