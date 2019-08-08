@@ -51,7 +51,7 @@
                                 </div>
                                 <div class="col-md-1 col-sm-1 col-xs-1">
                                     <br>
-                                    <label id="limpiarCampos" class="btn btn-white" data-toggle="tooltip" data-placement="top" data-title="Limpiar Campos">
+                                    <label class="btn btn-white limpiarCampos" data-toggle="tooltip" data-placement="top" data-title="Limpiar Campos">
                                         <i class="fa fa-2x fa-times text-danger"></i>
                                     </label>  
                                 </div>
@@ -77,7 +77,6 @@
                                             <th class="all">Motivo</th>
                                             <th class="all">Observaciones</th>
                                             <th class="all">Estado</th>
-                                            <th class="all"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -92,8 +91,6 @@
                                             } else {
                                                 echo '<th class="all flag">Deshabilitado</th>';
                                             }
-                                            echo '<th style="text-align: center"><a href="#" class="btn btn-sm btn-white editarMotivo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar" class="fa fa-2x fa-pencil"></i></a></th>
-                                                </tr>';
                                         }
                                         ?>
                                     </tbody>
@@ -115,20 +112,32 @@
                         <div class="col-md-12">
                             <h4 class="m-t-10">Generar Motivo de Rechazo</h4>
                         </div>
-                        <div class="col-md-12">
-                            <div class="col-md-8 col-sm-8 col-xs-8">
-                                <div class="form-group">
-                                    <label>Motivo</label>
-                                    <input id="inputMotivoRechazo" type="text" class="form-control" style="width: 100%"/>
+                        <form id="formAgregarRechazo" data-parsley-validate="true" enctype="multipart/form-data">
+                            <div class="col-md-12">
+                                <div class="col-md-4 col-sm-4 col-xs-4">
+                                    <div class="form-group">
+                                        <label>Motivo</label>
+                                        <input id="inputMotivoRechazo" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-6">
+                                    <label>Observaciones</label>
+                                    <input id="inputObservacionesRechazo" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                </div>
+                                <div class="col-md-1 col-sm-1 col-xs-1">
+                                    <br>
+                                    <label id="agregarRechazo" class="btn btn-white" data-toggle="tooltip" data-placement="top" data-title="Agregar" >
+                                        <i class="fa fa-2x fa-plus text-success"></i>
+                                    </label>  
+                                </div>
+                                <div class="col-md-1 col-sm-1 col-xs-1">
+                                    <br>
+                                    <label class="btn btn-white limpiarCampos" data-toggle="tooltip" data-placement="top" data-title="Limpiar Campos">
+                                        <i class="fa fa-2x fa-times text-danger"></i>
+                                    </label>  
                                 </div>
                             </div>
-                            <div class="col-md-1 col-sm-1 col-xs-1">
-                                <br>
-                                <label id="agregarRechazo" class="btn btn-white" data-toggle="tooltip" data-placement="top" data-title="Agregar" >
-                                    <i class="fa fa-2x fa-plus text-success"></i>
-                                </label>  
-                            </div>
-                        </div>
+                        </form>
                     </div>
                     <!--Finaliza apartado para generar un rechazo-->
                     <div class="col-md-12">
@@ -147,10 +156,24 @@
                                         <tr>
                                             <th class="never">Id</th>
                                             <th class="all">Motivo</th>
-                                            <th class="all"></th>
+                                            <th class="all">Observaciones</th>
+                                            <th class="all">Estado</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <?php
+                                        foreach ($datos["TipoRechazo"] as $value) {
+                                            echo '<tr>
+                                                    <th class="all id">' . $value["Id"] . '</th>
+                                                    <th class="all motivo">' . $value["Nombre"] . '</th>
+                                                    <th class="all observaciones">' . $value["Observaciones"] . '</th>';
+                                            if ($value["Flag"] == 1) {
+                                                echo '<th class="all flag">Habilitado</th>';
+                                            } else {
+                                                echo '<th class="all flag">Deshabilitado</th>';
+                                            }
+                                        }
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -170,53 +193,35 @@
 <!--Finalizando contenido-->
 
 <!--Empieza modal de editar-->
-<div id="modalEditarMotivo" class="modal modal-message fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!--Empieza titulo del modal-->
-            <div class="modal-header" style="text-align: center">
-                <h4 class="modal-title"></h4>
-            </div>
-            <!--Finaliza titulo del modal-->
-            <!--Empieza cuerpo del modal-->
-            <div class="modal-body">
-                <!--Empieza seccion de edición-->
-                <form id="formEditarMotivo" data-parsley-validate="true" enctype="multipart/form-data">
-                    <div class="col-md-12">
-                        <div class="col-md-6 col-sm-6 col-xs-6">
-                            <div class="form-group">
-                                <label>Motivo</label>
-                                <input id="inputEditarMotivo" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6 col-xs-6">
-                            <div class="form-group">
-                                <label>Estado</label>
-                                <select id="selectEditarEstado" class="form-control" style="width: 100%" data-parsley-required="true">
-                                    <option value="">Seleccionar</option>
-                                    <option value="1">Habilitado</option>
-                                    <option value="2">Deshabilitado</option>
-                                </select>
-                            </div>
-                        </div>
+<div id="modalEditarMotivo" class="hidden">
+    <div class="col-md-12">
+        <!--Empieza seccion de edición-->
+        <form class="formEditarMotivo" data-parsley-validate="true" enctype="multipart/form-data">
+            <div class="col-md-12">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <div class="form-group">
+                        <label>Motivo</label>
+                        <input id="editarMotivo" type="text" class="inputEditarMotivo form-control" style="width: 100%" data-parsley-required="true"/>
                     </div>
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Observaciones</label>
-                            <textarea id="inputEditarObservaciones" class="form-control" rows="4" style="width: 100%" data-parsley-required="true"></textarea>
-                        </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select id="editarEstado" class="selectEditarEstado form-control" style="width: 100%" data-parsley-required="true">
+                            <option value="1">Habilitado</option>
+                            <option value="2">Deshabilitado</option>
+                        </select>
                     </div>
-                </form>
-                <!--Finaliza seccion de edición-->
+                </div>
             </div>
-            <!--Finaliza cuerpo del modal-->
-            <!--Empieza pie del modal-->
-            <div class="modal-footer text-center">
-                <a id="btnAceptarEdicion" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
-                <a id="btnCerrarEdicion" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Observaciones</label>
+                    <textarea id="editarObservaciones" class="inputEditarObservaciones form-control" rows="4" style="width: 100%" data-parsley-required="true"></textarea>
+                </div>
             </div>
-            <!--Finaliza pie del modal-->
-        </div>
+        </form>
+        <!--Finaliza seccion de edición-->
     </div>
 </div>
 <!--Finaliza modal de editar-->

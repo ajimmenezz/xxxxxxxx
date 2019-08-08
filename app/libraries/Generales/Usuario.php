@@ -1,7 +1,7 @@
 <?php
 
 namespace Librerias\Generales;
-
+use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as User;
 use Controladores\Controller_Datos_Usuario as General;
 
 /**
@@ -154,7 +154,12 @@ class Usuario extends General {
         }
         //Obtiene Informacion 
         elseif ($operacion === '3') {
-            return $this->DBU->getPersonal('SELECT a.*, b.Email, c.Nombre as Perfil, d.Id AS IdDepartamento, d.Nombre AS Departamento, e.Id AS IdArea, e.Nombre AS Area FROM t_rh_personal a INNER JOIN cat_v3_usuarios b ON b.Id = a.IdUsuario INNER JOIN cat_perfiles c ON b.IdPerfil = c.Id INNER JOIN cat_v3_departamentos_siccob d ON c.IdDepartamento = d.Id INNER JOIN adist3_prod.cat_v3_areas_siccob e ON d.IdArea = e.Id');
+            return $this->DBU->getPersonal('SELECT a.*, b.Email, c.Nombre as Perfil, d.Id AS IdDepartamento, d.Nombre AS Departamento, e.Id AS IdArea, e.Nombre AS Area, f.IdEstatus FROM t_rh_personal a
+                                            INNER JOIN cat_v3_usuarios b ON b.Id = a.IdUsuario 
+                                            INNER JOIN cat_perfiles c ON b.IdPerfil = c.Id 
+                                            INNER JOIN cat_v3_departamentos_siccob d ON c.IdDepartamento = d.Id 
+                                            INNER JOIN adist3_prod.cat_v3_areas_siccob e ON d.IdArea = e.Id
+                                            LEFT JOIN t_altas_bajas_personal f ON f.IdPersonal = b.Id');
         }
         //Obtiene datos para mandar al modal Actualizar Personal 
         elseif ($operacion === '4') {
@@ -422,4 +427,18 @@ class Usuario extends General {
         }
     }
 
+    public function bajaPersonal(array $personal) {
+        $datos = array();
+        $datos['IdUsuario'] = User::getId();
+        $datos['IdPersonal'] = $personal['id'];
+        $datos['Fecha'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        if($personal['fechaBaja'] !== ''){
+            $datos['FechaEstatus'] = $personal['fechaBaja'];
+        }else{
+            $datos['FechaEstatus'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        }
+        
+        $bajaPersonal = $this->DBU->bajaUsuarios($datos);
+        return $bajaPersonal;
+    }
 }

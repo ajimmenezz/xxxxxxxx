@@ -14,7 +14,7 @@ class Modelo_Base
         return self::$DB[$db];
     }
     
-    public function query(string $query) {
+    protected function query(string $query) {
         if ($consulta = self::$DB[$this->nombreBD]->simple_query($query)) {
             return $consulta;
         } else {
@@ -22,7 +22,7 @@ class Modelo_Base
         }
     }
 
-    public function consulta(string $query) {
+    protected function consulta(string $query) {
         if (self::$DB[$this->nombreBD]->simple_query($query)) {
             $consulta = self::$DB[$this->nombreBD]->query($query);
             return $consulta->result_array();
@@ -31,7 +31,7 @@ class Modelo_Base
         }
     }
 
-    public function insertar(string $query) {
+    protected function insertar(string $query) {
 
         if (self::$DB[$this->nombreBD]->simple_query($query)) {
             return self::$DB[$this->nombreBD]->insert_id();
@@ -40,7 +40,7 @@ class Modelo_Base
         }
     }
     
-    public function actualizar(string $query) {
+    protected function actualizar(string $query) {
 
         if (self::$DB[$this->nombreBD]->simple_query($query)) {
             return self::$DB[$this->nombreBD]->affected_rows();
@@ -49,7 +49,7 @@ class Modelo_Base
         }
     }
     
-    public function borrar(string $query) {
+    protected function borrar(string $query) {
 
         if (self::$DB[$this->nombreBD]->simple_query($query)) {
             return self::$DB[$this->nombreBD]->affected_rows();

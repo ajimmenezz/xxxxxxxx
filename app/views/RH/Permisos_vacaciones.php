@@ -266,12 +266,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Descuento</label>
-                                <input type="text" class="form-control date" id="inputDescuento" style="width: 100%" disabled/>
-                            </div>
-                        </div>
                         
                         <!--Empezando mensaje--> 
                         <div class="row">

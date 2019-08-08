@@ -77,24 +77,26 @@
                         <?php
                         if (!empty($datos['ListaPersonal'])) {
                             foreach ($datos['ListaPersonal'] as $key => $value) {
-                                echo '<tr>';
-                                echo '<td>' . $value['Id'] . '</td>';
-                                echo '<td>' . $value['ApPaterno'] . '</td>';
-                                echo '<td>' . $value['ApMaterno'] . '</td>';
-                                echo '<td>' . $value['Nombres'] . '</td>';
-                                echo '<td>' . $value['Area'] . '</td>';
-                                echo '<td>' . $value['Departamento'] . '</td>';
-                                echo '<td>' . $value['Perfil'] . '</td>';
-                                echo '<td>' . $value['IdUsuario'] . '</td>';
-                                echo '<td>' . $value['Tel1'] . '</td>';
-                                echo '<td>' . $value['Tel2'] . '</td>';
-                                echo '<td>' . $value['Email'] . '</td>';
-                                echo '<td>' . $value['FechaNacimiento'] . '</td>';
-                                echo '<td>' . $value['CURP'] . '</td>';
-                                echo '<td>' . $value['RFC'] . '</td>';
-                                echo '<td>' . $value['FechaAlta'] . '</td>';
-                                echo '<td>' . $value['NSS'] . '</td>';
-                                echo '</tr>';
+                                if ($value['IdEstatus'] !== '47') {
+                                    echo '<tr>';
+                                    echo '<td>' . $value['Id'] . '</td>';
+                                    echo '<td>' . $value['ApPaterno'] . '</td>';
+                                    echo '<td>' . $value['ApMaterno'] . '</td>';
+                                    echo '<td>' . $value['Nombres'] . '</td>';
+                                    echo '<td>' . $value['Area'] . '</td>';
+                                    echo '<td>' . $value['Departamento'] . '</td>';
+                                    echo '<td>' . $value['Perfil'] . '</td>';
+                                    echo '<td>' . $value['IdUsuario'] . '</td>';
+                                    echo '<td>' . $value['Tel1'] . '</td>';
+                                    echo '<td>' . $value['Tel2'] . '</td>';
+                                    echo '<td>' . $value['Email'] . '</td>';
+                                    echo '<td>' . $value['FechaNacimiento'] . '</td>';
+                                    echo '<td>' . $value['CURP'] . '</td>';
+                                    echo '<td>' . $value['RFC'] . '</td>';
+                                    echo '<td>' . $value['FechaAlta'] . '</td>';
+                                    echo '<td>' . $value['NSS'] . '</td>';
+                                    echo '</tr>';
+                                }
                             }
                         }
                         ?>                                        
