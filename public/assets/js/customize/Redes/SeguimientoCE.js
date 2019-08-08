@@ -60,10 +60,10 @@ $(function () {
     function cambioVista(folio) {
         $('#contentServiciosGeneralesRedes').addClass('hidden');
         $('#contentServiciosRedes').removeClass('hidden');
-        if (folio !== 0 && folio !== null) {
+        if (folio != 0 && folio != null) {
             $('#addFolio').val(folio);
             elementosAgregarFolio();
-            elementosGuardarFolio();
+            elementosInfoFolio();
         }
         iniciarObjetos();
         verBotonConcluir();
@@ -134,16 +134,15 @@ $(function () {
     /**Empiezan eventos de botones para folio**/
     $('#guardarFolio').on('click', function () {
         if (evento.validarFormulario('#folio')) {
-            let dato = {folio: $('#addFolio').val()};
-            elementosGuardarFolio();
-
+            let dato = {folio: $('#addFolio').val(), idServicio: datoServicioTabla};
             peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/GuardarFolio', dato, function (respuesta) {
-                modal.cerrarModal();
+                //modal.cerrarModal();
+                //elementosInfoFolio();
                 console.log(respuesta);
             });
         }
     });
-    function elementosGuardarFolio() {
+    function elementosInfoFolio() {
         $('#infoFolio').removeClass('hidden');
         $('#editarFolio').removeClass('hidden');
         $('#eliminarFolio').removeClass('hidden');
