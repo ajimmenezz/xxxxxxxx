@@ -318,4 +318,25 @@ $(function () {
             $('#btnConcluir').attr("disabled", true);
         }
     }
+    
+    var firmaGerente = new DrawingBoard.Board("firmaGerente", {
+                    background: "#fff",
+                    color: "#000",
+                    size: 1,
+                    controlsPosition: "right",
+                    controls: [
+                        {
+                            Navigation: {
+                                back: false,
+                                forward: false
+                            }
+                        }
+                    ],
+                    webStorage: false
+                });
+                
+    $('#modalConcluir').on('click', function () {
+        $('#contentFirmasConclucion').removeClass('hidden');
+        $('#contentServiciosRedes').addClass('hidden');
+    });
 });

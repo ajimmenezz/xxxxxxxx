@@ -1967,6 +1967,7 @@ $config['Redes'] = array(
         'pluginsCss' => array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
+            'DrawingBoard/css/drawingboard.min',
             'jquery-fileUpload/css/fileinput.min',
             'parsley/src/parsley'
         ),
@@ -1986,6 +1987,7 @@ $config['Redes'] = array(
             'select2/dist/js/select2.min',
             'jquery-fileUpload/js/fileinput',
             'jquery-fileUpload/js/es',
+            'DrawingBoard/js/drawingboard.min',
             'parsley/dist/parsley',
             'parsley/src/i18n/es'
         ),

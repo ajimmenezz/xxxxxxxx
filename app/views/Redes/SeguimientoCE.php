@@ -1,3 +1,4 @@
+<!--Empieza Vista de la tabla de seguimiento CE-->
 <div id="contentServiciosGeneralesRedes" class="content">
     <!-- Empezando titulo de cabecera -->
     <h1 class="page-header">Servicios Generales de Redes</h1>
@@ -79,8 +80,9 @@
     </div>
     <!--Finaliza contenido general-->
 </div>
+<!--Finaliza Vista de la tabla de seguimiento CE-->
 
-
+<!--Empieza Vista detallada del seguimieto de un servicio-->
 <div id="contentServiciosRedes" class="hidden">
     <!--Empieza contenido general-->
     <div id="content" class="content">
@@ -502,7 +504,7 @@
                             </a>
                         </div>
                         <div class="col-md-6">
-                            <a href="#modalConcluir" class="btn btn-danger" data-toggle="modal">
+                            <a id="modalConcluir" class="btn btn-danger" data-toggle="modal">
                                 CONCLUIR
                             </a>
                         </div>
@@ -525,6 +527,7 @@
     </div>
     <!--Finaliza contenido general-->
 </div>
+<!--Finaliza Vista detallada del seguimieto de un servicio-->
 
 <!--Empezando seccion para material nodo-->
 <div id="modalMaterialNodo" class="modal modal-message fade">
@@ -683,7 +686,7 @@
             <div class="modal-body text-center">
                 <!--Empieza seccion de evidencia-->
                 <div class="col-md-12">
-                     <div class="image-inner">
+                    <div class="image-inner">
                         <a class="text-center" href="" data-lightbox="gallery-group-evidencia">
                             <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="">
                         </a>                                                
@@ -702,59 +705,47 @@
 </div>
 <!--Finaliza modal de evidencia-->
 
-<!--Empieza modal de conclucion-->
-<div id="modalConcluir" class="modal modal-message fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!--Empieza titulo del modal-->
-            <div class="modal-header" style="text-align: center">
-                <h4 class="modal-title">Concluir</h4>
-            </div>
-            <!--Finaliza titulo del modal-->
-            <!--Empieza cuerpo del modal-->
-            <div class="modal-body">
-                <!--Empieza seccion del cliente-->
-                <div class="col-md-12">
-                    <form id="formAgregarCliente" data-parsley-validate="true" enctype="multipart/form-data">
-                        <div class="col-md-12">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Nombre Cliente</label>
-                                    <input id="inputCliente" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
-                                </div>
-                            </div>
+<!--Empieza seccion de firmas-->
+<div id="contentFirmasConclucion" class="content hidden">
+    <!--Empieza contenido general-->
+    <div id="panelFirmas" class="panel panel-inverse">
+        <!--Empieza titulo pagina-->
+        <div class="panel-heading">
+            <h4 class="panel-title">Concluir Servicio</h4>
+        </div>
+        <!--Finaliza titulo pagina-->
+        <!--Empieza Panel -->
+        <div class="panel-body row">
+            <!--Empieza contenido de elementos-->
+            <div class="col-md-12 text-center">
+                <form id="formAgregarCliente" data-parsley-validate="true" enctype="multipart/form-data">
+                    <div class="col-md-12">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">
                             <div class="form-group">
-                                <label class="f-s-14 f-w-600 m-t-10">Firma del Técnico (Siccob o Lexmark) * :</label>
-                                <div class="input-group m-b-10">
-                                    <span class="input-group-addon"><i class="fa fa-child"></i></span>
-                                    <label class="form-control"></label>
-                                </div>
-                                <div class="image-inner">
-                                    <a class="text-center" href="" data-lightbox="gallery-group-firmas">
-                                        <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="" alt="Firma Técnico">
-                                    </a>                                                
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Firma Cliente</label>
-                                    <input id="inputFirmaCliente" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
-                                </div>
+                                <label>Nombre y Firma de Cliente</label>
+                                <input id="inputCliente" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <!--Finaliza seccion del cliente-->
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">
+                            <div style="width: 600px; height: 300px;" id="firmaGerente"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-12"><br><br></div>
+                </form>
             </div>
-            <!--Finaliza cuerpo del modal-->
-            <!--Empieza pie del modal-->
-            <div class="modal-footer text-center">
+            <div class="col-md-12 text-center">
                 <a id="btnResumen" class="btn btn-sm btn-info"><i class="fa fa-info-circle"></i> Resumen</a>
                 <a id="btnConcluir" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> Continuar</a>
                 <a class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cancelar</a>
             </div>
-            <!--Finaliza pie del modal-->
+            <!--Finaliza contenido de elementos-->
         </div>
+        <!--Finaliza Panel -->
     </div>
+    <!--Finaliza contenido general-->
 </div>
-<!--Finaliza modal de conclucion-->
+<!--Finaliza seccion de firmas-->
