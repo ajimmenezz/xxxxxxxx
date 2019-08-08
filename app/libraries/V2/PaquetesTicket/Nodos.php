@@ -23,6 +23,5 @@ class Nodos
         $this->insert=$this->DBServiciosGeneralRedes->insertar($query);
         $IdServicio =$this->DBServiciosGeneralRedes->insert_id();
         var_dump($IdServicio);
-//        $return= 
     }
 }
