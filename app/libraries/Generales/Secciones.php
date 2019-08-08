@@ -266,7 +266,7 @@ class Secciones extends General {
                 $datos['enviarCorreos'] = $this->permisosVacaciones->enviarCorreoSiccob();
                 break;
             case 'RH/Autorizar_permisos':
-                $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id']);
+                $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id'], $usuario['IdPerfil']);
                 break;
             case 'RH/Catalogos_Permisos':
                   $datos['TipoMotivo'] = $this->CatalogoMotivosPermiso->getDatos();

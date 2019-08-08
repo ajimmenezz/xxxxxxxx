@@ -19,19 +19,14 @@ class Autorizar_permisos extends General{
         $this->Excel = new \Librerias\Generales\CExcel();
     }
     
-    public function buscarSubordinados(int $idUsuario){
-        switch ($idUsuario) {
+    public function buscarSubordinados(int $idUsuario, int $IdPerfil){
+        switch ($IdPerfil) {
             case '21':
-                return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, cu.Nombre, tpar.IdTipoAusencia, 
-                            tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida
-                            from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
-                            where tpar.IdEstatus = 9');
-                break;
             case '37':
-                return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, cu.Nombre, tpar.IdTipoAusencia, 
+                return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, nombreUsuario(cu.Id) as Nombre, tpar.IdTipoAusencia, 
                             tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida
                             from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
-                            where tpar.IdEstatus = 9');
+                            where tpar.IdEstatus = 9 and cu.Id <> '.$idUsuario);
                 break;
             default:
                 return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, cu.Nombre, tpar.IdTipoAusencia, 

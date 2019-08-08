@@ -16,9 +16,6 @@
                         </label>';
                 }
                 ?>
-                <label id="btnExcel" class="btn btn-success btn-xs">
-                            <i class="fa fa-file-excel-o"></i>
-                        </label>
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>                            
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
             </div>
