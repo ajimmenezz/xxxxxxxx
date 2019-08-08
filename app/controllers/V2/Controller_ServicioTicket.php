@@ -69,6 +69,7 @@ class Controller_ServicioTicket extends CI_Controller {
         $this->servicio=$this->factory->getServicio('GeneralRedes',$datosServicio['idServicio']);
         $this->datos=$this->servicio->getDatos();
         $this->servicio->setFolioServiceDesk($datosServicio['folio']);
+        $this->setInformacionFolio($datosServicio['folio']);
     }
     
     public function mostrarMaterial() {
