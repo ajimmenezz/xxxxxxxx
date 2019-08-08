@@ -7,8 +7,7 @@ use Modelos\Modelo_ServicioGeneralRedes as Modelo;
 
 class ServicioGeneralRedes implements Servicio {
 
-    private $DBServiciosGeneralRedes;
-    private $consulta;
+    private $DBServiciosGeneralRedes;    
     private $id;
     private $sucursales;
     private $folioSolicitud;
@@ -29,18 +28,26 @@ class ServicioGeneralRedes implements Servicio {
     }
 
     public function setDatos() {
-        $this->consulta = $this->DBServiciosGeneralRedes->getDatosServicio($this->id);
+        $consulta = $this->DBServiciosGeneralRedes->getDatosServicio($this->id);
         
-        $this->folioSolicitud = $this->consulta[0]['Folio'];
-        $this->fechaCreacion = $this->consulta[0]['FechaCreacion'];
-        $this->fechaSolicitud = $this->consulta[0]['FechaSolicitud'];
-        $this->ticket = $this->consulta[0]['Ticket'];
-        $this->atiende = $this->consulta[0]['Atiende'];
-        $this->idSolicitud = $this->consulta[0]['IdSolicitud'];
-        $this->descripcion = $this->consulta[0]['Descripcion'];
-        $this->solicita = $this->consulta[0]['Solicita'];
-        $this->descripcionSolicitud = $this->consulta[0]['DescripcionSolicitud'];
+        $this->folioSolicitud = $consulta[0]['Folio'];
+        $this->fechaCreacion = $consulta[0]['FechaCreacion'];
+        $this->fechaSolicitud = $consulta[0]['FechaSolicitud'];
+        $this->ticket = $consulta[0]['Ticket'];
+        $this->atiende = $consulta[0]['Atiende'];
+        $this->idSolicitud = $consulta[0]['IdSolicitud'];
+        $this->descripcion = $consulta[0]['Descripcion'];
+        $this->solicita = $consulta[0]['Solicita'];
+        $this->descripcionSolicitud = $consulta[0]['DescripcionSolicitud'];
   
+    }
+    
+    public function setEstatusServicio(string $estatus){
+        var_dump($estatus);
+    }
+    
+    public function getFolio() {
+        return $this->folioSolicitud;
     }
 
     public function getDatos() {
@@ -61,8 +68,7 @@ class ServicioGeneralRedes implements Servicio {
         return $this->sucursales;
     }
 
-    public function setFolioServiceDesk(string $folio) {
-        var_dump($folio);
+    public function setFolioServiceDesk(string $folio) {        
         $respuesta = $this->DBServiciosGeneralRedes->setFolioServiceDesk(array('idServicio' => $this->id, 'folio' => $folio));
         return $respuesta;
     }

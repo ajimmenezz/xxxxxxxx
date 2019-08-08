@@ -1,23 +1,25 @@
 <?php
+
 namespace Librerias\V2\PaquetesTicket;
+
 use Modelos\Modelo_ServicioGeneralRedes as Modelo;
 
-class Nodos
-{
+class Nodos {
+
     private $DBServiciosGeneralRedes;
     private $insert;
-    public function __construct(array $data) {
-        $this->DBServiciosGeneralRedes= new Modelo();
-        registrarNodo();
-        
-        
+
+    public function __construct() {
+//        $this->DBServiciosGeneralRedes= new Modelo();
+//        registrarNodo();
     }
+
     public function eliminarNodo($idNodo) {
-        $delete= "DELETE FROM t_redes_nodos WHERE id=".$idNodo;
+        $delete = "DELETE FROM t_redes_nodos WHERE id=" . $idNodo;
         $this->DBServiciosGeneralRedes->eliminarNodo($delete);
     }
-    public function registrarNodo()
-    {
+
+    public function registrarNodo() {
         $query = "INSERT INTO 
                     `t_redes_nodos`
                         (`IdServicio`, `IdArea`, `Nombre`, `IdSwitch`, `NumeroSwitch`, `Flag`)
@@ -29,7 +31,9 @@ class Nodos
         $IdServicio = $this->DBServiciosGeneralRedes->insert_id();
         var_dump($IdServicio);
     }
+
     public function editarNodo($datosNodo) {
         var_dump($datosNodo);
     }
+
 }

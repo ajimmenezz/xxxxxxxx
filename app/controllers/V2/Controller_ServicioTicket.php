@@ -6,7 +6,6 @@ use Librerias\V2\PaquetesTicket\Material as Material;
 use Librerias\V2\PaquetesTicket\Movimiento as Movimiento;
 use Librerias\V2\PaquetesTicket\Nodos as Nodos;
 
-
 class Controller_ServicioTicket extends CI_Controller {
 
     private $factory;
@@ -15,27 +14,40 @@ class Controller_ServicioTicket extends CI_Controller {
     private $material;
     private $movimiento;
     private $nodo;
-  
-
-   private $idServicio;
 
     public function __construct() {
         parent::__construct();
         $this->factory = new FactoryServiciosTicket();
-        $this->serviceDesk= new ServiceDesk;
-        $this->material= new Material;
-        $this->nodo= new Nodos;
+        $this->datos = array();
+//        $this->material= new Material;
+//        $this->nodo= new Nodos;
     }
 
     public function atenderServicio() {
-        $this->getServicios();
-        $this->datos['sucursales'] = $this->servicio->getSucursales();
-        echo json_encode($this->datos);
+//        $this->getServicios();
+        $datosServicio = $this->input->post();
+        $this->servicio = $this->factory->getServicio('GeneralRedes', $datosServicio['id']);
+        $this->servicio->setEstatusServicio('enAtencion');
+        $folio = $this->servicio->getFolio();
         
+        $this->datos['servicio'] = $this->servicio->getDatos();
+        $this->datos['sucursales'] = $this->servicio->getSucursales();
+        $this->datos['problemas'] = null;
+        $this->datos['nodos'] = null;
+        $this->datos['material'] = null;
+        $this->datos['firmas'] = null;        
+        $this->datos['folio'] = $this->servicio->getFolio();
+        $this->datos['notasFolio'] = null;
+        
+        if (!empty($this->datos['folio'])) {
+            $this->datos['folio'] = ServiceDesk::getDetallesFolio($folio);
+            $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
+        }
+        echo json_encode($this->datos);
     }
 
     private function setInformacionFolio(string $folio) {
-        $this->datos['detallesFolio'] = ServiceDesk::getDetallesFolio($folio);
+        $this->datos['Folio'] = ServiceDesk::getDetallesFolio($folio);
         $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
     }
 
@@ -45,10 +57,9 @@ class Controller_ServicioTicket extends CI_Controller {
     }
 
     private function getServicios() {
-        $this->datos = array();
         $datosServicio = $this->input->post();
-        $this->idServicio=$datosServicio['id'];
         $this->servicio = $this->factory->getServicio('GeneralRedes', $datosServicio['id']);
+        $this->servicio->setEstatusServicio('atencion');
         $this->datos = $this->servicio->getdatos();
         if (!empty($this->datos['folio'])) {
             $this->setInformacionFolio($this->datos['folio']);
@@ -65,16 +76,16 @@ class Controller_ServicioTicket extends CI_Controller {
             return FALSE;
         }
     }
-    public function guardarFolio()
-    {
+
+    public function guardarFolio() {
         $datosServicio = $this->input->post();
-        
-        $this->servicio=$this->factory->getServicio('GeneralRedes',$datosServicio['idServicio']);
-        $this->datos=$this->servicio->getDatos();
+
+        $this->servicio = $this->factory->getServicio('GeneralRedes', $datosServicio['idServicio']);
+        $this->datos = $this->servicio->getDatos();
         $this->servicio->setFolioServiceDesk($datosServicio['folio']);
         $this->setInformacionFolio($datosServicio['folio']);
     }
-    
+
     public function registrarNodo() {
         $datos = $this->input->post();
         var_dump($datos);
@@ -83,34 +94,34 @@ class Controller_ServicioTicket extends CI_Controller {
     }
 
     public function mostrarMaterial() {
-        $idTecnico=1;
+        $idTecnico = 1;
         $this->material = new Material($idTecnico);
     }
-    public function mostrarNodos()
-    {
-       
+
+    public function mostrarNodos() {
+        
     }
-    
+
     public function registrarMaterial($datos) {
         var_dump($datos);
         $this->material->setMaterial($datos);
     }
-    public function registrarMovimiento()
-    {
-        $this->movimiento= new Movimiento;
+
+    public function registrarMovimiento() {
+        $this->movimiento = new Movimiento;
         $this->movimiento->setMovimiento($datos);
     }
 
     public function editarNodo() {
         $datosNodo = array();
-        $datosNodo=$this->input->post();
+        $datosNodo = $this->input->post();
         $this->nodo->editarNodo($datosNodo);
     }
-    
+
     public function eliminarMaterialNodo() {
         
     }
-    
+
     public function eliminarNodo($idNodo) {
         $this->nodo->eliminarNodo($idNodo);
     }
