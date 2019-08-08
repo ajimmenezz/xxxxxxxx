@@ -30,6 +30,7 @@ class FactoryServiciosTicket
     }
     public function setNodos(array $datos)
     {
+        var_dump($datos);
         $this->nodo=new Nodos($datos);
     }
     
