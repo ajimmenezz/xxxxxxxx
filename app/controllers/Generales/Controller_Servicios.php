@@ -110,6 +110,7 @@ class Controller_Servicios extends Base {
                 break;
             case 'Servicio_Cancelar':
                 $resultado = $this->ServicioTicket->servicioCancelar($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

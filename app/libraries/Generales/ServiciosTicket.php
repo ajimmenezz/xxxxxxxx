@@ -1208,12 +1208,10 @@ class ServiciosTicket extends General {
             $verificarEstatusServicio = $this->DBST->consultaGeneral('SELECT 
                                                                 tst.IdEstatus
                                                             FROM t_servicios_ticket tst
-                                                            WHERE tst.Id = "' . $datos['servicio'] . '"');
+                                                            WHERE tst.Id = "' . $datos['servicio'] . '"
+                                                            AND IdEstatus IN(4,5,6,10)');
 
-            if (!in_array('6', $verificarEstatusServicio) ||
-                    !in_array('4', $verificarEstatusServicio) ||
-                    !in_array('10', $verificarEstatusServicio) ||
-                    !in_array('5', $verificarEstatusServicio)) {
+            if (empty($verificarEstatusServicio)) {
                 $consulta = $this->DBST->actualizarServicio('t_servicios_ticket', $data, array('Id' => $datos['servicio']));
                 if (!empty($consulta)) {
                     $data = array(
@@ -1263,19 +1261,15 @@ class ServiciosTicket extends General {
                     $notas = $this->DBST->setNuevoElemento('t_notas_servicio', $data);
                     if (!empty($notas)) {
                         $serviciosAsignados = $this->getServiciosAsignados($usuario['IdDepartamento']);
-                        if (!empty($serviciosAsignados)) {
-                            return $serviciosAsignados;
-                        } else {
-                            return array();
-                        }
+                        return $serviciosAsignados;
                     } else {
-                        return FALSE;
+                        throw new \Exception('Vuelva a interntarlo.');
                     }
                 } else {
-                    return FALSE;
+                    throw new \Exception('Vuelva a interntarlo.');
                 }
             } else {
-                throw new Exception('No puede concelar este servicio por el estatus que se encu');
+                throw new \Exception('No puede cancelar este servicio por el estatus que se encuentra.');
             }
         } catch (\Exception $ex) {
             return $ex->getMessage();
