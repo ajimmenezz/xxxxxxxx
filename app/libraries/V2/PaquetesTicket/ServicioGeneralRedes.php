@@ -69,18 +69,25 @@ class ServicioGeneralRedes implements Servicio {
         );
     }
 
-    public function getSucursales() {
-        $this->sucursales = $this->DBServiciosGeneralRedes->getSucursal('1');
-        return $this->sucursales;
-    }
-
     public function setFolioServiceDesk(string $folio) {
-        $respuesta = $this->DBServiciosGeneralRedes->setFolioServiceDesk(array('idServicio' => $this->id, 'folio' => $folio));
-        return $respuesta;
+        $this->DBServiciosGeneralRedes->empezarTransaccion();
+        $this->DBServiciosGeneralRedes->setFolioServiceDesk($this->idSolicitud, $folio);
+        $this->setDatos();
+        $this->DBServiciosGeneralRedes->finalizarTransaccion();                      
     }
 
     public function getCliente() {
         return $this->idCliente;
     }
+
+    public function getSolucion() {
+        $datos = array();
+        $datos['solucion'] = $this->DBServiciosGeneralRedes->getDatosSolucion($this->id);        
+        $datos['IdSucursal'] = $this->idSucursal;
+        return $datos;
+    }
+    
+    
+    
 
 }
