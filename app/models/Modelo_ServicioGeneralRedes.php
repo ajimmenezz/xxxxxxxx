@@ -45,21 +45,25 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
 
     public function setEstatus(string $idServicio, string $estatus) {
         $this->actualizar('update t_servicios_ticket 
-                            set IdEstatus = '.$estatus.'                            
-                            where Id = '.$idServicio);
+                            set IdEstatus = ' . $estatus . '                            
+                            where Id = ' . $idServicio);
     }
 
-    public function setFolioServiceDesk(array $datosServicio) {
-        $cosulta = array();
-        try {
-            $servicio = $this->getDatosServicio($datosServicio['idServicio']);
-            $consulta = $this->actualizar('UPDATE t_solicitudes
-                                            SET Folio = "' . $datosServicio['folio'] . '" 
-                                            WHERE Id = "' . $servicio[0]['IdSolicitud'] . '"');
-        } catch (Exception $exc) {
-            var_dump($ex->getMessage());
-        }
+    public function getDatosSolucion(string $idServicio) {
+        $consulta = $this->consulta('select 
+                                        Id,
+                                        Descripcion as Observaciones,
+                                        Archivos,
+                                        Fecha as FechaUltimoMovimiento   
+                                    from t_servicios_generales tsg
+                                    where tsg.IdServicio = ' . $idServicio);
         return $consulta;
+    }
+
+    public function setFolioServiceDesk(string $idSolicitud, string $idFolio) {
+        $this->actualizar('UPDATE t_solicitudes
+                                            SET Folio = "' . $idFolio . '" 
+                                            WHERE Id = "' . $idSolicitud . '"');
     }
 
     public function insertarMaterial($query) {

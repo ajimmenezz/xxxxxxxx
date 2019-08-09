@@ -35,19 +35,66 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
+    public function seguimientoServicio(string $tipoServicio) {
+        try {
+            $datosServicio = $this->input->post();
+            $this->servicio = $this->factory->getServicio($tipoServicio, $datosServicio['id']);
+            $this->datos['servicio'] = $this->servicio->getDatos();
+            $this->datos['sucursales'] = $this->gestorSucursales->getSucursales($this->servicio->getCliente());
+            $this->datos['solucion'] = $this->servicio->getSolucion();
+            $this->datos['problemas'] = null;
+            $this->datos['firmas'] = null;
+            $this->getInformacionFolio();
+            $this->setEstatusServiceDesk();
+            echo json_encode($this->datos);
+        } catch (Exception $exc) {
+            
+        }
+    }
+
     private function getInformacionFolio() {
         try {
             $this->datos['folio'] = null;
             $this->datos['notasFolio'] = null;
 
             if (!empty($this->servicio->getFolio())) {
-                ServiceDesk::setEstatus('En Atención', $this->servicio->getFolio());
                 $this->datos['folio'] = ServiceDesk::getDatos($this->servicio->getFolio());
                 $this->datos['notasFolio'] = ServiceDesk::getNotas($this->servicio->getFolio());
             }
         } catch (Exception $ex) {
             $this->datos['folio'] = array('Error' => $ex->getMessage());
             $this->datos['notasFolio'] = array('Error' => $ex->getMessage());
+        }
+    }
+
+    private function setEstatusServiceDesk() {
+        $estatusFolio = null;
+        try {
+
+            if (!empty($this->datos['folio'] && property_exists($this->datos['folio'], 'STATUS'))) {
+                $estatusFolio = $this->datos['folio']->STATUS;
+            }
+
+            if ($estatusFolio === 'Abierto') {
+                ServiceDesk::setEstatus('En Atención', $this->servicio->getFolio());
+            }
+        } catch (Exception $ex) {
+            
+        }
+    }
+
+    public function setFolio() {
+        try {
+            $datosServicio = $this->input->post();                        
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->setFolioServiceDesk($datosServicio['folio']);
+            $this->getInformacionFolio();
+            $this->datos['operacion'] = TRUE ;
+            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
         }
     }
 
@@ -70,15 +117,6 @@ class Controller_ServicioTicket extends CI_Controller {
         } else {
             return FALSE;
         }
-    }
-
-    public function guardarFolio() {
-        $datosServicio = $this->input->post();
-
-        $this->servicio = $this->factory->getServicio('GeneralRedes', $datosServicio['idServicio']);
-        $this->datos = $this->servicio->getDatos();
-        $this->servicio->setFolioServiceDesk($datosServicio['folio']);
-        $this->getInformacionFolio($datosServicio['folio']);
     }
 
 }

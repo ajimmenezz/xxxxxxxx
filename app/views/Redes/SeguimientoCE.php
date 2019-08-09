@@ -159,7 +159,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Descripción Solicitud</label>
-                                            <textarea id="textareaDescripcionSolicitud" class="form-control semi-bold" rows="2" disabled></textarea>
+                                            <textarea id="textareaDescripcionSolicitud" class="form-control semi-bold" rows="6" disabled></textarea>
                                         </div>
                                     </div>
                                 </div>

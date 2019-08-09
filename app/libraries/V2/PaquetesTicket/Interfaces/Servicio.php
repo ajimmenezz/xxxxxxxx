@@ -16,5 +16,7 @@ interface Servicio
     public function setFolioServiceDesk(string $folio);
     
     public function getCliente();
+    
+    public function getSolucion();
 
 }
