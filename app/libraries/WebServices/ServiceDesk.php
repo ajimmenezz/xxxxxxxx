@@ -428,4 +428,10 @@ class ServiceDesk extends General {
         return $data;
     }
 
+    public function getNotas(string $key, string $folio) {
+        $this->FIELDS = 'format=json&OPERATION_NAME=GET_NOTES&TECHNICIAN_KEY=' . $key;
+        $data = json_decode(file_get_contents($this->Url . '/' . $folio . '/notes/?' . $this->FIELDS));
+        return $data;
+    }
+
 }
