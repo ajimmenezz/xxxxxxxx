@@ -54,6 +54,7 @@ $(function () {
             peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
                 cambioVista(datosFila[1]);
                 cargarElementosServicio(respuesta);
+                console.log(respuesta)
             });
         }
     });
@@ -62,7 +63,7 @@ $(function () {
         $('#contentServiciosGeneralesRedes').addClass('hidden');
         $('#contentServiciosRedes').removeClass('hidden');
         if (folio != 0 && folio != null) {
-            $('#addFolio').val(folio);
+            $('#addFolio').val(folio).prop("disabled", true);
             elementosAgregarFolio();
             elementosInfoFolio();
         }
@@ -84,7 +85,7 @@ $(function () {
         $("#fechaSolicitud").text(datosServicio.FechaSolicitud);
         $("#textareaDescripcionS").text(datosServicio.descripcionSolicitud);
     }
-/*********************************************************************************************************************************************/
+    /*********************************************************************************************************************************************/
     function atenderServicio(datoServicioTabla) {
         peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
             modal.cerrarModal();
@@ -307,9 +308,8 @@ $(function () {
         }
     });
     $('#btnConcluir').on('click', function () {
-        if (evento.validarFormulario('#formAgregarCliente')) {
-            console.log('btnConcluir');
-        }
+        $('#contentFirmasConclucion').removeClass('hidden');
+        $('#contentServiciosRedes').addClass('hidden');
     });
     /**Finalizan seccion de botonos generales**/
 
@@ -317,27 +317,67 @@ $(function () {
         let datosNodo = tablaNodos.datosTabla();
         if (datosNodo.length == 0) {
             $('#btnConcluir').attr("disabled", true);
+            $('#btnConcluir').off("click");
         }
     }
-    
-    var firmaGerente = new DrawingBoard.Board("firmaGerente", {
-                    background: "#fff",
-                    color: "#000",
-                    size: 1,
-                    controlsPosition: "right",
-                    controls: [
-                        {
-                            Navigation: {
-                                back: false,
-                                forward: false
-                            }
-                        }
-                    ],
-                    webStorage: false
-                });
-                
-    $('#modalConcluir').on('click', function () {
-        $('#contentFirmasConclucion').removeClass('hidden');
-        $('#contentServiciosRedes').addClass('hidden');
+
+    let firmaClienet = new DrawingBoard.Board("firmaCliente", {
+        background: "#fff",
+        color: "#000",
+        size: 1,
+        controlsPosition: "right",
+        controls: [
+            {
+                Navigation: {
+                    back: false,
+                    forward: false
+                }
+            }
+        ],
+        webStorage: false
+    });
+    let firmaTecnico = new DrawingBoard.Board("firmaTecnico", {
+        background: "#fff",
+        color: "#000",
+        size: 1,
+        controlsPosition: "right",
+        controls: [
+            {
+                Navigation: {
+                    back: false,
+                    forward: false
+                }
+            }
+        ],
+        webStorage: false
+    });
+
+    $('#btnContinuar').on('click', function () {
+        let imgFirmaCliente = firmaClienet.getImg();
+        let inputFirmaCliente = (firmaClienet.blankCanvas == imgFirmaCliente) ? '' : imgFirmaCliente;
+
+        if (evento.validarFormulario('#formAgregarCliente')) {
+            if (inputFirmaCliente == '') {
+                evento.mostrarMensaje("#errorMessageFirmaCliente", false, 'Falta firma del Cliente', 2000);
+            } else {
+                $('#contentfirmaTecnico').removeClass('hidden');
+                $('#btnTerminar').removeClass('hidden');
+                $('#btnRegresarServicio2').removeClass('hidden');
+                $('#contentfirmaCliente').addClass('hidden');
+                $('#btnContinuar').addClass('hidden');
+                $('#btnRegresarServicio').addClass('hidden');
+            }
+        }
+    });
+
+    $('#btnRegresarServicio').on('click', function () {
+        $('#contentServiciosRedes').removeClass('hidden');
+        $('#contentFirmasConclucion').addClass('hidden');
+    });
+    $('#btnRegresarServicio2').on('click', function () {
+        $('#contentfirmaCliente').removeClass('hidden');
+        $('#btnRegresarServicio').removeClass('hidden');
+        $('#contentfirmaTecnico').addClass('hidden');
+        $('#btnRegresarServicio2').addClass('hidden');
     });
 });

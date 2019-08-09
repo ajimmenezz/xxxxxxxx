@@ -504,7 +504,7 @@
                             </a>
                         </div>
                         <div class="col-md-6">
-                            <a id="modalConcluir" class="btn btn-danger" data-toggle="modal">
+                            <a id="btnConcluir" class="btn btn-danger" data-toggle="modal">
                                 CONCLUIR
                             </a>
                         </div>
@@ -717,21 +717,58 @@
         <!--Empieza Panel -->
         <div class="panel-body row">
             <!--Empieza contenido de elementos-->
-            <div class="col-md-12 text-center">
+            <div id="contentfirmaCliente" class="col-md-12 text-center">
                 <form id="formAgregarCliente" data-parsley-validate="true" enctype="multipart/form-data">
                     <div class="col-md-12">
                         <div class="col-md-2"></div>
-                        <div class="col-md-8">
+                        <div class="col-md-7">
                             <div class="form-group">
                                 <label>Nombre y Firma de Cliente</label>
                                 <input id="inputCliente" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/>
                             </div>
                         </div>
                     </div>
+                    <!--Empezando mensaje--> 
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="errorMessageFirmaCliente"></div>
+                        </div>
+                    </div>
+                    <!--Finalizando mensaje-->
                     <div class="col-md-12">
                         <div class="col-md-2"></div>
                         <div class="col-md-8">
-                            <div style="width: 600px; height: 300px;" id="firmaGerente"></div>
+                            <div class="form-group">
+                                <div id="firmaCliente" style="width: 600px; height: 300px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12"><br><br></div>
+                </form>
+            </div>
+            <div id="contentfirmaTecnico" class="col-md-12 text-center hidden">
+                <form id="formAgregarTecnico" data-parsley-validate="true" enctype="multipart/form-data">
+                    <div class="col-md-12">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label>Firma de Técnico</label>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Empezando mensaje--> 
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="errorMessageFirmaTecnico"></div>
+                        </div>
+                    </div>
+                    <!--Finalizando mensaje-->
+                    <div class="col-md-12">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <div id="firmaTecnico" style="width: 600px; height: 300px;"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-12"><br><br></div>
@@ -739,8 +776,10 @@
             </div>
             <div class="col-md-12 text-center">
                 <a id="btnResumen" class="btn btn-sm btn-info"><i class="fa fa-info-circle"></i> Resumen</a>
-                <a id="btnConcluir" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> Continuar</a>
-                <a class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cancelar</a>
+                <a id="btnContinuar" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> Continuar</a>
+                <a id="btnTerminar" class="btn btn-sm btn-success hidden"><i class="fa fa-sign-in"></i> Terminar</a>
+                <a id="btnRegresarServicio" class="btn btn-sm btn-danger"><i class="fa fa-rotate-180 fa-sign-in"></i> Regresar</a>
+                <a id="btnRegresarServicio2" class="btn btn-sm btn-danger hidden"><i class="fa fa-rotate-180 fa-sign-in"></i> Regresar</a>
             </div>
             <!--Finaliza contenido de elementos-->
         </div>
