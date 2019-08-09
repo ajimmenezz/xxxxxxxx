@@ -798,47 +798,62 @@ Servicio.prototype.camposSD = function () {
                             </div>\n\
                         </div>\n\
                         <div class="row">\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group">\n\
-                                    <label> Resolución por: <strong>' + datosSD.nombreUsuarioResolucionSD + '</strong></label>\n\
-                                </div>\n\
-                            </div>\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group">\n\
-                                    <label> Fecha de Resolución: <strong>' + datosSD.fechaResolucionSD + '</strong></label>\n\
-                                </div>\n\
-                            </div>\n\
-                        </div>\n\
-                        <div class="row">\n\
                             <div class="col-md-offset-9 col-md-3">\n\
                                 <div class="form-group text-right">\n\
-                                    <h5><a><strong id="detallesResolucion"><i class="fa fa-minus-square"></i> Descripción Resolución</strong></a></h5>\n\
+                                    <h5><a><strong id="detallesResolucion"><i class="fa fa-minus-square"></i> Notas</strong></a></h5>\n\
                                 </div>\n\
                             </div>\n\
                         </div>\n\
                         <div id="masDetallesResolucion" class="">\n\
                             <div class="row">\n\
-                                <div class="col-sm-12 col-md-12">\n\
-                                    <div class="form-group">\n\
-                                        <label> Descripción de Resolución:</label>\n\
-                                        <br>\n\
-                                        <strong>' + datosSD.resolucionSD + '</strong>\n\
-                                    </div>\n\
-                                </div>\n\
-                            </div>\n\
-                        </div>';
+                                <div class="col-md-12">';
+
+        $.each(datosSD.notasSD, function (key, value) {
+            var collapseTitulo = '';
+            var collapseTexto = '';
+            if (key === 0) {
+                collapseTitulo = '';
+                collapseTexto = 'collapse in';
+            } else {
+                collapseTitulo = 'collapse';
+                collapseTexto = 'collapse';
+            }
+
+            html += '               <div class="panel panel-inverse overflow-hidden">\n\
+                                        <div class="panel-heading">\n\
+                                            <h3 class="panel-title">\n\
+                                                <a class="accordion-toggle accordion-toggle-styled ' + collapseTitulo + '" data-toggle="collapse" data-parent="#accordion" href="#collapse' + key + '">\n\
+                                                    <i class="fa fa-plus-circle pull-right"></i>\n\
+                                                    ' + value.nombreUsuario + '  ' + value.fecha + '\n\
+                                                </a>\n\
+                                            </h3>\n\
+                                        </div>\n\
+                                        <div id="collapse' + key + '" class="panel-collapse ' + collapseTexto + ' ">\n\
+                                            <div class="panel-body">\n\
+                                                ' + value.texto + '\n\
+                                            </div>\n\
+                                        </div>\n\
+                                    </div>';
+        });
+        html += '               </div>\n\
+                            </div>';
     }
+
+
+
     return html;
+
+
 };
 
 Servicio.prototype.detallesDescripcionResolucion = function () {
     $('#detallesResolucion').on('click', function (e) {
         if ($('#masDetallesResolucion').hasClass('hidden') === false) {
             $('#masDetallesResolucion').addClass('hidden');
-            $('#detallesResolucion').empty().html('<i class="fa fa-plus-square"></i> Descripción Resolución</li>');
+            $('#detallesResolucion').empty().html('<i class="fa fa-plus-square"></i> Notas</li>');
         } else {
             $('#masDetallesResolucion').removeClass('hidden');
-            $('#detallesResolucion').empty().html('<i class="fa fa-minus-square"></i> Descripción Resolución</li>');
+            $('#detallesResolucion').empty().html('<i class="fa fa-minus-square"></i> Notas</li>');
         }
     });
 };

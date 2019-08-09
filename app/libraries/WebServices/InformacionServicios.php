@@ -907,6 +907,7 @@ class InformacionServicios extends General {
         if (!empty($dataFolio[0]['Folio'])) {
             $datosSD = $this->ServiceDesk->getDetallesFolio($key, $dataFolio[0]['Folio']);
             $datosResolucionSD = json_decode($this->ServiceDesk->getResolucionFolio($key, $dataFolio[0]['Folio']));
+            $datosNotasSD = $this->ServiceDesk->getNotas($key, $dataFolio[0]['Folio']);
 
             if (!empty($datosResolucionSD)) {
                 if ($datosResolucionSD->operation->result->status === 'Success') {
@@ -920,6 +921,7 @@ class InformacionServicios extends General {
                         $data['estatusSD'] = $datosSD->STATUS;
                         $data['asuntoSD'] = $datosSD->SUBJECT;
                         $data['descripcionSD'] = $datosSD->DESCRIPTION;
+                        
                         if (isset($datosResolucionSD->operation->Details)) {
                             $nombreUsuarioSD = $this->ServiceDesk->nombreUsuarioServiceDesk($key, $datosResolucionSD->operation->Details->RESOLVER);
                             $data['nombreUsuarioResolucionSD'] = $nombreUsuarioSD;
@@ -929,6 +931,21 @@ class InformacionServicios extends General {
                             $data['nombreUsuarioResolucionSD'] = 'Sin Resolución';
                             $data['fechaResolucionSD'] = 'Sin Resolución';
                             $data['resolucionSD'] = 'Sin Resolución';
+                        }
+                        
+                        if (isset($datosNotasSD->operation->Details)) {
+                            $data['notasSD'] = array();
+                            $detallesNotas = $datosNotasSD->operation->Details;
+                            foreach ($detallesNotas as $key => $value) {
+                                $data['notasSD'][$key]['nombreUsuario'] = $value->USERNAME;
+                                $data['notasSD'][$key]['fecha'] = date('Y-m-d H:i:s', $value->NOTESDATE / 1000);
+                                $data['notasSD'][$key]['texto'] = $value->NOTESTEXT;
+                            }
+                        } else {
+                            $data['nombreUsuarioResolucionSD'] = 'Sin Resolución';
+                            $data['fechaResolucionSD'] = 'Sin Resolución';
+                            $data['resolucionSD'] = 'Sin Resolución';
+                            $data['notasSD'] = 'Sin notas';
                         }
                     } else {
                         $data = NULL;
