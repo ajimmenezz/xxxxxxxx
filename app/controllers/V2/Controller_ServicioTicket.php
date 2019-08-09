@@ -22,9 +22,9 @@ class Controller_ServicioTicket extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->factory = new FactoryServiciosTicket();
-        $this->serviceDesk= new ServiceDesk;
-        $this->material= new Material;
-        $this->nodo= new Nodos;
+        $this->serviceDesk= new ServiceDesk();
+        $this->material= new Material();
+        $this->nodo= new Nodos();
     }
 
     public function atenderServicio() {
@@ -77,14 +77,13 @@ class Controller_ServicioTicket extends CI_Controller {
     
     public function registrarNodo() {
         $datos = $this->input->post();
-        var_dump($datos);
         $nodo = $this->factory->setNodos($datos);
         $this->registrarMaterial($datos);
     }
 
     public function mostrarMaterial() {
-        $idTecnico=1;
-        $this->material = new Material($idTecnico);
+//        $idTecnico=1;
+//        $this->material = new Material($idTecnico);
     }
     public function mostrarNodos()
     {
@@ -92,7 +91,6 @@ class Controller_ServicioTicket extends CI_Controller {
     }
     
     public function registrarMaterial($datos) {
-        var_dump($datos);
         $this->material->setMaterial($datos);
     }
     public function registrarMovimiento()

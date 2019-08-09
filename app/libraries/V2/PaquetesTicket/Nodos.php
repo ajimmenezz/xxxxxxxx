@@ -6,10 +6,10 @@ class Nodos
 {
     private $DBServiciosGeneralRedes;
     private $insert;
-    public function __construct(array $data) {
-        $this->DBServiciosGeneralRedes= new Modelo();
-        registrarNodo();
-        
+    public function __construct() {
+//        $this->DBServiciosGeneralRedes= new Modelo();
+//        registrarNodo();
+//        
         
     }
     public function eliminarNodo($idNodo) {

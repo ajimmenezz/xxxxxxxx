@@ -7,11 +7,11 @@ class Material{
     
     private $DBServicioGeneralRedes;
     private $id;
-    public function __construct($idTecnico) {
-        var_dump($idTecnico);
-        $this->DBServicioGeneralRedes=new Modelo();
-        $this->id=$idTecnico;
-        $this->getMaterialTecnico();
+    public function __construct() {
+//        var_dump($idTecnico);
+//        $this->DBServicioGeneralRedes=new Modelo();
+//        $this->id=$idTecnico;
+//        $this->getMaterialTecnico();
     }
     
     public function getMaterialTecnico() {
