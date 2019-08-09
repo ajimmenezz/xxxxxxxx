@@ -40,10 +40,11 @@ $(function () {
             tamañoDatosFila += 1;
         });
         datoServicioTabla.id = datosFila[0];
+        datoServicioTabla.id = datosFila[0];
         if (datosFila[tamañoDatosFila - 1] === "ABIERTO") {
             modal.mostrarModalBasico('Iniciar Servicio', '<h3>¿Quieres atender el servicio?</h3>');
             $('#btnAceptar').on('click', function () {
-                peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
+                peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender/'+datosFila[4], datoServicioTabla, function (respuesta) {
                     modal.cerrarModal();
                     cambioVista(datosFila[1]);
                     cargarElementosServicio(respuesta);

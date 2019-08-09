@@ -9,10 +9,12 @@ interface Servicio
    
     public function setDatos();
     
-    public function setEstatusServicio(string $estatus);
+    public function setEstatus(string $estatus);
     
     public function getDatos();
    
     public function setFolioServiceDesk(string $folio);
+    
+    public function getCliente();
 
 }
