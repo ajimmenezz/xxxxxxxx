@@ -19,6 +19,7 @@ $(function () {
     let selectSwitch = null;
     let selectMaterial = null;
     let evidenciaMaterial = null;
+    let collapseNotas = null;
 
     let datoServicioTabla = {
         id: null
@@ -43,10 +44,11 @@ $(function () {
         if (datosFila[tamañoDatosFila - 1] === "ABIERTO") {
             modal.mostrarModal('Iniciar Servicio', '<h3>¿Quieres atender el servicio?</h3>');
             $('#btnAceptar').on('click', function () {
-                peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
+                peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender/' + datosFila[4], datoServicioTabla, function (respuesta) {
                     modal.cerrarModal();
-                    cambioVista(datosFila[1]);
+                    cambioVista(respuesta);
                     cargarElementosServicio(respuesta);
+                    arreglarNotas(respuesta.notasFolio)
                 });
             });
         } else {
@@ -57,13 +59,12 @@ $(function () {
         }
     });
 
-    function cambioVista(folio) {
+    function cambioVista(infoServicio) {
         $('#contentServiciosGeneralesRedes').addClass('hidden');
         $('#contentServiciosRedes').removeClass('hidden');
-        if (folio != 0 && folio != null) {
-            $('#addFolio').val(folio).prop("disabled", true);
-            elementosAgregarFolio();
-            elementosInfoFolio();
+        if (infoServicio.servicio.Folio != 0 && infoServicio.servicio.Folio != null) {
+            mostrarElementosAgregarFolio();
+            mostrarInformacionFolio(infoServicio);
         }
         iniciarObjetos();
         eventosTablas();
@@ -73,16 +74,42 @@ $(function () {
         }, 600);
     }
 
-    function cargarElementosServicio(datosServicio) {
-        selectSucursal.cargaDatosEnSelect(datosServicio.sucursales);
-        $("#fechaServicio").text(datosServicio.FechaCreacion);
-        $("#ticket").text(datosServicio.Ticket);
-        $("#atendido").text(datosServicio.Atiende);
-        $("#solicitud").text(datosServicio.idSolicitud);
-        $("#textareaDescripcion").text(datosServicio.Descripcion);
-        $("#solicitaS").text(datosServicio.Solicita);
-        $("#fechaSolicitud").text(datosServicio.FechaSolicitud);
-        $("#textareaDescripcionS").text(datosServicio.descripcionSolicitud);
+    function cargarElementosServicio(datos) {
+        let servicio = datos.servicio;
+        selectSucursal.cargaDatosEnSelect(datos.sucursales);
+        $("#fechaServicio").text(servicio.FechaCreacion);
+        $("#ticketServicio").text(servicio.Ticket);
+        $("#atendidoServicio").text(servicio.Atiende);
+        $("#solicitudServicio").text(servicio.idSolicitud);
+        $("#textareaDescripcion").text(servicio.Descripcion);
+        $("#solicitaSolicitud").text(servicio.Solicita);
+        $("#fechaSolicitud").text(servicio.FechaSolicitud);
+        $("#textareaDescripcionSolicitud").text(servicio.descripcionSolicitud);
+    }
+
+    function mostrarElementosAgregarFolio() {
+        $('#infoServicio').removeClass('col-md-12');
+        $('#infoServicio').addClass('col-md-6');
+        $('#btnAgregarFolio').addClass('hidden');
+        $('#agregarFolio').removeClass('hidden');
+    }
+
+    function mostrarInformacionFolio(infoServicio) {
+        let infoFolio = infoServicio.folio;
+        let notasFolio = infoServicio.notasFolio
+        $('#infoFolio').removeClass('hidden');
+        $('#editarFolio').removeClass('hidden');
+        $('#eliminarFolio').removeClass('hidden');
+        $('#guardarFolio').addClass('hidden');
+        $('#cancelarFolio').addClass('hidden');
+        $('#addFolio').val(infoServicio.servicio.Folio).prop("disabled", true);
+        $("#creadoPorFolio").text(infoFolio.CREATEDBY);
+        //$("#fechaCreacionFolio").text(infoFolio);
+        $("#solicitaFolio").text(infoFolio.REQUESTER);
+        $("#prioridadFolio").text(infoFolio.PRIORITY);
+        $("#asignadoFolio").text(infoFolio.TECHNICIAN);
+        $("#estatusFolio").text(infoFolio.STATUS);
+        $("#asuntoFolio").text(infoFolio.SHORTDESCRIPTION);
     }
 
     function iniciarObjetos() {
@@ -94,19 +121,30 @@ $(function () {
         selectSwitch = new SelectBasico('selectSwith');
         selectMaterial = new SelectBasico('selectMaterial');
         evidenciaMaterial = new FileUpload_Basico('agregarEvidenciaNodo');
+        collapseNotas = new Collapse('collapseNotas');
         selectSucursal.iniciarSelect();
         selectArea.iniciarSelect();
         selectSwitch.iniciarSelect();
         selectMaterial.iniciarSelect();
     }
-    
+
+    function arreglarNotas(notas) {
+        let datos = [];
+        let contador = 0;
+        $.each(notas, function (key, value) {
+            datos[contador] = {titulo: value.USERNAME, contenido: value.NOTESTEXT};
+            contador++;
+        });
+        collapseNotas.multipleCollapse(datos);
+    }
+
     function eventosTablas() {
         tablaNodos.evento(function () {
             let datos = tablaNodos.datosFila(this);
             let contentHtml = $('#modalMaterialNodo').html();
             modal.mostrarModal('Editar', contentHtml);
         });
-        
+
         tablaAgregarMateriales.evento(function () {
             let _this = this;
             modal.mostrarModal('Eliminar Material', '<h4>Se Eliminará este material de la lista<br>\n\
@@ -117,7 +155,7 @@ $(function () {
             });
         });
     }
-    
+
     /*********************************************************************************************************************************************/
 
     /**Empiezan eventos de botones del encabezado**/
@@ -129,15 +167,9 @@ $(function () {
         console.log('btnEditarServicio')
     });
     $('#btnAgregarFolio').on('click', function () {
-        elementosAgregarFolio();
+        mostrarElementosAgregarFolio();
     });
 
-    function elementosAgregarFolio() {
-        $('#infoServicio').removeClass('col-md-12');
-        $('#infoServicio').addClass('col-md-6');
-        $('#btnAgregarFolio').addClass('hidden');
-        $('#agregarFolio').removeClass('hidden');
-    }
     /**Finalizan eventos de botones del encabezado**/
 
     /**Empiezan eventos de botones para folio**/
@@ -146,18 +178,12 @@ $(function () {
             let dato = {folio: $('#addFolio').val(), idServicio: datoServicioTabla};
             peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/GuardarFolio', dato, function (respuesta) {
                 //modal.cerrarModal();
-                //elementosInfoFolio();
+                //mostrarInformacionFolio();
                 console.log(respuesta);
             });
         }
     });
-    function elementosInfoFolio() {
-        $('#infoFolio').removeClass('hidden');
-        $('#editarFolio').removeClass('hidden');
-        $('#eliminarFolio').removeClass('hidden');
-        $('#guardarFolio').addClass('hidden');
-        $('#cancelarFolio').addClass('hidden');
-    }
+
     $('#editarFolio').on('click', function () {
         console.log('editarFolio')
     });

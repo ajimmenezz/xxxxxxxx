@@ -124,6 +124,7 @@ $route['Generales/ServiceDesk/(:any)'] = 'Generales/Controller_ServiceDesk/manej
 $route['Generales/Dispositivos/(:any)'] = 'Generales/Controller_Dispositivos/manejarEvento/$1';
 $route['Generales/Dashboard/(:any)'] = 'Generales/Controller_Dashboard/manejarEvento/$1';
 $route['Generales/Dashboard_Gapsi/(:any)'] = 'Gapsi/Controller_GestorProyectos/manejarEvento/$1';
+$route['Generales/Tester/(:any)'] = 'Generales/Controller_Tester/manejarEvento/$1';
 
 /* Routers para el manejo de páginas de PhantomJS */
 $route['Phantom/Servicio/(:any)'] = 'Phantom/Controller_Phantom/servicioPhantom/$1';
@@ -192,7 +193,7 @@ $route['Salas4D/EventoCatalogos/(:any)'] = 'Salas4D/Controller_Catalogos/manejar
 /* Routers para el manejo de Redes */
 $route['Redes/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Redes/Seguimiento/(:any)'] = 'Redes/Controller_Seguimiento/manejarEvento/$1';
-$route['Redes/SeguimientoCE/SeguimientoGeneral/Atender'] = 'V2/Controller_ServicioTicket/atenderServicio';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/Atender/(:any)'] = 'V2/Controller_ServicioTicket/atenderServicio/$1';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/ActualizarFolio'] = 'V2/Controller_ServicioTicket/actualizarFolio';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/GuardarFolio'] = 'V2/Controller_ServicioTicket/guardarFolio';
 

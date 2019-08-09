@@ -624,6 +624,7 @@ Servicio.prototype.eventosFolio = function () {
         $('#btnAceptarEliminarFolio').on('click', function () {
             _this.cerrarModal();
             _this.enviarEvento('/Generales/Solicitud/editarFolio', dataFolio, seccion, function (respuesta) {
+                console.log(respuesta);
                 if (respuesta === null) {
                     $('#folioSeguimiento').empty().html('');
                     $('#tituloFolio').empty().append('Sin Folio');
@@ -706,14 +707,14 @@ Servicio.prototype.eventosFolio = function () {
                     var data = {servicio: servicio, personalSD: usuarioSD, solicitud: solicitud};
                     _this.enviarEvento('/Generales/Solicitud/ReasignarFolioSD', data, '#modal-dialogo', function (respuesta) {
                         _this.cerrarModal();
-                        if (respuesta !== null) {
+                        if (respuesta.code === 200) {
                             _this.mostrarMensaje('.errorFolioSolicitudSinClasificar', true, 'Datos actualizados correctamente.', 3000);
-                            var datosSDHTML = _this.camposSD(respuesta);
+                            var datosSDHTML = _this.camposSD(respuesta.message);
                             $('#seccionSD').empty().html(datosSDHTML);
                             _this.detallesDescripcionResolucion();
                         } else {
-                            _this.mostrarMensaje('.errorFolioSolicitudSinClasificar', true, 'Datos actualizados correctamente.', 3000);
-                            var mensajeSinDatos = _this.mensajeAlerta('No hay información para mostrar con este folio en Service Desk.')
+                            _this.mostrarMensaje('.errorFolioSolicitudSinClasificar', false, respuesta.message, 3000);
+                            var mensajeSinDatos = _this.mensajeAlerta(respuesta.message)
                             $('#seccionSD').empty().html(mensajeSinDatos);
                         }
                     });
@@ -1897,10 +1898,10 @@ Servicio.prototype.subirInformacionSD = function (servicio) {
     $('#btnSubirInformacionSD').on('click', function () {
         var data = {servicio: servicio};
         _this.enviarEvento('/Generales/ServiceDesk/GuardarInformacionSD', data, seccionCarga, function (respuesta) {
-            if (respuesta === true) {
+            if (respuesta.code === 200) {
                 _this.mensajeModal('Se subio la información', 'Correcto', true);
             } else {
-                _this.mensajeModal('No existe Folio para este servicio', 'Advertencia', true);
+                _this.mensajeModal(respuesta.message, 'Advertencia', true);
             }
         });
     });

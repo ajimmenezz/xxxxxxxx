@@ -22,7 +22,7 @@ class FactoryServiciosTicket
         
         switch ($tipo)
         {
-            case 'GeneralRedes':
+            case 'Cableado':
                 $this->servicio= new GeneralRedes($idServicio);//4
                 break;
         }

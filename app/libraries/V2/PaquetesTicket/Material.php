@@ -1,21 +1,23 @@
 <?php
 
 namespace Librerias\V2\PaquetesTicket;
+
 use Modelos\Modelo_ServicioGeneralRedes as Modelo;
 
-class Material{
-    
+class Material {
+
     private $DBServicioGeneralRedes;
     private $id;
+
     public function __construct() {
 //        var_dump($idTecnico);
 //        $this->DBServicioGeneralRedes=new Modelo();
 //        $this->id=$idTecnico;
 //        $this->getMaterialTecnico();
     }
-    
+
     public function getMaterialTecnico() {
-        $query="Select * from tableselect 
+        $query = "Select * from tableselect 
                     tInv.Cantidad as Cantidad,
                     tInv.Serie as Serie,
                     almVirt.Nombre as Almacen,
@@ -46,30 +48,30 @@ class Material{
                 AND 
                         tInv.Cantidad>0
                 AND     
-                        usuario.id=".$this->id;
+                        usuario.id=" . $this->id;
         var_dump($query);
-        $consulta=$this->DBServicioGeneralRedes->consulta($query);
+        $consulta = $this->DBServicioGeneralRedes->consulta($query);
         var_dump($consulta);
-        
     }
+
     public function setMaterial($datos) {
-        $consulta= array();
-        foreach ($array as $query =>$datos) {
-            $query="INSERT INTO
+        $consulta = array();
+        foreach ($array as $query => $datos) {
+            $query = "INSERT INTO
                             t_redes_material
                                         (idNodo,idMaterialTecnico,Cantidad)
                             VALUES
-                                        (".$datos['nodo']['idNodo'].",".$datos['idMaterial'].",".$datos['Material']['Cantidad'].")";
+                                        (" . $datos['nodo']['idNodo'] . "," . $datos['idMaterial'] . "," . $datos['Material']['Cantidad'] . ")";
         }
         try {
-            $consulta=$this->DBServicioGeneralRedes->insertarMaterial($query);
-            
+            $consulta = $this->DBServicioGeneralRedes->insertarMaterial($query);
         } catch (Exception $ex) {
             $ex->getMessage($ex);
         }
     }
+
     public function setMovimiento($datos) {
         
     }
-    
+
 }

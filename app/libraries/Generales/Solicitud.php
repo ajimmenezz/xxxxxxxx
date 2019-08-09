@@ -516,7 +516,7 @@ class Solicitud extends General {
                     }
 
                     $data['datosSD'] = $this->ServiceDesk->getDetallesFolio($apiKey, $datosSolicitud['Folio']);
-                    $data['datosResolucionSD'] = json_decode($this->ServiceDesk->getResolucionFolio($apiKey, $datosSolicitud['Folio']));
+                    $data['datosResolucionSD'] = $this->ServiceDesk->getResolucionFolio($apiKey, $datosSolicitud['Folio']);
 
                     if (isset($data['datosSD']->WORKORDERID)) {
                         $data['sucursales'] = $this->DBS->consulta("select Id, IdCliente, Nombre, NombreCinemex from cat_v3_sucursales where IdCliente = 1 and Flag = 1 order by Nombre");
@@ -983,7 +983,7 @@ class Solicitud extends General {
             } else {
                 $textoNotificacionFechaLimite = ' La fecha límite para atender es <b>' . $datos['fechaLimiteAtencion'] . '</b>.';
             }
-            
+
             $this->enviarNotificacion(array(
                 'Departamento' => $datos['departamento'],
                 'remitente' => $usuario['Id'],
@@ -1227,11 +1227,11 @@ class Solicitud extends General {
      */
 
     private function rechazarFolioSistemaSD(array $datos, array $usuario, array $datosSolicitud, string $fecha) {
-        $resolucionVieja = json_decode($this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $datosSolicitud['Folio']));
+        $resolucionVieja = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $datosSolicitud['Folio']);
         $datos['descripcion'] = $datos['descripcion'] . '<br><br>' . $resolucionVieja->operation->Details->RESOLUTION;
-        $resultadoResolucion = json_decode($this->ServiceDesk->resolucionFolioSD($datosSolicitud['Folio'], $datos['tecnicoSD'], $usuario['SDKey'], $datos['descripcion']));
+        $resultadoResolucion = $this->ServiceDesk->resolucionFolioSD($datosSolicitud['Folio'], $datos['tecnicoSD'], $usuario['SDKey'], $datos['descripcion']);
         if ($resultadoResolucion->operation->result->status === 'Success') {
-            $reasignacion = json_decode($this->ServiceDesk->reasignarFolioSD($datosSolicitud['Folio'], $datos['tecnicoSD'], $usuario['SDKey']));
+            $reasignacion = $this->ServiceDesk->reasignarFolioSD($datosSolicitud['Folio'], $datos['tecnicoSD'], $usuario['SDKey']);
             if ($reasignacion->operation->result->status === 'Success') {
                 $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array(
                     'IdEstatus' => '10'
@@ -1382,7 +1382,7 @@ class Solicitud extends General {
         $folios = array();
         $datosFolios = array();
         $solicitudesGeneradas = array();
-        $foliosSD = json_decode($this->ServiceDesk->getFoliosTecnico($SDKey));
+        $foliosSD = $this->ServiceDesk->getFoliosTecnico($SDKey);
 
         if (isset($foliosSD->operation->details)) {
             foreach ($foliosSD->operation->details as $value) {
@@ -1447,7 +1447,7 @@ class Solicitud extends General {
      */
 
     private function getTecnicosSistemaSD(array $usuario) {
-        return json_decode($this->ServiceDesk->getTecnicosSD($usuario['SDKey']));
+        return $this->ServiceDesk->getTecnicosSD($usuario['SDKey']);
     }
 
     /*
@@ -1456,7 +1456,7 @@ class Solicitud extends General {
      */
 
     public function getFoliosServiceDesk() {
-        return $this->ServiceDesk->getFolios('77FF5854-D695-4E33-81C9-78064B7D8A62');
+        return $this->ServiceDesk->getFolios('A8D6001B-EB63-4996-A158-1B968E19AB84');
     }
 
     public function getFormularioSolicitud(array $datos = []) {
@@ -1519,11 +1519,13 @@ class Solicitud extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
         $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array('Folio' => $datos['folio']), array('Id' => $datos['solicitud']));
-
         if (!empty($consulta)) {
-            $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $datos['folio']);
-            $datosSD = $this->InformacionServicios->datosSD($datos['solicitud']);
-            return $datosSD;
+            if ($datos['folio'] !== '') {
+                $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $datos['folio']);
+                $datosSD = $this->InformacionServicios->datosSD($datos['solicitud']);
+                return $datosSD;
+            }
+            return NULL;
         } else {
             return NULL;
         }
@@ -1590,7 +1592,9 @@ class Solicitud extends General {
         if ($folio[0]['Folio'] != '') {
             $this->ServiceDesk->reasignarFolioSD($folio[0]['Folio'], $datos['personalSD'], $key);
             $datosSD = $this->InformacionServicios->datosSD($datos['solicitud']);
-            return $datosSD;
+            return ['code' => 200, 'message' => $datosSD];
+        } else {
+            throw new \Exception('No existe información para ese folio.');
         }
     }
 

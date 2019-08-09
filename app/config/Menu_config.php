@@ -49,6 +49,17 @@ $config['Modulos'] = array(
 
 //Menu por secciones
 $config['Generales'] = array(
+    'Tester' => array(
+        'liga' => 'Tester',
+        'icono' => 'fa fa-line-chart',
+        'Url' => '/Generales/Tester',
+        'css' => array(),
+        'pluginsCss' => array(),
+        'js' => array('Base/Base', 'Base/Socket', 'Generales/tester'),
+        'pluginsJs' => array(),
+//        'Permiso' => 'VGTESTER'
+        'Permiso' => 'VGDASH'
+    ),
     'Dashboard-Siccob' => array(
         'liga' => 'Dashboard General',
         'icono' => 'fa fa-line-chart',
@@ -1975,6 +1986,7 @@ $config['Redes'] = array(
             'Base/Base', 
             'Componentes/HerramientasWeb/Utileria',
             'Componentes/HerramientasWeb/Modal',
+            'Componentes/HerramientasWeb/Collapse',
             'Componentes/Selects/Select', 
             'Componentes/Selects/SelectBasico',
             'Componentes/Tablas/Tabla', 
