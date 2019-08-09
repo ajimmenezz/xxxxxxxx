@@ -515,6 +515,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
     }
 
     _this.eventosFolio(datosDelServicio.IdSolicitud, '#seccion-servicio-sin-clasificar', servicio);
+    _this.botonEliminarAvanceProblema();
 };
 
 Servicio.prototype.GuardarNotas = function () {
@@ -1969,6 +1970,13 @@ Servicio.prototype.botonAgregarVuelta = function () {
         });
     });
 };
+
+Servicio.prototype.botonEliminarAvanceProblema = function () {
+    $('#btnEliminarAvanceSeguimientoSinEspecificar').off('click');
+    $('#btnEliminarAvanceSeguimientoSinEspecificar').on('click', function () {
+        console.log('pumas');
+    });
+}
 
 Servicio.prototype.validarCamposFirmaAgregarVuelta = function () {
     var _this = this;

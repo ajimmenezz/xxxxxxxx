@@ -220,7 +220,7 @@
                             width="200"
                             src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif" />
                     </div>
-                    
+
                     <!-- Empezando informacion de Service Desk -->
                     <div id="seccionSD" class="alert alert-warning hidden"></div>  
                     <!-- Finalizando informacion de Service Desk -->
@@ -309,12 +309,13 @@
         <!--Finalizando la seccion de servicio sin clasificar-->
 
         <!--Empezando la seccion Notas-->
-        <div class="tab-pane fade " id="Historial">            
+        <div class="tab-pane fade " id="Historial">
             <div class="panel-body">
                 <!-- begin timeline -->
                 <ul id="listaHistorial" class="timeline">
                     <?php
                     foreach ($avanceServicio as $key => $item) {
+                        var_dump($item);
                         $arrayArchivos = explode(",", $item['Archivos']);
                         $arrayFecha = explode(' ', $item['Fecha']);
                         ?>
@@ -339,14 +340,22 @@
                             <div class="timeline-body">
                                 <div class="timeline-header">
                                     <div class="row">
-                                        <div class="col-md-9 col-xs-9">
+                                        <div class="col-md-6 col-xs-6">
                                             <?php (empty($item['Foto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $item['Foto']; ?>
                                             <span class="userimage"><img src="<?php echo $foto ?>" alt="" /></span>
                                             <span class="username"><?php echo $item['Usuario'] ?></span>
                                         </div>
-                                        <div class="col-md-3 col-xs-3">
+                                        <div class="col-md-3 col-xs-3 text-right">
                                             <?php (($item['IdTipo'] === '1')) ? $colorTituloAvance = 'color:#337ab7' : $colorTituloAvance = 'color:#ff5b57'; ?>
-                                            <span class="pull-right text-muted"><h4 style="<?php echo $colorTituloAvance ?>"><?php echo $item['TipoAvance'] ?></h4></span>
+                                            <span class="pull-right text-muted "><h4 style="<?php echo $colorTituloAvance ?>"><?php echo $item['TipoAvance'] ?></h4></span>
+                                        </div>
+                                        <div class="col-md-3 col-xs-3 text-right">
+                                            <label id="btnEditarAvanceSeguimientoSinEspecificar" data-id="<?php echo $item['Id'] ?>" class="btn btn-warning btn-xs">
+                                                <i class="fa fa-pencil"></i> Editar
+                                            </label>  
+                                            <label id="btnEliminarAvanceSeguimientoSinEspecificar" data-id="<?php echo $item['Id'] ?>" class="btn btn-danger btn-xs">
+                                                <i class="fa fa-trash-o"></i> Eliminar
+                                            </label>  
                                         </div>
                                     </div>
                                 </div>
