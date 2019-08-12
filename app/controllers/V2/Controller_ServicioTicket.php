@@ -102,26 +102,5 @@ class Controller_ServicioTicket extends CI_Controller {
             echo json_encode($this->datos);
         }
     }
-
-    private function getServicios() {
-        $datosServicio = $this->input->post();
-        $this->servicio = $this->factory->getServicio('GeneralRedes', $datosServicio['id']);
-        $this->servicio->setEstatusServicio('atencion');
-        $this->datos = $this->servicio->getdatos();
-        if (!empty($this->datos['folio'])) {
-            $this->getInformacionFolio($this->datos['folio']);
-        }
-    }
-
-    public function actualizarFolio() {
-        $this->getServicios();
-        $respuesta = $this->servicio->setFolioServiceDesk($this->input->post('folio'));
-        if (!empty($respuesta)) {
-            $this->getInformacionFolio($this->input->post('folio'));
-            return $this->datos;
-        } else {
-            return FALSE;
-        }
-    }
-
+  
 }
