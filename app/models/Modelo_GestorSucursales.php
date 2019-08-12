@@ -6,8 +6,8 @@ use Librerias\V2\PaquetesGenerales\Interfaces\Modelo_Base as Modelo;
 
 class Modelo_GestorSucursales extends Modelo {
 
-    public function __construct(string $db = 'pruebas') {
-        parent::__construct($db);
+    public function __construct() {
+        parent::__construct();
     }
 
     public function getSucursalesCliente(string $idCliente) {

@@ -7,7 +7,7 @@ use Librerias\V2\PaquetesGenerales\Interfaces\Modelo_Base as Base;
 Class Modelo_GestorServicio extends Base {
 
     public function __construct() {
-        parent::__construct('pruebas');
+        parent::__construct();
     }
 
     public function getServicios($idJefe) {

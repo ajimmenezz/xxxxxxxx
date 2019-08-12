@@ -2,7 +2,7 @@
 
 namespace Librerias\V2\PaquetesSucursales;
 
-use Librerias\V2\PaquetesSucursales\Sucursal as Sucursal;
+use Librerias\V2\PaquetesSucursales\interfaces\Sucursal as Sucursal;
 
 class SucursalGapsi implements Sucursal {
 
@@ -46,6 +46,14 @@ class SucursalGapsi implements Sucursal {
     public function setGasto(array $filtros) {
 
         $this->gasto = $this->DBSucursal->getGasto($this->id, $filtros);
+    }
+
+    public function getId() {
+        
+    }
+
+    public function getAreas() {
+        
     }
 
 }
