@@ -5,7 +5,7 @@ class Collapse {
         this.objetoCollapse = $(`#${this.collapse}`);
     }
     
-    iniciarCollapse(nombre, contenido, href = null){
+    iniciarCollapse(nombre, contenido, href = 'one'){
         this.objetoCollapse.append('<div class="panel panel-inverse overflow-hidden">\n\
                                         <div class="panel-heading">\n\
                                             <h3 class="panel-title">\n\

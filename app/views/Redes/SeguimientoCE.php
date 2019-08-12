@@ -104,9 +104,13 @@
                 <!--Empieza subtitulo y accion de botones-->
                 <div class="col-md-12">
                     <div class="panel-heading-btn">
-                        <label id="btnEditarServicio" class="btn btn-primary btn-sm">
-                            <i class="fa fa-pencil"></i> Editar Servicio
-                        </label>
+                        <?php
+                        if ($datos['infoServicios']['rol'] == "Jefe") {
+                            echo '<label id="btnEditarServicio" class="btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil"></i> Editar Servicio
+                                </label>';
+                        }
+                        ?>
                         <label id="btnAgregarFolio" class="btn btn-warning btn-sm">
                             <i class="fa fa-plus"></i> Agregar Folio
                         </label>
@@ -230,7 +234,7 @@
                                         <div class="col-md-12 row">
                                             <div class="tab-content" style="background: #F9EAC6">
                                                 <!--Empieza contenedor y scroll del acordean-->
-                                                <div class="height-sm" data-scrollbar="true">
+                                                <div class="height-sm" data-scrollbar="true" style="padding: 10px;">
                                                     <div id="accordion" class="panel-group">
                                                         <div id="collapseNotas"></div>
                                                     </div>
@@ -361,7 +365,7 @@
                                             <th class="all nodo">Platino</th>
                                             <th class="all switch">Platino</th>
                                             <th class="all numSwitch">5</th>
-                                            <th class="all" style="text-align: center"><a href="#" class="btn btn-sm btn-white evidenciaNodo" data-toggle="modal"><i class="fa fa-2x fa-file"></i></a></th>
+                                            <th class="all" style="text-align: center"><a id="btnAgregarNodo" href="#modalMaterialNodo" class="btn btn-sm btn-white" data-toggle="modal"><i class="fa fa-2x fa-pencil"></i></a></th>
                                             <th style="text-align: center">
                                                 <a id="editarNodo" href="#" class="btn btn-sm btn-white editarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Nodo" class="fa fa-2x fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
                                                 <a id="editarMaterial" href="#" class="btn btn-sm btn-white editarMaterial" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Material" class="fa fa-2x fa-file-photo-o text-warning"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -374,7 +378,7 @@
                                             <th class="all nodo">Platino2</th>
                                             <th class="all switch">Platino2</th>
                                             <th class="all numSwitch">5</th>
-                                            <th class="all" style="text-align: center"><a href="#" class="btn btn-sm btn-white evidenciaNodo" data-toggle="modal"><i class="fa fa-2x fa-file"></i></a></th>
+                                            <th class="all" style="text-align: center"><a id="btnAgregarNodo" href="#modalMaterialNodo" class="btn btn-sm btn-white" data-toggle="modal"><i class="fa fa-2x fa-pencil"></i></a></th>
                                             <th style="text-align: center">
                                                 <a id="editarNodo" href="#" class="btn btn-sm btn-white editarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Nodo" class="fa fa-2x fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
                                                 <a id="editarMaterial" href="#" class="btn btn-sm btn-white editarMaterial" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Material" class="fa fa-2x fa-file-photo-o text-warning"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -387,7 +391,7 @@
                                             <th class="all nodo">Platino3</th>
                                             <th class="all switch">Platino3</th>
                                             <th class="all numSwitch">5</th>
-                                            <th class="all" style="text-align: center"><a href="#" class="btn btn-sm btn-white evidenciaNodo" data-toggle="modal"><i class="fa fa-2x fa-file"></i></a></th>
+                                            <th class="all" style="text-align: center"><a id="btnAgregarNodo" href="#modalMaterialNodo" class="btn btn-sm btn-white" data-toggle="modal"><i class="fa fa-2x fa-pencil"></i></a></th>
                                             <th style="text-align: center">
                                                 <a id="editarNodo" href="#" class="btn btn-sm btn-white editarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Nodo" class="fa fa-2x fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
                                                 <a id="editarMaterial" href="#" class="btn btn-sm btn-white editarMaterial" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Material" class="fa fa-2x fa-file-photo-o text-warning"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -455,6 +459,26 @@
                 </div>
                 <!--Finaliza seccion de evidencias-->
 
+                <!--Empieza seccion de Firmas Existentes-->
+                <div id="firmasExistentes" class="text-center hidden">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div id="firmaExistenteCliente" class="image-inner">
+                                <a class="text-center" href="" data-lightbox="gallery-group-evidencia">
+                                    <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="">
+                                </a>                                                
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="firmaExistenteTecnico" class="image-inner">
+                                <a class="text-center" href="" data-lightbox="gallery-group-evidencia">
+                                    <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="">
+                                </a>                                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Finaliza seccion de Firmas Existentes-->
                 <!--Empieza seccion de botones-->
                 <div id="botones" class="text-center">
                     <div class="col-md-12">
@@ -502,13 +526,13 @@
             <!--Empieza cuerpo del modal-->
             <div class="modal-body">
                 <div class="col-md-12">
+                    <!--Empieza seccion agregar nodo-->
                     <form id="formDatosNodo" class="margin-bottom-0" data-parsley-validate="true">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Area</label>
                                 <select id="selectArea" class="form-control" style="width: 100%" data-parsley-required="true">
                                     <option value="">Seleccionar</option>
-                                    <option value="prueba">Prueba</option>
                                 </select>
                             </div>
                         </div>
@@ -523,7 +547,6 @@
                                 <label>Switch</label>
                                 <select id="selectSwith" class="form-control" style="width: 100%" data-parsley-required="true">
                                     <option value="">Seleccionar</option>
-                                    <option value="prueba">Prueba</option>
                                 </select>
                             </div>
                         </div>
@@ -534,6 +557,7 @@
                             </div>
                         </div>
                     </form>
+                    <!--Finaliza seccion agregar nodo-->
                 </div>
                 <div class="col-md-12">
                     <form id="formMaterial" data-parsley-validate="true" enctype="multipart/form-data">
@@ -595,8 +619,8 @@
                                 <input id="agregarEvidenciaNodo" name="agregarEvidenciaNodo[]" type="file" multiple data-parsley-required="true">
                             </div>
                         </div>
-                        <div class="col-md-12 hidden">
-                            <div id="imagenEvidencia" class="image-inner">
+                        <div class="col-md-12">
+                            <div id="imagenEvidencia" class="image-inner hidden">
                                 <a class="text-center" href="" data-lightbox="gallery-group-evidencia">
                                     <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="">
                                 </a>                                                
@@ -691,7 +715,7 @@
             <div class="col-md-12 text-center">
                 <a id="btnResumen" class="btn btn-sm btn-info"><i class="fa fa-info-circle"></i> Resumen</a>
                 <a id="btnContinuar" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> Continuar</a>
-                <a id="btnTerminar" class="btn btn-sm btn-success hidden"><i class="fa fa-sign-in"></i> COncluir</a>
+                <a id="btnTerminar" class="btn btn-sm btn-success hidden"><i class="fa fa-sign-in"></i> Concluir</a>
                 <a id="btnRegresarServicio" class="btn btn-sm btn-danger"><i class="fa fa-rotate-180 fa-sign-in"></i> Regresar</a>
                 <a id="btnRegresarServicio2" class="btn btn-sm btn-danger hidden"><i class="fa fa-rotate-180 fa-sign-in"></i> Regresar</a>
             </div>
