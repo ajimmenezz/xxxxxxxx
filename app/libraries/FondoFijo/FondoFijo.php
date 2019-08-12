@@ -277,6 +277,12 @@ class FondoFijo extends General
         $resultado = $this->DB->getSaldosCuentasXUsuario($id);
         return $resultado;
     }
+    public function getSaldosXTecnico()
+    {
+        $idSupervisor= $_SESSION['Id'];
+        $resultado= $this->DB->getSaldosXTecnico($idSupervisor);
+        return $resultado;
+    }
 
     public function detalleCuenta(array $datos)
     {

@@ -192,7 +192,8 @@ $config['Secciones'] = array(
         'Catalogos' => 'Catalogos',  
         'Depositar' => 'Depositar',  
         'MiFondo' => 'MiFondo',   
-        'Autorizar' => 'Autorizar'     
+        'Autorizar' => 'Autorizar',
+        'SaldosTecnico' => 'SaldosTecnico'     
     ),
     'Instalaciones' => array(
         'Seguimiento' => 'Seguimiento'  
