@@ -3,7 +3,6 @@
 namespace Librerias\V2\PaquetesTicket;
 
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
-use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
 use Modelos\Modelo_ServicioGeneralRedes as Modelo;
 
 class ServicioGeneralRedes implements Servicio {
@@ -64,6 +63,7 @@ class ServicioGeneralRedes implements Servicio {
             "idSolicitud" => $this->idSolicitud,
             "Descripcion" => $this->descripcion,
             "Solicita" => $this->solicita,
+            "Sucursal" => $this->idSucursal,
             "FechaSolicitud" => $this->fechaSolicitud,
             "descripcionSolicitud" => $this->descripcionSolicitud
         );

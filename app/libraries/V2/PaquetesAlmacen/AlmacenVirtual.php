@@ -16,6 +16,16 @@ class AlmacenVirtual {
     }
     
     public function getAlmacen() {
+        $datos = array();
+        $consulta = $this->DBAlmacenVirtual->getMaterial($this->idUsuario);
         
+        foreach ($consulta as $value) {
+            array_push($datos, array(
+                'id' => $value['Id'], 
+                'text' => $value['Producto'],
+                'cantidad' => $value['Cantidad']));
+            
+        }
+        return $datos;
     }
 }

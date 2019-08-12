@@ -3,11 +3,13 @@
 use Librerias\V2\Factorys\FactoryServiciosTicket as FactoryServiciosTicket;
 use Librerias\V2\PaquetesGenerales\Utilerias\ServiceDesk as ServiceDesk;
 use Librerias\V2\PaquetesSucursales\GestorSucursales as GestorSucursal;
+use Librerias\V2\PaquetesTicket\GestorDatosServicio as GestorDatosServicio;
 
 class Controller_ServicioTicket extends CI_Controller {
 
     private $factory;
     private $gestorSucursales;
+    private $gestorDatosServicio;
     private $servicio;
     private $datos;
 
@@ -15,6 +17,7 @@ class Controller_ServicioTicket extends CI_Controller {
         parent::__construct();
         $this->factory = new FactoryServiciosTicket();
         $this->gestorSucursales = new GestorSucursal();
+        $this->gestorDatosServicio = new GestorDatosServicio();
         $this->datos = array();
     }
 
@@ -28,6 +31,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['solucion'] = null;
             $this->datos['problemas'] = null;
             $this->datos['firmas'] = null;
+            $this->datos['datosServicio'] = $this->gestorDatosServicio->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
             $this->getInformacionFolio();
             echo json_encode($this->datos);
         } catch (Exception $exc) {
@@ -44,6 +48,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['problemas'] = null;
             $this->datos['firmas'] = null;
+            $this->datos['datosServicio'] = $this->gestorDatosServicio->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
             $this->getInformacionFolio();
             $this->setEstatusServiceDesk();
             echo json_encode($this->datos);
