@@ -66,10 +66,10 @@ $(function () {
                 $('#btnCancelarConfirmacion').attr('disabled', 'disabled');
                 var data = {'servicio': datosTablaServicios[1], ticket: datosTablaServicios[2], idSolicitud: datosTablaServicios[0]};
                 evento.enviarEvento('Servicio/Verificar_Servicio', data, '#modal-dialogo', function (respuesta) {
-                    if (respuesta === true) {
+                    if (respuesta.code === 200) {
                         evento.mensajeConfirmacion('Se Valido con Exito', 'Correcto');
                     } else {
-                        evento.mensajeConfirmacion('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+                        evento.mensajeConfirmacion('Ocurrió un error al subir la información. Intente de nuevo o contacte al administrador. (' + respuesta.message + ')', 'Error');
                     }
                 });
             });
@@ -98,7 +98,7 @@ $(function () {
                         $('#btnCancelarRechazarServicio').attr('disabled', 'disabled');
                         evento.enviarEvento('Servicio/Rechazar_Servicio', data, '#seccionRechazarServicio', function (respuesta) {
                             if (respuesta instanceof Array || respuesta instanceof Object) {
-                               evento.mensajeConfirmacion('Se Rechazo con Exito', 'Correcto');
+                                evento.mensajeConfirmacion('Se Rechazo con Exito', 'Correcto');
                             }
                         });
                     }

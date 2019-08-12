@@ -1083,7 +1083,7 @@ class ServiciosTicket extends General {
                             }
                         }
                     }
-                    $resolucionVieja = json_decode($this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $datosServicio['Folio']));
+                    $resolucionVieja = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $datosServicio['Folio']);
                     $html = $html . '<br><br>' . $resolucionVieja->operation->Details->RESOLUTION;
                     $respuesta = $this->ServiceDesk->resolucionFolioSD($datosServicio['Folio'], '', $usuario['SDKey'], $html);
                 }
@@ -1429,13 +1429,15 @@ class ServiciosTicket extends General {
     }
 
     public function verificarServicio(array $datos) {
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '4');
-        $serviciosTicket = $this->DBST->consultaGeneral('SELECT Id FROM t_servicios_ticket WHERE Ticket = "' . $datos['ticket'] . '" AND IdEstatus in(10,5,2,1)');
-        $contador = 0;
-        $linkPDF = '';
+        try {
+            $this->DBST->iniciaTransaccion();
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '4');
+            $serviciosTicket = $this->DBST->consultaGeneral('SELECT Id FROM t_servicios_ticket WHERE Ticket = "' . $datos['ticket'] . '" AND IdEstatus in(10,5,2,1)');
+            $contador = 0;
+            $linkPDF = '';
 
-        $datosDescripcionConclusion = $this->DBST->consultaGeneral('SELECT
+            $datosDescripcionConclusion = $this->DBST->consultaGeneral('SELECT
                                             tst.Descripcion AS DescripcionServicio,
                                             tst.IdSolicitud,
                                             tsi.Asunto AS AsuntoSolicitud,
@@ -1446,21 +1448,21 @@ class ServiciosTicket extends General {
                                            ON tsi.IdSolicitud = tst.IdSolicitud
                                            WHERE tst.Id = "' . $datos['servicio'] . '"');
 
-        $linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
-        $infoServicio = $this->getInformacionServicio($datos['servicio']);
-        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-        $host = $_SERVER['SERVER_NAME'];
+            $linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
+            $infoServicio = $this->getInformacionServicio($datos['servicio']);
+            $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+            $host = $_SERVER['SERVER_NAME'];
 
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
-        } else {
-            $path = 'http://' . $host . '/' . $linkPdf['link'];
-        }
-        if (empty($serviciosTicket)) {
-            $this->concluirSolicitud($fecha, $datos['idSolicitud']);
-            $this->concluirTicket($datos['ticket']);
+            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+            } else {
+                $path = 'http://' . $host . '/' . $linkPdf['link'];
+            }
+            if (empty($serviciosTicket)) {
+                $this->concluirSolicitud($fecha, $datos['idSolicitud']);
+                $this->concluirTicket($datos['ticket']);
 
-            $serviciosConcluidos = $this->DBST->consultaGeneral('SELECT 
+                $serviciosConcluidos = $this->DBST->consultaGeneral('SELECT 
                                                                         tse.Id, 
                                                                         tse.Ticket,
                                                                         nombreUsuario(tso.Atiende) Atiende,
@@ -1471,56 +1473,50 @@ class ServiciosTicket extends General {
                                                                 ON tse.IdSolicitud = tso.Id
                                                                 WHERE tse.Ticket = "' . $datos['ticket'] . '"');
 
-            foreach ($serviciosConcluidos as $key => $value) {
-                $contador++;
-                $linkPdfServiciosConcluidos = $this->getServicioToPdf(array('servicio' => $value['Id']));
-                $infoServicioServiciosConcluidos = $this->getInformacionServicio($value['Id']);
-                $tipoServicioServiciosConcluidos = stripAccents($infoServicioServiciosConcluidos[0]['NTipoServicio']);
+                foreach ($serviciosConcluidos as $key => $value) {
+                    $contador++;
+                    $linkPdfServiciosConcluidos = $this->getServicioToPdf(array('servicio' => $value['Id']));
+                    $infoServicioServiciosConcluidos = $this->getInformacionServicio($value['Id']);
+                    $tipoServicioServiciosConcluidos = stripAccents($infoServicioServiciosConcluidos[0]['NTipoServicio']);
 
-                if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-                    $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicioServiciosConcluidos . '.pdf';
-                    $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
-                } else {
-                    $path = 'http://' . $host . '/' . $linkPdfServiciosConcluidos['link'];
-                    $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
-                }
-
-                $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
-            }
-
-            $titulo = 'Solicitud Concluida';
-            $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
-            $textoCorreo = '<p>Estimado(a) <strong>' . $value['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $value['Ticket'] . '</strong><br> Número Solicitud: <strong>' . $datosDescripcionConclusion[0]['IdSolicitud'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
-
-            $mensajeFirma = $this->Correo->mensajeCorreo($titulo, $textoCorreo);
-            $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($value['CorreoAtiende']), $titulo, $mensajeFirma);
-        }
-
-        if (!empty($datosDescripcionConclusion[0]['Folio'])) {
-            if ($datosDescripcionConclusion[0]['Folio'] !== NULL) {
-                if ($datosDescripcionConclusion[0]['Folio'] !== '') {
-                    if ($datosDescripcionConclusion[0]['Folio'] !== '0') {
-                        $this->agregarVueltaAsociadoMantenimiento(array(
-                            'servicio' => $datos['servicio'],
-                            'folio' => $datosDescripcionConclusion[0]['Folio']));
-
-                        $resultadoSD = $this->InformacionServicios->verifyProcess($datos);
-                        if ($resultadoSD === TRUE) {
-                            return TRUE;
-                        } else {
-                            return $resultadoSD;
-                        }
+                    if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                        $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicioServiciosConcluidos . '.pdf';
+                        $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
                     } else {
-                        return TRUE;
+                        $path = 'http://' . $host . '/' . $linkPdfServiciosConcluidos['link'];
+                        $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
                     }
-                } else {
-                    return TRUE;
+
+                    $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
                 }
-            } else {
-                return TRUE;
+
+                $titulo = 'Solicitud Concluida';
+                $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
+                $textoCorreo = '<p>Estimado(a) <strong>' . $value['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $value['Ticket'] . '</strong><br> Número Solicitud: <strong>' . $datosDescripcionConclusion[0]['IdSolicitud'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
+
+                $mensajeFirma = $this->Correo->mensajeCorreo($titulo, $textoCorreo);
+                $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($value['CorreoAtiende']), $titulo, $mensajeFirma);
             }
-        } else {
-            return TRUE;
+
+            foreach ($datosDescripcionConclusion as $value) {
+                if (isset($value['Folio'])) {
+                    if ($value['Folio'] !== NULL) {
+                        if ($value['Folio'] !== '0') {
+                            $this->agregarVueltaAsociadoMantenimiento(array(
+                                'servicio' => $datos['servicio'],
+                                'folio' => $value['Folio']));
+
+                            $this->InformacionServicios->verifyProcess($datos);
+                        }
+                    }
+                }
+            }
+
+            $this->DBST->commitTransaccion();
+            return ['code' => 200, 'message' => 'correcto'];
+        } catch (\Exception $ex) {
+            $this->DBST->roolbackTransaccion();
+            return array('code' => 400, 'message' => $ex->getMessage());
         }
     }
 

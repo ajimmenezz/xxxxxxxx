@@ -490,7 +490,7 @@ class EditarSolicitud extends General {
                         $apiKey = $this->DBS->getApiKeyMesaAyuda();
                     }
                     $data['datosSD'] = $this->ServiceDesk->getDetallesFolio($apiKey, $datosSolicitud['Folio']);
-                    $data['datosResolucionSD'] = json_decode($this->ServiceDesk->getResolucionFolio($apiKey, $datosSolicitud['Folio']));
+                    $data['datosResolucionSD'] = $this->ServiceDesk->getResolucionFolio($apiKey, $datosSolicitud['Folio']);
                 }
                 $data['usuarioApiKey'] = $usuario['SDKey'];
                 $data['formularioSolicitud'] = parent::getCI()->load->view('Generales/Modal/formularioAsignadaSolicitudSistemasExternos', $data, TRUE);
@@ -1138,11 +1138,11 @@ class EditarSolicitud extends General {
      */
 
     private function rechazarFolioSistemaSD(array $datos, array $usuario, array $datosSolicitud, string $fecha) {
-        $resolucionVieja = json_decode($this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $datosSolicitud['Folio']));
+        $resolucionVieja = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $datosSolicitud['Folio']);
         $datos['descripcion'] = $datos['descripcion'] . '<br><br>' . $resolucionVieja->operation->Details->RESOLUTION;
-        $resultadoResolucion = json_decode($this->ServiceDesk->resolucionFolioSD($datosSolicitud['Folio'], $datos['tecnicoSD'], $usuario['SDKey'], $datos['descripcion']));
+        $resultadoResolucion = $this->ServiceDesk->resolucionFolioSD($datosSolicitud['Folio'], $datos['tecnicoSD'], $usuario['SDKey'], $datos['descripcion']);
         if ($resultadoResolucion->operation->result->status === 'Success') {
-            $reasignacion = json_decode($this->ServiceDesk->reasignarFolioSD($datosSolicitud['Folio'], $datos['tecnicoSD'], $usuario['SDKey']));
+            $reasignacion = $this->ServiceDesk->reasignarFolioSD($datosSolicitud['Folio'], $datos['tecnicoSD'], $usuario['SDKey']);
             if ($reasignacion->operation->result->status === 'Success') {
                 $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array(
                     'IdEstatus' => '10'
@@ -1293,7 +1293,7 @@ class EditarSolicitud extends General {
         $folios = array();
         $datosFolios = array();
         $solicitudesGeneradas = array();
-        $foliosSD = json_decode($this->ServiceDesk->getFoliosTecnico($SDKey));
+        $foliosSD = $this->ServiceDesk->getFoliosTecnico($SDKey);
 
         if (isset($foliosSD->operation->details)) {
             foreach ($foliosSD->operation->details as $value) {
@@ -1358,7 +1358,7 @@ class EditarSolicitud extends General {
      */
 
     private function getTecnicosSistemaSD(array $usuario) {
-        return json_decode($this->ServiceDesk->getTecnicosSD($usuario['SDKey']));
+        return $this->ServiceDesk->getTecnicosSD($usuario['SDKey']);
     }
 
     /*
