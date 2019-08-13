@@ -100,6 +100,7 @@ $(function () {
     });
 
     function cambioVista(infoServicio) {
+        console.log(infoServicio);
         $('#contentServiciosGeneralesRedes').addClass('hidden');
         $('#contentServiciosRedes').removeClass('hidden');
         iniciarObjetos();
@@ -181,14 +182,19 @@ $(function () {
 
     function cargarContenidoSolucion(solucion) {
         selectSucursal.definirValor(solucion.IdSucursal);
-        $('#textareaObservaciones').text(solucion.solucion[0].Observaciones);
+        if (solucion.solucion.length > 0) {
+            $('#textareaObservaciones').text(solucion.solucion[0].Observaciones);
+        }
         selectSucursal.evento('change', function () {
             let totalNodos = tablaNodos.datosTabla();
+            
             if (totalNodos.length > 0) {
                 modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara los Nodos registrados</h4>');
                 $('#btnAceptar').on('click', function () {
                     modal.cerrarModal();
-                    console.log(totalNodos)
+                    peticion.enviar('contentServiciosGeneralesRedes0','SeguimientoCE/SeguimientoGeneral/Accion/borraNodos',datoServicioTabla, function(respuesta){
+                       console.log(respuesta); 
+                    });                    
                 });
                 $('#btnCerrar').on('click', function () {
                     selectSucursal.definirValor(solucion.IdSucursal);
@@ -379,13 +385,27 @@ $(function () {
         }
     });
     $('#btnAceptarM').on('click', function () {
-        if (evento.validarFormulario('#formDatosNodo') && evento.validarFormulario('#formEvidenciaMaterial')) {
+//        if (evento.validarFormulario('#formDatosNodo') && evento.validarFormulario('#formEvidenciaMaterial')) {
 //            nodo.area = selectArea.obtenerValor();
 //            nodo.nodo = $('#inputNodo').val();
 //            nodo.switch = selectSwitch.obtenerValor();
 //            nodo.numSwitch = $('#inputNumSwith').val();
-            console.log('agregar tabla de nodos');
-        }
+            let datos = {
+                id : datoServicioTabla.id,
+                tipo : datoServicioTabla.tipo,
+                area : '66',
+                nodo : 'v1',
+                stwich : '416449',
+                numStwich : '2',
+                material : [
+                    {idMaterial : 1 , cantidad : 5 }
+                ],
+                evidencias : []                                
+            };
+            peticion.enviar('contentServiciosGeneralesRedes0','SeguimientoCE/SeguimientoGeneral/Accion/agregarNodo',datos, function(respuesta){
+                console.log(respuesta);
+            });
+//        }
     });
 
     /**Empiezan eventos de botones para la tabla de nodos**/

@@ -3,11 +3,12 @@
 namespace Librerias\V2\PaquetesTicket;
 
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
+use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenUsuario;
+
 use Modelos\Modelo_ServicioGeneralRedes as Modelo;
 
 class ServicioGeneralRedes implements Servicio {
 
-    private $DBServiciosGeneralRedes;
     private $id;
     private $idSucursal;
     private $idCliente;
@@ -19,9 +20,12 @@ class ServicioGeneralRedes implements Servicio {
     private $descripcion;
     private $solicita;
     private $descripcionSolicitud;
+    private $DBServiciosGeneralRedes;
+    private $almacenUsuario;
 
     public function __construct(string $idServicio) {
         $this->DBServiciosGeneralRedes = new Modelo();
+        $this->almacenUsuario = new AlmacenUsuario();
         $this->id = $idServicio;
         $this->setDatos();
     }
@@ -86,8 +90,38 @@ class ServicioGeneralRedes implements Servicio {
         $datos['IdSucursal'] = $this->idSucursal;
         return $datos;
     }
+
+    public function runAccion(string $evento, array $datos = array()) {
+        $respuesta = array();
+        
+        switch ($evento) {
+            case 'agregarNodo':
+                $this->addNodo($datos);
+                break;
+            case 'borrarNodos':
+                $this->borrarNodos();
+                break;
+            default:
+                break;
+        }
+        
+        return $respuesta;
+    }
     
+    private function addNodo(array $datos) {
+        
+    }
     
+    private function editarNodo(array $datos) {
+        
+    }
     
+    private function borrarNodo() {
+        
+    }
+    
+    private function borrarNodos() {
+        
+    }
 
 }

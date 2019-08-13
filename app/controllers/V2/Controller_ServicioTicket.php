@@ -3,13 +3,13 @@
 use Librerias\V2\Factorys\FactoryServiciosTicket as FactoryServiciosTicket;
 use Librerias\V2\PaquetesGenerales\Utilerias\ServiceDesk as ServiceDesk;
 use Librerias\V2\PaquetesSucursales\GestorSucursales as GestorSucursal;
-use Librerias\V2\PaquetesTicket\GestorDatosServicio as GestorDatosServicio;
+use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 
 class Controller_ServicioTicket extends CI_Controller {
 
     private $factory;
     private $gestorSucursales;
-    private $gestorDatosServicio;
+    private $gestorServicios;
     private $servicio;
     private $datos;
 
@@ -17,7 +17,7 @@ class Controller_ServicioTicket extends CI_Controller {
         parent::__construct();
         $this->factory = new FactoryServiciosTicket();
         $this->gestorSucursales = new GestorSucursal();
-        $this->gestorDatosServicio = new GestorDatosServicio();
+        $this->gestorServicios = new GestorServicio();
         $this->datos = array();
     }
 
@@ -31,11 +31,13 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['solucion'] = null;
             $this->datos['problemas'] = null;
             $this->datos['firmas'] = null;
-            $this->datos['datosServicio'] = $this->gestorDatosServicio->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
+            $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
             $this->getInformacionFolio();
+            $this->setEstatusServiceDesk();
             echo json_encode($this->datos);
         } catch (Exception $exc) {
-            
+            $this->datos['ERROR'] = $exc->getMessage();
+            echo json_encode($this->datos);
         }
     }
 
@@ -48,12 +50,12 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['problemas'] = null;
             $this->datos['firmas'] = null;
-            $this->datos['datosServicio'] = $this->gestorDatosServicio->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
-            $this->getInformacionFolio();
-            $this->setEstatusServiceDesk();
+            $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
+            $this->getInformacionFolio();            
             echo json_encode($this->datos);
         } catch (Exception $exc) {
-            
+            $this->datos['ERROR'] = $exc->getMessage();
+            echo json_encode($this->datos);
         }
     }
 
@@ -90,11 +92,11 @@ class Controller_ServicioTicket extends CI_Controller {
 
     public function setFolio() {
         try {
-            $datosServicio = $this->input->post();                        
+            $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->setFolioServiceDesk($datosServicio['folio']);
             $this->getInformacionFolio();
-            $this->datos['operacion'] = TRUE ;
+            $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
@@ -102,5 +104,16 @@ class Controller_ServicioTicket extends CI_Controller {
             echo json_encode($this->datos);
         }
     }
-  
+
+    public function runEvento(string $evento) {
+        try {
+            $datosServicios = $datosServicio = $this->input->post();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->runAccion($evento, $datosServicio);
+        } catch (Exception $ex) {
+            $this->datos['ERROR'] = $exc->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
+
 }
