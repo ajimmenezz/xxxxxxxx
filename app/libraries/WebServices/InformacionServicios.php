@@ -149,9 +149,8 @@ class InformacionServicios extends General {
                                                             ON tse.IdSolicitud = tso.Id 
                                                             WHERE tso.Folio = "' . $datos['Folio'] . '"'
                 . $datosExtraServicio .
-                'AND tse.IdEstatus in (1,2,3,10,12)
+                'AND tse.IdEstatus in (1,2,3,5,10,12)
                                                                     AND tse.IdTipoServicio not in (21,41)');
-
         return $servicios;
     }
 
@@ -925,10 +924,16 @@ class InformacionServicios extends General {
                                             ON ts.Id = tst.IdSolicitud
                                         WHERE tst.Id = "' . $datos['servicio'] . '"');
 
-        $servicios = $this->verificarTodosServiciosFolio(array('Servicio' => $datos['servicio'], 'ServicioConcluir' => TRUE, 'Folio' => $datosServicios[0]['Folio']));
+        if($datos['servicioConcluir'] === 'true'){
+            $servicioConcluir = TRUE;
+        }else{
+            $servicioConcluir = FALSE;
+        }
+        
+        $servicios = $this->verificarTodosServiciosFolio(array('Servicio' => $datos['servicio'], 'ServicioConcluir' => $servicioConcluir, 'Folio' => $datosServicios[0]['Folio']));
 
         if (empty($servicios)) {
-            $this->guardarDatosServiceDesk($datos['servicio'], TRUE);
+            $this->guardarDatosServiceDesk($datos['servicio'], $servicioConcluir);
         } else {
             $key = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($usuario['Id']));
             $htmlServicio = $this->vistaHTMLServicio($datosServicios[0]);
@@ -1004,7 +1009,7 @@ class InformacionServicios extends General {
             Id 
             from t_solicitudes 
             where Folio = '" . $folio . "'
-        ) and tst.IdEstatus in (3,4,5)");
+        )");
         return $consulta;
     }
 
@@ -1167,6 +1172,7 @@ class InformacionServicios extends General {
             return ["code" => 500, "message" => "The parameter 'folio' must be a number"];
         } else {
             $servicios = $this->getServiciosByFolio($datos['folio']);
+
             if (!empty($servicios)) {
                 $this->setHeaderPDF($datos['folio']);
 

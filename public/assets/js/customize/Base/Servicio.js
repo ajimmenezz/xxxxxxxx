@@ -1896,7 +1896,7 @@ Servicio.prototype.subirInformacionSD = function (servicio) {
 
     $('#btnSubirInformacionSD').off('click');
     $('#btnSubirInformacionSD').on('click', function () {
-        var data = {servicio: servicio};
+        var data = {servicio: servicio, servicioConcluir: false};
         _this.enviarEvento('/Generales/ServiceDesk/GuardarInformacionSD', data, seccionCarga, function (respuesta) {
             if (respuesta.code === 200) {
                 _this.mensajeModal('Se subio la información', 'Correcto', true);
