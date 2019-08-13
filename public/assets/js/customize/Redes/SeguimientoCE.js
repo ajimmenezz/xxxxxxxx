@@ -195,11 +195,14 @@ $(function () {
         }
         selectSucursal.evento('change', function () {
             let totalNodos = tablaNodos.datosTabla();
+            
             if (totalNodos.length > 0) {
                 modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara los Nodos registrados</h4>');
                 $('#btnAceptar').on('click', function () {
                     modal.cerrarModal();
-                    console.log(totalNodos)
+                    peticion.enviar('contentServiciosGeneralesRedes0','SeguimientoCE/SeguimientoGeneral/Accion/borraNodos',datoServicioTabla, function(respuesta){
+                       console.log(respuesta); 
+                    });                    
                 });
                 $('#btnCerrar').on('click', function () {
                     selectSucursal.definirValor(solucion.IdSucursal);
@@ -250,7 +253,7 @@ $(function () {
         }
     });
     $('#btnAceptarAgregarMaterial').on('click', function () {
-//        if (evento.validarFormulario('#formDatosNodo') && evento.validarFormulario('#formEvidenciaMaterial')) {
+        if (evento.validarFormulario('#formDatosNodo') && evento.validarFormulario('#formEvidenciaMaterial')) {
             infoMaterialNodo.id = datoServicioTabla.id,
             infoMaterialNodo.tipo =  datoServicioTabla.tipo,
             infoMaterialNodo.area = selectArea.obtenerValor();
@@ -264,7 +267,7 @@ $(function () {
                 contador++;
             });
             console.log(infoMaterialNodo);
-//        }
+        }
     });
 
     function eventosTablas() {

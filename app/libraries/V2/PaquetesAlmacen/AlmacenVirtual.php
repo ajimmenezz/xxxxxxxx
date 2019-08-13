@@ -28,4 +28,8 @@ class AlmacenVirtual {
         }
         return $datos;
     }
+    
+    public function updateAlmacen(array $material) {
+        
+    }
 }

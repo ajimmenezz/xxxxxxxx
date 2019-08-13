@@ -18,5 +18,7 @@ interface Servicio
     public function getCliente();
     
     public function getSolucion();
+    
+    public function runAccion(string $evento);
 
 }
