@@ -531,9 +531,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Area</label>
-                                <select id="selectArea" class="form-control" style="width: 100%" data-parsley-required="true">
-                                    <option value="">Seleccionar</option>
-                                </select>
+                                <select id="selectArea" class="form-control" style="width: 100%" data-parsley-required="true"></select>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -545,9 +543,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Switch</label>
-                                <select id="selectSwith" class="form-control" style="width: 100%" data-parsley-required="true">
-                                    <option value="">Seleccionar</option>
-                                </select>
+                                <select id="selectSwith" class="form-control" style="width: 100%" data-parsley-required="true"></select>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -566,10 +562,7 @@
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <label>Material</label>
-                                    <select id="selectMaterial" class="form-control" style="width: 100%" data-parsley-required="true">
-                                        <option value="">Seleccionar</option>
-                                        <option value="prueba">Prueba</option>
-                                    </select>
+                                    <select id="selectMaterial" class="form-control" style="width: 100%" data-parsley-required="true"></select>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -586,7 +579,7 @@
                             </div>
                             <div class="col-md-1">
                                 <br>
-                                <label id="btnAgregarMaterialNodo" class="btn btn-success">
+                                <label id="btnAgregarMaterialATablaNodo" class="btn btn-success">
                                     <i class="fa fa-plus"></i>
                                 </label>
                             </div>
@@ -601,6 +594,7 @@
                             <table id="table-materialNodo" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
                                 <thead>
                                     <tr>
+                                        <th class="never">id</th>
                                         <th class="all">Material</th>
                                         <th class="all">Cantidad</th>
                                     </tr>
@@ -634,8 +628,8 @@
             <!--Finaliza cuerpo del modal-->
             <!--Empieza pie del modal-->
             <div class="modal-footer text-center">
-                <a id="btnAceptarM" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
-                <a id="btnCerrarM" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+                <a id="btnAceptarAgregarMaterial" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCancelarAgregarMaterial" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
             </div>
             <!--Finaliza pie del modal-->
         </div>

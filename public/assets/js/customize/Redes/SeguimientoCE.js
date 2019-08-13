@@ -58,15 +58,19 @@ $(function () {
         tipo: null,
         folio: null
     }
-    let datoServicioGral = {
-        sucursal: null,
-        observaciones: null
-    }
-    let  nodo = {
+//    let datoServicioGral = {
+//        sucursal: null,
+//        observaciones: null
+//    }
+    let  infoMaterialNodo = {
+        id: null,
+        tipo: null,
         area: null,
         nodo: null,
         switch : null,
-        numSwitch: null
+        numSwitch: null,
+        evidencia: [],
+        material: []
     }
 
     tablaPrincipal.evento(function () {
@@ -94,7 +98,6 @@ $(function () {
         } else {
             peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Seguimiento/' + datosFila[4], datoServicioTabla, function (respuesta) {
                 cambioVista(respuesta);
-                console.log(respuesta)
             });
         }
     });
@@ -110,6 +113,7 @@ $(function () {
         }
         cargarContenidoServicio(infoServicio);
         cargarContenidoSolucion(infoServicio.solucion);
+        cargarContenidoModalMaterial(infoServicio.datosServicio);
         eventosTablas();
         ocultarElementosDefault(infoServicio.solucion, infoServicio.firmas);
         $('html, body').animate({
@@ -130,6 +134,7 @@ $(function () {
         selectSucursal.iniciarSelect();
         selectArea.iniciarSelect();
         selectSwitch.iniciarSelect();
+        selectSwitch.bloquearElemento();
         selectMaterial.iniciarSelect();
     }
 
@@ -157,18 +162,22 @@ $(function () {
     }
 
     function arreglarNotas(notas) {
-        let datos = [];
-        let contador = 0;
-        $.each(notas, function (key, value) {
-            datos[contador] = {titulo: value.USERNAME, contenido: value.NOTESTEXT};
-            contador++;
-        });
-        collapseNotas.multipleCollapse(datos);
+        if (notas.length > 0) {
+            let datos = [];
+            let contador = 0;
+            $.each(notas, function (key, value) {
+                datos[contador] = {titulo: value.USERNAME, contenido: value.NOTESTEXT};
+                contador++;
+            });
+            collapseNotas.multipleCollapse(datos);
+        }
     }
 
     function cargarContenidoServicio(datos) {
         let servicio = datos.servicio;
-        selectSucursal.cargaDatosEnSelect(datos.sucursales);
+        if (datos.sucursales.length > 0) {
+            selectSucursal.cargaDatosEnSelect(datos.sucursales);
+        }
         $("#fechaServicio").text(servicio.FechaCreacion);
         $("#ticketServicio").text(servicio.Ticket);
         $("#atendidoServicio").text(servicio.Atiende);
@@ -181,7 +190,9 @@ $(function () {
 
     function cargarContenidoSolucion(solucion) {
         selectSucursal.definirValor(solucion.IdSucursal);
-        $('#textareaObservaciones').text(solucion.solucion[0].Observaciones);
+        if (solucion.solucion.length > 0) {
+            $('#textareaObservaciones').text(solucion.solucion[0].Observaciones);
+        }
         selectSucursal.evento('change', function () {
             let totalNodos = tablaNodos.datosTabla();
             if (totalNodos.length > 0) {
@@ -197,6 +208,64 @@ $(function () {
             }
         });
     }
+
+    function cargarContenidoModalMaterial(materialNodo) {
+        if (materialNodo.areasSucursal.length > 0) {
+            selectArea.cargaDatosEnSelect(materialNodo.areasSucursal);
+            selectArea.evento('change', function () {
+                selectSwitch.limpiarElemento();
+                selectSwitch.habilitarElemento();
+                let switches = [], contador = 0, areaSeleccionada = selectArea.obtenerValor();
+                $.each(materialNodo.censoSwitch, function (key, value) {
+                    if (value.idArea === areaSeleccionada) {
+                        switches[contador] = {id: value.id, text: value.text};
+                        contador++;
+                    }
+                });
+                selectSwitch.cargaDatosEnSelect(switches);
+            });
+        }
+        if (materialNodo.censoSwitch.length > 0) {
+            selectSwitch.cargaDatosEnSelect(materialNodo.censoSwitch);
+        }
+        if (materialNodo.materialUsuario.length > 0) {
+            selectMaterial.cargaDatosEnSelect(materialNodo.materialUsuario);
+            selectMaterial.evento('change', function () {
+                let materialSeleccionado = selectMaterial.obtenerValor();
+                $.each(materialNodo.materialUsuario, function (key, value) {
+                    if (value.id == materialSeleccionado) {
+                        $('#materialDisponible').val(value.cantidad);
+                    }
+                });
+            });
+        }
+    }
+    $('#btnAgregarMaterialATablaNodo').on('click', function () {
+        if (evento.validarFormulario('#formMaterial')) {
+            tablaAgregarMateriales.agregarDatosFila([
+                selectMaterial.obtenerValor(),
+                selectMaterial.obtenerTexto(),
+                $('#materialUtilizar').val()
+            ]);
+        }
+    });
+    $('#btnAceptarAgregarMaterial').on('click', function () {
+//        if (evento.validarFormulario('#formDatosNodo') && evento.validarFormulario('#formEvidenciaMaterial')) {
+            infoMaterialNodo.id = datoServicioTabla.id,
+            infoMaterialNodo.tipo =  datoServicioTabla.tipo,
+            infoMaterialNodo.area = selectArea.obtenerValor();
+            infoMaterialNodo.nodo = $('#inputNodo').val();
+            infoMaterialNodo.switch = selectSwitch.obtenerValor();
+            infoMaterialNodo.numSwitch = $('#inputNumSwith').val();
+            infoMaterialNodo.evidencia = $('#agregarEvidenciaNodo').val();
+            let contador = 0;
+            $.each(tablaAgregarMateriales.datosTabla(), function (key, value) {
+                infoMaterialNodo.material[contador] = {idMaterial: value[0], cantidad: value[2]};
+                contador++;
+            });
+            console.log(infoMaterialNodo);
+//        }
+    });
 
     function eventosTablas() {
         tablaNodos.evento(function () {
@@ -370,23 +439,6 @@ $(function () {
     });
     /**Finalizan eventos de botones para datos y problemas**/
 
-    $('#btnAgregarMaterialNodo').on('click', function () {
-        if (evento.validarFormulario('#formMaterial')) {
-            tablaAgregarMateriales.agregarDatosFila([
-                selectMaterial.obtenerValor(),
-                $('#materialUtilizar').val()
-            ]);
-        }
-    });
-    $('#btnAceptarM').on('click', function () {
-        if (evento.validarFormulario('#formDatosNodo') && evento.validarFormulario('#formEvidenciaMaterial')) {
-//            nodo.area = selectArea.obtenerValor();
-//            nodo.nodo = $('#inputNodo').val();
-//            nodo.switch = selectSwitch.obtenerValor();
-//            nodo.numSwitch = $('#inputNumSwith').val();
-            console.log('agregar tabla de nodos');
-        }
-    });
 
     /**Empiezan eventos de botones para la tabla de nodos**/
 //    $('.evidenciaNodo').on('click', function () {
@@ -422,9 +474,9 @@ $(function () {
     /**Empiezan seccion de botonos generales**/
     $('#btnGuardar').on('click', function () {
         if (evento.validarFormulario('#formDatosSolucion')) {
-            datoServicioGral.sucursal = selectSucursal.obtenerValor();
-            datoServicioGral.observaciones = $('#textareaObservaciones').val();
-            console.log(datoServicioGral)
+//            datoServicioGral.sucursal = selectSucursal.obtenerValor();
+//            datoServicioGral.observaciones = $('#textareaObservaciones').val();
+//            console.log(datoServicioGral)
         }
     });
     $('#btnConcluir').on('click', function () {

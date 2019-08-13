@@ -19,6 +19,7 @@ class Upload {
             uploadUrl: 'Sin definir url en FileUpload',
             uploadAsync: false,
             dropZoneEnabled: false,
+            minFileCount: 1,
             showUpload: false,
             showRemove: false,
             allowedFileExtensions: ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx'],
