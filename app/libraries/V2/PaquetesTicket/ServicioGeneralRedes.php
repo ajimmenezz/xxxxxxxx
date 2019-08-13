@@ -4,7 +4,7 @@ namespace Librerias\V2\PaquetesTicket;
 
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenUsuario;
-
+use Librerias\V2\PaquetesTicket\Nodo as Nodo;
 use Modelos\Modelo_ServicioGeneralRedes as Modelo;
 
 class ServicioGeneralRedes implements Servicio {
@@ -21,6 +21,7 @@ class ServicioGeneralRedes implements Servicio {
     private $solicita;
     private $descripcionSolicitud;
     private $DBServiciosGeneralRedes;
+    private $nodo;
     private $almacenUsuario;
 
     public function __construct(string $idServicio) {
@@ -47,7 +48,7 @@ class ServicioGeneralRedes implements Servicio {
 
     public function setEstatus(string $estatus) {
         try {
-            $this->DBServiciosGeneralRedes->empezarTransaccion();            
+            $this->DBServiciosGeneralRedes->empezarTransaccion();
             $this->DBServiciosGeneralRedes->setEstatus($this->id, $estatus);
             $this->DBServiciosGeneralRedes->finalizarTransaccion();
         } catch (\Exception $ex) {
@@ -77,7 +78,7 @@ class ServicioGeneralRedes implements Servicio {
         $this->DBServiciosGeneralRedes->empezarTransaccion();
         $this->DBServiciosGeneralRedes->setFolioServiceDesk($this->idSolicitud, $folio);
         $this->setDatos();
-        $this->DBServiciosGeneralRedes->finalizarTransaccion();                      
+        $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
 
     public function getCliente() {
@@ -86,17 +87,18 @@ class ServicioGeneralRedes implements Servicio {
 
     public function getSolucion() {
         $datos = array();
-        $datos['solucion'] = $this->DBServiciosGeneralRedes->getDatosSolucion($this->id);        
+        $datos['solucion'] = $this->DBServiciosGeneralRedes->getDatosSolucion($this->id);
         $datos['IdSucursal'] = $this->idSucursal;
         return $datos;
     }
 
     public function runAccion(string $evento, array $datos = array()) {
         $respuesta = array();
-        
+
         switch ($evento) {
             case 'agregarNodo':
-                $this->addNodo($datos);
+                $this->nodo = new Nodo($this->id);
+                $this->nodo->setNodo($datos);
                 break;
             case 'borrarNodos':
                 $this->borrarNodos();
@@ -104,22 +106,18 @@ class ServicioGeneralRedes implements Servicio {
             default:
                 break;
         }
-        
+
         return $respuesta;
     }
-    
-    private function addNodo(array $datos) {
-        
-    }
-    
+
     private function editarNodo(array $datos) {
         
     }
-    
+
     private function borrarNodo() {
         
     }
-    
+
     private function borrarNodos() {
         
     }

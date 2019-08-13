@@ -28,11 +28,5 @@ class FactoryServiciosTicket
         }
         return $this->servicio;
     }
-    public function setNodos(array $datos)
-    {
-        var_dump($datos);
-        $this->nodo=new Nodos($datos);
-    }
-    
 }
 
