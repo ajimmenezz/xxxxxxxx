@@ -1294,7 +1294,8 @@ class ServiciosTicket extends General {
 
         $data['servicio'] = $servicio;
         $data['notas'] = $this->Notas->getNotasByServicio($servicio, $idSolcitud);
-        $data['avanceServicio'] = $this->consultaAvanceServicio($servicio);
+
+        $data['historialAvancesProblemas'] = $this->mostrarHistorialAvancesProblemas($servicio);
         $data['datosServicio'] = $datosServicio;
         $data['sucursales'] = $this->consultaSucursalesXSolicitudCliente($datosServicio['Ticket']);
         $data['idSucursal'] = $this->DBST->consultaGeneral('SELECT 
@@ -1320,6 +1321,12 @@ class ServiciosTicket extends General {
 
         $data['formulario'] = parent::getCI()->load->view('Generales/Modal/formularioSeguimientoServicioSinClasificar', $data, TRUE);
         return $data;
+    }
+
+    public function mostrarHistorialAvancesProblemas(string $servicio) {
+        $data = array();
+        $data['avanceServicio'] = $this->consultaAvanceServicio($servicio);
+        return parent::getCI()->load->view('Generales/Detalles/HistorialAvancesProblemas', $data, TRUE);
     }
 
     public function cambiarEstatusServicioTicket(string $servicio, string $fecha, string $estatus, string $departamento = null) {
@@ -2230,28 +2237,13 @@ class ServiciosTicket extends General {
     }
 
     public function consultaAvanceServicio(string $servicio) {
-        $data = $this->DBST->consultaGeneral('SELECT tsa.*,
-                                                (SELECT Nombre FROM cat_v3_tipos_avance WHERE Id = tsa.IdTipo) AS TipoAvance,
-                                                (SELECT UrlFoto FROM t_rh_personal WHERE Id = tsa.IdUsuario) AS Foto,
-                                                nombreUsuario(IdUSuario) AS Usuario
-                                                FROM t_servicios_avance tsa
-                                                WHERE IdServicio = "' . $servicio . '"
-                                                ORDER BY Fecha ASC');
-        foreach ($data as $key => $item) {
-            $tablaEquipos = $this->DBST->consultaGeneral('SELECT 
-                                                        tsae.IdItem,
-                                                        tsae.Serie,
-                                                        tsae.Cantidad,
-                                                        CASE tsae.IdItem 
-                                                            WHEN 1 THEN (SELECT Equipo FROM v_equipos WHERE Id = tsae.TipoItem) 
-                                                            WHEN 2 THEN (SELECT Nombre FROM cat_v3_equipos_sae WHERE Id = tsae.TipoItem)
-                                                            WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tsae.TipoItem) 
-                                                            END as EquipoMaterial,
-                                                            tsae.IdTipoDiagnostico,
-                                                            (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tsae.IdTipoDiagnostico) TipoDiagnostico 
-                                                        FROM t_servicios_avance_equipo tsae          
-                                                        WHERE IdAvance = "' . $item['Id'] . '"');
-            array_push($data[$key], array('tablaEquipos' => $tablaEquipos));
+        $data = $this->DBST->servicioAvanceProblema($servicio);
+
+        if (!empty($data)) {
+            foreach ($data as $key => $item) {
+                $tablaEquipos = $this->DBST->serviciosAvanceEquipo($item['Id']);
+                array_push($data[$key], array('tablaEquipos' => $tablaEquipos));
+            }
         }
 
         return $data;
@@ -2483,6 +2475,43 @@ class ServiciosTicket extends General {
                     $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $folio);
                 }
             }
+        }
+    }
+
+    public function eliminarAvanceProblema(array $datos) {
+        try {
+            $this->DBST->iniciaTransaccion();
+            $this->DBST->flagearServicioAvance($datos);
+            $arrayServiciosAvanceEquipo = $this->DBST->serviciosAvanceEquipo($datos['idAvanceProblema']);
+
+            if ($arrayServiciosAvanceEquipo) {
+                $this->DBST->flagearServicioAvanceEquipo($datos);
+            }
+
+            $historialAvanceProblema = $this->mostrarHistorialAvancesProblemas($datos['idServicio']);
+            $this->DBST->commitTransaccion();
+
+            return ['code' => 200, 'message' => $historialAvanceProblema];
+        } catch (\Exception $ex) {
+            $this->DBST->roolbackTransaccion();
+
+            return ['code' => 400, 'message' => $ex->getMessage()];
+        }
+    }
+
+    public function consultaAvanceProblema(array $datos) {
+        $data = array();
+        try {
+            $this->DBST->iniciaTransaccion();
+            $data['avanceProblema'] = $this->DBST->consultaAvanceProblema($datos['id']);
+            $data['serviciosAvanceEquipo'] = $this->DBST->serviciosAvanceEquipo($datos['id']);
+            $this->DBST->commitTransaccion();
+            
+            return ['code' => 200, 'message' => $data];
+        } catch (\Exception $ex) {
+            $this->DBST->roolbackTransaccion();
+
+            return ['code' => 400, 'message' => $ex->getMessage()];
         }
     }
 

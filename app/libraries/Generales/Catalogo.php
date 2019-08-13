@@ -2734,7 +2734,8 @@ class Catalogo extends General {
                                                     cxm.Nombre as Marca,
                                                     concat((select Nombre from cat_v3_x4d_equipos where Id = cxe.IdEquipo),' - ',(select Nombre from cat_v3_x4d_marcas where Id = cxe.IdMarca),' - ',cxe.Nombre) as Elemento,
                                                     cxs.ClaveSAE,
-                                                    cxs.Flag
+                                                    cxs.Flag,
+                                                    cxs.IdElemento
                                                     from cat_v3_x4d_subelementos cxs
                                                     inner join cat_v3_x4d_elementos cxe on cxs.IdElemento = cxe.Id
                                                     inner join cat_v3_x4d_marcas cxm on cxs.IdMarca = cxm.Id " . $flag);

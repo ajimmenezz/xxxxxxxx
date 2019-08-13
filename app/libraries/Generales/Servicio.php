@@ -2149,7 +2149,7 @@ class Servicio extends General {
             if (!empty($cambiarEstatus)) {
                 if ($status === '4') {
                     $this->InformacionServicios->verifyProcess($datos);
-                }else{
+                } else {
                     $this->InformacionServicios->setHTMLService($datos);
                 }
                 return TRUE;
@@ -2284,13 +2284,17 @@ class Servicio extends General {
         $equiposSAE = $this->Catalogo->catEquiposSAE('3', array('Flag' => '1'));
         $componentesEquipo = $this->Catalogo->catComponentesEquipo('3');
         $tiposDiagnostico = $this->DBS->consultaGeneral('SELECT * FROM cat_v3_tipos_diagnostico_correctivo WHERE Flag = 1 AND Id > 1');
+        $elementos = $this->Catalogo->catX4DModelos('3', array('Flag' => '1'));
+        $subelementos = $this->Catalogo->catX4DComponentes('3', array('Flag' => '1'));
         $CI = parent::getCI();
 
         $data = [
             'equiposSAE' => $equiposSAE,
             'equipos' => $equipos,
             'componentesEquipo' => $componentesEquipo,
-            'tiposDiagnostico' => $tiposDiagnostico
+            'tiposDiagnostico' => $tiposDiagnostico,
+            'elementos' => $elementos,
+            'subelementos' => $subelementos
         ];
 
         return array('formulario' => parent::getCI()->load->view('Generales/Modal/formularioAvanceServicio', $data, TRUE), 'datos' => $data);
@@ -2378,14 +2382,10 @@ class Servicio extends General {
             }
         }
 
-        if (!empty($datosNotasSD)) {
-            if ($datosNotasSD) {
-                return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');
-            } else {
-                return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => $datosNotasSD);
-            }
+        if ($datosNotasSD) {
+            return array('avances' => $this->Servicio->mostrarHistorialAvancesProblemas($datos['servicio']), 'SD' => '');
         } else {
-            return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');
+            return array('avances' => $this->Servicio->mostrarHistorialAvancesProblemas($datos['servicio']), 'SD' => $datosNotasSD);
         }
     }
 
@@ -2534,7 +2534,7 @@ class Servicio extends General {
                         tsae.Serie,
                         tsae.Cantidad
                         from t_servicios_avance_equipo tsae
-                        where IdAvance = '" . $value['Id'] . "';";
+                        where IdAvance = '" . $value['Id'] . "'";
             array_push($arrayReturn, [
                 'usuario' => $value['Usuario'],
                 'foto' => $value['Foto'],
