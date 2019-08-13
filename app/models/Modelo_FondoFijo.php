@@ -885,6 +885,7 @@ class Modelo_FondoFijo extends Modelo_Base
     public function getSaldosXTecnico(String $idSupervisor) {
         $resultado= $this->consulta('
             	select
+                usua.Id as idUsuario,
         cat.Id as IdTipoCuenta,
         nombreUsuario(usua.Id) as Nombre,
         usua.IdJefe,

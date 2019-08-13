@@ -285,8 +285,9 @@ class FondoFijo extends General
     }
 
     public function detalleCuenta(array $datos)
-    {
-        if (!isset($datos['tipoCuenta']) || !isset($datos['usuario'])) {
+    {        
+        if (!isset($datos['tipoCuenta']) || !isset($datos['usuario'])) { 
+         
             return [
                 'code' => 500,
                 'error' => 'No se ha recibido la información de la cuenta o el usuario. Intente de nuevo'
@@ -299,7 +300,6 @@ class FondoFijo extends General
                 'tickets' => $this->DB->getTicketsByUsuario($this->usuario['Id']),
                 'sucursales' => $this->DB->getSucursales()
             ];
-
             return [
                 'code' => 200,
                 'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/DetallesCuenta', $data, TRUE)

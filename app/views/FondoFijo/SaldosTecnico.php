@@ -31,11 +31,12 @@
                                     <?php
                                     //var_dump($datos['SaldoTecnico']);
                                     //var_dump($_SESSION);
+                                   // var_dump($datos);
                                     if (isset($datos['SaldoTecnico']) && !empty($datos['SaldoTecnico'])) {
                                         foreach ($datos['SaldoTecnico'] as $key => $value) {
                                             echo ""
                                                 . "<tr>"
-                                                . " <td>" . $value['Nombre'] . "</td>"
+                                                . " <td>" . $value['idUsuario'] . "</td>"
                                                 . " <td>" . $value['IdTipoCuenta'] . "</td>"
                                                 . " <td>" . $value['Nombre'] . "</td>"
                                                 . " <td>" . $value['TipoCuenta'] . "</td>"
