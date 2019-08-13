@@ -574,7 +574,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Cantidad Utilizar</label>
-                                    <input id="materialUtilizar" type="number" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                    <input id="materialUtilizar" class="form-control" style="width: 100%" data-parsley-required="true"/>
                                 </div>
                             </div>
                             <div class="col-md-1">

@@ -1,11 +1,11 @@
 class Upload {
 
-    constructor(nombreFileUpload, configuracion = {}, pagina) {
+    constructor(nombreFileUpload, configuracion = {}) {
         this.fileUpload = nombreFileUpload;
         this.configuracion = configuracion;
         this.datosExtra = {};
         this.iniciarFileUpload();
-        this.pagina = pagina;
+        //this.pagina = pagina;
     }
 
     iniciarPlugin() {
@@ -19,7 +19,6 @@ class Upload {
             uploadUrl: 'Sin definir url en FileUpload',
             uploadAsync: false,
             dropZoneEnabled: false,
-            minFileCount: 1,
             showUpload: false,
             showRemove: false,
             allowedFileExtensions: ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx'],
@@ -76,10 +75,10 @@ class Upload {
 
         if (_this.validarArchivos()) {
             $(`#${this.fileUpload}`).on('filebatchpreupload', function (event, data, previewId, index) {
-                _this.pagina.empezarPantallaCargando(panel);
+//                _this.pagina.empezarPantallaCargando(panel);
             }).on('filebatchuploadsuccess', function (event, data, previewId, index) {
-                _this.pagina.errorServidor(data.response);
-                _this.pagina.quitarPantallaCargando(panel);
+//                _this.pagina.errorServidor(data.response);
+//                _this.pagina.quitarPantallaCargando(panel);
                 if (callback !== null) {
                     callback(data.response);
                 }

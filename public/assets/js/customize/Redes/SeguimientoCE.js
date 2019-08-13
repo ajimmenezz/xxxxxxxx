@@ -69,7 +69,6 @@ $(function () {
         nodo: null,
         switch : null,
         numSwitch: null,
-        evidencia: [],
         material: []
     }
 
@@ -90,13 +89,13 @@ $(function () {
         if (datosFila[tamañoDatosFila - 1] === "ABIERTO") {
             modal.mostrarModal('Iniciar Servicio', '<h3>¿Quieres atender el servicio?</h3>');
             $('#btnAceptar').on('click', function () {
-                peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Atender/' + datosFila[4], datoServicioTabla, function (respuesta) {
+                peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Atender/' + datosFila[4], datoServicioTabla, function (respuesta) {
                     modal.cerrarModal();
                     cambioVista(respuesta);
                 });
             });
         } else {
-            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Seguimiento/' + datosFila[4], datoServicioTabla, function (respuesta) {
+            peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Seguimiento/' + datosFila[4], datoServicioTabla, function (respuesta) {
                 cambioVista(respuesta);
             });
         }
@@ -129,7 +128,7 @@ $(function () {
         selectArea = new SelectBasico('selectArea');
         selectSwitch = new SelectBasico('selectSwith');
         selectMaterial = new SelectBasico('selectMaterial');
-        evidenciaMaterial = new FileUpload_Basico('agregarEvidenciaNodo');
+        evidenciaMaterial = new FileUpload_Basico('agregarEvidenciaNodo', {url: 'SeguimientoCE/SeguimientoGeneral/Accion/agregarNodo', extensiones: ['jpg', 'jpeg', 'png']});
         collapseNotas = new Collapse('collapseNotas');
         selectSucursal.iniciarSelect();
         selectArea.iniciarSelect();
@@ -195,14 +194,14 @@ $(function () {
         }
         selectSucursal.evento('change', function () {
             let totalNodos = tablaNodos.datosTabla();
-            
+
             if (totalNodos.length > 0) {
                 modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara los Nodos registrados</h4>');
                 $('#btnAceptar').on('click', function () {
                     modal.cerrarModal();
-                    peticion.enviar('contentServiciosGeneralesRedes0','SeguimientoCE/SeguimientoGeneral/Accion/borraNodos',datoServicioTabla, function(respuesta){
-                       console.log(respuesta); 
-                    });                    
+                    peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/borraNodos', datoServicioTabla, function (respuesta) {
+                        console.log(respuesta);
+                    });
                 });
                 $('#btnCerrar').on('click', function () {
                     selectSucursal.definirValor(solucion.IdSucursal);
@@ -221,7 +220,7 @@ $(function () {
                 let switches = [], contador = 0, areaSeleccionada = selectArea.obtenerValor();
                 $.each(materialNodo.censoSwitch, function (key, value) {
                     if (value.idArea === areaSeleccionada) {
-                        switches[contador] = {id: value.id, text: value.text};
+                        switches[contador] = {id: value.modelo, text: value.text};
                         contador++;
                     }
                 });
@@ -245,28 +244,31 @@ $(function () {
     }
     $('#btnAgregarMaterialATablaNodo').on('click', function () {
         if (evento.validarFormulario('#formMaterial')) {
-            tablaAgregarMateriales.agregarDatosFila([
-                selectMaterial.obtenerValor(),
-                selectMaterial.obtenerTexto(),
-                $('#materialUtilizar').val()
-            ]);
+            if (parseFloat($('#materialUtilizar').val()) <= parseFloat($('#materialDisponible').val()) && parseFloat($('#materialUtilizar').val()) > 0) {
+                tablaAgregarMateriales.agregarDatosFila([
+                    selectMaterial.obtenerValor(),
+                    selectMaterial.obtenerTexto(),
+                    $('#materialUtilizar').val()
+                ]);
+            }
         }
     });
     $('#btnAceptarAgregarMaterial').on('click', function () {
         if (evento.validarFormulario('#formDatosNodo') && evento.validarFormulario('#formEvidenciaMaterial')) {
-            infoMaterialNodo.id = datoServicioTabla.id,
-            infoMaterialNodo.tipo =  datoServicioTabla.tipo,
+            infoMaterialNodo.id = datoServicioTabla.id;
+            infoMaterialNodo.tipo = datoServicioTabla.tipo;
             infoMaterialNodo.area = selectArea.obtenerValor();
             infoMaterialNodo.nodo = $('#inputNodo').val();
             infoMaterialNodo.switch = selectSwitch.obtenerValor();
             infoMaterialNodo.numSwitch = $('#inputNumSwith').val();
-            infoMaterialNodo.evidencia = $('#agregarEvidenciaNodo').val();
             let contador = 0;
             $.each(tablaAgregarMateriales.datosTabla(), function (key, value) {
                 infoMaterialNodo.material[contador] = {idMaterial: value[0], cantidad: value[2]};
                 contador++;
             });
-            console.log(infoMaterialNodo);
+            evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
+                console.log(respuesta)
+            });
         }
     });
 
