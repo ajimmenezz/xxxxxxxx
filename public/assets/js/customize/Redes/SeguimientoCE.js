@@ -195,14 +195,14 @@ $(function () {
         }
         selectSucursal.evento('change', function () {
             let totalNodos = tablaNodos.datosTabla();
-            
+
             if (totalNodos.length > 0) {
                 modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara los Nodos registrados</h4>');
                 $('#btnAceptar').on('click', function () {
                     modal.cerrarModal();
-                    peticion.enviar('contentServiciosGeneralesRedes0','SeguimientoCE/SeguimientoGeneral/Accion/borraNodos',datoServicioTabla, function(respuesta){
-                       console.log(respuesta); 
-                    });                    
+                    peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/borraNodos', datoServicioTabla, function (respuesta) {
+                        console.log(respuesta);
+                    });
                 });
                 $('#btnCerrar').on('click', function () {
                     selectSucursal.definirValor(solucion.IdSucursal);
@@ -221,7 +221,7 @@ $(function () {
                 let switches = [], contador = 0, areaSeleccionada = selectArea.obtenerValor();
                 $.each(materialNodo.censoSwitch, function (key, value) {
                     if (value.idArea === areaSeleccionada) {
-                        switches[contador] = {id: value.id, text: value.text};
+                        switches[contador] = {id: value.modelo, text: value.text};
                         contador++;
                     }
                 });
@@ -254,8 +254,8 @@ $(function () {
     });
     $('#btnAceptarAgregarMaterial').on('click', function () {
         if (evento.validarFormulario('#formDatosNodo') && evento.validarFormulario('#formEvidenciaMaterial')) {
-            infoMaterialNodo.id = datoServicioTabla.id,
-            infoMaterialNodo.tipo =  datoServicioTabla.tipo,
+            infoMaterialNodo.id = datoServicioTabla.id;
+            infoMaterialNodo.tipo = datoServicioTabla.tipo;
             infoMaterialNodo.area = selectArea.obtenerValor();
             infoMaterialNodo.nodo = $('#inputNodo').val();
             infoMaterialNodo.switch = selectSwitch.obtenerValor();
@@ -266,7 +266,11 @@ $(function () {
                 infoMaterialNodo.material[contador] = {idMaterial: value[0], cantidad: value[2]};
                 contador++;
             });
-            console.log(infoMaterialNodo);
+
+            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/agregarNodo', infoMaterialNodo, function (respuesta) {
+                console.log(infoMaterialNodo);
+
+            });
         }
     });
 
