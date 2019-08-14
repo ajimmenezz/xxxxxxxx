@@ -23,8 +23,8 @@ class AlmacenVirtual {
             array_push($datos, array(
                 'id' => $value['Id'], 
                 'text' => $value['Producto'],
-                'cantidad' => $value['Cantidad']));
-            
+                'cantidad' => $value['Cantidad'],
+                'bloqueado' => $value['Bloqueado']));            
         }
         return $datos;
     }
