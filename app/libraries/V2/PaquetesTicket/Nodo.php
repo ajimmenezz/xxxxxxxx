@@ -2,6 +2,7 @@
 
 namespace Librerias\V2\PaquetesTicket;
 
+use Librerias\V2\PaquetesGenerales\Utilerias\Archivo as Archivo;
 use Modelos\Modelo_NodoRedes as Modelo;
 
 class Nodo {
@@ -15,7 +16,9 @@ class Nodo {
     }
 
     public function setNodo(array $datos) {
-        $datos['archivos'] = $this->saveArchivos($datos['id']);
+        $carpeta = 'Servicios/Servicio-' . $this->idServicio . '/EvidenciaMaterialNodos/';
+        Archivo::saveArchivos($carpeta);
+        $datos['archivos'] = Archivo::getString();        
         $idNodo = $this->DBNodo->setNodo($this->idServicio, $datos);
         $this->DBNodo->setMaterialNodo($idNodo, $this->getArrayMaterial($datos['material']));
     }
@@ -29,19 +32,7 @@ class Nodo {
     }
 
     public function getNodos() {
-        
-    }
-
-    private function saveArchivos(string $idServicio) {
-        $CI = & get_instance();
-        $CI->load->helper('fileupload');
-        $nombre = '';
-        foreach ($_FILES as $key => $value) {
-            $nombre = $key;
-        }
-        $carpeta = 'Servicios/Servicio-' . $idServicio . '/EvidenciaMaterialNodos/';
-        $archivos = implode(',', setMultiplesArchivos($CI, $nombre, $carpeta));
-        return $archivos;
+        return $this->DBNodo->getNodos($this->idServicio);
     }
 
     private function getArrayMaterial(string $material) {

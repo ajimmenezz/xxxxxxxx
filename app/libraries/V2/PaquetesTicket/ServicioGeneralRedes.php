@@ -25,9 +25,10 @@ class ServicioGeneralRedes implements Servicio {
     private $almacenUsuario;
 
     public function __construct(string $idServicio) {
+        $this->id = $idServicio;
         $this->DBServiciosGeneralRedes = new Modelo();
         $this->almacenUsuario = new AlmacenUsuario();
-        $this->id = $idServicio;
+        $this->nodo = new Nodo($this->id);
         $this->setDatos();
     }
 
@@ -86,9 +87,12 @@ class ServicioGeneralRedes implements Servicio {
     }
 
     public function getSolucion() {
+
         $datos = array();
         $datos['solucion'] = $this->DBServiciosGeneralRedes->getDatosSolucion($this->id);
         $datos['IdSucursal'] = $this->idSucursal;
+        $datos['problemas'] = null;
+        $datos['nodos'] = $this->nodo->getNodos();
         return $datos;
     }
 
@@ -97,7 +101,6 @@ class ServicioGeneralRedes implements Servicio {
 
         switch ($evento) {
             case 'agregarNodo':
-                $this->nodo = new Nodo($this->id);
                 $this->nodo->setNodo($datos);
                 break;
             case 'borrarNodos':
@@ -107,6 +110,8 @@ class ServicioGeneralRedes implements Servicio {
                 break;
         }
 
+        $respuesta['solucion'] = $this->getSolucion();
+        $respuesta['materialUsuario'] = $this->almacenUsuario->getAlmacen();
         return $respuesta;
     }
 

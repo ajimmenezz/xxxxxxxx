@@ -109,7 +109,7 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();           
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $this->servicio->runAccion($evento, $datosServicio);
+            echo json_encode($this->servicio->runAccion($evento, $datosServicio));
         } catch (Exception $ex) {
             $this->datos['ERROR'] = $ex->getMessage();
             echo json_encode($this->datos);

@@ -11,19 +11,16 @@ class Modelo_NodoRedes extends Base {
     }
 
     public function setNodo(string $idServicio, array $datos) {
-
-//        $consulta = $this->insertar('insert into t_redes_nodos values(
-//                           "",
-//                           '.$idServicio.',
-//                           '.$datos['area'].',
-//                           "'.$datos['nodo'].'",
-//                           '.$datos['switch'].',
-//                           '.$datos['numSwitch'].',
-//                           "'.$datos['archivos'].'"                          
-//                         )');
-//        
-//        return $consulta;
-        return '1';
+        $consulta = $this->insertar('insert into t_redes_nodos values(
+                           "",
+                           '.$idServicio.',
+                           '.$datos['area'].',
+                           "'.$datos['nodo'].'",
+                           '.$datos['switch'].',
+                           '.$datos['numSwitch'].',
+                           "'.$datos['archivos'].'"                          
+                         )');        
+        return $consulta;
     }
 
     public function setMaterialNodo(string $idNodo, array $material) {
@@ -40,6 +37,24 @@ class Modelo_NodoRedes extends Base {
                             set Bloqueado = ' . $totalMaterialUsado . '                            
                             where Id = ' . $value['idMaterial']);
         }
+    }
+    
+    public function getNodos(string $idServicio) {
+        $consulta = $this->consulta('select 
+                                        trn.Id,
+                                        trn.IdArea,
+                                        trn.Nombre,
+                                        trn.IdSwitch,
+                                        trn.NumeroSwitch,
+                                        trn.Archivos,
+                                        trm.Id as IdMaterial,
+                                        trm.IdMaterialTecnico,
+                                        trm.Cantidad
+                                    from t_redes_nodos trn
+                                    inner join t_redes_material trm
+                                    on trn.Id = trm.IdNodo
+                                    where trn.IdServicio = '.$idServicio);
+       return $consulta;
     }
 
 }
