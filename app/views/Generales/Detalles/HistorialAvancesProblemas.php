@@ -81,8 +81,7 @@
                             ?>
                         </div>
                         <?php
-                        $contadorTabla = count($item[0]['tablaEquipos']);
-                        if ($contadorTabla > 0) {
+                        if (!empty($item[0]['tablaEquipos'])) {
                             ?>
                             <div class="timeline-footer">
                                 <br>

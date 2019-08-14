@@ -1090,12 +1090,16 @@ class Servicio extends General {
                                                         CASE tsae.IdItem 
                                                             WHEN 1 THEN (SELECT Equipo FROM v_equipos WHERE Id = tsae.TipoItem) 
                                                             WHEN 2 THEN (SELECT Nombre FROM cat_v3_equipos_sae WHERE Id = tsae.TipoItem)
-                                                            WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tsae.TipoItem) 
+                                                            WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tsae.TipoItem)
+                                                            WHEN 4 THEN (SELECT Nombre FROM cat_v3_x4d_elementos WHERE Id = tsae.TipoItem) 
+                                                            WHEN 5 THEN (SELECT Nombre FROM cat_v3_x4d_subelementos WHERE Id = tsae.TipoItem) 
                                                         END as EquipoMaterial,
                                                         CASE tsae.IdItem 
                                                             WHEN 1 THEN "Equipo"
                                                             WHEN 2 THEN "Material"
                                                             WHEN 3 THEN "Refacción"
+                                                            WHEN 4 THEN "Elemento"
+                                                            WHEN 5 THEN "Sub-Elemento"
                                                         END as Tipo,
                                                         tsae.IdItem,
                                                           (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tsae.IdTipoDiagnostico) TipoDiagnostico
@@ -1104,6 +1108,7 @@ class Servicio extends General {
                                                   ON tsa.Id = tsae.IdAvance
                                                   WHERE tsa.IdTipo = 2
                                                   AND tsa.IdServicio = "' . $servicio . '"
+                                                  AND tsae.Flag = "1"
                                                   GROUP BY tsae.TipoItem, tsae.IdItem, tsae.IdTipoDiagnostico
                                                   ORDER BY Tipo, EquipoMaterial ASC');
         if (!empty($consulta)) {
@@ -2301,8 +2306,20 @@ class Servicio extends General {
     }
 
     public function guardarAvenceServicio(array $datos) {
+        try {
+            if ($datos['tipoOperacion'] === 'Guardar') {
+                return $this->insertAvanceProblema($datos);
+            } else {
+                return $this->updateAvanceProblema($datos);
+            }
+        } catch (\Exception $ex) {
+            return ['code' => 400, 'message' => $ex->getMessage()];
+        }
+    }
+
+    private function insertAvanceProblema(array $datos) {
+        $this->DBS->iniciaTransaccion();
         $archivos = null;
-        $CI = parent::getCI();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $usuario = $this->Usuario->getDatosUsuario();
         $verificar = TRUE;
@@ -2352,9 +2369,9 @@ class Servicio extends General {
         }
 
         if ($datos['verificarArchivos'] !== 'false') {
+            $CI = parent::getCI();
             $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/ArchivosAvance/';
             $archivos = setMultiplesArchivos($CI, 'archivosAvanceServicio', $carpeta);
-            $host = $_SERVER['SERVER_NAME'];
 
             if ($archivos) {
                 $archivos = implode(',', $archivos);
@@ -2382,10 +2399,118 @@ class Servicio extends General {
             }
         }
 
-        if ($datosNotasSD) {
-            return array('avances' => $this->Servicio->mostrarHistorialAvancesProblemas($datos['servicio']), 'SD' => '');
+        if ($this->DBS->estatusTransaccion() === FALSE) {
+            $this->DBS->roolbackTransaccion();
+            throw new \Exception("Error con la Base de Datos.");
         } else {
-            return array('avances' => $this->Servicio->mostrarHistorialAvancesProblemas($datos['servicio']), 'SD' => $datosNotasSD);
+            $this->DBS->commitTransaccion();
+            if ($datosNotasSD) {
+                return array('code' => 200, 'message' => $this->Servicio->mostrarHistorialAvancesProblemas($datos['servicio']), 'SD' => '');
+            } else {
+                return array('code' => 200, 'message' => $this->Servicio->mostrarHistorialAvancesProblemas($datos['servicio']), 'SD' => $datosNotasSD);
+            }
+        }
+    }
+
+    private function updateAvanceProblema(array $datos) {
+        $this->DBS->iniciaTransaccion();
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $verificar = TRUE;
+        $this->DBS->actualizarAvanceProblema(
+                array('campos' => array(
+                        'IdUsuario' => $usuario['Id'],
+                        'Descripcion' => $datos['descripcion'],
+                        'IdTipo' => $datos['tipoAvanceProblema'],
+                        'Fecha' => $fecha,
+                        'Descripcion' => $datos['descripcion']
+                    ), 'where' => array('Id' => $datos['idAvanceProblema'])));
+
+        if ((is_string($datos['datosTabla']))) {
+            $datos['datosTabla'] = explode(",", $datos['datosTabla']);
+            $datos['datosTabla'] = array_chunk($datos['datosTabla'], 8);
+        }
+
+        if ($datos['verificarArchivos'] === 'false') {
+            if ($datos['datosTabla'][0] === 'sinDatos') {
+                $verificar = FALSE;
+            }
+        } else {
+            if ($datos['datosTabla'][0][0] === 'sinDatos') {
+                $verificar = FALSE;
+            }
+        }
+
+        if ($verificar === TRUE) {
+            $avancesProblemaEquipo = $this->DBS->serviciosAvanceEquipo($datos['idAvanceProblema']);
+            
+            if (!empty($avancesProblemaEquipo)) {
+                $this->DBS->flagearServicioAvanceEquipo(array('idAvanceProblema' => $datos['idAvanceProblema']));
+            }
+            
+            foreach ($datos['datosTabla'] as $value) {
+                $this->DBS->setNuevoElemento('t_servicios_avance_equipo', array(
+                    'IdAvance' => $datos['idAvanceProblema'],
+                    'TipoItem' => $value[4],
+                    'IdItem' => $value[5],
+                    'Serie' => $value[2],
+                    'Cantidad' => $value[3],
+                    'IdTipoDiagnostico' => $value[7]
+                ));
+            }
+        }
+
+        if ($datos['tipoAvanceProblema'] === '2') {
+            $this->DBS->actualizarServicio('t_servicios_ticket', array(
+                'IdEstatus' => '3'
+                    ), array('Id' => $datos['servicio'])
+            );
+        }
+
+        if ($datos['verificarArchivos'] !== 'false') {
+            $CI = parent::getCI();
+            $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/ArchivosAvance/';
+            $archivos = setMultiplesArchivos($CI, 'archivosAvanceServicio', $carpeta);
+            $evidenciasAnteriores = '';
+
+            $evidenciasAnterioresAvanceProblema = $this->DBS->consultaAvanceProblema($datos['idAvanceProblema']);
+
+            if ($evidenciasAnterioresAvanceProblema[0]['Archivos'] !== NULL) {
+                if ($evidenciasAnterioresAvanceProblema[0]['Archivos'] !== '') {
+                    $evidenciasAnteriores = $evidenciasAnterioresAvanceProblema[0]['Archivos'] . ',';
+                }
+            }
+
+            if ($archivos) {
+                $archivos = implode(',', $archivos);
+                $this->DBS->actualizarAvanceProblema(
+                        array('campos' => array(
+                                'Archivos' => $evidenciasAnteriores . $archivos
+                            ), 'where' => array('Id' => $datos['idAvanceProblema'])));
+            }
+
+            $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
+            $folio = $this->DBS->getServicios('SELECT
+                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
+                                            FROM t_servicios_ticket
+                                            WHERE Id = "' . $datos['servicio'] . '"');
+
+            if ($folio[0]['Folio'] !== NULL) {
+                if ($folio[0]['Folio'] !== '0') {
+                    $avanceProblema = $this->DBP->getAdvanceService($datos['servicio']);
+                    $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
+                    $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];
+                    $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
+                }
+            }
+        }
+
+        if ($this->DBS->estatusTransaccion() === FALSE) {
+            $this->DBS->roolbackTransaccion();
+            throw new \Exception("Error con la Base de Datos.");
+        } else {
+            $this->DBS->commitTransaccion();
+            return array('code' => 200, 'message' => $this->Servicio->mostrarHistorialAvancesProblemas($datos['servicio']), 'SD' => '');
         }
     }
 
@@ -2514,7 +2639,8 @@ class Servicio extends General {
                 . "tsa.Descripcion, "
                 . "tsa.Archivos "
                 . "from t_servicios_avance tsa "
-                . "where tsa.IdServicio = '" . $servicio . "'";
+                . "where tsa.IdServicio = '" . $servicio . "'"
+                . "AND tsa.Flag = '1'";
         $resultado = $this->DBS->consultaGeneral($query);
 
         $arrayReturn = [];
@@ -2525,16 +2651,21 @@ class Servicio extends General {
                                 when 1 then 'Equipo'
                                 when 2 then 'Material'
                                 when 3 then 'Refacción'
+                                when 4 then 'Elemento'
+                                when 5 then 'Sub-Elemento'
                         end as Tipo,
                         CASE tsae.IdItem
                                 when 1 then modelo(tsae.TipoItem)
                                 when 2 then (select Nombre from cat_v3_equipos_sae where Id = tsae.TipoItem)
                                 when 3 then (select Nombre from cat_v3_componentes_equipo where Id = tsae.TipoItem)
+                                WHEN 4 THEN (SELECT Nombre FROM cat_v3_x4d_elementos WHERE Id = tsae.TipoItem) 
+                                WHEN 5 THEN (SELECT Nombre FROM cat_v3_x4d_subelementos WHERE Id = tsae.TipoItem)
                         end as Equipo,
                         tsae.Serie,
                         tsae.Cantidad
                         from t_servicios_avance_equipo tsae
-                        where IdAvance = '" . $value['Id'] . "'";
+                        where IdAvance = '" . $value['Id'] . "'
+                        AND tsae.Flag = '1'";
             array_push($arrayReturn, [
                 'usuario' => $value['Usuario'],
                 'foto' => $value['Foto'],

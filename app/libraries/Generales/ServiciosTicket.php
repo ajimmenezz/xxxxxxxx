@@ -2523,48 +2523,28 @@ class ServiciosTicket extends General {
     }
 
     public function eliminarEvidenciaAvanceProblema(array $datos) {
-        $informaionAvanceProblema = $this->DBST->consultaAvanceProblema($datos['id']);
-        var_dump($informaionAvanceProblema);
-        $archivos = explode(',', $informaionAvanceProblema[0]['Archivos']);
-        var_dump($archivos);
+        try {
+            $informaionAvanceProblema = $this->DBST->consultaAvanceProblema($datos['id']);
+            $archivos = explode(',', $informaionAvanceProblema[0]['Archivos']);
 
-        foreach ($archivos as $key => $value) {
-            if ($evidencias['key'] === $value) {
-                unset($archivos[$key]);
+            foreach ($archivos as $key => $value) {
+                if ($datos['key'] === $value) {
+                    unset($archivos[$key]);
+                }
             }
-        }
-        if (eliminarArchivo($evidencias['key'])) {
-            $consulta = $this->DBS->actualizarSolicitud(
-                    't_solicitudes_internas', array('Evidencias' => implode(',', $archivos)), array('IdSolicitud' => $evidencias['id'])
-            );
-            if (!empty($consulta)) {
-                return TRUE;
-            } else {
-                return FALSE;
+
+            if (eliminarArchivo($datos['key'])) {
+                $this->DBST->actualizarAvanceProblema(array(
+                    'campos' => array('Archivos' => implode(',', $archivos)),
+                    'where' => array('Id' => $datos['id'])));
+                return ['code' => 200, 'message' => 'correcto'];
             }
+        } catch (\Exception $ex) {
+            $this->DBST->roolbackTransaccion();
+
+            return ['code' => 400, 'message' => $ex->getMessage()];
         }
     }
-
-//        public function eliminarEvidencia(array $evidencias) {
-//        $datosSolicitud = $this->DBS->getDatosSolicitud($evidencias['id']);
-//        $archivos = explode(',', $datosSolicitud['detalles'][0]['Evidencias']);
-//
-//        foreach ($archivos as $key => $value) {
-//            if ($evidencias['key'] === $value) {
-//                unset($archivos[$key]);
-//            }
-//        }
-//        if (eliminarArchivo($evidencias['key'])) {
-//            $consulta = $this->DBS->actualizarSolicitud(
-//                    't_solicitudes_internas', array('Evidencias' => implode(',', $archivos)), array('IdSolicitud' => $evidencias['id'])
-//            );
-//            if (!empty($consulta)) {
-//                return TRUE;
-//            } else {
-//                return FALSE;
-//            }
-//        }
-//    }
 }
 
 class PDFAux extends PDF {

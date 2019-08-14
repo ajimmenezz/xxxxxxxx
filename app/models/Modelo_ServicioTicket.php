@@ -716,10 +716,8 @@ class Modelo_ServicioTicket extends Modelo_Base {
         $host = $_SERVER['SERVER_NAME'];
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            //$consulta = parent::connectDBAdist2()->query($query);
             return parent::connectDBAdist2()->insert_id();
         } else {
-            //$consulta = parent::connectDBAdist3()->query($query);
             return parent::connectDBAdist3()->insert_id();
         }
     }
@@ -889,9 +887,11 @@ class Modelo_ServicioTicket extends Modelo_Base {
                                         WHEN 4 THEN (SELECT Nombre FROM cat_v3_x4d_elementos WHERE Id = tsae.TipoItem) 
                                         WHEN 5 THEN (SELECT Nombre FROM cat_v3_x4d_subelementos WHERE Id = tsae.TipoItem) 
                                     end as EquipoMaterial,
-                                    (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tsae.IdTipoDiagnostico) TipoDiagnostico 
+                                    (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tsae.IdTipoDiagnostico) TipoDiagnostico,
+                                    tsae.TipoItem
                                     from t_servicios_avance_equipo tsae
-                                    where IdAvance = '" . $idAvance . "'");
+                                    where IdAvance = '" . $idAvance . "'
+                                    AND Flag = '1'");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -916,7 +916,7 @@ class Modelo_ServicioTicket extends Modelo_Base {
             return FALSE;
         }
     }
-    
+
     public function consultaAvanceProblema(string $id) {
         $consulta = $this->consulta('SELECT tsa.*,
                                                 (SELECT Nombre FROM cat_v3_tipos_avance WHERE Id = tsa.IdTipo) AS TipoAvance,
@@ -931,6 +931,16 @@ class Modelo_ServicioTicket extends Modelo_Base {
             return $consulta;
         } else {
             return FALSE;
+        }
+    }
+
+    public function actualizarAvanceProblema(array $datos) {
+        $resultado = $this->actualizar('t_servicios_avance', $datos['campos'], $datos['where']);
+
+        if (!empty($resultado)) {
+            return TRUE;
+        } else {
+            throw new \Exception('Error con la Base de Datos.');
         }
     }
 

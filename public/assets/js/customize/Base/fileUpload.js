@@ -30,7 +30,7 @@ function Upload() {
                 type: extencion,
                 key: value,
                 caption: value.substring(value.lastIndexOf('/') + 1),
-                extra: { id: solicitud, extra: extraData }
+                extra: {id: solicitud, extra: extraData}
             });
         });
         return imagenes;
@@ -60,6 +60,7 @@ Upload.prototype.crearUpload = function () {
     var _this = this;
     var nombres = [];
     var botonosDescargas = [];
+
     var objeto = arguments[0];
     var url = arguments[1] || '#';
     var tiposArchivos = arguments[2] || ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml', 'csv'];
@@ -75,6 +76,8 @@ Upload.prototype.crearUpload = function () {
     var clasePreview = (arguments[12]) ? arguments[12] : false;
     var archivosMinimo = arguments[13] || 0;
     var showPreview = (arguments[14] === undefined || arguments[14] === null) ? true : false;
+    var cargarMensajeElimicarCorrecto = (arguments[15] === undefined || arguments[15] === null) ? true : false;
+
     if (imgenesInciales.length > 0) {
         if (imgenesInciales[0] !== '') {
             nombres = _this.getNombreImagen(imgenesInciales, solicitud, _this.getDatosExtra());
@@ -110,10 +113,10 @@ Upload.prototype.crearUpload = function () {
         },
         initialPreviewThumbTags: botonosDescargas,
         previewSettings: {
-            image: { width: '160px', height: '160px' },
-            video: { width: "160px", height: "160px" },
-            other: { width: "160px", height: "160px" },
-            object: { width: "160px", height: "160px" }
+            image: {width: '160px', height: '160px'},
+            video: {width: "160px", height: "160px"},
+            other: {width: "160px", height: "160px"},
+            object: {width: "160px", height: "160px"}
         },
         previewZoomButtonClasses: {
             toggleheader: 'hidden',
@@ -129,16 +132,16 @@ Upload.prototype.crearUpload = function () {
         },
         layoutTemplates: {
             footer: '<div class="file-thumbnail-footer">\n' +
-                '    <div class="file-footer-caption">{caption}</div>\n' +
-                '    {actions}\n' +
-                '</div>',
+                    '    <div class="file-footer-caption">{caption}</div>\n' +
+                    '    {actions}\n' +
+                    '</div>',
             actions: '<div class="file-actions">\n' +
-                '    <div class="file-footer-buttons">\n' +
-                '        {CUSTOM_TAG_INIT}{delete}' +
-                '    </div>\n' +
-                '    <div class="file-upload-indicator" title="{indicatorTitle}">{indicator}</div>\n' +
-                '    <div class="clearfix"></div>\n' +
-                '</div>'
+                    '    <div class="file-footer-buttons">\n' +
+                    '        {CUSTOM_TAG_INIT}{delete}' +
+                    '    </div>\n' +
+                    '    <div class="file-upload-indicator" title="{indicatorTitle}">{indicator}</div>\n' +
+                    '    <div class="clearfix"></div>\n' +
+                    '</div>'
         },
         deleteUrl: urlBorrar,
         deleteExtraData: function () {
@@ -148,9 +151,11 @@ Upload.prototype.crearUpload = function () {
         overwriteInitial: false,
         showPreview: showPreview
     }).on('filedeleted', function (event, key) {
-        _this.mostrarModal('Archivo Eliminado', '<p class="text-center">Se elimino con exito el archivo.</p>');
-        $('#btnModalConfirmar').addClass('hidden');
-        $('#btnModalAbortar').empty().append('Cerrar');
+        if (cargarMensajeElimicarCorrecto) {
+            _this.mostrarModal('Archivo Eliminado', '<p class="text-center">Se elimino con exito el archivo.</p>');
+            $('#btnModalConfirmar').addClass('hidden');
+            $('#btnModalAbortar').empty().append('Cerrar');
+        }
     });
 
     if (inhabilitar) {
@@ -250,8 +255,7 @@ Upload.prototype.descargarImagen = function (evidenciaImpericia) {
 Upload.prototype.verificarImagenCuadrada = function (objeto) {
     var ancho = $(objeto).width();
     var alto = $(objeto).height();
-    console.log(ancho);
-    console.log(alto);
+
     if (ancho < alto || ancho > alto) {
         return false
     } else {

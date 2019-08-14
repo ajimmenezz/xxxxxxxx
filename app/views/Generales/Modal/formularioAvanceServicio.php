@@ -150,7 +150,7 @@
                     </div>                               
                 </div>
                 <!--Finalizando -->
-                
+
                 <!-- Empezando Seleccion Refaccion-->
                 <div id="seleccionSalas4XD" class="row hidden">
                     <div class="col-md-5">
@@ -237,6 +237,14 @@
                     </table>
                 </div>
                 <!--Finalizando -->
+
+                <div class="row">
+                    <div class="col-md-12 m-t-20">
+                        <div class="alert alert-warning fade in m-b-15">                            
+                            Para eliminar el registro de la tabla solo tiene que dar click sobre fila para eliminarlo.                            
+                        </div>                        
+                    </div>
+                </div>
 
             </form>
             <!--Finalizando formulario Avence servicio -->
