@@ -299,11 +299,16 @@ $(function () {
         limpiarElementosModalMaterial();
         $('#imagenEvidencia').addClass('hidden');
         $('#btnActualizarAgregarMaterial').addClass('hidden');
+        $('#btnEliminarAgregarMaterial').addClass('hidden');
         $('#btnAceptarAgregarMaterial').removeClass('hidden');
-        $('#btnEliminarAgregarMaterial').removeClass('hidden');
+    });
+    $('#btnActualizarAgregarMaterial').on('click', function () {
+//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/', data, function (respuesta) {
+//            console.log(respuesta);
+//        });
     });
     $('#btnEliminarAgregarMaterial').on('click', function () {
-//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/', datoServicioTabla, function (respuesta) {
+//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/', data, function (respuesta) {
 //            console.log(respuesta);
 //        });
     });
