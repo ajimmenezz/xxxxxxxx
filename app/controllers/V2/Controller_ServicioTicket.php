@@ -28,7 +28,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->servicio->setEstatus('2');
             $this->datos['servicio'] = $this->servicio->getDatos();
             $this->datos['sucursales'] = $this->gestorSucursales->getSucursales($this->servicio->getCliente());
-            $this->datos['solucion'] = null;
+            $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['problemas'] = null;
             $this->datos['firmas'] = null;
             $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
@@ -107,7 +107,7 @@ class Controller_ServicioTicket extends CI_Controller {
 
     public function runEvento(string $evento) {
         try {
-            $datosServicios = $datosServicio = $this->input->post();
+            $datosServicio = $this->input->post();           
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->runAccion($evento, $datosServicio);
         } catch (Exception $ex) {

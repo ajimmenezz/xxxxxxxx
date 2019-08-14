@@ -69,7 +69,7 @@ $(function () {
         nodo: null,
         switch : null,
         numSwitch: null,
-        material: []
+        material: null
     }
 
     tablaPrincipal.evento(function () {
@@ -261,10 +261,14 @@ $(function () {
             infoMaterialNodo.nodo = $('#inputNodo').val();
             infoMaterialNodo.switch = selectSwitch.obtenerValor();
             infoMaterialNodo.numSwitch = $('#inputNumSwith').val();
-            let contador = 0;
+            infoMaterialNodo.material = null;
+            
             $.each(tablaAgregarMateriales.datosTabla(), function (key, value) {
-                infoMaterialNodo.material[contador] = {idMaterial: value[0], cantidad: value[2]};
-                contador++;
+                if (infoMaterialNodo.material === null) {
+                    infoMaterialNodo.material = '{"idMaterial": ' + value[0] + ', "cantidad": ' + value[2] + '}';
+                } else {
+                    infoMaterialNodo.material += '|{"idMaterial": ' + value[0] + ', "cantidad": ' + value[2] + '}';
+                }
             });
             evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
                 console.log(respuesta)
