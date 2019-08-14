@@ -41,7 +41,7 @@ class Modelo_NodoRedes extends Base {
     
     public function getNodos(string $idServicio) {
         $consulta = $this->consulta('select 
-                                        trn.Id,
+                                        trn.Id as IdNodo,
                                         trn.IdArea,
                                         trn.Nombre,
                                         trn.IdSwitch,
