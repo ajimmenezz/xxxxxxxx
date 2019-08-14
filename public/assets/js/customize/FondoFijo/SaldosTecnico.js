@@ -1,3 +1,4 @@
+
 $(function () {
     //Objetos
     var evento = new Base();
@@ -27,21 +28,45 @@ $(function () {
         let _this = this;
         var datosTabla = $('#table-cuentas').DataTable().row(_this).data();
         var datos = {
-            'id':datosTabla[2],
-            'tipoCuenta': datosTabla[1],
-            'usuario': datosTabla[0]
+            'id':datosTabla[0],
+            'tipoCuenta': datosTabla[1]
+            
         };
-        evento.enviarEvento('MiFondo/DetalleCuenta', datos, '#panelCuentas', function (respuesta) {
+            
+        evento.enviarEvento('MiFondo/MovimientosTecnico', datos, '#panelCuentas', function (respuesta) {
+            let aux="";
+            
+            for(i=0; i<respuesta.consulta.length ; i++)
+            {
+                aux+= "<tr onclick=(getDatos("+respuesta.consulta[i].Id+")); >";         
+                aux+= "<td>"+respuesta.consulta[i].Id+"</td>";
+                aux+= "<td id="+respuesta.consulta[i].Id+">"+respuesta.consulta[i].TipoMovimiento+"</span></td>";
+                aux+= "<td id="+respuesta.consulta[i].Id+">"+respuesta.consulta[i].FechaRegistro+"</td>";
+                aux+= "<td id="+respuesta.consulta[i].Id+">"+respuesta.consulta[i].Concepto+"</td>";
+                aux+= "<td id="+respuesta.consulta[i].Id+">"+respuesta.consulta[i].Monto+"</td>";
+                aux+= "<td>"+respuesta.consulta[i].TipoMovimiento+"</td>";
+                aux+= "</tr>";
+            }
             if (respuesta.code == 200) {
-                $("#seccionDetalleCuenta").empty().append(respuesta.formulario);
-                evento.cambiarDiv("#seccionCuentas", "#seccionDetalleCuenta");
-                initDetallesCuenta(datos, _this);
+//                console.log("if");
+                $("#saldoTecnico").empty().append(respuesta.formulario);
+//               evento.cambiarDiv("#listaUsuariosFondoFijo", "#seccionDetalleMovimientos");
+                initDetallesCuenta(datos);
+                $("#table_datos").html(aux);
+                $('#usuarioNombre').html("<strong>Nombre: </strong>"+datosTabla[2]);
+                $('#saldoNombre').html("<strong>Saldo: </strong>"+datosTabla[4]);
+                
+                tabla.generaTablaPersonal('#tabla-movimientos', null, null, true, true, [[1, 'asc']]);
+                
+                
             } else {
                 evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
+
             }
+            
         });
     });
-
+    
     function initDetallesCuenta(datos, filaCuenta) {
         tabla.generaTablaPersonal('#table-movimientos', null, null, true, true, [[0, 'desc']]);
         select.crearSelect("select");
@@ -241,7 +266,65 @@ $(function () {
             });
         }
     }
+    
 });
+    function getDatos(id)
+    {
+        var evento = new Base();
+        var websocket = new Socket();
+        var tabla = new Tabla();
+        var select = new Select();
+        var file = new Upload();
+
+        //Evento que maneja las peticiones del socket
+        websocket.socketMensaje();
+
+        //Muestra la hora en el sistema
+        evento.horaServidor($('#horaServidor').val());
+
+        //Evento para cerra la session
+        evento.cerrarSesion();
+
+        //Evento para mostrar la ayuda del sistema
+        evento.mostrarAyuda('Ayuda_Proyectos');
+
+        //Inicializa funciones de la plantilla
+        App.init();
+        console.log(id);
+         var datos = {
+            'id':id
+        };
+            
+         evento.enviarEvento('MiFondo/DetallesMovimientos', datos, '#panelCuentas', function (respuesta) {
+             console.log("Respuestas");
+             console.log(respuesta);
+             evento.iniciarModal("#modalEdit", "Detalles del depósito / ajuste", respuesta.html);
+             $("#btnGuardarCambios").hide();
+             $("#btnCancelarMovimiento").off("click");
+              $('#userReg').html(respuesta.generales[0].Autoriza);
+             $('#userMov').html(respuesta.generales[0].TipoMovimiento);
+             $('#userConce').html(respuesta.generales[0].Concepto);
+             $('#userMont').html(respuesta.generales[0].Monto);
+             $('#userSaldA').html(respuesta.generales[0].SaldoPrevio); 
+             $('#userSald').html(respuesta.generales[0].SaldoNuevo); 
+             $('#userStatus').html(respuesta.generales[0].idStatus);
+             $('#fechaMov').html(respuesta.generales[0].FechaMovimiento);
+             $('#fechaAut').html(respuesta.generales[0].FechaAutorizacion);
+             $('#userAut').html(respuesta.generales[0].Autoriza);
+                   
+                 
+             
+             
 
 
 
+
+
+
+
+
+
+         });
+       
+    }
+  

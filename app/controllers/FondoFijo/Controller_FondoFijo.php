@@ -69,6 +69,7 @@ class Controller_FondoFijo extends Base
                 break;
             case 'DetallesMovimiento':
                 $resultado = $this->fondo_fijo->formularioDetallesMovimiento($this->input->post());
+                var_dump($resultado);
                 break;
             case 'CancelarMovimiento':
                 $resultado = $this->fondo_fijo->cancelarMovimiento($this->input->post());
@@ -76,9 +77,17 @@ class Controller_FondoFijo extends Base
             case 'RechazarMovimiento':
                 $resultado = $this->fondo_fijo->rechazarMovimiento($this->input->post());
                 break;
+            
             case 'SaldosTecnico':
                 $resultado = $this->fondo_fijo->getSaldosXTecnico(19);
                 break;
+            case 'MovimientosTecnico':
+                $resultado = $this->fondo_fijo->getMovimientosTecnico($this->input->post());
+                break;
+            case 'DetallesMovimientos':
+               $resultado = $this->fondo_fijo->getDetallesMovimiento($this->input->post());
+                break;
+            
             default:
                 $resultado = FALSE;
                 break;

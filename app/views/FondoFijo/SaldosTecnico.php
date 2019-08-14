@@ -1,4 +1,4 @@
-<div id="seccionCuentas" class="content">
+<div id="saldoTecnico" class="content">
     <h1 class="page-header">Saldos técnico</h1>
     <div id="panelCuentas" class="panel panel-inverse">
         <div class="panel-heading">
@@ -56,7 +56,7 @@
         </div>
     </div>
 </div>
-
+<div id="movimientosID"></div>
 <div id="seccionDetalleCuenta" class="content" style="display:none"></div>
 
 <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">

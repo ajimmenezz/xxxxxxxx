@@ -901,4 +901,8 @@ class Modelo_FondoFijo extends Modelo_Base
         where usua.idJefe='.$idSupervisor.';');
         return $resultado;
     }
+    public function getMovimientosTecnico($consulta) {
+        $resp=$this->consulta($consulta);
+        return $resp;
+    }
 }

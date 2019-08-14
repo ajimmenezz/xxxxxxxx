@@ -12,6 +12,7 @@ class FondoFijo extends General
     private $Correo;
     private $usuario;
     private $cfdi;
+    public $data;
 
     public function __construct()
     {
@@ -537,5 +538,32 @@ class FondoFijo extends General
                 unlink('.' . $v);
             } catch (Exception $ex) { }
         }
+    }
+    public function getMovimientosTecnico(array $datos) {
+        $idUsuario=$datos['id'];
+        $idTipoCuenta=$datos['tipoCuenta'];
+        $data   = $this->DB->getMovimientos($idUsuario, $idTipoCuenta);
+        return [
+            "code"=>200,
+            'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/registroMovimientos', $data, TRUE),
+            'consulta'=>$data
+        ];
+        
+    }
+    public function getDetallesMovimiento(array $datos) {
+        $idMovimiento= $datos['id'];
+        $datos=$this->DB->getDetallesFondoFijoXId($idMovimiento);
+        
+        
+        return [
+          'code'=>200,
+          'html' => parent::getCI()->load->view('FondoFijo/Formularios/detallesGeneralMovimientos', $datos, TRUE),          
+          'generales'=>$datos
+            
+        ];
+        
+        
+
+        
     }
 }
