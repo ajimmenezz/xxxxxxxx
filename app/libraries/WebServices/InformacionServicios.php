@@ -444,6 +444,8 @@ class InformacionServicios extends General {
                                                                                     WHEN 1 THEN (SELECT Equipo FROM v_equipos WHERE Id = TipoItem) 
                                                                                     WHEN 2 THEN (SELECT Nombre FROM cat_v3_equipos_sae WHERE Id = TipoItem)
                                                                                     WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = TipoItem) 
+                                                                                    WHEN 4 THEN (SELECT Nombre FROM cat_v3_x4d_elementos WHERE Id = TipoItem) 
+                                                                                    WHEN 5 THEN (SELECT Nombre FROM cat_v3_x4d_subelementos WHERE Id = TipoItem) 
                                                                                 END as EquipoMaterial 
                                                                             FROM t_servicios_avance_equipo 
                                                                             WHERE IdAvance = "' . $datos['Id'] . '"');
@@ -458,6 +460,13 @@ class InformacionServicios extends General {
                     break;
                 case '3':
                     $tipoItem = 'Refacción';
+                    break;
+                case '4':
+                    $tipoItem = 'Elemento';
+                    break;
+                case '5':
+                    $tipoItem = 'Sub-Elemento';
+                    break;
             }
             if ($valor['IdItem'] === '1') {
                 if ($datos['IdTipo'] === '1') {
