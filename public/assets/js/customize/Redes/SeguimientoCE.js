@@ -57,7 +57,7 @@ $(function () {
         id: null,
         tipo: null,
         folio: null
-    }
+    };
 //    let datoServicioGral = {
 //        sucursal: null,
 //        observaciones: null
@@ -70,7 +70,8 @@ $(function () {
         switch : null,
         numSwitch: null,
         material: null
-    }
+    };
+    let materialTecnico = null;
 
     tablaPrincipal.evento(function () {
         let tamañoDatosFila = 0, datosFila = tablaPrincipal.datosFila(this);
@@ -211,6 +212,7 @@ $(function () {
         });
     }
 
+    /**Empiesan eventos del modal Material**/
     function cargarContenidoModalMaterial(materialNodo) {
         if (materialNodo.areasSucursal.length > 0) {
             selectArea.cargaDatosEnSelect(materialNodo.areasSucursal);
@@ -231,6 +233,7 @@ $(function () {
             selectSwitch.cargaDatosEnSelect(materialNodo.censoSwitch);
         }
         if (materialNodo.materialUsuario.length > 0) {
+            materialTecnico = materialNodo.materialUsuario;
             selectMaterial.cargaDatosEnSelect(materialNodo.materialUsuario);
             selectMaterial.evento('change', function () {
                 let materialSeleccionado = selectMaterial.obtenerValor();
@@ -245,11 +248,26 @@ $(function () {
     $('#btnAgregarMaterialATablaNodo').on('click', function () {
         if (evento.validarFormulario('#formMaterial')) {
             if (parseFloat($('#materialUtilizar').val()) <= parseFloat($('#materialDisponible').val()) && parseFloat($('#materialUtilizar').val()) > 0) {
+                let resta = null;
+                $.each(materialTecnico, function (key, value) {
+                    if (value.id === selectMaterial.obtenerValor()) {
+                        resta = parseFloat(value.cantidad) - parseFloat($('#materialUtilizar').val());
+                        value.cantidad = resta;
+                    }
+                });
                 tablaAgregarMateriales.agregarDatosFila([
                     selectMaterial.obtenerValor(),
                     selectMaterial.obtenerTexto(),
                     $('#materialUtilizar').val()
                 ]);
+                selectMaterial.cargaDatosEnSelect(materialTecnico);
+                $('#materialDisponible').val('');
+                $('#materialUtilizar').val('');
+            } else {
+                $("#notaMaterial").removeClass("hidden").delay(4000).queue(function (next) {
+                    $(this).addClass("hidden");
+                    next();
+                });
             }
         }
     });
@@ -262,7 +280,7 @@ $(function () {
             infoMaterialNodo.switch = selectSwitch.obtenerValor();
             infoMaterialNodo.numSwitch = $('#inputNumSwith').val();
             infoMaterialNodo.material = null;
-            
+
             $.each(tablaAgregarMateriales.datosTabla(), function (key, value) {
                 if (infoMaterialNodo.material === null) {
                     infoMaterialNodo.material = '{"idMaterial": ' + value[0] + ', "cantidad": ' + value[2] + '}';
@@ -271,26 +289,61 @@ $(function () {
                 }
             });
             evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
-                console.log(respuesta)
+                limpiarElementosModalMaterial();
+                $('#modalMaterialNodo').modal('toggle');
+                tablaNodos.limpiartabla();
             });
         }
     });
+    $('#btnCancelarAgregarMaterial').on('click', function () {
+        limpiarElementosModalMaterial();
+        $('#imagenEvidencia').addClass('hidden');
+        $('#btnActualizarAgregarMaterial').addClass('hidden');
+        $('#btnAceptarAgregarMaterial').removeClass('hidden');
+        $('#btnEliminarAgregarMaterial').removeClass('hidden');
+    });
+    $('#btnEliminarAgregarMaterial').on('click', function () {
+//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/', datoServicioTabla, function (respuesta) {
+//            console.log(respuesta);
+//        });
+    });
+    /**Finalizan eventos del modal Material**/
+    
+    function  limpiarElementosModalMaterial() {
+        selectArea.limpiarElemento();
+        $('#inputNodo').val('');
+        selectSwitch.limpiarElemento();
+        $('#inputNumSwith').val('');
+        selectMaterial.limpiarElemento();
+        $('#materialDisponible').val('');
+        $('#materialUtilizar').val('');
+        tablaAgregarMateriales.limpiartabla();
+        evidenciaMaterial.limpiarElemento();
+    }
 
     function eventosTablas() {
         tablaNodos.evento(function () {
             let datos = tablaNodos.datosFila(this);
+            $('#modalMaterialNodo').modal().show();
             $('#inputNodo').val(datos[2]);
             $('#imagenEvidencia').removeClass('hidden');
+            $('#btnAceptarAgregarMaterial').addClass('hidden');
+            $('#btnActualizarAgregarMaterial').removeClass('hidden');
+            $('#btnEliminarAgregarMaterial').removeClass('hidden');
         });
 
         tablaAgregarMateriales.evento(function () {
-            let _this = this;
-            modal.mostrarModal('Eliminar Material', '<h4>Se Eliminará este material de la lista<br>\n\
-                                            ¿Estas seguro de esto?</h4>');
-            $('#btnAceptar').on('click', function () {
-                modal.cerrarModal();
-                tablaAgregarMateriales.eliminarFila(_this);
+            let suma = null, datosFila = tablaAgregarMateriales.datosFila(this);
+            $.each(materialTecnico, function (key, value) {
+                if (value.id === datosFila[0]) {
+                    suma = parseFloat(value.cantidad) + parseFloat(datosFila[2]);
+                    value.cantidad = suma;
+                }
             });
+            tablaAgregarMateriales.eliminarFila(this);
+            selectMaterial.cargaDatosEnSelect(materialTecnico);
+            $('#materialDisponible').val('');
+            $('#materialUtilizar').val('');
         });
     }
 
@@ -307,8 +360,6 @@ $(function () {
         }
     }
 
-    /*********************************************************************************************************************************************/
-
     /**Empiezan eventos de botones del encabezado**/
     $('#btnRegresar').on('click', function () {
         location.reload();
@@ -320,7 +371,6 @@ $(function () {
     $('#btnAgregarFolio').on('click', function () {
         mostrarElementosAgregarFolio();
     });
-
     /**Finalizan eventos de botones del encabezado**/
 
     /**Empiezan eventos de botones para folio**/
@@ -368,13 +418,13 @@ $(function () {
                 $('#addFolio').val('');
 
                 ocultarElementosAgregarFolio();
-                $("#creadoPorFolio").empty()
-                //$("#fechaCreacionFolio").text(infoFolio);
-                $("#solicitaFolio").empty()
-                $("#prioridadFolio").empty()
-                $("#asignadoFolio").empty()
-                $("#estatusFolio").empty()
-                $("#asuntoFolio").empty()
+                $("#creadoPorFolio").empty();
+                $("#fechaCreacionFolio").empty();
+                $("#solicitaFolio").empty();
+                $("#prioridadFolio").empty();
+                $("#asignadoFolio").empty();
+                $("#estatusFolio").empty();
+                $("#asuntoFolio").empty();
                 $('#editarFolio').addClass('hidden');
                 $('#guardarFolio').removeClass('hidden');
             });
@@ -413,6 +463,7 @@ $(function () {
         $('#detallesFolio').addClass('hidden');
     });
     /**Finalizan eventos de botones para ver detalles de servicio y folio**/
+    /*********************************************************************************************************************************************/
 
     /**Empiezan eventos de botones para datos y problemas**/
     $('#btnSinMaterial').on('click', function () {
@@ -447,38 +498,6 @@ $(function () {
         $('#vistaNodos').removeClass('hidden');
     });
     /**Finalizan eventos de botones para datos y problemas**/
-
-
-    /**Empiezan eventos de botones para la tabla de nodos**/
-//    $('.evidenciaNodo').on('click', function () {
-//        modal.mostrarModalBotonTabla("evidenciaNodo", '#modalEvidencia');
-//        let row = $(this).closest("tr");
-//    });
-//    $('.editarNodo').on('click', function () {
-//        let row, sucursal, nodo, switk, numSwitk;
-//        modal.mostrarModalBotonTabla("editarNodo", '#modalEditarNodo');
-//        row = $(this).closest("tr");
-//
-//        sucursal = row.find(".sucursal").text();
-//        $('#inputEdicionNodo').val(row.find(".nodo").text());
-//        switk = row.find(".switch").text();
-//        $('#inputEdicionNumSwith').val(row.find(".numSwitch").text());
-//    });
-//    $('.editarMaterial').on('click', function () {
-//        modal.mostrarModalBotonTabla("editarMaterial", '#modalMaterialNodo');
-//        let row = $(this).closest("tr");
-//    });
-//    $('.eliminarNodo').on('click', function () {
-//        let row = $(this).closest("tr");
-//        modal.mostrarModal('Eliminar Nodo', '<h4>Al eliminar el nodo se borrara toda la información del material y de las evidencias<br>\n\
-//                                            ¿Estas seguro de querer eliminar el nodo?</h4>');
-//        $('#btnAceptar').on('click', function () {
-//            modal.cerrarModal();
-//            tablaNodos.eliminarFila(row);
-//        });
-//    });
-    /**Finalizan eventos de botones para la tabla de nodos**/
-
 
     /**Empiezan seccion de botonos generales**/
     $('#btnGuardar').on('click', function () {

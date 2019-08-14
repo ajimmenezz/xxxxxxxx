@@ -372,32 +372,6 @@
                                                 <a href="#" class="btn btn-sm btn-white eliminarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i></a>
                                             </th>
                                         </tr>
-                                        <tr>
-                                            <th class="all id">2</th>
-                                            <th class="all sucursal">Platino2</th>
-                                            <th class="all nodo">Platino2</th>
-                                            <th class="all switch">Platino2</th>
-                                            <th class="all numSwitch">5</th>
-                                            <th class="all" style="text-align: center"><a id="btnAgregarNodo" href="#modalMaterialNodo" class="btn btn-sm btn-white" data-toggle="modal"><i class="fa fa-2x fa-pencil"></i></a></th>
-                                            <th style="text-align: center">
-                                                <a id="editarNodo" href="#" class="btn btn-sm btn-white editarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Nodo" class="fa fa-2x fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <a id="editarMaterial" href="#" class="btn btn-sm btn-white editarMaterial" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Material" class="fa fa-2x fa-file-photo-o text-warning"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <a href="#" class="btn btn-sm btn-white eliminarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i></a>
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <th class="all id">3</th>
-                                            <th class="all sucursal">Platino3</th>
-                                            <th class="all nodo">Platino3</th>
-                                            <th class="all switch">Platino3</th>
-                                            <th class="all numSwitch">5</th>
-                                            <th class="all" style="text-align: center"><a id="btnAgregarNodo" href="#modalMaterialNodo" class="btn btn-sm btn-white" data-toggle="modal"><i class="fa fa-2x fa-pencil"></i></a></th>
-                                            <th style="text-align: center">
-                                                <a id="editarNodo" href="#" class="btn btn-sm btn-white editarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Nodo" class="fa fa-2x fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <a id="editarMaterial" href="#" class="btn btn-sm btn-white editarMaterial" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Material" class="fa fa-2x fa-file-photo-o text-warning"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <a href="#" class="btn btn-sm btn-white eliminarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i></a>
-                                            </th>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -587,6 +561,11 @@
                         <!--Finaliza seccion agregar Material-->
                     </form>
                 </div>
+                <!--Inicio Nota de material extra-->
+                <div id="notaMaterial" class="col-md-12 hidden">
+                    <label style="color: red">Has seleccionado material que no tienes disponible</label>
+                </div>
+                <!--Fin Nota de material extra-->
                 <form id="formEvidenciaMaterial" data-parsley-validate="true" enctype="multipart/form-data">
                     <!--Empieza tabla de material nodos-->
                     <div class="col-md-12">
@@ -604,6 +583,11 @@
                             </table>
                         </div>
                     </div>
+                    <!--Inicio Nota de tabla-->
+                    <div class="col-md-12">
+                        <label style="color: red">Al dar Click en la tabla se eliminara el material registrado</label>
+                    </div>
+                    <!--Fin Nota de tabla-->
                     <!--Finaliza tabla de material nodos-->
                     <!--Empieza seccion de evidencia-->
                     <div class="text-center">
@@ -629,6 +613,8 @@
             <!--Empieza pie del modal-->
             <div class="modal-footer text-center">
                 <a id="btnAceptarAgregarMaterial" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnActualizarAgregarMaterial" class="btn btn-sm btn-success hidden"><i class="fa fa-refresh"></i> Actualizar</a>
+                <a id="btnEliminarAgregarMaterial" class="btn btn-sm btn-danger hidden" data-dismiss="modal"><i class="fa fa-trash-o"></i> Eliminar</a>
                 <a id="btnCancelarAgregarMaterial" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
             </div>
             <!--Finaliza pie del modal-->
