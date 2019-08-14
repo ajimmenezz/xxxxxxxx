@@ -354,7 +354,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
     var tipoServicio = arguments[12] || '';
     var idPerfil = arguments[13] || '';
     var dataServicio = {servicio: servicio, ticket: ticket};
-    console.log(tipoServicio);
+
     $(resumenSeguimiento).addClass('hidden');
     $(seccion).removeClass('hidden').empty().append(formulario);
 
@@ -491,12 +491,12 @@ Servicio.prototype.ServicioSinClasificar = function () {
 
     //Encargado de agregar un avance
     $('#btnAgregarAvance').on('click', function () {
-        _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio);
+        _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio, 'Guardar');
     });
 
     //Encargado de agregar un problema
     $('#btnAgregarProblema').on('click', function () {
-        _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio);
+        _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio, 'Guardar');
     });
 
     //Encargado de agregar un problema
@@ -1376,9 +1376,11 @@ Servicio.prototype.validarCorreoArray = function (correo) {
 
 Servicio.prototype.mostrarFormularioAvanceServicio = function () {
     var _this = this;
-    guments[0];
-    var tipoAvanceProblema var servicio = ar= arguments[1];
+    var servicio = arguments[0];
+    var tipoAvanceProblema = arguments[1];
     var tipoServicio = arguments[2] || '';
+    var tipoFormulario = arguments[3] || 'Guardar';
+    var informacionAvanceProblema = arguments[4] || null;
     var data = {servicio: servicio, tipoAvanceProblema: tipoAvanceProblema};
     var titulo = '';
     var tituloEquipoMaterial = '';
@@ -1399,14 +1401,24 @@ Servicio.prototype.mostrarFormularioAvanceServicio = function () {
 
         $("#modal-dialogo #content").prop('style', 'margin-left:0px !important;');
         $('#tituloEquipoMaterial').empty().html(tituloEquipoMaterial);
-        _this.file.crearUpload('#archivosAvanceServicio',
-                '/Generales/Servicio/GuardarAvenceServicio'
-                );
+
         _this.select.crearSelect('#selectAvanceRefaccionEquipo');
         _this.select.crearSelect('#selectTipoFalla');
         _this.select.crearSelect('select');
         _this.tabla.generaTablaPersonal('#data-table-avances');
-        $('#inputDescripcionAvanceServicio').val('pumas');
+
+        if (tipoFormulario !== 'Guardar') {
+            _this.colocarInformacionFormularioAvanceProblema(informacionAvanceProblema);
+        }
+        
+        console.log(informacionAvanceProblema.avanceProblema[0].Id);
+        _this.file.crearUpload('#archivosAvanceServicio',
+                '/Generales/Servicio/GuardarAvenceServicio',
+                null,
+                null,
+                informacionAvanceProblema.archivo,
+                '/Generales/Servicio/EliminarEvidenciaAvanceProblema',
+                informacionAvanceProblema.avanceProblema[0].Id);
 
         if (tipoAvanceProblema === '2') {
             $('#divArchivos').empty().html('Archivos *');
@@ -1902,19 +1914,29 @@ Servicio.prototype.botonEditarAvanceProblema = function (servicio) {
         var data = {id: idAvanceProblema};
         _this.enviarEvento('/Generales/Servicio/ConsultaAvanceProblema', data, '#modal-dialogo', function (respuesta) {
 
-            console.log(respuesta);
-            _this.mostrarFormularioAvanceServicio(servicio, '1', '');
-            _this.colocarInformacionFormularioAvanceProblema(respuesta.message);
+            _this.mostrarFormularioAvanceServicio(servicio, respuesta.message.avanceProblema[0].IdTipo, '', 'Actualizar', respuesta.message);
+//            _this.colocarInformacionFormularioAvanceProblema(respuesta.message);
         });
     });
 }
 
 Servicio.prototype.colocarInformacionFormularioAvanceProblema = function () {
+    var _this = this;
     var informacionAvanceProblema = arguments[0];
     console.log(informacionAvanceProblema);
     console.log(informacionAvanceProblema.avanceProblema[0].Descripcion);
-//    $('#inputDescripcionAvanceServicio').val(informacionAvanceProblema.avanceProblema[0].Descripcion);
-    $('#inputDescripcionAvanceServicio').val('pumas');
+    $('#inputDescripcionAvanceServicio').val(informacionAvanceProblema.avanceProblema[0].Descripcion);
+
+    $.each(informacionAvanceProblema.serviciosAvanceEquipo, function (index, value) {
+        var data = {
+            tipoItem: value.IdItem,
+            descripcion: value.EquipoMaterial,
+            item: value.EquipoMaterial,
+            serie: value.Serie,
+            cantidad: value.Cantidad,
+            tipoFalla: value.TipoDiagnostico};
+        _this.agregandoTablaAvanceServicio(data);
+    });
 }
 
 Servicio.prototype.validarCamposFirmaAgregarVuelta = function () {

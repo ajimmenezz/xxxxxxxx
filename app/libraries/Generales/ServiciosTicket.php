@@ -2505,8 +2505,15 @@ class ServiciosTicket extends General {
             $this->DBST->iniciaTransaccion();
             $data['avanceProblema'] = $this->DBST->consultaAvanceProblema($datos['id']);
             $data['serviciosAvanceEquipo'] = $this->DBST->serviciosAvanceEquipo($datos['id']);
+
+            if (!empty($data['avanceProblema'][0])) {
+                $data['archivo'] = explode(',', $data['avanceProblema'][0]['Archivos']);
+            } else {
+                $data['archivo'] = null;
+            }
+
             $this->DBST->commitTransaccion();
-            
+
             return ['code' => 200, 'message' => $data];
         } catch (\Exception $ex) {
             $this->DBST->roolbackTransaccion();
@@ -2515,6 +2522,49 @@ class ServiciosTicket extends General {
         }
     }
 
+    public function eliminarEvidenciaAvanceProblema(array $datos) {
+        $informaionAvanceProblema = $this->DBST->consultaAvanceProblema($datos['id']);
+        var_dump($informaionAvanceProblema);
+        $archivos = explode(',', $informaionAvanceProblema[0]['Archivos']);
+        var_dump($archivos);
+
+        foreach ($archivos as $key => $value) {
+            if ($evidencias['key'] === $value) {
+                unset($archivos[$key]);
+            }
+        }
+        if (eliminarArchivo($evidencias['key'])) {
+            $consulta = $this->DBS->actualizarSolicitud(
+                    't_solicitudes_internas', array('Evidencias' => implode(',', $archivos)), array('IdSolicitud' => $evidencias['id'])
+            );
+            if (!empty($consulta)) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+    }
+
+//        public function eliminarEvidencia(array $evidencias) {
+//        $datosSolicitud = $this->DBS->getDatosSolicitud($evidencias['id']);
+//        $archivos = explode(',', $datosSolicitud['detalles'][0]['Evidencias']);
+//
+//        foreach ($archivos as $key => $value) {
+//            if ($evidencias['key'] === $value) {
+//                unset($archivos[$key]);
+//            }
+//        }
+//        if (eliminarArchivo($evidencias['key'])) {
+//            $consulta = $this->DBS->actualizarSolicitud(
+//                    't_solicitudes_internas', array('Evidencias' => implode(',', $archivos)), array('IdSolicitud' => $evidencias['id'])
+//            );
+//            if (!empty($consulta)) {
+//                return TRUE;
+//            } else {
+//                return FALSE;
+//            }
+//        }
+//    }
 }
 
 class PDFAux extends PDF {

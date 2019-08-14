@@ -117,6 +117,9 @@ class Controller_Servicios extends Base {
             case 'ConsultaAvanceProblema':
                 $resultado = $this->ServicioTicket->consultaAvanceProblema($this->input->post());
                 break;
+            case 'EliminarEvidenciaAvanceProblema':
+                $resultado = $this->ServicioTicket->eliminarEvidenciaAvanceProblema($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
