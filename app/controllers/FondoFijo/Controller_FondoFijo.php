@@ -78,7 +78,7 @@ class Controller_FondoFijo extends Base
                 break;
             
             case 'SaldosTecnico':
-                $resultado = $this->fondo_fijo->getSaldosXTecnico(19);
+                $resultado = $this->fondo_fijo->getSaldosXTecnico();
                 break;
             case 'MovimientosTecnico':
                 $resultado = $this->fondo_fijo->getMovimientosTecnico($this->input->post());

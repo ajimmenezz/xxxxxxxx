@@ -884,21 +884,33 @@ class Modelo_FondoFijo extends Modelo_Base
     }
     public function getSaldosXTecnico(String $idSupervisor) {
         $resultado= $this->consulta('
-            	select
-                usua.Id as idUsuario,
-        cat.Id as IdTipoCuenta,
-        nombreUsuario(usua.Id) as Nombre,
-        usua.IdJefe,
-        cat.Nombre as TipoCuenta,
-        montos.IdUsuario,
-        saldo.Saldo,
-        saldo.Fecha
+        select
+            usua.Id as idUsuario,
+            cat.Id as IdTipoCuenta,
+            nombreUsuario(usua.Id) as Nombre,
+            usua.IdJefe,
+            cat.Nombre as TipoCuenta,
+            montos.IdUsuario,
+            saldo.Saldo,
+            saldo.Fecha
         from 
-        cat_v3_fondofijo_tipos_cuenta cat 
-        inner join cat_v3_fondofijo_montos_x_usuario_cuenta montos on cat.Id = montos.IdTipoCuenta
-        left join t_fondofijo_saldos saldo on cat.Id = saldo.IdTipoCuenta and montos.IdUsuario = saldo.IdUsuario
-        join cat_v3_usuarios usua on montos.Id=usua.id
-        where usua.idJefe='.$idSupervisor.';');
+            cat_v3_fondofijo_tipos_cuenta cat 
+        inner join 
+            cat_v3_fondofijo_montos_x_usuario_cuenta montos 
+        on 
+            cat.Id = montos.IdTipoCuenta
+        left join 
+            t_fondofijo_saldos saldo 
+        on 
+            cat.Id = saldo.IdTipoCuenta 
+        and 
+            montos.IdUsuario = saldo.IdUsuario
+        join 
+            cat_v3_usuarios usua 
+        on 
+            montos.Id=usua.id
+        where 
+            usua.idJefe='.$idSupervisor.';');
         return $resultado;
     }
     public function getMovimientosTecnico($consulta) {

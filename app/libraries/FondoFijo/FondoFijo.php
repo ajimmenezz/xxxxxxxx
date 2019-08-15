@@ -281,6 +281,7 @@ class FondoFijo extends General
     public function getSaldosXTecnico()
     {
         $idSupervisor= $_SESSION['Id'];
+        //var_dump($idSupervisor);
         $resultado= $this->DB->getSaldosXTecnico($idSupervisor);
         return $resultado;
     }
