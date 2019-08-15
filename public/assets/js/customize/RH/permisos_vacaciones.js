@@ -1,3 +1,4 @@
+
 $(function () {
 
     var evento = new Base();
@@ -86,15 +87,18 @@ $(function () {
                 $("#bloqueHorario").css("display", "block");
                 $('#labelHora').text('Hora de Entrada');
                 $("#bloqueFechaHasta").css("display", "none");
+                $('#diaPermiso').html("Fecha del Permiso  *");
                 break;
             case '2':
                 $("#bloqueHorario").css("display", "block");
                 $('#labelHora').text('Hora de Salida');
                 $("#bloqueFechaHasta").css("display", "none");
+                $('#diaPermiso').html("Fecha del Permiso  *");
                 break;
             case '3':
                 $("#bloqueHorario").css("display", "none");
                 $("#bloqueFechaHasta").css("display", "block");
+                $('#diaPermiso').html("Fecha de Ausencia  *");
                 break;
             default:
                 $("#bloqueHorario").css("display", "none");
@@ -342,3 +346,4 @@ $(function () {
     });
 
 });
+

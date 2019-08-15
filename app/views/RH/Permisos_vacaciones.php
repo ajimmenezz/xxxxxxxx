@@ -178,20 +178,20 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">                    
+                        <div class="col-md-6">                    
                             <div class="form-group">
                                 <label>Tipo de Ausencia *</label>
                                 <select id="selectTipoAusencia" class="form-control efectoDescuento" name="SelectTipoAusencia" style="width: 100%" data-parsley-required="true">
                                     <option value="">Seleccionar</option>
                                     <?php
                                         foreach ($datos['tipoAusencia'] as $tipoAusencia) {
-                                            echo '<option value="'.$tipoAusencia['Id'].'">'.$tipoAusencia['Nombre'].'</option>';
+                                            echo '<option onselect="alert();" value="'.$tipoAusencia['Id'].'">'.$tipoAusencia['Nombre'].'</option>';
                                         }
                                     ?>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">                    
+                        <div class="col-md-6">                    
                             <div class="form-group">
                                 <label>Motivo Ausencia *</label>
                                 <select id="selectMotivoAusencia" class="form-control efectoDescuento" name="SelectMotivoAusencia" data-parsley-required="true" style="width: 100%" data-parsley-required="true" disabled>
@@ -199,10 +199,10 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-6">                    
+                        <div class="col-md-12">                    
                             <div id="observaciones" class="form-group">
                                 <label>Observaciones</label>
-                                <input id="inputObservaciones" type="text" class="form-control" style="width: 100%" disabled/>
+                                <textarea id="inputObservaciones" type="text" class="form-control" style="width: 100%" rows="4" disabled></textarea>
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -227,7 +227,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="DiaPermiso">Fecha de Ausencia *</label>
+                                <label id="diaPermiso" for="DiaPermiso">Fecha de Ausencia *</label>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -292,3 +292,4 @@
 <!-- Empezando #contenido -->
 <div id="contentActualizar" class="content hidden"></div>
 <!-- Finalizando #contenido -->
+ 
