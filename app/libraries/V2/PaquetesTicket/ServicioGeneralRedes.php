@@ -4,7 +4,8 @@ namespace Librerias\V2\PaquetesTicket;
 
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenUsuario;
-use Librerias\V2\PaquetesTicket\Nodo as Nodo;
+use Librerias\V2\PaquetesTicket\GestorNodosRedes as GestorNodo;
+use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
 use Modelos\Modelo_ServicioGeneralRedes as Modelo;
 
 class ServicioGeneralRedes implements Servicio {
@@ -21,14 +22,14 @@ class ServicioGeneralRedes implements Servicio {
     private $solicita;
     private $descripcionSolicitud;
     private $DBServiciosGeneralRedes;
-    private $nodo;
+    private $gestorNodos;
     private $almacenUsuario;
 
     public function __construct(string $idServicio) {
         $this->id = $idServicio;
         $this->DBServiciosGeneralRedes = new Modelo();
         $this->almacenUsuario = new AlmacenUsuario();
-        $this->nodo = new Nodo($this->id);
+        $this->gestorNodos = new GestorNodo($this->id);
         $this->setDatos();
     }
 
@@ -90,8 +91,8 @@ class ServicioGeneralRedes implements Servicio {
         $datos = array();
         $datos['solucion'] = $this->DBServiciosGeneralRedes->getDatosSolucion($this->id);
         $datos['IdSucursal'] = $this->idSucursal;
-        $datos['nodos'] = $this->nodo->getNodos();
-        $datos['totalMaterial'] = $this->nodo->getTotalMaterial();
+        $datos['nodos'] = $this->gestorNodos->getNodos();
+        $datos['totalMaterial'] = $this->gestorNodos->getTotalMaterial();
         return $datos;
     }
 
@@ -100,19 +101,20 @@ class ServicioGeneralRedes implements Servicio {
 
         switch ($evento) {
             case 'agregarNodo':
-                $this->nodo->setNodo($datos);
+                $this->gestorNodos->setNodo($datos);
                 break;
             case 'borrarNodo':
-                $this->nodo->deleteNodo($datos['idNodo']);
+                $this->gestorNodos->deleteNodo($datos['idNodo']);
                 break;
             case 'actualizarNodo':
-                $this->nodo->updateNodo($datos);
+                $this->gestorNodos->updateNodo($datos);
                 break;
             case 'borrarNodos':
                 $this->borrarNodos();
                 $this->setSucursal($datos['idSucursal']);
                 break;
-            case 'borrarMaterial':
+            case 'borrarArchivos':
+                $this->gestorNodos->deleteArchivosNodo($datos);
                 break;
             default:
                 break;
@@ -122,20 +124,37 @@ class ServicioGeneralRedes implements Servicio {
         $respuesta['materialUsuario'] = $this->almacenUsuario->getAlmacen();
         return $respuesta;
     }
-       
+
     private function borrarNodos() {
         $nodosEliminados = array();
-        $nodos = $this->nodo->getNodos();
+        $nodos = $this->gestorNodos->getNodos();
         foreach ($nodos as $value) {
-            if(!in_array($value['IdNodo'], $nodosEliminados)){
-                $this->nodo->deleteNodo($value['IdNodo']);
+            if (!in_array($value['IdNodo'], $nodosEliminados)) {
+                $this->gestorNodos->deleteNodo($value['IdNodo']);
                 array_push($nodosEliminados, $value['IdNodo']);
-            }            
+            }
         }
     }
-    
-    public function setSucursal(string $idSucursal){
+
+    public function setSucursal(string $idSucursal) {
+        $this->DBServiciosGeneralRedes->empezarTransaccion();
+        $this->DBServiciosGeneralRedes->setSucursal($this->id, $idSucursal);
+        $this->DBServiciosGeneralRedes->finalizarTransaccion();
+    }
+
+    public function setProblema(array $datos) {
+        $this->DBServiciosGeneralRedes->empezarTransaccion();
+        $datos['idUsuario'] = Usuario::getId();
+        $this->DBServiciosGeneralRedes->setProblema($this->id, $datos);
+        $this->DBServiciosGeneralRedes->finalizarTransaccion();
+    }
+
+    public function setSolucion(array $datos) {        
+        $this->DBServiciosGeneralRedes->empezarTransaccion();
         
+        $datos['idUsuario'] = Usuario::getId();
+        
+        $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
 
 }

@@ -66,4 +66,25 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
                                             WHERE Id = "' . $idSolicitud . '"');
     }
 
+    public function setSucursal(string $idServicio, string $idSucursal) {
+        $this->actualizar('update t_servicios_ticket set 
+                           IdSucursal = ' . $idSucursal . ' where Id = ' . $idServicio);
+    }
+    
+    public function setProblema(string $idServicio, array $datos) {
+        $this->insertar('insert into t_servicios_avance values (
+                            null,
+                            '.$idServicio.',
+                            '.$datos['idUsuario'].',
+                            2,
+                            now(),
+                            "'.$datos['descripcion'].'",
+                            "Archivos"
+                        )');
+    }
+    
+    public function getDatosServicioGeneral(string $idServicio) {
+        
+    }
+
 }

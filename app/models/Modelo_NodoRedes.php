@@ -76,8 +76,28 @@ class Modelo_NodoRedes extends Base {
         $this->borrar('delete from t_redes_nodos where Id = ' . $idNodo);
     }
 
-    public function updateNodo(string $idNodo) {
+    public function updateNodo(array $datos) {
+        $archivos = null;
+                        
+        $consulta = $this->consulta('select Archivos from t_redes_nodos where Id = ' . $datos['idNodo']);
         
+        if (!empty($consulta)) {            
+            $archivos = $consulta[0]['Archivos'];
+        }
+        
+        if (!empty($archivos)) {
+            $archivos .= ','.$datos['archivos'];
+        }else{
+            $archivos = $datos['archivos'];
+        }
+        
+        $this->actualizar('update t_redes_nodos set
+                                            IdArea = '.$datos['area'].',
+                                            Nombre = "'.$datos['nodo'].'",
+                                            IdSwitch = '.$datos['switch'].',
+                                            NumeroSwitch = '.$datos['numSwitch'].',
+                                            Archivos = "'.$archivos.'"
+                                       where Id = '.$datos['idNodo']);
     }
 
     public function getInformacionNodo(string $idNodo) {
@@ -93,11 +113,11 @@ class Modelo_NodoRedes extends Base {
     }
 
     public function deleteMaterialNodo(string $idNodo) {
-        $this->borrar('delete from t_redes_material where IdNodo = ' . $idNodo);        
+        $this->borrar('delete from t_redes_material where IdNodo = ' . $idNodo);
     }
-    
+
     public function getTotalMaterial(string $idServicio) {
-        return $this->ejecutaFuncion('call getTotalRedesServiceMaterial('.$idServicio.')');        
+        return $this->ejecutaFuncion('call getTotalRedesServiceMaterial(' . $idServicio . ')');
     }
 
 }

@@ -51,7 +51,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['problemas'] = null;
             $this->datos['firmas'] = null;
             $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
-            $this->getInformacionFolio();            
+            $this->getInformacionFolio();
             echo json_encode($this->datos);
         } catch (Exception $exc) {
             $this->datos['ERROR'] = $exc->getMessage();
@@ -107,11 +107,40 @@ class Controller_ServicioTicket extends CI_Controller {
 
     public function runEvento(string $evento) {
         try {
-            $datosServicio = $this->input->post();           
+            $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             echo json_encode($this->servicio->runAccion($evento, $datosServicio));
         } catch (Exception $ex) {
             $this->datos['ERROR'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
+
+    public function setProblema() {
+        try {
+            $datosServicio = $this->input->post();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->setProblema($datosServicio);
+            if (!empty($datosServicio['folio'])) {                
+                ServiceDesk::setEstatus('Problema', $datosServicio['folio']);
+            }
+            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
+    
+    public function setSolucion() {
+        try {
+            $datosServicio = $this->input->post();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->setSolucion($datosServicio);            
+            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
             echo json_encode($this->datos);
         }
     }

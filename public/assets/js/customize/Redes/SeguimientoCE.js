@@ -196,13 +196,16 @@ $(function () {
         if (solucion.solucion.length > 0) {
             $('#textareaObservaciones').text(solucion.solucion[0].Observaciones);
         }
+
         selectSucursal.evento('change', function () {
             let totalNodos = tablaNodos.datosTabla();
+            datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
 
             if (totalNodos.length > 0) {
                 modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara los Nodos registrados</h4>');
                 $('#btnAceptar').on('click', function () {
                     modal.cerrarModal();
+
                     peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
                         console.log(respuesta);
                     });
@@ -248,7 +251,7 @@ $(function () {
             });
         }
     }
-    
+
     $('#btnAgregarMaterialATablaNodo').on('click', function () {
         if (evento.validarFormulario('#formMaterial')) {
             if (parseFloat($('#materialUtilizar').val()) <= parseFloat($('#materialDisponible').val()) && parseFloat($('#materialUtilizar').val()) > 0) {
@@ -275,7 +278,7 @@ $(function () {
             }
         }
     });
-    
+
     $('#btnAceptarAgregarMaterial').on('click', function () {
         if (evento.validarFormulario('#formDatosNodo') && evento.validarFormulario('#formEvidenciaMaterial')) {
             infoMaterialNodo.id = datoServicioTabla.id;
@@ -300,7 +303,7 @@ $(function () {
             });
         }
     });
-    
+
     $('#btnCancelarAgregarMaterial').on('click', function () {
         limpiarElementosModalMaterial();
         $('#imagenEvidencia').addClass('hidden');
@@ -308,11 +311,11 @@ $(function () {
         $('#btnEliminarAgregarMaterial').addClass('hidden');
         $('#btnAceptarAgregarMaterial').removeClass('hidden');
     });
-    
+
     $('#btnActualizarAgregarMaterial').on('click', function () {
         infoMaterialNodo.id = datoServicioTabla.id;
         infoMaterialNodo.tipo = datoServicioTabla.tipo;
-        infoMaterialNodo.idNodo = '3';
+        infoMaterialNodo.idNodo = '8';
         infoMaterialNodo.area = '66';
         infoMaterialNodo.nodo = 'D1';
         infoMaterialNodo.switch = '175';
@@ -326,18 +329,19 @@ $(function () {
 //                infoMaterialNodo.material += '|{"idMaterial": ' + value[0] + ', "cantidad": ' + value[2] + '}';
 //            }
 //        });
-        
-        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
-            console.log(respuesta);
-        });
-        
-//        evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
+
+//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
+//            console.log(respuesta);
+//        });
+
+        evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
 //            limpiarElementosModalMaterial();
 //            $('#modalMaterialNodo').modal('toggle');
 //            tablaNodos.limpiartabla();
-//        });
+            console.log(respuesta);
+        });
     });
-    
+
     $('#btnEliminarAgregarMaterial').on('click', function () {
         let datos = {};
         datos.id = datoServicioTabla.id;
@@ -440,7 +444,7 @@ $(function () {
     $('#btnEditarServicio').on('click', function () {
         console.log('btnEditarServicio')
     });
-    
+
     $('#btnAgregarFolio').on('click', function () {
         mostrarElementosAgregarFolio();
     });
@@ -520,19 +524,19 @@ $(function () {
         $('#menosDetalles').removeClass('hidden');
         $('#detallesServicio').removeClass('hidden');
     });
-    
+
     $('#menosDetalles').on('click', function () {
         $('#masDetalles').removeClass('hidden');
         $('#menosDetalles').addClass('hidden');
         $('#detallesServicio').addClass('hidden');
     });
-    
+
     $('#masDetallesFolio').on('click', function () {
         $('#masDetallesFolio').addClass('hidden');
         $('#menosDetallesFolio').removeClass('hidden');
         $('#detallesFolio').removeClass('hidden');
     });
-    
+
     $('#menosDetallesFolio').on('click', function () {
         $('#masDetallesFolio').removeClass('hidden');
         $('#menosDetallesFolio').addClass('hidden');
@@ -548,7 +552,7 @@ $(function () {
         $('#sinMaterial').addClass('hidden');
         $('#conMaterial').removeClass('hidden');
     });
-    
+
     $('#btnConMaterial').on('click', function () {
         $('#btnConMaterial').addClass('hidden');
         $('#btnSinMaterial').removeClass('hidden');
@@ -560,16 +564,25 @@ $(function () {
         let contentReportar = $('#segReportar').html();
         let contentEvidencia = $('#vistaEvidencias').html();
         modal.mostrarModal('Definir Problema', contentReportar + contentEvidencia, 'text-left');
-        console.log('btnReportar')
+
+        datoServicioTabla.descripcion = 'Descripcion de problema ',
+                modal.btnAceptar('btnAceptar', function () {
+
+                    /*falta implementar el fileupload para mandar las evidencias*/
+                    peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/agregarProblema', datoServicioTabla, function (respuesta) {
+                        console.log(respuesta);
+                    });
+                });
+
     });
-    
+
     $('#btnVerMaterial').on('click', function () {
         $('#btnVerMaterial').addClass('hidden');
         $('#vistaNodos').addClass('hidden');
         $('#btnVerNodos').removeClass('hidden');
         $('#vistaMaterialUsado').removeClass('hidden');
     });
-    
+
     $('#btnVerNodos').on('click', function () {
         $('#btnVerNodos').addClass('hidden');
         $('#vistaMaterialUsado').addClass('hidden');
@@ -581,12 +594,15 @@ $(function () {
     /**Empiezan seccion de botonos generales**/
     $('#btnGuardar').on('click', function () {
         if (evento.validarFormulario('#formDatosSolucion')) {
-//            datoServicioGral.sucursal = selectSucursal.obtenerValor();
+             datoServicioTabla.observaciones = $('#textareaObservaciones').val();
 //            datoServicioGral.observaciones = $('#textareaObservaciones').val();
 //            console.log(datoServicioGral)
+            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
+                console.log(respuesta);
+            });
         }
     });
-    
+
     $('#btnConcluir').on('click', function () {
         $('#contentFirmasConclucion').removeClass('hidden');
         $('#contentServiciosRedes').addClass('hidden');
@@ -625,7 +641,7 @@ $(function () {
         $('#contentServiciosRedes').removeClass('hidden');
         $('#contentFirmasConclucion').addClass('hidden');
     });
-    
+
     $('#btnRegresarServicio2').on('click', function () {
         $('#contentfirmaCliente').removeClass('hidden');
         $('#btnRegresarServicio').removeClass('hidden');

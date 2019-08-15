@@ -20,8 +20,7 @@ class Modal {
     }
 
     btnAceptar(idElemento, callback = null) {
-        $('#btnModalConfirmar').on('click', callback);
-        this.cerrarModal();
+        $(`#${idElemento}`).on('click', callback);        
     }
 
     cerrarModal() {
