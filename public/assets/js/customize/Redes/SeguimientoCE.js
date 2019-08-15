@@ -20,8 +20,8 @@ $(function () {
     let selectSwitch = null;
     let selectMaterial = null;
     let evidenciaMaterial = null;
+    let evidenciaProblema = null;
     let collapseNotas = null;
-    let campoImagenes = null;
 
     let firmaClienet = new DrawingBoard.Board("firmaCliente", {
         background: "#fff",
@@ -74,6 +74,9 @@ $(function () {
     };
     let materialTecnico = null;
     let listaTotalNodos = null;
+    let censoSwitches = null;
+    let areasSucursales = null;
+    let idNodo = null;
 
     tablaPrincipal.evento(function () {
         let tamañoDatosFila = 0, datosFila = tablaPrincipal.datosFila(this);
@@ -108,6 +111,8 @@ $(function () {
         $('#contentServiciosGeneralesRedes').addClass('hidden');
         $('#contentServiciosRedes').removeClass('hidden');
         listaTotalNodos = infoServicio.solucion.nodos;
+        censoSwitches = infoServicio.datosServicio.censoSwitch;
+        areasSucursales = infoServicio.datosServicio.areasSucursal;
         iniciarObjetos();
         if (infoServicio.servicio.Folio != 0 && infoServicio.servicio.Folio != null) {
             mostrarElementosAgregarFolio();
@@ -117,7 +122,7 @@ $(function () {
         cargarContenidoServicio(infoServicio);
         cargarContenidoSolucion(infoServicio.solucion);
         cargarContenidoModalMaterial(infoServicio.datosServicio);
-        cargarContenidoTablaNodos(infoServicio);
+        cargarContenidoTablaNodos();
         eventosTablas();
         ocultarElementosDefault(infoServicio.solucion, infoServicio.firmas);
         $('html, body').animate({
@@ -134,8 +139,10 @@ $(function () {
         selectSwitch = new SelectBasico('selectSwith');
         selectMaterial = new SelectBasico('selectMaterial');
         evidenciaMaterial = new FileUpload_Basico('agregarEvidenciaNodo', {url: 'SeguimientoCE/SeguimientoGeneral/Accion/agregarNodo', extensiones: ['jpg', 'jpeg', 'png']});
+        evidenciaMaterial.iniciarFileUpload()
+        evidenciaProblema = new FileUpload_Basico('agregarEvidenciaProblema', {url: '', extensiones: ['jpg', 'jpeg', 'png']});
+        evidenciaProblema.iniciarFileUpload()
         collapseNotas = new Collapse('collapseNotas');
-        campoImagenes = new Imagenes('imagenEvidencia');
         selectSucursal.iniciarSelect();
         selectArea.iniciarSelect();
         selectSwitch.iniciarSelect();
@@ -205,7 +212,7 @@ $(function () {
                 modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara los Nodos registrados</h4>');
                 $('#btnAceptar').on('click', function () {
                     modal.cerrarModal();
-                    peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/borraNodos', datoServicioTabla, function (respuesta) {
+                    peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
                         console.log(respuesta);
                     });
                 });
@@ -250,6 +257,7 @@ $(function () {
             });
         }
     }
+
     $('#btnAgregarMaterialATablaNodo').on('click', function () {
         if (evento.validarFormulario('#formMaterial')) {
             if (parseFloat($('#materialUtilizar').val()) <= parseFloat($('#materialDisponible').val()) && parseFloat($('#materialUtilizar').val()) > 0) {
@@ -276,6 +284,7 @@ $(function () {
             }
         }
     });
+
     $('#btnAceptarAgregarMaterial').on('click', function () {
         if (evento.validarFormulario('#formDatosNodo') && evento.validarFormulario('#formEvidenciaMaterial')) {
             infoMaterialNodo.id = datoServicioTabla.id;
@@ -295,28 +304,81 @@ $(function () {
             });
             evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
                 limpiarElementosModalMaterial();
-                $('#modalMaterialNodo').modal('toggle');
                 tablaNodos.limpiartabla();
+                listaTotalNodos = respuesta.solucion.nodos;
+                cargarContenidoTablaNodos();
             });
         }
     });
+
     $('#btnCancelarAgregarMaterial').on('click', function () {
         limpiarElementosModalMaterial();
-        $('#imagenEvidencia').addClass('hidden');
-        $('#btnActualizarAgregarMaterial').addClass('hidden');
-        $('#btnEliminarAgregarMaterial').addClass('hidden');
-        $('#btnAceptarAgregarMaterial').removeClass('hidden');
-        $('#fileEvidencia').removeClass('hidden');
+        restaurarElementosModal();
     });
+
     $('#btnActualizarAgregarMaterial').on('click', function () {
-//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/', data, function (respuesta) {
+        infoMaterialNodo.id = datoServicioTabla.id;
+        infoMaterialNodo.tipo = datoServicioTabla.tipo;
+        infoMaterialNodo.idNodo = idNodo;
+        infoMaterialNodo.area = selectArea.obtenerValor();
+        infoMaterialNodo.nodo = $('#inputNodo').val();
+        infoMaterialNodo.switch = selectSwitch.obtenerValor();
+        infoMaterialNodo.numSwitch = $('#inputNumSwith').val();
+        infoMaterialNodo.material = null;
+
+        $.each(tablaAgregarMateriales.datosTabla(), function (key, value) {
+            if (infoMaterialNodo.material === null) {
+                infoMaterialNodo.material = '{"idMaterial": ' + value[0] + ', "cantidad": ' + value[2] + '}';
+            } else {
+                infoMaterialNodo.material += '|{"idMaterial": ' + value[0] + ', "cantidad": ' + value[2] + '}';
+            }
+        });
+
+//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
 //            console.log(respuesta);
+//        });
+
+//        evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
+//            limpiarElementosModalMaterial();
+//            $('#modalMaterialNodo').modal('toggle');
+//            tablaNodos.limpiartabla();
 //        });
     });
+    
+//    $('[id*=img-] .eliminarEvidencia').on('click', function (){
+//        let dato = $(this);
+//       console.log('aqui') 
+//       console.log(dato) 
+//    });
+
     $('#btnEliminarAgregarMaterial').on('click', function () {
-//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/', data, function (respuesta) {
-//            console.log(respuesta);
-//        });
+        let datos = {};
+        datos.id = datoServicioTabla.id;
+        datos.tipo = datoServicioTabla.tipo;
+        datos.idNodo = idNodo;
+        let suma = 0, datosMaterial = [];
+        $.each(listaTotalNodos, function (key, value) {
+            if (value.IdNodo === idNodo) {
+                datosMaterial.push(value);
+            }
+        });
+        $.each(materialTecnico, function (key, value) {
+            $.each(datosMaterial, function (llave, valor) {
+                if (value.id == valor.IdMaterialTecnico) {
+                    suma = parseFloat(value.cantidad) + parseFloat(valor.Cantidad);
+                    value.cantidad = suma;
+                }
+            });
+        });
+
+        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodo', datos, function (respuesta) {
+            limpiarElementosModalMaterial();
+            restaurarElementosModal();
+            $('#modalMaterialNodo').modal('toggle');
+            tablaNodos.limpiartabla();
+            listaTotalNodos = respuesta.solucion.nodos;
+            cargarContenidoTablaNodos()
+        });
     });
 
     function  limpiarElementosModalMaterial() {
@@ -329,19 +391,28 @@ $(function () {
         $('#materialUtilizar').val('');
         tablaAgregarMateriales.limpiartabla();
         evidenciaMaterial.limpiarElemento();
-        campoImagenes.limpiarCampoImagen();
+    }
+
+    function restaurarElementosModal() {
+        $('#imagenEvidencia').addClass('hidden');
+        $('#btnActualizarAgregarMaterial').addClass('hidden');
+        $('#btnEliminarAgregarMaterial').addClass('hidden');
+        $('#btnAceptarAgregarMaterial').removeClass('hidden');
+        $('#fileMostrarEvidencia').addClass('hidden');
+        $('#fileEvidencia').removeClass('hidden');
+        $('#evidenciasMaterialUtilizado').empty();
     }
     /**Finalizan eventos del modal Material**/
 
-    function cargarContenidoTablaNodos(datos) {
+    function cargarContenidoTablaNodos() {
         let listaTemporalNodos = JSON.parse(JSON.stringify(listaTotalNodos));
         $.each(listaTemporalNodos, function (key, value) {
-            $.each(datos.datosServicio.areasSucursal, function (llave, valor) {
+            $.each(areasSucursales, function (llave, valor) {
                 if (value.IdArea === valor.id) {
                     value.IdArea = valor.text;
                 }
             });
-            $.each(datos.datosServicio.censoSwitch, function (llave, valor) {
+            $.each(censoSwitches, function (llave, valor) {
                 if (value.IdSwitch === valor.modelo) {
                     value.IdSwitch = valor.text;
                 }
@@ -369,12 +440,13 @@ $(function () {
                 $('#btnActualizarAgregarMaterial').removeClass('hidden');
                 $('#btnEliminarAgregarMaterial').removeClass('hidden');
                 $('#fileEvidencia').addClass('hidden');
+                $('#fileMostrarEvidencia').removeClass('hidden');
                 actualizarContenidoModalMaterial(datos[0]);
             }
         });
 
         tablaAgregarMateriales.evento(function () {
-            let suma = null, datosFila = tablaAgregarMateriales.datosFila(this);
+            let suma = 0, datosFila = tablaAgregarMateriales.datosFila(this);
             $.each(materialTecnico, function (key, value) {
                 if (value.id === datosFila[0]) {
                     suma = parseFloat(value.cantidad) + parseFloat(datosFila[2]);
@@ -389,28 +461,33 @@ $(function () {
     }
 
     function actualizarContenidoModalMaterial(id) {
-        let contador = 0, listaTemporalNodos = [];
+        idNodo = null;
+        let listaTemporalNodos = [], evidencias = '', archivos;
         $.each(listaTotalNodos, function (key, value) {
             if (value.IdNodo === id) {
                 listaTemporalNodos.push(value);
             }
-            contador++;
         });
         selectArea.definirValor(listaTemporalNodos[0].IdArea);
         $('#inputNodo').val(listaTemporalNodos[0].Nombre);
         selectSwitch.definirValor(listaTemporalNodos[0].IdSwitch);
         $('#inputNumSwith').val(listaTemporalNodos[0].NumeroSwitch);
-        campoImagenes.aplicarMultipleImagen(listaTemporalNodos[0].Archivos);
+        archivos = listaTemporalNodos[0].Archivos.split(',');
+        $.each(archivos, function (key, value) {
+            evidencias += `<div class="evidencia"><a href="`+value+`" data-lightbox="evidencias"><img src ="`+value+`" /></a><div><a id="img-`+key+`" class="eliminarEvidencia" href="#"><i class="fa fa-trash text-danger"></i></a></div></div>`;
+        });
+        $('#evidenciasMaterialUtilizado').append(evidencias);
         $.each(listaTemporalNodos, function (key, value) {
             $.each(materialTecnico, function (llave, valor) {
-                if(value.IdMaterialTecnico == valor.id)
-                tablaAgregarMateriales.agregarDatosFila([
-                    value.IdMaterialTecnico,
-                    valor.text,
-                    value.Cantidad
-                ]);
+                if (value.IdMaterialTecnico == valor.id)
+                    tablaAgregarMateriales.agregarDatosFila([
+                        value.IdMaterialTecnico,
+                        valor.text,
+                        value.Cantidad
+                    ]);
             });
         });
+        idNodo = id;
     }
 
     function ocultarElementosDefault(solucion, firmas) {
@@ -434,6 +511,7 @@ $(function () {
     $('#btnEditarServicio').on('click', function () {
         console.log('btnEditarServicio')
     });
+
     $('#btnAgregarFolio').on('click', function () {
         mostrarElementosAgregarFolio();
     });
@@ -513,16 +591,19 @@ $(function () {
         $('#menosDetalles').removeClass('hidden');
         $('#detallesServicio').removeClass('hidden');
     });
+
     $('#menosDetalles').on('click', function () {
         $('#masDetalles').removeClass('hidden');
         $('#menosDetalles').addClass('hidden');
         $('#detallesServicio').addClass('hidden');
     });
+
     $('#masDetallesFolio').on('click', function () {
         $('#masDetallesFolio').addClass('hidden');
         $('#menosDetallesFolio').removeClass('hidden');
         $('#detallesFolio').removeClass('hidden');
     });
+
     $('#menosDetallesFolio').on('click', function () {
         $('#masDetallesFolio').removeClass('hidden');
         $('#menosDetallesFolio').addClass('hidden');
@@ -538,25 +619,27 @@ $(function () {
         $('#sinMaterial').addClass('hidden');
         $('#conMaterial').removeClass('hidden');
     });
+
     $('#btnConMaterial').on('click', function () {
         $('#btnConMaterial').addClass('hidden');
         $('#btnSinMaterial').removeClass('hidden');
         $('#sinMaterial').removeClass('hidden');
         $('#conMaterial').addClass('hidden');
     });
-
-    $('#btnReportar').on('click', function () {
-        let contentReportar = $('#segReportar').html();
-        let contentEvidencia = $('#vistaEvidencias').html();
-        modal.mostrarModal('Definir Problema', contentReportar + contentEvidencia, 'text-left');
-        console.log('btnReportar')
+    
+    $('#btnAceptarProblema').on('click', function () {
+        if (evento.validarFormulario('#formEvidenciaProblema')) {
+            console.log('jaja')
+        }
     });
+
     $('#btnVerMaterial').on('click', function () {
         $('#btnVerMaterial').addClass('hidden');
         $('#vistaNodos').addClass('hidden');
         $('#btnVerNodos').removeClass('hidden');
         $('#vistaMaterialUsado').removeClass('hidden');
     });
+
     $('#btnVerNodos').on('click', function () {
         $('#btnVerNodos').addClass('hidden');
         $('#vistaMaterialUsado').addClass('hidden');
@@ -565,7 +648,7 @@ $(function () {
     });
     /**Finalizan eventos de botones para datos y problemas**/
 
-    /**Empiezan seccion de botonos generales**/
+    /**Empiezan seccion de botones generales**/
     $('#btnGuardar').on('click', function () {
         if (evento.validarFormulario('#formDatosSolucion')) {
 //            datoServicioGral.sucursal = selectSucursal.obtenerValor();
@@ -573,11 +656,24 @@ $(function () {
 //            console.log(datoServicioGral)
         }
     });
+
     $('#btnConcluir').on('click', function () {
         $('#contentFirmasConclucion').removeClass('hidden');
         $('#contentServiciosRedes').addClass('hidden');
     });
-    /**Finalizan seccion de botonos generales**/
+    /**Finalizan seccion de botones generales**/
+
+    $('#btnRegresarServicio').on('click', function () {
+        $('#contentServiciosRedes').removeClass('hidden');
+        $('#contentFirmasConclucion').addClass('hidden');
+    });
+
+    $('#btnRegresarServicio2').on('click', function () {
+        $('#contentfirmaCliente').removeClass('hidden');
+        $('#btnRegresarServicio').removeClass('hidden');
+        $('#contentfirmaTecnico').addClass('hidden');
+        $('#btnRegresarServicio2').addClass('hidden');
+    });
 
     $('#btnContinuar').on('click', function () {
         let imgFirmaCliente = firmaClienet.getImg();
@@ -597,7 +693,6 @@ $(function () {
         }
     });
 
-
     $('#btnTerminar').on('click', function () {
         let imgFirmaTecnico = firmaTecnico.getImg();
         let inputFirmaTecnico = (firmaTecnico.blankCanvas == imgFirmaTecnico) ? '' : imgFirmaTecnico;
@@ -608,14 +703,4 @@ $(function () {
         }
     });
 
-    $('#btnRegresarServicio').on('click', function () {
-        $('#contentServiciosRedes').removeClass('hidden');
-        $('#contentFirmasConclucion').addClass('hidden');
-    });
-    $('#btnRegresarServicio2').on('click', function () {
-        $('#contentfirmaCliente').removeClass('hidden');
-        $('#btnRegresarServicio').removeClass('hidden');
-        $('#contentfirmaTecnico').addClass('hidden');
-        $('#btnRegresarServicio2').addClass('hidden');
-    });
 });

@@ -87,7 +87,6 @@ class ServicioGeneralRedes implements Servicio {
     }
 
     public function getSolucion() {
-
         $datos = array();
         $datos['solucion'] = $this->DBServiciosGeneralRedes->getDatosSolucion($this->id);
         $datos['IdSucursal'] = $this->idSucursal;
@@ -103,8 +102,15 @@ class ServicioGeneralRedes implements Servicio {
             case 'agregarNodo':
                 $this->nodo->setNodo($datos);
                 break;
+            case 'borrarNodo':
+                $this->nodo->deleteNodo($datos['idNodo']);
+                break;
+            case 'actualizarNodo':
+                $this->nodo->updateNodo($datos);
+                break;
             case 'borrarNodos':
                 $this->borrarNodos();
+                $this->setSucursal($datos['idSucursal']);
                 break;
             default:
                 break;
@@ -114,16 +120,19 @@ class ServicioGeneralRedes implements Servicio {
         $respuesta['materialUsuario'] = $this->almacenUsuario->getAlmacen();
         return $respuesta;
     }
-
-    private function editarNodo(array $datos) {
-        
-    }
-
-    private function borrarNodo() {
-        
-    }
-
+       
     private function borrarNodos() {
+        $nodosEliminados = array();
+        $nodos = $this->nodo->getNodos();
+        foreach ($nodos as $value) {
+            if(!in_array($value['IdNodo'], $nodosEliminados)){
+                $this->nodo->deleteNodo($value['IdNodo']);
+                array_push($nodosEliminados, $value['IdNodo']);
+            }            
+        }
+    }
+    
+    public function setSucursal(string $idSucursal){
         
     }
 

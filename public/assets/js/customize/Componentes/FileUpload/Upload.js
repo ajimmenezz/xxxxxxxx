@@ -4,7 +4,7 @@ class Upload {
         this.fileUpload = nombreFileUpload;
         this.configuracion = configuracion;
         this.datosExtra = {};
-        this.iniciarFileUpload();
+        //this.iniciarFileUpload();
         //this.pagina = pagina;
     }
 
@@ -23,6 +23,8 @@ class Upload {
             showRemove: false,
             allowedFileExtensions: ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx'],
             overwriteInitial: false,
+            initialPreviewAsData: true,
+            initialPreview: [],
             previewSettings: {
                 image: {width: '160px', height: '164px'},
                 video: {width: "160px", height: "164px"},
@@ -58,6 +60,7 @@ class Upload {
                             <div class="clearfix"></div>
                         </div>`
             },
+            deleteUrl: '',
             uploadExtraData: function () {
                 var datos = _this.obteniendoDatosExtra();
                 return datos;
