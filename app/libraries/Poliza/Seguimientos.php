@@ -5365,16 +5365,10 @@ class Seguimientos extends General {
     public function sendTextSD(array $dataSendTextSD) {
         $user = $this->Usuario->getDatosUsuario();
         $viewHtml = '';
-
         $dataService = $this->DBP->consultationServiceAndRequest($dataSendTextSD['service']);
         $key = $this->InformacionServicios->getApiKeyByUser($user['Id']);
-        $descriptionService = $this->InformacionServicios->MostrarDatosSD($dataService[0]['Folio'], $dataSendTextSD['service'], FALSE, $key);
-        if ($descriptionService['estatus']) {
-            $viewHtml .= $descriptionService['html'];
-        }
-
         $viewHtml .= $this->createTextSD($dataSendTextSD);
-        $result = $this->ServiceDesk->setResolucionServiceDesk($key, $dataService[0]['Folio'], $viewHtml);
+        $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $dataService[0]['Folio'], 'html' => $viewHtml));
     }
 
     public function createTextSD(array $dataCreateTextSD) {

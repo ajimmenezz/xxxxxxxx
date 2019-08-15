@@ -216,11 +216,11 @@ class ServiceDesk extends General {
         $html = str_replace('&nbsp', '', $datos);
         $html = str_replace('style="color:#FF0000";', '', $datos);
         $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/notes/";
-        $input_data = '{operation:{details:{notes:{note:{isPublic:true,notesText:"' . urlencode($html) . '"}}}}}';
+        $input_data = '{operation:{details:{notes:{note:{isPublic:true,notesText:"' . $this->mres($html) . '"}}}}}';
         $FIELDS = "format=json"
                 . "&OPERATION_NAME=ADD_NOTE"
                 . "&TECHNICIAN_KEY=" . $key
-                . "&INPUT_DATA=" . $input_data;
+                . "&INPUT_DATA=" . urlencode($input_data);
         $data = json_decode(file_get_contents($URL2 . '?' . $FIELDS));
 
         return $data;
@@ -229,12 +229,11 @@ class ServiceDesk extends General {
     public function setWorkLogServiceDesk(string $key, string $folio, string $datos) {
         $html = strip_tags($datos);
         $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/worklogs/";
-        $input_data = '{operation:{details:{worklogs:{worklog:{description:"' . urlencode($html) . '",workMinutes:1}}}}}';
+        $input_data = '{operation:{details:{worklogs:{worklog:{description:"' . $this->mres($html) . '",workMinutes:1}}}}}';
         $FIELDS = "format=json"
                 . "&OPERATION_NAME=ADD_WORKLOG"
                 . "&TECHNICIAN_KEY=" . $key
-                . "&INPUT_DATA=" . $input_data;
-
+                . "&INPUT_DATA=" . urlencode($input_data);
         $data = json_decode(file_get_contents($URL2 . '?' . $FIELDS));
 
         return $data;
