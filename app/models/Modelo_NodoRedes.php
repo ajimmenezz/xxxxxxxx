@@ -12,7 +12,7 @@ class Modelo_NodoRedes extends Base {
 
     public function setNodo(string $idServicio, array $datos) {
         $consulta = $this->insertar('insert into t_redes_nodos values(
-                           "",
+                           null,
                            ' . $idServicio . ',
                            ' . $datos['area'] . ',
                            "' . $datos['nodo'] . '",
@@ -93,8 +93,11 @@ class Modelo_NodoRedes extends Base {
     }
 
     public function deleteMaterialNodo(string $idNodo) {
-        $this->borrar('delete from t_redes_material where IdNodo = ' . $idNodo);
-        return $consulta;
+        $this->borrar('delete from t_redes_material where IdNodo = ' . $idNodo);        
+    }
+    
+    public function getTotalMaterial(string $idServicio) {
+        return $this->ejecutaFuncion('call getTotalRedesServiceMaterial('.$idServicio.')');        
     }
 
 }

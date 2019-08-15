@@ -90,8 +90,8 @@ class ServicioGeneralRedes implements Servicio {
         $datos = array();
         $datos['solucion'] = $this->DBServiciosGeneralRedes->getDatosSolucion($this->id);
         $datos['IdSucursal'] = $this->idSucursal;
-        $datos['problemas'] = null;
         $datos['nodos'] = $this->nodo->getNodos();
+        $datos['totalMaterial'] = $this->nodo->getTotalMaterial();
         return $datos;
     }
 
@@ -111,6 +111,8 @@ class ServicioGeneralRedes implements Servicio {
             case 'borrarNodos':
                 $this->borrarNodos();
                 $this->setSucursal($datos['idSucursal']);
+                break;
+            case 'borrarMaterial':
                 break;
             default:
                 break;

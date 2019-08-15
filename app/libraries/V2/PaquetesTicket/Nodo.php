@@ -32,7 +32,7 @@ class Nodo {
             $this->DBNodo->empezarTransaccion();
             $archivos = explode(',', $informacionNodo[0]['Archivos']);
             $this->deleteArchivos($archivos);
-            $this->DBNodo->deleteNodo($datos['idNodo']);
+            $this->DBNodo->deleteMaterialNodo($datos['idNodo']);
             $carpeta = 'Servicios/Servicio-' . $this->idServicio . '/EvidenciaMaterialNodos/';
             Archivo::saveArchivos($carpeta);
             $datos['archivos'] = Archivo::getString();
@@ -43,6 +43,11 @@ class Nodo {
 
     public function deleteNodo(string $idNodo) {
         $this->DBNodo->empezarTransaccion();
+        $informacionNodo = $this->DBNodo->getInformacionNodo($idNodo);
+        if (!empty($informacionNodo)) {
+            $archivos = explode(',', $informacionNodo[0]['Archivos']);
+            $this->deleteArchivos($archivos);
+        }
         $this->DBNodo->deleteNodo($idNodo);
         $this->DBNodo->finalizarTransaccion();
     }
@@ -66,6 +71,10 @@ class Nodo {
         foreach ($archivos as $value) {
             Archivo::deleteArchivo($value);
         }
+    }
+    
+    public function getTotalMaterial() {
+        return $this->DBNodo->getTotalMaterial($this->idServicio);
     }
 
 }
