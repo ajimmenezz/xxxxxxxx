@@ -39,7 +39,7 @@ class Modelo_NodoRedes extends Base {
         }
     }
 
-    public function getNodos(string $idServicio) {
+    public function getNodosConMaterial(string $idServicio) {
         $consulta = $this->consulta('select 
                                         trn.Id as IdNodo,
                                         trn.IdArea,
@@ -57,7 +57,7 @@ class Modelo_NodoRedes extends Base {
         return $consulta;
     }
 
-    public function delateNodo(string $idNodo) {
+    public function deleteNodo(string $idNodo) {
         $consulta = $this->consulta('select
                                         IdMaterialTecnico,
                                         Cantidad
@@ -65,13 +65,36 @@ class Modelo_NodoRedes extends Base {
                                      where IdNodo = ' . $idNodo);
         foreach ($consulta as $value) {
             $bloqueado = $this->consulta('select Bloqueado from t_inventario where Id = ' . $value['IdMaterialTecnico']);
-            $totalMaterialUsado = $bloqueado[0]['Bloqueado'] - $value['Cantidad'];            
+            $totalMaterialUsado = $bloqueado[0]['Bloqueado'] - $value['Cantidad'];
             $this->actualizar('update t_inventario 
                             set Bloqueado = ' . $totalMaterialUsado . '                            
                             where Id = ' . $value['IdMaterialTecnico']);
         }
+
         $this->borrar('delete from t_redes_material where IdNodo = ' . $idNodo);
+
         $this->borrar('delete from t_redes_nodos where Id = ' . $idNodo);
+    }
+
+    public function updateNodo(string $idNodo) {
+        
+    }
+
+    public function getInformacionNodo(string $idNodo) {
+        $consulta = $this->consulta('select                                        
+                                        IdArea,
+                                        Nombre,
+                                        IdSwitch,
+                                        NumeroSwitch,
+                                        Archivos
+                                    from t_redes_nodos                                    
+                                    where Id = ' . $idNodo);
+        return $consulta;
+    }
+
+    public function deleteMaterialNodo(string $idNodo) {
+        $this->borrar('delete from t_redes_material where IdNodo = ' . $idNodo);
+        return $consulta;
     }
 
 }
