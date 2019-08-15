@@ -16,19 +16,23 @@ class Nodo {
     }
 
     public function setNodo(array $datos) {
+        $this->DBNodo->empezarTransaccion();
         $carpeta = 'Servicios/Servicio-' . $this->idServicio . '/EvidenciaMaterialNodos/';
         Archivo::saveArchivos($carpeta);
         $datos['archivos'] = Archivo::getString();        
         $idNodo = $this->DBNodo->setNodo($this->idServicio, $datos);
         $this->DBNodo->setMaterialNodo($idNodo, $this->getArrayMaterial($datos['material']));
+        $this->DBNodo->finalizarTransaccion();
     }
 
     public function updateNodo(array $datos) {
         
     }
 
-    public function delateNodo(array $datos) {
-        
+    public function delateNodo(string $idNodo) {
+        $this->DBNodo->empezarTransaccion();
+        $this->DBNodo->delateNodo($idNodo);              
+        $this->DBNodo->finalizarTransaccion();               
     }
 
     public function getNodos() {

@@ -308,12 +308,17 @@ $(function () {
 //        });
     });
     $('#btnEliminarAgregarMaterial').on('click', function () {
-//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/', data, function (respuesta) {
-//            console.log(respuesta);
-//        });
+        let datos = {};
+        datos.id = datoServicioTabla.id;
+        datos.tipo = datoServicioTabla.tipo;
+        datos.idNodo = '2';
+        
+        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodo', datos, function (respuesta) {
+            console.log(respuesta);
+        });
     });
     /**Finalizan eventos del modal Material**/
-    
+
     function  limpiarElementosModalMaterial() {
         selectArea.limpiarElemento();
         $('#inputNodo').val('');

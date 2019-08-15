@@ -103,8 +103,8 @@ class ServicioGeneralRedes implements Servicio {
             case 'agregarNodo':
                 $this->nodo->setNodo($datos);
                 break;
-            case 'borrarNodos':
-                $this->borrarNodos();
+            case 'borrarNodo':
+                $this->nodo->delateNodo($datos['idNodo']);
                 break;
             default:
                 break;
