@@ -576,18 +576,14 @@
                     <!--Finaliza tabla de material nodos-->
                     <!--Empieza seccion de evidencia-->
                     <div class="text-center">
-                        <div class="col-md-12">
+                        <div id="fileEvidencia" class="col-md-12">
                             <label>Evidencia</label><br>
                             <div id="archivoEvidencia" class="form-group">
                                 <input id="agregarEvidenciaNodo" name="agregarEvidenciaNodo[]" type="file" multiple data-parsley-required="true">
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <div id="imagenEvidencia" class="image-inner hidden">
-                                <a class="text-center" href="" data-lightbox="gallery-group-evidencia">
-                                    <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="">
-                                </a>                                                
-                            </div>
+                            <div id="imagenEvidencia" class="hidden"></div>
                         </div>
                         <div class="col-md-12"><br></div>
                     </div>

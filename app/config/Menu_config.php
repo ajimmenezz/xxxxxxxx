@@ -1988,6 +1988,7 @@ $config['Redes'] = array(
             'Componentes/HerramientasWeb/Modal',
             'Componentes/HerramientasWeb/Collapse',
             'Componentes/HerramientasWeb/Fecha',
+            'Componentes/HerramientasWeb/Imagenes',
             'Componentes/Selects/Select', 
             'Componentes/Selects/SelectBasico',
             'Componentes/Tablas/Tabla', 
