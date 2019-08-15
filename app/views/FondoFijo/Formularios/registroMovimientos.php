@@ -23,7 +23,7 @@
                             <table id="tabla-movimientos" class="table table-bordered table-striped table-condensed">
                                 <thead>
                                     <tr>
-                                        <th class="all">Id</th>
+                                        <th class="never">Id</th>
                                         <th class="all">Movimiento</th>
                                         <th class="all">Fecha</th>
                                         <th class="all">Concepto</th>

@@ -69,7 +69,6 @@ class Controller_FondoFijo extends Base
                 break;
             case 'DetallesMovimiento':
                 $resultado = $this->fondo_fijo->formularioDetallesMovimiento($this->input->post());
-                var_dump($resultado);
                 break;
             case 'CancelarMovimiento':
                 $resultado = $this->fondo_fijo->cancelarMovimiento($this->input->post());

@@ -32,7 +32,7 @@ $(function () {
             'tipoCuenta': datosTabla[1]
             
         };
-            
+            console.log(datos);
         evento.enviarEvento('MiFondo/MovimientosTecnico', datos, '#panelCuentas', function (respuesta) {
             let aux="";
             
@@ -57,7 +57,7 @@ $(function () {
                 $('#saldoNombre').html("<strong>Saldo: </strong>"+datosTabla[4]);
                 
                 tabla.generaTablaPersonal('#tabla-movimientos', null, null, true, true, [[1, 'asc']]);
-                
+                tabla.reordenarTabla('Fecha','asc');
                 
             } else {
                 evento.mostrarMensaje("#errorMessage", false, respuesta.error, 4000);
