@@ -194,13 +194,8 @@
                         <div class="col-md-4">                    
                             <div class="form-group">
                                 <label>Motivo Ausencia *</label>
-                                <select id="selectMotivoAusencia" class="form-control efectoDescuento" name="SelectMotivoAusencia" data-parsley-required="true" style="width: 100%" data-parsley-required="true">
+                                <select id="selectMotivoAusencia" class="form-control efectoDescuento" name="SelectMotivoAusencia" data-parsley-required="true" style="width: 100%" data-parsley-required="true" disabled>
                                     <option value="">Seleccionar</option>
-                                    <?php
-                                        foreach ($datos['motivoAusencia'] as $tipoAusencia) {
-                                            echo '<option value="'.$tipoAusencia['Id'].'" data-msg="'.$tipoAusencia['Observaciones'].'">'.$tipoAusencia['Nombre'].'</option>';
-                                        }
-                                    ?>
                                 </select>
                             </div>
                         </div>

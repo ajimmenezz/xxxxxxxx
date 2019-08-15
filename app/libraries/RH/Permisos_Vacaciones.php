@@ -27,8 +27,20 @@ class Permisos_Vacaciones extends General {
         return $this->DBS->consultaGral('SELECT Id, Nombre FROM cat_v3_tipos_ausencia_personal WHERE Flag = 1');
     }
 
-    public function obtenerMotivoAusencia() {
-        return $this->DBS->consultaGral('SELECT Id, Nombre, Observaciones FROM cat_v3_motivos_ausencia_personal WHERE Flag = 1');
+    public function obtenerMotivoAusencia(array $datos) {
+        return $this->DBS->consultaGral('SELECT
+                                                tcmarcta.IdTipoAusencia,
+                                                cvmap.Nombre,
+                                                cvmap.Observaciones,
+                                                cvmap.Id
+                                        FROM
+                                            cat_v3_tipos_ausencia_personal AS cvap
+                                        INNER JOIN t_cat_motivos_ausencia_relacion_cat_tipos_ausencia AS tcmarcta
+                                        ON tcmarcta.IdTipoAusencia = cvap.Id
+                                        INNER JOIN cat_v3_motivos_ausencia_personal AS cvmap
+                                        ON cvmap.Id = tcmarcta.IdMotivoAusencia
+                                        WHERE cvmap.Flag = "1"
+                                        AND tcmarcta.IdTipoAusencia = "' . $datos['tipoAusencia'] . '"');
     }
 
     public function obtenerPermisosAusencia($idUsuario) {
@@ -133,7 +145,7 @@ class Permisos_Vacaciones extends General {
                 }
                 $evidencia = 'Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/' . substr($concatenaNombre, 0, -1);
             }
-        }else{
+        } else {
             $evidencia = "";
         }
 
@@ -232,7 +244,7 @@ class Permisos_Vacaciones extends General {
     }
 
     public function revisarActualizarPermiso($datosPermisos) {
-        if ($datosPermisos['evidenciaIncapacidad'] !== "" && ($datosPermisos['motivoAusencia'] =='3' || $datosPermisos['motivoAusencia'] == '4')) {
+        if ($datosPermisos['evidenciaIncapacidad'] !== "" && ($datosPermisos['motivoAusencia'] == '3' || $datosPermisos['motivoAusencia'] == '4')) {
             $nombreArchivo = explode("\\", $datosPermisos['evidenciaIncapacidad']);
             $divideNombreArchivo = preg_split("/[\s-]+/", $nombreArchivo[2]);
             $concatenaNombre = "";
@@ -245,7 +257,7 @@ class Permisos_Vacaciones extends General {
                 }
                 $evidencia = 'Permisos_Ausencia/' . $idUsuario[1] . '/evidenciasMedicas/' . substr($concatenaNombre, 0, -1);
             }
-        }else{
+        } else {
             $evidencia = "";
         }
         switch ($datosPermisos['tipoAusencia']) {
@@ -334,7 +346,7 @@ class Permisos_Vacaciones extends General {
                 break;
             case '12':
                 $texto .= 'CONSULTA DENTISTA PARTICULAR';
-                break;	
+                break;
         }
         $texto .= ' para el día ' . $datosPermisos['fechaPermisoDesde'] . '</p><br><br>
                     <a href="http://adist/' . $carpeta . '">Archivo</a>';
@@ -466,7 +478,7 @@ class Permisos_Vacaciones extends General {
                 break;
             case '12':
                 $this->pdf->Cell(0, 0, utf8_decode('CONSULTA DENTISTA PARTICULAR'));
-                break;	
+                break;
         }
 
         $this->pdf->SetXY(140, 80);
@@ -574,7 +586,6 @@ class Permisos_Vacaciones extends General {
 //        } else {
 //            $this->pdf->Cell(0, 0, "   ----------");
 //        }
-
         //pie de documento
         $this->pdf->SetFont("helvetica", "", 7);
         $this->pdf->SetXY(140, 276);
