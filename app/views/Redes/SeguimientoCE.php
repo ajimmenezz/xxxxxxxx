@@ -106,7 +106,7 @@
                     <div class="panel-heading-btn">
                         <?php
                         if ($datos['infoServicios']['rol'] == "Jefe") {
-                            echo '<label id="btnEditarServicio" class="btn btn-primary btn-sm">
+                            echo '<label id="btnEditarServicio" class="btn btn-primary btn-sm hidden">
                                     <i class="fa fa-pencil"></i> Editar Servicio
                                 </label>';
                         }
@@ -350,28 +350,13 @@
                                     <thead>
                                         <tr>
                                             <th class="never">id</th>
-                                            <th class="all">Sucursal</th>
+                                            <th class="all">Area</th>
                                             <th class="all">Nodo</th>
                                             <th class="all">Switch</th>
                                             <th class="all"># Switch</th>
-                                            <th class="never">Evidencia</th>
-                                            <th class="never">Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <th class="all id">1</th>
-                                            <th class="all sucursal">Platino</th>
-                                            <th class="all nodo">Platino</th>
-                                            <th class="all switch">Platino</th>
-                                            <th class="all numSwitch">5</th>
-                                            <th class="all" style="text-align: center"><a id="btnAgregarNodo" href="#modalMaterialNodo" class="btn btn-sm btn-white" data-toggle="modal"><i class="fa fa-2x fa-pencil"></i></a></th>
-                                            <th style="text-align: center">
-                                                <a id="editarNodo" href="#" class="btn btn-sm btn-white editarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Nodo" class="fa fa-2x fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <a id="editarMaterial" href="#" class="btn btn-sm btn-white editarMaterial" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Editar Material" class="fa fa-2x fa-file-photo-o text-warning"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <a href="#" class="btn btn-sm btn-white eliminarNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i></a>
-                                            </th>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

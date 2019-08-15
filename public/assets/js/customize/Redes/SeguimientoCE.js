@@ -72,6 +72,7 @@ $(function () {
         material: null
     };
     let materialTecnico = null;
+    let listaTotalNodos = null;
 
     tablaPrincipal.evento(function () {
         let tamañoDatosFila = 0, datosFila = tablaPrincipal.datosFila(this);
@@ -105,6 +106,7 @@ $(function () {
     function cambioVista(infoServicio) {
         $('#contentServiciosGeneralesRedes').addClass('hidden');
         $('#contentServiciosRedes').removeClass('hidden');
+        listaTotalNodos = infoServicio.solucion.nodos;
         iniciarObjetos();
         if (infoServicio.servicio.Folio != 0 && infoServicio.servicio.Folio != null) {
             mostrarElementosAgregarFolio();
@@ -114,6 +116,7 @@ $(function () {
         cargarContenidoServicio(infoServicio);
         cargarContenidoSolucion(infoServicio.solucion);
         cargarContenidoModalMaterial(infoServicio.datosServicio);
+        cargarContenidoTablaNodos(infoServicio);
         eventosTablas();
         ocultarElementosDefault(infoServicio.solucion, infoServicio.firmas);
         $('html, body').animate({
@@ -317,7 +320,6 @@ $(function () {
             console.log(respuesta);
         });
     });
-    /**Finalizan eventos del modal Material**/
 
     function  limpiarElementosModalMaterial() {
         selectArea.limpiarElemento();
@@ -330,16 +332,42 @@ $(function () {
         tablaAgregarMateriales.limpiartabla();
         evidenciaMaterial.limpiarElemento();
     }
+    /**Finalizan eventos del modal Material**/
+    
+    function cargarContenidoTablaNodos(datos) {
+        let listaTemporalNodos = JSON.parse(JSON.stringify(listaTotalNodos));
+        $.each(listaTemporalNodos, function (key, value) {
+            $.each(datos.datosServicio.areasSucursal, function(llave, valor){
+                if(value.IdArea === valor.id){
+                    value.IdArea = valor.text;
+                }
+            });
+            $.each(datos.datosServicio.censoSwitch, function(llave, valor){
+                if(value.IdSwitch === valor.modelo){
+                    value.IdSwitch = valor.text;
+                }
+            });
+        });
+        $.each(listaTemporalNodos, function (key, value) {
+            tablaNodos.agregarDatosFila([
+                value.IdNodo,
+                value.IdArea,
+                value.Nombre,
+                value.IdSwitch,
+                value.NumeroSwitch
+            ]);
+        });
+    }
 
     function eventosTablas() {
         tablaNodos.evento(function () {
             let datos = tablaNodos.datosFila(this);
             $('#modalMaterialNodo').modal().show();
-            $('#inputNodo').val(datos[2]);
             $('#imagenEvidencia').removeClass('hidden');
             $('#btnAceptarAgregarMaterial').addClass('hidden');
             $('#btnActualizarAgregarMaterial').removeClass('hidden');
             $('#btnEliminarAgregarMaterial').removeClass('hidden');
+            actualizarContenidoModalMaterial(datos[0]);
         });
 
         tablaAgregarMateriales.evento(function () {
@@ -356,10 +384,16 @@ $(function () {
             $('#materialUtilizar').val('');
         });
     }
+    
+    function actualizarContenidoModalMaterial(id) {
+        console.log(listaTotalNodos)
+        console.log(id)
+        
+    }
 
     function ocultarElementosDefault(solucion, firmas) {
         let datosNodo = tablaNodos.datosTabla();
-        if (datosNodo.length == 0 && solucion == null) {
+        if (datosNodo.length == 0 || solucion.IdSucursal == null) {
             $('#btnConcluir').attr("disabled", true);
             $('#btnConcluir').off("click");
         }
