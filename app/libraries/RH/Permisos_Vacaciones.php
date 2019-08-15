@@ -40,7 +40,8 @@ class Permisos_Vacaciones extends General {
                                         INNER JOIN cat_v3_motivos_ausencia_personal AS cvmap
                                         ON cvmap.Id = tcmarcta.IdMotivoAusencia
                                         WHERE cvmap.Flag = "1"
-                                        AND tcmarcta.IdTipoAusencia = "' . $datos['tipoAusencia'] . '"');
+                                        AND tcmarcta.IdTipoAusencia = "' . $datos['tipoAusencia'] . '"
+                                        ORDER BY cvmap.Nombre ASC');
     }
 
     public function obtenerPermisosAusencia($idUsuario) {
