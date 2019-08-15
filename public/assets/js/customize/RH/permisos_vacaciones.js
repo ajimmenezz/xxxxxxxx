@@ -1,3 +1,4 @@
+
 $(function () {
     
     var evento = new Base();
@@ -96,7 +97,26 @@ $(function () {
                 $("#bloqueFechaHasta").css("display","none");
         }
     });
-    
+    $("#selectTipoAusencia").on('change', function () {
+        let op= $(this).val();
+        switch (op) {
+            case '1':
+                // code block
+                $('#diaPermiso').html("Fecha del Permiso  *");
+                break;
+            case '2':
+                // code block
+                $('#diaPermiso').html("Fecha del Permiso  *");
+                break;
+            case '3':
+                // code block
+                $('#diaPermiso').html("Fecha de Ausencia  *");
+                break;    
+            default:
+            // code block
+        }
+        
+    });
     //evento para enviar la solicitud de permisos
     $("#btnGenerarSolicitudPermiso").on("click", function () {
         if (evento.validarFormulario('#formSolicitudPermiso')) {
@@ -324,3 +344,4 @@ $(function () {
     });
 
 });
+
