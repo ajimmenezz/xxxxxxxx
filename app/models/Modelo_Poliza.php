@@ -2393,6 +2393,7 @@ class Modelo_Poliza extends Modelo_Base {
                                                 INNER JOIN
                                             t_servicios_ticket tst ON tsa.IdServicio = tst.Id
                                         WHERE IdServicio = '" . $service . "'
+                                        AND tsa.Flag = '1'
                                         ORDER BY Id DESC
                                         LIMIT 1");
 

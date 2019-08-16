@@ -441,6 +441,8 @@ class InformacionServicios extends General {
                                                                                     WHEN 1 THEN (SELECT Equipo FROM v_equipos WHERE Id = TipoItem) 
                                                                                     WHEN 2 THEN (SELECT Nombre FROM cat_v3_equipos_sae WHERE Id = TipoItem)
                                                                                     WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = TipoItem) 
+                                                                                    WHEN 4 THEN (SELECT Nombre FROM cat_v3_x4d_elementos WHERE Id = TipoItem) 
+                                                                                    WHEN 5 THEN (SELECT Nombre FROM cat_v3_x4d_subelementos WHERE Id = TipoItem) 
                                                                                 END as EquipoMaterial 
                                                                             FROM t_servicios_avance_equipo 
                                                                             WHERE IdAvance = "' . $datos['Id'] . '"');
@@ -455,6 +457,13 @@ class InformacionServicios extends General {
                     break;
                 case '3':
                     $tipoItem = 'Refacción';
+                    break;
+                case '4':
+                    $tipoItem = 'Elemento';
+                    break;
+                case '5':
+                    $tipoItem = 'Sub-Elemento';
+                    break;
             }
             if ($valor['IdItem'] === '1') {
                 if ($datos['IdTipo'] === '1') {
@@ -898,6 +907,7 @@ class InformacionServicios extends General {
                         $data['estatusSD'] = $datosSD->STATUS;
                         $data['asuntoSD'] = $datosSD->SUBJECT;
                         $data['descripcionSD'] = $datosSD->DESCRIPTION;
+                        
                         if (isset($datosResolucionSD->operation->Details)) {
                             $nombreUsuarioSD = $this->ServiceDesk->nombreUsuarioServiceDesk($key, $datosResolucionSD->operation->Details->RESOLVER);
                             $data['nombreUsuarioResolucionSD'] = $nombreUsuarioSD;
@@ -907,6 +917,21 @@ class InformacionServicios extends General {
                             $data['nombreUsuarioResolucionSD'] = 'Sin Resolución';
                             $data['fechaResolucionSD'] = 'Sin Resolución';
                             $data['resolucionSD'] = 'Sin Resolución';
+                        }
+                        
+                        if (isset($datosNotasSD->operation->Details)) {
+                            $data['notasSD'] = array();
+                            $detallesNotas = $datosNotasSD->operation->Details;
+                            foreach ($detallesNotas as $key => $value) {
+                                $data['notasSD'][$key]['nombreUsuario'] = $value->USERNAME;
+                                $data['notasSD'][$key]['fecha'] = date('Y-m-d H:i:s', $value->NOTESDATE / 1000);
+                                $data['notasSD'][$key]['texto'] = $value->NOTESTEXT;
+                            }
+                        } else {
+                            $data['nombreUsuarioResolucionSD'] = 'Sin Resolución';
+                            $data['fechaResolucionSD'] = 'Sin Resolución';
+                            $data['resolucionSD'] = 'Sin Resolución';
+                            $data['notasSD'] = 'Sin notas';
                         }
                     } else {
                         $data = NULL;

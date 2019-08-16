@@ -62,7 +62,7 @@ $(function () {
                     evento.cerrarModal();
                 });
 
-            } else if (operacion === '2' || operacion === '12' || operacion === '10') {
+            } else if (operacion === '2' || operacion === '12' || operacion === '10' || operacion === '3') {
                 var data = {servicio: servicio, operacion: '2'};
                 cargarFormularioSeguimiento(data, datos, '#panelSeguimientoAdministracion');
             }

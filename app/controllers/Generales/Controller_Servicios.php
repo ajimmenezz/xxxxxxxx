@@ -105,6 +105,21 @@ class Controller_Servicios extends Base {
             case 'CrearPDFVueltaAsociadoMantenimiento':
                 $resultado = $this->ServicioTicket->pfdAsociadoVueltaServicioMantenimiento($this->input->post());
                 break;
+            case 'Servicio_Cancelar_Modal':
+                $resultado = $this->ServicioTicket->modalServicioCancelar($this->input->post());
+                break;
+            case 'Servicio_Cancelar':
+                $resultado = $this->ServicioTicket->servicioCancelar($this->input->post());
+                break;
+            case 'EliminarAvanceProblema':
+                $resultado = $this->ServicioTicket->eliminarAvanceProblema($this->input->post());
+                break;
+            case 'ConsultaAvanceProblema':
+                $resultado = $this->ServicioTicket->consultaAvanceProblema($this->input->post());
+                break;
+            case 'EliminarEvidenciaAvanceProblema':
+                $resultado = $this->ServicioTicket->eliminarEvidenciaAvanceProblema($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

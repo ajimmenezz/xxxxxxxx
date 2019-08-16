@@ -259,7 +259,7 @@ $config['Generales'] = array(
             'jquery-tag-it/css/jquery.tagit',
             'parsley/src/parsley'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Tabla', 'Base/Fecha', 'Base/Select', 'Generales/buscar'),
+        'js' => array('Base/Base', 'Base/fileUpload', 'Base/Socket', 'Base/Tabla', 'Base/Nota', 'Base/Fecha', 'Base/Servicio', 'Base/Select', 'Generales/buscar'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
@@ -303,6 +303,36 @@ $config['Generales'] = array(
             'parsley/src/i18n/es'
         ),
         'Permiso' => 'VGV'
+    ),
+    'Permisosvacaciones-RH' => array(
+        'liga' => 'Permisos',
+        'icono' => 'fa fa-newspaper-o',
+        'Url' => '/RH/Permisos_vacaciones',
+        'css' => array(),
+        'pluginsCss' => array(
+            'bootstrap-timepicker/css/bootstrap-timepicker',
+            'DataTables/css/data-table',
+            'jquery-fileUpload/css/fileinput.min',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Fecha', 'Base/Tabla', 'RH/permisos_vacaciones', 'Base/Botones', 'Base/Nota'),
+        'pluginsJs' => array(
+            'bootstrap-timepicker/js/bootstrap-timepicker',
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'select2/dist/js/select2.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'masked-input/masked-input.min',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
+        ),
+        'Permiso' => 'VRHPV'
     )
 );
 
@@ -1456,36 +1486,6 @@ $config['RH'] = array(
         ),
         'Permiso' => 'VRHRP'
     ),
-    'Permisosvacaciones-RH' => array(
-        'liga' => 'Permisos',
-        'icono' => '',
-        'Url' => '/RH/Permisos_vacaciones',
-        'css' => array(),
-        'pluginsCss' => array(
-            'bootstrap-timepicker/css/bootstrap-timepicker',
-            'DataTables/css/data-table',
-            'jquery-fileUpload/css/fileinput.min',
-            'select2/dist/css/select2.min',
-            'parsley/src/parsley',
-            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
-        ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Fecha', 'Base/Tabla', 'RH/permisos_vacaciones', 'Base/Botones', 'Base/Nota'),
-        'pluginsJs' => array(
-            'bootstrap-timepicker/js/bootstrap-timepicker',
-            'DataTables/js/jquery.dataTables',
-            'DataTables/js/dataTables.responsive',
-            'jquery-fileUpload/js/fileinput',
-            'jquery-fileUpload/js/es',
-            'select2/dist/js/select2.min',
-            'parsley/dist/parsley',
-            'parsley/src/i18n/es',
-            'masked-input/masked-input.min',
-            'moment/moment-locales.min',
-            'moment/es',
-            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
-        ),
-        'Permiso' => 'VRHPV'
-    ),
     'Catalogo-Permisos-RH' => array(
         'liga' => 'Catálogo de Permisos',
         'icono' => '',
@@ -2000,7 +2000,7 @@ $config['Redes'] = array(
             'parsley/dist/parsley',
             'parsley/src/i18n/es'
         ),
-        'Permiso' => 'VRHPV'
+        'Permiso' => 'VSGRCE'
     )
 );
 

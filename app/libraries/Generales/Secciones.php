@@ -261,12 +261,11 @@ class Secciones extends General {
             case 'RH/Permisos_vacaciones':
                 $datos['departamento'] = $this->permisosVacaciones->buscarDepartamento();
                 $datos['tipoAusencia'] = $this->permisosVacaciones->obtenerTiposAusencia();
-                $datos['motivoAusencia'] = $this->permisosVacaciones->obtenerMotivoAusencia();
                 $datos['permisosAusencias'] = $this->permisosVacaciones->obtenerPermisosAusencia($usuario['Id']);
                 $datos['enviarCorreos'] = $this->permisosVacaciones->enviarCorreoSiccob();
                 break;
             case 'RH/Autorizar_permisos':
-                $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id']);
+                $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id'], $usuario['IdPerfil']);
                 break;
             case 'RH/Catalogos_Permisos':
                   $datos['TipoMotivo'] = $this->CatalogoMotivosPermiso->getDatos();

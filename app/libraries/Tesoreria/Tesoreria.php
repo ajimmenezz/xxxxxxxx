@@ -92,7 +92,7 @@ class Tesoreria extends General {
 
         if (in_array('281', $usuario['PermisosAdicionales']) || in_array('281', $usuario['Permisos'])) {
             $data['facturasTesoreriaPago'] = $this->DBT->facturasTesoreriaPago();
-            if(empty($data['facturasTesoreriaPago'])){
+            if (empty($data['facturasTesoreriaPago'])) {
                 $data['facturasTesoreriaPagoJueves'] = $this->DBT->facturasTesoreriaPagoJueves();
             }
             $data['tablaTesoreria'] = parent::getCI()->load->view("Tesoreria/Formularios/TablaTesoreriaPagos", $data, TRUE);
@@ -592,6 +592,7 @@ class Tesoreria extends General {
     }
 
     private function filtrosSemanaAnterior(string $fecha) {
+        $fechaInicial = date("Y-m-d", strtotime("-7 day", strtotime($fecha)));
         $fechaFinal = date("Y-m-d", strtotime("-0 day", strtotime($fecha)));
 
         return array('fechaInicial' => $fechaInicial . ' 16:01:00', 'fechaFinal' => $fechaFinal . ' 16:00:00');
