@@ -351,10 +351,10 @@ $(function () {
 //            limpiarElementosModalMaterial();
 //            $('#modalMaterialNodo').modal('toggle');
 //            tablaNodos.limpiartabla();
-            console.log(respuesta);
-        });
+        console.log(respuesta);
+    });
 //    });
-    
+
 //    $('[id*=img-] .eliminarEvidencia').on('click', function (){
 //        let dato = $(this);
 //       console.log('aqui') 
@@ -484,7 +484,7 @@ $(function () {
         $('#inputNumSwith').val(listaTemporalNodos[0].NumeroSwitch);
         archivos = listaTemporalNodos[0].Archivos.split(',');
         $.each(archivos, function (key, value) {
-            evidencias += `<div class="evidencia"><a href="`+value+`" data-lightbox="evidencias"><img src ="`+value+`" /></a><div><a id="img-`+key+`" class="eliminarEvidencia" href="#"><i class="fa fa-trash text-danger"></i></a></div></div>`;
+            evidencias += `<div class="evidencia"><a href="` + value + `" data-lightbox="evidencias"><img src ="` + value + `" /></a><div><a id="img-` + key + `" class="eliminarEvidencia" href="#"><i class="fa fa-trash text-danger"></i></a></div></div>`;
         });
         $('#evidenciasMaterialUtilizado').append(evidencias);
         $.each(listaTemporalNodos, function (key, value) {
@@ -638,20 +638,25 @@ $(function () {
     });
 
     $('#btnReportar').on('click', function () {
-        let contentReportar = $('#segReportar').html();
-        let contentEvidencia = $('#vistaEvidencias').html();
-        modal.mostrarModal('Definir Problema', contentReportar + contentEvidencia, 'text-left');
-
-        datoServicioTabla.descripcion = 'Descripcion de problema ',
-                modal.btnAceptar('btnAceptar', function () {
-
-                    /*falta implementar el fileupload para mandar las evidencias*/
-                    peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/agregarProblema', datoServicioTabla, function (respuesta) {
-                        console.log(respuesta);
-                    });
-                });
-
+        evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', 'data', function (respuesta) {
+            console.log(respuesta);
+        });
     });
+//    $('#btnReportar').on('click', function () {
+//        let contentReportar = $('#segReportar').html();
+//        let contentEvidencia = $('#vistaEvidencias').html();
+//        modal.mostrarModal('Definir Problema', contentReportar + contentEvidencia, 'text-left');
+//
+//        datoServicioTabla.descripcion = 'Descripcion de problema ',
+//                modal.btnAceptar('btnAceptar', function () {
+//
+//                    /*falta implementar el fileupload para mandar las evidencias*/
+//                    peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/agregarProblema', datoServicioTabla, function (respuesta) {
+//                        console.log(respuesta);
+//                    });
+//                });
+//
+//    });
 
     $('#btnVerMaterial').on('click', function () {
         $('#btnVerMaterial').addClass('hidden');
@@ -671,7 +676,7 @@ $(function () {
     /**Empiezan seccion de botones generales**/
     $('#btnGuardar').on('click', function () {
         if (evento.validarFormulario('#formDatosSolucion')) {
-             datoServicioTabla.observaciones = $('#textareaObservaciones').val();
+            datoServicioTabla.observaciones = $('#textareaObservaciones').val();
 //            datoServicioGral.observaciones = $('#textareaObservaciones').val();
 //            console.log(datoServicioGral)
             peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
