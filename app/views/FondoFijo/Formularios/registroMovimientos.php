@@ -11,7 +11,9 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <h4>Registro de movimientos</h4>
                         <h5 id="usuarioNombre"></h5>
-                        <h5 id="saldoNombre"></h5>
+                        <h5 id="saldo1"></h5>
+                        <h5 id="saldo2"></h5>
+                        <h5 id="saldo3"></h5>
                     </div>
                     <div class="col-md-12 col-sm-12 col-xs-12 m-t-15">
                         <div class="underline m-b-10"></div>
@@ -24,11 +26,12 @@
                                 <thead>
                                     <tr>
                                         <th class="never">Id</th>
-                                        <th class="all">Movimiento</th>
-                                        <th class="all">Fecha</th>
-                                        <th class="all">Concepto</th>
+                                        <th class="all">Tipo Cuenta</th>
                                         <th class="all">Monto</th>
-                                        <th class="all">Tipo Movimiento</th>
+                                        <th class="all">Concepto</th>
+                                        <th class="all">Estatus</th>
+                                        <th class="all">Fecha Registro</th>
+                                        <th class="all">Fecha Autorización</th>
                                     </tr>
                                 </thead>
                                 <tbody id="table_datos">

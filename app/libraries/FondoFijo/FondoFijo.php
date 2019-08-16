@@ -278,13 +278,7 @@ class FondoFijo extends General
         $resultado = $this->DB->getSaldosCuentasXUsuario($id);
         return $resultado;
     }
-    public function getSaldosXTecnico()
-    {
-        $idSupervisor= $_SESSION['Id'];
-        //var_dump($idSupervisor);
-        $resultado= $this->DB->getSaldosXTecnico($idSupervisor);
-        return $resultado;
-    }
+   
 
     public function detalleCuenta(array $datos)
     {        
@@ -542,8 +536,7 @@ class FondoFijo extends General
     }
     public function getMovimientosTecnico(array $datos) {
         $idUsuario=$datos['id'];
-        $idTipoCuenta=$datos['tipoCuenta'];
-        $data   = $this->DB->getMovimientos($idUsuario, $idTipoCuenta);
+        $data   = $this->DB->getMovimientosXTecnico($idUsuario);
         return [
             "code"=>200,
             'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/registroMovimientos', $data, TRUE),
@@ -551,8 +544,9 @@ class FondoFijo extends General
         ];
         
     }
-    public function getDetallesMovimiento(array $datos) {
-        $idMovimiento= $datos['id'];
+    public function getDetallesMovimiento(array $d) {
+        $idMovimiento= $d['IdMovimiento'];
+        
         $datos=$this->DB->getDetallesFondoFijoXId($idMovimiento);
         
         
@@ -562,9 +556,11 @@ class FondoFijo extends General
           'generales'=>$datos
             
         ];
-        
-        
-
-        
+    }
+     public function getTecnicos()
+    {
+        $idSupervisor= $_SESSION['Id'];
+        $resultado= $this->DB->getTecnico($idSupervisor);
+        return $resultado;
     }
 }

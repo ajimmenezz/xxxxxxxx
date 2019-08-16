@@ -7,7 +7,7 @@
             <div id="listaCuentasAsignadas">
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                        <h4>Técnicos asignados</h4>
+                        <h4>Lista de técnicos</h4>
                     </div>
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="underline m-b-10"></div>
@@ -18,30 +18,30 @@
                         <div class="table-responsive">
                             <table id="table-cuentas" class="table table-bordered table-striped table-condensed">
                                 <thead>
-                                    <tr>
-                                        <th class="none">IdTipoCuenta</th>
-                                        <th class="none">IdUsuario</th>
-                                        <th class="all">Persona</th>
-                                        <th class="all">Tipo Cuenta</th>
-                                        <th class="all">Saldo</th>
-                                        <th class="all">Fecha de Saldo</th>
-                                    </tr>
+                                    <?php
+                                    
+                                         if (isset($datos['SaldoTecnico']) && !empty($datos['SaldoTecnico'])) {
+                                             echo "<tr>";
+                                             echo "<th class='none'>IdUsuario</th>";
+                                             echo "<th class='all'>Técnico</th>";
+                                             foreach ($datos['SaldoTecnico']['TiposSaldo'] as $key => $value1) {
+                                                 echo "". " <th> SALDO " . $value1['Nombre'] . "</th>";
+                                             }
+                                             echo "</tr>";
+                                         }
+                                    ?>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    //var_dump($datos['SaldoTecnico']);
-                                    //var_dump($_SESSION);
-                                   // var_dump($datos);
                                     if (isset($datos['SaldoTecnico']) && !empty($datos['SaldoTecnico'])) {
-                                        foreach ($datos['SaldoTecnico'] as $key => $value) {
+                                        foreach ($datos['SaldoTecnico']['datosTecnico'] as $key => $value) {
                                             echo ""
                                                 . "<tr>"
-                                                . " <td>" . $value['idUsuario'] . "</td>"
-                                                . " <td>" . $value['IdTipoCuenta'] . "</td>"
+                                                . " <td>" . $value['Id'] . "</td>"
                                                 . " <td>" . $value['Nombre'] . "</td>"
-                                                . " <td>" . $value['TipoCuenta'] . "</td>"
-                                                . " <td>$" . number_format((float)$value['Saldo'], 2) . "</td>"                                                
-                                                . " <td>" . $value['Fecha'] . "</td>"
+                                                . " <td>" . $value['E1'] . "</td>"
+                                                . " <td>" . $value['E2'] . "</td>"
+                                                . " <td>" . $value['E3'] . "</td>"
                                                 . "</tr>";
                                         }
                                     }

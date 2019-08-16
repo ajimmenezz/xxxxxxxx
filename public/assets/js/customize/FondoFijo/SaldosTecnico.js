@@ -28,24 +28,25 @@ $(function () {
         let _this = this;
         var datosTabla = $('#table-cuentas').DataTable().row(_this).data();
         var datos = {
-            'id':datosTabla[0],
-            'tipoCuenta': datosTabla[1]
+            'id':datosTabla[0]
             
         };
-            console.log(datos);
+          //  console.log(datos);
         evento.enviarEvento('MiFondo/MovimientosTecnico', datos, '#panelCuentas', function (respuesta) {
             let aux="";
             
             for(i=0; i<respuesta.consulta.length ; i++)
             {
-                aux+= "<tr onclick=(getDatos("+respuesta.consulta[i].Id+")); >";         
-                aux+= "<td>"+respuesta.consulta[i].Id+"</td>";
-                aux+= "<td id="+respuesta.consulta[i].Id+">"+respuesta.consulta[i].TipoMovimiento+"</span></td>";
-                aux+= "<td id="+respuesta.consulta[i].Id+">"+respuesta.consulta[i].FechaRegistro+"</td>";
-                aux+= "<td id="+respuesta.consulta[i].Id+">"+respuesta.consulta[i].Concepto+"</td>";
-                aux+= "<td id="+respuesta.consulta[i].Id+">"+respuesta.consulta[i].Monto+"</td>";
-                aux+= "<td>"+respuesta.consulta[i].TipoMovimiento+"</td>";
-                aux+= "</tr>";
+              //  console.log(respuesta.consulta[i].Id);
+                  aux+= "<tr onclick=(getDatos("+respuesta.consulta[i].Id+")); >";         
+                  aux+= "<td>"+respuesta.consulta[i].IdMovimiento+"</td>";
+                  aux+= "<td>"+respuesta.consulta[i].Cuenta+"</span></td>";
+                  aux+= "<td>"+respuesta.consulta[i].Monto+"</td>";
+                  aux+= "<td>"+respuesta.consulta[i].Concepto+"</td>";
+                  aux+= "<td>"+respuesta.consulta[i].Estatus+"</td>";
+                  aux+= "<td>"+respuesta.consulta[i].FechaRegistro+"</td>";
+                  aux+= "<td>"+respuesta.consulta[i].FechaAutorizacion+"</td>";
+                  aux+= "</tr>";
             }
             if (respuesta.code == 200) {
 //                console.log("if");
@@ -53,8 +54,10 @@ $(function () {
 //               evento.cambiarDiv("#listaUsuariosFondoFijo", "#seccionDetalleMovimientos");
                 initDetallesCuenta(datos);
                 $("#table_datos").html(aux);
-                $('#usuarioNombre').html("<strong>Nombre: </strong>"+datosTabla[2]);
-                $('#saldoNombre').html("<strong>Saldo: </strong>"+datosTabla[4]);
+                $('#usuarioNombre').html("<strong>Nombre: </strong>"+datosTabla[1]);
+                $('#saldo1').html("<strong>Saldo Efectivo Residing: </strong>"+datosTabla[2]);
+                $('#saldo2').html("<strong>Saldo Efectivale Mensual: </strong>"+datosTabla[3]);
+                $('#saldo3').html("<strong>Saldo Efectivale FF: </strong>"+datosTabla[4]);
                 
                 tabla.generaTablaPersonal('#tabla-movimientos', null, null, true, true, [[1, 'asc']]);
                 tabla.reordenarTabla('Fecha','asc');
@@ -292,12 +295,12 @@ $(function () {
         App.init();
         console.log(id);
          var datos = {
-            'id':id
+            'IdMovimiento':id
         };
             
          evento.enviarEvento('MiFondo/DetallesMovimientos', datos, '#panelCuentas', function (respuesta) {
              console.log("Respuestas");
-             console.log(respuesta);
+             
              evento.iniciarModal("#modalEdit", "Detalles del depósito / ajuste", respuesta.html);
              $("#btnGuardarCambios").hide();
              $("#btnCancelarMovimiento").off("click");
@@ -311,18 +314,6 @@ $(function () {
              $('#fechaMov').html(respuesta.generales[0].FechaMovimiento);
              $('#fechaAut').html(respuesta.generales[0].FechaAutorizacion);
              $('#userAut').html(respuesta.generales[0].Autoriza);
-                   
-                 
-             
-             
-
-
-
-
-
-
-
-
 
          });
        

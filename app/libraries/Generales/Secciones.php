@@ -551,7 +551,8 @@ class Secciones extends General
                 $datos['Sucursales'] = $this->prime->getSucursalesPrime();
                 break;
             case 'FondoFijo/SaldosTecnico':
-                $datos['SaldoTecnico'] = $this->fondoFijo->getSaldosXTecnico();
+                $datos['SaldoTecnico'] = $this->fondoFijo->getTecnicos();
+                //Este va a la vista
                 break;
             default:
                 break;
