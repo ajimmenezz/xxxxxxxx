@@ -135,7 +135,10 @@ $(function () {
             cargarContenidoTablaNodos();
             eventosTablas();
         } else {
-            
+            $('#btnConMaterial').addClass('hidden');
+            $('#btnSinMaterial').removeClass('hidden');
+            $('#sinMaterial').removeClass('hidden');
+            $('#conMaterial').removeClass('hidden');
         }
         ocultarElementosDefault(infoServicio.solucion, infoServicio.firmas);
         $('html, body').animate({
