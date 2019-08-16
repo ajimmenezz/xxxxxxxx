@@ -11,7 +11,6 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
     }
 
     public function getDatosServicio(string $idServicio) {
-        $consulta = array();
         try {
             $consulta = $this->consulta('select 
                                             serviciosTicket.FechaCreacion,
@@ -70,21 +69,49 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
         $this->actualizar('update t_servicios_ticket set 
                            IdSucursal = ' . $idSucursal . ' where Id = ' . $idServicio);
     }
-    
+
     public function setProblema(string $idServicio, array $datos) {
         $this->insertar('insert into t_servicios_avance values (
                             null,
-                            '.$idServicio.',
-                            '.$datos['idUsuario'].',
+                            ' . $idServicio . ',
+                            ' . $datos['idUsuario'] . ',
                             2,
                             now(),
-                            "'.$datos['descripcion'].'",
-                            "Archivos"
+                            "' . $datos['descripcion'] . '",
+                            "' . $datos['archivos'] . '"                            
                         )');
     }
-    
-    public function getDatosServicioGeneral(string $idServicio) {
-        
+
+    public function getProblemas(string $idServicio) {
+        return $this->consulta('select 
+                                    ctu.Nombre as Usuario,
+                                    tsa.Fecha,
+                                    tsa.Descripcion,
+                                    tsa.Archivos
+                                from t_servicios_avance tsa
+                                inner join cat_v3_usuarios ctu
+                                on tsa.IdUsuario = ctu.Id
+                                where IdServicio = ' . $idServicio);
+    }
+
+    public function setSolucion(string $idServicio, array $datos) {
+        $this->setSucursal($idServicio, $datos['idSucursal']);
+
+        $consulta = $this->consulta('select * from t_servicios_generales where IdServicio = ' . $idServicio);
+
+        if(empty($consulta)){
+            $this->insertar('insert into t_servicios_generales values(
+                                null,
+                                '.$datos['idUsuario'].',
+                                '.$idServicio.',
+                                "'.$datos['observaciones'].'",
+                                "'.$datos['archivos'].'",
+                                now()    
+                             )'); 
+        }else{
+            $this->actualizar('update t_servicios_ticket set 
+                           IdSucursal = ' . $datos['idSucursal'] . ' where Id = ' . $idServicio);
+        }
     }
 
 }

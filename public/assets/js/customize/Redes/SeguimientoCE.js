@@ -202,7 +202,6 @@ $(function () {
     }
 
     function cargarContenidoSolucion(solucion) {
-        let _this = this;
         selectSucursal.definirValor(solucion.IdSucursal);
         if (solucion.solucion.length > 0) {
             $('#textareaObservaciones').text(solucion.solucion[0].Observaciones);
@@ -680,8 +679,8 @@ $(function () {
     $('#btnGuardar').on('click', function () {
         if (evento.validarFormulario('#formDatosSolucion')) {
             datoServicioTabla.observaciones = $('#textareaObservaciones').val();
-//            datoServicioGral.observaciones = $('#textareaObservaciones').val();
-//            console.log(datoServicioGral)
+            datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
+            datoServicioTabla.material = false;
             peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
                 console.log(respuesta);
             });

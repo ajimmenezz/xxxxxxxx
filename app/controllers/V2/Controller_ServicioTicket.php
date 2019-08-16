@@ -3,6 +3,7 @@
 use Librerias\V2\Factorys\FactoryServiciosTicket as FactoryServiciosTicket;
 use Librerias\V2\PaquetesGenerales\Utilerias\ServiceDesk as ServiceDesk;
 use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
+use Librerias\V2\PaquetesGenerales\Utilerias\Archivo as Archivo;
 use Librerias\V2\PaquetesSucursales\GestorSucursales as GestorSucursal;
 use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 
@@ -49,7 +50,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['servicio'] = $this->servicio->getDatos();
             $this->datos['sucursales'] = $this->gestorSucursales->getSucursales($this->servicio->getCliente());
             $this->datos['solucion'] = $this->servicio->getSolucion();
-            $this->datos['problemas'] = null;
+            $this->datos['problemas'] = $this->servicio->getProblemas();
             $this->datos['firmas'] = null;
             $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
             $this->getInformacionFolio();
@@ -112,7 +113,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->runAccion($evento, $datosServicio);
             $this->datos['solucion'] = $this->servicio->getSolucion();
-            $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));            
+            $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['ERROR'] = $ex->getMessage();
@@ -122,16 +123,17 @@ class Controller_ServicioTicket extends CI_Controller {
 
     public function setProblema() {
         try {
+
             $datosServicio = $this->input->post();
-            $this->datos = $datosServicio;
-            var_dump($datosServicio);
-//            $datosServicio['idUsuario'] = Usuario::getId();
-//            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-//            $this->servicio->setProblema($datosServicio);
-//            if (!empty($datosServicio['folio'])) {                
-//                ServiceDesk::setEstatus('Problema', $datosServicio['folio']);
-//                ServiceDesk::setNota($datosServicio['folio'],'');
-//            }
+            $datosServicio['idUsuario'] = Usuario::getId();
+            $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciaProblemas/';
+            Archivo::saveArchivos($carpeta);
+            $datosServicio['archivos'] = Archivo::getString();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->setProblema($datosServicio);
+            $this->setNotaServiceDesk($datosServicio);
+            $this->datos['problemas'] = $this->servicio->getProblemas();
+            $this->datos['solucion'] = $this->servicio->getSolucion();
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
@@ -139,18 +141,45 @@ class Controller_ServicioTicket extends CI_Controller {
             echo json_encode($this->datos);
         }
     }
-    
+
     public function setSolucion() {
         try {
             $datosServicio = $this->input->post();
+            $datosServicio['archivos'] = '';
             $datosServicio['idUsuario'] = Usuario::getId();
-            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $this->servicio->setSolucion($datosServicio);            
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);                        
+            if ($datosServicio['material'] !== 'false') {
+                $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciaSolucion/';
+                Archivo::saveArchivos($carpeta);
+                $datosServicio['archivos'] = Archivo::getString();
+            }            
+            $this->servicio->setSolucion($datosServicio);
+            $this->datos['solucion'] = $this->servicio->getSolucion();
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
-            $this->datos['Error'] = $ex->getMessage();
+            $this->datos['Error'] = $ex->getMessage();            
             echo json_encode($this->datos);
+        }
+    }
+
+    private function setNotaServiceDesk(array $datosServicio) {
+        $descripcion = '';
+        $evidencias = '<p>';
+        $host = 'http://' . $_SERVER['SERVER_NAME'];
+
+        if (!empty($datosServicio['folio'])) {
+            $archivos = explode(',', $datosServicio['archivos']);
+            $descripcion = '<p>***** Problema ******</p>';
+            $descripcion .= '<p>Descripcion: <strong>' . $datosServicio['descripcion'] . '</strong></p>';
+            foreach ($archivos as $key => $path) {
+                $evidencias .= '<a href="' . $host . $path . '" target="_blank">Evidencia-' . ($key + 1) . '</a>  ';
+            }
+            $evidencias .= '</p>';
+            $descripcion .= $evidencias;
+
+            ServiceDesk::setEstatus('Problema', $datosServicio['folio']);
+            ServiceDesk::setNota($datosServicio['folio'], $descripcion);
         }
     }
 
