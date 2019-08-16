@@ -57,7 +57,8 @@ $(function () {
     let datoServicioTabla = {
         id: null,
         tipo: null,
-        folio: null
+        folio: null,
+        idSucursal: null
     };
 //    let datoServicioGral = {
 //        sucursal: null,
@@ -140,7 +141,7 @@ $(function () {
         selectMaterial = new SelectBasico('selectMaterial');
         evidenciaMaterial = new FileUpload_Basico('agregarEvidenciaNodo', {url: 'SeguimientoCE/SeguimientoGeneral/Accion/agregarNodo', extensiones: ['jpg', 'jpeg', 'png']});
         evidenciaMaterial.iniciarFileUpload()
-        evidenciaProblema = new FileUpload_Basico('agregarEvidenciaProblema', {url: '', extensiones: ['jpg', 'jpeg', 'png']});
+        evidenciaProblema = new FileUpload_Basico('agregarEvidenciaProblema', {url: 'SeguimientoCE/SeguimientoGeneral/agregarProblema', extensiones: ['jpg', 'jpeg', 'png']});
         evidenciaProblema.iniciarFileUpload()
         collapseNotas = new Collapse('collapseNotas');
         selectSucursal.iniciarSelect();
@@ -201,6 +202,7 @@ $(function () {
     }
 
     function cargarContenidoSolucion(solucion) {
+        let _this = this;
         selectSucursal.definirValor(solucion.IdSucursal);
         if (solucion.solucion.length > 0) {
             $('#textareaObservaciones').text(solucion.solucion[0].Observaciones);
@@ -208,15 +210,15 @@ $(function () {
 
         selectSucursal.evento('change', function () {
             let totalNodos = tablaNodos.datosTabla();
-            datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
 
             if (totalNodos.length > 0) {
                 modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara los Nodos registrados</h4>');
                 $('#btnAceptar').on('click', function () {
-                    modal.cerrarModal();
+                    datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
 
                     peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
                         console.log(respuesta);
+                        modal.cerrarModal();
                     });
                 });
                 $('#btnCerrar').on('click', function () {
@@ -637,8 +639,9 @@ $(function () {
         $('#conMaterial').addClass('hidden');
     });
 
-    $('#btnReportar').on('click', function () {
-        evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', 'data', function (respuesta) {
+    $('#btnAceptarProblema').on('click', function () {
+        datoServicioTabla.descripcion = $('#textareaDescProblema').val();
+        evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', datoServicioTabla, function (respuesta) {
             console.log(respuesta);
         });
     });

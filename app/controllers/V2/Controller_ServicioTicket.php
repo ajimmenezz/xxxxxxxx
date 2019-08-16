@@ -110,7 +110,10 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            echo json_encode($this->servicio->runAccion($evento, $datosServicio));
+            $this->servicio->runAccion($evento, $datosServicio);
+            $this->datos['solucion'] = $this->servicio->getSolucion();
+            $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));            
+            echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['ERROR'] = $ex->getMessage();
             echo json_encode($this->datos);
@@ -120,13 +123,15 @@ class Controller_ServicioTicket extends CI_Controller {
     public function setProblema() {
         try {
             $datosServicio = $this->input->post();
-            $datosServicio['idUsuario'] = Usuario::getId();
-            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $this->servicio->setProblema($datosServicio);
-            if (!empty($datosServicio['folio'])) {                
-                ServiceDesk::setEstatus('Problema', $datosServicio['folio']);
-                ServiceDesk::setNota($datosServicio['folio'],'');
-            }
+            $this->datos = $datosServicio;
+            var_dump($datosServicio);
+//            $datosServicio['idUsuario'] = Usuario::getId();
+//            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+//            $this->servicio->setProblema($datosServicio);
+//            if (!empty($datosServicio['folio'])) {                
+//                ServiceDesk::setEstatus('Problema', $datosServicio['folio']);
+//                ServiceDesk::setNota($datosServicio['folio'],'');
+//            }
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
