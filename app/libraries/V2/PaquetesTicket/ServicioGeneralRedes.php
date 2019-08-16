@@ -20,11 +20,11 @@ class ServicioGeneralRedes implements Servicio {
     private $solicita;
     private $descripcionSolicitud;
     private $DBServiciosGeneralRedes;
-    private $gestorNodos;    
+    private $gestorNodos;
 
     public function __construct(string $idServicio) {
         $this->id = $idServicio;
-        $this->DBServiciosGeneralRedes = new Modelo();        
+        $this->DBServiciosGeneralRedes = new Modelo();
         $this->gestorNodos = new GestorNodo($this->id);
         $this->setDatos();
     }
@@ -93,7 +93,7 @@ class ServicioGeneralRedes implements Servicio {
     }
 
     public function runAccion(string $evento, array $datos = array()) {
-        
+
         switch ($evento) {
             case 'agregarNodo':
                 $this->gestorNodos->setNodo($datos);
@@ -113,7 +113,7 @@ class ServicioGeneralRedes implements Servicio {
                 break;
             default:
                 break;
-        }       
+        }
     }
 
     private function borrarNodos() {
@@ -134,16 +134,34 @@ class ServicioGeneralRedes implements Servicio {
     }
 
     public function setProblema(array $datos) {
-        $this->DBServiciosGeneralRedes->empezarTransaccion();       
+        $this->DBServiciosGeneralRedes->empezarTransaccion();
         $this->DBServiciosGeneralRedes->setProblema($this->id, $datos);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
 
-    public function setSolucion(array $datos) {        
+    public function getProblemas() {
+        $datos = array();
+        $consulta = $this->DBServiciosGeneralRedes->getProblemas($this->id);
+        
+        if (!empty($consulta)) {
+            foreach ($consulta as $value) {
+                $temporal = explode(',', $value['Archivos']);
+                array_push($datos, array(
+                    'usuario' => $value['Usuario'],
+                    'fecha' => $value['Fecha'],
+                    'descripcion' => $value['Descripcion'],
+                    'archivos' => $temporal                    
+                ));
+            }
+            
+        }
+        
+        return $datos;
+    }
+
+    public function setSolucion(array $datos) {
         $this->DBServiciosGeneralRedes->empezarTransaccion();
-        
-        
-        
+        $this->DBServiciosGeneralRedes->setSolucion($this->id, $datos);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
 

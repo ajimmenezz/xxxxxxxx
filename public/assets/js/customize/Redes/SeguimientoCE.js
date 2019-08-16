@@ -703,9 +703,9 @@ $(function () {
     $('#btnGuardar').on('click', function () {
         if (evento.validarFormulario('#formDatosSolucion')) {
             datoServicioTabla.observaciones = $('#textareaObservaciones').val();
-//            datoServicioGral.observaciones = $('#textareaObservaciones').val();
-//            console.log(datoServicioGral)
-            peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
+            datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
+            datoServicioTabla.material = false;
+            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
                 console.log(respuesta);
             });
         }
