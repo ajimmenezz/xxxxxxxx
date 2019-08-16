@@ -133,7 +133,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->servicio->setProblema($datosServicio);
             $this->setNotaServiceDesk($datosServicio);
             $this->datos['problemas'] = $this->servicio->getProblemas();
-            $this->datos['solucion'] = $this->servicio->getSolucion();
+            $this->getInformacionFolio();
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
