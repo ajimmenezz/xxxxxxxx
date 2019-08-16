@@ -5,7 +5,6 @@ namespace Librerias\V2\PaquetesTicket;
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenUsuario;
 use Librerias\V2\PaquetesTicket\GestorNodosRedes as GestorNodo;
-use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
 use Modelos\Modelo_ServicioGeneralRedes as Modelo;
 
 class ServicioGeneralRedes implements Servicio {
@@ -143,8 +142,7 @@ class ServicioGeneralRedes implements Servicio {
     }
 
     public function setProblema(array $datos) {
-        $this->DBServiciosGeneralRedes->empezarTransaccion();
-        $datos['idUsuario'] = Usuario::getId();
+        $this->DBServiciosGeneralRedes->empezarTransaccion();       
         $this->DBServiciosGeneralRedes->setProblema($this->id, $datos);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
@@ -152,7 +150,7 @@ class ServicioGeneralRedes implements Servicio {
     public function setSolucion(array $datos) {        
         $this->DBServiciosGeneralRedes->empezarTransaccion();
         
-        $datos['idUsuario'] = Usuario::getId();
+        
         
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }

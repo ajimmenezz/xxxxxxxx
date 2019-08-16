@@ -2,6 +2,7 @@
 
 use Librerias\V2\Factorys\FactoryServiciosTicket as FactoryServiciosTicket;
 use Librerias\V2\PaquetesGenerales\Utilerias\ServiceDesk as ServiceDesk;
+use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
 use Librerias\V2\PaquetesSucursales\GestorSucursales as GestorSucursal;
 use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 
@@ -119,10 +120,12 @@ class Controller_ServicioTicket extends CI_Controller {
     public function setProblema() {
         try {
             $datosServicio = $this->input->post();
+            $datosServicio['idUsuario'] = Usuario::getId();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->setProblema($datosServicio);
             if (!empty($datosServicio['folio'])) {                
                 ServiceDesk::setEstatus('Problema', $datosServicio['folio']);
+                ServiceDesk::setNota($datosServicio['folio'],'');
             }
             echo json_encode($this->datos);
         } catch (Exception $ex) {
@@ -135,6 +138,7 @@ class Controller_ServicioTicket extends CI_Controller {
     public function setSolucion() {
         try {
             $datosServicio = $this->input->post();
+            $datosServicio['idUsuario'] = Usuario::getId();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->setSolucion($datosServicio);            
             echo json_encode($this->datos);
