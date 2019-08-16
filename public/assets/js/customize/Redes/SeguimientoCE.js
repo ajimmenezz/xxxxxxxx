@@ -73,9 +73,10 @@ $(function () {
         material: null
     };
     let materialTecnico = null;
-    let listaTotalNodos = null;
     let censoSwitches = null;
     let areasSucursales = null;
+    let listaTotalNodos = null;
+    let listaTotalMaterialUsado = null;
     let idNodo = null;
 
     tablaPrincipal.evento(function () {
@@ -87,7 +88,6 @@ $(function () {
 
         datoServicioTabla.id = datosFila[0];
         datoServicioTabla.tipo = datosFila[4];
-
         if (datosFila[1] !== '' || datosFila[1] !== 0) {
             datoServicioTabla.folio = datosFila[1];
         }
@@ -103,6 +103,7 @@ $(function () {
         } else {
             peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Seguimiento/' + datosFila[4], datoServicioTabla, function (respuesta) {
                 cambioVista(respuesta);
+                console.log(respuesta)
             });
         }
     });
@@ -113,13 +114,19 @@ $(function () {
         listaTotalNodos = infoServicio.solucion.nodos;
         censoSwitches = infoServicio.datosServicio.censoSwitch;
         areasSucursales = infoServicio.datosServicio.areasSucursal;
+        materialTecnico = infoServicio.datosServicio.materialUsuario;
+        listaTotalMaterialUsado = infoServicio.solucion.totalMaterial;
         iniciarObjetos();
         if (infoServicio.servicio.Folio != 0 && infoServicio.servicio.Folio != null) {
             mostrarElementosAgregarFolio();
             mostrarInformacionFolio(infoServicio.folio);
             arreglarNotas(infoServicio.notasFolio);
         }
-        cargarContenidoServicio(infoServicio);
+        if (infoServicio.sucursales.length > 0) {
+            selectSucursal.cargaDatosEnSelect(infoServicio.sucursales);
+            selectSucursal.definirValor(infoServicio.solucion.IdSucursal);
+        }
+        cargarContenidoServicio(infoServicio.servicio);
         cargarContenidoSolucion(infoServicio.solucion);
         cargarContenidoModalMaterial(infoServicio.datosServicio);
         cargarContenidoTablaNodos();
@@ -140,7 +147,7 @@ $(function () {
         selectMaterial = new SelectBasico('selectMaterial');
         evidenciaMaterial = new FileUpload_Basico('agregarEvidenciaNodo', {url: 'SeguimientoCE/SeguimientoGeneral/Accion/agregarNodo', extensiones: ['jpg', 'jpeg', 'png']});
         evidenciaMaterial.iniciarFileUpload()
-        evidenciaProblema = new FileUpload_Basico('agregarEvidenciaProblema', {url: '', extensiones: ['jpg', 'jpeg', 'png']});
+        evidenciaProblema = new FileUpload_Basico('agregarEvidenciaProblema', {url: 'SeguimientoCE/SeguimientoGeneral/agregarProblema', extensiones: ['jpg', 'jpeg', 'png']});
         evidenciaProblema.iniciarFileUpload()
         collapseNotas = new Collapse('collapseNotas');
         selectSucursal.iniciarSelect();
@@ -185,40 +192,41 @@ $(function () {
         }
     }
 
-    function cargarContenidoServicio(datos) {
-        let servicio = datos.servicio;
-        if (datos.sucursales.length > 0) {
-            selectSucursal.cargaDatosEnSelect(datos.sucursales);
-        }
-        $("#fechaServicio").text(servicio.FechaCreacion);
-        $("#ticketServicio").text(servicio.Ticket);
-        $("#atendidoServicio").text(servicio.Atiende);
-        $("#solicitudServicio").text(servicio.idSolicitud);
-        $("#textareaDescripcion").text(servicio.Descripcion);
-        $("#solicitaSolicitud").text(servicio.Solicita);
-        $("#fechaSolicitud").text(servicio.FechaSolicitud);
-        $("#textareaDescripcionSolicitud").text(servicio.descripcionSolicitud);
+    function cargarContenidoServicio(datosServicio) {
+        $("#fechaServicio").text(datosServicio.FechaCreacion);
+        $("#ticketServicio").text(datosServicio.Ticket);
+        $("#atendidoServicio").text(datosServicio.Atiende);
+        $("#solicitudServicio").text(datosServicio.idSolicitud);
+        $("#textareaDescripcion").text(datosServicio.Descripcion);
+        $("#solicitaSolicitud").text(datosServicio.Solicita);
+        $("#fechaSolicitud").text(datosServicio.FechaSolicitud);
+        $("#textareaDescripcionSolicitud").text(datosServicio.descripcionSolicitud);
     }
 
     function cargarContenidoSolucion(solucion) {
-        selectSucursal.definirValor(solucion.IdSucursal);
         if (solucion.solucion.length > 0) {
             $('#textareaObservaciones').text(solucion.solucion[0].Observaciones);
         }
 
         selectSucursal.evento('change', function () {
-            let totalNodos = tablaNodos.datosTabla();
-            datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
-
-            if (totalNodos.length > 0) {
+            let totalNodos = listaTotalNodos.length;
+            if (totalNodos > 0) {
                 modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara los Nodos registrados</h4>');
-                $('#btnAceptar').on('click', function () {
-                    modal.cerrarModal();
 
-                    peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
+                modal.btnAceptar('btnAceptar', function () {
+                    datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
+                    console.log(datoServicioTabla)
+                    peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
                         console.log(respuesta);
+                        listaTotalNodos = respuesta.solucion.nodos;
+                        materialTecnico = respuesta.materialUsuario;
+                        listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
+                        selectSucursal.definirValor(respuesta.solucion.IdSucursal);
+                        tablaNodos.limpiartabla();
+                        modal.cerrarModal();
                     });
                 });
+
                 $('#btnCerrar').on('click', function () {
                     selectSucursal.definirValor(solucion.IdSucursal);
                     modal.cerrarModal();
@@ -343,7 +351,7 @@ $(function () {
             }
         });
 
-//        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
+//        peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
 //            console.log(respuesta);
 //        });
 
@@ -381,7 +389,7 @@ $(function () {
             });
         });
 
-        peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodo', datos, function (respuesta) {
+        peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodo', datos, function (respuesta) {
             limpiarElementosModalMaterial();
             restaurarElementosModal();
             $('#modalMaterialNodo').modal('toggle');
@@ -531,7 +539,7 @@ $(function () {
     $('#guardarFolio').on('click', function () {
         if (evento.validarFormulario('#folio')) {
             datoServicioTabla.folio = $('#addFolio').val();
-            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Folio/guardar', datoServicioTabla, function (respuesta) {
+            peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/guardar', datoServicioTabla, function (respuesta) {
                 if (!respuesta.operacion) {
                     datoServicioTabla.folio = null;
                 }
@@ -567,7 +575,7 @@ $(function () {
         modal.mostrarModal('Eliminar Folio', '<h4>¿Estas Seguro de eliminar este FOLIO?</h4>');
         $('#btnAceptar').on('click', function () {
             datoServicioTabla.folio = '';
-            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/Folio/eliminar', datoServicioTabla, function (respuesta) {
+            peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/eliminar', datoServicioTabla, function (respuesta) {
                 $('#addFolio').prop('disabled', false);
                 $('#addFolio').val('');
 
@@ -637,26 +645,14 @@ $(function () {
         $('#conMaterial').addClass('hidden');
     });
 
-    $('#btnReportar').on('click', function () {
-        evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', 'data', function (respuesta) {
-            console.log(respuesta);
-        });
+    $('#btnAceptarProblema').on('click', function () {
+        if (evento.validarFormulario('#formEvidenciaProblema')) {
+            let descripcionProblema = $('#textareaDescProblema').val();
+            evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', infoMaterialNodo, function (respuesta) {
+                console.log(respuesta);
+            });
+        }
     });
-//    $('#btnReportar').on('click', function () {
-//        let contentReportar = $('#segReportar').html();
-//        let contentEvidencia = $('#vistaEvidencias').html();
-//        modal.mostrarModal('Definir Problema', contentReportar + contentEvidencia, 'text-left');
-//
-//        datoServicioTabla.descripcion = 'Descripcion de problema ',
-//                modal.btnAceptar('btnAceptar', function () {
-//
-//                    /*falta implementar el fileupload para mandar las evidencias*/
-//                    peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/agregarProblema', datoServicioTabla, function (respuesta) {
-//                        console.log(respuesta);
-//                    });
-//                });
-//
-//    });
 
     $('#btnVerMaterial').on('click', function () {
         $('#btnVerMaterial').addClass('hidden');
@@ -679,7 +675,7 @@ $(function () {
             datoServicioTabla.observaciones = $('#textareaObservaciones').val();
 //            datoServicioGral.observaciones = $('#textareaObservaciones').val();
 //            console.log(datoServicioGral)
-            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
+            peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
                 console.log(respuesta);
             });
         }
