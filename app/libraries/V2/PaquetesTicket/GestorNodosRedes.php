@@ -5,7 +5,7 @@ namespace Librerias\V2\PaquetesTicket;
 use Librerias\V2\PaquetesGenerales\Utilerias\Archivo as Archivo;
 use Modelos\Modelo_NodoRedes as Modelo;
 
-class Nodo {
+class GestorNodosRedes {
 
     private $DBNodo;
     private $idServicio;
@@ -26,23 +26,23 @@ class Nodo {
     }
 
     public function updateNodo(array $datos) {
-        $informacionNodo = $this->DBNodo->getInformacionNodo($datos['idNodo']);
-
-        if (!empty($informacionNodo)) {
-            $this->DBNodo->empezarTransaccion();
-            $archivos = explode(',', $informacionNodo[0]['Archivos']);
-            $this->deleteArchivos($archivos);
-            $this->DBNodo->deleteNodo($datos['idNodo']);
-            $carpeta = 'Servicios/Servicio-' . $this->idServicio . '/EvidenciaMaterialNodos/';
-            Archivo::saveArchivos($carpeta);
-            $datos['archivos'] = Archivo::getString();
-            $this->DBNodo->setMaterialNodo($datos['idNodo'], $this->getArrayMaterial($datos['material']));
-            $this->DBNodo->finalizarTransaccion();
-        }
+        $this->DBNodo->empezarTransaccion();
+        $this->DBNodo->deleteMaterialNodo($datos['idNodo']);
+        $carpeta = 'Servicios/Servicio-' . $this->idServicio . '/EvidenciaMaterialNodos/';
+        Archivo::saveArchivos($carpeta);
+        $datos['archivos'] = Archivo::getString();
+        $this->DBNodo->updateNodo($datos);
+        $this->DBNodo->setMaterialNodo($datos['idNodo'], $this->getArrayMaterial($datos['material']));
+        $this->DBNodo->finalizarTransaccion();
     }
 
     public function deleteNodo(string $idNodo) {
         $this->DBNodo->empezarTransaccion();
+        $informacionNodo = $this->DBNodo->getInformacionNodo($idNodo);
+        if (!empty($informacionNodo)) {
+            $archivos = explode(',', $informacionNodo[0]['Archivos']);
+            $this->deleteArchivos($archivos);
+        }
         $this->DBNodo->deleteNodo($idNodo);
         $this->DBNodo->finalizarTransaccion();
     }
@@ -66,6 +66,14 @@ class Nodo {
         foreach ($archivos as $value) {
             Archivo::deleteArchivo($value);
         }
+    }
+
+    public function getTotalMaterial() {
+        return $this->DBNodo->getTotalMaterial($this->idServicio);
+    }
+    
+    public function deleteArchivosNodo(array $datos) {
+        
     }
 
 }

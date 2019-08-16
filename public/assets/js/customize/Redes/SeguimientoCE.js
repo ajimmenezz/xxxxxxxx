@@ -205,8 +205,10 @@ $(function () {
         if (solucion.solucion.length > 0) {
             $('#textareaObservaciones').text(solucion.solucion[0].Observaciones);
         }
+
         selectSucursal.evento('change', function () {
             let totalNodos = tablaNodos.datosTabla();
+            datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
 
             if (totalNodos.length > 0) {
                 modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara los Nodos registrados</h4>');
@@ -325,6 +327,12 @@ $(function () {
         infoMaterialNodo.switch = selectSwitch.obtenerValor();
         infoMaterialNodo.numSwitch = $('#inputNumSwith').val();
         infoMaterialNodo.material = null;
+        infoMaterialNodo.idNodo = '8';
+        infoMaterialNodo.area = '66';
+        infoMaterialNodo.nodo = 'D1';
+        infoMaterialNodo.switch = '175';
+        infoMaterialNodo.numSwitch = '3';
+        infoMaterialNodo.material = '{"idMaterial": 38, "cantidad": 1}|{"idMaterial": 40, "cantidad": 1}';
 
         $.each(tablaAgregarMateriales.datosTabla(), function (key, value) {
             if (infoMaterialNodo.material === null) {
@@ -342,8 +350,9 @@ $(function () {
 //            limpiarElementosModalMaterial();
 //            $('#modalMaterialNodo').modal('toggle');
 //            tablaNodos.limpiartabla();
-//        });
-    });
+            console.log(respuesta);
+        });
+//    });
     
 //    $('[id*=img-] .eliminarEvidencia').on('click', function (){
 //        let dato = $(this);
@@ -626,11 +635,21 @@ $(function () {
         $('#sinMaterial').removeClass('hidden');
         $('#conMaterial').addClass('hidden');
     });
-    
-    $('#btnAceptarProblema').on('click', function () {
-        if (evento.validarFormulario('#formEvidenciaProblema')) {
-            console.log('jaja')
-        }
+
+    $('#btnReportar').on('click', function () {
+        let contentReportar = $('#segReportar').html();
+        let contentEvidencia = $('#vistaEvidencias').html();
+        modal.mostrarModal('Definir Problema', contentReportar + contentEvidencia, 'text-left');
+
+        datoServicioTabla.descripcion = 'Descripcion de problema ',
+                modal.btnAceptar('btnAceptar', function () {
+
+                    /*falta implementar el fileupload para mandar las evidencias*/
+                    peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/agregarProblema', datoServicioTabla, function (respuesta) {
+                        console.log(respuesta);
+                    });
+                });
+
     });
 
     $('#btnVerMaterial').on('click', function () {
@@ -651,9 +670,12 @@ $(function () {
     /**Empiezan seccion de botones generales**/
     $('#btnGuardar').on('click', function () {
         if (evento.validarFormulario('#formDatosSolucion')) {
-//            datoServicioGral.sucursal = selectSucursal.obtenerValor();
+             datoServicioTabla.observaciones = $('#textareaObservaciones').val();
 //            datoServicioGral.observaciones = $('#textareaObservaciones').val();
 //            console.log(datoServicioGral)
+            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
+                console.log(respuesta);
+            });
         }
     });
 

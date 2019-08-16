@@ -11,10 +11,7 @@ class Modelo_AlmacenVirtual extends Modelo {
     }
     
     public function getMaterial(string $idUsuario) {
-//        $consulta = $this->ejecutaFuncion('call getInventoryByUser('.$idUsuario.')');        
-        $consulta = $this->ejecutaFuncion('call getInventoryByUser(49)');  
-        
-        return $consulta;
-//        var_dump($consulta);
+//        return $this->ejecutaFuncion('call getInventoryByUser('.$idUsuario.')');        
+        return $this->ejecutaFuncion('call getInventoryByUser(49)');                  
     }
 }
