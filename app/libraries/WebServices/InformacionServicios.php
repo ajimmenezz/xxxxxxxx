@@ -394,7 +394,7 @@ class InformacionServicios extends General {
     public function avancesProblemasServicio(string $folio) {
         $datosAvancesProblemas = '';
         $datosAvances = '***AVANCES***<br>';
-        $datosProblemas = '<br><p style="color:#FF0000";>***PROBLEMAS***</p>';
+        $datosProblemas = "<br><p style='color:#FF0000';>***PROBLEMAS***</p>";
         $avancesProblemas = '';
 
         $serviciosAvancesServicios = $this->DBS->consultaGeneralSeguimiento('SELECT 
@@ -420,7 +420,7 @@ class InformacionServicios extends General {
             $datosAvances = '';
         }
 
-        if ($datosProblemas == '<br><p style="color:#FF0000";>***PROBLEMAS***</p>') {
+        if ($datosProblemas == "<br><p style='color:#FF0000';>***PROBLEMAS***</p>") {
             $datosProblemas = '';
         }
 
