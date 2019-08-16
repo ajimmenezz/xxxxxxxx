@@ -29,18 +29,69 @@ class InformacionServicios extends General {
         $this->pdf = new PDFAux();
     }
 
-    public function MostrarDatosSD(string $folio) {
-        $host = $_SERVER['SERVER_NAME'];
-        $pdf = $this->pdfFromFolio(array('folio' => $folio));
+//    public function MostrarDatosSD(string $folio) {
+//        $host = $_SERVER['SERVER_NAME'];
+//        $pdf = $this->pdfFromFolio(array('folio' => $folio));
+//
+//        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+//            $path = 'https://siccob.solutions/' . $pdf['uri'];
+//        } else {
+//            $path = 'http://' . $host . '/' . $pdf['uri'];
+//        }
+//
+//        $html = "<div>Se resuelve el incidente del folio:" . $folio . "</div>";
+//        $html .= "<div><a href='" . $path . "' target='_blank'>Resumen documento PDF</a></div>";
+//        return array('html' => $html);
+//    }
 
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'https://siccob.solutions/' . $pdf['uri'];
+    public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key) {
+        $html = '';
+        $estatus = TRUE;
+
+        if ($servicioConcluir) {
+            $union = 'SELECT 
+                            tse.Id,
+                            tse.Ticket,
+                            tse.IdTipoServicio,
+                            (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tse.IdTipoServicio) Seguimiento,
+                            tse.IdEstatus,
+                            tse.FechaConclusion,
+                            tse.Atiende AS Atiende
+                    FROM t_servicios_ticket tse 
+                    INNER JOIN t_solicitudes tso 
+                    ON tse.IdSolicitud = tso.Id 
+                    WHERE tse.Id = "' . $servicio . '"
+                    UNION ';
         } else {
-            $path = 'http://' . $host . '/' . $pdf['uri'];
+            $union = '';
+            $html .= $this->consultaCorrectivoProblema($servicio, $folio, $key);
         }
 
-        $html = "<div>Se resuelve el incidente del folio:" . $folio . "</div>";
-        $html .= "<div><a href='" . $path . "' target='_blank'>Resumen documento PDF</a></div>";
+        $serviciosConcluidos = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM (' . $union . 'SELECT 
+                                                                                tse.Id,
+                                                                                tse.Ticket,
+                                                                                tse.IdTipoServicio,
+                                                                                (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tse.IdTipoServicio) Seguimiento,
+                                                                                tse.IdEstatus,
+                                                                                tse.FechaConclusion,
+                                                                                (SELECT Atiende FROM t_solicitudes WHERE Id = tse.IdSolicitud) Atiende
+                                                                        FROM t_servicios_ticket tse 
+                                                                        INNER JOIN t_solicitudes tso 
+                                                                        ON tse.IdSolicitud = tso.Id 
+                                                                        WHERE tso.Folio = "' . $folio . '"
+                                                                        AND (tse.IdEstatus in (3,4)
+                                                                        OR (tse.IdTipoServicio = 20 AND tse.IdEstatus = 2))
+                                                                        ) TABLAS
+                                                                        ORDER BY FIELD (IdEstatus, 2,4), FechaConclusion DESC');
+
+        if (!empty($serviciosConcluidos)) {
+            foreach ($serviciosConcluidos as $key => $value) {
+                $html .= $this->vistaHTMLServicio($value);
+            }
+
+            $html .= $this->avancesProblemasServicio($folio);
+        }
+
         return array('html' => $html);
     }
 
@@ -215,7 +266,7 @@ class InformacionServicios extends General {
         $linkPdf = $this->cargarPDF($datos);
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($usuario['Id']));
-        
+
 
         if ($informacionDiagnostico !== FALSE) {
             if ($informacionDiagnostico[0]['IdTipoDiagnostico'] === '4') {
@@ -777,7 +828,7 @@ class InformacionServicios extends General {
                     'Servicio' => $servicio,
                     'ServicioConcluir' => $servicioConcluir
                 ));
-                $descripcion = $this->MostrarDatosSD($value['Folio']);
+                $descripcion = $this->MostrarDatosSD($value['Folio'], $informacionSolicitud['servicio'], FALSE, $key);
                 $this->ServiceDesk->setResolucionServiceDesk($key, $value['Folio'], $descripcion['html']);
             }
         }
@@ -924,12 +975,12 @@ class InformacionServicios extends General {
                                             ON ts.Id = tst.IdSolicitud
                                         WHERE tst.Id = "' . $datos['servicio'] . '"');
 
-        if($datos['servicioConcluir'] === 'true'){
+        if ($datos['servicioConcluir'] === 'true') {
             $servicioConcluir = TRUE;
-        }else{
+        } else {
             $servicioConcluir = FALSE;
         }
-        
+
         $servicios = $this->verificarTodosServiciosFolio(array('Servicio' => $datos['servicio'], 'ServicioConcluir' => $servicioConcluir, 'Folio' => $datosServicios[0]['Folio']));
 
         if (empty($servicios)) {
