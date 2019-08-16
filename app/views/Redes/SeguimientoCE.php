@@ -303,7 +303,7 @@
                         <div class="col-md-12">
                             <div class="col-md-12">
                                 <br>
-                                <label id="btnReportar" class="btn btn-success">Reportar</label>
+                                <label id="btnReportar" href="#modalDefinirProblema" class="btn btn-success" data-toggle="modal">Reportar</label>
                                 <br><br>
                             </div>
                             <div class="col-md-12">
@@ -376,11 +376,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <th>Cable</th>
-                                            <th>10 m</th>
-                                            <th>60 m</th>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -455,16 +450,6 @@
                     </div>
                 </div>
                 <!--Finaliza seccion de botones-->
-                <!--Segmento de modal reportar-->
-                <div id="segReportar" class="hidden">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Descripción del Problema</label>
-                            <textarea id="textareaDescProblema" class="form-control" rows="4" data-parsley-required="true"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <!--Segmento de modal reportar-->
             </div>
             <!--Finaliza Panel -->
         </div>
@@ -576,17 +561,19 @@
                     <!--Finaliza tabla de material nodos-->
                     <!--Empieza seccion de evidencia-->
                     <div class="text-center">
-                        <div class="col-md-12">
+                        <div id="fileEvidencia" class="col-md-12">
                             <label>Evidencia</label><br>
                             <div id="archivoEvidencia" class="form-group">
                                 <input id="agregarEvidenciaNodo" name="agregarEvidenciaNodo[]" type="file" multiple data-parsley-required="true">
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            <div id="imagenEvidencia" class="image-inner hidden">
-                                <a class="text-center" href="" data-lightbox="gallery-group-evidencia">
-                                    <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="">
-                                </a>                                                
+                        <div id="fileMostrarEvidencia" class="col-md-12 hidden">
+                            <div id="file-evidencia-subida" class="row editar-material">
+                                <div class="col-md-12">
+                                    <label>Evidencia</label>
+                                    <div id="evidenciasMaterialUtilizado">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-12"><br></div>
@@ -597,9 +584,9 @@
             <!--Finaliza cuerpo del modal-->
             <!--Empieza pie del modal-->
             <div class="modal-footer text-center">
-                <a id="btnAceptarAgregarMaterial" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnAceptarAgregarMaterial" class="btn btn-sm btn-success" data-dismiss="modal"><i class="fa fa-check"></i> Aceptar</a>
                 <a id="btnActualizarAgregarMaterial" class="btn btn-sm btn-success hidden"><i class="fa fa-refresh"></i> Actualizar</a>
-                <a id="btnEliminarAgregarMaterial" class="btn btn-sm btn-danger hidden" data-dismiss="modal"><i class="fa fa-trash-o"></i> Eliminar</a>
+                <a id="btnEliminarAgregarMaterial" class="btn btn-sm btn-danger hidden"><i class="fa fa-trash-o"></i> Eliminar</a>
                 <a id="btnCancelarAgregarMaterial" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
             </div>
             <!--Finaliza pie del modal-->
@@ -607,6 +594,46 @@
     </div>
 </div>
 <!--Finalizando seccion para material nodo-->
+
+<!--Empieza modal de reportar problemas-->
+<div id="modalDefinirProblema" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Definir Problema</h4>
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <form id="formEvidenciaProblema" data-parsley-validate="true" enctype="multipart/form-data">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Descripción del Problema</label>
+                                <textarea id="textareaDescProblema" class="form-control" rows="4" data-parsley-required="true"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label>Evidencia</label><br>
+                            <div id="archivoProblema" class="form-group">
+                                <input id="agregarEvidenciaProblema" name="agregarEvidenciaProblema[]" type="file" multiple data-parsley-required="true">
+                            </div>
+                        </div>
+                    </form>
+                </div>   
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptarProblema" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCancelarProblema" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>
+<!--Finaliza modal de reportar problemas-->
 
 <!--Empieza seccion de firmas-->
 <div id="contentFirmasConclucion" class="content hidden">

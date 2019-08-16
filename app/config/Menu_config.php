@@ -1973,7 +1973,9 @@ $config['Redes'] = array(
         'liga' => 'Seguimiento CE',
         'icono' => '',
         'Url' => '/Redes/SeguimientoCE',
-        'css' => array(),
+        'css' => array(
+            'Proyecto/tareasTecnico'
+        ),
         'pluginsCss' => array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
