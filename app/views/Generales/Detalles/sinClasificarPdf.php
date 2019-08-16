@@ -138,7 +138,7 @@ if (!empty($generales['archivos']['htmlArchivos'])) {
     <?php
 }
 
-if (count($avanceServicio) > 0) {
+if (!empty($avanceServicio)) {
     ?>
     <div style="page-break-after:always;">
         <div class="row">
@@ -184,8 +184,8 @@ if (count($avanceServicio) > 0) {
                     <?php
                 }
             }
-            $contadorTabla = $value[0]['tablaEquipos'];
-            if (count($contadorTabla) > 0) {
+
+            if (!empty($value[0]['tablaEquipos'])) {
                 ?>
                 <div class="timeline-footer">
                     <br>
@@ -214,7 +214,7 @@ if (count($avanceServicio) > 0) {
                         </thead>
                         <tbody>
                             <?php
-                            foreach ($contadorTabla as $key => $valor) {
+                            foreach ($value[0]['tablaEquipos'] as $key => $valor) {
                                 switch ($valor['IdItem']) {
                                     case '1':
                                         $tipoItem = 'Equipo';
