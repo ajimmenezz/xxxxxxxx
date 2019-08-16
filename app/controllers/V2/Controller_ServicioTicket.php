@@ -2,6 +2,7 @@
 
 use Librerias\V2\Factorys\FactoryServiciosTicket as FactoryServiciosTicket;
 use Librerias\V2\PaquetesGenerales\Utilerias\ServiceDesk as ServiceDesk;
+use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
 use Librerias\V2\PaquetesSucursales\GestorSucursales as GestorSucursal;
 use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 
@@ -109,7 +110,10 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            echo json_encode($this->servicio->runAccion($evento, $datosServicio));
+            $this->servicio->runAccion($evento, $datosServicio);
+            $this->datos['solucion'] = $this->servicio->getSolucion();
+            $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));            
+            echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['ERROR'] = $ex->getMessage();
             echo json_encode($this->datos);
@@ -119,11 +123,15 @@ class Controller_ServicioTicket extends CI_Controller {
     public function setProblema() {
         try {
             $datosServicio = $this->input->post();
-            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $this->servicio->setProblema($datosServicio);
-            if (!empty($datosServicio['folio'])) {                
-                ServiceDesk::setEstatus('Problema', $datosServicio['folio']);
-            }
+            $this->datos = $datosServicio;
+            var_dump($datosServicio);
+//            $datosServicio['idUsuario'] = Usuario::getId();
+//            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+//            $this->servicio->setProblema($datosServicio);
+//            if (!empty($datosServicio['folio'])) {                
+//                ServiceDesk::setEstatus('Problema', $datosServicio['folio']);
+//                ServiceDesk::setNota($datosServicio['folio'],'');
+//            }
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
@@ -135,6 +143,7 @@ class Controller_ServicioTicket extends CI_Controller {
     public function setSolucion() {
         try {
             $datosServicio = $this->input->post();
+            $datosServicio['idUsuario'] = Usuario::getId();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->setSolucion($datosServicio);            
             echo json_encode($this->datos);

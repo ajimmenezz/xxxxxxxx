@@ -21,6 +21,7 @@ $(function () {
     let selectMaterial = null;
     let evidenciaMaterial = null;
     let evidenciaProblema = null;
+    let evidenciaFija = null;
     let collapseNotas = null;
 
     let firmaClienet = new DrawingBoard.Board("firmaCliente", {
@@ -57,7 +58,8 @@ $(function () {
     let datoServicioTabla = {
         id: null,
         tipo: null,
-        folio: null
+        folio: null,
+        idSucursal: null
     };
 //    let datoServicioGral = {
 //        sucursal: null,
@@ -128,9 +130,13 @@ $(function () {
         }
         cargarContenidoServicio(infoServicio.servicio);
         cargarContenidoSolucion(infoServicio.solucion);
-        cargarContenidoModalMaterial(infoServicio.datosServicio);
-        cargarContenidoTablaNodos();
-        eventosTablas();
+        if (infoServicio.solucion.solucion[0].Archivos == "") {
+            cargarContenidoModalMaterial(infoServicio.datosServicio);
+            cargarContenidoTablaNodos();
+            eventosTablas();
+        } else {
+            
+        }
         ocultarElementosDefault(infoServicio.solucion, infoServicio.firmas);
         $('html, body').animate({
             scrollTop: $("#contentServiciosRedes").offset().top - 50
@@ -149,11 +155,12 @@ $(function () {
         evidenciaMaterial.iniciarFileUpload()
         evidenciaProblema = new FileUpload_Basico('agregarEvidenciaProblema', {url: 'SeguimientoCE/SeguimientoGeneral/agregarProblema', extensiones: ['jpg', 'jpeg', 'png']});
         evidenciaProblema.iniciarFileUpload()
+        evidenciaFija = new FileUpload_Basico('agregarEvidenciaFija', {url: 'SeguimientoCE/SeguimientoGeneral/', extensiones: ['jpg', 'jpeg', 'png']});
+        evidenciaFija.iniciarFileUpload()
         collapseNotas = new Collapse('collapseNotas');
         selectSucursal.iniciarSelect();
         selectArea.iniciarSelect();
         selectSwitch.iniciarSelect();
-        selectSwitch.bloquearElemento();
         selectMaterial.iniciarSelect();
     }
 
@@ -209,34 +216,39 @@ $(function () {
         }
 
         selectSucursal.evento('change', function () {
+            datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
             let totalNodos = listaTotalNodos.length;
             if (totalNodos > 0) {
                 modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara los Nodos registrados</h4>');
 
                 modal.btnAceptar('btnAceptar', function () {
-                    datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
-                    console.log(datoServicioTabla)
-                    peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
-                        console.log(respuesta);
-                        listaTotalNodos = respuesta.solucion.nodos;
-                        materialTecnico = respuesta.materialUsuario;
-                        listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
-                        selectSucursal.definirValor(respuesta.solucion.IdSucursal);
-                        tablaNodos.limpiartabla();
-                        modal.cerrarModal();
-                    });
+                    peticionCambioSucursal();
                 });
 
                 $('#btnCerrar').on('click', function () {
                     selectSucursal.definirValor(solucion.IdSucursal);
                     modal.cerrarModal();
                 });
+            } else {
+                peticionCambioSucursal()
             }
+        });
+    }
+
+    function peticionCambioSucursal() {
+        peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
+            listaTotalNodos = respuesta.solucion.nodos;
+            materialTecnico = respuesta.datosServicio.materialUsuario;
+            listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
+            cargarContenidoModalMaterial(respuesta.datosServicio);
+            tablaNodos.limpiartabla();
+            modal.cerrarModal();
         });
     }
 
     /**Empiesan eventos del modal Material**/
     function cargarContenidoModalMaterial(materialNodo) {
+        selectSwitch.bloquearElemento();
         if (materialNodo.areasSucursal.length > 0) {
             selectArea.cargaDatosEnSelect(materialNodo.areasSucursal);
             selectArea.evento('change', function () {
@@ -256,7 +268,6 @@ $(function () {
             selectSwitch.cargaDatosEnSelect(materialNodo.censoSwitch);
         }
         if (materialNodo.materialUsuario.length > 0) {
-            materialTecnico = materialNodo.materialUsuario;
             selectMaterial.cargaDatosEnSelect(materialNodo.materialUsuario);
             selectMaterial.evento('change', function () {
                 let materialSeleccionado = selectMaterial.obtenerValor();
@@ -317,14 +328,31 @@ $(function () {
                 limpiarElementosModalMaterial();
                 tablaNodos.limpiartabla();
                 listaTotalNodos = respuesta.solucion.nodos;
+                listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
+                materialTecnico = respuesta.datosServicio.materialUsuario;
+                cargarContenidoModalMaterial(respuesta.datosServicio);
                 cargarContenidoTablaNodos();
             });
         }
     });
 
     $('#btnCancelarAgregarMaterial').on('click', function () {
+        let suma = 0, infoTabla = tablaAgregarMateriales.datosTabla();
+        if (idNodo === null) {
+            if (infoTabla.length > 0) {
+                $.each(materialTecnico, function (key, value) {
+                    $.each(infoTabla, function (llave, valor) {
+                        if (value.id == valor[0]) {
+                            suma = parseFloat(value.cantidad) + parseFloat(valor[2]);
+                            value.cantidad = suma;
+                        }
+                    });
+                });
+            }
+        }
         limpiarElementosModalMaterial();
         restaurarElementosModal();
+        idNodo = null;
     });
 
     $('#btnActualizarAgregarMaterial').on('click', function () {
@@ -359,6 +387,7 @@ $(function () {
 //            limpiarElementosModalMaterial();
 //            $('#modalMaterialNodo').modal('toggle');
 //            tablaNodos.limpiartabla();
+        idNodo = null;
         console.log(respuesta);
     });
 //    });
@@ -395,7 +424,8 @@ $(function () {
             $('#modalMaterialNodo').modal('toggle');
             tablaNodos.limpiartabla();
             listaTotalNodos = respuesta.solucion.nodos;
-            cargarContenidoTablaNodos()
+            cargarContenidoTablaNodos();
+            idNodo = null;
         });
     });
 
@@ -417,7 +447,6 @@ $(function () {
         $('#btnEliminarAgregarMaterial').addClass('hidden');
         $('#btnAceptarAgregarMaterial').removeClass('hidden');
         $('#fileMostrarEvidencia').addClass('hidden');
-        $('#fileEvidencia').removeClass('hidden');
         $('#evidenciasMaterialUtilizado').empty();
     }
     /**Finalizan eventos del modal Material**/
@@ -457,7 +486,6 @@ $(function () {
                 $('#btnAceptarAgregarMaterial').addClass('hidden');
                 $('#btnActualizarAgregarMaterial').removeClass('hidden');
                 $('#btnEliminarAgregarMaterial').removeClass('hidden');
-                $('#fileEvidencia').addClass('hidden');
                 $('#fileMostrarEvidencia').removeClass('hidden');
                 actualizarContenidoModalMaterial(datos[0]);
             }
@@ -507,7 +535,7 @@ $(function () {
         });
         idNodo = id;
     }
-
+    /*********************************************************************************************************************************************/
     function ocultarElementosDefault(solucion, firmas) {
         let datosNodo = tablaNodos.datosTabla();
         if (datosNodo.length == 0 || solucion.IdSucursal == null) {
@@ -628,7 +656,6 @@ $(function () {
         $('#detallesFolio').addClass('hidden');
     });
     /**Finalizan eventos de botones para ver detalles de servicio y folio**/
-    /*********************************************************************************************************************************************/
 
     /**Empiezan eventos de botones para datos y problemas**/
     $('#btnSinMaterial').on('click', function () {
@@ -647,8 +674,8 @@ $(function () {
 
     $('#btnAceptarProblema').on('click', function () {
         if (evento.validarFormulario('#formEvidenciaProblema')) {
-            let descripcionProblema = $('#textareaDescProblema').val();
-            evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', infoMaterialNodo, function (respuesta) {
+            datoServicioTabla.descripcion = $('#textareaDescProblema').val();
+            evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', datoServicioTabla, function (respuesta) {
                 console.log(respuesta);
             });
         }

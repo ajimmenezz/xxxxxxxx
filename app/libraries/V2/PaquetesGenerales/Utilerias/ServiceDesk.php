@@ -45,15 +45,15 @@ class ServiceDesk {
         set_error_handler(array('Librerias\V2\PaquetesGenerales\Utilerias\ServiceDesk', 'getErrorPHP'), E_WARNING);
         set_error_handler(array('Librerias\V2\PaquetesGenerales\Utilerias\ServiceDesk', 'getErrorPHP'), E_NOTICE);
 
-        $datos = json_decode(file_get_contents($url));
+        $respuesta = json_decode(file_get_contents($url));
 
-        if ($datos === NULL) {
+        if ($respuesta === NULL) {
             throw new \Exception('Error con la comunicación al Service Desk');
         }
 
         restore_error_handler();
 
-        return $datos;
+        return $respuesta;
     }
 
     static private function validarError(\stdClass $datos) {
@@ -107,9 +107,9 @@ class ServiceDesk {
         $key = Usuario::getAPIKEY();
         $key = self::validarAPIKey(strval($key));
         self::$FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST&TECHNICIAN_KEY=' . $key;
-        $datos = self::sendSolicitud(self::$url . '/' . $folio . '?' . self::$FIELDS);
-        self::validarError($datos);
-        return $datos;
+        $respuesta = self::sendSolicitud(self::$url . '/' . $folio . '?' . self::$FIELDS);
+        self::validarError($respuesta);
+        return $respuesta;
     }
 
     static public function getNotas(string $folio) {
@@ -117,24 +117,24 @@ class ServiceDesk {
         $key = Usuario::getAPIKEY();
         $key = self::validarAPIKey(strval($key));
         self::$FIELDS = 'format=json&OPERATION_NAME=GET_NOTES&TECHNICIAN_KEY=' . $key;
-        $datos = self::sendSolicitud(self::$url . '/' . $folio . '/notes/?' . self::$FIELDS);
-        self::validarError($datos);
-        $datos = $datos->operation->Details;
-        return $datos;
+        $respuesta = self::sendSolicitud(self::$url . '/' . $folio . '/notes/?' . self::$FIELDS);
+        self::validarError($respuesta);
+        $respuesta = $respuesta->operation->Details;
+        return $respuesta;
     }
 
     static public function getFoliosTecnico(string $key) {
         self::setVariables();
         $input_data = '{"operation":{"details":{ "from": "0","limit": "5000","filterby": "All_Pending_User"}}}';
         self::$FIELDS = 'format=json&OPERATION_NAME=GET_REQUESTS&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
-        $datos = self::sendSolicitud(self::$url . '?' . self::$FIELDS);
-        self::validarError($datos);
-        return $datos;
+        $respuesta = self::sendSolicitud(self::$url . '?' . self::$FIELDS);
+        self::validarError($respuesta);
+        return $respuesta;
     }
 
     static public function setEstatus(string $estatus, string $folio) {
         $key = Usuario::getAPIKEY();
-        $key = self::validarAPIKey(strval($key));        
+        $key = self::validarAPIKey(strval($key));
         $input_data = ''
                 . '{'
                 . ' "operation": {'
@@ -148,9 +148,44 @@ class ServiceDesk {
                 . "INPUT_DATA=" . urlencode($input_data) . "&"
                 . "TECHNICIAN_KEY=" . $key;
 
-        $datos = self::sendSolicitud(self::$url . '/' . $folio. '?' . self::$FIELDS);
-        self::validarError($datos);        
-        return $datos;
+        $respuesta = self::sendSolicitud(self::$url . '/' . $folio . '?' . self::$FIELDS);
+        self::validarError($respuesta);
+    }
+
+    static public function setNota(string $folio, string $mensaje) {
+        $key = Usuario::getAPIKEY();
+        $key = self::validarAPIKey(strval($key));
+        static::$url .= "/" . $folio . "/notes/";
+        $input_data = '{operation:{details:{notes:{note:{isPublic:true,notesText:"' . static::remplazarCaracteresEspeciales($mensaje) . '"}}}}}';
+        self::$FIELDS = "format=json"
+                . "&OPERATION_NAME=ADD_NOTE"
+                . "&TECHNICIAN_KEY=" . $key
+                . "&INPUT_DATA=" . urlencode($input_data);
+        $respuesta = self::sendSolicitud(self::$url . '?' . self::$FIELDS);
+        self::validarError($respuesta);
+        self::setWorkLog($folio, $mensaje);
+    }
+
+    static private function setWorkLog(string $folio, string $mensaje) {
+        $mensaje = strip_tags($mensaje);
+        $key = Usuario::getAPIKEY();
+        $key = self::validarAPIKey(strval($key));
+        static::$url .= "/" . $folio . "/worklogs/";
+        $input_data = '{operation:{details:{worklogs:{worklog:{description:"' . static::remplazarCaracteresEspeciales($mensaje) . '",workMinutes:1}}}}}';
+        self::$FIELDS = "format=json"
+                . "&OPERATION_NAME=ADD_WORKLOG"
+                . "&TECHNICIAN_KEY=" . $key
+                . "&INPUT_DATA=" . urlencode($input_data);
+        $respuesta = self::sendSolicitud(self::$url . '?' . self::$FIELDS);
+        self::validarError($respuesta);
+        return $respuesta;
+    }
+
+    static private function remplazarCaracteresEspeciales(string $texto) {
+        $search = array("\\", "\x00", "\n", "\r", "'", '"', "\x1a");
+        $replace = array("\\\\", "\\0", "\\n", "\\r", "\'", '\"', "\\Z");
+
+        return str_replace($search, $replace, $texto);
     }
 
 }

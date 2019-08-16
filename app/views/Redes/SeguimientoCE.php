@@ -396,17 +396,16 @@
                     <div id="vistaEvidencias">
                         <!--Empieza seccion agregar evidencia-->
                         <div class="col-md-12">
-                            <div class="col-md-12">
-                                <label id="addEvidencia" class="btn btn-success">
-                                    <i class="fa fa-plus"></i> EVIDENCIA
-                                </label>
-                            </div>
-                            <div class="col-md-12">
-                                <br>
-                                <div class="form-group">
-                                    <textarea id="textareaObservaciones" class="form-control" rows="8"></textarea>
+                            <form id="formEvidenciaProblema" data-parsley-validate="true" enctype="multipart/form-data">
+                                <div class="col-md-12">
+                                    <div id="archivoEvidenciaFija" class="form-group">
+                                        <input id="agregarEvidenciaFija" name="agregarEvidenciaProblema[]" type="file" multiple data-parsley-required="true">
+                                    </div>
                                 </div>
-                            </div>
+                                <div class="col-md-12">
+                                    <div id="evidenciasMaterialFija"></div>
+                                </div>
+                            </form>
                         </div>
                         <!--Finaliza seccion agregar evidencia-->
                     </div>
