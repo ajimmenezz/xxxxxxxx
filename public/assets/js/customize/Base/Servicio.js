@@ -467,6 +467,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
         var sucursal = $('#selectSucursalesSinClasificar').val();
         var descripcion = $('#inputDescripcionSinClasificar').val();
         var evidencias = $('#evidenciaSinClasificar').val();
+        var archivosPreview = _this.file.previews('.previewSinClasificar');
 
         if (descripcion !== '') {
             var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, soloGuardar: true};
