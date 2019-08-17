@@ -66,5 +66,9 @@ class Archivo {
 
         restore_error_handler();
     }
+    
+    static public function saveArchivos64($param) {
+        
+    }
 
 }
