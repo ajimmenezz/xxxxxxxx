@@ -234,7 +234,7 @@
                                         <div class="col-md-12 row">
                                             <div class="tab-content" style="background: #F9EAC6">
                                                 <!--Empieza contenedor y scroll del acordean-->
-                                                <div class="height-sm" data-scrollbar="true" style="padding: 10px;">
+                                                <div class="height-xs" data-scrollbar="true" data-height="50%" style="padding: 10px;">
                                                     <div id="accordion" class="panel-group">
                                                         <div id="collapseNotas"></div>
                                                     </div>
@@ -307,9 +307,9 @@
                                 <br><br>
                             </div>
                             <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Historial de problemas</label>
-                                    <textarea id="textareaObservaciones" class="form-control" rows="4"></textarea>
+                                <label>Historial de problemas</label>
+                                <div class="height-xs" data-scrollbar="true" data-height="50%" style="padding: 10px;">
+                                    <div id="observacionesProblemas"></div>
                                 </div>
                             </div>
                         </div>
@@ -396,7 +396,7 @@
                     <div id="vistaEvidencias">
                         <!--Empieza seccion agregar evidencia-->
                         <div class="col-md-12">
-                            <form id="formEvidenciaProblema" data-parsley-validate="true" enctype="multipart/form-data">
+                            <form id="formEvidenciaFija" data-parsley-validate="true" enctype="multipart/form-data">
                                 <div class="col-md-12">
                                     <div id="archivoEvidenciaFija" class="form-group">
                                         <input id="agregarEvidenciaFija" name="agregarEvidenciaProblema[]" type="file" multiple data-parsley-required="true">
@@ -625,7 +625,7 @@
             <!--Finaliza cuerpo del modal-->
             <!--Empieza pie del modal-->
             <div class="modal-footer text-center">
-                <a id="btnAceptarProblema" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnAceptarProblema" class="btn btn-sm btn-success" data-dismiss="modal"><i class="fa fa-check"></i> Aceptar</a>
                 <a id="btnCancelarProblema" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
             </div>
             <!--Finaliza pie del modal-->
@@ -704,7 +704,7 @@
                 </form>
             </div>
             <div class="col-md-12 text-center">
-                <a id="btnResumen" class="btn btn-sm btn-info"><i class="fa fa-info-circle"></i> Resumen</a>
+                <a id="btnResumen" class="btn btn-sm btn-info hidden"><i class="fa fa-info-circle"></i> Resumen</a>
                 <a id="btnContinuar" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> Continuar</a>
                 <a id="btnTerminar" class="btn btn-sm btn-success hidden"><i class="fa fa-sign-in"></i> Concluir</a>
                 <a id="btnRegresarServicio" class="btn btn-sm btn-danger"><i class="fa fa-rotate-180 fa-sign-in"></i> Regresar</a>

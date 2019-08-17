@@ -128,18 +128,20 @@ $(function () {
             selectSucursal.cargaDatosEnSelect(infoServicio.sucursales);
             selectSucursal.definirValor(infoServicio.solucion.IdSucursal);
         }
-        cargarContenidoServicio(infoServicio.servicio);
-        cargarContenidoSolucion(infoServicio.solucion);
-        if (infoServicio.solucion.solucion[0].Archivos == "") {
-            cargarContenidoModalMaterial(infoServicio.datosServicio);
-            cargarContenidoTablaNodos();
-            eventosTablas();
-        } else {
+        if (infoServicio.solucion.solucion[0].Archivos !== "") {
             $('#btnConMaterial').addClass('hidden');
             $('#btnSinMaterial').removeClass('hidden');
             $('#sinMaterial').removeClass('hidden');
-            $('#conMaterial').removeClass('hidden');
+            $('#conMaterial').addClass('hidden');
         }
+        if (infoServicio.problemas !== null) {
+            cargarContenidoProblemas(infoServicio.problemas);
+        }
+        cargarContenidoServicio(infoServicio.servicio);
+        cargarContenidoSolucion(infoServicio.solucion);
+        cargarContenidoModalMaterial(infoServicio.datosServicio);
+        cargarContenidoTablaNodos();
+        eventosTablas();
         ocultarElementosDefault(infoServicio.solucion, infoServicio.firmas);
         $('html, body').animate({
             scrollTop: $("#contentServiciosRedes").offset().top - 50
@@ -200,6 +202,27 @@ $(function () {
             });
             collapseNotas.multipleCollapse(datos);
         }
+    }
+
+    function cargarContenidoProblemas(infoProblemas) {
+        let problema = '';
+        $.each(infoProblemas, function (key, value) {
+            problema += '<div class="problema col-md-12 row">\n\
+                            <div class="col-md-6 col-sm-12">\n\
+                                Usuario: <label class="semi-bold">' + value.usuario + '</label>\n\
+                            </div>\n\
+                            <div class="col-md-6 col-sm-12">\n\
+                                Fecha:<label class="semi-bold">' + value.fecha + '</label>\n\
+                            </div>\n\
+                            <div class="col-md-11 col-sm-11 col-xs-10">\n\
+                                <textarea class="form-control" rows="2" disabled>' + value.descripcion + '</textarea>\n\
+                            </div>\n\
+                            <div class="col-md-1 col-sm-2 col-xs-1">\n\
+                                <a href="' + value.archivos[0] + '" data-lightbox="problema"><i class="fa fa-file-photo-o "></i></a>\n\
+                            </div>\n\
+                        </div><br><br><br><br><br><br>';
+        });
+        $('#observacionesProblemas').append(problema);
     }
 
     function cargarContenidoServicio(datosServicio) {
@@ -367,12 +390,6 @@ $(function () {
         infoMaterialNodo.switch = selectSwitch.obtenerValor();
         infoMaterialNodo.numSwitch = $('#inputNumSwith').val();
         infoMaterialNodo.material = null;
-        infoMaterialNodo.idNodo = '8';
-        infoMaterialNodo.area = '66';
-        infoMaterialNodo.nodo = 'D1';
-        infoMaterialNodo.switch = '175';
-        infoMaterialNodo.numSwitch = '3';
-        infoMaterialNodo.material = '{"idMaterial": 38, "cantidad": 1}|{"idMaterial": 40, "cantidad": 1}';
 
         $.each(tablaAgregarMateriales.datosTabla(), function (key, value) {
             if (infoMaterialNodo.material === null) {
@@ -381,7 +398,11 @@ $(function () {
                 infoMaterialNodo.material += '|{"idMaterial": ' + value[0] + ', "cantidad": ' + value[2] + '}';
             }
         });
-
+//        let evidenciaOpcional = $('#agregarEvidenciaNodo').val();
+//        let evidenciaEstablecida = $('#evidenciasMaterialUtilizado').html();
+//        if(evidenciaOpcional == '' && evidenciaEstablecida == ''){
+//            
+//        }
 //        peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
 //            console.log(respuesta);
 //        });
@@ -391,15 +412,15 @@ $(function () {
 //            $('#modalMaterialNodo').modal('toggle');
 //            tablaNodos.limpiartabla();
         idNodo = null;
-        console.log(respuesta);
+//        console.log(evidenciaEstablecida);
     });
 //    });
 
-//    $('[id*=img-] .eliminarEvidencia').on('click', function (){
-//        let dato = $(this);
-//       console.log('aqui') 
-//       console.log(dato) 
-//    });
+    $('[id*=img-] .eliminarEvidencia').on('click', function () {
+        let dato = $(this);
+        console.log('aqui')
+        console.log(dato)
+    });
 
     $('#btnEliminarAgregarMaterial').on('click', function () {
         let datos = {};
@@ -427,6 +448,9 @@ $(function () {
             $('#modalMaterialNodo').modal('toggle');
             tablaNodos.limpiartabla();
             listaTotalNodos = respuesta.solucion.nodos;
+            listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
+            materialTecnico = respuesta.datosServicio.materialUsuario;
+            cargarContenidoModalMaterial(respuesta.datosServicio);
             cargarContenidoTablaNodos();
             idNodo = null;
         });
@@ -523,7 +547,7 @@ $(function () {
         $('#inputNumSwith').val(listaTemporalNodos[0].NumeroSwitch);
         archivos = listaTemporalNodos[0].Archivos.split(',');
         $.each(archivos, function (key, value) {
-            evidencias += `<div class="evidencia"><a href="` + value + `" data-lightbox="evidencias"><img src ="` + value + `" /></a><div><a id="img-` + key + `" class="eliminarEvidencia" href="#"><i class="fa fa-trash text-danger"></i></a></div></div>`;
+            evidencias += '<div class="evidencia"><a href="' + value + '" data-lightbox="evidencias"><img src ="' + value + '" /></a><div><a id="img-' + key + '" class="eliminarEvidencia" href="#"><i class="fa fa-trash text-danger"></i></a></div></div>';
         });
         $('#evidenciasMaterialUtilizado').append(evidencias);
         $.each(listaTemporalNodos, function (key, value) {
@@ -680,6 +704,11 @@ $(function () {
             datoServicioTabla.descripcion = $('#textareaDescProblema').val();
             evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', datoServicioTabla, function (respuesta) {
                 console.log(respuesta);
+                mostrarInformacionFolio(respuesta.folio);
+                arreglarNotas(respuesta.notasFolio);
+                cargarContenidoProblemas(respuesta.problemas);
+                $('#textareaDescProblema').val('');
+                evidenciaProblema.limpiarElemento();
             });
         }
     });
