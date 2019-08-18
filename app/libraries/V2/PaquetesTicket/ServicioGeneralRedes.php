@@ -118,6 +118,9 @@ class ServicioGeneralRedes implements Servicio {
             case 'borrarArchivos':
                 $this->gestorNodos->deleteArchivosNodo($datos);
                 break;
+            case 'borrarArchivo':
+//                $this->gestorNodos->deleteArchivosNodo($datos);
+                break;
             default:
                 break;
         }

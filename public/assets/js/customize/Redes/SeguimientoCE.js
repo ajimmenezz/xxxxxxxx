@@ -391,6 +391,7 @@ $(function () {
         infoMaterialNodo.switch = selectSwitch.obtenerValor();
         infoMaterialNodo.numSwitch = $('#inputNumSwith').val();
         infoMaterialNodo.material = null;
+        infoMaterialNodo.evidencias = false;
 
         $.each(tablaAgregarMateriales.datosTabla(), function (key, value) {
             if (infoMaterialNodo.material === null) {
