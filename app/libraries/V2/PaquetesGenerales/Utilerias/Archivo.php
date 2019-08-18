@@ -7,7 +7,7 @@ class Archivo {
     static private $CI;
     static private $archivos;
     static private $error;
-  
+
     static private function setConfiguracion() {
         self::$CI = & get_instance();
         self::$CI->load->helper('fileupload');
@@ -54,10 +54,10 @@ class Archivo {
                     self::$error['codigo'] = 'ESD001';
                     self::$error['error'] = $errstr;
                     self::$error['archivo'] = $errfile . ': linea : ' . $errline;
-                    break;                
+                    break;
             }
 
-            throw new \Exception('Error :' .$errstr );
+            throw new \Exception('Error :' . $errstr);
         }, E_WARNING);
 
 
@@ -66,9 +66,26 @@ class Archivo {
 
         restore_error_handler();
     }
-    
-    static public function saveArchivos64($param) {
-        
+
+    static public function saveArchivos64(string $carpeta, array $imagenes) {
+
+        self::$archivos = array();
+        $temporal = $_SERVER['DOCUMENT_ROOT'] . '/storage/Archivos/' . $carpeta;
+
+        if (!file_exists($temporal)) {
+            mkdir($temporal, 0777, true);
+        }
+
+        foreach ($imagenes as $key => $imagen) {
+            $temporal = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imagen));
+            $archivo = base64_decode($temporal);
+            $temporal = '/storage/Archivos/' . $carpeta . '/' . $key . '.png';
+
+            if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . $temporal, $archivo)) {
+                throw new \Exception('Error : No se puede gardar la imagen de tipo 64 ');
+            }
+            array_push(self::$archivos, $temporal);
+        }
     }
 
 }

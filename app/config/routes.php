@@ -199,6 +199,7 @@ $route['Redes/SeguimientoCE/SeguimientoGeneral/Folio/(:any)'] = 'V2/Controller_S
 $route['Redes/SeguimientoCE/SeguimientoGeneral/Accion/(:any)'] = 'V2/Controller_ServicioTicket/runEvento/$1';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/agregarProblema'] = 'V2/Controller_ServicioTicket/setProblema';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/guardarSolucion'] = 'V2/Controller_ServicioTicket/setSolucion';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/concluir'] = 'V2/Controller_ServicioTicket/setConcluir';
 
 /* Routers para el manejo de MesaDeAyuda */
 $route['MesaDeAyuda/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';

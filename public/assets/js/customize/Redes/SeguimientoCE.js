@@ -58,7 +58,8 @@ $(function () {
         id: null,
         tipo: null,
         folio: null,
-        idSucursal: null
+        idSucursal: null,
+        nombreCliente: null
     };
 //    let datoServicioGral = {
 //        sucursal: null,
@@ -713,6 +714,7 @@ $(function () {
             if (inputFirmaCliente == '') {
                 evento.mostrarMensaje("#errorMessageFirmaCliente", false, 'Falta firma del Cliente', 2000);
             } else {
+                datoServicioTabla.nombreCliente = $('#inputCliente').val()
                 $('#contentfirmaTecnico').removeClass('hidden');
                 $('#btnTerminar').removeClass('hidden');
                 $('#btnRegresarServicio2').removeClass('hidden');
@@ -729,7 +731,11 @@ $(function () {
         if (inputFirmaTecnico == '') {
             evento.mostrarMensaje("#errorMessageFirmaTecnico", false, 'Falta firma del Tecnico', 2000);
         } else {
-            console.log("concluye servicio")
+            datoServicioTabla.firmaCliente = firmaClienet.getImg();
+            datoServicioTabla.firmaTecnico = firmaTecnico.getImg();
+            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
+                console.log(respuesta);
+            });
         }
     });
 

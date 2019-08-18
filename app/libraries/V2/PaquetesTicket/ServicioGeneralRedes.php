@@ -44,6 +44,13 @@ class ServicioGeneralRedes implements Servicio {
         $this->descripcionSolicitud = $consulta[0]['DescripcionSolicitud'];
     }
 
+    public function startServicio(string $atiende) {
+        $this->DBServiciosGeneralRedes->empezarTransaccion();
+        $this->DBServiciosGeneralRedes->setFechaAtencion($this->id, $atiende);
+        $this->setEstatus('2');
+        $this->DBServiciosGeneralRedes->finalizarTransaccion();
+    }
+
     public function setEstatus(string $estatus) {
         try {
             $this->DBServiciosGeneralRedes->empezarTransaccion();
@@ -53,7 +60,7 @@ class ServicioGeneralRedes implements Servicio {
             var_dump($ex->getMessage());
         }
     }
-
+    
     public function getFolio() {
         return $this->folioSolicitud;
     }
@@ -142,7 +149,7 @@ class ServicioGeneralRedes implements Servicio {
     public function getProblemas() {
         $datos = array();
         $consulta = $this->DBServiciosGeneralRedes->getProblemas($this->id);
-        
+
         if (!empty($consulta)) {
             foreach ($consulta as $value) {
                 $temporal = explode(',', $value['Archivos']);
@@ -150,18 +157,24 @@ class ServicioGeneralRedes implements Servicio {
                     'usuario' => $value['Usuario'],
                     'fecha' => $value['Fecha'],
                     'descripcion' => $value['Descripcion'],
-                    'archivos' => $temporal                    
+                    'archivos' => $temporal
                 ));
             }
-            
         }
-        
+
         return $datos;
     }
 
     public function setSolucion(array $datos) {
         $this->DBServiciosGeneralRedes->empezarTransaccion();
         $this->DBServiciosGeneralRedes->setSolucion($this->id, $datos);
+        $this->DBServiciosGeneralRedes->finalizarTransaccion();
+    }
+    
+    public function endServicio(string $termina){
+        $this->DBServiciosGeneralRedes->empezarTransaccion();
+        $this->DBServiciosGeneralRedes->setConclusion($this->id, $termina);
+        $this->setEstatus('4');
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
 

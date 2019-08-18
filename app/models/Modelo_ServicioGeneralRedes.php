@@ -48,6 +48,13 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
                             where Id = ' . $idServicio);
     }
 
+    public function setFechaAtencion(string $idServicio, string $atiende) {
+        $this->actualizar('update t_servicios_ticket 
+                            set FechaInicio = NOW(),                            
+                            Atiende = ' . $atiende . '                            
+                            where Id = ' . $idServicio);
+    }
+
     public function getDatosSolucion(string $idServicio) {
         $consulta = $this->consulta('select 
                                         Id,
@@ -99,19 +106,23 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
 
         $consulta = $this->consulta('select * from t_servicios_generales where IdServicio = ' . $idServicio);
 
-        if(empty($consulta)){
+        if (empty($consulta)) {
             $this->insertar('insert into t_servicios_generales values(
                                 null,
-                                '.$datos['idUsuario'].',
-                                '.$idServicio.',
-                                "'.$datos['observaciones'].'",
-                                "'.$datos['archivos'].'",
+                                ' . $datos['idUsuario'] . ',
+                                ' . $idServicio . ',
+                                "' . $datos['observaciones'] . '",
+                                "' . $datos['archivos'] . '",
                                 now()    
-                             )'); 
-        }else{
+                             )');
+        } else {
             $this->actualizar('update t_servicios_ticket set 
                            IdSucursal = ' . $datos['idSucursal'] . ' where Id = ' . $idServicio);
         }
+    }
+    
+    public function setConclusion(string $idServicio, string $termina){
+        
     }
 
 }
