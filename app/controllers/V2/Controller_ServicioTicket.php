@@ -27,7 +27,8 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($tipoServicio, $datosServicio['id']);
-            $this->servicio->setEstatus('2');
+            $idUsuario = Usuario::getId();
+            $this->servicio->startServicio($idUsuario);
             $this->datos['servicio'] = $this->servicio->getDatos();
             $this->datos['sucursales'] = $this->gestorSucursales->getSucursales($this->servicio->getCliente());
             $this->datos['solucion'] = $this->servicio->getSolucion();
@@ -181,6 +182,35 @@ class Controller_ServicioTicket extends CI_Controller {
             ServiceDesk::setEstatus('Problema', $datosServicio['folio']);
             ServiceDesk::setNota($datosServicio['folio'], $descripcion);
         }
+    }
+    
+    public function setConcluir() {
+        try {
+            $datosServicio = $this->input->post();
+            $datosServicio['idUsuario'] = Usuario::getId();
+            $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciasFirmas';
+            $firmas = array(
+                'Firma-Cliente-'.$datosServicio['nombreCliente'] => $datosServicio['firmaCliente'],
+                'Firma-Tecnico-'.Usuario::getNombre() => $datosServicio['firmaTecnico']
+                    );
+            Archivo::saveArchivos64($carpeta,$firmas);
+            $datosServicio['archivos'] = Archivo::getString();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio = $this->servicio->setConclusion($datosServicio);
+            $this->setResolucionServiceDesk($datosServicio);
+            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
+    
+    private function setResolucionServiceDesk(array $datosServicio) {
+        $mensaje = 'Una nueva Resolución en service desk';
+        
+        ServiceDesk::setResolucion($datosServicio['folio'],$mensaje);
+        ServiceDesk::setEstatus('Validacion',$datosServicio['folio']);
     }
 
 }

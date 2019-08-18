@@ -187,5 +187,27 @@ class ServiceDesk {
 
         return str_replace($search, $replace, $texto);
     }
+    
+    static public function setResolucion(string $folio, string $mensaje) {
+        $key = Usuario::getAPIKEY();
+        $key = self::validarAPIKey(strval($key));
+        $input_data = ''
+                . '{'
+                . ' "operation": {'
+                . '     "details": {'
+                . '         "resolution": {'
+                . '             "resolutiontext": "' . self::remplazarCaracteresEspeciales($mensaje) . '"'
+                . '         }'
+                . '     }'
+                . ' }'
+                . '}';
+
+        self::$FIELDS = "format=json&"
+                . "OPERATION_NAME=EDIT_RESOLUTION&"
+                . "INPUT_DATA=" . urlencode($input_data) . "&"
+                . "TECHNICIAN_KEY=" . $key;
+        $respuesta = self::sendSolicitud(self::$url . '/' . $folio . '/resolution/?' . self::$FIELDS);
+        self::validarError($respuesta);        
+    }
 
 }

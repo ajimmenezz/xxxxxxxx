@@ -42,5 +42,10 @@ Class Usuario {
         self::setDatos();
         return self::$datos['SDKey'];
     }
+    
+    static public function getNombre() {
+        self::setDatos();
+        return self::$datos['Nombre'];
+    }
 
 }

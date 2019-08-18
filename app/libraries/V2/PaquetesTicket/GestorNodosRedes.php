@@ -28,9 +28,11 @@ class GestorNodosRedes {
     public function updateNodo(array $datos) {
         $this->DBNodo->empezarTransaccion();
         $this->DBNodo->deleteMaterialNodo($datos['idNodo']);
-        $carpeta = 'Servicios/Servicio-' . $this->idServicio . '/EvidenciaMaterialNodos/';
-        Archivo::saveArchivos($carpeta);
-        $datos['archivos'] = Archivo::getString();
+        if ($datos['evidencias'] === 'true') {
+            $carpeta = 'Servicios/Servicio-' . $this->idServicio . '/EvidenciaMaterialNodos/';
+            Archivo::saveArchivos($carpeta);
+            $datos['archivos'] = Archivo::getString();
+        }
         $this->DBNodo->updateNodo($datos);
         $this->DBNodo->setMaterialNodo($datos['idNodo'], $this->getArrayMaterial($datos['material']));
         $this->DBNodo->finalizarTransaccion();
@@ -71,7 +73,7 @@ class GestorNodosRedes {
     public function getTotalMaterial() {
         return $this->DBNodo->getTotalMaterial($this->idServicio);
     }
-    
+
     public function deleteArchivosNodo(array $datos) {
         
     }
