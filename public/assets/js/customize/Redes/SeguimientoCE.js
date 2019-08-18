@@ -79,6 +79,7 @@ $(function () {
     let areasSucursales = null;
     let listaTotalNodos = null;
     let listaTotalMaterialUsado = null;
+    let evidenciasNodo = null;
     let idNodo = null;
 
     tablaPrincipal.evento(function () {
@@ -105,7 +106,7 @@ $(function () {
         } else {
             peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Seguimiento/' + datosFila[4], datoServicioTabla, function (respuesta) {
                 cambioVista(respuesta);
-                console.log(respuesta)
+//                console.log(respuesta)
             });
         }
     });
@@ -398,11 +399,11 @@ $(function () {
                 infoMaterialNodo.material += '|{"idMaterial": ' + value[0] + ', "cantidad": ' + value[2] + '}';
             }
         });
-//        let evidenciaOpcional = $('#agregarEvidenciaNodo').val();
-//        let evidenciaEstablecida = $('#evidenciasMaterialUtilizado').html();
-//        if(evidenciaOpcional == '' && evidenciaEstablecida == ''){
-//            
-//        }
+        let evidenciaOpcional = $('#agregarEvidenciaNodo').val();
+        let evidenciaEstablecida = $('#evidenciasMaterialUtilizado').html();
+        if(evidenciaOpcional == '' && evidenciaEstablecida == ''){
+            
+        }
 //        peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
 //            console.log(respuesta);
 //        });
@@ -415,12 +416,6 @@ $(function () {
 //        console.log(evidenciaEstablecida);
     });
 //    });
-
-    $('[id*=img-] .eliminarEvidencia').on('click', function () {
-        let dato = $(this);
-        console.log('aqui')
-        console.log(dato)
-    });
 
     $('#btnEliminarAgregarMaterial').on('click', function () {
         let datos = {};
@@ -534,8 +529,9 @@ $(function () {
     }
 
     function actualizarContenidoModalMaterial(id) {
+        evidenciasNodo = null
         idNodo = null;
-        let listaTemporalNodos = [], evidencias = '', archivos;
+        let listaTemporalNodos = [], evidencias = '';
         $.each(listaTotalNodos, function (key, value) {
             if (value.IdNodo === id) {
                 listaTemporalNodos.push(value);
@@ -545,9 +541,18 @@ $(function () {
         $('#inputNodo').val(listaTemporalNodos[0].Nombre);
         selectSwitch.definirValor(listaTemporalNodos[0].IdSwitch);
         $('#inputNumSwith').val(listaTemporalNodos[0].NumeroSwitch);
-        archivos = listaTemporalNodos[0].Archivos.split(',');
-        $.each(archivos, function (key, value) {
-            evidencias += '<div class="evidencia"><a href="' + value + '" data-lightbox="evidencias"><img src ="' + value + '" /></a><div><a id="img-' + key + '" class="eliminarEvidencia" href="#"><i class="fa fa-trash text-danger"></i></a></div></div>';
+        evidenciasNodo = listaTemporalNodos[0].Archivos.split(',');
+        $.each(evidenciasNodo, function (key, value) {
+            evidencias += '<div class="evidencia">\n\
+                                <a href="' + value + '" data-lightbox="evidencias">\n\
+                                    <img src ="' + value + '" />\n\
+                                </a>\n\
+                                <div class="eliminarEvidencia" data-value="' + key + '">\n\
+                                    <a id="img-' + key + '" href="#">\n\
+                                        <i class="fa fa-trash text-danger"></i>\n\
+                                    </a>\n\
+                                </div>\n\
+                            </div>';
         });
         $('#evidenciasMaterialUtilizado').append(evidencias);
         $.each(listaTemporalNodos, function (key, value) {
@@ -559,6 +564,23 @@ $(function () {
                         value.Cantidad
                     ]);
             });
+        });
+        
+        $('.eliminarEvidencia').on('click', function () {
+            let dato = $(this).attr('data-value');
+            $.each(evidenciasNodo, function (key, value) {
+                if(key == dato){
+                    evidenciasNodo[dato] = '';
+                }
+            });
+            console.log(evidenciasNodo)
+            let envio = '';
+            $.each(evidenciasNodo, function (key, value) {
+                if(value !== ''){
+                    envio += value+',';
+                }
+            });
+            console.log(envio)
         });
         idNodo = id;
     }
@@ -703,7 +725,6 @@ $(function () {
         if (evento.validarFormulario('#formEvidenciaProblema')) {
             datoServicioTabla.descripcion = $('#textareaDescProblema').val();
             evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', datoServicioTabla, function (respuesta) {
-                console.log(respuesta);
                 mostrarInformacionFolio(respuesta.folio);
                 arreglarNotas(respuesta.notasFolio);
                 cargarContenidoProblemas(respuesta.problemas);
