@@ -572,7 +572,6 @@
                         <div id="fileMostrarEvidencia" class="col-md-12 hidden">
                             <div id="file-evidencia-subida" class="row editar-material">
                                 <div class="col-md-12">
-                                    <label>Evidencia</label>
                                     <div id="evidenciasMaterialUtilizado">
                                     </div>
                                 </div>
