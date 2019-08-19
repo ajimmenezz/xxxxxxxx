@@ -40,8 +40,8 @@ class GestorNodosRedes {
 
     public function deleteNodo(string $idNodo) {
         $this->DBNodo->empezarTransaccion();
-        $informacionNodo = $this->DBNodo->getInformacionNodo($idNodo);
-        if (!empty($informacionNodo)) {
+        $informacionNodo = $this->DBNodo->getInformacionNodo($idNodo);        
+        if (!empty($informacionNodo[0]['Archivos'])) {
             $archivos = explode(',', $informacionNodo[0]['Archivos']);
             $this->deleteArchivos($archivos);
         }

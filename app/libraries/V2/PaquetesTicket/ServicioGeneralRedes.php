@@ -61,7 +61,7 @@ class ServicioGeneralRedes implements Servicio {
             var_dump($ex->getMessage());
         }
     }
-    
+
     public function getFolio() {
         return $this->folioSolicitud;
     }
@@ -174,26 +174,32 @@ class ServicioGeneralRedes implements Servicio {
         $this->DBServiciosGeneralRedes->setSolucion($this->id, $datos);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
-    
-    public function endServicio(string $termina){
+
+    public function endServicio(string $termina) {
         $this->DBServiciosGeneralRedes->empezarTransaccion();
         $this->DBServiciosGeneralRedes->setConclusion($this->id, $termina);
         $this->setEstatus('4');
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
-    
-    public function setConcluir(){
-        $pdf = new PDF($this->folioSolicitud);
-        $pdf->AddPage();        
-        $pdf->tituloTabla('#Información General');
-        $pdf->table(array('columna 1','columna 2'), array(array('celda 01','celda 02'),array('celda 11','celda 12')));
-        $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
-        $pdf->Output('F', $carpeta, true);
-        $archivo = substr($carpeta, 1);
-        var_dump($archivo);
-//        return $archivo;
+
+    public function setConcluir(array $datos) {
+        $this->DBServiciosGeneralRedes->empezarTransaccion();
+        var_dump($datos);
+        $this->DBServiciosGeneralRedes->setConclusion($this->id, $datos);        
+        $this->DBServiciosGeneralRedes->finalizarTransaccion();
+//        $pdf = new PDF($this->folioSolicitud);
+//        $pdf->AddPage();        
+//        $pdf->tituloTabla('#Información General');
+//        $pdf->table(array('columna 1','columna 2'), array(array('celda 01','celda 02'),array('celda 11','celda 12')));
+//        $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
+//        $pdf->Output('F', $carpeta, true);
+//        $archivo = substr($carpeta, 1);
+//        var_dump($archivo);
+        $archivo = '<p>******* Termino de servicio de cableado ********</p>
+                    <p><strong>Descripción:</strong> Se concluye el servicio de cableado</p>';
+        return $archivo;
     }
-    
+
     public function deleteEvidencias() {
         $this->DBServiciosGeneralRedes->empezarTransaccion();
         $temporal = $this->DBServiciosGeneralRedes->getEvidencias($this->id);
