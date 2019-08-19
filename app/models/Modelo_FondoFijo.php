@@ -901,7 +901,7 @@ class Modelo_FondoFijo extends Modelo_Base
         $query="";
         $query="
             SELECT 
-                tfs.Id,
+            cu.Id,
             NOMBREUSUARIO(tfs.IdUsuario) AS Nombre,
             tfs.IdTipoCuenta as idTipoCuenta,
             (SELECT 
@@ -912,7 +912,6 @@ class Modelo_FondoFijo extends Modelo_Base
                     Id = tfs.IdTipoCuenta) AS TipoCuenta"
              ;
         
-        echo $longitudTipos;
         for($i=1; $i<= $longitudTipos; $i++)
         {
             $query.=",(

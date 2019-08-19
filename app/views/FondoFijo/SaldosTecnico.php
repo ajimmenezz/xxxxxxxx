@@ -33,6 +33,7 @@
                                 </thead>
                                 <tbody>
                                     <?php
+//                                    var_dump($datos['SaldoTecnico']);
                                     if (isset($datos['SaldoTecnico']) && !empty($datos['SaldoTecnico'])) {
                                         foreach ($datos['SaldoTecnico']['datosTecnico'] as $key => $value) {
                                             echo ""

@@ -31,7 +31,8 @@ $(function () {
             'id':datosTabla[0]
             
         };
-          //  console.log(datos);
+            console.log(datos);
+            console.log(datosTabla);
         evento.enviarEvento('MiFondo/MovimientosTecnico', datos, '#panelCuentas', function (respuesta) {
             let aux="";
             
