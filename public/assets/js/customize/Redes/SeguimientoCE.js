@@ -81,6 +81,7 @@ $(function () {
     let listaTotalNodos = null;
     let listaTotalMaterialUsado = null;
     let evidenciasNodo = null;
+    let archivosEstablecidos = null;
     let idNodo = null;
 
     tablaPrincipal.evento(function () {
@@ -107,6 +108,8 @@ $(function () {
                         $('#btnSinMaterial').removeClass('hidden');
                         $('#sinMaterial').removeClass('hidden');
                         $('#conMaterial').addClass('hidden');
+                        archivosEstablecidos = respuesta.solucion.solucion[0].Archivos;
+                        cargarEvidenciaArchivos();
                     } else {
                         datoServicioTabla.material = false;
                     }
@@ -121,6 +124,8 @@ $(function () {
                     $('#btnSinMaterial').removeClass('hidden');
                     $('#sinMaterial').removeClass('hidden');
                     $('#conMaterial').addClass('hidden');
+                    archivosEstablecidos = respuesta.solucion.solucion[0].Archivos;
+                    cargarEvidenciaArchivos();
                 } else {
                     datoServicioTabla.material = false;
                 }
@@ -601,7 +606,20 @@ $(function () {
         });
         idNodo = id;
     }
-    /*********************************************************************************************************************************************/
+
+    function cargarEvidenciaArchivos() {
+        let evidencias = '', archivos = archivosEstablecidos.split(',');
+        $.each(archivos, function (key, value) {
+            evidencias += '<div id="img-' + key + '" class="evidencia">\n\
+                                <a href="' + value + '" data-lightbox="evidencias">\n\
+                                    <img src ="' + value + '" />\n\
+                                </a>\n\
+                            </div>';
+        });
+        $('#evidenciasMaterialFija').append(evidencias);
+
+    }
+
     function ocultarElementosDefault(solucion, firmas) {
         let datosNodo = tablaNodos.datosTabla();
         if (datosNodo.length == 0 || solucion.IdSucursal == null) {
@@ -725,17 +743,29 @@ $(function () {
 
     /**Empiezan eventos de botones para datos y problemas**/
     $('#btnSinMaterial').on('click', function () {
-        $('#btnConMaterial').removeClass('hidden');
-        $('#btnSinMaterial').addClass('hidden');
-        $('#sinMaterial').addClass('hidden');
-        $('#conMaterial').removeClass('hidden');
+        modal.mostrarModal('AVISO', '<h4>Se borrara toda Evidencia establecida, ¿Estas seguro de esto?</h4>');
+        modal.btnAceptar('btnAceptar', function () {
+
+            $('#btnConMaterial').removeClass('hidden');
+            $('#btnSinMaterial').addClass('hidden');
+            $('#sinMaterial').addClass('hidden');
+            $('#conMaterial').removeClass('hidden');
+            datoServicioTabla.material = false;
+            modal.cerrarModal();
+        });
     });
 
     $('#btnConMaterial').on('click', function () {
-        $('#btnConMaterial').addClass('hidden');
-        $('#btnSinMaterial').removeClass('hidden');
-        $('#sinMaterial').removeClass('hidden');
-        $('#conMaterial').addClass('hidden');
+        modal.mostrarModal('AVISO', '<h4>Se borrara todo Nodo establecido, ¿Estas seguro de esto?</h4>');
+        modal.btnAceptar('btnAceptar', function () {
+
+            $('#btnConMaterial').addClass('hidden');
+            $('#btnSinMaterial').removeClass('hidden');
+            $('#sinMaterial').removeClass('hidden');
+            $('#conMaterial').addClass('hidden');
+            datoServicioTabla.material = true;
+            modal.cerrarModal();
+        });
     });
 
     $('#btnAceptarProblema').on('click', function () {
