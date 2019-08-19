@@ -42,9 +42,10 @@
                             <label id="tituloEquipoMaterial"></label>
                             <select id="selectUtilizado" class="form-control" style="width: 100%">
                                 <option value="">Seleccionar</option>
-                                <option value="1">Equipo</option>';
+                                <option value="1">Equipo TI</option>';
                                 <option value="2">Material</option>';
                                 <option value="3">Refacción</option>';
+                                <option value="4">Salas X4D</option>';
                             </select>
                         </div>
                     </div>
@@ -150,6 +151,38 @@
                 </div>
                 <!--Finalizando -->
 
+                <!-- Empezando Seleccion Refaccion-->
+                <div id="seleccionSalas4XD" class="row hidden">
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Elemento *</label>
+                            <select id="selectAvanceElemento" class="form-control" style="width: 100%">
+                                <option value="">Seleccionar</option>
+                                <?php
+                                foreach ($elementos as $item) {
+                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>                                           
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Sub-elemento</label>
+                            <select id="selectAvanceSubelemento" class="form-control" style="width: 100%" disabled>
+                                <option value="">Seleccionar</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input id="inputAvanceCantidadElementoSubelemento" type="number" class="form-control"  placeholder="Cantidad"/>
+                        </div>
+                    </div>                               
+                </div>
+                <!--Finalizando -->
+
                 <!--Empezando boton de agregar y mensaje de error-->
                 <div class="row m-t-10">
                     <!--Empezando error--> 
@@ -204,6 +237,14 @@
                     </table>
                 </div>
                 <!--Finalizando -->
+
+                <div class="row">
+                    <div class="col-md-12 m-t-20">
+                        <div class="alert alert-warning fade in m-b-15">                            
+                            Para eliminar el registro de la tabla solo tiene que dar click sobre fila para eliminarlo.                            
+                        </div>                        
+                    </div>
+                </div>
 
             </form>
             <!--Finalizando formulario Avence servicio -->

@@ -92,7 +92,7 @@ Servicio.prototype.nuevoServicio = function () {
 
                     }]
             };
-//            console.log(resource);
+
             handleClientLoad(resource, true);
         };
 
@@ -468,6 +468,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
         var descripcion = $('#inputDescripcionSinClasificar').val();
         var evidencias = $('#evidenciaSinClasificar').val();
         var archivosPreview = _this.file.previews('.previewSinClasificar');
+
         if (descripcion !== '') {
             var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, soloGuardar: true};
             _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#seccion-servicio-sin-clasificar', data, function (respuesta) {
@@ -491,12 +492,12 @@ Servicio.prototype.ServicioSinClasificar = function () {
 
     //Encargado de agregar un avance
     $('#btnAgregarAvance').on('click', function () {
-        _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio);
+        _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio, 'Guardar');
     });
 
     //Encargado de agregar un problema
     $('#btnAgregarProblema').on('click', function () {
-        _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio);
+        _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio, 'Guardar');
     });
 
     //Encargado de agregar un problema
@@ -515,6 +516,8 @@ Servicio.prototype.ServicioSinClasificar = function () {
     }
 
     _this.eventosFolio(datosDelServicio.IdSolicitud, '#seccion-servicio-sin-clasificar', servicio);
+    _this.botonEliminarAvanceProblema(servicio);
+    _this.botonEditarAvanceProblema(servicio);
 };
 
 Servicio.prototype.GuardarNotas = function () {
@@ -1356,10 +1359,6 @@ Servicio.prototype.validarCamposFirma = function () {
     });
 };
 
-Servicio.prototype.EnviarReporte = function () {
-
-}
-
 Servicio.prototype.validarCorreoArray = function (correo) {
     var resultado;
     var expre = new RegExp(/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/);
@@ -1382,11 +1381,15 @@ Servicio.prototype.mostrarFormularioAvanceServicio = function () {
     var servicio = arguments[0];
     var tipoAvanceProblema = arguments[1];
     var tipoServicio = arguments[2] || '';
+    var tipoFormulario = arguments[3] || 'Guardar';
+    var informacionAvanceProblema = arguments[4] || null;
     var data = {servicio: servicio, tipoAvanceProblema: tipoAvanceProblema};
     var titulo = '';
     var tituloEquipoMaterial = '';
     var nombreCampo = '';
     var verficarCampoArchivo = false;
+    var idAvanceProblema = '';
+    var archivosAvanceProblema = '';
 
     if (tipoAvanceProblema === '1') {
         titulo = 'Agregar Avance';
@@ -1399,15 +1402,39 @@ Servicio.prototype.mostrarFormularioAvanceServicio = function () {
 
     _this.enviarEvento('/Generales/Servicio/MostrarFormularioAvanceServicio', data, '#seccion-servicio-sin-clasificar', function (respuesta) {
         _this.mostrarModal(titulo, respuesta.formulario);
+
         $("#modal-dialogo #content").prop('style', 'margin-left:0px !important;');
         $('#tituloEquipoMaterial').empty().html(tituloEquipoMaterial);
-        _this.file.crearUpload('#archivosAvanceServicio',
-                '/Generales/Servicio/GuardarAvenceServicio'
-                );
+
         _this.select.crearSelect('#selectAvanceRefaccionEquipo');
         _this.select.crearSelect('#selectTipoFalla');
         _this.select.crearSelect('select');
         _this.tabla.generaTablaPersonal('#data-table-avances');
+
+        if (tipoFormulario !== 'Guardar') {
+            _this.colocarInformacionFormularioAvanceProblema(informacionAvanceProblema);
+        }
+        if (informacionAvanceProblema !== null) {
+            idAvanceProblema = informacionAvanceProblema.avanceProblema[0].Id
+            archivosAvanceProblema = informacionAvanceProblema.archivo
+        }
+
+        _this.file.crearUpload('#archivosAvanceServicio',
+                '/Generales/Servicio/GuardarAvenceServicio',
+                null,
+                null,
+                archivosAvanceProblema,
+                '/Generales/Servicio/EliminarEvidenciaAvanceProblema',
+                idAvanceProblema,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                null,
+                false);
 
         if (tipoAvanceProblema === '2') {
             $('#divArchivos').empty().html('Archivos *');
@@ -1421,6 +1448,7 @@ Servicio.prototype.mostrarFormularioAvanceServicio = function () {
                     $('#seleccionEquipo').removeClass('hidden');
                     $('#seleccionMaterial').addClass('hidden');
                     $('#seleccionRefaccion').addClass('hidden');
+                    $('#seleccionSalas4XD').addClass('hidden');
                     if (tipoAvanceProblema === '2') {
                         $('#inputSerieEquipo').addClass('hidden');
                         $('#inputCantidadEquipo').removeClass('hidden');
@@ -1438,18 +1466,28 @@ Servicio.prototype.mostrarFormularioAvanceServicio = function () {
                     $('#seleccionEquipo').addClass('hidden');
                     $('#seleccionMaterial').removeClass('hidden');
                     $('#seleccionRefaccion').addClass('hidden');
+                    $('#seleccionSalas4XD').addClass('hidden');
                     nombreCampo = 'material';
                     break;
                 case '3':
                     $('#seleccionEquipo').addClass('hidden');
                     $('#seleccionMaterial').addClass('hidden');
                     $('#seleccionRefaccion').removeClass('hidden');
+                    $('#seleccionSalas4XD').addClass('hidden');
                     nombreCampo = 'refaccion';
+                    break;
+                case '4':
+                    $('#seleccionEquipo').addClass('hidden');
+                    $('#seleccionMaterial').addClass('hidden');
+                    $('#seleccionRefaccion').addClass('hidden');
+                    $('#seleccionSalas4XD').removeClass('hidden');
+                    nombreCampo = 'salas4XD';
                     break;
                 default:
                     $('#seleccionEquipo').addClass('hidden');
                     $('#seleccionMaterial').addClass('hidden');
                     $('#seleccionRefaccion').addClass('hidden');
+                    $('#seleccionSalas4XD').addClass('hidden');
             }
         });
 
@@ -1466,17 +1504,41 @@ Servicio.prototype.mostrarFormularioAvanceServicio = function () {
             }
         });
 
+        $('#selectAvanceElemento').on('change', function () {
+            var objetoNuevoSubelementos = {};
+            $.each(respuesta.datos.subelementos, function (key, valor) {
+                objetoNuevoSubelementos[key] = {Id: valor.Id, Nombre: valor.Nombre + ' - ' + valor.Marca, IdElemento: valor.IdElemento};
+            });
+
+            _this.select.setOpcionesSelect('#selectAvanceSubelemento', objetoNuevoSubelementos, $('#selectAvanceElemento').val(), 'IdElemento');
+            if ($('#selectAvanceElemento').val() !== '') {
+                $('#selectAvanceSubelemento').removeAttr('disabled');
+            } else {
+                $('#selectAvanceSubelemento').attr('disabled', 'disabled');
+            }
+        });
+
+        $('#data-table-avances tbody').on('click', 'tr', function () {
+            var datosTablaAvances = $('#data-table-avances').DataTable().rows(this).data();
+            if (datosTablaAvances.length > 0) {
+                _this.tabla.eliminarFila('#data-table-avances', this);
+            }
+        });
+
         $('#btnModalConfirmar').off('click');
         $('#btnModalConfirmar').on('click', function () {
             var descripcion = $('#inputDescripcionAvanceServicio').val();
             var datosTablaAvanceServicios = $('#data-table-avances').DataTable().rows().data();
             var verificarArchivos = false;
             var archivos = $('#archivosAvanceServicio').val();
+
             if (archivos !== '') {
                 verificarArchivos = true;
             }
             if (tipoAvanceProblema === '2') {
                 if (archivos !== '') {
+                    verficarCampoArchivo = false;
+                } else if (archivosAvanceProblema !== '') {
                     verficarCampoArchivo = false;
                 } else {
                     verficarCampoArchivo = true;
@@ -1495,19 +1557,13 @@ Servicio.prototype.mostrarFormularioAvanceServicio = function () {
                         datosTabla.push('sinDatos');
                     }
 
-                    var data = {datosTabla: datosTabla, servicio: servicio, tipoAvanceProblema: tipoAvanceProblema, descripcion: descripcion, verificarArchivos: verificarArchivos};
+                    var data = {datosTabla: datosTabla, servicio: servicio, tipoAvanceProblema: tipoAvanceProblema, descripcion: descripcion, verificarArchivos: verificarArchivos, tipoOperacion: tipoFormulario, idAvanceProblema: idAvanceProblema};
                     _this.file.enviarArchivos('#archivosAvanceServicio', '/Generales/Servicio/GuardarAvenceServicio', '#seccion-avance-servicio', data, function (respuesta) {
-                        if (respuesta instanceof Array || respuesta instanceof Object) {
-                            $('#Historial').empty().append(_this.vistaHistorial(respuesta.avances));
-                            if (respuesta.avances instanceof Array || respuesta.avances instanceof Object) {
-                                if (respuesta.SD === '') {
-                                    _this.mensajeModal('Se agrego a la sección de Historial', 'Correcto', true);
-                                } else {
-                                    _this.mensajeModal('Ocurrió el error "' + respuesta.SD + '" Por favor contacte al administrador del Sistema AdIST.', 'Error', true);
-                                }
-                            } else {
-                                _this.mensajeModal('Se agrego a la sección de Historial', 'Correcto', true);
-                            }
+                        if (respuesta.code === 200) {
+                            $('#Historial').empty().append(respuesta.message);
+                            _this.botonEliminarAvanceProblema(servicio);
+                            _this.botonEditarAvanceProblema(servicio);
+                            _this.mensajeModal('Se agrego a la sección de Historial', 'Correcto', true);
                         }
                     });
                 } else {
@@ -1521,7 +1577,6 @@ Servicio.prototype.mostrarFormularioAvanceServicio = function () {
         $('#btnAgregarAvenceServicio').off('click');
         $('#btnAgregarAvenceServicio').on('click', function () {
             _this.verificarCamposGeneralesAvanceServicio(nombreCampo, tipoAvanceProblema, tipoServicio);
-
         });
 
         $('#btnSalirAvanceServicio').off('click');
@@ -1599,6 +1654,27 @@ Servicio.prototype.verificarCamposGeneralesAvanceServicio = function () {
                     _this.mostrarMensaje('.errorAvenceServicio', false, 'Debes Selecionar un Equipo.', 3000)
                 }
                 break;
+            case 'salas4XD':
+                var selectElemento = $('#selectAvanceElemento').val();
+                var selectSubelemento = $('#selectAvanceSubelemento').val();
+                var cantidadElementoSubelemento = $('#inputAvanceCantidadElementoSubelemento').val();
+                var nombreElemento = $('#selectAvanceElemento option:selected').text();
+                var nombreSubelemento = $('#selectAvanceSubelemento option:selected').text();
+                if (selectElemento !== '') {
+                    if (cantidadElementoSubelemento > 0) {
+                        if (selectSubelemento !== '') {
+                            var data = {tipoItem: '5', descripcion: nombreSubelemento, item: selectSubelemento, serie: '', cantidad: cantidadElementoSubelemento, tipoFalla: tipoFalla};
+                        } else {
+                            var data = {tipoItem: '4', descripcion: nombreElemento, item: selectElemento, serie: '', cantidad: cantidadElementoSubelemento, tipoFalla: tipoFalla};
+                        }
+                        _this.agregandoTablaAvanceServicio(data);
+                    } else {
+                        _this.mostrarMensaje('.errorAvenceServicio', false, 'Debes Selecionar una Cantidad.', 3000)
+                    }
+                } else {
+                    _this.mostrarMensaje('.errorAvenceServicio', false, 'Debes Selecionar un Elemento.', 3000)
+                }
+                break;
         }
     } else {
         _this.mostrarMensaje('.errorAvenceServicio', false, 'Debes Selecionar un Equipo o Material.', 3000)
@@ -1620,6 +1696,12 @@ Servicio.prototype.agregandoTablaAvanceServicio = function () {
             break;
         case '3':
             tipoItem = 'Refacción';
+            break;
+        case '4':
+            tipoItem = 'Elemento';
+            break;
+        case '5':
+            tipoItem = 'Sub-Elemento';
             break;
         default:
     }
@@ -1659,157 +1741,6 @@ Servicio.prototype.agregandoTablaAvanceServicio = function () {
         $('#inputAvanceCantidadMaterial').val('');
         $('#inputAvanceCantidadRefaccion').val('');
     });
-};
-
-Servicio.prototype.vistaHistorial = function () {
-    var _this = this;
-    var respuesta = arguments[0];
-
-    var html = '<div class="panel-body">';
-    html += '<ul id="listaHistorial" class="timeline">';
-
-    $.each(respuesta, function (key, value) {
-        var archivos = '';
-        var marco = '';
-        var foto = '/assets/img/user-13.jpg';
-        var icono = '';
-        var colorIcono = '';
-        var colorTituloAvance = '';
-        var arrayFecha = [];
-        var imagen = '';
-
-        if (value.Archivos !== null) {
-            if (value.Archivos.indexOf(',') != -1) {
-                archivos = value.Archivos.split(',');
-            } else {
-                archivos = value.Archivos;
-            }
-        }
-
-        arrayFecha = value.Fecha.split(' ');
-
-        html += '<li>';
-        html += '   <div class="timeline-time">';
-        html += '       <span class="date">' + arrayFecha[0] + '</span>';
-        html += '       <span class="time">' + arrayFecha[1] + '</span>';
-        html += '   </div>';
-        html += '   <div class="timeline-icon">';
-
-        if (value.IdTipo === '1') {
-            icono = 'fa fa-check';
-            colorIcono = ''
-            colorTituloAvance = 'color:#337ab7'
-        } else {
-            icono = 'fa fa-ban';
-            colorIcono = 'background:#ff5b57';
-            colorTituloAvance = 'color:#ff5b57';
-        }
-        html += '       <a href="javascript:;" style="' + colorIcono + '"><i class="' + icono + '"></i></a>';
-        html += '   </div>';
-        html += '   <div class="timeline-body">';
-        html += '       <div class="timeline-header">';
-        html += '           <div class="row">';
-        html += '               <div class="col-md-9 col-xs-9">';
-
-        if (value.Foto !== null) {
-            foto = value.Foto;
-        } else {
-            foto = '/assets/img/user-13.jpg';
-        }
-
-        html += '                   <span class="userimage"><img src="' + foto + '" alt="" /></span>';
-        html += '                   <span class="username">' + value.Usuario + '</span>';
-        html += '               </div>';
-        html += '               <div class="col-md-3 col-xs-3">';
-        html += '                   <span class="pull-right text-muted"><h4 style="' + colorTituloAvance + '">' + value.TipoAvance + '</h4></span>';
-        html += '               </div>';
-        html += '           </div>';
-        html += '       </div>';
-        html += '       <div class="timeline-content">';
-        html += '           <p>' + value.Descripcion + '</p>';
-        html += '       </div>';
-        html += '       <div class="row">'
-        html += '           <div class="thumbnail-pic m-5 p-5">'
-
-        if (archivos instanceof Object) {
-            $.each(archivos, function (key, value) {
-                imagen = _this.definirImagenExtencion(value);
-                html += '       <a target="_blank" href="' + value + '"><img src="' + imagen + '" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" ></a>';
-            });
-        } else {
-            imagen = _this.definirImagenExtencion(archivos);
-            html += '           <a target="_blank" href="' + archivos + '"><img src="' + imagen + '" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" ></a>';
-        }
-
-        html += '           </div>';
-        html += '       </div>';
-        if (value[0].tablaEquipos.length > 0) {
-            html += '       <div class="timeline-footer">';
-            html += '           <br>';
-            html += '           <div class="row m-r-10">';
-            html += '               <div class="col-md-12">';
-            html += '                   <h4 class="m-t-10">Lista de Equipos o Materiales</h4>';
-            html += '               </div>';
-            html += '           </div>';
-            html += '           <div class="row">';
-            html += '               <div class="col-md-12">';
-            html += '                   <div class="underline m-b-15 m-t-15"></div>';
-            html += '               </div>';
-            html += '           </div>';
-            html += '           <div class="table-responsive">';
-            html += '               <table id="data-table-avance-servicio-' + value.Id + '" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">';
-            html += '                   <thead>';
-            html += '                       <tr>';
-            html += '                           <th class="never">Tipo Item</th>';
-            html += '                           <th class="all">Descripción</th>';
-            html += '                           <th class="all">Serie</th>';
-            html += '                           <th class="all">Cantidad</th>';
-            html += '                           <th class="all">Tipo Falla</th>';
-            html += '                        </tr>';
-            html += '                   </thead>';
-            html += '                   <tbody>';
-
-            $.each(value[0].tablaEquipos, function (key, valor) {
-                var tipoItem = ''
-                switch (valor.IdItem) {
-                    case '1':
-                        tipoItem = 'Equipo';
-                        break;
-                    case '2':
-                        tipoItem = 'Material';
-                        break;
-                    case '3':
-                        tipoItem = 'Refacción';
-                }
-                html += '<tr>';
-                html += '<td>' + tipoItem + '</td>';
-                html += '<td>' + valor.EquipoMaterial + '</td>';
-                html += '<td>' + valor.Serie + '</td>';
-                html += '<td>' + valor.Cantidad + '</td>';
-                html += '<td>' + valor.TipoDiagnostico + '</td>';
-                html += '</tr>';
-            });
-            html += '                   </tbody>';
-            html += '               </table>';
-            html += '           </div>';
-            html += '       </div>';
-        }
-        html += '   </div>';
-        html += '</li>';
-    });
-
-    html += '   <li>';
-    html += '       <div class="timeline-icon">';
-    html += '           <a href="javascript:;" style="background:#707478"><i class="fa fa-spinner"></i></a>';
-    html += '       </div>';
-    html += '       <div class="timeline-body">';
-    html += '           Fin del Historial...';
-    html += '       </div>';
-    html += '   </li>';
-    html += '</ul>';
-    html += '</div>';
-
-    return html;
 };
 
 Servicio.prototype.mostrarFormularioReasigarServicio = function () {
@@ -1911,7 +1842,7 @@ Servicio.prototype.subirInformacionSD = function (servicio) {
 
     $('#btnSubirInformacionSD').off('click');
     $('#btnSubirInformacionSD').on('click', function () {
-        var data = {servicio: servicio};
+        var data = {servicio: servicio, servicioConcluir: false};
         _this.enviarEvento('/Generales/ServiceDesk/GuardarInformacionSD', data, seccionCarga, function (respuesta) {
             if (respuesta.code === 200) {
                 _this.mensajeModal('Se subio la información', 'Correcto', true);
@@ -1970,6 +1901,68 @@ Servicio.prototype.botonAgregarVuelta = function () {
         });
     });
 };
+
+Servicio.prototype.botonEliminarAvanceProblema = function (servicio) {
+    var _this = this;
+
+    $('.btnEliminarAvanceSeguimientoSinEspecificar').off('click');
+    $('.btnEliminarAvanceSeguimientoSinEspecificar').on('click', function () {
+        var idAvanceProblema = $(this).data('id');
+        var modalMensaje = _this.mensajeValidar("¿Realmente quiere eliminar la información?");
+        _this.mostrarModal('Advertencia', modalMensaje);
+
+        $('#btnAceptarConfirmacion').on('click', function () {
+            var data = {
+                idAvanceProblema: idAvanceProblema,
+                idServicio: servicio
+            };
+
+            _this.enviarEvento('/Generales/Servicio/EliminarAvanceProblema', data, '#modal-dialogo', function (respuesta) {
+                if (respuesta.code === 200) {
+                    $('#Historial').empty().append(respuesta.message);
+                    _this.botonEliminarAvanceProblema(servicio);
+                    _this.botonEditarAvanceProblema(servicio);
+                    _this.cerrarModal();
+                } else {
+                    _this.mensajeModal(respuesta.message, 'Error', true);
+                }
+            });
+        });
+
+        $('#btnCancelarConfirmacion').on('click', function () {
+            _this.cerrarModal();
+        });
+    });
+}
+
+Servicio.prototype.botonEditarAvanceProblema = function (servicio) {
+    var _this = this;
+    $(".btnEditarAvanceSeguimientoSinEspecificar").off("click");
+    $(".btnEditarAvanceSeguimientoSinEspecificar").on("click", function () {
+        var idAvanceProblema = $(this).data('id');
+        var data = {id: idAvanceProblema};
+        _this.enviarEvento('/Generales/Servicio/ConsultaAvanceProblema', data, '#modal-dialogo', function (respuesta) {
+            _this.mostrarFormularioAvanceServicio(servicio, respuesta.message.avanceProblema[0].IdTipo, '', 'Actualizar', respuesta.message);
+        });
+    });
+}
+
+Servicio.prototype.colocarInformacionFormularioAvanceProblema = function () {
+    var _this = this;
+    var informacionAvanceProblema = arguments[0];
+    $('#inputDescripcionAvanceServicio').val(informacionAvanceProblema.avanceProblema[0].Descripcion);
+
+    $.each(informacionAvanceProblema.serviciosAvanceEquipo, function (index, value) {
+        var data = {
+            tipoItem: value.IdItem,
+            descripcion: value.EquipoMaterial,
+            item: value.TipoItem,
+            serie: value.Serie,
+            cantidad: value.Cantidad,
+            tipoFalla: value.TipoDiagnostico};
+        _this.agregandoTablaAvanceServicio(data);
+    });
+}
 
 Servicio.prototype.validarCamposFirmaAgregarVuelta = function () {
     var _this = this;

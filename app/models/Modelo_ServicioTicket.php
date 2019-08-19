@@ -716,10 +716,8 @@ class Modelo_ServicioTicket extends Modelo_Base {
         $host = $_SERVER['SERVER_NAME'];
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            //$consulta = parent::connectDBAdist2()->query($query);
             return parent::connectDBAdist2()->insert_id();
         } else {
-            //$consulta = parent::connectDBAdist3()->query($query);
             return parent::connectDBAdist3()->insert_id();
         }
     }
@@ -844,6 +842,105 @@ class Modelo_ServicioTicket extends Modelo_Base {
             return $consulta;
         } else {
             return FALSE;
+        }
+    }
+
+    public function flagearServicioAvance(array $datos) {
+        $campos = array('Flag' => '0');
+        $resultado = $this->actualizar('t_servicios_avance', $campos, array('Id' => $datos['idAvanceProblema']));
+
+        if (!empty($resultado)) {
+            return TRUE;
+        } else {
+            throw new \Exception('Error con la Base de Datos.');
+        }
+    }
+
+    public function flagearServicioAvanceEquipo(array $datos) {
+        $campos = array('Flag' => '0');
+        $resultado = $this->actualizar('t_servicios_avance_equipo', $campos, array('IdAvance' => $datos['idAvanceProblema']));
+
+        if (!empty($resultado)) {
+            return TRUE;
+        } else {
+            throw new \Exception('Error con la Base de Datos.');
+        }
+    }
+
+    public function serviciosAvanceEquipo(string $idAvance) {
+        $consulta = $this->consulta("select
+                                    tsae.IdItem,
+                                    tsae.Serie,
+                                    tsae.IdAvance,
+                                    tsae.Cantidad,
+                                    CASE tsae.IdItem
+                                            when 1 then 'Equipo'
+                                            when 2 then 'Material'
+                                            when 3 then 'Refacción'
+                                            when 4 then 'Elemento'
+                                            when 5 then 'Sub-Elemento'
+                                    end as Tipo,
+                                    CASE tsae.IdItem 
+                                        WHEN 1 THEN (SELECT Equipo FROM v_equipos WHERE Id = tsae.TipoItem) 
+                                        WHEN 2 THEN (SELECT Nombre FROM cat_v3_equipos_sae WHERE Id = tsae.TipoItem)
+                                        WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tsae.TipoItem) 
+                                        WHEN 4 THEN (SELECT Nombre FROM cat_v3_x4d_elementos WHERE Id = tsae.TipoItem) 
+                                        WHEN 5 THEN (SELECT Nombre FROM cat_v3_x4d_subelementos WHERE Id = tsae.TipoItem) 
+                                    end as EquipoMaterial,
+                                    (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tsae.IdTipoDiagnostico) TipoDiagnostico,
+                                    tsae.TipoItem
+                                    from t_servicios_avance_equipo tsae
+                                    where IdAvance = '" . $idAvance . "'
+                                    AND Flag = '1'");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function servicioAvanceProblema(string $servicio) {
+        $consulta = $this->consulta('SELECT tsa.*,
+                                                (SELECT Nombre FROM cat_v3_tipos_avance WHERE Id = tsa.IdTipo) AS TipoAvance,
+                                                (SELECT UrlFoto FROM t_rh_personal WHERE Id = tsa.IdUsuario) AS Foto,
+                                                nombreUsuario(IdUSuario) AS Usuario
+                                                FROM t_servicios_avance tsa
+                                                WHERE IdServicio = "' . $servicio . '"
+                                                AND Flag = "1"
+                                                ORDER BY Fecha ASC');
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function consultaAvanceProblema(string $id) {
+        $consulta = $this->consulta('SELECT tsa.*,
+                                                (SELECT Nombre FROM cat_v3_tipos_avance WHERE Id = tsa.IdTipo) AS TipoAvance,
+                                                (SELECT UrlFoto FROM t_rh_personal WHERE Id = tsa.IdUsuario) AS Foto,
+                                                nombreUsuario(IdUSuario) AS Usuario
+                                                FROM t_servicios_avance tsa
+                                                WHERE Id = "' . $id . '"
+                                                AND Flag = "1"
+                                                ORDER BY Fecha ASC');
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function actualizarAvanceProblema(array $datos) {
+        $resultado = $this->actualizar('t_servicios_avance', $datos['campos'], $datos['where']);
+
+        if (!empty($resultado)) {
+            return TRUE;
+        } else {
+            throw new \Exception('Error con la Base de Datos.');
         }
     }
 

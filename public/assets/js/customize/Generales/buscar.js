@@ -282,7 +282,8 @@ $(function () {
             $("#btnSubirInfoSD").off("click");
             $("#btnSubirInfoSD").on("click", function () {
                 var data = {
-                    'servicio': $(this).attr("data-id-servicio")
+                    servicio: $(this).attr("data-id-servicio"),
+                    servicioConcluir: false
                 }
                 evento.enviarEvento('/Generales/ServiceDesk/GuardarInformacionSD', data, '#seccion-detalles', function (respuesta) {
                     if (respuesta.code === 200) {

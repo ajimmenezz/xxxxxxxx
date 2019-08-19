@@ -3828,7 +3828,7 @@ $(function () {
             file.enviarArchivos(nombreEvidencias, 'Seguimiento/guardarDiagnosticoEquipo', '#seccion-servicio-correctivo', data, function (respuesta) {
                 if (respuesta !== 'faltaDatosGenerales') {
                     if (tipoDiagnostico === '5' || tipoDiagnostico === '1') {
-                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
+                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                         evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                             if (respuesta.code === 200) {
                                 if (respuesta.message === 'serviciosConcluidos') {
@@ -3853,7 +3853,7 @@ $(function () {
             evento.enviarEvento('Seguimiento/guardarDiagnosticoEquipo', data, '#seccion-servicio-correctivo', function (respuesta) {
                 if (respuesta !== 'faltaDatosGenerales') {
                     if (tipoDiagnostico === '5' || tipoDiagnostico === '1') {
-                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
+                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                         evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                             if (respuesta.code === 200) {
                                 if (respuesta.message === 'serviciosConcluidos') {
@@ -4483,7 +4483,7 @@ $(function () {
             file.enviarArchivos('#evidenciasSolucionReparacionSinEquipo', 'Seguimiento/guardarReparacionSinEquipo', '#seccion-servicio-correctivo', data, function (respuesta) {
                 if (respuesta !== 'faltaDatosGenerales') {
                     if (respuesta !== 'faltaDatosDiagnostico') {
-                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
+                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                         if (operacion === '2' && respuesta !== 'faltanServicios') {
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {
@@ -4519,7 +4519,7 @@ $(function () {
             evento.enviarEvento('Seguimiento/guardarReparacionSinEquipo', data, '#seccion-servicio-correctivo', function (respuesta) {
                 if (respuesta !== 'faltaDatosGenerales') {
                     if (respuesta !== 'faltaDatosDiagnostico') {
-                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
+                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                         if (operacion === '2' && respuesta !== 'faltanServicios') {
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {
@@ -4599,7 +4599,7 @@ $(function () {
                 if (respuesta !== 'faltaDatosGenerales') {
                     if (respuesta !== 'faltaDatosDiagnostico') {
                         if (operacion === '2' && respuesta !== 'faltanServicios') {
-                            var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
+                            var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {
                                     if (respuesta.message === 'serviciosConcluidos') {
@@ -4635,7 +4635,7 @@ $(function () {
                 if (respuesta !== 'faltaDatosGenerales') {
                     if (respuesta !== 'faltaDatosDiagnostico') {
                         if (operacion === '2' && respuesta !== 'faltanServicios') {
-                            var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
+                            var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {
                                     if (respuesta.message === 'serviciosConcluidos') {
@@ -4715,7 +4715,7 @@ $(function () {
                 if (respuesta !== 'faltaDatosGenerales') {
                     if (respuesta !== 'faltaDatosDiagnostico') {
                         if (operacion === '2' && respuesta !== 'faltanServicios') {
-                            var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
+                            var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {
                                     if (respuesta.message === 'serviciosConcluidos') {
@@ -4750,7 +4750,7 @@ $(function () {
                 if (respuesta !== 'faltaDatosGenerales') {
                     if (respuesta !== 'faltaDatosDiagnostico') {
                         if (operacion === '2' && respuesta !== 'faltanServicios') {
-                            var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
+                            var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {
                                     if (respuesta.message === 'serviciosConcluidos') {
