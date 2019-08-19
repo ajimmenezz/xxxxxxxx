@@ -195,7 +195,12 @@ class ServicioGeneralRedes implements Servicio {
     }
     
     public function deleteEvidencias() {
-        
+        $this->DBServiciosGeneralRedes->empezarTransaccion();
+        $temporal = $this->DBServiciosGeneralRedes->getEvidencias($this->id);
+        $evidencias = explode(',', $temporal);
+        $this->DBServiciosGeneralRedes->deleteEvidencias($this->id);
+        $this->DBServiciosGeneralRedes->finalizarTransaccion();
+        return $evidencias;
     }
 
 }

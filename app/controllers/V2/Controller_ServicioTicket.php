@@ -210,5 +210,22 @@ class Controller_ServicioTicket extends CI_Controller {
 //        ServiceDesk::setResolucion($datosServicio['folio'],$mensaje);
 //        ServiceDesk::setEstatus('Validacion',$datosServicio['folio']);
     }
+    
+    public function deleteEvidencias() {
+         try {
+            $datosServicio = $this->input->post();                        
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $archivos = $this->servicio->deleteEvidencias();
+            foreach ($archivos as $value) {
+                Archivo::deleteArchivo($value);
+            }
+            $this->datos['operacion'] = TRUE;
+            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
 
 }

@@ -120,9 +120,18 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
                            IdSucursal = ' . $datos['idSucursal'] . ' where Id = ' . $idServicio);
         }
     }
-    
-    public function setConclusion(string $idServicio, string $termina){
+
+    public function setConclusion(string $idServicio, string $termina) {
         
+    }
+
+    public function getEvidencias(string $idServicio) {
+        return $this->consulta('select Archivos from t_servicios_generales where IdServicio = ' . $idServicio);
+    }
+
+    public function deleteEvidencias(string $idServicio) {
+        $this->actualizar('update t_servicios_generales set 
+                                   Archivos = "" where IdServicio = ' . $idServicio);
     }
 
 }
