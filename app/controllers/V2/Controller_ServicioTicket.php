@@ -195,9 +195,8 @@ class Controller_ServicioTicket extends CI_Controller {
                     );
             Archivo::saveArchivos64($carpeta,$firmas);
             $datosServicio['archivos'] = Archivo::getString();
-            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-//            $this->servicio = $this->servicio->setConclusion($datosServicio);
-            $pdf = $this->servicio->setPDFConcluir();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);            
+            $pdf = $this->servicio->setConcluir();
             $this->setResolucionServiceDesk($datosServicio);
             echo json_encode($this->datos);
         } catch (Exception $ex) {
