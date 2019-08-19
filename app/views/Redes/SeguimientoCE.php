@@ -492,7 +492,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label># de Switch</label>
-                                <input id="inputNumSwith" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"/>
+                                <input id="inputNumSwith" type="number" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"/>
                             </div>
                         </div>
                     </form>
@@ -591,7 +591,7 @@
             <!--Finaliza cuerpo del modal-->
             <!--Empieza pie del modal-->
             <div class="modal-footer text-center">
-                <a id="btnAceptarAgregarMaterial" class="btn btn-sm btn-success bloqueoConclusionBtn" data-dismiss="modal"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnAceptarAgregarMaterial" class="btn btn-sm btn-success bloqueoConclusionBtn"><i class="fa fa-check"></i> Aceptar</a>
                 <a id="btnActualizarAgregarMaterial" class="btn btn-sm btn-success hidden bloqueoConclusionBtn"><i class="fa fa-refresh"></i> Actualizar</a>
                 <a id="btnEliminarAgregarMaterial" class="btn btn-sm btn-danger hidden bloqueoConclusionBtn"><i class="fa fa-trash-o"></i> Eliminar</a>
                 <a id="btnCancelarAgregarMaterial" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
