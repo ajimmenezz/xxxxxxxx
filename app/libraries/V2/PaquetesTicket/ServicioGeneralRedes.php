@@ -4,6 +4,7 @@ namespace Librerias\V2\PaquetesTicket;
 
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesTicket\GestorNodosRedes as GestorNodo;
+use Librerias\V2\PaquetesGenerales\Utilerias\PDF as PDF;
 use Modelos\Modelo_ServicioGeneralRedes as Modelo;
 
 class ServicioGeneralRedes implements Servicio {
@@ -119,7 +120,7 @@ class ServicioGeneralRedes implements Servicio {
                 $this->gestorNodos->deleteArchivosNodo($datos);
                 break;
             case 'borrarArchivo':
-//                $this->gestorNodos->deleteArchivosNodo($datos);
+                $this->gestorNodos->deleteArchivo($datos);
                 break;
             default:
                 break;
@@ -179,6 +180,19 @@ class ServicioGeneralRedes implements Servicio {
         $this->DBServiciosGeneralRedes->setConclusion($this->id, $termina);
         $this->setEstatus('4');
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
+    }
+    
+    public function setPDFConcluir(){
+        $pdf = new PDF();
+        $pdf->AddPage();
+        $pdf->titulo('Servicio de Cableado');
+        $pdf->parrafo('este es un ejemplo de archivo');
+        $pdf->table(array('columna 1','columna 2'), array(array('celda 01','celda 02'),array('celda 11','celda 12')));
+        $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
+        $pdf->Output('F', $carpeta, true);
+        $archivo = substr($carpeta, 1);
+        var_dump($archivo);
+//        return $archivo;
     }
 
 }
