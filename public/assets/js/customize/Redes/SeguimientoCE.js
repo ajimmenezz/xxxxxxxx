@@ -118,7 +118,8 @@ $(function () {
             });
         } else {
             peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Seguimiento/' + datosFila[4], datoServicioTabla, function (respuesta) {
-                if (respuesta.solucion.solucion[0].Archivos !== "") {
+                console.log(datoServicioTabla.id,respuesta);
+                if (respuesta.solucion.solucion.Archivos !== "") {
                     datoServicioTabla.material = true;
                     $('#btnConMaterial').addClass('hidden');
                     $('#btnSinMaterial').removeClass('hidden');
@@ -130,7 +131,7 @@ $(function () {
                     datoServicioTabla.material = false;
                 }
                 cambioVistaNodos(respuesta);
-                console.log(respuesta)
+                
             });
         }
     });
@@ -599,9 +600,11 @@ $(function () {
                     delete evidenciasNodo[key];
                 }
             });
-            peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarArchivo', {evidencia: archivo}, function (respuesta) {
+
+            datoServicioTabla.evidencia = archivo;
+            datoServicioTabla.idNodo = idNodo;
+            peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarArchivo', datoServicioTabla, function (respuesta) {
                 $(`#img-${indice}`).addClass('hidden');
-                console.log(respuesta)
             });
         });
         idNodo = id;

@@ -78,26 +78,26 @@ class Modelo_NodoRedes extends Base {
 
     public function updateNodo(array $datos) {
         $archivos = null;
-                        
+
         $consulta = $this->consulta('select Archivos from t_redes_nodos where Id = ' . $datos['idNodo']);
-        
-        if (!empty($consulta)) {            
+
+        if (!empty($consulta)) {
             $archivos = $consulta[0]['Archivos'];
         }
-        
+
         if (!empty($archivos)) {
-            $archivos .= ','.$datos['archivos'];
-        }else{
+            $archivos .= ',' . $datos['archivos'];
+        } else {
             $archivos = $datos['archivos'];
         }
-        
+
         $this->actualizar('update t_redes_nodos set
-                                            IdArea = '.$datos['area'].',
-                                            Nombre = "'.$datos['nodo'].'",
-                                            IdSwitch = '.$datos['switch'].',
-                                            NumeroSwitch = '.$datos['numSwitch'].',
-                                            Archivos = "'.$archivos.'"
-                                       where Id = '.$datos['idNodo']);
+                                            IdArea = ' . $datos['area'] . ',
+                                            Nombre = "' . $datos['nodo'] . '",
+                                            IdSwitch = ' . $datos['switch'] . ',
+                                            NumeroSwitch = ' . $datos['numSwitch'] . ',
+                                            Archivos = "' . $archivos . '"
+                                       where Id = ' . $datos['idNodo']);
     }
 
     public function getInformacionNodo(string $idNodo) {
@@ -118,6 +118,31 @@ class Modelo_NodoRedes extends Base {
 
     public function getTotalMaterial(string $idServicio) {
         return $this->ejecutaFuncion('call getTotalRedesServiceMaterial(' . $idServicio . ')');
+    }
+
+    public function deleteArchivo(string $idServicio, array $datos) {
+
+        $temporal = null;
+        $key = null;
+
+        $consulta = $this->consulta('select Archivos from t_redes_nodos where Id = ' . $datos['idNodo']);
+
+        if (!empty($consulta)) {
+            foreach ($consulta as $value) {
+                $temporal = explode(',', $value['Archivos']);
+            }
+        }
+
+        if (in_array($datos['evidencia'], $temporal)) {
+            $key = array_search($datos['evidencia'], $temporal);
+            unset($temporal[$key]);
+        }
+
+        $archivos = implode(',', $temporal);
+
+        $this->actualizar('update t_redes_nodos set
+                            Archivos = "' . $archivos . '"
+                            where Id = ' . $datos['idNodo']);
     }
 
 }

@@ -74,8 +74,8 @@ class GestorNodosRedes {
         return $this->DBNodo->getTotalMaterial($this->idServicio);
     }
 
-    public function deleteArchivosNodo(array $datos) {
-        
+    public function deleteArchivo(array $datos) {
+        $this->DBNodo->deleteArchivo($this->idServicio,$datos);
     }
 
 }
