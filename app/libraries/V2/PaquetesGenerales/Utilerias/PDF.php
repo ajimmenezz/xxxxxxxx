@@ -10,6 +10,12 @@ class PDF extends \FPDF {
     private $HREF = '';
     private $ALIGN = '';
     private $carpeta = '';
+    private $dato;
+
+    public function __construct(string $dato = '') {
+        parent::__construct();
+        $this->dato = $dato;
+    }
 
     public function definirArchivo(string $carpeta, string $archivo) {
         $this->carpeta = './storage/Archivos/' . $carpeta;
@@ -21,13 +27,14 @@ class PDF extends \FPDF {
 
     public function Header() {
 
-        $this->Image('./assets/img/siccob-logo.png', 10, 14, 14);
-        $this->SetFont('Arial', 'I', 9);
-        $this->Ln(10);
-        $this->Cell(90);
-        $this->Cell(100, 14, 'Soluciones Integrales para empresas integrables', 0, 0, 'R');
-        $this->Ln(5);
-        $this->WriteHTML('<p align="center"><hr></p>');
+        $this->Image('./assets/img/siccob-logo.png', 10, 8, 20);
+        $this->SetFont('helvetica', 'B', 15);
+        $this->SetXY(0, 13);
+        $this->Cell(0, 0, utf8_decode('Resumen de Incidente Service Desk'), 0, 0, 'C');
+        $this->SetXY(0, 20);
+        $this->SetFont("helvetica", "I", 13);
+        $this->Cell(0, 0, utf8_decode($this->dato), 0, 0, 'C');
+        $this->Ln(20);
     }
 
     public function Footer() {
@@ -151,6 +158,11 @@ class PDF extends \FPDF {
         $this->SetFont('Courier', 'BUI', 12);
         $this->Cell(0, 5, utf8_decode($puesto), 0, 1, 'L');
     }
+    
+    public function tituloTabla(string $titulo){
+        $this->Cell(0, 6, utf8_decode($titulo), 1, 0, 'L', true);
+    }
+
 
     public function table(array $cabecera, array $data) {
         $this->Ln();
@@ -160,7 +172,7 @@ class PDF extends \FPDF {
         $this->SetDrawColor(226, 231, 235);
         $this->SetLineWidth(.3);
         $this->SetFont('', 'B');
-        
+
         // Cabecera
         $ancho = 190 / count($cabecera);
         foreach ($cabecera as $value) {
@@ -172,14 +184,14 @@ class PDF extends \FPDF {
         $this->SetFillColor(226, 231, 235);
         $this->SetTextColor(0);
         $this->SetFont('', '', 8);
-        
+
         // Datos
         $fill = false;
         foreach ($data as $row) {
             foreach ($row as $key => $value) {
                 if ($key === 0) {
                     $this->Cell($ancho, 7, $value, 'LR', 0, 'L', $fill);
-                }else{
+                } else {
                     $this->Cell($ancho, 7, $value, 'LR', 0, 'C', $fill);
                 }
             }

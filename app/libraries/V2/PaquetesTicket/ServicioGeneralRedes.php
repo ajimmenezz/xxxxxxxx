@@ -182,17 +182,20 @@ class ServicioGeneralRedes implements Servicio {
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
     
-    public function setPDFConcluir(){
-        $pdf = new PDF();
-        $pdf->AddPage();
-        $pdf->titulo('Servicio de Cableado');
-        $pdf->parrafo('este es un ejemplo de archivo');
+    public function setConcluir(){
+        $pdf = new PDF($this->folioSolicitud);
+        $pdf->AddPage();        
+        $pdf->tituloTabla('#Información General');
         $pdf->table(array('columna 1','columna 2'), array(array('celda 01','celda 02'),array('celda 11','celda 12')));
         $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
         $pdf->Output('F', $carpeta, true);
         $archivo = substr($carpeta, 1);
         var_dump($archivo);
 //        return $archivo;
+    }
+    
+    public function deleteEvidencias() {
+        
     }
 
 }
