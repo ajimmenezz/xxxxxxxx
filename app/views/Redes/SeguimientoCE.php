@@ -186,9 +186,9 @@
                             </form>
                             <div class="col-md-2">
                                 <i id="guardarFolio" data-toggle="tooltip" data-placement="top" data-title="Guardar" class="fa fa-2x fa-save  text-success"></i>
-                                <i id="editarFolio" data-toggle="tooltip" data-placement="top" data-title="Editar" class="fa fa-2x fa-pencil hidden"></i>
+                                <i id="editarFolio" data-toggle="tooltip" data-placement="top" data-title="Editar" class="fa fa-2x fa-pencil hidden bloqueoConclusionBtn"></i>
                                 <i id="cancelarFolio" data-toggle="tooltip" data-placement="top" data-title="Cancelar" class="fa fa-2x fa-times text-danger"></i>
-                                <i id="eliminarFolio" data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger hidden"></i>
+                                <i id="eliminarFolio" data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger hidden bloqueoConclusionBtn"></i>
                             </div>
                             <br><br><br>
                         </div>
@@ -260,10 +260,10 @@
                         <!--Empieza Titulo solucion-->
                         <div class="col-md-12 row">
                             <div class="panel-heading-btn">
-                                <label id="btnSinMaterial" class="btn btn-default btn-xs hidden">
+                                <label id="btnSinMaterial" class="btn btn-default btn-xs hidden bloqueoConclusionBtn">
                                     <i class="fa fa-toggle-off"></i> Sin Material
                                 </label>
-                                <label id="btnConMaterial" class="btn btn-primary btn-xs">
+                                <label id="btnConMaterial" class="btn btn-primary btn-xs bloqueoConclusionBtn">
                                     <i class="fa fa-toggle-off fa-rotate-180"></i> Con Material
                                 </label>
                             </div>
@@ -277,13 +277,13 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Sucursal</label>
-                                        <select id="selectSucursal" class="form-control" style="width: 100%" data-parsley-required="true"></select>
+                                        <select id="selectSucursal" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"></select>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Observaciones</label>
-                                        <textarea id="textareaObservaciones" class="form-control" rows="4" data-parsley-required="true"></textarea>
+                                        <textarea id="textareaObservaciones" class="form-control bloqueoConclusion" rows="4" data-parsley-required="true"></textarea>
                                     </div>
                                 </div>
                             </form>
@@ -303,7 +303,7 @@
                         <div class="col-md-12">
                             <div class="col-md-12">
                                 <br>
-                                <label id="btnReportar" href="#modalDefinirProblema" class="btn btn-success" data-toggle="modal">Reportar</label>
+                                <label id="btnReportar" href="#modalDefinirProblema" class="btn btn-success bloqueoConclusionBtn" data-toggle="modal">Reportar</label>
                                 <br><br>
                             </div>
                             <div class="col-md-12">
@@ -336,7 +336,7 @@
                         <div id="datosNodo">
                             <!--Empieza seccion agregar nodo-->
                             <div class="col-md-12">
-                                <div class="col-md-2" >
+                                <div class="col-md-2 bloqueoConclusionBtn" >
                                     <a id="btnAgregarNodo" href="#modalMaterialNodo" class="btn btn-sm btn-success" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Agregar Nodo" class="fa fa-plus"></i></a>
                                 </div>
                                 <div class="col-md-12"><br></div>
@@ -398,7 +398,7 @@
                         <div class="col-md-12">
                             <form id="formEvidenciaFija" data-parsley-validate="true" enctype="multipart/form-data">
                                 <div class="col-md-12">
-                                    <div id="archivoEvidenciaFija" class="form-group">
+                                    <div id="archivoEvidenciaFija" class="form-group bloqueoConclusionBtn">
                                         <input id="agregarEvidenciaFija" name="agregarEvidenciaProblema[]" type="file" multiple data-parsley-required="true">
                                     </div>
                                 </div>
@@ -437,12 +437,12 @@
                     <div class="col-md-12">
                         <br><br>
                         <div class="col-md-6">
-                            <a id="btnGuardar" class="btn btn-success">
+                            <a id="btnGuardar" class="btn btn-success bloqueoConclusionBtn">
                                 GUARDAR
                             </a>
                         </div>
                         <div class="col-md-6">
-                            <a id="btnConcluir" class="btn btn-danger" data-toggle="modal">
+                            <a id="btnConcluir" class="btn btn-danger bloqueoConclusionBtn" data-toggle="modal">
                                 CONCLUIR
                             </a>
                         </div>
@@ -474,25 +474,25 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Area</label>
-                                <select id="selectArea" class="form-control" style="width: 100%" data-parsley-required="true"></select>
+                                <select id="selectArea" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"></select>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Nodo</label>
-                                <input id="inputNodo" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                <input id="inputNodo" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Switch</label>
-                                <select id="selectSwith" class="form-control" style="width: 100%" data-parsley-required="true"></select>
+                                <select id="selectSwith" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"></select>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label># de Switch</label>
-                                <input id="inputNumSwith" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                <input id="inputNumSwith" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"/>
                             </div>
                         </div>
                     </form>
@@ -505,7 +505,7 @@
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <label>Material</label>
-                                    <select id="selectMaterial" class="form-control" style="width: 100%" data-parsley-required="true"></select>
+                                    <select id="selectMaterial" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"></select>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -517,12 +517,12 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Cantidad Utilizar</label>
-                                    <input id="materialUtilizar" class="form-control" style="width: 100%" data-parsley-required="true"/>
+                                    <input id="materialUtilizar" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"/>
                                 </div>
                             </div>
                             <div class="col-md-1">
                                 <br>
-                                <label id="btnAgregarMaterialATablaNodo" class="btn btn-success">
+                                <label id="btnAgregarMaterialATablaNodo" class="btn btn-success bloqueoConclusionBtn">
                                     <i class="fa fa-plus"></i>
                                 </label>
                             </div>
@@ -538,7 +538,7 @@
                 <form id="formEvidenciaMaterial" data-parsley-validate="true" enctype="multipart/form-data">
                     <!--Empieza tabla de material nodos-->
                     <div class="col-md-12">
-                        <div class="table-responsive">
+                        <div class="table-responsive bloqueoConclusion">
                             <table id="table-materialNodo" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
                                 <thead>
                                     <tr>
@@ -562,7 +562,7 @@
                     <div class="text-center">
                         <div id="fileEvidencia" class="col-md-12">
                             <label>Evidencia</label><br>
-                            <div id="archivoEvidencia" class="form-group">
+                            <div id="archivoEvidencia" class="form-group bloqueoConclusionBtn">
                                 <input id="agregarEvidenciaNodo" name="agregarEvidenciaNodo[]" type="file" multiple data-parsley-required="true">
                             </div>
                         </div>
@@ -585,9 +585,9 @@
             <!--Finaliza cuerpo del modal-->
             <!--Empieza pie del modal-->
             <div class="modal-footer text-center">
-                <a id="btnAceptarAgregarMaterial" class="btn btn-sm btn-success" data-dismiss="modal"><i class="fa fa-check"></i> Aceptar</a>
-                <a id="btnActualizarAgregarMaterial" class="btn btn-sm btn-success hidden"><i class="fa fa-refresh"></i> Actualizar</a>
-                <a id="btnEliminarAgregarMaterial" class="btn btn-sm btn-danger hidden"><i class="fa fa-trash-o"></i> Eliminar</a>
+                <a id="btnAceptarAgregarMaterial" class="btn btn-sm btn-success bloqueoConclusionBtn" data-dismiss="modal"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnActualizarAgregarMaterial" class="btn btn-sm btn-success hidden bloqueoConclusionBtn"><i class="fa fa-refresh"></i> Actualizar</a>
+                <a id="btnEliminarAgregarMaterial" class="btn btn-sm btn-danger hidden bloqueoConclusionBtn"><i class="fa fa-trash-o"></i> Eliminar</a>
                 <a id="btnCancelarAgregarMaterial" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
             </div>
             <!--Finaliza pie del modal-->

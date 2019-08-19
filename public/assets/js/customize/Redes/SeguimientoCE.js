@@ -111,7 +111,8 @@ $(function () {
                 console.log(datoServicioTabla.id, respuesta);
                 cambioVistaSinMaterial(respuesta.solucion);
                 cambioVistaNodos(respuesta);
-
+//                $('.bloqueoConclusion').prop("disabled", true);
+//                $('.bloqueoConclusionBtn').addClass('hidden');
             });
         }
     });
@@ -428,8 +429,9 @@ $(function () {
                 });
             }
         } else {
+            let evidencia = new FileUpload_Basico('agregarEvidenciaNodo', {url: 'SeguimientoCE/SeguimientoGeneral/Accion/agregarNodo', extensiones: ['jpg', 'jpeg', 'png']});
 //            evidenciaMaterial.definiendoDatosExtra({url: 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo'});
-            console.log(evidenciaMaterial.obtenerConfiguracionBasica())
+            console.log(evidencia)
 //            evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
 //                limpiarElementosModalMaterial();
 //                $('#modalMaterialNodo').modal('toggle');
@@ -508,6 +510,14 @@ $(function () {
                 }
             });
         });
+
+        let hash = {};
+        listaTemporalNodos = listaTemporalNodos.filter(function (cuenta) {
+            var exists = !hash[cuenta.IdNodo] || false;
+            hash[cuenta.IdNodo] = true;
+            return exists;
+        });
+
         $.each(listaTemporalNodos, function (key, value) {
             tablaNodos.agregarDatosFila([
                 value.IdNodo,
@@ -531,6 +541,7 @@ $(function () {
                 $('#btnEliminarAgregarMaterial').removeClass('hidden');
                 $('#fileMostrarEvidencia').removeClass('hidden');
                 actualizarContenidoModalMaterial(datos[0]);
+//                $('.bloqueoConclusionBtn').addClass('hidden');
             }
         });
 
@@ -569,7 +580,7 @@ $(function () {
                                     <a href="' + value + '" data-lightbox="evidencias">\n\
                                         <img src ="' + value + '" />\n\
                                     </a>\n\
-                                    <div class="eliminarEvidencia" data-value="' + value + '" data-key="' + key + '">\n\
+                                    <div class="eliminarEvidencia bloqueoConclusionBtn" data-value="' + value + '" data-key="' + key + '">\n\
                                         <a href="#">\n\
                                             <i class="fa fa-trash text-danger"></i>\n\
                                         </a>\n\
