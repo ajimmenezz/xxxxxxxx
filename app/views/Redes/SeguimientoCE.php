@@ -566,6 +566,9 @@
                                 <input id="agregarEvidenciaNodo" name="agregarEvidenciaNodo[]" type="file" multiple data-parsley-required="true">
                             </div>
                         </div>
+                        <div id="notaEvidencia" class="col-md-12 hidden">
+                            <label style="color: red">Es necesario enviar una evidencia</label>
+                        </div>
                         <div id="fileMostrarEvidencia" class="col-md-12 hidden">
                             <div id="file-evidencia-subida" class="row editar-material">
                                 <div class="col-md-12">

@@ -101,18 +101,36 @@ $(function () {
             $('#btnAceptar').on('click', function () {
                 peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Atender/' + datosFila[4], datoServicioTabla, function (respuesta) {
                     modal.cerrarModal();
-                    cambioVista(respuesta);
+                    if (respuesta.solucion.solucion[0].Archivos !== "") {
+                        datoServicioTabla.material = true;
+                        $('#btnConMaterial').addClass('hidden');
+                        $('#btnSinMaterial').removeClass('hidden');
+                        $('#sinMaterial').removeClass('hidden');
+                        $('#conMaterial').addClass('hidden');
+                    } else {
+                        datoServicioTabla.material = false;
+                    }
+                    cambioVistaNodos(respuesta);
                 });
             });
         } else {
             peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Seguimiento/' + datosFila[4], datoServicioTabla, function (respuesta) {
-                cambioVista(respuesta);
-//                console.log(respuesta)
+                if (respuesta.solucion.solucion[0].Archivos !== "") {
+                    datoServicioTabla.material = true;
+                    $('#btnConMaterial').addClass('hidden');
+                    $('#btnSinMaterial').removeClass('hidden');
+                    $('#sinMaterial').removeClass('hidden');
+                    $('#conMaterial').addClass('hidden');
+                } else {
+                    datoServicioTabla.material = false;
+                }
+                cambioVistaNodos(respuesta);
+                console.log(respuesta)
             });
         }
     });
 
-    function cambioVista(infoServicio) {
+    function cambioVistaNodos(infoServicio) {
         $('#contentServiciosGeneralesRedes').addClass('hidden');
         $('#contentServiciosRedes').removeClass('hidden');
         listaTotalNodos = infoServicio.solucion.nodos;
@@ -129,12 +147,6 @@ $(function () {
         if (infoServicio.sucursales.length > 0) {
             selectSucursal.cargaDatosEnSelect(infoServicio.sucursales);
             selectSucursal.definirValor(infoServicio.solucion.IdSucursal);
-        }
-        if (infoServicio.solucion.solucion[0].Archivos !== "") {
-            $('#btnConMaterial').addClass('hidden');
-            $('#btnSinMaterial').removeClass('hidden');
-            $('#sinMaterial').removeClass('hidden');
-            $('#conMaterial').addClass('hidden');
         }
         if (infoServicio.problemas !== null) {
             cargarContenidoProblemas(infoServicio.problemas);
@@ -162,7 +174,7 @@ $(function () {
         evidenciaMaterial.iniciarFileUpload()
         evidenciaProblema = new FileUpload_Basico('agregarEvidenciaProblema', {url: 'SeguimientoCE/SeguimientoGeneral/agregarProblema', extensiones: ['jpg', 'jpeg', 'png']});
         evidenciaProblema.iniciarFileUpload()
-        evidenciaFija = new FileUpload_Basico('agregarEvidenciaFija', {url: 'SeguimientoCE/SeguimientoGeneral/', extensiones: ['jpg', 'jpeg', 'png']});
+        evidenciaFija = new FileUpload_Basico('agregarEvidenciaFija', {url: 'eguimientoCE/SeguimientoGeneral/guardarSolucion', extensiones: ['jpg', 'jpeg', 'png']});
         evidenciaFija.iniciarFileUpload()
         collapseNotas = new Collapse('collapseNotas');
         selectSucursal.iniciarSelect();
@@ -400,24 +412,30 @@ $(function () {
             } else {
                 infoMaterialNodo.material += '|{"idMaterial": ' + value[0] + ', "cantidad": ' + value[2] + '}';
             }
-        });
+        });/*evidencia: "url" ruta ""*/       /*t_servicios_ticket  estatus 4*/
         let evidenciaOpcional = $('#agregarEvidenciaNodo').val();
-        let evidenciaEstablecida = $('#evidenciasMaterialUtilizado').html();
-        if(evidenciaOpcional == '' && evidenciaEstablecida == ''){
-            
+        let evidenciaEstablecida = jQuery.isEmptyObject(evidenciasNodo);
+        if (evidenciaOpcional == '') {
+            if (evidenciaEstablecida == true) {
+                $("#notaEvidencia").removeClass("hidden").delay(4000).queue(function (next) {
+                    $(this).addClass("hidden");
+                    next();
+                });
+            } else {
+                peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
+                    limpiarElementosModalMaterial();
+                    $('#modalMaterialNodo').modal('toggle');
+                    console.log(respuesta);
+                });
+            }
+        } else {
+            evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
+                limpiarElementosModalMaterial();
+                $('#modalMaterialNodo').modal('toggle');
+            });
         }
-//        peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
-//            console.log(respuesta);
-//        });
-
-//        evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
-//            limpiarElementosModalMaterial();
-//            $('#modalMaterialNodo').modal('toggle');
-//            tablaNodos.limpiartabla();
         idNodo = null;
-//        console.log(evidenciaEstablecida);
     });
-//    });
 
     $('#btnEliminarAgregarMaterial').on('click', function () {
         let datos = {};
@@ -545,12 +563,12 @@ $(function () {
         $('#inputNumSwith').val(listaTemporalNodos[0].NumeroSwitch);
         evidenciasNodo = listaTemporalNodos[0].Archivos.split(',');
         $.each(evidenciasNodo, function (key, value) {
-            evidencias += '<div class="evidencia">\n\
+            evidencias += '<div id="img-' + key + '" class="evidencia">\n\
                                 <a href="' + value + '" data-lightbox="evidencias">\n\
                                     <img src ="' + value + '" />\n\
                                 </a>\n\
-                                <div class="eliminarEvidencia" data-value="' + key + '">\n\
-                                    <a id="img-' + key + '" href="#">\n\
+                                <div class="eliminarEvidencia" data-value="' + value + '" data-key="' + key + '">\n\
+                                    <a href="#">\n\
                                         <i class="fa fa-trash text-danger"></i>\n\
                                     </a>\n\
                                 </div>\n\
@@ -567,22 +585,19 @@ $(function () {
                     ]);
             });
         });
-        
+
         $('.eliminarEvidencia').on('click', function () {
-            let dato = $(this).attr('data-value');
+            let archivo = $(this).attr('data-value');
+            let indice = $(this).attr('data-key');
             $.each(evidenciasNodo, function (key, value) {
-                if(key == dato){
-                    evidenciasNodo[dato] = '';
+                if (key == indice) {
+                    delete evidenciasNodo[key];
                 }
             });
-            console.log(evidenciasNodo)
-            let envio = '';
-            $.each(evidenciasNodo, function (key, value) {
-                if(value !== ''){
-                    envio += value+',';
-                }
+            peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarArchivo', {evidencia: archivo}, function (respuesta) {
+                $(`#img-${indice}`).addClass('hidden');
+                console.log(respuesta)
             });
-            console.log(envio)
         });
         idNodo = id;
     }
@@ -756,10 +771,15 @@ $(function () {
         if (evento.validarFormulario('#formDatosSolucion')) {
             datoServicioTabla.observaciones = $('#textareaObservaciones').val();
             datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
-            datoServicioTabla.material = false;
-            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
-                console.log(respuesta);
-            });
+            if (datoServicioTabla.material === false) {
+                peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
+//                console.log(respuesta);
+                });
+            } else {
+                evidenciaFija.enviarPeticionServidor('#contentServiciosGeneralesRedes', datoServicioTabla, function (respuesta) {
+//                console.log(respuesta);
+                });
+            }
         }
     });
 
@@ -808,7 +828,7 @@ $(function () {
         } else {
             datoServicioTabla.firmaCliente = firmaClienet.getImg();
             datoServicioTabla.firmaTecnico = firmaTecnico.getImg();
-            peticion.enviar('contentServiciosGeneralesRedes0', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
+            peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
                 console.log(respuesta);
             });
         }
