@@ -52,7 +52,7 @@ Class Modelo_GestorServicio extends Base {
                                     JOIN cat_v3_estatus AS ce ON tst.IdEstatus = ce.Id 
                                     JOIN cat_v3_servicios_departamento AS csd ON tst.IdTipoServicio = csd.Id 
                                     JOIN t_solicitudes AS ts ON tst.IdSolicitud = ts.Id 
-                                    WHERE tst.Atiende = '" . $idTrabajador . "' AND tst.IdEstatus IN(1, 2, 3, 10, 12)
+                                    WHERE tst.Atiende = '" . $idTrabajador . "' AND tst.IdEstatus IN(1, 2, 5, 3, 10, 12)
                                     AND tst.IdTipoServicio = 49
                                     ");
         } catch (\Exception $ex) {
