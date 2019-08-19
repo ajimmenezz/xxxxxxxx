@@ -214,6 +214,7 @@ class ServiceDesk extends General {
      */
 
     public function setResolucionServiceDesk(string $key, string $folio, string $datos) {
+        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/resolution/";
         $input_data = ''
                 . '{'
                 . ' "operation": {'
@@ -224,15 +225,21 @@ class ServiceDesk extends General {
                 . '     }'
                 . ' }'
                 . '}';
-
-        $this->FIELDS = "format=json&"
+        $FIELDS = "format=json&"
                 . "OPERATION_NAME=EDIT_RESOLUTION&"
                 . "INPUT_DATA=" . urlencode($input_data) . "&"
                 . "TECHNICIAN_KEY=" . $key;
-        $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '/resolution/?' . $this->FIELDS);
-        $this->validarError($datosSD);
-        $this->generateLogResolverSD(array($datosSD, $folio));
-        return $datosSD;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL2);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $FIELDS);
+        $return = curl_exec($ch);
+        curl_close($ch);
+        $jsonDecode = json_decode($return);
+        $this->generateLogResolverSD(array($jsonDecode, $folio));
+
+        return $jsonDecode;
     }
 
     public function setNoteServiceDesk(string $key, string $folio, string $datos) {
