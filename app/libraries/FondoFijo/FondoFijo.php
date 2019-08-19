@@ -537,6 +537,7 @@ class FondoFijo extends General
     public function getMovimientosTecnico(array $datos) {
         $idUsuario=$datos['id'];
         $data   = $this->DB->getMovimientosXTecnico($idUsuario);
+       
         return [
             "code"=>200,
             'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/registroMovimientos', $data, TRUE),

@@ -692,7 +692,6 @@ class Modelo_FondoFijo extends Modelo_Base
                                     tcff.Archivos, 
                                     tcff.XML,
                                     tcff.PDF
-
                                     from
                                     t_fondofijo_movimientos tcff
                                     left join cat_v3_comprobacion_conceptos ccc on tcff.IdConcepto = ccc.Id
@@ -942,7 +941,6 @@ class Modelo_FondoFijo extends Modelo_Base
     }
     public function getMovimientosXTecnico(int $idUsuario)
     {
-
         $consulta = $this->consulta("
         select
         tfm.Id,

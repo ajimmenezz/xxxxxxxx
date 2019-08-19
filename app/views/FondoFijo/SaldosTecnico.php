@@ -36,13 +36,25 @@
 //                                    var_dump($datos['SaldoTecnico']);
                                     if (isset($datos['SaldoTecnico']) && !empty($datos['SaldoTecnico'])) {
                                         foreach ($datos['SaldoTecnico']['datosTecnico'] as $key => $value) {
+                                            if($value['E1']=="" or $value['E1']==Null or $value['E1']==0)
+                                            {
+                                                $value['E1']="0.00";
+                                            }
+                                            if($value['E2']=="" or $value['E1']==Null or $value['E1']==0)
+                                            {
+                                                $value['E2']="0.00";
+                                            }
+                                            if($value['E3']=="" or $value['E1']==Null or $value['E1']==0)
+                                            {
+                                                $value['E3']="0.00";
+                                            }
                                             echo ""
                                                 . "<tr>"
                                                 . " <td>" . $value['Id'] . "</td>"
                                                 . " <td>" . $value['Nombre'] . "</td>"
-                                                . " <td>" . $value['E1'] . "</td>"
-                                                . " <td>" . $value['E2'] . "</td>"
-                                                . " <td>" . $value['E3'] . "</td>"
+                                                . " <td> $" . number_format( $value['E1'],2,'.',',') . "</td>"
+                                                . " <td> $" . number_format( $value['E2'],2,'.',',') . "</td>"
+                                                . " <td> $" . number_format( $value['E3'],2,'.',','). "</td>"
                                                 . "</tr>";
                                         }
                                     }

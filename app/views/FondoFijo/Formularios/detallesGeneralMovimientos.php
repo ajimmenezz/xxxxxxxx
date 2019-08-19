@@ -59,4 +59,17 @@
             <label class="form-control" id="userAut"></label>
         </div>
     </div>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="form-group">
+            <label class="f-s-13 f-w-600">¿Extraordinario?</label>
+            <label class="form-control" id="userExt"></label>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="form-group">
+            <label class="f-s-13 f-w-600">¿Dentro de presupuesto?</label>
+            <label class="form-control" id="userPres"></label>
+        </div>
+    </div>
+    <div id="datosComplementarios"></div>
 </div>

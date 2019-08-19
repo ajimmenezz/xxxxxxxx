@@ -1,19 +1,46 @@
 <div id="seccionDetalleMovimientos">
-<h1 class="page-header">Saldos técnico</h1>
+<h1 class="page-header">
+    Saldos técnico
+    <button class="pull-right btn btn-primary btn-sm float-right" onclick="location.reload();"><i class="fa fa-mail-reply "></i> Recargar</button>
+</h1>
+
 
     <div id="panelCuentas" class="panel panel-inverse">
         <div class="panel-heading">
-            <button class="btn btn-primary btn-sm float-right" onclick="location.reload();"><i class="fa fa-mail-reply "></i> Recargar</button>
         </div>
         <div class="panel-body">
             <div id="seccionDetalleMovimientos">
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <h4>Registro de movimientos</h4>
-                        <h5 id="usuarioNombre"></h5>
-                        <h5 id="saldo1"></h5>
-                        <h5 id="saldo2"></h5>
-                        <h5 id="saldo3"></h5>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12 m-t-15">
+                        <div class="underline m-b-10"></div>
+                    </div>
+                    <div class="col-md-5 col-sm-12 col-xs-12">
+                        <table class="table table-bordered table-striped table-condensed">
+                            <thead>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th style=" background-color:#F0F3F5; text-align: right"id="usuarioNombreTable"></th>
+                                    <th style=" background-color:white; text-align: left" id="usuarioNombre">Prueba</th>
+                                </tr>
+                                <tr>
+                                    <th style=" background-color:#F0F3F5; text-align: right" id="saldo1Table"></th>
+                                    <th style=" background-color:white; text-align: left" id="saldo1">Prueba3</th>
+                                </tr>
+                                <tr>
+                                    <th style=" background-color:#F0F3F5; text-align: right" id="saldo2Table"></th>
+                                    <th style=" background-color:white; text-align: left" id="saldo2">Prueba3</th>
+                                </tr>
+                                <tr>
+                                    <th style=" background-color:#F0F3F5; text-align: right" id="saldo3Table"></th>
+                                    <th style=" background-color:white; text-align: left" id="saldo3">Prueba3</th>
+                                </tr>
+                            </tbody>
+                        </table>
+
                     </div>
                     <div class="col-md-12 col-sm-12 col-xs-12 m-t-15">
                         <div class="underline m-b-10"></div>
