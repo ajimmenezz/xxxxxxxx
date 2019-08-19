@@ -194,9 +194,9 @@ class Controller_ServicioTicket extends CI_Controller {
                 'Firma-Tecnico-'.Usuario::getNombre() => $datosServicio['firmaTecnico']
                     );
             Archivo::saveArchivos64($carpeta,$firmas);
-            $datosServicio['archivos'] = Archivo::getString();
+            $datosServicio['archivos'] = Archivo::getArray();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);            
-            $pdf = $this->servicio->setConcluir();
+            $datosServicio['mensaje'] = $this->servicio->setConcluir($datosServicio);
             $this->setResolucionServiceDesk($datosServicio);
             echo json_encode($this->datos);
         } catch (Exception $ex) {
@@ -206,7 +206,8 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
     
-    private function setResolucionServiceDesk(array $datosServicio) {                
+    private function setResolucionServiceDesk(array $datosServicio) { 
+        ServiceDesk::setNota($datosServicio['folio'], $datosServicio['mensaje']);
 //        ServiceDesk::setResolucion($datosServicio['folio'],$mensaje);
 //        ServiceDesk::setEstatus('Validacion',$datosServicio['folio']);
     }

@@ -121,8 +121,16 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
         }
     }
 
-    public function setConclusion(string $idServicio, string $termina) {
-        
+    public function setConclusion(string $idServicio, array $datos) {
+        $this->actualizar('update t_servicios_ticket set 
+                           IdEstatus = 5,
+                           FechaConclusion = NOW(),
+                           Firma = "'.$datos['archivos'][0].'",
+                           NombreFirma = "'.$datos['nombreCliente'].'",
+                           FechaFirma = NOW(),                           
+                           IdTecnicoFirma = '.$datos['idUsuario'].',
+                           FirmaTecnico = "'.$datos['archivos'][1].'"
+                           where Id = ' . $idServicio);
     }
 
     public function getEvidencias(string $idServicio) {
