@@ -13,6 +13,7 @@ class InformacionServicios extends General {
     private $ServiceDesk;
     private $MSP;
     private $MSD;
+    private $DBST;
     private $pdf;
     private $x;
     private $y;
@@ -26,6 +27,7 @@ class InformacionServicios extends General {
         $this->ServiceDesk = \Librerias\WebServices\ServiceDesk::factory();
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
         $this->MSD = \Modelos\Modelo_ServiceDesk::factory();
+        $this->DBST = \Modelos\Modelo_ServicioTicket::factory();
         $this->pdf = new PDFAux();
     }
 
@@ -405,6 +407,7 @@ class InformacionServicios extends General {
                                                                             INNER JOIN t_solicitudes ts
                                                                             ON tst.IdSolicitud = ts.Id
                                                                             WHERE ts.Folio = "' . $folio . '"
+                                                                            AND tsa.Flag = "1"
                                                                             ORDER BY tsa.Fecha DESC');
 
         foreach ($serviciosAvancesServicios as $value) {
@@ -435,47 +438,22 @@ class InformacionServicios extends General {
         $linkImagenes = '';
         $tabla = '';
         $datosAvancesProblemas = '';
-        $tablaAvancesProblemas = $this->DBS->consultaGeneralSeguimiento('SELECT 
-                                                                                    *,
-                                                                                CASE IdItem 
-                                                                                    WHEN 1 THEN (SELECT Equipo FROM v_equipos WHERE Id = TipoItem) 
-                                                                                    WHEN 2 THEN (SELECT Nombre FROM cat_v3_equipos_sae WHERE Id = TipoItem)
-                                                                                    WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = TipoItem) 
-                                                                                    WHEN 4 THEN (SELECT Nombre FROM cat_v3_x4d_elementos WHERE Id = TipoItem) 
-                                                                                    WHEN 5 THEN (SELECT Nombre FROM cat_v3_x4d_subelementos WHERE Id = TipoItem) 
-                                                                                END as EquipoMaterial 
-                                                                            FROM t_servicios_avance_equipo 
-                                                                            WHERE IdAvance = "' . $datos['Id'] . '"');
+        $tablaAvancesProblemas = $this->DBST->serviciosAvanceEquipo($datos['Id']);
 
-        foreach ($tablaAvancesProblemas as $key => $valor) {
-            switch ($valor['IdItem']) {
-                case '1':
-                    $tipoItem = 'Equipo';
-                    break;
-                case '2':
-                    $tipoItem = 'Material';
-                    break;
-                case '3':
-                    $tipoItem = 'Refacción';
-                    break;
-                case '4':
-                    $tipoItem = 'Elemento';
-                    break;
-                case '5':
-                    $tipoItem = 'Sub-Elemento';
-                    break;
-            }
-            if ($valor['IdItem'] === '1') {
-                if ($datos['IdTipo'] === '1') {
-                    $tabla .= "<div>" . $tipoItem . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Serie: " . $valor['Serie'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
+        if (!empty($tablaAvancesProblemas)) {
+            foreach ($tablaAvancesProblemas as $key => $valor) {
+                if ($valor['IdItem'] === '1') {
+                    if ($datos['IdTipo'] === '1') {
+                        $tabla .= "<div>" . $valor['Tipo'] . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Serie: " . $valor['Serie'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
+                    } else {
+                        $tabla .= "<div>" . $valor['Tipo'] . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
+                    }
                 } else {
-                    $tabla .= "<div>" . $tipoItem . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
+                    $tabla .= "<div>" . $valor['Tipo'] . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
                 }
-            } else {
-                $tabla .= "<div>" . $tipoItem . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
             }
         }
-
+        
         $archivosAvanceProblema = explode(',', $datos['Archivos']);
 
         foreach ($archivosAvanceProblema as $v) {
