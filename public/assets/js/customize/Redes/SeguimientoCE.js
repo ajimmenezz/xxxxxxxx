@@ -16,6 +16,7 @@ $(function () {
     let tablaMateriales = null;
     let tablaAgregarMateriales = null;
     let selectSucursal = null;
+    let actualizarEvidencia = null;
     let selectArea = null;
     let selectSwitch = null;
     let selectMaterial = null;
@@ -176,6 +177,8 @@ $(function () {
         evidenciaProblema.iniciarFileUpload();
         evidenciaFija = new FileUpload_Basico('agregarEvidenciaFija', {url: 'eguimientoCE/SeguimientoGeneral/guardarSolucion', extensiones: ['jpg', 'jpeg', 'png']});
         evidenciaFija.iniciarFileUpload();
+        actualizarEvidencia = new FileUpload_Basico('actualizarEvidenciaNodo', {url: 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', extensiones: ['jpg', 'jpeg', 'png']});
+        actualizarEvidencia.iniciarFileUpload();
         collapseNotas = new Collapse('collapseNotas');
         selectSucursal.iniciarSelect();
         selectArea.iniciarSelect();
@@ -404,7 +407,6 @@ $(function () {
         infoMaterialNodo.switch = selectSwitch.obtenerValor();
         infoMaterialNodo.numSwitch = $('#inputNumSwith').val();
         infoMaterialNodo.material = null;
-        infoMaterialNodo.evidencias = false;
 
         $.each(tablaAgregarMateriales.datosTabla(), function (key, value) {
             if (infoMaterialNodo.material === null) {
@@ -422,6 +424,7 @@ $(function () {
                     next();
                 });
             } else {
+                infoMaterialNodo.evidencias = false;
                 peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
                     limpiarElementosModalMaterial();
                     $('#modalMaterialNodo').modal('toggle');
@@ -429,13 +432,12 @@ $(function () {
                 });
             }
         } else {
-            let evidencia = new FileUpload_Basico('agregarEvidenciaNodo', {url: 'SeguimientoCE/SeguimientoGeneral/Accion/agregarNodo', extensiones: ['jpg', 'jpeg', 'png']});
-//            evidenciaMaterial.definiendoDatosExtra({url: 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo'});
-            console.log(evidencia)
-//            evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
-//                limpiarElementosModalMaterial();
-//                $('#modalMaterialNodo').modal('toggle');
-//            });
+            infoMaterialNodo.evidencias = true;
+            actualizarEvidencia.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
+                limpiarElementosModalMaterial();
+                $('#modalMaterialNodo').modal('toggle');
+                console.log(respuesta);
+            });
         }
         idNodo = null;
     });
@@ -576,7 +578,8 @@ $(function () {
         if (listaTemporalNodos[0].Archivos !== "") {
             evidenciasNodo = listaTemporalNodos[0].Archivos.split(',');
             $.each(evidenciasNodo, function (key, value) {
-                evidencias += '<div id="img-' + key + '" class="evidencia">\n\
+                if (value !== '') {
+                    evidencias += '<div id="img-' + key + '" class="evidencia">\n\
                                     <a href="' + value + '" data-lightbox="evidencias">\n\
                                         <img src ="' + value + '" />\n\
                                     </a>\n\
@@ -586,6 +589,7 @@ $(function () {
                                         </a>\n\
                                     </div>\n\
                                 </div>';
+                }
             });
             $('#evidenciasMaterialUtilizado').append(evidencias);
         }
