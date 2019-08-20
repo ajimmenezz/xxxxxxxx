@@ -456,11 +456,6 @@ $(function () {
                 });
             }
         } else {
-//            let ruta = "";
-//            $.each(evidenciasNodo, function (key, value) {
-//                ruta += value + ",";
-//            });
-//            infoMaterialNodo.archivos = ruta.slice(0, -1);
             infoMaterialNodo.evidencias = true;
             actualizarEvidencia.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
                 limpiarElementosModalMaterial();
@@ -516,6 +511,7 @@ $(function () {
         $('#materialUtilizar').val('');
         tablaAgregarMateriales.limpiartabla();
         evidenciaMaterial.limpiarElemento();
+        actualizarEvidencia.limpiarElemento();
     }
 
     function restaurarElementosModal() {
@@ -531,8 +527,8 @@ $(function () {
     /**Finalizan eventos del modal Material**/
 
     function cargarContenidoTablaNodos() {
-        let listaTemporalNodos = JSON.parse(JSON.stringify(listaTotalNodos));
-        $.each(listaTemporalNodos, function (key, value) {
+        let listaTemporalTotalNodos = JSON.parse(JSON.stringify(listaTotalNodos));
+        $.each(listaTemporalTotalNodos, function (key, value) {
             $.each(areasSucursales, function (llave, valor) {
                 if (value.IdArea === valor.id) {
                     value.IdArea = valor.text;
@@ -546,13 +542,13 @@ $(function () {
         });
 
         let hash = {};
-        listaTemporalNodos = listaTemporalNodos.filter(function (cuenta) {
+        listaTemporalTotalNodos = listaTemporalTotalNodos.filter(function (cuenta) {
             var exists = !hash[cuenta.IdNodo] || false;
             hash[cuenta.IdNodo] = true;
             return exists;
         });
 
-        $.each(listaTemporalNodos, function (key, value) {
+        $.each(listaTemporalTotalNodos, function (key, value) {
             tablaNodos.agregarDatosFila([
                 value.IdNodo,
                 value.IdArea,
@@ -577,7 +573,6 @@ $(function () {
                 $('#fileEvidencia').addClass('hidden');
                 $('#fileEvidenciaActualizar').removeClass('hidden');
                 actualizarContenidoModalMaterial(datos[0]);
-//                $('.bloqueoConclusionBtn').addClass('hidden');
             }
         });
 
