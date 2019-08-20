@@ -90,6 +90,9 @@ class ServiceDesk extends General {
             case 'Error when validating URL - Invalid URL for the requested operation.':
                 $textoError = 'URL no válida para la operación solicitada.';
                 break;
+            case 'Error when adding note to request - 561339 - Notes text cannot be empty when adding notes':
+                $textoError = 'No cuenta con información para subirlo al ServiceDesk.';
+                break;
             default :
                 $textoError = $error;
                 break;
