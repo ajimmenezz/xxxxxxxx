@@ -116,10 +116,10 @@ $(function () {
                 console.log(datoServicioTabla.id, respuesta);
                 cambioVistaSinMaterial(respuesta.solucion);
                 cambioVistaNodos(respuesta);
-//                if (datosFila[tamañoDatosFila - 1] === "EN VALIDACIÓN") {
-//                    $('.bloqueoConclusion').prop("disabled", true);
-//                    $('.bloqueoConclusionBtn').addClass('hidden');
-//                }
+                if (datosFila[tamañoDatosFila - 1] === "EN VALIDACIÓN") {
+                    $('.bloqueoConclusion').prop("disabled", true);
+                    $('.bloqueoConclusionBtn').addClass('hidden');
+                }
             });
         }
     });
@@ -305,21 +305,8 @@ $(function () {
 
     /**Empiesan eventos del modal Material**/
     function cargarContenidoModalMaterial(materialNodo) {
-        selectSwitch.bloquearElemento();
         if (materialNodo.areasSucursal.length > 0) {
             selectArea.cargaDatosEnSelect(materialNodo.areasSucursal);
-            selectArea.evento('change', function () {
-                selectSwitch.limpiarElemento();
-                selectSwitch.habilitarElemento();
-                let switches = [], contador = 0, areaSeleccionada = selectArea.obtenerValor();
-                $.each(materialNodo.censoSwitch, function (key, value) {
-                    if (value.idArea === areaSeleccionada) {
-                        switches[contador] = {id: value.modelo, text: value.text};
-                        contador++;
-                    }
-                });
-                selectSwitch.cargaDatosEnSelect(switches);
-            });
         }
         if (materialNodo.censoSwitch.length > 0) {
             selectSwitch.cargaDatosEnSelect(materialNodo.censoSwitch);
@@ -437,7 +424,7 @@ $(function () {
                 infoMaterialNodo.material += '|{"idMaterial": ' + value[0] + ', "cantidad": ' + value[2] + '}';
             }
         });
-        let evidenciaOpcional = $('#agregarEvidenciaNodo').val();
+        let evidenciaOpcional = $('#actualizarEvidenciaNodo').val();
         let evidenciaEstablecida = jQuery.isEmptyObject(evidenciasNodo);
         if (evidenciaOpcional == '') {
             if (evidenciaEstablecida == true) {
@@ -451,8 +438,11 @@ $(function () {
                 peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
                     limpiarElementosModalMaterial();
                     restaurarElementosModal();
+                    listaTotalNodos = respuesta.solucion.nodos;
+                    listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
+                    materialTecnico = respuesta.datosServicio.materialUsuario;
+                    cargarContenidoModalMaterial(respuesta.datosServicio);
                     $('#modalMaterialNodo').modal('toggle');
-                    console.log(respuesta);
                 });
             }
         } else {
@@ -460,8 +450,11 @@ $(function () {
             actualizarEvidencia.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
                 limpiarElementosModalMaterial();
                 restaurarElementosModal();
+                listaTotalNodos = respuesta.solucion.nodos;
+                listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
+                materialTecnico = respuesta.datosServicio.materialUsuario;
+                cargarContenidoModalMaterial(respuesta.datosServicio);
                 $('#modalMaterialNodo').modal('toggle');
-                console.log(respuesta);
             });
         }
         idNodo = null;
@@ -950,7 +943,12 @@ $(function () {
             datoServicioTabla.firmaCliente = firmaClienet.getImg();
             datoServicioTabla.firmaTecnico = firmaTecnico.getImg();
             peticion.enviar('contentFirmasConclucion', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
-                console.log(respuesta);
+                modal.mostrarModal("Exito", '<h4>Se han concluido el servicio correctamente</h4>');
+                $('#btnCerrar').addClass('hidden');
+                modal.btnAceptar('btnAceptar', function () {
+                        modal.cerrarModal();
+                        location.reload();
+                });
             });
         }
     });
