@@ -370,7 +370,7 @@ $(function () {
             });
 
             if ($('#agregarEvidenciaNodo').val() !== '') {
-                infoMaterialNodo.evidencias = true;
+                infoMaterialNodo.evidencias = true;                
                 evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
                     limpiarElementosModalMaterial();
                     tablaNodos.limpiartabla();

@@ -10,9 +10,8 @@ class Modelo_Censo extends Base{
         parent::__construct();
     }
     
-    public function getCensoComponente(string $idSucursal, string $componente) {        
-//        $consulta = $this->ejecutaFuncion('call getInventoryFromSucursalItem('.$idSucursal.',"'.$componente.'")');
-        $consulta = $this->ejecutaFuncion('call getInventoryFromSucursalItem(10,"'.$componente.'")');
+    public function getCensoComponente(string $idSucursal, string $componente) {              
+        $consulta = $this->ejecutaFuncion('call getInventoryFromSucursalItem('.$idSucursal.',"'.$componente.'")');
         return $consulta;
     }
 }

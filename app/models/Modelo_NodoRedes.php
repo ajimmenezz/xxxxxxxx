@@ -10,7 +10,7 @@ class Modelo_NodoRedes extends Base {
         parent::__construct();
     }
 
-    public function setNodo(string $idServicio, array $datos) {
+    public function setNodo(string $idServicio, array $datos) {       
         $consulta = $this->insertar('insert into t_redes_nodos values(
                            null,
                            ' . $idServicio . ',

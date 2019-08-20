@@ -21,11 +21,11 @@ class Censo {
         
         foreach ($consulta as $value) {
             array_push($datos, array(
-                'id' => $value['Id'],
+                'id' => $value['IdModelo'],
                 'text' => $value['Equipo'],
                 'idArea' => $value['IdArea'],
                 'area' => $value['Area'],
-                'modelo' => $value['IdModelo'],
+                'idRegistro' => $value['Id'],
                 'serie' => $value['Serie']                    
             ));
         }
