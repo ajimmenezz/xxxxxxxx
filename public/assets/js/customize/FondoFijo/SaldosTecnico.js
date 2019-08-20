@@ -422,39 +422,35 @@ $(function () {
             {}
             else
             {
-//                DatosComplementarios+="if ("+respuesta.generales[0].Archivos+" != '' && !is_null("+respuesta.generales[0].Archivos+")) {    $archivos = explode('','', "+respuesta.generales[0].Archivos+");?>";
-//                DatosComplementarios+="<div class='col-md-12 col-sm-12 col-xs-12'>";
-//                DatosComplementarios+="<?php switch ($ext) {";
-//                DatosComplementarios+="    case 'png':";
-//                DatosComplementarios+="    case 'jpeg':";
-//                DatosComplementarios+="    case 'jpg':";
-//                DatosComplementarios+="    case 'gif':";
-//                DatosComplementarios+="echo '<a class='imagenesSolicitud' target='_blank' href='' . $value . ''><img src=" + respuesta.generales[0].Archivos + "class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>'";
-//                DatosComplementarios+="break;";
-//                DatosComplementarios+="case 'xls':";
-//                DatosComplementarios+="case 'xlsx':";
-//                DatosComplementarios+="    echo '<a class='imagenesSolicitud' target='_blank' href=''"+ respuesta.generales[0].Archivos +" ''><img src='/assets/img/Iconos/excel_icon.png' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>';";
-//                 DatosComplementarios+="    break;";
-//                DatosComplementarios+="case 'doc':";
-//                DatosComplementarios+="case 'docx':";
-//                DatosComplementarios+="    echo '<a class='imagenesSolicitud' target='_blank' href='' "+ respuesta.generales[0].Archivos +"''><img src='/assets/img/Iconos/word_icon.png' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>';";
-//                DatosComplementarios+="    break;";
-//                DatosComplementarios+="case 'pdf':";
-//                DatosComplementarios+="    echo '<a class='imagenesSolicitud' target='_blank' href='' "+ respuesta.generales[0].Archivos +"''><img src='/assets/img/Iconos/pdf_icon.png' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>';";
-//                DatosComplementarios+="    break;";
-//                DatosComplementarios+="default:";
-//                DatosComplementarios+="    echo '<a class='imagenesSolicitud' target='_blank' href='' "+ respuesta.generales[0].Archivos +"''><img src='/assets/img/Iconos/no-thumbnail.jpg' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>';";
-//                DatosComplementarios+="    break;";
-//                DatosComplementarios+="}";
-//                DatosComplementarios+="echo '</div>'";
-//                DatosComplementarios+="}";
-//                DatosComplementarios+="?>";
-//                DatosComplementarios+="</div>";
-//                DatosComplementarios+="<?php";
-//                DatosComplementarios+="}";
-                
-           
-
+                var ruta = respuesta.generales[0].Archivos;
+                var extension = ruta.split(".");
+                DatosComplementarios+="<div class='col-md-12 col-sm-12 col-xs-12'>";
+                switch (extension) {
+                    case 'png':
+                       
+                    case 'jpeg':
+                       
+                    case 'jpg':
+                      
+                    case 'gif':
+                    DatosComplementarios+="<a class='imagenesSolicitud' target='_blank' href='"+respuesta.generales[0].Archivos+"'><img src='" + respuesta.generales[0].Archivos + "' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>";
+                    break;
+                    case 'xls':
+                    case 'xlsx':
+                    DatosComplementarios+="<a class='imagenesSolicitud' target='_blank' href='"+ respuesta.generales[0].Archivos +" '><img src='/assets/img/Iconos/excel_icon.png' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>'";
+                    break;
+                    case 'doc':
+                    case 'docx':
+                        DatosComplementarios += "'<a class='imagenesSolicitud' target='_blank' href='" + respuesta.generales[0].Archivos + "'><img src='/assets/img/Iconos/word_icon.png' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>'";
+                        break;
+                    case 'pdf':
+                        DatosComplementarios += "'<a class='imagenesSolicitud' target='_blank' href='" + respuesta.generales[0].Archivos + "'><img src='/assets/img/Iconos/pdf_icon.png' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>'";
+                        break;
+                    default:
+                        DatosComplementarios += "'<a class='imagenesSolicitud' target='_blank' href='" + respuesta.generales[0].Archivos + "'><img src='/assets/img/Iconos/no-thumbnail.jpg' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>'";
+                        break;
+                }
+                DatosComplementarios+="</div>";
             }
             
              $("#datosComplementarios").html(DatosComplementarios);
