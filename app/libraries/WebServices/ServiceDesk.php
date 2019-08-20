@@ -52,7 +52,7 @@ class ServiceDesk extends General {
         $datosSD = json_decode(file_get_contents($url));
 
         if ($datosSD === NULL) {
-            throw new \Exception('Error para ingresar al SD');
+            throw new \Exception('Service Desk no responde.');
         }
 
         restore_error_handler();
@@ -91,7 +91,7 @@ class ServiceDesk extends General {
                 $textoError = 'URL no válida para la operación solicitada.';
                 break;
             default :
-                $textoError = 'Error para ingresar al SD.';
+                $textoError = $error;
                 break;
         }
         return $textoError;

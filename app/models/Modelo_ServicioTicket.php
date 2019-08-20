@@ -944,4 +944,56 @@ class Modelo_ServicioTicket extends Modelo_Base {
         }
     }
 
+    public function atiendeServicio(string $servicio) {
+        $consulta = $this->consulta('SELECT 
+                                        tso.Atiende
+                                        FROM t_servicios_ticket tst
+                                        INNER JOIN t_solicitudes tso
+                                        ON tst.IdSolicitud = tso.Id
+                                        WHERE tst.Id = "' . $servicio . '"');
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function consultaServicio(string $servicio) {
+        $consulta = $this->consulta('SELECT 
+                                            ts.Folio,
+                                            tst.Id,
+                                            tst.Ticket,
+                                            tst.IdTipoServicio,
+                                            (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tst.IdTipoServicio) Seguimiento,
+                                            tst.IdEstatus,
+                                            tst.FechaConclusion,
+                                            (SELECT Atiende FROM t_solicitudes WHERE Id = tst.IdSolicitud) Atiende
+                                        FROM t_servicios_ticket tst
+                                        INNER JOIN t_solicitudes ts
+                                            ON ts.Id = tst.IdSolicitud
+                                        WHERE tst.Id = "' . $servicio . '"');
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function consultaServicioLaboratorio(string $servicio) {
+        $consulta = $this->consulta('SELECT
+                                            (SELECT IdDepartamento FROM cat_perfiles WHERE Id = cvu.IdPerfil) IdDepartamento
+                                        FROM t_servicios_ticket tst
+                                        INNER JOIN cat_v3_usuarios cvu
+                                        ON tst.Atiende = cvu.Id
+                                        WHERE tst.Id = "' . $servicio . '"');
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
 }
