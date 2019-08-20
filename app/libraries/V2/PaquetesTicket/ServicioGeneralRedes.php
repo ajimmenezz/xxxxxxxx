@@ -169,14 +169,20 @@ class ServicioGeneralRedes implements Servicio {
         return $datos;
     }
 
-    public function setSolucion(array $datos) {
+    public function setSolucion(array $datos) {        
         $this->DBServiciosGeneralRedes->empezarTransaccion();
-        $consulta = $this->DBServiciosGeneralRedes->getEvidencias($this->id);
+        $consulta = $this->DBServiciosGeneralRedes->getEvidencias($this->id); 
+        
+        if(empty($consulta)){
+            array_push($consulta, array('Archivos' => ''));
+        }
+        
         if (!array_key_exists('archivos', $datos)) {
             $datos['archivos'] = $consulta[0]['Archivos'];
-        } else {
-            $datos['archivos'] .= ',' . $consulta[0]['Archivos'];
+        } else if(!empty($consulta[0]['Archivos'])){                        
+            $datos['archivos'] .= ','.$consulta[0]['Archivos'];
         }
+        
         $this->DBServiciosGeneralRedes->setSolucion($this->id, $datos);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
@@ -189,8 +195,7 @@ class ServicioGeneralRedes implements Servicio {
     }
 
     public function setConcluir(array $datos) {
-        $this->DBServiciosGeneralRedes->empezarTransaccion();
-        var_dump($datos);
+        $this->DBServiciosGeneralRedes->empezarTransaccion();        
         $this->DBServiciosGeneralRedes->setConclusion($this->id, $datos);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
 //        $pdf = new PDF($this->folioSolicitud);
