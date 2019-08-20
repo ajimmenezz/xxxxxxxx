@@ -266,32 +266,40 @@ $(function () {
 
         selectSucursal.evento('change', function () {
             datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
-            let totalNodos = listaTotalNodos.length;
-            if (totalNodos > 0) {
-                modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara los Nodos registrados</h4>');
+            if (listaTotalNodos.length > 0) {
+                modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara la Información y cambios guardados</h4>');
 
                 modal.btnAceptar('btnAceptar', function () {
-                    peticionCambioSucursal();
+                    peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
+                        listaTotalNodos = respuesta.solucion.nodos;
+                        materialTecnico = respuesta.datosServicio.materialUsuario;
+                        listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
+                        cargarContenidoModalMaterial(respuesta.datosServicio);
+                        tablaNodos.limpiartabla();
+                        modal.cerrarModal();
+                    });
                 });
 
                 $('#btnCerrar').on('click', function () {
                     selectSucursal.definirValor(solucion.IdSucursal);
                     modal.cerrarModal();
                 });
-            } else {
-                peticionCambioSucursal()
-            }
-        });
-    }
+            } else if (archivosEstablecidos !== null) {
+                modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara la Evidencia y cambios guardados</h4>');
 
-    function peticionCambioSucursal() {
-        peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
-            listaTotalNodos = respuesta.solucion.nodos;
-            materialTecnico = respuesta.datosServicio.materialUsuario;
-            listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
-            cargarContenidoModalMaterial(respuesta.datosServicio);
-            tablaNodos.limpiartabla();
-            modal.cerrarModal();
+                modal.btnAceptar('btnAceptar', function () {
+                    peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/borrarEvidencias', datoServicioTabla, function (respuesta) {
+                        modal.cerrarModal();
+                        $('#evidenciasMaterialFija').empty();
+                    });
+                });
+
+                $('#btnCerrar').on('click', function () {
+                    selectSucursal.definirValor(solucion.IdSucursal);
+                    modal.cerrarModal();
+                });
+            }
+
         });
     }
 
@@ -388,6 +396,7 @@ $(function () {
                 });
             } else {
                 infoMaterialNodo.evidencias = false;
+                console.log("consulta sin evidencia")
             }
         }
     });
@@ -796,61 +805,54 @@ $(function () {
     /**Empiezan eventos de botones para datos y problemas**/
     $('#btnSinMaterial').on('click', function () {
         datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
-        if (archivosEstablecidos !== "") {
-            console.log(datoServicioTabla)
-//            modal.mostrarModal('AVISO', '<h4>Se borrara toda Evidencia establecida, ¿Estas seguro de esto?</h4>');
-//            modal.btnAceptar('btnAceptar', function () {
-//                peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarEvidencias', datoServicioTabla, function (respuesta) {
-//                    listaTotalNodos = respuesta.solucion.nodos;
-//                    materialTecnico = respuesta.datosServicio.materialUsuario;
-//                    listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
-//                    cargarContenidoModalMaterial(respuesta.datosServicio);
-//                    modal.cerrarModal();
-//                });
-//                datoServicioTabla.material = false;
-//                cambioMaterial();
-//            });
+        if (archivosEstablecidos !== null) {
+            modal.mostrarModal('Aviso', '<h4>Si realizas esta acción se Borrara la Evidencia y cambios guardados</h4>');
+
+            modal.btnAceptar('btnAceptar', function () {
+                peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/borrarEvidencias', datoServicioTabla, function (respuesta) {
+                    modal.cerrarModal();
+                    cambioBtnSinMaterial();
+                    $('#evidenciasMaterialFija').empty();
+                });
+            });
         } else {
-            datoServicioTabla.material = false;
-            cambioMaterial();
+            cambioBtnSinMaterial();
         }
     });
+
+    function cambioBtnSinMaterial() {
+        $('#btnConMaterial').removeClass('hidden');
+        $('#btnSinMaterial').addClass('hidden');
+        $('#sinMaterial').addClass('hidden');
+        $('#conMaterial').removeClass('hidden');
+    }
 
     $('#btnConMaterial').on('click', function () {
         datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
         if (listaTotalNodos.length > 0) {
-            modal.mostrarModal('AVISO', '<h4>Se borrara todo Nodo establecido, ¿Estas seguro de esto?</h4>');
+            modal.mostrarModal('Aviso', '<h4>Si realizas esta acción se Borrara la Información y cambios guardados</h4>');
+
             modal.btnAceptar('btnAceptar', function () {
                 peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
-//                    listaTotalNodos = respuesta.solucion.nodos;
-//                    materialTecnico = respuesta.datosServicio.materialUsuario;
-//                    listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
-//                    cargarContenidoModalMaterial(respuesta.datosServicio);
-//                    tablaNodos.limpiartabla();
-                    console.log(respuesta)
+                    listaTotalNodos = respuesta.solucion.nodos;
+                    materialTecnico = respuesta.datosServicio.materialUsuario;
+                    listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
+                    cargarContenidoModalMaterial(respuesta.datosServicio);
+                    tablaNodos.limpiartabla();
+                    cambioBtnComMaterial()
                     modal.cerrarModal();
                 });
-                datoServicioTabla.material = true;
-                cambioMaterial();
             });
         } else {
-            datoServicioTabla.material = true;
-            cambioMaterial();
+            cambioBtnComMaterial();
         }
     });
 
-    function cambioMaterial() {
-        if (datoServicioTabla.material) {
-            $('#btnConMaterial').addClass('hidden');
-            $('#btnSinMaterial').removeClass('hidden');
-            $('#sinMaterial').removeClass('hidden');
-            $('#conMaterial').addClass('hidden');
-        } else {
-            $('#btnConMaterial').removeClass('hidden');
-            $('#btnSinMaterial').addClass('hidden');
-            $('#sinMaterial').addClass('hidden');
-            $('#conMaterial').removeClass('hidden');
-        }
+    function cambioBtnComMaterial() {
+        $('#btnConMaterial').addClass('hidden');
+        $('#btnSinMaterial').removeClass('hidden');
+        $('#sinMaterial').removeClass('hidden');
+        $('#conMaterial').addClass('hidden');
     }
 
     $('#btnAceptarProblema').on('click', function () {
@@ -889,18 +891,19 @@ $(function () {
             datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
             if (validarImagen == '') {
                 datoServicioTabla.material = false;
-                console.log(datoServicioTabla)
                 peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
-                    console.log(respuesta)
-//                    modal.mostrarModal("Exito", '<h4>Se han guardado los cambios correctamente</h4>');
-//                    $('#btnAceptar').addClass('hidden');
+                    modal.mostrarModal("Exito", '<h4>Se han guardado los cambios correctamente</h4>');
+                    $('#btnAceptar').addClass('hidden');
                 });
             } else {
                 datoServicioTabla.material = true;
                 evidenciaFija.enviarPeticionServidor('#contentServiciosGeneralesRedes', datoServicioTabla, function (respuesta) {
-                    console.log(respuesta)
-//                    modal.mostrarModal("Exito", '<h4>Se han guardado los cambios correctamente</h4>');
-//                    $('#btnAceptar').addClass('hidden');
+                    modal.mostrarModal("Exito", '<h4>Se han guardado los cambios correctamente</h4>');
+                    evidenciaFija.limpiarElemento();
+                    $('#evidenciasMaterialFija').empty();
+                    archivosEstablecidos = respuesta.solucion.solucion[0].Archivos;
+                    cargarEvidenciaArchivos();
+                    $('#btnAceptar').addClass('hidden');
                 });
             }
         }

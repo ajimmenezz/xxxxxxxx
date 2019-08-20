@@ -171,9 +171,12 @@ class ServicioGeneralRedes implements Servicio {
 
     public function setSolucion(array $datos) {
         $this->DBServiciosGeneralRedes->empezarTransaccion();
-         if(!array_key_exists('archivos', $datos)){
-             $datos['archivos'] = $this->DBServiciosGeneralRedes->getEvidencias($this->id);
-         }
+        $consulta = $this->DBServiciosGeneralRedes->getEvidencias($this->id);
+        if (!array_key_exists('archivos', $datos)) {
+            $datos['archivos'] = $consulta[0]['Archivos'];
+        } else {
+            $datos['archivos'] .= ',' . $consulta[0]['Archivos'];
+        }
         $this->DBServiciosGeneralRedes->setSolucion($this->id, $datos);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
@@ -188,7 +191,7 @@ class ServicioGeneralRedes implements Servicio {
     public function setConcluir(array $datos) {
         $this->DBServiciosGeneralRedes->empezarTransaccion();
         var_dump($datos);
-        $this->DBServiciosGeneralRedes->setConclusion($this->id, $datos);        
+        $this->DBServiciosGeneralRedes->setConclusion($this->id, $datos);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
 //        $pdf = new PDF($this->folioSolicitud);
 //        $pdf->AddPage();        
@@ -206,7 +209,7 @@ class ServicioGeneralRedes implements Servicio {
     public function deleteEvidencias() {
         $this->DBServiciosGeneralRedes->empezarTransaccion();
         $temporal = $this->DBServiciosGeneralRedes->getEvidencias($this->id);
-        $evidencias = explode(',', $temporal);
+        $evidencias = explode(',', $temporal[0]['Archivos']);
         $this->DBServiciosGeneralRedes->deleteEvidencias($this->id);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
         return $evidencias;

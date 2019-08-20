@@ -116,8 +116,11 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
                                 now()    
                              )');
         } else {
-            $this->actualizar('update t_servicios_ticket set 
-                           IdSucursal = ' . $datos['idSucursal'] . ' where Id = ' . $idServicio);
+            $this->actualizar('update t_servicios_generales set 
+                           Descripcion = "' . $datos['observaciones'] .'",
+                           Archivos = "' . $datos['archivos'] .'",
+                           Fecha = now()
+                            where IdServicio = ' . $idServicio);
         }
     }
 
