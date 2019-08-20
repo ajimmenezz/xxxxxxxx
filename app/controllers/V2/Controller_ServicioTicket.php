@@ -145,8 +145,7 @@ class Controller_ServicioTicket extends CI_Controller {
 
     public function setSolucion() {
         try {
-            $datosServicio = $this->input->post();
-            $datosServicio['archivos'] = '';
+            $datosServicio = $this->input->post();            
             $datosServicio['idUsuario'] = Usuario::getId();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);                        
             if ($datosServicio['material'] !== 'false') {

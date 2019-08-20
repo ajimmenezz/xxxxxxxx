@@ -171,6 +171,9 @@ class ServicioGeneralRedes implements Servicio {
 
     public function setSolucion(array $datos) {
         $this->DBServiciosGeneralRedes->empezarTransaccion();
+         if(!array_key_exists('archivos', $datos)){
+             $datos['archivos'] = $this->DBServiciosGeneralRedes->getEvidencias($this->id);
+         }
         $this->DBServiciosGeneralRedes->setSolucion($this->id, $datos);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
