@@ -181,7 +181,7 @@ $(function () {
         evidenciaMaterial.iniciarFileUpload();
         evidenciaProblema = new FileUpload_Basico('agregarEvidenciaProblema', {url: 'SeguimientoCE/SeguimientoGeneral/agregarProblema', extensiones: ['jpg', 'jpeg', 'png']});
         evidenciaProblema.iniciarFileUpload();
-        evidenciaFija = new FileUpload_Basico('agregarEvidenciaFija', {url: 'eguimientoCE/SeguimientoGeneral/guardarSolucion', extensiones: ['jpg', 'jpeg', 'png']});
+        evidenciaFija = new FileUpload_Basico('agregarEvidenciaFija', {url: 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', extensiones: ['jpg', 'jpeg', 'png']});
         evidenciaFija.iniciarFileUpload();
         actualizarEvidencia = new FileUpload_Basico('actualizarEvidenciaNodo', {url: 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', extensiones: ['jpg', 'jpeg', 'png']});
         actualizarEvidencia.iniciarFileUpload();
@@ -889,15 +889,18 @@ $(function () {
             datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
             if (validarImagen == '') {
                 datoServicioTabla.material = false;
+                console.log(datoServicioTabla)
                 peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
-                    modal.mostrarModal("Exito", '<h4>Se han guardado los cambios correctamente</h4>');
-                    $('#btnAceptar').addClass('hidden');
+                    console.log(respuesta)
+//                    modal.mostrarModal("Exito", '<h4>Se han guardado los cambios correctamente</h4>');
+//                    $('#btnAceptar').addClass('hidden');
                 });
             } else {
                 datoServicioTabla.material = true;
                 evidenciaFija.enviarPeticionServidor('#contentServiciosGeneralesRedes', datoServicioTabla, function (respuesta) {
-                    modal.mostrarModal("Exito", '<h4>Se han guardado los cambios correctamente</h4>');
-                    $('#btnAceptar').addClass('hidden');
+                    console.log(respuesta)
+//                    modal.mostrarModal("Exito", '<h4>Se han guardado los cambios correctamente</h4>');
+//                    $('#btnAceptar').addClass('hidden');
                 });
             }
         }
