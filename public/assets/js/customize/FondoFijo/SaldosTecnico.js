@@ -31,17 +31,17 @@ $(function () {
             'id':datosTabla[0]
             
         };
-            console.log(datos);
-            console.log(datosTabla);
+//            console.log(datos);
+//            console.log(datosTabla);
         evento.enviarEvento('MiFondo/MovimientosTecnico', datos, '#panelCuentas', function (respuesta) {
             let aux="";
-            
+//            console.log(respuesta);
             for(i=0; i<respuesta.consulta.length ; i++)
             {
                   aux+= "<tr onclick=(getDatos("+respuesta.consulta[i].Id+")); >";         
                   aux+= "<td>"+respuesta.consulta[i].IdMovimiento+"</td>";
                   aux+= "<td>"+respuesta.consulta[i].Cuenta+"</span></td>";
-                  aux+= "<td> $"+numberFormat(respuesta.consulta[i].Monto)+"</td>";
+                  aux+= "<td> $"+respuesta.consulta[i].Monto+"</td>";
                   aux+= "<td>"+respuesta.consulta[i].Concepto+"</td>";
                   aux+= "<td>"+respuesta.consulta[i].Estatus+"</td>";
                   aux+= "<td>"+respuesta.consulta[i].FechaRegistro+"</td>";
@@ -284,7 +284,8 @@ $(function () {
     
 });
     function getDatos(id, concepto)
-    {   console.log(concepto);
+    {   
+        //console.log(concepto);
         var evento = new Base();
         var websocket = new Socket();
         var tabla = new Tabla();
@@ -305,23 +306,23 @@ $(function () {
 
         //Inicializa funciones de la plantilla
         App.init();
-        console.log(id);
+//        console.log(id);
          var datos = {
             'IdMovimiento':id
         };
             
          evento.enviarEvento('MiFondo/DetallesMovimientos', datos, '#panelCuentas', function (respuesta) {
-             console.log("Respuestas");
-             console.log(respuesta);
+//             console.log("Respuestas");
+//             console.log(respuesta);
              evento.iniciarModal("#modalEdit", "Detalles del depósito / ajuste", respuesta.html);
              $("#btnGuardarCambios").hide();
              $("#btnCancelarMovimiento").off("click");
               $('#userReg').html(respuesta.generales[0].Autoriza);
              $('#userMov').html(respuesta.generales[0].TipoMovimiento);
              $('#userConce').html(respuesta.generales[0].Nombre);
-             $('#userMont').html(numberFormat(respuesta.generales[0].Monto));
-             $('#userSaldA').html(numberFormat(respuesta.generales[0].SaldoPrevio)); 
-             $('#userSald').html(numberFormat(respuesta.generales[0].SaldoNuevo)); 
+             $('#userMont').html("$"+respuesta.generales[0].Monto);
+             $('#userSaldA').html("$"+respuesta.generales[0].SaldoPrevio); 
+             $('#userSald').html("$"+respuesta.generales[0].SaldoNuevo); 
              $('#userStatus').html(respuesta.generales[0].Estatus);
              $('#fechaMov').html(respuesta.generales[0].FechaMovimiento);
              $('#fechaAut').html(respuesta.generales[0].FechaAutorizacion);
@@ -425,13 +426,16 @@ $(function () {
                 var ruta = respuesta.generales[0].Archivos;
                 var extension = ruta.split(".");
                 DatosComplementarios+="<div class='col-md-12 col-sm-12 col-xs-12'>";
-                switch (extension) {
+                switch (extension[1]) {
                     case 'png':
-                       
+                    DatosComplementarios += "'<a class='imagenesSolicitud' target='_blank' href='" + respuesta.generales[0].Archivos + "'><img src='/assets/img/Iconos/no-thumbnail.jpg' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>'";
+                    break;
                     case 'jpeg':
-                       
+                    DatosComplementarios += "'<a class='imagenesSolicitud' target='_blank' href='" + respuesta.generales[0].Archivos + "'><img src='/assets/img/Iconos/no-thumbnail.jpg' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>'";
+                    break;
                     case 'jpg':
-                      
+                    DatosComplementarios += "'<a class='imagenesSolicitud' target='_blank' href='" + respuesta.generales[0].Archivos + "'><img src='/assets/img/Iconos/no-thumbnail.jpg' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>'";
+                    break;
                     case 'gif':
                     DatosComplementarios+="<a class='imagenesSolicitud' target='_blank' href='"+respuesta.generales[0].Archivos+"'><img src='" + respuesta.generales[0].Archivos + "' class='img-responsive img-thumbnail' style='max-height:100px !important;' alt='Evidencia' /></a>";
                     break;
@@ -452,31 +456,8 @@ $(function () {
                 }
                 DatosComplementarios+="</div>";
             }
-            
              $("#datosComplementarios").html(DatosComplementarios);
              
          });
        
     }
-    
-        function numberFormat(numero) {
-                var resultado = "";
-                if (numero[0] == "-")
-                {
-                    nuevoNumero = numero.replace(/\./g, '').substring(2);
-                } else {
-                    nuevoNumero = numero.replace(/\./g, '');
-                }
-                if (numero.indexOf(",") >= 0)
-                    nuevoNumero = nuevoNumero.substring(0, nuevoNumero.indexOf(","));
-                for (var j, i = nuevoNumero.length , j = 0; i >= 0; i--, j++)
-                    resultado = nuevoNumero.charAt(i) + ((j > 0) && (j % 3 == 0) ? "," : "") + resultado;
-                if (numero.indexOf(",") >= 0)
-                    resultado += numero.substring(numero.indexOf(","));
-                if (numero[0] == "-")
-                {
-                    return "-" + resultado;
-                } else {
-                    return resultado;
-                }
-            }

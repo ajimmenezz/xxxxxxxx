@@ -497,8 +497,6 @@ class FondoFijo extends General
         return $autorizar;
     }
 
-    /************************************************************************/
-
     public function rechazarMovimientoCobrable(array $datos)
     {
         $rechazar = $this->DB->rechazarMovimientoCobrable($datos);
@@ -537,7 +535,13 @@ class FondoFijo extends General
     public function getMovimientosTecnico(array $datos) {
         $idUsuario=$datos['id'];
         $data   = $this->DB->getMovimientosXTecnico($idUsuario);
-       
+        $lengt= count($data);
+        for($i=0;$i<$lengt;$i++)
+        {
+           $data[$i]['Monto']=number_format( $data[$i]['Monto'],2,'.',',');
+           $data[$i]['SaldoPrevio']=number_format( $data[$i]['SaldoPrevio'],2,'.',',');
+           $data[$i]['SaldoNuevo']=number_format( $data[$i]['SaldoNuevo'],2,'.',',');
+        }
         return [
             "code"=>200,
             'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/registroMovimientos', $data, TRUE),
@@ -549,7 +553,14 @@ class FondoFijo extends General
         $idMovimiento= $d['IdMovimiento'];
         
         $datos=$this->DB->getDetallesFondoFijoXId($idMovimiento);
+        $lengt= count($datos);
         
+        for($i=0;$i<$lengt;$i++)
+        {
+           $datos[$i]['Monto']=number_format( $datos[$i]['Monto'],2,'.',',');
+           $datos[$i]['SaldoPrevio']=number_format( $datos[$i]['SaldoPrevio'],2,'.',',');
+           $datos[$i]['SaldoNuevo']=number_format( $datos[$i]['SaldoNuevo'],2,'.',',');
+        }
         
         return [
           'code'=>200,
