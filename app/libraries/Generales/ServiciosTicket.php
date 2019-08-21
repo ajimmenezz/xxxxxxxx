@@ -171,6 +171,7 @@ class ServiciosTicket extends General {
             ON ts.Id = tst.IdSolicitud
             where tst.Atiende = ' . $usuario['Id'] . '
             and tst.IdEstatus in (1,2,3,10,12)
+            AND tst.IdTipoServicio != 45
             ' . $whereFolio . '
             and (csd.IdDepartamento = ' . $departamento . ' or tst.IdTipoServicio = 9) group by tst.Id desc '
                             . $queryUnion);
