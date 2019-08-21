@@ -555,6 +555,7 @@ class Secciones extends General {
             case 'FondoFijo/MiFondo':
                 $datos['Cuentas'] = $this->fondoFijo->getSaldosCuentasXUsuario($usuario['Id']);
                 break;
+            
             case 'FondoFijo/Autorizar':
                 $datos['Pendientes'] = $this->fondoFijo->pendientesXAutorizar($usuario['Id']);
                 break;
@@ -566,6 +567,11 @@ class Secciones extends General {
                 break;
             case 'Redes/SeguimientoCE':
                 $datos['infoServicios'] = $this->seccionCE->getDatosServicios();
+                break;
+
+            case 'FondoFijo/SaldosTecnico':
+                $datos['SaldoTecnico'] = $this->fondoFijo->getTecnicos();
+                //Este va a la vista
                 break;
             default:
                 break;
