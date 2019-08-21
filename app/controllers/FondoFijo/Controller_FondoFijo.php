@@ -76,13 +76,16 @@ class Controller_FondoFijo extends Base
             case 'RechazarMovimiento':
                 $resultado = $this->fondo_fijo->rechazarMovimiento($this->input->post());
                 break;
+            case 'AutorizarMovimiento':
+                $resultado = $this->fondo_fijo->autorizarMovimiento($this->input->post());
+                break;
             case 'MovimientosTecnico':
                 $resultado = $this->fondo_fijo->getMovimientosTecnico($this->input->post());
                 break;
             case 'DetallesMovimientos':
-               $resultado = $this->fondo_fijo->getDetallesMovimiento($this->input->post());
+                $resultado = $this->fondo_fijo->getDetallesMovimiento($this->input->post());
                 break;
-            
+
             default:
                 $resultado = FALSE;
                 break;
