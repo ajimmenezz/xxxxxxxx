@@ -627,7 +627,6 @@ Servicio.prototype.eventosFolio = function () {
         $('#btnAceptarEliminarFolio').on('click', function () {
             _this.cerrarModal();
             _this.enviarEvento('/Generales/Solicitud/editarFolio', dataFolio, seccion, function (respuesta) {
-                console.log(respuesta);
                 if (respuesta === null) {
                     $('#folioSeguimiento').empty().html('');
                     $('#tituloFolio').empty().append('Sin Folio');
@@ -735,119 +734,126 @@ Servicio.prototype.camposSD = function () {
                         <div class="row">\n\
                             <div class="col-sm-12 col-md-12">'
                 + datosSD +
-                '</div>\n\
+                '           </div>\n\
                         </div>\n\
                     </div>';
     } else {
-        var html = '<div class="row">\n\
-                        </div>\n\
+        if (datosSD.code === 400) {
+            var html = '<div class="row">\n\
                         <div class="row">\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group">\n\
-                                    <label> Creado por: <strong>' + datosSD.creadoSD + '</strong></label>\n\
-                                </div>\n\
-                            </div>\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group">\n\
-                                    <label> Fecha de Creación: <strong>' + datosSD.fechaSolicitudSD + '</strong></label>\n\
-                                </div>\n\
-                            </div>\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group text-right">\n\
-                                    <label> Prioridad: <strong>' + datosSD.prioridadSD + '</strong></label>\n\
-                                </div>\n\
+                            <div class="col-sm-12 col-md-12">'
+                    + datosSD.message +
+                    '           </div>\n\
+                        </div>\n\
+                    </div>';
+        } else {
+            var html = '<div class="row">\n\
+                        <div class="col-sm-4 col-md-4">\n\
+                            <div class="form-group">\n\
+                                <label> Creado por: <strong>' + datosSD.creadoSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div class="row">\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group">\n\
-                                    <label> Solicita: <strong>' + datosSD.solicitaSD + '</strong></label>\n\
-                                </div>\n\
-                            </div>\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group">\n\
-                                    <label> Asignado a: <strong>' + datosSD.asignadoSD + '</strong></label>\n\
-                                </div>\n\
-                            </div>\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group text-right">\n\
-                                    <label> Estatus: <strong>' + datosSD.estatusSD + '</strong></label>\n\
-                                </div>\n\
+                        <div class="col-sm-4 col-md-4">\n\
+                            <div class="form-group">\n\
+                                <label> Fecha de Creación: <strong>' + datosSD.fechaSolicitudSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div class="row">\n\
-                            <div class="col-md-12">\n\
-                                <div class="underline m-b-15 m-t-15"></div>\n\
+                        <div class="col-sm-4 col-md-4">\n\
+                            <div class="form-group text-right">\n\
+                                <label> Prioridad: <strong>' + datosSD.prioridadSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div class="row">\n\
-                            <div class="col-sm-12 col-md-12">\n\
-                                <div class="form-group">\n\
-                                    <label> Asunto: <strong>' + datosSD.asuntoSD + '</strong></label>\n\
-                                </div>\n\
+                    </div>\n\
+                    <div class="row">\n\
+                        <div class="col-sm-4 col-md-4">\n\
+                            <div class="form-group">\n\
+                                <label> Solicita: <strong>' + datosSD.solicitaSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div class="row">\n\
-                            <div class="col-sm-12 col-md-12">\n\
-                                <div class="form-group">\n\
-                                    <label> Descripción:</label>\n\
-                                    <br>\n\
-                                    <strong>' + datosSD.descripcionSD + '</strong>\n\
-                                </div>\n\
+                        <div class="col-sm-4 col-md-4">\n\
+                            <div class="form-group">\n\
+                                <label> Asignado a: <strong>' + datosSD.asignadoSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div class="row">\n\
-                            <div class="col-md-12">\n\
-                                <div class="underline m-b-15 m-t-15"></div>\n\
+                        <div class="col-sm-4 col-md-4">\n\
+                            <div class="form-group text-right">\n\
+                                <label> Estatus: <strong>' + datosSD.estatusSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div class="row">\n\
-                            <div class="col-md-offset-9 col-md-3">\n\
-                                <div class="form-group text-right">\n\
-                                    <h5><a><strong id="detallesResolucion"><i class="fa fa-minus-square"></i> Notas</strong></a></h5>\n\
-                                </div>\n\
+                    </div>\n\
+                    <div class="row">\n\
+                        <div class="col-md-12">\n\
+                            <div class="underline m-b-15 m-t-15"></div>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div class="row">\n\
+                        <div class="col-sm-12 col-md-12">\n\
+                            <div class="form-group">\n\
+                                <label> Asunto: <strong>' + datosSD.asuntoSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div id="masDetallesResolucion" class="">\n\
-                            <div class="row">\n\
-                                <div class="col-md-12">';
+                    </div>\n\
+                    <div class="row">\n\
+                        <div class="col-sm-12 col-md-12">\n\
+                            <div class="form-group">\n\
+                                <label> Descripción:</label>\n\
+                                <br>\n\
+                                <strong>' + datosSD.descripcionSD + '</strong>\n\
+                            </div>\n\
+                        </div>\n\
+                    </div>';
 
-        $.each(datosSD.notasSD, function (key, value) {
-            var collapseTitulo = '';
-            var collapseTexto = '';
-            if (key === 0) {
-                collapseTitulo = '';
-                collapseTexto = 'collapse in';
-            } else {
-                collapseTitulo = 'collapse';
-                collapseTexto = 'collapse';
+            if (datosSD.notasSD !== 'Sin notas') {
+                html += '<div class="row">\n\
+                        <div class="col-md-12">\n\
+                            <div class="underline m-b-15 m-t-15"></div>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div class="row">\n\
+                        <div class="col-md-offset-9 col-md-3">\n\
+                            <div class="form-group text-right">\n\
+                                <h5><a><strong id="detallesResolucion"><i class="fa fa-minus-square"></i> Notas</strong></a></h5>\n\
+                            </div>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div id="masDetallesResolucion" class="">\n\
+                        <div class="row">\n\
+                            <div class="col-md-12">';
+                $.each(datosSD.notasSD, function (key, value) {
+                    var collapseTitulo = '';
+                    var collapseTexto = '';
+                    if (key === 0) {
+                        collapseTitulo = '';
+                        collapseTexto = 'collapse in';
+                    } else {
+                        collapseTitulo = 'collapse';
+                        collapseTexto = 'collapse';
+                    }
+
+                    html += '       <div class="panel panel-inverse overflow-hidden">\n\
+                                    <div class="panel-heading">\n\
+                                        <h3 class="panel-title">\n\
+                                            <a class="accordion-toggle accordion-toggle-styled ' + collapseTitulo + '" data-toggle="collapse" data-parent="#accordion" href="#collapse' + key + '">\n\
+                                                <i class="fa fa-plus-circle pull-right"></i>\n\
+                                                ' + value.nombreUsuario + '  ' + value.fecha + '\n\
+                                            </a>\n\
+                                        </h3>\n\
+                                    </div>\n\
+                                    <div id="collapse' + key + '" class="panel-collapse ' + collapseTexto + ' ">\n\
+                                        <div class="panel-body">\n\
+                                            ' + value.texto + '\n\
+                                        </div>\n\
+                                    </div>\n\
+                                </div>';
+                });
+                html += '       </div>';
             }
-
-            html += '               <div class="panel panel-inverse overflow-hidden">\n\
-                                        <div class="panel-heading">\n\
-                                            <h3 class="panel-title">\n\
-                                                <a class="accordion-toggle accordion-toggle-styled ' + collapseTitulo + '" data-toggle="collapse" data-parent="#accordion" href="#collapse' + key + '">\n\
-                                                    <i class="fa fa-plus-circle pull-right"></i>\n\
-                                                    ' + value.nombreUsuario + '  ' + value.fecha + '\n\
-                                                </a>\n\
-                                            </h3>\n\
-                                        </div>\n\
-                                        <div id="collapse' + key + '" class="panel-collapse ' + collapseTexto + ' ">\n\
-                                            <div class="panel-body">\n\
-                                                ' + value.texto + '\n\
-                                            </div>\n\
-                                        </div>\n\
-                                    </div>';
-        });
-        html += '               </div>\n\
-                            </div>';
+            html += '       </div>\n\
+                    </div>';
+        }
     }
 
-
-
     return html;
-
-
 };
 
 Servicio.prototype.detallesDescripcionResolucion = function () {
