@@ -221,7 +221,8 @@ class ServicioGeneralRedes implements Servicio {
     }
     
     public function getFirmas(string $idServicio){
-        return "hola".$idServicio;
+        $consulta = $this->DBServiciosGeneralRedes->getFirmas($idServicio);
+        return $consulta[0]['firmas'];
     }
 
 }

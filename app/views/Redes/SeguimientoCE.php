@@ -106,9 +106,13 @@
                     <div class="panel-heading-btn">
                         <?php
                         if ($datos['infoServicios']['rol'] == "Jefe") {
-                            echo '<label id="btnConcluirServicio" class="btn btn-primary btn-sm hidden">
-                                    <i class="fa fa-check"></i> Concluir Servicio
-                                </label>';
+                            echo '<div id="scciones" class="btn-group btn-sm hidden">
+                                    <a href="javascript:;" data-toggle="dropdown" class="btn btn-warning dropdown-toggle">Acciones <span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#" id="validarServicio"><span class="fa fa-check"></span> Validar Servicio</a></li>
+                                        <li><a href="#" id="exportarPDF"><span class="fa fa-file-pdf-o"></span> Exportar PDF</a></li>
+                                    </ul>
+                                </div>';
                         }
                         ?>
                         <label id="btnAgregarFolio" class="btn btn-warning btn-sm">
@@ -415,19 +419,13 @@
                 <!--Empieza seccion de Firmas Existentes-->
                 <div id="firmasExistentes" class="text-center hidden">
                     <div class="col-md-12">
-                        <div class="col-md-6">
-                            <div id="firmaExistenteCliente" class="image-inner">
-                                <a class="text-center" href="" data-lightbox="gallery-group-evidencia">
-                                    <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="">
-                                </a>                                                
-                            </div>
+                        <div class="col-md-5">
+                            <div id="firmaExistenteCliente"></div>
+                            <label>Firma Cliente</label>
                         </div>
-                        <div class="col-md-6">
-                            <div id="firmaExistenteTecnico" class="image-inner">
-                                <a class="text-center" href="" data-lightbox="gallery-group-evidencia">
-                                    <img style="height:150px !important; max-height:150px !important;" class="img-thumbnail" src="">
-                                </a>                                                
-                            </div>
+                        <div class="col-md-5">
+                            <div id="firmaExistenteTecnico" class="image-inner"></div>
+                            <label>Firma Técnico</label>
                         </div>
                     </div>
                 </div>

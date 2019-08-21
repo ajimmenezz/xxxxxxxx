@@ -105,12 +105,12 @@ $(function () {
             });
         } else {
             peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Seguimiento/' + datosFila[4], datoServicioTabla, function (respuesta) {
-                console.log(datoServicioTabla.id, respuesta);
                 cambioVistaSinMaterial(respuesta.solucion);
                 cambioVistaNodos(respuesta);
                 if (datosFila[tamañoDatosFila - 1] === "EN VALIDACIÓN") {
                     $('.bloqueoConclusion').prop("disabled", true);
                     $('.bloqueoConclusionBtn').addClass('hidden');
+                    $('#scciones').removeClass('hidden');
                     $('·table-materialNodo').off("click");
                 }
             });
@@ -677,6 +677,9 @@ $(function () {
         }
         if (firmas !== null) {
             $('#firmasExistentes').removeClass('hidden');
+            let firma = firmas.split(',');
+            $('#firmaExistenteCliente').append('<img src ="' + firma[0] + '" />');
+            $('#firmaExistenteTecnico').append('<img src ="' + firma[1] + '" />');
         } else {
             $('#firmasExistentes').addClass('hidden');
     }

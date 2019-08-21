@@ -117,8 +117,8 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
                              )');
         } else {
             $this->actualizar('update t_servicios_generales set 
-                           Descripcion = "' . $datos['observaciones'] .'",
-                           Archivos = "' . $datos['archivos'] .'",
+                           Descripcion = "' . $datos['observaciones'] . '",
+                           Archivos = "' . $datos['archivos'] . '",
                            Fecha = now()
                             where IdServicio = ' . $idServicio);
         }
@@ -128,11 +128,11 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
         $this->actualizar('update t_servicios_ticket set 
                            IdEstatus = 5,
                            FechaConclusion = NOW(),
-                           Firma = "'.$datos['archivos'][0].'",
-                           NombreFirma = "'.$datos['nombreCliente'].'",
+                           Firma = "' . $datos['archivos'][0] . '",
+                           NombreFirma = "' . $datos['nombreCliente'] . '",
                            FechaFirma = NOW(),                           
-                           IdTecnicoFirma = '.$datos['idUsuario'].',
-                           FirmaTecnico = "'.$datos['archivos'][1].'"
+                           IdTecnicoFirma = ' . $datos['idUsuario'] . ',
+                           FirmaTecnico = "' . $datos['archivos'][1] . '"
                            where Id = ' . $idServicio);
     }
 
@@ -143,6 +143,10 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
     public function deleteEvidencias(string $idServicio) {
         $this->actualizar('update t_servicios_generales set 
                                    Archivos = "" where IdServicio = ' . $idServicio);
+    }
+
+    public function getFirmas(string $idServicio) {
+        return $this->consulta('select concat(Firma,",", FirmaTecnico) as firmas from t_servicios_ticket where Id=' . $idServicio);
     }
 
 }
