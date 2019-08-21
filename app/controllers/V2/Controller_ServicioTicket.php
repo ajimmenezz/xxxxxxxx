@@ -52,7 +52,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['sucursales'] = $this->gestorSucursales->getSucursales($this->servicio->getCliente());
             $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['problemas'] = $this->servicio->getProblemas();
-            $this->datos['firmas'] = null;
+            $this->datos['firmas'] = $this->servicio->getFirmas($datosServicio['id']);
             $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
             $this->getInformacionFolio();
             echo json_encode($this->datos);

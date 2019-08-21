@@ -219,5 +219,9 @@ class ServicioGeneralRedes implements Servicio {
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
         return $evidencias;
     }
+    
+    public function getFirmas(string $idServicio){
+        return "hola".$idServicio;
+    }
 
 }

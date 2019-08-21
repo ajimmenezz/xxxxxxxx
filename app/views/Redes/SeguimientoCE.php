@@ -106,8 +106,8 @@
                     <div class="panel-heading-btn">
                         <?php
                         if ($datos['infoServicios']['rol'] == "Jefe") {
-                            echo '<label id="btnEditarServicio" class="btn btn-primary btn-sm hidden">
-                                    <i class="fa fa-pencil"></i> Editar Servicio
+                            echo '<label id="btnConcluirServicio" class="btn btn-primary btn-sm hidden">
+                                    <i class="fa fa-check"></i> Concluir Servicio
                                 </label>';
                         }
                         ?>
@@ -591,10 +591,14 @@
             <!--Finaliza cuerpo del modal-->
             <!--Empieza pie del modal-->
             <div class="modal-footer text-center">
-                <a id="btnAceptarAgregarMaterial" class="btn btn-sm btn-success bloqueoConclusionBtn"><i class="fa fa-check"></i> Aceptar</a>
-                <a id="btnActualizarAgregarMaterial" class="btn btn-sm btn-success hidden bloqueoConclusionBtn"><i class="fa fa-refresh"></i> Actualizar</a>
-                <a id="btnEliminarAgregarMaterial" class="btn btn-sm btn-danger hidden bloqueoConclusionBtn"><i class="fa fa-trash-o"></i> Eliminar</a>
-                <a id="btnCancelarAgregarMaterial" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+                <div class="col-md-6 bloqueoConclusionBtn">
+                    <a id="btnAceptarAgregarMaterial" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                    <a id="btnActualizarAgregarMaterial" class="btn btn-sm btn-success hidden"><i class="fa fa-refresh"></i> Actualizar</a>
+                    <a id="btnEliminarAgregarMaterial" class="btn btn-sm btn-danger hidden"><i class="fa fa-trash-o"></i> Eliminar</a>
+                </div>
+                <div class="col-md-6">
+                    <a id="btnCancelarAgregarMaterial" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+                </div>
             </div>
             <!--Finaliza pie del modal-->
         </div>

@@ -17,9 +17,13 @@ class GestorNodosRedes {
 
     public function setNodo(array $datos) {
         $this->DBNodo->empezarTransaccion();
-        $carpeta = 'Servicios/Servicio-' . $this->idServicio . '/EvidenciaMaterialNodos/';
-        Archivo::saveArchivos($carpeta);
-        $datos['archivos'] = Archivo::getString();
+        if ($datos['evidencias'] === 'true') {
+            $carpeta = 'Servicios/Servicio-' . $this->idServicio . '/EvidenciaMaterialNodos/';
+            Archivo::saveArchivos($carpeta);
+            $datos['archivos'] = Archivo::getString();
+        } else {
+            $datos['archivos'] = '';
+        }
         $idNodo = $this->DBNodo->setNodo($this->idServicio, $datos);
         $this->DBNodo->setMaterialNodo($idNodo, $this->getArrayMaterial($datos['material']));
         $this->DBNodo->finalizarTransaccion();
@@ -40,7 +44,7 @@ class GestorNodosRedes {
 
     public function deleteNodo(string $idNodo) {
         $this->DBNodo->empezarTransaccion();
-        $informacionNodo = $this->DBNodo->getInformacionNodo($idNodo);        
+        $informacionNodo = $this->DBNodo->getInformacionNodo($idNodo);
         if (!empty($informacionNodo[0]['Archivos'])) {
             $archivos = explode(',', $informacionNodo[0]['Archivos']);
             $this->deleteArchivos($archivos);
@@ -75,7 +79,7 @@ class GestorNodosRedes {
     }
 
     public function deleteArchivo(array $datos) {
-        $this->DBNodo->deleteArchivo($this->idServicio,$datos);
+        $this->DBNodo->deleteArchivo($this->idServicio, $datos);
     }
 
 }
