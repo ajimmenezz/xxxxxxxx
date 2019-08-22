@@ -299,7 +299,7 @@
                         if (in_array('177', $usuario['PermisosAdicionales']) || in_array('177', $usuario['Permisos']) ||
                                 in_array('182', $usuario['PermisosAdicionales']) || in_array('182', $usuario['Permisos'])) {
                             ?>
-                            <li id="btnRechazarServicioConcluido" class="hidden" data-id-servicio=""><a href="#"><i class="fa fa-times-circle"></i> Rechazar Servicio</a></li>                        
+                            <li id="btnRechazarServicioConcluido" class="hidden" data-id-servicio=""><a href="#"><i class="fa fa-times-circle"></i> Reabrir Servicio</a></li>                        
                             <?php
                         }
                         if (in_array('217', $usuario['Permisos'])) {

@@ -1760,6 +1760,143 @@ class Servicio extends General {
         }
     }
 
+    public function servicioEnValidacion(array $datos = null) {
+        try {
+            $usuario = $this->Usuario->getDatosUsuario();
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $evidenciasAnteriores = '';
+            $consulta = $this->DBS->consultaGeneral('SELECT Id, Archivos FROM t_servicios_generales WHERE IdServicio =' . $datos['servicio']);
+
+            $verificarServicioSinClaficar = $this->DBS->consultaGeneral('SELECT 
+                                                                        (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tst.IdTipoServicio) AS Seguimiento,
+                                                                        tst.IdTipoServicio
+                                                                    FROM t_servicios_ticket tst WHERE tst.Id = "' . $datos['servicio'] . '"');
+
+            $tipoServicio = $verificarServicioSinClaficar[0]['IdTipoServicio'];
+
+            if (in_array($tipoServicio, [11, '11'])) {
+                $this->borrarCensos($datos['servicio']);
+            }
+
+            if (!empty($datos['sucursal'])) {
+                $this->DBS->actualizarServicio('t_servicios_ticket', array('IdSucursal' => $datos['sucursal']), array('Id' => $datos['servicio']));
+            }
+
+            if (!empty($_FILES)) {
+                $descripcion = $datos['datosConcluir'];
+                if ($descripcion === '[object Object]') {
+                    $descripcion = $datos['descripcion'];
+                }
+                $CI = parent::getCI();
+                $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/EvidenciasServicioGeneral/';
+                $archivos = setMultiplesArchivos($CI, 'evidenciasSinClasificar', $carpeta);
+                $archivos = implode(',', $archivos);
+
+                if (!empty($archivos) && $archivos != '') {
+                    $resultado = '';
+                    if (!empty($consulta)) {
+                        if ($archivos !== NULL) {
+                            if ($archivos !== '') {
+                                $evidenciasAnteriores = $archivos . ',';
+                            }
+                        }
+                        $resultado = $this->DBS->actualizarServicio('t_servicios_generales', array(
+                            'IdUsuario' => $usuario['Id'],
+                            'IdServicio' => $datos['servicio'],
+                            'Descripcion' => $descripcion,
+                            'Archivos' => $evidenciasAnteriores . $consulta[0]['Archivos'],
+                            'Fecha' => $fecha
+                                ), array('IdServicio' => $datos['servicio'])
+                        );
+                    } else {
+                        $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', array(
+                            'IdUsuario' => $usuario['Id'],
+                            'IdServicio' => $datos['servicio'],
+                            'Descripcion' => $descripcion,
+                            'Archivos' => $archivos,
+                            'Fecha' => $fecha
+                                )
+                        );
+                    }
+                }
+                $consulta = '';
+            } else {
+                if ($verificarServicioSinClaficar[0]['Seguimiento'] === '0') {
+                    if (is_array($datos['datosConcluir'])) {
+                        $descripcion = $datos['datosConcluir']['descripcion'];
+                    } else {
+                        $descripcion = $datos['datosConcluir'];
+                    }
+                    $datosServicio = array(
+                        'IdUsuario' => $usuario['Id'],
+                        'IdServicio' => $datos['servicio'],
+                        'Descripcion' => $descripcion,
+                        'Fecha' => $fecha
+                    );
+                    if (!empty($consulta)) {
+                        $resultado = $this->DBS->actualizarServicio('t_servicios_generales', $datosServicio, array('IdServicio' => $datos['servicio']));
+                    } else {
+                        $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', $datosServicio);
+                    }
+                }
+            }
+//
+//            if (isset($datos['soloGuardar'])) {
+//                return array('code' => 200, 'message' => 'correcto');
+//            } else {
+//            if ($verificarServicioSinClaficar[0]['Seguimiento'] === '0') {
+//                if (is_array($datos['datosConcluir'])) {
+//                    $datosConcluir = $datos['datosConcluir'];
+//                } else {
+//                    $datosConcluir = array($datos['datosConcluir']);
+//                }
+//
+//                if ($verificarServicioSinClaficar[0]['IdTipoServicio'] === '41') {
+//                    $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
+//                } else {
+//                    $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '5');
+//                }
+//            } else {
+//                $this->crearImangenFirma($datos, $datos['datosConcluir']);
+//                if (isset($datos['datosConcluir']['estatus'])) {
+//                    $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
+//                } else {
+            $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '5');
+//                }
+//            }
+            if (!$cambiarEstatus) {
+                throw new \Exception("Error con la Base de Datos.");
+            }
+//            }
+            return array('code' => 200, 'message' => 'correcto');
+        } catch (\Exception $ex) {
+            return array('code' => 400, 'message' => $ex->getMessage());
+        }
+    }
+
+    private function borrarCensos(string $servicio) {
+        $consultaPuntosCensos = $this->DBS->consulta("select * from t_censos_puntos where IdServicio = '" . $servicio . "'");
+        if (!empty($consultaPuntosCensos)) {
+            foreach ($consultaPuntosCensos as $key => $value) {
+                $this->DBS->queryBolean(""
+                        . "delete "
+                        . "from t_censos "
+                        . "where IdServicio = '" . $value['IdServicio'] . "' "
+                        . "and IdArea = '" . $value['IdArea'] . "' "
+                        . "and Punto > " . $value['Puntos']);
+            }
+        }
+
+        $this->DBS->queryBolean("delete
+                                    from t_censos
+                                    where IdServicio = '" . $value['IdServicio'] . "'
+                                    and IdArea not in (
+                                                    select 
+                                                    IdArea 
+                                                    from t_censos_puntos 
+                                                    where IdServicio = '" . $value['IdServicio'] . "')");
+    }
+
     public function enviar_Reporte_PDF(array $datos) {
         $titulo = 'Se concluyo Solicitud';
         $usuario = $this->Usuario->getDatosUsuario();
@@ -2443,11 +2580,11 @@ class Servicio extends General {
 
         if ($verificar === TRUE) {
             $avancesProblemaEquipo = $this->DBS->serviciosAvanceEquipo($datos['idAvanceProblema']);
-            
+
             if (!empty($avancesProblemaEquipo)) {
                 $this->DBS->flagearServicioAvanceEquipo(array('idAvanceProblema' => $datos['idAvanceProblema']));
             }
-            
+
             foreach ($datos['datosTabla'] as $value) {
                 $this->DBS->setNuevoElemento('t_servicios_avance_equipo', array(
                     'IdAvance' => $datos['idAvanceProblema'],

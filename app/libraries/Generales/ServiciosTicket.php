@@ -1914,13 +1914,6 @@ class ServiciosTicket extends General {
                 $this->reabrirTicket($datos['ticket']);
             }
 
-            $this->DBST->actualizarServicio('t_servicios_ticket', array(
-                'Firma' => NULL,
-                'NombreFirma' => NULL,
-                'CorreoCopiaFirma' => NULL,
-                'FechaFirma' => NULL
-                    ), array('Id' => $datos['servicio']));
-
             $notas = $this->DBST->setNuevoElemento('t_notas_servicio', $data);
 
             $data['departamento'] = $atiende['IdDepartamento'];
@@ -1956,13 +1949,6 @@ class ServiciosTicket extends General {
             'Nota' => $datos['descripcion'],
             'Fecha' => $fecha
         );
-
-        $this->DBST->actualizarServicio('t_servicios_ticket', array(
-            'Firma' => NULL,
-            'NombreFirma' => NULL,
-            'CorreoCopiaFirma' => NULL,
-            'FechaFirma' => NULL
-                ), array('Id' => $datos['servicio']));
 
         $descripcion = 'Se ha Rechazado Servicio del siguiente Ticket: ' . $datos['ticket'];
         $notas = $this->DBST->setNuevoElemento('t_notas_servicio', $data);

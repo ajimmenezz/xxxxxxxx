@@ -2061,3 +2061,21 @@ Servicio.prototype.validarTecnicoPoliza = function () {
         }
     });
 }
+
+Servicio.prototype.servicioValidacion = function () {
+    var _this = this;
+    var ticket = arguments[0].ticket || null;
+    var servicio = arguments[0].servicio;
+    var estatus = '5';
+    var sucursal = arguments[0].sucursal;
+    var seccion = arguments[0].seccion;
+    var dataMandar = {ticket: ticket, servicio: servicio, estatus: estatus, sucursal: sucursal};
+    
+    _this.enviarEvento('/Generales/Servicio/ServicioEnValidacion', dataMandar, seccion, function (respuesta) {
+        if (respuesta.code === 200) {
+            _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+        } else {
+            _this.mensajeModal('Ocurrió el error "' + respuesta.message + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+        }
+    });
+}
