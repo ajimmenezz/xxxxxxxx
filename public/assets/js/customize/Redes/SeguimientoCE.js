@@ -98,6 +98,9 @@ $(function () {
             modal.mostrarModal('Iniciar Servicio', '<h3>¿Quieres atender el servicio?</h3>');
             $('#btnAceptar').on('click', function () {
                 peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Atender/' + datosFila[4], datoServicioTabla, function (respuesta) {
+                    if (!validarError(respuesta)) {
+                        return;
+                    }
                     modal.cerrarModal();
                     cambioVistaSinMaterial(respuesta.solucion);
                     cambioVistaNodos(respuesta);
@@ -105,6 +108,9 @@ $(function () {
             });
         } else {
             peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Seguimiento/' + datosFila[4], datoServicioTabla, function (respuesta) {
+                if (!validarError(respuesta)) {
+                    return;
+                }
                 cambioVistaSinMaterial(respuesta.solucion);
                 cambioVistaNodos(respuesta);
                 if (datosFila[tamañoDatosFila - 1] === "EN VALIDACIÓN") {
@@ -264,6 +270,9 @@ $(function () {
 
                 modal.btnAceptar('btnAceptar', function () {
                     peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
+                        if (!validarError(respuesta, 'modal-dialogo')) {
+                            return;
+                        }
                         listaTotalNodos = respuesta.solucion.nodos;
                         materialTecnico = respuesta.datosServicio.materialUsuario;
                         listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
@@ -283,6 +292,9 @@ $(function () {
 
                 modal.btnAceptar('btnAceptar', function () {
                     peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/borrarEvidencias', datoServicioTabla, function (respuesta) {
+                        if (!validarError(respuesta, 'modal-dialogo')) {
+                            return;
+                        }
                         modal.cerrarModal();
                         $('#evidenciasMaterialFija').empty();
                         ocultarElementosDefault(respuesta.solucion);
@@ -367,6 +379,9 @@ $(function () {
             if ($('#agregarEvidenciaNodo').val() !== '') {
                 infoMaterialNodo.evidencias = true;
                 evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
+                    if (!validarError(respuesta, 'modalMaterialNodo')) {
+                        return;
+                    }
                     limpiarElementosModalMaterial();
                     tablaNodos.limpiartabla();
                     listaTotalNodos = respuesta.solucion.nodos;
@@ -380,6 +395,9 @@ $(function () {
             } else {
                 infoMaterialNodo.evidencias = false;
                 peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/agregarNodo', infoMaterialNodo, function (respuesta) {
+                    if (!validarError(respuesta, 'modalMaterialNodo')) {
+                        return;
+                    }
                     limpiarElementosModalMaterial();
                     tablaNodos.limpiartabla();
                     listaTotalNodos = respuesta.solucion.nodos;
@@ -442,6 +460,9 @@ $(function () {
                 infoMaterialNodo.archivos = '';
                 infoMaterialNodo.evidencias = false;
                 peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
+                    if (!validarError(respuesta, 'modalMaterialNodo')) {
+                        return;
+                    }
                     limpiarElementosModalMaterial();
                     restaurarElementosModal();
                     listaTotalNodos = respuesta.solucion.nodos;
@@ -456,6 +477,9 @@ $(function () {
         } else {
             infoMaterialNodo.evidencias = true;
             actualizarEvidencia.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
+                if (!validarError(respuesta, 'modalMaterialNodo')) {
+                    return;
+                }
                 limpiarElementosModalMaterial();
                 restaurarElementosModal();
                 listaTotalNodos = respuesta.solucion.nodos;
@@ -489,6 +513,9 @@ $(function () {
         });
 
         peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodo', datos, function (respuesta) {
+            if (!validarError(respuesta, 'modalMaterialNodo')) {
+                return;
+            }
             limpiarElementosModalMaterial();
             restaurarElementosModal();
             $('#modalMaterialNodo').modal('toggle');
@@ -646,6 +673,9 @@ $(function () {
             datoServicioTabla.evidencia = archivo;
             datoServicioTabla.idNodo = idNodo;
             peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarArchivo', datoServicioTabla, function (respuesta) {
+                if (!validarError(respuesta)) {
+                    return;
+                }
                 listaTotalNodos = respuesta.solucion.nodos;
                 $(`#img-${indice}`).addClass('hidden');
             });
@@ -690,10 +720,6 @@ $(function () {
         location.reload();
     });
 
-    $('#btnEditarServicio').on('click', function () {
-        console.log('btnEditarServicio')
-    });
-
     $('#btnAgregarFolio').on('click', function () {
         mostrarElementosAgregarFolio();
     });
@@ -704,6 +730,9 @@ $(function () {
         if (evento.validarFormulario('#folio')) {
             datoServicioTabla.folio = $('#addFolio').val();
             peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/guardar', datoServicioTabla, function (respuesta) {
+                if (!validarError(respuesta)) {
+                    return;
+                }
                 if (!respuesta.operacion) {
                     datoServicioTabla.folio = null;
                 }
@@ -740,6 +769,9 @@ $(function () {
         $('#btnAceptar').on('click', function () {
             datoServicioTabla.folio = '';
             peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/eliminar', datoServicioTabla, function (respuesta) {
+                if (!validarError(respuesta)) {
+                    return;
+                }
                 $('#addFolio').prop('disabled', false);
                 $('#addFolio').val('');
 
@@ -801,6 +833,9 @@ $(function () {
 
             modal.btnAceptar('btnAceptar', function () {
                 peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/borrarEvidencias', datoServicioTabla, function (respuesta) {
+                    if (!validarError(respuesta, 'modal-dialogo')) {
+                        return;
+                    }
                     modal.cerrarModal();
                     cambioBtnSinMaterial();
                     $('#evidenciasMaterialFija').empty();
@@ -826,6 +861,9 @@ $(function () {
 
             modal.btnAceptar('btnAceptar', function () {
                 peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
+                    if (!validarError(respuesta, 'modal-dialogo')) {
+                        return;
+                    }
                     listaTotalNodos = respuesta.solucion.nodos;
                     materialTecnico = respuesta.datosServicio.materialUsuario;
                     listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
@@ -852,6 +890,9 @@ $(function () {
         if (evento.validarFormulario('#formEvidenciaProblema')) {
             datoServicioTabla.descripcion = $('#textareaDescProblema').val();
             evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', datoServicioTabla, function (respuesta) {
+                if (!validarError(respuesta, 'modalDefinirProblema')) {
+                    return;
+                }
                 mostrarInformacionFolio(respuesta.folio);
                 arreglarNotas(respuesta.notasFolio);
                 cargarContenidoProblemas(respuesta.problemas);
@@ -885,12 +926,18 @@ $(function () {
             if (validarImagen == '') {
                 datoServicioTabla.material = false;
                 peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
+                    if (!validarError(respuesta)) {
+                        return;
+                    }
                     modal.mostrarModal("Exito", '<h4>Se han guardado los cambios correctamente</h4>');
                     $('#btnAceptar').addClass('hidden');
                 });
             } else {
                 datoServicioTabla.material = true;
                 evidenciaFija.enviarPeticionServidor('#contentServiciosGeneralesRedes', datoServicioTabla, function (respuesta) {
+                    if (!validarError(respuesta)) {
+                        return;
+                    }
                     modal.mostrarModal("Exito", '<h4>Se han guardado los cambios correctamente</h4>');
                     evidenciaFija.limpiarElemento();
                     $('#evidenciasMaterialFija').empty();
@@ -949,6 +996,9 @@ $(function () {
             datoServicioTabla.firmaCliente = firmaClienet.getImg();
             datoServicioTabla.firmaTecnico = firmaTecnico.getImg();
             peticion.enviar('panelFirmas', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
+                if (!validarError(respuesta)) {
+                    return;
+                }
                 modal.mostrarModal("Exito", '<h4>Se han concluido el servicio correctamente</h4>');
                 $('#btnCerrar').addClass('hidden');
                 modal.btnAceptar('btnAceptar', function () {
@@ -958,5 +1008,18 @@ $(function () {
             });
         }
     });
+
+    function validarError(respuesta, objeto = null) {
+        if (!respuesta.operacion) {
+            console.log(respuesta.Error);
+            if (objeto !== null) {
+                $(`#${objeto}`).modal('hide');
+            }
+            modal.mostrarModal('Error', '<h3>Ocurrió un problema en la petición. Intentalo mas tarde</h3>');
+            $('#btnAceptar').addClass('hidden');
+            return false;
+        }
+        return true;
+    }
 
 });
