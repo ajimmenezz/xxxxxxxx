@@ -2739,8 +2739,6 @@ $(function () {
         $('.kv-file-zoom').addClass('hidden');
     };
     var eventosParaSeccionSeguimientoCorrectivo = function () {
-
-
         var datosTabla = arguments[0];
         var respuesta = arguments[1];
         var servicio = datosTabla[0];
@@ -3657,6 +3655,10 @@ $(function () {
         servicios.eventosFolio(datosTabla[2], '#seccion-servicio-correctivo', servicio);
         servicios.subirInformacionSD(servicio, '#seccion-servicio-correctivo');
         servicios.botonAgregarVuelta({servicio: servicio}, '#seccion-servicio-correctivo');
+        servicios.botonAgregarAvance(servicio, 'Correctivo');
+        servicios.botonAgregarProblema(servicio, 'Correctivo');
+        servicios.botonEliminarAvanceProblema(servicio);
+        servicios.botonEditarAvanceProblema(servicio);
     };
     var validarFormularioDatosGeneralesCorrectivo = function () {
         var datosTabla = arguments[0];

@@ -1,5 +1,5 @@
-//Constructor del la clase Tabla
 function Servicio() {
+//Constructor del la clase Tabla
     this.file = new Upload();
     this.tabla = new Tabla();
     this.select = new Select();
@@ -491,20 +491,22 @@ Servicio.prototype.ServicioSinClasificar = function () {
     });
 
     //Encargado de agregar un avance
-    $('#btnAgregarAvance').on('click', function () {
-        _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio, 'Guardar');
-    });
+//    $('#btnAgregarAvance').on('click', function () {
+//        _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio, 'Guardar');
+//    });
 
     //Encargado de agregar un problema
-    $('#btnAgregarProblema').on('click', function () {
-        _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio, 'Guardar');
-    });
+//    $('#btnAgregarProblema').on('click', function () {
+//        _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio, 'Guardar');
+//    });
 
     //Encargado de agregar un problema
     $('#btnReasignarServicio').on('click', function () {
         _this.mostrarFormularioReasigarServicio(servicio, ticket);
     });
 
+    _this.botonAgregarAvance(servicio, tipoServicio);
+    _this.botonAgregarProblema(servicio, tipoServicio);
     _this.botonAgregarVuelta(dataServicio, '#seccion-servicio-sin-clasificar');
     _this.GuardarNotas(dataServicio, nombreControlador);
     _this.initBotonNuevaSolicitud(ticket);
@@ -518,6 +520,26 @@ Servicio.prototype.ServicioSinClasificar = function () {
     _this.eventosFolio(datosDelServicio.IdSolicitud, '#seccion-servicio-sin-clasificar', servicio);
     _this.botonEliminarAvanceProblema(servicio);
     _this.botonEditarAvanceProblema(servicio);
+};
+
+Servicio.prototype.botonAgregarAvance = function () {
+    var _this = this;
+    var servicio = arguments[0];
+    var tipoServicio = arguments[1];
+    
+    $('#btnAgregarAvance').on('click', function () {
+        _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio, 'Guardar');
+    });
+};
+
+Servicio.prototype.botonAgregarProblema = function () {
+    var _this = this;
+    var servicio = arguments[0];
+    var tipoServicio = arguments[1];
+    
+    $('#btnAgregarProblema').on('click', function () {
+        _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio, 'Guardar');
+    });
 };
 
 Servicio.prototype.GuardarNotas = function () {

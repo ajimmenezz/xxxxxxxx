@@ -10,7 +10,11 @@
                 Acciones <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
+                <li id="btnAgregarAvance"><a href="#"><i class="fa fa-plus"></i> Agregar Avance</a></li>
+                <li id="btnAgregarProblema"><a href="#"><i class="fa fa-plus"></i> Agregar Problema</a></li>
                 <?php echo $informacion['botonAgregarVuelta'] ?>
+                <li id="btnAgregarAvance"><a href="#"><i class="fa fa-plus"></i> Agregar Avance</a></li>
+                <li id="btnAgregarProblema"><a href="#"><i class="fa fa-plus"></i> Agregar Problema</a></li>
                 <li id="btnCancelarServicioSeguimiento"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
                 <li id="btnEnviarReporteProblema"><a href="#"><i class="fa fa-check-square"></i> Enviar Reporte con Firma</a></li>
                 <li id="btnGeneraPdfServicio"><a href="#"><i class="fa fa-file-pdf-o"></i> Generar Pdf</a></li>
@@ -41,6 +45,7 @@
                 <li class=""><a href="#DiagnosticoEquipo" data-toggle="tab">Diagnóstico del Equipo</a></li>
                 <li class=""><a href="#ProblemasServicio" data-toggle="tab">Problemas del Servicio</a></li>
                 <li class=""><a href="#Solucion" data-toggle="tab">Solución</a></li>
+                <li class=""><a href="#Historial" data-toggle="tab">Historial</a></li>
                 <li class=""><a href="#Notas" data-toggle="tab">Conversación</a></li>
                 <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
             </ul>
@@ -1922,6 +1927,12 @@
             </div>
         </div>
         <!--Finalizando la seccion Solucion-->
+
+        <!--Empezando la seccion Historial-->
+        <div class="tab-pane fade " id="Historial">
+            <?php echo $historialAvancesProblemas; ?>
+        </div>
+        <!--Finalizando la seccion Historial-->
 
         <!--Empezando la seccion Notas-->
         <div class="tab-pane fade " id="Notas">            
