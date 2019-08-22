@@ -439,6 +439,7 @@ class ServiciosTicket extends General {
                         break;
                 }
             } else if ($datosServicio['IdTipoServicio'] === '20') {
+                $data['historialAvancesProblemas'] = $this->mostrarHistorialAvancesProblemas($datos['servicio']);
                 /* Aqui comienzan las lineas de seguimiento de los servicios de Correctivo */
                 switch ($datos['operacion']) {
                     /* Inicia el servicio de Correctivo */
@@ -2542,6 +2543,7 @@ class ServiciosTicket extends General {
             return ['code' => 400, 'message' => $ex->getMessage()];
         }
     }
+
 }
 
 class PDFAux extends PDF {
