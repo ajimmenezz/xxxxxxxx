@@ -70,7 +70,8 @@ $config['Secciones'] = array(
         'Catalogo-Perfil' => 'Catalogos_Perfil',
         'Permisosvacaciones-RH' => 'Permisos_vacaciones',
         'Catalogo-Permisos-RH' => 'Catalogos_Permisos',
-        'AutorizarPermisos-RH' => 'Autorizar_permisos'
+        'AutorizarPermisos-RH' => 'Autorizar_permisos',
+        'CalendarioPermisos' => 'CalendarioPermisos'
     ),
     'Capacitacion' => array(
         'Capacitacion-Videos' => 'Videos'

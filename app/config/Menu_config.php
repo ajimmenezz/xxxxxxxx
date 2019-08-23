@@ -1423,6 +1423,23 @@ $config['RH'] = array(
         ),
         'Permiso' => 'VRHSE'
     ),
+    'CalendarioPermisos' => array(
+        'liga' => 'CalendarioPermisos',
+        'icono' => 'fa fa-calendar',
+        'Url' => '/RH/CalendarioPermisos',/*Ruta de la vista a la que se dirigirá*/
+        'css' => array(),
+        'pluginsCss' => array(
+        'fullcalendar/fullcalendar/fullcalendar'
+        ),
+
+        'js' => array('Base/Base', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla','RH/CalendarioPermisos'),
+        
+        'pluginsJs' => array(
+         'fullcalendar/fullcalendar/fullcalendar',
+        ),
+
+        'Permiso' => 'VCPP'
+    ),
     'Catalogo-Perfil' => array(
         'liga' => 'Catálogos Perfil',
         'icono' => '',
@@ -1516,7 +1533,7 @@ $config['RH'] = array(
             'select2/dist/css/select2.min',
             'parsley/src/parsley'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Fecha', 'Base/Tabla', 'Base/Botones', 'Base/Nota', 'RH/autorizar_permisos'),
+        'js' => array('calendar.demo','Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Fecha', 'Base/Tabla', 'Base/Botones', 'Base/Nota', 'RH/autorizar_permisos'),
         'pluginsJs' => array(
             'bootstrap-datepicker/js/bootstrap-datepicker',
             'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
