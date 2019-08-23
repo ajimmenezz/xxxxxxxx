@@ -354,13 +354,13 @@ Servicio.prototype.ServicioSinClasificar = function () {
     var tipoServicio = arguments[12] || '';
     var idPerfil = arguments[13] || '';
     var dataServicio = {servicio: servicio, ticket: ticket};
-    console.log(datosDelServicio);
+
     $(resumenSeguimiento).addClass('hidden');
     $(seccion).removeClass('hidden').empty().append(formulario);
 
     _this.select.crearSelect('select');
     _this.select.cambiarOpcion('#selectSucursalesSinClasificar', idSucursal);
-    _this.colocarBotonGuardarCambiosSinClasificar(datosDelServicio);
+    _this.colocarBotonGuardarCambiosSinClasificar(datosDelServicio, archivo);
 
     //evento para mostrar los detalles de las descripciones
     $('#detallesServicioSinClasificar').on('click', function (e) {
@@ -399,14 +399,6 @@ Servicio.prototype.ServicioSinClasificar = function () {
                 nombreControlador + '/Servicio_Cancelar'
                 );
     });
-
-    _this.file.crearUpload('#evidenciaSinClasificar',
-            '/Generales/Servicio/Concluir_SinClasificar',
-            null,
-            null,
-            archivo,
-            '/Generales/Servicio/EliminarEvidenciaServicio',
-            );
 
     //Evento para concluir el servicio
     $("#btnConcluirServicioSinClasificar").off("click");
@@ -491,7 +483,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
         var evidencias = $('#evidenciaSinClasificar').val();
         var archivosPreview = _this.file.previews('.previewSinClasificar');
         var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, correo: '', operacion: '9', seccion: '#seccion-servicio-sin-clasificar'};
-        
+
         _this.servicioValidacion(data);
     });
 
@@ -524,10 +516,29 @@ Servicio.prototype.ServicioSinClasificar = function () {
     _this.botonEditarAvanceProblema(servicio);
 };
 
-Servicio.prototype.colocarBotonGuardarCambiosSinClasificar = function (datosServicio) {
+Servicio.prototype.colocarBotonGuardarCambiosSinClasificar = function () {
+    var datosServicio = arguments[0];
+    var archivo = arguments[1];
+    var _this = this;
+
     if (datosServicio.Firma !== null) {
-        $('#divBotonesServicioSinClasificar').addClass('hidden');
-        $('#divGuardarCambiosServicioSinClasificar').removeClass('hidden');
+        $('.divBotonesServicioSinClasificar').addClass('hidden');
+        $('.divGuardarCambiosServicioSinClasificar').removeClass('hidden');
+        _this.file.crearUpload('#evidenciaCambiosSinClasificar',
+                '/Generales/Servicio/ServicioEnValidacion',
+                null,
+                null,
+                archivo,
+                '/Generales/Servicio/EliminarEvidenciaServicio',
+                );
+    } else {
+        _this.file.crearUpload('#evidenciaSinClasificar',
+                '/Generales/Servicio/Concluir_SinClasificar',
+                null,
+                null,
+                archivo,
+                '/Generales/Servicio/EliminarEvidenciaServicio',
+                );
     }
 };
 
@@ -1218,7 +1229,6 @@ Servicio.prototype.modalCampoFirmaExtra = function () {
     return html;
 
 };
-
 
 Servicio.prototype.formConcluirServicio = function () {
     var html = ' <div id="modal-concluir-servicio">\n\
@@ -2100,10 +2110,11 @@ Servicio.prototype.servicioValidacion = function () {
     var estatus = '5';
     var sucursal = arguments[0].sucursal;
     var seccion = arguments[0].seccion;
+    var descripcion = arguments[0].descripcion;
     var datosConcluir = arguments[0].datosConcluir || null;
-    var dataMandar = {ticket: ticket, servicio: servicio, estatus: estatus, sucursal: sucursal, datosConcluir: datosConcluir};
+    var dataMandar = {ticket: ticket, servicio: servicio, estatus: estatus, sucursal: sucursal, descripcion: descripcion, datosConcluir: datosConcluir};
 
-    _this.enviarEvento('/Generales/Servicio/ServicioEnValidacion', dataMandar, seccion, function (respuesta) {
+    _this.file.enviarArchivos('#evidenciaCambiosSinClasificar', '/Generales/Servicio/ServicioEnValidacion', seccion, dataMandar, function (respuesta) {
         if (respuesta.code === 200) {
             _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
         } else {

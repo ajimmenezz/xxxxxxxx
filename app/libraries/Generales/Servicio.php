@@ -1641,26 +1641,7 @@ class Servicio extends General {
         $tipoServicio = $verificarServicioSinClaficar[0]['IdTipoServicio'];
 
         if (in_array($tipoServicio, [11, '11'])) {
-            $consultaPuntosCensos = $this->DBS->consulta("select * from t_censos_puntos where IdServicio = '" . $datos['servicio'] . "'");
-            if (!empty($consultaPuntosCensos)) {
-                foreach ($consultaPuntosCensos as $key => $value) {
-                    $this->DBS->queryBolean(""
-                            . "delete "
-                            . "from t_censos "
-                            . "where IdServicio = '" . $value['IdServicio'] . "' "
-                            . "and IdArea = '" . $value['IdArea'] . "' "
-                            . "and Punto > " . $value['Puntos']);
-                }
-            }
-
-            $this->DBS->queryBolean("delete
-                                    from t_censos
-                                    where IdServicio = '" . $value['IdServicio'] . "'
-                                    and IdArea not in (
-                                                    select 
-                                                    IdArea 
-                                                    from t_censos_puntos 
-                                                    where IdServicio = '" . $value['IdServicio'] . "')");
+            $this->borrarCensos($datos['servicio']);
         }
 
         if (!empty($datos['sucursal'])) {
@@ -1668,61 +1649,11 @@ class Servicio extends General {
         }
 
         if (!empty($_FILES)) {
-            $descripcion = $datos['datosConcluir'];
-            if ($descripcion === '[object Object]') {
-                $descripcion = $datos['descripcion'];
-            }
-            $CI = parent::getCI();
-            $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/EvidenciasServicioGeneral/';
-            $archivos = setMultiplesArchivos($CI, 'evidenciasSinClasificar', $carpeta);
-            $archivos = implode(',', $archivos);
-
-            if (!empty($archivos) && $archivos != '') {
-                $resultado = '';
-                if (!empty($consulta)) {
-                    if ($archivos !== NULL) {
-                        if ($archivos !== '') {
-                            $evidenciasAnteriores = $archivos . ',';
-                        }
-                    }
-                    $resultado = $this->DBS->actualizarServicio('t_servicios_generales', array(
-                        'IdUsuario' => $usuario['Id'],
-                        'IdServicio' => $datos['servicio'],
-                        'Descripcion' => $descripcion,
-                        'Archivos' => $evidenciasAnteriores . $consulta[0]['Archivos'],
-                        'Fecha' => $fecha
-                            ), array('IdServicio' => $datos['servicio'])
-                    );
-                } else {
-                    $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', array(
-                        'IdUsuario' => $usuario['Id'],
-                        'IdServicio' => $datos['servicio'],
-                        'Descripcion' => $descripcion,
-                        'Archivos' => $archivos,
-                        'Fecha' => $fecha
-                            )
-                    );
-                }
-            }
+            $this->guardarEvidenciasServicioSinClasificar($datos, 'evidenciasSinClasificar');
             $consulta = '';
         } else {
             if ($verificarServicioSinClaficar[0]['Seguimiento'] === '0') {
-                if (is_array($datos['datosConcluir'])) {
-                    $descripcion = $datos['datosConcluir']['descripcion'];
-                } else {
-                    $descripcion = $datos['datosConcluir'];
-                }
-                $datosServicio = array(
-                    'IdUsuario' => $usuario['Id'],
-                    'IdServicio' => $datos['servicio'],
-                    'Descripcion' => $descripcion,
-                    'Fecha' => $fecha
-                );
-                if (!empty($consulta)) {
-                    $resultado = $this->DBS->actualizarServicio('t_servicios_generales', $datosServicio, array('IdServicio' => $datos['servicio']));
-                } else {
-                    $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', $datosServicio);
-                }
+                $this->guardarDescripcionServicionSinClasificar($datos);
             }
         }
 
@@ -1761,13 +1692,9 @@ class Servicio extends General {
     }
 
     public function servicioEnValidacion(array $datos = null) {
-//        var_dump($datos);
         try {
-            $usuario = $this->Usuario->getDatosUsuario();
+            $this->DBS->iniciaTransaccion();
             $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-            $evidenciasAnteriores = '';
-            $consulta = $this->DBS->consultaGeneral('SELECT Id, Archivos FROM t_servicios_generales WHERE IdServicio =' . $datos['servicio']);
-
             $verificarServicioSinClaficar = $this->DBS->consultaGeneral('SELECT 
                                                                         (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tst.IdTipoServicio) AS Seguimiento,
                                                                         tst.IdTipoServicio
@@ -1784,94 +1711,93 @@ class Servicio extends General {
             }
 
             if (!empty($_FILES)) {
-                $descripcion = $datos['datosConcluir'];
-                if ($descripcion === '[object Object]') {
-                    $descripcion = $datos['descripcion'];
-                }
-                $CI = parent::getCI();
-                $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/EvidenciasServicioGeneral/';
-                $archivos = setMultiplesArchivos($CI, 'evidenciasSinClasificar', $carpeta);
-                $archivos = implode(',', $archivos);
-
-                if (!empty($archivos) && $archivos != '') {
-                    $resultado = '';
-                    if (!empty($consulta)) {
-                        if ($archivos !== NULL) {
-                            if ($archivos !== '') {
-                                $evidenciasAnteriores = $archivos . ',';
-                            }
-                        }
-                        $resultado = $this->DBS->actualizarServicio('t_servicios_generales', array(
-                            'IdUsuario' => $usuario['Id'],
-                            'IdServicio' => $datos['servicio'],
-                            'Descripcion' => $descripcion,
-                            'Archivos' => $evidenciasAnteriores . $consulta[0]['Archivos'],
-                            'Fecha' => $fecha
-                                ), array('IdServicio' => $datos['servicio'])
-                        );
-                    } else {
-                        $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', array(
-                            'IdUsuario' => $usuario['Id'],
-                            'IdServicio' => $datos['servicio'],
-                            'Descripcion' => $descripcion,
-                            'Archivos' => $archivos,
-                            'Fecha' => $fecha
-                                )
-                        );
-                    }
-                }
-                $consulta = '';
+                $this->guardarEvidenciasServicioSinClasificar($datos, 'evidenciasCambiosSinClasificar');
             } else {
                 if ($verificarServicioSinClaficar[0]['Seguimiento'] === '0') {
-                    if (is_array($datos['datosConcluir'])) {
-                        $descripcion = $datos['datosConcluir']['descripcion'];
-                    } else {
-                        $descripcion = $datos['datosConcluir'];
-                    }
-                    $datosServicio = array(
-                        'IdUsuario' => $usuario['Id'],
-                        'IdServicio' => $datos['servicio'],
-                        'Descripcion' => $descripcion,
-                        'Fecha' => $fecha
-                    );
-                    if (!empty($consulta)) {
-                        $resultado = $this->DBS->actualizarServicio('t_servicios_generales', $datosServicio, array('IdServicio' => $datos['servicio']));
-                    } else {
-                        $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', $datosServicio);
-                    }
+                    $this->guardarDescripcionServicionSinClasificar($datos);
                 }
             }
-//
-//            if (isset($datos['soloGuardar'])) {
-//                return array('code' => 200, 'message' => 'correcto');
-//            } else {
-//            if ($verificarServicioSinClaficar[0]['Seguimiento'] === '0') {
-//                if (is_array($datos['datosConcluir'])) {
-//                    $datosConcluir = $datos['datosConcluir'];
-//                } else {
-//                    $datosConcluir = array($datos['datosConcluir']);
-//                }
-//
-//                if ($verificarServicioSinClaficar[0]['IdTipoServicio'] === '41') {
-//                    $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
-//                } else {
-//                    $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '5');
-//                }
-//            } else {
-//                $this->crearImangenFirma($datos, $datos['datosConcluir']);
-//                if (isset($datos['datosConcluir']['estatus'])) {
-//                    $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
-//                } else {
+
             $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '5');
-//                }
-//            }
+
             if (!$cambiarEstatus) {
                 throw new \Exception("Error con la Base de Datos.");
             }
-//            }
+
+            $this->DBS->commitTransaccion();
             return array('code' => 200, 'message' => 'correcto');
         } catch (\Exception $ex) {
+            $this->DBS->roolbackTransaccion();
             return array('code' => 400, 'message' => $ex->getMessage());
+        }
+    }
+
+    private function guardarEvidenciasServicioSinClasificar(array $datos, string $campoEvidencias) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $descripcion = $datos['datosConcluir'];
+        $evidenciasAnteriores = '';
+        $consulta = $this->DBS->consultaGeneral('SELECT Id, Archivos FROM t_servicios_generales WHERE IdServicio =' . $datos['servicio']);
+
+        if ($descripcion === '[object Object]') {
+            $descripcion = $datos['descripcion'];
+        }
+
+        $CI = parent::getCI();
+        $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/EvidenciasServicioGeneral/';
+        $archivos = setMultiplesArchivos($CI, $campoEvidencias, $carpeta);
+        $archivos = implode(',', $archivos);
+
+        if (!empty($archivos) && $archivos != '') {
+            $resultado = '';
+            if (!empty($consulta)) {
+                if ($archivos !== NULL) {
+                    if ($archivos !== '') {
+                        $evidenciasAnteriores = $archivos . ',';
+                    }
+                }
+                $resultado = $this->DBS->actualizarServicio('t_servicios_generales', array(
+                    'IdUsuario' => $usuario['Id'],
+                    'IdServicio' => $datos['servicio'],
+                    'Descripcion' => $descripcion,
+                    'Archivos' => $evidenciasAnteriores . $consulta[0]['Archivos'],
+                    'Fecha' => $fecha
+                        ), array('IdServicio' => $datos['servicio'])
+                );
+            } else {
+                $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', array(
+                    'IdUsuario' => $usuario['Id'],
+                    'IdServicio' => $datos['servicio'],
+                    'Descripcion' => $descripcion,
+                    'Archivos' => $archivos,
+                    'Fecha' => $fecha
+                        )
+                );
+            }
+        }
+    }
+
+    private function guardarDescripcionServicionSinClasificar(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $consulta = $this->DBS->consultaGeneral('SELECT Id, Archivos FROM t_servicios_generales WHERE IdServicio =' . $datos['servicio']);
+
+        if (is_array($datos['datosConcluir'])) {
+            $descripcion = $datos['datosConcluir']['descripcion'];
+        } else {
+            $descripcion = $datos['datosConcluir'];
+        }
+
+        $datosServicio = array(
+            'IdUsuario' => $usuario['Id'],
+            'IdServicio' => $datos['servicio'],
+            'Descripcion' => $descripcion,
+            'Fecha' => $fecha
+        );
+        if (!empty($consulta)) {
+            $resultado = $this->DBS->actualizarServicio('t_servicios_generales', $datosServicio, array('IdServicio' => $datos['servicio']));
+        } else {
+            $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', $datosServicio);
         }
     }
 
