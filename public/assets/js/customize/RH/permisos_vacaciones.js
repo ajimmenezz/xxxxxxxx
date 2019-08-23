@@ -1,6 +1,6 @@
 
 $(function () {
-    
+
     var evento = new Base();
     var select = new Select();
     var file = new Upload();
@@ -20,22 +20,22 @@ $(function () {
     tabla.generaTablaPersonal('#table-permisos-ausencia', null, null, true, true);
     //Inicializa funciones de la plantilla
     App.init();
-    
+
     $('#inputFechaDocumento').datepicker({
         format: 'yyyy-mm-dd'
     });
     $('#inputFechaDocumento').datepicker("setDate", new Date());
     $('#inputFechaDesde').datetimepicker({
         format: 'YYYY-MM-DD',
-        maxDate: moment().add(1,'year'),
-        minDate: moment().add(-15,'day')
+        maxDate: moment().add(1, 'year'),
+        minDate: moment().add(-15, 'day')
     });
     $('#selectSolicitudHora').timepicker();
-    $('#selectSolicitudHora').on("change", function(){
-        var dia =  $(this).val().split(' ');
-        if(dia[0] < '09:00' && dia[1] == 'AM')
+    $('#selectSolicitudHora').on("change", function () {
+        var dia = $(this).val().split(' ');
+        if (dia[0] < '09:00' && dia[1] == 'AM')
             $('#selectSolicitudHora').val('09:00 AM')
-        if(dia[0] > '07:00' && dia[1] == 'PM')
+        if (dia[0] > '07:00' && dia[1] == 'PM')
             $('#selectSolicitudHora').val('07:00 PM')
     });
 
@@ -44,7 +44,7 @@ $(function () {
         useCurrent: false
     });
     $("#inputFechaDesde").on("dp.change", function (e) {
-        $('#inputFechaHasta').data("DateTimePicker").maxDate(moment(e.date).add(1,'day'));
+        $('#inputFechaHasta').data("DateTimePicker").maxDate(moment(e.date).add(1, 'day'));
         $('#inputFechaHasta').data("DateTimePicker").minDate(e.date);
     });
     $("#inputFechaHasta").on("dp.change", function (e) {
@@ -55,68 +55,69 @@ $(function () {
     //evento que activa los campos inputCitaFolio, descripcionAusencia
     $('#selectMotivoAusencia').on('change', function () {
         let dato = $('option:selected', this).attr('data-msg');
-        if($('#selectTipoAusencia').val() !== ""){
+
+        if ($('#selectTipoAusencia').val() !== "") {
             $('#inputObservaciones').val(dato);
-        }else{
+        } else {
             $('#selectTipoAusencia').on('change', function () {
                 $('#inputObservaciones').val(dato);
             });
         }
         if ($(this).val() == '1' || $(this).val() == '2' || $(this).val() == '6' || $(this).val() == '7' || $(this).val() == '8' || $(this).val() == '9' || $(this).val() == '11' || $(this).val() == '12') {
-            $("#citaFolio").css("display","block");
-            $("#archivoCitaIncapacidad").css("display","block");
+            $("#citaFolio").css("display", "block");
+            $("#archivoCitaIncapacidad").css("display", "block");
             $('#textareaMotivoSolicitudPermiso').attr('data-parsley-required', 'false');
             $('#textareaMotivoSolicitudPermiso').val('');
-        }else{
+        } else {
             $('#textareaMotivoSolicitudPermiso').attr('data-parsley-required', 'true');
-            $("#citaFolio").css("display","none");
+            $("#citaFolio").css("display", "none");
             $('#inputCitaFolio').val('');
-            $("#archivoCitaIncapacidad").css("display","none");
+            $("#archivoCitaIncapacidad").css("display", "none");
             file.limpiar('#inputEvidenciaIncapacidad');
         }
     });
 
     $('#selectTipoAusencia').on('change', function () {
-        switch($(this).val()){
+        $('#selectMotivoAusencia').empty().append('<option value="">Seleccionar</option>');
+        select.cambiarOpcion('#selectMotivoAusencia', '');
+        var tipoAusencia = $(this).val();
+
+        switch ($(this).val()) {
             case '1':
-                $("#bloqueHorario").css("display","block");
+                $("#bloqueHorario").css("display", "block");
                 $('#labelHora').text('Hora de Entrada');
-                $("#bloqueFechaHasta").css("display","none");
+                $("#bloqueFechaHasta").css("display", "none");
+                $('#diaPermiso').html("Fecha del Permiso  *");
                 break;
             case '2':
-                $("#bloqueHorario").css("display","block");
+                $("#bloqueHorario").css("display", "block");
                 $('#labelHora').text('Hora de Salida');
-                $("#bloqueFechaHasta").css("display","none");
-                break;
-            case '3':
-                $("#bloqueHorario").css("display","none");
-                $("#bloqueFechaHasta").css("display","block");
-                break;
-            default:
-                $("#bloqueHorario").css("display","none");
-                $("#bloqueFechaHasta").css("display","none");
-        }
-    });
-    $("#selectTipoAusencia").on('change', function () {
-        let op= $(this).val();
-        switch (op) {
-            case '1':
-                // code block
-                $('#diaPermiso').html("Fecha del Permiso  *");
-                break;
-            case '2':
-                // code block
+                $("#bloqueFechaHasta").css("display", "none");
                 $('#diaPermiso').html("Fecha del Permiso  *");
                 break;
             case '3':
-                // code block
+                $("#bloqueHorario").css("display", "none");
+                $("#bloqueFechaHasta").css("display", "block");
                 $('#diaPermiso').html("Fecha de Ausencia  *");
-                break;    
+                break;
             default:
-            // code block
+                $("#bloqueHorario").css("display", "none");
+                $("#bloqueFechaHasta").css("display", "none");
         }
-        
+
+        if (tipoAusencia !== '') {
+            var data = {tipoAusencia: tipoAusencia};
+            evento.enviarEvento('EventoPermisosVacaciones/MostarMotivosAucencia', data, '#panelPermisosVacaciones', function (respuesta) {
+                $.each(respuesta, function (key, valor) {
+                    $("#selectMotivoAusencia").append('<option value="' + valor.Id + '" data-msg="' + valor.Observaciones + '">' + valor.Nombre + '</option>');
+                });
+                $('#selectMotivoAusencia').removeAttr('disabled');
+            });
+        } else {
+            $('#selectMotivoAusencia').attr('disabled', 'disabled');
+        }
     });
+
     //evento para enviar la solicitud de permisos
     $("#btnGenerarSolicitudPermiso").on("click", function () {
         if (evento.validarFormulario('#formSolicitudPermiso')) {
@@ -137,7 +138,7 @@ $(function () {
             var html = '<div class="row m-t-20">\n\
                     <form id="formDescuentoPermiso" class="margin-bottom-0" enctype="multipart/form-data">\n\
                         <div id="modal-dialogo" class="col-md-12 text-center">\n\
-                            <h4>Se descontará '+data.descuentoPermiso+' al salario</h4><br>\n\
+                            <h4>Se descontará ' + data.descuentoPermiso + ' al salario</h4><br>\n\
                             <button id="btnCancelarPermisoM" type="button" class="btn btn-sm btn-danger"><i class="fa fa-times"></i> Cerrar</button>\n\
                             <button id="btnAceptarPermisoM" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
                         </div>\n\
@@ -145,32 +146,32 @@ $(function () {
                     </div>';
             $('#btnModalConfirmar').addClass('hidden');
             $('#btnModalAbortar').addClass('hidden');
-                if ( $('#inputEvidenciaIncapacidad').val() !== '' ) {
-                    file.enviarArchivos('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', '#panelPermisosVacaciones', data, function (respuesta) {
-                        if (respuesta !== 'otraImagen') {
-                            window.open(respuesta, '_blank');
-                            location.reload();
-                        } else {
-                            evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
-                        }
-                    });
-                } else {
-                    evento.enviarEvento('EventoPermisosVacaciones/Permisos', data, '#panelPermisosVacaciones', function (respuesta) {
-                        if (respuesta) {
-                            window.open(respuesta, '_blank');
-                            location.reload();
-                        } else {
-                            evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
-                        }
-                    });
-                }
+            if ($('#inputEvidenciaIncapacidad').val() !== '') {
+                file.enviarArchivos('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', '#panelPermisosVacaciones', data, function (respuesta) {
+                    if (respuesta !== 'otraImagen') {
+                        window.open(respuesta, '_blank');
+                        location.reload();
+                    } else {
+                        evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
+                    }
+                });
+            } else {
+                evento.enviarEvento('EventoPermisosVacaciones/Permisos', data, '#panelPermisosVacaciones', function (respuesta) {
+                    if (respuesta) {
+                        window.open(respuesta, '_blank');
+                        location.reload();
+                    } else {
+                        evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
+                    }
+                });
+            }
         }
     });
 
     $('#table-permisos-ausencia tbody').on('click', 'tr', function () {
 
         var informacionPermisoAusencia = $('#table-permisos-ausencia').DataTable().row(this).data();
-        
+
         if (informacionPermisoAusencia[7] === "Pendiente por Autorizar") {
             var data = {
                 idPermiso: informacionPermisoAusencia[0]
@@ -192,15 +193,15 @@ $(function () {
                         $('#inputFechaDocumentoAct').datepicker("setDate", new Date());
                         $('#inputFechaDesdeAct').datetimepicker({
                             format: 'YYYY-MM-DD',
-                            maxDate: moment().add(1,'year'),
-                            minDate: moment().add(-15,'day')
+                            maxDate: moment().add(1, 'year'),
+                            minDate: moment().add(-15, 'day')
                         });
                         $('#selectSolicitudHoraAct').timepicker();
-                        $('#selectSolicitudHoraAct').on("change", function(){
-                            var dia =  $(this).val().split(' ');
-                            if(dia[0] < '09:00' && dia[1] == 'AM')
+                        $('#selectSolicitudHoraAct').on("change", function () {
+                            var dia = $(this).val().split(' ');
+                            if (dia[0] < '09:00' && dia[1] == 'AM')
                                 $('#selectSolicitudHoraAct').val('09:00 AM')
-                            if(dia[0] > '07:00' && dia[1] == 'PM')
+                            if (dia[0] > '07:00' && dia[1] == 'PM')
                                 $('#selectSolicitudHoraAct').val('07:00 PM')
                         });
                         $('#inputFechaHastaAct').datetimepicker({
@@ -208,7 +209,7 @@ $(function () {
                             useCurrent: false
                         });
                         $("#inputFechaDesdeAct").on("dp.change", function (e) {
-                            $('#inputFechaHastaAct').data("DateTimePicker").maxDate(moment(e.date).add(1,'day'));
+                            $('#inputFechaHastaAct').data("DateTimePicker").maxDate(moment(e.date).add(1, 'day'));
                             $('#inputFechaHastaAct').data("DateTimePicker").minDate(e.date);
 //                            $('#inputDescuentoAct').val('1.17 Dias');
                         });
@@ -217,40 +218,40 @@ $(function () {
                         });
                         $('#selectMotivoAusenciaAct').on('change', function () {
                             if ($(this).val() == '1' || $(this).val() == '2' || $(this).val() == '6' || $(this).val() == '7' || $(this).val() == '8' || $(this).val() == '9' || $(this).val() == '11' || $(this).val() == '12') {
-                                $("#citaFolioAct").css("display","block");
+                                $("#citaFolioAct").css("display", "block");
                                 $('#inputCitaFolioAct').attr('data-parsley-required', 'true');
-                                $("#archivoCitaIncapacidadAct").css("display","block");
+                                $("#archivoCitaIncapacidadAct").css("display", "block");
                                 $('#inputEvidenciaIncapacidadAct').attr('data-parsley-required', 'true');
                                 $('#textareaMotivoSolicitudPermisoAct').attr('data-parsley-required', 'false');
                                 $('#textareaMotivoSolicitudPermisoAct').val('');
-                                $("#archivoCitaIncapacidadAct").css("display","block");
-                            }else{
+                                $("#archivoCitaIncapacidadAct").css("display", "block");
+                            } else {
                                 $('#textareaMotivoSolicitudPermisoAct').attr('data-parsley-required', 'true');
-                                $("#citaFolioAct").css("display","none");
+                                $("#citaFolioAct").css("display", "none");
                                 $('#inputCitaFolioAct').attr('data-parsley-required', 'false');
                                 $('#inputCitaFolioAct').val('');
-                                $("#archivoCitaIncapacidadAct").css("display","none");
+                                $("#archivoCitaIncapacidadAct").css("display", "none");
                                 $('#inputEvidenciaIncapacidadAct').attr('data-parsley-required', 'false');
                                 file.limpiar('#inputEvidenciaIncapacidadAct');
                             }
                         });
                         $('#selectTipoAusenciaAct').on('change', function () {
-                            switch($(this).val()){
+                            switch ($(this).val()) {
                                 case '1':
-                                    $("#bloqueHorarioAct").css("display","block");
+                                    $("#bloqueHorarioAct").css("display", "block");
                                     $('#labelHoraAct').text('Hora de Entrada');
                                     break;
                                 case '2':
-                                    $("#bloqueHorarioAct").css("display","block");
+                                    $("#bloqueHorarioAct").css("display", "block");
                                     $('#labelHoraAct').text('Hora de Salida');
                                     break;
                                 default:
-                                    $("#bloqueHorarioAct").css("display","none");
+                                    $("#bloqueHorarioAct").css("display", "none");
                             }
                         });
 
                         $("#btnVerPDFAutorizar").on("click", function () {
-                            window.open('/storage/Archivos/'+$('#archivoPDF').val(), '_blank');
+                            window.open('/storage/Archivos/' + $('#archivoPDF').val(), '_blank');
                         });
 //actualizar permisos
                         $("#btnCancelarPermiso").on("click", function () {
@@ -300,7 +301,7 @@ $(function () {
                                     horaAusencia: $('#selectSolicitudHoraAct').val(),
                                     pdf: $('#archivoPDF').val()
                                 }
-                                if ( $('#selectMotivoAusenciaAct').val() == '3' ||$('#selectMotivoAusenciaAct').val() == '4' ) {
+                                if ($('#selectMotivoAusenciaAct').val() == '3' || $('#selectMotivoAusenciaAct').val() == '4') {
                                     evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermisoArchivo', dataActualizar, '#panelPermisosVacaciones', function (respuesta) {
                                         if (respuesta !== 'otraImagen') {
                                             location.reload();
@@ -319,7 +320,8 @@ $(function () {
                                             evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
                                         }
                                     });
-                                };
+                                }
+                                ;
                             }
                         });
                         //fin
@@ -332,12 +334,12 @@ $(function () {
             });
         } else {
             var informacionPermisoAusencia = $('#table-permisos-ausencia').DataTable().row(this).data();
-            
+
             if (informacionPermisoAusencia[7] == "Autorizado") {
-                window.open('/storage/Archivos/'+informacionPermisoAusencia[9], '_blank');
+                window.open('/storage/Archivos/' + informacionPermisoAusencia[9], '_blank');
             } else {
                 if (informacionPermisoAusencia[7] == "Rechazado") {
-                    window.open('/storage/Archivos/'+informacionPermisoAusencia[9], '_blank');
+                    window.open('/storage/Archivos/' + informacionPermisoAusencia[9], '_blank');
                 }
             }
         }
