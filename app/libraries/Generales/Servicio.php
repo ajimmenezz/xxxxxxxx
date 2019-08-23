@@ -1761,6 +1761,7 @@ class Servicio extends General {
     }
 
     public function servicioEnValidacion(array $datos = null) {
+//        var_dump($datos);
         try {
             $usuario = $this->Usuario->getDatosUsuario();
             $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));

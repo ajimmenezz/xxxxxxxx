@@ -354,12 +354,13 @@ Servicio.prototype.ServicioSinClasificar = function () {
     var tipoServicio = arguments[12] || '';
     var idPerfil = arguments[13] || '';
     var dataServicio = {servicio: servicio, ticket: ticket};
-
+    console.log(datosDelServicio);
     $(resumenSeguimiento).addClass('hidden');
     $(seccion).removeClass('hidden').empty().append(formulario);
 
     _this.select.crearSelect('select');
     _this.select.cambiarOpcion('#selectSucursalesSinClasificar', idSucursal);
+    _this.colocarBotonGuardarCambiosSinClasificar(datosDelServicio);
 
     //evento para mostrar los detalles de las descripciones
     $('#detallesServicioSinClasificar').on('click', function (e) {
@@ -483,22 +484,23 @@ Servicio.prototype.ServicioSinClasificar = function () {
         }
     });
 
+    $("#btnGuardarCambiosServicioSinClasificar").off("click");
+    $('#btnGuardarCambiosServicioSinClasificar').on('click', function (e) {
+        var sucursal = $('#selectSucursalesSinClasificar').val();
+        var descripcion = $('#inputDescripcionSinClasificar').val();
+        var evidencias = $('#evidenciaSinClasificar').val();
+        var archivosPreview = _this.file.previews('.previewSinClasificar');
+        var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, correo: '', operacion: '9', seccion: '#seccion-servicio-sin-clasificar'};
+        
+        _this.servicioValidacion(data);
+    });
+
     $("#btnGeneraPdfServicio").off("click");
     $("#btnGeneraPdfServicio").on("click", function () {
         _this.enviarEvento('/Servicio/Servicio_ToPdf', dataServicio, '#seccion-servicio-sin-clasificar', function (respuesta) {
             window.open('/' + respuesta.link);
         });
     });
-
-    //Encargado de agregar un avance
-//    $('#btnAgregarAvance').on('click', function () {
-//        _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio, 'Guardar');
-//    });
-
-    //Encargado de agregar un problema
-//    $('#btnAgregarProblema').on('click', function () {
-//        _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio, 'Guardar');
-//    });
 
     //Encargado de agregar un problema
     $('#btnReasignarServicio').on('click', function () {
@@ -522,11 +524,18 @@ Servicio.prototype.ServicioSinClasificar = function () {
     _this.botonEditarAvanceProblema(servicio);
 };
 
+Servicio.prototype.colocarBotonGuardarCambiosSinClasificar = function (datosServicio) {
+    if (datosServicio.Firma !== null) {
+        $('#divBotonesServicioSinClasificar').addClass('hidden');
+        $('#divGuardarCambiosServicioSinClasificar').removeClass('hidden');
+    }
+};
+
 Servicio.prototype.botonAgregarAvance = function () {
     var _this = this;
     var servicio = arguments[0];
     var tipoServicio = arguments[1];
-    
+
     $('#btnAgregarAvance').on('click', function () {
         _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio, 'Guardar');
     });
@@ -536,7 +545,7 @@ Servicio.prototype.botonAgregarProblema = function () {
     var _this = this;
     var servicio = arguments[0];
     var tipoServicio = arguments[1];
-    
+
     $('#btnAgregarProblema').on('click', function () {
         _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio, 'Guardar');
     });
@@ -2091,8 +2100,9 @@ Servicio.prototype.servicioValidacion = function () {
     var estatus = '5';
     var sucursal = arguments[0].sucursal;
     var seccion = arguments[0].seccion;
-    var dataMandar = {ticket: ticket, servicio: servicio, estatus: estatus, sucursal: sucursal};
-    
+    var datosConcluir = arguments[0].datosConcluir || null;
+    var dataMandar = {ticket: ticket, servicio: servicio, estatus: estatus, sucursal: sucursal, datosConcluir: datosConcluir};
+
     _this.enviarEvento('/Generales/Servicio/ServicioEnValidacion', dataMandar, seccion, function (respuesta) {
         if (respuesta.code === 200) {
             _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');

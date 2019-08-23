@@ -289,6 +289,8 @@
                         <div class="col-md-12">
                             <div class="errorGeneralServicioSinClasificar"></div>
                         </div>
+                    </div>
+                    <div id="divBotonesServicioSinClasificar" class="row">
                         <!--Finalizando Error-->
                         <div class="col-md-6">
                             <div class="form-group text-center">
@@ -301,7 +303,14 @@
                             </div>
                         </div>
                     </div>
-
+                    <div id="divGuardarCambiosServicioSinClasificar" class="row hidden">
+                        <div class="col-md-12">
+                            <div class="form-group text-center">
+                                <br>
+                                <a id="btnGuardarCambiosServicioSinClasificar" href="javascript:;" class="btn btn-inverse m-r-5 "><i class="fa fa-unlock-alt"></i> Guardar cambios y Concluir servicio</a>                            
+                            </div>
+                        </div>
+                    </div>
                 </form>
                 <!--Finalizando formulario servicio sin clasificar-->
             </div>
