@@ -120,6 +120,9 @@ class Controller_Servicios extends Base {
             case 'EliminarEvidenciaAvanceProblema':
                 $resultado = $this->ServicioTicket->eliminarEvidenciaAvanceProblema($this->input->post());
                 break;
+            case 'ServicioEnValidacion':
+                $resultado = $this->Servicio->servicioEnValidacion($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

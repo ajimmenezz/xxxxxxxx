@@ -286,6 +286,12 @@
                                 <a id="btnConcluirServicioMantenimiento" href="javascript:;" class="btn btn-danger m-r-5 "><i class="fa fa-unlock-alt"></i> Concluir Servicio</a>                            
                             </div>
                         </div>
+                        <div id="divGuardarCambiosServicioMantenimiento" class="col-md-12 hidden">
+                            <div class="form-group text-center">
+                                <br>
+                                <a id="btnGuardarCambiosServicioMantenimiento" href="javascript:;" class="btn btn-inverse m-r-5 "><i class="fa fa-unlock-alt"></i> Guardar cambios y Concluir servicio</a>                            
+                            </div>
+                        </div>
                     </div>
 
                 </form>
