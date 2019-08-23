@@ -1009,6 +1009,16 @@ $(function () {
         }
     });
 
+    $('#exportarPDF').on('click', function () {
+        peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/exportarPDF', datoServicioTabla, function (respuesta) {
+            if (!validarError(respuesta)) {
+                return;
+            }
+            console.log(respuesta.PDF);
+            window.open(respuesta.PDF, '_blank');
+        });
+    });
+
     function validarError(respuesta, objeto = null) {
         if (!respuesta.operacion) {
             console.log(respuesta.Error);

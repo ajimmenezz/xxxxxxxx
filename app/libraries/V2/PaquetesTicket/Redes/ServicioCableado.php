@@ -1,13 +1,13 @@
 <?php
 
-namespace Librerias\V2\PaquetesTicket;
+namespace Librerias\V2\PaquetesTicket\Redes;
 
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
-use Librerias\V2\PaquetesTicket\GestorNodosRedes as GestorNodo;
+use Librerias\V2\PaquetesTicket\Redes\GestorNodosRedes as GestorNodo;
 use Librerias\V2\PaquetesGenerales\Utilerias\PDF as PDF;
 use Modelos\Modelo_ServicioGeneralRedes as Modelo;
 
-class ServicioGeneralRedes implements Servicio {
+class ServicioCableado implements Servicio {
 
     private $id;
     private $idSucursal;
@@ -169,20 +169,20 @@ class ServicioGeneralRedes implements Servicio {
         return $datos;
     }
 
-    public function setSolucion(array $datos) {        
+    public function setSolucion(array $datos) {
         $this->DBServiciosGeneralRedes->empezarTransaccion();
-        $consulta = $this->DBServiciosGeneralRedes->getEvidencias($this->id); 
-        
-        if(empty($consulta)){
+        $consulta = $this->DBServiciosGeneralRedes->getEvidencias($this->id);
+
+        if (empty($consulta)) {
             array_push($consulta, array('Archivos' => ''));
         }
-        
+
         if (!array_key_exists('archivos', $datos)) {
             $datos['archivos'] = $consulta[0]['Archivos'];
-        } else if(!empty($consulta[0]['Archivos'])){                        
-            $datos['archivos'] .= ','.$consulta[0]['Archivos'];
+        } else if (!empty($consulta[0]['Archivos'])) {
+            $datos['archivos'] .= ',' . $consulta[0]['Archivos'];
         }
-        
+
         $this->DBServiciosGeneralRedes->setSolucion($this->id, $datos);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
@@ -195,17 +195,9 @@ class ServicioGeneralRedes implements Servicio {
     }
 
     public function setConcluir(array $datos) {
-        $this->DBServiciosGeneralRedes->empezarTransaccion();        
+        $this->DBServiciosGeneralRedes->empezarTransaccion();
         $this->DBServiciosGeneralRedes->setConclusion($this->id, $datos);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
-//        $pdf = new PDF($this->folioSolicitud);
-//        $pdf->AddPage();        
-//        $pdf->tituloTabla('#Información General');
-//        $pdf->table(array('columna 1','columna 2'), array(array('celda 01','celda 02'),array('celda 11','celda 12')));
-//        $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
-//        $pdf->Output('F', $carpeta, true);
-//        $archivo = substr($carpeta, 1);
-//        var_dump($archivo);
         $archivo = '<p>******* Termino de servicio de cableado ********</p>
                     <p><strong>Descripción:</strong> Se concluye el servicio de cableado</p>';
         return $archivo;
@@ -219,10 +211,23 @@ class ServicioGeneralRedes implements Servicio {
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
         return $evidencias;
     }
-    
-    public function getFirmas(string $idServicio){
+
+    public function getFirmas(string $idServicio) {
         $consulta = $this->DBServiciosGeneralRedes->getFirmas($idServicio);
         return $consulta[0]['firmas'];
+    }
+
+    public function getPDF(array $datos) {
+        
+        $pdf = new PDF($this->folioSolicitud);
+        $pdf->AddPage();        
+        $pdf->tituloTabla('#Información General', [31, 56, 31]);
+        $pdf->tabla(array('Cliente:','Sucursal:','Tipo Serv:'), array(array('C1','S1','T1'),array('C2','S2','T2'),array('C3','S3','T3')));
+        $pdf->tablaImagenes(array('/storage/Archivos/Servicios/ervicio-32364/EvidenciaProblemas/descarga.jpg'));
+        $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
+        $pdf->Output('F', $carpeta, true);
+        $archivo = substr($carpeta, 1);
+        return $archivo;
     }
 
 }

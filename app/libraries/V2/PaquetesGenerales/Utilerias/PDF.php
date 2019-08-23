@@ -56,8 +56,7 @@ class PDF extends \FPDF {
                     $this->Cell(0, 5, $e, 0, 1, 'C');
                 else
                     $this->Write(5, $e);
-            }
-            else {
+            } else {
                 if ($e[0] == '/')
                     $this->CloseTag(strtoupper(substr($e, 1)));
                 else {
@@ -158,27 +157,34 @@ class PDF extends \FPDF {
         $this->SetFont('Courier', 'BUI', 12);
         $this->Cell(0, 5, utf8_decode($puesto), 0, 1, 'L');
     }
-    
-    public function tituloTabla(string $titulo){
+
+    public function tituloTabla(string $titulo) {
+        $this->SetFillColor(31, 56, 100);
+        $this->SetTextColor(255, 255, 255);
         $this->Cell(0, 6, utf8_decode($titulo), 1, 0, 'L', true);
     }
 
-
-    public function table(array $cabecera, array $data) {
+    //$posicion = true 'horizontal'
+    //$posicion = false 'vertical'
+    public function tabla(array $cabecera, array $datos, bool $posicion = true) {
         $this->Ln();
         // Colores, ancho de línea y fuente en negrita
-        $this->SetFillColor(255, 255, 255);
-        $this->SetTextColor(112, 116, 120);
-        $this->SetDrawColor(226, 231, 235);
-        $this->SetLineWidth(.3);
+        $this->SetFillColor(217, 217, 217);
+        $this->SetTextColor(10, 10, 10);
+        $this->SetLineWidth(.2);
         $this->SetFont('', 'B');
 
         // Cabecera
-        $ancho = 190 / count($cabecera);
-        foreach ($cabecera as $value) {
-            $this->Cell($ancho, 7, $value, 1, 0, 'C', true);
+        if ($posicion === true) {
+            $ancho = 190 / count($cabecera);
+            foreach ($cabecera as $value) {
+                $this->Cell($ancho, 7, $value, 1, 0, 'C', true);
+            }
+            $this->Ln();
+        } else {
+            $datosTabla = array_merge($cabecera, $datos);
+            $ancho = 190 / count($datosTabla);
         }
-        $this->Ln();
 
         // Restauración de colores y fuentes
         $this->SetFillColor(226, 231, 235);
@@ -187,20 +193,77 @@ class PDF extends \FPDF {
 
         // Datos
         $fill = false;
-        foreach ($data as $row) {
-            foreach ($row as $key => $value) {
-                if ($key === 0) {
-                    $this->Cell($ancho, 7, $value, 'LR', 0, 'L', $fill);
-                } else {
-                    $this->Cell($ancho, 7, $value, 'LR', 0, 'C', $fill);
+        if ($posicion === true) {
+            foreach ($datos as $row) {
+                foreach ($row as $key => $value) {
+                    if ($key === 0) {
+                        $this->Cell($ancho, 7, $value, 'LR', 0, 'L', $fill);
+                    } else {
+                        $this->Cell($ancho, 7, $value, 'LR', 0, 'C', $fill);
+                    }
                 }
+                $this->Ln();
+                $fill = !$fill;
             }
-            $this->Ln();
-            $fill = !$fill;
+        } else {
+            foreach ($cabecera as $value) {
+                $this->Cell($ancho, 7, $value, 1, 0, 'R', $fill);
+                foreach ($datos as $row => $key) {
+                    $this->Cell($ancho, 7, $key[$row], 1, 0, 'L', $fill);
+                }
+                $this->Ln();
+                $fill = !$fill;
+            }
+//            var_dump($datos);
+//            var_dump("=============");
+//            var_dump($cabecera);
         }
         // Línea de cierre
         $this->Cell(190, 0, '', 'T');
         $this->Ln(10);
+    }
+
+    public function tablaImagenes(array $imagenes) {
+        $this->Ln(7);
+        $countFilas = ((count($imagenes) / 4) < 0.5) ? round(count($imagenes) / 4, 0, PHP_ROUND_HALF_UP) + 1 : ceil(count($imagenes) / 4);
+        $columna = 0;
+        $listaImagenes = array();
+        $tempImagenes = array();
+
+        for ($j = 0; $j < $countFilas; $j++) {
+
+            foreach ($imagenes as $key => $imagen) {
+                if ($columna < 4) {
+                    array_push($tempImagenes, $imagen);
+                    $columna += 1;
+                    unset($imagenes[$key]);
+                }
+            }
+            array_push($listaImagenes, $tempImagenes);
+            $tempImagenes = array();
+            $columna = 0;
+        }
+
+        //insertar imagenes
+        $ancho = $this->GetPageWidth() - 20;
+        $y = $this->GetY();
+        $x = 10;
+        foreach ($listaImagenes as $imagenes) {
+            foreach ($imagenes as $imagen) {
+                if ($x < $ancho) {
+                    $this->Image('.' . $imagen, $x, $y, 40, 35, 'JPG');
+                    $x += 50;
+                }
+            }
+            $x = 10;
+            $y += 40;
+            $altura = $y + 35;
+            if ($altura > ($this->GetPageHeight() - 40)) {
+                $this->AddPage();
+                $y = 25;
+            }
+        }
+        $this->SetY($y);
     }
 
 }

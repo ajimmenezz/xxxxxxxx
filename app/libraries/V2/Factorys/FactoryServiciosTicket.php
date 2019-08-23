@@ -1,7 +1,7 @@
 <?php
 namespace Librerias\V2\Factorys;
 use Librerias\V2\PaquetesServicios\Servicio as Servicio;
-use Librerias\V2\PaquetesTicket\ServicioGeneralRedes as GeneralRedes;
+use Librerias\V2\PaquetesTicket\Redes\ServicioCableado as GeneralRedes;
 use Librerias\V2\PaquetesTicket\Nodos as Nodos;
 
 class FactoryServiciosTicket

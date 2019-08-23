@@ -1,6 +1,6 @@
 <?php
 
-namespace Librerias\V2\PaquetesTicket;
+namespace Librerias\V2\PaquetesTicket\Redes;
 
 use Librerias\V2\PaquetesGenerales\Utilerias\Archivo as Archivo;
 use Modelos\Modelo_NodoRedes as Modelo;

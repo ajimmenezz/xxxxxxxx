@@ -152,21 +152,21 @@ class Controller_ServicioTicket extends CI_Controller {
 
     public function setSolucion() {
         try {
-            $datosServicio = $this->input->post();            
+            $datosServicio = $this->input->post();
             $datosServicio['idUsuario'] = Usuario::getId();
-            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);                        
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             if ($datosServicio['material'] !== 'false') {
                 $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciaSolucion/';
                 Archivo::saveArchivos($carpeta);
                 $datosServicio['archivos'] = Archivo::getString();
-            }            
+            }
             $this->servicio->setSolucion($datosServicio);
             $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
-            $this->datos['Error'] = $ex->getMessage();            
+            $this->datos['Error'] = $ex->getMessage();
             echo json_encode($this->datos);
         }
     }
@@ -190,19 +190,19 @@ class Controller_ServicioTicket extends CI_Controller {
             ServiceDesk::setNota($datosServicio['folio'], $descripcion);
         }
     }
-    
+
     public function setConcluir() {
         try {
             $datosServicio = $this->input->post();
             $datosServicio['idUsuario'] = Usuario::getId();
             $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciasFirmas';
             $firmas = array(
-                'Firma-Cliente-'.$datosServicio['nombreCliente'] => $datosServicio['firmaCliente'],
-                'Firma-Tecnico-'.Usuario::getNombre() => $datosServicio['firmaTecnico']
-                    );
-            Archivo::saveArchivos64($carpeta,$firmas);
+                'Firma-Cliente-' . $datosServicio['nombreCliente'] => $datosServicio['firmaCliente'],
+                'Firma-Tecnico-' . Usuario::getNombre() => $datosServicio['firmaTecnico']
+            );
+            Archivo::saveArchivos64($carpeta, $firmas);
             $datosServicio['archivos'] = Archivo::getArray();
-            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);            
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $datosServicio['mensaje'] = $this->servicio->setConcluir($datosServicio);
             $this->setResolucionServiceDesk($datosServicio);
             $this->datos['operacion'] = TRUE;
@@ -213,21 +213,35 @@ class Controller_ServicioTicket extends CI_Controller {
             echo json_encode($this->datos);
         }
     }
-    
-    private function setResolucionServiceDesk(array $datosServicio) { 
+
+    private function setResolucionServiceDesk(array $datosServicio) {
         ServiceDesk::setNota($datosServicio['folio'], $datosServicio['mensaje']);
 //        ServiceDesk::setResolucion($datosServicio['folio'],$mensaje);
 //        ServiceDesk::setEstatus('Validacion',$datosServicio['folio']);
     }
-    
+
     public function deleteEvidencias() {
-         try {
-            $datosServicio = $this->input->post();                        
+        try {
+            $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $archivos = $this->servicio->deleteEvidencias();
             foreach ($archivos as $value) {
                 Archivo::deleteArchivo($value);
             }
+            $this->datos['operacion'] = TRUE;
+            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
+
+    public function getPDF() {
+        try {
+            $datosServicio = $this->input->post();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->datos['PDF'] = $this->servicio->getPDF($datosServicio);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {
