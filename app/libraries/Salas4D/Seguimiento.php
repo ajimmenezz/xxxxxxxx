@@ -195,7 +195,7 @@ class Seguimiento extends General {
         $result = $this->DBCS->insertaActividadesTransaccion($arraydatos);
         return $result;
     }
-    
+
     public function guardarX4DIdSeguimiento(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
@@ -355,43 +355,43 @@ class Seguimiento extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['Id'] . '/Pdf/Ticket_' . $datos['Ticket'] . '_Servicio_' . $datos['Id'] . '_' . $tipoServicio . '.pdf';
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['Id'] . '/Pdf/Ticket_' . $datos['Ticket'] . '_Servicio_' . $datos['Id'] . '_' . $tipoServicio . '.pdf';
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }
 
         $linkPDF = '<br>Para descargar el archivo PDF de conclusión <a href="' . $path . '" target="_blank">dar click aqui</a>';
-        $textoCorreo = '<p>Se notifica que el servicio de ' . $nombreServ . ' con numero de ticket '.$IdTicket .' se a concluido por ' . $usuario['Nombre'] . '<br>' . $linkPDF . '</p>';
+        $textoCorreo = '<p>Se notifica que el servicio de ' . $nombreServ . ' con numero de ticket ' . $IdTicket . ' se a concluido por ' . $usuario['Nombre'] . '<br>' . $linkPDF . '</p>';
 
-        
-        if($datos['flagCorrectivo'] == 1){
+
+        if ($datos['flagCorrectivo'] == 1) {
             $this->servicioCorrectivoConcluir($datos);
-        }        
+        }
         foreach ($correoEnviar as $key => $value) {
             $this->enviarCorreoConcluido(array($value['CorreoCopiaFirma']), $titulo, $textoCorreo);
             return TRUE;
-        }  
-        
-        
+        }
     }
 
-    public function servicioCorrectivoConcluir($datos){       
+    public function servicioCorrectivoConcluir($datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $danado = $this->DBCS->getCorrectivosGenerales(array('servicio' => $datos['servicio']));
         $solucion = $this->DBCS->getSolucionByServicio(array('servicio' => $datos['servicio']));
-        
-        if($danado['tipoFalla'] == 1 && $solucion[0]['IdTipoSolucion'] == 1){
-            $flagActual = $this->DBCS->actualizarSoloElemento(array('elementoDanado' => $danado['elementoRadio'],'idUsuario' => $usuario['Id'],'servicio' => $datos['servicio'], 'solucion' => $solucion));            
-        }else if($danado['tipoFalla'] == 2 && $solucion[0]['IdTipoSolucion'] == 1){
-            $flagActual = $this->DBCS->actualizarSoloSubelemento(array('elementoDanado' => $danado['elementoRadio'],'idUsuario' => $usuario['Id'],'servicio' => $datos['servicio'], 'solucion' => $solucion));            
-        }else if($danado['tipoFalla'] == 1 && $solucion[0]['IdTipoSolucion'] == 2){
-            $flagActual = $this->DBCS->actualizarElementoDanado(array('elementoDanado' => $danado['elementoRadio'],'idUsuario' => $usuario['Id'],'servicio' => $datos['servicio'], 'solucion' => $solucion));            
-        }else if($danado['tipoFalla'] == 2 && $solucion[0]['IdTipoSolucion'] == 3){
-            $flagActual = $this->DBCS->masSubelementoSolucion(array('subelementoDanado' => $danado['elementoRadio'],'idUsuario' => $usuario['Id'],'servicio' => $datos['servicio'],'solucion' => $solucion));
-        }else if($danado['tipoFalla'] == 1 && $solucion[0]['IdTipoSolucion'] == 3){
-            $flagActual = $this->DBCS->elementoConSubelemento(array('elementoDanado' => $danado['elementoRadio'],'idUsuario' => $usuario['Id'],'servicio' => $datos['servicio'],'solucion' => $solucion));
+
+        if ($danado['tipoFalla'] == 1 && $solucion[0]['IdTipoSolucion'] == 1) {
+            $flagActual = $this->DBCS->actualizarSoloElemento(array('elementoDanado' => $danado['elementoRadio'], 'idUsuario' => $usuario['Id'], 'servicio' => $datos['servicio'], 'solucion' => $solucion));
+        } else if ($danado['tipoFalla'] == 2 && $solucion[0]['IdTipoSolucion'] == 1) {
+            $flagActual = $this->DBCS->actualizarSoloSubelemento(array('elementoDanado' => $danado['elementoRadio'], 'idUsuario' => $usuario['Id'], 'servicio' => $datos['servicio'], 'solucion' => $solucion));
+        } else if ($danado['tipoFalla'] == 1 && $solucion[0]['IdTipoSolucion'] == 2) {
+            $flagActual = $this->DBCS->actualizarElementoDanado(array('elementoDanado' => $danado['elementoRadio'], 'idUsuario' => $usuario['Id'], 'servicio' => $datos['servicio'], 'solucion' => $solucion));
+        } else if ($danado['tipoFalla'] == 2 && $solucion[0]['IdTipoSolucion'] == 3) {
+            $flagActual = $this->DBCS->masSubelementoSolucion(array('subelementoDanado' => $danado['elementoRadio'], 'idUsuario' => $usuario['Id'], 'servicio' => $datos['servicio'], 'solucion' => $solucion));
+        } else if ($danado['tipoFalla'] == 1 && $solucion[0]['IdTipoSolucion'] == 3) {
+            $flagActual = $this->DBCS->elementoConSubelemento(array('elementoDanado' => $danado['elementoRadio'], 'idUsuario' => $usuario['Id'], 'servicio' => $datos['servicio'], 'solucion' => $solucion));
         }
     }
-    
+
     public function enviarCorreoConcluido(array $correo, string $titulo, string $texto) {
         $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $correo, $titulo, $mensaje);
@@ -405,29 +405,29 @@ class Seguimiento extends General {
         $catTiposFalla = $this->DBCS->getTipoFalla();
         $nombreProductoDanado = $this->getElementos(array('sucursales' => $serviciosTicket[0]['IdSucursal'], 'tipoFalla' => $correctivosGenerales['tipoFalla']));
         $solucionServicio = $this->DBCS->getSolucionByServicio(array('servicio' => $servicio));
-        $tipoSolucion= $this->DBCS->getTipoSolucion();
+        $tipoSolucion = $this->DBCS->getTipoSolucion();
         $subDanados = $this->DBCS->subelmentoDanadoCorrectivo(array('servicio' => $servicio));
         $elementoUtil = $this->DBCS->elementoUtil($servicio);
-        
+
         $data = [
-                'solicitud' => $detalleSolicitud,
-                'serviciosTicket' => $serviciosTicket,
-                'sucursal4D' => $sucursal4D,
-                'correctivosGenerales' => $correctivosGenerales,
-                'catTiposFalla' => $catTiposFalla,
-                'nombreProductoDanado' => $nombreProductoDanado,
-                'solucionServicio' => $solucionServicio,
-                'tipoSolucion' => $tipoSolucion,
-                'subDanados' => $subDanados,
-                'elementoUtil' => $elementoUtil
-                ];
+            'solicitud' => $detalleSolicitud,
+            'serviciosTicket' => $serviciosTicket,
+            'sucursal4D' => $sucursal4D,
+            'correctivosGenerales' => $correctivosGenerales,
+            'catTiposFalla' => $catTiposFalla,
+            'nombreProductoDanado' => $nombreProductoDanado,
+            'solucionServicio' => $solucionServicio,
+            'tipoSolucion' => $tipoSolucion,
+            'subDanados' => $subDanados,
+            'elementoUtil' => $elementoUtil
+        ];
         if (!$esPdf) {
             return FALSE;
         } else {
             return parent::getCI()->load->view('Salas4D/Modal/ServicioMantoCorrectivo4DPDF', $data, TRUE);
         }
     }
-    
+
     public function getDetallesServicio4D(string $servicio, bool $esPdf = false) {
         $generalesSolicitud = $this->DBCS->getGeneralesSolicitudServicio($servicio);
         $generales = $this->getGeneralesSinClasificar($servicio, $esPdf);
@@ -436,21 +436,21 @@ class Seguimiento extends General {
         $vistaAvance = array();
         $avances = array();
 
-        foreach($infoActividad as $valor){
-            
-            $avances = $this->DBCS->getInformeActividades($valor['Id'],$servicio);
-            
+        foreach ($infoActividad as $valor) {
+
+            $avances = $this->DBCS->getInformeActividades($valor['Id'], $servicio);
+
             $vistaAvance[$valor['Id']] = array();
-            foreach ($avances as $v) {  
+            foreach ($avances as $v) {
                 array_push($vistaAvance[$valor['Id']], $v);
-                $tablaProductos = $this->DBCS->getProductosInforme($v['Id']);               
-                
-                if(!empty($tablaProductos)){                    
-                    $vistaProductos[$v['Id']]= array();
+                $tablaProductos = $this->DBCS->getProductosInforme($v['Id']);
+
+                if (!empty($tablaProductos)) {
+                    $vistaProductos[$v['Id']] = array();
                     foreach ($tablaProductos as $clave => $value) {
-                         array_push($vistaProductos[$v['Id']], $value);
+                        array_push($vistaProductos[$v['Id']], $value);
                     }
-                }else{
+                } else {
                     $vistaProductos[$v['Id']] = '';
                 }
             }
@@ -796,16 +796,16 @@ class Seguimiento extends General {
             return FALSE;
         }
     }
-    
-    public function actualizarSeguimientoCorrectivo(array $datos){
+
+    public function actualizarSeguimientoCorrectivo(array $datos) {
         $arrayCorrectivo = array(
             'IdServicio' => $datos['IdServicio'],
             'IdTipoFalla' => $datos['tipoFalla'],
-            'IdRegistroInventario' => $datos['IdElemento'] 
+            'IdRegistroInventario' => $datos['IdElemento']
         );
         $this->DBCS->insertarMantenimientoCorrectivo($arrayCorrectivo);
     }
-    
+
     public function insertarMantenimientoCorrectivo(array $datos) {
         $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
             'IdSucursal' => $datos['sucursal'],
@@ -814,45 +814,45 @@ class Seguimiento extends General {
         $arrayCorrectivo = array(
             'IdServicio' => $datos['IdServicio'],
             'IdTipoFalla' => $datos['tipoFalla'],
-            'IdRegistroInventario' => $datos['IdElemento'] 
+            'IdRegistroInventario' => $datos['IdElemento']
         );
         $resultado = $this->DBCS->insertarMantenimientoCorrectivo($arrayCorrectivo);
-        
-         if ($resultado) {
+
+        if ($resultado) {
             return $resultado;
         } else {
             return FALSE;
         }
     }
 
-    public function getElementos(array $datos){
+    public function getElementos(array $datos) {
         $elemento = $this->DBCS->getElementosSucursal($datos['sucursales']);
         $subelemento = $this->DBCS->getSubelementosSucursal($datos['sucursales']);
-        if($datos['tipoFalla'] == '1'){
+        if ($datos['tipoFalla'] == '1') {
             return $elemento;
-        }else if($datos['tipoFalla'] == '2'){
-            if(count($subelemento) !== []){
+        } else if ($datos['tipoFalla'] == '2') {
+            if (count($subelemento) !== []) {
                 return $subelemento;
-            }else{
+            } else {
                 return "no hay subelemento";
-            }            
-        }else if($datos['tipoFalla'] == '0'){
+            }
+        } else if ($datos['tipoFalla'] == '0') {
             return $elemento;
         }
-        if($datos['tipoFalla'] == NULL && $datos['tipoSolucion'] == '1'){
+        if ($datos['tipoFalla'] == NULL && $datos['tipoSolucion'] == '1') {
             return FALSE;
-        }else if($datos['tipoFalla'] == NULL && $datos['tipoSolucion'] == '2'){
+        } else if ($datos['tipoFalla'] == NULL && $datos['tipoSolucion'] == '2') {
             return $elemento;
-        }else if($datos['tipoFalla'] == NULL && $datos['tipoSolucion'] == '3'){
-            if(count($subelemento) !== []){
+        } else if ($datos['tipoFalla'] == NULL && $datos['tipoSolucion'] == '3') {
+            if (count($subelemento) !== []) {
                 return $subelemento;
-            }else{
+            } else {
                 return FALSE;
             }
         }
     }
-    
-    public function editarMantenimientoCorrectivo(array $datos){
+
+    public function editarMantenimientoCorrectivo(array $datos) {
         $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
             'IdSucursal' => $datos['sucursal'],
                 ), array('Id' => $datos['IdServicio'])
@@ -860,112 +860,110 @@ class Seguimiento extends General {
         $arrayCorrectivo = array(
             'IdServicio' => $datos['IdServicio'],
             'IdTipoFalla' => $datos['tipoFalla'],
-            'IdRegistroInventario' => $datos['IdElemento'] 
+            'IdRegistroInventario' => $datos['IdElemento']
         );
         return $this->DBCS->editarMantenimientoCorrectivo($arrayCorrectivo);
     }
-    
-    public function mostrarProductoAlmacen(string $elemento = null){
+
+    public function mostrarProductoAlmacen(string $elemento = null) {
         $usuario = $this->Usuario->getDatosUsuario();
         $condicion = "";
-        if(!is_null($elemento)){
+        if (!is_null($elemento)) {
             $condicion .= " AND IdRegistroInventario not in ($elemento) ";
         }
-        $productos = $this->DBCS->elementoDisponiblesServicio($usuario['Id'],$condicion);
+        $productos = $this->DBCS->elementoDisponiblesServicio($usuario['Id'], $condicion);
         return $productos;
     }
-    
-    public function getSubelementosByRegistro(array $dato){
+
+    public function getSubelementosByRegistro(array $dato) {
         $subElementos = array();
 //        $subUtilizados = array();
-        
+
         $usuario = $this->Usuario->getDatosUsuario();
         $danados = $this->DBCS->subelmentoDanadoCorrectivo(array('servicio' => $dato['servicio']));
         $arrayDanados = array();
         foreach ($danados as $key => $value) {
             array_push($arrayDanados, $value['IdSubelementoDañado']);
         }
-        
-        if($dato['tipoFalla'] == '3'){
+
+        if ($dato['tipoFalla'] == '3') {
             $query = $this->DBCS->getSubelementosByRegistro($dato['IdElemento']);
-        }else{
+        } else {
             $query = $this->DBCS->consulta("select 
                                             tss.Id,
                                             subelementoSucursal(tss.Id) as Subelemento,
                                             tss.Serie
                                            FROM t_subelementos_salas4D tss
-                                           WHERE Id = '".$dato['IdElemento']."' and Flag = 1");
+                                           WHERE Id = '" . $dato['IdElemento'] . "' and Flag = 1");
         }
-        
-        foreach ($query as $value) {           
-                array_push($subElementos, array('id' => $value['Id'],'text' => $value['Subelemento'], 'serie' => $value['Serie']));
+
+        foreach ($query as $value) {
+            array_push($subElementos, array('id' => $value['Id'], 'text' => $value['Subelemento'], 'serie' => $value['Serie']));
         }
-        
-        $subUtilizados = $this->DBCS->todosSubelementosMiAlmacen($usuario['Id'],$dato['servicio']);
-        
-        return array($subElementos,$subUtilizados,$arrayDanados);
+
+        $subUtilizados = $this->DBCS->todosSubelementosMiAlmacen($usuario['Id'], $dato['servicio']);
+
+        return array($subElementos, $subUtilizados, $arrayDanados);
     }
-    
-    public function insertarArchivoCorrectivo(array $datos){
+
+    public function insertarArchivoCorrectivo(array $datos) {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $consultaArchivo = $this->DBCS->getSolucionByServicio(array('servicio' => $datos['servicio']));
-        
+
         $arrayDatos = array(
             'IdServicio' => $datos['servicio'],
             'IdTipoSolucion' => $datos['tipoSolucion'],
             'Observaciones' => $datos['Observaciones'],
             'elementoUtilizado' => $datos['elementoUtilizado'],
-            'evidencias' =>  $datos['evidencias'],
+            'evidencias' => $datos['evidencias'],
             'Fecha' => $fecha,
-            'DatosProductos' => json_decode($datos['datosTabla'],true)
+            'DatosProductos' => json_decode($datos['datosTabla'], true)
         );
-        
-        if(!empty($_FILES)){
+
+        if (!empty($_FILES)) {
             $CI = parent::getCI();
             $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Salas4XD/SeguimientoActividad/';
             $archivos = setMultiplesArchivos($CI, 'inputArchivoCorrectivo', $carpeta);
             $archivosImplode = implode(",", $archivos);
-            if(!empty($archivosImplode) && $archivosImplode != '' ){
+            if (!empty($archivosImplode) && $archivosImplode != '') {
                 $evidenciaActualizada = $archivosImplode;
                 $queryConsulta = $consultaArchivo[0] ['Archivos'];
-                if(!empty($queryConsulta)){
-                    $evidenciaActualizada2 = $archivosImplode .',';
+                if (!empty($queryConsulta)) {
+                    $evidenciaActualizada2 = $archivosImplode . ',';
                     $evidenciaActual = $evidenciaActualizada2 . $queryConsulta;
-                }else{
+                } else {
                     $evidenciaActual = $evidenciaActualizada;
                 }
-                
-                $data = array_merge($arrayDatos,["evidencias" => $evidenciaActual]);
+
+                $data = array_merge($arrayDatos, ["evidencias" => $evidenciaActual]);
                 $result = $this->DBCS->insertaMantenimientoCorrectivo($data);
                 return $result;
-                
-            }else{
-                $data = array_merge($arrayDatos,["evidencias" => $archivosImplode]);
+            } else {
+                $data = array_merge($arrayDatos, ["evidencias" => $archivosImplode]);
                 $result = $this->DBCS->insertaMantenimientoCorrectivo($data);
                 return $result;
             }
-            
-        }else{
+        } else {
             $result = $this->DBCS->insertaMantenimientoCorrectivo($arrayDatos);
             return $result;
         }
     }
-    
-    public function mostrarSolcuionCorrectivo(array $datos){
+
+    public function mostrarSolcuionCorrectivo(array $datos) {
         $consulta = $this->DBCS->consulta("SELECT 
                                                IdRegistroInventario 
                                             FROM t_salas4d_correctivos_elementos 
-                                            WHERE IdRegistroSolucion = (SELECT MAX(Id) as Id FROM t_salas4d_correctivos_soluciones WHERE IdServicio ='".$datos['servicio']."')");
+                                            WHERE IdRegistroSolucion = (SELECT MAX(Id) as Id FROM t_salas4d_correctivos_soluciones WHERE IdServicio ='" . $datos['servicio'] . "')");
 
         $consultasub = $this->DBCS->consulta("SELECT 
                                                 IdSubelementoInventario
                                              FROM t_salas4d_correctivos_subelementos 
-                                             WHERE IdRegistroSolucion = (SELECT MAX(Id) as Id FROM t_salas4d_correctivos_soluciones WHERE IdServicio ='".$datos['servicio']."')");
+                                             WHERE IdRegistroSolucion = (SELECT MAX(Id) as Id FROM t_salas4d_correctivos_soluciones WHERE IdServicio ='" . $datos['servicio'] . "')");
         $elemento = null;
-        if(!empty($consulta)){
+        if (!empty($consulta)) {
             $elemento = $consulta[0]['IdRegistroInventario'];
         }
-        
+
         $data = [
             'informeGeneral' => $this->DBCS->getCorrectivosGenerales(array('servicio' => $datos['servicio'])),
             'solucionServicio' => $this->DBCS->getSolucionByServicio(array('servicio' => $datos['servicio'])),
@@ -973,15 +971,15 @@ class Seguimiento extends General {
             'productosAlmacen' => $this->mostrarProductoAlmacen($elemento),
             'elemento' => $elemento,
             'subelementoUtilizado' => $this->DBCS->subelmentoDanadoCorrectivo(array('servicio' => $datos['servicio']))
-            ];
-        return array('formulario' => parent::getCI()->load->view('Salas4D/Modal/FormularioSolucionMantenimientoCorrectivo',$data,TRUE),
-                     'solucionServicio' => $data['solucionServicio'],
-                     'informeGeneral' => $data['informeGeneral'],
-                     'elementosAlmacen' => $data['productosAlmacen'],
-                     'elementoUtil' => $data['elemento'],
-                     'subdanado' => $data['subelementoUtilizado'],
-                     'tipoSolucion' => $data['tipoSolucion']
-                    ); 
+        ];
+        return array('formulario' => parent::getCI()->load->view('Salas4D/Modal/FormularioSolucionMantenimientoCorrectivo', $data, TRUE),
+            'solucionServicio' => $data['solucionServicio'],
+            'informeGeneral' => $data['informeGeneral'],
+            'elementosAlmacen' => $data['productosAlmacen'],
+            'elementoUtil' => $data['elemento'],
+            'subdanado' => $data['subelementoUtilizado'],
+            'tipoSolucion' => $data['tipoSolucion']
+        );
     }
-    
+
 }
