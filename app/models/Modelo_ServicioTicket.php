@@ -996,4 +996,14 @@ class Modelo_ServicioTicket extends Modelo_Base {
         }
     }
 
+    public function insertarHitoricoServiciosAvance(array $datos) {
+        $resultado = $this->insertar('historico_servicios_avance', $datos);
+
+        if (!empty($resultado)) {
+            return $resultado;
+        } else {
+            return FALSE;
+        }
+    }
+
 }
