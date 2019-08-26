@@ -221,9 +221,19 @@ class ServicioCableado implements Servicio {
         
         $pdf = new PDF($this->folioSolicitud);
         $pdf->AddPage();        
-        $pdf->tituloTabla('#Información General', [31, 56, 31]);
-        $pdf->tabla(array('Cliente:','Sucursal:','Tipo Serv:'), array(array('C1','S1','T1'),array('C2','S2','T2'),array('C3','S3','T3')));
-        $pdf->tablaImagenes(array('/storage/Archivos/Servicios/ervicio-32364/EvidenciaProblemas/descarga.jpg'));
+        $pdf->tituloTabla('#Información General', [31, 56, 100]);
+        $pdf->tabla(array(), array(array('C1','S1','T1'),array('C2','S2','T2'),array('C3','S3','T3')));
+        $pdf->tablaImagenes(array('/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga.jpg',
+            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
+            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga1.jpg',
+            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
+            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
+            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga1.jpg',
+            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
+            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg'));
+        $pdf->tituloTabla('Firmas del Servicio', [31, 56, 32]);
+        $pdf->firma(array(array('/storage/Archivos/Servicios/Servicio-32364/EvidenciasFirmas/Firma-Cliente-prueba.png','Nombre','Puesto'),
+            array('/storage/Archivos/Servicios/Servicio-32364/EvidenciasFirmas/Firma-Cliente-prueba.png','Nombre1','Puesto1')));
         $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
         $pdf->Output('F', $carpeta, true);
         $archivo = substr($carpeta, 1);
