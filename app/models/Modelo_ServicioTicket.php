@@ -996,4 +996,15 @@ class Modelo_ServicioTicket extends Modelo_Base {
         }
     }
 
+    public function cambiarEstatusServicio(array $datos) {
+        $campos = array('IdEstatus' => $datos['estatus']);
+        $resultado = $this->actualizar('t_servicios_ticket ', $campos, array('Id' => $datos['idServicio']));
+
+        if (!empty($resultado)) {
+            return TRUE;
+        } else {
+            throw new \Exception('Error con la Base de Datos.');
+        }
+    }
+
 }

@@ -954,6 +954,12 @@ $(function () {
         $('#contentFirmasConclucion').removeClass('hidden');
         $('#contentServiciosRedes').addClass('hidden');
     });
+
+    $('#validarServicio').on('click', function () {
+        peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/validarServicio', datoServicioTabla, function (respuesta) {
+            console.log(respuesta);
+        });
+    });
     /**Finalizan seccion de botones generales**/
 
     $('#btnRegresarServicio').on('click', function () {

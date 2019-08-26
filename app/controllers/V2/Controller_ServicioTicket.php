@@ -250,5 +250,21 @@ class Controller_ServicioTicket extends CI_Controller {
             echo json_encode($this->datos);
         }
     }
+    
+    public function validateService() {
+        try {
+            $datosServicio = $this->input->post();
+//            var_dump($datosServicio);
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->cambiarEstatusServicio(array('idServicio' => $datosServicio['id'], 'estatus' => '4'));
+//            $this->datos['PDF'] = $this->servicio->getPDF($datosServicio);
+//            $this->datos['operacion'] = TRUE;
+//            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+//            $this->datos['operacion'] = FALSE;
+//            $this->datos['Error'] = $ex->getMessage();
+//            echo json_encode($this->datos);
+        }
+    }
 
 }

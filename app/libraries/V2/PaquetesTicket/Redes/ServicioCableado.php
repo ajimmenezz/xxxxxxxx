@@ -6,6 +6,7 @@ use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesTicket\Redes\GestorNodosRedes as GestorNodo;
 use Librerias\V2\PaquetesGenerales\Utilerias\PDF as PDF;
 use Modelos\Modelo_ServicioGeneralRedes as Modelo;
+use Modelos\Modelo_ServicioTicket as ModeloServicioTicket;
 
 class ServicioCableado implements Servicio {
 
@@ -21,11 +22,13 @@ class ServicioCableado implements Servicio {
     private $solicita;
     private $descripcionSolicitud;
     private $DBServiciosGeneralRedes;
+    private $DBServicioTicket;
     private $gestorNodos;
 
     public function __construct(string $idServicio) {
         $this->id = $idServicio;
         $this->DBServiciosGeneralRedes = new Modelo();
+        $this->DBServicioTicket = new ModeloServicioTicket();
         $this->gestorNodos = new GestorNodo($this->id);
         $this->setDatos();
     }
@@ -218,16 +221,20 @@ class ServicioCableado implements Servicio {
     }
 
     public function getPDF(array $datos) {
-        
         $pdf = new PDF($this->folioSolicitud);
-        $pdf->AddPage();        
+        $pdf->AddPage();
         $pdf->tituloTabla('#Información General', [31, 56, 31]);
-        $pdf->tabla(array('Cliente:','Sucursal:','Tipo Serv:'), array(array('C1','S1','T1'),array('C2','S2','T2'),array('C3','S3','T3')));
+        $pdf->tabla(array('Cliente:', 'Sucursal:', 'Tipo Serv:'), array(array('C1', 'S1', 'T1'), array('C2', 'S2', 'T2'), array('C3', 'S3', 'T3')));
         $pdf->tablaImagenes(array('/storage/Archivos/Servicios/ervicio-32364/EvidenciaProblemas/descarga.jpg'));
         $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
         $pdf->Output('F', $carpeta, true);
         $archivo = substr($carpeta, 1);
         return $archivo;
+    }
+
+    public function cambiarEstatusServicio(array $datos) {
+        $consulta = $this->DBServicioTicket->cambiarEstatusServicio($datos);
+        return $consulta;
     }
 
 }
