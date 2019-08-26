@@ -48,6 +48,9 @@ class Controller_PermisosVacaciones extends Base {
             case 'MostarMotivosAucencia':
                 $resultado = $this->permisos->obtenerMotivoAusencia($this->input->post());
                 break;
+            case 'MostarMotivosRechazo':
+                $resultado = $this->permisos->obtenerMotivoRechazo();
+                break;
         }
         echo json_encode($resultado);
     }

@@ -105,6 +105,7 @@ class Autorizar_permisos extends General{
     public function autorizarPermiso(array $datosPermiso){
         $informacionPermiso = $this->DBS->consultaGral("SELECT IdUsuarioJefe, IdUsuarioRH, IdUsuarioContabilidad, IdUsuarioDireccion 
                 FROM t_permisos_ausencia_rh WHERE Id='".$datosPermiso['idPermiso']."'");
+        return array('Var: ' =>$informacionPermiso);
         if ($informacionPermiso[0]['IdUsuarioJefe'] == NULL){
             switch ($datosPermiso['idPerfil']){
                 case 21:

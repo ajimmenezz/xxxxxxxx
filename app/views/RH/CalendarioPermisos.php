@@ -45,12 +45,16 @@
         <div id="idus" hidden></div>
         <div id="idper" hidden></div>
         <div id="arc" hidden></div>
+        
+       
+
+        <div id="datosAutorizacion" ></div>
+        
+
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn bg-red text-white"   >Aceptar permiso</button>
-        <button type="button" class="btn bg-green text-white "   data-dismiss="modal">Rechazar permiso</button>
-
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+              <span id="BotonesAcciones"></span>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" data-toggle="modal">Cerrar</button>
       </div>
     </div>
   </div>
@@ -58,3 +62,32 @@
 <!-- Finalizando #contenido -->
 <script src="../assets/js/customize/calendario/calendar.js"></script>
 <script src="../assets/js/customize/calendario/es.js"></script>
+
+<!-- Finalizando panel Revisar Permiso-->
+<div id="modalRechazo" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Motivo de rechazo</label>
+                    <select id="motivoRechazo" class="form-control efectoDescuento" name="motivoRechazo" style="width: 100%">
+                        <option value="">Seleccionar...</option>
+                        <option id="rechazos"></option>
+                    </select>
+                </div>
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptarRechazo" class="btn btn-sm btn-success" data-dismiss="modal"><i class="fa fa-check"></i> Cerrar</a>
+                <a id="btnCerrarAM" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>

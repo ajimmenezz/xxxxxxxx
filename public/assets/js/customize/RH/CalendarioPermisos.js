@@ -22,13 +22,17 @@ $(function () {
     let horaSalida = new Array();
     let descripcion = new Array();
     let archivo = new Array();
+    let autorizacionJefe = new Array();
+    let autorizacionRH = new Array();
+    let autorizacionContabilidad = new Array();
+    let autorizacionDireccion = new Array();
 
 
     let estatus = new Array();
     let usuario = new Array();
     let fechaAusenciaDesde = new Array();
     let fechaAusenciaHasta = new Array();
-
+    let Rechazo = new Array();
     let iteraciones;
     var eventosDinamicos;
     let colores = new Array();
@@ -83,8 +87,13 @@ $(function () {
             idPerfil[i]=respuesta[i].IdPerfil;
 
             archivo[i]=respuesta[i].Archivo;
-
-
+           
+            autorizacionJefe[i]= respuesta[i].AutorizacionJefe; 
+            autorizacionRH[i] = respuesta[i].AutorizacionRH;
+            autorizacionContabilidad[i] =  respuesta[i].AutorizacionContabilidad; 
+            autorizacionDireccion[i] = respuesta[i].AutorizacionDireccion;
+            Rechazo[i] = respuesta[i].Rechazo;
+       
         }
         //SE PINTA EL CALENDARIO
         var handleCalendarDemo = function () {
@@ -138,6 +147,112 @@ $(function () {
                     $('#sts').html(calEvent.estatusEvento);
                     $('#aus').html(calEvent.title);
                     $('#fed').html("<h5>Fecha de permiso: </h5>"+ calEvent.fechaAusenciaDesdeEvento);
+                    var autJefe=" ";
+                    var autRH=" ";
+                    var autConta=" ";
+                    var autDire=" ";
+                    var fill="";
+                    var btns="";
+                    if(calEvent.estatusEvento =="RECHAZADO" )
+                    {
+                        fill="";
+                        fill+="<h5>Rechazado por: </h5>";
+                        fill+="<h5>Motivo: "+calEvent.Rechazo+"</h5>";
+                        if(calEvent.autorizacionJefe!=null)
+                        {
+                            fill+="<h5>Por: "+calEvent.autorizacionJefe+"</h5>";
+                        }
+                        if(calEvent.autorizacionRH!=null)
+                        {
+                            fill+="<h5>Por: "+calEvent.autorizacionRH+"</h5>";
+                        }
+                        if(calEvent.autorizacionContabilidad!=null)
+                        {
+                            fill+="<h5>Por: "+calEvent.autorizacionContabilidad+"</h5>";
+                        }
+                        if(calEvent.autorizacionDireccion!=null)
+                        {
+                            fill+="<h5>Por: "+calEvent.autorizacionDireccion+"</h5>";
+                        }
+                        
+                        $("#BotonesAcciones").html(btns);
+                        $("#datosAutorizacion").html(fill);
+                        
+                    }
+                    if(calEvent.estatusEvento =="AUTORIZADO")
+                    {
+                        fill="";
+                        fill+="<h5>Autorizado por: </h5>";
+                        if(calEvent.autorizacionJefe!=null)
+                        {
+                            fill+="<h5>Por: "+calEvent.autorizacionJefe+"</h5>";
+                        }
+                        if(calEvent.autorizacionRH!=null)
+                        {
+                            fill+="<h5>Por: "+calEvent.autorizacionRH+"</h5>";
+                        }
+                        if(calEvent.autorizacionContabilidad!=null)
+                        {
+                            fill+="<h5>Por: "+calEvent.autorizacionContabilidad+"</h5>";
+                        }
+                        if(calEvent.autorizacionDireccion!=null)
+                        {
+                            fill+="<h5>Por: "+calEvent.autorizacionDireccion+"</h5>";
+                        }
+                        $("#BotonesAcciones").html(btns);
+                        $("#datosAutorizacion").html(fill);
+                      
+                        
+                    }
+                    if(calEvent.estatusEvento=="PENDIENTE POR AUTORIZAR")
+                    {
+                       
+                        fill="";
+                        if(calEvent.autorizacionJefe==null || calEvent.autorizacionJefe=="")
+                        {
+                            autJefe="PENDIENTE";
+                        }
+                        else
+                        {
+                             autJefe=calEvent.autorizacionJefe;
+                        }
+                        if(calEvent.autorizacionRH==null || calEvent.autorizacionRH=="")
+                        {
+                            autRH="PENDIENTE";
+                        }
+                        else
+                        {
+                             autRH=calEvent.autorizacionRH;
+                        }
+                        if(calEvent.autorizacionContabilidad==null || calEvent.autorizacionContabilidad=="")
+                        {
+                            autConta="PENDIENTE";
+                        }
+                        else
+                        {
+                             autConta=calEvent.autorizacionContabilidad;
+                        }
+                        if(calEvent.autorizacionDireccion==null || calEvent.autorizacionDireccion=="")
+                        {
+                            autDire="PENDIENTE";
+                        }
+                        else
+                        {
+                             autDire=calEvent.autorizacionDireccion;
+                        }
+                        fill+="<h5>Autorizado por: </h5>";
+                        fill+="<div> JEFE: "+autJefe+"</div>";
+                        fill+="<div> RH: "+autRH+"</div>";
+                        fill+="<div> CONTABILIDAD: "+autConta+"</div>";
+                        fill+="<div> DIRECCION: "+autDire+"</div>";
+                        btns+="<button type='button'  class='btn bg-red text-white' onclick='aceptarPermiso();'>Aceptar permiso</button>";
+                        btns+="<button type='button'  class='btn bg-green text-white ' onclick='rechazarPermiso(); '>Rechazar permiso</button>";
+                        $("#BotonesAcciones").html(btns);
+                        $("#datosAutorizacion").html(fill);
+                        
+                    }
+                    
+                    
                     if(calEvent.fechaAusenciaHastaEvento=="0000-00-00")
                     {
                         $('#fechaHasta').html(" ");
@@ -225,7 +340,7 @@ $(function () {
                 media: '<i class="fa fa-thumb-tack"></i>',
                 description: descripcion[k],
 
-                estatusEvento: '"'+estatus[k]+'"',
+                estatusEvento: estatus[k],
                 usuarioEvento: usuario[k],
                 fechaAusenciaDesdeEvento: fechaAusenciaDesde[k],
                 fechaAusenciaHastaEvento: fechaAusenciaHasta[k],
@@ -233,30 +348,82 @@ $(function () {
                 horaSalidaEvento: horaSalida[k],
                 idUsuario: idUsuario[k],
                 idPerfil: idPerfil[k],
-                archivo: archivo[k]
+                archivo: archivo[k],
+                
+                autorizacionJefe : autorizacionJefe[k],
+                autorizacionRH : autorizacionRH[k],
+                autorizacionContabilidad : autorizacionContabilidad[k],
+                autorizacionDireccion : autorizacionDireccion[k],
+                Rechazo: Rechazo[k]
             };
-           console.log(eventosDinamicos);
             $('#calendar').fullCalendar( 'renderEvent', eventosDinamicos, true);
         }
     });
+    
 });
-/*function cambiarEstatus()
+
+function aceptarPermiso()
 {
-     //Objetos
-    var evento = new Base();
-    var datos;
-    datos=
-    {
-
-
-        idPermiso:$("#idPermiso").html,
-        idPerfil:$("#idper").html,
-        idUsuario:$("#idus").html,
-        archivo:$("#arc").html
-
+    let idPermiso =$('#idPermiso').html() ;     
+    let idPerfil = $('#idper').html();
+    let idUser= $("#usr").html();
+    let archivo= $("#arc").html();
+    var evento= new Base();
+    
+    let datos=
+            {
+            perfilUsuario: idPerfil,
+            idPerfil:idPerfil,
+            idUser:idUser,
+            archivo:archivo,
+            idPermiso:idPermiso
     };
-    console.log($("#idPermiso").html);
-//     evento.enviarEvento('CalendarioPermisos/cancelarPermiso', datos, '', function (respuesta) {
-//        console.log(respuesta);
-//    });
-}*/
+    evento.enviarEvento('EventoPermisosVacaciones/Autorizar',datos,'#panelAutorizarPermisos',function(respuesta)
+    {
+        
+        console.log(respuesta);
+    });
+}
+
+function rechazarPermiso()
+{
+    let idPermiso = $('#idPermiso').html();
+    let idPerfil = $('#idper').html();
+    let idUser = $("#usr").html();
+    let archivo = $("#arc").html();
+    var evento = new Base();
+    var sel="";
+    let datos =
+            {
+                perfilUsuario: idPerfil,
+                idPerfil: idPerfil,
+                idUser: idUser,
+                archivo: archivo,
+                idPermiso: idPermiso
+            };
+    selectMotivos();
+    console.log(idPermiso, idPerfil);
+    evento.enviarEvento('EventoPermisosVacaciones/Autorizar', datos, '', function (respuesta)
+    {
+        $('#modalRechazo').modal();
+        console.log(respuesta);
+        
+    });
+}
+function selectMotivos()
+{
+    //Objetos
+    var evento = new Base();
+    let sel="";
+    let motivo="";
+    evento.enviarEvento('EventoPermisosVacaciones/MostarMotivosRechazo', '', '', function (respuesta) {
+        let long = respuesta.lenght();
+        console.log(long);
+        for(let i=0; i<1; i++)
+        {
+            console.log(respuesta[i].Nombre);
+            sel+="<option>"+respuesta[i].Nombre+"</option>";
+        }
+        $("#rechazos").html(sel);
+    });
+}

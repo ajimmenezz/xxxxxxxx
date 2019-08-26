@@ -20,8 +20,8 @@
                         perm.Id,
                         nombreUsuario(perm.IdUsuario) as Usuario,
                         Estatus(perm.IdEstatus) as Estatus,
-                        ausencia(perm.IdTipoAusencia) as Ausencia,
-                        motivos(perm.IdMotivoAusencia ) as Motivo,
+                        tipoAusencia(perm.IdTipoAusencia) as Ausencia,
+                        motivoAusencia(perm.IdMotivoAusencia ) as Motivo,
                         perm.Motivo as Justificacion,
                         perm.FechaAusenciaDesde as FechaAusenciaDesde,
                         perm.FechaAusenciaHasta as FechaAusenciaHasta,
@@ -30,7 +30,13 @@
                         perm.Archivo as Archivo,
                         nombreUsuario(catU.IdJefe) as Jefe,
                         catU.IdPerfil as IdPerfil,
-                        catU.id as IdUsuario
+                        catU.id as IdUsuario,
+                        nombreUsuario(idUsuarioJefe) as AutorizacionJefe,
+                        nombreUsuario(idUsuarioRH) as AutorizacionRH,
+                        nombreUsuario(idUsuarioContabilidad) as AutorizacionContabilidad,
+                        nombreUsuario(idUsuarioDireccion) as AutorizacionDireccion,
+                        tipoRechazo(IdRechazo) as Rechazo
+                        
 					
                     from t_permisos_ausencia_rh perm
                     join 
@@ -41,8 +47,6 @@
                             catU.IdJefe= 3
                     and FechaAusenciaDesde>='".$fechaMinima."'
                     and FechaAusenciaDesde<='".$fechaMaxima."'
-                    and perm.IdEstatus!= 10 
-                    and perm.IdEstatus!=6
                     ";
           // var_dump($query);
             $resultado= $this->consulta($query);

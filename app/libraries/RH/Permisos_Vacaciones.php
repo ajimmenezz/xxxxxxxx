@@ -43,6 +43,9 @@ class Permisos_Vacaciones extends General {
                                         AND tcmarcta.IdTipoAusencia = "' . $datos['tipoAusencia'] . '"
                                         ORDER BY cvmap.Nombre ASC');
     }
+    public function obtenerMotivoRechazo() {
+        return $this->DBS->consultaGral('select * from cat_v3_tipos_rechazos_ausencia_personal');
+    }
 
     public function obtenerPermisosAusencia($idUsuario) {
         return $this->DBS->consultaGral('SELECT tpa.Id, tpa.FechaDocumento, tap.Nombre AS IdTipoAusencia, map.Nombre AS IdMotivoAusencia, 
