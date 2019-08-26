@@ -143,10 +143,10 @@ $(function () {
                 events: [],
                 eventClick: function(calEvent, jsEvent, view) {
                     $("#idPermiso").html(calEvent.id);
-                    $('#usr').html(calEvent.usuarioEvento);
-                    $('#sts').html(calEvent.estatusEvento);
-                    $('#aus').html(calEvent.title);
-                    $('#fed').html("<h5>Fecha de permiso: </h5>"+ calEvent.fechaAusenciaDesdeEvento);
+                    $('#usr').html("<h6>"+calEvent.usuarioEvento+"</h6>");
+                    $('#sts').html("<h6>"+calEvent.estatusEvento+"</h6>");
+                    $('#aus').html("<h6>"+calEvent.title+"</h6>");
+                    $('#fed').html("<h6>Fecha de permiso: </h6>"+ calEvent.fechaAusenciaDesdeEvento);
                     var autJefe=" ";
                     var autRH=" ";
                     var autConta=" ";
