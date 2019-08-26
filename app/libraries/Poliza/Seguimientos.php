@@ -3,6 +3,7 @@
 namespace Librerias\Poliza;
 
 use Controladores\Controller_Datos_Usuario as General;
+use Librerias\Componentes\Error as Error;
 
 class Seguimientos extends General {
 
@@ -2035,17 +2036,18 @@ class Seguimientos extends General {
     public function enviarSolucionCorrectivoSD(array $datos) {
         try {
             $this->InformacionServicios->verifyProcess($datos);
-
-            $verificarEstatusTicket = $this->consultaCorrectivosServiciosTicket($datos['ticket'], $datos['servicio']);
-
-            $this->enviar_Reporte_PDF($datos);
-            if (!empty($verificarEstatusTicket)) {
-                return array('code' => 200, 'message' => 'faltanServicios');
-            } else {
-                return array('code' => 200, 'message' => 'serviciosConcluidos');
-            }
         } catch (\Exception $ex) {
-            return array('code' => 400, 'message' => $ex->getMessage());
+            
+        }
+
+        $verificarEstatusTicket = $this->consultaCorrectivosServiciosTicket($datos['ticket'], $datos['servicio']);
+
+        $this->enviar_Reporte_PDF($datos);
+
+        if (!empty($verificarEstatusTicket)) {
+            return array('code' => 200, 'message' => 'faltanServicios');
+        } else {
+            return array('code' => 200, 'message' => 'serviciosConcluidos');
         }
     }
 

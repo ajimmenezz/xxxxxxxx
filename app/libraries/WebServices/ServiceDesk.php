@@ -52,7 +52,7 @@ class ServiceDesk extends General {
         $datosSD = json_decode(file_get_contents($url));
 
         if ($datosSD === NULL) {
-            throw new \Exception('Error para ingresar al SD');
+            throw new \Exception('Service Desk no responde.');
         }
 
         restore_error_handler();
@@ -90,8 +90,11 @@ class ServiceDesk extends General {
             case 'Error when validating URL - Invalid URL for the requested operation.':
                 $textoError = 'URL no válida para la operación solicitada.';
                 break;
+            case 'Error when adding note to request - 561339 - Notes text cannot be empty when adding notes':
+                $textoError = 'No cuenta con información para subirlo al ServiceDesk.';
+                break;
             default :
-                $textoError = 'Error para ingresar al SD.';
+                $textoError = $error;
                 break;
         }
         return $textoError;
@@ -214,6 +217,7 @@ class ServiceDesk extends General {
      */
 
     public function setResolucionServiceDesk(string $key, string $folio, string $datos) {
+        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/resolution/";
         $input_data = ''
                 . '{'
                 . ' "operation": {'
@@ -224,15 +228,21 @@ class ServiceDesk extends General {
                 . '     }'
                 . ' }'
                 . '}';
-
-        $this->FIELDS = "format=json&"
+        $FIELDS = "format=json&"
                 . "OPERATION_NAME=EDIT_RESOLUTION&"
                 . "INPUT_DATA=" . urlencode($input_data) . "&"
                 . "TECHNICIAN_KEY=" . $key;
-        $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '/resolution/?' . $this->FIELDS);
-        $this->validarError($datosSD);
-        $this->generateLogResolverSD(array($datosSD, $folio));
-        return $datosSD;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL2);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $FIELDS);
+        $return = curl_exec($ch);
+        curl_close($ch);
+        $jsonDecode = json_decode($return);
+        $this->generateLogResolverSD(array($jsonDecode, $folio));
+
+        return $jsonDecode;
     }
 
     public function setNoteServiceDesk(string $key, string $folio, string $datos) {
@@ -411,6 +421,12 @@ class ServiceDesk extends General {
         $datosSD = $this->getDatosSD($this->Url . '/' . $_id . '?' . $this->FIELDS);
         $this->validarError($datosSD);
         return $datosSD;
+    }
+
+    public function getNotas(string $key, string $folio) {
+        $this->FIELDS = 'format=json&OPERATION_NAME=GET_NOTES&TECHNICIAN_KEY=' . $key;
+        $data = json_decode(file_get_contents($this->Url . '/' . $folio . '/notes/?' . $this->FIELDS));
+        return $data;
     }
 
 }

@@ -6,6 +6,7 @@ use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesTicket\Redes\GestorNodosRedes as GestorNodo;
 use Librerias\V2\PaquetesGenerales\Utilerias\PDF as PDF;
 use Modelos\Modelo_ServicioGeneralRedes as Modelo;
+use Modelos\Modelo_ServicioTicket as ModeloServicioTicket;
 
 class ServicioCableado implements Servicio {
 
@@ -21,11 +22,13 @@ class ServicioCableado implements Servicio {
     private $solicita;
     private $descripcionSolicitud;
     private $DBServiciosGeneralRedes;
+    private $DBServicioTicket;
     private $gestorNodos;
 
     public function __construct(string $idServicio) {
         $this->id = $idServicio;
         $this->DBServiciosGeneralRedes = new Modelo();
+        $this->DBServicioTicket = new ModeloServicioTicket();
         $this->gestorNodos = new GestorNodo($this->id);
         $this->setDatos();
     }
@@ -218,26 +221,31 @@ class ServicioCableado implements Servicio {
     }
 
     public function getPDF(array $datos) {
-        
+        $informacionGeneral = $this->DBServiciosGeneralRedes->getDatosSolucionPDF($datos);
+        var_dump($informacionGeneral);
         $pdf = new PDF($this->folioSolicitud);
         $pdf->AddPage();        
-        $pdf->tituloTabla('#Información General', [31, 56, 100]);
-        $pdf->tabla(array(), array(array('C1','S1','T1'),array('C2','S2','T2'),array('C3','S3','T3')));
-        $pdf->tablaImagenes(array('/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga.jpg',
-            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
-            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga1.jpg',
-            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
-            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
-            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga1.jpg',
-            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
-            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg'));
-        $pdf->tituloTabla('Firmas del Servicio', [31, 56, 32]);
-        $pdf->firma(array(array('/storage/Archivos/Servicios/Servicio-32364/EvidenciasFirmas/Firma-Cliente-prueba.png','Nombre','Puesto'),
-            array('/storage/Archivos/Servicios/Servicio-32364/EvidenciasFirmas/Firma-Cliente-prueba.png','Nombre1','Puesto1')));
+        $pdf->tituloTabla('#1 Información General');
+        $pdf->tabla(array(), $informacionGeneral);
+//        $pdf->tablaImagenes(array('/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga.jpg',
+//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
+//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga1.jpg',
+//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
+//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
+//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga1.jpg',
+//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
+//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg'));
+//        $pdf->tituloTabla('Solución del Servicio');
+//        $pdf->firma(array(array('/storage/Archivos/Servicios/Servicio-32364/EvidenciasFirmas/Firma-Cliente-prueba.png','Nombre','Puesto')));
         $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
         $pdf->Output('F', $carpeta, true);
         $archivo = substr($carpeta, 1);
         return $archivo;
+    }
+
+    public function cambiarEstatusServicio(array $datos) {
+        $consulta = $this->DBServicioTicket->cambiarEstatusServicio($datos);
+        return $consulta;
     }
 
 }

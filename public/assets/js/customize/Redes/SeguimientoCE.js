@@ -954,6 +954,12 @@ $(function () {
         $('#contentFirmasConclucion').removeClass('hidden');
         $('#contentServiciosRedes').addClass('hidden');
     });
+
+    $('#validarServicio').on('click', function () {
+        peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/validarServicio', datoServicioTabla, function (respuesta) {
+            console.log(respuesta);
+        });
+    });
     /**Finalizan seccion de botones generales**/
 
     $('#btnRegresarServicio').on('click', function () {
@@ -1009,15 +1015,15 @@ $(function () {
         }
     });
 
-    $('#exportarPDF').on('click', function () {
-        peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/exportarPDF', datoServicioTabla, function (respuesta) {
-            if (!validarError(respuesta)) {
-                return;
-            }
-            console.log(respuesta.PDF);
-            window.open(respuesta.PDF, '_blank');
-        });
-    });
+//    $('#exportarPDF').on('click', function () {
+//        peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/exportarPDF', datoServicioTabla, function (respuesta) {
+//            if (!validarError(respuesta)) {
+//                return;
+//            }
+//            console.log(respuesta.PDF);
+//            window.open(respuesta.PDF, '_blank');
+//        });
+//    });
 
     function validarError(respuesta, objeto = null) {
         if (!respuesta.operacion) {

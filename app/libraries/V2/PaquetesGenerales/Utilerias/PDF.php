@@ -153,15 +153,14 @@ class PDF extends \FPDF {
     /*     * **************************************** */
 
     public function tituloTabla(string $titulo, array $colorFondoRGB = []) {
-        $fill = false;
-        $this->SetTextColor(0, 0, 0);
+        $this->SetTextColor(255, 255, 255);
         if ($colorFondoRGB !== []) {
-            $fill = true;
             $this->SetFillColor($colorFondoRGB[0], $colorFondoRGB[1], $colorFondoRGB[2]);
-            $this->SetTextColor(255, 255, 255);
+        } else {
+            $this->SetFillColor(31, 56, 100);
         }
         $this->SetFont('', 'B', 12);
-        $this->Cell(0, 6, utf8_decode($titulo), 1, 0, 'L', $fill);
+        $this->Cell(0, 6, utf8_decode($titulo), 1, 0, 'L', true);
     }
 
     public function tabla(array $cabecera, array $datos) {
@@ -263,10 +262,10 @@ class PDF extends \FPDF {
             $listaFirmas = array();
             $tempFirmas = array();
 
-            for ($j = 0; $j < $totalFirmas; $j++) {
+            for ($j = 0; $j < $countFilas; $j++) {
 
                 foreach ($datosPersona as $key => $firma) {
-                    if ($columna < 4) {
+                    if ($columna < 2) {
                         array_push($tempFirmas, $firma);
                         $columna += 1;
                         unset($datosPersona[$key]);
@@ -279,23 +278,20 @@ class PDF extends \FPDF {
 
             $ancho = $this->GetPageWidth() - 20;
             $y = $this->GetY();
-            $x = 20;
+            $x = 30;
             foreach ($listaFirmas as $firmas) {
                 foreach ($firmas as $firma) {
                     if ($x < $ancho) {
-//                        $this->Image('.' . $firma, $x, $y, 40, 35);
-                        $this->SetX($x);
-//                        $this->SetX($y);
-                        $this->Image('.' . $firma[0], null, null, 80);
-                        $this->SetX($x);
+                        $this->Image('.' . $firma[0], $x, $y, 80, 30);
+                        $this->SetXY($x, $y + 30);
                         $this->Cell(70, 7, utf8_decode($firma[1]), 1, 1, 'C', true);
                         $this->SetX($x);
                         $this->Cell(70, 7, utf8_decode($firma[2]), 1, 1, 'C', true);
-//                        $x += 10;
+                        $x += 85;
                     }
                 }
-                $x = 20;
-                $y += 40;
+                $x = 30;
+                $y += 50;
                 $altura = $y + 35;
                 if ($altura > ($this->GetPageHeight() - 40)) {
                     $this->AddPage();

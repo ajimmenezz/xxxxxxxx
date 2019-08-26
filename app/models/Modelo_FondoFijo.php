@@ -311,11 +311,11 @@ class Modelo_FondoFijo extends Modelo_Base
         $this->iniciaTransaccion();
 
         $saldoPrevio = $this->getSaldo($datos['id'], $datos['tipoCuenta']);
-        $saldoNuevo = (float) $saldoPrevio + (float) $datos['depositar'];
+        $saldoNuevo = (double)$saldoPrevio + (double)$datos['depositar'];
 
         $this->insertar("t_fondofijo_movimientos", [
             "FechaRegistro" => $this->getFecha(),
-            "FechaMovimiento" => str_replace("T", " ", $datos['fecha']),
+            "FechaMovimiento" => $this->getFecha(),
             "FechaAutorizacion" => $this->getFecha(),
             "IdUsuarioRegistra" => $this->usuario['Id'],
             "IdUsuarioAutoriza" => $this->usuario['Id'],
@@ -366,9 +366,9 @@ class Modelo_FondoFijo extends Modelo_Base
                 'Id' => $idMovimiento,
                 'TipoCuenta' => $this->getTiposCuenta($datos['tipoCuenta'])[0]['Nombre'],
                 'Fecha' => $this->getFecha(),
-                'SaldoAnterior' => '$' . number_format((float) $saldoPrevio, 2),
-                'Deposito' => '$' . number_format((float) $datos['depositar'], 2),
-                'Saldo' => '$' . number_format((float) $saldoNuevo, 2)
+                'SaldoAnterior' => '$' . number_format((float)$saldoPrevio, 2),
+                'Deposito' => '$' . number_format((float)$datos['depositar'], 2),
+                'Saldo' => '$' . number_format((float)$saldoNuevo, 2)
             ];
 
 
@@ -388,7 +388,7 @@ class Modelo_FondoFijo extends Modelo_Base
         $consulta = $this->consulta("select
         tfm.Id,
         (select Nombre from cat_v3_fondofijo_tipos_cuenta where Id = tfm.IdTipoCuenta) as TipoCuenta,
-        tfm.FechaMovimiento as Fecha,
+        tfm.FechaRegistro as Fecha,
         tfm.SaldoPrevio,
         tfm.Monto,
         tfm.SaldoNuevo
@@ -397,23 +397,6 @@ class Modelo_FondoFijo extends Modelo_Base
         where IdTipoMovimiento = 6
         and tfm.IdEstatus = 7
         and tfm.IdUsuarioFondoFijo = '" . $idUsuario . "'" . $condicion);
-        return $consulta;
-    }
-
-    public function getComprobaciones(int $idUsuario)
-    {
-        $consulta = $this->consulta("select 
-        tfm.Id,
-        (select Nombre from cat_v3_fondofijo_tipos_cuenta where Id = tfm.IdTipoCuenta) as TipoCuenta,
-        (select Nombre from cat_v3_comprobacion_conceptos where Id = tfm.IdConcepto) as Concepto,
-        ABS(tfm.Monto) as Monto,
-        estatus(tfm.IdEstatus) as Estatus,
-        tfm.FechaRegistro,
-        tfm.FechaAutorizacion
-        from t_fondofijo_movimientos tfm
-        where tfm.IdUsuarioFondoFijo = '" . $idUsuario . "'
-        and tfm.IdTipoMovimiento = 7
-        and tfm.FechaRegistro >= DATE_SUB(now(),INTERVAL 1 MONTH)");
         return $consulta;
     }
 
@@ -594,7 +577,7 @@ class Modelo_FondoFijo extends Modelo_Base
 
         $saldoPrevio = $this->getSaldo($this->usuario['Id'], $datos['tipoCuenta']);
         if ($datos['enPresupuesto'] == 1) {
-            $saldoNuevo = (float) $saldoPrevio + (float) $datos['monto'];
+            $saldoNuevo = (double)$saldoPrevio + (double)$datos['monto'];
         } else {
             $saldoNuevo = $saldoPrevio;
         }
@@ -709,7 +692,6 @@ class Modelo_FondoFijo extends Modelo_Base
                                     tcff.Archivos, 
                                     tcff.XML,
                                     tcff.PDF
-
                                     from
                                     t_fondofijo_movimientos tcff
                                     left join cat_v3_comprobacion_conceptos ccc on tcff.IdConcepto = ccc.Id
@@ -731,7 +713,7 @@ class Modelo_FondoFijo extends Modelo_Base
         if ($generales['IdEstatus'] == 7) {
 
             $saldoPrevio = $this->getSaldo($generales['IdUsuarioFondoFijo'], $generales['IdTipoCuenta']);
-            $saldoNuevo = (float) $saldoPrevio + abs((float) $generales['Monto']);
+            $saldoNuevo = (double)$saldoPrevio + abs((double)$generales['Monto']);
 
             $this->insertar("t_fondofijo_movimientos", [
                 "FechaRegistro" => $this->getFecha(),
@@ -811,7 +793,8 @@ class Modelo_FondoFijo extends Modelo_Base
         $empleados = $this->getEmpleadosByIdJefe($id);
         $ids = implode(",", $empleados);
 
-        $consulta = $this->consulta("select
+        $consulta = $this->consulta("
+            select
         tfm.Id,
         nombreUsuario(tfm.IdUsuarioFondoFijo) as Usuario,
         (select Nombre from cat_v3_fondofijo_tipos_cuenta where Id = tfm.IdTipoCuenta) as TipoCuenta,
@@ -861,7 +844,7 @@ class Modelo_FondoFijo extends Modelo_Base
 
         $generales = $this->getDetallesFondoFijoXId($datos['id'])[0];
         $saldoPrevio = $this->getSaldo($generales['IdUsuarioFondoFijo'], $generales['IdTipoCuenta']);
-        $saldoNuevo = (float) $saldoPrevio + (float) $generales['Monto'];
+        $saldoNuevo = (double)$saldoPrevio + (double)$generales['Monto'];
 
         $this->actualizar("t_fondofijo_movimientos", [
             "IdEstatus" => 7,
@@ -897,5 +880,101 @@ class Modelo_FondoFijo extends Modelo_Base
                 'id' => $generales['IdUsuarioFondoFijo']
             ];
         }
+    }
+    public function getTiposSaldo()
+    {
+        $query= "
+            SELECT 
+                * 
+            FROM 
+                cat_v3_fondofijo_tipos_cuenta 
+            WHERE 
+                flag=1;
+                ";
+        $consulta=$this->consulta($query);
+        return $consulta;
+    }
+    public function getTecnico(String $idSupervisor) {
+        $tipoSaldo=$this->getTiposSaldo();
+        $longitudTipos=count($tipoSaldo);
+        $query="";
+        $query="
+            SELECT 
+            cu.Id,
+            NOMBREUSUARIO(tfs.IdUsuario) AS Nombre,
+            tfs.IdTipoCuenta as idTipoCuenta,
+            (SELECT 
+                    Nombre
+                FROM
+                    cat_v3_fondofijo_tipos_cuenta
+                WHERE
+                    Id = tfs.IdTipoCuenta) AS TipoCuenta"
+             ;
+        
+        for($i=1; $i<= $longitudTipos; $i++)
+        {
+            $query.=",(
+                SELECT 
+                    SUM(Saldo)
+                FROM
+                    t_fondofijo_saldos
+                WHERE
+                    IdUsuario = cu.Id
+                AND IdTipoCuenta =' ".$i." ') AS E".$i;
+            
+        }
+                
+            $query.=" FROM
+                t_fondofijo_saldos tfs
+                    INNER JOIN
+                cat_v3_usuarios cu ON tfs.IdUsuario = cu.Id
+                    INNER JOIN
+                cat_v3_fondofijo_tipos_cuenta cat ON tfs.IdTipoCuenta = cat.id
+            WHERE
+                cu.IdJefe =".$idSupervisor." GROUP BY cu.Id";
+            $resultado= $this->consulta($query);
+            return array("datosTecnico"=>$resultado,"TiposSaldo"=>$tipoSaldo);
+    }
+    public function getMovimientosTecnico($consulta) {
+        $resp=$this->consulta($consulta);
+        return $resp;
+    }
+    public function getMovimientosXTecnico(int $idUsuario)
+    {
+        $consulta = $this->consulta("
+        select
+        tfm.Id,
+        if(
+            tfm.IdTipoMovimiento = 6 and tfm.Monto < 0, 
+            'Ajuste de Cuenta', 
+            (select Nombre from cat_v3_comprobacion_tipos_movimiento where Id = tfm.IdTipoMovimiento)
+        ) as TipoMovimiento,        
+        case
+            when tfm.IdTipoMovimiento = 1 then 'Depósito'
+            when tfm.IdTIpoMovimiento = 3 then tfm.Observaciones
+            when tfm.IdTipoMovimiento = 4 then 'Depósito Gasolina'
+            when tfm.IdTipoMovimiento = 5 then 'Ajuste de gasolina'
+            when tfm.IdTipoMovimiento = 6 and tfm.Monto > 0 then 'Abono a Cuenta' 
+            when tfm.IdTipoMovimiento = 6 and tfm.Monto < 0 then 'Ajuste de Cuenta'           
+            else (select Nombre from cat_v3_comprobacion_conceptos where Id = tfm.IdConcepto)
+        end as Concepto,        
+        estatus(tfm.IdEstatus) as Estatus,
+        tfm.FechaRegistro as FechaRegistro,
+        tfm.FechaAutorizacion as FechaAutorizacion,
+        tfm.SaldoPrevio,
+        tfm.Monto,
+        tfm.SaldoNuevo,
+        cfftc.nombre as Cuenta
+        from 
+            t_fondofijo_movimientos tfm
+        inner join
+            cat_v3_fondofijo_tipos_cuenta cfftc
+	on
+            tfm.IdTipoCuenta=cfftc.id
+                        
+        where tfm.IdUsuarioFondoFijo = ".$idUsuario."
+        order by Id desc
+        " );
+        return $consulta;
     }
 }

@@ -13,6 +13,7 @@ class InformacionServicios extends General {
     private $ServiceDesk;
     private $MSP;
     private $MSD;
+    private $DBST;
     private $pdf;
     private $x;
     private $y;
@@ -26,21 +27,73 @@ class InformacionServicios extends General {
         $this->ServiceDesk = \Librerias\WebServices\ServiceDesk::factory();
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
         $this->MSD = \Modelos\Modelo_ServiceDesk::factory();
+        $this->DBST = \Modelos\Modelo_ServicioTicket::factory();
         $this->pdf = new PDFAux();
     }
 
-    public function MostrarDatosSD(string $folio) {
-        $host = $_SERVER['SERVER_NAME'];
-        $pdf = $this->pdfFromFolio(array('folio' => $folio));
+//    public function MostrarDatosSD(string $folio) {
+//        $host = $_SERVER['SERVER_NAME'];
+//        $pdf = $this->pdfFromFolio(array('folio' => $folio));
+//
+//        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+//            $path = 'https://siccob.solutions/' . $pdf['uri'];
+//        } else {
+//            $path = 'http://' . $host . '/' . $pdf['uri'];
+//        }
+//
+//        $html = "<div>Se resuelve el incidente del folio:" . $folio . "</div>";
+//        $html .= "<div><a href='" . $path . "' target='_blank'>Resumen documento PDF</a></div>";
+//        return array('html' => $html);
+//    }
 
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'https://siccob.solutions/' . $pdf['uri'];
+    public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key) {
+        $html = '';
+        $estatus = TRUE;
+
+        if ($servicioConcluir) {
+            $union = 'SELECT 
+                            tse.Id,
+                            tse.Ticket,
+                            tse.IdTipoServicio,
+                            (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tse.IdTipoServicio) Seguimiento,
+                            tse.IdEstatus,
+                            tse.FechaConclusion,
+                            tse.Atiende AS Atiende
+                    FROM t_servicios_ticket tse 
+                    INNER JOIN t_solicitudes tso 
+                    ON tse.IdSolicitud = tso.Id 
+                    WHERE tse.Id = "' . $servicio . '"
+                    UNION ';
         } else {
-            $path = 'http://' . $host . '/' . $pdf['uri'];
+            $union = '';
+            $html .= $this->consultaCorrectivoProblema($servicio, $folio, $key);
         }
 
-        $html = "<div>Se resuelve el incidente del folio:" . $folio . "</div>";
-        $html .= "<div><a href='" . $path . "' target='_blank'>Resumen documento PDF</a></div>";
+        $serviciosConcluidos = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM (' . $union . 'SELECT 
+                                                                                tse.Id,
+                                                                                tse.Ticket,
+                                                                                tse.IdTipoServicio,
+                                                                                (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tse.IdTipoServicio) Seguimiento,
+                                                                                tse.IdEstatus,
+                                                                                tse.FechaConclusion,
+                                                                                (SELECT Atiende FROM t_solicitudes WHERE Id = tse.IdSolicitud) Atiende
+                                                                        FROM t_servicios_ticket tse 
+                                                                        INNER JOIN t_solicitudes tso 
+                                                                        ON tse.IdSolicitud = tso.Id 
+                                                                        WHERE tso.Folio = "' . $folio . '"
+                                                                        AND (tse.IdEstatus in (3,4)
+                                                                        OR (tse.IdTipoServicio = 20 AND tse.IdEstatus = 2))
+                                                                        ) TABLAS
+                                                                        ORDER BY FIELD (IdEstatus, 2,4), FechaConclusion DESC');
+
+        if (!empty($serviciosConcluidos)) {
+            foreach ($serviciosConcluidos as $key => $value) {
+                $html .= $this->vistaHTMLServicio($value);
+            }
+
+            $html .= $this->avancesProblemasServicio($folio);
+        }
+
         return array('html' => $html);
     }
 
@@ -83,52 +136,47 @@ class InformacionServicios extends General {
         return $html;
     }
 
-    public function cambiarEstatusSD(array $datos) {
-        $atiende = $this->DBS->consultaGeneralSeguimiento('SELECT 
-                                                                tso.Atiende
-                                                                FROM t_servicios_ticket tst
-                                                                INNER JOIN t_solicitudes tso
-                                                                ON tst.IdSolicitud = tso.Id
-                                                                WHERE tst.Id = "' . $datos['Servicio'] . '"');
-        $SDkey = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($atiende[0]['Atiende']));
-
-        $servicios = $this->verificarTodosServiciosFolio($datos);
-
+    public function cambiarEstatusResolucionSD(array $datos, array $servicios) {
+        $datosServicios = $this->DBST->consultaServicio($datos['Servicio']);
         if (isset($datos['Servicio'])) {
-            $servicioLaboratorio = $this->DBS->consultaGeneralSeguimiento('SELECT
-                                                                    (SELECT IdDepartamento FROM cat_perfiles WHERE Id = cvu.IdPerfil) IdDepartamento
-                                                                FROM t_servicios_ticket tst
-                                                                INNER JOIN cat_v3_usuarios cvu
-                                                                ON tst.Atiende = cvu.Id
-                                                                WHERE tst.Id = "' . $datos['Servicio'] . '"');
-
+            $servicioLaboratorio = $this->DBST->consultaServicioLaboratorio($datos['Servicio']);
 
             if ($servicioLaboratorio[0]['IdDepartamento'] === '10') {
-                $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($SDkey, 'En Atención', $datos['Folio']);
+                $htmlServicio = $this->vistaHTMLServicio($datosServicios[0]);
+                $this->setNoteAndWorkLog(array('key' => $datos['Key'], 'folio' => $datos['Folio'], 'html' => $htmlServicio));
+                $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
             } else {
                 if (!empty($servicios)) {
                     foreach ($servicios as $key => $value) {
                         if ($value['IdEstatus'] === '3') {
-                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($SDkey, 'Problema', $datos['Folio']);
+                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
                         } else {
-                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($SDkey, 'En Atención', $datos['Folio']);
+                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
                         }
                     }
+                    $htmlServicio = $this->vistaHTMLServicio($datosServicios[0]);
+                    $this->setNoteAndWorkLog(array('key' => $datos['Key'], 'folio' => $datos['Folio'], 'html' => $htmlServicio));
                 } else {
-                    $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($SDkey, 'Completado', $datos['Folio']);
+                    $informacionServicios = $this->MostrarDatosSD($datos['Folio'], $datos['Servicio'], $datos['ServicioConcluir'], $datos['Key']);
+                    $this->ServiceDesk->setResolucionServiceDesk($datos['Key'], $datos['Folio'], $informacionServicios['html']);
+                    $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Completado', $datos['Folio']);
                 }
             }
         } else {
             if (!empty($servicios)) {
                 foreach ($servicios as $key => $value) {
                     if ($value['IdEstatus'] === '3') {
-                        $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($SDkey, 'Problema', $datos['Folio']);
+                        $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
                     } else {
-                        $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($SDkey, 'En Atención', $datos['Folio']);
+                        $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
                     }
                 }
+                $htmlServicio = $this->vistaHTMLServicio($datosServicios[0]);
+                $this->setNoteAndWorkLog(array('key' => $datos['Key'], 'folio' => $datos['Folio'], 'html' => $htmlServicio));
             } else {
-                $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($SDkey, 'Completado', $datos['Folio']);
+                $informacionServicios = $this->MostrarDatosSD($datos['Folio'], $datos['Servicio'], $datos['ServicioConcluir'], $datos['Key']);
+                $this->ServiceDesk->setResolucionServiceDesk($datos['Key'], $datos['Folio'], $informacionServicios['html']);
+                $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Completado', $datos['Folio']);
             }
         }
 
@@ -149,9 +197,8 @@ class InformacionServicios extends General {
                                                             ON tse.IdSolicitud = tso.Id 
                                                             WHERE tso.Folio = "' . $datos['Folio'] . '"'
                 . $datosExtraServicio .
-                'AND tse.IdEstatus in (1,2,3,10,12)
+                'AND tse.IdEstatus in (1,2,3,5,10,12)
                                                                     AND tse.IdTipoServicio not in (21,41)');
-
         return $servicios;
     }
 
@@ -216,7 +263,7 @@ class InformacionServicios extends General {
         $linkPdf = $this->cargarPDF($datos);
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($usuario['Id']));
-        
+
 
         if ($informacionDiagnostico !== FALSE) {
             if ($informacionDiagnostico[0]['IdTipoDiagnostico'] === '4') {
@@ -344,7 +391,7 @@ class InformacionServicios extends General {
     public function avancesProblemasServicio(string $folio) {
         $datosAvancesProblemas = '';
         $datosAvances = '***AVANCES***<br>';
-        $datosProblemas = '<br><p style="color:#FF0000";>***PROBLEMAS***</p>';
+        $datosProblemas = "<br><p style='color:#FF0000';>***PROBLEMAS***</p>";
         $avancesProblemas = '';
 
         $serviciosAvancesServicios = $this->DBS->consultaGeneralSeguimiento('SELECT 
@@ -355,6 +402,7 @@ class InformacionServicios extends General {
                                                                             INNER JOIN t_solicitudes ts
                                                                             ON tst.IdSolicitud = ts.Id
                                                                             WHERE ts.Folio = "' . $folio . '"
+                                                                            AND tsa.Flag = "1"
                                                                             ORDER BY tsa.Fecha DESC');
 
         foreach ($serviciosAvancesServicios as $value) {
@@ -370,7 +418,7 @@ class InformacionServicios extends General {
             $datosAvances = '';
         }
 
-        if ($datosProblemas == '<br><p style="color:#FF0000";>***PROBLEMAS***</p>') {
+        if ($datosProblemas == "<br><p style='color:#FF0000';>***PROBLEMAS***</p>") {
             $datosProblemas = '';
         }
 
@@ -385,35 +433,19 @@ class InformacionServicios extends General {
         $linkImagenes = '';
         $tabla = '';
         $datosAvancesProblemas = '';
-        $tablaAvancesProblemas = $this->DBS->consultaGeneralSeguimiento('SELECT 
-                                                                                    *,
-                                                                                CASE IdItem 
-                                                                                    WHEN 1 THEN (SELECT Equipo FROM v_equipos WHERE Id = TipoItem) 
-                                                                                    WHEN 2 THEN (SELECT Nombre FROM cat_v3_equipos_sae WHERE Id = TipoItem)
-                                                                                    WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = TipoItem) 
-                                                                                END as EquipoMaterial 
-                                                                            FROM t_servicios_avance_equipo 
-                                                                            WHERE IdAvance = "' . $datos['Id'] . '"');
+        $tablaAvancesProblemas = $this->DBST->serviciosAvanceEquipo($datos['Id']);
 
-        foreach ($tablaAvancesProblemas as $key => $valor) {
-            switch ($valor['IdItem']) {
-                case '1':
-                    $tipoItem = 'Equipo';
-                    break;
-                case '2':
-                    $tipoItem = 'Material';
-                    break;
-                case '3':
-                    $tipoItem = 'Refacción';
-            }
-            if ($valor['IdItem'] === '1') {
-                if ($datos['IdTipo'] === '1') {
-                    $tabla .= "<div>" . $tipoItem . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Serie: " . $valor['Serie'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
+        if (!empty($tablaAvancesProblemas)) {
+            foreach ($tablaAvancesProblemas as $key => $valor) {
+                if ($valor['IdItem'] === '1') {
+                    if ($datos['IdTipo'] === '1') {
+                        $tabla .= "<div>" . $valor['Tipo'] . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Serie: " . $valor['Serie'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
+                    } else {
+                        $tabla .= "<div>" . $valor['Tipo'] . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
+                    }
                 } else {
-                    $tabla .= "<div>" . $tipoItem . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
+                    $tabla .= "<div>" . $valor['Tipo'] . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
                 }
-            } else {
-                $tabla .= "<div>" . $tipoItem . ": &nbsp " . $valor['EquipoMaterial'] . " &nbsp Cantidad: " . $valor['Cantidad'] . "</div>";
             }
         }
 
@@ -760,26 +792,20 @@ class InformacionServicios extends General {
     }
 
     public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $descripcion = array();
-        $informacionSolicitud = $this->getGeneralesSolicitudServicio($servicio);
-        $key = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($usuario['Id']));
-        $folio = $this->DBS->consultaGeneralSeguimiento('SELECT 
-                                            ts.Folio 
-                                        FROM t_servicios_ticket tst
-                                        INNER JOIN t_solicitudes ts
-                                            ON ts.Id = tst.IdSolicitud
-                                        WHERE tst.Id = "' . $informacionSolicitud['servicio'] . '"');
+        $folio = $this->DBST->consultaFolio($servicio);
 
-        foreach ($folio as $value) {
-            if (isset($value['Folio'])) {
-                $this->cambiarEstatusSD(array(
-                    'Folio' => $value['Folio'],
+        if ($folio !== '0') {
+            if ($folio !== NULL) {
+                $atiende = $this->DBST->atiendeServicio($servicio);
+                $key = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($atiende[0]['Atiende']));
+                $datos = array(
+                    'Folio' => $folio,
                     'Servicio' => $servicio,
-                    'ServicioConcluir' => $servicioConcluir
-                ));
-                $descripcion = $this->MostrarDatosSD($value['Folio']);
-                $this->ServiceDesk->setResolucionServiceDesk($key, $value['Folio'], $descripcion['html']);
+                    'ServicioConcluir' => $servicioConcluir,
+                    'Key' => $key);
+                $servicios = $this->verificarTodosServiciosFolio($datos);
+
+                $this->cambiarEstatusResolucionSD($datos, $servicios);
             }
         }
         return ['code' => 200, 'message' => 'correcto'];
@@ -835,6 +861,7 @@ class InformacionServicios extends General {
         if (!empty($dataFolio[0]['Folio'])) {
             $datosSD = $this->ServiceDesk->getDetallesFolio($key, $dataFolio[0]['Folio']);
             $datosResolucionSD = $this->ServiceDesk->getResolucionFolio($key, $dataFolio[0]['Folio']);
+            $datosNotasSD = $this->ServiceDesk->getNotas($key, $dataFolio[0]['Folio']);
 
             if (!empty($datosResolucionSD)) {
                 if ($datosResolucionSD->operation->result->status === 'Success') {
@@ -848,6 +875,7 @@ class InformacionServicios extends General {
                         $data['estatusSD'] = $datosSD->STATUS;
                         $data['asuntoSD'] = $datosSD->SUBJECT;
                         $data['descripcionSD'] = $datosSD->DESCRIPTION;
+
                         if (isset($datosResolucionSD->operation->Details)) {
                             $nombreUsuarioSD = $this->ServiceDesk->nombreUsuarioServiceDesk($key, $datosResolucionSD->operation->Details->RESOLVER);
                             $data['nombreUsuarioResolucionSD'] = $nombreUsuarioSD;
@@ -857,6 +885,21 @@ class InformacionServicios extends General {
                             $data['nombreUsuarioResolucionSD'] = 'Sin Resolución';
                             $data['fechaResolucionSD'] = 'Sin Resolución';
                             $data['resolucionSD'] = 'Sin Resolución';
+                        }
+
+                        if (isset($datosNotasSD->operation->Details)) {
+                            $data['notasSD'] = array();
+                            $detallesNotas = $datosNotasSD->operation->Details;
+                            foreach ($detallesNotas as $key => $value) {
+                                $data['notasSD'][$key]['nombreUsuario'] = $value->USERNAME;
+                                $data['notasSD'][$key]['fecha'] = date('Y-m-d H:i:s', $value->NOTESDATE / 1000);
+                                $data['notasSD'][$key]['texto'] = $value->NOTESTEXT;
+                            }
+                        } else {
+                            $data['nombreUsuarioResolucionSD'] = 'Sin Resolución';
+                            $data['fechaResolucionSD'] = 'Sin Resolución';
+                            $data['resolucionSD'] = 'Sin Resolución';
+                            $data['notasSD'] = 'Sin notas';
                         }
                     } else {
                         $data = NULL;
@@ -910,30 +953,14 @@ class InformacionServicios extends General {
     }
 
     public function verifyProcess(array $datos) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $datosServicios = $this->DBS->consultaGeneralSeguimiento('SELECT 
-                                            ts.Folio,
-                                            tst.Id,
-                                            tst.Ticket,
-                                            tst.IdTipoServicio,
-                                            (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tst.IdTipoServicio) Seguimiento,
-                                            tst.IdEstatus,
-                                            tst.FechaConclusion,
-                                            (SELECT Atiende FROM t_solicitudes WHERE Id = tst.IdSolicitud) Atiende
-                                        FROM t_servicios_ticket tst
-                                        INNER JOIN t_solicitudes ts
-                                            ON ts.Id = tst.IdSolicitud
-                                        WHERE tst.Id = "' . $datos['servicio'] . '"');
-
-        $servicios = $this->verificarTodosServiciosFolio(array('Servicio' => $datos['servicio'], 'ServicioConcluir' => TRUE, 'Folio' => $datosServicios[0]['Folio']));
-
-        if (empty($servicios)) {
-            $this->guardarDatosServiceDesk($datos['servicio'], TRUE);
+        if ($datos['servicioConcluir'] === 'true') {
+            $servicioConcluir = TRUE;
         } else {
-            $key = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($usuario['Id']));
-            $htmlServicio = $this->vistaHTMLServicio($datosServicios[0]);
-            $this->setNoteAndWorkLog(array('key' => $key, 'folio' => $datosServicios[0]['Folio'], 'html' => $htmlServicio));
+            $servicioConcluir = FALSE;
         }
+
+        $this->guardarDatosServiceDesk($datos['servicio'], $servicioConcluir);
+
         return ['code' => 200, 'message' => 'correcto'];
     }
 
@@ -1004,7 +1031,7 @@ class InformacionServicios extends General {
             Id 
             from t_solicitudes 
             where Folio = '" . $folio . "'
-        ) and tst.IdEstatus in (3,4,5)");
+        )");
         return $consulta;
     }
 
@@ -1167,6 +1194,7 @@ class InformacionServicios extends General {
             return ["code" => 500, "message" => "The parameter 'folio' must be a number"];
         } else {
             $servicios = $this->getServiciosByFolio($datos['folio']);
+
             if (!empty($servicios)) {
                 $this->setHeaderPDF($datos['folio']);
 

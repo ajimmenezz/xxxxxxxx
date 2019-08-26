@@ -202,6 +202,7 @@ $route['Redes/SeguimientoCE/SeguimientoGeneral/guardarSolucion'] = 'V2/Controlle
 $route['Redes/SeguimientoCE/SeguimientoGeneral/concluir'] = 'V2/Controller_ServicioTicket/setConcluir';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/exportarPDF'] = 'V2/Controller_ServicioTicket/getPDF';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/borrarEvidencias'] = 'V2/Controller_ServicioTicket/deleteEvidencias';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/validarServicio'] = 'V2/Controller_ServicioTicket/validateService';
 
 /* Routers para el manejo de MesaDeAyuda */
 $route['MesaDeAyuda/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
@@ -277,6 +278,9 @@ $route['FondoFijo/Catalogos/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEv
 $route['FondoFijo/Depositar/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
 $route['FondoFijo/MiFondo/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
 $route['FondoFijo/Autorizar/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
+$route['FondoFijo/SaldosTecnico/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
+$route['FondoFijo/MovimientosTecnico/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
+$route['FondoFijo/DetallesMovimiento/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
 
 /* Routers para el manejo de Instalaciones de Equipo */
 $route['Instalaciones/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';

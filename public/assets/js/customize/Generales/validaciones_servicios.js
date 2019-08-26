@@ -64,7 +64,7 @@ $(function () {
             $('#btnAceptarConfirmacion').on('click', function () {
                 $('#btnAceptarConfirmacion').attr('disabled', 'disabled');
                 $('#btnCancelarConfirmacion').attr('disabled', 'disabled');
-                var data = {'servicio': datosTablaServicios[1], ticket: datosTablaServicios[2], idSolicitud: datosTablaServicios[0]};
+                var data = {'servicio': datosTablaServicios[1], ticket: datosTablaServicios[2], idSolicitud: datosTablaServicios[0], servicioConcluir: false};
                 evento.enviarEvento('Servicio/Verificar_Servicio', data, '#modal-dialogo', function (respuesta) {
                     if (respuesta.code === 200) {
                         evento.mensajeConfirmacion('Se Valido con Exito', 'Correcto');

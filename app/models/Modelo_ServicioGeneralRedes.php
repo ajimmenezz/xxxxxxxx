@@ -148,5 +148,19 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
     public function getFirmas(string $idServicio) {
         return $this->consulta('select concat(Firma,",", FirmaTecnico) as firmas from t_servicios_ticket where Id=' . $idServicio);
     }
+    
+    public function getDatosSolucionPDF(array $datosServicio) {
+        return $this->consulta('SELECT 
+                                    nombreUsuario(tst.Solicita) AS Cliente, 
+                                    cs.Nombre AS Sucursal, 
+                                    csd.Nombre AS TipoServicio, 
+                                    ce.Nombre AS Estatus, 
+                                    nombreUsuario(tst.Atiende) AS Atiende 
+                                FROM t_servicios_ticket AS tst
+                                INNER JOIN cat_v3_sucursales AS cs ON tst.IdSucursal = cs.Id
+                                INNER JOIN cat_v3_servicios_departamento AS csd ON tst.IdTipoServicio = csd.Id
+                                INNER JOIN cat_v3_estatus AS ce ON tst.IdEstatus = ce.Id
+                                WHERE tst.Id ='.$datosServicio['id']);
+    }
 
 }

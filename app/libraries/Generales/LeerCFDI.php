@@ -221,7 +221,7 @@ class LeerCFDI {
     /**
      * Valida la informaci{on del CFDI para fines de Siccob y Residig
      */
-    function validar(float $total = 0, array $receptores = ['SSO0101179Z7', 'RSD130305DI7', 'RRC130605555']) {
+    function validar(float $total = 0, array $receptores = ['SSO0101179Z7', 'RSD130305DI7', 'RRC130605555', 'SSS140225LT6']) {
         $total = abs($total);
         $arrayReturn = [
             'code' => 200,

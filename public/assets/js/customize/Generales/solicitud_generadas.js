@@ -188,7 +188,7 @@ $(function () {
                             $('#btnAceptarConcluirServicio').on('click', function () {
                                 $('#btnAceptarConcluirServicio').attr('disabled', 'disabled');
                                 $('#btnCancelar').attr('disabled', 'disabled');
-                                var data = {'servicio': datos[0], ticket: datos[1], idSolicitud: respuesta.ids.IdSolicitud};
+                                var data = {'servicio': datos[0], ticket: datos[1], idSolicitud: respuesta.ids.IdSolicitud, servicioConcluir: false};
                                 evento.enviarEvento('Servicio/Verificar_Servicio', data, '#seccionValidarServicio', function (respuesta) {
                                     if (respuesta === true) {
                                         mensajeModal('Se Valido con Exito', 'Correcto', true);
