@@ -4,15 +4,14 @@ namespace Modelos;
 
 use Librerias\V2\PaquetesGenerales\Interfaces\Modelo_Base as Modelo_Base;
 
-class Modelo_ServicioGeneralRedes extends Modelo_Base {
+class Modelo_ServicioCableado extends Modelo_Base {
 
     public function __construct() {
         parent::__construct();
     }
 
     public function getDatosServicio(string $idServicio) {
-        try {
-            $consulta = $this->consulta('select 
+        $consulta = $this->consulta('select 
                                             serviciosTicket.FechaCreacion,
                                             serviciosTicket.Ticket,
                                             usuario(serviciosTicket.Atiende) as Atiende,
@@ -36,9 +35,6 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
                                                 solicitudes.Id=solicitudesInternas.IdSolicitud
                                         where
                                                 serviciosTicket.Id = ' . $idServicio);
-        } catch (\Exception $ex) {
-            var_dump($ex->getMessage());
-        }
         return $consulta;
     }
 
@@ -101,13 +97,8 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
                                 where IdServicio = ' . $idServicio);
     }
 
-    public function setSolucion(string $idServicio, array $datos) {
-        $this->setSucursal($idServicio, $datos['idSucursal']);
-
-        $consulta = $this->consulta('select * from t_servicios_generales where IdServicio = ' . $idServicio);
-
-        if (empty($consulta)) {
-            $this->insertar('insert into t_servicios_generales values(
+    public function setServicio(string $idServicio, array $datos) {
+        $this->insertar('insert into t_servicios_generales values(
                                 null,
                                 ' . $datos['idUsuario'] . ',
                                 ' . $idServicio . ',
@@ -115,13 +106,14 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
                                 "' . $datos['archivos'] . '",
                                 now()    
                              )');
-        } else {
-            $this->actualizar('update t_servicios_generales set 
+    }
+
+    public function updateServicio(string $idServicio, array $datos) {
+        $this->actualizar('update t_servicios_generales set 
                            Descripcion = "' . $datos['observaciones'] . '",
                            Archivos = "' . $datos['archivos'] . '",
                            Fecha = now()
                             where IdServicio = ' . $idServicio);
-        }
     }
 
     public function setConclusion(string $idServicio, array $datos) {
@@ -150,7 +142,7 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
     }
 
     public function getDatosSolucionPDF(array $datosServicio) {
-        $datos['infoGeneral'] = $this->consulta('SELECT 
+        return $this->consulta('SELECT 
                                     nombreUsuario(tst.Solicita) AS Cliente, 
                                     cs.Nombre AS Sucursal, 
                                     csd.Nombre AS TipoServicio, 
@@ -161,28 +153,6 @@ class Modelo_ServicioGeneralRedes extends Modelo_Base {
                                 INNER JOIN cat_v3_servicios_departamento AS csd ON tst.IdTipoServicio = csd.Id
                                 INNER JOIN cat_v3_estatus AS ce ON tst.IdEstatus = ce.Id
                                 WHERE tst.Id =' . $datosServicio['id']);
-
-        $datos['infoNodos'] = $this->consulta('SELECT 
-                                                    caa.Nombre AS Area, 
-                                                    trn.Nombre AS Nodo, 
-                                                    cme.Nombre AS Switch, 
-                                                    trn.NumeroSwitch
-                                                FROM t_servicios_ticket AS tst
-                                                INNER JOIN t_redes_nodos AS trn ON tst.Id = trn.IdServicio
-                                                INNER JOIN cat_v3_areas_atencion AS caa ON trn.IdArea = caa.Id
-                                                INNER JOIN cat_v3_modelos_equipo AS cme ON trn.IdSwitch = cme.Id
-                                                WHERE tst.Id =' . $datosServicio['id']);
-
-        $datos['evidencias'] = $this->consulta('SELECT Archivos FROM t_redes_nodos WHERE IdServicio =' . $datosServicio['id']);
-
-        $datos['infoFirmas'] = $this->consulta('SELECT 
-                                                    tst.Firma, 
-                                                    tst.NombreFirma, 
-                                                    tst.FirmaTecnico, 
-                                                    nombreUsuario(tst.Atiende) AS Atiende
-                                                FROM t_servicios_ticket AS tst
-                                                WHERE tst.Id =' . $datosServicio['id']);
-        return $datos;
     }
 
 }
