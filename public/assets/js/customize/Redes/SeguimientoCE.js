@@ -80,6 +80,7 @@ $(function () {
     let evidenciasNodo = null;
     let archivosEstablecidos = null;
     let idNodo = null;
+    let validacion = null;
 
     tablaPrincipal.evento(function () {
         let tamañoDatosFila = 0, datosFila = tablaPrincipal.datosFila(this);
@@ -118,6 +119,7 @@ $(function () {
                     $('.bloqueoConclusionBtn').addClass('hidden');
                     $('#scciones').removeClass('hidden');
                     $('·table-materialNodo').off("click");
+                    validacion = "EN VALIDACIÓN";
                 }
             });
         }
@@ -594,7 +596,7 @@ $(function () {
         });
     }
 
-    function cargarContenidoTablaMaterial(materialUsado){
+    function cargarContenidoTablaMaterial(materialUsado) {
         tablaMateriales.limpiartabla();
         $.each(materialUsado, function (key, value) {
             tablaMateriales.agregarDatosFila([
@@ -604,7 +606,7 @@ $(function () {
             ]);
         });
     }
-    
+
     function eventosTablas() {
         tablaNodos.evento(function () {
             let datosNodo = tablaNodos.datosTabla();
@@ -667,6 +669,10 @@ $(function () {
                 }
             });
             $('#evidenciasMaterialUtilizado').append(evidencias);
+            if (validacion === "EN VALIDACIÓN") {
+                $('.bloqueoConclusionBtn').addClass('hidden');
+                tablaAgregarMateriales.evento(function (){console.log(validacion)});
+            }
         }
         $.each(listaTemporalNodos, function (key, value) {
             $.each(materialTecnico, function (llave, valor) {
@@ -858,6 +864,7 @@ $(function () {
                     cambioBtnSinMaterial();
                     $('#evidenciasMaterialFija').empty();
                     ocultarElementosDefault(respuesta.solucion);
+                    archivosEstablecidos = null;
                 });
             });
         } else {
