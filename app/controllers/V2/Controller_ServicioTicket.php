@@ -207,7 +207,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->setResolucionServiceDesk($datosServicio);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $this->datos['operacion'] = FALSE;
             $this->datos['Error'] = $ex->getMessage();
             echo json_encode($this->datos);
@@ -215,7 +215,11 @@ class Controller_ServicioTicket extends CI_Controller {
     }
 
     private function setResolucionServiceDesk(array $datosServicio) {
-        ServiceDesk::setNota($datosServicio['folio'], $datosServicio['mensaje']);
+        $this->getInformacionFolio();
+
+        if ($this->datos['folio'] !== NULL) {
+            ServiceDesk::setNota($datosServicio['folio'], $datosServicio['mensaje']);
+        }
 //        ServiceDesk::setResolucion($datosServicio['folio'],$mensaje);
 //        ServiceDesk::setEstatus('Validacion',$datosServicio['folio']);
     }
@@ -250,7 +254,7 @@ class Controller_ServicioTicket extends CI_Controller {
             echo json_encode($this->datos);
         }
     }
-    
+
     public function validateService() {
         try {
             $datosServicio = $this->input->post();

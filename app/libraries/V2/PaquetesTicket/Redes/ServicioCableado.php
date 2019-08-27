@@ -182,7 +182,15 @@ class ServicioCableado implements Servicio {
             $datos['archivos'] .= ',' . $consulta[0]['Archivos'];
         }
 
-        $this->DBServiciosGeneralRedes->setSolucion($this->id, $datos);
+        $consulta = $this->DBServiciosGeneralRedes->getDatosServicio($this->id);
+        
+        if (empty($consulta)) {
+            $this->DBServiciosGeneralRedes->setServicio($this->id, $datos);
+        } else {
+            $this->DBServiciosGeneralRedes->updateServicio($this->id, $datos);
+        }
+        
+        $this->DBServiciosGeneralRedes->setSucursal($this->id, $datos['idSucursal']);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
 
@@ -194,17 +202,13 @@ class ServicioCableado implements Servicio {
     }
 
     public function setConcluir(array $datos) {
+//        var_dump($datos);
         $this->DBServiciosGeneralRedes->empezarTransaccion();
-        $this->DBServiciosGeneralRedes->setSucursal($this->id, $datos['idSucursal']);
-        $consulta = $this->DBServiciosGeneralRedes->getDatosServicio($this->id);
-        if (empty($consulta)) {
-            $this->DBServiciosGeneralRedes->setServicio($this->id, $datos);            
-        } else {
-            $this->DBServiciosGeneralRedes->updateServicio($this->id, $datos);
-        }
+        $this->DBServiciosGeneralRedes->setConclusion($this->id, $datos);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
         $archivo = '<p>******* Termino de servicio de cableado ********</p>
                     <p><strong>Descripción:</strong> Se concluye el servicio de cableado</p>';
+//        var_dump($archivo);
         return $archivo;
     }
 
