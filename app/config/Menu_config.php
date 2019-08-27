@@ -1432,7 +1432,7 @@ $config['RH'] = array(
         'fullcalendar/fullcalendar/fullcalendar'
         ),
 
-        'js' => array('Base/Base', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla','RH/CalendarioPermisos'),
+        'js' => array('Base/Base', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla','RH/CalendarioPermisos','Componentes/HerramientasWeb/Utileria'),
         
         'pluginsJs' => array(
          'fullcalendar/fullcalendar/fullcalendar',

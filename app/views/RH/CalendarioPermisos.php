@@ -16,7 +16,7 @@
     </div>
    <?php 
    $_SESSION['Id'];
-    echo " <span id='spanID'>".$_SESSION['Id']."</span>";
+    echo " <span hidden id='spanID'>".$_SESSION['Id']."</span>";
    ?>
     <!-- Finalizando panel Autorizacion Permisos-->   
 
@@ -25,33 +25,40 @@
 <div class="modal fade" id="modalDatosPermiso" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header bg-aqua">
-        <h5 class="modal-title" id="exampleModalLabel">Datos del permiso</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+      <div class="modal-header bg-black">
+        <h5 class="modal-title text-white" id="exampleModalLabel">Información del permiso
+        <button type="button" class="close " data-dismiss="modal" aria-label="Close" style="color: #000">
+          <span class="text-white" aria-hidden="true" style="color:#000">&times;</span>
         </button>
+        </h5>
+        
       </div>
       <div class="modal-body text-center">
         <div id="idPermiso" hidden></div>
         <div id="idUsr" hidden></div>
-        <div ><h4>Usuario: </h4><span id="usr"></span></div>
-        <div ><h4>Estatus: </h4><span id="sts"></span></div>
-        <div ><h4>Motivo de ausencia:</h4><span id="aus"></span></div>
-        <div id="fed"><h4>Fecha de permiso: </h4></div>
+
+        <div ><h5>Usuario: </h5></div>
+        <input type="text" class="form-control text-center" readonly="readonly" name="" id="usr">
+        <div> <h5>Estatus:</h5> </div>
+        <input type="text" class="form-control text-center" readonly="readonly" name="" id="sts">
+        <div ><h5>Motivo de ausencia:</h5></div>
+        <input type="text" class="form-control text-center" readonly="readonly" name="" id="aus">
+        <div><h5>Fecha de permiso: </h5></div>
+        <input type="text" class="form-control text-center" readonly="readonly" name="" id="fed">
+        
         <div id="feh"></div>
         <div id="hoe"></div>
         <div id="hos"></div>
-        <div ><h4>Motivo : </h4><span id="jus"></span></div>
-        <div ><h4>Tipo motivo: </h4><span id="mot"></span></div>
+        
+        <div ><h5>Motivo : </h5></div>
+        <input type="text" class="form-control text-center" readonly="readonly" name="" id="jus">
+        <div ><h5>Tipo motivo: </h5><span id=""></span></div>
+        <input type="text" class="form-control text-center" readonly="readonly" name="" id="mot">
         <div id="idus" hidden></div>
         <div id="idper" hidden></div>
         <div id="arc" hidden></div>
-        
-        
-       
 
         <div id="datosAutorizacion" ></div>
-        
 
       </div>
       <div class="modal-footer">
@@ -69,6 +76,7 @@
 <div id="modalRechazo" class="modal modal-message fade">
     <div class="modal-dialog">
         <div class="modal-content">
+            <div class="loader"></div>
             <!--Empieza titulo del modal-->
             <div class="modal-header" style="text-align: center">
             </div>

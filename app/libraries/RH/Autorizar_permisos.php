@@ -59,6 +59,7 @@ class Autorizar_permisos extends General{
     }
     
     public function cancelarPermiso(array $datosPermiso){
+        return array("datos",$datosPermiso);
         $estadoPermiso = array('IdEstatus' => '10');
         switch ($datosPermiso['idPerfil']){
             case 21:
@@ -114,6 +115,7 @@ class Autorizar_permisos extends General{
                     $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 37'));
                     break;
                 case 37:
+                    
                     $revisor = array (
                         'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
                         'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
@@ -128,6 +130,7 @@ class Autorizar_permisos extends General{
                     break;
             }
         }else{
+            
             switch ($datosPermiso['idPerfil']){
                 case 21:
                     $revisor = array (
@@ -145,17 +148,19 @@ class Autorizar_permisos extends General{
         }
         
         $infoCorreo = $this->informacionCorreo($datosPermiso['idPermiso']);
+        
         $texto = '<p>El permiso de ausencia de <strong>' .$infoCorreo[0]['Nombre']. ',</strong> ha sido previamente <strong>Autorizado</strong>, se requiere su concentimiento o rechazo.</p><br><br>
                     Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
                     <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Autorizado', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
-        
         $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado por: ", $motivo = array ('MotivoRechazo' => ""));
         return $this->DBS->actualizar('t_permisos_ausencia_rh', $revisor, array('Id' => $datosPermiso['idPermiso']));
     }
     
     public function conluirAutorizacion(array $datosPermiso){
+        return array("Datos", $datosPermiso);
+
         $estadoPermiso = array('IdEstatus' => '7');
         switch ($datosPermiso['idPerfil']){
             case 37:
