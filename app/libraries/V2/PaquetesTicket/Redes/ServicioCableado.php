@@ -194,6 +194,7 @@ class ServicioCableado implements Servicio {
     }
 
     public function setConcluir(array $datos) {
+//        var_dump($datos);
         $this->DBServiciosGeneralRedes->empezarTransaccion();
         $this->DBServiciosGeneralRedes->setSucursal($this->id, $datos['idSucursal']);
         $consulta = $this->DBServiciosGeneralRedes->getDatosServicio($this->id);
@@ -205,6 +206,7 @@ class ServicioCableado implements Servicio {
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
         $archivo = '<p>******* Termino de servicio de cableado ********</p>
                     <p><strong>Descripción:</strong> Se concluye el servicio de cableado</p>';
+//        var_dump($archivo);
         return $archivo;
     }
 

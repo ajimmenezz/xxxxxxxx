@@ -117,6 +117,7 @@ class Modelo_ServicioCableado extends Modelo_Base {
     }
 
     public function setConclusion(string $idServicio, array $datos) {
+        var_dump('pumas2');
         $this->actualizar('update t_servicios_ticket set 
                            IdEstatus = 5,
                            FechaConclusion = NOW(),

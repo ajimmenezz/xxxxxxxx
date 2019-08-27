@@ -1001,9 +1001,10 @@ $(function () {
         } else {
             datoServicioTabla.firmaCliente = firmaClienet.getImg();
             datoServicioTabla.firmaTecnico = firmaTecnico.getImg();
+            console.log(datoServicioTabla);
             peticion.enviar('panelFirmas', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
                 if (!validarError(respuesta)) {
-                    return;
+//                    return;
                 }
                 modal.mostrarModal("Exito", '<h4>Se han concluido el servicio correctamente</h4>');
                 $('#btnCerrar').addClass('hidden');

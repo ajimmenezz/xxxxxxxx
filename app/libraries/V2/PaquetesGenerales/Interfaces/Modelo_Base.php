@@ -82,7 +82,7 @@ class Modelo_Base {
     }
 
     private function lanzarExcepcion(string $query) {
-
+        var_dump($query);
         $error = self::$DB[$this->nombreBD]->error();
         throw new \Exception('Error para genera la consulta: ' . $query . ' donde presenta el siguiente error : ' . $error['message']);
     }
