@@ -32,7 +32,7 @@ class Modelo_GestorSucursales extends Modelo {
                                          id, 
                                          Nombre as text
                                       from 
-                                         cat_v3_sucursales');
+                                         cat_v3_sucursales where Flag = 1');
         } catch (Exception $ex) {
             var_dump($ex->getMessage());
         }

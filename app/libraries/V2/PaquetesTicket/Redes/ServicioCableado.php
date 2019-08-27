@@ -221,21 +221,17 @@ class ServicioCableado implements Servicio {
     }
 
     public function getPDF(array $datos) {
-        $informacionGeneral = $this->DBServiciosGeneralRedes->getDatosSolucionPDF($datos);
-        var_dump($informacionGeneral);
+        $informacionServicio = $this->DBServiciosGeneralRedes->getDatosSolucionPDF($datos);
         $pdf = new PDF($this->folioSolicitud);
         $pdf->AddPage();        
         $pdf->tituloTabla('#1 Información General');
-        $pdf->tabla(array(), $informacionGeneral);
-//        $pdf->tablaImagenes(array('/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga.jpg',
-//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
-//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga1.jpg',
-//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
-//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
-//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga1.jpg',
-//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg',
-//            '/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga2.jpg'));
-//        $pdf->tituloTabla('Solución del Servicio');
+        $pdf->tabla(array(), $informacionServicio['infoGeneral']);
+        $pdf->tituloTabla('Solución del Servicio');
+        $pdf->tabla(array(), $informacionServicio['infoNodos']);
+        $evidencias = explode(',', $informacionServicio['evidencias'][0]['Archivos']);
+        $pdf->tablaImagenes($evidencias);
+        $pdf->tituloTabla('Firmas del Servicio');
+        $pdf->firma($informacionServicio['infoFirmas'][0]);
 //        $pdf->firma(array(array('/storage/Archivos/Servicios/Servicio-32364/EvidenciasFirmas/Firma-Cliente-prueba.png','Nombre','Puesto')));
         $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
         $pdf->Output('F', $carpeta, true);
