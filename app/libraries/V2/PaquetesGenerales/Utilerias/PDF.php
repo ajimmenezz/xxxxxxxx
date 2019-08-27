@@ -178,8 +178,6 @@ class PDF extends \FPDF {
                 $this->Cell($ancho, 7, $value, 1, 0, 'C', true);
             }
             $this->Ln();
-        } else {
-            $ancho = 190 / count($datos);
         }
 
         // Restauración de colores y fuentes
@@ -189,16 +187,29 @@ class PDF extends \FPDF {
 
         // Datos
         $fill = false;
-        foreach ($datos as $row) {
-            foreach ($row as $key => $value) {
-                if ($key === 0) {
-                    $this->Cell($ancho, 7, $value, 'LR', 0, 'L', $fill);
-                } else {
-                    $this->Cell($ancho, 7, $value, 'LR', 0, 'C', $fill);
+        if ($cabecera !== []) {
+            foreach ($datos as $row) {
+                foreach ($row as $key => $value) {
+                    if ($key === 0) {
+                        $this->Cell($ancho, 7, utf8_decode($value), 'LR', 0, 'L', $fill);
+                    } else {
+                        $this->Cell($ancho, 7, utf8_decode($value), 'LR', 0, 'C', $fill);
+                    }
+                }
+                $this->Ln();
+                $fill = !$fill;
+            }
+        } else {
+            foreach ($datos as $row) {
+                foreach ($row as $key => $value) {
+                    $this->SetFont('', 'B');
+                    $this->Cell(30, 7, utf8_decode($key) . ': ', 'LR', 0, 'R', $fill);
+                    $this->SetFont('', '');
+                    $this->Cell(0, 7, utf8_decode($value), 'LR', 0, 'L', $fill);
+                    $this->Ln();
+                    $fill = !$fill;
                 }
             }
-            $this->Ln();
-            $fill = !$fill;
         }
         // Línea de cierre
         $this->Cell(190, 0, '', 'T');
@@ -255,43 +266,42 @@ class PDF extends \FPDF {
         $this->SetFont('Courier', 'BI', 12);
 
         $totalFirmas = count($datosPersona);
-        if ($totalFirmas > 1) {
-            $countFilas = (($totalFirmas / 2) < 0.5) ? round($totalFirmas / 2, 0, PHP_ROUND_HALF_UP) + 1 : ceil($totalFirmas / 2);
-//            $this->Cell(80, 5, utf8_decode('NO'), 0, 1, 'C', true);
-            $columna = 0;
-            $listaFirmas = array();
-            $tempFirmas = array();
-
-            for ($j = 0; $j < $countFilas; $j++) {
-
-                foreach ($datosPersona as $key => $firma) {
-                    if ($columna < 2) {
-                        array_push($tempFirmas, $firma);
-                        $columna += 1;
-                        unset($datosPersona[$key]);
-                    }
-                }
-                array_push($listaFirmas, $tempFirmas);
-                $tempFirmas = array();
-                $columna = 0;
-            }
+        if ($totalFirmas > 2) {
+//            $countFilas = (($totalFirmas / 2) < 0.5) ? round($totalFirmas / 2, 0, PHP_ROUND_HALF_UP) + 1 : ceil($totalFirmas / 2);
+//            $columna = 0;
+//            $listaFirmas = array();
+//            $tempFirmas = array();
+//
+//            for ($j = 0; $j < $countFilas; $j++) {
+//
+//                foreach ($datosPersona as $key => $firma) {
+//                    if ($columna < 2) {
+//                        array_push($tempFirmas, $firma);
+//                        $columna += 1;
+//                        unset($datosPersona[$key]);
+//                    }
+//                }
+//                array_push($listaFirmas, $tempFirmas);
+//                $tempFirmas = array();
+//                $columna = 0;
+//            }
 
             $ancho = $this->GetPageWidth() - 20;
             $y = $this->GetY();
             $x = 30;
-            foreach ($listaFirmas as $firmas) {
-                foreach ($firmas as $firma) {
-                    if ($x < $ancho) {
-                        $this->Image('.' . $firma[0], $x, $y, 80, 30);
-                        $this->SetXY($x, $y + 30);
-                        $this->Cell(70, 7, utf8_decode($firma[1]), 1, 1, 'C', true);
-                        $this->SetX($x);
-                        $this->Cell(70, 7, utf8_decode($firma[2]), 1, 1, 'C', true);
-                        $x += 85;
+            foreach ($datosPersona as $key) {
+                if ($x < $ancho) {
+                    if ($this->compararNombreOArchivo($key)) {
+                        $this->Image('.' . $key, $x, $y, 80, 30);
+                    } else {
+                        $this->SetXY($x, $y + 35);
+                        $this->Cell(70, 7, utf8_decode($key), 1, 1, 'C', true);
+                    $x += 80;
                     }
+                } else {
+                    $x = 30;
+                    $y += 50;
                 }
-                $x = 30;
-                $y += 50;
                 $altura = $y + 35;
                 if ($altura > ($this->GetPageHeight() - 40)) {
                     $this->AddPage();
@@ -301,13 +311,22 @@ class PDF extends \FPDF {
             $this->SetY($y);
         } else {
             foreach ($datosPersona as $key) {
-                $this->SetX(65);
-                $this->Image('.' . $key[0], null, null, 80);
-                $this->SetX(60);
-                $this->Cell(90, 7, utf8_decode($key[1]), 1, 1, 'C', true);
-                $this->SetX(60);
-                $this->Cell(90, 7, utf8_decode($key[2]), 1, 1, 'C', true);
+                if ($this->compararNombreOArchivo($key)) {
+                    $this->SetX(65);
+                    $this->Image('.' . $key, null, null, 80);
+                } else {
+                    $this->SetX(60);
+                    $this->Cell(90, 7, utf8_decode($key), 1, 1, 'C', true);
+                }
             }
+        }
+    }
+
+    function compararNombreOArchivo($campo) {
+        if (preg_match("[^/]", $campo)) {
+            return true;
+        } else {
+            return false;
         }
     }
 

@@ -30,7 +30,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $idUsuario = Usuario::getId();
             $this->servicio->startServicio($idUsuario);
             $this->datos['servicio'] = $this->servicio->getDatos();
-            $this->datos['sucursales'] = $this->gestorSucursales->getSucursales($this->servicio->getCliente());
+            $this->datos['sucursales'] = $this->gestorSucursales->getSucursales();
             $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['problemas'] = null;
             $this->datos['firmas'] = null;
@@ -51,7 +51,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($tipoServicio, $datosServicio['id']);
             $this->datos['servicio'] = $this->servicio->getDatos();
-            $this->datos['sucursales'] = $this->gestorSucursales->getSucursales($this->servicio->getCliente());
+            $this->datos['sucursales'] = $this->gestorSucursales->getSucursales();
             $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['problemas'] = $this->servicio->getProblemas();
             $this->datos['firmas'] = $this->servicio->getFirmas($datosServicio['id']);

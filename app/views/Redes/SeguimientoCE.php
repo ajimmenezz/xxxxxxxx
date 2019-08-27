@@ -374,9 +374,9 @@
                                 <table id="table-material" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
                                     <thead>
                                         <tr>
+                                            <th class="all">Tipo Producto</th>
                                             <th class="all">Material</th>
                                             <th class="all">Cantidad</th>
-                                            <th class="all">Almacén Disponible</th>
                                         </tr>
                                     </thead>
                                     <tbody>
