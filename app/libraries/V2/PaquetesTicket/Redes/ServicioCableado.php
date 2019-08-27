@@ -56,13 +56,9 @@ class ServicioCableado implements Servicio {
     }
 
     public function setEstatus(string $estatus) {
-        try {
-            $this->DBServiciosGeneralRedes->empezarTransaccion();
-            $this->DBServiciosGeneralRedes->setEstatus($this->id, $estatus);
-            $this->DBServiciosGeneralRedes->finalizarTransaccion();
-        } catch (\Exception $ex) {
-            var_dump($ex->getMessage());
-        }
+        $this->DBServiciosGeneralRedes->empezarTransaccion();
+        $this->DBServiciosGeneralRedes->setEstatus($this->id, $estatus);
+        $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
 
     public function getFolio() {
@@ -199,7 +195,13 @@ class ServicioCableado implements Servicio {
 
     public function setConcluir(array $datos) {
         $this->DBServiciosGeneralRedes->empezarTransaccion();
-        $this->DBServiciosGeneralRedes->setConclusion($this->id, $datos);
+        $this->DBServiciosGeneralRedes->setSucursal($this->id, $datos['idSucursal']);
+        $consulta = $this->DBServiciosGeneralRedes->getDatosServicio($this->id);
+        if (empty($consulta)) {
+            $this->DBServiciosGeneralRedes->setServicio($this->id, $datos);            
+        } else {
+            $this->DBServiciosGeneralRedes->updateServicio($this->id, $datos);
+        }
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
         $archivo = '<p>******* Termino de servicio de cableado ********</p>
                     <p><strong>Descripción:</strong> Se concluye el servicio de cableado</p>';
@@ -224,7 +226,7 @@ class ServicioCableado implements Servicio {
         $informacionGeneral = $this->DBServiciosGeneralRedes->getDatosSolucionPDF($datos);
         var_dump($informacionGeneral);
         $pdf = new PDF($this->folioSolicitud);
-        $pdf->AddPage();        
+        $pdf->AddPage();
         $pdf->tituloTabla('#1 Información General');
         $pdf->tabla(array(), $informacionGeneral);
 //        $pdf->tablaImagenes(array('/storage/Archivos/Servicios/Servicio-32364/EvidenciaProblemas/descarga.jpg',
