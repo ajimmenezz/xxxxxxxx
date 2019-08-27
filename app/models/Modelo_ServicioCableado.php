@@ -11,8 +11,7 @@ class Modelo_ServicioCableado extends Modelo_Base {
     }
 
     public function getDatosServicio(string $idServicio) {
-        try {
-            $consulta = $this->consulta('select 
+        $consulta = $this->consulta('select 
                                             serviciosTicket.FechaCreacion,
                                             serviciosTicket.Ticket,
                                             usuario(serviciosTicket.Atiende) as Atiende,
@@ -36,9 +35,6 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                                 solicitudes.Id=solicitudesInternas.IdSolicitud
                                         where
                                                 serviciosTicket.Id = ' . $idServicio);
-        } catch (\Exception $ex) {
-            var_dump($ex->getMessage());
-        }
         return $consulta;
     }
 
@@ -101,13 +97,8 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                 where IdServicio = ' . $idServicio);
     }
 
-    public function setSolucion(string $idServicio, array $datos) {
-        $this->setSucursal($idServicio, $datos['idSucursal']);
-
-        $consulta = $this->consulta('select * from t_servicios_generales where IdServicio = ' . $idServicio);
-
-        if (empty($consulta)) {
-            $this->insertar('insert into t_servicios_generales values(
+    public function setServicio(string $idServicio, array $datos) {
+        $this->insertar('insert into t_servicios_generales values(
                                 null,
                                 ' . $datos['idUsuario'] . ',
                                 ' . $idServicio . ',
@@ -115,13 +106,14 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                 "' . $datos['archivos'] . '",
                                 now()    
                              )');
-        } else {
-            $this->actualizar('update t_servicios_generales set 
+    }
+
+    public function updateServicio(string $idServicio, array $datos) {
+        $this->actualizar('update t_servicios_generales set 
                            Descripcion = "' . $datos['observaciones'] . '",
                            Archivos = "' . $datos['archivos'] . '",
                            Fecha = now()
                             where IdServicio = ' . $idServicio);
-        }
     }
 
     public function setConclusion(string $idServicio, array $datos) {
@@ -148,7 +140,7 @@ class Modelo_ServicioCableado extends Modelo_Base {
     public function getFirmas(string $idServicio) {
         return $this->consulta('select concat(Firma,",", FirmaTecnico) as firmas from t_servicios_ticket where Id=' . $idServicio);
     }
-    
+
     public function getDatosSolucionPDF(array $datosServicio) {
         return $this->consulta('SELECT 
                                     nombreUsuario(tst.Solicita) AS Cliente, 
@@ -160,7 +152,7 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                 INNER JOIN cat_v3_sucursales AS cs ON tst.IdSucursal = cs.Id
                                 INNER JOIN cat_v3_servicios_departamento AS csd ON tst.IdTipoServicio = csd.Id
                                 INNER JOIN cat_v3_estatus AS ce ON tst.IdEstatus = ce.Id
-                                WHERE tst.Id ='.$datosServicio['id']);
+                                WHERE tst.Id =' . $datosServicio['id']);
     }
 
 }
