@@ -97,7 +97,9 @@ class ServiceDesk {
         try {
             self::getFoliosTecnico($key);
         } catch (\Exception $ex) {
-            $key = self::$DBServiceDesk->getApiKeyDefault();
+            $key = '';
+            //Se comenta el codigo para que se planche la información solo la persona que haga los cambios.
+//            $key = self::$DBServiceDesk->getApiKeyDefault();
         }
         return $key;
     }
@@ -187,7 +189,7 @@ class ServiceDesk {
 
         return str_replace($search, $replace, $texto);
     }
-    
+
     static public function setResolucion(string $folio, string $mensaje) {
         $key = Usuario::getAPIKEY();
         $key = self::validarAPIKey(strval($key));
@@ -207,7 +209,7 @@ class ServiceDesk {
                 . "INPUT_DATA=" . urlencode($input_data) . "&"
                 . "TECHNICIAN_KEY=" . $key;
         $respuesta = self::sendSolicitud(self::$url . '/' . $folio . '/resolution/?' . self::$FIELDS);
-        self::validarError($respuesta);        
+        self::validarError($respuesta);
     }
 
 }
