@@ -104,7 +104,9 @@ class ServiceDesk extends General {
         try {
             $this->getFoliosTecnico($key);
         } catch (\Exception $ex) {
-            $key = $this->modeloServiceDesck->getApiKeyByUser('2');
+            $key = '';
+//            Se comenta el codigo para que se planche la información solo la persona que haga los cambios.
+//            $key = $this->modeloServiceDesck->getApiKeyByUser('2');
         }
         return $key;
     }
