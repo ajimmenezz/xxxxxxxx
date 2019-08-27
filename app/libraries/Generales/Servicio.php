@@ -2422,9 +2422,15 @@ class Servicio extends General {
                         'IdUsuario' => $usuario['Id'],
                         'Descripcion' => $datos['descripcion'],
                         'IdTipo' => $datos['tipoAvanceProblema'],
-                        'Fecha' => $fecha,
                         'Descripcion' => $datos['descripcion']
                     ), 'where' => array('Id' => $datos['idAvanceProblema'])));
+
+        $this->DBS->insertarHitoricoServiciosAvance(
+                array(
+                    'IdUsuarioModifica' => $usuario['Id'],
+                    'IdServicioAvance' => $datos['idAvanceProblema'],
+                    'FechaModificacion' => $fecha
+        ));
 
         if ((is_string($datos['datosTabla']))) {
             $datos['datosTabla'] = explode(",", $datos['datosTabla']);
@@ -2443,11 +2449,11 @@ class Servicio extends General {
 
         if ($verificar === TRUE) {
             $avancesProblemaEquipo = $this->DBS->serviciosAvanceEquipo($datos['idAvanceProblema']);
-            
+
             if (!empty($avancesProblemaEquipo)) {
                 $this->DBS->flagearServicioAvanceEquipo(array('idAvanceProblema' => $datos['idAvanceProblema']));
             }
-            
+
             foreach ($datos['datosTabla'] as $value) {
                 $this->DBS->setNuevoElemento('t_servicios_avance_equipo', array(
                     'IdAvance' => $datos['idAvanceProblema'],
