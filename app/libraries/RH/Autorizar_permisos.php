@@ -59,7 +59,6 @@ class Autorizar_permisos extends General{
     }
     
     public function cancelarPermiso(array $datosPermiso){
-        
         $estadoPermiso = array('IdEstatus' => '10');
         switch ($datosPermiso['idPerfil']){
             case 21:
@@ -105,7 +104,6 @@ class Autorizar_permisos extends General{
     public function autorizarPermiso(array $datosPermiso){
         $informacionPermiso = $this->DBS->consultaGral("SELECT IdUsuarioJefe, IdUsuarioRH, IdUsuarioContabilidad, IdUsuarioDireccion 
                 FROM t_permisos_ausencia_rh WHERE Id='".$datosPermiso['idPermiso']."'");
-        return array('Var: ' =>$informacionPermiso);
         if ($informacionPermiso[0]['IdUsuarioJefe'] == NULL){
             switch ($datosPermiso['idPerfil']){
                 case 21:
@@ -154,7 +152,6 @@ class Autorizar_permisos extends General{
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
         $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado por: ", $motivo = array ('MotivoRechazo' => ""));
-        
         return $this->DBS->actualizar('t_permisos_ausencia_rh', $revisor, array('Id' => $datosPermiso['idPermiso']));
     }
     

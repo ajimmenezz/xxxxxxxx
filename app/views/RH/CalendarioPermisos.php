@@ -33,18 +33,20 @@
       </div>
       <div class="modal-body text-center">
         <div id="idPermiso" hidden></div>
-        <div ><h5>Usuario: </h5><span id="usr"></span></div>
-        <div ><h5>Estatus: </h5><span id="sts"></span></div>
-        <div ><h5>Motivo de ausencia:</h5><span id="aus"></span></div>
-        <div id="fed"><h5>Fecha de permiso: </h5></div>
+        <div id="idUsr" hidden></div>
+        <div ><h4>Usuario: </h4><span id="usr"></span></div>
+        <div ><h4>Estatus: </h4><span id="sts"></span></div>
+        <div ><h4>Motivo de ausencia:</h4><span id="aus"></span></div>
+        <div id="fed"><h4>Fecha de permiso: </h4></div>
         <div id="feh"></div>
         <div id="hoe"></div>
         <div id="hos"></div>
-        <div ><h5>Motivo : </h5><span id="jus"></span></div>
-        <div ><h5>Tipo motivo: </h5><span id="mot"></span></div>
+        <div ><h4>Motivo : </h4><span id="jus"></span></div>
+        <div ><h4>Tipo motivo: </h4><span id="mot"></span></div>
         <div id="idus" hidden></div>
         <div id="idper" hidden></div>
         <div id="arc" hidden></div>
+        
         
        
 
@@ -76,7 +78,7 @@
                 <div class="form-group">
                     <label>Motivo de rechazo</label>
                     <select id="motivoRechazo" class="form-control efectoDescuento" name="motivoRechazo" style="width: 100%">
-                        <option value="">Seleccionar...</option>
+                        <option value="" selected disabled>Seleccionar...</option>
                         <option id="rechazos"></option>
                     </select>
                 </div>

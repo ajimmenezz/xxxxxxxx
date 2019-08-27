@@ -31,6 +31,7 @@ class Controller_PermisosVacaciones extends Base {
                 $resultado = $this->permisos->cancelarPermiso($this->input->post());
                 break;
             case 'Autorizar':
+                
                 $resultado = $this->autorizar->revisarPermiso($this->input->post());
                 break;
             case 'AutorizarPermiso':

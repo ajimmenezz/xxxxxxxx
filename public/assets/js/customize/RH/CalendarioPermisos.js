@@ -143,10 +143,11 @@ $(function () {
                 events: [],
                 eventClick: function(calEvent, jsEvent, view) {
                     $("#idPermiso").html(calEvent.id);
-                    $('#usr').html("<h6>"+calEvent.usuarioEvento+"</h6>");
-                    $('#sts').html("<h6>"+calEvent.estatusEvento+"</h6>");
-                    $('#aus').html("<h6>"+calEvent.title+"</h6>");
-                    $('#fed').html("<h6>Fecha de permiso: </h6>"+ calEvent.fechaAusenciaDesdeEvento);
+                    $("#idUsr").html(calEvent.idUser);
+                    $('#usr').html("<h5>"+calEvent.usuarioEvento+"</h5>");
+                    $('#sts').html("<h5>"+calEvent.estatusEvento+"</h5>");
+                    $('#aus').html("<h5>"+calEvent.title+"</h5>");
+                    $('#fed').html("<h4>Fecha de permiso: </h4><h5>"+ calEvent.fechaAusenciaDesdeEvento+"</h5>");
                     var autJefe=" ";
                     var autRH=" ";
                     var autConta=" ";
@@ -156,8 +157,8 @@ $(function () {
                     if(calEvent.estatusEvento =="RECHAZADO" )
                     {
                         fill="";
-                        fill+="<h5>Rechazado por: </h5>";
-                        fill+="<h5>Motivo: "+calEvent.Rechazo+"</h5>";
+                        fill+="<h4>Rechazado por: </h4>";
+                        fill+="<h4>Motivo: "+calEvent.Rechazo+"</h4>";
                         if(calEvent.autorizacionJefe!=null)
                         {
                             fill+="<h5>Por: "+calEvent.autorizacionJefe+"</h5>";
@@ -246,7 +247,7 @@ $(function () {
                         fill+="<div> CONTABILIDAD: "+autConta+"</div>";
                         fill+="<div> DIRECCION: "+autDire+"</div>";
                         btns+="<button type='button'  class='btn bg-red text-white' onclick='aceptarPermiso();'>Aceptar permiso</button>";
-                        btns+="<button type='button'  class='btn bg-green text-white ' onclick='rechazarPermiso(); '>Rechazar permiso</button>";
+                        btns+="<button type='button'  class='btn bg-green text-white ' onclick='modalMotivo(); '>Rechazar permiso</button>";
                         $("#BotonesAcciones").html(btns);
                         $("#datosAutorizacion").html(fill);
                         
@@ -267,7 +268,7 @@ $(function () {
                     }
                     else
                     {
-                        $('#hoe').html("<h5>Hora entrada: </h5>"+calEvent.horaEntradaEvento);
+                        $('#hoe').html("<h4>Hora entrada: </h4><h5>"+calEvent.horaEntradaEvento+"</h5>");
                     }
                     if(calEvent.horaSalidaEvento=="00:00:00")
                     {
@@ -278,8 +279,8 @@ $(function () {
                         $('#hos').html("<h5>Hora salida: </h5>"+calEvent.horaSalidaEvento);
                     }
 
-                    $('#jus').html(calEvent.description);
-                    $('#mot').html(calEvent.description);
+                    $('#jus').html("<h5>"+calEvent.description+"</h5>");
+                    $('#mot').html("<h5>"+calEvent.description+"</h5>");
                     
 
                     $('#idus').html(calEvent.idUsuario);
@@ -359,7 +360,19 @@ $(function () {
             $('#calendar').fullCalendar( 'renderEvent', eventosDinamicos, true);
         }
     });
-    
+    $('#btnAceptarRechazo').on('click', function () {
+        console.log($("#motivoRechazo").val());
+        if($("#motivoRechazo").val()=="" || $("#motivoRechazo").val()== null)
+        {
+            console.log("No se seleccionó nada");
+        }
+        else
+        {
+            console.log($("#motivoRechazo").val());
+            enviarCancelacion();
+        }
+    });
+
 });
 
 function aceptarPermiso()
@@ -372,43 +385,23 @@ function aceptarPermiso()
     
     let datos=
             {
-            perfilUsuario: idPerfil,
-            idPerfil:idPerfil,
-            idUser:idUser,
-            archivo:archivo,
-            idPermiso:idPermiso
+                idPermiso:idPermiso,
+                idPerfil:idPerfil,
+                idUser:idUser,
+                archivo: archivo
     };
-    evento.enviarEvento('EventoPermisosVacaciones/Autorizar',datos,'#panelAutorizarPermisos',function(respuesta)
+    console.log(datos);
+    evento.enviarEvento('EventoPermisosVacaciones/AutorizarPermiso',datos,'#panelAutorizarPermisos',function(respuesta)
     {
-        
-        console.log(respuesta);
+        location.reload();
     });
 }
 
-function rechazarPermiso()
+function modalMotivo()
 {
-    let idPermiso = $('#idPermiso').html();
-    let idPerfil = $('#idper').html();
-    let idUser = $("#usr").html();
-    let archivo = $("#arc").html();
-    var evento = new Base();
-    var sel="";
-    let datos =
-            {
-                perfilUsuario: idPerfil,
-                idPerfil: idPerfil,
-                idUser: idUser,
-                archivo: archivo,
-                idPermiso: idPermiso
-            };
     selectMotivos();
-    console.log(idPermiso, idPerfil);
-    evento.enviarEvento('EventoPermisosVacaciones/Autorizar', datos, '', function (respuesta)
-    {
-        $('#modalRechazo').modal();
-        console.log(respuesta);
-        
-    });
+    $('#modalRechazo').modal();
+    
 }
 function selectMotivos()
 {
@@ -417,13 +410,34 @@ function selectMotivos()
     let sel="";
     let motivo="";
     evento.enviarEvento('EventoPermisosVacaciones/MostarMotivosRechazo', '', '', function (respuesta) {
-        let long = respuesta.lenght();
-        console.log(long);
-        for(let i=0; i<1; i++)
+        for(let i=0; i<respuesta.length; i++)
         {
-            console.log(respuesta[i].Nombre);
-            sel+="<option>"+respuesta[i].Nombre+"</option>";
+            //console.log(respuesta[i].Nombre);
+            sel+="<option id= '"+respuesta[i].Id+"'>"+respuesta[i].Nombre+"</option>";
         }
         $("#rechazos").html(sel);
+    });
+}
+function enviarCancelacion()
+{
+    let idPermiso = $('#idPermiso').html();
+    let idPerfil = $('#idper').html();
+    let idUser = $("#usr").html();
+    let archivo = $("#arc").html();
+    var evento = new Base();
+    let datos =
+            {
+                perfilUsuario: idPerfil,
+                idPerfil: idPerfil,
+                idUser: idUser,
+                archivo: archivo,
+                idPermiso: idPermiso
+            };
+    console.log(idPermiso, idPerfil);
+
+    evento.enviarEvento('EventoPermisosVacaciones/CancelarPermisos', datos, '', function (respuesta)
+    {
+        //console.log(respuesta);
+        location.reload();
     });
 }
