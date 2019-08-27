@@ -5,7 +5,7 @@ namespace Librerias\V2\PaquetesTicket\Redes;
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesTicket\Redes\GestorNodosRedes as GestorNodo;
 use Librerias\V2\PaquetesGenerales\Utilerias\PDF as PDF;
-use Modelos\Modelo_ServicioGeneralRedes as Modelo;
+use Modelos\Modelo_ServicioCableado as Modelo;
 use Modelos\Modelo_ServicioTicket as ModeloServicioTicket;
 
 class ServicioCableado implements Servicio {
