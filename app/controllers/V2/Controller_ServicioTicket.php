@@ -206,7 +206,6 @@ class Controller_ServicioTicket extends CI_Controller {
             $datosServicio['mensaje'] = $this->servicio->setConcluir($datosServicio);
             $this->setResolucionServiceDesk($datosServicio);
             $this->datos['operacion'] = TRUE;
-            var_dump('pumas');
             echo json_encode($this->datos);
         } catch (\Exception $ex) {
             $this->datos['operacion'] = FALSE;
