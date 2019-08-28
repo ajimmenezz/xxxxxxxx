@@ -73,8 +73,8 @@ class Modelo_Base {
     }
 
     public function ejecutaFuncion(string $query) {
-        if ($consulta = self::$DB[$this->nombreBD]->query($query)) {                        
-            \mysqli_next_result(self::$DB[$this->nombreBD]->conn_id); 
+        if ($consulta = self::$DB[$this->nombreBD]->query($query)) {
+            \mysqli_next_result(self::$DB[$this->nombreBD]->conn_id);
             return $consulta->result_array();
         } else {
             $this->lanzarExcepcion($query);
@@ -82,9 +82,30 @@ class Modelo_Base {
     }
 
     private function lanzarExcepcion(string $query) {
-        var_dump($query);
         $error = self::$DB[$this->nombreBD]->error();
         throw new \Exception('Error para genera la consulta: ' . $query . ' donde presenta el siguiente error : ' . $error['message']);
+    }
+
+    public function insertarArray($table, array $data) {
+        if (self::$DB[$this->nombreBD]->insert($table, $data)) {
+            return self::$DB[$this->nombreBD]->affected_rows();
+        } else {
+            $this->lanzarExcepcion($query);
+        }
+    }
+
+    public function actualizarArray(string $table, array $data, array $where = null) {
+        if (!empty($data)) {
+            if (!empty($where)) {
+                self::$DB[$this->nombreBD]->where($where);
+            }
+            if (self::$DB[$this->nombreBD]->update($table, $data)) {
+                return self::$DB[$this->nombreBD]->affected_rows();
+            } else {
+                $this->lanzarExcepcion('Error con la base de datos.');
+            }
+        }
+        return null;
     }
 
 }

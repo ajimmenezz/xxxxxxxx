@@ -594,7 +594,7 @@ $(function () {
         });
     }
 
-    function cargarContenidoTablaMaterial(materialUsado){
+    function cargarContenidoTablaMaterial(materialUsado) {
         tablaMateriales.limpiartabla();
         $.each(materialUsado, function (key, value) {
             tablaMateriales.agregarDatosFila([
@@ -604,7 +604,7 @@ $(function () {
             ]);
         });
     }
-    
+
     function eventosTablas() {
         tablaNodos.evento(function () {
             let datosNodo = tablaNodos.datosTabla();
@@ -1019,10 +1019,11 @@ $(function () {
         } else {
             datoServicioTabla.firmaCliente = firmaClienet.getImg();
             datoServicioTabla.firmaTecnico = firmaTecnico.getImg();
-            console.log(datoServicioTabla);
+            datoServicioTabla.nodos = listaTotalNodos;
+
             peticion.enviar('panelFirmas', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
                 if (!validarError(respuesta)) {
-//                    return;
+                    location.reload();
                 }
                 modal.mostrarModal("Exito", '<h4>Se han concluido el servicio correctamente</h4>');
                 $('#btnCerrar').addClass('hidden');

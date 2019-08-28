@@ -6,6 +6,7 @@ use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
 use Librerias\V2\PaquetesGenerales\Utilerias\Archivo as Archivo;
 use Librerias\V2\PaquetesSucursales\GestorSucursales as GestorSucursal;
 use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
+use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenVirtual;
 
 class Controller_ServicioTicket extends CI_Controller {
 
@@ -14,12 +15,15 @@ class Controller_ServicioTicket extends CI_Controller {
     private $gestorServicios;
     private $servicio;
     private $datos;
+    private $almacenVirtual;
 
     public function __construct() {
         parent::__construct();
         $this->factory = new FactoryServiciosTicket();
         $this->gestorSucursales = new GestorSucursal();
         $this->gestorServicios = new GestorServicio();
+        $this->almacenVirtual = new AlmacenVirtual();
+
         $this->datos = array();
     }
 
@@ -130,7 +134,6 @@ class Controller_ServicioTicket extends CI_Controller {
 
     public function setProblema() {
         try {
-
             $datosServicio = $this->input->post();
             $datosServicio['idUsuario'] = Usuario::getId();
             $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciaProblemas/';
@@ -205,6 +208,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $datosServicio['mensaje'] = $this->servicio->setConcluir($datosServicio);
             $this->setResolucionServiceDesk($datosServicio);
+            $this->almacenVirtual->updateAlmacen($datosServicio);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (\Exception $ex) {
