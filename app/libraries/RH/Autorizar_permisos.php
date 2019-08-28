@@ -383,7 +383,6 @@ class Autorizar_permisos extends General{
     public function cancelarPermisoCalendario(array $datosPermiso){
 
         $estadoPermiso = array('IdEstatus' => '10');
-        var_dump($datosPermiso['motivoRechazo']);
 
         switch ($datosPermiso['idPerfil']){
             case 21:

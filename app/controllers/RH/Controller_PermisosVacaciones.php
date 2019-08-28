@@ -56,7 +56,6 @@ class Controller_PermisosVacaciones extends Base {
                 $resultado = $this->permisos->obtenerDatos();
                 break;
             case 'cancelarPermisoCalendario':
-                var_dump("Llegó a cancelar");
                 $resultado = $this->autorizar->cancelarPermisoCalendario($this->input->post());
                 break;
         }

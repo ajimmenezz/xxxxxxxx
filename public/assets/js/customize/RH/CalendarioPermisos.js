@@ -57,7 +57,6 @@ $(function () {
         };
 
         evento.enviarEvento('CalendarioPermisos/datosPermiso', datos, '', function (respuesta) {
-            //console.log(respuesta);
             iteraciones=respuesta.length;
             for (var i = 0; i < respuesta.length; i++) {
                 ids[i]=respuesta[i].Id;
@@ -166,28 +165,29 @@ $(function () {
                         {
                             fill="";
                             fill+="<h4 style='color: #d68f8f'>Rechazado</h4>";
+                            let bandera=true;
                             
-                            if(calEvent.autorizacionJefe!=null)
+                            if(calEvent.autorizacionJefe!=null && bandera==true)
                             {
                                 fill+="<h5><input type='text' class='form-control text-center' readonly='readonly' id='' value='"+calEvent.autorizacionJefe+"'></h5>";
+                                bandera=false;
                             }
-                            if(calEvent.autorizacionRH!=null)
+                            if(calEvent.autorizacionRH!=null && bandera==true)
                             {
                                 fill+="<h5><input type='text' class='form-control text-center' readonly='readonly' id='' value='"+calEvent.autorizacionRH+"'></h5>";
-
+                                bandera=false;
                             }
-                            if(calEvent.autorizacionContabilidad!=null)
+                            if(calEvent.autorizacionContabilidad!=null && bandera==true)
                             {
                                 fill+="<h5><input type='text' class='form-control text-center' readonly='readonly' id='' value='"+calEvent.autorizacionContabilidad+"'></h5>";
-
+                                bandera=false;
                             }
-                            if(calEvent.autorizacionDireccion!=null)
+                            if(calEvent.autorizacionDireccion!=null && bandera==true)
                             {
                                 fill+="<h5><input type='text' class='form-control text-center' readonly='readonly' id='' value='"+calEvent.autorizacionDireccion+"'></h5>";
-
+                                bandera=false;
                             }
                             fill+="<h4>Motivo:</h4>";
-                            console.log(calEvent.Rechazo);
                             fill+= "<input type='text' class='form-control text-center' readonly='readonly' id='' value='"+calEvent.Rechazo+"'>";
                             
                             $("#BotonesAcciones").html(btns);
@@ -382,14 +382,12 @@ $(function () {
             }
         });
         $('#btnAceptarRechazo').on('click', function () {
-            console.log($("#motivoRechazo").val());
             if($("#motivoRechazo").val()=="" || $("#motivoRechazo").val()== null)
             {
                 console.log("No se seleccionó nada");
             }
             else
             {
-                console.log($("#motivoRechazo").val());
                 let motivo=$("#motivoRechazo").val();
                 enviarCancelacion(motivo);
             }
@@ -407,7 +405,6 @@ $(function () {
         var peticion= new Utileria();
         
         
-       // console.log(datos);
         peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/obtenerDatos','',function(respuesta)
         {
             idPerfil = respuesta.ID;
@@ -420,10 +417,8 @@ $(function () {
                         idUser:idUser,
                         archivo: archivo
             };
-            console.log(datosPerm);
             peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/ConluirAutorizacion',datosPerm,function(respuesta)
             {
-                console.log(respuesta);
                 location.reload();
             });
         });
@@ -445,7 +440,6 @@ $(function () {
             sel+="<option value='' selected disabled>Seleccionar...</option>";
             for(let i=0; i<respuesta.length; i++)
             {
-                console.log(respuesta[i].Id);
                 sel+="<option value='1'>"+respuesta[i].Nombre+"</option>";
             }
             $("#motivoRechazo").html(sel);
@@ -459,11 +453,9 @@ $(function () {
         let archivo = $("#arc").html();
         var evento = new Base();
         var peticion = new Utileria();
-        console.log(motivo);
         let idMotivo= motivo;
         
         peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/obtenerDatos', '', function (respuesta) {
-           console.log(respuesta); 
            idUser= respuesta.ID;
            idPerfil=respuesta.Perfil;
             let datos =
@@ -475,12 +467,11 @@ $(function () {
                         idPermiso: idPermiso,
                         motivoRechazo: idMotivo
                     };
-            console.log(datos);
-            evento.enviarEvento('EventoPermisosVacaciones/cancelarPermisoCalendario', datos,  '', function (respuesta)
+            peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/cancelarPermisoCalendario', datos,  function (respuesta)
             {
-               console.log(respuesta);
+               location.reload();
             });
-              // location.reload();
+              // 
         });
 
     }
