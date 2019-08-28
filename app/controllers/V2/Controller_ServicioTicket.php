@@ -7,6 +7,7 @@ use Librerias\V2\PaquetesGenerales\Utilerias\Archivo as Archivo;
 use Librerias\V2\PaquetesSucursales\GestorSucursales as GestorSucursal;
 use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenVirtual;
+use Librerias\V2\PaquetesTicket\Utilerias\Solicitud as Solicitud;
 
 class Controller_ServicioTicket extends CI_Controller {
 
@@ -263,9 +264,18 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $this->servicio->cambiarEstatusServicio(array('idServicio' => $datosServicio['id'], 'estatus' => '4'));
-            $this->datos['operacion'] = TRUE;
-            echo json_encode($this->datos);
+            $idSolicitud = $this->servicio->getDatos()['idSolicitud'];
+            $solicitud = new Solicitud($idSolicitud);
+//            $this->servicio->setEstatus('4');
+//            $solicitud->verificarServiciosParaConcluirSolicitudTicket();
+//            var_dump($datosServicio);
+            $this->servicio->enviarServicioConcluido($datosServicio);
+//            var_dump($datosServicio);
+//            $archivoPDF = $this->servicio->getPDF($datosServicio);
+//            var_dump('pumas');
+//            var_dump($archivoPDF);
+//            $this->datos['operacion'] = TRUE;
+//            echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
             $this->datos['Error'] = $ex->getMessage();

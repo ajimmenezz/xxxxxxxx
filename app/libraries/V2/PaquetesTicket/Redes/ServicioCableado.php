@@ -236,16 +236,51 @@ class ServicioCableado implements Servicio {
         $pdf->tablaImagenes($evidencias);
         $pdf->tituloTabla('Firmas del Servicio');
         $pdf->firma($informacionServicio['infoFirmas'][0]);
-//        $pdf->firma(array(array('/storage/Archivos/Servicios/Servicio-32364/EvidenciasFirmas/Firma-Cliente-prueba.png','Nombre','Puesto')));
         $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
         $pdf->Output('F', $carpeta, true);
         $archivo = substr($carpeta, 1);
         return $archivo;
     }
-
-    public function cambiarEstatusServicio(array $datos) {
-        $consulta = $this->DBServicioTicket->cambiarEstatusServicio($datos);
-        return $consulta;
+    
+    public function enviarServicioConcluido(array $datos){
+        var_dump('pumas');
+//        var_dump($this->setDatos());
+        $archivoPDF = $this->getPDF($datos);
+        var_dump($archivoPDF);
+//                        $serviciosConcluidos = $this->DBST->consultaGeneral('SELECT 
+//                                                                        tse.Id, 
+//                                                                        tse.Ticket,
+//                                                                        nombreUsuario(tso.Atiende) Atiende,
+//                                                                        (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = tso.Atiende) CorreoAtiende,
+//                                                                        tso.Solicita
+//                                                                FROM t_servicios_ticket tse
+//                                                                INNER JOIN t_solicitudes tso
+//                                                                ON tse.IdSolicitud = tso.Id
+//                                                                WHERE tse.Ticket = "' . $datos['ticket'] . '"');
+//
+//                foreach ($serviciosConcluidos as $key => $value) {
+//                    $contador++;
+//                    $linkPdfServiciosConcluidos = $this->getServicioToPdf(array('servicio' => $value['Id']));
+//                    $infoServicioServiciosConcluidos = $this->getInformacionServicio($value['Id']);
+//                    $tipoServicioServiciosConcluidos = stripAccents($infoServicioServiciosConcluidos[0]['NTipoServicio']);
+//
+//                    if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+//                        $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicioServiciosConcluidos . '.pdf';
+//                        $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
+//                    } else {
+//                        $path = 'http://' . $host . '/' . $linkPdfServiciosConcluidos['link'];
+//                        $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
+//                    }
+//
+//                    $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
+//                }
+//
+//                $titulo = 'Solicitud Concluida';
+//                $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
+//                $textoCorreo = '<p>Estimado(a) <strong>' . $value['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $value['Ticket'] . '</strong><br> Número Solicitud: <strong>' . $datosDescripcionConclusion[0]['IdSolicitud'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
+//
+//                $mensajeFirma = $this->Correo->mensajeCorreo($titulo, $textoCorreo);
+//                $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($value['CorreoAtiende']), $titulo, $mensajeFirma);
     }
 
 }
