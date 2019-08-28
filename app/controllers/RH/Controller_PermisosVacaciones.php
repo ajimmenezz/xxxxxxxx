@@ -52,6 +52,9 @@ class Controller_PermisosVacaciones extends Base {
             case 'MostarMotivosRechazo':
                 $resultado = $this->permisos->obtenerMotivoRechazo();
                 break;
+            case 'obtenerDatos':
+                $resultado = $this->permisos->obtenerDatos();
+                break;
         }
         echo json_encode($resultado);
     }

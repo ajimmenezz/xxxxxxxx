@@ -346,14 +346,7 @@ $(function () {
 
                 let titulo="";
             for (var k = 0; k < iteraciones; k++) {
-    //            if(usuario[k].length>=5)
-    //            {
-    //                console.log("Mayor a 5");
-    //                console.log(usuario[k].length);                
-    //                console.log();
                     titulo=usuario[k].substring(0,9)+"...";
-    //
-    //            }
                 eventosDinamicos = {
                     id: ids[k],
                    // media: '<i class="fa fa-circle"></i>',
@@ -403,12 +396,20 @@ $(function () {
     function aceptarPermiso()
     {
         let idPermiso =$('#idPermiso').html() ;     
-        let idPerfil = $('#idper').html();
-        let idUser= $("#usr").val();
+        let idPerfil;
+        let idUser;
         let archivo= $("#arc").html();
         var evento= new Base();
         var peticion= new Utileria();
         
+        
+       // console.log(datos);
+        peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/obtenerDatos','',function(respuesta)
+        {
+            idPerfil = respuesta.ID;
+            idUser = respuesta.Perfil;
+           // location.reload();
+        });
         let datos=
                 {
                     idPermiso:idPermiso,
@@ -416,12 +417,10 @@ $(function () {
                     idUser:idUser,
                     archivo: archivo
         };
-       // console.log(datos);
-        
-        peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/conluirAutorizacion',datos,function(respuesta)
+        peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/ConluirAutorizacion',datos,function(respuesta)
         {
             console.log(respuesta);
-           // location.reload();
+            location.reload();
         });
     }
 
@@ -449,24 +448,31 @@ $(function () {
     function enviarCancelacion()
     {
         let idPermiso = $('#idPermiso').html();
-        let idPerfil = $('#idper').html();
-        let idUser = $("#usr").val();
+        let idPerfil;
+        let idUser;
         let archivo = $("#arc").html();
         var evento = new Base();
         var peticion = new Utileria();
+        
+        evento.enviarEvento('EventoPermisosVacaciones/obtenerDatos', '', '', function (respuesta) {
+           console.log(respuesta); 
+           idUser= respuesta.ID;
+           idPerfil=respuesta.Perfil;
+        });
         let datos =
                 {
                     perfilUsuario: idPerfil,
                     idPerfil: idPerfil,
                     idUser: idUser,
                     archivo: archivo,
-                    idPermiso: idPermiso
+                    idPermiso: idPermiso,
+                    motivoRechazo: "Motivo"
                 };
-        console.log(datos);
 
-        peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/CancelarPermisos', datos, '#modalDatosPermiso', function (respuesta)
+        console.log(datos);
+        peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/CancelarPermisos', datos,  function (respuesta)
         {
-            //console.log(respuesta);
-            location.reload();
+           console.log(respuesta);
+         //   location.reload();
         });
     }

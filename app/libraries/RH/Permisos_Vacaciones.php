@@ -46,6 +46,9 @@ class Permisos_Vacaciones extends General {
     public function obtenerMotivoRechazo() {
         return $this->DBS->consultaGral('select * from cat_v3_tipos_rechazos_ausencia_personal');
     }
+    public function getDatos() {
+        return array("idSesion", $_SESSION['id']);
+    }
 
     public function obtenerPermisosAusencia($idUsuario) {
         return $this->DBS->consultaGral('SELECT tpa.Id, tpa.FechaDocumento, tap.Nombre AS IdTipoAusencia, map.Nombre AS IdMotivoAusencia, 
@@ -678,6 +681,13 @@ class Permisos_Vacaciones extends General {
 
             $respuestaCorreo = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array('hhuerta@siccob.com.mx'), 'Ausencia de Personal', $mensaje);
         }
+    }
+    public function obtenerDatos() {
+        $idUsuarioConsulta= $_SESSION['Id'];        
+        $idPerfilUsuarioConsulta= $_SESSION['Id'];
+
+        return array('ID'=> $idUsuarioConsulta, "Perfil" => $idPerfilUsuarioConsulta);
+        
     }
 
 }
