@@ -459,21 +459,21 @@ $(function () {
            console.log(respuesta); 
            idUser= respuesta.ID;
            idPerfil=respuesta.Perfil;
+            let datos =
+                    {
+                        perfilUsuario: idPerfil,
+                        idPerfil: idPerfil,
+                        idUser: idUser,
+                        archivo: archivo,
+                        idPermiso: idPermiso,
+                        motivoRechazo: "Motivo"
+                    };
+            console.log(datos);
+            evento.enviarEvento('EventoPermisosVacaciones/CancelarPermisos', datos,  '', function (respuesta)
+            {
+               console.log(respuesta);
+             //   location.reload();
+            });
         });
-        let datos =
-                {
-                    perfilUsuario: idPerfil,
-                    idPerfil: idPerfil,
-                    idUser: idUser,
-                    archivo: archivo,
-                    idPermiso: idPermiso,
-                    motivoRechazo: "Motivo"
-                };
 
-        console.log(datos);
-        peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/CancelarPermisos', datos,  function (respuesta)
-        {
-           console.log(respuesta);
-         //   location.reload();
-        });
     }
