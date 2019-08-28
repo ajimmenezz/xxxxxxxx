@@ -13,7 +13,7 @@ Class Modelo_GestorServicio extends Base {
     public function getServicios($idJefe) {
         $totalServicios = array();
         try {
-            $trabajadores = $this->consulta("SELECT Id FROM `cat_v3_usuarios` WHERE IdJefe = '" . $idJefe . "'");
+            $trabajadores = $this->consulta("SELECT Id FROM cat_v3_usuarios WHERE IdJefe = '" . $idJefe . "'");
 
             if (!empty($trabajadores)) {
                 foreach ($trabajadores as $value) {

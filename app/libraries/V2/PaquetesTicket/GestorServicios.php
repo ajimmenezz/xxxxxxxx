@@ -22,6 +22,7 @@ Class GestorServicios {
     public function getServicios() {
         $idUsuario = Usuario::getId();
         $rol = Usuario::getRol();
+        $nombre = Usuario::getNombre();
 
         if ($rol == "Jefe") {
             $informacion['servicios'] = $this->DBServicios->getServicios($idUsuario);
@@ -29,6 +30,7 @@ Class GestorServicios {
             $informacion['servicios'] = $this->DBServicios->getServiciosDeTecnico($idUsuario);
         }
         $informacion['rol'] = $rol;
+        $informacion['nombre'] = $nombre;
         return $informacion;
     }
 

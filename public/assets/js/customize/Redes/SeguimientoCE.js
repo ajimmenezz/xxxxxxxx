@@ -85,6 +85,9 @@ $(function () {
     tablaPrincipal.evento(function () {
         let tamañoDatosFila = 0, datosFila = tablaPrincipal.datosFila(this);
 
+        let nombre = $('#nombreTrabajador').text();
+        let rol = $('#rolTrabajador').text();
+
         $.each(datosFila, function () {
             tamañoDatosFila += 1;
         });
@@ -114,6 +117,13 @@ $(function () {
                 }
                 cambioVistaSinMaterial(respuesta.solucion);
                 cambioVistaNodos(respuesta);
+                if (rol === 'Jefe' && nombre !== datosFila[6]) {
+                    $('.bloqueoConclusion').prop("disabled", true);
+                    $('.bloqueoConclusionBtn').addClass('hidden');
+                    $('#scciones').removeClass('hidden');
+                    $('·table-materialNodo').off("click");
+                    validacion = "EN VALIDACIÓN";
+                }
                 if (datosFila[tamañoDatosFila - 1] === "EN VALIDACIÓN") {
                     $('.bloqueoConclusion').prop("disabled", true);
                     $('.bloqueoConclusionBtn').addClass('hidden');
@@ -202,19 +212,45 @@ $(function () {
     }
 
     function mostrarInformacionFolio(infoFolio) {
-        $('#infoFolio').removeClass('hidden');
-        $('#editarFolio').removeClass('hidden');
-        $('#eliminarFolio').removeClass('hidden');
-        $('#guardarFolio').addClass('hidden');
-        $('#cancelarFolio').addClass('hidden');
-        $('#addFolio').val(infoFolio.WORKORDERID).prop("disabled", true);
-        $("#creadoPorFolio").text(infoFolio.CREATEDBY);
-        $("#fechaCreacionFolio").text(fecha.formatoFecha(infoFolio.CREATEDTIME));
-        $("#solicitaFolio").text(infoFolio.REQUESTER);
-        $("#prioridadFolio").text(infoFolio.PRIORITY);
-        $("#asignadoFolio").text(infoFolio.TECHNICIAN);
-        $("#estatusFolio").text(infoFolio.STATUS);
-        $("#asuntoFolio").text(infoFolio.SHORTDESCRIPTION);
+        if (infoFolio.Error === "") {
+            $('#infoFolio').removeClass('hidden');
+            $('#editarFolio').removeClass('hidden');
+            $('#eliminarFolio').removeClass('hidden');
+            $('#guardarFolio').addClass('hidden');
+            $('#cancelarFolio').addClass('hidden');
+            $('#addFolio').val(infoFolio.WORKORDERID).prop("disabled", true);
+            $("#creadoPorFolio").text(infoFolio.CREATEDBY);
+            $("#fechaCreacionFolio").text(fecha.formatoFecha(infoFolio.CREATEDTIME));
+            $("#solicitaFolio").text(infoFolio.REQUESTER);
+            $("#prioridadFolio").text(infoFolio.PRIORITY);
+            $("#asignadoFolio").text(infoFolio.TECHNICIAN);
+            $("#estatusFolio").text(infoFolio.STATUS);
+            $("#asuntoFolio").text(infoFolio.SHORTDESCRIPTION);
+        } else {
+            $('#agregarFolio').empty();
+            $('#agregarFolio').append('<div class="col-md-12"><br>\n\
+                                            <form id="errorFolio">\n\
+                                                <div class="form-group">\n\
+                                                   <label class="col-md-10">La clave del técnico en la solicitud no es válida. Imposible de autenticar.</label>\n\
+                                                </div>\n\
+                                            </form>\n\
+                                            <div class="col-md-2">\n\
+                                                <i id="reloadFolio" class="fa fa-2x fa-refresh  text-primary"></i>\n\
+                                            </div><br><br><br>\n\
+                                        </div>');
+
+            $('#reloadFolio').on('click', function () {
+                peticion.enviar('agregarFolio', 'SeguimientoCE/SeguimientoGeneral/Seguimiento/Cableado', datoServicioTabla, function (respuesta) {
+                    if (!validarError(respuesta)) {
+                        return;
+                    }
+                    mostrarElementosAgregarFolio();
+                    mostrarInformacionFolio(respuesta.folio);
+                    arreglarNotas(respuesta.notasFolio);
+                });
+            });
+
+        }
     }
 
     function arreglarNotas(notas) {
@@ -671,7 +707,9 @@ $(function () {
             $('#evidenciasMaterialUtilizado').append(evidencias);
             if (validacion === "EN VALIDACIÓN") {
                 $('.bloqueoConclusionBtn').addClass('hidden');
-                tablaAgregarMateriales.evento(function (){console.log(validacion)});
+                tablaAgregarMateriales.evento(function () {
+                    console.log(validacion)
+                });
             }
         }
         $.each(listaTemporalNodos, function (key, value) {
@@ -776,7 +814,7 @@ $(function () {
     });
 
     $('#cancelarFolio').on('click', function () {
-        if (datoServicioTabla.folio !== null && datoServicioTabla.folio !== '0') {
+        if (datoServicioTabla.folio !== '' && datoServicioTabla.folio !== '0') {
             $('#addFolio').prop('disabled', true);
             $('#infoFolio').removeClass('hidden');
             $('#editarFolio').removeClass('hidden');
@@ -863,7 +901,7 @@ $(function () {
                     modal.cerrarModal();
                     cambioBtnSinMaterial();
                     $('#evidenciasMaterialFija').empty();
-                    ocultarElementosDefault(respuesta.solucion);
+                    $('#btnConcluir').addClass('hidden');
                     archivosEstablecidos = null;
                 });
             });
@@ -976,13 +1014,35 @@ $(function () {
     });
 
     $('#btnConcluir').on('click', function () {
-        $('#contentFirmasConclucion').removeClass('hidden');
-        $('#contentServiciosRedes').addClass('hidden');
+        let faltaEvidencia = true;
+        if (listaTotalNodos.length > 0) {
+            $.each(listaTotalNodos, function (key, value) {
+                if (value.Archivos == "") {
+                    faltaEvidencia += 1;
+                    modal.mostrarModal('AVISO', '<h4>El Nodo <b>' + value.Nombre + '</b> no tiene evidencia</h4>');
+                    $('#btnAceptar').addClass('hidden');
+                    faltaEvidencia = false;
+                }
+            });
+            if (faltaEvidencia === true) {
+                $('#contentFirmasConclucion').removeClass('hidden');
+                $('#contentServiciosRedes').addClass('hidden');
+            }
+        } else {
+            if (archivosEstablecidos !== null) {
+                $('#contentFirmasConclucion').removeClass('hidden');
+                $('#contentServiciosRedes').addClass('hidden');
+            }
+        }
     });
 
     $('#validarServicio').on('click', function () {
         peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/validarServicio', datoServicioTabla, function (respuesta) {
-            console.log(respuesta);
+            if (!validarError(respuesta)) {
+                return;
+            }
+            modal.mostrarModal("Exito", '<h4>Servicio validado correctamente</h4>');
+            $('#btnAceptar').addClass('hidden');
         });
     });
     /**Finalizan seccion de botones generales**/
@@ -1026,7 +1086,6 @@ $(function () {
         } else {
             datoServicioTabla.firmaCliente = firmaClienet.getImg();
             datoServicioTabla.firmaTecnico = firmaTecnico.getImg();
-            console.log(datoServicioTabla);
             peticion.enviar('panelFirmas', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
                 if (!validarError(respuesta)) {
 //                    return;
@@ -1046,14 +1105,12 @@ $(function () {
             if (!validarError(respuesta)) {
                 return;
             }
-            console.log(respuesta.PDF);
             window.open(respuesta.PDF, '_blank');
         });
     });
 
     function validarError(respuesta, objeto = null) {
         if (!respuesta.operacion) {
-            console.log(respuesta.Error);
             if (objeto !== null) {
                 $(`#${objeto}`).modal('hide');
             }
