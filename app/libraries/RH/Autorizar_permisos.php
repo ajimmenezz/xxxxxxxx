@@ -380,5 +380,48 @@ class Autorizar_permisos extends General{
         
         return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/RH/Reportes/' . $nombreArchivo ];
     }
+    public function cancelarPermisoCalendario(array $datosPermiso){
+
+        $estadoPermiso = array('IdEstatus' => '10');
+        var_dump($datosPermiso['motivoRechazo']);
+
+        switch ($datosPermiso['idPerfil']){
+            case 21:
+                $revisor = array (
+                    'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
+                    'IdRechazo' => $datosPermiso['motivoRechazo']
+                    );
+                break;
+            case 37:
+                $revisor = array (
+                    'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
+                    'IdRechazo' => $datosPermiso['motivoRechazo']
+                    );
+                break;
+            case 44:
+                $revisor = array (
+                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
+                    'IdRechazo' => $datosPermiso['motivoRechazo']
+                    );
+                break;
+            default :
+                $revisor = array (
+                    'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
+                    'IdRechazo' => $datosPermiso['motivoRechazo']
+                    );
+                break;
+        }
+        $resultado = array_merge($estadoPermiso, $revisor);
+        
+        $infoCorreo = $this->informacionCorreo($datosPermiso['idPermiso']);
+        $texto = '<p>Estimado(a) <strong>' .$infoCorreo[0]['Nombre']. ',</strong> se ha <strong>Rechazado</strong> el permiso de ausencia.</p><br><br>
+                    Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
+                    Motivo de Rechazo: <p><b>' . $datosPermiso['motivoRechazo'] . '</b> </p><br><br>
+                    <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
+        $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Rechazado', $texto);
+        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+        
+        return $this->DBS->actualizar('t_permisos_ausencia_rh', $resultado, array('Id' => $datosPermiso['idPermiso']));
+    }
 }
 

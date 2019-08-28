@@ -85,10 +85,9 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label>Motivo de rechazo</label>
-                    <select id="motivoRechazo" class="form-control efectoDescuento" name="motivoRechazo" style="width: 100%">
-                        <option value="" selected disabled>Seleccionar...</option>
-                        <option id="rechazos"></option>
+                    <select id="motivoRechazo" class="form-control efectoDescuento" style="width: 100%">
                     </select>
+                   
                 </div>
             </div>
             <!--Finaliza cuerpo del modal-->

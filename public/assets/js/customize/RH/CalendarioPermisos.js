@@ -169,19 +169,22 @@ $(function () {
                             
                             if(calEvent.autorizacionJefe!=null)
                             {
-                                fill+="<h5> "+calEvent.autorizacionJefe+"</h5>";
+                                fill+="<h5><input type='text' class='form-control text-center' readonly='readonly' id='' value='"+calEvent.autorizacionJefe+"'></h5>";
                             }
                             if(calEvent.autorizacionRH!=null)
                             {
-                                fill+="<h5> "+calEvent.autorizacionRH+"</h5>";
+                                fill+="<h5><input type='text' class='form-control text-center' readonly='readonly' id='' value='"+calEvent.autorizacionRH+"'></h5>";
+
                             }
                             if(calEvent.autorizacionContabilidad!=null)
                             {
-                                fill+="<h5> "+calEvent.autorizacionContabilidad+"</h5>";
+                                fill+="<h5><input type='text' class='form-control text-center' readonly='readonly' id='' value='"+calEvent.autorizacionContabilidad+"'></h5>";
+
                             }
                             if(calEvent.autorizacionDireccion!=null)
                             {
-                                fill+="<h5> "+calEvent.autorizacionDireccion+"</h5>";
+                                fill+="<h5><input type='text' class='form-control text-center' readonly='readonly' id='' value='"+calEvent.autorizacionDireccion+"'></h5>";
+
                             }
                             fill+="<h4>Motivo:</h4>";
                             console.log(calEvent.Rechazo);
@@ -387,7 +390,8 @@ $(function () {
             else
             {
                 console.log($("#motivoRechazo").val());
-                enviarCancelacion();
+                let motivo=$("#motivoRechazo").val();
+                enviarCancelacion(motivo);
             }
         });
         
@@ -438,15 +442,16 @@ $(function () {
         let sel="";
         let motivo="";
         evento.enviarEvento('EventoPermisosVacaciones/MostarMotivosRechazo', '', '', function (respuesta) {
+            sel+="<option value='' selected disabled>Seleccionar...</option>";
             for(let i=0; i<respuesta.length; i++)
             {
-                //console.log(respuesta[i].Nombre);
-                sel+="<option id= '"+respuesta[i].Id+"'>"+respuesta[i].Nombre+"</option>";
+                console.log(respuesta[i].Id);
+                sel+="<option value='1'>"+respuesta[i].Nombre+"</option>";
             }
-            $("#rechazos").html(sel);
+            $("#motivoRechazo").html(sel);
         });
     }
-    function enviarCancelacion()
+    function enviarCancelacion(motivo)
     {
         let idPermiso = $('#idPermiso').html();
         let idPerfil;
@@ -454,6 +459,8 @@ $(function () {
         let archivo = $("#arc").html();
         var evento = new Base();
         var peticion = new Utileria();
+        console.log(motivo);
+        let idMotivo= motivo;
         
         peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/obtenerDatos', '', function (respuesta) {
            console.log(respuesta); 
@@ -466,14 +473,14 @@ $(function () {
                         idUser: idUser,
                         archivo: archivo,
                         idPermiso: idPermiso,
-                        motivoRechazo: "Motivo"
+                        motivoRechazo: idMotivo
                     };
             console.log(datos);
-            evento.enviarEvento('EventoPermisosVacaciones/CancelarPermisos', datos,  '', function (respuesta)
+            evento.enviarEvento('EventoPermisosVacaciones/cancelarPermisoCalendario', datos,  '', function (respuesta)
             {
                console.log(respuesta);
             });
-               location.reload();
+              // location.reload();
         });
 
     }
