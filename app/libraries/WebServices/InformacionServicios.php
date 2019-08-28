@@ -1014,7 +1014,7 @@ class InformacionServicios extends General {
         $result = $this->ServiceDesk->getTecnicosSD($key);
 
         if ($result->operation->result->status !== 'Success') {
-            $key = $this->MSP->getApiKeyByUser('2');
+            $key = '';
         }
 
         return $key;

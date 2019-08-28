@@ -2469,7 +2469,7 @@ class ServiciosTicket extends General {
             $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
 
             if (!isset($datosSD->operation->result->status)) {
-                if ($datosSD->STATUS !== 'Problema') {
+                if ($datosSD->STATUS === 'Abierto') {
                     $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $folio);
                 }
             }
