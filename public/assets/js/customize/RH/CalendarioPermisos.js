@@ -455,7 +455,7 @@ $(function () {
         var evento = new Base();
         var peticion = new Utileria();
         
-        evento.enviarEvento('EventoPermisosVacaciones/obtenerDatos', '', '', function (respuesta) {
+        peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/obtenerDatos', '', function (respuesta) {
            console.log(respuesta); 
            idUser= respuesta.ID;
            idPerfil=respuesta.Perfil;
@@ -472,8 +472,8 @@ $(function () {
             evento.enviarEvento('EventoPermisosVacaciones/CancelarPermisos', datos,  '', function (respuesta)
             {
                console.log(respuesta);
-             //   location.reload();
             });
+               location.reload();
         });
 
     }
