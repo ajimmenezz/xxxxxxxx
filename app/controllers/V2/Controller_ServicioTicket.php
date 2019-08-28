@@ -237,6 +237,8 @@ class Controller_ServicioTicket extends CI_Controller {
             foreach ($archivos as $value) {
                 Archivo::deleteArchivo($value);
             }
+            $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));
+            $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {

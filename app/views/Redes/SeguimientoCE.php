@@ -20,6 +20,8 @@
             <!--Finaliza el encabezado del panel-->
             <!--Empieza tabla de servicios-->
             <div class="col-md-12">
+                <label id="nombreTrabajador" class="hidden"><?php echo $datos['infoServicios']["nombre"];?></label>
+                <label id="rolTrabajador" class="hidden"><?php echo $datos['infoServicios']["rol"];?></label>
                 <div class="table-responsive">
                     <table id="table-ServiciosGeneralesRedes" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
                         <thead>
@@ -115,7 +117,7 @@
                                 </div>';
                         }
                         ?>
-                        <label id="btnAgregarFolio" class="btn btn-warning btn-sm">
+                        <label id="btnAgregarFolio" class="btn btn-warning btn-sm bloqueoConclusionBtn">
                             <i class="fa fa-plus"></i> Agregar Folio
                         </label>
                     </div>
