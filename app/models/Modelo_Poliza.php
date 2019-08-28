@@ -2400,4 +2400,9 @@ class Modelo_Poliza extends Modelo_Base {
         return $answerQuery;
     }
 
+    public function bitacoraReporteFalso(array $datos) {
+        $resultado = $this->insertar('historico_servicios_correctivo_reporte_falso', $datos);
+        return $resultado;
+    }
+
 }

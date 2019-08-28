@@ -887,6 +887,7 @@ class Seguimientos extends General {
                     }
                 }
             }
+
             switch ($datos['tipoDiagnostico']) {
                 case '1':
                     $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencia_Correctivo_ReporteEnFalso/';
@@ -899,20 +900,28 @@ class Seguimientos extends General {
                         'FechaCaptura' => $fecha,
                         'Observaciones' => $datos['observaciones']
                     ));
+
                     if (!empty($idCorrectivoDiagnostico)) {
                         if ($archivos) {
                             $archivos = implode(',', $archivos);
-                            $this->DBS->actualizarSeguimiento('t_correctivos_diagnostico', array(
-                                'Evidencias' => $evidenciasAnteriores . $archivos
-                                    ), array('Id' => $idCorrectivoDiagnostico)
-                            );
+                            $evidencias = $evidenciasAnteriores . $archivos;
                             return $idCorrectivoDiagnostico;
                         } else {
-                            $this->DBS->actualizarSeguimiento('t_correctivos_diagnostico', array(
-                                'Evidencias' => $datos['evidencias']
-                                    ), array('Id' => $idCorrectivoDiagnostico)
-                            );
+                            $evidencias = $datos['evidencias'];
                         }
+                        
+                        $this->DBS->actualizarSeguimiento('t_correctivos_diagnostico', array(
+                            'Evidencias' => $evidencias
+                                ), array('Id' => $idCorrectivoDiagnostico)
+                        );
+
+                        $this->DBP->bitacoraReporteFalso(array(
+                            'IdUsuarioModifica' => $usuario['Id'],
+                            'IdServicio' => $datos['servicio'],
+                            'Observaciones' => $datos['observaciones'],
+                            'Evidencias' => $evidencias,
+                            'FechaModificaciones' => $fecha
+                        ));
                     } else {
                         return FALSE;
                     }
