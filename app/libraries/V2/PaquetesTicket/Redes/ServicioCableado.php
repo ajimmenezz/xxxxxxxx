@@ -7,6 +7,7 @@ use Librerias\V2\PaquetesTicket\Redes\GestorNodosRedes as GestorNodo;
 use Librerias\V2\PaquetesGenerales\Utilerias\PDF as PDF;
 use Modelos\Modelo_ServicioCableado as Modelo;
 use Modelos\Modelo_ServicioTicket as ModeloServicioTicket;
+use Librerias\Generales\Correo as Correo;
 
 class ServicioCableado implements Servicio {
 
@@ -24,6 +25,7 @@ class ServicioCableado implements Servicio {
     private $DBServiciosGeneralRedes;
     private $DBServicioTicket;
     private $gestorNodos;
+    private $correoAtiende;
 
     public function __construct(string $idServicio) {
         $this->id = $idServicio;
@@ -46,6 +48,7 @@ class ServicioCableado implements Servicio {
         $this->descripcion = $consulta[0]['Descripcion'];
         $this->solicita = $consulta[0]['Solicita'];
         $this->descripcionSolicitud = $consulta[0]['DescripcionSolicitud'];
+        $this->correoAtiende = $consulta[0]['CorreoAtiende'];
     }
 
     public function startServicio(string $atiende) {
@@ -241,46 +244,24 @@ class ServicioCableado implements Servicio {
         $archivo = substr($carpeta, 1);
         return $archivo;
     }
-    
-    public function enviarServicioConcluido(array $datos){
-        var_dump('pumas');
-//        var_dump($this->setDatos());
+
+    public function enviarServicioConcluido(array $datos) {
+        $correo = new Correo();
+        $host = $_SERVER['SERVER_NAME'];
         $archivoPDF = $this->getPDF($datos);
-        var_dump($archivoPDF);
-//                        $serviciosConcluidos = $this->DBST->consultaGeneral('SELECT 
-//                                                                        tse.Id, 
-//                                                                        tse.Ticket,
-//                                                                        nombreUsuario(tso.Atiende) Atiende,
-//                                                                        (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = tso.Atiende) CorreoAtiende,
-//                                                                        tso.Solicita
-//                                                                FROM t_servicios_ticket tse
-//                                                                INNER JOIN t_solicitudes tso
-//                                                                ON tse.IdSolicitud = tso.Id
-//                                                                WHERE tse.Ticket = "' . $datos['ticket'] . '"');
-//
-//                foreach ($serviciosConcluidos as $key => $value) {
-//                    $contador++;
-//                    $linkPdfServiciosConcluidos = $this->getServicioToPdf(array('servicio' => $value['Id']));
-//                    $infoServicioServiciosConcluidos = $this->getInformacionServicio($value['Id']);
-//                    $tipoServicioServiciosConcluidos = stripAccents($infoServicioServiciosConcluidos[0]['NTipoServicio']);
-//
-//                    if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-//                        $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicioServiciosConcluidos . '.pdf';
-//                        $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
-//                    } else {
-//                        $path = 'http://' . $host . '/' . $linkPdfServiciosConcluidos['link'];
-//                        $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
-//                    }
-//
-//                    $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
-//                }
-//
-//                $titulo = 'Solicitud Concluida';
-//                $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
-//                $textoCorreo = '<p>Estimado(a) <strong>' . $value['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $value['Ticket'] . '</strong><br> Número Solicitud: <strong>' . $datosDescripcionConclusion[0]['IdSolicitud'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
-//
-//                $mensajeFirma = $this->Correo->mensajeCorreo($titulo, $textoCorreo);
-//                $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($value['CorreoAtiende']), $titulo, $mensajeFirma);
+
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'https://siccob.solutions/' . $archivoPDF;
+        } else {
+            $path = 'http://' . $host . '/' . $archivoPDF;
+        }
+
+        $linkPDF = '<br>Ver Servicio PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+        $titulo = 'Servicio Concluido';
+        $textoCorreo = '<p>Estimado(a) <strong>' . $this->atiende . ',</strong> se ha concluido el </p><br>Servicio: <strong>' . $this->id . '</strong><br> Número Solicitud: <strong>' . $this->idSolicitud . '</strong><br>' . $linkPDF;
+        $mensajeFirma = $correo->mensajeCorreo($titulo, $textoCorreo);
+
+        $correo->enviarCorreo('notificaciones@siccob.solutions', array($this->correoAtiende), $titulo, $mensajeFirma);
     }
 
 }

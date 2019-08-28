@@ -1037,12 +1037,17 @@ $(function () {
     });
 
     $('#validarServicio').on('click', function () {
-        peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/validarServicio', datoServicioTabla, function (respuesta) {
+        peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/validarServicio', datoServicioTabla, function (respuesta) {
             if (!validarError(respuesta)) {
                 return;
             }
+
             modal.mostrarModal("Exito", '<h4>Servicio validado correctamente</h4>');
             $('#btnAceptar').addClass('hidden');
+            modal.btnAceptar('btnCerrar', function () {
+                modal.cerrarModal();
+                location.reload();
+            });
         });
     });
     /**Finalizan seccion de botones generales**/
@@ -1090,7 +1095,7 @@ $(function () {
 
             peticion.enviar('panelFirmas', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
                 if (!validarError(respuesta)) {
-                    location.reload();
+                    return;
                 }
                 modal.mostrarModal("Exito", '<h4>Se han concluido el servicio correctamente</h4>');
                 $('#btnCerrar').addClass('hidden');

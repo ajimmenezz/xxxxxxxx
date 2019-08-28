@@ -14,7 +14,7 @@ class Modelo_ServicioCableado extends Modelo_Base {
         $consulta = $this->consulta('select 
                                             serviciosTicket.FechaCreacion,
                                             serviciosTicket.Ticket,
-                                            usuario(serviciosTicket.Atiende) as Atiende,
+                                            nombreUsuario(serviciosTicket.Atiende) as Atiende,
                                             serviciosTicket.IdSolicitud,
                                             serviciosTicket.Descripcion,
                                             serviciosTicket.IdSucursal,
@@ -22,7 +22,8 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                             usuario(serviciosTicket.Solicita) as Solicita,
                                             solicitudes.FechaCreacion as FechaSolicitud,
                                             solicitudesInternas.Descripcion as DescripcionSolicitud,
-                                            solicitudes.Folio
+                                            solicitudes.Folio,
+                                            (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = serviciosTicket.Atiende) CorreoAtiende
                                         from 
                                                 t_servicios_ticket serviciosTicket
                                         join 

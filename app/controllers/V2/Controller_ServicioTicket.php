@@ -225,8 +225,6 @@ class Controller_ServicioTicket extends CI_Controller {
         if ($this->datos['folio'] !== NULL) {
             ServiceDesk::setNota($datosServicio['folio'], $datosServicio['mensaje']);
         }
-//        ServiceDesk::setResolucion($datosServicio['folio'],$mensaje);
-//        ServiceDesk::setEstatus('Validacion',$datosServicio['folio']);
     }
 
     public function deleteEvidencias() {
@@ -262,22 +260,17 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
-    public function validateService() {
+    public function validarServicio() {
         try {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $idSolicitud = $this->servicio->getDatos()['idSolicitud'];
             $solicitud = new Solicitud($idSolicitud);
-//            $this->servicio->setEstatus('4');
-//            $solicitud->verificarServiciosParaConcluirSolicitudTicket();
-//            var_dump($datosServicio);
+            $this->servicio->setEstatus('4');
+            $solicitud->verificarServiciosParaConcluirSolicitudTicket();
             $this->servicio->enviarServicioConcluido($datosServicio);
-//            var_dump($datosServicio);
-//            $archivoPDF = $this->servicio->getPDF($datosServicio);
-//            var_dump('pumas');
-//            var_dump($archivoPDF);
-//            $this->datos['operacion'] = TRUE;
-//            echo json_encode($this->datos);
+            $this->datos['operacion'] = TRUE;
+            echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
             $this->datos['Error'] = $ex->getMessage();

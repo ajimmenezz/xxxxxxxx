@@ -202,7 +202,7 @@ $route['Redes/SeguimientoCE/SeguimientoGeneral/guardarSolucion'] = 'V2/Controlle
 $route['Redes/SeguimientoCE/SeguimientoGeneral/concluir'] = 'V2/Controller_ServicioTicket/setConcluir';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/exportarPDF'] = 'V2/Controller_ServicioTicket/getPDF';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/borrarEvidencias'] = 'V2/Controller_ServicioTicket/deleteEvidencias';
-$route['Redes/SeguimientoCE/SeguimientoGeneral/validarServicio'] = 'V2/Controller_ServicioTicket/validateService';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/validarServicio'] = 'V2/Controller_ServicioTicket/validarServicio';
 
 /* Routers para el manejo de MesaDeAyuda */
 $route['MesaDeAyuda/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
