@@ -159,8 +159,6 @@ class Autorizar_permisos extends General{
     }
     
     public function conluirAutorizacion(array $datosPermiso){
-        //return array("Datos", $datosPermiso);
-
         $estadoPermiso = array('IdEstatus' => '7');
         switch ($datosPermiso['idPerfil']){
             case 37:

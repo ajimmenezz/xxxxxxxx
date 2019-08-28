@@ -409,18 +409,19 @@ $(function () {
             idPerfil = respuesta.ID;
             idUser = respuesta.Perfil;
            // location.reload();
-        });
-        let datos=
-                {
-                    idPermiso:idPermiso,
-                    idPerfil:idPerfil,
-                    idUser:idUser,
-                    archivo: archivo
-        };
-        peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/ConluirAutorizacion',datos,function(respuesta)
-        {
-            console.log(respuesta);
-            location.reload();
+            let datosPerm=
+                    {
+                        idPermiso:idPermiso,
+                        idPerfil:idPerfil,
+                        idUser:idUser,
+                        archivo: archivo
+            };
+            console.log(datosPerm);
+            peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/ConluirAutorizacion',datosPerm,function(respuesta)
+            {
+                console.log(respuesta);
+                location.reload();
+            });
         });
     }
 
