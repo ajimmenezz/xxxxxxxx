@@ -233,23 +233,8 @@ $(function () {
                                                 <div class="form-group">\n\
                                                    <label class="col-md-10">La clave del técnico en la solicitud no es válida. Imposible de autenticar.</label>\n\
                                                 </div>\n\
-                                            </form>\n\
-                                            <div class="col-md-2">\n\
-                                                <i id="reloadFolio" class="fa fa-2x fa-refresh  text-primary"></i>\n\
-                                            </div><br><br><br>\n\
+                                            </form><br><br><br>\n\
                                         </div>');
-
-            $('#reloadFolio').on('click', function () {
-                peticion.enviar('agregarFolio', 'SeguimientoCE/SeguimientoGeneral/Seguimiento/Cableado', datoServicioTabla, function (respuesta) {
-                    if (!validarError(respuesta)) {
-                        return;
-                    }
-                    mostrarElementosAgregarFolio();
-                    mostrarInformacionFolio(respuesta.folio);
-                    arreglarNotas(respuesta.notasFolio);
-                });
-            });
-
         }
     }
 
