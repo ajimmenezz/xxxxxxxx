@@ -196,7 +196,7 @@ class Permisos_Vacaciones extends General {
                  INNER JOIN cat_perfiles AS cp ON cu.IdPerfil=cp.Id INNER JOIN cat_v3_departamentos_siccob AS cds ON cp.IdDepartamento=cds.Id 
                  WHERE tpa.Id ="' . $idPermiso['idPermiso'] . '"');
         $informacionPermisoAusencia['tiposAusencia'] = $this->obtenerTiposAusencia();
-        $informacionPermisoAusencia['motivosAusencia'] = $this->obtenerMotivoAusencia();
+        //$informacionPermisoAusencia['motivosAusencia'] = $this->obtenerMotivoAusencia();
 
         if ($informacionPermisoAusencia['datosAusencia'][0]['IdEstatus'] == '9' && $informacionPermisoAusencia['datosAusencia'][0]['IdUsuarioJefe'] == NULL) {
             return array('formulario' => parent::getCI()->load->view('RH/Modal/formularioActualizarAusencia', $informacionPermisoAusencia, TRUE));
