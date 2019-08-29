@@ -34,6 +34,7 @@ $(function () {
         let fechaAusenciaHasta = new Array();
         let Rechazo = new Array();
         let iteraciones;
+        let Justificacion= new Array();
         var eventosDinamicos;
         let colores = new Array();
         colores[0]= "bg-black";
@@ -92,8 +93,10 @@ $(function () {
                 autorizacionContabilidad[i] =  respuesta[i].AutorizacionContabilidad; 
                 autorizacionDireccion[i] = respuesta[i].AutorizacionDireccion;
                 Rechazo[i] = respuesta[i].Rechazo;
+                Justificacion[i]=respuesta[i].Justificacion;
            
             }
+            console.log(Justificacion);
             //SE PINTA EL CALENDARIO
             var handleCalendarDemo = function () {
                 "use strict";
@@ -298,7 +301,7 @@ $(function () {
                             $('#hos').html("<h5>Hora salida: </h5><input type='text' class='form-control text-center' readonly='readonly' id='' value ='"+calEvent.horaSalidaEvento+"'>");
                         }
 
-                        $('#jus').val(calEvent.descripcion);
+                        $('#jus').val(calEvent.Justificacion);
                         $('#mot').val(calEvent.descripcion);
                         
 
@@ -364,7 +367,7 @@ $(function () {
                    className: "bg-teal",
 
                     descripcion: descripcion[k],
-
+                    Justificacion: Justificacion[k],
                     estatusEvento: estatus[k],
                     usuarioEvento: usuario[k],
                     fechaAusenciaDesdeEvento: fechaAusenciaDesde[k],
