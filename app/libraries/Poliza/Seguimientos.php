@@ -888,6 +888,11 @@ class Seguimientos extends General {
                 }
             }
 
+            $this->DBS->actualizarSeguimiento('t_correctivos_generales', array(
+                'FallaReportada' => $datos['fallaReportada']
+                    ), array('IdServicio' => $datos['servicio'])
+            );
+
             switch ($datos['tipoDiagnostico']) {
                 case '1':
                     $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencia_Correctivo_ReporteEnFalso/';
@@ -1053,7 +1058,6 @@ class Seguimientos extends General {
                     }
                     break;
             }
-            
         } else {
             return 'faltaDatosGenerales';
         }
@@ -2421,7 +2425,7 @@ class Seguimientos extends General {
                 if ($folio[0]['Folio'] !== '') {
                     if ($folio[0]['Folio'] !== '0') {
                         $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-                        $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
+                        $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
 
                         if (!isset($datosSD->operation->result->status)) {
                             if ($datosSD->STATUS !== 'Completado') {

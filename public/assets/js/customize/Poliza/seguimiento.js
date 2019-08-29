@@ -2531,6 +2531,7 @@ $(function () {
         var respuesta = arguments[0];
         if (respuesta.informacion.informacionDatosGeneralesCorrectivo.length > 0) {
             select.cambiarOpcion('#selectSucursalesCorrectivo', respuesta.informacion.sucursal);
+            $('#inputFallaReportadaDiagnostico').val(respuesta.informacion.informacionDatosGeneralesCorrectivo[0].FallaReportada);
             $('#selectComponenteDiagnosticoCorrectivo').removeAttr('disabled');
             $('#selectRefaccionSolicitud').removeAttr('disabled');
             $('#inputCantidadRefaccionSolicitud').removeAttr('disabled');
