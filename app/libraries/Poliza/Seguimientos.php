@@ -914,14 +914,6 @@ class Seguimientos extends General {
                             'Evidencias' => $evidencias
                                 ), array('Id' => $idCorrectivoDiagnostico)
                         );
-
-                        $this->DBP->bitacoraReporteFalso(array(
-                            'IdUsuarioModifica' => $usuario['Id'],
-                            'IdServicio' => $datos['servicio'],
-                            'Observaciones' => $datos['observaciones'],
-                            'Evidencias' => $evidencias,
-                            'FechaModificaciones' => $fecha
-                        ));
                     } else {
                         return FALSE;
                     }

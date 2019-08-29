@@ -2520,6 +2520,9 @@ $(function () {
                 'Seguimiento/Eliminar_EvidenciaSolucion',
                 datosTabla[0]
                 );
+        file.crearUpload('#archivosAgregarObservacionesReporteFalso',
+                'Seguimiento/guardarDiagnosticoEquipo'
+                );
         file.descargarImagen(evidenciaCambioEquipo);
         $("#divNotasServicio").slimScroll({height: '400px'});
         nota.initButtons({servicio: datosTabla[0]}, 'Seguimiento');
@@ -2938,24 +2941,22 @@ $(function () {
         });
         $('#btnGuardarReporteFalsoCorrectivo').off('click');
         $('#btnGuardarReporteFalsoCorrectivo').on('click', function (e) {
-            if (validarCampos($('#inputObservacionesReporteFalsoCorrectivo').val(), '.errorFormularioReporteFalsoCorrectivo', 'Debes llenar el campo de Observaciones.')) {
-                if (respuesta.informacion.diagnosticoEquipo === null) {
-                    if ($('#evidenciasReporteFalsoCorrectivo').val() !== '') {
-                        guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
-                    } else {
-                        evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
-                    }
-                } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
-                    if ($('#evidenciasReporteFalsoCorrectivo').val() !== '') {
-                        guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
-                    } else {
-                        evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
-                    }
-                } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+            if (respuesta.informacion.diagnosticoEquipo === null) {
+                if ($('#evidenciasReporteFalsoCorrectivo').val() !== '') {
                     guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
                 } else {
                     evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
                 }
+            } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
+                if ($('#evidenciasReporteFalsoCorrectivo').val() !== '') {
+                    guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
+                } else {
+                    evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                }
+            } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+                guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
+            } else {
+                evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
             }
         });
         $('#btnGuardarImpericiaCorrectivo').off('click');
@@ -3649,6 +3650,48 @@ $(function () {
                 window.open('/' + respuesta.link);
             });
         });
+
+        $("#btnAgregarObservacionesReporteFalso").off("click");
+        $("#btnAgregarObservacionesReporteFalso").on("click", function () {
+            $(this).addClass('hidden');
+            $("#divFormAgregarObservaciones").removeClass('hidden');
+        });
+
+        $("#btnCancelarAgregarObservacionesReporteFalso").off("click");
+        $("#btnCancelarAgregarObservacionesReporteFalso").on("click", function () {
+            $("#divFormAgregarObservaciones").addClass('hidden');
+            $("#btnAgregarObservacionesReporteFalso").removeClass('hidden');
+            file.limpiar('#archivosAgregarObservacionesReporteFalso');
+            evento.limpiarFormulario("#formAgregarObservacionesReporteFalso");
+        });
+
+        $('#btnConfirmarAgregarObservacionesReporteFalso').off('click');
+        $('#btnConfirmarAgregarObservacionesReporteFalso').on('click', function () {
+            var observaciones = $('#txtAgregarObservacion').val();
+            var evidencias = $('#archivosAgregarObservacionesReporteFalso').val();
+            var data = {servicio: servicio, observaciones: observaciones};
+            
+            if (observaciones !== '' && evidencias !== '') {
+                file.enviarArchivos('#archivosAgregarNotas', 'Seguimiento/Guardar_Nota_Servicio', '#divDetallesServicio', data, function (respuesta) {
+//                    if (respuesta) {
+//                        Nota.prototype.fileUpload.limpiar('#archivosAgregarNotas');
+//                        Nota.prototype.evento.limpiarFormulario("#formAgregarNotas");
+//                        Nota.prototype.evento.mostrarMensaje('#errorAgregarCorrectoNota', true, 'Su nota o archivos se agregaron correctamente.', 5000);
+//                        Nota.prototype.evento.enviarEvento(nombreControlador + '/ActualizaNotas', data, '#divDetallesServicio', function (respuesta) {
+//                            $("#divFormAgregarNota").addClass('hidden');
+//                            $("#btnAgregarNota").removeClass('hidden');
+//                            $("#divNotasServicio").slimScroll({height: '400px'});
+//                            $("#ulListaNotas").empty().append(respuesta.html);
+//                        });
+//                    } else {
+//                        Nota.prototype.evento.mostrarMensaje('#errorAgregarNotaServicio', false, 'No se pudo agregar la nota. Intente de nuevo por favor.', 3000);
+//                    }
+                });
+            } else {
+                evento.mostrarMensaje('#errorAgregarObservacionesReporteFalso', false, 'Debe capturar la observación y agregar al menos un archivo para guardarlo.', 3000);
+            }
+        });
+
         servicios.initBotonReasignarServicio(servicio, datosTabla[1], '#seccion-servicio-correctivo');
         //evento para crear nueva solicitud
         servicios.initBotonNuevaSolicitud(datosTabla[1], '#seccion-servicio-correctivo');

@@ -397,6 +397,9 @@ class Controller_Seguimiento extends Base {
             case 'enviarDatosCotizarOpcionRevision':
                 $resultado = $this->Seguimientos->checkInsertSicsa($this->input->post());
                 break;
+            case 'enviarDatosCotizarOpcionRevision':
+                $resultado = $this->Seguimientos->checkInsertSicsa($this->input->post());
+                break;
             case 'MostrarServicios':
                 $servicios = array('serviciosAsignados' => $this->ServiciosTicket->getServiciosAsignados($this->input->post('departamento'), $this->input->post('folio')));
                 $resultado = $servicios;
