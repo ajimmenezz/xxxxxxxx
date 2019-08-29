@@ -1521,7 +1521,7 @@ class Solicitud extends General {
         $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array('Folio' => $datos['folio']), array('Id' => $datos['solicitud']));
         if (!empty($consulta)) {
             if ($datos['folio'] !== '') {
-                $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
+                $datosSD = $this->ServiceDesk->getDetallesFolio($key, $datos['folio']);
 
                 if (!isset($datosSD->operation->result->status)) {
                     if ($datosSD->STATUS !== 'Completado') {

@@ -1423,7 +1423,7 @@ class EditarSolicitud extends General {
         $key = $this->MSP->getApiKeyByUser($usuario['Id']);
         $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array('Folio' => $datos['folio']), array('Id' => $datos['solicitud']));
         if (!empty($consulta)) {
-            $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
+            $datosSD = $this->ServiceDesk->getDetallesFolio($key, $datos['folio']);
 
             if (!isset($datosSD->operation->result->status)) {
                 if ($datosSD->STATUS !== 'Completado') {
