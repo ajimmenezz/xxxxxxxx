@@ -2039,6 +2039,7 @@ class Servicio extends General {
         $linkPDF = '';
         $contador = 0;
         $correctivos = $this->DBS->getServicios('SELECT Id, Ticket FROM t_servicios_ticket WHERE Ticket = ' . $datos['ticket'] . ' AND IdTipoServicio = 20');
+
         $this->DBS->actualizarServicio('t_servicios_ticket', array(
             'IdEstatus' => '4',
             'FechaConclusion' => $fecha
@@ -2073,26 +2074,30 @@ class Servicio extends General {
                 'Id_Orden' => $datos['ticket']
             ));
 
-            foreach ($correctivos as $key => $value) {
-                $contador++;
-                $linkPdf = $this->getServicioToPdf(array('servicio' => $value['Id']));
-                $infoServicio = $this->getInformacionServicio($value['Id']);
-                $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+            if (!empty($correctivos)) {
+                foreach ($correctivos as $key => $value) {
+                    $contador++;
+                    $linkPdf = $this->getServicioToPdf(array('servicio' => $value['Id']));
+                    $infoServicio = $this->getInformacionServicio($value['Id']);
+                    $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
 
-                if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-                    $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicio . '.pdf';
-                    $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
-                } else {
-                    $path = 'http://' . $host . '/' . $linkPdf['link'];
-                    $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
+                    if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                        $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicio . '.pdf';
+                        $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
+                    } else {
+                        $path = 'http://' . $host . '/' . $linkPdf['link'];
+                        $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
+                    }
+
+                    $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
                 }
-
-                $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
+                $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
+            } else {
+                $linkSolicitud = '';
             }
 
             $titulo = 'Solicitud Concluida';
-            $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
-            $textoCorreo = '<p>Estimado(a) <strong>' . $verificarSolicitud[0]['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $value['Ticket'] . '</strong><br> Número Solicitud: <strong>' . $verificarSolicitud[0]['Id'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
+            $textoCorreo = '<p>Estimado(a) <strong>' . $verificarSolicitud[0]['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $datos['ticket'] . '</strong><br> Número Solicitud: <strong>' . $verificarSolicitud[0]['Id'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
             $this->enviarCorreoConcluido(array($verificarSolicitud[0]['CorreoAtiende']), $titulo, $textoCorreo);
 
             return 'serviciosConcluidos';
