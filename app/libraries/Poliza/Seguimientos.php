@@ -897,8 +897,7 @@ class Seguimientos extends General {
                         'IdServicio' => $datos['servicio'],
                         'IdTipoDiagnostico' => $datos['tipoDiagnostico'],
                         'IdUsuario' => $usuario['Id'],
-                        'FechaCaptura' => $fecha,
-                        'Observaciones' => $datos['observaciones']
+                        'FechaCaptura' => $fecha
                     ));
 
                     if (!empty($idCorrectivoDiagnostico)) {
@@ -909,7 +908,7 @@ class Seguimientos extends General {
                         } else {
                             $evidencias = $datos['evidencias'];
                         }
-                        
+
                         $this->DBS->actualizarSeguimiento('t_correctivos_diagnostico', array(
                             'Evidencias' => $evidencias
                                 ), array('Id' => $idCorrectivoDiagnostico)
@@ -5625,8 +5624,46 @@ class Seguimientos extends General {
         return $viewHtml;
     }
 
-    public function buscarFolio($datos) {
-        var_dump($datos);
+    public function guardarObservacionesBitacora(array $datos) {
+        try {
+            $usuario = $this->Usuario->getDatosUsuario();
+            $fechaCaptura = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            if (!empty($_FILES)) {
+                $CI = parent::getCI();
+                $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencias_Bitacora_Reporte_Falso/';
+                $archivos = setMultiplesArchivos($CI, 'archivosAgregarObservacionesReporteFalso', $carpeta);
+                if (!empty($archivos)) {
+                    $archivos = implode(',', $archivos);
+                    $nuevo = $this->DBP->insertarBitacoraReporteFalso(array(
+                        'IdUsuario' => $usuario['Id'],
+                        'IdServicio' => $datos['servicio'],
+                        'Observaciones' => $datos['observaciones'],
+                        'Evidencias' => $archivos,
+                        'Fecha' => $fechaCaptura
+                            )
+                    );
+                }
+            }
+            return array('code' => 200, 'message' => $this->mostrarBitacoraReporteFalso($datos['servicio']));
+        } catch (\Exception $ex) {
+            return ['code' => 400, 'message' => $ex->getMessage()];
+        }
+    }
+
+    public function mostrarBitacoraReporteFalso(string $servicio) {
+        $data = array();
+        $data['bitacoraReporteFalso'] = $this->DBP->consultaBitacoraReporteFalso($servicio);
+        return parent::getCI()->load->view('Poliza/Detalles/BitacoraReporteFalso', $data, TRUE);
+    }
+
+    public function verificarBitacoraReporteFalso(array $datos) {
+        $arrayBitacora = $this->DBP->consultaBitacoraReporteFalso($datos['servicio']);
+
+        if (!empty($arrayBitacora)) {
+            return array('code' => 200, 'message' => 'correcto');
+        } else {
+            return ['code' => 400, 'message' => 'Debe guardar al menos un observación.'];
+        }
     }
 
 }

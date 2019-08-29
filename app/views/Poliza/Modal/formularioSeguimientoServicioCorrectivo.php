@@ -13,8 +13,6 @@
                 <li id="btnAgregarAvance"><a href="#"><i class="fa fa-plus"></i> Agregar Avance</a></li>
                 <li id="btnAgregarProblema"><a href="#"><i class="fa fa-plus"></i> Agregar Problema</a></li>
                 <?php echo $informacion['botonAgregarVuelta'] ?>
-                <li id="btnAgregarAvance"><a href="#"><i class="fa fa-plus"></i> Agregar Avance</a></li>
-                <li id="btnAgregarProblema"><a href="#"><i class="fa fa-plus"></i> Agregar Problema</a></li>
                 <li id="btnCancelarServicioSeguimiento"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
                 <li id="btnEnviarReporteProblema"><a href="#"><i class="fa fa-check-square"></i> Enviar Reporte con Firma</a></li>
                 <li id="btnGeneraPdfServicio"><a href="#"><i class="fa fa-file-pdf-o"></i> Generar Pdf</a></li>
@@ -462,9 +460,12 @@
                             <div class="row">
                                 <div class="col-md-12">                            
                                     <fieldset>
-                                        <legend class="pull-left width-full f-s-17">Observaciones del Diagnotico.</legend>
+                                        <legend class="pull-left width-full f-s-17">Bitácora Observaciones del Diagnotico.</legend>
                                     </fieldset>  
                                 </div>
+                            </div>
+                            <div id="divBitacoraReporteFalso">
+                                <?php echo $bitacoraReporteFalso; ?>
                             </div>
                         </div>
                     </div>
@@ -752,8 +753,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
         <!--Finalizando la seccion Diagnostico del Equipo-->

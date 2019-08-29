@@ -397,8 +397,11 @@ class Controller_Seguimiento extends Base {
             case 'enviarDatosCotizarOpcionRevision':
                 $resultado = $this->Seguimientos->checkInsertSicsa($this->input->post());
                 break;
-            case 'enviarDatosCotizarOpcionRevision':
-                $resultado = $this->Seguimientos->checkInsertSicsa($this->input->post());
+            case 'guardarObservacionesBitacora':
+                $resultado = $this->Seguimientos->guardarObservacionesBitacora($this->input->post());
+                break;
+            case 'varifiarBitacora':
+                $resultado = $this->Seguimientos->verificarBitacoraReporteFalso($this->input->post());
                 break;
             case 'MostrarServicios':
                 $servicios = array('serviciosAsignados' => $this->ServiciosTicket->getServiciosAsignados($this->input->post('departamento'), $this->input->post('folio')));

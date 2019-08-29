@@ -2521,7 +2521,7 @@ $(function () {
                 datosTabla[0]
                 );
         file.crearUpload('#archivosAgregarObservacionesReporteFalso',
-                'Seguimiento/guardarDiagnosticoEquipo'
+                'Seguimiento/guardarObservacionesBitacora'
                 );
         file.descargarImagen(evidenciaCambioEquipo);
         $("#divNotasServicio").slimScroll({height: '400px'});
@@ -2941,23 +2941,30 @@ $(function () {
         });
         $('#btnGuardarReporteFalsoCorrectivo').off('click');
         $('#btnGuardarReporteFalsoCorrectivo').on('click', function (e) {
-            if (respuesta.informacion.diagnosticoEquipo === null) {
-                if ($('#evidenciasReporteFalsoCorrectivo').val() !== '') {
-                    guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
+            var data = {servicio: servicio};
+            evento.enviarEvento('Seguimiento/varifiarBitacora', data, '#seccion-servicio-correctivo', function (resultado) {
+                if (resultado.code === 200) {
+                    if (respuesta.informacion.diagnosticoEquipo === null) {
+                        if ($('#evidenciasReporteFalsoCorrectivo').val() !== '') {
+                            guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
+                        } else {
+                            evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                        }
+                    } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
+                        if ($('#evidenciasReporteFalsoCorrectivo').val() !== '') {
+                            guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
+                        } else {
+                            evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                        }
+                    } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+                        guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
+                    } else {
+                        evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                    }
                 } else {
-                    evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                    evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, resultado.message, 3000);
                 }
-            } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
-                if ($('#evidenciasReporteFalsoCorrectivo').val() !== '') {
-                    guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
-                } else {
-                    evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
-                }
-            } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
-                guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
-            } else {
-                evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
-            }
+            });
         });
         $('#btnGuardarImpericiaCorrectivo').off('click');
         $('#btnGuardarImpericiaCorrectivo').on('click', function (e) {
@@ -3670,22 +3677,17 @@ $(function () {
             var observaciones = $('#txtAgregarObservacion').val();
             var evidencias = $('#archivosAgregarObservacionesReporteFalso').val();
             var data = {servicio: servicio, observaciones: observaciones};
-            
             if (observaciones !== '' && evidencias !== '') {
-                file.enviarArchivos('#archivosAgregarNotas', 'Seguimiento/Guardar_Nota_Servicio', '#divDetallesServicio', data, function (respuesta) {
-//                    if (respuesta) {
-//                        Nota.prototype.fileUpload.limpiar('#archivosAgregarNotas');
-//                        Nota.prototype.evento.limpiarFormulario("#formAgregarNotas");
-//                        Nota.prototype.evento.mostrarMensaje('#errorAgregarCorrectoNota', true, 'Su nota o archivos se agregaron correctamente.', 5000);
-//                        Nota.prototype.evento.enviarEvento(nombreControlador + '/ActualizaNotas', data, '#divDetallesServicio', function (respuesta) {
-//                            $("#divFormAgregarNota").addClass('hidden');
-//                            $("#btnAgregarNota").removeClass('hidden');
-//                            $("#divNotasServicio").slimScroll({height: '400px'});
-//                            $("#ulListaNotas").empty().append(respuesta.html);
-//                        });
-//                    } else {
-//                        Nota.prototype.evento.mostrarMensaje('#errorAgregarNotaServicio', false, 'No se pudo agregar la nota. Intente de nuevo por favor.', 3000);
-//                    }
+                file.enviarArchivos('#archivosAgregarObservacionesReporteFalso', 'Seguimiento/guardarObservacionesBitacora', '#seccion-servicio-correctivo', data, function (respuesta) {
+                    if (respuesta.code === 200) {
+                        $('#divBitacoraReporteFalso').empty().append(respuesta.message);
+                        file.limpiar('#archivosAgregarObservacionesReporteFalso');
+                        $('#txtAgregarObservacion').val('');
+                        servicios.mensajeModal('Se agrego la observación.', 'Correcto', true);
+                        limpiarFormulariosDiagnostico('1');
+                        $("#divFormAgregarObservaciones").addClass('hidden');
+                        $("#btnAgregarObservacionesReporteFalso").removeClass('hidden');
+                    }
                 });
             } else {
                 evento.mostrarMensaje('#errorAgregarObservacionesReporteFalso', false, 'Debe capturar la observación y agregar al menos un archivo para guardarlo.', 3000);
