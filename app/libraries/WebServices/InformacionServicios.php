@@ -953,7 +953,7 @@ class InformacionServicios extends General {
     }
 
     public function verifyProcess(array $datos) {
-        if ($datos['servicioConcluir'] === 'true') {
+        if (isset($datos['servicioConcluir']) && $datos['servicioConcluir'] === 'true') {
             $servicioConcluir = TRUE;
         } else {
             $servicioConcluir = FALSE;
