@@ -30,13 +30,13 @@
                         perm.Archivo as Archivo,
                         nombreUsuario(catU.IdJefe) as Jefe,
                         catU.IdPerfil as IdPerfil,
+                        nombrePerfil(catU.IdPerfil) as NombrePerfil,
                         catU.id as IdUsuario,
                         nombreUsuario(idUsuarioJefe) as AutorizacionJefe,
                         nombreUsuario(idUsuarioRH) as AutorizacionRH,
                         nombreUsuario(idUsuarioContabilidad) as AutorizacionContabilidad,
                         nombreUsuario(idUsuarioDireccion) as AutorizacionDireccion,
                         tipoRechazo(IdRechazo) as Rechazo
-                        
 					
                     from t_permisos_ausencia_rh perm
                     join 
@@ -44,11 +44,9 @@
                     on
                             catU.id= perm.IdUsuario
                     where
-                            catU.IdJefe= 3
-                    and FechaAusenciaDesde>='".$fechaMinima."'
+                    FechaAusenciaDesde>='".$fechaMinima."'
                     and FechaAusenciaDesde<='".$fechaMaxima."'
                     ";
-          // var_dump($query);
             $resultado= $this->consulta($query);
             return $resultado;
         }

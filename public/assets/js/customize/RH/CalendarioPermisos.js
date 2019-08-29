@@ -35,6 +35,7 @@ $(function () {
         let Rechazo = new Array();
         let iteraciones;
         let Justificacion= new Array();
+        let Perfil = new Array();
         var eventosDinamicos;
         let colores = new Array();
         colores[0]= "bg-black";
@@ -94,6 +95,7 @@ $(function () {
                 autorizacionDireccion[i] = respuesta[i].AutorizacionDireccion;
                 Rechazo[i] = respuesta[i].Rechazo;
                 Justificacion[i]=respuesta[i].Justificacion;
+                Perfil[i]= respuesta[i].NombrePerfil;
            
             }
             console.log(Justificacion);
@@ -142,13 +144,33 @@ $(function () {
                     eventRender: function (event, element, calEvent) {
                         var mediaObject = (event.media) ? event.media : '';
                         var description = (event.description) ? event.description : '';
-                        element.find(".fc-event-title").after($("<span class=\"fc-event-icons\"></span>").html(mediaObject));
-                        element.find(".fc-event-title").append('<small>' + description + '</small>');
+                        var ausencia = (event.ausencia) ? event.ausencia : '';
+                        var Perfil = (event.Perfil) ? event.Perfil : '';
+                        let imagen = event.imageurl;
+                        let nombre= event.title;
+                        console.log(nombre);
+                        if(imagen)
+                        {
+                            console.log(imagen);
+                            imagen = "<div class='text-center'><img src='"+event.imageurl+"' class='img-fluid img-responsive img-circle'></div>";
+                        }
+
+                        else
+
+                        {
+                            console.log(imagen);
+                            imagen= "";
+                        }
+
+                        element.find(".fc-event-title").before("<div></div>").html(imagen);
+                       // element.find(".fc-event-title").append("<DIV></DIV>").after($("<span class=\"fc-event-icons\"></span>").html(mediaObject));
+                        element.find(".fc-event-title").after('<div>'+nombre+'</div><div><small>' + ausencia + '</small></div><div>'+Perfil+'</div>');
                     },
                     editable: false,
                     events: [],
                     
                     eventTextColor: '#fff',
+                    
                     eventClick: function(calEvent, jsEvent, view) {
                         
                         /*LLENAR EVENTOS*/
@@ -352,20 +374,25 @@ $(function () {
 
                 let titulo="";
             for (var k = 0; k < iteraciones; k++) {
-                    titulo=usuario[k].substring(0,9)+"...";
+                titulo=usuario[k].substring(0,9)+"...";
+                console.log("Perfiles");                
+                console.log(Perfil[i]);
+
                 eventosDinamicos = {
+                    imageurl: '/assets/img/user-13.jpg',
                     id: ids[k],
                    // media: '<i class="fa fa-circle"></i>',
                     title: titulo ,
                     idUsuario: idUsuario[k],
                     idPerfil: idPerfil[k],
+                    Perfil:Perfil[i],
                     archivo: archivo[k],
                     ausencia: ausencia[k],
                     start: fechaDesde[k],
                     end: fechaHasta[k],
-                   // className: colores[Math.floor(Math.random() * 17)],
-                   className: "bg-teal",
-
+                    // className: colores[Math.floor(Math.random() * 17)],
+                    className: "bg-teal",
+                    description:descripcion[k]+" "+ Perfil[k],
                     descripcion: descripcion[k],
                     Justificacion: Justificacion[k],
                     estatusEvento: estatus[k],
