@@ -905,7 +905,6 @@ class Seguimientos extends General {
                         if ($archivos) {
                             $archivos = implode(',', $archivos);
                             $evidencias = $evidenciasAnteriores . $archivos;
-                            return $idCorrectivoDiagnostico;
                         } else {
                             $evidencias = $datos['evidencias'];
                         }
@@ -915,13 +914,7 @@ class Seguimientos extends General {
                                 ), array('Id' => $idCorrectivoDiagnostico)
                         );
 
-                        $this->DBP->bitacoraReporteFalso(array(
-                            'IdUsuarioModifica' => $usuario['Id'],
-                            'IdServicio' => $datos['servicio'],
-                            'Observaciones' => $datos['observaciones'],
-                            'Evidencias' => $evidencias,
-                            'FechaModificaciones' => $fecha
-                        ));
+                        return $idCorrectivoDiagnostico;
                     } else {
                         return FALSE;
                     }

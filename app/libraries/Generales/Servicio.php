@@ -1315,7 +1315,12 @@ class Servicio extends General {
         if (empty($correctivosDiagnostico)) {
             $correctivosDiagnostico[0] = 'Sin Información';
         } else {
-            $correctivosDiagnostico[0]['Evidencias'] = ($correctivosDiagnostico[0]['Evidencias'] !== '') ? $this->getHtmlArchivosPdf($correctivosDiagnostico[0]['Evidencias'], $servicio) : '';
+            if ($correctivosDiagnostico[0]['Evidencias'] !== NULL && $correctivosDiagnostico[0]['Evidencias'] !== '') {
+                $evidenciasDiagnostico = $this->getHtmlArchivosPdf($correctivosDiagnostico[0]['Evidencias'], $servicio);
+            } else {
+                $evidenciasDiagnostico = '';
+            }
+            $correctivosDiagnostico[0]['Evidencias'] = $evidenciasDiagnostico;
         }
 
         $tipoProblema = $this->DBS->consultaGeneral('SELECT Id, IdTipoProblema FROM t_correctivos_problemas WHERE IdServicio = "' . $servicio . '" ORDER BY Id DESC LIMIT 1');
