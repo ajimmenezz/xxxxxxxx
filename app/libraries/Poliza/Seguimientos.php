@@ -1053,6 +1053,7 @@ class Seguimientos extends General {
                     }
                     break;
             }
+            
         } else {
             return 'faltaDatosGenerales';
         }

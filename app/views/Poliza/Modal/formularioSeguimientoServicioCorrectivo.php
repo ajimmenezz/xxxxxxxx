@@ -371,6 +371,14 @@
                 </div>
                 <!--Finalizando Separador-->
 
+                <div class="row m-b-15">
+                    <div class="col-md-12">
+                        <label>Falla reportada en sitio *</label>
+                        <input id="inputFallaReportadaDiagnostico" type="text" class="form-control"  placeholder="Ingrese la persona que recibe" value="" maxlength="250"/>
+                    </div>
+                </div>
+
+
                 <ul class="nav nav-pills">
                     <li class="active"><a href="#reporte-falso" data-toggle="tab">Reporte en Falso</a></li>
                     <li><a href="#impericia" data-toggle="tab">Impericia (Mal uso)</a></li>
