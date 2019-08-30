@@ -261,7 +261,6 @@ class Secciones extends General {
             case 'RH/Permisos_vacaciones':
                 $datos['departamento'] = $this->permisosVacaciones->buscarDepartamento();
                 $datos['tipoAusencia'] = $this->permisosVacaciones->obtenerTiposAusencia();
-                $datos['motivoAusencia'] = $this->permisosVacaciones->obtenerMotivoAusencia();
                 $datos['permisosAusencias'] = $this->permisosVacaciones->obtenerPermisosAusencia($usuario['Id']);
                 $datos['enviarCorreos'] = $this->permisosVacaciones->enviarCorreoSiccob();
                 break;
@@ -556,6 +555,7 @@ class Secciones extends General {
             case 'FondoFijo/MiFondo':
                 $datos['Cuentas'] = $this->fondoFijo->getSaldosCuentasXUsuario($usuario['Id']);
                 break;
+            
             case 'FondoFijo/Autorizar':
                 $datos['Pendientes'] = $this->fondoFijo->pendientesXAutorizar($usuario['Id']);
                 break;
@@ -567,6 +567,11 @@ class Secciones extends General {
                 break;
             case 'Redes/SeguimientoCE':
                 $datos['infoServicios'] = $this->seccionCE->getDatosServicios();
+                break;
+
+            case 'FondoFijo/SaldosTecnico':
+                $datos['SaldoTecnico'] = $this->fondoFijo->getTecnicos();
+                //Este va a la vista
                 break;
             default:
                 break;

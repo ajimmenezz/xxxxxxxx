@@ -27,7 +27,8 @@ $config['Secciones'] = array(
         'Minuta_Resumen' => 'Minuta_Resumen',
         'Archivo_Nuevo' => 'Archivo_Nuevo',
         'Archivo_Resumen' => 'Archivo_Resumen',
-        'Dashboard_Gapsi' => 'Dashboard_Gapsi'
+        'Dashboard_Gapsi' => 'Dashboard_Gapsi', 
+        'Tester' => 'Tester'
     ),
     'Administrador' => array(
         'Dashboard-Administrador' => 'Dashboard',
@@ -194,7 +195,8 @@ $config['Secciones'] = array(
         'Catalogos' => 'Catalogos',  
         'Depositar' => 'Depositar',  
         'MiFondo' => 'MiFondo',   
-        'Autorizar' => 'Autorizar'     
+        'Autorizar' => 'Autorizar',
+        'SaldosTecnico' => 'SaldosTecnico'     
     ),
     'Instalaciones' => array(
         'Seguimiento' => 'Seguimiento'  

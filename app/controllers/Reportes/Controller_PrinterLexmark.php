@@ -11,6 +11,7 @@ class Controller_PrinterLexmark extends Base
     {
         parent::__construct();
         $this->mailReader = new \Librerias\Generales\MailReader();
+        $this->reporteLexmark = new \Librerias\Reportes\Lexmark();
     }
 
     public function manejarEvento(string $evento = null)
@@ -18,6 +19,9 @@ class Controller_PrinterLexmark extends Base
         switch ($evento) {
             case 'ReadMailLexmark':
                 $resultado = $this->mailReader->getMailReportLexmark();
+                break;
+            case 'SetDailyPrints':
+                $resultado = $this->reporteLexmark->setDailyPrints();
                 break;
             default:
                 $resultado = ['code' => 404, 'message' => "Not found"];

@@ -1,5 +1,5 @@
-//Constructor del la clase Tabla
 function Servicio() {
+//Constructor del la clase Tabla
     this.file = new Upload();
     this.tabla = new Tabla();
     this.select = new Select();
@@ -467,6 +467,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
         var sucursal = $('#selectSucursalesSinClasificar').val();
         var descripcion = $('#inputDescripcionSinClasificar').val();
         var evidencias = $('#evidenciaSinClasificar').val();
+        var archivosPreview = _this.file.previews('.previewSinClasificar');
 
         if (descripcion !== '') {
             var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, soloGuardar: true};
@@ -489,21 +490,13 @@ Servicio.prototype.ServicioSinClasificar = function () {
         });
     });
 
-    //Encargado de agregar un avance
-    $('#btnAgregarAvance').on('click', function () {
-        _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio, 'Guardar');
-    });
-
-    //Encargado de agregar un problema
-    $('#btnAgregarProblema').on('click', function () {
-        _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio, 'Guardar');
-    });
-
     //Encargado de agregar un problema
     $('#btnReasignarServicio').on('click', function () {
         _this.mostrarFormularioReasigarServicio(servicio, ticket);
     });
 
+    _this.botonAgregarAvance(servicio, tipoServicio);
+    _this.botonAgregarProblema(servicio, tipoServicio);
     _this.botonAgregarVuelta(dataServicio, '#seccion-servicio-sin-clasificar');
     _this.GuardarNotas(dataServicio, nombreControlador);
     _this.initBotonNuevaSolicitud(ticket);
@@ -517,6 +510,26 @@ Servicio.prototype.ServicioSinClasificar = function () {
     _this.eventosFolio(datosDelServicio.IdSolicitud, '#seccion-servicio-sin-clasificar', servicio);
     _this.botonEliminarAvanceProblema(servicio);
     _this.botonEditarAvanceProblema(servicio);
+};
+
+Servicio.prototype.botonAgregarAvance = function () {
+    var _this = this;
+    var servicio = arguments[0];
+    var tipoServicio = arguments[1];
+    
+    $('#btnAgregarAvance').on('click', function () {
+        _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio, 'Guardar');
+    });
+};
+
+Servicio.prototype.botonAgregarProblema = function () {
+    var _this = this;
+    var servicio = arguments[0];
+    var tipoServicio = arguments[1];
+    
+    $('#btnAgregarProblema').on('click', function () {
+        _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio, 'Guardar');
+    });
 };
 
 Servicio.prototype.GuardarNotas = function () {
@@ -708,14 +721,14 @@ Servicio.prototype.eventosFolio = function () {
                     var data = {servicio: servicio, personalSD: usuarioSD, solicitud: solicitud};
                     _this.enviarEvento('/Generales/Solicitud/ReasignarFolioSD', data, '#modal-dialogo', function (respuesta) {
                         _this.cerrarModal();
-                        if (respuesta !== null) {
+                        if (respuesta.code === 200) {
                             _this.mostrarMensaje('.errorFolioSolicitudSinClasificar', true, 'Datos actualizados correctamente.', 3000);
-                            var datosSDHTML = _this.camposSD(respuesta);
+                            var datosSDHTML = _this.camposSD(respuesta.message);
                             $('#seccionSD').empty().html(datosSDHTML);
                             _this.detallesDescripcionResolucion();
                         } else {
-                            _this.mostrarMensaje('.errorFolioSolicitudSinClasificar', true, 'Datos actualizados correctamente.', 3000);
-                            var mensajeSinDatos = _this.mensajeAlerta('No hay información para mostrar con este folio en Service Desk.')
+                            _this.mostrarMensaje('.errorFolioSolicitudSinClasificar', false, respuesta.message, 3000);
+                            var mensajeSinDatos = _this.mensajeAlerta(respuesta.message)
                             $('#seccionSD').empty().html(mensajeSinDatos);
                         }
                     });
@@ -733,119 +746,126 @@ Servicio.prototype.camposSD = function () {
                         <div class="row">\n\
                             <div class="col-sm-12 col-md-12">'
                 + datosSD +
-                '</div>\n\
+                '           </div>\n\
                         </div>\n\
                     </div>';
     } else {
-        var html = '<div class="row">\n\
-                        </div>\n\
+        if (datosSD.code === 400) {
+            var html = '<div class="row">\n\
                         <div class="row">\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group">\n\
-                                    <label> Creado por: <strong>' + datosSD.creadoSD + '</strong></label>\n\
-                                </div>\n\
-                            </div>\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group">\n\
-                                    <label> Fecha de Creación: <strong>' + datosSD.fechaSolicitudSD + '</strong></label>\n\
-                                </div>\n\
-                            </div>\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group text-right">\n\
-                                    <label> Prioridad: <strong>' + datosSD.prioridadSD + '</strong></label>\n\
-                                </div>\n\
+                            <div class="col-sm-12 col-md-12">'
+                    + datosSD.message +
+                    '           </div>\n\
+                        </div>\n\
+                    </div>';
+        } else {
+            var html = '<div class="row">\n\
+                        <div class="col-sm-4 col-md-4">\n\
+                            <div class="form-group">\n\
+                                <label> Creado por: <strong>' + datosSD.creadoSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div class="row">\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group">\n\
-                                    <label> Solicita: <strong>' + datosSD.solicitaSD + '</strong></label>\n\
-                                </div>\n\
-                            </div>\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group">\n\
-                                    <label> Asignado a: <strong>' + datosSD.asignadoSD + '</strong></label>\n\
-                                </div>\n\
-                            </div>\n\
-                            <div class="col-sm-4 col-md-4">\n\
-                                <div class="form-group text-right">\n\
-                                    <label> Estatus: <strong>' + datosSD.estatusSD + '</strong></label>\n\
-                                </div>\n\
+                        <div class="col-sm-4 col-md-4">\n\
+                            <div class="form-group">\n\
+                                <label> Fecha de Creación: <strong>' + datosSD.fechaSolicitudSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div class="row">\n\
-                            <div class="col-md-12">\n\
-                                <div class="underline m-b-15 m-t-15"></div>\n\
+                        <div class="col-sm-4 col-md-4">\n\
+                            <div class="form-group text-right">\n\
+                                <label> Prioridad: <strong>' + datosSD.prioridadSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div class="row">\n\
-                            <div class="col-sm-12 col-md-12">\n\
-                                <div class="form-group">\n\
-                                    <label> Asunto: <strong>' + datosSD.asuntoSD + '</strong></label>\n\
-                                </div>\n\
+                    </div>\n\
+                    <div class="row">\n\
+                        <div class="col-sm-4 col-md-4">\n\
+                            <div class="form-group">\n\
+                                <label> Solicita: <strong>' + datosSD.solicitaSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div class="row">\n\
-                            <div class="col-sm-12 col-md-12">\n\
-                                <div class="form-group">\n\
-                                    <label> Descripción:</label>\n\
-                                    <br>\n\
-                                    <strong>' + datosSD.descripcionSD + '</strong>\n\
-                                </div>\n\
+                        <div class="col-sm-4 col-md-4">\n\
+                            <div class="form-group">\n\
+                                <label> Asignado a: <strong>' + datosSD.asignadoSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div class="row">\n\
-                            <div class="col-md-12">\n\
-                                <div class="underline m-b-15 m-t-15"></div>\n\
+                        <div class="col-sm-4 col-md-4">\n\
+                            <div class="form-group text-right">\n\
+                                <label> Estatus: <strong>' + datosSD.estatusSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div class="row">\n\
-                            <div class="col-md-offset-9 col-md-3">\n\
-                                <div class="form-group text-right">\n\
-                                    <h5><a><strong id="detallesResolucion"><i class="fa fa-minus-square"></i> Notas</strong></a></h5>\n\
-                                </div>\n\
+                    </div>\n\
+                    <div class="row">\n\
+                        <div class="col-md-12">\n\
+                            <div class="underline m-b-15 m-t-15"></div>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div class="row">\n\
+                        <div class="col-sm-12 col-md-12">\n\
+                            <div class="form-group">\n\
+                                <label> Asunto: <strong>' + datosSD.asuntoSD + '</strong></label>\n\
                             </div>\n\
                         </div>\n\
-                        <div id="masDetallesResolucion" class="">\n\
-                            <div class="row">\n\
-                                <div class="col-md-12">';
+                    </div>\n\
+                    <div class="row">\n\
+                        <div class="col-sm-12 col-md-12">\n\
+                            <div class="form-group">\n\
+                                <label> Descripción:</label>\n\
+                                <br>\n\
+                                <strong>' + datosSD.descripcionSD + '</strong>\n\
+                            </div>\n\
+                        </div>\n\
+                    </div>';
 
-        $.each(datosSD.notasSD, function (key, value) {
-            var collapseTitulo = '';
-            var collapseTexto = '';
-            if (key === 0) {
-                collapseTitulo = '';
-                collapseTexto = 'collapse in';
-            } else {
-                collapseTitulo = 'collapse';
-                collapseTexto = 'collapse';
+            if (datosSD.notasSD !== 'Sin notas') {
+                html += '<div class="row">\n\
+                        <div class="col-md-12">\n\
+                            <div class="underline m-b-15 m-t-15"></div>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div class="row">\n\
+                        <div class="col-md-offset-9 col-md-3">\n\
+                            <div class="form-group text-right">\n\
+                                <h5><a><strong id="detallesResolucion"><i class="fa fa-minus-square"></i> Notas</strong></a></h5>\n\
+                            </div>\n\
+                        </div>\n\
+                    </div>\n\
+                    <div id="masDetallesResolucion" class="">\n\
+                        <div class="row">\n\
+                            <div class="col-md-12">';
+                $.each(datosSD.notasSD, function (key, value) {
+                    var collapseTitulo = '';
+                    var collapseTexto = '';
+                    if (key === 0) {
+                        collapseTitulo = '';
+                        collapseTexto = 'collapse in';
+                    } else {
+                        collapseTitulo = 'collapse';
+                        collapseTexto = 'collapse';
+                    }
+
+                    html += '       <div class="panel panel-inverse overflow-hidden">\n\
+                                    <div class="panel-heading">\n\
+                                        <h3 class="panel-title">\n\
+                                            <a class="accordion-toggle accordion-toggle-styled ' + collapseTitulo + '" data-toggle="collapse" data-parent="#accordion" href="#collapse' + key + '">\n\
+                                                <i class="fa fa-plus-circle pull-right"></i>\n\
+                                                ' + value.nombreUsuario + '  ' + value.fecha + '\n\
+                                            </a>\n\
+                                        </h3>\n\
+                                    </div>\n\
+                                    <div id="collapse' + key + '" class="panel-collapse ' + collapseTexto + ' ">\n\
+                                        <div class="panel-body">\n\
+                                            ' + value.texto + '\n\
+                                        </div>\n\
+                                    </div>\n\
+                                </div>';
+                });
+                html += '       </div>';
             }
-
-            html += '               <div class="panel panel-inverse overflow-hidden">\n\
-                                        <div class="panel-heading">\n\
-                                            <h3 class="panel-title">\n\
-                                                <a class="accordion-toggle accordion-toggle-styled ' + collapseTitulo + '" data-toggle="collapse" data-parent="#accordion" href="#collapse' + key + '">\n\
-                                                    <i class="fa fa-plus-circle pull-right"></i>\n\
-                                                    ' + value.nombreUsuario + '  ' + value.fecha + '\n\
-                                                </a>\n\
-                                            </h3>\n\
-                                        </div>\n\
-                                        <div id="collapse' + key + '" class="panel-collapse ' + collapseTexto + ' ">\n\
-                                            <div class="panel-body">\n\
-                                                ' + value.texto + '\n\
-                                            </div>\n\
-                                        </div>\n\
-                                    </div>';
-        });
-        html += '               </div>\n\
-                            </div>';
+            html += '       </div>\n\
+                    </div>';
+        }
     }
 
-
-
     return html;
-
-
 };
 
 Servicio.prototype.detallesDescripcionResolucion = function () {
@@ -1840,12 +1860,12 @@ Servicio.prototype.subirInformacionSD = function (servicio) {
 
     $('#btnSubirInformacionSD').off('click');
     $('#btnSubirInformacionSD').on('click', function () {
-        var data = {servicio: servicio};
+        var data = {servicio: servicio, servicioConcluir: false};
         _this.enviarEvento('/Generales/ServiceDesk/GuardarInformacionSD', data, seccionCarga, function (respuesta) {
-            if (respuesta === true) {
+            if (respuesta.code === 200) {
                 _this.mensajeModal('Se subio la información', 'Correcto', true);
             } else {
-                _this.mensajeModal('No existe Folio para este servicio', 'Advertencia', true);
+                _this.mensajeModal(respuesta.message, 'Advertencia', true);
             }
         });
     });

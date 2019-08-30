@@ -2400,4 +2400,25 @@ class Modelo_Poliza extends Modelo_Base {
         return $answerQuery;
     }
 
+    public function insertarBitacoraReporteFalso(array $datos) {
+        $resultado = $this->insertar('t_correctivos_bitacora_reporte_falso', $datos);
+        return $resultado;
+    }
+
+    public function consultaBitacoraReporteFalso(string $servicio) {
+        $consulta = $this->consulta('SELECT 
+                                        tcbrf.*,
+                                        (SELECT 
+                                                UrlFoto
+                                            FROM
+                                                t_rh_personal
+                                            WHERE
+                                                Id = tcbrf.IdUsuario) AS Foto,
+                                        nombreUsuario(tcbrf.IdUSuario) AS Usuario
+                                    FROM
+                                        t_correctivos_bitacora_reporte_falso AS tcbrf
+                                    WHERE tcbrf.IdServicio = "' . $servicio . '"');
+        return $consulta;
+    }
+
 }

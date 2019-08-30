@@ -10,6 +10,8 @@
                 Acciones <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
+                <li id="btnAgregarAvance"><a href="#"><i class="fa fa-plus"></i> Agregar Avance</a></li>
+                <li id="btnAgregarProblema"><a href="#"><i class="fa fa-plus"></i> Agregar Problema</a></li>
                 <?php echo $informacion['botonAgregarVuelta'] ?>
                 <li id="btnCancelarServicioSeguimiento"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
                 <li id="btnEnviarReporteProblema"><a href="#"><i class="fa fa-check-square"></i> Enviar Reporte con Firma</a></li>
@@ -41,6 +43,7 @@
                 <li class=""><a href="#DiagnosticoEquipo" data-toggle="tab">Diagnóstico del Equipo</a></li>
                 <li class=""><a href="#ProblemasServicio" data-toggle="tab">Problemas del Servicio</a></li>
                 <li class=""><a href="#Solucion" data-toggle="tab">Solución</a></li>
+                <li class=""><a href="#Historial" data-toggle="tab">Historial</a></li>
                 <li class=""><a href="#Notas" data-toggle="tab">Conversación</a></li>
                 <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
             </ul>
@@ -368,6 +371,14 @@
                 </div>
                 <!--Finalizando Separador-->
 
+                <div class="row m-b-15">
+                    <div class="col-md-12">
+                        <label>Falla reportada en sitio *</label>
+                        <input id="inputFallaReportadaDiagnostico" type="text" class="form-control"  placeholder="Ingrese la persona que recibe" value="" maxlength="250"/>
+                    </div>
+                </div>
+
+
                 <ul class="nav nav-pills">
                     <li class="active"><a href="#reporte-falso" data-toggle="tab">Reporte en Falso</a></li>
                     <li><a href="#impericia" data-toggle="tab">Impericia (Mal uso)</a></li>
@@ -390,18 +401,6 @@
                             </div>
                             <!--Finalizando-->
 
-
-                            <!--Empezando Obervaciones Reporte en Falso-->
-                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
-                                <div class="col-md-12">                                    
-                                    <div class="form-group">
-                                        <label for="inputObservacionesReporteFalsoCorrectivo">Observaciones del Servicio *</label>
-                                        <textarea id="inputObservacionesReporteFalsoCorrectivo" class="form-control " placeholder="Observaciones del diagnóstico de reporte en falso." rows="3" ></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--Finalizando-->
-
                             <div class="row m-t-10">
                                 <!--Empezando error--> 
                                 <div class="col-md-12">
@@ -414,6 +413,67 @@
                                         <a id="btnGuardarReporteFalsoCorrectivo" href="javascript:;" class="btn btn-primary m-r-5 "><i class="fa fa-floppy-o"></i> Guardar y Concluir Servicio</a>                            
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row>">
+                                <div class="col-md-12 col-xs-12">
+                                    <a href="javascript:;" id="btnAgregarObservacionesReporteFalso" class="btn bg-green btn-success pull-right">
+                                        <i class="fa fa-plus pull-left"></i>
+                                        Agregar Observación
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row hidden" id="divFormAgregarObservaciones">
+                                <div class="col-md-12 col-xs-12">
+                                    <div class="row">
+                                        <div class="col-md-12 col-xs-12">
+                                            <h3>Agregar Observación</h3>
+                                            <div class="underline"></div>
+                                        </div>
+                                    </div>
+                                    <form id="formAgregarObservacionesReporteFalso">
+                                        <div class="row m-t-20">
+                                            <div class="col-md-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label>Observación *</label>
+                                                    <textarea id="txtAgregarObservacion" class="form-control" rows="3" placeholder="Ingresa la observación ....."></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>Agregar Archivos o Imagenes *</label>
+                                                    <input id="archivosAgregarObservacionesReporteFalso"  name="archivosAgregarObservacionesReporteFalso[]" type="file" multiple/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div id="errorAgregarObservacionesReporteFalso"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 col-xs-12 text-center">
+                                                <a id="btnConfirmarAgregarObservacionesReporteFalso" class="btn btn-primary" >
+                                                    <i class="fa fa-floppy-o"></i> Guardar
+                                                </a>
+                                                <a id="btnCancelarAgregarObservacionesReporteFalso" class="btn btn-danger">
+                                                    <i class="fa fa-ban"></i> Cancelar
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">                            
+                                    <fieldset>
+                                        <legend class="pull-left width-full f-s-17">Bitácora Observaciones del Diagnotico.</legend>
+                                    </fieldset>  
+                                </div>
+                            </div>
+                            <div id="divBitacoraReporteFalso">
+                                <?php echo $bitacoraReporteFalso; ?>
                             </div>
                         </div>
                     </div>
@@ -470,7 +530,7 @@
                             <!--Finalizando-->
 
                             <!--Empezando Observaciones Imepericia-->
-                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
+                            <div class="row">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesImpericiaCorrectivo">Observaciones del Servicio *</label>
@@ -549,7 +609,7 @@
                             <!--Finalizando-->
 
                             <!--Empezando Evidencias Fallas de Equipo-->
-                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
+                            <div class="row">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesFallaEquipoCorrectivo">Observaciones del Servicio *</label>
@@ -635,7 +695,7 @@
                             <!-- Finalizando -->
 
                             <!-- Empezando Observaciones Falla de Componente -->
-                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
+                            <div class="row">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesFallaComponenteCorrectivo">Observaciones del Servicio *</label>
@@ -675,7 +735,7 @@
                             <!--Finalizando-->
 
                             <!--Empezando Obervaciones Reporte Mutlimedia-->
-                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
+                            <div class="row">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesReporteMultimediaCorrectivo">Observaciones del Servicio *</label>
@@ -701,8 +761,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
         <!--Finalizando la seccion Diagnostico del Equipo-->
@@ -1581,7 +1639,7 @@
                             <!--Finalizando-->
 
                             <!--Empezando Obervaciones Solucion-->
-                            <div class="row <?php echo $informacion['campoObservaciones'] ?>">
+                            <div class="row">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesSolucion">Observaciones de la Solución *</label>
@@ -1755,7 +1813,7 @@
                             <!--Finalizando-->
 
                             <!--Empezando Observaciones Solucion-->
-                            <div class="row m-t-20 <?php echo $informacion['campoObservaciones'] ?>">
+                            <div class="row m-t-20">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesSolucionReparacionConRefaccion">Observaciones de la Solución *</label>
@@ -1887,7 +1945,7 @@
                             <!--Finalizando-->
 
                             <!--Empezando Evidencias Solucion-->
-                            <div class="row m-t-20 <?php echo $informacion['campoObservaciones'] ?>">
+                            <div class="row m-t-20">
                                 <div class="col-md-12">                                    
                                     <div class="form-group">
                                         <label for="inputObservacionesSolucionCambioEquipo">Observaciones de la Solución *</label>
@@ -1923,6 +1981,12 @@
             </div>
         </div>
         <!--Finalizando la seccion Solucion-->
+
+        <!--Empezando la seccion Historial-->
+        <div class="tab-pane fade " id="Historial">
+            <?php echo $historialAvancesProblemas; ?>
+        </div>
+        <!--Finalizando la seccion Historial-->
 
         <!--Empezando la seccion Notas-->
         <div class="tab-pane fade " id="Notas">            

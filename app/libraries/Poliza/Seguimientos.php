@@ -3,6 +3,7 @@
 namespace Librerias\Poliza;
 
 use Controladores\Controller_Datos_Usuario as General;
+use Librerias\Componentes\Error as Error;
 
 class Seguimientos extends General {
 
@@ -886,6 +887,12 @@ class Seguimientos extends General {
                     }
                 }
             }
+
+            $this->DBS->actualizarSeguimiento('t_correctivos_generales', array(
+                'FallaReportada' => $datos['fallaReportada']
+                    ), array('IdServicio' => $datos['servicio'])
+            );
+
             switch ($datos['tipoDiagnostico']) {
                 case '1':
                     $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencia_Correctivo_ReporteEnFalso/';
@@ -895,23 +902,23 @@ class Seguimientos extends General {
                         'IdServicio' => $datos['servicio'],
                         'IdTipoDiagnostico' => $datos['tipoDiagnostico'],
                         'IdUsuario' => $usuario['Id'],
-                        'FechaCaptura' => $fecha,
-                        'Observaciones' => $datos['observaciones']
+                        'FechaCaptura' => $fecha
                     ));
+
                     if (!empty($idCorrectivoDiagnostico)) {
                         if ($archivos) {
                             $archivos = implode(',', $archivos);
-                            $this->DBS->actualizarSeguimiento('t_correctivos_diagnostico', array(
-                                'Evidencias' => $evidenciasAnteriores . $archivos
-                                    ), array('Id' => $idCorrectivoDiagnostico)
-                            );
-                            return $idCorrectivoDiagnostico;
+                            $evidencias = $evidenciasAnteriores . $archivos;
                         } else {
-                            $this->DBS->actualizarSeguimiento('t_correctivos_diagnostico', array(
-                                'Evidencias' => $datos['evidencias']
-                                    ), array('Id' => $idCorrectivoDiagnostico)
-                            );
+                            $evidencias = $datos['evidencias'];
                         }
+
+                        $this->DBS->actualizarSeguimiento('t_correctivos_diagnostico', array(
+                            'Evidencias' => $evidencias
+                                ), array('Id' => $idCorrectivoDiagnostico)
+                        );
+
+                        return $idCorrectivoDiagnostico;
                     } else {
                         return FALSE;
                     }
@@ -2033,16 +2040,20 @@ class Seguimientos extends General {
     }
 
     public function enviarSolucionCorrectivoSD(array $datos) {
-        $this->enviar_Reporte_PDF($datos);
-
-        $this->InformacionServicios->verifyProcess($datos);
+        try {
+            $this->InformacionServicios->verifyProcess($datos);
+        } catch (\Exception $ex) {
+            
+        }
 
         $verificarEstatusTicket = $this->consultaCorrectivosServiciosTicket($datos['ticket'], $datos['servicio']);
 
+        $this->enviar_Reporte_PDF($datos);
+
         if (!empty($verificarEstatusTicket)) {
-            return 'faltanServicios';
+            return array('code' => 200, 'message' => 'faltanServicios');
         } else {
-            return 'serviciosConcluidos';
+            return array('code' => 200, 'message' => 'serviciosConcluidos');
         }
     }
 
@@ -2415,7 +2426,13 @@ class Seguimientos extends General {
                 if ($folio[0]['Folio'] !== '') {
                     if ($folio[0]['Folio'] !== '0') {
                         $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-                        $this->ServiceDesk->cambiarEstatusServiceDesk($key, $estatus, $folio[0]['Folio']);
+                        $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
+
+                        if (!isset($datosSD->operation->result->status)) {
+                            if ($datosSD->STATUS !== 'Completado') {
+                                $this->ServiceDesk->cambiarEstatusServiceDesk($key, $estatus, $folio[0]['Folio']);
+                            }
+                        }
                     }
                 }
             }
@@ -5250,7 +5267,7 @@ class Seguimientos extends General {
 
         if ($idSD !== '') {
             $dataService = $this->DBP->consultationServiceAndRequest($dataToCreateEmailList['idService']);
-            $reassignment = json_decode($this->ServiceDesk->reasignarFolioSD($dataService[0]['Folio'], $idSD, $user['SDKey']));
+            $reassignment = $this->ServiceDesk->reasignarFolioSD($dataService[0]['Folio'], $idSD, $user['SDKey']);
         }
 
         return $reassignment;
@@ -5607,8 +5624,46 @@ class Seguimientos extends General {
         return $viewHtml;
     }
 
-    public function buscarFolio($datos) {
-        var_dump($datos);
+    public function guardarObservacionesBitacora(array $datos) {
+        try {
+            $usuario = $this->Usuario->getDatosUsuario();
+            $fechaCaptura = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            if (!empty($_FILES)) {
+                $CI = parent::getCI();
+                $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencias_Bitacora_Reporte_Falso/';
+                $archivos = setMultiplesArchivos($CI, 'archivosAgregarObservacionesReporteFalso', $carpeta);
+                if (!empty($archivos)) {
+                    $archivos = implode(',', $archivos);
+                    $nuevo = $this->DBP->insertarBitacoraReporteFalso(array(
+                        'IdUsuario' => $usuario['Id'],
+                        'IdServicio' => $datos['servicio'],
+                        'Observaciones' => $datos['observaciones'],
+                        'Evidencias' => $archivos,
+                        'Fecha' => $fechaCaptura
+                            )
+                    );
+                }
+            }
+            return array('code' => 200, 'message' => $this->mostrarBitacoraReporteFalso($datos['servicio']));
+        } catch (\Exception $ex) {
+            return ['code' => 400, 'message' => $ex->getMessage()];
+        }
+    }
+
+    public function mostrarBitacoraReporteFalso(string $servicio) {
+        $data = array();
+        $data['bitacoraReporteFalso'] = $this->DBP->consultaBitacoraReporteFalso($servicio);
+        return parent::getCI()->load->view('Poliza/Detalles/BitacoraReporteFalso', $data, TRUE);
+    }
+
+    public function verificarBitacoraReporteFalso(array $datos) {
+        $arrayBitacora = $this->DBP->consultaBitacoraReporteFalso($datos['servicio']);
+
+        if (!empty($arrayBitacora)) {
+            return array('code' => 200, 'message' => 'correcto');
+        } else {
+            return ['code' => 400, 'message' => 'Debe guardar al menos un observación.'];
+        }
     }
 
 }

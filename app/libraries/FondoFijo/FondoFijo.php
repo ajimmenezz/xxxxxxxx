@@ -12,6 +12,7 @@ class FondoFijo extends General
     private $Correo;
     private $usuario;
     private $cfdi;
+    public $data;
 
     public function __construct()
     {
@@ -199,8 +200,7 @@ class FondoFijo extends General
                 'tiposCuenta' => $this->getTiposCuentaXUsuario($datos['id']),
                 'montos' => $this->getMontosUsuario($datos['id']),
                 'usuario' => $datos,
-                'depositos' => $this->DB->getDepositos($datos['id']),
-                'comprobaciones' => $this->DB->getComprobaciones($datos['id'])
+                'depositos' => $this->DB->getDepositos($datos['id'])
             ];
 
             return [
@@ -278,10 +278,12 @@ class FondoFijo extends General
         $resultado = $this->DB->getSaldosCuentasXUsuario($id);
         return $resultado;
     }
+   
 
     public function detalleCuenta(array $datos)
-    {
-        if (!isset($datos['tipoCuenta']) || !isset($datos['usuario'])) {
+    {        
+        if (!isset($datos['tipoCuenta']) || !isset($datos['usuario'])) { 
+         
             return [
                 'code' => 500,
                 'error' => 'No se ha recibido la información de la cuenta o el usuario. Intente de nuevo'
@@ -294,7 +296,6 @@ class FondoFijo extends General
                 'tickets' => $this->DB->getTicketsByUsuario($this->usuario['Id']),
                 'sucursales' => $this->DB->getSucursales()
             ];
-
             return [
                 'code' => 200,
                 'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/DetallesCuenta', $data, TRUE)
@@ -425,15 +426,10 @@ class FondoFijo extends General
             $rolAutoriza = 1;
         }
 
-        $rolTesoreria = 0;
-        if (isset($datos['tesoreria']) && $datos['tesoreria'] == 1) {
-            $rolTesoreria = 1;
-        }
 
         $datos = [
             'generales' => $this->DB->getDetallesFondoFijoXId($datos['id'])[0],
-            'rolAutoriza' => $rolAutoriza,
-            'rolTesoreria' => $rolTesoreria
+            'rolAutoriza' => $rolAutoriza
         ];
 
         return [
@@ -501,8 +497,6 @@ class FondoFijo extends General
         return $autorizar;
     }
 
-    /************************************************************************/
-
     public function rechazarMovimientoCobrable(array $datos)
     {
         $rechazar = $this->DB->rechazarMovimientoCobrable($datos);
@@ -537,5 +531,48 @@ class FondoFijo extends General
                 unlink('.' . $v);
             } catch (Exception $ex) { }
         }
+    }
+    public function getMovimientosTecnico(array $datos) {
+        $idUsuario=$datos['id'];
+        $data   = $this->DB->getMovimientosXTecnico($idUsuario);
+        $lengt= count($data);
+        for($i=0;$i<$lengt;$i++)
+        {
+           $data[$i]['Monto']=number_format( $data[$i]['Monto'],2,'.',',');
+           $data[$i]['SaldoPrevio']=number_format( $data[$i]['SaldoPrevio'],2,'.',',');
+           $data[$i]['SaldoNuevo']=number_format( $data[$i]['SaldoNuevo'],2,'.',',');
+        }
+        return [
+            "code"=>200,
+            'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/registroMovimientos', $data, TRUE),
+            'consulta'=>$data
+        ];
+        
+    }
+    public function getDetallesMovimiento(array $d) {
+        $idMovimiento= $d['IdMovimiento'];
+        
+        $datos=$this->DB->getDetallesFondoFijoXId($idMovimiento);
+        $lengt= count($datos);
+        
+        for($i=0;$i<$lengt;$i++)
+        {
+           $datos[$i]['Monto']=number_format( $datos[$i]['Monto'],2,'.',',');
+           $datos[$i]['SaldoPrevio']=number_format( $datos[$i]['SaldoPrevio'],2,'.',',');
+           $datos[$i]['SaldoNuevo']=number_format( $datos[$i]['SaldoNuevo'],2,'.',',');
+        }
+        
+        return [
+          'code'=>200,
+          'html' => parent::getCI()->load->view('FondoFijo/Formularios/detallesGeneralMovimientos', $datos, TRUE),          
+          'generales'=>$datos
+            
+        ];
+    }
+     public function getTecnicos()
+    {
+        $idSupervisor= $_SESSION['Id'];
+        $resultado= $this->DB->getTecnico($idSupervisor);
+        return $resultado;
     }
 }
