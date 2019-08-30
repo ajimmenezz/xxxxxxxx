@@ -52,6 +52,7 @@ $(function () {
         colores[11]= "bg-purple";
         colores[12]= "bg-maroon";
         colores[13]= "bg-darken-4";
+        getHoraServer();
 
 
         var datos = {
@@ -424,7 +425,14 @@ $(function () {
         });
         
     });
-
+    
+    function getHoraServer()
+    {
+//        var evento = new Base();
+//        evento.enviarEvento('EventoPermisosVacaciones/getDatosServer', '','', function(respuesta){
+//            
+//        });
+    }
     function aceptarPermiso()
     {
         let idPermiso =$('#idPermiso').html() ;     
@@ -447,7 +455,7 @@ $(function () {
                         idUser:idUser,
                         archivo: archivo
             };
-            peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/ConluirAutorizacion',datosPerm,function(respuesta)
+            peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/AutorizarPermiso',datosPerm,function(respuesta)
             {
                 location.reload();
             });
@@ -488,6 +496,10 @@ $(function () {
         peticion.enviar('modalDatosPermiso','EventoPermisosVacaciones/obtenerDatos', '', function (respuesta) {
            idUser= respuesta.ID;
            idPerfil=respuesta.Perfil;
+           if(idPerfil==4)
+           {
+               
+           }
             let datos =
                     {
                         perfilUsuario: idPerfil,
