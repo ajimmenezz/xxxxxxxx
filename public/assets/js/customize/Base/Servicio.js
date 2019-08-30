@@ -490,16 +490,6 @@ Servicio.prototype.ServicioSinClasificar = function () {
         });
     });
 
-    //Encargado de agregar un avance
-//    $('#btnAgregarAvance').on('click', function () {
-//        _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio, 'Guardar');
-//    });
-
-    //Encargado de agregar un problema
-//    $('#btnAgregarProblema').on('click', function () {
-//        _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio, 'Guardar');
-//    });
-
     //Encargado de agregar un problema
     $('#btnReasignarServicio').on('click', function () {
         _this.mostrarFormularioReasigarServicio(servicio, ticket);

@@ -13,8 +13,6 @@
                 <li id="btnAgregarAvance"><a href="#"><i class="fa fa-plus"></i> Agregar Avance</a></li>
                 <li id="btnAgregarProblema"><a href="#"><i class="fa fa-plus"></i> Agregar Problema</a></li>
                 <?php echo $informacion['botonAgregarVuelta'] ?>
-                <li id="btnAgregarAvance"><a href="#"><i class="fa fa-plus"></i> Agregar Avance</a></li>
-                <li id="btnAgregarProblema"><a href="#"><i class="fa fa-plus"></i> Agregar Problema</a></li>
                 <li id="btnCancelarServicioSeguimiento"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
                 <li id="btnEnviarReporteProblema"><a href="#"><i class="fa fa-check-square"></i> Enviar Reporte con Firma</a></li>
                 <li id="btnGeneraPdfServicio"><a href="#"><i class="fa fa-file-pdf-o"></i> Generar Pdf</a></li>
@@ -373,6 +371,14 @@
                 </div>
                 <!--Finalizando Separador-->
 
+                <div class="row m-b-15">
+                    <div class="col-md-12">
+                        <label>Falla reportada en sitio *</label>
+                        <input id="inputFallaReportadaDiagnostico" type="text" class="form-control"  placeholder="Ingrese la persona que recibe" value="" maxlength="250"/>
+                    </div>
+                </div>
+
+
                 <ul class="nav nav-pills">
                     <li class="active"><a href="#reporte-falso" data-toggle="tab">Reporte en Falso</a></li>
                     <li><a href="#impericia" data-toggle="tab">Impericia (Mal uso)</a></li>
@@ -395,17 +401,6 @@
                             </div>
                             <!--Finalizando-->
 
-                            <!--Empezando Obervaciones Reporte en Falso-->
-                            <div class="row">
-                                <div class="col-md-12">                                    
-                                    <div class="form-group">
-                                        <label for="inputObservacionesReporteFalsoCorrectivo">Observaciones del Servicio *</label>
-                                        <textarea id="inputObservacionesReporteFalsoCorrectivo" class="form-control " placeholder="Observaciones del diagnóstico de reporte en falso." rows="3" ></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--Finalizando-->
-
                             <div class="row m-t-10">
                                 <!--Empezando error--> 
                                 <div class="col-md-12">
@@ -418,6 +413,67 @@
                                         <a id="btnGuardarReporteFalsoCorrectivo" href="javascript:;" class="btn btn-primary m-r-5 "><i class="fa fa-floppy-o"></i> Guardar y Concluir Servicio</a>                            
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row>">
+                                <div class="col-md-12 col-xs-12">
+                                    <a href="javascript:;" id="btnAgregarObservacionesReporteFalso" class="btn bg-green btn-success pull-right">
+                                        <i class="fa fa-plus pull-left"></i>
+                                        Agregar Observación
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row hidden" id="divFormAgregarObservaciones">
+                                <div class="col-md-12 col-xs-12">
+                                    <div class="row">
+                                        <div class="col-md-12 col-xs-12">
+                                            <h3>Agregar Observación</h3>
+                                            <div class="underline"></div>
+                                        </div>
+                                    </div>
+                                    <form id="formAgregarObservacionesReporteFalso">
+                                        <div class="row m-t-20">
+                                            <div class="col-md-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label>Observación *</label>
+                                                    <textarea id="txtAgregarObservacion" class="form-control" rows="3" placeholder="Ingresa la observación ....."></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>Agregar Archivos o Imagenes *</label>
+                                                    <input id="archivosAgregarObservacionesReporteFalso"  name="archivosAgregarObservacionesReporteFalso[]" type="file" multiple/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div id="errorAgregarObservacionesReporteFalso"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 col-xs-12 text-center">
+                                                <a id="btnConfirmarAgregarObservacionesReporteFalso" class="btn btn-primary" >
+                                                    <i class="fa fa-floppy-o"></i> Guardar
+                                                </a>
+                                                <a id="btnCancelarAgregarObservacionesReporteFalso" class="btn btn-danger">
+                                                    <i class="fa fa-ban"></i> Cancelar
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">                            
+                                    <fieldset>
+                                        <legend class="pull-left width-full f-s-17">Bitácora Observaciones del Diagnotico.</legend>
+                                    </fieldset>  
+                                </div>
+                            </div>
+                            <div id="divBitacoraReporteFalso">
+                                <?php echo $bitacoraReporteFalso; ?>
                             </div>
                         </div>
                     </div>
@@ -705,8 +761,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
         <!--Finalizando la seccion Diagnostico del Equipo-->
