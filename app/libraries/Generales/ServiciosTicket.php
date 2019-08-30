@@ -1452,7 +1452,8 @@ class ServiciosTicket extends General {
                                             tst.IdSolicitud,
                                             tsi.Asunto AS AsuntoSolicitud,
                                             tsi.Descripcion AS DescripcionSolicitud,
-                                            (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
+                                            (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio,
+                                            tst.IdTipoServicio
                                            FROM t_servicios_ticket tst
                                            INNER JOIN t_solicitudes_internas tsi
                                            ON tsi.IdSolicitud = tst.IdSolicitud
@@ -1468,6 +1469,11 @@ class ServiciosTicket extends General {
             } else {
                 $path = 'http://' . $host . '/' . $linkPdf['link'];
             }
+            
+            if($datosDescripcionConclusion[0]['IdTipoServicio'] === '20'){
+                
+            }
+            
             if (empty($serviciosTicket)) {
                 $this->concluirSolicitud($fecha, $datos['idSolicitud']);
                 $this->concluirTicket($datos['ticket']);
@@ -2411,8 +2417,8 @@ class ServiciosTicket extends General {
                                                 cliente(IdCliente) Cliente
                                             FROM cat_v3_sucursales
                                             WHERE Flag = 1
-                                            AND IdCliente = "' . $sucursal[0]['Cliente'] . '"
                                             ORDER BY Nombre ASC');
+//                                            AND IdCliente = "' . $sucursal[0]['Cliente'] . '"
         return $return;
     }
 

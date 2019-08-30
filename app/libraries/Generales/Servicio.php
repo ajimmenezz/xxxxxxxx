@@ -1751,11 +1751,11 @@ class Servicio extends General {
                 }
             } else {
                 $this->crearImangenFirma($datos, $datos['datosConcluir']);
-                if (isset($datos['datosConcluir']['estatus'])) {
-                    $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
-                } else {
-                    $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '5');
-                }
+//                if (isset($datos['datosConcluir']['estatus'])) {
+//                    $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
+//                } else {
+                $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '5');
+//                }
             }
             if ($cambiarEstatus === TRUE) {
                 return TRUE;
@@ -1779,33 +1779,36 @@ class Servicio extends General {
         $verificarServicioCorrectivo = $this->DBS->getServicios('SELECT IdTipoServicio FROM t_servicios_ticket WHERE Id = "' . $datos['servicio'] . '"');
         $folio = $this->DBS->consultaFolio($datos['servicio']);
 
-        if ($verificarServicioCorrectivo[0]['IdTipoServicio'] === '20') {
-            $linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
-            $infoServicio = $this->getInformacionServicio($datos['servicio']);
-            $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+//        if ($verificarServicioCorrectivo[0]['IdTipoServicio'] === '20') {
+//            var_dump('pumas1');
+//            $linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
+//            $infoServicio = $this->getInformacionServicio($datos['servicio']);
+//            $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+//
+//            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+//                $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+//            } else {
+//                $path = 'http://' . $host . '/' . $linkPdf['link'];
+//            }
+//
+////            if ($datos['estatus'] === '4') {
+////                if ($datos['concluirServicio']) {
+////                    $this->concluirServicioSolicitudTicket($fecha, $datos, $path);
+////                }
+////            } else {
+//            $this->DBS->actualizarServicio('t_servicios_ticket', array(
+//                'IdEstatus' => '5',
+//                'FechaConclusion' => $fecha
+//                    ), array('Id' => $datos['servicio'])
+//            );
+////            }
+//
+//            $dataPDF = $this->enviarReportePDFCorrectivo($datos, $dataFirma, $dataFirmaTecnico);
+//            $linkPDF = $dataPDF['linkPDF'];
+//            $linkExtraEquiposFaltante = $dataPDF['linkExtraEquiposFaltante'];
+//        } else {
+//            var_dump('pumas2');
 
-            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-                $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
-            } else {
-                $path = 'http://' . $host . '/' . $linkPdf['link'];
-            }
-
-            if ($datos['estatus'] === '4') {
-                if ($datos['concluirServicio']) {
-                    $this->concluirServicioSolicitudTicket($fecha, $datos, $path);
-                }
-            } else {
-                $this->DBS->actualizarServicio('t_servicios_ticket', array(
-                    'IdEstatus' => $datos['status'],
-                    'FechaConclusion' => $fecha
-                        ), array('Id' => $datos['servicio'])
-                );
-            }
-
-            $dataPDF = $this->enviarReportePDFCorrectivo($datos, $dataFirma, $dataFirmaTecnico);
-            $linkPDF = $dataPDF['linkPDF'];
-            $linkExtraEquiposFaltante = $dataPDF['linkExtraEquiposFaltante'];
-        } else {
             $direccionFirma = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'Firma_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
             $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'FirmaTecnico_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
             file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $dataFirma);
@@ -1853,17 +1856,17 @@ class Servicio extends General {
             $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
             $linkPDF = '<br>Ver PDF Resumen General <a href="' . $path . '" target="_blank">Aquí</a>';
 
-            if ($datos['estatus'] === '4') {
-                if ($datos['concluirServicio']) {
-                    $this->concluirServicioSolicitudTicket($fecha, $datos, $path);
-                }
-            } else {
+//            if ($datos['estatus'] === '4') {
+//                if ($datos['concluirServicio']) {
+//                    $this->concluirServicioSolicitudTicket($fecha, $datos, $path);
+//                }
+//            } else {
                 $this->DBS->actualizarServicio('t_servicios_ticket', array(
-                    'IdEstatus' => $datos['status'],
+                    'IdEstatus' => '5',
                     'FechaConclusion' => $fecha
                         ), array('Id' => $datos['servicio'])
                 );
-            }
+//            }
 
             $datosDescripcionConclusion = $this->DBS->getServicios('SELECT
                                             tst.Descripcion AS DescripcionServicio,
@@ -1932,7 +1935,7 @@ class Servicio extends General {
                 $textoCorreo = '<p>Estimado(a) <strong>' . $datos['recibe'] . ',</strong> se le he mandado el documento que ha firmado de la conclusión del servicio(s) a solicitado.</p>' . $linkPDF . $linkDetallesServicio . $linkExtraEquiposFaltante;
                 $this->enviarCorreoConcluido($datos['correo'], $titulo, $textoCorreo);
             }
-        }
+//        }
 
         if ($folio !== FALSE && $usuario['IdPerfil'] == '83') {
             $this->agregarVueltaAsociado($folio, $datos);
