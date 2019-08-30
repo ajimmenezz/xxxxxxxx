@@ -5634,22 +5634,27 @@ class Seguimientos extends General {
         try {
             $usuario = $this->Usuario->getDatosUsuario();
             $fechaCaptura = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
             if (!empty($_FILES)) {
                 $CI = parent::getCI();
                 $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencias_Bitacora_Reporte_Falso/';
                 $archivos = setMultiplesArchivos($CI, 'archivosAgregarObservacionesReporteFalso', $carpeta);
                 if (!empty($archivos)) {
                     $archivos = implode(',', $archivos);
-                    $nuevo = $this->DBP->insertarBitacoraReporteFalso(array(
-                        'IdUsuario' => $usuario['Id'],
-                        'IdServicio' => $datos['servicio'],
-                        'Observaciones' => $datos['observaciones'],
-                        'Evidencias' => $archivos,
-                        'Fecha' => $fechaCaptura
-                            )
-                    );
                 }
+            } else {
+                $archivos = NULL;
             }
+
+            $this->DBP->insertarBitacoraReporteFalso(array(
+                'IdUsuario' => $usuario['Id'],
+                'IdServicio' => $datos['servicio'],
+                'Observaciones' => $datos['observaciones'],
+                'Evidencias' => $archivos,
+                'Fecha' => $fechaCaptura
+                    )
+            );
+
             return array('code' => 200, 'message' => $this->mostrarBitacoraReporteFalso($datos['servicio']));
         } catch (\Exception $ex) {
             return ['code' => 400, 'message' => $ex->getMessage()];
