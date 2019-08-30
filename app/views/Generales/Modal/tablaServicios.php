@@ -27,6 +27,8 @@
                 $host = $_SERVER['SERVER_NAME'];
                 if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                     $link = 'https://siccob.solutions/Detalles/Servicio/';
+                } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+                    $link = 'https://pruebas.siccob.solutions/Detalles/Servicio/';
                 } else {
                     $link = 'http://' . $host . '/Detalles/Servicio/';
                 }
@@ -42,7 +44,7 @@
                         echo '<td>' . $value['Atiende'] . '</td>';
                         echo '<td>' . $value['Descripcion'] . '</td>';
 //                        echo '<td>' . $value['IdSolicitud'] . '</td>';
-                        echo '<td><a href="' . $link . $value['Id'] .'" class="btn btn-success m-r-5"><i class="fa fa-eye"></i> Ver Servicio</a></td>';
+                        echo '<td><a href="' . $link . $value['Id'] . '" class="btn btn-success m-r-5"><i class="fa fa-eye"></i> Ver Servicio</a></td>';
                         echo '</tr>';
                     }
                 }

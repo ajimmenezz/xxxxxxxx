@@ -360,6 +360,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
 
     _this.select.crearSelect('select');
     _this.select.cambiarOpcion('#selectSucursalesSinClasificar', idSucursal);
+    _this.colocarBotonGuardarCambiosSinClasificar(datosDelServicio, archivo);
 
     //evento para mostrar los detalles de las descripciones
     $('#detallesServicioSinClasificar').on('click', function (e) {
@@ -398,14 +399,6 @@ Servicio.prototype.ServicioSinClasificar = function () {
                 nombreControlador + '/Servicio_Cancelar'
                 );
     });
-
-    _this.file.crearUpload('#evidenciaSinClasificar',
-            '/Generales/Servicio/Concluir_SinClasificar',
-            null,
-            null,
-            archivo,
-            '/Generales/Servicio/EliminarEvidenciaServicio',
-            );
 
     //Evento para concluir el servicio
     $("#btnConcluirServicioSinClasificar").off("click");
@@ -483,6 +476,17 @@ Servicio.prototype.ServicioSinClasificar = function () {
         }
     });
 
+    $("#btnGuardarCambiosServicioSinClasificar").off("click");
+    $('#btnGuardarCambiosServicioSinClasificar').on('click', function (e) {
+        var sucursal = $('#selectSucursalesSinClasificar').val();
+        var descripcion = $('#inputDescripcionSinClasificar').val();
+        var evidencias = $('#evidenciaSinClasificar').val();
+        var archivosPreview = _this.file.previews('.previewSinClasificar');
+        var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, correo: '', operacion: '9', seccion: '#seccion-servicio-sin-clasificar'};
+
+        _this.servicioValidacion(data);
+    });
+
     $("#btnGeneraPdfServicio").off("click");
     $("#btnGeneraPdfServicio").on("click", function () {
         _this.enviarEvento('/Servicio/Servicio_ToPdf', dataServicio, '#seccion-servicio-sin-clasificar', function (respuesta) {
@@ -512,11 +516,37 @@ Servicio.prototype.ServicioSinClasificar = function () {
     _this.botonEditarAvanceProblema(servicio);
 };
 
+Servicio.prototype.colocarBotonGuardarCambiosSinClasificar = function () {
+    var datosServicio = arguments[0];
+    var archivo = arguments[1];
+    var _this = this;
+
+    if (datosServicio.Firma !== null) {
+        $('.divBotonesServicioSinClasificar').addClass('hidden');
+        $('.divGuardarCambiosServicioSinClasificar').removeClass('hidden');
+        _this.file.crearUpload('#evidenciaCambiosSinClasificar',
+                '/Generales/Servicio/ServicioEnValidacion',
+                null,
+                null,
+                archivo,
+                '/Generales/Servicio/EliminarEvidenciaServicio',
+                );
+    } else {
+        _this.file.crearUpload('#evidenciaSinClasificar',
+                '/Generales/Servicio/Concluir_SinClasificar',
+                null,
+                null,
+                archivo,
+                '/Generales/Servicio/EliminarEvidenciaServicio',
+                );
+    }
+};
+
 Servicio.prototype.botonAgregarAvance = function () {
     var _this = this;
     var servicio = arguments[0];
     var tipoServicio = arguments[1];
-    
+
     $('#btnAgregarAvance').on('click', function () {
         _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio, 'Guardar');
     });
@@ -526,7 +556,7 @@ Servicio.prototype.botonAgregarProblema = function () {
     var _this = this;
     var servicio = arguments[0];
     var tipoServicio = arguments[1];
-    
+
     $('#btnAgregarProblema').on('click', function () {
         _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio, 'Guardar');
     });
@@ -1199,7 +1229,6 @@ Servicio.prototype.modalCampoFirmaExtra = function () {
     return html;
 
 };
-
 
 Servicio.prototype.formConcluirServicio = function () {
     var html = ' <div id="modal-concluir-servicio">\n\
@@ -2070,6 +2099,26 @@ Servicio.prototype.validarTecnicoPoliza = function () {
     _this.enviarEvento('/Generales/Servicio/VerificarTecnicoPoliza', {}, '#modal-dialogo', function (respuesta) {
         if (respuesta === false) {
             $('#divCampoCorreo').addClass('hidden');
+        }
+    });
+}
+
+Servicio.prototype.servicioValidacion = function () {
+    var _this = this;
+    var ticket = arguments[0].ticket || null;
+    var servicio = arguments[0].servicio;
+    var estatus = '5';
+    var sucursal = arguments[0].sucursal;
+    var seccion = arguments[0].seccion;
+    var descripcion = arguments[0].descripcion;
+    var datosConcluir = arguments[0].datosConcluir || null;
+    var dataMandar = {ticket: ticket, servicio: servicio, estatus: estatus, sucursal: sucursal, descripcion: descripcion, datosConcluir: datosConcluir};
+
+    _this.file.enviarArchivos('#evidenciaCambiosSinClasificar', '/Generales/Servicio/ServicioEnValidacion', seccion, dataMandar, function (respuesta) {
+        if (respuesta.code === 200) {
+            _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+        } else {
+            _this.mensajeModal('Ocurrió el error "' + respuesta.message + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
         }
     });
 }

@@ -1586,6 +1586,8 @@ class Solicitud extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $detallesSolicitud = 'https://siccob.solutions/Detalles/Solicitud/' . $solicitud;
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $detallesSolicitud = 'https://pruebas.siccob.solutions/Detalles/Solicitud/' . $solicitud;
         } else {
             $detallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $solicitud;
         }

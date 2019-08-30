@@ -1646,26 +1646,7 @@ class Servicio extends General {
         $tipoServicio = $verificarServicioSinClaficar[0]['IdTipoServicio'];
 
         if (in_array($tipoServicio, [11, '11'])) {
-            $consultaPuntosCensos = $this->DBS->consulta("select * from t_censos_puntos where IdServicio = '" . $datos['servicio'] . "'");
-            if (!empty($consultaPuntosCensos)) {
-                foreach ($consultaPuntosCensos as $key => $value) {
-                    $this->DBS->queryBolean(""
-                            . "delete "
-                            . "from t_censos "
-                            . "where IdServicio = '" . $value['IdServicio'] . "' "
-                            . "and IdArea = '" . $value['IdArea'] . "' "
-                            . "and Punto > " . $value['Puntos']);
-                }
-            }
-
-            $this->DBS->queryBolean("delete
-                                    from t_censos
-                                    where IdServicio = '" . $value['IdServicio'] . "'
-                                    and IdArea not in (
-                                                    select 
-                                                    IdArea 
-                                                    from t_censos_puntos 
-                                                    where IdServicio = '" . $value['IdServicio'] . "')");
+            $this->borrarCensos($datos['servicio']);
         }
 
         if (!empty($datos['sucursal'])) {
@@ -1673,61 +1654,11 @@ class Servicio extends General {
         }
 
         if (!empty($_FILES)) {
-            $descripcion = $datos['datosConcluir'];
-            if ($descripcion === '[object Object]') {
-                $descripcion = $datos['descripcion'];
-            }
-            $CI = parent::getCI();
-            $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/EvidenciasServicioGeneral/';
-            $archivos = setMultiplesArchivos($CI, 'evidenciasSinClasificar', $carpeta);
-            $archivos = implode(',', $archivos);
-
-            if (!empty($archivos) && $archivos != '') {
-                $resultado = '';
-                if (!empty($consulta)) {
-                    if ($archivos !== NULL) {
-                        if ($archivos !== '') {
-                            $evidenciasAnteriores = $archivos . ',';
-                        }
-                    }
-                    $resultado = $this->DBS->actualizarServicio('t_servicios_generales', array(
-                        'IdUsuario' => $usuario['Id'],
-                        'IdServicio' => $datos['servicio'],
-                        'Descripcion' => $descripcion,
-                        'Archivos' => $evidenciasAnteriores . $consulta[0]['Archivos'],
-                        'Fecha' => $fecha
-                            ), array('IdServicio' => $datos['servicio'])
-                    );
-                } else {
-                    $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', array(
-                        'IdUsuario' => $usuario['Id'],
-                        'IdServicio' => $datos['servicio'],
-                        'Descripcion' => $descripcion,
-                        'Archivos' => $archivos,
-                        'Fecha' => $fecha
-                            )
-                    );
-                }
-            }
+            $this->guardarEvidenciasServicioSinClasificar($datos, 'evidenciasSinClasificar');
             $consulta = '';
         } else {
             if ($verificarServicioSinClaficar[0]['Seguimiento'] === '0') {
-                if (is_array($datos['datosConcluir'])) {
-                    $descripcion = $datos['datosConcluir']['descripcion'];
-                } else {
-                    $descripcion = $datos['datosConcluir'];
-                }
-                $datosServicio = array(
-                    'IdUsuario' => $usuario['Id'],
-                    'IdServicio' => $datos['servicio'],
-                    'Descripcion' => $descripcion,
-                    'Fecha' => $fecha
-                );
-                if (!empty($consulta)) {
-                    $resultado = $this->DBS->actualizarServicio('t_servicios_generales', $datosServicio, array('IdServicio' => $datos['servicio']));
-                } else {
-                    $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', $datosServicio);
-                }
+                $this->guardarDescripcionServicionSinClasificar($datos);
             }
         }
 
@@ -1765,6 +1696,139 @@ class Servicio extends General {
         }
     }
 
+    public function servicioEnValidacion(array $datos = null) {
+        try {
+            $this->DBS->iniciaTransaccion();
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $verificarServicioSinClaficar = $this->DBS->consultaGeneral('SELECT 
+                                                                        (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tst.IdTipoServicio) AS Seguimiento,
+                                                                        tst.IdTipoServicio
+                                                                    FROM t_servicios_ticket tst WHERE tst.Id = "' . $datos['servicio'] . '"');
+
+            $tipoServicio = $verificarServicioSinClaficar[0]['IdTipoServicio'];
+
+            if (in_array($tipoServicio, [11, '11'])) {
+                $this->borrarCensos($datos['servicio']);
+            }
+
+            if (!empty($datos['sucursal'])) {
+                $this->DBS->actualizarServicio('t_servicios_ticket', array('IdSucursal' => $datos['sucursal']), array('Id' => $datos['servicio']));
+            }
+
+            if (!empty($_FILES)) {
+                $this->guardarEvidenciasServicioSinClasificar($datos, 'evidenciasCambiosSinClasificar');
+            } else {
+                if ($verificarServicioSinClaficar[0]['Seguimiento'] === '0') {
+                    $this->guardarDescripcionServicionSinClasificar($datos);
+                }
+            }
+
+            $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '5');
+
+            if (!$cambiarEstatus) {
+                throw new \Exception("Error con la Base de Datos.");
+            }
+
+            $this->DBS->commitTransaccion();
+            return array('code' => 200, 'message' => 'correcto');
+        } catch (\Exception $ex) {
+            $this->DBS->roolbackTransaccion();
+            return array('code' => 400, 'message' => $ex->getMessage());
+        }
+    }
+
+    private function guardarEvidenciasServicioSinClasificar(array $datos, string $campoEvidencias) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $descripcion = $datos['datosConcluir'];
+        $evidenciasAnteriores = '';
+        $consulta = $this->DBS->consultaGeneral('SELECT Id, Archivos FROM t_servicios_generales WHERE IdServicio =' . $datos['servicio']);
+
+        if ($descripcion === '[object Object]') {
+            $descripcion = $datos['descripcion'];
+        }
+
+        $CI = parent::getCI();
+        $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/EvidenciasServicioGeneral/';
+        $archivos = setMultiplesArchivos($CI, $campoEvidencias, $carpeta);
+        $archivos = implode(',', $archivos);
+
+        if (!empty($archivos) && $archivos != '') {
+            $resultado = '';
+            if (!empty($consulta)) {
+                if ($archivos !== NULL) {
+                    if ($archivos !== '') {
+                        $evidenciasAnteriores = $archivos . ',';
+                    }
+                }
+                $resultado = $this->DBS->actualizarServicio('t_servicios_generales', array(
+                    'IdUsuario' => $usuario['Id'],
+                    'IdServicio' => $datos['servicio'],
+                    'Descripcion' => $descripcion,
+                    'Archivos' => $evidenciasAnteriores . $consulta[0]['Archivos'],
+                    'Fecha' => $fecha
+                        ), array('IdServicio' => $datos['servicio'])
+                );
+            } else {
+                $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', array(
+                    'IdUsuario' => $usuario['Id'],
+                    'IdServicio' => $datos['servicio'],
+                    'Descripcion' => $descripcion,
+                    'Archivos' => $archivos,
+                    'Fecha' => $fecha
+                        )
+                );
+            }
+        }
+    }
+
+    private function guardarDescripcionServicionSinClasificar(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $consulta = $this->DBS->consultaGeneral('SELECT Id, Archivos FROM t_servicios_generales WHERE IdServicio =' . $datos['servicio']);
+
+        if (is_array($datos['datosConcluir'])) {
+            $descripcion = $datos['datosConcluir']['descripcion'];
+        } else {
+            $descripcion = $datos['datosConcluir'];
+        }
+
+        $datosServicio = array(
+            'IdUsuario' => $usuario['Id'],
+            'IdServicio' => $datos['servicio'],
+            'Descripcion' => $descripcion,
+            'Fecha' => $fecha
+        );
+        if (!empty($consulta)) {
+            $resultado = $this->DBS->actualizarServicio('t_servicios_generales', $datosServicio, array('IdServicio' => $datos['servicio']));
+        } else {
+            $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', $datosServicio);
+        }
+    }
+
+    private function borrarCensos(string $servicio) {
+        $consultaPuntosCensos = $this->DBS->consulta("select * from t_censos_puntos where IdServicio = '" . $servicio . "'");
+        if (!empty($consultaPuntosCensos)) {
+            foreach ($consultaPuntosCensos as $key => $value) {
+                $this->DBS->queryBolean(""
+                        . "delete "
+                        . "from t_censos "
+                        . "where IdServicio = '" . $value['IdServicio'] . "' "
+                        . "and IdArea = '" . $value['IdArea'] . "' "
+                        . "and Punto > " . $value['Puntos']);
+            }
+        }
+
+        $this->DBS->queryBolean("delete
+                                    from t_censos
+                                    where IdServicio = '" . $value['IdServicio'] . "'
+                                    and IdArea not in (
+                                                    select 
+                                                    IdArea 
+                                                    from t_censos_puntos 
+                                                    where IdServicio = '" . $value['IdServicio'] . "')");
+    }
+
     public function enviar_Reporte_PDF(array $datos) {
         $titulo = 'Se concluyo Solicitud';
         $usuario = $this->Usuario->getDatosUsuario();
@@ -1786,6 +1850,8 @@ class Servicio extends General {
 
             if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                 $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+            } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+                $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
             } else {
                 $path = 'http://' . $host . '/' . $linkPdf['link'];
             }
@@ -1846,6 +1912,8 @@ class Servicio extends General {
 
             if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                 $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+            } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+                $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
             } else {
                 $path = 'http://' . $host . '/' . $linkPdf['link'];
             }
@@ -1894,6 +1962,9 @@ class Servicio extends General {
                 $linkPdfEquipoFaltante = $this->getServicioToPdf(array('servicio' => $datos['servicio']), '/EquipoFaltante');
                 if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                     $pathEquipoFaltante = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+                }
+                if ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+                    $pathEquipoFaltante = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
                 } else {
                     $pathEquipoFaltante = 'http://' . $host . '/' . $linkPdfEquipoFaltante['link'];
                 }
@@ -2012,6 +2083,8 @@ class Servicio extends General {
 
                 if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                     $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicio . '.pdf';
+                } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+                    $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicio . '.pdf';
                 } else {
                     $path = 'http://' . $host . '/' . $linkPdf['link'];
                 }
@@ -2024,6 +2097,8 @@ class Servicio extends General {
                     $linkPdfEquipoFaltante = $this->getServicioToPdf(array('servicio' => $value['Id']), '/EquipoFaltante');
                     if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                         $pathEquipoFaltante = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicio . '.pdf';
+                    } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+                        $pathEquipoFaltante = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicio . '.pdf';
                     } else {
                         $pathEquipoFaltante = 'http://' . $host . '/' . $linkPdfEquipoFaltante['link'];
                     }
@@ -2089,14 +2164,15 @@ class Servicio extends General {
                     if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                         $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicio . '.pdf';
                         $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
+                    } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+                        $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicio . '.pdf';
+                        $linkDetallesSolicitud = 'http://pruebas.siccob.solutions/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
                     } else {
                         $path = 'http://' . $host . '/' . $linkPdf['link'];
                         $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
                     }
-
-                    $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
+                    $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
                 }
-                $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
             } else {
                 $linkSolicitud = '';
             }
@@ -2187,6 +2263,8 @@ class Servicio extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }
@@ -2713,6 +2791,8 @@ class Servicio extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $detallesServicio = 'https://siccob.solutions/Detalles/Servicio/' . $servicio;
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $detallesServicio = 'https://pruebas.siccob.solutions/Detalles/Servicio/' . $servicio;
         } else {
             $detallesServicio = 'http://' . $host . '/Detalles/Servicio/' . $servicio;
         }
@@ -2780,6 +2860,9 @@ class Servicio extends General {
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $infoServicio = $this->getInformacionServicio($datos['servicio']);
             $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $infoServicio = $this->getInformacionServicio($datos['servicio']);
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }
@@ -3062,6 +3145,9 @@ class Servicio extends General {
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $infoServicio = $this->getInformacionServicio($datos['servicio']);
             $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'pruebas.siccob.solutions') {
+            $infoServicio = $this->getInformacionServicio($datos['servicio']);
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }

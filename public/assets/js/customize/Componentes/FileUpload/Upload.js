@@ -1,11 +1,11 @@
 class Upload {
 
-    constructor(nombreFileUpload, configuracion = {}, pagina) {
+    constructor(nombreFileUpload, configuracion = {}) {
         this.fileUpload = nombreFileUpload;
         this.configuracion = configuracion;
         this.datosExtra = {};
-        this.iniciarFileUpload();
-        this.pagina = pagina;
+        //this.iniciarFileUpload();
+        //this.pagina = pagina;
     }
 
     iniciarPlugin() {
@@ -23,6 +23,8 @@ class Upload {
             showRemove: false,
             allowedFileExtensions: ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx'],
             overwriteInitial: false,
+            initialPreviewAsData: true,
+            initialPreview: [],
             previewSettings: {
                 image: {width: '160px', height: '164px'},
                 video: {width: "160px", height: "164px"},
@@ -58,6 +60,7 @@ class Upload {
                             <div class="clearfix"></div>
                         </div>`
             },
+            deleteUrl: '',
             uploadExtraData: function () {
                 var datos = _this.obteniendoDatosExtra();
                 return datos;
@@ -75,10 +78,10 @@ class Upload {
 
         if (_this.validarArchivos()) {
             $(`#${this.fileUpload}`).on('filebatchpreupload', function (event, data, previewId, index) {
-                _this.pagina.empezarPantallaCargando(panel);
+//                _this.pagina.empezarPantallaCargando(panel);
             }).on('filebatchuploadsuccess', function (event, data, previewId, index) {
-                _this.pagina.errorServidor(data.response);
-                _this.pagina.quitarPantallaCargando(panel);
+//                _this.pagina.errorServidor(data.response);
+//                _this.pagina.quitarPantallaCargando(panel);
                 if (callback !== null) {
                     callback(data.response);
                 }

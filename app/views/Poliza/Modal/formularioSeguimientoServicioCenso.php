@@ -278,11 +278,17 @@
                             <div class="errorDatosGeneralesCenso"></div>
                         </div>
                         <!--Finalizando Error-->
-                        <div class="col-md-12"> 
+                        <div id="divBotonesServicioCenso" class="col-md-12"> 
                             <div class="form-group text-center">
                                 <br>
                                 <a id="btnGuardarDatosGenerales" href="javascript:;" class="btn btn-primary m-r-5 "><i class="fa fa-floppy-o"></i> Guardar Información</a>
                                 <a id="btnConcluirServicioCenso" href="javascript:;" class="btn btn-danger m-r-5 "><i class="fa fa-unlock-alt"></i> Concluir Servicio</a>                            
+                            </div>
+                        </div>
+                        <div id="divGuardarCambiosServicioCenso" class="col-md-12 hidden">
+                            <div class="form-group text-center">
+                                <br>
+                                <a id="btnGuardarCambiosServicioCenso" href="javascript:;" class="btn btn-inverse m-r-5 "><i class="fa fa-unlock-alt"></i> Guardar cambios y Concluir servicio</a>                            
                             </div>
                         </div>
                     </div>
