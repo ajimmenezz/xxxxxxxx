@@ -63,7 +63,7 @@
                                                 }
                                                 switch ($value['IdEstatus']){
                                                     case '6':
-                                                        echo '<td>Cancelado</td>';
+                                                        echo '<td style="color: orange">Cancelado</td>';
                                                         echo '<td></td>';
                                                         break;
                                                     case '7':

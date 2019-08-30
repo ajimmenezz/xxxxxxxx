@@ -93,7 +93,7 @@ class Autorizar_permisos extends General{
         $texto = '<p>Estimado(a) <strong>' .$infoCorreo[0]['Nombre']. ',</strong> se ha <strong>Rechazado</strong> el permiso de ausencia.</p><br><br>
                     Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
                     Motivo de Rechazo: <p><b>' . $datosPermiso[0]['motivoRechazo'] . '</b> </p><br><br>
-                    <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
+                    <a href="https://'.$_SERVER['SERVER_NAME'].'/storage/Archivos/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Rechazado', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
@@ -103,6 +103,7 @@ class Autorizar_permisos extends General{
     }
     
     public function autorizarPermiso(array $datosPermiso){
+        var_dump($datosPermiso);
         $informacionPermiso = $this->DBS->consultaGral("SELECT IdUsuarioJefe, IdUsuarioRH, IdUsuarioContabilidad, IdUsuarioDireccion 
                 FROM t_permisos_ausencia_rh WHERE Id='".$datosPermiso['idPermiso']."'");
         if ($informacionPermiso[0]['IdUsuarioJefe'] == NULL){
@@ -151,7 +152,7 @@ class Autorizar_permisos extends General{
         
         $texto = '<p>El permiso de ausencia de <strong>' .$infoCorreo[0]['Nombre']. ',</strong> ha sido previamente <strong>Autorizado</strong>, se requiere su concentimiento o rechazo.</p><br><br>
                     Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
-                    <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
+                    <a href="https://'.$_SERVER['SERVER_NAME'].'/storage/Archivos/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Autorizado', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado por: ", $motivo = array ('MotivoRechazo' => ""));
@@ -183,7 +184,7 @@ class Autorizar_permisos extends General{
         $infoCorreo = $this->informacionCorreo($datosPermiso['idPermiso']);
         $texto = '<p>Estimado(a) <strong>' .$infoCorreo[0]['Nombre']. ',</strong> se ha <strong>Autorizado</strong> el permiso de ausencia.</p><br><br>
                     Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
-                    <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
+                    <a href="https://'.$_SERVER['SERVER_NAME'].'/storage/Archivos/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Concluido', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
@@ -221,6 +222,7 @@ class Autorizar_permisos extends General{
     }
     
     public function agregarFirmasPDF(array $datosPermiso, string $estadoPermiso, array $datosFirmas){
+        
         $direccionArchivo = $this->DBS->consultaGral("SELECT Archivo FROM t_permisos_ausencia_rh WHERE Id='".$datosPermiso['idPermiso']."'");
         $nombreJefe = $this->DBS->consultaGral('SELECT CONCAT(trp.Nombres," ",trp.ApPaterno," ",trp.ApMaterno) AS Nombre FROM cat_v3_usuarios AS cu 
                 INNER JOIN t_rh_personal AS trp ON cu.Id=trp.Id WHERE cu.IdPerfil="' .$datosPermiso['idPerfil']. '"');
@@ -232,19 +234,19 @@ class Autorizar_permisos extends General{
         
         $this->pdf->AddPage();
         $tplIdx = $this->pdf->importPage(1);
-        $this->pdf->useTemplate($tplIdx, 0, 0, 210, 297,true);
+        $this->pdf->useTemplate($tplIdx, 0, 0, 210, 420, true);
         
         $this->pdf->SetXY(150, 2);
         $this->pdf->SetFillColor(255, 255, 255);
         $this->pdf->Cell(50, 20, '', 0, 0, 'C', True);
         if ($datosFirmas['MotivoRechazo'] != ""){
-            $this->pdf->SetXY(15, 200);
+            $this->pdf->SetXY(25, 320);
             $this->pdf->SetFont('Arial','B',35);
             $this->pdf->SetTextColor(254,159,159);
             $this->pdf->Cell(30,30,'R e c h a z a d o');
         }
         if ($estadoPermiso == "Autorizado y Concluido por: "){
-            $this->pdf->SetXY(15, 200);
+            $this->pdf->SetXY(25, 320);
             $this->pdf->SetFont('Arial','B',35);
             $this->pdf->SetTextColor(147,240,252);
             $this->pdf->Cell(30,30,'A u t o r i z a d o');
@@ -254,38 +256,35 @@ class Autorizar_permisos extends General{
         $this->pdf->SetTextColor(0,0,0);
         switch ($datosPermiso['idPerfil']){
             case 21:
-                $this->pdf->SetXY(15, 195);
-                $this->pdf->Cell(0, 0, utf8_decode($estadoPermiso.$nombreJefe[0]['Nombre'].' el día '. mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
+//                $this->pdf->SetXY(110, 375);
+//                $this->pdf->Cell(0, 0, utf8_decode($nombreJefe[0]['Nombre']));
+                $this->pdf->SetXY(110, 379);
+                $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
                 if ($datosFirmas['MotivoRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
-                    $this->pdf->SetXY(15, 200);
+                    $this->pdf->SetXY(15, 367);
                     $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
                 }
                 break;
             case 37:
-                $this->pdf->SetXY(15, 200);
-                $this->pdf->Cell(0, 0, utf8_decode($estadoPermiso.$nombreJefe[0]['Nombre'].' el día '. mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
+//                $this->pdf->SetXY(150, 375);
+//                $this->pdf->Cell(0, 0, utf8_decode($nombreJefe[0]['Nombre']));
+                $this->pdf->SetXY(150, 379);
+                $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
                 if ($datosFirmas['MotivoRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
-                    $this->pdf->SetXY(15, 205);
-                    $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
-                }
-                break;
-            case 44:
-                $this->pdf->SetXY(15, 205);
-                $this->pdf->Cell(0, 0, utf8_decode($estadoPermiso.$nombreJefe[0]['Nombre'].' el día '. mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
-                if ($datosFirmas['MotivoRechazo'] != ""){
-                    $this->pdf->SetFont("helvetica", "", 11);
-                    $this->pdf->SetXY(15, 210);
+                    $this->pdf->SetXY(15, 367);
                     $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
                 }
                 break;
             default :
-                $this->pdf->SetXY(15, 190);
-                $this->pdf->Cell(0, 0, utf8_decode($estadoPermiso.$nombreJefe[0]['Nombre'].' el día '. mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
+//                $this->pdf->SetXY(55, 375);
+//                $this->pdf->Cell(0, 0, utf8_decode($nombreJefe[0]['Nombre']));
+                $this->pdf->SetXY(55, 379);
+                $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
                 if ($datosFirmas['MotivoRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
-                    $this->pdf->SetXY(15, 195);
+                    $this->pdf->SetXY(15, 367);
                     $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
                 }
                 break;
@@ -416,9 +415,9 @@ class Autorizar_permisos extends General{
         $texto = '<p>Estimado(a) <strong>' .$infoCorreo[0]['Nombre']. ',</strong> se ha <strong>Rechazado</strong> el permiso de ausencia.</p><br><br>
                     Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
                     Motivo de Rechazo: <p><b>' . $datosPermiso['motivoRechazo'] . '</b> </p><br><br>
-                    <a href="http://adist/'.$datosPermiso['archivo'].'">Archivo</a>';
+                    <a href="https://'.$_SERVER['SERVER_NAME'].'/storage/Archivos/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Rechazado', $texto);
-        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+//        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
         return $this->DBS->actualizar('t_permisos_ausencia_rh', $resultado, array('Id' => $datosPermiso['idPermiso']));
     }
