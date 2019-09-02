@@ -104,7 +104,7 @@ class Correo extends General {
                 }
             }
 
-            parent::getCI()->email->send();
+            return parent::getCI()->email->send();
         }
     }
 

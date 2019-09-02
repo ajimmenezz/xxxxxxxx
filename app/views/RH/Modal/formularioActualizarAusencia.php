@@ -95,7 +95,7 @@
                         if ($datosAusencia[0]["FolioDocumento"] != "") {
                             echo '<div id="citaFolioAct" class="form-group">
                                 <label>Cita o Folio *</label>
-                                <input type="text" class="form-control" id="inputCitaFolioAct" style="width: 100%" value="' . $datosAusencia[0]["FolioDocumento"] . '"/>
+                                <input type="text" class="form-control" id="inputCitaFolioAct" style="width: 100%" value="' . $datosAusencia[0]["FolioDocumento"] . '" disabled/>
                             </div>';
                         } else {
                             echo '<div id="citaFolioAct" class="form-group">
@@ -142,7 +142,7 @@
                     }else{
                         echo '<div id="archivoCitaIncapacidadAct" class="form-group" style="display: none">
                                 <label>Archivo Cita o Incapacidad</label>
-                                <input id="inputEvidenciaIncapacidadAct" name="evidenciasIncapacidadAct[]" type="file" multiple data-parsley-required="true">
+                                <input id="inputEvidenciaIncapacidadAct" name="evidenciasIncapacidadAct[]" type="file" multiple>
                             </div>';
                     }
                     ?>

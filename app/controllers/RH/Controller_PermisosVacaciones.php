@@ -31,6 +31,7 @@ class Controller_PermisosVacaciones extends Base {
                 $resultado = $this->permisos->cancelarPermiso($this->input->post());
                 break;
             case 'Autorizar':
+                
                 $resultado = $this->autorizar->revisarPermiso($this->input->post());
                 break;
             case 'AutorizarPermiso':
@@ -47,6 +48,15 @@ class Controller_PermisosVacaciones extends Base {
                 break;
             case 'MostarMotivosAucencia':
                 $resultado = $this->permisos->obtenerMotivoAusencia($this->input->post());
+                break;
+            case 'MostarMotivosRechazo':
+                $resultado = $this->permisos->obtenerMotivoRechazo();
+                break;
+            case 'obtenerDatos':
+                $resultado = $this->permisos->obtenerDatos();
+                break;
+            case 'cancelarPermisoCalendario':
+                $resultado = $this->autorizar->cancelarPermisoCalendario($this->input->post());
                 break;
         }
         echo json_encode($resultado);
