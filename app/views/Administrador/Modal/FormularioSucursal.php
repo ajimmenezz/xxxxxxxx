@@ -183,6 +183,20 @@ foreach ($flag as $item) {
             </div>
         </div>
     </div>
+    <div class="row m-t-12">
+        <div class="col-md-9">
+            <div class="form-group">
+                <label for="alias">Alias</label>
+                <textarea id="inputAlias" type="text" class="form-control" maxlength="200" style="width: 100%" rows="3"></textarea>                    
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="centroCostos">Centro de Costos</label>
+                <input id="inputCentroCostos" type="text" class="form-control" maxlength="6" style="width: 100%"/>                            
+            </div>
+        </div>
+    </div>
     <div class="row m-t-10">
         <!--Empezando error--> 
         <div class="col-md-12">
