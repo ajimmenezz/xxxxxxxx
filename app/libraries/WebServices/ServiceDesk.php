@@ -51,10 +51,6 @@ class ServiceDesk extends General {
         set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $datosSD = json_decode(file_get_contents($url));
 
-        if ($datosSD === NULL) {
-            throw new \Exception('Service Desk no responde.');
-        }
-
         restore_error_handler();
 
         return $datosSD;
@@ -132,7 +128,12 @@ class ServiceDesk extends General {
     public function getDetallesFolio(string $key, string $folio) {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '?' . $this->FIELDS);
-        $this->validarError($datosSD);
+
+        if ($datosSD !== NULL) {
+            $this->validarError($datosSD);
+        } else {
+            $datosSD = 'Sin respuesta con ServiceDesk';
+        }
         return $datosSD;
     }
 
@@ -144,7 +145,12 @@ class ServiceDesk extends General {
     public function getResolucionFolio(string $key, string $folio) {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_RESOLUTION&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '?' . $this->FIELDS);
-        $this->validarError($datosSD);
+        
+        if ($datosSD !== NULL) {
+            $this->validarError($datosSD);
+        } else {
+            $datosSD = 'Sin respuesta con ServiceDesk';
+        }
         return $datosSD;
     }
 
