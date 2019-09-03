@@ -254,7 +254,7 @@ class Base {
             $this->consulta = self::connectDBAdist2()->query($consulta);
             return $this->consulta->result_array();
         } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
-            $this->consulta = self::connectDBAdist2P()->query($consulta);
+            $this->consulta = self::connectDBAdist2()->query($consulta);
             return $this->consulta->result_array();
         } else {
             $this->consulta = self::connectDBAdist2P()->query($consulta);
