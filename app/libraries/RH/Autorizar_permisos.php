@@ -110,7 +110,8 @@ class Autorizar_permisos extends General{
                 case 21:
                     $revisor = array (
                         'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                        'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                        'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
+                        'IdRechazo' => ""
                         );
                     $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 37'));
                     break;
@@ -118,13 +119,15 @@ class Autorizar_permisos extends General{
                     
                     $revisor = array (
                         'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                        'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                        'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
+                        'IdRechazo' => ""
                         );
                     $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 44'));
                     break;
                 default :
                     $revisor = array (
-                        'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                        'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
+                        'IdRechazo' => ""
                         );
                     $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 21'));
                     break;
@@ -134,15 +137,24 @@ class Autorizar_permisos extends General{
             switch ($datosPermiso['idPerfil']){
                 case 21:
                     $revisor = array (
-                        'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                        'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
+                        'IdRechazo' => ""
                         );
                     $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 37'));
                     break;
                 case 37:
                     $revisor = array (
-                        'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                        'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
+                        'IdRechazo' => ""
                         );
                     $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 44'));
+                    break;
+                default :
+                    $revisor = array (
+                        'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
+                        'IdRechazo' => ""
+                        );
+                    $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 21'));
                     break;
             }
         }
@@ -164,17 +176,20 @@ class Autorizar_permisos extends General{
             case 37:
                 $revisor = array (
                     'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
+                    'IdRechazo' => ""
                     );
                 break;
             case 44:
                 $revisor = array (
-                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
+                    'IdRechazo' => ""
                     );
                 break;
             default :
                 $revisor = array (
-                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
+                    'IdRechazo' => ""
                     );
                 break;
         }
