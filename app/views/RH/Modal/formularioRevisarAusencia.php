@@ -155,7 +155,7 @@
                     if ($datosAusencia[0]["FolioDocumento"] != "") {
                         echo '<div id="citaFolio" class="form-group">
                             <label>Cita o Folio</label>
-                            <input type="text" class="form-control" id="inputCitaFolioRevisar" style="width: 100%" disabled value="'.$datosAusencia[0]["FolioDocumento"].'"/>
+                            <input type="text" class="form-control" id="inputCitaFolioRevisar" style="width: 100%" disabled value="' . $datosAusencia[0]["FolioDocumento"] . '"/>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group" style="display: none">
@@ -304,12 +304,17 @@
                         }
                         ?>
                     </select>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mensajeCancelarPermiso"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!--Finaliza cuerpo del modal-->
             <!--Empieza pie del modal-->
             <div class="modal-footer text-center">
-                <a id="btnAceptarRechazo" class="btn btn-sm btn-success" data-dismiss="modal"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnAceptarRechazo" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
                 <a id="btnCerrarAM" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
             </div>
             <!--Finaliza pie del modal-->

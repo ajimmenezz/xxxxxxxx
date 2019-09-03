@@ -331,9 +331,8 @@ $(function () {
                                     dataActualizar['evidenciaIncapacidad'] = "";
                                     evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermiso', dataActualizar, '#panelActualizarPermisos', function (respuesta) {
                                         if (respuesta) {
-                                            console.log(respuesta.ruta);
                                             window.open(respuesta.ruta, '_blank');
-//                                            location.reload();
+                                            location.reload();
                                         } else {
                                             evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
                                         }

@@ -1,5 +1,5 @@
 $(function () {
-    
+
     var evento = new Base();
     var websocket = new Socket();
     var select = new Select();
@@ -39,30 +39,32 @@ $(function () {
                     $('#contentRevisarPermiso').empty().addClass('hidden');
                     $('#contentPermisosPendientes').removeClass('hidden');
                 });
-                var data ={
+                var data = {
                     idPermiso: $('#idPermisoRevisar').val(),
                     idPerfil: perfilUsuario,
                     idUser: idUsuario,
                     archivo: $('#archivoPDF').val()
                 }
-                
+
                 $("#btnVerPDFAutorizar").on("click", function () {
-                    window.open('/storage/Archivos/'+$('#archivoPDF').val(), '_blank');
+                    window.open('/storage/Archivos/' + $('#archivoPDF').val(), '_blank');
                 });
                 $("#btnCancelarPermiso").on("click", function () {
                     $('#btnAceptarRechazo').on('click', function () {
                         if ($('#motivoRechazo').val() !== "") {
-                            data[0]={
+                            data[0] = {
                                 motivoRechazo: $('#motivoRechazo').val(),
                                 textoRechazo: $(`#motivoRechazo option:selected`).text()
                             };
-                            evento.enviarEvento('EventoPermisosVacaciones/CancelarPermisos', data, '#modal-dialogo', function (respuesta) {
+                            evento.enviarEvento('EventoPermisosVacaciones/CancelarPermisos', data, '#modalRechazo', function (respuesta) {
                                 if (respuesta) {
                                     location.reload();
                                 } else {
                                     evento.mostrarMensaje('.mensajeSolicitudPermisosRevisar', false, 'Hubo un problema con la cancelación del permiso.', 3000);
                                 }
                             });
+                        } else {
+                            evento.mostrarMensaje('.mensajeCancelarPermiso', false, 'Falta motivo de rechazo', 3000);
                         }
                     });
                 });
@@ -84,12 +86,12 @@ $(function () {
                         }
                     });
                 });
-            }else {
+            } else {
                 evento.mostrarMensaje('.mensajeAutorizarPermisos', false, 'Hubo un problema con la solicitud.', 3000);
             }
         });
     });
-    
+
     $('#btnExcel').on('click', function () {
         evento.enviarEvento('EventoPermisosVacaciones/exportarExcel', null, '#modal-dialogo', function (respuesta) {
             window.open(respuesta.ruta, '_blank');
