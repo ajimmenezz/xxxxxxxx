@@ -1420,7 +1420,7 @@ class EditarSolicitud extends General {
 
     public function editarFolio(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-        $key = $this->MSP->getApiKeyByUser($usuario['Id']);
+        $key = $this->ServiceDesk->validarAPIKey($usuario['SDKey']);
         $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array('Folio' => $datos['folio']), array('Id' => $datos['solicitud']));
         if (!empty($consulta)) {
             $datosSD = $this->ServiceDesk->getDetallesFolio($key, $datos['folio']);
