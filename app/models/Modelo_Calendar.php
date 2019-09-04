@@ -30,7 +30,7 @@
                         perm.Archivo as Archivo,
                         nombreUsuario(catU.IdJefe) as Jefe,
                         catU.IdPerfil as IdPerfil,
-                        nombrePerfil(catU.IdPerfil) as NombrePerfil,
+                        (select Nombre from cat_perfiles where Id = catU.IdPerfil) as NombrePerfil,
                         catU.id as IdUsuario,
                         nombreUsuario(idUsuarioJefe) as AutorizacionJefe,
                         nombreUsuario(idUsuarioRH) as AutorizacionRH,
