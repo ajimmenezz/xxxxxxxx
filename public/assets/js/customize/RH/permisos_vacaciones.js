@@ -149,7 +149,7 @@ $(function () {
             if ($('#inputEvidenciaIncapacidad').val() !== '') {
                 file.enviarArchivos('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', '#panelPermisosVacaciones', data, function (respuesta) {
                     if (respuesta !== 'otraImagen') {
-                        window.open(respuesta, '_blank');
+                        window.open(respuesta.ruta, '_blank');
                         location.reload();
                     } else {
                         evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
@@ -158,7 +158,7 @@ $(function () {
             } else {
                 evento.enviarEvento('EventoPermisosVacaciones/Permisos', data, '#panelPermisosVacaciones', function (respuesta) {
                     if (respuesta) {
-                        window.open(respuesta, '_blank');
+                        window.open(respuesta.ruta, '_blank');
                         location.reload();
                     } else {
                         evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
@@ -174,7 +174,8 @@ $(function () {
 
         if (informacionPermisoAusencia[7] === "Pendiente por Autorizar") {
             var data = {
-                idPermiso: informacionPermisoAusencia[0]
+                idPermiso: informacionPermisoAusencia[0],
+                tipoAusencia: informacionPermisoAusencia[2]
             }
             evento.enviarEvento('EventoPermisosVacaciones/VerModalActualizar', data, '#panelPermisosVacaciones', function (respuesta) {
                 if (respuesta) {
@@ -222,7 +223,7 @@ $(function () {
                                 $('#inputCitaFolioAct').attr('data-parsley-required', 'true');
                                 $("#archivoCitaIncapacidadAct").css("display", "block");
                                 $('#inputEvidenciaIncapacidadAct').attr('data-parsley-required', 'true');
-                                $('#textareaMotivoSolicitudPermisoAct').attr('data-parsley-required', 'false');
+                                $('#textareaMotivoSolicitudPermisoAct').attr('data-parsley-required', 'true');
                                 $('#textareaMotivoSolicitudPermisoAct').val('');
                                 $("#archivoCitaIncapacidadAct").css("display", "block");
                             } else {
@@ -236,6 +237,10 @@ $(function () {
                             }
                         });
                         $('#selectTipoAusenciaAct').on('change', function () {
+                            $('#selectMotivoAusenciaAct').empty().append('<option value="">Seleccionar</option>');
+                            select.cambiarOpcion('#selectMotivoAusenciaAct', '');
+                            var tipoAusencia = $(this).val();
+
                             switch ($(this).val()) {
                                 case '1':
                                     $("#bloqueHorarioAct").css("display", "block");
@@ -247,6 +252,18 @@ $(function () {
                                     break;
                                 default:
                                     $("#bloqueHorarioAct").css("display", "none");
+                            }
+
+                            if (tipoAusencia !== '') {
+                                var data = {tipoAusencia: tipoAusencia};
+                                evento.enviarEvento('EventoPermisosVacaciones/MostarMotivosAucencia', data, '#panelActualizarPermisos', function (respuesta) {
+                                    $.each(respuesta, function (key, valor) {
+                                        $("#selectMotivoAusenciaAct").append('<option value="' + valor.Id + '" data-msg="' + valor.Observaciones + '">' + valor.Nombre + '</option>');
+                                    });
+                                    $('#selectMotivoAusenciaAct').removeAttr('disabled');
+                                });
+                            } else {
+                                $('#selectMotivoAusenciaAct').attr('disabled', 'disabled');
                             }
                         });
 
@@ -301,27 +318,26 @@ $(function () {
                                     horaAusencia: $('#selectSolicitudHoraAct').val(),
                                     pdf: $('#archivoPDF').val()
                                 }
-                                if ($('#selectMotivoAusenciaAct').val() == '3' || $('#selectMotivoAusenciaAct').val() == '4') {
-                                    evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermisoArchivo', dataActualizar, '#panelPermisosVacaciones', function (respuesta) {
+                                if ($('#selectMotivoAusenciaAct').val() == '1' || $('#selectMotivoAusenciaAct').val() == '2' || $('#selectMotivoAusenciaAct').val() == '6' || $('#selectMotivoAusenciaAct').val() == '7' || $('#selectMotivoAusenciaAct').val() == '8' || $('#selectMotivoAusenciaAct').val() == '9' || $('#selectMotivoAusenciaAct').val() == '11' || $('#selectMotivoAusenciaAct').val() == '12') {
+                                    evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermisoArchivo', dataActualizar, '#panelActualizarPermisos', function (respuesta) {
                                         if (respuesta !== 'otraImagen') {
+                                            window.open(respuesta.ruta, '_blank');
                                             location.reload();
-                                            window.open(respuesta, '_blank');
                                         } else {
                                             evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
                                         }
                                     });
                                 } else {
                                     dataActualizar['evidenciaIncapacidad'] = "";
-                                    evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermiso', dataActualizar, '#panelPermisosVacaciones', function (respuesta) {
+                                    evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermiso', dataActualizar, '#panelActualizarPermisos', function (respuesta) {
                                         if (respuesta) {
+                                            window.open(respuesta.ruta, '_blank');
                                             location.reload();
-                                            window.open(respuesta, '_blank');
                                         } else {
                                             evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
                                         }
                                     });
                                 }
-                                ;
                             }
                         });
                         //fin

@@ -2894,7 +2894,9 @@ $(function () {
             var tipoFalla = $('#selectImpericiaTipoFallaEquipoCorrectivo').val();
             var equipo = $('#selectEquipoCorrectivo').val();
             if (equipo === '') {
-                equipo = datosGeneralesCorrectivo[0].IdModelo;
+                if (datosGeneralesCorrectivo.length > 0) {
+                    equipo = datosGeneralesCorrectivo[0].IdModelo;
+                }
             }
             var dataTipoFalla = {equipo: equipo, tipoFalla: tipoFalla};
             evento.enviarEvento('Seguimiento/ConsultaFallasEquiposXTipoFallaYEquipo', dataTipoFalla, '#seccion-servicio-correctivo', function (respuesta) {
@@ -2914,7 +2916,9 @@ $(function () {
             var tipoFalla = $('#selectTipoFallaEquipoCorrectivo').val();
             var equipo = $('#selectEquipoCorrectivo').val();
             if (equipo === '') {
-                equipo = datosGeneralesCorrectivo[0].IdModelo;
+                if (datosGeneralesCorrectivo.length > 0) {
+                    equipo = datosGeneralesCorrectivo[0].IdModelo;
+                }
             }
             var dataTipoFalla = {equipo: equipo, tipoFalla: tipoFalla};
             evento.enviarEvento('Seguimiento/ConsultaFallasEquiposXTipoFallaYEquipo', dataTipoFalla, '#seccion-servicio-correctivo', function (respuesta) {
@@ -3740,9 +3744,8 @@ $(function () {
         $('#btnConfirmarAgregarObservacionesReporteFalso').off('click');
         $('#btnConfirmarAgregarObservacionesReporteFalso').on('click', function () {
             var observaciones = $('#txtAgregarObservacion').val();
-            var evidencias = $('#archivosAgregarObservacionesReporteFalso').val();
             var data = {servicio: servicio, observaciones: observaciones};
-            if (observaciones !== '' && evidencias !== '') {
+            if (observaciones !== '') {
                 file.enviarArchivos('#archivosAgregarObservacionesReporteFalso', 'Seguimiento/guardarObservacionesBitacora', '#seccion-servicio-correctivo', data, function (respuesta) {
                     if (respuesta.code === 200) {
                         $('#divBitacoraReporteFalso').empty().append(respuesta.message);
@@ -3755,7 +3758,7 @@ $(function () {
                     }
                 });
             } else {
-                evento.mostrarMensaje('#errorAgregarObservacionesReporteFalso', false, 'Debe capturar la observación y agregar al menos un archivo para guardarlo.', 3000);
+                evento.mostrarMensaje('#errorAgregarObservacionesReporteFalso', false, 'Debe capturar la observación.', 3000);
             }
         });
 

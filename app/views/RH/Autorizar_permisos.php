@@ -89,7 +89,7 @@
                                                     echo '<td>CONSULTA MEDICO O DENTISTA IMSS</td>';
                                                     break;
                                                 case '10':
-                                                    echo '<td>CONSULTA MEDICO IMSS</td>';
+                                                    echo '<td>ASUNTOS PERSONALES</td>';
                                                     break;
                                                 case '11':
                                                     echo '<td>CONSULTA MEDICO PARTICULAR</td>';

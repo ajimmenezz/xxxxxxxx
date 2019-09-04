@@ -1302,17 +1302,18 @@ class ServiciosTicket extends General {
         $data['datosServicio'] = $datosServicio;
         $data['sucursales'] = $this->consultaSucursalesXSolicitudCliente($datosServicio['Ticket']);
         $data['idSucursal'] = $this->DBST->consultaGeneral('SELECT 
-                                                                IF(IdSucursal != NULL,
-                                                                    IdSucursal,
+                                                                    tst.IdSucursal,
+                                                                IF(tst.IdSucursal IS NULL,
                                                                     (SELECT 
                                                                             IdSucursal
                                                                         FROM
                                                                             t_solicitudes
                                                                         WHERE
-                                                                            Id = IdSolicitud)) AS IdSucursal
+                                                                            Id = tst.IdSolicitud), tst.IdSucursal) AS IdSucursal
                                                             FROM
-                                                                t_servicios_ticket
-                                                            WHERE Id = "' . $servicio . '"');
+                                                                t_servicios_ticket tst
+                                                            WHERE
+                                                                Id = "' . $servicio . '"');
         $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $data['datosServicio']['Ticket'] . '"');
         $data['idPerfil'] = $usuario['IdPerfil'];
 
@@ -2433,8 +2434,8 @@ class ServiciosTicket extends General {
                                                 cliente(IdCliente) Cliente
                                             FROM cat_v3_sucursales
                                             WHERE Flag = 1
-                                            AND IdCliente = "' . $sucursal[0]['Cliente'] . '"
                                             ORDER BY Nombre ASC');
+//                                            AND IdCliente = "' . $sucursal[0]['Cliente'] . '"
         return $return;
     }
 

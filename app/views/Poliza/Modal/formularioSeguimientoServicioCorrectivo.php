@@ -414,7 +414,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row>">
+                            <div class="row">
                                 <div class="col-md-12 col-xs-12">
                                     <a href="javascript:;" id="btnAgregarObservacionesReporteFalso" class="btn bg-green btn-success pull-right">
                                         <i class="fa fa-plus pull-left"></i>
@@ -422,54 +422,52 @@
                                     </a>
                                 </div>
                             </div>
-                            <div class="row hidden" id="divFormAgregarObservaciones">
-                                <div class="col-md-12 col-xs-12">
-                                    <div class="row">
+                            <div class="hidden" id="divFormAgregarObservaciones">
+                                <div class="row">
+                                    <div class="col-md-12 col-xs-12">
+                                        <h3>Agregar Observación</h3>
+                                        <div class="underline"></div>
+                                    </div>
+                                </div>
+                                <form id="formAgregarObservacionesReporteFalso">
+                                    <div class="row m-t-20">
                                         <div class="col-md-12 col-xs-12">
-                                            <h3>Agregar Observación</h3>
-                                            <div class="underline"></div>
+                                            <div class="form-group">
+                                                <label>Observación *</label>
+                                                <textarea id="txtAgregarObservacion" class="form-control" rows="3" placeholder="Ingresa la observación ....."></textarea>
+                                            </div>
                                         </div>
                                     </div>
-                                    <form id="formAgregarObservacionesReporteFalso">
-                                        <div class="row m-t-20">
-                                            <div class="col-md-12 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Observación *</label>
-                                                    <textarea id="txtAgregarObservacion" class="form-control" rows="3" placeholder="Ingresa la observación ....."></textarea>
-                                                </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Agregar Archivos o Imagenes</label>
+                                                <input id="archivosAgregarObservacionesReporteFalso"  name="archivosAgregarObservacionesReporteFalso[]" type="file" multiple/>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <label>Agregar Archivos o Imagenes *</label>
-                                                    <input id="archivosAgregarObservacionesReporteFalso"  name="archivosAgregarObservacionesReporteFalso[]" type="file" multiple/>
-                                                </div>
-                                            </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div id="errorAgregarObservacionesReporteFalso"></div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="errorAgregarObservacionesReporteFalso"></div>
-                                            </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-xs-12 text-center">
+                                            <a id="btnConfirmarAgregarObservacionesReporteFalso" class="btn btn-primary" >
+                                                <i class="fa fa-floppy-o"></i> Guardar
+                                            </a>
+                                            <a id="btnCancelarAgregarObservacionesReporteFalso" class="btn btn-danger">
+                                                <i class="fa fa-ban"></i> Cancelar
+                                            </a>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-12 col-xs-12 text-center">
-                                                <a id="btnConfirmarAgregarObservacionesReporteFalso" class="btn btn-primary" >
-                                                    <i class="fa fa-floppy-o"></i> Guardar
-                                                </a>
-                                                <a id="btnCancelarAgregarObservacionesReporteFalso" class="btn btn-danger">
-                                                    <i class="fa fa-ban"></i> Cancelar
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="row">
+                            <div class="row m-t-15">
                                 <div class="col-md-12">                            
                                     <fieldset>
                                         <legend class="pull-left width-full f-s-17">Bitácora Observaciones del Diagnotico.</legend>
-                                    </fieldset>  
+                                    </fieldset> 
                                 </div>
                             </div>
                             <div id="divBitacoraReporteFalso">
