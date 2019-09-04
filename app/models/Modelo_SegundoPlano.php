@@ -9,9 +9,11 @@ use Librerias\Modelos\Base as Base;
  *
  * @author Freddy
  */
-class Modelo_SegundoPlano extends Base {
+class Modelo_SegundoPlano extends Base
+{
 
-    public function obtenerMaterialSae() {
+    public function obtenerMaterialSae()
+    {
         $data = array();
         $consulta = parent::connectDBSAE7()->query('select * from SAE7EMPRESA3.dbo.INVE03');
         if (!empty($consulta)) {
@@ -22,11 +24,13 @@ class Modelo_SegundoPlano extends Base {
         return $data;
     }
 
-    public function truncar(string $consulta) {
+    public function truncar(string $consulta)
+    {
         parent::connectDBPrueba()->query($consulta);
     }
 
-    public function agregarMaterialFaltanteEquiposSae() {
+    public function agregarMaterialFaltanteEquiposSae()
+    {
 
         parent::connectDBPrueba()->query('call actualizaCatalogoProductosSAE()');
         if (mysqli_more_results(parent::connectDBPrueba()->conn_id)) {
@@ -34,17 +38,28 @@ class Modelo_SegundoPlano extends Base {
         }
     }
 
-    public function getApiKeyByUser($idUser = '') {
-        $consulta = parent::connectDBPrueba()->query('select SDKey from cat_v3_usuarios where Id = "' . $idUser . '";');
-        if (!empty($consulta)) {
-            $value = $consulta->result_array();
-            return $value[0]['SDKey'];
+    public function getApiKeyByUser($idUser = '')
+    {
+
+        $consulta = $this->consulta('select SDKey from cat_v3_usuarios where Id = "' . $idUser . '";');
+        if (!empty($consulta) && isset($consulta[0]['SDkey'])) {
+            return $consulta[0]['SDKey'];
         } else {
-            return false;
+            return '';
         }
+
+
+        // $consulta = parent::connectDBPrueba()->query('select SDKey from cat_v3_usuarios where Id = "' . $idUser . '";');
+        // if (!empty($consulta && isset($consulta[0]['SDKey']))) {
+        //     $value = $consulta->result_array();
+        //     return $value[0]['SDKey'];
+        // } else {
+        //     return false;
+        // }
     }
 
-    public function getDatabaseInfoSD(string $folio = '') {
+    public function getDatabaseInfoSD(string $folio = '')
+    {
         $consulta = parent::connectDBPrueba()->query('select * from hist_incidentes_sd where Folio = "' . $folio . '" order by FechaComprobacion desc limit 1;');
         if (!empty($consulta)) {
             return $consulta->result_array();
@@ -53,7 +68,8 @@ class Modelo_SegundoPlano extends Base {
         }
     }
 
-    public function buscarMailsBySDName(string $name = 'SIN INFO') {
+    public function buscarMailsBySDName(string $name = 'SIN INFO')
+    {
         $consulta = parent::connectDBPrueba()->query("select  
                                                         Email as Tecnico,
                                                         if(cu.IdJefe is not null and cu.IdJefe > 0,
@@ -67,7 +83,8 @@ class Modelo_SegundoPlano extends Base {
         }
     }
 
-    public function insertInfoCambiosSD(array $datos) {
+    public function insertInfoCambiosSD(array $datos)
+    {
         $fecha = $this->consulta("select now() as Fecha;");
         $this->insertar('hist_incidentes_sd', [
             'Folio' => $datos['folio'],
@@ -85,16 +102,18 @@ class Modelo_SegundoPlano extends Base {
         ]);
     }
 
-    public function getInfoUserByIMEI($imei) {
+    public function getInfoUserByIMEI($imei)
+    {
         $consulta = $this->consulta("select "
-                . "nombreUsuario(cu.Id) as Usuario, "
-                . "cu.EmailCorporativo as Email "
-                . "from cat_v3_usuarios cu "
-                . "where IMEI = '" . $imei . "'");
+            . "nombreUsuario(cu.Id) as Usuario, "
+            . "cu.EmailCorporativo as Email "
+            . "from cat_v3_usuarios cu "
+            . "where IMEI = '" . $imei . "'");
         return $consulta;
     }
 
-    public function insertaAsignacionesSD($array) {
+    public function insertaAsignacionesSD($array)
+    {
         $consulta = $this->consulta("select FechaLectura as Fecha from hist_incidentes_sd where Folio = '" . $array['Folio'] . "' order by Id limit 1;");
         if (!empty($consulta)) {
             $fecha = $consulta[0]['Fecha'];
@@ -106,17 +125,20 @@ class Modelo_SegundoPlano extends Base {
         $this->insertar("t_asignaciones_sd", $insert);
     }
 
-    public function getFoliosExistentesAsignacionesSD(string $folios = ",0") {
+    public function getFoliosExistentesAsignacionesSD(string $folios = ",0")
+    {
         $consulta = $this->consulta("select Folio from t_asignaciones_sd where Folio in (''" . $folios . ")");
         return $consulta;
     }
 
-    public function getFoliosExistentesEnSolicitudes(string $folios = ",0") {
+    public function getFoliosExistentesEnSolicitudes(string $folios = ",0")
+    {
         $consulta = $this->consulta("select Folio from t_solicitudes where Folio in (''" . $folios . ")");
         return $consulta;
     }
 
-    public function getFoliosExistentesEnV2(string $folios = ",0") {
+    public function getFoliosExistentesEnV2(string $folios = ",0")
+    {
         $consulta = parent::connectDBAdist2()->query("select  
                                                         Folio_Cliente as Folio
                                                         from t_servicios
@@ -124,7 +146,8 @@ class Modelo_SegundoPlano extends Base {
         return $consulta->result_array();
     }
 
-    public function insertaSolicitudesAdISTV3($array, $arrayAsunto) {
+    public function insertaSolicitudesAdISTV3($array, $arrayAsunto)
+    {
         $this->iniciaTransaccion();
         $this->insertar("t_solicitudes", $array);
         $ultimo = $this->ultimoId();
@@ -138,5 +161,4 @@ class Modelo_SegundoPlano extends Base {
             return true;
         }
     }
-
 }
