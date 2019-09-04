@@ -2394,7 +2394,6 @@ class Servicio extends General {
             }
         }
 
-        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
         $folio = $this->DBS->getServicios('SELECT
                                                 (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
                                             FROM t_servicios_ticket
@@ -2402,6 +2401,7 @@ class Servicio extends General {
 
         if ($folio[0]['Folio'] !== NULL) {
             if ($folio[0]['Folio'] !== '0') {
+                $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                 $avanceProblema = $this->DBP->getAdvanceService($datos['servicio']);
                 $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
                 $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];

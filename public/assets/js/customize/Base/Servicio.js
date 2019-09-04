@@ -516,7 +516,7 @@ Servicio.prototype.botonAgregarAvance = function () {
     var _this = this;
     var servicio = arguments[0];
     var tipoServicio = arguments[1];
-    
+
     $('#btnAgregarAvance').on('click', function () {
         _this.mostrarFormularioAvanceServicio(servicio, '1', tipoServicio, 'Guardar');
     });
@@ -526,7 +526,7 @@ Servicio.prototype.botonAgregarProblema = function () {
     var _this = this;
     var servicio = arguments[0];
     var tipoServicio = arguments[1];
-    
+
     $('#btnAgregarProblema').on('click', function () {
         _this.mostrarFormularioAvanceServicio(servicio, '2', tipoServicio, 'Guardar');
     });
@@ -1582,6 +1582,8 @@ Servicio.prototype.mostrarFormularioAvanceServicio = function () {
                             _this.botonEliminarAvanceProblema(servicio);
                             _this.botonEditarAvanceProblema(servicio);
                             _this.mensajeModal('Se agrego a la sección de Historial', 'Correcto', true);
+                        } else {
+                            _this.mensajeModal(respuesta.message, 'Error', false);
                         }
                     });
                 } else {
