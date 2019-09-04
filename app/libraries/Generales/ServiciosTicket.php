@@ -1452,7 +1452,12 @@ class ServiciosTicket extends General {
                                             tst.IdSolicitud,
                                             tsi.Asunto AS AsuntoSolicitud,
                                             tsi.Descripcion AS DescripcionSolicitud,
-                                            (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
+                                            (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio,
+                                            tst.IdTipoServicio,
+                                            tst.Firma,
+                                            tst.FirmaTecnico,
+                                            tst.IdValidaCinemex,
+                                            tst.NombreFirma
                                            FROM t_servicios_ticket tst
                                            INNER JOIN t_solicitudes_internas tsi
                                            ON tsi.IdSolicitud = tst.IdSolicitud
@@ -1470,6 +1475,7 @@ class ServiciosTicket extends General {
             } else {
                 $path = 'http://' . $host . '/' . $linkPdf['link'];
             }
+
             if (empty($serviciosTicket)) {
                 $this->concluirSolicitud($fecha, $datos['idSolicitud']);
                 $this->concluirTicket($datos['ticket']);
