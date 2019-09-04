@@ -42,7 +42,7 @@ class Modelo_SegundoPlano extends Base
     {
 
         $consulta = $this->consulta('select SDKey from cat_v3_usuarios where Id = "' . $idUser . '";');
-        if (!empty($consulta) && isset($consulta[0]['SDkey'])) {
+        if (!empty($consulta)) {
             return $consulta[0]['SDKey'];
         } else {
             return '';
