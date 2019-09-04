@@ -198,7 +198,7 @@ class Controller_SegundoPlano extends \CI_Controller {
 
     public function getAsignacionesSD() {
         date_default_timezone_set("America/Mexico_City");
-        $apiKey = $this->DB->getApiKeyByUser();
+        $apiKey = $this->DB->getApiKeyByUser('2');
         $filterId = $this->getViewFilterId($apiKey);
 
         $requests = $this->SD->getRequestsByFilter($filterId, $apiKey, 0);
