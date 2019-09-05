@@ -1934,22 +1934,15 @@ class Servicio extends General {
             }
         }
 
-        if ($folio !== FALSE && $usuario['IdPerfil'] == '83') {
-            $this->agregarVueltaAsociado($folio, $datos);
+        if ($usuario['IdPerfil'] == '83') {
+            $this->agregarVueltaAsociado($datos);
         }
 
         return TRUE;
     }
 
-    public function agregarVueltaAsociado(string $folio, array $datos) {
-        $dataServicios = $this->DBS->getServicios('SELECT
-                                                        IdSucursal,
-                                                        (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio,
-                                                        IdEstatus,
-                                                        sucursal(IdSucursal) Sucursal
-                                                    FROM t_servicios_ticket
-                                                    WHERE Id = "' . $datos['servicio'] . '"');
-
+    public function agregarVueltaAsociado(array $datos) {
+        $dataServicios = $this->DBS->consultaServicio($datos['servicio']);
         $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
         $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
 
@@ -2722,13 +2715,8 @@ class Servicio extends General {
     public function guardarVueltaAsociados(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-
         $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
-        $folio = $this->DBS->getServicios('SELECT
-                                                IdSucursal,
-                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
-                                            FROM t_servicios_ticket
-                                            WHERE Id = "' . $datos['servicio'] . '"');
+        $folio = $this->DBS->consultaServicio($datos['servicio']);
 
         if (isset($datos['correo'])) {
             $correo = implode(",", $datos['correo']);
@@ -2748,15 +2736,7 @@ class Servicio extends General {
         $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/Asociados/' . str_replace(' ', '_', 'FirmaTecnico_' . $folio[0]['Folio']) . $fechaAsociado . '.png';
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $imagenFirmaTecnico);
 
-        $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio[0]['Folio']);
-
-        if (empty($vueltasFacturasOutsourcing)) {
-            $vuelta = '1';
-        } else {
-            $numeroVuelta = (int) $vueltasFacturasOutsourcing[0]['Vuelta'];
-            $vuelta = $numeroVuelta + 1;
-        }
-
+        $vuelta = $this->crearVueltaAsociado($folio[0]['Folio'], $datos['servicio']);
         $idFacturacionOutSourcing = $this->DBS->setServicioId('t_facturacion_outsourcing', array(
             'IdServicio' => $datos['servicio'],
             'Vuelta' => $vuelta,
@@ -2771,7 +2751,6 @@ class Servicio extends General {
             'FechaEstatus' => $fecha
                 )
         );
-
         $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
@@ -2791,7 +2770,10 @@ class Servicio extends General {
 
         if ($consulta) {
             $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-            $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
+
+            if ($folio[0]['Folio'] !== NULL && $folio[0]['Folio'] !== '0') {
+                $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
+            }
 
             if (isset($informacionSD->SHORTDESCRIPTION)) {
                 $detallesSD = $informacionSD->SHORTDESCRIPTION;
@@ -3001,20 +2983,10 @@ class Servicio extends General {
         return $generales;
     }
 
-    public function guardarVueltaAsociadosSinFirma(array $datos) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
-        $folio = $this->DBS->getServicios('SELECT
-                                                IdSucursal,
-                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio,
-                                                Atiende
-                                            FROM t_servicios_ticket
-                                            WHERE Id = "' . $datos['servicio'] . '"');
-
-        if ($folio[0]['Folio'] !== NULL) {
-            if ($folio[0]['Folio'] !== '0') {
-                $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio[0]['Folio']);
+    public function crearVueltaAsociado(string $folio = NULL, string $servicio) {
+        if ($folio !== NULL) {
+            if ($folio !== '0') {
+                $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio);
 
                 if (empty($vueltasFacturasOutsourcing)) {
                     $vuelta = '1';
@@ -3023,7 +2995,7 @@ class Servicio extends General {
                     $vuelta = $numeroVuelta + 1;
                 }
             } else {
-                $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($datos['servicio']);
+                $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($servicio);
 
                 if (empty($vueltasFacturasOutsourcingServicio)) {
                     $vuelta = '1';
@@ -3033,7 +3005,7 @@ class Servicio extends General {
                 }
             }
         } else {
-            $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($datos['servicio']);
+            $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($servicio);
 
             if (empty($vueltasFacturasOutsourcingServicio)) {
                 $vuelta = '1';
@@ -3043,6 +3015,14 @@ class Servicio extends General {
             }
         }
 
+        return $vuelta;
+    }
+
+    public function guardarVueltaAsociadosSinFirma(array $datos) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
+        $folio = $this->DBS->consultaServicio($datos['servicio']);
+        $vuelta = $this->crearVueltaAsociado($folio[0]['Folio'], $datos['servicio']);
         $idFacturacionOutSourcing = $this->DBS->setServicioId('t_facturacion_outsourcing', array(
             'IdServicio' => $datos['servicio'],
             'Vuelta' => $vuelta,
@@ -3053,7 +3033,6 @@ class Servicio extends General {
             'FechaEstatus' => $fecha
                 )
         );
-
         $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);

@@ -968,7 +968,9 @@ class Modelo_ServicioTicket extends Modelo_Base {
                                             (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tst.IdTipoServicio) Seguimiento,
                                             tst.IdEstatus,
                                             tst.FechaConclusion,
-                                            (SELECT Atiende FROM t_solicitudes WHERE Id = tst.IdSolicitud) Atiende
+                                            (SELECT Atiende FROM t_solicitudes WHERE Id = tst.IdSolicitud) Atiende,
+                                            tst.IdSucursal,
+                                            sucursal(tst.IdSucursal) Sucursal
                                         FROM t_servicios_ticket tst
                                         INNER JOIN t_solicitudes ts
                                             ON ts.Id = tst.IdSolicitud
