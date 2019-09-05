@@ -55,7 +55,7 @@ class Autorizar_permisos extends General{
                  INNER JOIN cat_perfiles AS cp ON cu.IdPerfil=cp.Id INNER JOIN cat_v3_departamentos_siccob AS cds ON cp.IdDepartamento=cds.Id 
                  WHERE tpa.Id ="' . $datosPermiso['idPermiso'] . '"');
         
-        return array('formulario' => parent::getCI()->load->view('RH/Modal/formularioRevisarAusencia', $informacionPermisoAusencia, TRUE));
+        return array('formulario' => parent::getCI()->load->view('RH/Modal/formularioRevisarAusencia', $informacionPermisoAusencia, TRUE), 'consulta' =>$informacionPermisoAusencia);
     }
     
     public function cancelarPermiso(array $datosPermiso){
@@ -65,25 +65,29 @@ class Autorizar_permisos extends General{
             case 21:
                 $revisor = array (
                     'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'IdRechazo' => $datosPermiso[0]['motivoRechazo']
+                    'IdRechazo' => $datosPermiso[0]['motivoRechazo'],
+                    'MotivoRechazo' => "hay rechazo"
                     );
                 break;
             case 37:
                 $revisor = array (
                     'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'IdRechazo' => $datosPermiso[0]['motivoRechazo']
+                    'IdRechazo' => $datosPermiso[0]['motivoRechazo'],
+                    'MotivoRechazo' => "hay rechazo"
                     );
                 break;
             case 44:
                 $revisor = array (
                     'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'IdRechazo' => $datosPermiso[0]['motivoRechazo']
+                    'IdRechazo' => $datosPermiso[0]['motivoRechazo'],
+                    'MotivoRechazo' => "hay rechazo"
                     );
                 break;
             default :
                 $revisor = array (
                     'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'IdRechazo' => $datosPermiso[0]['motivoRechazo']
+                    'IdRechazo' => $datosPermiso[0]['motivoRechazo'],
+                    'MotivoRechazo' => "hay rechazo"
                     );
                 break;
         }
@@ -110,8 +114,7 @@ class Autorizar_permisos extends General{
                 case 21:
                     $revisor = array (
                         'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                        'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                        'IdRechazo' => ""
+                        'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                         );
                     $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 37'));
                     break;
@@ -119,15 +122,13 @@ class Autorizar_permisos extends General{
                     
                     $revisor = array (
                         'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                        'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                        'IdRechazo' => ""
+                        'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                         );
                     $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 44'));
                     break;
                 default :
                     $revisor = array (
-                        'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                        'IdRechazo' => ""
+                        'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                         );
                     $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 21'));
                     break;
@@ -137,22 +138,19 @@ class Autorizar_permisos extends General{
             switch ($datosPermiso['idPerfil']){
                 case 21:
                     $revisor = array (
-                        'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                        'IdRechazo' => ""
+                        'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                         );
                     $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 37'));
                     break;
                 case 37:
                     $revisor = array (
-                        'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                        'IdRechazo' => ""
+                        'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                         );
                     $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 44'));
                     break;
                 default :
                     $revisor = array (
-                        'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                        'IdRechazo' => ""
+                        'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                         );
                     $correoRevisorSig = array ('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 21'));
                     break;
@@ -176,20 +174,17 @@ class Autorizar_permisos extends General{
             case 37:
                 $revisor = array (
                     'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                    'IdRechazo' => ""
+                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                     );
                 break;
             case 44:
                 $revisor = array (
-                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                    'IdRechazo' => ""
+                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                     );
                 break;
             default :
                 $revisor = array (
-                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
-                    'IdRechazo' => ""
+                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                     );
                 break;
         }
@@ -236,7 +231,6 @@ class Autorizar_permisos extends General{
     }
     
     public function agregarFirmasPDF(array $datosPermiso, string $estadoPermiso, array $datosFirmas){
-        
         $direccionArchivo = $this->DBS->consultaGral("SELECT Archivo FROM t_permisos_ausencia_rh WHERE Id='".$datosPermiso['idPermiso']."'");
         $nombreJefe = $this->DBS->consultaGral('SELECT CONCAT(trp.Nombres," ",trp.ApPaterno," ",trp.ApMaterno) AS Nombre FROM cat_v3_usuarios AS cu 
                 INNER JOIN t_rh_personal AS trp ON cu.Id=trp.Id WHERE cu.IdPerfil="' .$datosPermiso['idPerfil']. '"');
@@ -253,7 +247,7 @@ class Autorizar_permisos extends General{
         $this->pdf->SetXY(150, 2);
         $this->pdf->SetFillColor(255, 255, 255);
         $this->pdf->Cell(50, 20, '', 0, 0, 'C', True);
-        if ($datosFirmas['IdRechazo'] != ""){
+        if ($datosFirmas['MotivoRechazo'] != ""){
             $this->pdf->SetXY(25, 320);
             $this->pdf->SetFont('Arial','B',35);
             $this->pdf->SetTextColor(254,159,159);
@@ -274,7 +268,7 @@ class Autorizar_permisos extends General{
 //                $this->pdf->Cell(0, 0, utf8_decode($nombreJefe[0]['Nombre']));
                 $this->pdf->SetXY(110, 379);
                 $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
-                if ($datosFirmas['IdRechazo'] != ""){
+                if ($datosFirmas['MotivoRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
                     $this->pdf->SetXY(15, 367);
                     $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
@@ -285,7 +279,7 @@ class Autorizar_permisos extends General{
 //                $this->pdf->Cell(0, 0, utf8_decode($nombreJefe[0]['Nombre']));
                 $this->pdf->SetXY(150, 379);
                 $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
-                if ($datosFirmas['IdRechazo'] != ""){
+                if ($datosFirmas['MotivoRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
                     $this->pdf->SetXY(15, 367);
                     $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
@@ -296,7 +290,7 @@ class Autorizar_permisos extends General{
 //                $this->pdf->Cell(0, 0, utf8_decode($nombreJefe[0]['Nombre']));
                 $this->pdf->SetXY(55, 379);
                 $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
-                if ($datosFirmas['IdRechazo'] != ""){
+                if ($datosFirmas['MotivoRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
                     $this->pdf->SetXY(15, 367);
                     $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
