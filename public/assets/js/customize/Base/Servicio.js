@@ -451,7 +451,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
                 $('#btnModalConfirmar').addClass('hidden');
                 $('#btnModalConfirmar').off('click');
                 _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
-                _this.validarCamposFirma(ticket, servicio, true, true, '4');
+                _this.validarCamposFirma(ticket, servicio, true, true, '5');
 //                    } else {
 //                        _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
 //                    }

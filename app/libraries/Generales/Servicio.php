@@ -1796,7 +1796,7 @@ class Servicio extends General {
                 }
             } else {
                 $this->DBS->actualizarServicio('t_servicios_ticket', array(
-                    'IdEstatus' => $datos['status'],
+                    'IdEstatus' => $datos['estatus'],
                     'FechaConclusion' => $fecha
                         ), array('Id' => $datos['servicio'])
                 );
@@ -1859,7 +1859,7 @@ class Servicio extends General {
                 }
             } else {
                 $this->DBS->actualizarServicio('t_servicios_ticket', array(
-                    'IdEstatus' => $datos['status'],
+                    'IdEstatus' => $datos['estatus'],
                     'FechaConclusion' => $fecha
                         ), array('Id' => $datos['servicio'])
                 );
@@ -2791,7 +2791,10 @@ class Servicio extends General {
 
         if ($consulta) {
             $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-            $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
+
+            if ($folio[0]['Folio'] !== NULL && $folio[0]['Folio'] !== '0') {
+                $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
+            }
 
             if (isset($informacionSD->SHORTDESCRIPTION)) {
                 $detallesSD = $informacionSD->SHORTDESCRIPTION;
