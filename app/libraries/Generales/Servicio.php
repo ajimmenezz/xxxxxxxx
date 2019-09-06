@@ -1309,7 +1309,7 @@ class Servicio extends General {
         if (empty($generales)) {
             $generales[0] = 'Sin Información';
         }
-
+        $detallesSD = 'Sin Información';
         $correctivosDiagnostico = $this->InformacionServicios->consultaCorrectivosDiagnostico($servicio);
 
         if (empty($correctivosDiagnostico)) {
@@ -1465,17 +1465,13 @@ class Servicio extends General {
         if (!empty($generalesSolicitud['folio'])) {
             if ($generalesSolicitud['folio'] !== '' || $generalesSolicitud['folio'] !== '0') {
                 $key = $this->InformacionServicios->getApiKeyByUser($generalesSolicitud['atiende']);
-                $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $generalesSolicitud['folio']);
-                if (isset($informacionSD->SHORTDESCRIPTION)) {
-                    $detallesSD = $informacionSD->SHORTDESCRIPTION;
-                } else {
-                    $detallesSD = 'Sin Información';
+                if (!empty($key)) {
+                    $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $generalesSolicitud['folio']);
+                    if (isset($informacionSD->SHORTDESCRIPTION)) {
+                        $detallesSD = $informacionSD->SHORTDESCRIPTION;
+                    }
                 }
-            } else {
-                $detallesSD = 'Sin Información';
             }
-        } else {
-            $detallesSD = 'Sin Información';
         }
 
         $data = [
