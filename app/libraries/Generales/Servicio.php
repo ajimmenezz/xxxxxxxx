@@ -1306,6 +1306,8 @@ class Servicio extends General {
         $sucursal = $this->DBS->getServicios('SELECT sucursal(IdSucursal) AS Sucursal FROM t_servicios_ticket WHERE Id = "' . $servicio . '"');
         $generales = $this->InformacionServicios->consultaInformacionCorrectivo($servicio);
         $idSolicitud = $this->DBS->consultaGeneral('SELECT IdSolicitud FROM t_servicios_ticket WHERE Id = "' . $servicio . '"');
+        $detallesSD = 'Sin Información';
+
         if (empty($generales)) {
             $generales[0] = 'Sin Información';
         }
@@ -1465,17 +1467,14 @@ class Servicio extends General {
         if (!empty($generalesSolicitud['folio'])) {
             if ($generalesSolicitud['folio'] !== '' || $generalesSolicitud['folio'] !== '0') {
                 $key = $this->InformacionServicios->getApiKeyByUser($generalesSolicitud['atiende']);
-                $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $generalesSolicitud['folio']);
-                if (isset($informacionSD->SHORTDESCRIPTION)) {
-                    $detallesSD = $informacionSD->SHORTDESCRIPTION;
-                } else {
-                    $detallesSD = 'Sin Información';
+
+                if (!empty($key)) {
+                    $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $generalesSolicitud['folio']);
+                    if (isset($informacionSD->SHORTDESCRIPTION)) {
+                        $detallesSD = $informacionSD->SHORTDESCRIPTION;
+                    }
                 }
-            } else {
-                $detallesSD = 'Sin Información';
             }
-        } else {
-            $detallesSD = 'Sin Información';
         }
 
         $data = [
