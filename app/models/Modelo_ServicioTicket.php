@@ -940,7 +940,7 @@ class Modelo_ServicioTicket extends Modelo_Base {
         if (!empty($resultado)) {
             return TRUE;
         } else {
-            throw new \Exception('Error con la Base de Datos.');
+            return FALSE;
         }
     }
 
