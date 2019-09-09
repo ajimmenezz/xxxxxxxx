@@ -2432,11 +2432,14 @@ class Seguimientos extends General {
                 if ($folio[0]['Folio'] !== '') {
                     if ($folio[0]['Folio'] !== '0') {
                         $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-                        $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
 
-                        if (!isset($datosSD->operation->result->status)) {
-                            if ($datosSD->STATUS !== 'Completado') {
-                                $this->ServiceDesk->cambiarEstatusServiceDesk($key, $estatus, $folio[0]['Folio']);
+                        if (!empty($key)) {
+                            $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
+
+                            if (!isset($datosSD->operation->result->status)) {
+                                if ($datosSD->STATUS !== 'Completado') {
+                                    $this->ServiceDesk->cambiarEstatusServiceDesk($key, $estatus, $folio[0]['Folio']);
+                                }
                             }
                         }
                     }
