@@ -1047,7 +1047,7 @@ class ServiciosTicket extends General {
                                 $evidencias = explode(',', $value['UrlEntrega']);
                                 foreach ($evidencias as $key => $url) {
                                     $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
-                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
+                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion' target='_blank'>Evidencia" . ( ++$key) . "</a></div>";
                                 }
                             } else if ($value['IdTipoEnvio'] === '2' || $value['IdTipoEnvio'] === '3') {
 
@@ -1060,7 +1060,7 @@ class ServiciosTicket extends General {
                                 $evidencias = explode(',', $value['UrlEnvio']);
                                 foreach ($evidencias as $key => $url) {
                                     $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
-                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
+                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion' target='_blank'>Evidencia" . ( ++$key) . "</a></div>";
                                 }
                                 $html .= '<div>Información de la Entrega : </div>';
                                 $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Fecha y Hora Entrega: ' . $value['FechaEnvio'] . '</div>';
@@ -1069,7 +1069,7 @@ class ServiciosTicket extends General {
                                 $evidenciasEntrega = explode(',', $value['UrlEntrega']);
                                 foreach ($evidenciasEntrega as $key => $url) {
                                     $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
-                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
+                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion' target='_blank'>Evidencia" . ( ++$key) . "</a></div>";
                                 }
                             }
                         }
@@ -1082,13 +1082,11 @@ class ServiciosTicket extends General {
                             $evidencias = explode(',', $value['UrlRecoleccion']);
                             foreach ($evidencias as $key => $url) {
                                 $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
-                                $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
+                                $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion' target='_blank'>Evidencia" . ( ++$key) . "</a></div>";
                             }
                         }
                     }
-                    $resolucionVieja = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $datosServicio['Folio']);
-                    $html = $html . '<br><br>' . $resolucionVieja->operation->Details->RESOLUTION;
-                    $respuesta = $this->ServiceDesk->resolucionFolioSD($datosServicio['Folio'], '', $usuario['SDKey'], $html);
+                    $this->InformacionServicios->setNoteAndWorkLog(array('key' => $usuario['SDKey'], 'folio' => $datosServicio['Folio'], 'html' => $html));
                 }
                 $data['tituloMensaje'] = 'Servicio Concluido';
                 $data['mensaje'] = 'Se concluyó el servicio con éxito.';
