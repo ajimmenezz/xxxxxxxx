@@ -259,6 +259,7 @@
                 break;
             case '3':
                 if ($returnArrayProblemasServicio['garantiaRespaldo'][0]['EsRespaldo'] === '1' && $returnArrayProblemasServicio['garantiaRespaldo'][0]['SolicitaEquipo'] === '0') {
+                    if(!empty($returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'])){
                     ?>
                     <div class="row">
                         <div class="col-md-12 col-xs-12">
@@ -298,6 +299,7 @@
                     </div>
                     <!-- Termina Firma -->
                     <?php
+                    }
                 }
                 if ($returnArrayProblemasServicio['garantiaRespaldo'][0]['EsRespaldo'] === '0' && $returnArrayProblemasServicio['garantiaRespaldo'][0]['SolicitaEquipo'] === '0') {
                     ?>
