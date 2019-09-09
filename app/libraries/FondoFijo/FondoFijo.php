@@ -200,7 +200,8 @@ class FondoFijo extends General
                 'tiposCuenta' => $this->getTiposCuentaXUsuario($datos['id']),
                 'montos' => $this->getMontosUsuario($datos['id']),
                 'usuario' => $datos,
-                'depositos' => $this->DB->getDepositos($datos['id'])
+                'depositos' => $this->DB->getDepositos($datos['id']),
+                'comprobaciones' => $this->DB->getComprobaciones($datos['id'])
             ];
 
             return [
@@ -426,10 +427,15 @@ class FondoFijo extends General
             $rolAutoriza = 1;
         }
 
+        $rolTesoreria = 0;
+        if (isset($datos['tesoreria']) && $datos['tesoreria'] == 1) {
+            $rolTesoreria = 1;
+        }
 
         $datos = [
             'generales' => $this->DB->getDetallesFondoFijoXId($datos['id'])[0],
-            'rolAutoriza' => $rolAutoriza
+            'rolAutoriza' => $rolAutoriza,
+            'rolTesoreria' => $rolTesoreria
         ];
 
         return [

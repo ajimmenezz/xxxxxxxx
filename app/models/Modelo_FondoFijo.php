@@ -449,6 +449,23 @@ class Modelo_FondoFijo extends Modelo_Base
         order by Id desc");
         return $consulta;
     }
+    
+    public function getComprobaciones(int $idUsuario)
+    {
+        $consulta = $this->consulta("select 
+        tfm.Id,
+        (select Nombre from cat_v3_fondofijo_tipos_cuenta where Id = tfm.IdTipoCuenta) as TipoCuenta,
+        (select Nombre from cat_v3_comprobacion_conceptos where Id = tfm.IdConcepto) as Concepto,
+        ABS(tfm.Monto) as Monto,
+        estatus(tfm.IdEstatus) as Estatus,
+        tfm.FechaRegistro,
+        tfm.FechaAutorizacion
+        from t_fondofijo_movimientos tfm
+        where tfm.IdUsuarioFondoFijo = '" . $idUsuario . "'
+        and tfm.IdTipoMovimiento = 7
+        and tfm.FechaRegistro >= DATE_SUB(now(),INTERVAL 1 MONTH)");
+        return $consulta;
+    }
 
     public function getConceptosXTipoCuenta(int $tipo)
     {
