@@ -18,7 +18,7 @@ class PDF extends \FPDF {
         if (!file_exists($this->carpeta)) {
             mkdir($this->carpeta, 0777, true);
         }
-        return $this->carpeta .= '/' . $archivo . '.pdf';
+        return $this->carpeta .=  $archivo . '.pdf';
     }
 
     public function Header() {

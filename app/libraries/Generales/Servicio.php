@@ -26,6 +26,7 @@ class Servicio extends General {
     private $ServiceDesk;
     private $SeguimientoPoliza;
     private $InformacionServicios;
+    private $Instalaciones;
     private $MSP;
 
     public function __construct() {
@@ -44,6 +45,7 @@ class Servicio extends General {
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();
         $this->ServiceDesk = \Librerias\WebServices\ServiceDesk::factory();
         $this->SeguimientoPoliza = \Librerias\Poliza\Seguimientos::factory();
+        $this->Instalaciones = \Librerias\Instalaciones\Instalaciones::factory();
         $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
 
@@ -3017,6 +3019,7 @@ class Servicio extends General {
     }
 
     public function guardarVueltaAsociadosSinFirma(array $datos) {
+        $host = $_SERVER['SERVER_NAME'];
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
         $folio = $this->DBS->consultaServicio($datos['servicio']);
@@ -3031,16 +3034,25 @@ class Servicio extends General {
             'FechaEstatus' => $fecha
                 )
         );
-        $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
-        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-        $host = $_SERVER['SERVER_NAME'];
 
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $infoServicio = $this->getInformacionServicio($datos['servicio']);
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
+        if ($infoServicio[0]['IdTipoServicio'] === '45') {
+            $linkPdf['link'] = $this->Instalaciones->exportar45($datos['servicio']);
+
+            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                $infoServicio = $this->getInformacionServicio($datos['servicio']);
+                $path = 'https://siccob.solutions' . $linkPdf['link'];
+            } else {
+                $path = 'http://' . $host . $linkPdf['link'];
+            }
         } else {
-            $path = 'http://' . $host . '/' . $linkPdf['link'];
+            $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
+            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                $infoServicio = $this->getInformacionServicio($datos['servicio']);
+                $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
+            } else {
+                $path = 'http://' . $host . '/' . $linkPdf['link'];
+            }
         }
 
         $consulta = $this->DBS->actualizarServicio('t_facturacion_outsourcing', array(

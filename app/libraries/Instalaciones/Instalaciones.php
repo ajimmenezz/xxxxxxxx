@@ -693,9 +693,7 @@ class Instalaciones extends General
         ];
     }
 
-
-
-    private function exportar45(int $servicio)
+    public function exportar45(int $servicio)
     {
         $generales = $this->DB->getGeneralesServicio($servicio)[0];
         $instalados = $this->DB->getEquiposInstaladosLexmark($servicio)['result'];
