@@ -2895,9 +2895,14 @@ class Servicio extends General {
             </div>';
 
         $key = $this->InformacionServicios->getApiKeyByUser($generalesSolicitud[0]['Atiende']);
-        $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
-        if (isset($informacionSD->SHORTDESCRIPTION)) {
-            $detallesSD = $informacionSD->SHORTDESCRIPTION;
+
+        if (!empty($key)) {
+            $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
+            if (isset($informacionSD->SHORTDESCRIPTION)) {
+                $detallesSD = $informacionSD->SHORTDESCRIPTION;
+            } else {
+                $detallesSD = '';
+            }
         } else {
             $detallesSD = '';
         }
