@@ -17,9 +17,10 @@
         <!--Finalizando cabecera del panel-->
         <!--Empezando cuerpo del panel-->
         <div class="panel-body">
-            Key <input id="keySD" type="text" />
-            Folio <input id="folioSD" type="text" />
-            <button  id="btn-solicitud-sd">Solicitar</button>
+            Id Vuelta <input id="idVueltaTester" type="text" />
+            Servicio <input id="servicioTester" type="text" />
+            Folio <input id="folioTester" type="text" />
+            <button  id="btn-pdfVuelta">Solicitar</button>
             <br /><br /><br />
             <pre>
                 <div id="respuesta">

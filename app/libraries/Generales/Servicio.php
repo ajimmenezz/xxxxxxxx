@@ -3019,9 +3019,7 @@ class Servicio extends General {
     }
 
     public function guardarVueltaAsociadosSinFirma(array $datos) {
-        $host = $_SERVER['SERVER_NAME'];
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
         $folio = $this->DBS->consultaServicio($datos['servicio']);
         $vuelta = $this->crearVueltaAsociado($folio[0]['Folio'], $datos['servicio']);
         $idFacturacionOutSourcing = $this->DBS->setServicioId('t_facturacion_outsourcing', array(
@@ -3034,19 +3032,33 @@ class Servicio extends General {
             'FechaEstatus' => $fecha
                 )
         );
+
+        $datos['idFacturacionOutSourcing'] = $idFacturacionOutSourcing;
+        $datos['folio'] = $folio[0]['Folio'];
+        $consulta = $this->crearPdfVuelta($datos);
+
+        if ($consulta) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function crearPdfVuelta(array $datos) {
+        $host = $_SERVER['SERVER_NAME'];
+        $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
 
         if ($infoServicio[0]['IdTipoServicio'] === '45') {
             $linkPdf['link'] = $this->Instalaciones->exportar45($datos['servicio']);
 
             if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-                $infoServicio = $this->getInformacionServicio($datos['servicio']);
                 $path = 'https://siccob.solutions' . $linkPdf['link'];
             } else {
                 $path = 'http://' . $host . $linkPdf['link'];
             }
         } else {
-            $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
+            $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $datos['folio']), $fechaAsociado);
             if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                 $infoServicio = $this->getInformacionServicio($datos['servicio']);
                 $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
@@ -3057,14 +3069,10 @@ class Servicio extends General {
 
         $consulta = $this->DBS->actualizarServicio('t_facturacion_outsourcing', array(
             'Archivo' => $path,
-                ), array('Id' => $idFacturacionOutSourcing)
+                ), array('Id' => $datos['idFacturacionOutSourcing'])
         );
 
-        if ($consulta) {
-            return TRUE;
-        } else {
-            return FALSE;
-        }
+        return $consulta;
     }
 
 }
