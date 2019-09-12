@@ -424,7 +424,7 @@ class Modelo_Solicitud extends Modelo_Base {
                                          Folio IS NOT NULL
                                     AND Folio != '0'
                                     AND IdEstatus = '1'
-                                    LIMIT 0, 10");
+                                    LIMIT 0, 100");
         if (!empty($consulta)) {
             return $consulta;
         } else {

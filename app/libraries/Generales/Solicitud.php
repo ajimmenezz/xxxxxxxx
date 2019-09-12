@@ -1627,8 +1627,7 @@ class Solicitud extends General {
                 $detallesSD = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $value['Folio']);
                 if ($detallesSD->STATUS === 'Cerrado' || $detallesSD->STATUS === 'Completado') {
                     $resolucion = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $value['Folio']);
-//                var_dump($resolucion->operation->Details->RESOLUTION);
-//                    
+                    
                     if (!empty($resolucion->operation->Details->RESOLUTION)) {
                         $textoResolucion = $resolucion->operation->Details->RESOLUTION;
                     } else {
@@ -1642,7 +1641,8 @@ class Solicitud extends General {
                         'Nota' => $textoResolucion,
                         'Fecha' => $fecha));
                     
-                    $textoReporte = 'Folio: ' . $value['Folio'] . ' Solicitud: ' . $value['Id'] . 'Fecha: ' . $fecha . ' Resolución: ' . $textoResolucion;
+                    $textoReporte = 'Folio: ' . $value['Folio'] . ' Solicitud: ' . $value['Id'] . ' Fecha: ' . $fecha . ' Resolución: ' . $textoResolucion;
+                    
                     $this->crearReporteSolicitudesConcluidas($textoReporte);
                     
                     $this->DBS->cambiarEstatusSolicitud(array('IdEstatus' => '4'), array('Id' => $value['Id']));
@@ -1656,6 +1656,7 @@ class Solicitud extends General {
     private function crearReporteSolicitudesConcluidas(string $contenido) {
         if (file_exists("./storage/Archivos/ReporteSolicitudesConcluidos/SolicitudesConcluidas.txt")) {
             $archivo = fopen("./storage/Archivos/ReporteSolicitudesConcluidos/SolicitudesConcluidas.txt", "a");
+            fputs($archivo,chr(13).chr(10));
             fwrite($archivo, PHP_EOL . "$contenido");
             fclose($archivo);
         } else {
