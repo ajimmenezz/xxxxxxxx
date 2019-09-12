@@ -19,7 +19,7 @@ class Controller_Calendar extends Base {
         switch ($evento) {
             case 'datosPermiso':         
                 $fecha = mdate('%Y-%m-%d', now('America/Mexico_City'));
-                $resultado = $this->calendario->PermisosUsuario($this->input->post(),$fecha);
+                $resultado = $this->calendario->PermisosUsuario($fecha);
                 break;
             case 'cancelarPermiso':
                 var_dump($this->input->post());

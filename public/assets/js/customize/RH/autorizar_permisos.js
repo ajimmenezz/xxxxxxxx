@@ -29,12 +29,16 @@ $(function () {
         var informacionPermisoAusencia = $('#data-table-autorizar-permisos-ausencia').DataTable().row(this).data();
         var datosPermiso = {
             idPermiso: informacionPermisoAusencia[0],
+            estatus: informacionPermisoAusencia[8],
             perfilUsuario: perfilUsuario
         }
         evento.enviarEvento('EventoPermisosVacaciones/Autorizar', datosPermiso, '#panelAutorizarPermisos', function (respuesta) {
             if (respuesta) {
                 $('#contentRevisarPermiso').removeClass('hidden').empty().append(respuesta.formulario);
                 $('#contentPermisosPendientes').addClass('hidden');
+                if (datosPermiso.estatus !== 'Pendiente por Autorizar') {
+                    $('.ocultarPermiso').addClass('hidden');
+                }
                 $('#btnCancelarRevisarPermiso').on('click', function () {
                     $('#contentRevisarPermiso').empty().addClass('hidden');
                     $('#contentPermisosPendientes').removeClass('hidden');

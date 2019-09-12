@@ -10,7 +10,7 @@ class CalendarioPermisos extends Calendario{
             $this->calendario= new Calendario;
         }
         
-    public function PermisosUsuario(array $datos, string $fecha) {
+    public function PermisosUsuario(string $fecha) {
         $dia = $this->calcularDia($fecha);
         switch ($dia){
             case "Domingo":
@@ -49,7 +49,7 @@ class CalendarioPermisos extends Calendario{
         $fechaMinima=date("Y-m-d",strtotime($fecha."- ".$diasAntes." days"));
         $fechaMaxima=date("Y-m-d",strtotime($fecha."+ ".$dia." days"));
         
-        $res = $this->calendario->consultaPermisos($datos['id'],$fechaMinima, $fechaMaxima);
+        $res = $this->calendario->consultaPermisos($fechaMinima, $fechaMaxima);
         
         return $res;
     }

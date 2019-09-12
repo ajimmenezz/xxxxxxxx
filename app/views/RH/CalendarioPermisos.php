@@ -1,76 +1,101 @@
 <!-- Empezando #contenido -->
 <div id="contentCalendarioPermisos" class="content">
     <!-- Empezando titulo de la pagina -->
-    <h1 class="page-header">Calendario Permisos</h1>
+    <h1 class="page-header">Calendario de Permisos</h1>
     <!-- Finalizando titulo de la pagina -->
-    <!-- Empezando panel Autorizacion Permisos-->
+    <!-- Empezando panel Calendario Permisos-->
     <div id="panelCalendarioPermisos" class="panel panel-inverse">
         <!--Empezando cabecera del panel-->
         <div class="panel-heading">
-            <h4 class="panel-title"><strong> Calendario Permisos</h4>
-            
+            <h4 class="panel-title">Calendario</h4>
         </div>
-        <div class="tab-content">
-            <div id="calendar" class=" calendar"></div>
+        <!--Finalizando cabecera del panel-->
+        <!--Empezando contenido del panel-->
+        <div class="panel-body">
+            <div id="calendar"></div>
         </div>
+        <!--Finalizando contenido del panel-->
     </div>
-   <?php 
-   $_SESSION['Id'];
-    echo " <span hidden id='spanID'>".$_SESSION['Id']."</span>";
-   ?>
-    <!-- Finalizando panel Autorizacion Permisos-->   
-
-</div>
-<!-- Modal -->
-<div class="modal fade" id="modalDatosPermiso" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header bg-black">
-        <h5 class="modal-title text-white" id="exampleModalLabel">Información del permiso
-        <button type="button" class="close " data-dismiss="modal" aria-label="Close" style="color: #000">
-          <span class="text-white" aria-hidden="true" style="color:#000">&times;</span>
-        </button>
-        </h5>
-        
-      </div>
-      <div class="modal-body text-center">
-        <div id="idPermiso" hidden></div>
-        <div id="idUsr" hidden></div>
-
-        <div ><h5>Usuario: </h5></div>
-        <input type="text" class="form-control text-center" readonly="readonly" name="" id="usr">
-        <div> <h5>Estatus:</h5> </div>
-        <input type="text" class="form-control text-center" readonly="readonly" name="" id="sts">
-        <div ><h5>Motivo de ausencia:</h5></div>
-        <input type="text" class="form-control text-center" readonly="readonly" name="" id="aus">
-        <div><h5>Fecha de permiso: </h5></div>
-        <input type="text" class="form-control text-center" readonly="readonly" name="" id="fed">
-        
-        <div id="feh"></div>
-        <div id="hoe"></div>
-        <div id="hos"></div>
-        
-        <div ><h5>Motivo : </h5></div>
-        <input type="text" class="form-control text-center" readonly="readonly" name="" id="jus">
-        <div ><h5>Tipo motivo: </h5><span id=""></span></div>
-        <input type="text" class="form-control text-center" readonly="readonly" name="" id="mot">
-        <div id="idus" hidden></div>
-        <div id="idper" hidden></div>
-        <div id="arc" hidden></div>
-
-        <div id="datosAutorizacion" ></div>
-
-      </div>
-      <div class="modal-footer">
-              <span id="BotonesAcciones"></span>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" data-toggle="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
+    <!-- Finalizando panel Calendario Permisos-->
 </div>
 <!-- Finalizando #contenido -->
-<script src="../assets/js/customize/calendario/calendar.js"></script>
-<script src="../assets/js/customize/calendario/es.js"></script>
+
+<!-- Empezando Modal datos del permiso -->
+<div id="modalDatosPermiso" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Información del permiso</h4>
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <!--Empieza seccion de evidencia-->
+                <div class="panel" data-sortable-id="ui-media-object-3">
+                    <div class="panel-body">
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                <label>Usuario: <label id="nombreUsuario" class="semi-bold"></label></label>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Perfil: <label id="perfilUsuario" class="semi-bold"></label></label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <h4 class="semi-bold">Información del Permiso</h4>
+                            <div class="col-md-4">
+                                <label>Tipo de ausencia: <label id="tipoAusencia" class="semi-bold"></label></label>
+                            </div>
+                            <div class="col-md-8">
+                                <label>Motivo de ausencia: <label id="motivoAusencia" class="semi-bold"></label></label>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Fecha: <label id="" class="semi-bold">2019-05-09</label></label>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Hora: <label id="" class="semi-bold">05:00:00</label></label>
+                            </div>
+                            <div class="col-md-5">
+                                <label>Estado: <label id="estatusAusencia" class="semi-bold"></label></label>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Descripción: </label>
+                                    <textarea id="descripcionAusencia" type="text" class="form-control" rows="3" disabled></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <h4 class="semi-bold">Autorizaciones</h4>
+                            <div class="col-md-12">
+                                <i class="fa fa-circle text-success"></i> <label>Jefe: <label id="autorizacionJefe" class="semi-bold"></label></label>
+                            </div>
+                            <div class="col-md-12">
+                                <i class="fa fa-circle text-danger"></i> <label>Recursos Humanos: <label id="autorizacionRecursosHumanos" class="semi-bold"></label></label>
+                            </div>
+                            <div class="col-md-12">
+                                <i class="fa fa-circle text-danger"></i> <label>Contabilidad: <label id="autorizacionContabilidad" class="semi-bold"></label></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Finaliza seccion de evidencia-->
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnCerrarAM" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCerrarAM" class="btn btn-sm btn-primary"><i class="fa fa-sign-out"></i> Aceptar y Concluir</a>
+                <a id="btnCerrarAM" class="btn btn-sm btn-danger"><i class="fa fa-sign-out fa-rotate-180"></i> Rechazar</a>
+                <a id="btnCerrarAM" class="btn btn-sm btn-warning"><i class="fa fa-exclamation-circle"></i> Solicitar Cancelación</a>
+                <a id="btnCerrarAM" class="btn btn-sm btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>
+<!-- Finalizando Modal datos del permiso -->
 
 <!-- Finalizando panel Revisar Permiso-->
 <div id="modalRechazo" class="modal modal-message fade">
@@ -87,7 +112,7 @@
                     <label>Motivo de rechazo</label>
                     <select id="motivoRechazo" class="form-control efectoDescuento" style="width: 100%">
                     </select>
-                   
+
                 </div>
             </div>
             <!--Finaliza cuerpo del modal-->

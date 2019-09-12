@@ -24,15 +24,17 @@ class Autorizar_permisos extends General{
             case '21':
             case '37':
                 return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, nombreUsuario(cu.Id) as Nombre, tpar.IdTipoAusencia, 
-                            tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida
+                            tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
+                            tpar.IdEstatus, tpar.Archivo, tpar.IdUsuarioJefe, tpar.IdUsuarioRH, tpar.IdUsuarioContabilidad, tpar.IdUsuarioDireccion
                             from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
-                            where tpar.IdEstatus = 9 and cu.Id <> '.$idUsuario);
+                            where DATE(FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() and cu.Id <> '.$idUsuario);
                 break;
             default:
                 return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, cu.Nombre, tpar.IdTipoAusencia, 
-                    tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida
+                    tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
+                    tpar.IdEstatus, tpar.Archivo, tpar.IdUsuarioJefe, tpar.IdUsuarioRH, tpar.IdUsuarioContabilidad, tpar.IdUsuarioDireccion
                     from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
-                    where tpar.IdEstatus = 9 and ((cu.IdJefe = '.$idUsuario.') and tpar.IdUsuarioJefe is null) 
+                    where DATE(FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() and ((cu.IdJefe = '.$idUsuario.') and tpar.IdUsuarioJefe is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 21 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 37 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null and tpar.IdUsuarioContabilidad is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 44 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null 

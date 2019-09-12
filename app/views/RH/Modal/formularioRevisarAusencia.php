@@ -17,23 +17,23 @@
             <label id="btnVerPDFAutorizar" class="btn btn-warning btn-xs">
                 <i class="fa fa"></i> Ver PDF
             </label>
-            <label id="btnCancelarPermiso" class="btn btn-danger btn-xs" href="#modalRechazo" data-toggle="modal">
+            <label id="btnCancelarPermiso" class="btn btn-danger btn-xs ocultarPermiso" href="#modalRechazo" data-toggle="modal">
                 <i class="fa fa"></i> Rechazar
             </label>
             <?php
             if ($perfilUsuario != 44) {
-                echo '<label id="btnAutorizarPermiso" class="btn btn-success btn-xs">
+                echo '<label id="btnAutorizarPermiso" class="btn btn-success btn-xs ocultarPermiso">
                     <i class="fa fa"></i> Autorizar
                 </label>&nbsp';
             }
             $fechaDoc = explode(" ", $datosAusencia[0]["FechaDocumento"]);
             if ($datosAusencia[0]["FechaAusenciaDesde"] > $fechaDoc[0] && $datosAusencia[0]['IdMotivoAusencia'] != 3 && $datosAusencia[0]['IdMotivoAusencia'] != 4) {
-                echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs">
+                echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
                     <i class="fa fa"></i>Autorizar y Concluir
                 </label>';
             } else {
                 if ($perfilUsuario == 37 || $perfilUsuario == 44) {
-                    echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs">
+                    echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
                         <i class="fa fa"></i>Autorizar y Concluir
                     </label>';
                 }
