@@ -22,8 +22,6 @@ $(function () {
         var folio = $('#folioSD').val();
         var data = {key: key, folio: folio};
         evento.enviarEvento('Tester/informacionSD', data, '#paneltester', function (respuesta) {
-//            $('#respuesta').empty().append(respuesta.SD.operation.result.message);
-            console.log(respuesta);
             $('#respuesta').empty().append(respuesta);
         });
     });
@@ -42,4 +40,13 @@ $(function () {
         });
     });
 
+    $('#btn-SolicitudesAbiertas').on('click', function () {
+        evento.enviarEvento('Tester/concluirSolicitudesAbiertas', {}, '#paneltesterSolicitudesAbiertas', function (respuesta) {
+            if (respuesta === 1) {
+                $('#respuesta').empty().append('Correcto');
+            } else {
+                $('#respuesta').empty().append('No se modifico');
+            }
+        });
+    });
 });

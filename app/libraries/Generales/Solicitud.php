@@ -1528,7 +1528,7 @@ class Solicitud extends General {
                         $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $datos['folio']);
                     }
                 }
-                
+
                 $datosSD = $this->InformacionServicios->datosSD($datos['solicitud']);
                 return $datosSD;
             }
@@ -1615,6 +1615,54 @@ class Solicitud extends General {
 
     public function sucursalesCliente(array $datos) {
         return $this->DBS->consultaGral('SELECT * FROM cat_v3_sucursales WHERE IdCliente = "' . $datos['cliente'] . '" ORDER BY Nombre ASC');
+    }
+
+    public function concluirSolicitudesAbiertas() {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $solicitudes = $this->DBS->getFolioSolicitudesAbiertas();
+
+        foreach ($solicitudes as $key => $value) {
+            try {
+                $detallesSD = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $value['Folio']);
+                if ($detallesSD->STATUS === 'Cerrado' || $detallesSD->STATUS === 'Completado') {
+                    $resolucion = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $value['Folio']);
+//                var_dump($resolucion->operation->Details->RESOLUTION);
+//                    
+                    if (!empty($resolucion->operation->Details->RESOLUTION)) {
+                        $textoResolucion = $resolucion->operation->Details->RESOLUTION;
+                    } else {
+                        $textoResolucion = 'Se concluye solicitud ya que esta concluido en SD';
+                    }
+
+                    $this->DBS->setNotasSolicitud(array(
+                        'IdSolicitud' => $value['Id'],
+                        'IdEstatus' => '4',
+                        'IdUsuario' => $usuario['Id'],
+                        'Nota' => $textoResolucion,
+                        'Fecha' => $fecha));
+                    
+                    $textoReporte = 'Folio: ' . $value['Folio'] . ' Solicitud: ' . $value['Id'] . 'Fecha: ' . $fecha . ' Resolución: ' . $textoResolucion;
+                    $this->crearReporteSolicitudesConcluidas($textoReporte);
+                    
+                    $this->DBS->cambiarEstatusSolicitud(array('IdEstatus' => '4'), array('Id' => $value['Id']));
+                }
+            } catch (\Exception $ex) {
+                
+            }
+        }
+    }
+
+    private function crearReporteSolicitudesConcluidas(string $contenido) {
+        if (file_exists("./storage/Archivos/ReporteSolicitudesConcluidos/SolicitudesConcluidas.txt")) {
+            $archivo = fopen("./storage/Archivos/ReporteSolicitudesConcluidos/SolicitudesConcluidas.txt", "a");
+            fwrite($archivo, PHP_EOL . "$contenido");
+            fclose($archivo);
+        } else {
+            $archivo = fopen("./storage/Archivos/ReporteSolicitudesConcluidos/SolicitudesConcluidas.txt", "w");
+            fwrite($archivo, PHP_EOL . "$contenido");
+            fclose($archivo);
+        }
     }
 
 }

@@ -414,4 +414,27 @@ class Modelo_Solicitud extends Modelo_Base {
         }
     }
 
+    public function getFolioSolicitudesAbiertas() {
+        $consulta = $this->consulta("SELECT
+                                        Id,
+                                        Folio
+                                    FROM
+                                        t_solicitudes
+                                    WHERE
+                                         Folio IS NOT NULL
+                                    AND Folio != '0'
+                                    AND IdEstatus = '1'
+                                    LIMIT 0, 10");
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function cambiarEstatusSolicitud(array $datos, array $where) {
+        $consulta = $this->actualizar('t_solicitudes', $datos, $where);
+        return $consulta;
+    }
+
 }

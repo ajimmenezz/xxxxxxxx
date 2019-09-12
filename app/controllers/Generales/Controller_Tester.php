@@ -3,6 +3,7 @@
 use Controladores\Controller_Base as Base;
 use Librerias\WebServices\ServiceDesk as SD;
 use Librerias\Generales\Servicio as Servicio;
+use Librerias\Generales\Solicitud as Solicitud;
 
 /**
  * Description of Controller_Solicitud
@@ -13,6 +14,7 @@ class Controller_Tester extends Base {
 
     private $Servicio;
     private $SD;
+    private $Solicitud;
 
     public function __construct() {
         parent::__construct();
@@ -21,6 +23,7 @@ class Controller_Tester extends Base {
     public function manejarEvento(string $evento = null) {
         $this->SD = new SD();
         $this->Servicio = new Servicio();
+        $this->Solicitud = new Solicitud();
         switch ($evento) {
             case 'informacionSD':
                 try {
@@ -44,6 +47,10 @@ class Controller_Tester extends Base {
             case 'generarPdfVuelta':
                 $datos = $this->input->post();
                 $resultado = $this->Servicio->crearPdfVuelta($datos);
+                break;
+                break;
+            case 'concluirSolicitudesAbiertas':
+                $resultado = $this->Solicitud->concluirSolicitudesAbiertas();
                 break;
             default:
                 $resultado = FALSE;
