@@ -49,13 +49,15 @@ class Calendario {
                     container: 'body'
                 });
             },
-            eventClick: this.clickEventosAgenda()
+            eventClick: function (evento, jsEvento, objetoVista) {
+//                $("<div>").dialog({modal: true, title: evento.nombreUsuario, width: 350});
+//                $('#modalDatosPermiso').modal();
+            }
         });
     }
 
-    clickEventosAgenda(callback) {
-        console.log("click eventos");
-        return callback;
+    clickEventosAgenda(infoEvento) {
+        console.log(infoEvento);
     }
 
     cargarInformacionCalendario(informacionAgenda) {

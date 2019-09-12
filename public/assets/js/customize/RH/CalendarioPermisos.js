@@ -42,11 +42,10 @@ $(function () {
             permisos.push(listaTemporalPermisos)
         });
         calendario.cargarInformacionCalendario(permisos);
-        console.log(calendario);
-//        calendario.clickEventosAgenda(function (){
-//            console.log("click eventos");
-//        })
-        
+//        console.log(calendario);
+        calendario.clickEventosAgenda(function (){
+            console.log("click eventos");
+        })
     });
     
 //        //SE PINTA EL CALENDARIO
