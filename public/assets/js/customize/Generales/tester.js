@@ -42,11 +42,7 @@ $(function () {
 
     $('#btn-SolicitudesAbiertas').on('click', function () {
         evento.enviarEvento('Tester/concluirSolicitudesAbiertas', {}, '#paneltesterSolicitudesAbiertas', function (respuesta) {
-            if (respuesta === 1) {
-                $('#respuesta').empty().append('Correcto');
-            } else {
-                $('#respuesta').empty().append('No se modifico');
-            }
+            $('#respuesta').empty().append('Correcto');
         });
     });
 });
