@@ -15,12 +15,13 @@ $(function () {
 
     peticion.enviar('', 'CalendarioPermisos/datosPermiso', null, function (respuesta) {
         let listaTemporalPermisos = {}, titulo = '', puesto = '';
+
         $.each(respuesta, function (key, value) {
             titulo = value.Usuario.substring(0, 8) + "...";
             puesto = value.Perfil.substring(0, 9) + "...";
             listaTemporalPermisos = {
                 id: value.Id,
-                title: titulo+"\n"+puesto,
+                title: titulo + "\n" + puesto,
                 nombreUsuario: value.Usuario,
                 perfil: value.Perfil,
                 tipoAusencia: value.Ausencia,
@@ -30,7 +31,7 @@ $(function () {
                 horaEntrada: value.HoraEntrada,
                 horaSalida: value.HoraSalida,
                 estatus: value.Estatus,
-                description: value.Ausencia+": "+value.Descripcion,
+                description: value.Ausencia + ": " + value.Descripcion,
                 autorizacionJefe: value.AutorizacionJefe,
                 autorizacionRH: value.AutorizacionRH,
                 autorizacionContador: value.AutorizacionContabilidad,
@@ -42,12 +43,11 @@ $(function () {
             permisos.push(listaTemporalPermisos)
         });
         calendario.cargarInformacionCalendario(permisos);
-//        console.log(calendario);
-        calendario.clickEventosAgenda(function (){
+        calendario.setEventoClick(function () {
             console.log("click eventos");
-        })
+        });
     });
-    
+
 //        //SE PINTA EL CALENDARIO
 //        var handleCalendarDemo = function () {
 //

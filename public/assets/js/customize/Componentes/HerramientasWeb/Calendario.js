@@ -3,8 +3,9 @@ class Calendario {
     constructor(nombre) {
         this.nombre = nombre;
         this.objeto = $(`#${this.nombre}`);
+        this.callback = null;
+        this.calendar;
         this.iniciarCalendario();
-        this.callback;
     }
 
     iniciarCalendario() {
@@ -49,15 +50,19 @@ class Calendario {
                     container: 'body'
                 });
             },
-            eventClick: function (evento, jsEvento, objetoVista) {
+
+            eventClick: function (evento, jsEvento, objetoVista) {                
+                if (_this.callback !== null) {
+                    _this.callback();
+                }
 //                $("<div>").dialog({modal: true, title: evento.nombreUsuario, width: 350});
 //                $('#modalDatosPermiso').modal();
             }
         });
     }
 
-    clickEventosAgenda(infoEvento) {
-        console.log(infoEvento);
+    setEventoClick(callback) {
+        this.callback = callback;        
     }
 
     cargarInformacionCalendario(informacionAgenda) {
