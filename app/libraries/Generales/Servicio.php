@@ -1901,8 +1901,9 @@ class Servicio extends General {
             } else {
                 $linkExtraEquiposFaltante = '';
             }
+
             $textoUsuario = '<p><strong>Estimado(a) ' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la conclusión del servicio que realizo.</p>' . $linkPDF . $linkDetallesServicio . $descripcionConclusion;
-            $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), $titulo, $textoUsuario);
+            $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Se concluyo el servicio', $textoUsuario);
 
             $datosSolicita = $this->DBS->getServicios('SELECT
                                             (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = tst.Solicita) AS CorreoSolicita,
