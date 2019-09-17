@@ -14,12 +14,10 @@ class Calendario {
             header: {
                 left: 'title',
                 center: 'prev,today,next',
-                right: 'month agendaWeek'
+                right: ''
             },
             buttonText: {
-                today: 'Hoy',
-                month: 'Mes',
-                agendaWeek: 'Semana'
+                today: 'Hoy'
             },
             titleFormat: {
                 month: 'MMMM yyyy',
@@ -52,9 +50,9 @@ class Calendario {
             },
 
             eventClick: function (evento, jsEvento, objetoVista) {                
-                if (_this.callback !== null) {
-                    _this.callback();
-                }
+//                if (_this.callback !== null) {
+                    _this.callback(evento, jsEvento, objetoVista);
+//                }
 //                $("<div>").dialog({modal: true, title: evento.nombreUsuario, width: 350});
 //                $('#modalDatosPermiso').modal();
             }

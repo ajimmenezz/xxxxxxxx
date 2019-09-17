@@ -538,11 +538,4 @@ class Permisos_Vacaciones extends General {
         }
     }
 
-    public function obtenerDatos() {
-        $idUsuarioConsulta = $_SESSION['Id'];
-        $idPerfilUsuarioConsulta = $_SESSION['Id'];
-
-        return array('ID' => $idUsuarioConsulta, "Perfil" => $idPerfilUsuarioConsulta);
-    }
-
 }

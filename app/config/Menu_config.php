@@ -1429,15 +1429,24 @@ $config['RH'] = array(
         'css' => array(
         ),
         'pluginsCss' => array(
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
             'fullcalendar/fullcalendar/fullcalendar'
         ),
         'js' => array(
             'Base/Base',
+            'Componentes/Selects/Select',
+            'Componentes/Selects/SelectBasico',
             'RH/CalendarioPermisos',
             'Componentes/HerramientasWeb/Calendario',
             'Componentes/HerramientasWeb/Utileria'
         ),
         'pluginsJs' => array(
+            'select2/dist/js/select2.min',
+            'moment/moment-locales.min',
+            'moment/es',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
             'fullcalendar/fullcalendar/fullcalendar.min'
         ),
         'Permiso' => 'VRHPV'

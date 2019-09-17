@@ -2,17 +2,13 @@
 
 use Controladores\Controller_Base as Base;
 use Librerias\RH\CalendarioPermisos as Calendario;
-use Librerias\RH\Autorizar_permisos as autorizar;
 class Controller_Calendar extends Base {
 
     private $calendario;
-    private $autorizar;
 
     public function __construct() {
         parent::__construct();
         $this->calendario = new Calendario;
-        $this->autorizar = new autorizar;
-
     }
 
     public function manejarEvento(string $evento = null) {
@@ -21,9 +17,8 @@ class Controller_Calendar extends Base {
                 $fecha = mdate('%Y-%m-%d', now('America/Mexico_City'));
                 $resultado = $this->calendario->PermisosUsuario($fecha);
                 break;
-            case 'cancelarPermiso':
-                var_dump($this->input->post());
-               // $resultado = $this->autorizar->cancelarPermiso();
+            case 'peticionCancelar':
+                $resultado = $this->calendario->peticionCancelarPermiso($this->input->post());
                 break;
         }
         echo json_encode($resultado);
