@@ -1449,7 +1449,7 @@ $config['RH'] = array(
             'parsley/src/i18n/es',
             'fullcalendar/fullcalendar/fullcalendar.min'
         ),
-        'Permiso' => 'VRHPV'
+        'Permiso' => 'VCPP'
     ),
     'Catalogo-Perfil' => array(
         'liga' => 'Catálogos Perfil',

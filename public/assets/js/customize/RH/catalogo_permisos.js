@@ -93,6 +93,16 @@ $(function () {
         } else {
             $('#editarEstado').select2().val(2).trigger('change');
         }
+        if (typeof infoTabla[4] !== 'undefined') {
+            $('#posibleCancelacion').removeClass('hidden');
+            if (infoTabla[4] === 'Si') {
+                $('#editarEstadoCancelacion').select2().val(1).trigger('change');
+            } else {
+                $('#editarEstadoCancelacion').select2().val(0).trigger('change');
+            }
+        } else {
+            $('#posibleCancelacion').addClass('hidden');
+        }
         $('#btnAceptar').on('click', function () {
             if (evento.validarFormulario('#formEditarMotivo')) {
                 datos.id = infoTabla[0];
@@ -105,6 +115,13 @@ $(function () {
                 $(".selectEditarEstado").each(function () {
                     datos.flag = $(this).val();
                 });
+                if (typeof infoTabla[4] !== 'undefined') {
+                    $(".selectEditarEstadoCancelacion").each(function () {
+                        datos.cancelacion = $(this).val();
+                    });
+                } else {
+                    datos.cancelacion = '';
+                }
                 peticionBackend(ruta, datos);
             }
         });

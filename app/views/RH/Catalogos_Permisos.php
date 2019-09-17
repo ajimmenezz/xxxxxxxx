@@ -78,6 +78,7 @@
                                             <th class="all">Motivo</th>
                                             <th class="all">Observaciones</th>
                                             <th class="all">Estado</th>
+                                            <th class="all">Puede Cancelarse</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -91,6 +92,11 @@
                                                 echo '<th class="all flag">Habilitado</th>';
                                             } else {
                                                 echo '<th class="all flag">Deshabilitado</th>';
+                                            }
+                                            if ($value["Cancelacion"] == 1) {
+                                                echo '<th class="all flag">Si</th>';
+                                            } else {
+                                                echo '<th class="all flag">No</th>';
                                             }
                                         }
                                         ?>
@@ -287,12 +293,20 @@
                 <!--Empieza seccion de edición-->
                 <form id="formEditarMotivo" data-parsley-validate="true" enctype="multipart/form-data">
                     <div class="col-md-12">
-                        <div class="col-md-6 col-sm-6 col-xs-6">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label>Motivo</label>
                                 <input id="editarMotivo" type="text" class="inputEditarMotivo form-control" style="width: 100%" data-parsley-required="true"/>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Observaciones</label>
+                            <textarea id="editarObservaciones" class="inputEditarObservaciones form-control" rows="4" style="width: 100%" data-parsley-required="true"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
                         <div class="col-md-6 col-sm-6 col-xs-6">
                             <div class="form-group">
                                 <label>Estado</label>
@@ -302,11 +316,14 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Observaciones</label>
-                            <textarea id="editarObservaciones" class="inputEditarObservaciones form-control" rows="4" style="width: 100%" data-parsley-required="true"></textarea>
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div id="posibleCancelacion" class="form-group hidden">
+                                <label>Cancelación</label>
+                                <select id="editarEstadoCancelacion" class="selectEditarEstadoCancelacion form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="1">Si</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </form>
