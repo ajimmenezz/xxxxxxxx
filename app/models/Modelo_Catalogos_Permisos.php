@@ -28,7 +28,7 @@ class Modelo_Catalogos_Permisos extends Base {
     }
 
     public function actualizarRegistro(string $tabla, array $datos) {
-        if($datos['cancelacion'] !== ""){
+        if($tabla === "cat_v3_motivos_ausencia_personal"){
             $this->actualizar('UPDATE '.$tabla.
                             ' SET Nombre = "'.$datos['nombre'].'", 
                             Observaciones = "'.$datos['observaciones'].'", 
