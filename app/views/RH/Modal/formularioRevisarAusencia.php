@@ -17,23 +17,26 @@
             <label id="btnVerPDFAutorizar" class="btn btn-warning btn-xs">
                 <i class="fa fa"></i> Ver PDF
             </label>
-            <label id="btnCancelarPermiso" class="btn btn-danger btn-xs" href="#modalRechazo" data-toggle="modal">
+            <label id="btnCancelarPermiso" class="btn btn-danger btn-xs ocultarPermiso" href="#modalRechazo" data-toggle="modal">
                 <i class="fa fa"></i> Rechazar
+            </label>
+            <label id="btnPeticionCancelar" class="btn btn-danger btn-xs hidden" href="#modalCancelarPeticion" data-toggle="modal">
+                <i class="fa fa"></i> Cancelar
             </label>
             <?php
             if ($perfilUsuario != 44) {
-                echo '<label id="btnAutorizarPermiso" class="btn btn-success btn-xs">
+                echo '<label id="btnAutorizarPermiso" class="btn btn-success btn-xs ocultarPermiso">
                     <i class="fa fa"></i> Autorizar
                 </label>&nbsp';
             }
             $fechaDoc = explode(" ", $datosAusencia[0]["FechaDocumento"]);
             if ($datosAusencia[0]["FechaAusenciaDesde"] > $fechaDoc[0] && $datosAusencia[0]['IdMotivoAusencia'] != 3 && $datosAusencia[0]['IdMotivoAusencia'] != 4) {
-                echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs">
+                echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
                     <i class="fa fa"></i>Autorizar y Concluir
                 </label>';
             } else {
                 if ($perfilUsuario == 37 || $perfilUsuario == 44) {
-                    echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs">
+                    echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
                         <i class="fa fa"></i>Autorizar y Concluir
                     </label>';
                 }
@@ -56,7 +59,7 @@
                         <label>Fecha Documento</label>
                         <?php
                         echo
-                        '<input type="text" class="form-control" id="inputNombreRevisar" style="width: 100%" disabled value="' . $datosAusencia[0]["FechaDocumento"] . '"/>';
+                        '<input type="text" class="form-control" id="inputFechaDoc" style="width: 100%" disabled value="' . $datosAusencia[0]["FechaDocumento"] . '"/>';
                         ?>
                     </div>
                 </div>
@@ -111,40 +114,40 @@
                         <?php
                         switch ($datosAusencia[0]['IdMotivoAusencia']) {
                             case '1':
-                                echo '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="CONSULTA MEDICO IMSS"/>';
+                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA MEDICO IMSS"/>';
                                 break;
                             case '2':
-                                echo '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="CONSULTA DENTISTA IMSS"/>';
+                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA DENTISTA IMSS"/>';
                                 break;
                             case '3':
-                                echo '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="PERMISOS POR RAZONES DE TRABAJO EXTERNO"/>';
+                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="PERMISOS POR RAZONES DE TRABAJO EXTERNO"/>';
                                 break;
                             case '4':
-                                echo '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="PERMISOS POR CURSOS DE CAPACITACION"/>';
+                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="PERMISOS POR CURSOS DE CAPACITACION"/>';
                                 break;
                             case '5':
-                                echo '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="ASUNTOS PERSONALES"/>';
+                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="ASUNTOS PERSONALES"/>';
                                 break;
                             case '6':
-                                echo '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="CONSULTA MEDICO PARTICULAR"/>';
+                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA MEDICO PARTICULAR"/>';
                                 break;
                             case '7':
-                                echo '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="CONSULTA DENTISTA PARTICULAR"/>';
+                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA DENTISTA PARTICULAR"/>';
                                 break;
                             case '8':
-                                echo '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="INCAPACIDAD IMSS DEL TRABAJADOR"/>';
+                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="INCAPACIDAD IMSS DEL TRABAJADOR"/>';
                                 break;
                             case '9':
-                                echo '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="CONSULTA MEDICO O DENTISTA IMSS"/>';
+                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA MEDICO O DENTISTA IMSS"/>';
                                 break;
                             case '10':
-                                echo '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="ASUNTOS PERSONALES"/>';
+                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="ASUNTOS PERSONALES"/>';
                                 break;
                             case '11':
-                                echo '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="CONSULTA MEDICO PARTICULAR"/>';
+                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA MEDICO PARTICULAR"/>';
                                 break;
                             case '12':
-                                echo '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="CONSULTA DENTISTA PARTICULAR"/>';
+                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA DENTISTA PARTICULAR"/>';
                                 break;
                         }
                         ?>
@@ -316,6 +319,46 @@
             <div class="modal-footer text-center">
                 <a id="btnAceptarRechazo" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
                 <a id="btnCerrarAM" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>
+
+<!-- Empezando panel Cancelar Permiso-->
+<div id="modalCancelarPeticion" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <div class="form-group">
+                    <form id="motivoSolicitudCancelacion" class="margin-bottom-0" data-parsley-validate="true" enctype="multipart/form-data">
+                        <label>Motivo de Cancelación del permiso</label>
+                        <select id="motivoCancelarPermiso" class="form-control efectoDescuento" name="motivoRechazo" style="width: 100%" data-parsley-required="true">
+                            <option value="">Seleccionar...</option>
+                            <?php
+                            foreach ($tipoCancelacion as $value) {
+                                echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+                            }
+                            ?>
+                        </select>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mensajeCancelarAutorizacion"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptarCancelarPeticion" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCerrarCancelarPeticion" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
             </div>
             <!--Finaliza pie del modal-->
         </div>

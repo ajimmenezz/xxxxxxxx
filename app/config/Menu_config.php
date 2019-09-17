@@ -1434,20 +1434,32 @@ $config['RH'] = array(
         'Permiso' => 'VRHSE'
     ),
     'CalendarioPermisos' => array(
-        'liga' => 'CalendarioPermisos',
+        'liga' => 'Calendario Permisos',
         'icono' => 'fa fa-calendar',
-        'Url' => '/RH/CalendarioPermisos',/*Ruta de la vista a la que se dirigirá*/
-        'css' => array(),
+        'Url' => '/RH/CalendarioPermisos',
+        'css' => array(
+        ),
         'pluginsCss' => array(
-        'fullcalendar/fullcalendar/fullcalendar'
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley',
+            'fullcalendar/fullcalendar/fullcalendar'
         ),
-
-        'js' => array('Base/Base', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla','RH/CalendarioPermisos','Componentes/HerramientasWeb/Utileria'),
-        
+        'js' => array(
+            'Base/Base',
+            'Componentes/Selects/Select',
+            'Componentes/Selects/SelectBasico',
+            'RH/CalendarioPermisos',
+            'Componentes/HerramientasWeb/Calendario',
+            'Componentes/HerramientasWeb/Utileria'
+        ),
         'pluginsJs' => array(
-         'fullcalendar/fullcalendar/fullcalendar','moment/moment-locales.min','moment/es'
+            'select2/dist/js/select2.min',
+            'moment/moment-locales.min',
+            'moment/es',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'fullcalendar/fullcalendar/fullcalendar.min'
         ),
-
         'Permiso' => 'VCPP'
     ),
     'Catalogo-Perfil' => array(
@@ -1512,12 +1524,12 @@ $config['RH'] = array(
             'parsley/src/parsley',
             'select2/dist/css/select2.min',
         ),
-        'js' => array('Base/Base', 
+        'js' => array('Base/Base',
             'Componentes/HerramientasWeb/Utileria',
             'Componentes/HerramientasWeb/Modal',
-            'Componentes/Tablas/Tabla', 
+            'Componentes/Tablas/Tabla',
             'Componentes/Tablas/TablaBasica',
-            'Componentes/Selects/Select', 
+            'Componentes/Selects/Select',
             'Componentes/Selects/SelectBasico',
             'RH/catalogo_permisos'),
         'pluginsJs' => array(
@@ -1543,7 +1555,7 @@ $config['RH'] = array(
             'select2/dist/css/select2.min',
             'parsley/src/parsley'
         ),
-        'js' => array('calendar.demo','Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Fecha', 'Base/Tabla', 'Base/Botones', 'Base/Nota', 'RH/autorizar_permisos'),
+        'js' => array('calendar.demo', 'Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Fecha', 'Base/Tabla', 'Base/Botones', 'Base/Nota', 'RH/autorizar_permisos'),
         'pluginsJs' => array(
             'bootstrap-datepicker/js/bootstrap-datepicker',
             'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
@@ -2009,7 +2021,7 @@ $config['Redes'] = array(
             'Componentes/HerramientasWeb/Fecha',
             'Componentes/Selects/Select', 
             'Componentes/Selects/SelectBasico',
-            'Componentes/Tablas/Tabla', 
+            'Componentes/Tablas/Tabla',
             'Componentes/Tablas/TablaBasica',
             'Componentes/FileUpload/Upload',
             'Componentes/FileUpload/FileUpload_Basico',

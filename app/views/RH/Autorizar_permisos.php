@@ -22,7 +22,7 @@
             <h4 class="panel-title">Autorizar Permisos</h4>
         </div>
         <div class="tab-content">
-            
+
             <!--Empezando cuerpo del panel de Tabla Permisos-->
             <div class="tab-pane fade active in" id="misPermisos">
                 <div class="panel-body">
@@ -39,17 +39,22 @@
                                         <th class="all">Fecha de Ausencia</th>
                                         <th class="all">Hora de Entrada</th>
                                         <th class="all">Hora de Salida</th>
+                                        <th class="all">Estado</th>
+                                        <th class="all">Falta Autorizar</th>
+                                        <th class="all">Vigencia</th>
+                                        <th class="never">Archivo</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <?php
-                                if ($datos['misSubordinados'] != false) {
-                                    foreach ($datos['misSubordinados'] as $valores) {
-                                        echo "<tr>";
-                                            echo '<td>'.$valores['Id'].'</td>';
-                                            echo '<td>'.$valores['FechaDocumento'].'</td>';
-                                            echo '<td>'.$valores['Nombre'].'</td>';
-                                            switch ($valores['IdTipoAusencia']){
+                                    <?php
+                                    $fecha = mdate('%Y-%m-%d', now('America/Mexico_City'));
+                                    if ($datos['misSubordinados'] != false) {
+                                        foreach ($datos['misSubordinados'] as $valores) {
+                                            echo "<tr>";
+                                            echo '<td>' . $valores['Id'] . '</td>';
+                                            echo '<td>' . $valores['FechaDocumento'] . '</td>';
+                                            echo '<td>' . $valores['Nombre'] . '</td>';
+                                            switch ($valores['IdTipoAusencia']) {
                                                 case '1':
                                                     echo '<td>Llegada Tarde</td>';
                                                     break;
@@ -60,7 +65,7 @@
                                                     echo '<td>No Asistirá</td>';
                                                     break;
                                             }
-                                            switch ($valores['IdMotivoAusencia']){
+                                            switch ($valores['IdMotivoAusencia']) {
                                                 case '1':
                                                     echo '<td>CONSULTA MEDICO IMSS</td>';
                                                     break;
@@ -99,24 +104,88 @@
                                                     break;
                                             }
                                             if ($valores['FechaAusenciaHasta'] != $valores['FechaAusenciaDesde'] && $valores['FechaAusenciaHasta'] != "0000-00-00") {
-                                                echo '<td>'.$valores['FechaAusenciaDesde'].' al '.$valores['FechaAusenciaHasta'].'</td>';
+                                                echo '<td>' . $valores['FechaAusenciaDesde'] . ' al ' . $valores['FechaAusenciaHasta'] . '</td>';
                                             } else {
-                                                echo '<td>'.$valores['FechaAusenciaDesde'].'</td>';
+                                                echo '<td>' . $valores['FechaAusenciaDesde'] . '</td>';
                                             }
                                             if ($valores['HoraEntrada'] != "00:00:00") {
-                                                echo '<td>'.$valores['HoraEntrada'].'</td>';
+                                                echo '<td>' . $valores['HoraEntrada'] . '</td>';
                                             } else {
                                                 echo '<td></td>';
                                             }
                                             if ($valores['HoraSalida'] != "00:00:00") {
-                                                echo '<td>'.$valores['HoraSalida'].'</td>';
+                                                echo '<td>' . $valores['HoraSalida'] . '</td>';
                                             } else {
                                                 echo '<td></td>';
                                             }
-                                        echo "</tr>";
+                                            switch ($valores['IdEstatus']) {
+                                                case '6':
+                                                    echo '<td style="color: orange">Cancelado</td>';
+                                                    echo '<td></td>';
+                                                    echo '<td></td>';
+                                                    break;
+                                                case '7':
+                                                    echo '<td style="color: green">Autorizado</td>';
+                                                    echo '<td></td>';
+                                                    echo '<td></td>';
+                                                    break;
+                                                case '9':
+                                                    echo '<td>Pendiente por Autorizar</td>';
+                                                    if ($valores['IdUsuarioJefe'] == NULL) {
+                                                        echo '<td>
+                                                                    <li>Jefe Inmediato</li>
+                                                                    <li>RH</li>
+                                                                    <li>Contador</li>
+                                                                    <li>Director</li>
+                                                                </td>';
+                                                    } else {
+                                                        if ($valores['IdUsuarioRH'] == NULL) {
+                                                            echo '<td>
+                                                                        <li>RH</li>
+                                                                        <li>Contador</li>
+                                                                        <li>Director</li>
+                                                                    </td>';
+                                                        } else {
+                                                            if ($valores['IdUsuarioContabilidad'] == NULL) {
+                                                                echo '<td>
+                                                                            <li>Contador</li>
+                                                                            <li>Director</li>
+                                                                        </td>';
+                                                            } else {
+                                                                if ($valores['IdUsuarioDireccion'] == NULL) {
+                                                                    echo '<td>
+                                                                                <li>Director</li>
+                                                                            </td>';
+                                                                } else {
+                                                                    echo '<td></td>';
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    $date1 = new DateTime($fecha);
+                                                    $date2 = new DateTime($valores['FechaAusenciaDesde']);
+                                                    $diff = $date1->diff($date2);
+                                                    if ($valores['FechaAusenciaDesde'] > $fecha) {
+                                                        echo '<td class="semi-bold" style="color: green">Solicitud dentro de ' . $diff->days . ' días</td>';
+                                                    }
+                                                    if ($valores['FechaAusenciaDesde'] == $fecha) {
+                                                        echo '<td class="semi-bold"> Para Hoy </td>';
+                                                    }
+                                                    if ($valores['FechaAusenciaDesde'] < $fecha) {
+                                                        echo '<td class="semi-bold" style="color: red">Expiro hace ' . $diff->days . ' días</td>';
+                                                    }
+                                                    break;
+                                                case '10':
+                                                    echo '<td style="color: red">Rechazado</td>';
+                                                    echo '<td></td>';
+                                                    echo '<td></td>';
+                                                    break;
+                                            }
+                                            echo '<td>' . $valores['Archivo'] . '</td>';
+                                            echo "</tr>";
+                                        }
                                     }
-                                }
-                                ?>
+                                    ?>
                                 </tbody>
                             </table>
                         </div>  
@@ -131,13 +200,13 @@
                     echo '<div class="col-md-3">
                         <div class="form-group" style="display: none">
                             <label>Perfil</label>
-                            <input class="form-control" id="idPerfil" value="'.$usuario['IdPerfil'].'"/>
+                            <input class="form-control" id="idPerfil" value="' . $usuario['IdPerfil'] . '"/>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group" style="display: none">
                             <label>Usuario</label>
-                            <input class="form-control" id="idUsuarioRev" value="'.$usuario['Id'].'"/>
+                            <input class="form-control" id="idUsuarioRev" value="' . $usuario['Id'] . '"/>
                         </div>
                     </div>';
                     ?>
@@ -146,7 +215,7 @@
             </div>
             <!--Finalizando cuerpo del panel de Tabla Permisos-->
         </div>
-        
+
     </div>
     <!-- Finalizando panel Autorizacion Permisos-->   
 

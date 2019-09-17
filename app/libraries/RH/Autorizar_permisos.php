@@ -24,15 +24,17 @@ class Autorizar_permisos extends General{
             case '21':
             case '37':
                 return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, nombreUsuario(cu.Id) as Nombre, tpar.IdTipoAusencia, 
-                            tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida
+                            tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
+                            tpar.IdEstatus, tpar.Archivo, tpar.IdUsuarioJefe, tpar.IdUsuarioRH, tpar.IdUsuarioContabilidad, tpar.IdUsuarioDireccion
                             from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
-                            where tpar.IdEstatus = 9 and cu.Id <> '.$idUsuario);
+                            where DATE(FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() and cu.Id <> '.$idUsuario);
                 break;
             default:
                 return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, cu.Nombre, tpar.IdTipoAusencia, 
-                    tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida
+                    tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
+                    tpar.IdEstatus, tpar.Archivo, tpar.IdUsuarioJefe, tpar.IdUsuarioRH, tpar.IdUsuarioContabilidad, tpar.IdUsuarioDireccion
                     from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
-                    where tpar.IdEstatus = 9 and ((cu.IdJefe = '.$idUsuario.') and tpar.IdUsuarioJefe is null) 
+                    where DATE(FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() and ((cu.IdJefe = '.$idUsuario.') and tpar.IdUsuarioJefe is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 21 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 37 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null and tpar.IdUsuarioContabilidad is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 44 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null 
@@ -44,10 +46,16 @@ class Autorizar_permisos extends General{
     public function motivosRechazo() {
         return $this->DBS->consultaGral('select * from cat_v3_tipos_rechazos_ausencia_personal');
     }
+    public function motivosCancelacion() {
+        return $this->DBS->consultaGral('SELECT Id, Nombre 
+                from cat_v3_tipos_cancelacion_ausencia_personal 
+                where Flag = 1');
+    }
     
     public function revisarPermiso(array $datosPermiso){
         $informacionPermisoAusencia['perfilUsuario'] = $datosPermiso['perfilUsuario'];
         $informacionPermisoAusencia['motivosRechazo'] = $this->motivosRechazo();
+        $informacionPermisoAusencia['tipoCancelacion'] = $this->motivosCancelacion();
         $informacionPermisoAusencia['datosAusencia'] = $this->DBS->consultaGral('SELECT tpa.FechaDocumento, CONCAT(trp.Nombres, " ",trp.ApPaterno, " ",trp.ApMaterno) AS Nombre,
                  cp.Nombre AS Puesto, cds.Nombre AS Departamento, tpa.Id, IdEstatus, IdTipoAusencia, IdMotivoAusencia, FechaAusenciaDesde, FechaAusenciaHasta, 
                  HoraEntrada, HoraSalida, Motivo, FolioDocumento, Archivo, ArchivosOriginales, IdUsuarioJefe FROM t_permisos_ausencia_rh AS tpa 
@@ -164,7 +172,7 @@ class Autorizar_permisos extends General{
                     <a href="https://'.$_SERVER['SERVER_NAME'].'/storage/Archivos/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Autorizado', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
-        $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado por: ", $motivo = array ('MotivoRechazo' => ""));
+        $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado por: ", $motivo = array ('IdRechazo' => ""));
         return $this->DBS->actualizar('t_permisos_ausencia_rh', $revisor, array('Id' => $datosPermiso['idPermiso']));
     }
     
@@ -197,7 +205,7 @@ class Autorizar_permisos extends General{
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Concluido', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
-        $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado y Concluido por: ", $motivo = array ('MotivoRechazo' => ""));
+        $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado y Concluido por: ", $motivo = array ('IdRechazo' => ""));
         
         return $this->DBS->actualizar('t_permisos_ausencia_rh', $resultado, array('Id' => $datosPermiso['idPermiso']));       
     }
@@ -387,47 +395,36 @@ class Autorizar_permisos extends General{
         
         return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/RH/Reportes/' . $nombreArchivo ];
     }
-    public function cancelarPermisoCalendario(array $datosPermiso){
-
-        $estadoPermiso = array('IdEstatus' => '10');
-
-        switch ($datosPermiso['idPerfil']){
-            case 21:
-                $revisor = array (
-                    'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'IdRechazo' => $datosPermiso['motivoRechazo']
-                    );
-                break;
-            case 37:
-                $revisor = array (
-                    'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'IdRechazo' => $datosPermiso['motivoRechazo']
-                    );
-                break;
-            case 44:
-                $revisor = array (
-                    'IdUsuarioDireccion' => $datosPermiso['idUser'], 'FechaAutorizacionDireccion' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'IdRechazo' => $datosPermiso['motivoRechazo']
-                    );
-                break;
-            default :
-                $revisor = array (
-                    'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'IdRechazo' => $datosPermiso['motivoRechazo']
-                    );
-                break;
+    public function cancelarPermisoAutorizado(array $datosPermiso){
+        
+        $jefeDirecto = $this->DBS->consultaGral('SELECT IdJefe, EmailCorporativo 
+                                                FROM cat_v3_usuarios 
+                                                WHERE Id= (SELECT IdUsuario FROM t_permisos_ausencia_rh 
+                                                where Id = '.$datosPermiso['idPermiso'].')');
+        $correoJefeDirecto = $this->DBS->consultaGral('SELECT EmailCorporativo 
+                                                        FROM cat_v3_usuarios 
+                                                        WHERE Id = '. $jefeDirecto[0]['IdJefe']);
+        $correosRevisores = $this->DBS->consultaGral('SELECT EmailCorporativo 
+                                                        FROM cat_v3_usuarios 
+                                                        WHERE IdPerfil in(21, 37)');
+        $arregloCorreos = "";
+        foreach ($correosRevisores as $value) {
+            $arregloCorreos .= $value["EmailCorporativo"] . ",";
         }
-        $resultado = array_merge($estadoPermiso, $revisor);
+        $arregloCorreos .= $correoJefeDirecto[0]["EmailCorporativo"].",".$jefeDirecto[0]["EmailCorporativo"];
+                
+        $texto = "Se Cancelo el PERMISO DE AUSENCIA de " . $datosPermiso["nombreUsuario"]
+                . "<br>EL cual estaba solicitado para " . $datosPermiso["MotivoAusencia"] . " el día " . $datosPermiso["fechaAusencia"] . "
+                    <br>El motivo de la Cancelación es: ".$datosPermiso["motivoCancelacion"].".";
+        $mensaje = $this->Correo->mensajeCorreo('Cancelar Permiso de Ausencia ', $texto);
+        $correoEnviado = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($arregloCorreos), 'Cancelar Permiso de Ausencia', $mensaje);
         
-        $infoCorreo = $this->informacionCorreo($datosPermiso['idPermiso']);
-        $texto = '<p>Estimado(a) <strong>' .$infoCorreo[0]['Nombre']. ',</strong> se ha <strong>Rechazado</strong> el permiso de ausencia.</p><br><br>
-                    Permiso Solicitado: <p>' .$infoCorreo['tipoAusencia']. ' para el día '.$infoCorreo[0]['FechaAusenciaDesde'].'</p><br><br>
-                    Motivo de Rechazo: <p><b>' . $datosPermiso['motivoRechazo'] . '</b> </p><br><br>
-                    <a href="https://'.$_SERVER['SERVER_NAME'].'/storage/Archivos/'.$datosPermiso['archivo'].'">Archivo</a>';
-        $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Rechazado', $texto);
-//        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+        $consulta = $this->DBS->actualizar('t_permisos_ausencia_rh', array(
+            'IdEstatus' => '6',
+            'IdCancelacion' => $datosPermiso['idMotivoCancelacion']
+                ), array('Id' => $datosPermiso['idPermiso']));
         
-        return $this->DBS->actualizar('t_permisos_ausencia_rh', $resultado, array('Id' => $datosPermiso['idPermiso']));
+        return $consulta;
     }
 }
 

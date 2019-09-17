@@ -28,11 +28,20 @@ class Modelo_Catalogos_Permisos extends Base {
     }
 
     public function actualizarRegistro(string $tabla, array $datos) {
-        $this->actualizar('UPDATE '.$tabla.
+        if($tabla === "cat_v3_motivos_ausencia_personal"){
+            $this->actualizar('UPDATE '.$tabla.
+                            ' SET Nombre = "'.$datos['nombre'].'", 
+                            Observaciones = "'.$datos['observaciones'].'", 
+                            Flag = "'.$datos['flag'].'", 
+                            Cancelacion = "'.$datos['cancelacion'].'" 
+                            where Id = "'.$datos['id'].'"');
+        }else{
+            $this->actualizar('UPDATE '.$tabla.
                             ' SET Nombre = "'.$datos['nombre'].'", 
                             Observaciones = "'.$datos['observaciones'].'", 
                             Flag = "'.$datos['flag'].'" 
                             where Id = "'.$datos['id'].'"');
+        }
     }
 
 }

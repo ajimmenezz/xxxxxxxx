@@ -47,6 +47,7 @@ class Secciones extends General {
     private $factoryCatalogos;
     private $CatalogoMotivosPermiso;
     private $CatalogoRechazoPermiso;
+    private $CatalogoCancelacionPermiso;
     
     
     private $gestorProyectos;
@@ -102,6 +103,7 @@ class Secciones extends General {
         $this->factoryCatalogos = new \Librerias\V2\Factorys\FactoryCatalogos();
         $this->CatalogoMotivosPermiso = $this->factoryCatalogos->getCatalogo('CatalogoMotivoPermisos');
         $this->CatalogoRechazoPermiso = $this->factoryCatalogos->getCatalogo('CatalogoRechazoPermisos');
+        $this->CatalogoCancelacionPermiso = $this->factoryCatalogos->getCatalogo('CatalogoCancelarPermisos');
     }
 
     /*
@@ -270,7 +272,7 @@ class Secciones extends General {
             case 'RH/Catalogos_Permisos':
                   $datos['TipoMotivo'] = $this->CatalogoMotivosPermiso->getDatos();
                   $datos['TipoRechazo'] = $this->CatalogoRechazoPermiso->getDatos();
-//                $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id']);
+                  $datos['TipoCancelacion'] = $this->CatalogoCancelacionPermiso->getDatos();
                 break;
             case 'Poliza':
                 $datos['TiposProyectos'] = $this->DBPO->getTiposProyecto();
