@@ -104,7 +104,11 @@
                                 <div id="listaMotivos">
                                     <select id="selectCancelacion" class="form-control" style="width: 100%" data-parsley-required="true">
                                         <option value="">Seleccionar</option>
-                                        <option value="prueba">Prueba</option>
+                                        <?php
+                                        foreach ($datos['motivosCancelacion'] as $value) {
+                                            echo '<option value="'.$value['Id'].'">'.$value['text'].'</option>';
+                                        }
+                                        ?>
                                     </select>
                                 </div>
                                 <div id="checkOtro" class="checkbox">

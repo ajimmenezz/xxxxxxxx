@@ -36,8 +36,15 @@ $(function () {
             if (respuesta) {
                 $('#contentRevisarPermiso').removeClass('hidden').empty().append(respuesta.formulario);
                 $('#contentPermisosPendientes').addClass('hidden');
-                if (datosPermiso.estatus !== 'Pendiente por Autorizar') {
-                    $('.ocultarPermiso').addClass('hidden');
+                if (respuesta.consulta.datosAusencia['0'].IdUsuarioJefe !== null) { 
+                    $('.ocultarPermiso').addClass('hidden'); 
+                    if (respuesta.consulta.datosAusencia['0'].IdUsuarioRH == null && perfilUsuario == '21') { 
+                        $('.ocultarPermiso').removeClass('hidden'); 
+                    } else { 
+                        if (respuesta.consulta.datosAusencia['0'].IdUsuarioContabilidad == null && perfilUsuario == '37') { 
+                            $('.ocultarPermiso').removeClass('hidden'); 
+                        } 
+                    }
                 }
                 if (datosPermiso.estatus === 'Autorizado') {
                     $('#btnPeticionCancelar').removeClass('hidden');

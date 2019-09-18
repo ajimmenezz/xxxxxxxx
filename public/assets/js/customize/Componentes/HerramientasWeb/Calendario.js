@@ -40,13 +40,13 @@ class Calendario {
 //                date.format();
 //            }
             eventRender: function (eventObj, $el) {
-                $el.popover({
-                    title: eventObj.nombreUsuario,
-                    content: eventObj.description,
-                    trigger: 'hover',
-                    placement: 'top',
-                    container: 'body'
-                });
+//                $el.popover({
+//                    title: eventObj.nombreUsuario,
+//                    content: eventObj.description,
+//                    trigger: 'hover',
+//                    placement: 'top',
+//                    container: 'body'
+//                });
             },
 
             eventClick: function (evento, jsEvento, objetoVista) {                

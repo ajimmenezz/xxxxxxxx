@@ -18,7 +18,7 @@ $(function () {
     peticion.enviar('', 'CalendarioPermisos/datosPermiso', null, function (respuesta) {
         let listaTemporalPermisos = {}, titulo = '', puesto = '';
 
-        $.each(respuesta.permisos, function (key, value) {
+        $.each(respuesta, function (key, value) {
             titulo = value.Usuario.substring(0, 8) + "...";
             puesto = value.Perfil.substring(0, 9) + "...";
             listaTemporalPermisos = {
@@ -71,13 +71,13 @@ $(function () {
                 $('#circleJefe').addClass("text-danger");
             }
             if (infoEvento.autorizacionRH !== null) {
-                $('#autorizacionJefe').text(infoEvento.autorizacionRH);
+                $('#autorizacionRecursosHumanos').text(infoEvento.autorizacionRH);
                 $('#circleRecursosHumanos').addClass("text-success");
             } else {
                 $('#circleRecursosHumanos').addClass("text-danger");
             }
             if (infoEvento.autorizacionContador !== null) {
-                $('#autorizacionJefe').text(infoEvento.autorizacionContador);
+                $('#autorizacionContabilidad').text(infoEvento.autorizacionContador);
                 $('#circleContabilidad').addClass("text-success");
             } else {
                 $('#circleContabilidad').addClass("text-danger");
@@ -86,12 +86,11 @@ $(function () {
                 $('#btnCancelarModalPermisos').addClass('hidden');
             }
         });
-        datosSelect(respuesta.motivosCancelacion);
+        datosSelect();
     });
 
     function datosSelect(motivosCancelacion) {
         selectCancelacion.iniciarSelect();
-        selectCancelacion.cargaDatosEnSelect(motivosCancelacion);
         $('input[type="checkbox"]').click(function () {
             if ($(this).prop("checked") === true) {
                 $('#otroMotivo').removeClass('hidden');
@@ -128,7 +127,11 @@ $(function () {
                 idJefe: infoPermiso.idJefe
             }
             peticion.enviar('', 'CalendarioPermisos/peticionCancelar', datos, function (respuesta) {
-                console.log(respuesta);
+                if(respuesta){ 
+                    location.reload(); 
+                }else{ 
+                    console.log("Error"); 
+                }
             });
         }
     });
