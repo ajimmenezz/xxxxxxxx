@@ -34,7 +34,7 @@ class Autorizar_permisos extends General{
                     tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
                     tpar.IdEstatus, tpar.Archivo, tpar.IdUsuarioJefe, tpar.IdUsuarioRH, tpar.IdUsuarioContabilidad, tpar.IdUsuarioDireccion
                     from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
-                    where DATE(FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() and ((cu.IdJefe = '.$idUsuario.') and tpar.IdUsuarioJefe is null) 
+                    where DATE(FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() and (cu.IdJefe = '.$idUsuario.') 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 21 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 37 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null and tpar.IdUsuarioContabilidad is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 44 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null 
@@ -58,7 +58,7 @@ class Autorizar_permisos extends General{
         $informacionPermisoAusencia['tipoCancelacion'] = $this->motivosCancelacion();
         $informacionPermisoAusencia['datosAusencia'] = $this->DBS->consultaGral('SELECT tpa.FechaDocumento, CONCAT(trp.Nombres, " ",trp.ApPaterno, " ",trp.ApMaterno) AS Nombre,
                  cp.Nombre AS Puesto, cds.Nombre AS Departamento, tpa.Id, IdEstatus, IdTipoAusencia, IdMotivoAusencia, FechaAusenciaDesde, FechaAusenciaHasta, 
-                 HoraEntrada, HoraSalida, Motivo, FolioDocumento, Archivo, ArchivosOriginales, IdUsuarioJefe FROM t_permisos_ausencia_rh AS tpa 
+                 HoraEntrada, HoraSalida, Motivo, FolioDocumento, Archivo, ArchivosOriginales, IdUsuarioJefe, IdUsuarioRH, IdUsuarioContabilidad FROM t_permisos_ausencia_rh AS tpa 
                  INNER JOIN t_rh_personal AS trp ON tpa.IdUsuario = trp.IdUsuario INNER JOIN cat_v3_usuarios AS cu ON tpa.IdUsuario=cu.Id 
                  INNER JOIN cat_perfiles AS cp ON cu.IdPerfil=cp.Id INNER JOIN cat_v3_departamentos_siccob AS cds ON cp.IdDepartamento=cds.Id 
                  WHERE tpa.Id ="' . $datosPermiso['idPermiso'] . '"');
@@ -172,7 +172,7 @@ class Autorizar_permisos extends General{
                     <a href="https://'.$_SERVER['SERVER_NAME'].'/storage/Archivos/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Autorizado', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
-        $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado por: ", $motivo = array ('IdRechazo' => ""));
+        $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado por: ", $motivo = array ('MotivoRechazo' => ""));
         return $this->DBS->actualizar('t_permisos_ausencia_rh', $revisor, array('Id' => $datosPermiso['idPermiso']));
     }
     
@@ -205,7 +205,7 @@ class Autorizar_permisos extends General{
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Concluido', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
-        $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado y Concluido por: ", $motivo = array ('IdRechazo' => ""));
+        $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado y Concluido por: ", $motivo = array ('MotivoRechazo' => ""));
         
         return $this->DBS->actualizar('t_permisos_ausencia_rh', $resultado, array('Id' => $datosPermiso['idPermiso']));       
     }

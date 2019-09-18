@@ -14,6 +14,11 @@ class CalendarioPermisos extends Calendario {
         $this->calendario = new Calendario;
         $this->Correo = \Librerias\Generales\Correo::factory();
     }
+    
+    public function getMotivoCancelaciones() {
+        $respuestaConsulta = $this->calendario->motivosCancelacion();
+        return $respuestaConsulta;
+    }
 
     public function PermisosUsuario(string $fecha) {
         $dia = $this->calcularDia($fecha);
@@ -54,8 +59,7 @@ class CalendarioPermisos extends Calendario {
         $fechaMinima = date("Y-m-d", strtotime($fecha . "- " . $diasAntes . " days"));
         $fechaMaxima = date("Y-m-d", strtotime($fecha . "+ " . $dia . " days"));
 
-        $respuestaConsulta['permisos'] = $this->calendario->consultaPermisos($fechaMinima, $fechaMaxima);
-        $respuestaConsulta['motivosCancelacion'] = $this->calendario->motivosCancelacion();
+        $respuestaConsulta = $this->calendario->consultaPermisos($fechaMinima, $fechaMaxima);
 
         return $respuestaConsulta;
     }

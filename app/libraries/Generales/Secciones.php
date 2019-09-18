@@ -48,6 +48,7 @@ class Secciones extends General {
     private $CatalogoMotivosPermiso;
     private $CatalogoRechazoPermiso;
     private $CatalogoCancelacionPermiso;
+    private $motivosCancelacion;
     
     
     private $gestorProyectos;
@@ -94,6 +95,7 @@ class Secciones extends General {
         $this->ModeloDashboard = \Modelos\Modelo_Dashboard::factory();
         $this->permisosVacaciones = \Librerias\RH\Permisos_Vacaciones::factory();
         $this->autorizarpermisos = \Librerias\RH\Autorizar_permisos::factory();
+        $this->motivosCancelacion = \Librerias\RH\CalendarioPermisos::factory();
         $this->GapsiProyecto = \Librerias\Gapsi\GerstorProyectosGAPSI::factory();
         $this->fondoFijo = \Librerias\FondoFijo\FondoFijo::factory();
         $this->instalaciones = \Librerias\Instalaciones\Instalaciones::factory();
@@ -268,6 +270,9 @@ class Secciones extends General {
                 break;
             case 'RH/Autorizar_permisos':
                 $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id'], $usuario['IdPerfil']);
+                break;
+            case 'RH/CalendarioPermisos':
+                $datos['motivosCancelacion'] = $this->motivosCancelacion->getMotivoCancelaciones();
                 break;
             case 'RH/Catalogos_Permisos':
                   $datos['TipoMotivo'] = $this->CatalogoMotivosPermiso->getDatos();
