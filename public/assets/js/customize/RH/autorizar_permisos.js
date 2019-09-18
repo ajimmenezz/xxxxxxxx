@@ -29,12 +29,26 @@ $(function () {
         var informacionPermisoAusencia = $('#data-table-autorizar-permisos-ausencia').DataTable().row(this).data();
         var datosPermiso = {
             idPermiso: informacionPermisoAusencia[0],
+            estatus: informacionPermisoAusencia[8],
             perfilUsuario: perfilUsuario
         }
         evento.enviarEvento('EventoPermisosVacaciones/Autorizar', datosPermiso, '#panelAutorizarPermisos', function (respuesta) {
             if (respuesta) {
                 $('#contentRevisarPermiso').removeClass('hidden').empty().append(respuesta.formulario);
                 $('#contentPermisosPendientes').addClass('hidden');
+                if (respuesta.consulta.datosAusencia['0'].IdUsuarioJefe !== null) { 
+                    $('.ocultarPermiso').addClass('hidden'); 
+                    if (respuesta.consulta.datosAusencia['0'].IdUsuarioRH == null && perfilUsuario == '21') { 
+                        $('.ocultarPermiso').removeClass('hidden'); 
+                    } else { 
+                        if (respuesta.consulta.datosAusencia['0'].IdUsuarioContabilidad == null && perfilUsuario == '37') { 
+                            $('.ocultarPermiso').removeClass('hidden'); 
+                        } 
+                    }
+                }
+                if (datosPermiso.estatus === 'Autorizado') {
+                    $('#btnPeticionCancelar').removeClass('hidden');
+                }
                 $('#btnCancelarRevisarPermiso').on('click', function () {
                     $('#contentRevisarPermiso').empty().addClass('hidden');
                     $('#contentPermisosPendientes').removeClass('hidden');
@@ -85,6 +99,26 @@ $(function () {
                             evento.mostrarMensaje('.mensajeSolicitudPermisosRevisar', false, 'Hubo un problema con la autorización del permiso.', 3000);
                         }
                     });
+                });
+                $('#btnAceptarCancelarPeticion').on('click', function () {
+                    if (evento.validarFormulario('#motivoSolicitudCancelacion')) {
+                        var data = {
+                            idPermiso: $('#idPermisoRevisar').val(),
+                            idUserRev: idUsuario,
+                            motivoCancelacion: $('#motivoCancelarPermiso option:selected').text(),
+                            idMotivoCancelacion: $('#motivoCancelarPermiso').val(),
+                            nombreUsuario: $('#inputNombreRevisar').val(),
+                            fechaAusencia: $('#inputFechaPermisoDesdeRevisar').val(),
+                            MotivoAusencia: $('#inputMotivoAusencia').val()
+                        }
+                        evento.enviarEvento('EventoPermisosVacaciones/cancelarPermisoAutorizado', data, '#modal-dialogo', function (respuesta) {
+                            if (respuesta) {
+                                location.reload();
+                            } else {
+                                evento.mostrarMensaje('.mensajeCancelarAutorizacion', false, 'Hubo un problema con el servidor, intenta mas tarde.', 3000);
+                            }
+                        });
+                    }
                 });
             } else {
                 evento.mostrarMensaje('.mensajeAutorizarPermisos', false, 'Hubo un problema con la solicitud.', 3000);

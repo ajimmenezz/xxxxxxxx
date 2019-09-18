@@ -11,14 +11,13 @@ $(function () {
 
     let tablaMotivoAusencia = new TablaBasica('table-catalogo-ausencia');
     let tablaMotivoRechazo = new TablaBasica('table-catalogo-rechazos');
-//    let selectEstatus = new SelectBasico('selectEditarEstado');
+    let tablaMotivoCancelacion = new TablaBasica('table-catalogo-cancelacion');
     let datos = {
         id: null,
         nombre: null,
         observaciones: null,
         flag: null
     }
-//    selectEstatus.iniciarSelect();
 
     /**Empieza sección de eventos para el catalogo de Asistencia**/
     $('#agregarMotivo').on('click', function () {
@@ -32,7 +31,9 @@ $(function () {
 
     tablaMotivoAusencia.evento(function () {
         let datosFila = tablaMotivoAusencia.datosFila(this);
-        modalEditar('Actualizar_Registro/Motivo', datosFila);
+        if (!jQuery.isEmptyObject(datosFila)) {
+            modalEditar('Actualizar_Registro/Motivo', datosFila);
+        }
     });
     /**Finaliza sección de eventos para el catalogo de Asistencia**/
 
@@ -48,10 +49,30 @@ $(function () {
     });
 
     tablaMotivoRechazo.evento(function () {
-        let datosFila = tablaMotivoAusencia.datosFila(this);
-        modalEditar('Actualizar_Registro/Rechazo', datosFila);
+        let datosFila = tablaMotivoRechazo.datosFila(this);
+        if (!jQuery.isEmptyObject(datosFila)) {
+            modalEditar('Actualizar_Registro/Rechazo', datosFila);
+        }
     });
     /**Finaliza sección de eventos para el catalogo de Motivos de Rechazo**/
+
+    /**Empieza sección de eventos para el catalogo de Motivos de Cancelacion**/
+    $('#agregarCancelacion').on('click', function () {
+        if (evento.validarFormulario('#formAgregarCancelacion')) {
+            datos.nombre = $('#inputMotivoCancelacion').val();
+            datos.observaciones = $('#inputObservacionesCancelacion').val();
+            peticionBackend('Nuevo_Registro/Cancelacion', datos);
+            limpiarCampos();
+        }
+    });
+
+    tablaMotivoCancelacion.evento(function () {
+        let datosFila = tablaMotivoCancelacion.datosFila(this);
+        if (!jQuery.isEmptyObject(datosFila)) {
+            modalEditar('Actualizar_Registro/Cancelacion', datosFila);
+        }
+    });
+    /**Finaliza sección de eventos para el catalogo de Motivos de Cancelacion**/
 
     function peticionBackend(ruta, datosAEnviar) {
         peticion.enviar('panelCatalogoAusencia', 'Catalogos_Permisos/' + ruta, datosAEnviar, function (respuesta) {
@@ -64,17 +85,26 @@ $(function () {
     }
 
     function modalEditar(ruta, infoTabla) {
-        let contenidoModal = $('#modalEditarMotivo').html();
-        modal.mostrarModalBasico("Editar", contenidoModal);
-        $('.inputEditarMotivo').val(infoTabla[1]);
-        $('.inputEditarObservaciones').val(infoTabla[2]);
+        $('#modalEditarMotivo').modal();
+        $('#editarMotivo').val(infoTabla[1]);
+        $('#editarObservaciones').val(infoTabla[2]);
         if (infoTabla[3] === 'Habilitado') {
-            $('.selectEditarEstado').select2().val(1).trigger('change');
+            $('#editarEstado').select2().val(1).trigger('change');
         } else {
-            $('.selectEditarEstado').select2().val(2).trigger('change');
+            $('#editarEstado').select2().val(2).trigger('change');
+        }
+        if (typeof infoTabla[4] !== 'undefined') {
+            $('#posibleCancelacion').removeClass('hidden');
+            if (infoTabla[4] === 'Si') {
+                $('#editarEstadoCancelacion').select2().val(1).trigger('change');
+            } else {
+                $('#editarEstadoCancelacion').select2().val(0).trigger('change');
+            }
+        } else {
+            $('#posibleCancelacion').addClass('hidden');
         }
         $('#btnAceptar').on('click', function () {
-//            if (evento.validarFormulario('.formEditarMotivo')) {
+            if (evento.validarFormulario('#formEditarMotivo')) {
                 datos.id = infoTabla[0];
                 $(".inputEditarMotivo").each(function () {
                     datos.nombre = $(this).val();
@@ -85,8 +115,15 @@ $(function () {
                 $(".selectEditarEstado").each(function () {
                     datos.flag = $(this).val();
                 });
+                if (typeof infoTabla[4] !== 'undefined') {
+                    $(".selectEditarEstadoCancelacion").each(function () {
+                        datos.cancelacion = $(this).val();
+                    });
+                } else {
+                    datos.cancelacion = '';
+                }
                 peticionBackend(ruta, datos);
-//            }
+            }
         });
     }
 
@@ -98,5 +135,7 @@ $(function () {
         $('#inputObservaciones').val('');
         $('#inputMotivoRechazo').val('');
         $('#inputObservacionesRechazo').val('');
+        $('#inputMotivoCancelacion').val('');
+        $('#inputObservacionesCancelacion').val('');
     }
 });

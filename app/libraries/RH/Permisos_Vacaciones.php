@@ -58,7 +58,7 @@ class Permisos_Vacaciones extends General {
                     tpa.IdUsuarioRH, tpa.IdUsuarioContabilidad, tpa.IdUsuarioDireccion 
                     FROM t_permisos_ausencia_rh AS tpa INNER JOIN cat_v3_tipos_ausencia_personal AS tap ON tpa.IdTipoAusencia = tap.Id
                     INNER JOIN cat_v3_motivos_ausencia_personal AS map ON tpa.IdMotivoAusencia = map.Id WHERE IdUsuario = "' . $idUsuario . '" 
-                    AND DATE(FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE()');
+                    AND DATE(tpa.FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE()');
     }
 
     public function jefeDirecto($idUsuario) {
@@ -79,6 +79,10 @@ class Permisos_Vacaciones extends General {
 
     public function correoJefeDirecto($idJefe) {
         return $this->DBS->consultaGral("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id='" . $idJefe . "'");
+    }
+    
+    public function correoRHContador() {
+        return $this->DBS->consultaGral("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil in(21, 37)");
     }
 
     public function generarPDF($datosPermisos) {
@@ -302,12 +306,18 @@ class Permisos_Vacaciones extends General {
     }
 
     public function enviarCorreoPermiso($datosPermisos, $asunto, $carpeta) {
+        $arregloCorreos = "";
         if ($datosPermisos['idUsuario'] == "") {
             $idJefe = $this->jefeDirectoidPermiso($datosPermisos['idPermiso']);
         } else {
             $idJefe = $this->jefeDirecto($datosPermisos['idUsuario']);
         }
         $correoJefe = $this->correoJefeDirecto($idJefe[0]['IdJefe']);
+        $correoRHContador = $this->correoRHContador();
+        foreach ($correoRHContador as $value) {
+            $arregloCorreos .= $value["EmailCorporativo"].",";
+        }
+        $arregloCorreos .= $correoJefe[0]['EmailCorporativo'];
         $texto = '<p>Se ha ' . $asunto . ' el permiso de ausencia por parte de <strong>' . $datosPermisos['nombre'] . ',</strong> 
                     se requiere su concentimiento o rechazo del mismo.</p><br><br>
                     Permiso Solicitado: <p>';
@@ -363,7 +373,7 @@ class Permisos_Vacaciones extends General {
         $texto .= ' para el día ' . $datosPermisos['fechaPermisoDesde'] . '</p><br><br>
                     <a href="http://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1) . '">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia ' . $asunto, $texto);
-        $correoEnviado = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoJefe[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+        $correoEnviado = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($arregloCorreos), 'Permiso de Ausencia', $mensaje);
         return $correoEnviado;
     }
 
@@ -526,13 +536,6 @@ class Permisos_Vacaciones extends General {
 
             $respuestaCorreo = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $totalCorreos, 'Ausencia de Personal', $mensaje);
         }
-    }
-
-    public function obtenerDatos() {
-        $idUsuarioConsulta = $_SESSION['Id'];
-        $idPerfilUsuarioConsulta = $_SESSION['Id'];
-
-        return array('ID' => $idUsuarioConsulta, "Perfil" => $idPerfilUsuarioConsulta);
     }
 
 }

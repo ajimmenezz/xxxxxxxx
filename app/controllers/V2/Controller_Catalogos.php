@@ -7,6 +7,7 @@ class Controller_Catalogos extends CI_Controller {
     private $factory;
     private $catalogoMotivosPermisos;
     private $catalogoRechazosPermisos;
+    private $catalogoCancelarPermisos;
 
     function __construct() {
         parent::__construct();
@@ -26,6 +27,11 @@ class Controller_Catalogos extends CI_Controller {
                     $this->catalogoRechazosPermisos = $this->factory->getCatalogo('CatalogoRechazoPermisos');
                     $this->catalogoRechazosPermisos->setRegistro($datos);
                     $respuesta = $this->catalogoRechazosPermisos->getDatos();
+                    break;
+                case 'Cancelacion':
+                    $this->catalogoCancelarPermisos = $this->factory->getCatalogo('CatalogoCancelarPermisos');
+                    $this->catalogoCancelarPermisos->setRegistro($datos);
+                    $respuesta = $this->catalogoCancelarPermisos->getDatos();
                     break;
 
                 default:
@@ -51,6 +57,11 @@ class Controller_Catalogos extends CI_Controller {
                     break;
                 case 'Rechazo':
                     $this->catalogoRechazosPermisos = $this->factory->getCatalogo('CatalogoRechazoPermisos');
+                    $this->catalogoRechazosPermisos->actualizarRegistro($datos);
+                    $respuesta = $this->catalogoRechazosPermisos->getDatos();
+                    break;
+                case 'Cancelacion':
+                    $this->catalogoRechazosPermisos = $this->factory->getCatalogo('CatalogoCancelarPermisos');
                     $this->catalogoRechazosPermisos->actualizarRegistro($datos);
                     $respuesta = $this->catalogoRechazosPermisos->getDatos();
                     break;
