@@ -496,8 +496,7 @@ class Seguimientos extends General {
                         WHERE ticket = "' . $ticket . '"
                         AND Id <> "' . $servicio . '"
                         AND IdTipoServicio = 20
-                        AND IdEstatus IN(10,5,2,1)';
-
+                        AND IdEstatus IN(10,3,2,1)';
         return $this->DBS->consultaGeneralSeguimiento($sentencia);
     }
 
@@ -1801,6 +1800,9 @@ class Seguimientos extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $servicio . '/Pdf/Ticket_' . $ticket . '_Servicio_' . $servicio . '_' . $tipoServicio . 'Impericia.pdf';
+        }
+        if ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $servicio . '/Pdf/Ticket_' . $ticket . '_Servicio_' . $servicio . '_' . $tipoServicio . 'Impericia.pdf';
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }
@@ -1897,6 +1899,8 @@ class Seguimientos extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }
@@ -1978,6 +1982,8 @@ class Seguimientos extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }
@@ -2579,6 +2585,8 @@ class Seguimientos extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }
@@ -2591,6 +2599,8 @@ class Seguimientos extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $detallesServicio = 'https://siccob.solutions/Detalles/Servicio/' . $servicio;
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $detallesServicio = 'https://pruebas.siccob.solutions/Detalles/Servicio/' . $servicio;
         } else {
             $detallesServicio = 'http://' . $host . '/Detalles/Servicio/' . $servicio;
         }
@@ -2629,6 +2639,8 @@ class Seguimientos extends General {
             $linkPdfEquipoFaltante = $this->getServicioToPdf(array('servicio' => $datos['servicio']), '/EquipoFaltante');
             if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                 $pathEquipoFaltante = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+            } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+                $pathEquipoFaltante = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
             } else {
                 $pathEquipoFaltante = 'http://' . $host . '/' . $linkPdfEquipoFaltante['link'];
             }
@@ -5385,16 +5397,10 @@ class Seguimientos extends General {
     public function sendTextSD(array $dataSendTextSD) {
         $user = $this->Usuario->getDatosUsuario();
         $viewHtml = '';
-
         $dataService = $this->DBP->consultationServiceAndRequest($dataSendTextSD['service']);
         $key = $this->InformacionServicios->getApiKeyByUser($user['Id']);
-        $descriptionService = $this->InformacionServicios->MostrarDatosSD($dataService[0]['Folio'], $dataSendTextSD['service'], FALSE, $key);
-        if ($descriptionService['estatus']) {
-            $viewHtml .= $descriptionService['html'];
-        }
-
         $viewHtml .= $this->createTextSD($dataSendTextSD);
-        $result = $this->ServiceDesk->setResolucionServiceDesk($key, $dataService[0]['Folio'], $viewHtml);
+        $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $dataService[0]['Folio'], 'html' => $viewHtml));
     }
 
     public function createTextSD(array $dataCreateTextSD) {

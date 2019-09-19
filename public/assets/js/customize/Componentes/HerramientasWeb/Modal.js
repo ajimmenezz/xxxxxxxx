@@ -1,6 +1,6 @@
 class Modal {
 
-    mostrarModalBasico() {
+    mostrarModal() {
         var titulo = arguments[0] || '';
         var contenido = arguments[1] || '';
         var alinearContenido = arguments[2] || 'text-center';
@@ -20,8 +20,7 @@ class Modal {
     }
 
     btnAceptar(idElemento, callback = null) {
-        $('#btnModalConfirmar').on('click', callback);
-        this.cerrarModal();
+        $(`#${idElemento}`).on('click', callback);        
     }
 
     cerrarModal() {

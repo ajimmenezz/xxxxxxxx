@@ -172,7 +172,7 @@ class Autorizar_permisos extends General{
                     <a href="https://'.$_SERVER['SERVER_NAME'].'/storage/Archivos/'.$datosPermiso['archivo'].'">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Autorizado', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
-        $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado por: ", $motivo = array ('IdRechazo' => ""));
+        $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado por: ", $motivo = array ('MotivoRechazo' => ""));
         return $this->DBS->actualizar('t_permisos_ausencia_rh', $revisor, array('Id' => $datosPermiso['idPermiso']));
     }
     
@@ -205,7 +205,7 @@ class Autorizar_permisos extends General{
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Concluido', $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($infoCorreo[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         
-        $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado y Concluido por: ", $motivo = array ('IdRechazo' => ""));
+        $this->agregarFirmasPDF($datosPermiso,$rechazado="Autorizado y Concluido por: ", $motivo = array ('MotivoRechazo' => ""));
         
         return $this->DBS->actualizar('t_permisos_ausencia_rh', $resultado, array('Id' => $datosPermiso['idPermiso']));       
     }

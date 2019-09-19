@@ -54,8 +54,6 @@ if (!function_exists('setMultiplesArchivos')) {
                 $_FILES[$name]['size'] = $files[$name]['size'][$i];
                 $CI->upload->initialize($config);
                 if (!$CI->upload->do_upload($name)) {
-//                    $error = array('error' => $CI->upload->display_errors());
-//                    var_dump($error);
                     return FALSE;
                 } else {
                     array_push($archivos, substr($carpeta, 1) . utf8_encode($CI->upload->data('file_name')));
@@ -93,8 +91,26 @@ if (!function_exists('setMultiplesArchivos')) {
                                         'SourceFile' => $src
                                     ));
                                     $url = $respuesta->get('ObjectURL');
-//                                    array_pop($archivos);
-//                                    array_push($archivos, $url);
+                                } catch (Aws\S3\Exception\S3Exception $e) {
+                                    array_pop($archivos);
+                                    unlink("." . $_image);
+                                    return false;
+                                }
+                            }
+                            if ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+                                try {
+                                    $src = '.' . $_image;
+                                    if ($bucket !== 'storagesolutions') {
+                                        $_image = str_replace('/storage', '', $_image);
+                                    }
+
+                                    $respuesta = $S3->putObject(array(
+                                        'Bucket' => $bucket,
+                                        'Key' => substr($_image, 1),
+                                        'ACL' => 'public-read',
+                                        'SourceFile' => $src
+                                    ));
+                                    $url = $respuesta->get('ObjectURL');
                                 } catch (Aws\S3\Exception\S3Exception $e) {
                                     array_pop($archivos);
                                     unlink("." . $_image);
@@ -116,8 +132,25 @@ if (!function_exists('setMultiplesArchivos')) {
                                     'SourceFile' => $src
                                 ));
                                 $url = $respuesta->get('ObjectURL');
-//                                array_pop($archivos);
-//                                array_push($archivos, $url);
+                            } catch (Aws\S3\Exception\S3Exception $e) {
+                                array_pop($archivos);
+                                unlink("." . $_image);
+                                return false;
+                            }
+                        }
+                        if ($host === 'pruebas.siccob.solutions' || $host === 'pruebas.siccob.solutions') {
+                            try {
+                                $src = '.' . $_image;
+                                if ($bucket !== 'storagesolutions') {
+                                    $_image = str_replace('/storage', '', $_image);
+                                }
+                                $respuesta = $S3->putObject(array(
+                                    'Bucket' => $bucket,
+                                    'Key' => substr($_image, 1),
+                                    'ACL' => 'public-read',
+                                    'SourceFile' => $src
+                                ));
+                                $url = $respuesta->get('ObjectURL');
                             } catch (Aws\S3\Exception\S3Exception $e) {
                                 array_pop($archivos);
                                 unlink("." . $_image);

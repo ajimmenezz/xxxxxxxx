@@ -134,12 +134,14 @@ $(function () {
                         iniciarElementosPaginaSeguimientoCenso(respuesta, datosTabla);
                         eventosParaSeccionSeguimientoCenso(datosTabla, respuesta);
                         personalizarDependiendoSucursalCenso(respuesta);
+                        colocarBotonGuardarCambiosCenso(respuesta.datosServicio);
                         break;
                         //Servicio Mantemiento
                     case '12':
                         iniciarElementosPaginaSeguimientoMantenimiento(respuesta, datosTabla);
                         eventosParaSeccionSeguimientoMantenimiento(datosTabla, respuesta);
                         personalizarDependiendoSucursalMantenimiento(respuesta);
+                        colocarBotonGuardarCambiosMantenimiento(respuesta.datosServicio);
                         break;
                     case '20':
                         iniciarElementosPaginaSeguimientoCorrectivo(respuesta, datosTabla);
@@ -1422,12 +1424,9 @@ $(function () {
         });
         $('#btnConcluirServicioCenso').on('click', function (e) {
             concluirServicioCenso([], datosTabla);
-//            var datosTablaModelos = $('#data-table-censo-modelos').DataTable().rows().data();
-//            if (datosTablaModelos.length > 0) {
-//                concluirServicioCenso(datosTablaModelos, datosTabla);
-//            } else {
-//                evento.mostrarMensaje('.errorDatosGeneralesCenso', false, 'Para guardar los Censos debe haber agregado un registro en la tabla un Censo en la pestaña Datos.', 5000);
-//            }
+        });
+        $('#btnGuardarCambiosServicioCenso').on('click', function (e) {
+            guardarCambiosConcluirServicioCenso([], datosTabla);
         });
         //Evento encargado de eliminar un fila de la tabla censos
         $('#data-table-censo-modelos tbody').on('click', 'tr', function () {
@@ -1496,6 +1495,12 @@ $(function () {
             }
         }
     };
+    var colocarBotonGuardarCambiosCenso = function (datosServicio) {
+        if (datosServicio.Firma !== null) {
+            $('#divBotonesServicioCenso').addClass('hidden');
+            $('#divGuardarCambiosServicioCenso').removeClass('hidden');
+        }
+    }
     var guardarFormularioDatosGeneralesCenso = function () {
         var datosTabla = arguments[0];
         var sucursal = $('#selectSucursales').val();
@@ -1604,6 +1609,31 @@ $(function () {
         servicios.validarTecnicoPoliza();
         servicios.modalCampoFirma(datosTablaPoliza[1], data);
     };
+    var guardarCambiosConcluirServicioCenso = function () {
+        var datosTablaModelos = arguments[0];
+        var datosTablaPoliza = arguments[1];
+        var servicio = datosTablaPoliza[0];
+        var datosTabla = [];
+        
+        for (var i = 0; i < datosTablaModelos.length; i++) {
+            datosTabla.push(datosTablaModelos[i]);
+        }
+
+        servicios.validarTecnicoPoliza();
+
+        var data = {servicio: servicio, descripcion: '', censos: datosTabla, ticket: datosTablaPoliza[1], idSolicitud: datosTablaPoliza[2], seccion: '#seccion-servicio-censo'};
+
+        var sucursal = $('#selectSucursales').val();
+        var descripcion = $('#inputDescripcionCenso').val();
+        if (sucursal !== '') {
+            var dataGenerales = {servicio: servicio, sucursal: sucursal, descripcion: descripcion};
+            evento.enviarEvento('Seguimiento/GuardarDatosGeneralesCenso', dataGenerales, '#seccion-servicio-censo', function (respuesta) {
+                servicios.servicioValidacion(data, datosTablaPoliza[1]);
+            });
+        } else {
+            servicios.servicioValidacion(data, datosTablaPoliza[1]);
+        }
+    }
     var eliminarFilaTablaModelos = function () {
         var datosTablaCensoModelos = arguments[0];
         var servicio = arguments[1];
@@ -1655,6 +1685,12 @@ $(function () {
         $("#divNotasServicio").slimScroll({height: '400px'});
         nota.initButtons({servicio: datosTablaServicioPoliza[0]}, 'Seguimiento');
     };
+    var colocarBotonGuardarCambiosMantenimiento = function (datosServicio) {
+        if (datosServicio.Firma !== null) {
+            $('#divConcluirServicioMantenimiento').addClass('hidden');
+            $('#divGuardarCambiosServicioMantenimiento').removeClass('hidden');
+        }
+    }
     var eventosParaSeccionSeguimientoMantenimiento = function () {
         var datosTablaPoliza = arguments[0];
         var respuesta = arguments[1];
@@ -1694,6 +1730,9 @@ $(function () {
         });
         $('#btnConcluirServicioMantenimiento').on('click', function (e) {
             concluirServicioMantenimiento(servicio, datosTablaPoliza);
+        });
+        $('#btnGuardarCambiosServicioMantenimiento').on('click', function (e) {
+            guardarCambiosConcluirServicioMantenimiento(servicio, datosTablaPoliza);
         });
         //Evento que vuelve a mostrar la lista de servicios de Poliza
         $('#btnRegresarSeguimientoMantenimiento').on('click', function () {
@@ -2282,6 +2321,21 @@ $(function () {
                 var dataConcluir = {servicio: servicio, descripcion: '', ticket: datosTablaPoliza[1], idSolicitud: datosTablaPoliza[2], sucursal: sucursal, operacion: '3'};
                 servicios.validarTecnicoPoliza();
                 servicios.modalCampoFirma(datosTablaPoliza[1], dataConcluir);
+            } else {
+                evento.mostrarMensaje('.errorDatosMantenimiento', false, 'Favor de Documentar todos los Puntos Censados en la Sección Antes y Después.', 5000);
+            }
+        });
+    };
+    var guardarCambiosConcluirServicioMantenimiento = function () {
+        var servicio = arguments[0];
+        var datosTablaPoliza = arguments[1];
+        var sucursal = $('#selectSucursalesMantenimiento').val();
+        var data = {sucursal: sucursal, servicio: servicio};
+        evento.enviarEvento('Seguimiento/verificarDocumentacion', data, '#seccion-servicio-mantemiento', function (respuesta) {
+            if (respuesta !== 'faltaDocumentacion') {
+                var datavalicacion = {servicio: servicio, descripcion: '', ticket: datosTablaPoliza[1], idSolicitud: datosTablaPoliza[2], sucursal: sucursal, operacion: '3', seccion: '#seccion-servicio-mantemiento'};
+                servicios.validarTecnicoPoliza();
+                servicios.servicioValidacion(datavalicacion);
             } else {
                 evento.mostrarMensaje('.errorDatosMantenimiento', false, 'Favor de Documentar todos los Puntos Censados en la Sección Antes y Después.', 5000);
             }
@@ -4864,7 +4918,7 @@ $(function () {
     };
     var concluirServicio = function () {
         var servicio = arguments[0];
-        var dataConclusion = {servicio: servicio, estatus: '4'};
+        var dataConclusion = {servicio: servicio, estatus: '5'};
         evento.enviarEvento('Seguimiento/CambiarEstatus', dataConclusion, '#seccion-servicio-correctivo', function (respuesta) {
             servicios.mensajeModal('Servicio Concluido', 'Correcto');
         });

@@ -194,7 +194,16 @@ $route['Salas4D/EventoCatalogos/(:any)'] = 'Salas4D/Controller_Catalogos/manejar
 /* Routers para el manejo de Redes */
 $route['Redes/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Redes/Seguimiento/(:any)'] = 'Redes/Controller_Seguimiento/manejarEvento/$1';
-$route['Redes/SeguimientoCE/atender'] = 'V2/Controller_ServicioTicket/atenderServicio';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/Atender/(:any)'] = 'V2/Controller_ServicioTicket/atenderServicio/$1';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/Seguimiento/(:any)'] = 'V2/Controller_ServicioTicket/seguimientoServicio/$1';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/Folio/(:any)'] = 'V2/Controller_ServicioTicket/setFolio';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/Accion/(:any)'] = 'V2/Controller_ServicioTicket/runEvento/$1';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/agregarProblema'] = 'V2/Controller_ServicioTicket/setProblema';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/guardarSolucion'] = 'V2/Controller_ServicioTicket/setSolucion';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/concluir'] = 'V2/Controller_ServicioTicket/setConcluir';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/exportarPDF'] = 'V2/Controller_ServicioTicket/getPDF';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/borrarEvidencias'] = 'V2/Controller_ServicioTicket/deleteEvidencias';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/validarServicio'] = 'V2/Controller_ServicioTicket/validarServicio';
 
 /* Routers para el manejo de MesaDeAyuda */
 $route['MesaDeAyuda/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';

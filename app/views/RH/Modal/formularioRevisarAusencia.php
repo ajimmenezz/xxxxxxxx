@@ -29,17 +29,10 @@
                     <i class="fa fa"></i> Autorizar
                 </label>&nbsp';
             }
-            $fechaDoc = explode(" ", $datosAusencia[0]["FechaDocumento"]);
-            if ($datosAusencia[0]["FechaAusenciaDesde"] > $fechaDoc[0] && $datosAusencia[0]['IdMotivoAusencia'] != 3 && $datosAusencia[0]['IdMotivoAusencia'] != 4) {
+            if ($perfilUsuario == 37 || $perfilUsuario == 44) {
                 echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
-                    <i class="fa fa"></i>Autorizar y Concluir
-                </label>';
-            } else {
-                if ($perfilUsuario == 37 || $perfilUsuario == 44) {
-                    echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
                         <i class="fa fa"></i>Autorizar y Concluir
                     </label>';
-                }
             }
             ?>
         </div>
@@ -47,11 +40,11 @@
     </div>
     <div class="tab-content">
         <div class="panel-body">
-            <?php
+                <?php
 //            if (($datosAusencia[0]['IdMotivoAusencia'] == '3' || $datosAusencia[0]['IdMotivoAusencia'] == '4') && $datosAusencia[0]["ArchivosOriginales"] == '') {
 //                echo '<label style="color: red">Sin archivo de cita o incapacidad</label>';
 //            }
-            ?>
+                ?>
             <form id="formRevisarPermiso" class="margin-bottom-0" data-parsley-validate="true" enctype="multipart/form-data">
 
                 <div class="col-md-3">
