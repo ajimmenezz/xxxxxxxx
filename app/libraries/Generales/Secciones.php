@@ -277,6 +277,7 @@ class Secciones extends General {
                   $datos['TipoMotivo'] = $this->CatalogoMotivosPermiso->getDatos();
                   $datos['TipoRechazo'] = $this->CatalogoRechazoPermiso->getDatos();
                   $datos['TipoCancelacion'] = $this->CatalogoCancelacionPermiso->getDatos();
+                  $datos['ListaPerfiles'] = $this->Catalogo->catPerfiles("3");
                 break;
             case 'Poliza':
                 $datos['TiposProyectos'] = $this->DBPO->getTiposProyecto();

@@ -20,10 +20,18 @@
             <label id="btnCancelarPermiso" class="btn btn-danger btn-xs ocultarPermiso" href="#modalRechazo" data-toggle="modal">
                 <i class="fa fa"></i> Rechazar
             </label>
-            <label id="btnPeticionCancelar" class="btn btn-danger btn-xs hidden" href="#modalCancelarPeticion" data-toggle="modal">
-                <i class="fa fa"></i> Cancelar
-            </label>
             <?php
+            if ($datosAusencia[0]['NivelCancelacion'] == null) {
+                echo '<label id="btnPeticionCancelar" class="btn btn-danger btn-xs hidden" href="#modalCancelarPeticion" data-toggle="modal">
+                        <i class="fa fa"></i> Cancelar
+                    </label>';
+            } else {
+                if ($perfilUsuario == $datosAusencia[0]['NivelCancelacion']) {
+                    echo '<label id="btnPeticionCancelar" class="btn btn-danger btn-xs hidden" href="#modalCancelarPeticion" data-toggle="modal">
+                            <i class="fa fa"></i> Cancelar
+                        </label>';
+                }
+            }
             if ($perfilUsuario != 44) {
                 echo '<label id="btnAutorizarPermiso" class="btn btn-success btn-xs ocultarPermiso">
                     <i class="fa fa"></i> Autorizar
