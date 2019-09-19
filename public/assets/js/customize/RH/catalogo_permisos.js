@@ -12,6 +12,8 @@ $(function () {
     let tablaMotivoAusencia = new TablaBasica('table-catalogo-ausencia');
     let tablaMotivoRechazo = new TablaBasica('table-catalogo-rechazos');
     let tablaMotivoCancelacion = new TablaBasica('table-catalogo-cancelacion');
+    let selectPefiles = new SelectBasico('editarNivelCancelacion');
+    selectPefiles.iniciarSelect();
     let datos = {
         id: null,
         nombre: null,
@@ -100,6 +102,11 @@ $(function () {
             } else {
                 $('#editarEstadoCancelacion').select2().val(0).trigger('change');
             }
+            if (infoTabla[6] !== '') {
+                $('#editarNivelCancelacion').select2().val(infoTabla[6]).trigger('change');
+            } else {
+                $('#editarNivelCancelacion').select2().val(null).trigger('change');
+            }
         } else {
             $('#posibleCancelacion').addClass('hidden');
         }
@@ -119,8 +126,16 @@ $(function () {
                     $(".selectEditarEstadoCancelacion").each(function () {
                         datos.cancelacion = $(this).val();
                     });
+                    $(".selectEditarNivelCancelacion").each(function () {
+                        if ($(this).val() !== '') {
+                            datos.nivelCancelacion = $(this).val();
+                        } else {
+                            datos.nivelCancelacion = 'null';
+                        }
+                    });
                 } else {
                     datos.cancelacion = '';
+                    datos.nivelCancelacion = '';
                 }
                 peticionBackend(ruta, datos);
             }

@@ -79,6 +79,8 @@
                                             <th class="all">Observaciones</th>
                                             <th class="all">Estado</th>
                                             <th class="all">Puede Cancelarse</th>
+                                            <th class="all">Nivel Cancelación</th>
+                                            <th class="never">IdPerfil</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -98,6 +100,12 @@
                                             } else {
                                                 echo '<th class="all flag">No</th>';
                                             }
+                                            if ($value["NombrePerfil"] === null) {
+                                                echo '<th class="all nivelCancelacion">Jefe Directo</th>';
+                                            } else {
+                                                echo '<th class="all nivelCancelacion">' . $value["NombrePerfil"] . '</th>';
+                                            }
+                                            echo '<th class="all idPerfil">' . $value["NivelCancelacion"] . '</th>';
                                         }
                                         ?>
                                     </tbody>
@@ -293,10 +301,19 @@
                 <!--Empieza seccion de edición-->
                 <form id="formEditarMotivo" data-parsley-validate="true" enctype="multipart/form-data">
                     <div class="col-md-12">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
                             <div class="form-group">
                                 <label>Motivo</label>
                                 <input id="editarMotivo" type="text" class="inputEditarMotivo form-control" style="width: 100%" data-parsley-required="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <label>Estado</label>
+                                <select id="editarEstado" class="selectEditarEstado form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="1">Habilitado</option>
+                                    <option value="2">Deshabilitado</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -307,17 +324,19 @@
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <div class="col-md-6 col-sm-6 col-xs-6">
-                            <div class="form-group">
-                                <label>Estado</label>
-                                <select id="editarEstado" class="selectEditarEstado form-control" style="width: 100%" data-parsley-required="true">
-                                    <option value="1">Habilitado</option>
-                                    <option value="2">Deshabilitado</option>
+                        <div id="posibleCancelacion" class="form-group hidden">
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <label>Nivel Cancelación</label>
+                                <select id="editarNivelCancelacion" class="selectEditarNivelCancelacion form-control" style="width: 100%">
+                                    <option value="">Jefe Directo</option>
+                                    <?php
+                                    foreach ($datos["ListaPerfiles"] as $value) {
+                                        echo '<option value="'.$value['Id'].'">'.$value['Nombre'].'</option>';
+                                    }
+                                    ?>
                                 </select>
                             </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6 col-xs-6">
-                            <div id="posibleCancelacion" class="form-group hidden">
+                            <div class="col-md-6 col-sm-6 col-xs-6">
                                 <label>Cancelación</label>
                                 <select id="editarEstadoCancelacion" class="selectEditarEstadoCancelacion form-control" style="width: 100%" data-parsley-required="true">
                                     <option value="1">Si</option>
@@ -325,6 +344,7 @@
                                 </select>
                             </div>
                         </div>
+                        <br><br><br>
                     </div>
                 </form>
                 <!--Finaliza seccion de edición-->
