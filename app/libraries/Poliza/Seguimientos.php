@@ -4899,6 +4899,7 @@ class Seguimientos extends General {
             $mensaje = ['mensaje' => "Se guardo correctamente la entrega.",
                 'datos' => $formularios,
                 'idTabla' => $datos['id'],
+                'idServicio' => $datos['idServicio'],
                 'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200];
             return $mensaje;
@@ -5288,14 +5289,16 @@ class Seguimientos extends General {
 
     private function findTechnicalId(array $dataFindTechnicalId) {
         $idSD = '';
-        $sdTechnicalList = $this->ServiceDesk->getTecnicosSD($dataFindTechnicalId['SDKey']);
-        $sdTechnicalList = json_decode($sdTechnicalList);
-        $datosAllab = $this->DBP->consultaEquiposAllab($dataFindTechnicalId['idService']);
 
-        if (isset($sdTechnicalList->operation->details)) {
-            foreach ($sdTechnicalList->operation->details as $key => $value) {
-                if ($datosAllab[0]['NombreUsuario'] . ' - Siccob' === $value->TECHNICIANNAME) {
-                    $idSD = $value->TECHNICIANID;
+        if ($this->ServiceDesk->validarAPIKey($dataFindTechnicalId['SDKey']) !== '') {
+            $sdTechnicalList = $this->ServiceDesk->getTecnicosSD($dataFindTechnicalId['SDKey']);
+            $datosAllab = $this->DBP->consultaEquiposAllab($dataFindTechnicalId['idService']);
+
+            if (isset($sdTechnicalList->operation->details)) {
+                foreach ($sdTechnicalList->operation->details as $key => $value) {
+                    if ($datosAllab[0]['NombreUsuario'] . ' - Siccob' === $value->TECHNICIANNAME) {
+                        $idSD = $value->TECHNICIANID;
+                    }
                 }
             }
         }
@@ -5396,9 +5399,12 @@ class Seguimientos extends General {
         $user = $this->Usuario->getDatosUsuario();
         $viewHtml = '';
         $dataService = $this->DBP->consultationServiceAndRequest($dataSendTextSD['service']);
-        $key = $this->InformacionServicios->getApiKeyByUser($user['Id']);
-        $viewHtml .= $this->createTextSD($dataSendTextSD);
-        $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $dataService[0]['Folio'], 'html' => $viewHtml));
+        $key = $this->ServiceDesk->validarAPIKey($user['SDKey']);
+
+        if ($key !== '') {
+            $viewHtml .= $this->createTextSD($dataSendTextSD);
+            $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $dataService[0]['Folio'], 'html' => $viewHtml));
+        }
     }
 
     public function createTextSD(array $dataCreateTextSD) {
