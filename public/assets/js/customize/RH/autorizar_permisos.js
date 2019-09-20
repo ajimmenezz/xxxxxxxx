@@ -47,7 +47,7 @@ $(function () {
                         } 
                     }
                 }
-                if (datosPermiso.estatus === 'Autorizado') {
+                if (datosPermiso.estatus === 'Autorizado' && respuesta.consulta.datosAusencia['0'].Cancelacion == 1) {
                     $('#btnPeticionCancelar').removeClass('hidden');
                 }
                 $('#btnCancelarRevisarPermiso').on('click', function () {
