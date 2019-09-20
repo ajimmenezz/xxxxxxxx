@@ -2116,11 +2116,21 @@ Servicio.prototype.servicioValidacion = function () {
     var datosConcluir = arguments[0].datosConcluir || null;
     var dataMandar = {ticket: ticket, servicio: servicio, estatus: estatus, sucursal: sucursal, descripcion: descripcion, datosConcluir: datosConcluir};
 
-    _this.file.enviarArchivos('#evidenciaCambiosSinClasificar', '/Generales/Servicio/ServicioEnValidacion', seccion, dataMandar, function (respuesta) {
-        if (respuesta.code === 200) {
-            _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
-        } else {
-            _this.mensajeModal('Ocurrió el error "' + respuesta.message + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
-        }
-    });
+    if ($('#evidenciaCambiosSinClasificar').val() !== undefined) {
+        _this.file.enviarArchivos('#evidenciaCambiosSinClasificar', '/Generales/Servicio/ServicioEnValidacion', seccion, dataMandar, function (respuesta) {
+            if (respuesta.code === 200) {
+                _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+            } else {
+                _this.mensajeModal('Ocurrió el error "' + respuesta.message + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+            }
+        });
+    } else {
+        _this.enviarEvento('/Generales/Servicio/ServicioEnValidacion', dataMandar, seccion, function (respuesta) {
+            if (respuesta.code === 200) {
+                _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+            } else {
+                _this.mensajeModal('Ocurrió el error "' + respuesta.message + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+            }
+        });
+    }
 }
