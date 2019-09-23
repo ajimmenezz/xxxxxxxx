@@ -55,8 +55,8 @@ class Controller_PermisosVacaciones extends Base {
             case 'obtenerDatos':
                 $resultado = $this->permisos->obtenerDatos();
                 break;
-            case 'cancelarPermisoCalendario':
-                $resultado = $this->autorizar->cancelarPermisoCalendario($this->input->post());
+            case 'cancelarPermisoAutorizado':
+                $resultado = $this->autorizar->cancelarPermisoAutorizado($this->input->post());
                 break;
         }
         echo json_encode($resultado);
