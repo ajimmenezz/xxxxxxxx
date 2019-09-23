@@ -96,7 +96,7 @@ class ServiceDesk extends General {
         }
         
         return $textoError;
-    }gi
+    }
 
     public function validarAPIKey(string $key) {
         try {
