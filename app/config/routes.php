@@ -285,6 +285,7 @@ $route['Prime/Inventario/(:any)'] = 'Prime/Controller_Inventario/manejarEvento/$
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
 $route['Reportes/Lexmark/(:any)'] = 'Reportes/Controller_PrinterLexmark/manejarEvento/$1';
+$route['Reportes/SD/(:any)'] = 'Reportes/Controller_Servicedesk/manejarEvento/$1';
 
 $route['Error/(:any)'] = 'Controller_Error/$1';
 
