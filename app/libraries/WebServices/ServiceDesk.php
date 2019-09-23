@@ -86,15 +86,17 @@ class ServiceDesk extends General {
             case 'Error when validating URL - Invalid URL for the requested operation.':
                 $textoError = 'URL no válida para la operación solicitada.';
                 break;
-            case 'Error when adding note to request - 561339 - Notes text cannot be empty when adding notes':
-                $textoError = 'No cuenta con información para subirlo al ServiceDesk.';
-                break;
             default :
                 $textoError = $error;
                 break;
         }
+
+        if (strpos($error, 'Error when adding note to request') !== FALSE) {
+            $textoError = 'No cuenta con información para subirlo al ServiceDesk.';
+        }
+        
         return $textoError;
-    }
+    }gi
 
     public function validarAPIKey(string $key) {
         try {
@@ -145,7 +147,7 @@ class ServiceDesk extends General {
     public function getResolucionFolio(string $key, string $folio) {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_RESOLUTION&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '?' . $this->FIELDS);
-        
+
         if ($datosSD !== NULL) {
             $this->validarError($datosSD);
         } else {
