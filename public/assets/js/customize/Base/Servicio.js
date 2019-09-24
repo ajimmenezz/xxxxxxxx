@@ -259,8 +259,8 @@ Servicio.prototype.nuevaSolicitud = function () {
                     _this.file.enviarArchivos('#inputEvidenciasSolicitud', '/Generales/Solicitud/Nueva_solicitud', '#panelNuevaSolicitud', data, function (respuesta) {
                         if (respuesta) {
                             if (data.personalSD != "") {
+                                data.solicitud = respuesta;
                                 evento.enviarEvento('/Generales/Solicitud/ReasignarFolioSD', data, null, function (respuesta) {
-
                                 });
                             }
 
