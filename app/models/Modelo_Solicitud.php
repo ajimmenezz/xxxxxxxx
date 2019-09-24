@@ -436,5 +436,12 @@ class Modelo_Solicitud extends Modelo_Base {
         $consulta = $this->actualizar('t_solicitudes', $datos, $where);
         return $consulta;
     }
+    
+    public function obtenerFolios($folio) {
+        $consulta = $this->consulta("SELECT Id, Ticket, Folio, FechaCreacion, estatus(IdEstatus) AS Estado
+			FROM t_solicitudes 
+			WHERE Folio ='".$folio."'");
+        return $consulta;
+    }
 
 }
