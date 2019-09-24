@@ -281,14 +281,16 @@ $(function () {
 
             $("#btnSubirInfoSD").off("click");
             $("#btnSubirInfoSD").on("click", function () {
+                $('#btnSubirInfoSD a').bind('click', false);
                 var data = {
                     servicio: $(this).attr("data-id-servicio"),
                     servicioConcluir: false
                 }
                 evento.enviarEvento('/Generales/ServiceDesk/GuardarInformacionSD', data, '#seccion-detalles', function (respuesta) {
+                    $('#btnSubirInfoSD a').unbind('click', false);
                     if (respuesta.code === 200) {
                         var html = `<p class="f-s-20 text-center">Su información fué agregada a ServiceDesk.</p>`;
-                        evento.mostrarModal("Informcación SD", html);
+                        evento.mostrarModal("Información SD", html);
                         $('#btnModalConfirmar').addClass('hidden');
                         $('#btnModalAbortar').empty().append('Cerrar');
                     } else {
