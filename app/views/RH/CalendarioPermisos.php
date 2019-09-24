@@ -28,7 +28,7 @@
             <div class="modal-header" style="text-align: center">
                 <h4 class="modal-title seccionInfoPermiso">Información del permiso</h4>
                 <h4 class="modal-title seccionRechazarPermiso hidden">Rechazar Permiso</h4>
-                <h4 class="modal-title seccionSolicitarCancelarPermiso">Solicitar Cancelacion del Permiso</h4>
+                <h4 class="modal-title seccionSolicitarCancelarPermiso hidden">Solicitar Cancelacion del Permiso</h4>
             </div>
             <!--Finaliza titulo del modal-->
             <!--Empieza cuerpo del modal-->

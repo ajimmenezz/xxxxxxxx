@@ -101,3 +101,31 @@
     <!-- Finalizando panel nuevo proyecto -->
 </div>
 <!-- Finalizando #contenido -->
+
+<!--Empezando contenido Comparacion tickets-->
+<div id="contentTicket" class="content">
+    <!-- Empezando titulo de la pagina -->
+    <h1 class="page-header">Comparación Tickets</h1>
+    <!-- Finalizando titulo de la pagina -->
+    <!--Empezando Panel-->
+    <div id="panelComparacionTickets" class="panel panel-inverse">
+        <!--Empezando cabecera del panel-->
+        <div class="panel-heading">
+            <div id="botonesExtra" class="panel-heading-btn">
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>                            
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
+            </div>
+            <h4 class="panel-title">Comparación Tickets Adist/SD</h4>
+        </div>
+        <!--Finalizando cabecera del panel-->
+        <!--Empezando cuerpo del panel-->
+        <div class="panel-body">
+            <div class="col-md-12">
+                <button  id="solicitarFolios">Solicitar Folios</button>
+            </div>
+        </div>
+        <!--Finalizando cuerpo del panel-->
+    </div>
+    <!--Finalizando Panel-->
+</div>
+<!--Finalizando contenido Comparacion tickets-->

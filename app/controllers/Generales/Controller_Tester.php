@@ -52,6 +52,9 @@ class Controller_Tester extends Base {
             case 'concluirSolicitudesAbiertas':
                 $resultado = $this->Solicitud->concluirSolicitudesAbiertas();
                 break;
+            case 'solicitarFolios':
+                $resultado = $this->Solicitud->getFolios();
+                break;
             default:
                 $resultado = FALSE;
                 break;

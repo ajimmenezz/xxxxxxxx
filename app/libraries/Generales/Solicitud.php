@@ -20,6 +20,7 @@ class Solicitud extends General {
     private $Correo;
     private $SegundoPlano;
     private $InformacionServicios;
+    private $Excel;
 
     public function __construct() {
         parent::__construct();
@@ -33,6 +34,7 @@ class Solicitud extends General {
         $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         $this->SegundoPlano = \Modelos\Modelo_SegundoPlano::factory();
         parent::getCI()->load->helper(array('FileUpload', 'date'));
+        $this->Excel = new \Librerias\Generales\CExcel();
     }
 
     /*
@@ -1665,5 +1667,75 @@ class Solicitud extends General {
             fclose($archivo);
         }
     }
+    
+    public function getFolios() {
+        $folios = $this->ServiceDesk->getFolios('A8D6001B-EB63-4996-A158-1B968E19AB84');
+        $sd = json_decode(json_encode($folios), True);
+        $j = 0;
+        $k = 0;
+        
+        for ($i = 0; $i < count($sd["operation"]["details"]); $i++) {
+            $temp = $this->DBS->obtenerFolios($sd["operation"]["details"][$i]["WORKORDERID"]);
+            
+            if(count($temp) > 0){
+                $foliosAdist[$j] = array(
+                            "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
+                            "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
+                            "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
+                            "FechaCreacionSD" => date('Y-m-d H:i:s', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                            "Solicitus" => $temp[0]["Id"],
+                            "Ticket" => $temp[0]["Ticket"],
+                            "Estatus" => $temp[0]["Estado"],
+                            "FechaCreacion" => $temp[0]["FechaCreacion"]
+                        );
+                $j++;
+            } else {
+                $foliosSD[$k] = array(
+                            "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
+                            "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
+                            "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
+                            "FechaCreacionSD" => date('Y-m-d H:i:s', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                            "Solicitus" => null,
+                            "Ticket" => null,
+                            "Estatus" => null,
+                            "FechaCreacion" => null
+                        );
+                $k++;
+            }
+        }
+        $resultado = array_merge($foliosAdist, $foliosSD);
+        return $this->crearExcel($resultado);
+    }
+    
+    public function crearExcel($datosFolio) {
+        $this->Excel->createSheet('Folios', 0);
+        $this->Excel->setActiveSheet(0);
+        $arrayTitulos = 
+            ['Ticket SD',
+            'Estatus SD',
+            'Tecnico SD',
+            'Fecha Creacion SD',
+            'Solicitud Adist',
+            'Ticket Adist',
+            'Estatus Solicitud Adist',
+            'Fecha Creacion Solicitud Adist'];
+        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
+        $arrayWidth = [30, 30, 30, 30, 30, 30, 30, 30];
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'];
 
+        $this->Excel->setTableContent('A', 1, $datosFolio, true, $arrayAlign);
+
+        $nombreArchivo = 'Reporte_Folios.xlsx';
+        $nombreArchivo = trim($nombreArchivo);
+        $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
+        
+        $path = "../public/storage/Archivos/Reportes";
+        if(!is_dir($path)){
+            mkdir($path, 755, true);
+        }
+        $this->Excel->saveFile($ruta);
+        
+        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/Reportes/' . $nombreArchivo ];
+    }
 }

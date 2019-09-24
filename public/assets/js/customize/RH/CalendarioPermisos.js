@@ -82,7 +82,7 @@ $(function () {
             } else {
                 $('#circleContabilidad').addClass("text-danger");
             }
-            if (infoEvento.fechaAusencia < hoy) {
+            if (infoEvento.fechaAusencia < hoy || infoEvento.estatus == 'CANCELADO') {
                 $('#btnCancelarModalPermisos').addClass('hidden');
             }
         });

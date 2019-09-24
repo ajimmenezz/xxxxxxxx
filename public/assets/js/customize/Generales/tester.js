@@ -45,4 +45,12 @@ $(function () {
             $('#respuesta').empty().append('Correcto');
         });
     });
+
+    $('#solicitarFolios').on('click', function () {
+        evento.enviarEvento('Tester/solicitarFolios', {}, '#panelComparacionTickets', function (respuesta) {
+            if (respuesta) {
+                window.open(respuesta.ruta, '_blank');
+            }
+        });
+    });
 });
