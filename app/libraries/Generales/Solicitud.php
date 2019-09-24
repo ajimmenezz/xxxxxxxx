@@ -1724,7 +1724,7 @@ class Solicitud extends General {
         $this->Excel->setColumnsWidth('A', $arrayWidth);
         $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'];
 
-        $this->Excel->setTableContent('A', 2, $datosFolio, true, $arrayAlign);
+        $this->Excel->setTableContent('A', 1, $datosFolio, true, $arrayAlign);
 
         $nombreArchivo = 'Reporte_Folios.xlsx';
         $nombreArchivo = trim($nombreArchivo);
