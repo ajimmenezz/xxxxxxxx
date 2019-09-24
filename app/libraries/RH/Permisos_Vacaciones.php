@@ -99,7 +99,7 @@ class Permisos_Vacaciones extends General {
         $idPermisoGenerado = $this->ajustarInformacionDBS($datosPermisos, $documento);
         $correoEnviado = $this->enviarCorreoPermiso($datosPermisos, $asunto = "Generado", $carpeta);
 
-        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' =>$correoEnviado];
+        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' =>$correoEnviado];
     }
 
     public function revisarArchivoAdjunto($datosPermisos) {
@@ -234,7 +234,7 @@ class Permisos_Vacaciones extends General {
 
         $correoEnviado = $this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
 
-        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' =>$correoEnviado];
+        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' =>$correoEnviado];
     }
 
     public function actualizarPermisoArchivo($datosPermisos) {
@@ -256,7 +256,7 @@ class Permisos_Vacaciones extends General {
 
         $correoEnviado = $this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
 
-        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' =>$correoEnviado];
+        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' =>$correoEnviado];
     }
 
     public function revisarActualizarPermiso($datosPermisos) {
@@ -371,7 +371,7 @@ class Permisos_Vacaciones extends General {
                 break;
         }
         $texto .= ' para el día ' . $datosPermisos['fechaPermisoDesde'] . '</p><br><br>
-                    <a href="http://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1) . '">Archivo</a>';
+                    <a href="https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1) . '">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia ' . $asunto, $texto);
         $correoEnviado = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($arregloCorreos), 'Permiso de Ausencia', $mensaje);
         return $correoEnviado;

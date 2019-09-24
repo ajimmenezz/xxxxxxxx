@@ -1736,6 +1736,6 @@ class Solicitud extends General {
         }
         $this->Excel->saveFile($ruta);
         
-        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/Reportes/' . $nombreArchivo ];
+        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/Reportes/' . $nombreArchivo ];
     }
 }
