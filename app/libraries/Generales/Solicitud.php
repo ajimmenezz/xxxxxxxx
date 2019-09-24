@@ -1719,12 +1719,12 @@ class Solicitud extends General {
             'Ticket Adist',
             'Estatus Solicitud Adist',
             'Fecha Creacion Solicitud Adist'];
-        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
         $arrayWidth = [30, 30, 30, 30, 30, 30, 30, 30];
         $this->Excel->setColumnsWidth('A', $arrayWidth);
         $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'];
 
-        $this->Excel->setTableContent('A', 1, $datosFolio, true, $arrayAlign);
+        $this->Excel->setTableContent('A', 2, $datosFolio, true, $arrayAlign);
 
         $nombreArchivo = 'Reporte_Folios.xlsx';
         $nombreArchivo = trim($nombreArchivo);
