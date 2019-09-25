@@ -925,7 +925,7 @@ $(function () {
                                                                 </div>\n\
                                                             </div>');
                             $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
-                            $('#data-table-solicitudes-asignadas').DataTable().row(_fila).remove().draw();
+                            $('#data-table-solicitudes-asignadas').DataTable().row(this).remove().draw();
                         } else {
                             evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12">\n\
