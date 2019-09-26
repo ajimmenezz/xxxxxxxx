@@ -29,7 +29,7 @@ class Busqueda extends General {
             $query = 'select 
             ts.Id as IdSolicitud,
             tst.Id as IdServicio,
-            ts.Ticket,
+            tst.Ticket,
             ts.Folio,
             regionCliente(cs.IdRegionCliente) as Region,
             sucursal(tst.IdSucursal) as Sucursal,
