@@ -10,7 +10,7 @@
         <div class="panel-heading">
             <div class="panel-heading-btn">
                 <?php
-//                if ($usuario['IdPerfil'] == 46) {
+                if ($usuario['IdPerfil'] == 46) {
                     echo '<div class="btn-group">
                                 <a href="javascript:;" data-toggle="dropdown" class="btn btn-xs btn-warning dropdown-toggle">Acciones <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
@@ -18,7 +18,7 @@
                                         <li><a id="compararFolios" href="javascript:;">Comparativa Adist/SD</a></li>
                                 </ul>
                         </div>';
-//                }
+                }
                 ?>
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>                            
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
