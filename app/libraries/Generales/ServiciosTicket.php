@@ -1222,11 +1222,12 @@ class ServiciosTicket extends General {
                         'Nota' => $datos['Descripcion'],
                         'Fecha' => $fecha
                     );
+                    $informacionServicio = $this->DBST->consultaServicio($datos['servicio']);
                     $verificarEstatusTicket = $this->DBST->consultaGeneral('SELECT 
                                                                 IdEstatus,
                                                                 IdSolicitud
                                                             FROM t_servicios_ticket tst
-                                                            WHERE Ticket = ' . $datos['ticket'] . '
+                                                            WHERE IdSolicitud = ' . $informacionServicio[0]['IdSolicitud'] . '
                                                             AND IdEstatus IN(10,5,2,1)');
                     if (!$verificarEstatusTicket) {
                         $serviciosConcluidos = FALSE;
@@ -1234,7 +1235,7 @@ class ServiciosTicket extends General {
                                                                 IdEstatus,
                                                                 IdSolicitud
                                                             FROM t_servicios_ticket tst
-                                                            WHERE Ticket = ' . $datos['ticket'] . '
+                                                            WHERE IdSolicitud = ' . $informacionServicio[0]['IdSolicitud'] . '
                                                             AND IdEstatus IN(4,6)');
                         foreach ($serviciosConcluidosCancelados as $key => $value) {
                             if ($value['IdEstatus'] === '4') {

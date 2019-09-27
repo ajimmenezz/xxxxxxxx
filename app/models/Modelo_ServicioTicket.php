@@ -970,7 +970,8 @@ class Modelo_ServicioTicket extends Modelo_Base {
                                             tst.FechaConclusion,
                                             (SELECT Atiende FROM t_solicitudes WHERE Id = tst.IdSolicitud) Atiende,
                                             tst.IdSucursal,
-                                            sucursal(tst.IdSucursal) Sucursal
+                                            sucursal(tst.IdSucursal) Sucursal,
+                                            tst.IdSolicitud
                                         FROM t_servicios_ticket tst
                                         INNER JOIN t_solicitudes ts
                                             ON ts.Id = tst.IdSolicitud
