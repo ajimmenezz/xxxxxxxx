@@ -1679,10 +1679,12 @@ class Solicitud extends General {
             
             if(count($temp) > 0){
                 $foliosAdist[$j] = array(
+                            "SemanaCreacionSD" => date('W', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                            "MesCreacionSD" => date('m', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                            "YearCreacionSD" => date('Y', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
                             "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
                             "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
                             "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
-                            "FechaCreacionSD" => date('Y-m-d H:i:s', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
                             "Solicitus" => $temp[0]["Id"],
                             "Ticket" => $temp[0]["Ticket"],
                             "Estatus" => $temp[0]["Estado"],
@@ -1691,10 +1693,12 @@ class Solicitud extends General {
                 $j++;
             } else {
                 $foliosSD[$k] = array(
+                            "SemanaCreacionSD" => date('W', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                            "MesCreacionSD" => date('m', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                            "YearCreacionSD" => date('Y', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
                             "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
                             "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
                             "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
-                            "FechaCreacionSD" => date('Y-m-d H:i:s', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
                             "Solicitus" => null,
                             "Ticket" => null,
                             "Estatus" => null,
@@ -1704,29 +1708,93 @@ class Solicitud extends General {
             }
         }
         $resultado = array_merge($foliosAdist, $foliosSD);
-        return $this->crearExcel($resultado);
-    }
-    
-    public function crearExcel($datosFolio) {
-        $this->Excel->createSheet('Folios', 0);
-        $this->Excel->setActiveSheet(0);
         $arrayTitulos = 
-            ['Ticket SD',
+            ['Semana Creacion SD',
+            'Mes Creacion SD',
+            'Año Creacion SD',
+            'Ticket SD',
             'Estatus SD',
             'Tecnico SD',
-            'Fecha Creacion SD',
             'Solicitud Adist',
             'Ticket Adist',
             'Estatus Solicitud Adist',
             'Fecha Creacion Solicitud Adist'];
-        $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
-        $arrayWidth = [30, 30, 30, 30, 30, 30, 30, 30];
-        $this->Excel->setColumnsWidth('A', $arrayWidth);
-        $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'];
-
-        $this->Excel->setTableContent('A', 1, $datosFolio, true, $arrayAlign);
-
-        $nombreArchivo = 'Reporte_Folios.xlsx';
+        
+        return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
+    }
+    
+    public function getFoliosSemanal() {
+        $foliosAdist = $this->DBS->obtenerFoliosAdist();
+        
+        $titulos = 
+            ['Mes',
+            'Semana',
+            'Ticket Service Desk',
+            'Estatus Ticket AdIST',
+            'Servicio AdIST',
+            'Tipo Servicio',
+            'Departamento',
+            'Tecnico Asignado',
+            'Region',
+            'Sucursal',
+            'Fecha Solicitud',
+            'Solicitante',
+            'Asunto',
+            'Descripcion Solicitud',
+            'Estatus Servicio',
+            'Fecha Servicio',
+            'Fecha Inicio Servicio',
+            'Fecha Conclusion Servicio',
+            'Area Atencion',
+            'Punto',
+            'Equipo Diagnosticado',
+            'Componente',
+            'Tipo Diagnostico',
+            'Tipo Falla',
+            'Falla',
+            'Fecha Diagnostico',
+            'Observaciones Diagnostico',
+            'Tipo Solucion',
+            'Solucion Sin Equipo',
+            'Cambio Equipo',
+            'Cambio Refaccion',
+            'Solucion Servicio Sin Clasificar',
+            'Tiempo Solicitud',
+            'Tiempo Servicio',
+            'Tiempo Transcurrido Entre Solicitud Servicio'];
+        
+        return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios.xlsx');
+    }
+    
+    public function crearExcel($datosFolio, $arrayTitulos, $nombreArchivo) {
+        
+        if(count($arrayTitulos) > 25){
+            $letra = 'AA';
+        }else{
+            $letra = 'A';
+        }
+        
+        $this->Excel->createSheet('Folios', 0);
+        $this->Excel->setActiveSheet(0);
+        
+        $this->Excel->setTableSubtitles($letra, 1, $arrayTitulos);
+        
+        $arrayWidth = array();
+        for($i= 0; $i<count($arrayTitulos); $i++){
+            array_push($arrayWidth, 30);
+        } 
+        $this->Excel->setColumnsWidth($letra, $arrayWidth);
+        
+        $arrayAlign = array();
+        for($i= 0; $i<count($arrayTitulos); $i++){
+            array_push($arrayAlign, 'center');
+        }
+        $this->Excel->setTableContent($letra, 1, $datosFolio, true, $arrayAlign);
+        
+        if(count($arrayTitulos) > 25){
+            $this->Excel->removeColumn('A', 26);
+        }
+        
         $nombreArchivo = trim($nombreArchivo);
         $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
         
