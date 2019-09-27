@@ -14,6 +14,7 @@ class Controller_SegundoPlano extends \CI_Controller
     private $mail;
     private $ubicaphone;
     private $informacionServicios;
+    private $solicitud;
 
     public function __construct()
     {
@@ -25,6 +26,7 @@ class Controller_SegundoPlano extends \CI_Controller
         $this->mail = \Librerias\Generales\Correo::factory();
         $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
         $this->informacionServicios = \Librerias\WebServices\InformacionServicios::factory();
+        $this->solicitud = \Librerias\Generales\Solicitud::factory();
     }
 
     public function actulizarTablaEquiposSae()
@@ -483,5 +485,9 @@ class Controller_SegundoPlano extends \CI_Controller
         //        echo "<pre>";
         //        var_dump($array);
         //        echo "</pre>";
+    }
+    
+    public function concluirSolicitudesAbiertas(){
+        $this->solicitud->concluirSolicitudesAbiertas();
     }
 }
