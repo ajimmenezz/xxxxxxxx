@@ -10,7 +10,7 @@
         <div class="panel-heading">
             <div class="panel-heading-btn">
                 <?php
-                if ($usuario['IdPerfil'] == 46) {
+                if ($usuario['IdPerfil'] == 46 || $usuario['IdPerfil'] == 3) {
                     echo '<div class="btn-group">
                                 <a href="javascript:;" data-toggle="dropdown" class="btn btn-xs btn-warning dropdown-toggle">Acciones <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
