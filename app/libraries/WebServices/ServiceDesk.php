@@ -92,9 +92,13 @@ class ServiceDesk extends General {
         }
 
         if (strpos($error, 'Error when adding note to request') !== FALSE) {
-            $textoError = 'No cuenta con información para subirlo al ServiceDesk.';
+            if (strpos($error, 'User does not have enough permission to add note') !== FALSE) {
+                $textoError = 'El usuario no tiene permiso suficiente para agregar una nota al ServiceDesk.';
+            }else{
+                $textoError = 'No cuenta con información para subirlo al ServiceDesk.';
+            }
         }
-        
+
         return $textoError;
     }
 
