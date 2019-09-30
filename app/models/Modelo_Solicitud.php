@@ -447,36 +447,37 @@ class Modelo_Solicitud extends Modelo_Base {
     public function obtenerFoliosAdist() {
         return $this->consulta("select
                                     CASE 
-                                        WHEN MONTH(ts.FechaCreacion) = 1
-                                        THEN 'Enero'
-                                        WHEN MONTH(ts.FechaCreacion) = 2
-                                        THEN 'Febrero'
-                                        WHEN MONTH(ts.FechaCreacion) = 3
-                                        THEN 'Marzo'
-                                        WHEN MONTH(ts.FechaCreacion) = 4
-                                        THEN 'Abril'
-                                        WHEN MONTH(ts.FechaCreacion) = 5
-                                        THEN 'Mayo'
-                                        WHEN MONTH(ts.FechaCreacion) = 6
-                                        THEN 'Junio'
-                                        WHEN MONTH(ts.FechaCreacion) = 7
-                                        THEN 'Julio'
-                                        WHEN MONTH(ts.FechaCreacion) = 8
-                                        THEN 'Agosto'
-                                        WHEN MONTH(ts.FechaCreacion) = 9
-                                        THEN 'Septiembre'
-                                        WHEN MONTH(ts.FechaCreacion) = 10
-                                        THEN 'Octubre'
-                                        WHEN MONTH(ts.FechaCreacion) = 11
-                                        THEN 'Noviembre'
-                                        WHEN MONTH(ts.FechaCreacion) = 12
-                                        THEN 'Diciembre'
+                                    WHEN MONTH(ts.FechaCreacion) = 1
+                                    THEN 'Enero'
+                                    WHEN MONTH(ts.FechaCreacion) = 2
+                                    THEN 'Febrero'
+                                    WHEN MONTH(ts.FechaCreacion) = 3
+                                    THEN 'Marzo'
+                                    WHEN MONTH(ts.FechaCreacion) = 4
+                                    THEN 'Abril'
+                                    WHEN MONTH(ts.FechaCreacion) = 5
+                                    THEN 'Mayo'
+                                    WHEN MONTH(ts.FechaCreacion) = 6
+                                    THEN 'Junio'
+                                    WHEN MONTH(ts.FechaCreacion) = 7
+                                    THEN 'Julio'
+                                    WHEN MONTH(ts.FechaCreacion) = 8
+                                    THEN 'Agosto'
+                                    WHEN MONTH(ts.FechaCreacion) = 9
+                                    THEN 'Septiembre'
+                                    WHEN MONTH(ts.FechaCreacion) = 10
+                                    THEN 'Octubre'
+                                    WHEN MONTH(ts.FechaCreacion) = 11
+                                    THEN 'Noviembre'
+                                    WHEN MONTH(ts.FechaCreacion) = 12
+                                    THEN 'Diciembre'
                                     END as Mes,
                                     WEEK(ts.FechaCreacion, 1) AS Semana,
                                     ts.Folio AS TicketServiceDesk,
                                     estatus(ts.IdEstatus) as EstatusTicketAdIST,
                                     tst.Id as ServicioAdIST,
                                     tipoServicio(tst.IdTipoServicio) as TipoServicio,
+                                    estatus(tst.IdEstatus) as EstatusServicio,
                                     departamentoArea(ts.IdDepartamento) as Departamento,
                                     nombreUsuario(tst.Atiende) as TecnicoAsignado,
                                     regionBySucursal(tst.IdSucursal) as Region,
@@ -485,10 +486,9 @@ class Modelo_Solicitud extends Modelo_Base {
                                     nombreUsuario(ts.Solicita) as Solicitante,
                                     tsi.Asunto,
                                     tsi.Descripcion as DescripcionSolicitud,
-                                    estatus(tst.IdEstatus) as EstatusServicio,
                                     tst.FechaCreacion as FechaServicio,
                                     tst.FechaInicio as FechaInicioServicio,
-                                    tst.FechaConclusion as FechaConclusiónServicio,
+                                    tst.FechaConclusion as FechaConclusionServicio,
                                     areaAtencion(tcg.IdArea) as AreaAtencion,
                                     tcg.Punto,
                                     modelo(tcg.IdModelo) as EquipoDiagnosticado,
