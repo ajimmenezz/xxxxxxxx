@@ -55,6 +55,9 @@ class Controller_Tester extends Base {
             case 'solicitarFolios':
                 $resultado = $this->Solicitud->getFolios();
                 break;
+            case 'solicitudSemanal':
+                $resultado = $this->Solicitud->getFoliosSemanal();
+                break;
             default:
                 $resultado = FALSE;
                 break;

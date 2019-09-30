@@ -443,5 +443,104 @@ class Modelo_Solicitud extends Modelo_Base {
 			WHERE Folio ='".$folio."'");
         return $consulta;
     }
+    
+    public function obtenerFoliosAdist() {
+        return $this->consulta("select
+                                    CASE 
+                                    WHEN MONTH(ts.FechaCreacion) = 1
+                                    THEN 'Enero'
+                                    WHEN MONTH(ts.FechaCreacion) = 2
+                                    THEN 'Febrero'
+                                    WHEN MONTH(ts.FechaCreacion) = 3
+                                    THEN 'Marzo'
+                                    WHEN MONTH(ts.FechaCreacion) = 4
+                                    THEN 'Abril'
+                                    WHEN MONTH(ts.FechaCreacion) = 5
+                                    THEN 'Mayo'
+                                    WHEN MONTH(ts.FechaCreacion) = 6
+                                    THEN 'Junio'
+                                    WHEN MONTH(ts.FechaCreacion) = 7
+                                    THEN 'Julio'
+                                    WHEN MONTH(ts.FechaCreacion) = 8
+                                    THEN 'Agosto'
+                                    WHEN MONTH(ts.FechaCreacion) = 9
+                                    THEN 'Septiembre'
+                                    WHEN MONTH(ts.FechaCreacion) = 10
+                                    THEN 'Octubre'
+                                    WHEN MONTH(ts.FechaCreacion) = 11
+                                    THEN 'Noviembre'
+                                    WHEN MONTH(ts.FechaCreacion) = 12
+                                    THEN 'Diciembre'
+                                    END as Mes,
+                                    WEEK(ts.FechaCreacion, 1) AS Semana,
+                                    ts.Folio AS TicketServiceDesk,
+                                    estatus(ts.IdEstatus) as EstatusTicketAdIST,
+                                    tst.Id as ServicioAdIST,
+                                    tipoServicio(tst.IdTipoServicio) as TipoServicio,
+                                    estatus(tst.IdEstatus) as EstatusServicio,
+                                    departamentoArea(ts.IdDepartamento) as Departamento,
+                                    nombreUsuario(tst.Atiende) as TecnicoAsignado,
+                                    regionBySucursal(tst.IdSucursal) as Region,
+                                    IF(tst.IdSucursal IS NULL, (sucursalCliente(ts.IdSucursal)), (sucursalCliente(tst.IdSucursal))) as Sucursal,
+                                    ts.FechaCreacion as FechaSolicitud,
+                                    nombreUsuario(ts.Solicita) as Solicitante,
+                                    tsi.Asunto,
+                                    tsi.Descripcion as DescripcionSolicitud,
+                                    tst.FechaCreacion as FechaServicio,
+                                    tst.FechaInicio as FechaInicioServicio,
+                                    tst.FechaConclusion as FechaConclusionServicio,
+                                    areaAtencion(tcg.IdArea) as AreaAtencion,
+                                    tcg.Punto,
+                                    modelo(tcg.IdModelo) as EquipoDiagnosticado,
+                                    (select Nombre from cat_v3_componentes_equipo where Id = tcd.IdComponente) as Componente,
+                                    (select Nombre from cat_v3_tipos_diagnostico_correctivo where Id = tcd.IdTipoDiagnostico) as TipoDiagnostico,
+                                    (select Nombre from cat_v3_tipos_falla where Id = tcd.IdTipoFalla) as TipoFalla,
+                                    if(tcd.IdComponente is null, (select Nombre from cat_v3_fallas_equipo where Id = tcd.IdFalla), (select Nombre from cat_v3_fallas_refaccion where Id = tcd.IdFalla)) as Falla,
+                                    tcd.FechaCaptura as FechaDiagnostico,
+                                    tcd.Observaciones as ObservacionesDiagnostico,
+                                    (select Nombre from cat_v3_correctivos_soluciones where Id = tcs.IdTipoSolucion) as TipoSolucion,
+                                    if(tcs.IdTipoSolucion = 1, (select Nombre from cat_v3_soluciones_equipo where Id = (select IdSolucionEquipo from t_correctivos_solucion_sin_equipo where IdSolucionCorrectivo = tcs.Id)),'NA') as SolucionSinEquipo,
+                                    if(tcs.IdTipoSolucion = 3, modelo((select IdModelo from t_correctivos_solucion_cambio where IdSolucionCorrectivo = tcs.Id)), 'NA') as CambioEquipo,
+                                    if(tcs.IdTipoSolucion = 2, (select group_concat(Nombre) from cat_v3_componentes_equipo where Id in (select IdRefaccion from t_correctivos_solucion_refaccion where IdSolucionCorrectivo = tcs.Id)), 'NA') as CambioRefaccion,
+                                    (SELECT Descripcion FROM t_servicios_generales WHERE IdServicio = tst.Id) AS SolucionServicioSinClasificar,
+                                        case
+                                            when
+                                                ts.IdEstatus in (4 , '4')
+                                            then
+                                                SEC_TO_TIME((TIMESTAMPDIFF(MINUTE,
+                                                            ts.FechaCreacion,
+                                                            ts.FechaConclusion)) * 60)
+                                            when ts.IdEstatus in (6 , '6') then ''
+                                            else SEC_TO_TIME((TIMESTAMPDIFF(MINUTE,
+                                                        ts.FechaCreacion,
+                                                        now())) * 60)
+                                        end as TiempoSolicitud,
+                                        case
+                                            when
+                                                tst.IdEstatus in (4 , '4')
+                                            then
+                                                SEC_TO_TIME((TIMESTAMPDIFF(MINUTE,
+                                                            tst.FechaCreacion,
+                                                            tst.FechaConclusion)) * 60)
+                                            when tst.IdEstatus in (6 , '6') then ''
+                                            else SEC_TO_TIME((TIMESTAMPDIFF(MINUTE,
+                                                        tst.FechaCreacion,
+                                                        now())) * 60)
+                                        end as TiempoServicio,
+                                        SEC_TO_TIME((TIMESTAMPDIFF(MINUTE,
+                                                    ts.FechaCreacion,
+                                                    tst.FechaCreacion)) * 60) AS TiempoTranscurridoEntreSolicitudServicio
+                                from t_servicios_ticket tst
+                                right join t_solicitudes ts on tst.IdSolicitud = ts.Id
+                                inner join t_solicitudes_internas tsi on tsi.IdSolicitud = ts.Id
+                                left join t_correctivos_generales tcg on tst.Id = tcg.IdServicio
+                                left join t_correctivos_diagnostico tcd on tcd.Id = (select MAX(Id) from t_correctivos_diagnostico where IdServicio = tst.Id)
+                                left join t_correctivos_soluciones tcs on tcs.Id = (select MAX(Id) from t_correctivos_soluciones where IdServicio = tst.Id)
+                                WHERE ts.FechaCreacion >= '2019-09-01 00:00:00'
+                                AND
+                                    ts.Folio IS NOT NULL
+                                AND ts.Folio != '0'
+                                LIMIT 0,1000000");
+    }
 
 }
