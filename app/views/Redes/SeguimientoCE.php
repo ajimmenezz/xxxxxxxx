@@ -191,10 +191,10 @@
                                 </div>
                             </form>
                             <div class="col-md-2">
-                                <i id="guardarFolio" data-toggle="tooltip" data-placement="top" data-title="Guardar" class="fa fa-2x fa-save  text-success"></i>
-                                <i id="editarFolio" data-toggle="tooltip" data-placement="top" data-title="Editar" class="fa fa-2x fa-pencil hidden bloqueoConclusionBtn"></i>
-                                <i id="cancelarFolio" data-toggle="tooltip" data-placement="top" data-title="Cancelar" class="fa fa-2x fa-times text-danger"></i>
-                                <i id="eliminarFolio" data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger hidden bloqueoConclusionBtn"></i>
+                                <a id="guardarFolio"><i data-toggle="tooltip" data-placement="top" data-title="Guardar" class="fa fa-2x fa-save  text-success"></i>Guardar</a>
+                                <a id="editarFolio" class="hidden bloqueoConclusionBtn"><i data-toggle="tooltip" data-placement="top" data-title="Editar" class="fa fa-2x fa-pencil"></i>Editar</a>
+                                <a id="cancelarFolio"><i data-toggle="tooltip" data-placement="top" data-title="Cancelar" class="fa fa-2x fa-times text-danger"></i>Cerrar</a>
+                                <a id="eliminarFolio" class="hidden bloqueoConclusionBtn"><i data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i>Eliminar</a>
                             </div>
                             <br><br><br>
                         </div>
@@ -267,10 +267,10 @@
                         <div class="col-md-12 row">
                             <div class="panel-heading-btn">
                                 <label id="btnSinMaterial" class="btn btn-default btn-xs hidden bloqueoConclusionBtn">
-                                    <i class="fa fa-toggle-off"></i> Sin Material
+                                    <i class="fa fa-toggle-off"></i> solo Evidencia
                                 </label>
                                 <label id="btnConMaterial" class="btn btn-primary btn-xs bloqueoConclusionBtn">
-                                    <i class="fa fa-toggle-off fa-rotate-180"></i> Con Material
+                                    <i class="fa fa-toggle-off fa-rotate-180"></i> Con Uso de Material
                                 </label>
                             </div>
                             <h4>Datos de solución</h4>
@@ -308,7 +308,7 @@
                         <!--Empieza contenido de problemas-->
                         <div class="col-md-12">
                             <div class="col-md-12">
-                                <br>
+                                <span>Sección donde podras reportar y ver todos los problemas del Servicio</span><br><br>
                                 <label id="btnReportar" href="#modalDefinirProblema" class="btn btn-success bloqueoConclusionBtn" data-toggle="modal">Reportar</label>
                                 <br><br>
                             </div>
@@ -343,7 +343,7 @@
                             <!--Empieza seccion agregar nodo-->
                             <div class="col-md-12">
                                 <div class="col-md-2 bloqueoConclusionBtn" >
-                                    <a id="btnAgregarNodo" href="#modalMaterialNodo" class="btn btn-sm btn-success" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Agregar Nodo" class="fa fa-plus"></i></a>
+                                    <a id="btnAgregarNodo" href="#modalMaterialNodo" data-toggle="modal"><i data-toggle="tooltip" data-placement="top" data-title="Agregar Nodo" class="fa fa-plus btn btn-sm btn-success"></i> Agregar Nodo</a>
                                 </div>
                                 <div class="col-md-12"><br></div>
                             </div>
@@ -411,6 +411,7 @@
                                 <div class="col-md-12">
                                     <div id="evidenciasMaterialFija"></div>
                                 </div>
+                                <label>Oprime el botón "Examinar" para agregar la Evidencia</label>
                             </form>
                         </div>
                         <!--Finaliza seccion agregar evidencia-->
@@ -528,6 +529,7 @@
                             </div>
                         </div>
                         <!--Finaliza seccion agregar Material-->
+                        <label>Una vez llenado el formulario anterior oprime el botón "+" para añadir el material a la tabla</label>
                     </form>
                 </div>
                 <!--Inicio Nota de material extra-->
@@ -583,6 +585,7 @@
                                 </div>
                             </div>
                         </div>
+                        <label>Oprime el botón "Examinar" para agregar Evidencia</label>
                         <div class="col-md-12"><br></div>
                     </div>
                     <!--Finaliza seccion de evidencia-->
