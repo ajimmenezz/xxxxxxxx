@@ -108,7 +108,11 @@ class Correo extends General {
             }
 
             if (!parent::getCI()->email->send()) {
-                $this->crearReporteFallasEnvio(parent::getCI()->email->print_debugger());
+                try {
+                    $this->crearReporteFallasEnvio(parent::getCI()->email->print_debugger());
+                } catch (Exception $exc) {
+                    echo $exc->getTraceAsString();
+                }
             }
 
             return parent::getCI()->email->send();
@@ -122,6 +126,7 @@ class Correo extends General {
             fwrite($archivo, PHP_EOL . "$contenido");
             fclose($archivo);
         } else {
+            mkdir("./storage/Archivos/ReportesTXT/", 755, true);
             $archivo = fopen("./storage/Archivos/ReportesTXT/ReporteFallasEnvio.txt", "w");
             fwrite($archivo, PHP_EOL . "$contenido");
             fclose($archivo);

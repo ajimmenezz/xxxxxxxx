@@ -661,7 +661,8 @@ class Solicitud extends General {
                 $detallesSolicitud = $this->linkDetallesSolicitud($datos['solicitud']);
                 $linkDetallesSolicitud = '<br>Ver Detalles de la Solicitud <a href="' . $detallesSolicitud . '" target="_blank">Aquí</a>';
 
-                $this->enviarNotificacion(array(
+                try {
+                    $this->enviarNotificacion(array(
                     'Departamento' => $solicitante['IdDepartamento'],
                     'remitente' => $usuario['Id'],
                     'tipo' => '3',
@@ -672,6 +673,10 @@ class Solicitud extends General {
                                     Asunto: <p><b>' . $datosSolicitud['detalles'][0]['Asunto'] . '</b> </p><br>
                                     Descripción:<br> <p><b>' . $datosSolicitud['detalles'][0]['Descripcion'] . '</b> </p>'
                     , $solicitante));
+                } catch (Exception $exc) {
+                    echo $exc->getTraceAsString();
+                }
+                
                 return array('ticket' => $ticket, 'folios' => $foliosServicios, 'solicitudes' => $this->getSolicitudesAsignadas());
             } else {
                 return FALSE;
@@ -1301,16 +1306,21 @@ class Solicitud extends General {
                 ));
 
                 if (!empty($notas)) {
-                    $this->enviarNotificacion(array(
-                        'Departamento' => $datos['departamento'],
-                        'remitente' => $usuario['Id'],
-                        'tipo' => '9',
-                        'descripcion' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> ha sido reasignada por el usuario ' . $usuario['Nombre'],
-                        'titulo' => 'Solicitud Reasignada',
-                        'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> a reasignado  la solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b>.<br>
-                        Por el siguiente motivo: <br><strong>' . $datos['descripcion'] . '</strong><br>
-                        Favor de validar la solicitud y brindarle seguimiento.'
-                    ));
+                    try {
+                        $this->enviarNotificacion(array(
+                            'Departamento' => $datos['departamento'],
+                            'remitente' => $usuario['Id'],
+                            'tipo' => '9',
+                            'descripcion' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> ha sido reasignada por el usuario ' . $usuario['Nombre'],
+                            'titulo' => 'Solicitud Reasignada',
+                            'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> a reasignado  la solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b>.<br>
+                            Por el siguiente motivo: <br><strong>' . $datos['descripcion'] . '</strong><br>
+                            Favor de validar la solicitud y brindarle seguimiento.'
+                        ));
+                    } catch (Exception $exc) {
+                        echo $exc->getTraceAsString();
+                    }
+
                     return $this->getSolicitudesAsignadas();
                 } else {
                     return FALSE;
