@@ -969,7 +969,8 @@ class Modelo_ServicioTicket extends Modelo_Base {
                                             (SELECT Atiende FROM t_solicitudes WHERE Id = tst.IdSolicitud) Atiende,
                                             tst.IdSucursal,
                                             sucursal(tst.IdSucursal) Sucursal,
-                                            tst.IdSolicitud
+                                            tst.IdSolicitud,
+                                            tst.Atiende AS AtiendeServicio
                                         FROM t_servicios_ticket tst
                                         INNER JOIN t_solicitudes ts
                                             ON ts.Id = tst.IdSolicitud
