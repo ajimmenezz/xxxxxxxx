@@ -27,18 +27,18 @@ class Autorizar_permisos extends General{
                             tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
                             tpar.IdEstatus, tpar.Archivo, tpar.IdUsuarioJefe, tpar.IdUsuarioRH, tpar.IdUsuarioContabilidad, tpar.IdUsuarioDireccion
                             from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
-                            where DATE(FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() and cu.Id <> '.$idUsuario);
+                            where FechaDocumento between (SELECT (NOW() - INTERVAL 1 MONTH)) and (SELECT NOW()) and cu.Id <> '.$idUsuario.' order by FechaAusenciaDesde desc');
                 break;
             default:
                 return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, cu.Nombre, tpar.IdTipoAusencia, 
                     tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
                     tpar.IdEstatus, tpar.Archivo, tpar.IdUsuarioJefe, tpar.IdUsuarioRH, tpar.IdUsuarioContabilidad, tpar.IdUsuarioDireccion
                     from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
-                    where DATE(FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() and (cu.IdJefe = '.$idUsuario.') 
+                    where FechaDocumento between (SELECT (NOW() - INTERVAL 1 MONTH)) and (SELECT NOW()) and (cu.IdJefe = '.$idUsuario.') 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 21 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 37 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null and tpar.IdUsuarioContabilidad is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 44 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null 
-                    and tpar.IdUsuarioContabilidad is not null and tpar.IdUsuarioDireccion is null)');
+                    and tpar.IdUsuarioContabilidad is not null and tpar.IdUsuarioDireccion is null) order by FechaAusenciaDesde desc');
                 break;
         }
     }
