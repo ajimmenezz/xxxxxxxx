@@ -71,7 +71,7 @@ class ServiciosTicket extends General {
             $routinQueryAll = 'call getServiciosAreaByDepartamento("' . $departamento . '")';
             $routinQuerySupervisor = 'call getServiciosByDepartamento("' . $departamento . '")';
         }
-        //En el arreglo se agregan los perfiles que van a poder ver todas los servicios del departamento.
+//En el arreglo se agregan los perfiles que van a poder ver todas los servicios del departamento.
 //        $perfilGerente = array('1', '2', '3', '4');
         $perfilGerente = [];
         $usuario = $this->Usuario->getDatosUsuario();
@@ -274,7 +274,7 @@ class ServiciosTicket extends General {
 
         if ($datosServicio['tieneSeguimiento'] !== '0') {
 
-            //No eliminar se ocupara despues
+//No eliminar se ocupara despues
 //        if ($datosServicio['IdTipoServicio'] === '4') {
 //            if ($datos['operacion'] === '1') {
 //                //Inicia un servicio para dar de alta un personal en un proyecto
@@ -299,27 +299,27 @@ class ServiciosTicket extends General {
 //        } else 
             if ($datosServicio['IdTipoServicio'] === '5') {
                 if ($datos['operacion'] === '1') {
-                    //Inicia un servicio para seguimiento de trafico
+//Inicia un servicio para seguimiento de trafico
                     $data['informacion'] = $this->actualizarServicioTrafico($datos['servicio'], $datosServicio, $fecha);
                     $data['serviciosAsignados'] = $this->getServiciosAsignados('17');
                     $data['formulario'] = parent::getCI()->load->view('Logistica/Modal/FormularioSeguimiento', $data, TRUE);
                 } else if ($datos['operacion'] === '2') {
-                    //Obtiene la informacion del servicio de trafico
+//Obtiene la informacion del servicio de trafico
                     $data['informacion'] = $this->getServicioTrafico($datos['servicio'], $datosServicio, $usuario);
                     $data['serviciosAsignados'] = $this->getServiciosAsignados('17');
                     $data['formulario'] = parent::getCI()->load->view('Logistica/Modal/FormularioSeguimiento', $data, TRUE);
                 } else if ($datos['operacion'] === '3') {
-                    //Encargado de actualizar los datos generales de seguimiento logistica
+//Encargado de actualizar los datos generales de seguimiento logistica
                     $data['serviciosAsignados'] = $this->actualizarTraficoGenerales($datos, $fecha, $usuario, $datosServicio);
                     $datosServicio = $this->DBST->getDatosServicio($datos['servicio']);
                     $data['datosServicio'] = $datosServicio;
                     $data['informacion'] = $this->getServicioTrafico($datos['servicio'], $datosServicio, $usuario);
                     $data['formulario'] = parent::getCI()->load->view('Logistica/Modal/FormularioSeguimiento', $data, TRUE);
                 } else if ($datos['operacion'] === '4') {
-                    // guardar y actualizar el material de un servcicio de trafico
+// guardar y actualizar el material de un servcicio de trafico
                     $data['materialActualizado'] = $this->setMaterialServicioTrafico($datos);
                 } else if ($datos['operacion'] === '5') {
-                    //concluir un servicio
+//concluir un servicio
                     if ($datos['idTipoTrafico'] === '1') {
                         $this->SeguimientoLogistica->actualizarEnvio($datos['datosFormulario']);
                     } else if ($datos['idTipoTrafico'] === '2') {
@@ -332,7 +332,7 @@ class ServiciosTicket extends General {
                 }
             } else if ($datosServicio['IdTipoServicio'] === '6') {
                 switch ($datos['operacion']) {
-                    //inicia servicio seguimiento de los servicios mantenimiento preventivo salasx4d
+//inicia servicio seguimiento de los servicios mantenimiento preventivo salasx4d
                     case '1':
                         $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '2', '4');
                         $this->setStatusSD($datosServicio['Folio']);
@@ -345,7 +345,7 @@ class ServiciosTicket extends General {
                 }
             } else if ($datosServicio['IdTipoServicio'] === '7') {
                 switch ($datos['operacion']) {
-                    //inicia servicio seguimiento de los servicios mantenimiento correctivo salasx4d
+//inicia servicio seguimiento de los servicios mantenimiento correctivo salasx4d
                     case '1':
                         $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '2', '4');
                         $this->setStatusSD($datosServicio['Folio']);
@@ -400,7 +400,7 @@ class ServiciosTicket extends General {
                         $data['informacionDatosCenso'] = $this->SeguimientoPoliza->consultaTodosCensoServicio($datos['servicio']);
                         $data['sucursales'] = $this->consultaSucursalesXSolicitudCliente($datosServicio['Ticket']);
                         $data['areasAtencion'] = $this->Catalogo->catAreasAtencion('3', array('Flag' => '1'));
-                        //$data['Infostatus']= $this->DBST->consulta('select * from hist_salas4d_mantto_actividades'); 
+//$data['Infostatus']= $this->DBST->consulta('select * from hist_salas4d_mantto_actividades'); 
                         $data['modelos'] = $this->Catalogo->catModelosEquipo('3', array('Flag' => '1'));
                         $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $datosServicio['Ticket'] . '"');
                         $data['documentacionFirmada'] = $this->consultaDocumentacioFirmadaServicio($datos['servicio']);
@@ -653,7 +653,7 @@ class ServiciosTicket extends General {
 
     private function getServicioTrafico(string $servicio, array $datosServicio, array $usuario) {
         $data = array();
-        //En el arreglo se agregan los perfiles que van a poder ver todas los servicios del departamento.
+//En el arreglo se agregan los perfiles que van a poder ver todas los servicios del departamento.
         $data['datosTrafico'] = $this->DBST->getDatosTrafico($servicio);
         $data['tiposTrafico'] = $this->Catalogo->catTiposTrafico('3');
         $data['tiposOrigenDestino'] = $this->Catalogo->catTiposOrigenDestino('3');
@@ -1136,6 +1136,12 @@ class ServiciosTicket extends General {
     public function servicioNuevo(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+        if ($datos['IdTipoServicio'] === '27') {
+            $idSolicitud = $this->crearTicketSDProactivo($datos);
+            $datos['IdSolicitud'] = $idSolicitud;
+        }
+
         $data = array(
             'Ticket' => $datos['Ticket'],
             'IdSolicitud' => $datos['IdSolicitud'],
@@ -1152,6 +1158,45 @@ class ServiciosTicket extends General {
         if (!empty($consulta)) {
             return $this->getServiciosAsignados($usuario['IdDepartamento']);
         } else {
+            return FALSE;
+        }
+    }
+
+    public function crearTicketSDProactivo(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+
+        try {
+            $datosSolicitudAnterior = $this->DBS->getDatosSolicitud($datos['IdSolicitud']);
+            $informacionSDAnterior = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $datosSolicitudAnterior['Folio']);
+            $informacionSD = '"subject": "Correctivo Proactivo",
+                                "description": "' . $datos['Descripcion'] . '",
+                                "status": "' . $informacionSDAnterior->STATUS . '",
+                                "requester": "SOPORTE SICCOB",
+                                "item": "' . $informacionSDAnterior->ITEM . '",
+                                "technician": "' . $informacionSDAnterior->TECHNICIAN . '",
+                                "mode": "' . $informacionSDAnterior->MODE . '",
+                                "priority": "' . $informacionSDAnterior->PRIORITY . '",
+                                "group": "' . $informacionSDAnterior->GROUP . '",
+                                "level": "' . $informacionSDAnterior->LEVEL . '",
+                                "category": "' . $informacionSDAnterior->CATEGORY . '",
+                                "subcategory": "' . $informacionSDAnterior->SUBCATEGORY . '"';
+            $datosSD = $this->ServiceDesk->getTicketServiceDesk($usuario['SDKey'], $informacionSD);
+            $solicitudNueva = 'insert t_solicitudes set 
+                Ticket = ' . $datosSolicitudAnterior['Ticket'] . ',
+                IdTipoSolicitud = ' . $datosSolicitudAnterior['TipoSolicitud'] . ',
+                IdEstatus = ' . $datosSolicitudAnterior['IdEstatus'] . ',
+                IdDepartamento = ' . $datosSolicitudAnterior['IdDepartamento'] . ',
+                IdPrioridad = ' . $datosSolicitudAnterior['IdPrioridad'] . ',
+                FechaCreacion = now(),
+                Solicita = ' . $usuario['Id'] . ', 
+                IdServicioOrigen = "' . $datos['servicio'] . '", 
+                IdSucursal = "' . $datosSolicitudAnterior['IdSucursal'] . '",
+                FechaTentativa = "' . $datosSolicitudAnterior['FechaTentativa'] . '",
+                FechaLimite = "' . $datosSolicitudAnterior['FechaLimite'] . '",
+                Folio = "' . $datosSD->operation->Details->WORKORDERID . '"';
+            $idSolicitud = $this->DBS->setSolicitud($solicitudNueva);
+            return $idSolicitud;
+        } catch (\Exception $ex) {
             return FALSE;
         }
     }
@@ -2551,11 +2596,11 @@ class PDFAux extends PDF {
 
     function Footer() {
         $fecha = date('d/m/Y');
-        // Go to 1.5 cm from bottom
+// Go to 1.5 cm from bottom
         $this->SetY(-15);
-        // Select Arial italic 8
+// Select Arial italic 8
         $this->SetFont('Helvetica', 'I', 10);
-        // Print centered page number
+// Print centered page number
         $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
         $this->Cell(68, 10, utf8_decode('Página ') . $this->PageNo(), 0, 0, 'R');
     }

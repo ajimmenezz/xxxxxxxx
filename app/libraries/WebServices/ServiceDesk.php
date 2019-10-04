@@ -94,7 +94,7 @@ class ServiceDesk extends General {
         if (strpos($error, 'Error when adding note to request') !== FALSE) {
             if (strpos($error, 'User does not have enough permission to add note') !== FALSE) {
                 $textoError = 'El usuario no tiene permiso suficiente para agregar una nota al ServiceDesk.';
-            }else{
+            } else {
                 $textoError = 'No cuenta con información para subirlo al ServiceDesk.';
             }
         }
@@ -441,6 +441,23 @@ class ServiceDesk extends General {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_NOTES&TECHNICIAN_KEY=' . $key;
         $data = json_decode(file_get_contents($this->Url . '/' . $folio . '/notes/?' . $this->FIELDS));
         return $data;
+    }
+
+    public function getTicketServiceDesk(string $key, string $informacionSD) {
+        $input_data = '{
+                        "operation":{
+                            "details": {
+                                ' . $informacionSD . '
+                            }
+                        }
+                    }';
+        $FIELDS = "format=json"
+                . "&OPERATION_NAME=ADD_REQUEST"
+                . "&TECHNICIAN_KEY=" . $key
+                . "&INPUT_DATA=" . urlencode($input_data);
+        $datosSD = $this->getDatosSD($this->Url . '/?' . $FIELDS);
+        $this->validarError($datosSD);
+        return $datosSD;
     }
 
 }
