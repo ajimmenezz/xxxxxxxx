@@ -195,9 +195,9 @@ class Controller_SegundoPlano extends \CI_Controller
 
                     $this->DB->insertInfoCambiosSD($datos);
 
-                    echo "***********************************************************************<br />"
-                        . "<pre style='text-color:red !important;'>", var_dump($mensaje), "</pre>"
-                        . "<br /<<br />";
+//                    echo "***********************************************************************<br />"
+//                        . "<pre style='text-color:red !important;'>", var_dump($mensaje), "</pre>"
+//                        . "<br /<<br />";
                 }
             }
         }
@@ -207,7 +207,7 @@ class Controller_SegundoPlano extends \CI_Controller
     {
         date_default_timezone_set("America/Mexico_City");
         $apiKey = $this->DB->getApiKeyByUser('2');
-        var_dump($apiKey);
+        //var_dump($apiKey);
         $filterId = $this->getViewFilterId($apiKey);
 
         $requests = $this->SD->getRequestsByFilter($filterId, $apiKey, 0);
@@ -261,10 +261,10 @@ class Controller_SegundoPlano extends \CI_Controller
 
             $this->DB->insertaAsignacionesSD($arrayInsert);
 
-            echo "<pre>";
-            var_dump($arrayInsert);
-            var_dump($details->CREATEDTIME);
-            echo "</pre>";
+//            echo "<pre>";
+//            var_dump($arrayInsert);
+//            var_dump($details->CREATEDTIME);
+//            echo "</pre>";
         }
 
         $cont = 0;
@@ -361,12 +361,12 @@ class Controller_SegundoPlano extends \CI_Controller
                     $this->mail->enviarCorreo('notificaciones@siccob.solutions', $correos, 'Nueva Solicitud por Folio ' . $arrayInsert['Folio'], $mensaje);
                 }
 
-                echo "<pre>";
-                var_dump($details);
-                echo "</pre>";
-                echo "<pre>";
-                var_dump($arrayInsert);
-                echo "</pre>";
+//                echo "<pre>";
+//                var_dump($details);
+//                echo "</pre>";
+//                echo "<pre>";
+//                var_dump($arrayInsert);
+//                echo "</pre>";
             }
         }
 

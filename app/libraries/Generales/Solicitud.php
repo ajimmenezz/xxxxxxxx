@@ -663,20 +663,20 @@ class Solicitud extends General {
 
                 try {
                     $this->enviarNotificacion(array(
-                    'Departamento' => $solicitante['IdDepartamento'],
-                    'remitente' => $usuario['Id'],
-                    'tipo' => '3',
-                    'descripcion' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> ya es atendida por ' . $usuario['Nombre'] . ' del ticket ' . $ticket,
-                    'titulo' => 'Seguimiento de Solicitud',
-                    'mensaje' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> del ticket ' . $ticket . ' ya esta siendo atendida por el usuario <b>' . $usuario['Nombre'] . '</b>.'
-                    . '             <br>' . $linkDetallesSolicitud . '<br><br>
+                        'Departamento' => $solicitante['IdDepartamento'],
+                        'remitente' => $usuario['Id'],
+                        'tipo' => '3',
+                        'descripcion' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> ya es atendida por ' . $usuario['Nombre'] . ' del ticket ' . $ticket,
+                        'titulo' => 'Seguimiento de Solicitud',
+                        'mensaje' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> del ticket ' . $ticket . ' ya esta siendo atendida por el usuario <b>' . $usuario['Nombre'] . '</b>.'
+                        . '             <br>' . $linkDetallesSolicitud . '<br><br>
                                     Asunto: <p><b>' . $datosSolicitud['detalles'][0]['Asunto'] . '</b> </p><br>
                                     Descripción:<br> <p><b>' . $datosSolicitud['detalles'][0]['Descripcion'] . '</b> </p>'
-                    , $solicitante));
+                        , $solicitante));
                 } catch (Exception $exc) {
                     echo $exc->getTraceAsString();
                 }
-                
+
                 return array('ticket' => $ticket, 'folios' => $foliosServicios, 'solicitudes' => $this->getSolicitudesAsignadas());
             } else {
                 return FALSE;
@@ -1667,7 +1667,7 @@ class Solicitud extends General {
 
     private function crearReporteSolicitudesConcluidas(string $contenido) {
         $carpeta = './storage/Archivos/ReportesTXT';
-        
+
         if (!file_exists($carpeta)) {
             mkdir($carpeta, 0777, true);
         }
@@ -1683,143 +1683,145 @@ class Solicitud extends General {
             fclose($archivo);
         }
     }
-    
+
     public function getFolios() {
         $folios = $this->ServiceDesk->getFolios('A8D6001B-EB63-4996-A158-1B968E19AB84');
         $sd = json_decode(json_encode($folios), True);
         $j = 0;
         $k = 0;
-        
+
         for ($i = 0; $i < count($sd["operation"]["details"]); $i++) {
             $temp = $this->DBS->obtenerFolios($sd["operation"]["details"][$i]["WORKORDERID"]);
-            
-            if(count($temp) > 0){
+
+            if (count($temp) > 0) {
                 $foliosAdist[$j] = array(
-                            "SemanaCreacionSD" => date('W', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                            "MesCreacionSD" => date('m', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                            "YearCreacionSD" => date('Y', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                            "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
-                            "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
-                            "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
-                            "Solicitus" => $temp[0]["Id"],
-                            "Ticket" => $temp[0]["Ticket"],
-                            "Estatus" => $temp[0]["Estado"],
-                            "FechaCreacion" => $temp[0]["FechaCreacion"]
-                        );
+                    "SemanaCreacionSD" => date('W', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "MesCreacionSD" => date('m', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "YearCreacionSD" => date('Y', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "FechaCreacionSD" => date('Y-m-d H:i:s', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
+                    "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
+                    "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
+                    "Solicitus" => $temp[0]["Id"],
+                    "Ticket" => $temp[0]["Ticket"],
+                    "Estatus" => $temp[0]["Estado"],
+                    "FechaCreacion" => $temp[0]["FechaCreacion"]
+                );
                 $j++;
             } else {
                 $foliosSD[$k] = array(
-                            "SemanaCreacionSD" => date('W', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                            "MesCreacionSD" => date('m', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                            "YearCreacionSD" => date('Y', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                            "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
-                            "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
-                            "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
-                            "Solicitus" => null,
-                            "Ticket" => null,
-                            "Estatus" => null,
-                            "FechaCreacion" => null
-                        );
+                    "SemanaCreacionSD" => date('W', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "MesCreacionSD" => date('m', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "YearCreacionSD" => date('Y', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "FechaCreacionSD" => date('Y-m-d H:i:s', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
+                    "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
+                    "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
+                    "Solicitus" => null,
+                    "Ticket" => null,
+                    "Estatus" => null,
+                    "FechaCreacion" => null
+                );
                 $k++;
             }
         }
         $resultado = array_merge($foliosAdist, $foliosSD);
-        $arrayTitulos = 
-            ['Semana Creacion SD',
-            'Mes Creacion SD',
-            'Año Creacion SD',
-            'Ticket SD',
-            'Estatus SD',
-            'Tecnico SD',
-            'Solicitud Adist',
-            'Ticket Adist',
-            'Estatus Solicitud Adist',
-            'Fecha Creacion Solicitud Adist'];
-        
+        $arrayTitulos = ['Semana Creacion SD',
+                    'Mes Creacion SD',
+                    'Año Creacion SD',
+                    'Fecha Creacion SD',
+                    'Ticket SD',
+                    'Estatus SD',
+                    'Tecnico SD',
+                    'Solicitud Adist',
+                    'Ticket Adist',
+                    'Estatus Solicitud Adist',
+                    'Fecha Creacion Solicitud Adist'];
+
         return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
     }
-    
+
     public function getFoliosSemanal() {
         $foliosAdist = $this->DBS->obtenerFoliosAdist();
-        
-        $titulos = 
-            ['Mes',
-            'Semana',
-            'Ticket Service Desk',
-            'Estatus Ticket AdIST',
-            'Servicio AdIST',
-            'Tipo Servicio',
-            'Estatus Servicio',
-            'Departamento',
-            'Tecnico Asignado',
-            'Region',
-            'Sucursal',
-            'Fecha Solicitud',
-            'Solicitante',
-            'Asunto',
-            'Descripcion Solicitud',
-            'Fecha Servicio',
-            'Fecha Inicio Servicio',
-            'Fecha Conclusion Servicio',
-            'Area Atencion',
-            'Punto',
-            'Equipo Diagnosticado',
-            'Componente',
-            'Tipo Diagnostico',
-            'Tipo Falla',
-            'Falla',
-            'Fecha Diagnostico',
-            'Observaciones Diagnostico',
-            'Tipo Solucion',
-            'Solucion Sin Equipo',
-            'Cambio Equipo',
-            'Cambio Refaccion',
-            'Solucion Servicio Sin Clasificar',
-            'Tiempo Solicitud',
-            'Tiempo Servicio',
-            'Tiempo Transcurrido Entre Solicitud Servicio'];
-        
+
+        $titulos = ['Mes',
+                    'Semana',
+                    'Ticket Service Desk',
+                    'Estatus Ticket AdIST',
+                    'Servicio AdIST',
+                    'Tipo Servicio',
+                    'Estatus Servicio',
+                    'Departamento',
+                    'Tecnico Asignado',
+                    'Region',
+                    'Sucursal',
+                    'Fecha Solicitud',
+                    'Solicitante',
+                    'Asunto',
+                    'Descripcion Solicitud',
+                    'Fecha Servicio',
+                    'Fecha Inicio Servicio',
+                    'Fecha Conclusion Servicio',
+                    'Area Atencion',
+                    'Punto',
+                    'Equipo Diagnosticado',
+                    'Componente',
+                    'Tipo Diagnostico',
+                    'Tipo Falla',
+                    'Falla',
+                    'Fecha Diagnostico',
+                    'Observaciones Diagnostico',
+                    'Tipo Solucion',
+                    'Solucion Sin Equipo',
+                    'Cambio Equipo',
+                    'Cambio Refaccion',
+                    'Solucion Servicio Sin Clasificar',
+                    'Tiempo Solicitud',
+                    'Tiempo Servicio',
+                    'Tiempo Transcurrido Entre Solicitud Servicio'];
+
         return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios.xlsx');
     }
-    
+
     public function crearExcel($datosFolio, $arrayTitulos, $nombreArchivo) {
-        
-        if(count($arrayTitulos) > 25){
+
+        if (count($arrayTitulos) > 25) {
             $letra = 'AA';
-        }else{
+        } else {
             $letra = 'A';
         }
-        
+
         $this->Excel->createSheet('Folios', 0);
         $this->Excel->setActiveSheet(0);
-        
+
         $this->Excel->setTableSubtitles($letra, 1, $arrayTitulos);
-        
+
         $arrayWidth = array();
-        for($i= 0; $i<count($arrayTitulos); $i++){
+        for ($i = 0; $i < count($arrayTitulos); $i++) {
             array_push($arrayWidth, 30);
-        } 
+        }
         $this->Excel->setColumnsWidth($letra, $arrayWidth);
-        
+
         $arrayAlign = array();
-        for($i= 0; $i<count($arrayTitulos); $i++){
+        for ($i = 0; $i < count($arrayTitulos); $i++) {
             array_push($arrayAlign, 'center');
         }
         $this->Excel->setTableContent($letra, 1, $datosFolio, true, $arrayAlign);
-        
-        if(count($arrayTitulos) > 25){
+
+        if (count($arrayTitulos) > 25) {
             $this->Excel->removeColumn('A', 26);
         }
-        
-        $nombreArchivo = trim($nombreArchivo);
+
+//        $nombreArchivo = trim($nombreArchivo);
         $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
-        
+
         $path = "../public/storage/Archivos/Reportes";
-        if(!is_dir($path)){
+        if (!is_dir($path)) {
             mkdir($path, 755, true);
         }
         $this->Excel->saveFile($ruta);
-        
-        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/Reportes/' . $nombreArchivo ];
+
+        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/Reportes/' . $nombreArchivo];
     }
+
 }
