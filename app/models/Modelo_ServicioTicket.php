@@ -946,10 +946,8 @@ class Modelo_ServicioTicket extends Modelo_Base {
 
     public function atiendeServicio(string $servicio) {
         $consulta = $this->consulta('SELECT 
-                                        tso.Atiende
+                                        tst.Atiende
                                         FROM t_servicios_ticket tst
-                                        INNER JOIN t_solicitudes tso
-                                        ON tst.IdSolicitud = tso.Id
                                         WHERE tst.Id = "' . $servicio . '"');
 
         if (!empty($consulta)) {
@@ -971,7 +969,8 @@ class Modelo_ServicioTicket extends Modelo_Base {
                                             (SELECT Atiende FROM t_solicitudes WHERE Id = tst.IdSolicitud) Atiende,
                                             tst.IdSucursal,
                                             sucursal(tst.IdSucursal) Sucursal,
-                                            tst.IdSolicitud
+                                            tst.IdSolicitud,
+                                            tst.Atiende AS AtiendeServicio
                                         FROM t_servicios_ticket tst
                                         INNER JOIN t_solicitudes ts
                                             ON ts.Id = tst.IdSolicitud

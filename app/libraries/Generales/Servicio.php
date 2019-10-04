@@ -3033,7 +3033,7 @@ class Servicio extends General {
             'Vuelta' => $vuelta,
             'Folio' => $folio[0]['Folio'],
             'Fecha' => $fecha,
-            'IdUsuario' => $folio[0]['Atiende'],
+            'IdUsuario' => $folio[0]['AtiendeServicio'],
             'IdEstatus' => '8',
             'FechaEstatus' => $fecha
                 )
