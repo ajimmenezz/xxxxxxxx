@@ -1166,6 +1166,7 @@ class ServiciosTicket extends General {
         $usuario = $this->Usuario->getDatosUsuario();
 
         try {
+            $this->DBS->iniciaTransaccion();
             $datosSolicitudAnterior = $this->DBS->getDatosSolicitud($datos['IdSolicitud']);
             $informacionSDAnterior = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $datosSolicitudAnterior['Folio']);
             $informacionSD = '"subject": "Correctivo Proactivo",
@@ -1183,7 +1184,7 @@ class ServiciosTicket extends General {
             $datosSD = $this->ServiceDesk->getTicketServiceDesk($usuario['SDKey'], $informacionSD);
             $solicitudNueva = 'insert t_solicitudes set 
                 Ticket = ' . $datosSolicitudAnterior['Ticket'] . ',
-                IdTipoSolicitud = ' . $datosSolicitudAnterior['TipoSolicitud'] . ',
+                IdTipoSolicitud = "4",
                 IdEstatus = ' . $datosSolicitudAnterior['IdEstatus'] . ',
                 IdDepartamento = ' . $datosSolicitudAnterior['IdDepartamento'] . ',
                 IdPrioridad = ' . $datosSolicitudAnterior['IdPrioridad'] . ',
@@ -1192,11 +1193,14 @@ class ServiciosTicket extends General {
                 IdServicioOrigen = "' . $datos['servicio'] . '", 
                 IdSucursal = "' . $datosSolicitudAnterior['IdSucursal'] . '",
                 FechaTentativa = "' . $datosSolicitudAnterior['FechaTentativa'] . '",
-                FechaLimite = "' . $datosSolicitudAnterior['FechaLimite'] . '",
+                FechaLimite = "' . $datosSolicitudAnterior['FechaLimite'] . '"
                 Folio = "' . $datosSD->operation->Details->WORKORDERID . '"';
             $idSolicitud = $this->DBS->setSolicitud($solicitudNueva);
+            $this->DBS->setDatosSolicitudInternas('t_solicitudes_internas', array('IdSolicitud' => $idSolicitud, 'Descripcion' => $datos['Descripcion'], 'Asunto' => $datos['Descripcion']));
+            $this->DBS->commitTransaccion();
             return $idSolicitud;
         } catch (\Exception $ex) {
+            $this->DBS->roolbackTransaccion();
             return FALSE;
         }
     }
