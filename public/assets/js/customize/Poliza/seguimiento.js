@@ -3725,7 +3725,7 @@ $(function () {
         var areaPunto = $('#selectAreaPuntoCorrectivo').val();
         var equipo = $('#selectEquipoCorrectivo').val();
         var numeroRenglon = areaPunto.search(/-/i);
-        var punto = areaPunto.substr(2, numeroRenglon);
+        var punto = areaPunto.substr(2, 2);
         var area = areaPunto.substr(0, numeroRenglon);
         punto = Math.abs(punto);
         var serie = $('#inputSerieCorrectivo').val();
