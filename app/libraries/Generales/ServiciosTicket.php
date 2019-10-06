@@ -1171,7 +1171,7 @@ class ServiciosTicket extends General {
             $informacionSDAnterior = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $datosSolicitudAnterior['Folio']);
             $informacionSD = '"subject": "Correctivo Proactivo",
                                 "description": "' . $datos['Descripcion'] . '",
-                                "status": "' . $informacionSDAnterior->STATUS . '",
+                                "status": "En Atención",
                                 "requester": "SOPORTE SICCOB",
                                 "item": "' . $informacionSDAnterior->ITEM . '",
                                 "technician": "' . $informacionSDAnterior->TECHNICIAN . '",
