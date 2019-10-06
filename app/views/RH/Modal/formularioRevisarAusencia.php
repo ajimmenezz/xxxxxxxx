@@ -37,18 +37,18 @@
                     <i class="fa fa"></i> Autorizar
                 </label>&nbsp';
             }
-            $fechaDoc = explode(" ", $datosAusencia[0]["FechaDocumento"]);
-            if ($datosAusencia[0]["FechaAusenciaDesde"] > $fechaDoc[0] && $datosAusencia[0]['IdMotivoAusencia'] != 3 && $datosAusencia[0]['IdMotivoAusencia'] != 4) {
-                echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
-                    <i class="fa fa"></i>Autorizar y Concluir
-                </label>';
-            } else {
+//            $fechaDoc = explode(" ", $datosAusencia[0]["FechaDocumento"]);
+//            if ($datosAusencia[0]["FechaAusenciaDesde"] > $fechaDoc[0] && $datosAusencia[0]['IdMotivoAusencia'] != 3 && $datosAusencia[0]['IdMotivoAusencia'] != 4) {
+//                echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
+//                    <i class="fa fa"></i>Autorizar y Concluir
+//                </label>';
+//            } else {
                 if ($perfilUsuario == 37 || $perfilUsuario == 44) {
                     echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
                         <i class="fa fa"></i>Autorizar y Concluir
                     </label>';
                 }
-            }
+//            }
             ?>
         </div>
         <h4 class="panel-title">Revisar Permiso</h4>
