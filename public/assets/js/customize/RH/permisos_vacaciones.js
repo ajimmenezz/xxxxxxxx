@@ -127,7 +127,9 @@ $(function () {
                 departamento: $('#inputDepartamento').val(),
                 puesto: $('#inputPuesto').val(),
                 tipoAusencia: $('#selectTipoAusencia').val(),
+                textoAusencia: $('#selectTipoAusencia option:selected').text(),
                 motivoAusencia: $('#selectMotivoAusencia').val(),
+                textoMotivoAusencia: $('#selectMotivoAusencia option:selected').text(),
                 citaFolio: $('#inputCitaFolio').val(),
                 descripcionAusencia: $('#textareaMotivoSolicitudPermiso').val(),
                 evidenciaIncapacidad: $('#inputEvidenciaIncapacidad').val(),
@@ -159,7 +161,7 @@ $(function () {
                 evento.enviarEvento('EventoPermisosVacaciones/Permisos', data, '#panelPermisosVacaciones', function (respuesta) {
                     if (respuesta) {
                         window.open(respuesta.ruta, '_blank');
-                        location.reload();
+                        
                     } else {
                         evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
                     }
