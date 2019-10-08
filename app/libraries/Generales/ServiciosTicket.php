@@ -29,6 +29,7 @@ class ServiciosTicket extends General {
     private $MSP;
     private $pdf;
     private $DBA;
+    private $Ticket;
 
     public function __construct() {
         parent::__construct();
@@ -51,6 +52,7 @@ class ServiciosTicket extends General {
         $this->DBT = \Modelos\Modelo_Tesoreria::factory();
         $this->pdf = new PDFAux();
         $this->DBA = \Modelos\Modelo_InventarioConsignacion::factory();
+        $this->Ticket = \Librerias\Generales\Ticket::factory();
 
         parent::getCI()->load->helper(array('date'));
     }
@@ -1138,9 +1140,10 @@ class ServiciosTicket extends General {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
         if ($datos['IdTipoServicio'] === '27') {
-            $idSolicitud = $this->crearTicketSDProactivo($datos);
-            if ($idSolicitud !== FALSE) {
-                $datos['IdSolicitud'] = $idSolicitud;
+            $datosTicket = $this->crearTicketSDProactivo($datos);
+            if ($datosTicket !== FALSE) {
+                $datos['IdSolicitud'] = $datosTicket['idSolicitud'];
+                $datos['Ticket'] = $datosTicket['ticket'];
             }
         }
 
@@ -1155,6 +1158,7 @@ class ServiciosTicket extends General {
             'Descripcion' => $datos['Descripcion'],
             'IdServicioOrigen' => $datos['servicio']
         );
+        
         $consulta = $this->setServicio($data, $datos['servicio']);
 
         if (!empty($consulta)) {
@@ -1185,6 +1189,7 @@ class ServiciosTicket extends General {
             $idSolicitud = $this->DBS->setSolicitud($solicitudNueva);
 
             if ($idSolicitud !== FALSE) {
+                $datosSolicitud = $this->DBS->getDatosSolicitud($idSolicitud);
                 $informacionSDAnterior = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $datosSolicitudAnterior['Folio']);
                 $informacionSD = '"subject": "Correctivo Proactivo",
                                 "description": "' . $datos['Descripcion'] . '",
@@ -1199,13 +1204,17 @@ class ServiciosTicket extends General {
                                 "category": "' . $informacionSDAnterior->CATEGORY . '",
                                 "subcategory": "' . $informacionSDAnterior->SUBCATEGORY . '"';
                 $datosSD = $this->ServiceDesk->getTicketServiceDesk($usuario['SDKey'], $informacionSD);
+                $folio = $datosSD->operation->Details->WORKORDERID;
+                $ticket = $this->Ticket->setTicket(array('Folio' => $folio), array('descripcion' => $datos['Descripcion'], 'cliente' => $datosSolicitud['IdCliente']));
                 
-                $this->DBS->cambiarEstatusSolicitud(array('Folio' => '"' . $datosSD->operation->Details->WORKORDERID . '"'), array('Id' => $idSolicitud));
+                $this->DBS->cambiarEstatusSolicitud(array(
+                    'Folio' => '"' . $folio . '"',
+                    'Ticket' => $ticket), array('Id' => $idSolicitud));
                 $this->DBS->setDatosSolicitudInternas('t_solicitudes_internas', array('IdSolicitud' => $idSolicitud, 'Descripcion' => $datos['Descripcion'], 'Asunto' => $datos['Descripcion']));
             }
 
             $this->DBS->commitTransaccion();
-            return $idSolicitud;
+            return array('idSolicitud' => $idSolicitud, 'ticket' => $ticket);
         } catch (\Exception $ex) {
             $this->DBS->roolbackTransaccion();
             return FALSE;
