@@ -1139,7 +1139,9 @@ class ServiciosTicket extends General {
 
         if ($datos['IdTipoServicio'] === '27') {
             $idSolicitud = $this->crearTicketSDProactivo($datos);
-            $datos['IdSolicitud'] = $idSolicitud;
+            if ($idSolicitud !== FALSE) {
+                $datos['IdSolicitud'] = $idSolicitud;
+            }
         }
 
         $data = array(
@@ -1168,20 +1170,6 @@ class ServiciosTicket extends General {
         try {
             $this->DBS->iniciaTransaccion();
             $datosSolicitudAnterior = $this->DBS->getDatosSolicitud($datos['IdSolicitud']);
-            $informacionSDAnterior = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $datosSolicitudAnterior['Folio']);
-            $informacionSD = '"subject": "Correctivo Proactivo",
-                                "description": "' . $datos['Descripcion'] . '",
-                                "status": "En Atención",
-                                "requester": "SOPORTE SICCOB",
-                                "item": "' . $informacionSDAnterior->ITEM . '",
-                                "technician": "' . $informacionSDAnterior->TECHNICIAN . '",
-                                "mode": "' . $informacionSDAnterior->MODE . '",
-                                "priority": "' . $informacionSDAnterior->PRIORITY . '",
-                                "group": "' . $informacionSDAnterior->GROUP . '",
-                                "level": "' . $informacionSDAnterior->LEVEL . '",
-                                "category": "' . $informacionSDAnterior->CATEGORY . '",
-                                "subcategory": "' . $informacionSDAnterior->SUBCATEGORY . '"';
-            $datosSD = $this->ServiceDesk->getTicketServiceDesk($usuario['SDKey'], $informacionSD);
             $solicitudNueva = 'insert t_solicitudes set 
                 Ticket = ' . $datosSolicitudAnterior['Ticket'] . ',
                 IdTipoSolicitud = "4",
@@ -1193,10 +1181,29 @@ class ServiciosTicket extends General {
                 IdServicioOrigen = "' . $datos['servicio'] . '", 
                 IdSucursal = "' . $datosSolicitudAnterior['IdSucursal'] . '",
                 FechaTentativa = "' . $datosSolicitudAnterior['FechaTentativa'] . '",
-                FechaLimite = "' . $datosSolicitudAnterior['FechaLimite'] . '",
-                Folio = "' . $datosSD->operation->Details->WORKORDERID . '"';
+                FechaLimite = "' . $datosSolicitudAnterior['FechaLimite'] . '"';
             $idSolicitud = $this->DBS->setSolicitud($solicitudNueva);
-            $this->DBS->setDatosSolicitudInternas('t_solicitudes_internas', array('IdSolicitud' => $idSolicitud, 'Descripcion' => $datos['Descripcion'], 'Asunto' => $datos['Descripcion']));
+
+            if ($idSolicitud !== FALSE) {
+                $informacionSDAnterior = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $datosSolicitudAnterior['Folio']);
+                $informacionSD = '"subject": "Correctivo Proactivo",
+                                "description": "' . $datos['Descripcion'] . '",
+                                "status": "En Atención",
+                                "requester": "SOPORTE SICCOB",
+                                "item": "' . $informacionSDAnterior->ITEM . '",
+                                "technician": "' . $informacionSDAnterior->TECHNICIAN . '",
+                                "mode": "' . $informacionSDAnterior->MODE . '",
+                                "priority": "' . $informacionSDAnterior->PRIORITY . '",
+                                "group": "' . $informacionSDAnterior->GROUP . '",
+                                "level": "' . $informacionSDAnterior->LEVEL . '",
+                                "category": "' . $informacionSDAnterior->CATEGORY . '",
+                                "subcategory": "' . $informacionSDAnterior->SUBCATEGORY . '"';
+                $datosSD = $this->ServiceDesk->getTicketServiceDesk($usuario['SDKey'], $informacionSD);
+                
+                $this->DBS->cambiarEstatusSolicitud(array('Folio' => '"' . $datosSD->operation->Details->WORKORDERID . '"'), array('Id' => $idSolicitud));
+                $this->DBS->setDatosSolicitudInternas('t_solicitudes_internas', array('IdSolicitud' => $idSolicitud, 'Descripcion' => $datos['Descripcion'], 'Asunto' => $datos['Descripcion']));
+            }
+
             $this->DBS->commitTransaccion();
             return $idSolicitud;
         } catch (\Exception $ex) {
