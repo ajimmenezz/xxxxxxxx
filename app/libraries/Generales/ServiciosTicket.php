@@ -1193,7 +1193,7 @@ class ServiciosTicket extends General {
                 IdServicioOrigen = "' . $datos['servicio'] . '", 
                 IdSucursal = "' . $datosSolicitudAnterior['IdSucursal'] . '",
                 FechaTentativa = "' . $datosSolicitudAnterior['FechaTentativa'] . '",
-                FechaLimite = "' . $datosSolicitudAnterior['FechaLimite'] . '"
+                FechaLimite = "' . $datosSolicitudAnterior['FechaLimite'] . '",
                 Folio = "' . $datosSD->operation->Details->WORKORDERID . '"';
             $idSolicitud = $this->DBS->setSolicitud($solicitudNueva);
             $this->DBS->setDatosSolicitudInternas('t_solicitudes_internas', array('IdSolicitud' => $idSolicitud, 'Descripcion' => $datos['Descripcion'], 'Asunto' => $datos['Descripcion']));
