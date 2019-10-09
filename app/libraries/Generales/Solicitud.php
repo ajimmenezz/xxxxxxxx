@@ -90,6 +90,12 @@ class Solicitud extends General {
 //            $data['SolicitudesSD'] = $this->setSolicitudesSD($usuario['SDKey'], $usuario);
 //        }
 
+        if ($usuario['Id'] === '44') {
+            $where = 'where ts.IdDepartamento IN(' . $usuario['IdDepartamento'] . ', 21)';
+        } else {
+            $where = 'where ts.IdDepartamento = "' . $usuario['IdDepartamento'] . '"';
+        }
+
         $data['solicitudes'] = $this->DBS->getSolicitudes('
             select 
                 ts.Id as Numero,
@@ -104,7 +110,8 @@ class Solicitud extends General {
             from t_solicitudes ts 
             left join t_solicitudes_internas tsi
             on ts.Id = tsi.IdSolicitud
-            where ts.IdDepartamento = ' . $usuario['IdDepartamento'] . ' and ts.IdEstatus = 1');
+            ' . $where . ' and ts.IdEstatus = 1');
+        
         return $data;
     }
 
@@ -1528,7 +1535,7 @@ class Solicitud extends General {
                         $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $datos['folio']);
                     }
                 }
-                
+
                 $datosSD = $this->InformacionServicios->datosSD($datos['solicitud']);
                 return $datosSD;
             }
