@@ -1168,19 +1168,21 @@ class ServiciosTicket extends General {
         try {
             $this->DBS->iniciaTransaccion();
             $datosSolicitudAnterior = $this->DBS->getDatosSolicitud($datos['IdSolicitud']);
-            $informacionSDAnterior = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $datosSolicitudAnterior['Folio']);
+            $informacionFolio = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $datosSolicitudAnterior['Folio']);
+            $informacionSDAnterior = json_decode(json_encode($informacionFolio), True);
             $informacionSD = '"subject": "Correctivo Proactivo",
                                 "description": "' . $datos['Descripcion'] . '",
                                 "status": "En Atención",
                                 "requester": "SOPORTE SICCOB",
-                                "item": "' . $informacionSDAnterior->ITEM . '",
-                                "technician": "' . $informacionSDAnterior->TECHNICIAN . '",
-                                "mode": "' . $informacionSDAnterior->MODE . '",
-                                "priority": "' . $informacionSDAnterior->PRIORITY . '",
-                                "group": "' . $informacionSDAnterior->GROUP . '",
-                                "level": "' . $informacionSDAnterior->LEVEL . '",
-                                "category": "' . $informacionSDAnterior->CATEGORY . '",
-                                "subcategory": "' . $informacionSDAnterior->SUBCATEGORY . '"';
+                                "Nombre del Gerente": "' . $informacionSDAnterior["Nombre del Gerente"] . '",
+                                "item": "' . $informacionSDAnterior["ITEM"] . '",
+                                "technician": "' . $informacionSDAnterior["TECHNICIAN"] . '",
+                                "mode": "' . $informacionSDAnterior["MODE"] . '",
+                                "priority": "' . $informacionSDAnterior["PRIORITY"] . '",
+                                "group": "' . $informacionSDAnterior["GROUP"] . '",
+                                "level": "' . $informacionSDAnterior["LEVEL"] . '",
+                                "category": "' . $informacionSDAnterior["CATEGORY"] . '",
+                                "subcategory": "' . $informacionSDAnterior["SUBCATEGORY"]. '"';
             $datosSD = $this->ServiceDesk->getTicketServiceDesk($usuario['SDKey'], $informacionSD);
             $solicitudNueva = 'insert t_solicitudes set 
                 Ticket = ' . $datosSolicitudAnterior['Ticket'] . ',
