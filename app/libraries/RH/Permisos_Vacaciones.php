@@ -80,7 +80,7 @@ class Permisos_Vacaciones extends General {
     public function correoJefeDirecto($idJefe) {
         return $this->DBS->consultaGral("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id='" . $idJefe . "'");
     }
-    
+
     public function correoRHContador() {
         return $this->DBS->consultaGral("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil in(21, 37)");
     }

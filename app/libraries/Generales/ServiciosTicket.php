@@ -1174,6 +1174,7 @@ class ServiciosTicket extends General {
         try {
             $this->DBS->iniciaTransaccion();
             $datosSolicitudAnterior = $this->DBS->getDatosSolicitud($datos['IdSolicitud']);
+            
             $solicitudNueva = 'insert t_solicitudes set 
                 Ticket = ' . $datosSolicitudAnterior['Ticket'] . ',
                 IdTipoSolicitud = "4",
@@ -1190,19 +1191,21 @@ class ServiciosTicket extends General {
 
             if ($idSolicitud !== FALSE) {
                 $datosSolicitud = $this->DBS->getDatosSolicitud($idSolicitud);
-                $informacionSDAnterior = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $datosSolicitudAnterior['Folio']);
+                $informacionFolio = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $datosSolicitudAnterior['Folio']);
+                $informacionSDAnterior = json_decode(json_encode($informacionFolio), True);
                 $informacionSD = '"subject": "Correctivo Proactivo",
-                                "description": "' . $datos['Descripcion'] . '",
-                                "status": "En Atención",
-                                "requester": "SOPORTE SICCOB",
-                                "item": "' . $informacionSDAnterior->ITEM . '",
-                                "technician": "' . $informacionSDAnterior->TECHNICIAN . '",
-                                "mode": "' . $informacionSDAnterior->MODE . '",
-                                "priority": "' . $informacionSDAnterior->PRIORITY . '",
-                                "group": "' . $informacionSDAnterior->GROUP . '",
-                                "level": "' . $informacionSDAnterior->LEVEL . '",
-                                "category": "' . $informacionSDAnterior->CATEGORY . '",
-                                "subcategory": "' . $informacionSDAnterior->SUBCATEGORY . '"';
+                                    "description": "' . $datos['Descripcion'] . '",
+                                    "status": "En Atención",
+                                    "requester": "SOPORTE SICCOB",
+                                    "Nombre del Gerente": "' . $informacionSDAnterior["Nombre del Gerente"] . '",
+                                    "item": "' . $informacionSDAnterior["ITEM"] . '",
+                                    "technician": "' . $informacionSDAnterior["TECHNICIAN"] . '",
+                                    "mode": "' . $informacionSDAnterior["MODE"] . '",
+                                    "priority": "' . $informacionSDAnterior["PRIORITY"] . '",
+                                    "group": "' . $informacionSDAnterior["GROUP"] . '",
+                                    "level": "' . $informacionSDAnterior["LEVEL"] . '",
+                                    "category": "' . $informacionSDAnterior["CATEGORY"] . '",
+                                    "subcategory": "' . $informacionSDAnterior["SUBCATEGORY"]. '"';
                 $datosSD = $this->ServiceDesk->getTicketServiceDesk($usuario['SDKey'], $informacionSD);
                 $folio = $datosSD->operation->Details->WORKORDERID;
                 $ticket = $this->Ticket->setTicket(array('Folio' => $folio), array('descripcion' => $datos['Descripcion'], 'cliente' => $datosSolicitud['IdCliente']));
