@@ -806,7 +806,8 @@ class Servicio extends General {
     public function getServicioToPdf(array $servicio, string $nombreExtra = NULL) {
         $usuario = $this->Usuario->getDatosUsuario();
         $infoServicio = $this->getInformacionServicio($servicio['servicio']);
-        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+        $tServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+        $tipoServicio = str_replace(".", "_", $tServicio);
         $nombreExtra = (is_null($nombreExtra)) ? '' : $nombreExtra;
         $archivo = 'storage/Archivos/Servicios/Servicio-' . $servicio['servicio'] . '/Pdf/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $servicio['servicio'] . '_' . $tipoServicio . $nombreExtra . '.pdf ';
         $ruta = 'http://' . $_SERVER['HTTP_HOST'] . '/Phantom/Servicio/' . $servicio['servicio'] . '/' . $nombreExtra;
