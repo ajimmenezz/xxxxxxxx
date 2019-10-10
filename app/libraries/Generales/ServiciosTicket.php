@@ -193,7 +193,7 @@ class ServiciosTicket extends General {
         if (in_array('79', $usuario['PermisosAdicionales']) || in_array('79', $usuario['Permisos'])) {
             $permisoValidacion = '';
         } elseif (in_array('80', $usuario['PermisosAdicionales']) || in_array('80', $usuario['Permisos'])) {
-            $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where cp.IdDepartamento = 11) AND cp.IdDepartamento != "7")) ';
+            $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where IdDepartamento = 11) AND IdDepartamento != "7")) ';
         }
 //elseif (in_array('82', $usuario['Permisos']) || in_array('82', $usuario['PermisosAdicionales'])) {
 //            $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where cp.IdDepartamento = 7))) ';
@@ -212,15 +212,11 @@ class ServiciosTicket extends General {
                     estatus(tst.IdEstatus)as NombreEstatus,
                     nombreUsuario(tst.Atiende) as Atiende,
                     tst.Atiende as IdAtiende,
-                    cvu.IdPerfil,
-                    cp.IdDepartamento
+					(SELECT IdPerfil FROM cat_v3_usuarios WHERE Id = tst.Atiende) AS IdPerfil,
+					(SELECT IdDepartamento FROM cat_perfiles WHERE Id = IdPerfil) AS IdDepartamento
                 FROM t_servicios_ticket tst
                 INNER JOIN t_solicitudes ts
                     ON ts.Id = tst.IdSolicitud
-                INNER JOIN cat_v3_usuarios cvu
-                    ON cvu.Id = ts.Atiende
-                INNER JOIN cat_perfiles cp
-                    ON cp.Id = cvu.IdPerfil
                 WHERE tst.IdEstatus = "5"'
                         . $permisoValidacion);
     }
