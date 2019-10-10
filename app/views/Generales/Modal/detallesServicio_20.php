@@ -357,22 +357,50 @@ if (!in_array($datos['FirmaGerente'], ['', NULL])) {
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                         <h5 class="f-w-700">Equipo Retirado</h5>
-                                        <pre><?php echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreEquipoRetira']; ?></pre>
+                                        <pre><?php 
+                                            if($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información'){
+                                                echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'];
+                                            }else{
+                                                echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreEquipoRetira'];
+                                            }
+                                            ?>
+                                        </pre>
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                         <h5 class="f-w-700">Serie Equipo Retirado</h5>
-                                        <pre><?php echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['SerieRetira']; ?></pre>
+                                        <pre><?php 
+                                            if($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información'){
+                                                echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'];
+                                            }else{
+                                                echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['SerieRetira'];
+                                            }
+                                            ?>
+                                        </pre>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                         <h5 class="f-w-700">Equipo Respaldo</h5>
-                                        <pre><?php echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreEquipoRespaldo']; ?></pre>
+                                        <pre><?php 
+                                            if($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información'){
+                                                echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'];
+                                            }else{
+                                                echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreEquipoRespaldo'];
+                                            }
+                                            ?>
+                                        </pre>
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                         <h5 class="f-w-700">Serie Equipo Respaldo</h5>
-                                        <pre><?php echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['SerieRespaldo']; ?></pre>
+                                        <pre><?php 
+                                            if($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información'){
+                                                echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'];
+                                            }else{
+                                                echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['SerieRespaldo'];
+                                            }
+                                            ?>
+                                        </pre>
                                     </div>
                                 </div>
 
@@ -380,9 +408,17 @@ if (!in_array($datos['FirmaGerente'], ['', NULL])) {
                                 <div class="row">
                                     <div class="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6 col-xs-offset-12 col-xs-12">
                                         <h5 class="f-w-700 text-center">Firma</h5>
-                                        <img style="max-height: 120px;" src="<?php echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['Firma']; ?>" alt="Firma" />
-                                        <h6 class="f-w-700 text-center"><?php echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreFirma']; ?></h6>            
-                                        <h6 class="f-w-700 text-center"><?php echo $problemasServicio['garantiaRespaldo'][0]['Fecha']; ?></h6>            
+                                        <?php 
+                                        if($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información'){
+                                            echo '<pre>';
+                                            echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'];
+                                            echo '</pre>';
+                                        }else{
+                                            echo '<img style="max-height: 120px;" src="'.$problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['Firma'].'" alt="Firma" />
+                                            <h6 class="f-w-700 text-center">'. $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreFirma'].'</h6>            
+                                            <h6 class="f-w-700 text-center">'. $problemasServicio['garantiaRespaldo'][0]['Fecha'].'</h6>';
+                                        }
+                                        ?>           
                                     </div>
                                 </div>
                                 <!-- Termina Firma -->
