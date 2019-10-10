@@ -72,4 +72,22 @@ class Modelo_ServiceDesk extends Modelo_Base {
         }
     }
 
+    public function apiKeyUsuario(string $idUsuario) {
+        $datosUsuario = parent::connectDBPrueba()->query('select SDKey from cat_v3_usuarios where Id = "' . $idUsuario . '";');
+        $keyUsuario = $datosUsuario->result_array();
+        return $keyUsuario[0]['SDKey'];
+    }
+
+    public function apiKeyJefe(string $idUsuario) {
+        $datosJefe = parent::connectDBPrueba()->query('SELECT 
+                                                        (SELECT SDKey FROM cat_v3_usuarios WHERE Id = cvu.IdJefe) AS KeyJefe
+                                                    FROM
+                                                        cat_v3_usuarios cvu
+                                                    WHERE
+                                                        cvu.Id = "' . $idUsuario . '"');
+
+        $keyJefe = $datosJefe->result_array();
+        return $keyJefe[0]['KeyJefe'];
+    }
+
 }

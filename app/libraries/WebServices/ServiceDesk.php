@@ -102,14 +102,35 @@ class ServiceDesk extends General {
         return $textoError;
     }
 
-    public function validarAPIKey(string $key) {
+    public function validarKey(string $key) {
         try {
             $this->getFoliosTecnico($key);
+            return array('code' => 200, 'messege' => $key);
         } catch (\Exception $ex) {
-            $key = '';
-//            Se comenta el codigo para que se planche la información solo la persona que haga los cambios.
-//            $key = $this->modeloServiceDesck->getApiKeyByUser('2');
+            return array('code' => 400, 'messege' => $ex->getMessage());
         }
+    }
+
+    public function validarAPIKey(string $key) {
+        $respuestaKey = $this->validarKey($key);
+        $respuestaUsuario['code'] = 200;
+        $respuestaJefe['code'] = 200;
+        $usuario = $this->Usuario->getDatosUsuario();
+
+        if ($respuestaKey['code'] === 400) {
+            $key = $this->modeloServiceDesck->apiKeyUsuario($usuario['Id']);
+            $respuestaUsuario = $this->validarKey($key);
+        }
+
+        if ($respuestaUsuario['code'] === 400) {
+            $key = $this->modeloServiceDesck->apiKeyJefe($usuario['Id']);
+            $respuestaJefe = $this->validarKey($key);
+        }
+
+        if ($respuestaJefe['code'] === 400) {
+            $key = '';
+        }
+
         return $key;
     }
 
