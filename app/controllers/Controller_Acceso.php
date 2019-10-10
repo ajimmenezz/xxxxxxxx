@@ -25,7 +25,7 @@ class Controller_Acceso extends Base {
      */
 
     public function index() {
-        $this->ServiciosTicket->concluirServicioSolicitudTicket();
+//        $this->ServiciosTicket->concluirServicioSolicitudTicket();
         $usuario = $this->usuario->getDatosUsuario();
         if (isset($usuario['Id'])) {
             $urlBase = 'http://' . $_SERVER['HTTP_HOST'];
