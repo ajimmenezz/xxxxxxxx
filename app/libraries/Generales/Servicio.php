@@ -810,7 +810,7 @@ class Servicio extends General {
         $tipoServicio = str_replace(".", "_", $tServicio);
         $nombreExtra = (is_null($nombreExtra)) ? '' : $nombreExtra;
         $archivo = 'storage/Archivos/Servicios/Servicio-' . $servicio['servicio'] . '/Pdf/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $servicio['servicio'] . '_' . $tipoServicio . $nombreExtra . '.pdf ';
-        $ruta = 'http://' . $_SERVER['HTTP_HOST'] . '/Phantom/Servicio/' . $servicio['servicio'] . '/' . $nombreExtra;
+        $ruta = 'https://' . $_SERVER['HTTP_HOST'] . '/Phantom/Servicio/' . $servicio['servicio'] . '/' . $nombreExtra;
 
         $datosServicio = $this->DBS->getServicios('SELECT
                                                 sucursal(IdSucursal) Sucursal,
