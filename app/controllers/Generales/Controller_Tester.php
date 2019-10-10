@@ -39,7 +39,7 @@ class Controller_Tester extends Base {
 //                    $resultado = $this->SD->cambiarEstatusServiceDesk($datos['key'], 'Problema', $datos['folio']);
 //                    $resultado = $this->SD->consultarDepartamentoTI($datos['key']);
                     $resultado = $this->SD->validarAPIKey($datos['key']);
-                    $resultado = $this->SD->cambiarEstatusServiceDesk($datos['key'], 'Problema', $datos['folio']);
+//                    $resultado = $this->SD->cambiarEstatusServiceDesk($datos['key'], 'Problema', $datos['folio']);
                 } catch (\Exception $ex) {
                     $resultado = $ex->getMessage();
                 }

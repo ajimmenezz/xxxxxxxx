@@ -27,18 +27,18 @@ class Autorizar_permisos extends General{
                             tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
                             tpar.IdEstatus, tpar.Archivo, tpar.IdUsuarioJefe, tpar.IdUsuarioRH, tpar.IdUsuarioContabilidad, tpar.IdUsuarioDireccion
                             from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
-                            where DATE(FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() and cu.Id <> '.$idUsuario);
+                            where FechaDocumento between (SELECT (NOW() - INTERVAL 1 MONTH)) and (SELECT NOW()) and cu.Id <> '.$idUsuario.' order by FechaAusenciaDesde desc');
                 break;
             default:
                 return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, cu.Nombre, tpar.IdTipoAusencia, 
                     tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
                     tpar.IdEstatus, tpar.Archivo, tpar.IdUsuarioJefe, tpar.IdUsuarioRH, tpar.IdUsuarioContabilidad, tpar.IdUsuarioDireccion
                     from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
-                    where DATE(FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() and (cu.IdJefe = '.$idUsuario.') 
+                    where FechaDocumento between (SELECT (NOW() - INTERVAL 1 MONTH)) and (SELECT NOW()) and (cu.IdJefe = '.$idUsuario.') 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 21 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 37 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null and tpar.IdUsuarioContabilidad is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = '.$idUsuario.') = 44 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null 
-                    and tpar.IdUsuarioContabilidad is not null and tpar.IdUsuarioDireccion is null)');
+                    and tpar.IdUsuarioContabilidad is not null and tpar.IdUsuarioDireccion is null) order by FechaAusenciaDesde desc');
                 break;
         }
     }
@@ -75,15 +75,13 @@ class Autorizar_permisos extends General{
             case 21:
                 $revisor = array (
                     'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'IdRechazo' => $datosPermiso[0]['motivoRechazo'],
-                    'MotivoRechazo' => "hay rechazo"
+                    'IdRechazo' => $datosPermiso[0]['motivoRechazo']
                     );
                 break;
             case 37:
                 $revisor = array (
                     'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'IdRechazo' => $datosPermiso[0]['motivoRechazo'],
-                    'MotivoRechazo' => "hay rechazo"
+                    'IdRechazo' => $datosPermiso[0]['motivoRechazo']
                     );
                 break;
             case 44:
@@ -96,8 +94,7 @@ class Autorizar_permisos extends General{
             default :
                 $revisor = array (
                     'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' =>  mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')), 
-                    'IdRechazo' => $datosPermiso[0]['motivoRechazo'],
-                    'MotivoRechazo' => "hay rechazo"
+                    'IdRechazo' => $datosPermiso[0]['motivoRechazo']
                     );
                 break;
         }
@@ -257,7 +254,7 @@ class Autorizar_permisos extends General{
         $this->pdf->SetXY(150, 2);
         $this->pdf->SetFillColor(255, 255, 255);
         $this->pdf->Cell(50, 20, '', 0, 0, 'C', True);
-        if ($datosFirmas['MotivoRechazo'] != ""){
+        if ($datosFirmas['IdRechazo'] != ""){
             $this->pdf->SetXY(25, 320);
             $this->pdf->SetFont('Arial','B',35);
             $this->pdf->SetTextColor(254,159,159);
@@ -278,7 +275,7 @@ class Autorizar_permisos extends General{
 //                $this->pdf->Cell(0, 0, utf8_decode($nombreJefe[0]['Nombre']));
                 $this->pdf->SetXY(110, 379);
                 $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
-                if ($datosFirmas['MotivoRechazo'] != ""){
+                if ($datosFirmas['IdRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
                     $this->pdf->SetXY(15, 367);
                     $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
@@ -289,7 +286,7 @@ class Autorizar_permisos extends General{
 //                $this->pdf->Cell(0, 0, utf8_decode($nombreJefe[0]['Nombre']));
                 $this->pdf->SetXY(150, 379);
                 $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
-                if ($datosFirmas['MotivoRechazo'] != ""){
+                if ($datosFirmas['IdRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
                     $this->pdf->SetXY(15, 367);
                     $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
@@ -300,7 +297,7 @@ class Autorizar_permisos extends General{
 //                $this->pdf->Cell(0, 0, utf8_decode($nombreJefe[0]['Nombre']));
                 $this->pdf->SetXY(55, 379);
                 $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
-                if ($datosFirmas['MotivoRechazo'] != ""){
+                if ($datosFirmas['IdRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
                     $this->pdf->SetXY(15, 367);
                     $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));

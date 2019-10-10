@@ -80,7 +80,7 @@ class Permisos_Vacaciones extends General {
     public function correoJefeDirecto($idJefe) {
         return $this->DBS->consultaGral("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id='" . $idJefe . "'");
     }
-    
+
     public function correoRHContador() {
         return $this->DBS->consultaGral("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil in(21, 37)");
     }
@@ -371,7 +371,8 @@ class Permisos_Vacaciones extends General {
                 break;
         }
         $texto .= ' para el día ' . $datosPermisos['fechaPermisoDesde'] . '</p><br><br>
-                    <a href="https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1) . '">Archivo</a>';
+                    <a href="https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1) . '">Archivo</a><br><br><br>
+                    <a href="https://' . $_SERVER['SERVER_NAME'] . '/RH/Autorizar_permisos">Sistema</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia ' . $asunto, $texto);
         $correoEnviado = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($arregloCorreos), 'Permiso de Ausencia', $mensaje);
         return $correoEnviado;

@@ -315,7 +315,7 @@ class Modelo_FondoFijo extends Modelo_Base
 
         $this->insertar("t_fondofijo_movimientos", [
             "FechaRegistro" => $this->getFecha(),
-            "FechaMovimiento" => $this->getFecha(),
+            "FechaMovimiento" => $datos['fecha'],
             "FechaAutorizacion" => $this->getFecha(),
             "IdUsuarioRegistra" => $this->usuario['Id'],
             "IdUsuarioAutoriza" => $this->usuario['Id'],

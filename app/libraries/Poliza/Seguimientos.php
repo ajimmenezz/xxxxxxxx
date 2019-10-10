@@ -360,6 +360,7 @@ class Seguimientos extends General {
                                                             FROM 
                                                                 cat_v3_fallas_refaccion
                                                             WHERE IdTipoFalla = "' . $datos['tipoFalla'] . '"
+                                                            AND IdRefaccion = "' . $datos['componente'] . '"
                                                             AND Flag = 1');
         if (!empty($consulta)) {
             return $consulta;
@@ -952,7 +953,7 @@ class Seguimientos extends General {
                         $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
                             'IdEstatus' => '3'
                                 ), array('Id' => $datos['servicio']));
-                        $this->cambiarEstatusServiceDesk($datos['servicio'], 'Problema');
+//                        $this->cambiarEstatusServiceDesk($datos['servicio'], 'Problema');
 
                         return $idCorrectivoDiagnostico;
                     } else {
@@ -1241,7 +1242,7 @@ class Seguimientos extends General {
 
                             $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                             $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
-                            $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
+//                            $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
                             $this->InformacionServicios->setHTMLService($datos);
                             $textoTI = '<p>El técnico <strong>' . $usuario['Nombre'] . ' </strong> le ha reasignado la solicitud para solicitar una Refacción.<br>Número de Solicitud: <strong>' . $verificarFolio[0]['Folio'] . '</strong>.</p><br><a href="' . $linkPDF . '">Documento PDF</a><br><p>Favor de verificar en Service Desk</p>';
                             $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud', $textoTI);
@@ -1332,7 +1333,7 @@ class Seguimientos extends General {
 
                             $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                             $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
-                            $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
+//                            $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
                             $this->InformacionServicios->setHTMLService($datos);
                             $textoTI = '<p>El técnico <strong>' . $usuario['Nombre'] . '</strong> le ha reasignado la solicitud para solicitar un Equipo.<br>Número de Solicitud: <strong>' . $verificarFolio[0]['Folio'] . '</strong>.</p><br><a href="' . $linkPDF . '">Documento PDF</a><br><p>Favor de verificar en Service Desk</p>';
                             $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud', $textoTI);
@@ -1389,7 +1390,7 @@ class Seguimientos extends General {
         $numeroInserccion = $this->DBP->insertarCorrectivoProblemasRespaldo($dataInformacionGarantia, $dataCorrectivosProblemas);
 
         $this->cambiarEstatus(array('servicio' => $datos['servicio'], 'estatus' => '3'));
-        $this->cambiarEstatusServiceDesk($datos['servicio'], 'Problema');
+//        $this->cambiarEstatusServiceDesk($datos['servicio'], 'Problema');
         $this->InformacionServicios->setHTMLService($datos);
 
         if ($datos['operacion'] === '2') {

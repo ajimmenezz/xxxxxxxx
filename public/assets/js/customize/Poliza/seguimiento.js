@@ -2899,8 +2899,9 @@ $(function () {
             });
         });
         $('#selectTipoFallaComponenteCorrectivo').on('change', function () {
+            var componente = $('#selectComponenteDiagnosticoCorrectivo').val();
             var tipoFalla = $('#selectTipoFallaComponenteCorrectivo').val();
-            var dataTipoFalla = {tipoFalla: tipoFalla};
+            var dataTipoFalla = {tipoFalla: tipoFalla, componente: componente};
             select.cambiarOpcion('#selectFallaComponenteDiagnosticoCorrectivo', '');
             $('#selectFallaComponenteDiagnosticoCorrectivo').empty().append('<option value="">Seleccionar</option>');
             evento.enviarEvento('Seguimiento/ConsultaFallasRefacionXTipoFalla', dataTipoFalla, '#seccion-servicio-correctivo', function (respuesta) {
