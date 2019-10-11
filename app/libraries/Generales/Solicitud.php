@@ -1789,6 +1789,48 @@ class Solicitud extends General {
 
         return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios.xlsx');
     }
+    
+    public function getFoliosAnual() {
+        $foliosAdist = $this->DBS->obtenerFoliosAdist();
+
+        $titulos = ['Mes',
+                    'Semana',
+                    'Ticket Service Desk',
+                    'Estatus Ticket AdIST',
+                    'Servicio AdIST',
+                    'Tipo Servicio',
+                    'Estatus Servicio',
+                    'Departamento',
+                    'Tecnico Asignado',
+                    'Region',
+                    'Sucursal',
+                    'Fecha Solicitud',
+                    'Solicitante',
+                    'Asunto',
+                    'Descripcion Solicitud',
+                    'Fecha Servicio',
+                    'Fecha Inicio Servicio',
+                    'Fecha Conclusion Servicio',
+                    'Area Atencion',
+                    'Punto',
+                    'Equipo Diagnosticado',
+                    'Componente',
+                    'Tipo Diagnostico',
+                    'Tipo Falla',
+                    'Falla',
+                    'Fecha Diagnostico',
+                    'Observaciones Diagnostico',
+                    'Tipo Solucion',
+                    'Solucion Sin Equipo',
+                    'Cambio Equipo',
+                    'Cambio Refaccion',
+                    'Solucion Servicio Sin Clasificar',
+                    'Tiempo Solicitud',
+                    'Tiempo Servicio',
+                    'Tiempo Transcurrido Entre Solicitud Servicio'];
+
+        return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios.xlsx');
+    }
 
     public function crearExcel($datosFolio, $arrayTitulos, $nombreArchivo) {
 
