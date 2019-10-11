@@ -53,7 +53,7 @@ class Permisos_Vacaciones extends General {
     }
 
     public function obtenerPermisosAusencia($idUsuario) {
-        return $this->DBS->consultaGral('SELECT tpa.Id, tpa.FechaDocumento, tap.Nombre AS IdTipoAusencia, map.Nombre AS IdMotivoAusencia, 
+        return $this->DBS->consultaGral('SELECT tpa.Id, tpa.FechaDocumento, tap.Nombre AS IdTipoAusencia, map.Nombre AS IdMotivoAusencia, map.Archivo AS ArchivoExtra,
                     tpa.FechaAusenciaDesde, tpa.FechaAusenciaHasta, tpa.HoraEntrada, tpa.HoraSalida, tpa.IdEstatus, tpa.Archivo, tpa.IdUsuarioJefe, 
                     tpa.IdUsuarioRH, tpa.IdUsuarioContabilidad, tpa.IdUsuarioDireccion 
                     FROM t_permisos_ausencia_rh AS tpa INNER JOIN cat_v3_tipos_ausencia_personal AS tap ON tpa.IdTipoAusencia = tap.Id
