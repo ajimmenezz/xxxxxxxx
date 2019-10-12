@@ -1,6 +1,5 @@
 <?php
 
-ini_set('memory_limit', '-1');
 namespace Modelos;
 
 use Librerias\Modelos\Base as Modelo_Base;
