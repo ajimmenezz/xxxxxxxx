@@ -66,7 +66,6 @@ class Autorizar_permisos extends General {
                  INNER JOIN cat_perfiles AS cp ON cu.IdPerfil=cp.Id INNER JOIN cat_v3_departamentos_siccob AS cds ON cp.IdDepartamento=cds.Id
                  INNER JOIN cat_v3_motivos_ausencia_personal AS cmap ON cmap.Id = tpa.IdMotivoAusencia
                  WHERE tpa.Id ="' . $datosPermiso['idPermiso'] . '"');
-        var_dump($informacionPermisoAusencia);
 
         return array('formulario' => parent::getCI()->load->view('RH/Modal/formularioRevisarAusencia', $informacionPermisoAusencia, TRUE), 'consulta' => $informacionPermisoAusencia);
     }
