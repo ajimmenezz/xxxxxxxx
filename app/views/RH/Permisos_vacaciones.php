@@ -223,7 +223,7 @@
                         <div class="col-md-3">                    
                             <div id="citaFolio" class="form-group" style="display: none">
                                 <br>
-                                <label>Cita o Folio *</label>
+                                <label>Cita o Folio</label>
                                 <input type="text" class="form-control" id="inputCitaFolio" style="width: 100%"/>
                             </div>
                         </div>

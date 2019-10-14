@@ -108,8 +108,9 @@ $(function () {
         if (tipoAusencia !== '') {
             var data = {tipoAusencia: tipoAusencia};
             evento.enviarEvento('EventoPermisosVacaciones/MostarMotivosAucencia', data, '#panelPermisosVacaciones', function (respuesta) {
+                console.log(respuesta);
                 $.each(respuesta, function (key, valor) {
-                    $("#selectMotivoAusencia").append('<option value="' + valor.Id + '" data-msg="' + valor.Observaciones + '">' + valor.Nombre + '</option>');
+                    $("#selectMotivoAusencia").append('<option value="' + valor.Id + '" data-msg="' + valor.Observaciones + '" data-file="' + valor.Archivo + '">' + valor.Nombre + '</option>');
                 });
                 $('#selectMotivoAusencia').removeAttr('disabled');
             });
@@ -130,6 +131,7 @@ $(function () {
                 textoAusencia: $('#selectTipoAusencia option:selected').text(),
                 motivoAusencia: $('#selectMotivoAusencia').val(),
                 textoMotivoAusencia: $('#selectMotivoAusencia option:selected').text(),
+                archivoMotivoAusencia: $('#selectMotivoAusencia option:selected').attr('data-file'),
                 citaFolio: $('#inputCitaFolio').val(),
                 descripcionAusencia: $('#textareaMotivoSolicitudPermiso').val(),
                 evidenciaIncapacidad: $('#inputEvidenciaIncapacidad').val(),
@@ -137,17 +139,7 @@ $(function () {
                 fechaPermisoHasta: $('#inputFechaPermisoHasta').val(),
                 horaAusencia: $('#selectSolicitudHora').val()
             }
-            var html = '<div class="row m-t-20">\n\
-                    <form id="formDescuentoPermiso" class="margin-bottom-0" enctype="multipart/form-data">\n\
-                        <div id="modal-dialogo" class="col-md-12 text-center">\n\
-                            <h4>Se descontará ' + data.descuentoPermiso + ' al salario</h4><br>\n\
-                            <button id="btnCancelarPermisoM" type="button" class="btn btn-sm btn-danger"><i class="fa fa-times"></i> Cerrar</button>\n\
-                            <button id="btnAceptarPermisoM" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
-                        </div>\n\
-                    </form>\n\
-                    </div>';
-            $('#btnModalConfirmar').addClass('hidden');
-            $('#btnModalAbortar').addClass('hidden');
+            
             if ($('#inputEvidenciaIncapacidad').val() !== '') {
                 file.enviarArchivos('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', '#panelPermisosVacaciones', data, function (respuesta) {
                     if (respuesta !== 'otraImagen') {
@@ -158,6 +150,9 @@ $(function () {
                     }
                 });
             } else {
+//                if(data.archivoMotivoAusencia == 1){
+//                    evento.mostrarModal('Aviso', 'Falta documentación para tu permiso, recuerda entregarla o adjuntar');
+//                }
                 evento.enviarEvento('EventoPermisosVacaciones/Permisos', data, '#panelPermisosVacaciones', function (respuesta) {
                     if (respuesta) {
                         window.open(respuesta.ruta, '_blank');

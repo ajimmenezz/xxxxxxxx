@@ -32,7 +32,8 @@ class Permisos_Vacaciones extends General {
                                                 tcmarcta.IdTipoAusencia,
                                                 cvmap.Nombre,
                                                 cvmap.Observaciones,
-                                                cvmap.Id
+                                                cvmap.Id,
+                                                cvmap.Archivo
                                         FROM
                                             cat_v3_tipos_ausencia_personal AS cvap
                                         INNER JOIN t_cat_motivos_ausencia_relacion_cat_tipos_ausencia AS tcmarcta
