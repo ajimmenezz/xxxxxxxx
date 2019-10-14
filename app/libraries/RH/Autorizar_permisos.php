@@ -243,57 +243,68 @@ class Autorizar_permisos extends General{
         
         $this->pdf->AddPage();
         $tplIdx = $this->pdf->importPage(1);
-        $this->pdf->useTemplate($tplIdx, 0, 0, 210, 420, true);
+        $this->pdf->useTemplate($tplIdx);
         
         $this->pdf->SetXY(150, 2);
         $this->pdf->SetFillColor(255, 255, 255);
-        $this->pdf->Cell(50, 20, '', 0, 0, 'C', True);
+        $this->pdf->Cell(50, 10, '', 0, 0, 'C', True);
         if ($datosFirmas['IdRechazo'] != ""){
-            $this->pdf->SetXY(25, 320);
-            $this->pdf->SetFont('Arial','B',35);
-            $this->pdf->SetTextColor(254,159,159);
-            $this->pdf->Cell(30,30,'R e c h a z a d o');
+            $this->pdf->SetXY(165, 10);
+            $this->pdf->SetFont("Arial", "B", 11);
+           $this->pdf->SetTextColor(254,159,159);
+            $this->pdf->Cell(14, 0, "Rechazado");
         }
         if ($estadoPermiso == "Autorizado y Concluido por: "){
-            $this->pdf->SetXY(25, 320);
-            $this->pdf->SetFont('Arial','B',35);
+            $this->pdf->SetXY(165, 10);
+            $this->pdf->SetFont("Arial", "B", 11);
             $this->pdf->SetTextColor(147,240,252);
-            $this->pdf->Cell(30,30,'A u t o r i z a d o');
+            $this->pdf->Cell(14, 0, "Autorizado");
         }
         
         $this->pdf->SetFont("helvetica", "B", 11);
         $this->pdf->SetTextColor(0,0,0);
         switch ($datosPermiso['idPerfil']){
             case 21:
-//                $this->pdf->SetXY(110, 375);
-//                $this->pdf->Cell(0, 0, utf8_decode($nombreJefe[0]['Nombre']));
-                $this->pdf->SetXY(110, 379);
+                $this->pdf->SetXY(62, 204);
                 $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
                 if ($datosFirmas['IdRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
-                    $this->pdf->SetXY(15, 367);
+                    $this->pdf->SetXY(15, 225);
+                    $this->pdf->Cell(0, 0, 'Motivo de Rechazo:');
+                    $this->pdf->SetXY(15, 230);
                     $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
                 }
                 break;
             case 37:
-//                $this->pdf->SetXY(150, 375);
-//                $this->pdf->Cell(0, 0, utf8_decode($nombreJefe[0]['Nombre']));
-                $this->pdf->SetXY(150, 379);
+                $this->pdf->SetXY(106, 204);
                 $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
                 if ($datosFirmas['IdRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
-                    $this->pdf->SetXY(15, 367);
+                    $this->pdf->SetXY(15, 225);
+                    $this->pdf->Cell(0, 0, 'Motivo de Rechazo:');
+                    $this->pdf->SetXY(15, 230);
+                    $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
+                }
+                break;
+            case 44:
+                $this->pdf->SetXY(150, 204);
+                $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
+                if ($datosFirmas['IdRechazo'] != ""){
+                    $this->pdf->SetFont("helvetica", "", 11);
+                    $this->pdf->SetXY(15, 225);
+                    $this->pdf->Cell(0, 0, 'Motivo de Rechazo:');
+                    $this->pdf->SetXY(15, 230);
                     $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
                 }
                 break;
             default :
-//                $this->pdf->SetXY(55, 375);
-//                $this->pdf->Cell(0, 0, utf8_decode($nombreJefe[0]['Nombre']));
-                $this->pdf->SetXY(55, 379);
+                $this->pdf->SetXY(15, 204);
                 $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
                 if ($datosFirmas['IdRechazo'] != ""){
                     $this->pdf->SetFont("helvetica", "", 11);
-                    $this->pdf->SetXY(15, 367);
+                    $this->pdf->SetXY(15, 225);
+                    $this->pdf->Cell(0, 0, 'Motivo de Rechazo:');
+                    $this->pdf->SetXY(15, 230);
                     $this->pdf->MultiCell(190, 4, utf8_decode($datosPermiso[0]['textoRechazo']));
                 }
                 break;

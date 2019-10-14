@@ -58,7 +58,7 @@ class Permisos_Vacaciones extends General {
                     tpa.IdUsuarioRH, tpa.IdUsuarioContabilidad, tpa.IdUsuarioDireccion 
                     FROM t_permisos_ausencia_rh AS tpa INNER JOIN cat_v3_tipos_ausencia_personal AS tap ON tpa.IdTipoAusencia = tap.Id
                     INNER JOIN cat_v3_motivos_ausencia_personal AS map ON tpa.IdMotivoAusencia = map.Id WHERE IdUsuario = "' . $idUsuario . '" 
-                    AND DATE(tpa.FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE()');
+                    AND DATE(tpa.FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() order by FechaAusenciaDesde desc');
     }
 
     public function jefeDirecto($idUsuario) {
@@ -96,8 +96,8 @@ class Permisos_Vacaciones extends General {
         $carpeta = $this->pdf->definirArchivo('Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'], $documento);
         $this->pdf->Output('F', $carpeta, true);
 
-//        $idPermisoGenerado = $this->ajustarInformacionDBS($datosPermisos, $documento);
-//        $correoEnviado = $this->enviarCorreoPermiso($datosPermisos, $asunto = "Generado", $carpeta);
+        $idPermisoGenerado = $this->ajustarInformacionDBS($datosPermisos, $documento);
+        $correoEnviado = $this->enviarCorreoPermiso($datosPermisos, $asunto = "Generado", $carpeta);
 
         return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1)];
     }
@@ -388,12 +388,10 @@ class Permisos_Vacaciones extends General {
 
     public function construirPDF($datosPermisos) {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-//        $paginasArchivo = $this->pdf->setSourceFile('../public/storage/Archivos/Archivos_Template/Control_ausencias_personal.pdf');
+        
         $this->pdf->AddPage();
         $this->pdf->SetMargins(30, 25 , 30);
-        $this->pdf->SetAutoPageBreak(true,25); 
-//        $tplIdx = $this->pdf->importPage(1);
-//        $this->pdf->useTemplate($tplIdx, 0, 0, 210, 420, true);
+        $this->pdf->SetAutoPageBreak(true,25);
         $this->pdf->SetTextColor(243, 18, 18);
         $this->pdf->SetXY(165, 10);
         $this->pdf->SetFont("helvetica", "B", 11);
@@ -427,25 +425,50 @@ class Permisos_Vacaciones extends General {
         if($datosPermisos['tipoAusencia'] == 3){
             $this->pdf->SetXY(72, 70);
             $this->pdf->Cell(53, 9, "NO ASISTIR A TRABAJAR",0,0,'C',true);
-            $this->pdf->SetXY(72, 85);
-            $this->pdf->Cell(30, 9, "",1);
+            $this->pdf->SetXY(95, 85);
+            $this->pdf->Cell(30, 9, "X");
         }else{
+            if($datosPermisos['tipoAusencia'] == 1){
+                $this->pdf->SetXY(72, 85);
+                $this->pdf->Cell(25, 9, utf8_decode($datosPermisos['horaAusencia']),1,0,'C');
+            }else{
+                $this->pdf->SetXY(100, 85);
+                $this->pdf->Cell(25, 9, utf8_decode($datosPermisos['horaAusencia']),1,0,'C');
+            }
             $this->pdf->SetXY(72, 70);
-            $this->pdf->Cell(25, 9, "",0,0,'C',true);
+            $this->pdf->Cell(25, 9, "ENTRADA",0,0,'C',true);
             $this->pdf->SetXY(72, 85);
-            $this->pdf->Cell(25, 9, "",1);
+            $this->pdf->Cell(25, 9, "",1,0,'C');
             $this->pdf->SetXY(100, 70);
-            $this->pdf->Cell(25, 9, "",0,0,'C',true);
+            $this->pdf->Cell(25, 9, "SALIDA",0,0,'C',true);
             $this->pdf->SetXY(100, 85);
-            $this->pdf->Cell(25, 9, "",1);
+            $this->pdf->Cell(25, 9, "",1,0,'C');
         }
         $this->pdf->SetXY(129, 70);
         $this->pdf->Cell(61, 9, "OBSERVACIONES",0,0,'C',true);
         
         $this->pdf->Ln();
+        $this->pdf->line(15,130,190,130);
         $this->pdf->SetFont("helvetica", "I", 10);
-        $this->pdf->SetXY(15, 105);
+        $this->pdf->SetXY(15, 140);
         $this->pdf->Cell(0, 0, "DESCRIPCION DE MOTIVOS: ");
+        
+        $this->pdf->SetFont("helvetica", "", 10);
+        $this->pdf->line(15,207,55,207);
+        $this->pdf->SetXY(20, 210);
+        $this->pdf->Cell(0, 0, "JEFE INMEDIATO");
+        
+        $this->pdf->line(60,207,100,207);
+        $this->pdf->SetXY(60, 210);
+        $this->pdf->Cell(0, 0, "RECURSOS HUMANOS");
+        
+        $this->pdf->line(105,207,145,207);
+        $this->pdf->SetXY(113, 210);
+        $this->pdf->Cell(0, 0, "CONTADOR");
+        
+        $this->pdf->line(150,207,190,207);
+        $this->pdf->SetXY(160, 210);
+        $this->pdf->Cell(0, 0, "DIRECTOR");
           
         //agregar datos del permiso
         $this->pdf->SetFont("helvetica", "B", 10);
@@ -467,100 +490,13 @@ class Permisos_Vacaciones extends General {
         $this->pdf->SetXY(15, 83);
         $this->pdf->MultiCell(53, 9, utf8_decode($datosPermisos['textoMotivoAusencia']));
         
+        $this->pdf->SetXY(15, 145);
+        $this->pdf->MultiCell(135, 4, utf8_decode($datosPermisos["descripcionAusencia"]));
+        
         $this->pdf->SetFont("helvetica", "B", 7);
         $this->pdf->SetXY(129, 83);
         $observaciones = $this->observacionesMotivo($datosPermisos['motivoAusencia']);
         $this->pdf->MultiCell(53, 9, utf8_decode($observaciones[0]['Observaciones']),0,'L');
-//        $this->pdf->SetXY(148, 48);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['fechaPermisoDesde'] . $datosPermisos['fechaPermisoHasta']));
-//        $this->pdf->SetXY(80, 62);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['nombre']));
-//        $this->pdf->SetXY(37, 72);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['puesto']));
-//        $this->pdf->SetXY(48, 82);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['departamento']));
-//
-//        $hora = explode(" ", $datosPermisos["horaAusencia"]);
-//        switch ($datosPermisos['tipoAusencia']) {
-//            case '1':
-//            case '3':
-//                $this->pdf->SetX(82);
-//                $x = $this->pdf->GetX();
-//                break;
-//            case '2':
-//                $this->pdf->SetX(107);
-//                $x = $this->pdf->GetX();
-//                break;
-//        }
-//
-//        switch ($datosPermisos['motivoAusencia']) {
-//            case '1':
-//                $this->pdf->SetXY($x, 116);
-//                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-//                break;
-//            case '2':
-//                $this->pdf->SetXY($x, 126);
-//                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-//                break;
-//            case '3':
-//                $this->pdf->SetXY($x, 137);
-//                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-//                break;
-//            case '4':
-//                $this->pdf->SetXY($x, 148);
-//                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-//                break;
-//            case '5':
-//                $this->pdf->SetXY($x, 158);
-//                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-//                break;
-//            case '6':
-//                $this->pdf->SetXY($x, 169);
-//                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-//                break;
-//            case '7':
-//                $this->pdf->SetXY($x, 179);
-//                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-//                break;
-//            case '8':
-//                $this->pdf->SetXY($x, 213);
-//                $this->pdf->Cell(0, 0, utf8_decode("X"));
-//                break;
-//            case '9':
-//                $this->pdf->SetXY($x, 223);
-//                $this->pdf->Cell(0, 0, utf8_decode("X"));
-//                break;
-//            case '10':
-//                $this->pdf->SetXY($x, 234);
-//                $this->pdf->Cell(0, 0, utf8_decode("X"));
-//                break;
-//            case '11':
-//                $this->pdf->SetXY($x, 244);
-//                $this->pdf->Cell(0, 0, utf8_decode("X"));
-//                break;
-//            case '12':
-//                $this->pdf->SetXY($x, 255);
-//                $this->pdf->Cell(0, 0, utf8_decode("X"));
-//                break;
-//        }
-//
-//        $this->pdf->SetXY(55, 266);
-//        $this->pdf->SetFont("helvetica", "", 10);
-//        $this->pdf->MultiCell(135, 4, utf8_decode($datosPermisos["descripcionAusencia"]));
-//
-//        $folioDocumento = $this->DBS->consultaGral("SELECT COUNT(Archivo) AS total FROM t_permisos_ausencia_rh");
-//        $cuenta = strlen($folioDocumento[0]['total']);
-//        $cerosFolio = '';
-//        for ($i = $cuenta; $i < 10; $i++) {
-//            $cerosFolio .= '0';
-//        }
-//        $this->pdf->SetFont("helvetica", "", 7);
-//        $this->pdf->SetXY(14, 399);
-//        $this->pdf->Cell(0, 0, utf8_decode("Folio: " . $cerosFolio . $folioDocumento[0]['total']));
     }
 
     public function observacionesMotivo($idMotivo) {

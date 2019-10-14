@@ -161,7 +161,7 @@ $(function () {
                 evento.enviarEvento('EventoPermisosVacaciones/Permisos', data, '#panelPermisosVacaciones', function (respuesta) {
                     if (respuesta) {
                         window.open(respuesta.ruta, '_blank');
-                        
+                        location.reload();
                     } else {
                         evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la solicitud de permiso.', 3000);
                     }
