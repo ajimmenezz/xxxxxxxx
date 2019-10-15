@@ -884,8 +884,7 @@ class Modelo_FondoFijo extends Modelo_Base {
 
         $query = "";
         $query = "
-            SELECT 
-            cu.IdPerfil,
+            SELECT
             cu.Id,
             NOMBREUSUARIO(tfs.IdUsuario) AS Nombre,
             tfs.IdTipoCuenta as idTipoCuenta,
@@ -914,7 +913,7 @@ class Modelo_FondoFijo extends Modelo_Base {
                     INNER JOIN
                 cat_v3_fondofijo_tipos_cuenta cat ON tfs.IdTipoCuenta = cat.id
             WHERE
-                cu.IdPerfil IN(39,57,64,83,113) GROUP BY cu.Id ORDER BY cu.IdPerfil asc";
+                cu.IdJefe =" . $idSupervisor . " GROUP BY cu.Id";
 
         $resultado = $this->consulta($query);
         return array("datosTecnico" => $resultado, "TiposSaldo" => $tipoSaldo);

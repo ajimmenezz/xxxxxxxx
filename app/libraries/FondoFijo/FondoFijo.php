@@ -544,7 +544,6 @@ class FondoFijo extends General {
 
     public function getTecnicos() {
         $idSupervisor = $this->usuario['Id'];
-        
         if (in_array($this->permisoSaldosTecnicosGerente, $this->usuario['PermisosAdicionales'])) {
             $resultado = $this->DB->getSaldosTecnicosGerente($idSupervisor);            
         } else {
