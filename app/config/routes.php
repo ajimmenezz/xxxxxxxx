@@ -88,6 +88,7 @@ $route['Poliza/Seguimiento/(:any)'] = 'Poliza/Controller_Seguimiento/manejarEven
 $route['Poliza/EventoCatalogoRegionesCliente/(:any)'] = 'Poliza/Controller_Poliza/manejarEvento/$1';
 $route['Poliza/EventoCatalogos/(:any)'] = 'Poliza/Controller_Catalogos/manejarEvento/$1';
 $route['Poliza/ReportesPoliza/(:any)'] = 'Poliza/Controller_ReportesPoliza/manejarEvento/$1';
+$route['Poliza/Tester/(:any)'] = 'Generales/Controller_Tester/manejarEvento/$1';
 $route['Poliza/EventoCatalogoRevisionFisica/(:any)'] = 'Poliza/Controller_Poliza/manejarEvento/$1';
 
 /* Routers para el manejo nuevo de Proyectos */
@@ -124,6 +125,7 @@ $route['Generales/ServiceDesk/(:any)'] = 'Generales/Controller_ServiceDesk/manej
 $route['Generales/Dispositivos/(:any)'] = 'Generales/Controller_Dispositivos/manejarEvento/$1';
 $route['Generales/Dashboard/(:any)'] = 'Generales/Controller_Dashboard/manejarEvento/$1';
 $route['Generales/Dashboard_Gapsi/(:any)'] = 'Gapsi/Controller_GestorProyectos/manejarEvento/$1';
+$route['Generales/Tester/(:any)'] = 'Generales/Controller_Tester/manejarEvento/$1';
 
 /* Routers para el manejo de páginas de PhantomJS */
 $route['Phantom/Servicio/(:any)'] = 'Phantom/Controller_Phantom/servicioPhantom/$1';
@@ -269,6 +271,9 @@ $route['FondoFijo/Catalogos/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEv
 $route['FondoFijo/Depositar/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
 $route['FondoFijo/MiFondo/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
 $route['FondoFijo/Autorizar/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
+$route['FondoFijo/SaldosTecnico/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
+$route['FondoFijo/MovimientosTecnico/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
+$route['FondoFijo/DetallesMovimiento/(:any)'] = 'FondoFijo/Controller_FondoFijo/manejarEvento/$1';
 
 /* Routers para el manejo de Instalaciones de Equipo */
 $route['Instalaciones/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
@@ -281,6 +286,7 @@ $route['Prime/Inventario/(:any)'] = 'Prime/Controller_Inventario/manejarEvento/$
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
 $route['Reportes/Lexmark/(:any)'] = 'Reportes/Controller_PrinterLexmark/manejarEvento/$1';
+$route['Reportes/SD/(:any)'] = 'Reportes/Controller_Servicedesk/manejarEvento/$1';
 
 $route['Error/(:any)'] = 'Controller_Error/$1';
 

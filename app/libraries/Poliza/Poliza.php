@@ -797,9 +797,11 @@ class Poliza extends General {
         if ($actualizarServicio) {
             $this->nuevosServiciosDesdeChecklist($actualizarServicio);
             $folio = $this->DBST->consultaFolio($datos['servicio']);
+            
             if ($folio !== FALSE && $usuario['IdPerfil'] == '83') {
-                $this->servicio->agregarVueltaAsociado($folio, $datos);
+                $this->servicio->agregarVueltaAsociado($datos);
             }
+            
             foreach ($actualizarServicio as $key => $value) {
                 $this->enviarCorreoConcluido(array($value['CorreoCopiaFirma']), $titulo, $textoCorreo);
                 $this->InformacionServicios->verifyProcess($datos);

@@ -5,42 +5,39 @@ namespace Librerias\FondoFijo;
 use Controladores\Controller_Base_General as General;
 use Librerias\Generales\LeerCFDI as CFDI;
 
-class FondoFijo extends General
-{
+class FondoFijo extends General {
 
     private $DB;
     private $Correo;
     private $usuario;
     private $cfdi;
+    private $permisoSaldosTecnicosGerente;
+    public $data;
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         $this->DB = \Modelos\Modelo_FondoFijo::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
         $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
+        $this->permisoSaldosTecnicosGerente = 325;
     }
 
-    public function getTiposCuenta()
-    {
+    public function getTiposCuenta() {
         $tipos = $this->DB->getTiposCuenta();
         return $tipos;
     }
 
-    public function getUsuarios()
-    {
+    public function getUsuarios() {
         $usuarios = $this->DB->getUsuarios();
         return $usuarios;
     }
 
-    public function getConceptos()
-    {
+    public function getConceptos() {
         $conceptos = $this->DB->getConceptos();
         return $conceptos;
     }
 
-    public function agregarTipoCuenta(array $datos)
-    {
+    public function agregarTipoCuenta(array $datos) {
         if (!isset($datos['tipo'])) {
             return [
                 'code' => 500,
@@ -63,8 +60,7 @@ class FondoFijo extends General
         }
     }
 
-    public function formularioEditarTipo(array $datos)
-    {
+    public function formularioEditarTipo(array $datos) {
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
@@ -79,8 +75,7 @@ class FondoFijo extends General
         }
     }
 
-    public function editarTipoCuenta(array $datos)
-    {
+    public function editarTipoCuenta(array $datos) {
         if (!isset($datos['tipo']) || !isset($datos['id']) || !isset($datos['estatus'])) {
             return [
                 'code' => 500,
@@ -99,8 +94,7 @@ class FondoFijo extends General
         }
     }
 
-    public function formularioEditarMontosUsuario(array $datos)
-    {
+    public function formularioEditarMontosUsuario(array $datos) {
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
@@ -120,14 +114,12 @@ class FondoFijo extends General
         }
     }
 
-    public function getMontosUsuario(int $id)
-    {
+    public function getMontosUsuario(int $id) {
         $montos = $this->DB->getMontosUsuario($id);
         return $montos;
     }
 
-    public function guardarMontos(array $datos)
-    {
+    public function guardarMontos(array $datos) {
         if (!isset($datos['id']) || !isset($datos['montos'])) {
             return [
                 'code' => 500,
@@ -139,8 +131,7 @@ class FondoFijo extends General
         }
     }
 
-    public function formularioAgregarConcepto(array $datos)
-    {
+    public function formularioAgregarConcepto(array $datos) {
 
         $datos = [
             'tiposCuenta' => $this->getTiposCuenta(),
@@ -156,39 +147,32 @@ class FondoFijo extends General
         ];
     }
 
-    public function agregarConcepto(array $datos)
-    {
+    public function agregarConcepto(array $datos) {
         return $this->DB->guardarConcepto($datos);
     }
 
-    public function getTiposComprobante()
-    {
+    public function getTiposComprobante() {
         return $this->DB->getTiposComprobante();
     }
 
-    public function getSucursales()
-    {
+    public function getSucursales() {
         return $this->DB->getSucursales();
     }
 
-    public function inhabilitarConcepto(array $datos)
-    {
+    public function inhabilitarConcepto(array $datos) {
         return $this->DB->habInhabConcepto($datos, 0);
     }
 
-    public function habilitarConcepto(array $datos)
-    {
+    public function habilitarConcepto(array $datos) {
         return $this->DB->habInhabConcepto($datos, 1);
     }
 
-    public function getUsuariosConFondoFijo()
-    {
+    public function getUsuariosConFondoFijo() {
         $usuarios = $this->DB->getUsuariosConFondoFijo();
         return $usuarios;
     }
 
-    public function formularioDepositar(array $datos)
-    {
+    public function formularioDepositar(array $datos) {
         if (!isset($datos['id'])) {
             return [
                 'code' => 500,
@@ -210,14 +194,12 @@ class FondoFijo extends General
         }
     }
 
-    public function getTiposCuentaXUsuario(int $id)
-    {
+    public function getTiposCuentaXUsuario(int $id) {
         $tipos = $this->DB->getTiposCuentaXUsuario($id);
         return $tipos;
     }
 
-    public function montosDepositar(array $datos)
-    {
+    public function montosDepositar(array $datos) {
         $montoMaximo = $this->DB->getMaximoMontoAutorizado($datos['id'], $datos['tipoCuenta']);
         $saldo = $this->DB->getSaldo($datos['id'], $datos['tipoCuenta']);
         $sugerido = (float) $montoMaximo - (float) $saldo;
@@ -234,9 +216,7 @@ class FondoFijo extends General
         ];
     }
 
-
-    public function registrarDeposito(array $datos)
-    {
+    public function registrarDeposito(array $datos) {
         $date = date('Ymd');
         $returnArray = [
             'code' => 400,
@@ -263,9 +243,9 @@ class FondoFijo extends General
             $generalesUsuario = $this->DB->getGeneralInfoByUserID($datos['id']);
             $titulo = 'Depósito Fondo Fijo';
             $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
-                . '<p>'
-                . ' Se ha registrado un nuevo depósito por la cantidad de <strong>$' . number_format($datos['depositar'], 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifica la información mencionada ingresando al sistema'
-                . '</p>';
+                    . '<p>'
+                    . ' Se ha registrado un nuevo depósito por la cantidad de <strong>$' . number_format($datos['depositar'], 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifica la información mencionada ingresando al sistema'
+                    . '</p>';
             //            $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
             //            $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
         }
@@ -273,15 +253,14 @@ class FondoFijo extends General
         return $registrar;
     }
 
-    public function getSaldosCuentasXUsuario(int $id)
-    {
+    public function getSaldosCuentasXUsuario(int $id) {
         $resultado = $this->DB->getSaldosCuentasXUsuario($id);
         return $resultado;
     }
 
-    public function detalleCuenta(array $datos)
-    {
+    public function detalleCuenta(array $datos) {
         if (!isset($datos['tipoCuenta']) || !isset($datos['usuario'])) {
+
             return [
                 'code' => 500,
                 'error' => 'No se ha recibido la información de la cuenta o el usuario. Intente de nuevo'
@@ -294,7 +273,6 @@ class FondoFijo extends General
                 'tickets' => $this->DB->getTicketsByUsuario($this->usuario['Id']),
                 'sucursales' => $this->DB->getSucursales()
             ];
-
             return [
                 'code' => 200,
                 'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/DetallesCuenta', $data, TRUE)
@@ -302,20 +280,17 @@ class FondoFijo extends General
         }
     }
 
-    public function cargaMontoMaximoConcepto(array $datos)
-    {
+    public function cargaMontoMaximoConcepto(array $datos) {
         $monto = $this->DB->cargaMontoMaximoConcepto(array_merge($datos, ['usuario' => $this->usuario['Id']]));
         return $monto;
     }
 
-    public function cargaServiciosTicket(array $datos)
-    {
+    public function cargaServiciosTicket(array $datos) {
         $servicios = $this->DB->cargaServiciosTicket(array_merge($datos, ['usuario' => $this->usuario['Id']]));
         return $servicios;
     }
 
-    public function registrarComprobante(array $datos)
-    {
+    public function registrarComprobante(array $datos) {
         $date = date('Ymd');
         $datos['tipoComprobante'] = 3;
         $datos['xml'] = '';
@@ -418,8 +393,7 @@ class FondoFijo extends General
         return $registrar;
     }
 
-    public function formularioDetallesMovimiento(array $datos)
-    {
+    public function formularioDetallesMovimiento(array $datos) {
         $rolAutoriza = 0;
         if (isset($datos['autorizaciones']) && $datos['autorizaciones'] == 1) {
             $rolAutoriza = 1;
@@ -441,20 +415,17 @@ class FondoFijo extends General
         ];
     }
 
-    public function cancelarMovimiento(array $datos)
-    {
+    public function cancelarMovimiento(array $datos) {
         $cancelar = $this->DB->cancelarMovimiento($datos);
         return $cancelar;
     }
 
-    public function pendientesXAutorizar(int $idJefe)
-    {
+    public function pendientesXAutorizar(int $idJefe) {
         $pendientes = $this->DB->pendientesXAutorizar($idJefe);
         return $pendientes;
     }
 
-    public function rechazarMovimiento(array $datos)
-    {
+    public function rechazarMovimiento(array $datos) {
         $rechazar = $this->DB->rechazarMovimiento($datos);
 
         if ($rechazar['code'] == 200) {
@@ -464,15 +435,15 @@ class FondoFijo extends General
 
             $titulo = 'Comprobante Rechazado - Fondo Fijo';
             $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
-                . '<p>'
-                . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' '
-                . ' ha  rechazado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" '
-                . ' por el total de <strong>$' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> '
-                . ' correspondiente al fondo fijo. <br />'
-                . ' Observaciones: <strong>' . $datos['observaciones'] . '</strong><br />'
-                . ' Por favor verifique la información mencionada ingresando al sistema '
-                . 'o comuniquese con el usuario que rechazó el comprobante.'
-                . '</p>';
+                    . '<p>'
+                    . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' '
+                    . ' ha  rechazado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" '
+                    . ' por el total de <strong>$' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> '
+                    . ' correspondiente al fondo fijo. <br />'
+                    . ' Observaciones: <strong>' . $datos['observaciones'] . '</strong><br />'
+                    . ' Por favor verifique la información mencionada ingresando al sistema '
+                    . 'o comuniquese con el usuario que rechazó el comprobante.'
+                    . '</p>';
             $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
             $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
         }
@@ -480,8 +451,7 @@ class FondoFijo extends General
         return $rechazar;
     }
 
-    public function autorizarMovimiento(array $datos)
-    {
+    public function autorizarMovimiento(array $datos) {
         $autorizar = $this->DB->autorizarMovimiento($datos);
 
         if ($autorizar['code'] == 200) {
@@ -491,9 +461,9 @@ class FondoFijo extends General
 
             $titulo = 'Comprobante Autorizado - Fondo Fijo';
             $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
-                . '<p>'
-                . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' ha autorizado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" por el total de $' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifique la información mencionada ingresando al sistema.'
-                . '</p>';
+                    . '<p>'
+                    . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' ha autorizado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" por el total de $' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> correspondiente al fondo fijo. Por favor verifique la información mencionada ingresando al sistema.'
+                    . '</p>';
             $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
             $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
         }
@@ -501,10 +471,7 @@ class FondoFijo extends General
         return $autorizar;
     }
 
-    /************************************************************************/
-
-    public function rechazarMovimientoCobrable(array $datos)
-    {
+    public function rechazarMovimientoCobrable(array $datos) {
         $rechazar = $this->DB->rechazarMovimientoCobrable($datos);
 
         if ($rechazar['code'] == 200) {
@@ -514,15 +481,15 @@ class FondoFijo extends General
 
             $titulo = 'Comprobante Rechazado - Fondo Fijo';
             $texto = '<h4>Hola ' . $generalesUsuario['Nombre'] . '</h4>'
-                . '<p>'
-                . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' '
-                . ' ha  rechazado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" '
-                . ' por el total de <strong>$' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> '
-                . ' correspondiente al fondo fijo. <br />'
-                . ' Observaciones: <strong>' . $datos['observaciones'] . '</strong><br />'
-                . ' Por favor verifique la información mencionada ingresando al sistema '
-                . 'o comuniquese con el usuario que rechazó el comprobante.'
-                . '</p>';
+                    . '<p>'
+                    . ' El usuario ' . $generalesUsuarioRechaza['Nombre'] . ' '
+                    . ' ha  rechazado su comprobante por concepto de "' . $generalesMovimiento['Nombre'] . '" '
+                    . ' por el total de <strong>$' . number_format(abs($generalesMovimiento['Monto']), 2, '.', ',') . '</strong> '
+                    . ' correspondiente al fondo fijo. <br />'
+                    . ' Observaciones: <strong>' . $datos['observaciones'] . '</strong><br />'
+                    . ' Por favor verifique la información mencionada ingresando al sistema '
+                    . 'o comuniquese con el usuario que rechazó el comprobante.'
+                    . '</p>';
             $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
             $this->Correo->enviarCorreo('fondofijo@siccob.solutions', array($generalesUsuario['EmailCorporativo']), $titulo, $mensaje);
         }
@@ -530,12 +497,59 @@ class FondoFijo extends General
         return $rechazar;
     }
 
-    public function eliminaArchivos(array $archivos)
-    {
+    public function eliminaArchivos(array $archivos) {
         foreach ($archivos as $k => $v) {
             try {
                 unlink('.' . $v);
-            } catch (Exception $ex) { }
+            } catch (Exception $ex) {
+                
+            }
         }
     }
+
+    public function getMovimientosTecnico(array $datos) {
+        $idUsuario = $datos['id'];
+        $data = $this->DB->getMovimientosXTecnico($idUsuario);
+        $lengt = count($data);
+        for ($i = 0; $i < $lengt; $i++) {
+            $data[$i]['Monto'] = number_format($data[$i]['Monto'], 2, '.', ',');
+            $data[$i]['SaldoPrevio'] = number_format($data[$i]['SaldoPrevio'], 2, '.', ',');
+            $data[$i]['SaldoNuevo'] = number_format($data[$i]['SaldoNuevo'], 2, '.', ',');
+        }
+        return [
+            "code" => 200,
+            'formulario' => parent::getCI()->load->view('FondoFijo/Formularios/registroMovimientos', $data, TRUE),
+            'consulta' => $data
+        ];
+    }
+
+    public function getDetallesMovimiento(array $d) {
+        $idMovimiento = $d['IdMovimiento'];
+
+        $datos = $this->DB->getDetallesFondoFijoXId($idMovimiento);
+        $lengt = count($datos);
+
+        for ($i = 0; $i < $lengt; $i++) {
+            $datos[$i]['Monto'] = number_format($datos[$i]['Monto'], 2, '.', ',');
+            $datos[$i]['SaldoPrevio'] = number_format($datos[$i]['SaldoPrevio'], 2, '.', ',');
+            $datos[$i]['SaldoNuevo'] = number_format($datos[$i]['SaldoNuevo'], 2, '.', ',');
+        }
+
+        return [
+            'code' => 200,
+            'html' => parent::getCI()->load->view('FondoFijo/Formularios/detallesGeneralMovimientos', $datos, TRUE),
+            'generales' => $datos
+        ];
+    }
+
+    public function getTecnicos() {
+        $idSupervisor = $this->usuario['Id'];
+        if (in_array($this->permisoSaldosTecnicosGerente, $this->usuario['PermisosAdicionales'])) {
+            $resultado = $this->DB->getSaldosTecnicosGerente($idSupervisor);            
+        } else {
+            $resultado = $this->DB->getTecnico($idSupervisor);
+        }
+        return $resultado;
+    }
+
 }

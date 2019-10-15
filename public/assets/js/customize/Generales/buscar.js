@@ -8,6 +8,7 @@ $(function () {
     var fecha = new Fecha();
     var catalogos;
     var filtrosAvanzados = [];
+    var servicios = new Servicio();
 
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();
@@ -267,6 +268,8 @@ $(function () {
         $("#seccion-reporte").addClass("hidden");
         $("#seccion-detalles").removeClass("hidden");
         evento.enviarEvento('Buscar/Detalles', {datos: datos}, '#seccion-detalles', function (respuesta) {
+            var servicio = datos[1];
+            var ticket = datos[2];
 
             $("#panel-detalles-solicitud").empty().append(respuesta.solicitud);
             $("#panel-detalles-servicio").empty().append(respuesta.servicio);
@@ -278,18 +281,20 @@ $(function () {
 
             $("#btnSubirInfoSD").off("click");
             $("#btnSubirInfoSD").on("click", function () {
+                $('#btnSubirInfoSD a').bind('click', false);
                 var data = {
-                    'servicio': $(this).attr("data-id-servicio")
+                    servicio: $(this).attr("data-id-servicio"),
+                    servicioConcluir: false
                 }
-                evento.enviarEvento('/Generales/ServiceDesk/ValidarServicio', data, '#seccion-detalles', function (respuesta) {
-                    if (respuesta === true) {
+                evento.enviarEvento('/Generales/ServiceDesk/GuardarInformacionSD', data, '#seccion-detalles', function (respuesta) {
+                    $('#btnSubirInfoSD a').unbind('click', false);
+                    if (respuesta.code === 200) {
                         var html = `<p class="f-s-20 text-center">Su información fué agregada a ServiceDesk.</p>`;
-                        evento.mostrarModal("Informcación SD", html);
+                        evento.mostrarModal("Información SD", html);
                         $('#btnModalConfirmar').addClass('hidden');
                         $('#btnModalAbortar').empty().append('Cerrar');
                     } else {
-                        var html = `<p class="f-s-20">Ocurrió un error al subir la información. Intente de nuevo o contacte al administrador.</p>
-                                    <p class="f-s-20">(` + respuesta + `)</p>`;
+                        var html = '<h3>Ocurrió un error al subir la información. Intente de nuevo o contacte al administrador. (' + respuesta.message + ')</h3>';
                         evento.mostrarModal("ERROR SD", html);
                         $('#btnModalConfirmar').addClass('hidden');
                         $('#btnModalAbortar').empty().append('Cerrar');
@@ -298,6 +303,19 @@ $(function () {
                 });
             });
 
+
+            servicios.initBotonReasignarServicio(servicio, ticket, '#seccion-detalles');
+
+            $('#btnCancelarServicioSeguimiento').off('click');
+            $('#btnCancelarServicioSeguimiento').on('click', function () {
+                var data = {servicio: servicio, ticket: ticket};
+                servicios.cancelarServicio(
+                        data,
+                        'Servicio/Servicio_Cancelar_Modal',
+                        '#modal-dialogo',
+                        'Servicio/Servicio_Cancelar'
+                        );
+            });
 
             $("#btnExportarPdf").off("click");
             $("#btnExportarPdf").on("click", function () {

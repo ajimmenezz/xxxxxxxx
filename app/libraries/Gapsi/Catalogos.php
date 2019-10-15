@@ -755,7 +755,7 @@ class Catalogos extends General {
 
         foreach ($datos as $k => $nodoReceptor) {
             if (isset($nodoReceptor['Rfc'])) {
-                if (in_array($nodoReceptor['Rfc'], ['SSO0101179Z7', 'RSD130305DI7','RRC130605555'])) {
+                if (in_array($nodoReceptor['Rfc'], ['SSO0101179Z7', 'RSD130305DI7','RRC130605555','SSS140225LT6'])) {
                     
                 } else {
                     $arrayReturn['code'] = 400;

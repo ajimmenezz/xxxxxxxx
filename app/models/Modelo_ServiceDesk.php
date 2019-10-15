@@ -48,4 +48,46 @@ class Modelo_ServiceDesk extends Modelo_Base {
         return $answerQuery;
     }
 
+    public function getApiKeyByUser($idUser = '') {
+        if ($idUser == '') {
+            $consulta = parent::connectDBPrueba()->query('select SDKey from cat_v3_usuarios where Id = 2;');
+        } else {
+            $consulta = parent::connectDBPrueba()->query('select SDKey from cat_v3_usuarios where Id = "' . $idUser . '";');
+        }
+        if (!empty($consulta)) {
+            $value = $consulta->result_array();
+            if ($value[0]['SDKey'] === '' || $value[0]['SDKey'] === NULL) {
+                $consulta2 = parent::connectDBPrueba()->query('select SDKey from cat_v3_usuarios where Id = 2;');
+                if (!empty($consulta2)) {
+                    $value2 = $consulta2->result_array();
+                    return $value2[0]['SDKey'];
+                } else {
+                    return FALSE;
+                }
+            } else {
+                return $value[0]['SDKey'];
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function apiKeyUsuario(string $idUsuario) {
+        $datosUsuario = parent::connectDBPrueba()->query('select SDKey from cat_v3_usuarios where Id = "' . $idUsuario . '";');
+        $keyUsuario = $datosUsuario->result_array();
+        return $keyUsuario[0]['SDKey'];
+    }
+
+    public function apiKeyJefe(string $idUsuario) {
+        $datosJefe = parent::connectDBPrueba()->query('SELECT 
+                                                        (SELECT SDKey FROM cat_v3_usuarios WHERE Id = cvu.IdJefe) AS KeyJefe
+                                                    FROM
+                                                        cat_v3_usuarios cvu
+                                                    WHERE
+                                                        cvu.Id = "' . $idUsuario . '"');
+
+        $keyJefe = $datosJefe->result_array();
+        return $keyJefe[0]['KeyJefe'];
+    }
+
 }

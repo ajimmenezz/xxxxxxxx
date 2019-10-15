@@ -486,7 +486,9 @@ class Catalogo extends General {
                         'IdResponsable' => $datos['responsable'],
                         'Permiso' => '0',
                         'Flag' => '1',
-                        'IdUnidadNegocio' => $datos['unidadNegocio']
+                        'IdUnidadNegocio' => $datos['unidadNegocio'],
+                        'Alias' => $datos["alias"],
+                        'CentroCostos' => $datos["centroCostos"]
                     ));
                     if (!empty($consulta)) {
                         return $this->catSucursales('3');
@@ -521,7 +523,9 @@ class Catalogo extends General {
                         'Telefono2' => $datos['telefono2'],
                         'IdResponsable' => $datos['responsable'],
                         'Flag' => $datos['estatus'],
-                        'IdUnidadNegocio' => $datos['unidadNegocio']
+                        'IdUnidadNegocio' => $datos['unidadNegocio'],
+                        'Alias' => $datos["alias"],
+                        'CentroCostos' => $datos["centroCostos"]
                             ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
@@ -2734,7 +2738,8 @@ class Catalogo extends General {
                                                     cxm.Nombre as Marca,
                                                     concat((select Nombre from cat_v3_x4d_equipos where Id = cxe.IdEquipo),' - ',(select Nombre from cat_v3_x4d_marcas where Id = cxe.IdMarca),' - ',cxe.Nombre) as Elemento,
                                                     cxs.ClaveSAE,
-                                                    cxs.Flag
+                                                    cxs.Flag,
+                                                    cxs.IdElemento
                                                     from cat_v3_x4d_subelementos cxs
                                                     inner join cat_v3_x4d_elementos cxe on cxs.IdElemento = cxe.Id
                                                     inner join cat_v3_x4d_marcas cxm on cxs.IdMarca = cxm.Id " . $flag);

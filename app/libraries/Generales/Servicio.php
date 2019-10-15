@@ -26,6 +26,7 @@ class Servicio extends General {
     private $ServiceDesk;
     private $SeguimientoPoliza;
     private $InformacionServicios;
+    private $Instalaciones;
     private $MSP;
 
     public function __construct() {
@@ -44,6 +45,7 @@ class Servicio extends General {
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();
         $this->ServiceDesk = \Librerias\WebServices\ServiceDesk::factory();
         $this->SeguimientoPoliza = \Librerias\Poliza\Seguimientos::factory();
+        $this->Instalaciones = \Librerias\Instalaciones\Instalaciones::factory();
         $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
 
@@ -804,10 +806,11 @@ class Servicio extends General {
     public function getServicioToPdf(array $servicio, string $nombreExtra = NULL) {
         $usuario = $this->Usuario->getDatosUsuario();
         $infoServicio = $this->getInformacionServicio($servicio['servicio']);
-        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+        $tServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+        $tipoServicio = str_replace(".", "_", $tServicio);
         $nombreExtra = (is_null($nombreExtra)) ? '' : $nombreExtra;
         $archivo = 'storage/Archivos/Servicios/Servicio-' . $servicio['servicio'] . '/Pdf/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $servicio['servicio'] . '_' . $tipoServicio . $nombreExtra . '.pdf ';
-        $ruta = 'http://' . $_SERVER['HTTP_HOST'] . '/Phantom/Servicio/' . $servicio['servicio'] . '/' . $nombreExtra;
+        $ruta = 'https://' . $_SERVER['HTTP_HOST'] . '/Phantom/Servicio/' . $servicio['servicio'] . '/' . $nombreExtra;
 
         $datosServicio = $this->DBS->getServicios('SELECT
                                                 sucursal(IdSucursal) Sucursal,
@@ -1090,12 +1093,16 @@ class Servicio extends General {
                                                         CASE tsae.IdItem 
                                                             WHEN 1 THEN (SELECT Equipo FROM v_equipos WHERE Id = tsae.TipoItem) 
                                                             WHEN 2 THEN (SELECT Nombre FROM cat_v3_equipos_sae WHERE Id = tsae.TipoItem)
-                                                            WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tsae.TipoItem) 
+                                                            WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tsae.TipoItem)
+                                                            WHEN 4 THEN (SELECT Nombre FROM cat_v3_x4d_elementos WHERE Id = tsae.TipoItem) 
+                                                            WHEN 5 THEN (SELECT Nombre FROM cat_v3_x4d_subelementos WHERE Id = tsae.TipoItem) 
                                                         END as EquipoMaterial,
                                                         CASE tsae.IdItem 
                                                             WHEN 1 THEN "Equipo"
                                                             WHEN 2 THEN "Material"
                                                             WHEN 3 THEN "Refacción"
+                                                            WHEN 4 THEN "Elemento"
+                                                            WHEN 5 THEN "Sub-Elemento"
                                                         END as Tipo,
                                                         tsae.IdItem,
                                                           (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tsae.IdTipoDiagnostico) TipoDiagnostico
@@ -1104,6 +1111,7 @@ class Servicio extends General {
                                                   ON tsa.Id = tsae.IdAvance
                                                   WHERE tsa.IdTipo = 2
                                                   AND tsa.IdServicio = "' . $servicio . '"
+                                                  AND tsae.Flag = "1"
                                                   GROUP BY tsae.TipoItem, tsae.IdItem, tsae.IdTipoDiagnostico
                                                   ORDER BY Tipo, EquipoMaterial ASC');
         if (!empty($consulta)) {
@@ -1301,16 +1309,23 @@ class Servicio extends General {
         $sucursal = $this->DBS->getServicios('SELECT sucursal(IdSucursal) AS Sucursal FROM t_servicios_ticket WHERE Id = "' . $servicio . '"');
         $generales = $this->InformacionServicios->consultaInformacionCorrectivo($servicio);
         $idSolicitud = $this->DBS->consultaGeneral('SELECT IdSolicitud FROM t_servicios_ticket WHERE Id = "' . $servicio . '"');
+        $detallesSD = 'Sin Información';
+
         if (empty($generales)) {
             $generales[0] = 'Sin Información';
         }
-
+        $detallesSD = 'Sin Información';
         $correctivosDiagnostico = $this->InformacionServicios->consultaCorrectivosDiagnostico($servicio);
 
         if (empty($correctivosDiagnostico)) {
             $correctivosDiagnostico[0] = 'Sin Información';
         } else {
-            $correctivosDiagnostico[0]['Evidencias'] = ($correctivosDiagnostico[0]['Evidencias'] !== '') ? $this->getHtmlArchivosPdf($correctivosDiagnostico[0]['Evidencias'], $servicio) : '';
+            if ($correctivosDiagnostico[0]['Evidencias'] !== NULL && $correctivosDiagnostico[0]['Evidencias'] !== '') {
+                $evidenciasDiagnostico = $this->getHtmlArchivosPdf($correctivosDiagnostico[0]['Evidencias'], $servicio);
+            } else {
+                $evidenciasDiagnostico = '';
+            }
+            $correctivosDiagnostico[0]['Evidencias'] = $evidenciasDiagnostico;
         }
 
         $tipoProblema = $this->DBS->consultaGeneral('SELECT Id, IdTipoProblema FROM t_correctivos_problemas WHERE IdServicio = "' . $servicio . '" ORDER BY Id DESC LIMIT 1');
@@ -1455,17 +1470,13 @@ class Servicio extends General {
         if (!empty($generalesSolicitud['folio'])) {
             if ($generalesSolicitud['folio'] !== '' || $generalesSolicitud['folio'] !== '0') {
                 $key = $this->InformacionServicios->getApiKeyByUser($generalesSolicitud['atiende']);
-                $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $generalesSolicitud['folio']);
-                if (isset($informacionSD->SHORTDESCRIPTION)) {
-                    $detallesSD = $informacionSD->SHORTDESCRIPTION;
-                } else {
-                    $detallesSD = 'Sin Información';
+                if (!empty($key)) {
+                    $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $generalesSolicitud['folio']);
+                    if (isset($informacionSD->SHORTDESCRIPTION)) {
+                        $detallesSD = $informacionSD->SHORTDESCRIPTION;
+                    }
                 }
-            } else {
-                $detallesSD = 'Sin Información';
             }
-        } else {
-            $detallesSD = 'Sin Información';
         }
 
         $data = [
@@ -1786,7 +1797,7 @@ class Servicio extends General {
                 }
             } else {
                 $this->DBS->actualizarServicio('t_servicios_ticket', array(
-                    'IdEstatus' => $datos['status'],
+                    'IdEstatus' => $datos['estatus'],
                     'FechaConclusion' => $fecha
                         ), array('Id' => $datos['servicio'])
                 );
@@ -1849,7 +1860,7 @@ class Servicio extends General {
                 }
             } else {
                 $this->DBS->actualizarServicio('t_servicios_ticket', array(
-                    'IdEstatus' => $datos['status'],
+                    'IdEstatus' => $datos['estatus'],
                     'FechaConclusion' => $fecha
                         ), array('Id' => $datos['servicio'])
                 );
@@ -1891,8 +1902,9 @@ class Servicio extends General {
             } else {
                 $linkExtraEquiposFaltante = '';
             }
+
             $textoUsuario = '<p><strong>Estimado(a) ' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la conclusión del servicio que realizo.</p>' . $linkPDF . $linkDetallesServicio . $descripcionConclusion;
-            $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), $titulo, $textoUsuario);
+            $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Se concluyo el servicio', $textoUsuario);
 
             $datosSolicita = $this->DBS->getServicios('SELECT
                                             (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = tst.Solicita) AS CorreoSolicita,
@@ -1924,22 +1936,15 @@ class Servicio extends General {
             }
         }
 
-        if ($folio !== FALSE && $usuario['IdPerfil'] == '83') {
-            $this->agregarVueltaAsociado($folio, $datos);
+        if ($usuario['IdPerfil'] == '83') {
+            $this->agregarVueltaAsociado($datos);
         }
 
         return TRUE;
     }
 
-    public function agregarVueltaAsociado(string $folio, array $datos) {
-        $dataServicios = $this->DBS->getServicios('SELECT
-                                                        IdSucursal,
-                                                        (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio,
-                                                        IdEstatus,
-                                                        sucursal(IdSucursal) Sucursal
-                                                    FROM t_servicios_ticket
-                                                    WHERE Id = "' . $datos['servicio'] . '"');
-
+    public function agregarVueltaAsociado(array $datos) {
+        $dataServicios = $this->DBS->consultaServicio($datos['servicio']);
         $nombreSucursal = str_replace(" PLATINO", "", $dataServicios[0]['Sucursal']);
         $vueltasAnteriores = $this->DBT->vueltasAnteriores(array('folio' => $dataServicios[0]['Folio']));
 
@@ -2034,6 +2039,7 @@ class Servicio extends General {
         $linkPDF = '';
         $contador = 0;
         $correctivos = $this->DBS->getServicios('SELECT Id, Ticket FROM t_servicios_ticket WHERE Ticket = ' . $datos['ticket'] . ' AND IdTipoServicio = 20');
+
         $this->DBS->actualizarServicio('t_servicios_ticket', array(
             'IdEstatus' => '4',
             'FechaConclusion' => $fecha
@@ -2068,26 +2074,30 @@ class Servicio extends General {
                 'Id_Orden' => $datos['ticket']
             ));
 
-            foreach ($correctivos as $key => $value) {
-                $contador++;
-                $linkPdf = $this->getServicioToPdf(array('servicio' => $value['Id']));
-                $infoServicio = $this->getInformacionServicio($value['Id']);
-                $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+            if (!empty($correctivos)) {
+                foreach ($correctivos as $key => $value) {
+                    $contador++;
+                    $linkPdf = $this->getServicioToPdf(array('servicio' => $value['Id']));
+                    $infoServicio = $this->getInformacionServicio($value['Id']);
+                    $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
 
-                if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-                    $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicio . '.pdf';
-                    $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
-                } else {
-                    $path = 'http://' . $host . '/' . $linkPdf['link'];
-                    $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
+                    if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                        $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicio . '.pdf';
+                        $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
+                    } else {
+                        $path = 'http://' . $host . '/' . $linkPdf['link'];
+                        $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
+                    }
+
+                    $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
                 }
-
-                $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
+                $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
+            } else {
+                $linkSolicitud = '';
             }
 
             $titulo = 'Solicitud Concluida';
-            $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
-            $textoCorreo = '<p>Estimado(a) <strong>' . $verificarSolicitud[0]['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $value['Ticket'] . '</strong><br> Número Solicitud: <strong>' . $verificarSolicitud[0]['Id'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
+            $textoCorreo = '<p>Estimado(a) <strong>' . $verificarSolicitud[0]['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $datos['ticket'] . '</strong><br> Número Solicitud: <strong>' . $verificarSolicitud[0]['Id'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
             $this->enviarCorreoConcluido(array($verificarSolicitud[0]['CorreoAtiende']), $titulo, $textoCorreo);
 
             return 'serviciosConcluidos';
@@ -2149,7 +2159,7 @@ class Servicio extends General {
             if (!empty($cambiarEstatus)) {
                 if ($status === '4') {
                     $this->InformacionServicios->verifyProcess($datos);
-                }else{
+                } else {
                     $this->InformacionServicios->setHTMLService($datos);
                 }
                 return TRUE;
@@ -2284,21 +2294,37 @@ class Servicio extends General {
         $equiposSAE = $this->Catalogo->catEquiposSAE('3', array('Flag' => '1'));
         $componentesEquipo = $this->Catalogo->catComponentesEquipo('3');
         $tiposDiagnostico = $this->DBS->consultaGeneral('SELECT * FROM cat_v3_tipos_diagnostico_correctivo WHERE Flag = 1 AND Id > 1');
+        $elementos = $this->Catalogo->catX4DModelos('3', array('Flag' => '1'));
+        $subelementos = $this->Catalogo->catX4DComponentes('3', array('Flag' => '1'));
         $CI = parent::getCI();
 
         $data = [
             'equiposSAE' => $equiposSAE,
             'equipos' => $equipos,
             'componentesEquipo' => $componentesEquipo,
-            'tiposDiagnostico' => $tiposDiagnostico
+            'tiposDiagnostico' => $tiposDiagnostico,
+            'elementos' => $elementos,
+            'subelementos' => $subelementos
         ];
 
         return array('formulario' => parent::getCI()->load->view('Generales/Modal/formularioAvanceServicio', $data, TRUE), 'datos' => $data);
     }
 
     public function guardarAvenceServicio(array $datos) {
+        try {
+            if ($datos['tipoOperacion'] === 'Guardar') {
+                return $this->insertAvanceProblema($datos);
+            } else {
+                return $this->updateAvanceProblema($datos);
+            }
+        } catch (\Exception $ex) {
+            return ['code' => 400, 'message' => $ex->getMessage()];
+        }
+    }
+
+    private function insertAvanceProblema(array $datos) {
+        $this->DBS->iniciaTransaccion();
         $archivos = null;
-        $CI = parent::getCI();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $usuario = $this->Usuario->getDatosUsuario();
         $verificar = TRUE;
@@ -2348,9 +2374,9 @@ class Servicio extends General {
         }
 
         if ($datos['verificarArchivos'] !== 'false') {
+            $CI = parent::getCI();
             $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/ArchivosAvance/';
             $archivos = setMultiplesArchivos($CI, 'archivosAvanceServicio', $carpeta);
-            $host = $_SERVER['SERVER_NAME'];
 
             if ($archivos) {
                 $archivos = implode(',', $archivos);
@@ -2363,7 +2389,6 @@ class Servicio extends General {
             }
         }
 
-        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
         $folio = $this->DBS->getServicios('SELECT
                                                 (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
                                             FROM t_servicios_ticket
@@ -2371,6 +2396,7 @@ class Servicio extends General {
 
         if ($folio[0]['Folio'] !== NULL) {
             if ($folio[0]['Folio'] !== '0') {
+                $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                 $avanceProblema = $this->DBP->getAdvanceService($datos['servicio']);
                 $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
                 $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];
@@ -2378,14 +2404,124 @@ class Servicio extends General {
             }
         }
 
-        if (!empty($datosNotasSD)) {
+        if ($this->DBS->estatusTransaccion() === FALSE) {
+            $this->DBS->roolbackTransaccion();
+            throw new \Exception("Error con la Base de Datos.");
+        } else {
+            $this->DBS->commitTransaccion();
             if ($datosNotasSD) {
-                return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');
+                return array('code' => 200, 'message' => $this->Servicio->mostrarHistorialAvancesProblemas($datos['servicio']), 'SD' => '');
             } else {
-                return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => $datosNotasSD);
+                return array('code' => 200, 'message' => $this->Servicio->mostrarHistorialAvancesProblemas($datos['servicio']), 'SD' => $datosNotasSD);
+            }
+        }
+    }
+
+    private function updateAvanceProblema(array $datos) {
+        $this->DBS->iniciaTransaccion();
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $verificar = TRUE;
+        $this->DBS->actualizarAvanceProblema(
+                array('campos' => array(
+                        'IdUsuario' => $usuario['Id'],
+                        'Descripcion' => $datos['descripcion'],
+                        'IdTipo' => $datos['tipoAvanceProblema'],
+                        'Descripcion' => $datos['descripcion']
+                    ), 'where' => array('Id' => $datos['idAvanceProblema'])));
+
+        $this->DBS->insertarHitoricoServiciosAvance(
+                array(
+                    'IdUsuarioModifica' => $usuario['Id'],
+                    'IdServicioAvance' => $datos['idAvanceProblema'],
+                    'FechaModificacion' => $fecha
+        ));
+
+        if ((is_string($datos['datosTabla']))) {
+            $datos['datosTabla'] = explode(",", $datos['datosTabla']);
+            $datos['datosTabla'] = array_chunk($datos['datosTabla'], 8);
+        }
+
+        if ($datos['verificarArchivos'] === 'false') {
+            if ($datos['datosTabla'][0] === 'sinDatos') {
+                $verificar = FALSE;
             }
         } else {
-            return array('avances' => $this->Servicio->consultaAvanceServicio($datos['servicio']), 'SD' => '');
+            if ($datos['datosTabla'][0][0] === 'sinDatos') {
+                $verificar = FALSE;
+            }
+        }
+
+        if ($verificar === TRUE) {
+            $avancesProblemaEquipo = $this->DBS->serviciosAvanceEquipo($datos['idAvanceProblema']);
+
+            if (!empty($avancesProblemaEquipo)) {
+                $this->DBS->flagearServicioAvanceEquipo(array('idAvanceProblema' => $datos['idAvanceProblema']));
+            }
+
+            foreach ($datos['datosTabla'] as $value) {
+                $this->DBS->setNuevoElemento('t_servicios_avance_equipo', array(
+                    'IdAvance' => $datos['idAvanceProblema'],
+                    'TipoItem' => $value[4],
+                    'IdItem' => $value[5],
+                    'Serie' => $value[2],
+                    'Cantidad' => $value[3],
+                    'IdTipoDiagnostico' => $value[7]
+                ));
+            }
+        }
+
+        if ($datos['tipoAvanceProblema'] === '2') {
+            $this->DBS->actualizarServicio('t_servicios_ticket', array(
+                'IdEstatus' => '3'
+                    ), array('Id' => $datos['servicio'])
+            );
+        }
+
+        if ($datos['verificarArchivos'] !== 'false') {
+            $CI = parent::getCI();
+            $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/ArchivosAvance/';
+            $archivos = setMultiplesArchivos($CI, 'archivosAvanceServicio', $carpeta);
+            $evidenciasAnteriores = '';
+
+            $evidenciasAnterioresAvanceProblema = $this->DBS->consultaAvanceProblema($datos['idAvanceProblema']);
+
+            if ($evidenciasAnterioresAvanceProblema[0]['Archivos'] !== NULL) {
+                if ($evidenciasAnterioresAvanceProblema[0]['Archivos'] !== '') {
+                    $evidenciasAnteriores = $evidenciasAnterioresAvanceProblema[0]['Archivos'] . ',';
+                }
+            }
+
+            if ($archivos) {
+                $archivos = implode(',', $archivos);
+                $this->DBS->actualizarAvanceProblema(
+                        array('campos' => array(
+                                'Archivos' => $evidenciasAnteriores . $archivos
+                            ), 'where' => array('Id' => $datos['idAvanceProblema'])));
+            }
+
+            $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
+            $folio = $this->DBS->getServicios('SELECT
+                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
+                                            FROM t_servicios_ticket
+                                            WHERE Id = "' . $datos['servicio'] . '"');
+
+            if ($folio[0]['Folio'] !== NULL) {
+                if ($folio[0]['Folio'] !== '0') {
+                    $avanceProblema = $this->DBP->getAdvanceService($datos['servicio']);
+                    $vistaAvanceProblema = $this->InformacionServicios->crearVistaAvanceProblema($avanceProblema[0]);
+                    $htmlAvanceProblema = '***' . $vistaAvanceProblema['tipo'] . '*** ' . $vistaAvanceProblema['datosAvancesProblemas'];
+                    $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
+                }
+            }
+        }
+
+        if ($this->DBS->estatusTransaccion() === FALSE) {
+            $this->DBS->roolbackTransaccion();
+            throw new \Exception("Error con la Base de Datos.");
+        } else {
+            $this->DBS->commitTransaccion();
+            return array('code' => 200, 'message' => $this->Servicio->mostrarHistorialAvancesProblemas($datos['servicio']), 'SD' => '');
         }
     }
 
@@ -2514,7 +2650,8 @@ class Servicio extends General {
                 . "tsa.Descripcion, "
                 . "tsa.Archivos "
                 . "from t_servicios_avance tsa "
-                . "where tsa.IdServicio = '" . $servicio . "'";
+                . "where tsa.IdServicio = '" . $servicio . "'"
+                . "AND tsa.Flag = '1'";
         $resultado = $this->DBS->consultaGeneral($query);
 
         $arrayReturn = [];
@@ -2525,16 +2662,21 @@ class Servicio extends General {
                                 when 1 then 'Equipo'
                                 when 2 then 'Material'
                                 when 3 then 'Refacción'
+                                when 4 then 'Elemento'
+                                when 5 then 'Sub-Elemento'
                         end as Tipo,
                         CASE tsae.IdItem
                                 when 1 then modelo(tsae.TipoItem)
                                 when 2 then (select Nombre from cat_v3_equipos_sae where Id = tsae.TipoItem)
                                 when 3 then (select Nombre from cat_v3_componentes_equipo where Id = tsae.TipoItem)
+                                WHEN 4 THEN (SELECT Nombre FROM cat_v3_x4d_elementos WHERE Id = tsae.TipoItem) 
+                                WHEN 5 THEN (SELECT Nombre FROM cat_v3_x4d_subelementos WHERE Id = tsae.TipoItem)
                         end as Equipo,
                         tsae.Serie,
                         tsae.Cantidad
                         from t_servicios_avance_equipo tsae
-                        where IdAvance = '" . $value['Id'] . "';";
+                        where IdAvance = '" . $value['Id'] . "'
+                        AND tsae.Flag = '1'";
             array_push($arrayReturn, [
                 'usuario' => $value['Usuario'],
                 'foto' => $value['Foto'],
@@ -2575,13 +2717,8 @@ class Servicio extends General {
     public function guardarVueltaAsociados(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-
         $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
-        $folio = $this->DBS->getServicios('SELECT
-                                                IdSucursal,
-                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
-                                            FROM t_servicios_ticket
-                                            WHERE Id = "' . $datos['servicio'] . '"');
+        $folio = $this->DBS->consultaServicio($datos['servicio']);
 
         if (isset($datos['correo'])) {
             $correo = implode(",", $datos['correo']);
@@ -2601,15 +2738,7 @@ class Servicio extends General {
         $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/Asociados/' . str_replace(' ', '_', 'FirmaTecnico_' . $folio[0]['Folio']) . $fechaAsociado . '.png';
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $imagenFirmaTecnico);
 
-        $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio[0]['Folio']);
-
-        if (empty($vueltasFacturasOutsourcing)) {
-            $vuelta = '1';
-        } else {
-            $numeroVuelta = (int) $vueltasFacturasOutsourcing[0]['Vuelta'];
-            $vuelta = $numeroVuelta + 1;
-        }
-
+        $vuelta = $this->crearVueltaAsociado($folio[0]['Folio'], $datos['servicio']);
         $idFacturacionOutSourcing = $this->DBS->setServicioId('t_facturacion_outsourcing', array(
             'IdServicio' => $datos['servicio'],
             'Vuelta' => $vuelta,
@@ -2624,7 +2753,6 @@ class Servicio extends General {
             'FechaEstatus' => $fecha
                 )
         );
-
         $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
@@ -2644,7 +2772,10 @@ class Servicio extends General {
 
         if ($consulta) {
             $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-            $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
+
+            if ($folio[0]['Folio'] !== NULL && $folio[0]['Folio'] !== '0') {
+                $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
+            }
 
             if (isset($informacionSD->SHORTDESCRIPTION)) {
                 $detallesSD = $informacionSD->SHORTDESCRIPTION;
@@ -2766,9 +2897,14 @@ class Servicio extends General {
             </div>';
 
         $key = $this->InformacionServicios->getApiKeyByUser($generalesSolicitud[0]['Atiende']);
-        $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
-        if (isset($informacionSD->SHORTDESCRIPTION)) {
-            $detallesSD = $informacionSD->SHORTDESCRIPTION;
+
+        if (!empty($key)) {
+            $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
+            if (isset($informacionSD->SHORTDESCRIPTION)) {
+                $detallesSD = $informacionSD->SHORTDESCRIPTION;
+            } else {
+                $detallesSD = '';
+            }
         } else {
             $detallesSD = '';
         }
@@ -2854,20 +2990,10 @@ class Servicio extends General {
         return $generales;
     }
 
-    public function guardarVueltaAsociadosSinFirma(array $datos) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
-        $folio = $this->DBS->getServicios('SELECT
-                                                IdSucursal,
-                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio,
-                                                Atiende
-                                            FROM t_servicios_ticket
-                                            WHERE Id = "' . $datos['servicio'] . '"');
-
-        if ($folio[0]['Folio'] !== NULL) {
-            if ($folio[0]['Folio'] !== '0') {
-                $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio[0]['Folio']);
+    public function crearVueltaAsociado(string $folio = NULL, string $servicio) {
+        if ($folio !== NULL) {
+            if ($folio !== '0') {
+                $vueltasFacturasOutsourcing = $this->DBT->vueltasFacturasOutsourcing($folio);
 
                 if (empty($vueltasFacturasOutsourcing)) {
                     $vuelta = '1';
@@ -2876,7 +3002,7 @@ class Servicio extends General {
                     $vuelta = $numeroVuelta + 1;
                 }
             } else {
-                $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($datos['servicio']);
+                $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($servicio);
 
                 if (empty($vueltasFacturasOutsourcingServicio)) {
                     $vuelta = '1';
@@ -2886,7 +3012,7 @@ class Servicio extends General {
                 }
             }
         } else {
-            $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($datos['servicio']);
+            $vueltasFacturasOutsourcingServicio = $this->DBT->vueltasFacturasOutsourcingServicio($servicio);
 
             if (empty($vueltasFacturasOutsourcingServicio)) {
                 $vuelta = '1';
@@ -2896,39 +3022,64 @@ class Servicio extends General {
             }
         }
 
+        return $vuelta;
+    }
+
+    public function guardarVueltaAsociadosSinFirma(array $datos) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $folio = $this->DBS->consultaServicio($datos['servicio']);
+        $vuelta = $this->crearVueltaAsociado($folio[0]['Folio'], $datos['servicio']);
         $idFacturacionOutSourcing = $this->DBS->setServicioId('t_facturacion_outsourcing', array(
             'IdServicio' => $datos['servicio'],
             'Vuelta' => $vuelta,
             'Folio' => $folio[0]['Folio'],
             'Fecha' => $fecha,
-            'IdUsuario' => $folio[0]['Atiende'],
+            'IdUsuario' => $folio[0]['AtiendeServicio'],
             'IdEstatus' => '8',
             'FechaEstatus' => $fecha
                 )
         );
 
-        $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
-        $infoServicio = $this->getInformacionServicio($datos['servicio']);
-        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-        $host = $_SERVER['SERVER_NAME'];
-
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $infoServicio = $this->getInformacionServicio($datos['servicio']);
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
-        } else {
-            $path = 'http://' . $host . '/' . $linkPdf['link'];
-        }
-
-        $consulta = $this->DBS->actualizarServicio('t_facturacion_outsourcing', array(
-            'Archivo' => $path,
-                ), array('Id' => $idFacturacionOutSourcing)
-        );
+        $datos['idFacturacionOutSourcing'] = $idFacturacionOutSourcing;
+        $datos['folio'] = $folio[0]['Folio'];
+        $consulta = $this->crearPdfVuelta($datos);
 
         if ($consulta) {
             return TRUE;
         } else {
             return FALSE;
         }
+    }
+
+    public function crearPdfVuelta(array $datos) {
+        $host = $_SERVER['SERVER_NAME'];
+        $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
+        $infoServicio = $this->getInformacionServicio($datos['servicio']);
+
+        if ($infoServicio[0]['IdTipoServicio'] === '45') {
+            $linkPdf['link'] = $this->Instalaciones->exportar45($datos['servicio']);
+
+            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                $path = 'https://siccob.solutions' . $linkPdf['link'];
+            } else {
+                $path = 'http://' . $host . $linkPdf['link'];
+            }
+        } else {
+            $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $datos['folio']), $fechaAsociado);
+            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                $infoServicio = $this->getInformacionServicio($datos['servicio']);
+                $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
+            } else {
+                $path = 'http://' . $host . '/' . $linkPdf['link'];
+            }
+        }
+
+        $consulta = $this->DBS->actualizarServicio('t_facturacion_outsourcing', array(
+            'Archivo' => $path,
+                ), array('Id' => $datos['idFacturacionOutSourcing'])
+        );
+
+        return $consulta;
     }
 
 }

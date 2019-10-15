@@ -81,7 +81,7 @@ class Permisos_Vacaciones extends General {
     public function correoJefeDirecto($idJefe) {
         return $this->DBS->consultaGral("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id='" . $idJefe . "'");
     }
-    
+
     public function correoRHContador() {
         return $this->DBS->consultaGral("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil in(21, 37)");
     }
@@ -100,7 +100,7 @@ class Permisos_Vacaciones extends General {
         $idPermisoGenerado = $this->ajustarInformacionDBS($datosPermisos, $documento);
         $correoEnviado = $this->enviarCorreoPermiso($datosPermisos, $asunto = "Generado", $carpeta);
 
-        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1)];
+        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' =>$correoEnviado];
     }
 
     public function revisarArchivoAdjunto($datosPermisos) {

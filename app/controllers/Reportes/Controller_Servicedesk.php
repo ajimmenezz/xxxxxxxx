@@ -2,26 +2,25 @@
 
 use Controladores\Controller_Base as Base;
 
-class Controller_PrinterLexmark extends Base
+class Controller_Servicedesk extends Base
 {
 
-    private $mailReader;
+    private $serviceDesk;
 
     public function __construct()
     {
         parent::__construct();
-        $this->mailReader = new \Librerias\Generales\MailReader();
-        $this->reporteLexmark = new \Librerias\Reportes\Lexmark();
+        $this->serviceDesk = new \Librerias\Reportes\Servicedesk();
     }
 
     public function manejarEvento(string $evento = null)
     {
         switch ($evento) {
-            case 'ReadMailLexmark':
-                $resultado = $this->mailReader->getMailReportLexmark();
+            case 'Reporte_Redes':
+                $resultado = $this->serviceDesk->sendRedesReport();
                 break;
-            case 'SetDailyPrints':
-                $resultado = $this->reporteLexmark->setDailyPrints();
+            case 'Reporte_Redes_Revision':
+                $resultado = $this->serviceDesk->sendRedesReviewReport();
                 break;
             default:
                 $resultado = ['code' => 404, 'message' => "Not found"];

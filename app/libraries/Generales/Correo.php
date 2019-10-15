@@ -70,6 +70,7 @@ class Correo extends General {
 
     public function enviarCorreo(string $remitente, array $destinatario, string $asunto, string $mensaje, array $archivoAdjunto = [], string $style = '') {
         $host = $_SERVER['SERVER_NAME'];
+        $destinatarios = implode(',', $destinatario);
 
         if ($host !== 'siccobsolutions.com.mx' || $host !== 'siccobsolutions.com.mx') {
             if ($style == '') {
@@ -80,6 +81,7 @@ class Correo extends General {
 }                       }
                     </style>';
             }
+            
             $contenido = '  <html>
                             <head>
                                 <title>' . $asunto . '</title>
@@ -91,20 +93,43 @@ class Correo extends General {
                             </body>
                         </html>';
             $config['mailtype'] = 'html';
+            
             parent::getCI()->email->initialize($config);
-            $destinatarios = implode(',', $destinatario);
             parent::getCI()->email->clear(TRUE);
             parent::getCI()->email->from($remitente);
             parent::getCI()->email->to($destinatarios);
             parent::getCI()->email->subject($asunto);
             parent::getCI()->email->message($contenido);
+
             if (!empty($archivoAdjunto)) {
                 foreach ($archivoAdjunto as $key => $value) {
                     parent::getCI()->email->attach($value);
                 }
             }
 
+            if (!parent::getCI()->email->send()) {
+                try {
+                    $this->crearReporteFallasEnvio(parent::getCI()->email->print_debugger());
+                } catch (Exception $exc) {
+                    echo $exc->getTraceAsString();
+                }
+            }
+
             return parent::getCI()->email->send();
+        }
+    }
+
+    private function crearReporteFallasEnvio(string $contenido) {
+        if (file_exists("./storage/Archivos/ReportesTXT/ReporteFallasEnvio.txt")) {
+            $archivo = fopen("./storage/Archivos/ReportesTXT/ReporteFallasEnvio.txt", "a");
+            fputs($archivo, chr(13) . chr(10));
+            fwrite($archivo, PHP_EOL . "$contenido");
+            fclose($archivo);
+        } else {
+            mkdir("./storage/Archivos/ReportesTXT/", 755, true);
+            $archivo = fopen("./storage/Archivos/ReportesTXT/ReporteFallasEnvio.txt", "w");
+            fwrite($archivo, PHP_EOL . "$contenido");
+            fclose($archivo);
         }
     }
 

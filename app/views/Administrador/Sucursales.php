@@ -81,6 +81,8 @@
                                 <th class="never">Telefono2</th>
                                 <th class="all">Estatus</th>
                                 <th class="never">NombreCinemex</th>
+                                <th class="never">Alias</th>
+                                <th class="never">CentroCostos</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -112,6 +114,8 @@ foreach ($datos['ListaSucursales'] as $key => $value) {
         echo '<td data-flag="' . $value['Flag'] . '">Inactivo</td>';
     }
     echo '<td>' . $value['NombreCinemex'] . '</td>';
+    echo '<td>' . $value['Alias'] . '</td>';
+    echo '<td>' . $value['CentroCostos'] . '</td>';
     echo '</tr>';
 }
 ?>                                        

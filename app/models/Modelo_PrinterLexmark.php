@@ -139,7 +139,7 @@ class Modelo_PrinterLexmark extends Modelo_Base
             tld.NivelCartuchoNegro
             from t_lecturas_reporte_markvision_detalle tld
             where tld.IdLectura = (select MAX(Id) from t_lecturas_reporte_markvision)
-        ) as tf");        
+        ) as tf");
 
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();
@@ -158,6 +158,46 @@ class Modelo_PrinterLexmark extends Modelo_Base
                     'green' => $greenPrinters,
                     'proyeccion' => $consultaProyeccion
                 ]
+            ];
+        }
+    }
+
+    public function setDailyPrints()
+    {
+        $this->iniciaTransaccion();
+        $consulta = $this->consulta("select * from t_lecturas_reporte_markvision_detalle where ImpresionesDia is null");
+        if (!empty($consulta)) {
+            foreach ($consulta as $key => $value) {
+                $carasCargadas = $this->consulta("
+                select CarasCargadas 
+                from t_lecturas_reporte_markvision_detalle 
+                where IdLectura = (" . $value['IdLectura'] . " - 1) 
+                and IP = '" . $value['IP'] . "' 
+                and Contacto = '" . $value['Contacto'] . "'");
+                if (!empty($carasCargadas) && isset($carasCargadas[0]) && isset($carasCargadas[0]['CarasCargadas'])) {
+                    if ($carasCargadas[0]['CarasCargadas'] > 0 && $carasCargadas[0]['CarasCargadas'] != '') {
+                        $carasCargadas = $value['CarasCargadas'] - $carasCargadas[0]['CarasCargadas'];
+                    } else {
+                        $carasCargadas = 0;
+                    }
+
+                    $this->actualizar("t_lecturas_reporte_markvision_detalle", [
+                        'ImpresionesDia' => $carasCargadas
+                    ], ['Id' => $value['Id']]);
+                }
+            }
+        }
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => 'All was saved correctly'
             ];
         }
     }

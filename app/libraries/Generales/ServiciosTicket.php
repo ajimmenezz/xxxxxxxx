@@ -29,6 +29,7 @@ class ServiciosTicket extends General {
     private $MSP;
     private $pdf;
     private $DBA;
+    private $Ticket;
 
     public function __construct() {
         parent::__construct();
@@ -51,6 +52,7 @@ class ServiciosTicket extends General {
         $this->DBT = \Modelos\Modelo_Tesoreria::factory();
         $this->pdf = new PDFAux();
         $this->DBA = \Modelos\Modelo_InventarioConsignacion::factory();
+        $this->Ticket = \Librerias\Generales\Ticket::factory();
 
         parent::getCI()->load->helper(array('date'));
     }
@@ -71,7 +73,7 @@ class ServiciosTicket extends General {
             $routinQueryAll = 'call getServiciosAreaByDepartamento("' . $departamento . '")';
             $routinQuerySupervisor = 'call getServiciosByDepartamento("' . $departamento . '")';
         }
-        //En el arreglo se agregan los perfiles que van a poder ver todas los servicios del departamento.
+//En el arreglo se agregan los perfiles que van a poder ver todas los servicios del departamento.
 //        $perfilGerente = array('1', '2', '3', '4');
         $perfilGerente = [];
         $usuario = $this->Usuario->getDatosUsuario();
@@ -171,6 +173,7 @@ class ServiciosTicket extends General {
             ON ts.Id = tst.IdSolicitud
             where tst.Atiende = ' . $usuario['Id'] . '
             and tst.IdEstatus in (1,2,3,10,12)
+            AND tst.IdTipoServicio != 45
             ' . $whereFolio . '
             and (csd.IdDepartamento = ' . $departamento . ' or tst.IdTipoServicio = 9) group by tst.Id desc '
                             . $queryUnion);
@@ -190,7 +193,7 @@ class ServiciosTicket extends General {
         if (in_array('79', $usuario['PermisosAdicionales']) || in_array('79', $usuario['Permisos'])) {
             $permisoValidacion = '';
         } elseif (in_array('80', $usuario['PermisosAdicionales']) || in_array('80', $usuario['Permisos'])) {
-            $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where cp.IdDepartamento = 11) AND cp.IdDepartamento != "7")) ';
+            $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where IdDepartamento = 11) AND IdDepartamento != "7")) ';
         }
 //elseif (in_array('82', $usuario['Permisos']) || in_array('82', $usuario['PermisosAdicionales'])) {
 //            $permisoValidacion = ' and (tst.Atiende in (select Id from cat_v3_usuarios where IdPerfil in (select Id from cat_perfiles cp where cp.IdDepartamento = 7))) ';
@@ -209,15 +212,11 @@ class ServiciosTicket extends General {
                     estatus(tst.IdEstatus)as NombreEstatus,
                     nombreUsuario(tst.Atiende) as Atiende,
                     tst.Atiende as IdAtiende,
-                    cvu.IdPerfil,
-                    cp.IdDepartamento
+					(SELECT IdPerfil FROM cat_v3_usuarios WHERE Id = tst.Atiende) AS IdPerfil,
+					(SELECT IdDepartamento FROM cat_perfiles WHERE Id = IdPerfil) AS IdDepartamento
                 FROM t_servicios_ticket tst
                 INNER JOIN t_solicitudes ts
                     ON ts.Id = tst.IdSolicitud
-                INNER JOIN cat_v3_usuarios cvu
-                    ON cvu.Id = ts.Atiende
-                INNER JOIN cat_perfiles cp
-                    ON cp.Id = cvu.IdPerfil
                 WHERE tst.IdEstatus = "5"'
                         . $permisoValidacion);
     }
@@ -273,7 +272,7 @@ class ServiciosTicket extends General {
 
         if ($datosServicio['tieneSeguimiento'] !== '0') {
 
-            //No eliminar se ocupara despues
+//No eliminar se ocupara despues
 //        if ($datosServicio['IdTipoServicio'] === '4') {
 //            if ($datos['operacion'] === '1') {
 //                //Inicia un servicio para dar de alta un personal en un proyecto
@@ -298,27 +297,27 @@ class ServiciosTicket extends General {
 //        } else 
             if ($datosServicio['IdTipoServicio'] === '5') {
                 if ($datos['operacion'] === '1') {
-                    //Inicia un servicio para seguimiento de trafico
+//Inicia un servicio para seguimiento de trafico
                     $data['informacion'] = $this->actualizarServicioTrafico($datos['servicio'], $datosServicio, $fecha);
                     $data['serviciosAsignados'] = $this->getServiciosAsignados('17');
                     $data['formulario'] = parent::getCI()->load->view('Logistica/Modal/FormularioSeguimiento', $data, TRUE);
                 } else if ($datos['operacion'] === '2') {
-                    //Obtiene la informacion del servicio de trafico
+//Obtiene la informacion del servicio de trafico
                     $data['informacion'] = $this->getServicioTrafico($datos['servicio'], $datosServicio, $usuario);
                     $data['serviciosAsignados'] = $this->getServiciosAsignados('17');
                     $data['formulario'] = parent::getCI()->load->view('Logistica/Modal/FormularioSeguimiento', $data, TRUE);
                 } else if ($datos['operacion'] === '3') {
-                    //Encargado de actualizar los datos generales de seguimiento logistica
+//Encargado de actualizar los datos generales de seguimiento logistica
                     $data['serviciosAsignados'] = $this->actualizarTraficoGenerales($datos, $fecha, $usuario, $datosServicio);
                     $datosServicio = $this->DBST->getDatosServicio($datos['servicio']);
                     $data['datosServicio'] = $datosServicio;
                     $data['informacion'] = $this->getServicioTrafico($datos['servicio'], $datosServicio, $usuario);
                     $data['formulario'] = parent::getCI()->load->view('Logistica/Modal/FormularioSeguimiento', $data, TRUE);
                 } else if ($datos['operacion'] === '4') {
-                    // guardar y actualizar el material de un servcicio de trafico
+// guardar y actualizar el material de un servcicio de trafico
                     $data['materialActualizado'] = $this->setMaterialServicioTrafico($datos);
                 } else if ($datos['operacion'] === '5') {
-                    //concluir un servicio
+//concluir un servicio
                     if ($datos['idTipoTrafico'] === '1') {
                         $this->SeguimientoLogistica->actualizarEnvio($datos['datosFormulario']);
                     } else if ($datos['idTipoTrafico'] === '2') {
@@ -331,7 +330,7 @@ class ServiciosTicket extends General {
                 }
             } else if ($datosServicio['IdTipoServicio'] === '6') {
                 switch ($datos['operacion']) {
-                    //inicia servicio seguimiento de los servicios mantenimiento preventivo salasx4d
+//inicia servicio seguimiento de los servicios mantenimiento preventivo salasx4d
                     case '1':
                         $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '2', '4');
                         $this->setStatusSD($datosServicio['Folio']);
@@ -344,7 +343,7 @@ class ServiciosTicket extends General {
                 }
             } else if ($datosServicio['IdTipoServicio'] === '7') {
                 switch ($datos['operacion']) {
-                    //inicia servicio seguimiento de los servicios mantenimiento correctivo salasx4d
+//inicia servicio seguimiento de los servicios mantenimiento correctivo salasx4d
                     case '1':
                         $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '2', '4');
                         $this->setStatusSD($datosServicio['Folio']);
@@ -399,7 +398,7 @@ class ServiciosTicket extends General {
                         $data['informacionDatosCenso'] = $this->SeguimientoPoliza->consultaTodosCensoServicio($datos['servicio']);
                         $data['sucursales'] = $this->consultaSucursalesXSolicitudCliente($datosServicio['Ticket']);
                         $data['areasAtencion'] = $this->Catalogo->catAreasAtencion('3', array('Flag' => '1'));
-                        //$data['Infostatus']= $this->DBST->consulta('select * from hist_salas4d_mantto_actividades'); 
+//$data['Infostatus']= $this->DBST->consulta('select * from hist_salas4d_mantto_actividades'); 
                         $data['modelos'] = $this->Catalogo->catModelosEquipo('3', array('Flag' => '1'));
                         $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $datosServicio['Ticket'] . '"');
                         $data['documentacionFirmada'] = $this->consultaDocumentacioFirmadaServicio($datos['servicio']);
@@ -438,6 +437,8 @@ class ServiciosTicket extends General {
                         break;
                 }
             } else if ($datosServicio['IdTipoServicio'] === '20') {
+                $data['historialAvancesProblemas'] = $this->mostrarHistorialAvancesProblemas($datos['servicio']);
+                $data['bitacoraReporteFalso'] = $this->SeguimientoPoliza->mostrarBitacoraReporteFalso($datos['servicio']);
                 /* Aqui comienzan las lineas de seguimiento de los servicios de Correctivo */
                 switch ($datos['operacion']) {
                     /* Inicia el servicio de Correctivo */
@@ -650,7 +651,7 @@ class ServiciosTicket extends General {
 
     private function getServicioTrafico(string $servicio, array $datosServicio, array $usuario) {
         $data = array();
-        //En el arreglo se agregan los perfiles que van a poder ver todas los servicios del departamento.
+//En el arreglo se agregan los perfiles que van a poder ver todas los servicios del departamento.
         $data['datosTrafico'] = $this->DBST->getDatosTrafico($servicio);
         $data['tiposTrafico'] = $this->Catalogo->catTiposTrafico('3');
         $data['tiposOrigenDestino'] = $this->Catalogo->catTiposOrigenDestino('3');
@@ -1044,7 +1045,7 @@ class ServiciosTicket extends General {
                                 $evidencias = explode(',', $value['UrlEntrega']);
                                 foreach ($evidencias as $key => $url) {
                                     $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
-                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
+                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion' target='_blank'>Evidencia" . ( ++$key) . "</a></div>";
                                 }
                             } else if ($value['IdTipoEnvio'] === '2' || $value['IdTipoEnvio'] === '3') {
 
@@ -1057,7 +1058,7 @@ class ServiciosTicket extends General {
                                 $evidencias = explode(',', $value['UrlEnvio']);
                                 foreach ($evidencias as $key => $url) {
                                     $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
-                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
+                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion' target='_blank'>Evidencia" . ( ++$key) . "</a></div>";
                                 }
                                 $html .= '<div>Información de la Entrega : </div>';
                                 $html .= '<div>&nbsp;&nbsp;&nbsp;&nbsp;Fecha y Hora Entrega: ' . $value['FechaEnvio'] . '</div>';
@@ -1066,7 +1067,7 @@ class ServiciosTicket extends General {
                                 $evidenciasEntrega = explode(',', $value['UrlEntrega']);
                                 foreach ($evidenciasEntrega as $key => $url) {
                                     $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
-                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
+                                    $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion' target='_blank'>Evidencia" . ( ++$key) . "</a></div>";
                                 }
                             }
                         }
@@ -1079,13 +1080,11 @@ class ServiciosTicket extends General {
                             $evidencias = explode(',', $value['UrlRecoleccion']);
                             foreach ($evidencias as $key => $url) {
                                 $direccion = 'http://' . $_SERVER['HTTP_HOST'] . $url;
-                                $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion'>Evidencia" . ( ++$key) . "</a></div>";
+                                $html .= "<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$direccion' target='_blank'>Evidencia" . ( ++$key) . "</a></div>";
                             }
                         }
                     }
-                    $resolucionVieja = json_decode($this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $datosServicio['Folio']));
-                    $html = $html . '<br><br>' . $resolucionVieja->operation->Details->RESOLUTION;
-                    $respuesta = $this->ServiceDesk->resolucionFolioSD($datosServicio['Folio'], '', $usuario['SDKey'], $html);
+                    $this->InformacionServicios->setNoteAndWorkLog(array('key' => $usuario['SDKey'], 'folio' => $datosServicio['Folio'], 'html' => $html));
                 }
                 $data['tituloMensaje'] = 'Servicio Concluido';
                 $data['mensaje'] = 'Se concluyó el servicio con éxito.';
@@ -1135,6 +1134,15 @@ class ServiciosTicket extends General {
     public function servicioNuevo(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+        if ($datos['IdTipoServicio'] === '27') {
+            $datosTicket = $this->crearTicketSDProactivo($datos);
+            if ($datosTicket !== FALSE) {
+                $datos['IdSolicitud'] = $datosTicket['idSolicitud'];
+                $datos['Ticket'] = $datosTicket['ticket'];
+            }
+        }
+
         $data = array(
             'Ticket' => $datos['Ticket'],
             'IdSolicitud' => $datos['IdSolicitud'],
@@ -1146,11 +1154,68 @@ class ServiciosTicket extends General {
             'Descripcion' => $datos['Descripcion'],
             'IdServicioOrigen' => $datos['servicio']
         );
+        
         $consulta = $this->setServicio($data, $datos['servicio']);
 
         if (!empty($consulta)) {
             return $this->getServiciosAsignados($usuario['IdDepartamento']);
         } else {
+            return FALSE;
+        }
+    }
+
+    public function crearTicketSDProactivo(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+
+        try {
+            $this->DBS->iniciaTransaccion();
+            $datosSolicitudAnterior = $this->DBS->getDatosSolicitud($datos['IdSolicitud']);
+            
+            $solicitudNueva = 'insert t_solicitudes set 
+                Ticket = ' . $datosSolicitudAnterior['Ticket'] . ',
+                IdTipoSolicitud = "4",
+                IdEstatus = ' . $datosSolicitudAnterior['IdEstatus'] . ',
+                IdDepartamento = ' . $datosSolicitudAnterior['IdDepartamento'] . ',
+                IdPrioridad = ' . $datosSolicitudAnterior['IdPrioridad'] . ',
+                FechaCreacion = now(),
+                Solicita = ' . $usuario['Id'] . ', 
+                IdServicioOrigen = "' . $datos['servicio'] . '", 
+                IdSucursal = "' . $datosSolicitudAnterior['IdSucursal'] . '",
+                FechaTentativa = "' . $datosSolicitudAnterior['FechaTentativa'] . '",
+                FechaLimite = "' . $datosSolicitudAnterior['FechaLimite'] . '"';
+            $idSolicitud = $this->DBS->setSolicitud($solicitudNueva);
+
+            if ($idSolicitud !== FALSE) {
+                $datosSolicitud = $this->DBS->getDatosSolicitud($idSolicitud);
+                $informacionFolio = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $datosSolicitudAnterior['Folio']);
+                $informacionSDAnterior = json_decode(json_encode($informacionFolio), True);
+                $informacionSD = '"subject": "Correctivo Proactivo",
+                                    "description": "' . $datos['Descripcion'] . '",
+                                    "status": "En Atención",
+                                    "requester": "SOPORTE SICCOB",
+                                    "Nombre del Gerente": "' . $informacionSDAnterior["Nombre del Gerente"] . '",
+                                    "item": "' . $informacionSDAnterior["ITEM"] . '",
+                                    "technician": "' . $informacionSDAnterior["TECHNICIAN"] . '",
+                                    "mode": "' . $informacionSDAnterior["MODE"] . '",
+                                    "priority": "' . $informacionSDAnterior["PRIORITY"] . '",
+                                    "group": "' . $informacionSDAnterior["GROUP"] . '",
+                                    "level": "' . $informacionSDAnterior["LEVEL"] . '",
+                                    "category": "' . $informacionSDAnterior["CATEGORY"] . '",
+                                    "subcategory": "' . $informacionSDAnterior["SUBCATEGORY"]. '"';
+                $datosSD = $this->ServiceDesk->getTicketServiceDesk($usuario['SDKey'], $informacionSD);
+                $folio = $datosSD->operation->Details->WORKORDERID;
+                $ticket = $this->Ticket->setTicket(array('Folio' => $folio), array('descripcion' => $datos['Descripcion'], 'cliente' => $datosSolicitud['IdCliente']));
+                
+                $this->DBS->cambiarEstatusSolicitud(array(
+                    'Folio' => '"' . $folio . '"',
+                    'Ticket' => $ticket), array('Id' => $idSolicitud));
+                $this->DBS->setDatosSolicitudInternas('t_solicitudes_internas', array('IdSolicitud' => $idSolicitud, 'Descripcion' => $datos['Descripcion'], 'Asunto' => $datos['Descripcion']));
+            }
+
+            $this->DBS->commitTransaccion();
+            return array('idSolicitud' => $idSolicitud, 'ticket' => $ticket);
+        } catch (\Exception $ex) {
+            $this->DBS->roolbackTransaccion();
             return FALSE;
         }
     }
@@ -1199,70 +1264,81 @@ class ServiciosTicket extends General {
      */
 
     public function servicioCancelar(array $datos) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $data = array(
-            'IdEstatus' => '6'
-        );
-        $consulta = $this->DBST->actualizarServicio('t_servicios_ticket', $data, array('Id' => $datos['servicio']));
-        if (!empty($consulta)) {
+        try {
+            $usuario = $this->Usuario->getDatosUsuario();
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
             $data = array(
-                'IdUsuario' => $usuario['Id'],
-                'IdEstatus' => '6',
-                'IdServicio' => $datos['servicio'],
-                'Nota' => $datos['Descripcion'],
-                'Fecha' => $fecha
+                'IdEstatus' => '6'
             );
-            $verificarEstatusTicket = $this->DBST->consultaGeneral('SELECT 
+            $verificarEstatusServicio = $this->DBST->consultaGeneral('SELECT 
+                                                                tst.IdEstatus
+                                                            FROM t_servicios_ticket tst
+                                                            WHERE tst.Id = "' . $datos['servicio'] . '"
+                                                            AND IdEstatus IN(4,5,6,10)');
+
+            if (empty($verificarEstatusServicio)) {
+                $consulta = $this->DBST->actualizarServicio('t_servicios_ticket', $data, array('Id' => $datos['servicio']));
+                if (!empty($consulta)) {
+                    $data = array(
+                        'IdUsuario' => $usuario['Id'],
+                        'IdEstatus' => '6',
+                        'IdServicio' => $datos['servicio'],
+                        'Nota' => $datos['Descripcion'],
+                        'Fecha' => $fecha
+                    );
+                    $informacionServicio = $this->DBST->consultaServicio($datos['servicio']);
+                    $verificarEstatusTicket = $this->DBST->consultaGeneral('SELECT 
                                                                 IdEstatus,
                                                                 IdSolicitud
                                                             FROM t_servicios_ticket tst
-                                                            WHERE Ticket = ' . $datos['ticket'] . '
+                                                            WHERE IdSolicitud = ' . $informacionServicio[0]['IdSolicitud'] . '
                                                             AND IdEstatus IN(10,5,2,1)');
-            if (!$verificarEstatusTicket) {
-                $serviciosConcluidos = FALSE;
-                $serviciosConcluidosCancelados = $this->DBST->consultaGeneral('SELECT 
+                    if (!$verificarEstatusTicket) {
+                        $serviciosConcluidos = FALSE;
+                        $serviciosConcluidosCancelados = $this->DBST->consultaGeneral('SELECT 
                                                                 IdEstatus,
                                                                 IdSolicitud
                                                             FROM t_servicios_ticket tst
-                                                            WHERE Ticket = ' . $datos['ticket'] . '
+                                                            WHERE IdSolicitud = ' . $informacionServicio[0]['IdSolicitud'] . '
                                                             AND IdEstatus IN(4,6)');
-                foreach ($serviciosConcluidosCancelados as $key => $value) {
-                    if ($value['IdEstatus'] === '4') {
-                        $serviciosConcluidos = TRUE;
+                        foreach ($serviciosConcluidosCancelados as $key => $value) {
+                            if ($value['IdEstatus'] === '4') {
+                                $serviciosConcluidos = TRUE;
+                            }
+                        }
+
+                        if ($serviciosConcluidos) {
+                            $estatusSolicitud = '4';
+                        } else {
+                            $estatusSolicitud = '6';
+                        }
+
+                        $this->DBST->actualizarServicio('t_solicitudes', array(
+                            'IdEstatus' => $estatusSolicitud,
+                            'FechaConclusion' => $fecha
+                                ), array('Id' => $serviciosConcluidosCancelados[0]['IdSolicitud']));
+                        $this->DBST->concluirTicketAdist2(array(
+                            'Estatus' => 'CONCLUIDO',
+                            'Flag' => '1',
+                            'F_Cierre' => '0',
+                            'Id_Orden' => $datos['ticket']
+                        ));
                     }
-                }
-
-                if ($serviciosConcluidos) {
-                    $estatusSolicitud = '4';
+                    $notas = $this->DBST->setNuevoElemento('t_notas_servicio', $data);
+                    if (!empty($notas)) {
+                        $serviciosAsignados = $this->getServiciosAsignados($usuario['IdDepartamento']);
+                        return $serviciosAsignados;
+                    } else {
+                        throw new \Exception('Vuelva a interntarlo.');
+                    }
                 } else {
-                    $estatusSolicitud = '6';
-                }
-
-                $this->DBST->actualizarServicio('t_solicitudes', array(
-                    'IdEstatus' => $estatusSolicitud,
-                    'FechaConclusion' => $fecha
-                        ), array('Id' => $serviciosConcluidosCancelados[0]['IdSolicitud']));
-                $this->DBST->concluirTicketAdist2(array(
-                    'Estatus' => 'CONCLUIDO',
-                    'Flag' => '1',
-                    'F_Cierre' => '0',
-                    'Id_Orden' => $datos['ticket']
-                ));
-            }
-            $notas = $this->DBST->setNuevoElemento('t_notas_servicio', $data);
-            if (!empty($notas)) {
-                $serviciosAsignados = $this->getServiciosAsignados($usuario['IdDepartamento']);
-                if ($serviciosAsignados) {
-                    return $serviciosAsignados;
-                } else {
-                    return array();
+                    throw new \Exception('Vuelva a interntarlo.');
                 }
             } else {
-                return FALSE;
+                throw new \Exception('No puede cancelar este servicio por el estatus que se encuentra.');
             }
-        } else {
-            return FALSE;
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
         }
     }
 
@@ -1284,21 +1360,23 @@ class ServiciosTicket extends General {
 
         $data['servicio'] = $servicio;
         $data['notas'] = $this->Notas->getNotasByServicio($servicio, $idSolcitud);
-        $data['avanceServicio'] = $this->consultaAvanceServicio($servicio);
+
+        $data['historialAvancesProblemas'] = $this->mostrarHistorialAvancesProblemas($servicio);
         $data['datosServicio'] = $datosServicio;
         $data['sucursales'] = $this->consultaSucursalesXSolicitudCliente($datosServicio['Ticket']);
         $data['idSucursal'] = $this->DBST->consultaGeneral('SELECT 
-                                                                IF(IdSucursal != NULL,
-                                                                    IdSucursal,
+                                                                    tst.IdSucursal,
+                                                                IF(tst.IdSucursal IS NULL,
                                                                     (SELECT 
                                                                             IdSucursal
                                                                         FROM
                                                                             t_solicitudes
                                                                         WHERE
-                                                                            Id = IdSolicitud)) AS IdSucursal
+                                                                            Id = tst.IdSolicitud), tst.IdSucursal) AS IdSucursal
                                                             FROM
-                                                                t_servicios_ticket
-                                                            WHERE Id = "' . $servicio . '"');
+                                                                t_servicios_ticket tst
+                                                            WHERE
+                                                                Id = "' . $servicio . '"');
         $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $data['datosServicio']['Ticket'] . '"');
         $data['idPerfil'] = $usuario['IdPerfil'];
 
@@ -1310,6 +1388,12 @@ class ServiciosTicket extends General {
 
         $data['formulario'] = parent::getCI()->load->view('Generales/Modal/formularioSeguimientoServicioSinClasificar', $data, TRUE);
         return $data;
+    }
+
+    public function mostrarHistorialAvancesProblemas(string $servicio) {
+        $data = array();
+        $data['avanceServicio'] = $this->consultaAvanceServicio($servicio);
+        return parent::getCI()->load->view('Generales/Detalles/HistorialAvancesProblemas', $data, TRUE);
     }
 
     public function cambiarEstatusServicioTicket(string $servicio, string $fecha, string $estatus, string $departamento = null) {
@@ -1419,13 +1503,15 @@ class ServiciosTicket extends General {
     }
 
     public function verificarServicio(array $datos) {
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '4');
-        $serviciosTicket = $this->DBST->consultaGeneral('SELECT Id FROM t_servicios_ticket WHERE Ticket = "' . $datos['ticket'] . '" AND IdEstatus in(10,5,2,1)');
-        $contador = 0;
-        $linkPDF = '';
+        try {
+            $this->DBST->iniciaTransaccion();
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '4');
+            $serviciosTicket = $this->DBST->consultaGeneral('SELECT Id FROM t_servicios_ticket WHERE Ticket = "' . $datos['ticket'] . '" AND IdEstatus in(10,5,2,1)');
+            $contador = 0;
+            $linkPDF = '';
 
-        $datosDescripcionConclusion = $this->DBST->consultaGeneral('SELECT
+            $datosDescripcionConclusion = $this->DBST->consultaGeneral('SELECT
                                             tst.Descripcion AS DescripcionServicio,
                                             tst.IdSolicitud,
                                             tsi.Asunto AS AsuntoSolicitud,
@@ -1436,21 +1522,21 @@ class ServiciosTicket extends General {
                                            ON tsi.IdSolicitud = tst.IdSolicitud
                                            WHERE tst.Id = "' . $datos['servicio'] . '"');
 
-        $linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
-        $infoServicio = $this->getInformacionServicio($datos['servicio']);
-        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-        $host = $_SERVER['SERVER_NAME'];
+            $linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
+            $infoServicio = $this->getInformacionServicio($datos['servicio']);
+            $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+            $host = $_SERVER['SERVER_NAME'];
 
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
-        } else {
-            $path = 'http://' . $host . '/' . $linkPdf['link'];
-        }
-        if (empty($serviciosTicket)) {
-            $this->concluirSolicitud($fecha, $datos['idSolicitud']);
-            $this->concluirTicket($datos['ticket']);
+            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+            } else {
+                $path = 'http://' . $host . '/' . $linkPdf['link'];
+            }
+            if (empty($serviciosTicket)) {
+                $this->concluirSolicitud($fecha, $datos['idSolicitud']);
+                $this->concluirTicket($datos['ticket']);
 
-            $serviciosConcluidos = $this->DBST->consultaGeneral('SELECT 
+                $serviciosConcluidos = $this->DBST->consultaGeneral('SELECT 
                                                                         tse.Id, 
                                                                         tse.Ticket,
                                                                         nombreUsuario(tso.Atiende) Atiende,
@@ -1461,56 +1547,50 @@ class ServiciosTicket extends General {
                                                                 ON tse.IdSolicitud = tso.Id
                                                                 WHERE tse.Ticket = "' . $datos['ticket'] . '"');
 
-            foreach ($serviciosConcluidos as $key => $value) {
-                $contador++;
-                $linkPdfServiciosConcluidos = $this->getServicioToPdf(array('servicio' => $value['Id']));
-                $infoServicioServiciosConcluidos = $this->getInformacionServicio($value['Id']);
-                $tipoServicioServiciosConcluidos = stripAccents($infoServicioServiciosConcluidos[0]['NTipoServicio']);
+                foreach ($serviciosConcluidos as $key => $value) {
+                    $contador++;
+                    $linkPdfServiciosConcluidos = $this->getServicioToPdf(array('servicio' => $value['Id']));
+                    $infoServicioServiciosConcluidos = $this->getInformacionServicio($value['Id']);
+                    $tipoServicioServiciosConcluidos = stripAccents($infoServicioServiciosConcluidos[0]['NTipoServicio']);
 
-                if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-                    $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicioServiciosConcluidos . '.pdf';
-                    $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
-                } else {
-                    $path = 'http://' . $host . '/' . $linkPdfServiciosConcluidos['link'];
-                    $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
-                }
-
-                $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
-            }
-
-            $titulo = 'Solicitud Concluida';
-            $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
-            $textoCorreo = '<p>Estimado(a) <strong>' . $value['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $value['Ticket'] . '</strong><br> Número Solicitud: <strong>' . $datosDescripcionConclusion[0]['IdSolicitud'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
-
-            $mensajeFirma = $this->Correo->mensajeCorreo($titulo, $textoCorreo);
-            $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($value['CorreoAtiende']), $titulo, $mensajeFirma);
-        }
-
-        if (!empty($datosDescripcionConclusion[0]['Folio'])) {
-            if ($datosDescripcionConclusion[0]['Folio'] !== NULL) {
-                if ($datosDescripcionConclusion[0]['Folio'] !== '') {
-                    if ($datosDescripcionConclusion[0]['Folio'] !== '0') {
-                        $this->agregarVueltaAsociadoMantenimiento(array(
-                            'servicio' => $datos['servicio'],
-                            'folio' => $datosDescripcionConclusion[0]['Folio']));
-
-                        $resultadoSD = $this->InformacionServicios->verifyProcess($datos);
-                        if ($resultadoSD === TRUE) {
-                            return TRUE;
-                        } else {
-                            return $resultadoSD;
-                        }
+                    if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                        $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicioServiciosConcluidos . '.pdf';
+                        $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
                     } else {
-                        return TRUE;
+                        $path = 'http://' . $host . '/' . $linkPdfServiciosConcluidos['link'];
+                        $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
                     }
-                } else {
-                    return TRUE;
+
+                    $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
                 }
-            } else {
-                return TRUE;
+
+                $titulo = 'Solicitud Concluida';
+                $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
+                $textoCorreo = '<p>Estimado(a) <strong>' . $value['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $value['Ticket'] . '</strong><br> Número Solicitud: <strong>' . $datosDescripcionConclusion[0]['IdSolicitud'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
+
+                $mensajeFirma = $this->Correo->mensajeCorreo($titulo, $textoCorreo);
+                $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($value['CorreoAtiende']), $titulo, $mensajeFirma);
             }
-        } else {
-            return TRUE;
+
+            foreach ($datosDescripcionConclusion as $value) {
+                if (isset($value['Folio'])) {
+                    if ($value['Folio'] !== NULL) {
+                        if ($value['Folio'] !== '0') {
+                            $this->agregarVueltaAsociadoMantenimiento(array(
+                                'servicio' => $datos['servicio'],
+                                'folio' => $value['Folio']));
+
+                            $this->InformacionServicios->verifyProcess($datos);
+                        }
+                    }
+                }
+            }
+
+            $this->DBST->commitTransaccion();
+            return ['code' => 200, 'message' => 'correcto'];
+        } catch (\Exception $ex) {
+            $this->DBST->roolbackTransaccion();
+            return array('code' => 400, 'message' => $ex->getMessage());
         }
     }
 
@@ -2220,28 +2300,13 @@ class ServiciosTicket extends General {
     }
 
     public function consultaAvanceServicio(string $servicio) {
-        $data = $this->DBST->consultaGeneral('SELECT tsa.*,
-                                                (SELECT Nombre FROM cat_v3_tipos_avance WHERE Id = tsa.IdTipo) AS TipoAvance,
-                                                (SELECT UrlFoto FROM t_rh_personal WHERE Id = tsa.IdUsuario) AS Foto,
-                                                nombreUsuario(IdUSuario) AS Usuario
-                                                FROM t_servicios_avance tsa
-                                                WHERE IdServicio = "' . $servicio . '"
-                                                ORDER BY Fecha ASC');
-        foreach ($data as $key => $item) {
-            $tablaEquipos = $this->DBST->consultaGeneral('SELECT 
-                                                        tsae.IdItem,
-                                                        tsae.Serie,
-                                                        tsae.Cantidad,
-                                                        CASE tsae.IdItem 
-                                                            WHEN 1 THEN (SELECT Equipo FROM v_equipos WHERE Id = tsae.TipoItem) 
-                                                            WHEN 2 THEN (SELECT Nombre FROM cat_v3_equipos_sae WHERE Id = tsae.TipoItem)
-                                                            WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = tsae.TipoItem) 
-                                                            END as EquipoMaterial,
-                                                            tsae.IdTipoDiagnostico,
-                                                            (SELECT Nombre FROM cat_v3_tipos_diagnostico_correctivo WHERE Id = tsae.IdTipoDiagnostico) TipoDiagnostico 
-                                                        FROM t_servicios_avance_equipo tsae          
-                                                        WHERE IdAvance = "' . $item['Id'] . '"');
-            array_push($data[$key], array('tablaEquipos' => $tablaEquipos));
+        $data = $this->DBST->servicioAvanceProblema($servicio);
+
+        if (!empty($data)) {
+            foreach ($data as $key => $item) {
+                $tablaEquipos = $this->DBST->serviciosAvanceEquipo($item['Id']);
+                array_push($data[$key], array('tablaEquipos' => $tablaEquipos));
+            }
         }
 
         return $data;
@@ -2410,8 +2475,8 @@ class ServiciosTicket extends General {
                                                 cliente(IdCliente) Cliente
                                             FROM cat_v3_sucursales
                                             WHERE Flag = 1
-                                            AND IdCliente = "' . $sucursal[0]['Cliente'] . '"
                                             ORDER BY Nombre ASC');
+//                                            AND IdCliente = "' . $sucursal[0]['Cliente'] . '"
         return $return;
     }
 
@@ -2469,10 +2534,78 @@ class ServiciosTicket extends General {
             $datosSD = $this->ServiceDesk->getDetallesFolio($key, $folio);
 
             if (!isset($datosSD->operation->result->status)) {
-                if ($datosSD->STATUS !== 'Problema') {
+                if ($datosSD->STATUS === 'Abierto') {
                     $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $folio);
                 }
             }
+        }
+    }
+
+    public function eliminarAvanceProblema(array $datos) {
+        try {
+            $this->DBST->iniciaTransaccion();
+            $this->DBST->flagearServicioAvance($datos);
+            $arrayServiciosAvanceEquipo = $this->DBST->serviciosAvanceEquipo($datos['idAvanceProblema']);
+
+            if ($arrayServiciosAvanceEquipo) {
+                $this->DBST->flagearServicioAvanceEquipo($datos);
+            }
+
+            $historialAvanceProblema = $this->mostrarHistorialAvancesProblemas($datos['idServicio']);
+            $this->DBST->commitTransaccion();
+
+            return ['code' => 200, 'message' => $historialAvanceProblema];
+        } catch (\Exception $ex) {
+            $this->DBST->roolbackTransaccion();
+
+            return ['code' => 400, 'message' => $ex->getMessage()];
+        }
+    }
+
+    public function consultaAvanceProblema(array $datos) {
+        $data = array();
+        try {
+            $this->DBST->iniciaTransaccion();
+            $data['avanceProblema'] = $this->DBST->consultaAvanceProblema($datos['id']);
+            $data['serviciosAvanceEquipo'] = $this->DBST->serviciosAvanceEquipo($datos['id']);
+
+            if (!empty($data['avanceProblema'][0])) {
+                $data['archivo'] = explode(',', $data['avanceProblema'][0]['Archivos']);
+            } else {
+                $data['archivo'] = null;
+            }
+
+            $this->DBST->commitTransaccion();
+
+            return ['code' => 200, 'message' => $data];
+        } catch (\Exception $ex) {
+            $this->DBST->roolbackTransaccion();
+
+            return ['code' => 400, 'message' => $ex->getMessage()];
+        }
+    }
+
+    public function eliminarEvidenciaAvanceProblema(array $datos) {
+        try {
+            $informaionAvanceProblema = $this->DBST->consultaAvanceProblema($datos['id']);
+            $archivos = explode(',', $informaionAvanceProblema[0]['Archivos']);
+
+            foreach ($archivos as $key => $value) {
+                if ($datos['key'] === $value) {
+                    unset($archivos[$key]);
+                }
+            }
+
+            if (eliminarArchivo($datos['key'])) {
+                $this->DBST->actualizarAvanceProblema(array(
+                    'campos' => array('Archivos' => implode(',', $archivos)),
+                    'where' => array('Id' => $datos['id'])));
+                return ['code' => 200, 'message' => 'correcto'];
+            }
+        } catch (\Exception $ex) {
+            $this->DBST->roolbackTransaccion();
+
+            return ['code' => 400, 'message' => $ex->getMessage()];
         }
     }
 
@@ -2482,11 +2615,11 @@ class PDFAux extends PDF {
 
     function Footer() {
         $fecha = date('d/m/Y');
-        // Go to 1.5 cm from bottom
+// Go to 1.5 cm from bottom
         $this->SetY(-15);
-        // Select Arial italic 8
+// Select Arial italic 8
         $this->SetFont('Helvetica', 'I', 10);
-        // Print centered page number
+// Print centered page number
         $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
         $this->Cell(68, 10, utf8_decode('Página ') . $this->PageNo(), 0, 0, 'R');
     }

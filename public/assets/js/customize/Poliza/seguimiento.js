@@ -1503,8 +1503,6 @@ $(function () {
         if (sucursal !== '' && descripcion !== '') {
             var data = {servicio: datosTabla[0], sucursal: sucursal, descripcion: descripcion};
             evento.enviarEvento('Seguimiento/GuardarDatosGeneralesCenso', data, '#seccion-servicio-censo', function (respuesta) {
-//                recargandoTablaCensoModelos(respuesta, 'Datos guardados correctamente.', '.errorDatosGeneralesCenso');
-                console.log(respuesta);
                 $('#selectSucursales').attr('disabled', 'disabled');
                 $('[href=#AreaPuntos]').parent('li').removeClass('hidden');
                 $('[href=#EquiposPunto]').parent('li').removeClass('hidden');
@@ -2522,6 +2520,9 @@ $(function () {
                 'Seguimiento/Eliminar_EvidenciaSolucion',
                 datosTabla[0]
                 );
+        file.crearUpload('#archivosAgregarObservacionesReporteFalso',
+                'Seguimiento/guardarObservacionesBitacora'
+                );
         file.descargarImagen(evidenciaCambioEquipo);
         $("#divNotasServicio").slimScroll({height: '400px'});
         nota.initButtons({servicio: datosTabla[0]}, 'Seguimiento');
@@ -2530,6 +2531,7 @@ $(function () {
         var respuesta = arguments[0];
         if (respuesta.informacion.informacionDatosGeneralesCorrectivo.length > 0) {
             select.cambiarOpcion('#selectSucursalesCorrectivo', respuesta.informacion.sucursal);
+            $('#inputFallaReportadaDiagnostico').val(respuesta.informacion.informacionDatosGeneralesCorrectivo[0].FallaReportada);
             $('#selectComponenteDiagnosticoCorrectivo').removeAttr('disabled');
             $('#selectRefaccionSolicitud').removeAttr('disabled');
             $('#inputCantidadRefaccionSolicitud').removeAttr('disabled');
@@ -2741,8 +2743,6 @@ $(function () {
         $('.kv-file-zoom').addClass('hidden');
     };
     var eventosParaSeccionSeguimientoCorrectivo = function () {
-
-
         var datosTabla = arguments[0];
         var respuesta = arguments[1];
         var servicio = datosTabla[0];
@@ -2840,7 +2840,9 @@ $(function () {
             var tipoFalla = $('#selectImpericiaTipoFallaEquipoCorrectivo').val();
             var equipo = $('#selectEquipoCorrectivo').val();
             if (equipo === '') {
-                equipo = datosGeneralesCorrectivo[0].IdModelo;
+                if (datosGeneralesCorrectivo.length > 0) {
+                    equipo = datosGeneralesCorrectivo[0].IdModelo;
+                }
             }
             var dataTipoFalla = {equipo: equipo, tipoFalla: tipoFalla};
             evento.enviarEvento('Seguimiento/ConsultaFallasEquiposXTipoFallaYEquipo', dataTipoFalla, '#seccion-servicio-correctivo', function (respuesta) {
@@ -2860,7 +2862,9 @@ $(function () {
             var tipoFalla = $('#selectTipoFallaEquipoCorrectivo').val();
             var equipo = $('#selectEquipoCorrectivo').val();
             if (equipo === '') {
-                equipo = datosGeneralesCorrectivo[0].IdModelo;
+                if (datosGeneralesCorrectivo.length > 0) {
+                    equipo = datosGeneralesCorrectivo[0].IdModelo;
+                }
             }
             var dataTipoFalla = {equipo: equipo, tipoFalla: tipoFalla};
             evento.enviarEvento('Seguimiento/ConsultaFallasEquiposXTipoFallaYEquipo', dataTipoFalla, '#seccion-servicio-correctivo', function (respuesta) {
@@ -2895,8 +2899,9 @@ $(function () {
             });
         });
         $('#selectTipoFallaComponenteCorrectivo').on('change', function () {
+            var componente = $('#selectComponenteDiagnosticoCorrectivo').val();
             var tipoFalla = $('#selectTipoFallaComponenteCorrectivo').val();
-            var dataTipoFalla = {tipoFalla: tipoFalla};
+            var dataTipoFalla = {tipoFalla: tipoFalla, componente: componente};
             select.cambiarOpcion('#selectFallaComponenteDiagnosticoCorrectivo', '');
             $('#selectFallaComponenteDiagnosticoCorrectivo').empty().append('<option value="">Seleccionar</option>');
             evento.enviarEvento('Seguimiento/ConsultaFallasRefacionXTipoFalla', dataTipoFalla, '#seccion-servicio-correctivo', function (respuesta) {
@@ -2942,94 +2947,114 @@ $(function () {
         });
         $('#btnGuardarReporteFalsoCorrectivo').off('click');
         $('#btnGuardarReporteFalsoCorrectivo').on('click', function (e) {
-            if (respuesta.informacion.diagnosticoEquipo === null) {
-                if ($('#evidenciasReporteFalsoCorrectivo').val() !== '') {
-                    guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
-                } else {
-                    evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
-                }
-            } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
-                if ($('#evidenciasReporteFalsoCorrectivo').val() !== '') {
-                    guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
-                } else {
-                    evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
-                }
-            } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
-                guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
-            } else {
-                evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+            var data = {servicio: servicio};
+            if (validarCampos($('#inputFallaReportadaDiagnostico').val(), '.errorFormularioReporteFalsoCorrectivo', 'Falla reportada en sitio.')) {
+                evento.enviarEvento('Seguimiento/varifiarBitacora', data, '#seccion-servicio-correctivo', function (resultado) {
+                    if (resultado.code === 200) {
+                        if (respuesta.informacion.diagnosticoEquipo === null) {
+                            if ($('#evidenciasReporteFalsoCorrectivo').val() !== '') {
+                                guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
+                            } else {
+                                evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                            }
+                        } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
+                            if ($('#evidenciasReporteFalsoCorrectivo').val() !== '') {
+                                guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
+                            } else {
+                                evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                            }
+                        } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+                            guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '1', $('#inputObservacionesReporteFalsoCorrectivo').val(), '#evidenciasReporteFalsoCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
+                        } else {
+                            evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                        }
+                    } else {
+                        evento.mostrarMensaje('.errorFormularioReporteFalsoCorrectivo', false, resultado.message, 3000);
+                    }
+                });
             }
         });
         $('#btnGuardarImpericiaCorrectivo').off('click');
         $('#btnGuardarImpericiaCorrectivo').on('click', function (e) {
-            if (validarCampos($('#selectImpericiaTipoFallaEquipoCorrectivo').val(), '.errorFormularioImpericiaCorrectivo', 'Debes seleccionar el campo Tipo de Falla.')) {
-                if (validarCampos($('#selectImpericiaFallaDiagnosticoCorrectivo').val(), '.errorFormularioImpericiaCorrectivo', 'Debes seleccionar el campo Falla.')) {
-                    if (respuesta.informacion.diagnosticoEquipo === null) {
-                        if ($('#evidenciasImpericiaCorrectivo').val() !== '') {
-                            guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '2', $('#inputObservacionesImpericiaCorrectivo').val(), '#evidenciasImpericiaCorrectivo', datosTabla, '1', 'Seguimiento/enviarReporteImpericia', respuesta.informacion.diagnosticoEquipo);
-                        } else {
-                            evento.mostrarMensaje('.errorFormularioImpericiaCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+            if (validarCampos($('#inputFallaReportadaDiagnostico').val(), '.errorFormularioImpericiaCorrectivo', 'Falla reportada en sitio.')) {
+                if (validarCampos($('#inputObservacionesImpericiaCorrectivo').val(), '.errorFormularioImpericiaCorrectivo', 'Debes llenar el campo de Observaciones.')) {
+                    if (validarCampos($('#selectImpericiaTipoFallaEquipoCorrectivo').val(), '.errorFormularioImpericiaCorrectivo', 'Debes seleccionar el campo Tipo de Falla.')) {
+                        if (validarCampos($('#selectImpericiaFallaDiagnosticoCorrectivo').val(), '.errorFormularioImpericiaCorrectivo', 'Debes seleccionar el campo Falla.')) {
+                            if (respuesta.informacion.diagnosticoEquipo === null) {
+                                if ($('#evidenciasImpericiaCorrectivo').val() !== '') {
+                                    guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '2', $('#inputObservacionesImpericiaCorrectivo').val(), '#evidenciasImpericiaCorrectivo', datosTabla, '1', 'Seguimiento/enviarReporteImpericia', respuesta.informacion.diagnosticoEquipo);
+                                } else {
+                                    evento.mostrarMensaje('.errorFormularioImpericiaCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                                }
+                            } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
+                                if ($('#evidenciasImpericiaCorrectivo').val() !== '') {
+                                    guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '2', $('#inputObservacionesImpericiaCorrectivo').val(), '#evidenciasImpericiaCorrectivo', datosTabla, '1', 'Seguimiento/enviarReporteImpericia', respuesta.informacion.diagnosticoEquipo);
+                                } else {
+                                    evento.mostrarMensaje('.errorFormularioImpericiaCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                                }
+                            } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+                                guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '2', $('#inputObservacionesImpericiaCorrectivo').val(), '#evidenciasImpericiaCorrectivo', datosTabla, '1', 'Seguimiento/enviarReporteImpericia', respuesta.informacion.diagnosticoEquipo);
+                            } else {
+                                evento.mostrarMensaje('.errorFormularioImpericiaCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                            }
                         }
-                    } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
-                        if ($('#evidenciasImpericiaCorrectivo').val() !== '') {
-                            guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '2', $('#inputObservacionesImpericiaCorrectivo').val(), '#evidenciasImpericiaCorrectivo', datosTabla, '1', 'Seguimiento/enviarReporteImpericia', respuesta.informacion.diagnosticoEquipo);
-                        } else {
-                            evento.mostrarMensaje('.errorFormularioImpericiaCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
-                        }
-                    } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
-                        guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '2', $('#inputObservacionesImpericiaCorrectivo').val(), '#evidenciasImpericiaCorrectivo', datosTabla, '1', 'Seguimiento/enviarReporteImpericia', respuesta.informacion.diagnosticoEquipo);
-                    } else {
-                        evento.mostrarMensaje('.errorFormularioImpericiaCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
                     }
-
                 }
             }
         });
         $('#btnGuardarFallaEquipoCorrectivo').off('click');
         $('#btnGuardarFallaEquipoCorrectivo').on('click', function (e) {
-            if (validarCampos($('#selectTipoFallaEquipoCorrectivo').val(), '.errorFormularioFallaEquipoCorrectivo', 'Debes seleccionar el campo Tipo de Falla.')) {
-                if (validarCampos($('#selectFallaDiagnosticoCorrectivo').val(), '.errorFormularioFallaEquipoCorrectivo', 'Debes seleccionar el campo Falla.')) {
-                    if (respuesta.informacion.diagnosticoEquipo === null) {
-                        if ($('#evidenciasFallaEquipoCorrectivo').val() !== '') {
-                            guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '3', $('#inputObservacionesFallaEquipoCorrectivo').val(), '#evidenciasFallaEquipoCorrectivo', datosTabla, '', '', respuesta.informacion.diagnosticoEquipo);
-                        } else {
-                            evento.mostrarMensaje('.errorFormularioFallaEquipoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+            if (validarCampos($('#inputFallaReportadaDiagnostico').val(), '.errorFormularioFallaEquipoCorrectivo', 'Falla reportada en sitio.')) {
+                if (validarCampos($('#inputObservacionesFallaEquipoCorrectivo').val(), '.errorFormularioFallaEquipoCorrectivo', 'Debes llenar el campo de Observaciones.')) {
+                    if (validarCampos($('#selectTipoFallaEquipoCorrectivo').val(), '.errorFormularioFallaEquipoCorrectivo', 'Debes seleccionar el campo Tipo de Falla.')) {
+                        if (validarCampos($('#selectFallaDiagnosticoCorrectivo').val(), '.errorFormularioFallaEquipoCorrectivo', 'Debes seleccionar el campo Falla.')) {
+                            if (respuesta.informacion.diagnosticoEquipo === null) {
+                                if ($('#evidenciasFallaEquipoCorrectivo').val() !== '') {
+                                    guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '3', $('#inputObservacionesFallaEquipoCorrectivo').val(), '#evidenciasFallaEquipoCorrectivo', datosTabla, '', '', respuesta.informacion.diagnosticoEquipo);
+                                } else {
+                                    evento.mostrarMensaje('.errorFormularioFallaEquipoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                                }
+                            } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
+                                if ($('#evidenciasFallaEquipoCorrectivo').val() !== '') {
+                                    guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '3', $('#inputObservacionesFallaEquipoCorrectivo').val(), '#evidenciasFallaEquipoCorrectivo', datosTabla, '', '', respuesta.informacion.diagnosticoEquipo);
+                                } else {
+                                    evento.mostrarMensaje('.errorFormularioFallaEquipoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                                }
+                            } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+                                guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '3', $('#inputObservacionesFallaEquipoCorrectivo').val(), '#evidenciasFallaEquipoCorrectivo', datosTabla, '', '', respuesta.informacion.diagnosticoEquipo);
+                            } else {
+                                evento.mostrarMensaje('.errorFormularioFallaEquipoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                            }
                         }
-                    } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
-                        if ($('#evidenciasFallaEquipoCorrectivo').val() !== '') {
-                            guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '3', $('#inputObservacionesFallaEquipoCorrectivo').val(), '#evidenciasFallaEquipoCorrectivo', datosTabla, '', '', respuesta.informacion.diagnosticoEquipo);
-                        } else {
-                            evento.mostrarMensaje('.errorFormularioFallaEquipoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
-                        }
-                    } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
-                        guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '3', $('#inputObservacionesFallaEquipoCorrectivo').val(), '#evidenciasFallaEquipoCorrectivo', datosTabla, '', '', respuesta.informacion.diagnosticoEquipo);
-                    } else {
-                        evento.mostrarMensaje('.errorFormularioFallaEquipoCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
                     }
                 }
             }
         });
         $('#btnGuardarFallaComponenteCorrectivo').off('click');
         $('#btnGuardarFallaComponenteCorrectivo').on('click', function (e) {
-            if (validarCampos($('#selectComponenteDiagnosticoCorrectivo').val(), '.errorFormularioFallaComponenteCorrectivo', 'Debes seleccionar el campo Componente.')) {
-                if (validarCampos($('#selectTipoFallaComponenteCorrectivo').val(), '.errorFormularioFallaComponenteCorrectivo', 'Debes seleccionar el campo Tipo de Falla.')) {
-                    if (validarCampos($('#selectFallaComponenteDiagnosticoCorrectivo').val(), '.errorFormularioFallaComponenteCorrectivo', 'Debes seleccionar el campo Falla.')) {
-                        if (respuesta.informacion.diagnosticoEquipo === null) {
-                            if ($('#evidenciasFallaComponenteCorrectivo').val() !== '') {
-                                guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '4', $('#inputObservacionesFallaComponenteCorrectivo').val(), '#evidenciasFallaComponenteCorrectivo', datosTabla, '', '', respuesta.informacion.diagnosticoEquipo);
-                            } else {
-                                evento.mostrarMensaje('.errorFormularioFallaComponenteCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+            if (validarCampos($('#inputFallaReportadaDiagnostico').val(), '.errorFormularioFallaComponenteCorrectivo', 'Falla reportada en sitio.')) {
+                if (validarCampos($('#inputObservacionesFallaComponenteCorrectivo').val(), '.errorFormularioFallaComponenteCorrectivo', 'Debes llenar el campo de Observaciones.')) {
+                    if (validarCampos($('#selectComponenteDiagnosticoCorrectivo').val(), '.errorFormularioFallaComponenteCorrectivo', 'Debes seleccionar el campo Componente.')) {
+                        if (validarCampos($('#selectTipoFallaComponenteCorrectivo').val(), '.errorFormularioFallaComponenteCorrectivo', 'Debes seleccionar el campo Tipo de Falla.')) {
+                            if (validarCampos($('#selectFallaComponenteDiagnosticoCorrectivo').val(), '.errorFormularioFallaComponenteCorrectivo', 'Debes seleccionar el campo Falla.')) {
+                                if (respuesta.informacion.diagnosticoEquipo === null) {
+                                    if ($('#evidenciasFallaComponenteCorrectivo').val() !== '') {
+                                        guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '4', $('#inputObservacionesFallaComponenteCorrectivo').val(), '#evidenciasFallaComponenteCorrectivo', datosTabla, '', '', respuesta.informacion.diagnosticoEquipo);
+                                    } else {
+                                        evento.mostrarMensaje('.errorFormularioFallaComponenteCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                                    }
+                                } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
+                                    if ($('#evidenciasFallaComponenteCorrectivo').val() !== '') {
+                                        guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '4', $('#inputObservacionesFallaComponenteCorrectivo').val(), '#evidenciasFallaComponenteCorrectivo', datosTabla, '', '', respuesta.informacion.diagnosticoEquipo);
+                                    } else {
+                                        evento.mostrarMensaje('.errorFormularioFallaComponenteCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                                    }
+                                } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+                                    guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '4', $('#inputObservacionesFallaComponenteCorrectivo').val(), '#evidenciasFallaComponenteCorrectivo', datosTabla, '', '', respuesta.informacion.diagnosticoEquipo);
+                                } else {
+                                    evento.mostrarMensaje('.errorFormularioFallaComponenteCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                                }
                             }
-                        } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
-                            if ($('#evidenciasFallaComponenteCorrectivo').val() !== '') {
-                                guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '4', $('#inputObservacionesFallaComponenteCorrectivo').val(), '#evidenciasFallaComponenteCorrectivo', datosTabla, '', '', respuesta.informacion.diagnosticoEquipo);
-                            } else {
-                                evento.mostrarMensaje('.errorFormularioFallaComponenteCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
-                            }
-                        } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
-                            guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '4', $('#inputObservacionesFallaComponenteCorrectivo').val(), '#evidenciasFallaComponenteCorrectivo', datosTabla, '', '', respuesta.informacion.diagnosticoEquipo);
-                        } else {
-                            evento.mostrarMensaje('.errorFormularioFallaComponenteCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
                         }
                     }
                 }
@@ -3037,22 +3062,26 @@ $(function () {
         });
         $('#btnGuardarReporteMultimediaCorrectivo').off('click');
         $('#btnGuardarReporteMultimediaCorrectivo').on('click', function (e) {
-            if (respuesta.informacion.diagnosticoEquipo === null) {
-                if ($('#evidenciasReporteMultimediaCorrectivo').val() !== '') {
-                    guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '5', $('#inputObservacionesReporteMultimediaCorrectivo').val(), '#evidenciasReporteMultimediaCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
-                } else {
-                    evento.mostrarMensaje('.errorFormularioReporteMultimediaCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+            if (validarCampos($('#inputFallaReportadaDiagnostico').val(), '.errorFormularioReporteMultimediaCorrectivo', 'Falla reportada en sitio.')) {
+                if (validarCampos($('#inputObservacionesReporteMultimediaCorrectivo').val(), '.errorFormularioReporteMultimediaCorrectivo', 'Debes llenar el campo de Observaciones.')) {
+                    if (respuesta.informacion.diagnosticoEquipo === null) {
+                        if ($('#evidenciasReporteMultimediaCorrectivo').val() !== '') {
+                            guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '5', $('#inputObservacionesReporteMultimediaCorrectivo').val(), '#evidenciasReporteMultimediaCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
+                        } else {
+                            evento.mostrarMensaje('.errorFormularioReporteMultimediaCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                        }
+                    } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
+                        if ($('#evidenciasReporteMultimediaCorrectivo').val() !== '') {
+                            guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '5', $('#inputObservacionesReporteMultimediaCorrectivo').val(), '#evidenciasReporteMultimediaCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
+                        } else {
+                            evento.mostrarMensaje('.errorFormularioReporteMultimediaCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                        }
+                    } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+                        guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '5', $('#inputObservacionesReporteMultimediaCorrectivo').val(), '#evidenciasReporteMultimediaCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
+                    } else {
+                        evento.mostrarMensaje('.errorFormularioReporteMultimediaCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                    }
                 }
-            } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
-                if ($('#evidenciasReporteMultimediaCorrectivo').val() !== '') {
-                    guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '5', $('#inputObservacionesReporteMultimediaCorrectivo').val(), '#evidenciasReporteMultimediaCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
-                } else {
-                    evento.mostrarMensaje('.errorFormularioReporteMultimediaCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
-                }
-            } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
-                guardarFormularioDiagnosticoEquipoCorrectivo(servicio, '5', $('#inputObservacionesReporteMultimediaCorrectivo').val(), '#evidenciasReporteMultimediaCorrectivo', datosTabla, '3', null, respuesta.informacion.diagnosticoEquipo, respuesta);
-            } else {
-                evento.mostrarMensaje('.errorFormularioReporteMultimediaCorrectivo', false, 'Debes llenar el campo de Evidencias.', 3000);
             }
         });
         $('#btnAgregarSolicitudRefaccion').off('click');
@@ -3433,19 +3462,21 @@ $(function () {
         });
         $('#btnGuardarConcluirReparacionSinEquipo').off('click');
         $('#btnGuardarConcluirReparacionSinEquipo').on('click', function (e) {
-            if (validarCampos($('#selectSolucionReparacionSinEquipo').val(), '.errorFormularioSolucionReparacionSinEquipo', 'Debes seleccionar el campo Solución.')) {
-                if ($('#evidenciasSolucionReparacionSinEquipo').val() !== '') {
-                    guardarConcluirCorrectivoReparacionSinEquipo(servicio, datosTabla, respuesta.informacion.correctivosSoluciones, '2', respuesta);
-                } else {
-                    var data = {servicio: servicio, idTipoSolucion: '1'};
-                    var respuestaAnterior = respuesta;
-                    evento.enviarEvento('Seguimiento/ConsultaCorrectivosSolucionesServicio', data, '#seccion-servicio-correctivo', function (respuesta) {
-                        if (respuesta) {
-                            guardarConcluirCorrectivoReparacionSinEquipo(servicio, datosTabla, respuestaAnterior.informacion.correctivosSoluciones, '2', respuestaAnterior);
-                        } else {
-                            evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', false, 'Debes llenar el campo de Evidencias.', 3000);
-                        }
-                    });
+            if (validarCampos($('#inputObservacionesSolucionReparacionSinEquipo').val(), '.errorFormularioSolucionReparacionSinEquipo', 'Debes llenar el campo de Observaciones.')) {
+                if (validarCampos($('#selectSolucionReparacionSinEquipo').val(), '.errorFormularioSolucionReparacionSinEquipo', 'Debes seleccionar el campo Solución.')) {
+                    if ($('#evidenciasSolucionReparacionSinEquipo').val() !== '') {
+                        guardarConcluirCorrectivoReparacionSinEquipo(servicio, datosTabla, respuesta.informacion.correctivosSoluciones, '2', respuesta);
+                    } else {
+                        var data = {servicio: servicio, idTipoSolucion: '1'};
+                        var respuestaAnterior = respuesta;
+                        evento.enviarEvento('Seguimiento/ConsultaCorrectivosSolucionesServicio', data, '#seccion-servicio-correctivo', function (respuesta) {
+                            if (respuesta) {
+                                guardarConcluirCorrectivoReparacionSinEquipo(servicio, datosTabla, respuestaAnterior.informacion.correctivosSoluciones, '2', respuestaAnterior);
+                            } else {
+                                evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                            }
+                        });
+                    }
                 }
             }
         });
@@ -3485,41 +3516,43 @@ $(function () {
         });
         $('#btnGuardarConcluirSolucionReparacionConRefaccion').off('click');
         $('#btnGuardarConcluirSolucionReparacionConRefaccion').on('click', function (e) {
-            if ($("#data-table-reparacion-refaccion-stock").length) {
-                var _refacciones = '';
-                $(".checkRefaccionesStock").each(function () {
-                    if ($(this).hasClass("fa-check-square-o")) {
-                        _refacciones += ',' + $(this).attr("data-id");
-                    }
-                });
-                _refacciones = (_refacciones !== '') ? _refacciones.substring(1) : _refacciones;
-                _evidencias = $('#evidenciasSolucionReparacionConRefaccion').val(); //              
-                if (_refacciones !== '' && (_evidencias !== '' || (respuesta.informacion.evidenciasCorrectivosSoluciones !== null && respuesta.informacion.evidenciasCorrectivosSoluciones.length > 0))) {
-                    guardarConcluirCorrectivoReparacionConRefaccion(servicio, datosTabla, _refacciones, respuesta.informacion.correctivosSoluciones, '2', respuesta);
-                } else {
-                    var _mensaje = 'Para concluir el servicio debes seleccionar al menos una refacción y tener una evidencia';
-                    evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, _mensaje, 3000);
-                }
-
-
-            } else {
-                var datosTablaReparacionRefaccion = $('#data-table-reparacion-refaccion').DataTable().rows().data();
-                if (datosTablaReparacionRefaccion.length > 0) {
-                    if ($('#evidenciasSolucionReparacionConRefaccion').val() !== '') {
-                        guardarConcluirCorrectivoReparacionConRefaccion(servicio, datosTabla, datosTablaReparacionRefaccion, respuesta.informacion.correctivosSoluciones, '2', respuesta);
+            if (validarCampos($('#inputObservacionesSolucionReparacionConRefaccion').val(), '.errorFormularioSolucionReparacionConRefaccion', 'Debes llenar el campo de Observaciones.')) {
+                if ($("#data-table-reparacion-refaccion-stock").length) {
+                    var _refacciones = '';
+                    $(".checkRefaccionesStock").each(function () {
+                        if ($(this).hasClass("fa-check-square-o")) {
+                            _refacciones += ',' + $(this).attr("data-id");
+                        }
+                    });
+                    _refacciones = (_refacciones !== '') ? _refacciones.substring(1) : _refacciones;
+                    _evidencias = $('#evidenciasSolucionReparacionConRefaccion').val(); //              
+                    if (_refacciones !== '' && (_evidencias !== '' || (respuesta.informacion.evidenciasCorrectivosSoluciones !== null && respuesta.informacion.evidenciasCorrectivosSoluciones.length > 0))) {
+                        guardarConcluirCorrectivoReparacionConRefaccion(servicio, datosTabla, _refacciones, respuesta.informacion.correctivosSoluciones, '2', respuesta);
                     } else {
-                        var data = {servicio: servicio, idTipoSolucion: '2'};
-                        var respuestaAnterior = respuesta;
-                        evento.enviarEvento('Seguimiento/ConsultaCorrectivosSolucionesServicio', data, '#seccion-servicio-correctivo', function (respuesta) {
-                            if (respuesta) {
-                                guardarConcluirCorrectivoReparacionConRefaccion(servicio, datosTabla, datosTablaReparacionRefaccion, respuestaAnterior.informacion.correctivosSoluciones, '2', respuestaAnterior);
-                            } else {
-                                evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, 'Debes llenar el campo de Evidencias.', 3000);
-                            }
-                        });
+                        var _mensaje = 'Para concluir el servicio debes seleccionar al menos una refacción y tener una evidencia';
+                        evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, _mensaje, 3000);
                     }
+
+
                 } else {
-                    evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, 'Para guardar los Equipos debe haber agregado un registro en la tabla.', 3000);
+                    var datosTablaReparacionRefaccion = $('#data-table-reparacion-refaccion').DataTable().rows().data();
+                    if (datosTablaReparacionRefaccion.length > 0) {
+                        if ($('#evidenciasSolucionReparacionConRefaccion').val() !== '') {
+                            guardarConcluirCorrectivoReparacionConRefaccion(servicio, datosTabla, datosTablaReparacionRefaccion, respuesta.informacion.correctivosSoluciones, '2', respuesta);
+                        } else {
+                            var data = {servicio: servicio, idTipoSolucion: '2'};
+                            var respuestaAnterior = respuesta;
+                            evento.enviarEvento('Seguimiento/ConsultaCorrectivosSolucionesServicio', data, '#seccion-servicio-correctivo', function (respuesta) {
+                                if (respuesta) {
+                                    guardarConcluirCorrectivoReparacionConRefaccion(servicio, datosTabla, datosTablaReparacionRefaccion, respuestaAnterior.informacion.correctivosSoluciones, '2', respuestaAnterior);
+                                } else {
+                                    evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, 'Debes llenar el campo de Evidencias.', 3000);
+                                }
+                            });
+                        }
+                    } else {
+                        evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, 'Para guardar los Equipos debe haber agregado un registro en la tabla.', 3000);
+                    }
                 }
             }
         });
@@ -3562,39 +3595,41 @@ $(function () {
         });
         $('#btnGuardarConcluirSolucionCambioEquipo').off('click');
         $('#btnGuardarConcluirSolucionCambioEquipo').on('click', function (e) {
-            if ($("#data-table-reparacion-cambio-stock").length) {
-                var _equipos = '';
-                var _dataEquipo = [];
-                $(".checkEquipoStock").each(function () {
-                    if ($(this).hasClass("fa-check-square-o")) {
-                        _equipos += ',' + $(this).attr("data-id");
-                        _dataEquipo['equipo'] = $(this).attr("data-id-producto");
-                        _dataEquipo['serie'] = $(this).attr("data-serie");
+            if (validarCampos($('#inputObservacionesSolucionCambioEquipo').val(), '.errorFormularioSolucionCambioEquipo', 'Debes llenar el campo de Observaciones.')) {
+                if ($("#data-table-reparacion-cambio-stock").length) {
+                    var _equipos = '';
+                    var _dataEquipo = [];
+                    $(".checkEquipoStock").each(function () {
+                        if ($(this).hasClass("fa-check-square-o")) {
+                            _equipos += ',' + $(this).attr("data-id");
+                            _dataEquipo['equipo'] = $(this).attr("data-id-producto");
+                            _dataEquipo['serie'] = $(this).attr("data-serie");
+                        }
+                    });
+                    _equipos = (_equipos !== '') ? _equipos.substring(1) : _equipos;
+                    _evidencias = $('#evidenciasSolucionCambioEquipo').val(); //              
+                    if (_equipos !== '' && (_evidencias !== '' || (respuesta.informacion.evidenciasCorrectivosSoluciones !== null && respuesta.informacion.evidenciasCorrectivosSoluciones.length > 0))) {
+                        guardarConcluirCorrectivoCambioEquipo(servicio, datosTabla, respuesta.informacion.correctivosSoluciones, '2', respuesta, _equipos, _dataEquipo);
+                    } else {
+                        var _mensaje = 'Para guardar la información debes seleccionar al menos un equipo y tener una evidencia';
+                        evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, _mensaje, 3000);
                     }
-                });
-                _equipos = (_equipos !== '') ? _equipos.substring(1) : _equipos;
-                _evidencias = $('#evidenciasSolucionCambioEquipo').val(); //              
-                if (_equipos !== '' && (_evidencias !== '' || (respuesta.informacion.evidenciasCorrectivosSoluciones !== null && respuesta.informacion.evidenciasCorrectivosSoluciones.length > 0))) {
-                    guardarConcluirCorrectivoCambioEquipo(servicio, datosTabla, respuesta.informacion.correctivosSoluciones, '2', respuesta, _equipos, _dataEquipo);
                 } else {
-                    var _mensaje = 'Para guardar la información debes seleccionar al menos un equipo y tener una evidencia';
-                    evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, _mensaje, 3000);
-                }
-            } else {
-                if (validarCampos($('#selectEquipoSolucionCambioEquipo').val(), '.errorFormularioSolucionCambioEquipo', 'Debes seleccionar el campo Equipo.')) {
-                    if (validarCampos($('#inputSerieSolucionCambioEquipo').val(), '.errorFormularioSolucionCambioEquipo', 'Debes llenar el campo de Número de Serie.')) {
-                        if ($('#evidenciasSolucionCambioEquipo').val() !== '') {
-                            guardarConcluirCorrectivoCambioEquipo(servicio, datosTabla, respuesta.informacion.correctivosSoluciones, '2', respuesta);
-                        } else {
-                            var data = {servicio: servicio, idTipoSolucion: '3'};
-                            var respuestaAnterior = respuesta;
-                            evento.enviarEvento('Seguimiento/ConsultaCorrectivosSolucionesServicio', data, '#seccion-servicio-correctivo', function (respuesta) {
-                                if (respuesta) {
-                                    guardarConcluirCorrectivoCambioEquipo(servicio, datosTabla, respuestaAnterior.informacion.correctivosSoluciones, '2', respuestaAnterior);
-                                } else {
-                                    evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, 'Debes llenar el campo de Evidencias.', 3000);
-                                }
-                            });
+                    if (validarCampos($('#selectEquipoSolucionCambioEquipo').val(), '.errorFormularioSolucionCambioEquipo', 'Debes seleccionar el campo Equipo.')) {
+                        if (validarCampos($('#inputSerieSolucionCambioEquipo').val(), '.errorFormularioSolucionCambioEquipo', 'Debes llenar el campo de Número de Serie.')) {
+                            if ($('#evidenciasSolucionCambioEquipo').val() !== '') {
+                                guardarConcluirCorrectivoCambioEquipo(servicio, datosTabla, respuesta.informacion.correctivosSoluciones, '2', respuesta);
+                            } else {
+                                var data = {servicio: servicio, idTipoSolucion: '3'};
+                                var respuestaAnterior = respuesta;
+                                evento.enviarEvento('Seguimiento/ConsultaCorrectivosSolucionesServicio', data, '#seccion-servicio-correctivo', function (respuesta) {
+                                    if (respuesta) {
+                                        guardarConcluirCorrectivoCambioEquipo(servicio, datosTabla, respuestaAnterior.informacion.correctivosSoluciones, '2', respuestaAnterior);
+                                    } else {
+                                        evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, 'Debes llenar el campo de Evidencias.', 3000);
+                                    }
+                                });
+                            }
                         }
                     }
                 }
@@ -3638,12 +3673,52 @@ $(function () {
                 window.open('/' + respuesta.link);
             });
         });
+
+        $("#btnAgregarObservacionesReporteFalso").off("click");
+        $("#btnAgregarObservacionesReporteFalso").on("click", function () {
+            $(this).addClass('hidden');
+            $("#divFormAgregarObservaciones").removeClass('hidden');
+        });
+
+        $("#btnCancelarAgregarObservacionesReporteFalso").off("click");
+        $("#btnCancelarAgregarObservacionesReporteFalso").on("click", function () {
+            $("#divFormAgregarObservaciones").addClass('hidden');
+            $("#btnAgregarObservacionesReporteFalso").removeClass('hidden');
+            file.limpiar('#archivosAgregarObservacionesReporteFalso');
+            evento.limpiarFormulario("#formAgregarObservacionesReporteFalso");
+        });
+
+        $('#btnConfirmarAgregarObservacionesReporteFalso').off('click');
+        $('#btnConfirmarAgregarObservacionesReporteFalso').on('click', function () {
+            var observaciones = $('#txtAgregarObservacion').val();
+            var data = {servicio: servicio, observaciones: observaciones};
+            if (observaciones !== '') {
+                file.enviarArchivos('#archivosAgregarObservacionesReporteFalso', 'Seguimiento/guardarObservacionesBitacora', '#seccion-servicio-correctivo', data, function (respuesta) {
+                    if (respuesta.code === 200) {
+                        $('#divBitacoraReporteFalso').empty().append(respuesta.message);
+                        file.limpiar('#archivosAgregarObservacionesReporteFalso');
+                        $('#txtAgregarObservacion').val('');
+                        servicios.mensajeModal('Se agrego la observación.', 'Correcto', true);
+                        limpiarFormulariosDiagnostico('1');
+                        $("#divFormAgregarObservaciones").addClass('hidden');
+                        $("#btnAgregarObservacionesReporteFalso").removeClass('hidden');
+                    }
+                });
+            } else {
+                evento.mostrarMensaje('#errorAgregarObservacionesReporteFalso', false, 'Debe capturar la observación.', 3000);
+            }
+        });
+
         servicios.initBotonReasignarServicio(servicio, datosTabla[1], '#seccion-servicio-correctivo');
         //evento para crear nueva solicitud
         servicios.initBotonNuevaSolicitud(datosTabla[1], '#seccion-servicio-correctivo');
         servicios.eventosFolio(datosTabla[2], '#seccion-servicio-correctivo', servicio);
         servicios.subirInformacionSD(servicio, '#seccion-servicio-correctivo');
         servicios.botonAgregarVuelta({servicio: servicio}, '#seccion-servicio-correctivo');
+        servicios.botonAgregarAvance(servicio, 'Correctivo');
+        servicios.botonAgregarProblema(servicio, 'Correctivo');
+        servicios.botonEliminarAvanceProblema(servicio);
+        servicios.botonEditarAvanceProblema(servicio);
     };
     var validarFormularioDatosGeneralesCorrectivo = function () {
         var datosTabla = arguments[0];
@@ -3651,7 +3726,7 @@ $(function () {
         var areaPunto = $('#selectAreaPuntoCorrectivo').val();
         var equipo = $('#selectEquipoCorrectivo').val();
         var numeroRenglon = areaPunto.search(/-/i);
-        var punto = areaPunto.substr(2, numeroRenglon);
+        var punto = areaPunto.substr(2, 2);
         var area = areaPunto.substr(0, numeroRenglon);
         punto = Math.abs(punto);
         var serie = $('#inputSerieCorrectivo').val();
@@ -3788,6 +3863,7 @@ $(function () {
         var evidencias = '';
         var tipoDiagnosticoAnterior = null;
         var estatus;
+        var fallaReportada = $('#inputFallaReportadaDiagnostico').val();
         if (diagnosticoEquipo !== null) {
             if (diagnosticoEquipo.length > 0) {
                 evidencias = diagnosticoEquipo[0].Evidencias;
@@ -3826,16 +3902,22 @@ $(function () {
             default:
         }
 
+        data.fallaReportada = fallaReportada;
+
         if ($(nombreEvidencias).val() !== '') {
             file.enviarArchivos(nombreEvidencias, 'Seguimiento/guardarDiagnosticoEquipo', '#seccion-servicio-correctivo', data, function (respuesta) {
                 if (respuesta !== 'faltaDatosGenerales') {
                     if (tipoDiagnostico === '5' || tipoDiagnostico === '1') {
-                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
+                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                         evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
-                            if (respuesta === 'serviciosConcluidos') {
-                                modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, divErrorMensaje, respuestaAnterior, true, '4');
+                            if (respuesta.code === 200) {
+                                if (respuesta.message === 'serviciosConcluidos') {
+                                    modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, divErrorMensaje, respuestaAnterior, true, '4');
+                                } else {
+                                    concluirServicio(servicio);
+                                }
                             } else {
-                                concluirServicio(servicio);
+                                servicios.mensajeModal(respuesta.message, 'ERROR SD', true);
                             }
                         });
                     } else if (tipoDiagnostico === '2' || tipoDiagnostico === '3' || tipoDiagnostico === '4') {
@@ -3851,12 +3933,16 @@ $(function () {
             evento.enviarEvento('Seguimiento/guardarDiagnosticoEquipo', data, '#seccion-servicio-correctivo', function (respuesta) {
                 if (respuesta !== 'faltaDatosGenerales') {
                     if (tipoDiagnostico === '5' || tipoDiagnostico === '1') {
-                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
+                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                         evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
-                            if (respuesta === 'serviciosConcluidos') {
-                                modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, divErrorMensaje, respuestaAnterior, true, '4');
+                            if (respuesta.code === 200) {
+                                if (respuesta.message === 'serviciosConcluidos') {
+                                    modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, divErrorMensaje, respuestaAnterior, true, '4');
+                                } else {
+                                    concluirServicio(servicio);
+                                }
                             } else {
-                                concluirServicio(servicio);
+                                servicios.mensajeModal(respuesta.message, 'ERROR SD', true);
                             }
                         });
                     } else if (tipoDiagnostico === '2' || tipoDiagnostico === '3' || tipoDiagnostico === '4') {
@@ -4475,56 +4561,74 @@ $(function () {
         data = {servicio: servicio, solucion: solucion, observaciones: observaciones, evidencias: evidencias, idTipoSolucion: idTipoSolucion, operacion: operacion, ticket: datosTablaPoliza[1], idSolicitud: datosTablaPoliza[2]};
         if ($('#evidenciasSolucionReparacionSinEquipo').val() !== '') {
             file.enviarArchivos('#evidenciasSolucionReparacionSinEquipo', 'Seguimiento/guardarReparacionSinEquipo', '#seccion-servicio-correctivo', data, function (respuesta) {
-                if (respuesta !== 'faltaDatosDiagnostico') {
-                    var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
-                    if (operacion === '2' && respuesta !== 'faltanServicios') {
-                        evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
-                            if (respuesta === 'serviciosConcluidos') {
-                                modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, '.errorFormularioSolucionReparacionSinEquipo', respuestaAnterior, true, '4');
-                            } else {
-                                concluirServicio(servicio);
-                            }
-                        });
+                if (respuesta !== 'faltaDatosGenerales') {
+                    if (respuesta !== 'faltaDatosDiagnostico') {
+                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
+                        if (operacion === '2' && respuesta !== 'faltanServicios') {
+                            evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
+                                if (respuesta.code === 200) {
+                                    if (respuesta.message === 'serviciosConcluidos') {
+                                        modalCampoFirma(respuesta.message, datosTablaPoliza[1], servicio, '.errorFormularioSolucionReparacionSinEquipo', respuestaAnterior, true, '4');
+                                    } else {
+                                        concluirServicio(servicio);
+                                    }
+                                } else {
+                                    servicios.mensajeModal(respuesta.message, 'ERROR SD', true);
+                                }
+                            });
+                        } else {
+                            select.cambiarOpcion('#selectEquipoSolucionCambioEquipo', '');
+                            $('#inputSerieSolucionCambioEquipo').val('');
+                            $('#inputObservacionesSolucionCambioEquipo').val('');
+                            $('#inputObservacionesSolucionReparacionConRefaccion').val('');
+                            tabla.limpiarTabla('#data-table-reparacion-refaccion');
+                            file.limpiar('#evidenciasSolucionCambioEquipo');
+                            file.limpiar('#evidenciasSolucionReparacionConRefaccion');
+                            evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', true, 'Datos Guardados Correctamente.', 3000);
+                        }
                     } else {
-                        select.cambiarOpcion('#selectEquipoSolucionCambioEquipo', '');
-                        $('#inputSerieSolucionCambioEquipo').val('');
-                        $('#inputObservacionesSolucionCambioEquipo').val('');
-                        $('#inputObservacionesSolucionReparacionConRefaccion').val('');
-                        tabla.limpiarTabla('#data-table-reparacion-refaccion');
-                        file.limpiar('#evidenciasSolucionCambioEquipo');
-                        file.limpiar('#evidenciasSolucionReparacionConRefaccion');
-                        evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', true, 'Datos Guardados Correctamente.', 3000);
+                        file.limpiar('#evidenciasSolucionReparacionSinEquipo');
+                        evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', false, 'Debe guardar los datos del dignostico.', 5000);
                     }
                 } else {
                     file.limpiar('#evidenciasSolucionReparacionSinEquipo');
-                    evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', false, 'Debe guardar los datos del dignostico.', 5000);
+                    evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', false, 'Falta llenar los datos de Información General.', 5000);
                 }
             });
         } else {
             evento.enviarEvento('Seguimiento/guardarReparacionSinEquipo', data, '#seccion-servicio-correctivo', function (respuesta) {
-                if (respuesta !== 'faltaDatosDiagnostico') {
-                    var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
-                    if (operacion === '2' && respuesta !== 'faltanServicios') {
-                        evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
-                            if (respuesta === 'serviciosConcluidos') {
-                                modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, '.errorFormularioSolucionReparacionSinEquipo', respuestaAnterior, true, '4');
-                            } else {
-                                concluirServicio(servicio);
-                            }
-                        });
+                if (respuesta !== 'faltaDatosGenerales') {
+                    if (respuesta !== 'faltaDatosDiagnostico') {
+                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
+                        if (operacion === '2' && respuesta !== 'faltanServicios') {
+                            evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
+                                if (respuesta.code === 200) {
+                                    if (respuesta.message === 'serviciosConcluidos') {
+                                        modalCampoFirma(respuesta.message, datosTablaPoliza[1], servicio, '.errorFormularioSolucionReparacionSinEquipo', respuestaAnterior, true, '4');
+                                    } else {
+                                        concluirServicio(servicio);
+                                    }
+                                } else {
+                                    servicios.mensajeModal(respuesta.message, 'ERROR SD', true);
+                                }
+                            });
+                        } else {
+                            select.cambiarOpcion('#selectEquipoSolucionCambioEquipo', '');
+                            $('#inputSerieSolucionCambioEquipo').val('');
+                            $('#inputObservacionesSolucionCambioEquipo').val('');
+                            $('#inputObservacionesSolucionReparacionConRefaccion').val('');
+                            tabla.limpiarTabla('#data-table-reparacion-refaccion');
+                            file.limpiar('#evidenciasSolucionCambioEquipo');
+                            file.limpiar('#evidenciasSolucionReparacionConRefaccion');
+                            evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', true, 'Datos Guardados Correctamente.', 3000);
+                        }
                     } else {
-                        select.cambiarOpcion('#selectEquipoSolucionCambioEquipo', '');
-                        $('#inputSerieSolucionCambioEquipo').val('');
-                        $('#inputObservacionesSolucionCambioEquipo').val('');
-                        $('#inputObservacionesSolucionReparacionConRefaccion').val('');
-                        tabla.limpiarTabla('#data-table-reparacion-refaccion');
-                        file.limpiar('#evidenciasSolucionCambioEquipo');
-                        file.limpiar('#evidenciasSolucionReparacionConRefaccion');
-                        evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', true, 'Datos Guardados Correctamente.', 3000);
+                        file.limpiar('#evidenciasSolucionReparacionSinEquipo');
+                        evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', false, 'Debe guardar los datos del dignostico.', 5000);
                     }
                 } else {
                     file.limpiar('#evidenciasSolucionReparacionSinEquipo');
-                    evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', false, 'Debe guardar los datos del dignostico.', 5000);
+                    evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', false, 'Falta llenar los datos de Información General.', 5000);
                 }
             });
         }
@@ -4572,56 +4676,74 @@ $(function () {
         };
         if ($('#evidenciasSolucionReparacionConRefaccion').val() !== '') {
             file.enviarArchivos('#evidenciasSolucionReparacionConRefaccion', 'Seguimiento/guardarReparacionConRefaccion', '#seccion-servicio-correctivo', data, function (respuesta) {
-                if (respuesta !== 'faltaDatosDiagnostico') {
-                    if (operacion === '2' && respuesta !== 'faltanServicios') {
-                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
-                        evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
-                            if (respuesta === 'serviciosConcluidos') {
-                                modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, '.evidenciasSolucionReparacionConRefaccion', respuestaAnterior, true, '4');
-                            } else {
-                                concluirServicio(servicio);
-                            }
-                        });
+                if (respuesta !== 'faltaDatosGenerales') {
+                    if (respuesta !== 'faltaDatosDiagnostico') {
+                        if (operacion === '2' && respuesta !== 'faltanServicios') {
+                            var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
+                            evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
+                                if (respuesta.code === 200) {
+                                    if (respuesta.message === 'serviciosConcluidos') {
+                                        modalCampoFirma(respuesta.message, datosTablaPoliza[1], servicio, '.evidenciasSolucionReparacionConRefaccion', respuestaAnterior, true, '4');
+                                    } else {
+                                        concluirServicio(servicio);
+                                    }
+                                } else {
+                                    servicios.mensajeModal(respuesta.message, 'ERROR SD', true);
+                                }
+                            });
+                        } else {
+                            select.cambiarOpcion('#selectSolucionReparacionSinEquipo', '');
+                            select.cambiarOpcion('#selectEquipoSolucionCambioEquipo', '');
+                            $('#inputObservacionesSolucionReparacionSinEquipo').val('');
+                            $('#inputSerieSolucionCambioEquipo').val('');
+                            $('#inputObservacionesSolucionCambioEquipo').val('');
+                            file.limpiar('#evidenciasSolucionReparacionSinEquipo');
+                            file.limpiar('#evidenciasSolucionCambioEquipo');
+                            evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', true, 'Datos Guardados Correctamente.', 3000);
+                        }
                     } else {
-                        select.cambiarOpcion('#selectSolucionReparacionSinEquipo', '');
-                        select.cambiarOpcion('#selectEquipoSolucionCambioEquipo', '');
-                        $('#inputObservacionesSolucionReparacionSinEquipo').val('');
-                        $('#inputSerieSolucionCambioEquipo').val('');
-                        $('#inputObservacionesSolucionCambioEquipo').val('');
-                        file.limpiar('#evidenciasSolucionReparacionSinEquipo');
-                        file.limpiar('#evidenciasSolucionCambioEquipo');
-                        evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', true, 'Datos Guardados Correctamente.', 3000);
+                        file.limpiar('#evidenciasSolucionReparacionConRefaccion');
+                        evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, 'Debe guardar los datos del dignostico.', 5000);
                     }
                 } else {
                     file.limpiar('#evidenciasSolucionReparacionConRefaccion');
-                    evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, 'Debe guardar los datos del dignostico.', 5000);
+                    evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, 'Falta llenar los datos de Información General.', 5000);
                 }
             });
         } else {
             evento.enviarEvento('Seguimiento/guardarReparacionConRefaccion', data, '#seccion-servicio-correctivo', function (respuesta) {
-                if (respuesta !== 'faltaDatosDiagnostico') {
-                    if (operacion === '2' && respuesta !== 'faltanServicios') {
-                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
-                        evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
-                            if (respuesta === 'serviciosConcluidos') {
-                                modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, '.evidenciasSolucionReparacionConRefaccion', respuestaAnterior, true, '4');
-                            } else {
-                                concluirServicio(servicio);
-                            }
-                        });
+                if (respuesta !== 'faltaDatosGenerales') {
+                    if (respuesta !== 'faltaDatosDiagnostico') {
+                        if (operacion === '2' && respuesta !== 'faltanServicios') {
+                            var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
+                            evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
+                                if (respuesta.code === 200) {
+                                    if (respuesta.message === 'serviciosConcluidos') {
+                                        modalCampoFirma(respuesta.message, datosTablaPoliza[1], servicio, '.evidenciasSolucionReparacionConRefaccion', respuestaAnterior, true, '4');
+                                    } else {
+                                        concluirServicio(servicio);
+                                    }
+                                } else {
+                                    servicios.mensajeModal(respuesta.message, 'ERROR SD', true);
+                                }
+                            });
+                        } else {
+                            select.cambiarOpcion('#selectSolucionReparacionSinEquipo', '');
+                            select.cambiarOpcion('#selectEquipoSolucionCambioEquipo', '');
+                            $('#inputObservacionesSolucionReparacionSinEquipo').val('');
+                            $('#inputSerieSolucionCambioEquipo').val('');
+                            $('#inputObservacionesSolucionCambioEquipo').val('');
+                            file.limpiar('#evidenciasSolucionReparacionSinEquipo');
+                            file.limpiar('#evidenciasSolucionCambioEquipo');
+                            evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', true, 'Datos Guardados Correctamente.', 3000);
+                        }
                     } else {
-                        select.cambiarOpcion('#selectSolucionReparacionSinEquipo', '');
-                        select.cambiarOpcion('#selectEquipoSolucionCambioEquipo', '');
-                        $('#inputObservacionesSolucionReparacionSinEquipo').val('');
-                        $('#inputSerieSolucionCambioEquipo').val('');
-                        $('#inputObservacionesSolucionCambioEquipo').val('');
-                        file.limpiar('#evidenciasSolucionReparacionSinEquipo');
-                        file.limpiar('#evidenciasSolucionCambioEquipo');
-                        evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', true, 'Datos Guardados Correctamente.', 3000);
+                        file.limpiar('#evidenciasSolucionReparacionConRefaccion');
+                        evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, 'Debe guardar los datos del dignostico.', 5000);
                     }
                 } else {
                     file.limpiar('#evidenciasSolucionReparacionConRefaccion');
-                    evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, 'Debe guardar los datos del dignostico.', 5000);
+                    evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, 'Falta llenar los datos de Información General.', 5000);
                 }
             });
         }
@@ -4670,54 +4792,72 @@ $(function () {
         };
         if ($('#evidenciasSolucionCambioEquipo').val() !== '') {
             file.enviarArchivos('#evidenciasSolucionCambioEquipo', 'Seguimiento/guardarCambioEquipo', '#seccion-servicio-correctivo', data, function (respuesta) {
-                if (respuesta !== 'faltaDatosDiagnostico') {
-                    if (operacion === '2' && respuesta !== 'faltanServicios') {
-                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
-                        evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
-                            if (respuesta === 'serviciosConcluidos') {
-                                modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, '.errorFormularioSolucionCambioEquipo', respuestaAnterior, true, '4');
-                            } else {
-                                concluirServicio(servicio);
-                            }
-                        });
+                if (respuesta !== 'faltaDatosGenerales') {
+                    if (respuesta !== 'faltaDatosDiagnostico') {
+                        if (operacion === '2' && respuesta !== 'faltanServicios') {
+                            var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
+                            evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
+                                if (respuesta.code === 200) {
+                                    if (respuesta.message === 'serviciosConcluidos') {
+                                        modalCampoFirma(respuesta.message, datosTablaPoliza[1], servicio, '.errorFormularioSolucionCambioEquipo', respuestaAnterior, true, '4');
+                                    } else {
+                                        concluirServicio(servicio);
+                                    }
+                                } else {
+                                    servicios.mensajeModal(respuesta.message, 'ERROR SD', true);
+                                }
+                            });
+                        } else {
+                            select.cambiarOpcion('#selectSolucionReparacionSinEquipo', '');
+                            $('#inputObservacionesSolucionReparacionSinEquipo').val('');
+                            $('#inputObservacionesSolucionReparacionConRefaccion').val('');
+                            tabla.limpiarTabla('#data-table-reparacion-refaccion');
+                            file.limpiar('#evidenciasSolucionReparacionSinEquipo');
+                            file.limpiar('#evidenciasSolucionReparacionConRefaccion');
+                            evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', true, 'Datos Guardados Correctamente.', 3000);
+                        }
                     } else {
-                        select.cambiarOpcion('#selectSolucionReparacionSinEquipo', '');
-                        $('#inputObservacionesSolucionReparacionSinEquipo').val('');
-                        $('#inputObservacionesSolucionReparacionConRefaccion').val('');
-                        tabla.limpiarTabla('#data-table-reparacion-refaccion');
-                        file.limpiar('#evidenciasSolucionReparacionSinEquipo');
-                        file.limpiar('#evidenciasSolucionReparacionConRefaccion');
-                        evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', true, 'Datos Guardados Correctamente.', 3000);
+                        file.limpiar('#evidenciasSolucionCambioEquipo');
+                        evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, 'Debe guardar los datos del dignostico.', 5000);
                     }
                 } else {
                     file.limpiar('#evidenciasSolucionCambioEquipo');
-                    evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, 'Debe guardar los datos del dignostico.', 5000);
+                    evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, 'Falta llenar los datos de Información General.', 5000);
                 }
             });
         } else {
             evento.enviarEvento('Seguimiento/guardarCambioEquipo', data, '#seccion-servicio-correctivo', function (respuesta) {
-                if (respuesta !== 'faltaDatosDiagnostico') {
-                    if (operacion === '2' && respuesta !== 'faltanServicios') {
-                        var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1]};
-                        evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
-                            if (respuesta === 'serviciosConcluidos') {
-                                modalCampoFirma(respuesta, datosTablaPoliza[1], servicio, '.errorFormularioSolucionCambioEquipo', respuestaAnterior, true, '4');
-                            } else {
-                                concluirServicio(servicio);
-                            }
-                        });
+                if (respuesta !== 'faltaDatosGenerales') {
+                    if (respuesta !== 'faltaDatosDiagnostico') {
+                        if (operacion === '2' && respuesta !== 'faltanServicios') {
+                            var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
+                            evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
+                                if (respuesta.code === 200) {
+                                    if (respuesta.message === 'serviciosConcluidos') {
+                                        modalCampoFirma(respuesta.message, datosTablaPoliza[1], servicio, '.errorFormularioSolucionCambioEquipo', respuestaAnterior, true, '4');
+                                    } else {
+                                        concluirServicio(servicio);
+                                    }
+                                } else {
+                                    servicios.mensajeModal(respuesta.message, 'ERROR SD', true);
+                                }
+                            });
+                        } else {
+                            select.cambiarOpcion('#selectSolucionReparacionSinEquipo', '');
+                            $('#inputObservacionesSolucionReparacionSinEquipo').val('');
+                            $('#inputObservacionesSolucionReparacionConRefaccion').val('');
+                            tabla.limpiarTabla('#data-table-reparacion-refaccion');
+                            file.limpiar('#evidenciasSolucionReparacionSinEquipo');
+                            file.limpiar('#evidenciasSolucionReparacionConRefaccion');
+                            evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', true, 'Datos Guardados Correctamente.', 3000);
+                        }
                     } else {
-                        select.cambiarOpcion('#selectSolucionReparacionSinEquipo', '');
-                        $('#inputObservacionesSolucionReparacionSinEquipo').val('');
-                        $('#inputObservacionesSolucionReparacionConRefaccion').val('');
-                        tabla.limpiarTabla('#data-table-reparacion-refaccion');
-                        file.limpiar('#evidenciasSolucionReparacionSinEquipo');
-                        file.limpiar('#evidenciasSolucionReparacionConRefaccion');
-                        evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', true, 'Datos Guardados Correctamente.', 3000);
+                        file.limpiar('#evidenciasSolucionCambioEquipo');
+                        evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, 'Debe guardar los datos del dignostico.', 5000);
                     }
                 } else {
                     file.limpiar('#evidenciasSolucionCambioEquipo');
-                    evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, 'Debe guardar los datos del dignostico.', 5000);
+                    evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, 'Falta llenar los datos de Información General.', 5000);
                 }
             });
         }
@@ -4754,19 +4894,17 @@ $(function () {
                         </div>\n\
                     </div>';
             }
-            if (respuesta !== 'faltaDatosGenerales') {
-                evento.mostrarModal('Firma', servicios.modalCampoFirmaExtra(html, 'Firma'));
-                $.each(encargadosTI, function (key, valor) {
-                    $("#selectTI").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
-                });
-                select.crearSelect('#selectTI');
-                $('#btnModalConfirmar').addClass('hidden');
-                $('#btnModalConfirmar').off('click');
-                servicios.validarTecnicoPoliza();
-                servicios.validarCamposFirma(ticket, servicio, true, concluirServicio, estatus);
-            } else {
-                evento.mostrarMensaje(idMensaje, false, 'Falta llenar los datos de Información General.', 5000);
-            }
+            evento.mostrarModal('Firma', servicios.modalCampoFirmaExtra(html, 'Firma'));
+            $.each(encargadosTI, function (key, valor) {
+                $("#selectTI").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
+            });
+
+            select.crearSelect('#selectTI');
+
+            $('#btnModalConfirmar').addClass('hidden');
+            $('#btnModalConfirmar').off('click');
+            servicios.validarTecnicoPoliza();
+            servicios.validarCamposFirma(ticket, servicio, true, concluirServicio, estatus);
         } else {
             var data = {servicio: servicio};
             evento.enviarEvento('/Generales/Servicio/ConsultaIdClienteSucursal', data, '#seccion-servicio-correctivo', function (respuesta) {
@@ -4783,19 +4921,17 @@ $(function () {
                         </div>\n\
                     </div>';
                 }
-                if (respuesta !== 'faltaDatosGenerales') {
-                    evento.mostrarModal('Firma', servicios.modalCampoFirmaExtra(html, 'Firma'));
-                    $.each(encargadosTI, function (key, valor) {
-                        $("#selectTI").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
-                    });
-                    select.crearSelect('#selectTI');
-                    $('#btnModalConfirmar').addClass('hidden');
-                    $('#btnModalConfirmar').off('click');
-                    servicios.validarTecnicoPoliza();
-                    servicios.validarCamposFirma(ticket, servicio, true, concluirServicio, estatus);
-                } else {
-                    evento.mostrarMensaje(idMensaje, false, 'Falta llenar los datos de Información General.', 5000);
-                }
+                evento.mostrarModal('Firma', servicios.modalCampoFirmaExtra(html, 'Firma'));
+                $.each(encargadosTI, function (key, valor) {
+                    $("#selectTI").append('<option value=' + valor.Id + '>' + valor.Nombre + '</option>');
+                });
+
+                select.crearSelect('#selectTI');
+
+                $('#btnModalConfirmar').addClass('hidden');
+                $('#btnModalConfirmar').off('click');
+                servicios.validarTecnicoPoliza();
+                servicios.validarCamposFirma(ticket, servicio, true, concluirServicio, estatus);
             });
         }
 
