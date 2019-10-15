@@ -1011,7 +1011,13 @@ class InformacionServicios extends General {
     }
 
     public function getApiKeyByUser(string $usuario) {
-        $key = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($usuario));
+        $keyTecnico = $this->MSP->getApiKeyByUser($usuario);
+        
+        if(empty($keyTecnico)){
+            $keyTecnico = $this->MSD->apiKeyJefe($usuario);
+        }
+        
+        $key = $this->ServiceDesk->validarAPIKey($keyTecnico);
 
         if (empty($key)) {
             $key = '';
