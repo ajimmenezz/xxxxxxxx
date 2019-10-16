@@ -113,7 +113,7 @@ class Solicitud extends General {
             left join t_solicitudes_internas tsi
             on ts.Id = tsi.IdSolicitud
             ' . $where . ' and ts.IdEstatus = 1');
-        
+
         return $data;
     }
 
@@ -1734,60 +1734,69 @@ class Solicitud extends General {
         }
         $resultado = array_merge($foliosAdist, $foliosSD);
         $arrayTitulos = ['Semana Creacion SD',
-                    'Mes Creacion SD',
-                    'Año Creacion SD',
-                    'Fecha Creacion SD',
-                    'Ticket SD',
-                    'Estatus SD',
-                    'Tecnico SD',
-                    'Solicitud Adist',
-                    'Ticket Adist',
-                    'Estatus Solicitud Adist',
-                    'Fecha Creacion Solicitud Adist'];
+            'Mes Creacion SD',
+            'Año Creacion SD',
+            'Fecha Creacion SD',
+            'Ticket SD',
+            'Estatus SD',
+            'Tecnico SD',
+            'Solicitud Adist',
+            'Ticket Adist',
+            'Estatus Solicitud Adist',
+            'Fecha Creacion Solicitud Adist'];
 
         return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
     }
 
     public function getFoliosSemanal() {
         $foliosAdist = $this->DBS->obtenerFoliosAdist();
-
-        $titulos = ['Mes',
-                    'Semana',
-                    'Ticket Service Desk',
-                    'Estatus Ticket AdIST',
-                    'Servicio AdIST',
-                    'Tipo Servicio',
-                    'Estatus Servicio',
-                    'Departamento',
-                    'Tecnico Asignado',
-                    'Region',
-                    'Sucursal',
-                    'Fecha Solicitud',
-                    'Solicitante',
-                    'Asunto',
-                    'Descripcion Solicitud',
-                    'Fecha Servicio',
-                    'Fecha Inicio Servicio',
-                    'Fecha Conclusion Servicio',
-                    'Area Atencion',
-                    'Punto',
-                    'Equipo Diagnosticado',
-                    'Componente',
-                    'Tipo Diagnostico',
-                    'Tipo Falla',
-                    'Falla',
-                    'Fecha Diagnostico',
-                    'Observaciones Diagnostico',
-                    'Tipo Solucion',
-                    'Solucion Sin Equipo',
-                    'Cambio Equipo',
-                    'Cambio Refaccion',
-                    'Solucion Servicio Sin Clasificar',
-                    'Tiempo Solicitud',
-                    'Tiempo Servicio',
-                    'Tiempo Transcurrido Entre Solicitud Servicio'];
-
+        $titulos = $this->cabeceraExcelFolios();
         return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios.xlsx');
+    }
+
+    public function getFoliosAnual() {
+        $foliosAdist = $this->DBS->obtenerFoliosAnualAdist();
+        $titulos = $this->cabeceraExcelFolios();
+        return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios.xlsx');
+    }
+
+    private function cabeceraExcelFolios() {
+        $titulos = ['Mes',
+            'Semana',
+            'Ticket Service Desk',
+            'Estatus Ticket AdIST',
+            'Servicio AdIST',
+            'Tipo Servicio',
+            'Estatus Servicio',
+            'Departamento',
+            'Tecnico Asignado',
+            'Region',
+            'Sucursal',
+            'Fecha Solicitud',
+            'Solicitante',
+            'Asunto',
+            'Descripcion Solicitud',
+            'Fecha Servicio',
+            'Fecha Inicio Servicio',
+            'Fecha Conclusion Servicio',
+            'Area Atencion',
+            'Punto',
+            'Equipo Diagnosticado',
+            'Componente',
+            'Tipo Diagnostico',
+            'Tipo Falla',
+            'Falla',
+            'Fecha Diagnostico',
+            'Observaciones Diagnostico',
+            'Tipo Solucion',
+            'Solucion Sin Equipo',
+            'Cambio Equipo',
+            'Cambio Refaccion',
+            'Solucion Servicio Sin Clasificar',
+            'Tiempo Solicitud',
+            'Tiempo Servicio',
+            'Tiempo Transcurrido Entre Solicitud Servicio'];
+        return $titulos;
     }
 
     public function crearExcel($datosFolio, $arrayTitulos, $nombreArchivo) {

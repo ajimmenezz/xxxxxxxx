@@ -15,6 +15,7 @@
                         echo '<div class="btn-group">
                                 <a href="javascript:;" data-toggle="dropdown" class="btn btn-xs btn-warning dropdown-toggle">Acciones <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
+                                        <li><a id="reporteAnual" href="javascript:;">Reporte Anual</a></li>
                                         <li><a id="reporteSemanal" href="javascript:;">Reporte Semanal</a></li>
                                         <li><a id="compararFolios" href="javascript:;">Comparativa Adist/SD</a></li>
                                 </ul>

@@ -35,6 +35,7 @@
                                         <th class="all">Estado</th>
                                         <th class="all">Falta Autorizar</th>
                                         <th class="never">Archivo</th>
+                                        <th class="never">Archivo Extra</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -110,6 +111,7 @@
                                                         break;
                                                 }
                                                 echo '<td>'.$value['Archivo'].'</td>';
+                                                echo '<td>'.$value['ArchivoExtra'].'</td>';
                                             echo "</tr>";
                                         }
                                     }
@@ -221,7 +223,7 @@
                         <div class="col-md-3">                    
                             <div id="citaFolio" class="form-group" style="display: none">
                                 <br>
-                                <label>Cita o Folio *</label>
+                                <label>Cita o Folio</label>
                                 <input type="text" class="form-control" id="inputCitaFolio" style="width: 100%"/>
                             </div>
                         </div>
