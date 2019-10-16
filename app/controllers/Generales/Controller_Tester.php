@@ -48,7 +48,6 @@ class Controller_Tester extends Base {
                 $datos = $this->input->post();
                 $resultado = $this->Servicio->crearPdfVuelta($datos);
                 break;
-                break;
             case 'concluirSolicitudesAbiertas':
                 $resultado = $this->Solicitud->concluirSolicitudesAbiertas();
                 break;

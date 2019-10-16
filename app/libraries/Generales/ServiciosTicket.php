@@ -1154,7 +1154,7 @@ class ServiciosTicket extends General {
             'Descripcion' => $datos['Descripcion'],
             'IdServicioOrigen' => $datos['servicio']
         );
-        
+
         $consulta = $this->setServicio($data, $datos['servicio']);
 
         if (!empty($consulta)) {
@@ -1170,7 +1170,7 @@ class ServiciosTicket extends General {
         try {
             $this->DBS->iniciaTransaccion();
             $datosSolicitudAnterior = $this->DBS->getDatosSolicitud($datos['IdSolicitud']);
-            
+
             $solicitudNueva = 'insert t_solicitudes set 
                 Ticket = ' . $datosSolicitudAnterior['Ticket'] . ',
                 IdTipoSolicitud = "4",
@@ -1201,13 +1201,13 @@ class ServiciosTicket extends General {
                                     "group": "' . $informacionSDAnterior["GROUP"] . '",
                                     "level": "' . $informacionSDAnterior["LEVEL"] . '",
                                     "category": "' . $informacionSDAnterior["CATEGORY"] . '",
-                                    "subcategory": "' . $informacionSDAnterior["SUBCATEGORY"]. '"';
+                                    "subcategory": "' . $informacionSDAnterior["SUBCATEGORY"] . '"';
                 $datosSD = $this->ServiceDesk->getTicketServiceDesk($usuario['SDKey'], $informacionSD);
                 $folio = $datosSD->operation->Details->WORKORDERID;
                 $ticket = $this->Ticket->setTicket(array('Folio' => $folio), array('descripcion' => $datos['Descripcion'], 'cliente' => $datosSolicitud['IdCliente']));
-                
+
                 $this->DBS->cambiarEstatusSolicitud(array(
-                    'Folio' => '"' . $folio . '"',
+                    'Folio' => $folio,
                     'Ticket' => $ticket), array('Id' => $idSolicitud));
                 $this->DBS->setDatosSolicitudInternas('t_solicitudes_internas', array('IdSolicitud' => $idSolicitud, 'Descripcion' => $datos['Descripcion'], 'Asunto' => $datos['Descripcion']));
             }

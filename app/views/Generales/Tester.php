@@ -91,7 +91,7 @@
             <button  id="btn-pdfVuelta">Solicitar</button>
             <br /><br /><br />
             <pre>
-                <div id="respuesta">
+                <div id="respuestaPdfVuelta">
 
                 </div>
             </pre>
