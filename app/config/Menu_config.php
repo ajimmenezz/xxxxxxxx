@@ -316,7 +316,7 @@ $config['Generales'] = array(
             'parsley/src/parsley',
             'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Fecha', 'Base/Tabla', 'RH/permisos_vacaciones', 'Base/Botones', 'Base/Nota'),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Fecha', 'Base/Tabla', 'RH/permisos_vacaciones', 'Base/Botones', 'Base/Nota', 'Componentes/HerramientasWeb/Modal',),
         'pluginsJs' => array(
             'bootstrap-timepicker/js/bootstrap-timepicker',
             'DataTables/js/jquery.dataTables',
