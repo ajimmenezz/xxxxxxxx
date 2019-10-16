@@ -436,7 +436,7 @@ class ServiciosTicket extends General {
                         $data['informacionServicio']['serviciosAsignados'] = $this->getServiciosAsignados('11');
                         break;
                 }
-            } else if ($datosServicio['IdTipoServicio'] === '20' || $datosServicio['IdTipoServicio'] === '50') {
+            } else if ($datosServicio['IdTipoServicio'] === '20') {
                 $data['historialAvancesProblemas'] = $this->mostrarHistorialAvancesProblemas($datos['servicio']);
                 $data['bitacoraReporteFalso'] = $this->SeguimientoPoliza->mostrarBitacoraReporteFalso($datos['servicio']);
                 /* Aqui comienzan las lineas de seguimiento de los servicios de Correctivo */
@@ -1135,7 +1135,7 @@ class ServiciosTicket extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
-        if ($datos['IdTipoServicio'] === '27' || $datos['IdTipoServicio'] === '50') {
+        if ($datos['IdTipoServicio'] === '27') {
             $datosTicket = $this->crearTicketSDProactivo($datos);
             if ($datosTicket !== FALSE) {
                 $datos['IdSolicitud'] = $datosTicket['idSolicitud'];

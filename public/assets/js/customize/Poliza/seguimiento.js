@@ -142,7 +142,6 @@ $(function () {
                         personalizarDependiendoSucursalMantenimiento(respuesta);
                         break;
                     case '20':
-                    case '50':
                         iniciarElementosPaginaSeguimientoCorrectivo(respuesta, datosTabla);
                         eventosParaSeccionSeguimientoCorrectivo(datosTabla, respuesta);
                         personalizarDependiendoSucursalCorrectivo(respuesta);
