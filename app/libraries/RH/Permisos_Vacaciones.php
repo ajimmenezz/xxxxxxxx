@@ -125,7 +125,7 @@ class Permisos_Vacaciones extends General {
                 $tplIdx = $this->pdf->importPage($i);
                 $this->pdf->useTemplate($tplIdx, 10, 0, 190);
             }
-        } catch (\InvalidArgumentException $ex) {
+        } catch (\spl_object_hash $ex) {
             $this->pdf->AddPage();
             $this->pdf->SetFont("helvetica", "B", 11);
             $this->pdf->Cell(14, 0, "Error al Adjuntar el Archivo");
