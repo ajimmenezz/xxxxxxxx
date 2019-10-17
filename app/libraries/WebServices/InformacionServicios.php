@@ -1012,15 +1012,15 @@ class InformacionServicios extends General {
 
     public function getApiKeyByUser(string $usuario) {
         $keyTecnico = $this->MSP->getApiKeyByUser($usuario);
-        
+
         if(empty($keyTecnico)){
             $keyTecnico = $this->MSD->apiKeyJefe($usuario);
         }
         
-        $key = $this->ServiceDesk->validarAPIKey($keyTecnico);
-
-        if (empty($key)) {
-            $key = '';
+        $key = $this->ServiceDesk->validarKey($keyTecnico);
+        
+        if ($key['code'] === 400) {
+            $key = $this->MSD->apiKeyJefe($usuario);
         }
 
         return $key;
