@@ -1016,11 +1016,13 @@ class InformacionServicios extends General {
         if(empty($keyTecnico)){
             $keyTecnico = $this->MSD->apiKeyJefe($usuario);
         }
-        
-        $key = $this->ServiceDesk->validarKey($keyTecnico);
-        
-        if ($key['code'] === 400) {
+
+        $respuestaKey = $this->ServiceDesk->validarKey($keyTecnico);
+
+        if ($respuestaKey['code'] === 400) {
             $key = $this->MSD->apiKeyJefe($usuario);
+        }else{
+            $key = $respuestaKey['messege'];
         }
 
         return $key;
