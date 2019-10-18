@@ -1911,7 +1911,6 @@ class ServiciosTicket extends General {
             $descripcion = 'Se ha Reabrio el Servicio del siguiente Ticket: ' . $datos['ticket'];
 
             $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '2');
-            $this->copiarArchivoFirma($datos['servicio'], $fecha);
 
             $data = array(
                 'IdUsuario' => $usuario['Id'],
@@ -1954,7 +1953,6 @@ class ServiciosTicket extends General {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
         $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '10', '0');
-        $this->copiarArchivoFirma($datos['servicio'], $fecha);
 
         $data = array(
             'IdUsuario' => $usuario['Id'],
@@ -1977,23 +1975,6 @@ class ServiciosTicket extends General {
             return $this->getServiciosBySolicitud($datos['idSolicitud']);
         } else {
             return FALSE;
-        }
-    }
-
-    private function copiarArchivoFirma(string $servicio, string $fecha) {
-        $urlFirmaServicio = $this->DBST->consultaGeneral('SELECT Firma FROM t_servicios_ticket WHERE Id = "' . $servicio . '"');
-        $fechaNueva = str_replace(" ", "_", $fecha);
-
-        if ($urlFirmaServicio[0]['Firma'] !== NULL) {
-            if (strpos($_SERVER['HTTP_USER_AGENT'], 'Windows')) {
-                $nuevaUrlFirmaServicioLinux = str_replace("/", "\\", $urlFirmaServicio[0]['Firma']);
-            } else {
-                $nuevaUrlFirmaServicioLinux = $urlFirmaServicio[0]['Firma'];
-            }
-            $nuevaUrlFirmaServicio = str_replace(".png", "_" . $fechaNueva, $nuevaUrlFirmaServicioLinux);
-            $nuevaUrlFirmaServicio = str_replace(":", "-", $nuevaUrlFirmaServicio);
-
-            copy(getcwd() . $nuevaUrlFirmaServicioLinux, getcwd() . $nuevaUrlFirmaServicio . ".png");
         }
     }
 
