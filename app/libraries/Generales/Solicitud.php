@@ -1755,6 +1755,8 @@ class Solicitud extends General {
     }
 
     public function getFoliosAnual() {
+        ini_set('memory_limit', '2048M');
+        set_time_limit('1200');
         $foliosAdist = $this->DBS->obtenerFoliosAnualAdist();
         $titulos = $this->cabeceraExcelFolios();
         return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios.xlsx');
