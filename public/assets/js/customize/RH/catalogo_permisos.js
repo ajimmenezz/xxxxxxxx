@@ -97,6 +97,7 @@ $(function () {
         }
         if (typeof infoTabla[4] !== 'undefined') {
             $('#posibleCancelacion').removeClass('hidden');
+            $('#documentacion').removeClass('hidden');
             if (infoTabla[4] === 'Si') {
                 $('#editarEstadoCancelacion').select2().val(1).trigger('change');
             } else {
@@ -106,6 +107,11 @@ $(function () {
                 $('#editarNivelCancelacion').select2().val(infoTabla[6]).trigger('change');
             } else {
                 $('#editarNivelCancelacion').select2().val(null).trigger('change');
+            }
+            if (infoTabla[7] === 'Si') {
+                $('#editarArchivoExtra').select2().val(1).trigger('change');
+            } else {
+                $('#editarArchivoExtra').select2().val(0).trigger('change');
             }
         } else {
             $('#posibleCancelacion').addClass('hidden');
@@ -133,9 +139,13 @@ $(function () {
                             datos.nivelCancelacion = 'null';
                         }
                     });
+                    $(".selectArchivoExtra").each(function () {
+                        datos.archivo = $(this).val();
+                    });
                 } else {
                     datos.cancelacion = '';
                     datos.nivelCancelacion = '';
+                    datos.archivo = '';
                 }
                 peticionBackend(ruta, datos);
             }

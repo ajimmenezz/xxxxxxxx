@@ -88,6 +88,7 @@ $route['Poliza/Seguimiento/(:any)'] = 'Poliza/Controller_Seguimiento/manejarEven
 $route['Poliza/EventoCatalogoRegionesCliente/(:any)'] = 'Poliza/Controller_Poliza/manejarEvento/$1';
 $route['Poliza/EventoCatalogos/(:any)'] = 'Poliza/Controller_Catalogos/manejarEvento/$1';
 $route['Poliza/ReportesPoliza/(:any)'] = 'Poliza/Controller_ReportesPoliza/manejarEvento/$1';
+$route['Poliza/Tester/(:any)'] = 'Generales/Controller_Tester/manejarEvento/$1';
 $route['Poliza/EventoCatalogoRevisionFisica/(:any)'] = 'Poliza/Controller_Poliza/manejarEvento/$1';
 
 /* Routers para el manejo nuevo de Proyectos */
@@ -294,6 +295,7 @@ $route['Prime/Inventario/(:any)'] = 'Prime/Controller_Inventario/manejarEvento/$
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
 $route['Reportes/Lexmark/(:any)'] = 'Reportes/Controller_PrinterLexmark/manejarEvento/$1';
+$route['Reportes/SD/(:any)'] = 'Reportes/Controller_Servicedesk/manejarEvento/$1';
 
 $route['Error/(:any)'] = 'Controller_Error/$1';
 

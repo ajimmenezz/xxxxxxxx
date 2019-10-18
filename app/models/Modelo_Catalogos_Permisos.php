@@ -44,7 +44,8 @@ class Modelo_Catalogos_Permisos extends Base {
                             Observaciones = "' . $datos['observaciones'] . '", 
                             Flag = "' . $datos['flag'] . '", 
                             Cancelacion = "' . $datos['cancelacion'] . '", 
-                            NivelCancelacion = ' . $datos['nivelCancelacion'] . '
+                            NivelCancelacion = ' . $datos['nivelCancelacion'] . ',
+                            Archivo = ' . $datos['archivo'] . '
                             where Id = "' . $datos['id'] . '"');
         } else {
             $this->actualizar('UPDATE ' . $tabla .

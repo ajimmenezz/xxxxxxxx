@@ -339,6 +339,9 @@ class Modelo_Busqueda extends Modelo_Base {
                                                                 on tcsr.IdRefaccion = cvce.Id
                                                             where tcsr.IdServicioOrigen = "' . $servicio . '" 
                                                             group by Servicio');
+                if(empty($array['solicitudesRefaccionServicio'])){
+                    $array['solicitudesRefaccionServicio'] = 'Sin Información';
+                }
                 break;
             case '2':
                 $array['solicitudesEquipoServicio'] = $this->consulta('select 
@@ -353,6 +356,9 @@ class Modelo_Busqueda extends Modelo_Base {
                                                                 on tcse.IdModelo = ve.Id
                                                             where tcse.IdServicioOrigen = "' . $servicio . '" 
                                                             group by Servicio');
+                if(empty($array['solicitudesEquipoServicio'])){
+                    $array['solicitudesEquipoServicio'] = 'Sin Información';
+                }
                 break;
             case '3':
                 $array['garantiaRespaldo'] = $this->consulta('SELECT * FROM t_correctivos_garantia_respaldo WHERE IdServicio = "' . $servicio . '" ORDER BY Id DESC LIMIT 1');
@@ -368,6 +374,10 @@ class Modelo_Busqueda extends Modelo_Base {
                                                                                                             (SELECT Equipo FROM v_equipos WHERE Id = tegr.IdModeloRespaldo) NombreEquipoRespaldo
                                                                                                         FROM t_equipos_garantia_respaldo tegr 
                                                                                                         WHERE tegr.IdGarantia = "' . $array['garantiaRespaldo'][0]['Id'] . '"');
+                
+                    if(empty($returnArrayEquipoGarantia['equiposGarantiaRespaldo'])){
+                        $returnArrayEquipoGarantia['equiposGarantiaRespaldo'] = 'Sin Información';
+                    }
                 }
                 if ($array['garantiaRespaldo'][0]['EsRespaldo'] === '0' && $array['garantiaRespaldo'][0]['SolicitaEquipo'] === '1') {
                     $returnArrayEquipoGarantia['solicitudEquipoRespaldo'] = $this->consulta('SELECT 
@@ -379,6 +389,9 @@ class Modelo_Busqueda extends Modelo_Base {
                                                                                                         WHERE tsr.IdServicioOrigen = "' . $servicio . '" 
                                                                                                         AND tst.IdTipoServicio = 21
                                                                                                         ORDER BY tsr.Id DESC LIMIT 1');
+                    if(empty($returnArrayEquipoGarantia['solicitudEquipoRespaldo'])){
+                        $returnArrayEquipoGarantia['solicitudEquipoRespaldo'] = 'Sin Información';
+                    }
                 }
                 $array['informacionGarantiaRespaldo'] = $returnArrayEquipoGarantia;
                 break;

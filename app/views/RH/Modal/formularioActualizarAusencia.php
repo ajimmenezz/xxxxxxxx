@@ -76,7 +76,7 @@
                 <div class="col-md-4">                    
                     <div class="form-group">
                         <label>Motivo Ausencia *</label>
-                        <select id="selectMotivoAusenciaAct" class="form-control" name="SelectMotivoAusenciaAct" data-parsley-required="true" style="width: 100%" data-parsley-required="true">
+                        <select id="selectMotivoAusenciaAct" class="form-control" name="SelectMotivoAusenciaAct" data-parsley-required="true" style="width: 100%" data-parsley-required="true" disabled>
                             <?php
                             foreach ($motivosAusencia as $motivoAusencia) {
                                 if ($datosAusencia[0]["IdMotivoAusencia"] == $motivoAusencia['Id']) {
@@ -91,7 +91,7 @@
                 </div>
                 <div class="col-md-4">
                     <?php
-                    if ($datosAusencia[0]["IdMotivoAusencia"] == 1 || $datosAusencia[0]["IdMotivoAusencia"] == 2 || $datosAusencia[0]["IdMotivoAusencia"] == 6 || $datosAusencia[0]["IdMotivoAusencia"] == 7 || $datosAusencia[0]["IdMotivoAusencia"] == 8 || $datosAusencia[0]["IdMotivoAusencia"] == 9 || $datosAusencia[0]["IdMotivoAusencia"] == 11 || $datosAusencia[0]["IdMotivoAusencia"] == 12) {
+                    if ($datosAusencia[0]['Doc'] == 1) {
                         if ($datosAusencia[0]["FolioDocumento"] != "") {
                             echo '<div id="citaFolioAct" class="form-group">
                                 <label>Cita o Folio *</label>
@@ -128,10 +128,11 @@
                 </div>
                 <div class="col-md-10">
                     <?php
-                    if ($datosAusencia[0]["IdMotivoAusencia"] == 1 || $datosAusencia[0]["IdMotivoAusencia"] == 2 || $datosAusencia[0]["IdMotivoAusencia"] == 6 || $datosAusencia[0]["IdMotivoAusencia"] == 7 || $datosAusencia[0]["IdMotivoAusencia"] == 8 || $datosAusencia[0]["IdMotivoAusencia"] == 9 || $datosAusencia[0]["IdMotivoAusencia"] == 11 || $datosAusencia[0]["IdMotivoAusencia"] == 12) {
+                    if ($datosAusencia[0]['Doc'] == 1) {
                         if($datosAusencia[0]["ArchivosOriginales"] == '') {
                                 echo '<div id="archivoCitaIncapacidadAct" class="form-group">
-                                    <label>Archivo Cita o Incapacidad</label>
+                                    <label>Archivo Cita o Incapacidad</label><br>
+                                    <label style="color: red">Todos los archivos que se requiera adjuntar deben ser escaneados a color y en formato PDF</label>
                                     <input id="inputEvidenciaIncapacidadAct" name="evidenciasIncapacidadAct[]" type="file" multiple data-parsley-required="true">
                                 </div>';
                         } else {
@@ -141,7 +142,8 @@
                         }
                     }else{
                         echo '<div id="archivoCitaIncapacidadAct" class="form-group" style="display: none">
-                                <label>Archivo Cita o Incapacidad</label>
+                                <label>Archivo Cita o Incapacidad</label><br>
+                                <label style="color: red">Todos los archivos que se requiera adjuntar deben ser escaneados a color y en formato PDF</label>
                                 <input id="inputEvidenciaIncapacidadAct" name="evidenciasIncapacidadAct[]" type="file" multiple>
                             </div>';
                     }

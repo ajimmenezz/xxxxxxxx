@@ -24,11 +24,16 @@ class Ticket extends General {
      */
 
     public function setTicket(array $datos, array $informacion) {
+        if(empty($informacion['cliente'])){
+           $informacion['cliente'] = '4'; 
+        }
+        
         if ($datos['Folio'] !== '') {
             $ticket = $this->DBT->setTicketAdist2($informacion['cliente'], $informacion['descripcion'], $datos['Folio']);
         } else {
             $ticket = $this->DBT->setTicketAdist2($informacion['cliente'], $informacion['descripcion']);
         }
+        
         return $ticket;
     }
 

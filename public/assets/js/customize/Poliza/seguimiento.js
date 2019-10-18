@@ -2953,8 +2953,9 @@ $(function () {
             });
         });
         $('#selectTipoFallaComponenteCorrectivo').on('change', function () {
+            var componente = $('#selectComponenteDiagnosticoCorrectivo').val();
             var tipoFalla = $('#selectTipoFallaComponenteCorrectivo').val();
-            var dataTipoFalla = {tipoFalla: tipoFalla};
+            var dataTipoFalla = {tipoFalla: tipoFalla, componente: componente};
             select.cambiarOpcion('#selectFallaComponenteDiagnosticoCorrectivo', '');
             $('#selectFallaComponenteDiagnosticoCorrectivo').empty().append('<option value="">Seleccionar</option>');
             evento.enviarEvento('Seguimiento/ConsultaFallasRefacionXTipoFalla', dataTipoFalla, '#seccion-servicio-correctivo', function (respuesta) {
@@ -3779,7 +3780,7 @@ $(function () {
         var areaPunto = $('#selectAreaPuntoCorrectivo').val();
         var equipo = $('#selectEquipoCorrectivo').val();
         var numeroRenglon = areaPunto.search(/-/i);
-        var punto = areaPunto.substr(2, numeroRenglon);
+        var punto = areaPunto.substr(2, 2);
         var area = areaPunto.substr(0, numeroRenglon);
         punto = Math.abs(punto);
         var serie = $('#inputSerieCorrectivo').val();
