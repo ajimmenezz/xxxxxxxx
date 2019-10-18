@@ -152,19 +152,21 @@ $(function () {
                 });
             } else {
                 if (data.archivoMotivoAusencia == 1) {
-                    modal.mostrarModalBasico('Aviso', '<h4>Falta la respectiva documentación para tu permiso<br>Recuerda que tienes 3 dias para entregarla o adjuntarla</h4>');
+                    modal.mostrarModalBasico('Aviso', '<h4>Falta la respectiva documentación para tu permiso.<br>\n\
+                                            Recuerda que tienes 3 días avilés para entregarla o adjuntarla,\n\
+                                            en caso de no finalizarse se cancelara de forma automática la presente solicitud</h4>');
                     $('#btnAceptar').on('click', function () {
-                        peticionCrearPermiso(data);
+                        peticionCrearPermiso('#modal-dialogo', data);
                     });
                 } else {
-                    peticionCrearPermiso(data);
+                    peticionCrearPermiso('#panelPermisosVacaciones', data);
                 }
             }
         }
     });
 
-    function peticionCrearPermiso(informacion) {
-        evento.enviarEvento('EventoPermisosVacaciones/Permisos', data, '#panelPermisosVacaciones', function (respuesta) {
+    function peticionCrearPermiso(panel, informacion) {
+        evento.enviarEvento('EventoPermisosVacaciones/Permisos', informacion, panel, function (respuesta) {
             if (respuesta) {
                 window.open(respuesta.ruta, '_blank');
                 location.reload();
@@ -351,7 +353,7 @@ $(function () {
                                 horaAusencia: $('#selectSolicitudHoraAct').val(),
                                 pdf: $('#archivoPDF').val()
                             }
-                            if ($('#selectMotivoAusenciaAct').val() == '1' || $('#selectMotivoAusenciaAct').val() == '2' || $('#selectMotivoAusenciaAct').val() == '6' || $('#selectMotivoAusenciaAct').val() == '7' || $('#selectMotivoAusenciaAct').val() == '8' || $('#selectMotivoAusenciaAct').val() == '9' || $('#selectMotivoAusenciaAct').val() == '11' || $('#selectMotivoAusenciaAct').val() == '12') {
+                            if (dataActualizar.evidenciaIncapacidad !== "") {
                                 evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermisoArchivo', dataActualizar, '#panelActualizarPermisos', function (respuesta) {
                                     if (respuesta !== 'otraImagen') {
                                         window.open(respuesta.ruta, '_blank');
@@ -361,7 +363,6 @@ $(function () {
                                     }
                                 });
                             } else {
-                                dataActualizar['evidenciaIncapacidad'] = "";
                                 evento.enviarEvento('EventoPermisosVacaciones/ActualizarPermiso', dataActualizar, '#panelActualizarPermisos', function (respuesta) {
                                     if (respuesta) {
                                         window.open(respuesta.ruta, '_blank');

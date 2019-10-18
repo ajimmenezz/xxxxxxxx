@@ -104,6 +104,19 @@ class Permisos_Vacaciones extends General {
     }
 
     public function revisarArchivoAdjunto($datosPermisos) {
+        set_error_handler( function ($errno, $errstr, $errfile, $errline) {
+
+            switch ($errno) {
+                case E_WARNING:
+                    $this->error['tipo'] = 'Warning';
+                    $this->error['codigo'] = 'PDF001';
+                    $this->error['error'] = $errstr;
+                    break;
+            }
+
+            throw new \Exception('Error al adjuntar');
+        }, E_WARNING);
+        
         $this->guardarImagen($datosPermisos);
 
         $nombreArchivo = explode("\\", $datosPermisos['evidenciaIncapacidad']);
@@ -128,9 +141,13 @@ class Permisos_Vacaciones extends General {
         } catch (\spl_object_hash $ex) {
             $this->pdf->AddPage();
             $this->pdf->SetFont("helvetica", "B", 11);
+            $this->pdf->Cell(14, 0, "Error del objeto PDF");
+        } catch (\Exception $ex){
+            $this->pdf->AddPage();
+            $this->pdf->SetFont("helvetica", "B", 11);
             $this->pdf->Cell(14, 0, "Error al Adjuntar el Archivo");
-//            echo $ex->getTraceAsString();
         }
+        restore_error_handler();
     }
 
     public function guardarImagen($datosPermisos) {
@@ -267,7 +284,7 @@ class Permisos_Vacaciones extends General {
     }
 
     public function revisarActualizarPermiso($datosPermisos) {
-        if ($datosPermisos['evidenciaIncapacidad'] !== "" && ($datosPermisos['motivoAusencia'] == '3' || $datosPermisos['motivoAusencia'] == '4')) {
+        if ($datosPermisos['evidenciaIncapacidad'] !== "") {
             $nombreArchivo = explode("\\", $datosPermisos['evidenciaIncapacidad']);
             $divideNombreArchivo = preg_split("/[\s-]+/", $nombreArchivo[2]);
             $concatenaNombre = "";
@@ -339,44 +356,9 @@ class Permisos_Vacaciones extends General {
                 $texto .= 'No Asistirá ';
                 break;
         }
-        switch ($datosPermisos['motivoAusencia']) {
-            case '1':
-                $texto .= 'CONSULTA MEDICO IMSS';
-                break;
-            case '2':
-                $texto .= 'CONSULTA DENTISTA IMSS';
-                break;
-            case '3':
-                $texto .= 'PERMISOS POR RAZONES DE TRABAJO EXTERNO';
-                break;
-            case '4':
-                $texto .= 'PERMISOS POR CURSOS DE CAPACITACION';
-                break;
-            case '5':
-                $texto .= 'ASUNTOS PERSONALES';
-                break;
-            case '6':
-                $texto .= 'CONSULTA MEDICO PARTICULAR';
-                break;
-            case '7':
-                $texto .= 'CONSULTA DENTISTA PARTICULAR';
-                break;
-            case '8':
-                $texto .= 'INCAPACIDAD IMSS DEL TRABAJADOR';
-                break;
-            case '9':
-                $texto .= 'CONSULTA MEDICO O DENTISTA IMSS';
-                break;
-            case '10':
-                $texto .= 'ASUNTOS PERSONALES';
-                break;
-            case '11':
-                $texto .= 'CONSULTA MEDICO PARTICULAR';
-                break;
-            case '12':
-                $texto .= 'CONSULTA DENTISTA PARTICULAR';
-                break;
-        }
+        
+        $texto .= $datosPermisos['textoMotivoAusencia'];
+                
         $texto .= ' para el día ' . $datosPermisos['fechaPermisoDesde'] . '</p><br><br>
                     <a href="https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1) . '">Archivo</a><br><br><br>
                     <a href="https://' . $_SERVER['SERVER_NAME'] . '/RH/Autorizar_permisos">Sistema</a>';
