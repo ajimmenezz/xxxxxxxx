@@ -44,7 +44,7 @@ class Controller_PermisosVacaciones extends Base {
                 $resultado = $this->autorizar->conluirAutorizacion($this->input->post());
                 break;
             case 'exportarExcel':
-                $resultado = $this->autorizar->exportExcel();
+                $resultado = $this->autorizar->exportExcel($this->input->post());
                 break;
             case 'MostarMotivosAucencia':
                 $resultado = $this->permisos->obtenerMotivoAusencia($this->input->post());

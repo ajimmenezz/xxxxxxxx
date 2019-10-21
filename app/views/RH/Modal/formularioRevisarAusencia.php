@@ -120,44 +120,7 @@
                     <div class="form-group">
                         <label>Motivo Ausencia</label>
                         <?php
-                        switch ($datosAusencia[0]['IdMotivoAusencia']) {
-                            case '1':
-                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA MEDICO IMSS"/>';
-                                break;
-                            case '2':
-                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA DENTISTA IMSS"/>';
-                                break;
-                            case '3':
-                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="PERMISOS POR RAZONES DE TRABAJO EXTERNO"/>';
-                                break;
-                            case '4':
-                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="PERMISOS POR CURSOS DE CAPACITACION"/>';
-                                break;
-                            case '5':
-                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="ASUNTOS PERSONALES"/>';
-                                break;
-                            case '6':
-                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA MEDICO PARTICULAR"/>';
-                                break;
-                            case '7':
-                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA DENTISTA PARTICULAR"/>';
-                                break;
-                            case '8':
-                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="INCAPACIDAD IMSS DEL TRABAJADOR"/>';
-                                break;
-                            case '9':
-                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA MEDICO O DENTISTA IMSS"/>';
-                                break;
-                            case '10':
-                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="ASUNTOS PERSONALES"/>';
-                                break;
-                            case '11':
-                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA MEDICO PARTICULAR"/>';
-                                break;
-                            case '12':
-                                echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="CONSULTA DENTISTA PARTICULAR"/>';
-                                break;
-                        }
+                        echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="'.$datosAusencia[0]["MotivoAusencia"].'"/>';
                         ?>
                     </div>
                 </div>
