@@ -476,7 +476,7 @@ class Modelo_Solicitud extends Modelo_Base {
                                     ts.Folio AS TicketServiceDesk,
                                     estatus(ts.IdEstatus) as EstatusTicketAdIST,
                                     tst.Id as ServicioAdIST,
-                                    tipoServicio(tst.IdTipoServicio) as TipoServicio,
+                                    IF(tipoServicio(tst.IdTipoServicio)  =  'Correctivo Adicional', 'Correctivo', tipoServicio(tst.IdTipoServicio)) AS TipoServicio,
                                     estatus(tst.IdEstatus) as EstatusServicio,
                                     departamentoArea(ts.IdDepartamento) as Departamento,
                                     nombreUsuario(tst.Atiende) as TecnicoAsignado,
@@ -536,7 +536,8 @@ class Modelo_Solicitud extends Modelo_Base {
                                 left join t_correctivos_generales tcg on tst.Id = tcg.IdServicio
                                 left join t_correctivos_diagnostico tcd on tcd.Id = (select MAX(Id) from t_correctivos_diagnostico where IdServicio = tst.Id)
                                 left join t_correctivos_soluciones tcs on tcs.Id = (select MAX(Id) from t_correctivos_soluciones where IdServicio = tst.Id)
-                                WHERE ts.FechaCreacion >= '2019-09-01 00:00:00'
+                                WHERE MONTH(ts.FechaCreacion) = MONTH(CURRENT_DATE())
+                                AND YEAR(ts.FechaCreacion) = YEAR(CURRENT_DATE())
                                 AND
                                     ts.Folio IS NOT NULL
                                 AND ts.Folio != '0'
@@ -575,7 +576,7 @@ class Modelo_Solicitud extends Modelo_Base {
                                     ts.Folio AS TicketServiceDesk,
                                     estatus(ts.IdEstatus) as EstatusTicketAdIST,
                                     tst.Id as ServicioAdIST,
-                                    tipoServicio(tst.IdTipoServicio) as TipoServicio,
+                                    IF(tipoServicio(tst.IdTipoServicio)  =  'Correctivo Adicional', 'Correctivo', tipoServicio(tst.IdTipoServicio)) AS TipoServicio,
                                     estatus(tst.IdEstatus) as EstatusServicio,
                                     departamentoArea(ts.IdDepartamento) as Departamento,
                                     nombreUsuario(tst.Atiende) as TecnicoAsignado,
@@ -637,7 +638,7 @@ class Modelo_Solicitud extends Modelo_Base {
                                     left join t_correctivos_generales tcg on tst.Id = tcg.IdServicio
                                     left join t_correctivos_diagnostico tcd on tcd.Id = (select MAX(Id) from t_correctivos_diagnostico where IdServicio = tst.Id)
                                     left join t_correctivos_soluciones tcs on tcs.Id = (select MAX(Id) from t_correctivos_soluciones where IdServicio = tst.Id)
-                                    WHERE ts.FechaCreacion BETWEEN '2019-01-01 00:00:00' AND '2019-12-31 23:59:59' 
+                                    WHERE YEAR(ts.FechaCreacion) = YEAR(CURRENT_DATE()) 
                                         AND tst.IdTipoServicio IN(20,27,50)
                                     AND
                                         ts.Folio IS NOT NULL
