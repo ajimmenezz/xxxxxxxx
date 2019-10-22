@@ -2831,16 +2831,30 @@ class Seguimientos extends General {
                     if ($idEstatus === '33' && $flag === '1') {
                         $departamentoEspera = "Laboratorio";
                         $textoEspera = "Esperando información del Departamento de Laboratorio";
-                        return array('formularioValidacion' => $this->vistaValidacion($datos),
-                            'formularioGuia' => [],
-                            'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
-                            'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
-                            'formularioRecepcionLab' => [],
-                            'formularioHistorialRefaccion' => [],
-                            'formularioRecepcionLog' => [],
-                            'formularioEnvioSeguimientoLog' => [],
-                            'formularioRecepcionTecnico' => [],
-                            'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
+                        $equipoAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+                        if ($equipoAllab[0]['IdTipoMovimiento'] === '1') {
+                            return array('formularioValidacion' => $this->vistaValidacion($datos),
+                                'formularioGuia' => [],
+                                'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                                'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionLab' => [],
+                                'formularioHistorialRefaccion' => [],
+                                'formularioRecepcionLog' => [],
+                                'formularioEnvioSeguimientoLog' => [],
+                                'formularioRecepcionTecnico' => [],
+                                'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
+                        }else{
+                            return array('formularioValidacion' => $this->vistaValidacion($datos),
+                                'formularioGuia' => [],
+                                'formularioEnvioAlmacen' => [],
+                                'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionLab' => [],
+                                'formularioHistorialRefaccion' => [],
+                                'formularioRecepcionLog' => [],
+                                'formularioEnvioSeguimientoLog' => [],
+                                'formularioRecepcionTecnico' => [],
+                                'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
+                        }
                     }
                     if ($idEstatus === '29' && $flag === '1') {
                         $departamentoEspera = "Laboratorio";
@@ -3680,6 +3694,19 @@ class Seguimientos extends General {
                 return array('formularioValidacion' => $this->vistaValidacion($datos),
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
+                    'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionLab' => [],
+                    'formularioHistorialRefaccion' => [],
+                    'formularioRecepcionLog' => [],
+                    'formularioEnvioSeguimientoLog' => [],
+                    'formularioRecepcionTecnico' => [],
+                    'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera),
+                    'permisos' => $permisos,
+                    'permisosAdicionales' => $permisosAdicionales);
+            } else if ($equipoAllab[0]['IdTipoMovimiento'] === '2') {
+                return array('formularioValidacion' => $this->vistaValidacion($datos),
+                    'formularioGuia' => [],
+                    'formularioEnvioAlmacen' => [],
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
                     'formularioRecepcionLab' => [],
                     'formularioHistorialRefaccion' => [],
