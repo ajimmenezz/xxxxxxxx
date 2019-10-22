@@ -10,7 +10,7 @@
         <div class="panel-heading">
             <div id="botonesExtra" class="panel-heading-btn">
                 <?php
-                if ($usuario["IdPerfil"] == 37 || $usuario["IdPerfil"] == 4) {
+                if ($usuario["IdPerfil"] == 37 || $usuario["IdPerfil"] == 21) {
                     echo '<a href="#modalExportar" class="btn btn-xs btn-success" data-toggle="modal"><i class="fa fa-file-excel-o"></i></a>';
                 }
                 ?>

@@ -161,4 +161,38 @@ class Modelo_SegundoPlano extends Base
             return true;
         }
     }
+    
+    public function getPermisosSNArchivo() {
+        $consulta = $this->consulta("UPDATE t_permisos_ausencia_rh AS tpa 
+                                        SET tpa.IdEstatus = 6 
+                                    WHERE tpa.Id IN 
+                                    (
+                                        SELECT 
+                                            tpar.Id 
+                                        FROM (select * from t_permisos_ausencia_rh) AS tpar
+                                        INNER JOIN cat_v3_motivos_ausencia_personal AS cmap 
+                                        ON cmap.Id = tpar.IdMotivoAusencia
+                                        WHERE cmap.Archivo = 1 
+                                        AND tpar.IdEstatus IN (7,9) 
+                                        AND tpar.ArchivosOriginales = '' 
+                                        AND (
+                                            SELECT DATEDIFF((SELECT CURDATE()), tpar.FechaAusenciaDesde)
+                                            ) > 3
+                                    );");
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return '';
+        }
+    }
+    
+    public function getCorreosPoliza() {
+        $consulta = $this->consulta("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil IN (39, 46)");
+        
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return '';
+        }
+    }
 }
