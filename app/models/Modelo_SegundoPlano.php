@@ -163,11 +163,7 @@ class Modelo_SegundoPlano extends Base
     }
     
     public function getPermisosSNArchivo() {
-        $consulta = $this->consulta("UPDATE t_permisos_ausencia_rh AS tpa 
-                                        SET tpa.IdEstatus = 6 
-                                    WHERE tpa.Id IN 
-                                    (
-                                        SELECT 
+        $idPermisos = $this->DBS->consulta("SELECT 
                                             tpar.Id 
                                         FROM (select * from t_permisos_ausencia_rh) AS tpar
                                         INNER JOIN cat_v3_motivos_ausencia_personal AS cmap 
@@ -177,13 +173,13 @@ class Modelo_SegundoPlano extends Base
                                         AND tpar.ArchivosOriginales = '' 
                                         AND (
                                             SELECT DATEDIFF((SELECT CURDATE()), tpar.FechaAusenciaDesde)
-                                            ) > 3
-                                    );");
-        if (!empty($consulta)) {
-            return $consulta;
-        } else {
-            return '';
+                                            ) > 3");
+        
+        foreach ($idPermisos as $value) {
+            $this->DBS->actualizar('t_permisos_ausencia_rh', array('IdEstatus' => 6), array('Id' => $value['Id']));
         }
+        
+        return $consulta = array('code' => "200");
     }
     
     public function getCorreosPoliza() {
