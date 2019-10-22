@@ -11,9 +11,7 @@
             <div id="botonesExtra" class="panel-heading-btn">
                 <?php
                 if ($usuario["IdPerfil"] == 37 || $usuario["IdPerfil"] == 21) {
-                    echo '<label id="btnExcel" class="btn btn-success btn-xs hidden">
-                            <i class="fa fa-file-excel-o"></i>
-                        </label>';
+                    echo '<a href="#modalExportar" class="btn btn-xs btn-success" data-toggle="modal"><i class="fa fa-file-excel-o"></i></a>';
                 }
                 ?>
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>                            
@@ -65,44 +63,7 @@
                                                     echo '<td>No Asistirá</td>';
                                                     break;
                                             }
-                                            switch ($valores['IdMotivoAusencia']) {
-                                                case '1':
-                                                    echo '<td>CONSULTA MEDICO IMSS</td>';
-                                                    break;
-                                                case '2':
-                                                    echo '<td>CONSULTA DENTISTA IMSS</td>';
-                                                    break;
-                                                case '3':
-                                                    echo '<td>PERMISOS POR RAZONES DE TRABAJO EXTERNO</td>';
-                                                    break;
-                                                case '4':
-                                                    echo '<td>PERMISOS POR CURSOS DE CAPACITACION</td>';
-                                                    break;
-                                                case '5':
-                                                    echo '<td>ASUNTOS PERSONALES</td>';
-                                                    break;
-                                                case '6':
-                                                    echo '<td>CONSULTA MEDICO PARTICULAR</td>';
-                                                    break;
-                                                case '7':
-                                                    echo '<td>CONSULTA DENTISTA PARTICULAR</td>';
-                                                    break;
-                                                case '8':
-                                                    echo '<td>INCAPACIDAD IMSS DEL TRABAJADOR</td>';
-                                                    break;
-                                                case '9':
-                                                    echo '<td>CONSULTA MEDICO O DENTISTA IMSS</td>';
-                                                    break;
-                                                case '10':
-                                                    echo '<td>ASUNTOS PERSONALES</td>';
-                                                    break;
-                                                case '11':
-                                                    echo '<td>CONSULTA MEDICO PARTICULAR</td>';
-                                                    break;
-                                                case '12':
-                                                    echo '<td>CONSULTA DENTISTA PARTICULAR</td>';
-                                                    break;
-                                            }
+                                            echo '<td>' . $valores['MotivoAusencia'] . '</td>';
                                             if ($valores['FechaAusenciaHasta'] != $valores['FechaAusenciaDesde'] && $valores['FechaAusenciaHasta'] != "0000-00-00") {
                                                 echo '<td>' . $valores['FechaAusenciaDesde'] . ' al ' . $valores['FechaAusenciaHasta'] . '</td>';
                                             } else {
@@ -224,3 +185,41 @@
 <!-- Empezando #contenido -->
 <div id="contentRevisarPermiso" class="content hidden"></div>
 <!-- Finalizando #contenido -->
+
+<!--Empieza modal de evidencia-->
+<div id="modalExportar" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Exportar Excel</h4>
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <!--Empieza seccion de evidencia-->
+                <div class="panel">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-8">
+                        <form id="fechasReportePermisos" data-parsley-validate="true" class="input-group input-daterange">
+                            <div class="input-group input-daterange">
+                                <input id="comienzo" type="text" class="form-control" name="start" placeholder="Comienzo Fecha" data-parsley-required="true"/>
+                                <span class="input-group-addon">a</span>
+                                <input id="fin" type="text" class="form-control" name="end" placeholder="Fin Fecha" data-parsley-required="true"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!--Finaliza seccion de evidencia-->
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnExcel" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCerrarModal" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>
+<!--Finaliza modal de evidencia-->
