@@ -576,6 +576,7 @@ class Modelo_Solicitud extends Modelo_Base {
                                     estatus(ts.IdEstatus) as EstatusTicketAdIST,
                                     tst.Id as ServicioAdIST,
                                     tipoServicio(tst.IdTipoServicio) as TipoServicio,
+                                    estatus(tst.IdEstatus) as EstatusServicio,
                                     departamentoArea(ts.IdDepartamento) as Departamento,
                                     nombreUsuario(tst.Atiende) as TecnicoAsignado,
                                     regionBySucursal(tst.IdSucursal) as Region,
