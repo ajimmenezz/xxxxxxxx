@@ -195,7 +195,7 @@ class Compras extends General
                 $carpeta = './storage/Gastos/' . $idGapsi['last'] . '/PRE';
 
                 if (!file_exists($carpeta)) {
-                    mkdir($carpeta, 0777, true);
+                    mkdir($carpeta, 0775, true);
                 }
 
                 $gastoPDF = $this->reportes->generaOC(array(
@@ -322,7 +322,7 @@ class Compras extends General
             $carpeta = './storage/Gastos/' . $idGapsi[0]['ID'] . '/PRE';
 
             if (!file_exists($carpeta)) {
-                mkdir($carpeta, 0777, true);
+                mkdir($carpeta, 0775, true);
             }
 
             $gastoPDF = $this->reportes->generaOC(array(

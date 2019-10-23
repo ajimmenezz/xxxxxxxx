@@ -1676,7 +1676,7 @@ class Solicitud extends General {
         $carpeta = './storage/Archivos/ReportesTXT';
 
         if (!file_exists($carpeta)) {
-            mkdir($carpeta, 0777, true);
+            mkdir($carpeta, 0775, true);
         }
 
         if (file_exists("./storage/Archivos/ReportesTXT/SolicitudesConcluidas.txt")) {
@@ -1835,7 +1835,7 @@ class Solicitud extends General {
 
         $path = "../public/storage/Archivos/Reportes";
         if (!is_dir($path)) {
-            mkdir($path, 755, true);
+            mkdir($path, 775, true);
         }
         $this->Excel->saveFile($ruta);
 
