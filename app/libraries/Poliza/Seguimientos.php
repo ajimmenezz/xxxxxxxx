@@ -2843,7 +2843,7 @@ class Seguimientos extends General {
                                 'formularioEnvioSeguimientoLog' => [],
                                 'formularioRecepcionTecnico' => [],
                                 'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
-                        }else{
+                        } else {
                             return array('formularioValidacion' => $this->vistaValidacion($datos),
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
@@ -5381,60 +5381,63 @@ class Seguimientos extends General {
     }
 
     private function toAssignSD(array $dataToCreateEmailList) {
-        $user = $this->Usuario->getDatosUsuario();
-        $idSDWarehouse = '28801';
-        $idSDLaboratory = '14731';
-        $idSDLogistics = '8708';
-        $idSD = '';
+        $dataService = $this->DBP->consultationServiceAndRequest($dataToCreateEmailList['idService']);
         $reassignment = '';
 
-        switch ($dataToCreateEmailList['idStatus']) {
-            case 2 :
-                if ($dataToCreateEmailList['movementType'] === '2') {
-                    $idSD = $idSDLaboratory;
-                } elseif ($dataToCreateEmailList['movementType'] === '3') {
-                    $idSD = $idSDWarehouse;
-                }
-                break;
-            case 12 :
-                if ($dataToCreateEmailList['movementType'] === '1') {
-                    $idSD = $idSDWarehouse;
-                } else {
-                    $idSD = $idSDLaboratory;
-                }
-                break;
-            case 26 :
-                $idSD = $idSDLogistics;
-                break;
-            case 28 :
-                if ($dataToCreateEmailList['movementType'] === '1') {
-                    $idSD = $idSDLaboratory;
-                }
-                break;
-            case 36 :
-            case 38 :
-                if ($dataToCreateEmailList['movementType'] === '3') {
-                    $idSD = $this->findTechnicalId(array('SDKey' => $user['SDKey'], 'idService' => $dataToCreateEmailList['idService']));
-                }
-                break;
-            case 39 :
-                if ($dataToCreateEmailList['movementType'] === '1') {
-                    $idSD = $idSDLogistics;
-                } elseif ($dataToCreateEmailList['movementType'] === '2') {
-                    $idSD = $idSDLaboratory;
-                }
-                break;
-            case 41:
-                $idSD = $idSDLaboratory;
-                break;
-            default :
-                $idSD = $this->findTechnicalId(array('SDKey' => $user['SDKey'], 'idService' => $dataToCreateEmailList['idService']));
-                break;
-        }
+        if (!empty($dataService[0]['Folio']) && $dataService[0]['Folio'] === '0') {
+            $user = $this->Usuario->getDatosUsuario();
+            $idSDWarehouse = '28801';
+            $idSDLaboratory = '14731';
+            $idSDLogistics = '8708';
+            $idSD = '';
 
-        if ($idSD !== '') {
-            $dataService = $this->DBP->consultationServiceAndRequest($dataToCreateEmailList['idService']);
-            $reassignment = $this->ServiceDesk->reasignarFolioSD($dataService[0]['Folio'], $idSD, $user['SDKey']);
+            switch ($dataToCreateEmailList['idStatus']) {
+                case 2 :
+                    if ($dataToCreateEmailList['movementType'] === '2') {
+                        $idSD = $idSDLaboratory;
+                    } elseif ($dataToCreateEmailList['movementType'] === '3') {
+                        $idSD = $idSDWarehouse;
+                    }
+                    break;
+                case 12 :
+                    if ($dataToCreateEmailList['movementType'] === '1') {
+                        $idSD = $idSDWarehouse;
+                    } else {
+                        $idSD = $idSDLaboratory;
+                    }
+                    break;
+                case 26 :
+                    $idSD = $idSDLogistics;
+                    break;
+                case 28 :
+                    if ($dataToCreateEmailList['movementType'] === '1') {
+                        $idSD = $idSDLaboratory;
+                    }
+                    break;
+                case 36 :
+                case 38 :
+                    if ($dataToCreateEmailList['movementType'] === '3') {
+                        $idSD = $this->findTechnicalId(array('SDKey' => $user['SDKey'], 'idService' => $dataToCreateEmailList['idService']));
+                    }
+                    break;
+                case 39 :
+                    if ($dataToCreateEmailList['movementType'] === '1') {
+                        $idSD = $idSDLogistics;
+                    } elseif ($dataToCreateEmailList['movementType'] === '2') {
+                        $idSD = $idSDLaboratory;
+                    }
+                    break;
+                case 41:
+                    $idSD = $idSDLaboratory;
+                    break;
+                default :
+                    $idSD = $this->findTechnicalId(array('SDKey' => $user['SDKey'], 'idService' => $dataToCreateEmailList['idService']));
+                    break;
+            }
+
+            if ($idSD !== '') {
+                $reassignment = $this->ServiceDesk->reasignarFolioSD($dataService[0]['Folio'], $idSD, $user['SDKey']);
+            }
         }
 
         return $reassignment;
@@ -5549,14 +5552,17 @@ class Seguimientos extends General {
     }
 
     public function sendTextSD(array $dataSendTextSD) {
-        $user = $this->Usuario->getDatosUsuario();
-        $viewHtml = '';
         $dataService = $this->DBP->consultationServiceAndRequest($dataSendTextSD['service']);
-        $key = $this->ServiceDesk->validarAPIKey($user['SDKey']);
+        
+        if (!empty($dataService[0]['Folio']) && $dataService[0]['Folio'] === '0') {
+            $user = $this->Usuario->getDatosUsuario();
+            $viewHtml = '';
+            $key = $this->ServiceDesk->validarAPIKey($user['SDKey']);
 
-        if ($key !== '') {
-            $viewHtml .= $this->createTextSD($dataSendTextSD);
-            $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $dataService[0]['Folio'], 'html' => $viewHtml));
+            if ($key !== '') {
+                $viewHtml .= $this->createTextSD($dataSendTextSD);
+                $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $dataService[0]['Folio'], 'html' => $viewHtml));
+            }
         }
     }
 
