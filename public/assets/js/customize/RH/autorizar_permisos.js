@@ -22,6 +22,11 @@ $(function () {
 
     //Inicializa funciones de la plantilla
     App.init();
+    
+    $('.input-daterange').datepicker({
+        autoclose: true,
+        format: 'yyyy-mm-dd'
+    });
 
     $('#data-table-autorizar-permisos-ausencia tbody').on('click', 'tr', function () {
         var perfilUsuario = $('#idPerfil').val();
@@ -130,8 +135,15 @@ $(function () {
     });
 
     $('#btnExcel').on('click', function () {
-        evento.enviarEvento('EventoPermisosVacaciones/exportarExcel', null, '#modal-dialogo', function (respuesta) {
-            window.open(respuesta.ruta, '_blank');
-        });
+        if (evento.validarFormulario('#fechasReportePermisos')) {
+            var filtroFechas = {
+                comienzo: $('#comienzo').val(),
+                fin: $('#fin').val()
+            }
+            evento.enviarEvento('EventoPermisosVacaciones/exportarExcel', filtroFechas, '#modal-dialogo', function (respuesta) {
+                window.open(respuesta.ruta, '_blank');
+                $('#modalExportar').modal('hide');
+            });
+        }
     });
 });

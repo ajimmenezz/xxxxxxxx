@@ -25,16 +25,18 @@ class Autorizar_permisos extends General {
             case '21':
             case '37':
                 return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, nombreUsuario(cu.Id) as Nombre, tpar.IdTipoAusencia, 
-                            tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
+                            tpar.IdMotivoAusencia, cmap.Nombre AS MotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
                             tpar.IdEstatus, tpar.Archivo, tpar.IdUsuarioJefe, tpar.IdUsuarioRH, tpar.IdUsuarioContabilidad, tpar.IdUsuarioDireccion
                             from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
+                            INNER JOIN cat_v3_motivos_ausencia_personal AS cmap ON cmap.Id = tpar.IdMotivoAusencia
                             where FechaDocumento between (SELECT (NOW() - INTERVAL 1 MONTH)) and (SELECT NOW()) and cu.Id <> ' . $idUsuario . ' order by FechaAusenciaDesde desc');
                 break;
             default:
                 return $this->DBS->consultaGral('select tpar.Id, tpar.FechaDocumento, cu.Nombre, tpar.IdTipoAusencia, 
-                    tpar.IdMotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
+                    tpar.IdMotivoAusencia, cmap.Nombre AS MotivoAusencia, tpar.FechaAusenciaDesde, tpar.FechaAusenciaHasta, tpar.HoraEntrada, tpar.HoraSalida,
                     tpar.IdEstatus, tpar.Archivo, tpar.IdUsuarioJefe, tpar.IdUsuarioRH, tpar.IdUsuarioContabilidad, tpar.IdUsuarioDireccion
                     from t_permisos_ausencia_rh tpar inner join cat_v3_usuarios cu on tpar.IdUsuario = cu.Id 
+                    INNER JOIN cat_v3_motivos_ausencia_personal AS cmap ON cmap.Id = tpar.IdMotivoAusencia
                     where FechaDocumento between (SELECT (NOW() - INTERVAL 1 MONTH)) and (SELECT NOW()) and (cu.IdJefe = ' . $idUsuario . ') 
                     or ((select IdPerfil from cat_v3_usuarios where Id = ' . $idUsuario . ') = 21 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is null) 
                     or ((select IdPerfil from cat_v3_usuarios where Id = ' . $idUsuario . ') = 37 and tpar.IdUsuarioJefe is not null and tpar.IdUsuarioRH is not null and tpar.IdUsuarioContabilidad is null) 
@@ -59,7 +61,7 @@ class Autorizar_permisos extends General {
         $informacionPermisoAusencia['motivosRechazo'] = $this->motivosRechazo();
         $informacionPermisoAusencia['tipoCancelacion'] = $this->motivosCancelacion();
         $informacionPermisoAusencia['datosAusencia'] = $this->DBS->consultaGral('SELECT tpa.FechaDocumento, CONCAT(trp.Nombres, " ",trp.ApPaterno, " ",trp.ApMaterno) AS Nombre,
-                 cp.Nombre AS Puesto, cds.Nombre AS Departamento, tpa.Id, tpa.IdEstatus, tpa.IdTipoAusencia, tpa.IdMotivoAusencia, tpa.FechaAusenciaDesde, tpa.FechaAusenciaHasta, 
+                 cp.Nombre AS Puesto, cds.Nombre AS Departamento, tpa.Id, tpa.IdEstatus, tpa.IdTipoAusencia, cmap.Nombre AS MotivoAusencia, tpa.IdMotivoAusencia, tpa.FechaAusenciaDesde, tpa.FechaAusenciaHasta, 
                  tpa.HoraEntrada, tpa.HoraSalida, tpa.Motivo, tpa.FolioDocumento, tpa.Archivo, tpa.ArchivosOriginales, tpa.IdUsuarioJefe, tpa.IdUsuarioRH, tpa.IdUsuarioContabilidad, cmap.Cancelacion, cmap.NivelCancelacion 
                  FROM t_permisos_ausencia_rh AS tpa 
                  INNER JOIN t_rh_personal AS trp ON tpa.IdUsuario = trp.IdUsuario INNER JOIN cat_v3_usuarios AS cu ON tpa.IdUsuario=cu.Id 
@@ -332,18 +334,18 @@ class Autorizar_permisos extends General {
         $this->pdf->Output('F', $carpeta, true);
     }
 
-    public function exportExcel() {
+    public function exportExcel($filtroFechas) {
         $permisos = $this->DBS->consultaGral('SELECT 
                                                 nombreUsuario(tpa.IdUsuario) AS Nombre,
                                                 CASE tpa.IdEstatus
                                                         WHEN 6 THEN "Cancelado"
-                                                    WHEN 7 THEN "Autorizado"
+                                                        WHEN 7 THEN "Autorizado"
                                                         WHEN 9 THEN "Pendiente por Autorizar"
                                                         WHEN 10 then "Rechazado"
                                                 END as Estatus,
                                                 CASE tpa.IdTipoAusencia
                                                         WHEN 1 THEN "Llegada tarde"
-                                                    WHEN 2 THEN "Salida Temprano"
+                                                        WHEN 2 THEN "Salida Temprano"
                                                         WHEN 3 THEN "No asistirá"
                                                 END as TipoAusencia,
                                                 cmap.Nombre AS MotivoAusencia,
@@ -363,7 +365,8 @@ class Autorizar_permisos extends General {
                                                 tpa.FechaAutorizacionContabilidad
                                             FROM t_permisos_ausencia_rh AS tpa
                                             INNER JOIN cat_v3_motivos_ausencia_personal AS cmap ON tpa.IdMotivoAusencia = cmap.Id
-                                            LEFT JOIN cat_v3_tipos_rechazos_ausencia_personal AS ctrap ON tpa.IdRechazo = ctrap.Id');
+                                            LEFT JOIN cat_v3_tipos_rechazos_ausencia_personal AS ctrap ON tpa.IdRechazo = ctrap.Id
+                                            WHERE FechaAusenciaDesde BETWEEN "'.$filtroFechas['comienzo'].'" AND "'.$filtroFechas['fin'].'"');
 
         $this->Excel->createSheet('Permisos', 0);
         $this->Excel->setActiveSheet(0);
@@ -393,7 +396,7 @@ class Autorizar_permisos extends General {
 
         $this->Excel->setTableContent('A', 2, $permisos, true, $arrayAlign);
 
-        $time = date("ymd_H_i_s");
+        $time = date("ymd_H_i");
         $nombreArchivo = 'Reporte_Permisos_Ausencia_' . $time . '.xlsx';
         $nombreArchivo = trim($nombreArchivo);
         $ruta = '../public/storage/Archivos/RH/Reportes/' . $nombreArchivo;
