@@ -2818,13 +2818,20 @@ class Servicio extends General {
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
         $nombreExtra = (is_null($nombreExtra)) ? '' : $nombreExtra;
         $archivo = 'storage/Archivos/Servicios/Servicio-' . $servicio['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $servicio['servicio'] . '_' . $nombreExtra . '.pdf ';
-        $ruta = 'http://' . $_SERVER['HTTP_HOST'] . '/Phantom/Folio/' . $servicio['folio'];
+
+        if (!empty($servicio['folio']) && $servicio['folio'] !== '0') {
+            $ruta = 'http://' . $_SERVER['HTTP_HOST'] . '/Phantom/Folio/' . $servicio['folio'];
+        }else{
+            $ruta = 'http://' . $_SERVER['HTTP_HOST'] . '/Phantom/Servicio/' . $servicio['servicio'];
+        }
+        
         $datosServicio = $this->DBS->getServicios('SELECT
                                                 sucursal(IdSucursal) Sucursal,
                                                 (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
                                             FROM t_servicios_ticket
                                             WHERE Id = "' . $servicio['servicio'] . '"');
         $link = $this->Phantom->htmlToPdf($archivo, $ruta, $datosServicio[0]);
+
         return ['link' => $link];
     }
 
