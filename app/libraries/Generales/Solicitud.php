@@ -518,12 +518,7 @@ class Solicitud extends General {
             if ($datos['operacion'] === '1') {
                 //Solo muestra la informacion de la solicitud para la seccion Solicitud asignada                                
                 if (!empty($datosSolicitud['Folio'])) {
-                    if (!empty($usuario['SDKey'])) {
-                        $apiKey = $usuario['SDKey'];
-                    } else {
-                        $apiKey = $this->DBS->getApiKeyMesaAyuda();
-                    }
-
+                    $apiKey = $this->ServiceDesk->validarAPIKey($usuario['SDKey']);
                     $data['datosSD'] = $this->ServiceDesk->getDetallesFolio($apiKey, $datosSolicitud['Folio']);
                     $data['datosResolucionSD'] = $this->ServiceDesk->getResolucionFolio($apiKey, $datosSolicitud['Folio']);
 
@@ -533,7 +528,7 @@ class Solicitud extends General {
                         $data['sucursales'] = $this->DBS->consulta("select Id, IdCliente, Nombre, NombreCinemex from cat_v3_sucursales where Flag = 1 order by Nombre");
                     }
                 }
-                $data['usuarioApiKey'] = $usuario['SDKey'];
+                $data['usuarioApiKey'] = $apiKey;
                 $data['formularioSolicitud'] = parent::getCI()->load->view('Generales/Modal/formularioAsignadaSolicitudSistemasExternos', $data, TRUE);
             } else if ($datos['operacion'] === '2') {
                 //Regresa la formulario para editar solicitud en la seccion autorizacion                
