@@ -88,6 +88,7 @@
                             <th class="all">Movimiento</th>
                             <th class="all">Referencia</th>
                             <th class="all">Cantidad</th>
+                            <th class="all">Serie</th>
                             <th class="all">Costo</th>
                             <th class="all">Costo Promo Inicial</th>
                             <th class="all">Costo Promo Final</th>
