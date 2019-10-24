@@ -749,7 +749,7 @@ class InformacionServicios extends General {
         $host = $_SERVER['SERVER_NAME'];
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $detallesServicio = 'https://siccob.solutions/Detalles/Servicio/' . $servicio;
+            $detallesServicio = 'http://siccob.solutions/Detalles/Servicio/' . $servicio;
         } else {
             $detallesServicio = 'http://' . $host . '/Detalles/Servicio/' . $servicio;
         }
@@ -763,7 +763,7 @@ class InformacionServicios extends General {
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+            $path = 'http://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }

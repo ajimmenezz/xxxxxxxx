@@ -1604,7 +1604,7 @@ class Solicitud extends General {
         $host = $_SERVER['SERVER_NAME'];
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $detallesSolicitud = 'https://siccob.solutions/Detalles/Solicitud/' . $solicitud;
+            $detallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $solicitud;
         } else {
             $detallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $solicitud;
         }
