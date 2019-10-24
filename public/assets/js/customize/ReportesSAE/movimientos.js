@@ -1,4 +1,4 @@
-$(function () {
+$(function() {
 
     //Objetos
     var evento = new Base();
@@ -21,12 +21,14 @@ $(function () {
 
 
     //Creando tabla de areas
-    tabla.generaTablaPersonal('#data-table-movimientos-sae', null, null, true, true, [[0, 'desc']]);
+    tabla.generaTablaPersonal('#data-table-movimientos-sae', null, null, true, true, [
+        [0, 'desc']
+    ]);
 
     fecha.rangoFechas('#desdeMovimientos', '#hastaMovimientos');
 
     $('#btnFiltrarMovimientos').off('click');
-    $("#btnFiltrarMovimientos").on("click", function () {
+    $("#btnFiltrarMovimientos").on("click", function() {
         var desde = $("#txtDesdeMovimientos").val();
         var hasta = $("#txtHastaMovimientos").val();
         var texto = $.trim($("#txtArticulo").val());
@@ -42,19 +44,19 @@ $(function () {
         }
     });
 
-    var recargarReporteMovimientos = function (data) {
-        evento.enviarEvento('Compras/getMovimientosAlmacenesSAE', data, '#seccion-movimientos-almacenes-SAE', function (respuesta) {
+    var recargarReporteMovimientos = function(data) {
+        evento.enviarEvento('Compras/getMovimientosAlmacenesSAE', data, '#seccion-movimientos-almacenes-SAE', function(respuesta) {
             tabla.limpiarTabla('#data-table-movimientos-sae');
-            $.each(respuesta.movimientos, function (key, valor) {
-                tabla.agregarFila('#data-table-movimientos-sae', [valor.Numero_Movimiento, valor.Folio, valor.Clave_Producto, valor.Articulo, valor.Almacen, valor.Concepto, valor.Movimiento, valor.Referencia, valor.Cantidad, valor.Costo, valor.Costo_Promo_Inicial, valor.Costo_Promo_Final, valor.Unidad_Venta, valor.Existencia, valor.Fecha, valor.MOV_ENLAZADO], true);
+            $.each(respuesta.movimientos, function(key, valor) {
+                tabla.agregarFila('#data-table-movimientos-sae', [valor.Numero_Movimiento, valor.Folio, valor.Clave_Producto, valor.Articulo, valor.Almacen, valor.Concepto, valor.Movimiento, valor.Referencia, valor.Cantidad, valor.Series, valor.Costo, valor.Costo_Promo_Inicial, valor.Costo_Promo_Final, valor.Unidad_Venta, valor.Existencia, valor.Fecha, valor.MOV_ENLAZADO], true);
             });
         });
     };
 
-    $("#btnExportarExcel").on("click", function () {
+    $("#btnExportarExcel").on("click", function() {
         var movimientos = $('#data-table-movimientos-sae').DataTable().rows({ search: 'applied' }).data();
         var realMovimientos = new Array();
-        $.each(movimientos, function (k, v) {
+        $.each(movimientos, function(k, v) {
             if (!isNaN(k)) {
                 realMovimientos.push(v);
             }
@@ -62,7 +64,7 @@ $(function () {
         var data = {
             movimientos: realMovimientos
         };
-        evento.enviarEvento('Compras/exportaMovimientosAlmacenesSAE', data, '#seccion-movimientos-almacenes-SAE', function (respuesta) {
+        evento.enviarEvento('Compras/exportaMovimientosAlmacenesSAE', data, '#seccion-movimientos-almacenes-SAE', function(respuesta) {
             window.open(respuesta.ruta, '_blank');
         });
     });
