@@ -20,6 +20,7 @@ class Solicitud extends General {
     private $Correo;
     private $SegundoPlano;
     private $InformacionServicios;
+    private $Excel;
 
     public function __construct() {
         parent::__construct();
@@ -33,6 +34,7 @@ class Solicitud extends General {
         $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         $this->SegundoPlano = \Modelos\Modelo_SegundoPlano::factory();
         parent::getCI()->load->helper(array('FileUpload', 'date'));
+        $this->Excel = new \Librerias\Generales\CExcel();
     }
 
     /*
@@ -90,6 +92,12 @@ class Solicitud extends General {
 //            $data['SolicitudesSD'] = $this->setSolicitudesSD($usuario['SDKey'], $usuario);
 //        }
 
+        if ($usuario['Id'] === '44') {
+            $where = 'where ts.IdDepartamento IN(' . $usuario['IdDepartamento'] . ', 21)';
+        } else {
+            $where = 'where ts.IdDepartamento = "' . $usuario['IdDepartamento'] . '"';
+        }
+
         $data['solicitudes'] = $this->DBS->getSolicitudes('
             select 
                 ts.Id as Numero,
@@ -104,7 +112,8 @@ class Solicitud extends General {
             from t_solicitudes ts 
             left join t_solicitudes_internas tsi
             on ts.Id = tsi.IdSolicitud
-            where ts.IdDepartamento = ' . $usuario['IdDepartamento'] . ' and ts.IdEstatus = 1');
+            ' . $where . ' and ts.IdEstatus = 1');
+
         return $data;
     }
 
@@ -659,17 +668,22 @@ class Solicitud extends General {
                 $detallesSolicitud = $this->linkDetallesSolicitud($datos['solicitud']);
                 $linkDetallesSolicitud = '<br>Ver Detalles de la Solicitud <a href="' . $detallesSolicitud . '" target="_blank">Aquí</a>';
 
-                $this->enviarNotificacion(array(
-                    'Departamento' => $solicitante['IdDepartamento'],
-                    'remitente' => $usuario['Id'],
-                    'tipo' => '3',
-                    'descripcion' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> ya es atendida por ' . $usuario['Nombre'] . ' del ticket ' . $ticket,
-                    'titulo' => 'Seguimiento de Solicitud',
-                    'mensaje' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> del ticket ' . $ticket . ' ya esta siendo atendida por el usuario <b>' . $usuario['Nombre'] . '</b>.'
-                    . '             <br>' . $linkDetallesSolicitud . '<br><br>
+                try {
+                    $this->enviarNotificacion(array(
+                        'Departamento' => $solicitante['IdDepartamento'],
+                        'remitente' => $usuario['Id'],
+                        'tipo' => '3',
+                        'descripcion' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> ya es atendida por ' . $usuario['Nombre'] . ' del ticket ' . $ticket,
+                        'titulo' => 'Seguimiento de Solicitud',
+                        'mensaje' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> del ticket ' . $ticket . ' ya esta siendo atendida por el usuario <b>' . $usuario['Nombre'] . '</b>.'
+                        . '             <br>' . $linkDetallesSolicitud . '<br><br>
                                     Asunto: <p><b>' . $datosSolicitud['detalles'][0]['Asunto'] . '</b> </p><br>
                                     Descripción:<br> <p><b>' . $datosSolicitud['detalles'][0]['Descripcion'] . '</b> </p>'
-                    , $solicitante));
+                        , $solicitante));
+                } catch (Exception $exc) {
+                    echo $exc->getTraceAsString();
+                }
+
                 return array('ticket' => $ticket, 'folios' => $foliosServicios, 'solicitudes' => $this->getSolicitudesAsignadas());
             } else {
                 return FALSE;
@@ -1299,16 +1313,21 @@ class Solicitud extends General {
                 ));
 
                 if (!empty($notas)) {
-                    $this->enviarNotificacion(array(
-                        'Departamento' => $datos['departamento'],
-                        'remitente' => $usuario['Id'],
-                        'tipo' => '9',
-                        'descripcion' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> ha sido reasignada por el usuario ' . $usuario['Nombre'],
-                        'titulo' => 'Solicitud Reasignada',
-                        'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> a reasignado  la solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b>.<br>
-                        Por el siguiente motivo: <br><strong>' . $datos['descripcion'] . '</strong><br>
-                        Favor de validar la solicitud y brindarle seguimiento.'
-                    ));
+                    try {
+                        $this->enviarNotificacion(array(
+                            'Departamento' => $datos['departamento'],
+                            'remitente' => $usuario['Id'],
+                            'tipo' => '9',
+                            'descripcion' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> ha sido reasignada por el usuario ' . $usuario['Nombre'],
+                            'titulo' => 'Solicitud Reasignada',
+                            'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> a reasignado  la solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b>.<br>
+                            Por el siguiente motivo: <br><strong>' . $datos['descripcion'] . '</strong><br>
+                            Favor de validar la solicitud y brindarle seguimiento.'
+                        ));
+                    } catch (Exception $exc) {
+                        echo $exc->getTraceAsString();
+                    }
+
                     return $this->getSolicitudesAsignadas();
                 } else {
                     return FALSE;
@@ -1629,7 +1648,7 @@ class Solicitud extends General {
                 $detallesSD = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $value['Folio']);
                 if ($detallesSD->STATUS === 'Cerrado' || $detallesSD->STATUS === 'Completado') {
                     $resolucion = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $value['Folio']);
-                    
+
                     if (!empty($resolucion->operation->Details->RESOLUTION)) {
                         $textoResolucion = $resolucion->operation->Details->RESOLUTION;
                     } else {
@@ -1642,11 +1661,11 @@ class Solicitud extends General {
                         'IdUsuario' => $usuario['Id'],
                         'Nota' => $textoResolucion,
                         'Fecha' => $fecha));
-                    
+
                     $textoReporte = 'Folio: ' . $value['Folio'] . ' Solicitud: ' . $value['Id'] . ' Fecha: ' . $fecha . ' Resolución: ' . $textoResolucion;
-                    
+
                     $this->crearReporteSolicitudesConcluidas($textoReporte);
-                    
+
                     $this->DBS->cambiarEstatusSolicitud(array('IdEstatus' => '4'), array('Id' => $value['Id']));
                 }
             } catch (\Exception $ex) {
@@ -1656,16 +1675,173 @@ class Solicitud extends General {
     }
 
     private function crearReporteSolicitudesConcluidas(string $contenido) {
-        if (file_exists("./storage/Archivos/ReporteSolicitudesConcluidos/SolicitudesConcluidas.txt")) {
-            $archivo = fopen("./storage/Archivos/ReporteSolicitudesConcluidos/SolicitudesConcluidas.txt", "a");
-            fputs($archivo,chr(13).chr(10));
+        $carpeta = './storage/Archivos/ReportesTXT';
+
+        if (!file_exists($carpeta)) {
+            mkdir($carpeta, 0777, true);
+        }
+
+        if (file_exists("./storage/Archivos/ReportesTXT/SolicitudesConcluidas.txt")) {
+            $archivo = fopen("./storage/Archivos/ReportesTXT/SolicitudesConcluidas.txt", "a");
+            fputs($archivo, chr(13) . chr(10));
             fwrite($archivo, PHP_EOL . "$contenido");
             fclose($archivo);
         } else {
-            $archivo = fopen("./storage/Archivos/ReporteSolicitudesConcluidos/SolicitudesConcluidas.txt", "w");
+            $archivo = fopen("./storage/Archivos/ReportesTXT/SolicitudesConcluidas.txt", "w");
             fwrite($archivo, PHP_EOL . "$contenido");
             fclose($archivo);
         }
+    }
+
+    public function getFolios() {
+        $folios = $this->ServiceDesk->getFolios('A8D6001B-EB63-4996-A158-1B968E19AB84');
+        $sd = json_decode(json_encode($folios), True);
+        $j = 0;
+        $k = 0;
+
+        for ($i = 0; $i < count($sd["operation"]["details"]); $i++) {
+            $temp = $this->DBS->obtenerFolios($sd["operation"]["details"][$i]["WORKORDERID"]);
+
+            if (count($temp) > 0) {
+                $foliosAdist[$j] = array(
+                    "SemanaCreacionSD" => date('W', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "MesCreacionSD" => date('m', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "YearCreacionSD" => date('Y', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "FechaCreacionSD" => date('Y-m-d H:i:s', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
+                    "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
+                    "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
+                    "Solicitus" => $temp[0]["Id"],
+                    "Ticket" => $temp[0]["Ticket"],
+                    "Estatus" => $temp[0]["Estado"],
+                    "FechaCreacion" => $temp[0]["FechaCreacion"]
+                );
+                $j++;
+            } else {
+                $foliosSD[$k] = array(
+                    "SemanaCreacionSD" => date('W', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "MesCreacionSD" => date('m', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "YearCreacionSD" => date('Y', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "FechaCreacionSD" => date('Y-m-d H:i:s', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
+                    "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
+                    "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
+                    "Solicitus" => null,
+                    "Ticket" => null,
+                    "Estatus" => null,
+                    "FechaCreacion" => null
+                );
+                $k++;
+            }
+        }
+        $resultado = array_merge($foliosAdist, $foliosSD);
+        $arrayTitulos = ['Semana Creacion SD',
+            'Mes Creacion SD',
+            'Año Creacion SD',
+            'Fecha Creacion SD',
+            'Ticket SD',
+            'Estatus SD',
+            'Tecnico SD',
+            'Solicitud Adist',
+            'Ticket Adist',
+            'Estatus Solicitud Adist',
+            'Fecha Creacion Solicitud Adist'];
+
+        return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
+    }
+
+    public function getFoliosSemanal() {
+        $foliosAdist = $this->DBS->obtenerFoliosAdist();
+        $titulos = $this->cabeceraExcelFolios();
+        return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios.xlsx');
+    }
+
+    public function getFoliosAnual() {
+        ini_set('memory_limit', '2048M');
+        set_time_limit('1200');
+        $foliosAdist = $this->DBS->obtenerFoliosAnualAdist();
+        $titulos = $this->cabeceraExcelFolios();
+        return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios.xlsx');
+    }
+
+    private function cabeceraExcelFolios() {
+        $titulos = ['Mes',
+            'Semana',
+            'Ticket Service Desk',
+            'Estatus Ticket AdIST',
+            'Servicio AdIST',
+            'Tipo Servicio',
+            'Estatus Servicio',
+            'Departamento',
+            'Tecnico Asignado',
+            'Region',
+            'Sucursal',
+            'Fecha Solicitud',
+            'Solicitante',
+            'Asunto',
+            'Descripcion Solicitud',
+            'Fecha Servicio',
+            'Fecha Inicio Servicio',
+            'Fecha Conclusion Servicio',
+            'Area Atencion',
+            'Punto',
+            'Equipo Diagnosticado',
+            'Componente',
+            'Tipo Diagnostico',
+            'Tipo Falla',
+            'Falla',
+            'Fecha Diagnostico',
+            'Observaciones Diagnostico',
+            'Tipo Solucion',
+            'Solucion Sin Equipo',
+            'Cambio Equipo',
+            'Cambio Refaccion',
+            'Solucion Servicio Sin Clasificar',
+            'Tiempo Solicitud',
+            'Tiempo Servicio',
+            'Tiempo Transcurrido Entre Solicitud Servicio'];
+        return $titulos;
+    }
+
+    public function crearExcel($datosFolio, $arrayTitulos, $nombreArchivo) {
+
+        if (count($arrayTitulos) > 25) {
+            $letra = 'AA';
+        } else {
+            $letra = 'A';
+        }
+
+        $this->Excel->createSheet('Folios', 0);
+        $this->Excel->setActiveSheet(0);
+
+        $this->Excel->setTableSubtitles($letra, 1, $arrayTitulos);
+
+        $arrayWidth = array();
+        for ($i = 0; $i < count($arrayTitulos); $i++) {
+            array_push($arrayWidth, 30);
+        }
+        $this->Excel->setColumnsWidth($letra, $arrayWidth);
+
+        $arrayAlign = array();
+        for ($i = 0; $i < count($arrayTitulos); $i++) {
+            array_push($arrayAlign, 'center');
+        }
+        $this->Excel->setTableContent($letra, 1, $datosFolio, true, $arrayAlign);
+
+        if (count($arrayTitulos) > 25) {
+            $this->Excel->removeColumn('A', 26);
+        }
+
+//        $nombreArchivo = trim($nombreArchivo);
+        $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
+
+        $path = "../public/storage/Archivos/Reportes";
+        if (!is_dir($path)) {
+            mkdir($path, 755, true);
+        }
+        $this->Excel->saveFile($ruta);
+
+        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/Reportes/' . $nombreArchivo];
     }
 
 }

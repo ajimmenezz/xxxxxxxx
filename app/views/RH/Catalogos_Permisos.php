@@ -81,6 +81,7 @@
                                             <th class="all">Puede Cancelarse</th>
                                             <th class="all">Nivel Cancelación</th>
                                             <th class="never">IdPerfil</th>
+                                            <th class="all">Archivo Extra</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -106,6 +107,11 @@
                                                 echo '<th class="all nivelCancelacion">' . $value["NombrePerfil"] . '</th>';
                                             }
                                             echo '<th class="all idPerfil">' . $value["NivelCancelacion"] . '</th>';
+                                            if ($value["Archivo"] == 1) {
+                                                echo '<th class="all flag">Si</th>';
+                                            } else {
+                                                echo '<th class="all flag">No</th>';
+                                            }
                                         }
                                         ?>
                                     </tbody>
@@ -331,7 +337,7 @@
                                     <option value="">Jefe Directo</option>
                                     <?php
                                     foreach ($datos["ListaPerfiles"] as $value) {
-                                        echo '<option value="'.$value['Id'].'">'.$value['Nombre'].'</option>';
+                                        echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
                                     }
                                     ?>
                                 </select>
@@ -343,8 +349,19 @@
                                     <option value="0">No</option>
                                 </select>
                             </div>
+                            <br><br><br>
+                            <div id="documentacion" class="form-group hidden">
+                                <br>
+                                <div class="col-md-6 col-sm-6 col-xs-6">
+                                    <label>Archivo Extra</label>
+                                    <select id="editarArchivoExtra" class="selectArchivoExtra form-control" style="width: 100%" data-parsley-required="true">
+                                        <option value="1">Si</option>
+                                        <option value="0">No</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <br><br><br>
+                        <br><br><br><br>
                     </div>
                 </form>
                 <!--Finaliza seccion de edición-->

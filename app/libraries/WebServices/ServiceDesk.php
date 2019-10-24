@@ -86,24 +86,51 @@ class ServiceDesk extends General {
             case 'Error when validating URL - Invalid URL for the requested operation.':
                 $textoError = 'URL no válida para la operación solicitada.';
                 break;
-            case 'Error when adding note to request - 561339 - Notes text cannot be empty when adding notes':
-                $textoError = 'No cuenta con información para subirlo al ServiceDesk.';
-                break;
             default :
                 $textoError = $error;
                 break;
         }
+
+        if (strpos($error, 'Error when adding note to request') !== FALSE) {
+            if (strpos($error, 'User does not have enough permission to add note') !== FALSE) {
+                $textoError = 'El usuario no tiene permiso suficiente para agregar una nota al ServiceDesk.';
+            } else {
+                $textoError = 'No cuenta con información para subirlo al ServiceDesk.';
+            }
+        }
+
         return $textoError;
     }
 
-    public function validarAPIKey(string $key) {
+    public function validarKey(string $key) {
         try {
             $this->getFoliosTecnico($key);
+            return array('code' => 200, 'messege' => $key);
         } catch (\Exception $ex) {
-            $key = '';
-//            Se comenta el codigo para que se planche la información solo la persona que haga los cambios.
-//            $key = $this->modeloServiceDesck->getApiKeyByUser('2');
+            return array('code' => 400, 'messege' => $ex->getMessage());
         }
+    }
+
+    public function validarAPIKey(string $key) {
+        $respuestaKey = $this->validarKey($key);
+        $respuestaUsuario['code'] = 200;
+        $respuestaJefe['code'] = 200;
+        $usuario = $this->Usuario->getDatosUsuario();
+
+        if ($respuestaKey['code'] === 400) {
+            $key = $this->modeloServiceDesck->apiKeyUsuario($usuario['Id']);
+            $respuestaUsuario = $this->validarKey($key);
+        }
+
+        if ($respuestaUsuario['code'] === 400) {
+            $key = $this->modeloServiceDesck->apiKeyJefe($usuario['Id']);
+            $respuestaJefe = $this->validarKey($key);
+        }
+
+        if ($respuestaJefe['code'] === 400) {
+            $key = '';
+        }
+
         return $key;
     }
 
@@ -145,7 +172,7 @@ class ServiceDesk extends General {
     public function getResolucionFolio(string $key, string $folio) {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_RESOLUTION&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '?' . $this->FIELDS);
-        
+
         if ($datosSD !== NULL) {
             $this->validarError($datosSD);
         } else {
@@ -435,6 +462,23 @@ class ServiceDesk extends General {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_NOTES&TECHNICIAN_KEY=' . $key;
         $data = json_decode(file_get_contents($this->Url . '/' . $folio . '/notes/?' . $this->FIELDS));
         return $data;
+    }
+
+    public function getTicketServiceDesk(string $key, string $informacionSD) {
+        $input_data = '{
+                        "operation":{
+                            "details": {
+                                ' . $informacionSD . '
+                            }
+                        }
+                    }';
+        $FIELDS = "format=json"
+                . "&OPERATION_NAME=ADD_REQUEST"
+                . "&TECHNICIAN_KEY=" . $key
+                . "&INPUT_DATA=" . urlencode($input_data);
+        $datosSD = $this->getDatosSD($this->Url . '/?' . $FIELDS);
+        $this->validarError($datosSD);
+        return $datosSD;
     }
 
 }

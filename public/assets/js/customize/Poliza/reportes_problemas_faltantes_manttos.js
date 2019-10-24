@@ -272,4 +272,29 @@ $(function () {
     };
 
     fecha.rangoFechas('#desdeProblemasFaltantesMantenimiento', '#hastaProblemasFaltantesMantenimiento');
+    
+    
+    $('#reporteAnual').on('click', function () {
+        evento.enviarEvento('/Poliza/Tester/solicitudAnual', {}, '#seccion-reportes-problemas-faltantes', function (respuesta) {
+            if (respuesta) {
+                window.open(respuesta.ruta, '_blank');
+            }
+        });
+    });
+    
+    $('#reporteSemanal').on('click', function () {
+        evento.enviarEvento('/Poliza/Tester/solicitudSemanal', {}, '#seccion-reportes-problemas-faltantes', function (respuesta) {
+            if (respuesta) {
+                window.open(respuesta.ruta, '_blank');
+            }
+        });
+    });
+    
+    $('#compararFolios').on('click', function () {
+        evento.enviarEvento('/Poliza/Tester/solicitarFolios', {}, '#seccion-reportes-problemas-faltantes', function (respuesta) {
+            if (respuesta) {
+                window.open(respuesta.ruta, '_blank');
+            }
+        });
+    });
 });

@@ -39,7 +39,7 @@ class Controller_Tester extends Base {
 //                    $resultado = $this->SD->cambiarEstatusServiceDesk($datos['key'], 'Problema', $datos['folio']);
 //                    $resultado = $this->SD->consultarDepartamentoTI($datos['key']);
                     $resultado = $this->SD->validarAPIKey($datos['key']);
-                    $resultado = $this->SD->cambiarEstatusServiceDesk($datos['key'], 'Problema', $datos['folio']);
+//                    $resultado = $this->SD->cambiarEstatusServiceDesk($datos['key'], 'Problema', $datos['folio']);
                 } catch (\Exception $ex) {
                     $resultado = $ex->getMessage();
                 }
@@ -48,9 +48,17 @@ class Controller_Tester extends Base {
                 $datos = $this->input->post();
                 $resultado = $this->Servicio->crearPdfVuelta($datos);
                 break;
-                break;
             case 'concluirSolicitudesAbiertas':
                 $resultado = $this->Solicitud->concluirSolicitudesAbiertas();
+                break;
+            case 'solicitarFolios':
+                $resultado = $this->Solicitud->getFolios();
+                break;
+            case 'solicitudSemanal':
+                $resultado = $this->Solicitud->getFoliosSemanal();
+                break;
+            case 'solicitudAnual':
+                $resultado = $this->Solicitud->getFoliosAnual();
                 break;
             default:
                 $resultado = FALSE;

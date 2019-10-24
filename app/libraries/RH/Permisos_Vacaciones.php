@@ -32,7 +32,8 @@ class Permisos_Vacaciones extends General {
                                                 tcmarcta.IdTipoAusencia,
                                                 cvmap.Nombre,
                                                 cvmap.Observaciones,
-                                                cvmap.Id
+                                                cvmap.Id,
+                                                cvmap.Archivo
                                         FROM
                                             cat_v3_tipos_ausencia_personal AS cvap
                                         INNER JOIN t_cat_motivos_ausencia_relacion_cat_tipos_ausencia AS tcmarcta
@@ -53,12 +54,12 @@ class Permisos_Vacaciones extends General {
     }
 
     public function obtenerPermisosAusencia($idUsuario) {
-        return $this->DBS->consultaGral('SELECT tpa.Id, tpa.FechaDocumento, tap.Nombre AS IdTipoAusencia, map.Nombre AS IdMotivoAusencia, 
+        return $this->DBS->consultaGral('SELECT tpa.Id, tpa.FechaDocumento, tap.Nombre AS IdTipoAusencia, map.Nombre AS IdMotivoAusencia, map.Archivo AS ArchivoExtra,
                     tpa.FechaAusenciaDesde, tpa.FechaAusenciaHasta, tpa.HoraEntrada, tpa.HoraSalida, tpa.IdEstatus, tpa.Archivo, tpa.IdUsuarioJefe, 
                     tpa.IdUsuarioRH, tpa.IdUsuarioContabilidad, tpa.IdUsuarioDireccion 
                     FROM t_permisos_ausencia_rh AS tpa INNER JOIN cat_v3_tipos_ausencia_personal AS tap ON tpa.IdTipoAusencia = tap.Id
                     INNER JOIN cat_v3_motivos_ausencia_personal AS map ON tpa.IdMotivoAusencia = map.Id WHERE IdUsuario = "' . $idUsuario . '" 
-                    AND DATE(tpa.FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE()');
+                    AND DATE(tpa.FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() order by FechaAusenciaDesde desc');
     }
 
     public function jefeDirecto($idUsuario) {
@@ -80,7 +81,7 @@ class Permisos_Vacaciones extends General {
     public function correoJefeDirecto($idJefe) {
         return $this->DBS->consultaGral("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id='" . $idJefe . "'");
     }
-    
+
     public function correoRHContador() {
         return $this->DBS->consultaGral("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil in(21, 37)");
     }
@@ -99,10 +100,23 @@ class Permisos_Vacaciones extends General {
         $idPermisoGenerado = $this->ajustarInformacionDBS($datosPermisos, $documento);
         $correoEnviado = $this->enviarCorreoPermiso($datosPermisos, $asunto = "Generado", $carpeta);
 
-        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' =>$correoEnviado];
+        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' => $correoEnviado];
     }
 
     public function revisarArchivoAdjunto($datosPermisos) {
+        set_error_handler( function ($errno, $errstr, $errfile, $errline) {
+
+            switch ($errno) {
+                case E_WARNING:
+                    $this->error['tipo'] = 'Warning';
+                    $this->error['codigo'] = 'PDF001';
+                    $this->error['error'] = $errstr;
+                    break;
+            }
+
+            throw new \Exception('Error al adjuntar');
+        }, E_WARNING);
+        
         $this->guardarImagen($datosPermisos);
 
         $nombreArchivo = explode("\\", $datosPermisos['evidenciaIncapacidad']);
@@ -124,11 +138,16 @@ class Permisos_Vacaciones extends General {
                 $tplIdx = $this->pdf->importPage($i);
                 $this->pdf->useTemplate($tplIdx, 10, 0, 190);
             }
-        } catch (\InvalidArgumentException $ex) {
+        } catch (\spl_object_hash $ex) {
+            $this->pdf->AddPage();
+            $this->pdf->SetFont("helvetica", "B", 11);
+            $this->pdf->Cell(14, 0, "Error del objeto PDF");
+        } catch (\Exception $ex){
             $this->pdf->AddPage();
             $this->pdf->SetFont("helvetica", "B", 11);
             $this->pdf->Cell(14, 0, "Error al Adjuntar el Archivo");
         }
+        restore_error_handler();
     }
 
     public function guardarImagen($datosPermisos) {
@@ -197,9 +216,10 @@ class Permisos_Vacaciones extends General {
     public function revisarInformacionAusencia($idPermiso) {
         $informacionPermisoAusencia['datosAusencia'] = $this->DBS->consultaGral('SELECT CONCAT(trp.Nombres, " ",trp.ApPaterno, " ",trp.ApMaterno) AS Nombre,
                  cp.Nombre AS Puesto, cds.Nombre AS Departamento, tpa.Id, IdEstatus, IdTipoAusencia, IdMotivoAusencia, FechaAusenciaDesde, FechaAusenciaHasta, 
-                 HoraEntrada, HoraSalida, Motivo, FolioDocumento, Archivo, ArchivosOriginales, IdUsuarioJefe FROM t_permisos_ausencia_rh AS tpa 
+                 HoraEntrada, HoraSalida, Motivo, FolioDocumento, tpa.Archivo, ArchivosOriginales, IdUsuarioJefe, cmap.Archivo AS Doc FROM t_permisos_ausencia_rh AS tpa 
                  INNER JOIN t_rh_personal AS trp ON tpa.IdUsuario = trp.IdUsuario INNER JOIN cat_v3_usuarios AS cu ON tpa.IdUsuario=cu.Id 
                  INNER JOIN cat_perfiles AS cp ON cu.IdPerfil=cp.Id INNER JOIN cat_v3_departamentos_siccob AS cds ON cp.IdDepartamento=cds.Id 
+                 INNER JOIN cat_v3_motivos_ausencia_personal AS cmap ON tpa.IdMotivoAusencia = cmap.Id
                  WHERE tpa.Id ="' . $idPermiso['idPermiso'] . '"');
         $informacionPermisoAusencia['tiposAusencia'] = $this->obtenerTiposAusencia();
         switch ($idPermiso['tipoAusencia']) {
@@ -218,7 +238,11 @@ class Permisos_Vacaciones extends General {
         if ($informacionPermisoAusencia['datosAusencia'][0]['IdEstatus'] == '9' && $informacionPermisoAusencia['datosAusencia'][0]['IdUsuarioJefe'] == NULL) {
             return array('formulario' => parent::getCI()->load->view('RH/Modal/formularioActualizarAusencia', $informacionPermisoAusencia, TRUE));
         } else {
-            return "En revision";
+            if($informacionPermisoAusencia['datosAusencia'][0]['Doc'] == 1) {
+                return array('formulario' => parent::getCI()->load->view('RH/Modal/formularioActualizarAusencia', $informacionPermisoAusencia, TRUE));
+            } else {
+                return "En revision";
+            }
         }
     }
 
@@ -234,7 +258,7 @@ class Permisos_Vacaciones extends General {
 
         $correoEnviado = $this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
 
-        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' =>$correoEnviado];
+        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' => $correoEnviado];
     }
 
     public function actualizarPermisoArchivo($datosPermisos) {
@@ -256,11 +280,11 @@ class Permisos_Vacaciones extends General {
 
         $correoEnviado = $this->enviarCorreoPermiso($datosPermisos, $asunto = "Actualizado", $carpeta);
 
-        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' =>$correoEnviado];
+        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1), 'correo' => $correoEnviado];
     }
 
     public function revisarActualizarPermiso($datosPermisos) {
-        if ($datosPermisos['evidenciaIncapacidad'] !== "" && ($datosPermisos['motivoAusencia'] == '3' || $datosPermisos['motivoAusencia'] == '4')) {
+        if ($datosPermisos['evidenciaIncapacidad'] !== "") {
             $nombreArchivo = explode("\\", $datosPermisos['evidenciaIncapacidad']);
             $divideNombreArchivo = preg_split("/[\s-]+/", $nombreArchivo[2]);
             $concatenaNombre = "";
@@ -315,7 +339,7 @@ class Permisos_Vacaciones extends General {
         $correoJefe = $this->correoJefeDirecto($idJefe[0]['IdJefe']);
         $correoRHContador = $this->correoRHContador();
         foreach ($correoRHContador as $value) {
-            $arregloCorreos .= $value["EmailCorporativo"].",";
+            $arregloCorreos .= $value["EmailCorporativo"] . ",";
         }
         $arregloCorreos .= $correoJefe[0]['EmailCorporativo'];
         $texto = '<p>Se ha ' . $asunto . ' el permiso de ausencia por parte de <strong>' . $datosPermisos['nombre'] . ',</strong> 
@@ -332,46 +356,12 @@ class Permisos_Vacaciones extends General {
                 $texto .= 'No Asistirá ';
                 break;
         }
-        switch ($datosPermisos['motivoAusencia']) {
-            case '1':
-                $texto .= 'CONSULTA MEDICO IMSS';
-                break;
-            case '2':
-                $texto .= 'CONSULTA DENTISTA IMSS';
-                break;
-            case '3':
-                $texto .= 'PERMISOS POR RAZONES DE TRABAJO EXTERNO';
-                break;
-            case '4':
-                $texto .= 'PERMISOS POR CURSOS DE CAPACITACION';
-                break;
-            case '5':
-                $texto .= 'ASUNTOS PERSONALES';
-                break;
-            case '6':
-                $texto .= 'CONSULTA MEDICO PARTICULAR';
-                break;
-            case '7':
-                $texto .= 'CONSULTA DENTISTA PARTICULAR';
-                break;
-            case '8':
-                $texto .= 'INCAPACIDAD IMSS DEL TRABAJADOR';
-                break;
-            case '9':
-                $texto .= 'CONSULTA MEDICO O DENTISTA IMSS';
-                break;
-            case '10':
-                $texto .= 'ASUNTOS PERSONALES';
-                break;
-            case '11':
-                $texto .= 'CONSULTA MEDICO PARTICULAR';
-                break;
-            case '12':
-                $texto .= 'CONSULTA DENTISTA PARTICULAR';
-                break;
-        }
+        
+        $texto .= $datosPermisos['textoMotivoAusencia'];
+                
         $texto .= ' para el día ' . $datosPermisos['fechaPermisoDesde'] . '</p><br><br>
-                    <a href="http://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1) . '">Archivo</a>';
+                    <a href="https://' . $_SERVER['SERVER_NAME'] . substr($carpeta, 1) . '">Archivo</a><br><br><br>
+                    <a href="https://' . $_SERVER['SERVER_NAME'] . '/RH/Autorizar_permisos">Sistema</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia ' . $asunto, $texto);
         $correoEnviado = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($arregloCorreos), 'Permiso de Ausencia', $mensaje);
         return $correoEnviado;
@@ -387,155 +377,119 @@ class Permisos_Vacaciones extends General {
 
     public function construirPDF($datosPermisos) {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $paginasArchivo = $this->pdf->setSourceFile('../public/storage/Archivos/Archivos_Template/Control_ausencias_personal.pdf');
+
         $this->pdf->AddPage();
-        $tplIdx = $this->pdf->importPage(1);
-        $this->pdf->useTemplate($tplIdx, 0, 0, 210, 420, true);
+        $this->pdf->SetMargins(30, 25, 30);
+        $this->pdf->SetAutoPageBreak(true, 25);
         $this->pdf->SetTextColor(243, 18, 18);
         $this->pdf->SetXY(165, 10);
         $this->pdf->SetFont("helvetica", "B", 11);
         $this->pdf->Cell(14, 0, "Falta Autorizar");
+
         $this->pdf->SetTextColor(0, 0, 0);
-        $this->pdf->SetXY(60, 48);
+        $this->pdf->SetFont("helvetica", "B", 15);
+        $this->pdf->SetXY(40, 20);
+        $this->pdf->Cell(0, 0, "CONTROL DE AUSENCIAS DEL PERSONAL");
+
+        $this->pdf->SetFont("helvetica", "I", 10);
+        $this->pdf->SetXY(15, 30);
+        $this->pdf->Cell(83, 8, "FECHA DEL DOCUMENTO:", 1);
+
+        $this->pdf->SetXY(110, 30);
+        $this->pdf->Cell(80, 8, "FECHA DEL PERMISO:", 1);
+
+        $this->pdf->SetXY(15, 43);
+        $this->pdf->Cell(175, 8, "NOMBRE COMPLETO DEL EMPLEADO: ", 1);
+
+        $this->pdf->SetXY(15, 51);
+        $this->pdf->Cell(175, 8, "PUESTO: ", 1);
+
+        $this->pdf->SetXY(15, 59);
+        $this->pdf->Cell(175, 8, "DEPARTAMENTO: ", 1);
+
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->SetFillColor(224, 224, 224);
+        $this->pdf->SetXY(15, 70);
+        $this->pdf->Cell(53, 9, "MOTIVOS", 0, 0, 'C', true);
+        if ($datosPermisos['tipoAusencia'] == 3) {
+            $this->pdf->SetXY(72, 70);
+            $this->pdf->Cell(53, 9, "NO ASISTIR A TRABAJAR", 0, 0, 'C', true);
+            $this->pdf->SetXY(95, 85);
+            $this->pdf->Cell(30, 9, "X");
+        } else {
+            if ($datosPermisos['tipoAusencia'] == 1) {
+                $this->pdf->SetXY(72, 85);
+                $this->pdf->Cell(25, 9, utf8_decode($datosPermisos['horaAusencia']), 1, 0, 'C');
+            } else {
+                $this->pdf->SetXY(100, 85);
+                $this->pdf->Cell(25, 9, utf8_decode($datosPermisos['horaAusencia']), 1, 0, 'C');
+            }
+            $this->pdf->SetXY(72, 70);
+            $this->pdf->Cell(25, 9, "ENTRADA", 0, 0, 'C', true);
+            $this->pdf->SetXY(72, 85);
+            $this->pdf->Cell(25, 9, "", 1, 0, 'C');
+            $this->pdf->SetXY(100, 70);
+            $this->pdf->Cell(25, 9, "SALIDA", 0, 0, 'C', true);
+            $this->pdf->SetXY(100, 85);
+            $this->pdf->Cell(25, 9, "", 1, 0, 'C');
+        }
+        $this->pdf->SetXY(129, 70);
+        $this->pdf->Cell(61, 9, "OBSERVACIONES", 0, 0, 'C', true);
+
+        $this->pdf->Ln();
+        $this->pdf->line(15, 130, 190, 130);
+        $this->pdf->SetFont("helvetica", "I", 10);
+        $this->pdf->SetXY(15, 140);
+        $this->pdf->Cell(0, 0, "DESCRIPCION DE MOTIVOS: ");
+
         $this->pdf->SetFont("helvetica", "", 10);
+        $this->pdf->line(15, 207, 55, 207);
+        $this->pdf->SetXY(20, 210);
+        $this->pdf->Cell(0, 0, "JEFE INMEDIATO");
+
+        $this->pdf->line(60, 207, 100, 207);
+        $this->pdf->SetXY(60, 210);
+        $this->pdf->Cell(0, 0, "RECURSOS HUMANOS");
+
+        $this->pdf->line(105, 207, 145, 207);
+        $this->pdf->SetXY(113, 210);
+        $this->pdf->Cell(0, 0, "CONTADOR");
+
+        $this->pdf->line(150, 207, 190, 207);
+        $this->pdf->SetXY(160, 210);
+        $this->pdf->Cell(0, 0, "DIRECTOR");
+
+        //agregar datos del permiso
+        $this->pdf->SetFont("helvetica", "B", 10);
+        $this->pdf->SetXY(62, 34);
         $this->pdf->Cell(0, 0, utf8_decode($fecha));
-        $this->pdf->SetXY(148, 48);
-        $this->pdf->SetFont("helvetica", "", 10);
-        $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['fechaPermisoDesde'] . $datosPermisos['fechaPermisoHasta']));
-        $this->pdf->SetXY(80, 62);
-        $this->pdf->SetFont("helvetica", "", 10);
+
+        $this->pdf->SetXY(150, 34);
+        $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['fechaPermisoDesde'] . " " . $datosPermisos['fechaPermisoHasta']));
+
+        $this->pdf->SetXY(82, 47);
         $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['nombre']));
-        $this->pdf->SetXY(37, 72);
-        $this->pdf->SetFont("helvetica", "", 10);
+
+        $this->pdf->SetXY(35, 55);
         $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['puesto']));
-        $this->pdf->SetXY(48, 82);
-        $this->pdf->SetFont("helvetica", "", 10);
+
+        $this->pdf->SetXY(47, 63);
         $this->pdf->Cell(0, 0, utf8_decode($datosPermisos['departamento']));
 
-        $hora = explode(" ", $datosPermisos["horaAusencia"]);
-        switch ($datosPermisos['tipoAusencia']) {
-            case '1':
-            case '3':
-                $this->pdf->SetX(82);
-                $x = $this->pdf->GetX();
-                break;
-            case '2':
-                $this->pdf->SetX(107);
-                $x = $this->pdf->GetX();
-                break;
-        }
+        $this->pdf->SetXY(15, 83);
+        $this->pdf->MultiCell(53, 9, utf8_decode($datosPermisos['textoMotivoAusencia']));
 
-        switch ($datosPermisos['motivoAusencia']) {
-            case '1':
-                $this->pdf->SetXY($x, 116);
-                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-                break;
-            case '2':
-                $this->pdf->SetXY($x, 126);
-                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-                break;
-            case '3':
-                $this->pdf->SetXY($x, 137);
-                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-                break;
-            case '4':
-                $this->pdf->SetXY($x, 148);
-                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-                break;
-            case '5':
-                $this->pdf->SetXY($x, 158);
-                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-                break;
-            case '6':
-                $this->pdf->SetXY($x, 169);
-                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-                break;
-            case '7':
-                $this->pdf->SetXY($x, 179);
-                $this->pdf->Cell(0, 0, utf8_decode($hora[0]));
-                break;
-            case '8':
-                $this->pdf->SetXY($x, 213);
-                $this->pdf->Cell(0, 0, utf8_decode("X"));
-                break;
-            case '9':
-                $this->pdf->SetXY($x, 223);
-                $this->pdf->Cell(0, 0, utf8_decode("X"));
-                break;
-            case '10':
-                $this->pdf->SetXY($x, 234);
-                $this->pdf->Cell(0, 0, utf8_decode("X"));
-                break;
-            case '11':
-                $this->pdf->SetXY($x, 244);
-                $this->pdf->Cell(0, 0, utf8_decode("X"));
-                break;
-            case '12':
-                $this->pdf->SetXY($x, 255);
-                $this->pdf->Cell(0, 0, utf8_decode("X"));
-                break;
-        }
-
-        $this->pdf->SetXY(55, 266);
-        $this->pdf->SetFont("helvetica", "", 10);
+        $this->pdf->SetXY(15, 145);
         $this->pdf->MultiCell(135, 4, utf8_decode($datosPermisos["descripcionAusencia"]));
 
-        $folioDocumento = $this->DBS->consultaGral("SELECT COUNT(Archivo) AS total FROM t_permisos_ausencia_rh");
-        $cuenta = strlen($folioDocumento[0]['total']);
-        $cerosFolio = '';
-        for ($i = $cuenta; $i < 10; $i++) {
-            $cerosFolio .= '0';
-        }
-        $this->pdf->SetFont("helvetica", "", 7);
-        $this->pdf->SetXY(14, 399);
-        $this->pdf->Cell(0, 0, utf8_decode("Folio: " . $cerosFolio . $folioDocumento[0]['total']));
+        $this->pdf->SetFont("helvetica", "B", 7);
+        $this->pdf->SetXY(129, 83);
+        $observaciones = $this->observacionesMotivo($datosPermisos['motivoAusencia']);
+        $this->pdf->MultiCell(53, 9, utf8_decode($observaciones[0]['Observaciones']), 0, 'L');
     }
 
-    public function enviarCorreoSiccob() {
-        $totalInacistencias = $this->DBS->consultaGral('SELECT CONCAT(trhp.Nombres, " ",trhp.ApPaterno, " ",trhp.ApMaterno) AS Nombre, 
-                                    IdTipoAusencia, IdMotivoAusencia, FechaAusenciaDesde, FechaAusenciaHasta, HoraEntrada, HoraSalida, Motivo 
-                                    FROM t_permisos_ausencia_rh AS tpa 
-                                    INNER JOIN cat_v3_usuarios AS cu ON tpa.IdUsuario = cu.Id 
-                                    INNER JOIN t_rh_personal AS trhp ON cu.Id = trhp.IdUsuario 
-                                    where tpa.IdEstatus = 7 AND FechaAusenciaDesde = CURDATE()+1');
-
-        $totalCorreos = $this->DBS->consultaGral("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE EmailCorporativo <> 'null'");
-
-        $texto = 'El día de mañana las siguientes personas estarán ausentes:<br><br>';
-        if ($totalInacistencias != false) {
-            foreach ($totalInacistencias as $inacistencias) {
-                $texto .= '<strong>' . $inacistencias['Nombre'] . ',</strong> ';
-                switch ($inacistencias['IdTipoAusencia']) {
-                    case '1':
-                        $texto .= 'Llegara a las ' . $inacistencias['HoraEntrada'];
-                        break;
-                    case '2':
-                        $texto .= 'Saldrá a las  ' . $inacistencias['HoraSalida'];
-                        break;
-                    case '3':
-                        $texto .= 'No Asistirá';
-                        break;
-                }
-                switch ($inacistencias['IdMotivoAusencia']) {
-                    case '1':
-                        $texto .= ' por motivo Personal.';
-                        break;
-                    case '2':
-                        $texto .= ' por motivo de Trabajo/Comisión.';
-                        break;
-                    case '3':
-                        $texto .= ' por Cita Médica.';
-                        break;
-                    case '4':
-                        $texto .= ' por motivo de IMSS Incapacidad.';
-                        break;
-                }
-                $texto .= '<br>';
-            }
-            $mensaje = $this->Correo->mensajeCorreo('Ausencia de Personal', $texto);
-
-            $respuestaCorreo = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $totalCorreos, 'Ausencia de Personal', $mensaje);
-        }
+    public function observacionesMotivo($idMotivo) {
+        return $this->DBS->consultaGral("select Observaciones from cat_v3_motivos_ausencia_personal where Id = " . $idMotivo);
     }
 
 }

@@ -129,7 +129,7 @@ Servicio.prototype.cancelarServicio = function () {
     $('#btnAceptarConcluirServicio').on('click', function () {
         $('#btnCancelarConcluirServicio').attr('disabled', 'disabled');
         $('#btnAceptarConcluirServicio').attr('disabled', 'disabled');
-        _this.enviarEvento(eventoModal, data, seccionPanel, function (respuesta) {
+        _this.enviarEvento(eventoModal, data, '#modal-dialogo', function (respuesta) {
             _this.mostrarModal('Cancelar Servicio', respuesta.formulario);
             $('#btnServicioCancelar').on('click', function () {
                 if (_this.validarFormulario('#formCancelarServicio')) {
@@ -259,8 +259,8 @@ Servicio.prototype.nuevaSolicitud = function () {
                     _this.file.enviarArchivos('#inputEvidenciasSolicitud', '/Generales/Solicitud/Nueva_solicitud', '#panelNuevaSolicitud', data, function (respuesta) {
                         if (respuesta) {
                             if (data.personalSD != "") {
+                                data.solicitud = respuesta;
                                 evento.enviarEvento('/Generales/Solicitud/ReasignarFolioSD', data, null, function (respuesta) {
-
                                 });
                             }
 

@@ -31,11 +31,11 @@ $(function () {
         var servicio = $('#servicioTester').val();
         var folio = $('#folioTester').val();
         var data = {servicio: servicio, idFacturacionOutSourcing: idVuelta, folio: folio};
-        evento.enviarEvento('Tester/generarPdfVuelta', data, '#paneltester', function (respuesta) {
+        evento.enviarEvento('Tester/generarPdfVuelta', data, '#panelCrearPdfVuelta', function (respuesta) {
             if (respuesta === 1) {
-                $('#respuesta').empty().append('Correcto');
+                $('#respuestaPdfVuelta').empty().append('Correcto');
             } else {
-                $('#respuesta').empty().append('No se modifico');
+                $('#respuestaPdfVuelta').empty().append('No se modifico');
             }
         });
     });
@@ -43,6 +43,14 @@ $(function () {
     $('#btn-SolicitudesAbiertas').on('click', function () {
         evento.enviarEvento('Tester/concluirSolicitudesAbiertas', {}, '#paneltesterSolicitudesAbiertas', function (respuesta) {
             $('#respuesta').empty().append('Correcto');
+        });
+    });
+
+    $('#solicitarFolios').on('click', function () {
+        evento.enviarEvento('Tester/solicitarFolios',  {}, '#panelComparacionTickets', function (respuesta) {
+            if (respuesta) {
+                window.open(respuesta.ruta, '_blank');
+            }
         });
     });
 });
