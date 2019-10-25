@@ -1198,7 +1198,7 @@ class InformacionServicios extends General {
         return $arrayReturn;
     }
 
-    private function getHistorialReporteEnFalso(int $id) {
+    public function getHistorialReporteEnFalso(int $id) {
         $consulta = $this->DBS->consulta("select
         tcbrf.Id,
         nombreUsuario(tcbrf.IdUsuario) as Usuario,

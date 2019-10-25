@@ -1326,8 +1326,12 @@ class Servicio extends General {
                 $evidenciasDiagnostico = '';
             }
             $correctivosDiagnostico[0]['Evidencias'] = $evidenciasDiagnostico;
+            
+            if($correctivosDiagnostico[0]['IdTipoDiagnostico'] === '1'){
+                $bitacoraObservaciones = $this->InformacionServicios->getHistorialReporteEnFalso($servicio);
+                $correctivosDiagnostico[0]['BitacoraObservaciones'] = $bitacoraObservaciones; 
+            }
         }
-
         $tipoProblema = $this->DBS->consultaGeneral('SELECT Id, IdTipoProblema FROM t_correctivos_problemas WHERE IdServicio = "' . $servicio . '" ORDER BY Id DESC LIMIT 1');
         $notas = $this->Notas->getNotasByServicio($servicio, $idSolicitud[0]['IdSolicitud']);
         $notasPdf = $this->getNotasByServicio($servicio);
