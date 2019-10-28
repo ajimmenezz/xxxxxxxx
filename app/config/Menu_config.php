@@ -60,6 +60,26 @@ $config['Generales'] = array(
 //        'Permiso' => 'VGTESTER'
         'Permiso' => 'VGDASH'
     ),
+    'Dashboard-Generico' => array(
+        'liga' => 'Dashboard',
+        'icono' => 'fa fa-dashboard',
+        'Url' => '/Generales/Dashboard_Generico',
+        'css' => array(            
+        ),
+        'pluginsCss' => array(            
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Generales/dashboard_generico'),
+        'pluginsJs' => array(  
+            'flot/jquery.flot.min',
+            'flot/jquery.flot.time.min',
+            'flot/jquery.flot.resize.min',
+            'flot/jquery.flot.pie.min',
+            'flot/jquery.flot.stack.min',
+            'flot/jquery.flot.crosshair.min',
+            'flot/jquery.flot.categories'
+        ),
+        'Permiso' => 'VGDASHG'
+    ),
     'Dashboard-Siccob' => array(
         'liga' => 'Dashboard General',
         'icono' => 'fa fa-line-chart',
@@ -119,7 +139,7 @@ $config['Generales'] = array(
         'Permiso' => 'VD4D'
     ),
     'Dashboard-Logistica' => array(
-        'liga' => 'Dashboard',
+        'liga' => 'Dashboard Logistica',
         'icono' => 'fa fa-dashboard',
         'Url' => '/Logistica/Dashboard',
         'css' => array(

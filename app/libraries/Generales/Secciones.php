@@ -51,6 +51,7 @@ class Secciones extends General {
     private $motivosCancelacion; 
     
     private $gestorProyectos;
+    private $gestorDashboard;
 
     public function __construct() {
         parent::__construct();
@@ -105,6 +106,9 @@ class Secciones extends General {
         $this->CatalogoMotivosPermiso = $this->factoryCatalogos->getCatalogo('CatalogoMotivoPermisos');
         $this->CatalogoRechazoPermiso = $this->factoryCatalogos->getCatalogo('CatalogoRechazoPermisos');
         $this->CatalogoCancelacionPermiso = $this->factoryCatalogos->getCatalogo('CatalogoCancelarPermisos');
+        
+        $this->gestorDashboard = new \Librerias\V2\PaquetesDashboard\GestorDashboard();
+        
     }
 
     /*
@@ -578,6 +582,9 @@ class Secciones extends General {
             case 'FondoFijo/SaldosTecnico':
                 $datos['SaldoTecnico'] = $this->fondoFijo->getTecnicos();
                 //Este va a la vista
+                break;
+            case 'Generales/Dashboard_Generico':
+                $datos['dashboard'] = $this->gestorDashboard->getDashboards();                
                 break;
             default:
                 break;
