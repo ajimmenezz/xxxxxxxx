@@ -565,7 +565,6 @@ class Secciones extends General {
             case 'FondoFijo/MiFondo':
                 $datos['Cuentas'] = $this->fondoFijo->getSaldosCuentasXUsuario($usuario['Id']);
                 break;
-            
             case 'FondoFijo/Autorizar':
                 $datos['Pendientes'] = $this->fondoFijo->pendientesXAutorizar($usuario['Id']);
                 break;

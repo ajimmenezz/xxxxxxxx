@@ -68,7 +68,7 @@ $config['Generales'] = array(
         ),
         'pluginsCss' => array(            
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Generales/dashboard_generico'),
+        'js' => array('Base/Base', 'Base/Socket', 'Componentes/HerramientasWeb/Utileria', 'Generales/dashboard_generico'),
         'pluginsJs' => array(  
             'flot/jquery.flot.min',
             'flot/jquery.flot.time.min',
