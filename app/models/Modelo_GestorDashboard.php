@@ -27,41 +27,41 @@ class Modelo_GestorDashboard extends Base {
     
     public function getPermisosDashboard(string $permisos) {
         $consulta = $this->consulta('SELECT 
-                                        cvp.Id
+                                        tpd.ClavePermiso
                                     FROM
                                         t_permisos_dashboard tpd
                                     INNER JOIN cat_v3_permisos cvp
                                     ON cvp.Permiso = tpd.ClavePermiso 
-                                    WHERE cvp.Id IN(' . $permisos . ')');
+                                    WHERE tpd.Id IN(' . $permisos . ')');
         return $consulta;
     }
     
-    public function getDato327(array $datos) {
+    public function getDatosVGC(array $datos) {
         $consulta = $this->consulta('SELECT * FROM t_permisos_dashboard');
         return $consulta;
     }
     
-    public function getDato328(array $datos) {
+    public function getDatosVGT(array $datos) {
         $consulta = $this->consulta('SELECT * FROM t_permisos_dashboard');
         return $consulta;
     }
     
-    public function getDato329(array $datos) {
+    public function getDatosVGHI(array $datos) {
         $consulta = $this->consulta('SELECT * FROM t_permisos_dashboard');
         return $consulta;
     }
     
-    public function getDato330(array $datos) {
+    public function getDatosVGIP(array $datos) {
         $consulta = $this->consulta('SELECT * FROM t_permisos_dashboard');
         return $consulta;
     }
     
-    public function getDato331(array $datos) {
+    public function getDatosVGZ(array $datos) {
         $consulta = $this->consulta('SELECT * FROM t_permisos_dashboard');
         return $consulta;
     }
     
-    public function getDato332(array $datos) {
+    public function getDatosVGTO(array $datos) {
         $consulta = $this->consulta('SELECT * FROM t_permisos_dashboard');
         return $consulta;
     }

@@ -47,15 +47,14 @@ class GestorDashboard {
         $arrayConsultas = array();
         $idPermisos = Usuario::getPermisos();
         $stringPermisos = implode(',', $idPermisos);
-        $permisos = $this->db->getPermisosDashboard($stringPermisos);
+        $claves = $this->db->getPermisosDashboard($stringPermisos);
 
-        foreach ($permisos as $key => $value) {
-            $getConsulta = 'get' . $value['Id'];
-            array_push($arrayConsultas, $this->db->$getConsulta());
+        foreach ($claves as $key => $value) {
+            $getConsulta = 'getDatos' . $value['ClavePermiso'];
+            array_push($arrayConsultas, $this->db->$getConsulta([]));
         }
 
-//        $consulta = $this->db->get327();
-        var_dump($arrayConsultas);
+        return $arrayConsultas;
     }
 
 }
