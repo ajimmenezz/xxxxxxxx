@@ -126,7 +126,7 @@ class Correo extends General {
             fwrite($archivo, PHP_EOL . "$contenido");
             fclose($archivo);
         } else {
-            mkdir("./storage/Archivos/ReportesTXT/", 755, true);
+            mkdir("./storage/Archivos/ReportesTXT/", 775, true);
             $archivo = fopen("./storage/Archivos/ReportesTXT/ReporteFallasEnvio.txt", "w");
             fwrite($archivo, PHP_EOL . "$contenido");
             fclose($archivo);

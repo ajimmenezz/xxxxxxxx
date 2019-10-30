@@ -518,12 +518,7 @@ class Solicitud extends General {
             if ($datos['operacion'] === '1') {
                 //Solo muestra la informacion de la solicitud para la seccion Solicitud asignada                                
                 if (!empty($datosSolicitud['Folio'])) {
-                    if (!empty($usuario['SDKey'])) {
-                        $apiKey = $usuario['SDKey'];
-                    } else {
-                        $apiKey = $this->DBS->getApiKeyMesaAyuda();
-                    }
-
+                    $apiKey = $this->ServiceDesk->validarAPIKey($usuario['SDKey']);
                     $data['datosSD'] = $this->ServiceDesk->getDetallesFolio($apiKey, $datosSolicitud['Folio']);
                     $data['datosResolucionSD'] = $this->ServiceDesk->getResolucionFolio($apiKey, $datosSolicitud['Folio']);
 
@@ -533,7 +528,7 @@ class Solicitud extends General {
                         $data['sucursales'] = $this->DBS->consulta("select Id, IdCliente, Nombre, NombreCinemex from cat_v3_sucursales where Flag = 1 order by Nombre");
                     }
                 }
-                $data['usuarioApiKey'] = $usuario['SDKey'];
+                $data['usuarioApiKey'] = $apiKey;
                 $data['formularioSolicitud'] = parent::getCI()->load->view('Generales/Modal/formularioAsignadaSolicitudSistemasExternos', $data, TRUE);
             } else if ($datos['operacion'] === '2') {
                 //Regresa la formulario para editar solicitud en la seccion autorizacion                
@@ -1604,7 +1599,7 @@ class Solicitud extends General {
         $host = $_SERVER['SERVER_NAME'];
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $detallesSolicitud = 'https://siccob.solutions/Detalles/Solicitud/' . $solicitud;
+            $detallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $solicitud;
         } else {
             $detallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $solicitud;
         }
@@ -1679,7 +1674,7 @@ class Solicitud extends General {
         $carpeta = './storage/Archivos/ReportesTXT';
 
         if (!file_exists($carpeta)) {
-            mkdir($carpeta, 0777, true);
+            mkdir($carpeta, 0775, true);
         }
 
         if (file_exists("./storage/Archivos/ReportesTXT/SolicitudesConcluidas.txt")) {
@@ -1838,7 +1833,7 @@ class Solicitud extends General {
 
         $path = "../public/storage/Archivos/Reportes";
         if (!is_dir($path)) {
-            mkdir($path, 755, true);
+            mkdir($path, 775, true);
         }
         $this->Excel->saveFile($ruta);
 

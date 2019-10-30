@@ -426,7 +426,7 @@ class Instalaciones extends General
             $data = base64_decode($img);
 
             if (!file_exists('./storage/Archivos/instalaciones/' . $datos['servicio'] . '/firmas')) {
-                mkdir('./storage/Archivos/instalaciones/' . $datos['servicio'] . '/firmas', 0755, true);
+                mkdir('./storage/Archivos/instalaciones/' . $datos['servicio'] . '/firmas', 0775, true);
             }
 
             $url = '/storage/Archivos/instalaciones/' . $datos['servicio'] . '/firmas/' . $datos['tipo'] . '.png';

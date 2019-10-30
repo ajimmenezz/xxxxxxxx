@@ -93,6 +93,12 @@ class Reportes extends General
                                                             case movimientos.TIPO_DOC when 'M' then 'Traspaso' when 'r' then 'Compra/Remisión' end as Movimiento,
                                                             movimientos.REFER as Referencia,
                                                             movimientos.CANT as Cantidad,
+                                                            (select Series = STUFF((
+                                                                select  '\n' + [NUM_SER]
+                                                                from HNUMSER03 
+                                                                where REG_SERIE = movimientos.REG_SERIE 
+                                                                for XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'),1,2,'')
+                                                            ) as Series,
                                                             CAST(movimientos.COSTO as CHAR) as Costo,
                                                             CAST(movimientos.COSTO_PROM_INI as CHAR) as Costo_Promo_Inicial,
                                                             CAST(movimientos.COSTO_PROM_FIN as CHAR) as Costo_Promo_Final,
@@ -202,6 +208,7 @@ class Reportes extends General
             'Movimiento',
             'Referencia',
             'Cantidad',
+            'Series',
             'Costo',
             'Costo Promo Inicial',
             'Costo Promo Final',
@@ -211,9 +218,9 @@ class Reportes extends General
             'Movimiento Enlazado'
         ];
         $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
-        $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
+        $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 25.0, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
         $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
-        $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', 'center', 'center', 'center', '', 'center', 'center', 'center'];
+        $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', '','center', 'center', 'center', '', 'center', 'center', 'center'];
         $this->Excel->setTableContent('A', 1, $movimientos, true, $arrayAlignMovimientos);
         /* End Hoja 2 */
 
