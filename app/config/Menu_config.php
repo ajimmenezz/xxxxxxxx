@@ -64,12 +64,25 @@ $config['Generales'] = array(
         'liga' => 'Dashboard',
         'icono' => 'fa fa-dashboard',
         'Url' => '/Generales/Dashboard_Generico',
-        'css' => array(            
+        'css' => array(
         ),
-        'pluginsCss' => array(            
+        'pluginsCss' => array(
+            'select2/dist/css/select2.min',
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Componentes/HerramientasWeb/Utileria', 'Generales/dashboard_generico'),
-        'pluginsJs' => array(  
+        'js' => array(
+            'Base/Base',
+            'Base/Socket',
+            'Componentes/HerramientasWeb/Utileria',
+            'Componentes/selects/select',
+            'Componentes/selects/selectBasico',
+            'Componentes/graficas/GraficaGoogle',
+            'V2/PaquetesDashboard/dashboard_generico',
+            'V2/PaquetesDashboard/FactoryDashboard',
+            'V2/PaquetesDashboard/Dashboard',
+            'V2/PaquetesDashboard/DashboardTendencias'
+        ),
+        'pluginsJs' => array(
+            'select2/dist/js/select2.min',
             'flot/jquery.flot.min',
             'flot/jquery.flot.time.min',
             'flot/jquery.flot.resize.min',

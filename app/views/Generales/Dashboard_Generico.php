@@ -9,10 +9,7 @@
             }
         ?>
         <!-- Finalizando titulo de la pagina -->
-
        
     </div>
 </div>
 <!-- Finalizando #contenido -->
-
-</div>
