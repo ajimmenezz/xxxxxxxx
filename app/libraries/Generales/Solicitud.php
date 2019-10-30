@@ -16,6 +16,7 @@ class Solicitud extends General {
     private $Catalogo;
     private $Ticket;
     private $Servicio;
+    private $ServicioConcluirFyC;
     private $ServiceDesk;
     private $Correo;
     private $SegundoPlano;
@@ -35,6 +36,7 @@ class Solicitud extends General {
         $this->SegundoPlano = \Modelos\Modelo_SegundoPlano::factory();
         parent::getCI()->load->helper(array('FileUpload', 'date'));
         $this->Excel = new \Librerias\Generales\CExcel();
+        $this->ServicioConcluirFyC = \Librerias\Generales\Servicio::factory();
     }
 
     /*
@@ -1608,7 +1610,7 @@ class Solicitud extends General {
 
     public function reasignarFolioSD(array $datos) {
 //        if($datos['perfil'] == 54 || $datos['perfil'] == 78){
-//            var_dump($datos);
+//            $this->ServicioConcluirFyC->Concluir_SinClasificar($datos);
 //        }
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
@@ -1690,44 +1692,56 @@ class Solicitud extends General {
     }
 
     public function getFolios() {
-        $folios = $this->ServiceDesk->getFolios2019('A8D6001B-EB63-4996-A158-1B968E19AB84');
-        $sd = json_decode(json_encode($folios), True);
-        $j = 0;
+        $todoFolioSD = array();
+        $from = 0;
+        for($i = 0; $i < 21; $i++){
+            $folios = array();
+            $folios = $this->ServiceDesk->getFolios2019('A8D6001B-EB63-4996-A158-1B968E19AB84', $from, 5000);
+            $sd = json_decode(json_encode($folios), True);
+            array_push($todoFolioSD, $sd["operation"]["details"]);
+            $from = $i.'001';
+        }
+        
+        $l = 0;
         $k = 0;
+        $foliosAdist = array();
+        $foliosSD = array();
+        
+        for ($i = 0; $i < count($todoFolioSD); $i++) {
+            for ($j = 0; $j < count($todoFolioSD[$i]); $j++) {
+                $temp = $this->DBS->obtenerFolios($todoFolioSD[$i][$j]["WORKORDERID"]);
 
-        for ($i = 0; $i < count($sd["operation"]["details"]); $i++) {
-            $temp = $this->DBS->obtenerFolios($sd["operation"]["details"][$i]["WORKORDERID"]);
-
-            if (count($temp) > 0) {
-                $foliosAdist[$j] = array(
-                    "SemanaCreacionSD" => date('W', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                    "MesCreacionSD" => date('m', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                    "YearCreacionSD" => date('Y', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                    "FechaCreacionSD" => date('Y-m-d H:i:s', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                    "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
-                    "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
-                    "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
-                    "Solicitus" => $temp[0]["Id"],
-                    "Ticket" => $temp[0]["Ticket"],
-                    "Estatus" => $temp[0]["Estado"],
-                    "FechaCreacion" => $temp[0]["FechaCreacion"]
-                );
-                $j++;
-            } else {
-                $foliosSD[$k] = array(
-                    "SemanaCreacionSD" => date('W', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                    "MesCreacionSD" => date('m', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                    "YearCreacionSD" => date('Y', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                    "FechaCreacionSD" => date('Y-m-d H:i:s', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
-                    "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
-                    "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
-                    "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
-                    "Solicitus" => null,
-                    "Ticket" => null,
-                    "Estatus" => null,
-                    "FechaCreacion" => null
-                );
-                $k++;
+                if (count($temp) > 0) {
+                    $foliosAdist[$l] = array(
+                        "SemanaCreacionSD" => date('W', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+                        "MesCreacionSD" => date('m', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+                        "YearCreacionSD" => date('Y', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+                        "FechaCreacionSD" => date('Y-m-d H:i:s', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+                        "TicketSD" => $todoFolioSD[$i][$j]["WORKORDERID"],
+                        "EstatusSD" => $todoFolioSD[$i][$j]["STATUS"],
+                        "Tecnico" => $todoFolioSD[$i][$j]["TECHNICIAN"],
+                        "Solicitus" => $temp[$j]["Id"],
+                        "Ticket" => $temp[$j]["Ticket"],
+                        "Estatus" => $temp[$j]["Estado"],
+                        "FechaCreacion" => $temp[$j]["FechaCreacion"]
+                    );
+                    $l++;
+                } else {
+                    $foliosSD[$k] = array(
+                        "SemanaCreacionSD" => date('W', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+                        "MesCreacionSD" => date('m', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+                        "YearCreacionSD" => date('Y', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+                        "FechaCreacionSD" => date('Y-m-d H:i:s', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+                        "TicketSD" => $todoFolioSD[$i][$j]["WORKORDERID"],
+                        "EstatusSD" => $todoFolioSD[$i][$j]["STATUS"],
+                        "Tecnico" => $todoFolioSD[$i][$j]["TECHNICIAN"],
+                        "Solicitus" => null,
+                        "Ticket" => null,
+                        "Estatus" => null,
+                        "FechaCreacion" => null
+                    );
+                    $k++;
+                }
             }
         }
         $resultado = array_merge($foliosAdist, $foliosSD);

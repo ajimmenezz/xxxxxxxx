@@ -246,7 +246,7 @@ class ServiceDesk extends General {
         return $datosSD;
     }
     
-    public function getFolios2019(string $key) {
+    public function getFolios2019(string $key, int $from, int $limit) {
 //        $input_data = '{"operation":{"details":{ "from": "0","limit": "100000","filterby": "All_Pending"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST_FILTERS&TECHNICIAN_KEY=' . $key;
         $datos = file_get_contents($this->Url . '?' . $this->FIELDS);
@@ -259,7 +259,7 @@ class ServiceDesk extends General {
             }
         }
 
-        $input_data = '{"operation":{"details":{ "from": "0","limit": "100000","filterby": "' . $IdFiltro . '"}}}';
+        $input_data = '{"operation":{"details":{ "from": "'.$from.'","limit": "'.$limit.'","filterby": "' . $IdFiltro . '"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUESTS&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->Url . '?' . $this->FIELDS);
         $this->validarError($datosSD);
