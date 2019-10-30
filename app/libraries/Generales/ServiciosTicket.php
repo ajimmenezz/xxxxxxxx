@@ -556,6 +556,9 @@ class ServiciosTicket extends General {
                 case 'Almacen':
                     $idDepartamento = '16';
                     break;
+                case 'FacturacionCobranza':
+                    $idDepartamento = '41';
+                    break;
             }
 
             if ($datos['operacion'] === '1') {
