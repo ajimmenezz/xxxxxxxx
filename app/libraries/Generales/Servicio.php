@@ -1638,13 +1638,6 @@ class Servicio extends General {
 
     public function Concluir_SinClasificar(array $datos = null) {
         $usuario = $this->Usuario->getDatosUsuario();
-//        if($datos['perfil'] == 54 || $datos['perfil'] == 78){
-//            $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-//            $folio = $this->DBS->consultaGeneral('SELECT Folio from t_solicitudes where Id = "'.$datos['solicitud'].'"');
-//            $htmlAvanceProblema = $datos["descripcion"].'<br><a href="">Link de Evidencia</a>';
-//            $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
-//            var_dump($htmlAvanceProblema);
-//        }
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $evidenciasAnteriores = '';
         $consulta = $this->DBS->consultaGeneral('SELECT Id, Archivos FROM t_servicios_generales WHERE IdServicio =' . $datos['servicio']);
@@ -1721,6 +1714,13 @@ class Servicio extends General {
                     );
                 }
             }
+//            if($datos['perfil'] == 54 || $datos['perfil'] == 78){
+//                $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
+//                $folio = $this->DBS->consultaGeneral('SELECT Folio from t_solicitudes where Id = "'.$datos['solicitud'].'"');
+//                $htmlAvanceProblema = $datos["descripcion"].'<br><a href="https://'. $_SERVER['SERVER_NAME'] .$archivos.'">Link de Evidencia</a>';
+//                $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
+//                var_dump($htmlAvanceProblema);
+//            }
             $consulta = '';
         } else {
             if ($verificarServicioSinClaficar[0]['Seguimiento'] === '0') {

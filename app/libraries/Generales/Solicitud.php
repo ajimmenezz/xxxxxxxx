@@ -1609,19 +1609,19 @@ class Solicitud extends General {
     }
 
     public function reasignarFolioSD(array $datos) {
-//        if($datos['perfil'] == 54 || $datos['perfil'] == 78){
-//            $this->ServicioConcluirFyC->Concluir_SinClasificar($datos);
-//        }
-        $usuario = $this->Usuario->getDatosUsuario();
-        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-        $folio = $this->DBS->consultaGral("SELECT folioByServicio('" . $datos['servicio'] . "') as Folio ");
-        if ($folio[0]['Folio'] != '') {
-            $this->ServiceDesk->reasignarFolioSD($folio[0]['Folio'], $datos['personalSD'], $key);
-            $datosSD = $this->InformacionServicios->datosSD($datos['solicitud']);
-            return ['code' => 200, 'message' => $datosSD];
-        } else {
-            throw new \Exception('No existe información para ese folio.');
+        if($datos['perfil'] == 54 || $datos['perfil'] == 78){
+            $this->ServicioConcluirFyC->Concluir_SinClasificar($datos);
         }
+//        $usuario = $this->Usuario->getDatosUsuario();
+//        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
+//        $folio = $this->DBS->consultaGral("SELECT folioByServicio('" . $datos['servicio'] . "') as Folio ");
+//        if ($folio[0]['Folio'] != '') {
+//            $this->ServiceDesk->reasignarFolioSD($folio[0]['Folio'], $datos['personalSD'], $key);
+//            $datosSD = $this->InformacionServicios->datosSD($datos['solicitud']);
+//            return ['code' => 200, 'message' => $datosSD];
+//        } else {
+//            throw new \Exception('No existe información para ese folio.');
+//        }
     }
 
     public function clientesActivos() {
@@ -1692,6 +1692,8 @@ class Solicitud extends General {
     }
 
     public function getFolios() {
+        ini_set('memory_limit', '4096M');
+        set_time_limit('1800');
         $todoFolioSD = array();
         $from = 0;
         for($i = 0; $i < 21; $i++){
@@ -1850,7 +1852,8 @@ class Solicitud extends General {
     }
 
     public function crearExcel($datosFolio, $arrayTitulos, $nombreArchivo) {
-
+        ini_set('memory_limit', '4096M');
+        set_time_limit('1800');
         if (count($arrayTitulos) > 25) {
             $letra = 'AA';
         } else {
