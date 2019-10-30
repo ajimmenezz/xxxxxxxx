@@ -1612,6 +1612,9 @@ class Solicitud extends General {
     }
 
     public function reasignarFolioSD(array $datos) {
+//        if($datos['perfil'] == 54 || $datos['perfil'] == 78){
+//            var_dump($datos);
+//        }
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
         $folio = $this->DBS->consultaGral("SELECT folioByServicio('" . $datos['servicio'] . "') as Folio ");
@@ -1692,7 +1695,7 @@ class Solicitud extends General {
     }
 
     public function getFolios() {
-        $folios = $this->ServiceDesk->getFolios('A8D6001B-EB63-4996-A158-1B968E19AB84');
+        $folios = $this->ServiceDesk->getFolios2019('A8D6001B-EB63-4996-A158-1B968E19AB84');
         $sd = json_decode(json_encode($folios), True);
         $j = 0;
         $k = 0;
