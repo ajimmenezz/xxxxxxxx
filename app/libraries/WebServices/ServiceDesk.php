@@ -245,7 +245,27 @@ class ServiceDesk extends General {
         $this->validarError($datosSD);
         return $datosSD;
     }
+    
+    public function getFolios2019(string $key) {
+//        $input_data = '{"operation":{"details":{ "from": "0","limit": "100000","filterby": "All_Pending"}}}';
+        $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST_FILTERS&TECHNICIAN_KEY=' . $key;
+        $datos = file_get_contents($this->Url . '?' . $this->FIELDS);
+        $filtros = json_decode($datos);
 
+        foreach ($filtros->operation->Details as $value) {
+            if ($value->VIEWNAME === '2019 To Compare') {
+                $IdFiltro = $value->VIEWID;
+                break;
+            }
+        }
+
+        $input_data = '{"operation":{"details":{ "from": "0","limit": "100000","filterby": "' . $IdFiltro . '"}}}';
+        $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUESTS&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
+        $datosSD = $this->getDatosSD($this->Url . '?' . $this->FIELDS);
+        $this->validarError($datosSD);
+        return $datosSD;
+    }
+    
     /*
      * Encargado de obtener e insertar una resolicion en Service Desk
      * 

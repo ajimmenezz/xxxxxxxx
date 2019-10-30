@@ -77,7 +77,7 @@
                     </div> 
                     <div class="col-sm-3 col-md-3">          
                         <div class="form-group">
-                            <label for="seguimientoSinClasificar"> Atendido por: <strong id="nombreAtiende"><?php echo $datosServicio['NombreAtiende']; ?></strong></label>                        
+                            <label for="seguimientoSinClasificar"> Atendido por: <strong id="nombreAtiende" att-IdPerfil="<?php echo $idPerfil; ?>"><?php echo $datosServicio['NombreAtiende']; ?></strong></label>                        
                         </div>    
                     </div>
                     <div class="col-sm-3 col-md-4">          
@@ -162,14 +162,21 @@
                 <div id="masDetallesFolio" class="hidden">
                     <form id="formFolioSinClasificar" data-parsley-validate="true">
                         <?php
-                        if ($folio[0]['Folio'] === NULL || $folio[0]['Folio'] === '0') {
-                            $tituloFolio = 'Sin Folio';
-                            $folioTexto = '';
-                            $mostrarGuardarFolio = '';
-                            $mostrarActulizarEliminarFolio = 'hidden';
+                        if (!empty($folio)) {
+                            if ($folio[0]['Folio'] === NULL || $folio[0]['Folio'] === '0') {
+                                $tituloFolio = 'Sin Folio';
+                                $folioTexto = '';
+                                $mostrarGuardarFolio = '';
+                                $mostrarActulizarEliminarFolio = 'hidden';
+                            } else {
+                                $tituloFolio = 'Cuenta con Folio';
+                                $folioTexto = $folio[0]['Folio'];
+                                $mostrarGuardarFolio = 'hidden';
+                                $mostrarActulizarEliminarFolio = '';
+                            }
                         } else {
-                            $tituloFolio = 'Cuenta con Folio';
-                            $folioTexto = $folio[0]['Folio'];
+                            $tituloFolio = 'Problema con Folio';
+                            $folioTexto = 'Actualiza Folio';
                             $mostrarGuardarFolio = 'hidden';
                             $mostrarActulizarEliminarFolio = '';
                         }
@@ -208,8 +215,12 @@
                             <div class="col-md-6">
                                 <div class="form-group text-left m-t-5">
                                     <a id="btnActualizarFolioServicioSinClasificar" href="javascript:;" class="btn btn-success <?php echo $mostrarActulizarEliminarFolio; ?>"><i class="fa fa-pencil"></i> Actualizar</a>                            
-                                    <a id="btnEliminarFolioServicioSinClasificar" href="javascript:;" class="btn btn-danger <?php echo $mostrarActulizarEliminarFolio; ?>"><i class="fa fa-eraser"></i> Eliminar</a>                            
-                                    <a id="btnReasignarFolioServicioSinClasificar" href="javascript:;" class="btn btn-primary <?php echo $mostrarActulizarEliminarFolio; ?>"><i class="fa fa-external-link"></i> Reasignar SD</a>                            
+                                    <a id="btnEliminarFolioServicioSinClasificar" href="javascript:;" class="btn btn-danger <?php echo $mostrarActulizarEliminarFolio; ?>"><i class="fa fa-eraser"></i> Eliminar</a>   
+                                    <?php
+                                    if ($idPerfil == '54' && $idPerfil == '78') {
+                                        echo '<a id="btnReasignarFolioServicioSinClasificar" href="javascript:;" class="btn btn-primary '. $mostrarActulizarEliminarFolio .'"><i class="fa fa-external-link"></i> Reasignar SD</a>';
+                                    }
+                                    ?>
                                 </div>
                             </div> 
                         </div>
@@ -295,11 +306,21 @@
                                 <a id="btnGuardarServicioSinClasificar" href="javascript:;" class="btn btn-primary m-r-5 "><i class="fa fa-floppy-o"></i> Guardar</a>                            
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group text-center">
-                                <a id="btnConcluirServicioSinClasificar" href="javascript:;" class="btn btn-danger m-r-5 "><i class="fa fa-unlock-alt"></i> Concluir Servicio</a>                            
-                            </div>
-                        </div>
+                        <?php
+                        if ($idPerfil == '54' || $idPerfil == '78') {
+                            echo '<div class="col-md-6">
+                                    <div class="form-group text-center">
+                                        <a id="btnConcluirReasignarFolioServicioSinClasificar" href="javascript:;" class="btn btn-danger m-r-5 '. $mostrarActulizarEliminarFolio .'"><i class="fa fa-external-link"></i> Terminar y Reasignar</a>
+                                    </div>
+                                </div>';
+                        }else{
+                            echo '<div class="col-md-6">
+                                    <div class="form-group text-center">
+                                        <a id="btnConcluirServicioSinClasificar" href="javascript:;" class="btn btn-danger m-r-5 "><i class="fa fa-unlock-alt"></i> Concluir Servicio</a>                            
+                                    </div>
+                                </div>';
+                        }
+                        ?>
                     </div>
 
                 </form>
