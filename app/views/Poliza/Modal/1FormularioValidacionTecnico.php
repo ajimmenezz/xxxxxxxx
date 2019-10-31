@@ -52,12 +52,12 @@ if (!empty($datosValidacion)) {
             <div class="row">
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group <?php echo $mostrarSelect; ?>">
-                        <label class="f-w-600 f-s-13">Ticket *</label>
+                        <label class="f-w-600 f-s-13">Ticket AdIST - Ticket SD *</label>
                         <select id="listaTicket" class="form-control" style="width: 100%" data-parsley-required="true">
                             <option value="">Selecciona . . .</option>
                             <?php
                             foreach ($ticketTecnico as $item) {
-                                echo '<option value="' . $item['Ticket'] . '">' . $item['Ticket'] . '</option>';
+                                echo '<option value="' . $item['Ticket'] . '">' . $item['Ticket'] . ' - ' . $item['Folio'] . '</option>';
                             }
                             ?>
                         </select>    
