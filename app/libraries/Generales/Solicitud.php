@@ -1696,70 +1696,91 @@ class Solicitud extends General {
         set_time_limit('1800');
         $todoFolioSD = array();
         $from = 0;
-        for($i = 0; $i < 21; $i++){
+        $this->DBS->queryBolean('truncate temporal_sd');
+        $i = 0;
+        do{
             $folios = array();
-            $folios = $this->ServiceDesk->getFolios2019('A8D6001B-EB63-4996-A158-1B968E19AB84', $from, 5000);
+            $folios = $this->ServiceDesk->getFolios2019('A8D6001B-EB63-4996-A158-1B968E19AB84', $from, 2000);
             $sd = json_decode(json_encode($folios), True);
-            array_push($todoFolioSD, $sd["operation"]["details"]);
-            $from = $i.'001';
-        }
-        
-        $l = 0;
-        $k = 0;
-        $foliosAdist = array();
-        $foliosSD = array();
-        
-        for ($i = 0; $i < count($todoFolioSD); $i++) {
-            for ($j = 0; $j < count($todoFolioSD[$i]); $j++) {
-                $temp = $this->DBS->obtenerFolios($todoFolioSD[$i][$j]["WORKORDERID"]);
-
-                if (count($temp) > 0) {
-                    $foliosAdist[$l] = array(
-                        "SemanaCreacionSD" => date('W', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
-                        "MesCreacionSD" => date('m', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
-                        "YearCreacionSD" => date('Y', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
-                        "FechaCreacionSD" => date('Y-m-d H:i:s', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
-                        "TicketSD" => $todoFolioSD[$i][$j]["WORKORDERID"],
-                        "EstatusSD" => $todoFolioSD[$i][$j]["STATUS"],
-                        "Tecnico" => $todoFolioSD[$i][$j]["TECHNICIAN"],
-                        "Solicitus" => $temp[$j]["Id"],
-                        "Ticket" => $temp[$j]["Ticket"],
-                        "Estatus" => $temp[$j]["Estado"],
-                        "FechaCreacion" => $temp[$j]["FechaCreacion"]
-                    );
-                    $l++;
+            foreach ($sd["operation"]["details"] as $key => $value) {
+                if(isset($value["TECHNICIAN"])){
+                    $this->DBS->insertar('temporal_sd', array(
+                       'ID' => $value["WORKORDERID"],
+                        'technician' => $value["TECHNICIAN"],
+                        'Status' => $value["STATUS"],
+                        'CreatedTime' => date('Y-m-d H:i:s', $value["CREATEDTIME"] / 1000)
+                    ));
                 } else {
-                    $foliosSD[$k] = array(
-                        "SemanaCreacionSD" => date('W', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
-                        "MesCreacionSD" => date('m', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
-                        "YearCreacionSD" => date('Y', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
-                        "FechaCreacionSD" => date('Y-m-d H:i:s', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
-                        "TicketSD" => $todoFolioSD[$i][$j]["WORKORDERID"],
-                        "EstatusSD" => $todoFolioSD[$i][$j]["STATUS"],
-                        "Tecnico" => $todoFolioSD[$i][$j]["TECHNICIAN"],
-                        "Solicitus" => null,
-                        "Ticket" => null,
-                        "Estatus" => null,
-                        "FechaCreacion" => null
-                    );
-                    $k++;
+                    $this->DBS->insertar('temporal_sd', array(
+                       'ID' => $value["WORKORDERID"],
+                        'technician' => 'No Asignado',
+                        'Status' => $value["STATUS"],
+                        'CreatedTime' => date('Y-m-d H:i:s', $value["CREATEDTIME"] / 1000)
+                    ));
                 }
             }
-        }
-        $resultado = array_merge($foliosAdist, $foliosSD);
-        $arrayTitulos = ['Semana Creacion SD',
-            'Mes Creacion SD',
-            'Año Creacion SD',
-            'Fecha Creacion SD',
-            'Ticket SD',
-            'Estatus SD',
-            'Tecnico SD',
-            'Solicitud Adist',
-            'Ticket Adist',
-            'Estatus Solicitud Adist',
-            'Fecha Creacion Solicitud Adist'];
+//            array_push($todoFolioSD, $sd["operation"]["details"]);
+            $i+=2;
+            $from = $i.'001';
+        }while (count($sd["operation"]["details"]) > 0);
+        
+        
+//        $l = 0;
+//        $k = 0;
+//        $foliosAdist = array();
+//        $foliosSD = array();
+        
+//        for ($i = 0; $i < count($todoFolioSD); $i++) {
+//            for ($j = 0; $j < count($todoFolioSD[$i]); $j++) {
+//                $temp = $this->DBS->obtenerFolios($todoFolioSD[$i][$j]["WORKORDERID"]);
+//
+//                if (count($temp) > 0) {
+//                    $foliosAdist[$l] = array(
+//                        "SemanaCreacionSD" => date('W', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+//                        "MesCreacionSD" => date('m', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+//                        "YearCreacionSD" => date('Y', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+//                        "FechaCreacionSD" => date('Y-m-d H:i:s', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+//                        "TicketSD" => $todoFolioSD[$i][$j]["WORKORDERID"],
+//                        "EstatusSD" => $todoFolioSD[$i][$j]["STATUS"],
+//                        "Tecnico" => $todoFolioSD[$i][$j]["TECHNICIAN"],
+//                        "Solicitus" => $temp[$j]["Id"],
+//                        "Ticket" => $temp[$j]["Ticket"],
+//                        "Estatus" => $temp[$j]["Estado"],
+//                        "FechaCreacion" => $temp[$j]["FechaCreacion"]
+//                    );
+//                    $l++;
+//                } else {
+//                    $foliosSD[$k] = array(
+//                        "SemanaCreacionSD" => date('W', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+//                        "MesCreacionSD" => date('m', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+//                        "YearCreacionSD" => date('Y', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+//                        "FechaCreacionSD" => date('Y-m-d H:i:s', $todoFolioSD[$i][$j]["CREATEDTIME"] / 1000),
+//                        "TicketSD" => $todoFolioSD[$i][$j]["WORKORDERID"],
+//                        "EstatusSD" => $todoFolioSD[$i][$j]["STATUS"],
+//                        "Tecnico" => $todoFolioSD[$i][$j]["TECHNICIAN"],
+//                        "Solicitus" => null,
+//                        "Ticket" => null,
+//                        "Estatus" => null,
+//                        "FechaCreacion" => null
+//                    );
+//                    $k++;
+//                }
+//            }
+//        }
+//        $resultado = array_merge($foliosAdist, $foliosSD);
+//        $arrayTitulos = ['Semana Creacion SD',
+//            'Mes Creacion SD',
+//            'Año Creacion SD',
+//            'Fecha Creacion SD',
+//            'Ticket SD',
+//            'Estatus SD',
+//            'Tecnico SD',
+//            'Solicitud Adist',
+//            'Ticket Adist',
+//            'Estatus Solicitud Adist',
+//            'Fecha Creacion Solicitud Adist'];
 
-        return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
+//        return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
     }
 
     public function getFoliosSemanal() {
