@@ -592,6 +592,7 @@ class Modelo_Solicitud extends Modelo_Base {
                                             Id = tcg.IdModelo) AS Modelo,
                                     marca(marcaByModelo(tcg.IdModelo)) AS Marca,
                                     linea(lineaByModelo(tcg.IdModelo)) AS Linea,
+                                    sublinea(sublineaByModelo(tcg.IdModelo)) as Sublinea,
                                     (select 
                                             Nombre
                                         from

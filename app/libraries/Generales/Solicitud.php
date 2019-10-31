@@ -1784,6 +1784,7 @@ class Solicitud extends General {
             'Modelo',
             'Marca',
             'Linea',
+            'Sublinea',
             'Componente',
             'Tipo Diagnostico',
             'Tipo Falla',
@@ -1798,7 +1799,7 @@ class Solicitud extends General {
             'Tiempo Solicitud',
             'Tiempo Servicio',
             'Tiempo Transcurrido Entre Solicitud Servicio'];
-        return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios.xlsx');
+        return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios_Anual.xlsx');
     }
 
     private function cabeceraExcelFolios() {
