@@ -246,24 +246,20 @@ class ServiceDesk extends General {
         return $datosSD;
     }
     
-    public function getFolios2019(string $key, int $from, int $limit) {
-//        $input_data = '{"operation":{"details":{ "from": "0","limit": "100000","filterby": "All_Pending"}}}';
-        $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST_FILTERS&TECHNICIAN_KEY=' . $key;
-        $datos = file_get_contents($this->Url . '?' . $this->FIELDS);
-        $filtros = json_decode($datos);
-
-        foreach ($filtros->operation->Details as $value) {
-            if ($value->VIEWNAME === '2019 To Compare') {
-                $IdFiltro = $value->VIEWID;
-                break;
-            }
-        }
-
-        $input_data = '{"operation":{"details":{ "from": "'.$from.'","limit": "'.$limit.'","filterby": "' . $IdFiltro . '"}}}';
-        $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUESTS&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
-        $datosSD = $this->getDatosSD($this->Url . '?' . $this->FIELDS);
-        $this->validarError($datosSD);
-        return $datosSD;
+    public function getFolios2019(int $from) {
+        $url = 'http://mesadeayuda.cinemex.net:8080/api/v3/requests?input_data={"list_info":{"get_total_count":true,"row_count":100,"start_index":'.$from.',"filter_by":{"name":"36931_MyView"},"fields_required":["created_by","created_time","site","requester","assigned_time","last_updated_time","technician","status","id","category","subcategory","item","priority","group"]}}';
+        
+        $opts = array(
+            'http' => array(
+                'method' => 'GET',
+                'header' => 'Authtoken: A8D6001B-EB63-4996-A158-1B968E19AB84'
+            )
+        );
+        
+        $context = stream_context_create($opts);
+        $result = json_decode(file_get_contents($url, false, $context), true);
+        
+        return $result;
     }
     
     /*
