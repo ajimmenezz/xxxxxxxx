@@ -1757,7 +1757,9 @@ class Servicio extends General {
                 }
 
                 if ($verificarServicioSinClaficar[0]['IdTipoServicio'] === '41') {
-                    $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
+                    if($datos['perfil'] != 54 || $datos['perfil'] != 78){
+                        $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
+                    }
                 } else {
                     $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '5');
                 }

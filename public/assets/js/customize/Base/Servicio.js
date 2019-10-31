@@ -765,13 +765,14 @@ Servicio.prototype.eventosFolio = function () {
 
             $('#btnModalConfirmar').off('click');
             $('#btnModalConfirmar').on('click', function () {
+                var sucursal = $('#selectSucursalesSinClasificar').val();
                 var descripcion = $('#inputDescripcionSinClasificar').val();
                 var evidencias = $('#evidenciaSinClasificar').val();
                 var archivosPreview = _this.file.previews('.previewSinClasificar');
                 var perfil = $('#nombreAtiende').attr('att-IdPerfil');
                 if (_this.validarFormulario('#formReasignarSD') && descripcion !== '') {
                     var usuarioSD = $("#usuarioSD").val();
-                    var data = {servicio: servicio, personalSD: usuarioSD, solicitud: solicitud, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, perfil: perfil};
+                    var data = {ticket: ticket, servicio: servicio, personalSD: usuarioSD, solicitud: solicitud, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, perfil: perfil, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}};
                     _this.enviarEvento('/Generales/Solicitud/ReasignarFolioSD', data, '#modal-dialogo', function (respuesta) {
                         _this.cerrarModal();
                         if (respuesta.code === 200) {
