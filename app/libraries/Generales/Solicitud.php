@@ -1612,16 +1612,16 @@ class Solicitud extends General {
         if($datos['perfil'] == 54 || $datos['perfil'] == 78){
             $this->ServicioConcluirFyC->Concluir_SinClasificar($datos);
         }
-//        $usuario = $this->Usuario->getDatosUsuario();
-//        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-//        $folio = $this->DBS->consultaGral("SELECT folioByServicio('" . $datos['servicio'] . "') as Folio ");
-//        if ($folio[0]['Folio'] != '') {
-//            $this->ServiceDesk->reasignarFolioSD($folio[0]['Folio'], $datos['personalSD'], $key);
-//            $datosSD = $this->InformacionServicios->datosSD($datos['solicitud']);
-//            return ['code' => 200, 'message' => $datosSD];
-//        } else {
-//            throw new \Exception('No existe información para ese folio.');
-//        }
+        $usuario = $this->Usuario->getDatosUsuario();
+        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
+        $folio = $this->DBS->consultaGral("SELECT folioByServicio('" . $datos['servicio'] . "') as Folio ");
+        if ($folio[0]['Folio'] != '') {
+            $this->ServiceDesk->reasignarFolioSD($folio[0]['Folio'], $datos['personalSD'], $key);
+            $datosSD = $this->InformacionServicios->datosSD($datos['solicitud']);
+            return ['code' => 200, 'message' => $datosSD];
+        } else {
+            throw new \Exception('No existe información para ese folio.');
+        }
     }
 
     public function clientesActivos() {

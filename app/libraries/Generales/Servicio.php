@@ -1714,13 +1714,13 @@ class Servicio extends General {
                     );
                 }
             }
-//            if($datos['perfil'] == 54 || $datos['perfil'] == 78){
-//                $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-//                $folio = $this->DBS->consultaGeneral('SELECT Folio from t_solicitudes where Id = "'.$datos['solicitud'].'"');
-//                $htmlAvanceProblema = $datos["descripcion"].'<br><a href="https://'. $_SERVER['SERVER_NAME'] .$archivos.'">Link de Evidencia</a>';
-//                $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
-//                var_dump($htmlAvanceProblema);
-//            }
+            if($datos['perfil'] == 54 || $datos['perfil'] == 78){
+                $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
+                $folio = $this->DBS->consultaGeneral('SELECT Folio from t_solicitudes where Id = "'.$datos['solicitud'].'"');
+                $htmlAvanceProblema = $datos["descripcion"].'<br><a href="https://'. $_SERVER['SERVER_NAME'] .$archivos.'">Link de Evidencia</a>';
+                $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
+                var_dump($htmlAvanceProblema);
+            }
             $consulta = '';
         } else {
             if ($verificarServicioSinClaficar[0]['Seguimiento'] === '0') {
