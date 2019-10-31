@@ -1705,15 +1705,31 @@ class Solicitud extends General {
                     $this->DBS->insertar('temporal_sd', array(
                         'ID' => $value["id"],
                         'technician' => $value["technician"]["name"],
+                        'CreatedBy' => $value["created_by"]["name"],
+                        'Requester' => $value["requester"]["name"],
                         'Status' => $value["status"]["name"],
-                        'CreatedTime' => date('Y-m-d H:i:s', $value["created_time"]["value"] / 1000)
+                        'CreatedTime' => date('Y-m-d H:i:s', $value["created_time"]["value"] / 1000),
+                        'AssignedTime' => date('Y-m-d H:i:s', $value["assigned_time"]["value"] / 1000),
+                        'Category' => $value["category"]["name"],
+                        'SubCategory' => $value["subcategory"]["name"],
+                        'Item' => $value["item"]["name"],
+                        'Group' => $value["group"]["name"],
+                        'Priority' => $value["priority"]["name"]
                     ));
                 } else {
                     $this->DBS->insertar('temporal_sd', array(
                         'ID' => $value["id"],
                         'technician' => 'No Asignado',
+                        'CreatedBy' => $value["created_by"]["name"],
+                        'Requester' => $value["requester"]["name"],
                         'Status' => $value["status"]["name"],
-                        'CreatedTime' => date('Y-m-d H:i:s', $value["created_time"]["value"] / 1000)
+                        'CreatedTime' => date('Y-m-d H:i:s', $value["created_time"]["value"] / 1000),
+                        'AssignedTime' => date('Y-m-d H:i:s', $value["assigned_time"]["value"] / 1000),
+                        'Category' => $value["category"]["name"],
+                        'SubCategory' => $value["subcategory"]["name"],
+                        'Item' => $value["item"]["name"],
+                        'Group' => $value["group"]["name"],
+                        'Priority' => $value["priority"]["name"]
                     ));
                 }
             }
