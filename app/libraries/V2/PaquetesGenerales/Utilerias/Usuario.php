@@ -36,5 +36,10 @@ Class Usuario {
         return self::$datos['Rol'];
     }
     
+    static public function getPermisos() {
+        self::setDatos();        
+        return self::$datos['Permisos'];
+    }
+    
 }
 
