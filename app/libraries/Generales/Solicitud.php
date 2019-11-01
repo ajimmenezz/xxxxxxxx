@@ -1751,6 +1751,69 @@ class Solicitud extends General {
 //        return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
     }
 
+    public function getFoliosAnterior() {
+        $foliosAdist = array();
+        $foliosSD = array();
+//        ini_set('memory_limit', '4096M');
+//        set_time_limit('1800');
+        
+        $folios = $this->ServiceDesk->getFolios('A8D6001B-EB63-4996-A158-1B968E19AB84');
+        $sd = json_decode(json_encode($folios), True);
+        $j = 0;
+        $k = 0;
+
+        for ($i = 0; $i < count($sd["operation"]["details"]); $i++) {
+            $temp = $this->DBS->obtenerFolios($sd["operation"]["details"][$i]["WORKORDERID"]);
+
+            if (count($temp) > 0) {
+                $foliosAdist[$j] = array(
+                    "SemanaCreacionSD" => date('W', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "MesCreacionSD" => date('m', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "YearCreacionSD" => date('Y', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "FechaCreacionSD" => date('Y-m-d H:i:s', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
+                    "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
+                    "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
+                    "Solicitus" => $temp[0]["Id"],
+                    "Ticket" => $temp[0]["Ticket"],
+                    "Estatus" => $temp[0]["Estado"],
+                    "FechaCreacion" => $temp[0]["FechaCreacion"]
+                );
+                $j++;
+            } else {
+                $foliosSD[$k] = array(
+                    "SemanaCreacionSD" => date('W', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "MesCreacionSD" => date('m', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "YearCreacionSD" => date('Y', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "FechaCreacionSD" => date('Y-m-d H:i:s', $sd["operation"]["details"][$i]["CREATEDTIME"] / 1000),
+                    "TicketSD" => $sd["operation"]["details"][$i]["WORKORDERID"],
+                    "EstatusSD" => $sd["operation"]["details"][$i]["STATUS"],
+                    "Tecnico" => $sd["operation"]["details"][$i]["TECHNICIAN"],
+                    "Solicitus" => null,
+                    "Ticket" => null,
+                    "Estatus" => null,
+                    "FechaCreacion" => null
+                );
+                $k++;
+            }
+        }
+
+        $resultado = array_merge($foliosAdist, $foliosSD);
+
+        $arrayTitulos = ['Semana Creacion SD',
+            'Mes Creacion SD',
+            'Año Creacion SD',
+            'Fecha Creacion SD',
+            'Ticket SD',
+            'Estatus SD',
+            'Tecnico SD',
+            'Solicitud Adist',
+            'Ticket Adist',
+            'Estatus Solicitud Adist',
+            'Fecha Creacion Solicitud Adist'];
+        return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
+    }
+
     public function getFoliosSemanal() {
         $foliosAdist = $this->DBS->obtenerFoliosAdist();
         $titulos = $this->cabeceraExcelFolios();
@@ -1842,8 +1905,6 @@ class Solicitud extends General {
     }
 
     public function crearExcel($datosFolio, $arrayTitulos, $nombreArchivo) {
-        ini_set('memory_limit', '4096M');
-        set_time_limit('1800');
         if (count($arrayTitulos) > 25) {
             $letra = 'AA';
         } else {
