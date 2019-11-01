@@ -1310,6 +1310,8 @@ class Servicio extends General {
         $generales = $this->InformacionServicios->consultaInformacionCorrectivo($servicio);
         $idSolicitud = $this->DBS->consultaGeneral('SELECT IdSolicitud FROM t_servicios_ticket WHERE Id = "' . $servicio . '"');
         $detallesSD = 'Sin Información';
+        $avanceServicio = $this->Servicio->consultaAvanceServicio($servicio);
+        $sumaTipoDiagnostico = $this->getSumaTipoDiagnostico($servicio);
 
         if (empty($generales)) {
             $generales[0] = 'Sin Información';
@@ -1498,7 +1500,9 @@ class Servicio extends General {
             'notas' => $notas,
             'notasPdf' => $notasPdf,
             'detallesServicio' => $detallesServicio,
-            'detallesSD' => $detallesSD
+            'detallesSD' => $detallesSD,
+            'avanceServicio' => $avanceServicio,
+            'sumaTipoDiagnostico' => $sumaTipoDiagnostico
         ];
 
         return parent::getCI()->load->view('Poliza/Detalles/correctivoPdf', $data, TRUE);
