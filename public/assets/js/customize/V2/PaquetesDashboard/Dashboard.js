@@ -1,7 +1,7 @@
 
 class Dashboard {
 
-    constructor(clave) {        
+    constructor(clave) {
         this.clave = clave;
         this.datos = {};
         this.componentes = {};
@@ -10,7 +10,7 @@ class Dashboard {
 
     setComponentes() {
         let _this = this;
-        
+
         $.each(this.componentes, function (key, value) {
             switch (key) {
                 case 'selects':
@@ -20,7 +20,7 @@ class Dashboard {
                     _this.setGrafica(value);
                     break;
             }
-            
+
         });
     }
 
@@ -35,11 +35,9 @@ class Dashboard {
     setGrafica(graficas) {
         let _this = this;
         $.each(graficas, function (key, value) {
-            console.log(_this.datos);
-            _this.objetos[value] = new GraficaGoogle(value,_this.datos);
+            _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'LineChart');
             _this.objetos[value].inicilizarGrafica();
         });
     }
-        
 
 }

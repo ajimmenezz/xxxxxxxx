@@ -7,11 +7,6 @@ $(function () {
     let factory = new FactoryDashboard();
     let dashboards;
 
-//    websocket = new Socket();
-//
-//    //Evento que maneja las peticiones del socket
-//    websocket.socketMensaje();
-
     //Muestra la hora en el sistema
     evento.horaServidor($('#horaServidor').val());
 
@@ -21,8 +16,7 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
-    peticion.enviar('', 'Dashboard_Generico/Mostrar_Graficas', {prueba: 'algo'}, function (respuesta) {
-        console.log(respuesta);
+    peticion.enviar('', 'Dashboard_Generico/Mostrar_Graficas', null, function (respuesta) {
         dashboards = {};
 
         $.each(respuesta, function (key, datos) {            
