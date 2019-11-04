@@ -111,24 +111,29 @@ class ServiceDesk extends General {
         }
     }
 
-    public function validarAPIKey(string $key) {
-        $respuestaKey = $this->validarKey($key);
-        $respuestaUsuario['code'] = 200;
-        $respuestaJefe['code'] = 200;
+    public function validarAPIKey(string $key = NULL) {
         $usuario = $this->Usuario->getDatosUsuario();
 
-        if ($respuestaKey['code'] === 400) {
-            $key = $this->modeloServiceDesck->apiKeyUsuario($usuario['Id']);
-            $respuestaUsuario = $this->validarKey($key);
-        }
+        if (!empty($key)) {
+            $respuestaKey = $this->validarKey($key);
+            $respuestaUsuario['code'] = 200;
+            $respuestaJefe['code'] = 200;
 
-        if ($respuestaUsuario['code'] === 400) {
+            if ($respuestaKey['code'] === 400) {
+                $key = $this->modeloServiceDesck->apiKeyUsuario($usuario['Id']);
+                $respuestaUsuario = $this->validarKey($key);
+            }
+
+            if ($respuestaUsuario['code'] === 400) {
+                $key = $this->modeloServiceDesck->apiKeyJefe($usuario['Id']);
+                $respuestaJefe = $this->validarKey($key);
+            }
+
+            if ($respuestaJefe['code'] === 400) {
+                $key = '';
+            }
+        } else {
             $key = $this->modeloServiceDesck->apiKeyJefe($usuario['Id']);
-            $respuestaJefe = $this->validarKey($key);
-        }
-
-        if ($respuestaJefe['code'] === 400) {
-            $key = '';
         }
 
         return $key;
@@ -245,23 +250,23 @@ class ServiceDesk extends General {
         $this->validarError($datosSD);
         return $datosSD;
     }
-    
+
     public function getFolios2019(int $from) {
-        $url = 'http://mesadeayuda.cinemex.net:8080/api/v3/requests?input_data={"list_info":{"get_total_count":true,"row_count":100,"start_index":'.$from.',"filter_by":{"name":"36931_MyView"},"fields_required":["created_by","created_time","site","requester","assigned_time","last_updated_time","technician","status","id","category","subcategory","item","priority","group"]}}';
-        
+        $url = 'http://mesadeayuda.cinemex.net:8080/api/v3/requests?input_data={"list_info":{"get_total_count":true,"row_count":100,"start_index":' . $from . ',"filter_by":{"name":"36931_MyView"},"fields_required":["created_by","created_time","site","requester","assigned_time","last_updated_time","technician","status","id","category","subcategory","item","priority","group"]}}';
+
         $opts = array(
             'http' => array(
                 'method' => 'GET',
                 'header' => 'Authtoken: A8D6001B-EB63-4996-A158-1B968E19AB84'
             )
         );
-        
+
         $context = stream_context_create($opts);
         $result = json_decode(file_get_contents($url, false, $context), true);
-        
+
         return $result;
     }
-    
+
     /*
      * Encargado de obtener e insertar una resolicion en Service Desk
      * 
