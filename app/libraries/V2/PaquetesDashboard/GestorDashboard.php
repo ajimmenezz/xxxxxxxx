@@ -51,10 +51,43 @@ class GestorDashboard {
 
         foreach ($claves as $key => $value) {
             $getConsulta = 'getDatos' . $value['ClavePermiso'];
-            array_push($arrayConsultas, $this->db->$getConsulta([]));
+            array_push($arrayConsultas, $this->$getConsulta($getConsulta));
         }
 
         return $arrayConsultas;
+    }
+
+    public function getDatosVGC(string $getConsulta) {
+//        $arrayTitulos = array();
+//            array_push($arrayTitulos, array($value['Semana']));
+        return array('VGC' => []);
+    }
+    
+    public function getDatosVGT(string $getConsulta) {
+        $arrayTendencia = array();
+        $consulta = $this->db->$getConsulta([]);
+        
+        foreach ($consulta as $key => $value) {
+            array_push($arrayTendencia, array($value['Semana'],$value['Incidentes']));
+        }
+                
+        return array('VGT' => $arrayTendencia);
+    }
+
+    public function getDatosVGHI(string $getConsulta) {
+        return array('VGHI' => []);
+    }
+
+    public function getDatosVGIP(string $getConsulta) {
+        return array('VGIP' => []);
+    }
+
+    public function getDatosVGZ(string $getConsulta) {
+        return array('VGZ' => []);
+    }
+
+    public function getDatosVGTO(string $getConsulta) {
+        return array('VGTO' => []);
     }
 
 }

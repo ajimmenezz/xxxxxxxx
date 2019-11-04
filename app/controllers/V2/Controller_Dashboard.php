@@ -13,16 +13,7 @@ class Controller_Dashboard extends CI_Controller {
 
     public function getDatosDashboards() {
         $datos = $this->input->post();
-//        $resultado = $this->gestorDashboard->getDatosDashboards();
-        $resultado = array('VGT' =>
-            [
-                ['Work', 0],
-                ['Eat', 2],
-                ['Commute', 2],
-                ['Watch TV', 2],
-                ['Sleep', 7]
-            ]
-        );
+        $resultado = $this->gestorDashboard->getDatosDashboards();
         echo json_encode($resultado);
     }
 
