@@ -1,6 +1,6 @@
 
 class DashboardTendencias extends Dashboard {
-
+    
     constructor(clave, datos) {
         super(clave);
         this.panel = 'panel-grafica-VGT';
@@ -9,6 +9,8 @@ class DashboardTendencias extends Dashboard {
             selects: ['select-cliente-VGT', 'select-tiempo-VGT', 'select-lapso-VGT'],
             graficas: ['grafica-VGT-1']
         };
+        this.informacion = {};
+        this.peticion = new Utileria();;
     }
 
     setEvento() {
@@ -29,30 +31,41 @@ class DashboardTendencias extends Dashboard {
     }
 
     eventoSelectCliente(select) {
-        let valor = select.obtenerValor();
-        
+        let _this = this;
         select.evento('change', function () {
-            valor = select.obtenerValor();
-            console.log(valor);
+             _this.informacion['cliente']= select.obtenerValor();
+            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Graficas',  _this.informacion, function (respuesta) {
+                console.log(respuesta);
+            });
         });
     }
 
     eventoSelectTiempo(select) {
-        let valor = select.obtenerValor();
-        
+        let _this = this;
         select.evento('change', function () {
-            $('#select-actual-VGT').prop("disabled", false);
-            valor = select.obtenerValor();
-            console.log(valor);
+            $('#select-lapso-VGT').prop("disabled", false);
+            _this.informacion['tiempo'] = select.obtenerValor();
+            let lapso = null;
+            switch (_this.informacion['tiempo']) {
+                case 'WEEK':
+                case 'MONTH':
+                    lapso = [3,4,5,6,7];
+                    break;
+                case 'YEAR':
+                    lapso = [2,3,4];
+                    break;
+            }
+            select.cargaDatosEnSelect(lapso, 'select-lapso-VGT')
         });
     }
     
     eventoSelectLapso(select) {
-        let valor = select.obtenerValor();
-        
+        let _this = this;
         select.evento('change', function () {
-            valor = select.obtenerValor();
-            console.log(valor);
+             _this.informacion['lapso'] = select.obtenerValor();
+            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Graficas',  _this.informacion, function (respuesta) {
+                console.log(respuesta);
+            });
         });
     }
 
