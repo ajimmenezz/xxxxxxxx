@@ -736,6 +736,62 @@ Servicio.prototype.eventosFolio = function () {
             });
         });
     });
+    $('#btnConcluirReasignarFolioServicioSinClasificar').off('click');
+    $('#btnConcluirReasignarFolioServicioSinClasificar').on('click', function () {
+        _this.enviarEvento('/Generales/ServiceDesk/CatalogoUsuariosSD', {}, seccion, function (respuesta) {
+            var html = '<form class="margin-bottom-0" id="formReasignarSD" data-parsley-validate="true">\n\
+                            <div class="row" m-t-10">\n\
+                                <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
+                                    <div class="form-group">\n\
+                                        <label for="usuarioSD">Asignar en SD a *</label>\n\
+                                        <select id="usuarioSD" class="form-control" style="width: 100%" data-parsley-required="true">\n\
+                                           <option value="">Seleccionar</option>\n\
+                                        </select>\n\
+                                    </div>\n\
+                                </div>\n\
+                            </div>\n\
+                            <div class="row" m-t-10">\n\
+                                <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
+                                    <div class="errorGuardarFactura"></div>\n\
+                                </div>\n\
+                            </div>\n\
+                        </form>';
+            _this.mostrarModal('Reasignar SD', html);
+            $.each(respuesta, function (key, valor) {
+                $("#usuarioSD").append('<option value=' + valor.TECHNICIANID + '>' + valor.TECHNICIANNAME + '</option>');
+            });
+
+            _this.select.crearSelect('#usuarioSD');
+
+            $('#btnModalConfirmar').off('click');
+            $('#btnModalConfirmar').on('click', function () {
+                var sucursal = $('#selectSucursalesSinClasificar').val();
+                var descripcion = $('#inputDescripcionSinClasificar').val();
+                var evidencias = $('#evidenciaSinClasificar').val();
+                var archivosPreview = _this.file.previews('.previewSinClasificar');
+                var perfil = $('#nombreAtiende').attr('att-IdPerfil');
+                if (_this.validarFormulario('#formReasignarSD') && descripcion !== '') {
+                    var usuarioSD = $("#usuarioSD").val();
+                    var data = {ticket: ticket, servicio: servicio, personalSD: usuarioSD, solicitud: solicitud, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, perfil: perfil, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}};
+                    _this.enviarEvento('/Generales/Solicitud/ReasignarFolioSD', data, '#modal-dialogo', function (respuesta) {
+                        _this.cerrarModal();
+                        if (respuesta.code === 200) {
+                            _this.mostrarMensaje('.errorFolioSolicitudSinClasificar', true, 'Datos actualizados correctamente.', 3000);
+                            var datosSDHTML = _this.camposSD(respuesta.message);
+                            $('#seccionSD').empty().html(datosSDHTML);
+                            _this.detallesDescripcionResolucion();
+                        } else {
+                            _this.mostrarMensaje('.errorFolioSolicitudSinClasificar', false, respuesta.message, 3000);
+                            var mensajeSinDatos = _this.mensajeAlerta(respuesta.message)
+                            $('#seccionSD').empty().html(mensajeSinDatos);
+                        }
+                    });
+                }else{
+                    _this.mostrarMensaje('.errorGuardarFactura', false, 'Revisa los campos faltantes.', 3000);
+                }
+            });
+        });
+    });
 };
 
 Servicio.prototype.camposSD = function () {

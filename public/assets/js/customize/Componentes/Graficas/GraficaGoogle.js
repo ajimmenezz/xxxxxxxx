@@ -1,17 +1,35 @@
 class GraficaGoogle {
 
-    constructor(nombre, datos = []) {
+    /*
+     * nombre: div donde mostrara la grafica
+     * datos: informacion a mostrar en la grafica
+     * grafica: tipo de grafica Pie, Line, Column, etc
+     * dataArray: false si la informacion es del estilo ['Work', 0], true si es compleja ["Copper", 8.94, "#b87333"] o incluye encabezado
+     * slices: valor de la linea
+     */
+    constructor(nombre, datos = [], grafica = null, dataArray = false, slices = null) {
         this.nombre = nombre;
         this.objeto = $(`#${this.nombre}`);
         this.datos = datos;
         this.google = null;
         this.chart = null;
         this.data = null;
+        this.tipo = grafica;
+        this.slices = slices;
+        this.complejidad = dataArray;
     }
 
     inicilizarGrafica(opciones = null) {
         let _this = this;
         let nombre = this.nombre;
+        let tipoGrafica = this.tipo
+        let informacion = this.datos;
+        let esCompleja = this.complejidad;
+
+        if (tipoGrafica === null) {
+            tipoGrafica = 'PieChart';
+        }
+
         _this.google = google;
 
         _this.establecerDatos();
@@ -21,10 +39,15 @@ class GraficaGoogle {
         // Set a callback to run when the Google Visualization API is loaded.
         _this.google.charts.setOnLoadCallback(function () {
             // Create the data table.
-            _this.data = new _this.google.visualization.DataTable();
-            _this.data.addColumn('string', 'Topping');
-            _this.data.addColumn('number', 'Slices');
-            _this.data.addRows(_this.datos);
+
+            if (esCompleja) {
+                _this.data = new _this.google.visualization.arrayToDataTable(informacion);
+            } else {
+                _this.data = new _this.google.visualization.DataTable();
+                _this.data.addColumn('string', 'Topping');
+                _this.data.addColumn('number', _this.slices);
+                _this.data.addRows(_this.datos);
+            }
             // Set chart options
             if (opciones !== null) {
                 var options = opciones;
@@ -35,7 +58,7 @@ class GraficaGoogle {
             }
 
             // Instantiate and draw our chart, passing in some options.
-            _this.chart = new _this.google.visualization.PieChart(document.getElementById(nombre));
+            _this.chart = new _this.google.visualization[tipoGrafica](document.getElementById(nombre));
             _this.chart.draw(_this.data, options);
         });
 

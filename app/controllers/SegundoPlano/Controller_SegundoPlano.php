@@ -364,7 +364,7 @@ class Controller_SegundoPlano extends \CI_Controller {
             }
         }
 
-        echo $cont;
+//        echo $cont;
 
         //Se coloca en Completado los SD que anteriormente no cambio su estatus 
         $logSDCierres = $this->DBS->consultarFlagLogSDCierres();
