@@ -64,23 +64,16 @@ class GestorDashboard {
 
     private function getDatosVGC(string $getConsulta) {
         $arrayComparacion = array();
-        $arraySemanas = array();
         $arrayTitulos = array();
-        $contador = 5;
-
-        while ($contador >= 1) {
-            $consulta = $this->db->$getConsulta(array('numeroSemana' => $contador));
-            array_push($arraySemanas, $consulta);
-            $contador--;
-        }
+        $arrayConsulta = $this->getConsultas(array('numeroSemana' => '4', 'nombreConsulta' => $getConsulta));
 
         $arrayTitulos[0] = 'Semana';
-        $arrayTitulos[1] = $arraySemanas[0][0]['EstatusTicketAdIST'];
-        $arrayTitulos[2] = $arraySemanas[0][1]['EstatusTicketAdIST'];
-        $arrayTitulos[3] = $arraySemanas[0][2]['EstatusTicketAdIST'];
+        $arrayTitulos[1] = $arrayConsulta[0][0]['EstatusTicketAdIST'];
+        $arrayTitulos[2] = $arrayConsulta[0][1]['EstatusTicketAdIST'];
+        $arrayTitulos[3] = $arrayConsulta[0][2]['EstatusTicketAdIST'];
         $arrayComparacion[0] = $arrayTitulos;
 
-        foreach ($arraySemanas as $key => $value) {
+        foreach ($arrayConsulta as $key => $value) {
             foreach ($value as $k => $v) {
                 $arrayComparacion[$key + 1][0] = $value[0]['Semana'];
                 $arrayComparacion[$key + 1][$k + 1] = (int) $v['SumaEstatus'];
@@ -95,10 +88,10 @@ class GestorDashboard {
 
     private function getDatosVGT(string $getConsulta) {
         $arrayTendencia = array();
-        $consulta = $this->db->$getConsulta([]);
+        $arrayConsulta = $this->getConsultas(array('numeroSemana' => '4', 'nombreConsulta' => $getConsulta));
 
-        foreach ($consulta as $key => $value) {
-            array_push($arrayTendencia, array($value['Semana'], $value['Incidentes']));
+        foreach ($arrayConsulta as $key => $value) {
+            array_push($arrayTendencia, array($value[0]['Semana'], $value[0]['Incidentes']));
         }
 
         return array('VGT' => $arrayTendencia);
@@ -119,7 +112,19 @@ class GestorDashboard {
     private function getDatosVGTO(string $getConsulta) {
         return array('VGTO' => []);
     }
-    
-    
+
+    private function getConsultas(array $datos) {
+        $arrayConsulta = array();
+        $contador = $datos['numeroSemana'];
+        $nombreConsulta = $datos['nombreConsulta'];
+
+        while ($contador >= 0) {
+            $consulta = $this->db->$nombreConsulta(array('numeroSemana' => $contador));
+            array_push($arrayConsulta, $consulta);
+            $contador--;
+        }
+
+        return $arrayConsulta;
+    }
 
 }
