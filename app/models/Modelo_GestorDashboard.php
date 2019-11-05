@@ -37,8 +37,20 @@ class Modelo_GestorDashboard extends Base {
     }
     
     public function getDatosVGC(array $datos) {
-        $consulta = $this->consulta('SELECT * FROM t_permisos_dashboard');
-        $consulta = [];
+        $consulta = $this->consulta("SELECT 
+                                        CONCAT('SEMANA', ' ', WEEK(ts.FechaCreacion, 1)) AS Semana,
+                                        ESTATUS(ts.IdEstatus) AS EstatusTicketAdIST,
+                                        COUNT(ts.IdEstatus) AS SumaEstatus
+                                    FROM
+                                        t_servicios_ticket tst
+                                            RIGHT JOIN
+                                        t_solicitudes ts ON tst.IdSolicitud = ts.Id
+                                    WHERE
+                                        WEEKOFYEAR(ts.FechaCreacion) = (WEEKOFYEAR(CURDATE()) - " . $datos['numeroSemana'] . ")
+                                            AND ts.Folio IS NOT NULL
+                                            AND ts.Folio != '0'
+                                            AND ts.IdEstatus IN (1 , 2, 3, 4)
+                                    GROUP BY EstatusTicketAdIST");
         return $consulta;
     }
     
