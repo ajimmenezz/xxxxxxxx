@@ -35,8 +35,35 @@ class Dashboard {
     setGrafica(graficas) {
         let _this = this;
         $.each(graficas, function (key, value) {
-            _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'LineChart');
-            _this.objetos[value].inicilizarGrafica();
+            switch (value) {
+                case 'grafica-VGT-1':
+                    _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'LineChart', false, 'Incidentes');
+                    break;
+                case 'grafica-VGC-1':
+                    _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'LineChart', true);
+                    break;
+                case 'VGHI':
+                    this.objeto = null;
+                    break;
+                case 'VGIP':
+                    this.objeto = null;
+                    break;
+                case 'VGZ':
+                    this.objeto = null;
+                    break;
+                case 'VGTO':
+                    this.objeto = null;
+                    break;
+
+                default:
+                    console.log("No se encontro la clave");
+                    break;
+            }
+            _this.objetos[value].inicilizarGrafica({
+                curveType: 'function',
+                pointSize: 10,
+                is3D: true
+            });
         });
     }
 

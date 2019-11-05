@@ -18,12 +18,16 @@ $(function () {
 
     peticion.enviar('', 'Dashboard_Generico/Mostrar_Graficas', null, function (respuesta) {
         dashboards = {};
-
-        $.each(respuesta, function (key, datos) {            
-            dashboards[key] = factory.getInstance(key, datos);            
-            dashboards[key].setComponentes();
-            dashboards[key].setEvento();
-        });               
+        
+        $.each(respuesta, function (key, value) {
+            $.each(value, function (llave, datos) {
+                if (datos.length > 0) {
+                    dashboards[llave] = factory.getInstance(llave, datos);
+                    dashboards[llave].setComponentes();
+                    dashboards[llave].setEvento();
+                }
+            });
+        });
     });
 
 });

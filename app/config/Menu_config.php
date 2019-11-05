@@ -79,7 +79,8 @@ $config['Generales'] = array(
             'V2/PaquetesDashboard/dashboard_generico',
             'V2/PaquetesDashboard/FactoryDashboard',
             'V2/PaquetesDashboard/Dashboard',
-            'V2/PaquetesDashboard/DashboardTendencias'
+            'V2/PaquetesDashboard/DashboardTendencias',
+            'V2/PaquetesDashboard/DashboardComparacion'
         ),
         'pluginsJs' => array(
             'select2/dist/js/select2.min',

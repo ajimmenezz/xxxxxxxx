@@ -1,5 +1,5 @@
 <!--Comienzo del panel-->
-<div id="panel-grafica-" class="panel panel-inverse">
+<div id="panel-grafica-VGC" class="panel panel-inverse">
     <!--Comienzo titulo panel-->
     <div class="panel-heading">
         <div class="panel-heading-btn">                        
@@ -12,7 +12,11 @@
     <div class="panel-body">
         <div class="col-md-12">
             <div class="col-md-6">
-
+                <!--Comienzo seccion de grafica-->
+                <div class="col-md-12">
+                    <div id="grafica-VGC-1" class="height-sm"></div>
+                </div>
+                <!--Fin seccion de grafica-->
             </div>
             <div class="col-md-6">
                 <div class="col-lg-12">
@@ -20,7 +24,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Tipo Servicio</label>
-                            <select id="select-servicio-" style="width: 100%">
+                            <select id="select-servicio-VGC" style="width: 100%">
                                 <option value="">Seleccionar</option>
                             </select>
                         </div>
@@ -30,7 +34,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Semana</label>
-                            <select id="select-semana-" style="width: 100%">
+                            <select id="select-semana-VGC" style="width: 100%">
                                 <option value="">Seleccionar</option>
                             </select>
                         </div>
@@ -40,7 +44,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Actual</label>
-                            <select id="select-actual-" style="width: 100%">
+                            <select id="select-actual-VGC" style="width: 100%">
                                 <option value="">Seleccionar</option>
                             </select>
                         </div>
@@ -50,7 +54,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Comparación</label>
-                            <select id="select-comparacion-" style="width: 100%">
+                            <select id="select-comparacion-VGC" style="width: 100%">
                                 <option value="">Seleccionar</option>
                             </select>
                         </div>

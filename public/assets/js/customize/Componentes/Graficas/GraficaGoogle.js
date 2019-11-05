@@ -5,8 +5,9 @@ class GraficaGoogle {
      * datos: informacion a mostrar en la grafica
      * grafica: tipo de grafica Pie, Line, Column, etc
      * dataArray: false si la informacion es del estilo ['Work', 0], true si es compleja ["Copper", 8.94, "#b87333"] o incluye encabezado
+     * slices: valor de la linea
      */
-    constructor(nombre, datos = [], grafica = null, dataArray = false) {
+    constructor(nombre, datos = [], grafica = null, dataArray = false, slices = null) {
         this.nombre = nombre;
         this.objeto = $(`#${this.nombre}`);
         this.datos = datos;
@@ -14,6 +15,7 @@ class GraficaGoogle {
         this.chart = null;
         this.data = null;
         this.tipo = grafica;
+        this.slices = slices;
         this.complejidad = dataArray;
     }
 
@@ -43,7 +45,7 @@ class GraficaGoogle {
             } else {
                 _this.data = new _this.google.visualization.DataTable();
                 _this.data.addColumn('string', 'Topping');
-                _this.data.addColumn('number', 'Slices');
+                _this.data.addColumn('number', _this.slices);
                 _this.data.addRows(_this.datos);
             }
             // Set chart options

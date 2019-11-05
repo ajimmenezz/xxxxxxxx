@@ -12,14 +12,13 @@
     <div class="panel-body">
         <div class="row">
             <!--Comienzo seccion de selects-->
-            <div class="col-lg-12 col-md-offset-4">
+            <div class="col-lg-12 col-md-offset-6">
                 <!--Comienzo conjunto select Cliente-->
                 <div class="col-md-2">
                     <div class="form-group">
                         <label>Cliente</label>
                         <select id="select-cliente-VGT" style="width: 100%">
                             <option value="">Seleccionar</option>
-                            <option >Todos</option>
                             <option >Cinemex</option>
                             <option >Siccob</option>
                             <option >A&AT</option>
@@ -33,30 +32,23 @@
                         <label>Tiempo</label>
                         <select id="select-tiempo-VGT" style="width: 100%">
                             <option value="">Seleccionar</option>
+                            <option>Semana</option>
+                            <option>Mes</option>
+                            <option>Año</option>
                         </select>
                     </div>
                 </div>
                 <!--Fin conjunto select Semana-->
-                <!--Comienzo conjunto select Otro-->
+                <!--Comienzo conjunto select lapso-->
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label>Otro</label>
-                        <select id="select-otro-VGT" style="width: 100%">
+                        <label>Lapso</label>
+                        <select id="select-lapso-VGT" style="width: 100%" disabled="true">
                             <option value="">Seleccionar</option>
                         </select>
                     </div>
                 </div>
-                <!--Fin conjunto select Otro-->
-                <!--Comienzo conjunto select Otro-->
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>Otro</label>
-                        <select id="select-otro-VGT" style="width: 100%">
-                            <option value="">Seleccionar</option>
-                        </select>
-                    </div>
-                </div>
-                <!--Fin conjunto select Otro-->
+                <!--Fin conjunto select lapso-->
             </div>
             <!--Fin seccion de selects-->
         </div>
