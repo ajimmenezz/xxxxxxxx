@@ -57,36 +57,58 @@ class GestorDashboard {
         return $arrayConsultas;
     }
 
-    public function getDatosVGC(string $getConsulta) {
-//        $arrayTitulos = array();
-//            array_push($arrayTitulos, array($value['Semana']));
-        return array('VGC' => []);
+    private function getDatosVGC(string $getConsulta) {
+        $arrayComparacion = array();
+        $arraySemanas = array();
+        $arrayTitulos = array();
+        $contador = 5;
+
+        while ($contador >= 1) {
+            $consulta = $this->db->$getConsulta(array('numeroSemana' => $contador));
+            array_push($arraySemanas, $consulta);
+            $contador--;
+        }
+
+        $arrayTitulos[0] = 'Semana';
+        $arrayTitulos[1] = $arraySemanas[0][0]['EstatusTicketAdIST'];
+        $arrayTitulos[2] = $arraySemanas[0][1]['EstatusTicketAdIST'];
+        $arrayTitulos[3] = $arraySemanas[0][2]['EstatusTicketAdIST'];
+        $arrayComparacion[0] = $arrayTitulos;
+
+        foreach ($arraySemanas as $key => $value) {
+            foreach ($value as $k => $v) {
+                $arrayComparacion[$key + 1][0] = $value[0]['Semana'];
+                $arrayComparacion[$key + 1][$k + 1] = $v['SumaEstatus'];
+            }
+        }
+
+        return array('VGC' => $arrayComparacion);
     }
-    
-    public function getDatosVGT(string $getConsulta) {
+
+    private function getDatosVGT(string $getConsulta) {
         $arrayTendencia = array();
         $consulta = $this->db->$getConsulta([]);
-        
+
         foreach ($consulta as $key => $value) {
-            array_push($arrayTendencia, array($value['Semana'],$value['Incidentes']));
+            array_push($arrayTendencia, array($value['Semana'], $value['Incidentes']));
         }
-                
+
         return array('VGT' => $arrayTendencia);
     }
 
-    public function getDatosVGHI(string $getConsulta) {
+    private function getDatosVGHI(string $getConsulta) {
         return array('VGHI' => []);
     }
 
-    public function getDatosVGIP(string $getConsulta) {
+    private function getDatosVGIP(string $getConsulta) {
         return array('VGIP' => []);
     }
 
-    public function getDatosVGZ(string $getConsulta) {
+    private function getDatosVGZ(string $getConsulta) {
         return array('VGZ' => []);
     }
 
-    public function getDatosVGTO(string $getConsulta) {
+    private function getDatosVGTO(string $getConsulta) {
         return array('VGTO' => []);
     }
 
