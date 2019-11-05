@@ -32,9 +32,9 @@
                         <label>Tiempo</label>
                         <select id="select-tiempo-VGT" style="width: 100%">
                             <option value="">Seleccionar</option>
-                            <option>Semana</option>
-                            <option>Mes</option>
-                            <option>Año</option>
+                            <option value="WEEK">Semana</option>
+                            <option value="MONTH">Mes</option>
+                            <option value="YEAR">Año</option>
                         </select>
                     </div>
                 </div>

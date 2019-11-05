@@ -14,8 +14,8 @@ class DashboardComparacion extends Dashboard {
         let _this = this;
         $.each(this.objetos, function (key, value) {
             switch (key) {
-                case 'select-cliente-VGC':
-                    _this.eventoSelectCliente(value);
+                case 'select-servicio-VGC':
+                    _this.eventoSelectServicio(value);
                     break;
 
                 default:
@@ -25,7 +25,7 @@ class DashboardComparacion extends Dashboard {
         });
     }
 
-    eventoSelectCliente(select) {
+    eventoSelectServicio(select) {
         let valor = select.obtenerValor();
         select.evento('change', function () {
             valor = select.obtenerValor();
