@@ -4,12 +4,14 @@ namespace Librerias\V2\PaquetesDashboard;
 
 use Modelos\Modelo_GestorDashboard as Modelo;
 use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
+use Librerias\V2\PaquetesGenerales\Utilerias\GestorClientes as GestorClientes;
 use CI_Controller;
 
 class GestorDashboard {
 
     private $db;
     static private $CI;
+    private $gestorClientes;
 
     public function __construct() {
         $this->db = new Modelo();
@@ -43,15 +45,18 @@ class GestorDashboard {
         return $dashboars;
     }
 
-    public function getDatosDashboards() {
+    public function getDatosDashboards(string $cliente) {
         $arrayConsultas = array();
-        $idPermisos = Usuario::getPermisos();
-        $stringPermisos = implode(',', $idPermisos);
-        $claves = $this->db->getPermisosDashboard($stringPermisos);
 
-        foreach ($claves as $key => $value) {
-            $getConsulta = 'getDatos' . $value['ClavePermiso'];
-            array_push($arrayConsultas, $this->$getConsulta($getConsulta));
+        if ($cliente === '1') {
+            $idPermisos = Usuario::getPermisos();
+            $stringPermisos = implode(',', $idPermisos);
+            $claves = $this->db->getPermisosDashboard($stringPermisos);
+
+            foreach ($claves as $key => $value) {
+                $getConsulta = 'getDatos' . $value['ClavePermiso'];
+                array_push($arrayConsultas, $this->$getConsulta($getConsulta));
+            }
         }
 
         return $arrayConsultas;
@@ -78,11 +83,14 @@ class GestorDashboard {
         foreach ($arraySemanas as $key => $value) {
             foreach ($value as $k => $v) {
                 $arrayComparacion[$key + 1][0] = $value[0]['Semana'];
-                $arrayComparacion[$key + 1][$k + 1] = $v['SumaEstatus'];
+                $arrayComparacion[$key + 1][$k + 1] = (int) $v['SumaEstatus'];
             }
         }
 
-        return array('VGC' => $arrayComparacion);
+        $this->gestorClientes = new GestorClientes();
+        $clientes = $this->gestorClientes->getIdNombreClientes();
+
+        return array('VGC' => $arrayComparacion, 'clientes' => $clientes);
     }
 
     private function getDatosVGT(string $getConsulta) {
@@ -111,5 +119,7 @@ class GestorDashboard {
     private function getDatosVGTO(string $getConsulta) {
         return array('VGTO' => []);
     }
+    
+    
 
 }

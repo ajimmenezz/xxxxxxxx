@@ -13,7 +13,7 @@ class Controller_Dashboard extends CI_Controller {
 
     public function getDatosDashboards() {
         $datos = $this->input->post();
-        $resultado = $this->gestorDashboard->getDatosDashboards();
+        $resultado = $this->gestorDashboard->getDatosDashboards('1');
         echo json_encode($resultado);
     }
 
