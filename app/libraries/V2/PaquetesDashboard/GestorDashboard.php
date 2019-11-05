@@ -45,27 +45,24 @@ class GestorDashboard {
         return $dashboars;
     }
 
-    public function getDatosDashboards(string $cliente) {
+    public function getDatosDashboards() {
         $arrayConsultas = array();
+        $idPermisos = Usuario::getPermisos();
+        $stringPermisos = implode(',', $idPermisos);
+        $claves = $this->db->getPermisosDashboard($stringPermisos);
 
-        if ($cliente === '1') {
-            $idPermisos = Usuario::getPermisos();
-            $stringPermisos = implode(',', $idPermisos);
-            $claves = $this->db->getPermisosDashboard($stringPermisos);
-
-            foreach ($claves as $key => $value) {
-                $getConsulta = 'getDatos' . $value['ClavePermiso'];
-                array_push($arrayConsultas, $this->$getConsulta($getConsulta));
-            }
+        foreach ($claves as $key => $value) {
+            $getConsulta = 'getDatos' . $value['ClavePermiso'];
+            array_push($arrayConsultas, $this->$getConsulta(array('nombreConsulta' => $getConsulta, 'cliente' => '1')));
         }
 
         return $arrayConsultas;
     }
 
-    private function getDatosVGC(string $getConsulta) {
+    private function getDatosVGC(array $datos) {
         $arrayComparacion = array();
         $arrayTitulos = array();
-        $arrayConsulta = $this->getConsultas(array('numeroSemana' => '4', 'nombreConsulta' => $getConsulta));
+        $arrayConsulta = $this->getConsultas(array('numeroSemana' => '4', 'nombreConsulta' => $datos['nombreConsulta']));
 
         $arrayTitulos[0] = 'Semana';
         $arrayTitulos[1] = $arrayConsulta[0][0]['EstatusTicketAdIST'];
@@ -86,30 +83,33 @@ class GestorDashboard {
         return array('VGC' => $arrayComparacion, 'clientes' => $clientes);
     }
 
-    private function getDatosVGT(string $getConsulta) {
+    public function getDatosVGT(array $datos) {
         $arrayTendencia = array();
-        $arrayConsulta = $this->getConsultas(array('numeroSemana' => '4', 'nombreConsulta' => $getConsulta));
+        
+        if ($datos['cliente'] === '1') {
+            $arrayConsulta = $this->getConsultas(array('numeroSemana' => '4', 'nombreConsulta' => $datos['nombreConsulta']));
 
-        foreach ($arrayConsulta as $key => $value) {
-            array_push($arrayTendencia, array($value[0]['Semana'], $value[0]['Incidentes']));
+            foreach ($arrayConsulta as $key => $value) {
+                array_push($arrayTendencia, array($value[0]['Semana'], $value[0]['Incidentes']));
+            }
         }
 
         return array('VGT' => $arrayTendencia);
     }
 
-    private function getDatosVGHI(string $getConsulta) {
+    public function getDatosVGHI(array $datos) {
         return array('VGHI' => []);
     }
 
-    private function getDatosVGIP(string $getConsulta) {
+    public function getDatosVGIP(array $datos) {
         return array('VGIP' => []);
     }
 
-    private function getDatosVGZ(string $getConsulta) {
+    public function getDatosVGZ(array $datos) {
         return array('VGZ' => []);
     }
 
-    private function getDatosVGTO(string $getConsulta) {
+    public function getDatosVGTO(array $datos) {
         return array('VGTO' => []);
     }
 

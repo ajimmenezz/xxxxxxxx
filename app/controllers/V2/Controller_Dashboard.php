@@ -12,9 +12,23 @@ class Controller_Dashboard extends CI_Controller {
     }
 
     public function getDatosDashboards() {
-        $datos = $this->input->post();
-        $resultado = $this->gestorDashboard->getDatosDashboards('1');
-        echo json_encode($resultado);
+        try {
+            $resultado = $this->gestorDashboard->getDatosDashboards();
+            echo json_encode($resultado);
+        } catch (\Exception $ex) {
+            return ['code' => 400, 'message' => $ex->getMessage()];
+        }
+    }
+
+    public function getDatosTendecia() {
+        try {
+            $datos = $this->input->post();
+            $datos['nombreConsulta'] = 'getDatosVGT';
+            $resultado = $this->gestorDashboard->getDatosVGT($datos);
+            echo json_encode($resultado);
+        } catch (\Exception $ex) {
+            return ['code' => 400, 'message' => $ex->getMessage()];
+        }
     }
 
 }
