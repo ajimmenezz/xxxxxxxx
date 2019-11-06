@@ -62,7 +62,7 @@ class GestorDashboard {
     private function getDatosVGC(array $datos) {
         $arrayComparacion = array();
         $arrayTitulos = array();
-        $arrayConsulta = $this->getConsultas(array('numeroSemana' => '4', 'nombreConsulta' => $datos['nombreConsulta']));
+        $arrayConsulta = $this->getConsultas(array('numeroSemana' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
 
         $arrayTitulos[0] = 'Semana';
         $arrayTitulos[1] = $arrayConsulta[0][0]['EstatusTicketAdIST'];
@@ -85,12 +85,14 @@ class GestorDashboard {
 
     public function getDatosVGT(array $datos) {
         $arrayTendencia = array();
-        
+
         if ($datos['cliente'] === '1') {
-            $arrayConsulta = $this->getConsultas(array('numeroSemana' => '4', 'nombreConsulta' => $datos['nombreConsulta']));
+            $arrayConsulta = $this->getConsultas(array('numeroSemana' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
 
             foreach ($arrayConsulta as $key => $value) {
-                array_push($arrayTendencia, array($value[0]['Semana'], $value[0]['Incidentes']));
+                if (!empty($value)) {
+                    array_push($arrayTendencia, array($value[0]['Semana'], $value[0]['Incidentes']));
+                }
             }
         }
 

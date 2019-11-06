@@ -34,7 +34,7 @@ class DashboardTendencias extends Dashboard {
         let _this = this;
         select.evento('change', function () {
              _this.informacion['cliente']= select.obtenerValor();
-            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Datos_Tendencia_Cliente',  _this.informacion, function (respuesta) {
+            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Datos_Tendencia',  _this.informacion, function (respuesta) {
                 console.log(respuesta);
             });
         });
