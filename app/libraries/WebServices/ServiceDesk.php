@@ -415,7 +415,7 @@ class ServiceDesk extends General
             . "TECHNICIAN_KEY=" . $key;
 
         $datosSD = $this->getDatosSD($URL2 . '?' . $FIELDS);
-        $this->validarError($datosSD, $folio);
+        // $this->validarError($datosSD, $folio);
         return $datosSD;
     }
 
