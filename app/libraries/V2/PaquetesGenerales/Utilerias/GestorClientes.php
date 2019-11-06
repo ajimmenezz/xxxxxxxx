@@ -23,8 +23,8 @@ class GestorClientes {
 
         foreach ($arrayClientes as $key => $value) {
             array_push($arrayIdNombreClientes, array(
-                'Id' => $value['Id'],
-                'Nombre' => $value['Nombre']));
+                'id' => $value['Id'],
+                'text' => $value['Nombre']));
         }
 
         return $arrayIdNombreClientes;

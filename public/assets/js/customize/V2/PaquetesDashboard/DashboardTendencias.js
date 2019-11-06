@@ -1,6 +1,6 @@
 
 class DashboardTendencias extends Dashboard {
-    
+
     constructor(clave, datos) {
         super(clave);
         this.panel = 'panel-grafica-VGT';
@@ -10,7 +10,7 @@ class DashboardTendencias extends Dashboard {
             graficas: ['grafica-VGT-1']
         };
         this.informacion = {};
-        this.peticion = new Utileria();;
+        this.peticion = new Utileria();
     }
 
     setEvento() {
@@ -48,22 +48,24 @@ class DashboardTendencias extends Dashboard {
             let lapso = null;
             switch (_this.informacion['tiempo']) {
                 case 'WEEK':
+                    lapso = [3, 4, 5, 6, 7, 8, 9];
+                    break;
                 case 'MONTH':
-                    lapso = [3,4,5,6,7];
+                    lapso = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
                     break;
                 case 'YEAR':
-                    lapso = [2,3,4];
+                    lapso = [2, 3, 4];
                     break;
             }
             select.cargaDatosEnSelect(lapso, 'select-lapso-VGT')
         });
     }
-    
+
     eventoSelectLapso(select) {
         let _this = this;
         select.evento('change', function () {
-             _this.informacion['lapso'] = select.obtenerValor();
-            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Graficas',  _this.informacion, function (respuesta) {
+            _this.informacion['lapso'] = select.obtenerValor();
+            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Graficas', _this.informacion, function (respuesta) {
                 console.log(respuesta);
             });
         });

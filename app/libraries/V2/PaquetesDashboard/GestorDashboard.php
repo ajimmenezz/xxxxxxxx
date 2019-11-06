@@ -96,7 +96,14 @@ class GestorDashboard {
             }
         }
 
-        return array('VGT' => $arrayTendencia);
+        return array('VGT' => [
+                    ["SEMANA", "Incidentes",['role'=> 'annotation', 'type'=> 'number'], "Completados",['role'=> 'annotation', 'type'=> 'number']],
+                    ["SEMANA 41", 821, 821,10,10],
+                    ["SEMANA 42", 854, 821,10,10],
+                    ["SEMANA 43", 915, 821,10,10],
+                    ["SEMANA 44", 669, 821,10,10],
+                    ["SEMANA 45", 484, 821,10,10]
+                ]);
     }
 
     public function getDatosVGHI(array $datos) {

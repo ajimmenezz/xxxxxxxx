@@ -11,7 +11,7 @@
     <!--Comienzo cuerpo del panel-->
     <div class="panel-body">
         <div class="col-md-12">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <!--Comienzo seccion de grafica-->
                 <div class="col-md-12">
                     <div id="grafica-VGC-1" class="height-sm"></div>
@@ -21,7 +21,7 @@
             <div class="col-md-6">
                 <div class="col-lg-12">
                     <!--Comienzo conjunto select tipo de servicio-->
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>Tipo Servicio</label>
                             <select id="select-servicio-VGC" style="width: 100%">
@@ -31,35 +31,28 @@
                     </div>
                     <!--Fin conjunto select tipo de servicio-->
                     <!--Comienzo conjunto select Semana-->
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
-                            <label>Semana</label>
-                            <select id="select-semana-VGC" style="width: 100%">
+                            <label>Tiempo</label>
+                            <select id="select-tiempo-VGC" style="width: 100%">
                                 <option value="">Seleccionar</option>
+                                <option value="WEEK">Semana</option>
+                                <option value="MONTH">Mes</option>
+                                <option value="YEAR">Año</option>
                             </select>
                         </div>
                     </div>
                     <!--Fin conjunto select Semana-->
                     <!--Comienzo conjunto select actual-->
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
-                            <label>Actual</label>
-                            <select id="select-actual-VGC" style="width: 100%">
+                            <label>Lapso</label>
+                            <select id="select-lapso-VGC" style="width: 100%" disabled="true">
                                 <option value="">Seleccionar</option>
                             </select>
                         </div>
                     </div>
                     <!--Fin conjunto select actual-->
-                    <!--Comienzo conjunto select comparacion-->
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Comparación</label>
-                            <select id="select-comparacion-VGC" style="width: 100%">
-                                <option value="">Seleccionar</option>
-                            </select>
-                        </div>
-                    </div>
-                    <!--Fin conjunto select comparacion-->
                 </div>
             </div>
         </div>

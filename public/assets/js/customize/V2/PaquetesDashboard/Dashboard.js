@@ -37,7 +37,7 @@ class Dashboard {
         $.each(graficas, function (key, value) {
             switch (value) {
                 case 'grafica-VGT-1':
-                    _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'LineChart', false, 'Incidentes');
+                    _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'LineChart', true);
                     break;
                 case 'grafica-VGC-1':
                     _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'LineChart', true);
@@ -62,7 +62,7 @@ class Dashboard {
             _this.objetos[value].inicilizarGrafica({
                 curveType: 'function',
                 pointSize: 10,
-                is3D: true
+                is3D: true,
             });
         });
     }
