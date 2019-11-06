@@ -25,6 +25,10 @@ class FactoryDashboard {
             case 'VGTO':                
                 this.objeto = null;
                 break;
+            case 'clientes':        
+                let select = new SelectBasico();
+                select.cargaDatosEnSelect(datos, 'select-cliente-VGT');
+                break;
 
             default:
                 console.log("No se encontro la clave");

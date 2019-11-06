@@ -19,9 +19,6 @@
                         <label>Cliente</label>
                         <select id="select-cliente-VGT" style="width: 100%">
                             <option value="">Seleccionar</option>
-                            <option >Cinemex</option>
-                            <option >Siccob</option>
-                            <option >A&AT</option>
                         </select>
                     </div>
                 </div>

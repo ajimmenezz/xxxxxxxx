@@ -5,7 +5,7 @@ class DashboardComparacion extends Dashboard {
         this.panel = 'panel-grafica-VGC';
         this.datos = datos;
         this.componentes = {
-            selects: ['select-servicio-VGC'],
+            selects: ['select-servicio-VGC', 'select-tiempo-VGC', 'select-lapso-VGC'],
             graficas: ['grafica-VGC-1']
         };
     }
