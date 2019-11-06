@@ -1778,7 +1778,7 @@ class Solicitud extends General
                     'Group' => $value["group"]["name"],
                     'Priority' => $value["priority"]["name"]
                 ), array(
-                    'Folio' => $value['Id']
+                    'Folio' => $value['id']
                 ));
             }
             $i += 1;
