@@ -84,26 +84,21 @@ class GestorDashboard {
     }
 
     public function getDatosVGT(array $datos) {
-        $arrayTendencia = array();
+        $arrayTendecia = array();
+        $arrayTendencia[0] = ["SEMANA", "Incidentes",['role'=> 'annotation', 'type'=> 'number'], "Completados",['role'=> 'annotation', 'type'=> 'number']];
 
         if ($datos['cliente'] === '1') {
             $arrayConsulta = $this->getConsultas(array('numeroSemana' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
 
             foreach ($arrayConsulta as $key => $value) {
                 if (!empty($value)) {
-                    array_push($arrayTendencia, array($value[0]['Semana'], $value[0]['Incidentes']));
+                    $incidentes = (int) $value[0]['Incidentes'];
+                    array_push($arrayTendencia, array($value[0]['Semana'], $incidentes, $incidentes, $incidentes, $incidentes));
                 }
             }
         }
 
-        return array('VGT' => [
-                    ["SEMANA", "Incidentes",['role'=> 'annotation', 'type'=> 'number'], "Completados",['role'=> 'annotation', 'type'=> 'number']],
-                    ["SEMANA 41", 821, 821,10,10],
-                    ["SEMANA 42", 854, 821,10,10],
-                    ["SEMANA 43", 915, 821,10,10],
-                    ["SEMANA 44", 669, 821,10,10],
-                    ["SEMANA 45", 484, 821,10,10]
-                ]);
+        return array('VGT' => $arrayTendencia);
     }
 
     public function getDatosVGHI(array $datos) {
