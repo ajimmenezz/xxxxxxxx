@@ -45,33 +45,11 @@ class DashboardTendencias extends Dashboard {
         let _this = this;
         select.evento('change', function () {
             _this.informacion['tiempo'] = select.obtenerValor();
-//            let lapso = null;
-//            switch (_this.informacion['tiempo']) {
-//                case 'WEEK':
-//                    lapso = [3, 4, 5, 6, 7, 8, 9];
-//                    break;
-//                case 'MONTH':
-//                    lapso = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-//                    break;
-//                case 'YEAR':
-//                    lapso = [2, 3, 4];
-//                    break;
-//            }
-//            select.cargaDatosEnSelect(lapso, 'select-lapso-VGT')
             _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
                 console.log(respuesta);
             });
         });
     }
 
-    eventoSelectLapso(select) {
-        let _this = this;
-        select.evento('change', function () {
-            _this.informacion['lapso'] = select.obtenerValor();
-            _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
-                console.log(respuesta);
-            });
-        });
-    }
 
 }

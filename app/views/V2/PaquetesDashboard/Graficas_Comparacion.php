@@ -65,12 +65,12 @@
             <div class="col-md-12">
                 <!--Comienzo seccion de grafica-->
                 <div class="col-md-8">
-                    <div id="grafica-VGC-1" class="height-sm"></div>
+                    <div id="grafica-VGC-1" class="height-md"></div>
                 </div>
                 <!--Fin seccion de grafica-->
                 <!--Comienzo seccion de tabla-->
                 <div class="col-md-4">
-                    <div id="grafica-VGC-1" class="height-sm"></div>
+                    <div id="grafica-VGC-2" class="height-md"></div>
                 </div>
                 <!--Fin seccion de tabla-->
             </div>

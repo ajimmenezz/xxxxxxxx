@@ -59,7 +59,7 @@
         <div class="row">
             <!--Comienzo seccion de grafica-->
             <div class="col-md-12">
-                <div id="grafica-VGT-1" class="height-sm"></div>
+                <div id="grafica-VGT-1" class="height-md"></div>
             </div>
             <!--Fin seccion de grafica-->
         </div>
