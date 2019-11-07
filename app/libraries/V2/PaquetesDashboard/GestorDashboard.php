@@ -77,7 +77,7 @@ class GestorDashboard {
         $arrayComparacion[0] = $arrayTitulos;
         $contador = 0;
         $contadorArreglo = 1;
-        
+
         while ($contador < 2) {
             foreach ($arrayConsulta as $key => $value) {
                 $contadorArregloAdentro = $contadorArreglo;
@@ -85,9 +85,10 @@ class GestorDashboard {
                     if ($contador === 0) {
                         $arrayComparacion[$key + $contador + 1][$contador] = $value[0]['Semana'];
                     }
-                    array_push($arrayComparacion[$key + 1], array((int) $v['SumaEstatus']));
+                    $arrayComparacion[$key + 1][$k + $contadorArregloAdentro] = (int) $v['SumaEstatus'];
                     $contadorArregloAdentro = $contadorArregloAdentro + 1;
                 }
+                ksort($arrayComparacion[$key + 1]);
             }
             $contador ++;
             $contadorArreglo ++;
@@ -100,6 +101,10 @@ class GestorDashboard {
     }
 
     public function getDatosVGT(array $datos) {
+        if (!isset($datos['cliente'])) {
+            $datos['cliente'] = 1;
+        }
+
         $arrayTendecia = array();
         $arrayTendencia[0] = ["SEMANA", "Incidentes", ['role' => 'annotation', 'type' => 'number']];
 
