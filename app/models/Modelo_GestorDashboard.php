@@ -37,20 +37,25 @@ class Modelo_GestorDashboard extends Base {
     }
 
     public function getDatosVGC(array $datos) {
-        $consulta = $this->consulta("SELECT 
-                                        CONCAT('SEMANA', ' ', WEEK(ts.FechaCreacion, 1)) AS Tiempo,
-                                        ESTATUS(ts.IdEstatus) AS EstatusTicketAdIST,
-                                        COUNT(DISTINCT ts.Folio) AS SumaEstatus
-                                    FROM
-                                        t_solicitudes ts
+        $consulta = $this->consulta("select
+                                    Tiempo,
+                                    SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
+                                    SUM(if(Estatus = 'En Atencion',1,0)) as 'En Atencion',
+                                    SUM(if(Estatus = 'Problema',1,0)) as Problema,
+                                    SUM(if(Estatus = 'Cerrado',1,0)) as Cerrado
+                                    from (
+                                    select
+                                    Folio,
+                                    if(`Status` = 'Completado', 'Cerrado', `Status`) as Estatus,
+                                    CONCAT('SEMANA', ' ', WEEK(CreatedTime, 1)) AS Tiempo
+                                    from t_solicitudes
                                     WHERE
-                                        YEAR(ts.FechaCreacion) = YEAR(CURRENT_DATE())
-                                            AND WEEK(ts.FechaCreacion, 1) = WEEK(CURRENT_DATE(), 1)- " . $datos['numeroTiempo'] . "
-                                            AND ts.Folio IS NOT NULL
-                                            AND ts.Folio != '0'
-                                            AND ts.IdEstatus != '6'
-                                            AND ts.IdEstatus IN (1 , 2, 3, 4)
-                                    GROUP BY Tiempo, EstatusTicketAdIST");
+                                        YEAR(CreatedTime) = YEAR(CURRENT_DATE())
+                                            AND WEEK(CreatedTime, 1) = WEEK(CURRENT_DATE(), 1) - " . $datos['numeroTiempo'] . "
+                                    and Technician is not null
+                                    and Technician <> ''
+                                    group by Folio
+                                    ) as tf group by Tiempo");
         return $consulta;
     }
 
