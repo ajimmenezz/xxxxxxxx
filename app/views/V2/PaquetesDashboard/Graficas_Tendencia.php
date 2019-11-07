@@ -5,14 +5,14 @@
         <div class="panel-heading-btn">                           
             <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
         </div>
-        <h3 class="panel-title">Grafica de Tendencias</h3>
+        <h3 class="panel-title">&nbsp;</h3>
     </div>
     <!--Fin titulo panel-->
     <!--Comienzo cuerpo del panel-->
     <div class="panel-body">
         <div class="row">
             <!--Comienzo seccion de selects-->
-            <div class="col-lg-12 col-md-offset-6">
+            <div class="col-md-12 col-md-offset-8">
                 <!--Comienzo conjunto select Cliente-->
                 <div class="col-md-2">
                     <div class="form-group">
@@ -39,18 +39,22 @@
                     </div>
                 </div>
                 <!--Fin conjunto select Semana-->
-                <!--Comienzo conjunto select lapso-->
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>Lapso</label>
-                        <select id="select-lapso-VGT" style="width: 100%" disabled="true">
-                            <option value="">Seleccionar</option>
-                        </select>
-                    </div>
-                </div>
-                <!--Fin conjunto select lapso-->
             </div>
             <!--Fin seccion de selects-->
+            <!--comienzo de encabezado-->
+            <div class="col-md-12">
+                <div class="col-md-11">
+                    <h3>Grafica de Tendencia</h3>
+                </div>
+                <div class="col-md-1">
+                    <br>
+                    <div id="actualizar-VGT">
+                        <button id="btn-actualizar-VGT" type="button" class="btn btn-sm btn-success m-r-5"><i class="fa fa-repeat"></i> Actualizar</button>
+                    </div>
+                </div>
+                <div class="col-md-12" style="background: #FCAC31"><br></div>
+            </div>
+            <!--fin de encabezado-->
         </div>
         <div class="row">
             <!--Comienzo seccion de grafica-->

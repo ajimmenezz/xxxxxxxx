@@ -15,6 +15,8 @@ $(function () {
 
     //Inicializa funciones de la plantilla
     App.init();
+    
+    $('#page-container').addClass('page-sidebar-minified');
 
     peticion.enviar('', 'Dashboard_Generico/Mostrar_Graficas', null, function (respuesta) {
         dashboards = {};
