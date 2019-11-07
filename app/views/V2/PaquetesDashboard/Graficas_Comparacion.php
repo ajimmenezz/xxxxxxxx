@@ -54,7 +54,7 @@
                 <div class="col-md-1">
                     <br>
                     <div id="actualizar-VGT">
-                        <button id="btn-actualizar-VGT" type="button" class="btn btn-sm btn-success m-r-5"><i class="fa fa-repeat"></i> Actualizar</button>
+                        <button id="btn-actualizar-VGC" type="button" class="btn btn-sm btn-success m-r-5"><i class="fa fa-repeat"></i> Actualizar</button>
                     </div>
                 </div>
                 <div class="col-md-12" style="background: #FCAC31"><br></div>

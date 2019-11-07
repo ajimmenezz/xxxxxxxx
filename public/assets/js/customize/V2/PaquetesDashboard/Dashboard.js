@@ -6,6 +6,7 @@ class Dashboard {
         this.datos = {};
         this.componentes = {};
         this.objetos = {};
+        this.peticion = new Utileria();
     }
 
     setComponentes() {
@@ -34,11 +35,17 @@ class Dashboard {
             _this.objetos[value].iniciarSelect();
         });
     }
-    
+
     setBotones(botones) {
         let _this = this;
         $.each(botones, function (key, value) {
-            console.log(value);
+            var clave = value.split("-");
+            $(`#${value}`).on('click', function () {
+                _this.peticion.enviar('panel-grafica-' + clave[2], 'Dashboard_Generico/Mostrar_Datos_Tendencia', _this.informacion, function (respuesta) {
+                    console.log(_this.informacion);
+                    console.log(respuesta);
+                });
+            });
         });
     }
 

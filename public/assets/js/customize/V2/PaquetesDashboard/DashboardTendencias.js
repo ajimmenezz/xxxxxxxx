@@ -10,8 +10,11 @@ class DashboardTendencias extends Dashboard {
             botones: ['btn-actualizar-VGT'],
             graficas: ['grafica-VGT-1']
         };
-        this.informacion = {};
-        this.peticion = new Utileria();
+        this.informacion = {
+            clave: "VGT",
+            cliente: "1",
+            tiempo: "WEEK"
+        };
     }
 
     setEvento() {
@@ -32,16 +35,12 @@ class DashboardTendencias extends Dashboard {
         let _this = this;
         select.evento('change', function () {
              _this.informacion['cliente']= select.obtenerValor();
-            _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Tendencia',  _this.informacion, function (respuesta) {
-                console.log(respuesta);
-            });
         });
     }
 
     eventoSelectTiempo(select) {
         let _this = this;
         select.evento('change', function () {
-            $('#select-lapso-VGT').prop("disabled", false);
             _this.informacion['tiempo'] = select.obtenerValor();
         });
     }
