@@ -16,9 +16,6 @@ class Dashboard {
                 case 'selects':
                     _this.setSelect(value);
                     break;
-                case 'botones':
-                    _this.setBotones(value);
-                    break;
                 case 'graficas':
                     _this.setGrafica(value);
                     break;

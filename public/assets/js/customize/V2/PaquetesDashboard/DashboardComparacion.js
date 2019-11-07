@@ -6,13 +6,10 @@ class DashboardComparacion extends Dashboard {
         this.datos = datos;
         this.componentes = {
             selects: ['select-servicio-VGC', 'select-tiempo-VGC', 'select-lapso-VGC'],
-            botones: ['btn-actualizar-VGC'],
             graficas: ['grafica-VGC-1']
         };
         this.informacion = {
-            clave: "VGC",
-            cliente: "1",
-            tiempo: "WEEK"
+            clave: "VGC"
         };
     }
 
