@@ -63,18 +63,34 @@ class GestorDashboard {
         $arrayComparacion = array();
         $arrayTitulos = array();
         $arrayConsulta = $this->getConsultas(array('numeroSemana' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
-
         $arrayTitulos[0] = 'Semana';
-        $arrayTitulos[1] = $arrayConsulta[0][0]['EstatusTicketAdIST'];
-        $arrayTitulos[2] = $arrayConsulta[0][1]['EstatusTicketAdIST'];
-        $arrayTitulos[3] = $arrayConsulta[0][2]['EstatusTicketAdIST'];
-        $arrayComparacion[0] = $arrayTitulos;
 
         foreach ($arrayConsulta as $key => $value) {
             foreach ($value as $k => $v) {
-                $arrayComparacion[$key + 1][0] = $value[0]['Semana'];
-                $arrayComparacion[$key + 1][$k + 1] = (int) $v['SumaEstatus'];
+                if (!in_array($v['EstatusTicketAdIST'], $arrayTitulos)) {
+                    array_push($arrayTitulos, $v['EstatusTicketAdIST']);
+                    array_push($arrayTitulos, ['role' => 'annotation', 'type' => 'number']);
+                }
             }
+        }
+
+        $arrayComparacion[0] = $arrayTitulos;
+        $contador = 0;
+        $contadorArreglo = 1;
+        
+        while ($contador < 2) {
+            foreach ($arrayConsulta as $key => $value) {
+                $contadorArregloAdentro = $contadorArreglo;
+                foreach ($value as $k => $v) {
+                    if ($contador === 0) {
+                        $arrayComparacion[$key + $contador + 1][$contador] = $value[0]['Semana'];
+                    }
+                    $arrayComparacion[$key + 1][$k + $contadorArregloAdentro] = (int) $v['SumaEstatus'];
+                    $contadorArregloAdentro = $contadorArregloAdentro + 1;
+                }
+            }
+            $contador ++;
+            $contadorArreglo ++;
         }
 
         $this->gestorClientes = new GestorClientes();
@@ -85,7 +101,7 @@ class GestorDashboard {
 
     public function getDatosVGT(array $datos) {
         $arrayTendecia = array();
-        $arrayTendencia[0] = ["SEMANA", "Incidentes",['role'=> 'annotation', 'type'=> 'number'], "Completados",['role'=> 'annotation', 'type'=> 'number']];
+        $arrayTendencia[0] = ["SEMANA", "Incidentes", ['role' => 'annotation', 'type' => 'number']];
 
         if ($datos['cliente'] === '1') {
             $arrayConsulta = $this->getConsultas(array('numeroSemana' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
@@ -93,7 +109,7 @@ class GestorDashboard {
             foreach ($arrayConsulta as $key => $value) {
                 if (!empty($value)) {
                     $incidentes = (int) $value[0]['Incidentes'];
-                    array_push($arrayTendencia, array($value[0]['Semana'], $incidentes, $incidentes, $incidentes, $incidentes));
+                    array_push($arrayTendencia, array($value[0]['Semana'], $incidentes, $incidentes));
                 }
             }
         }
