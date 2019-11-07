@@ -33,8 +33,8 @@ class DashboardTendencias extends Dashboard {
     eventoSelectCliente(select) {
         let _this = this;
         select.evento('change', function () {
-             _this.informacion['cliente']= select.obtenerValor();
-            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Datos_Tendencia',  _this.informacion, function (respuesta) {
+            _this.informacion['cliente'] = select.obtenerValor();
+            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Datos_Tendencia', _this.informacion, function (respuesta) {
                 console.log(respuesta);
             });
         });
@@ -45,19 +45,22 @@ class DashboardTendencias extends Dashboard {
         select.evento('change', function () {
             $('#select-lapso-VGT').prop("disabled", false);
             _this.informacion['tiempo'] = select.obtenerValor();
-            let lapso = null;
-            switch (_this.informacion['tiempo']) {
-                case 'WEEK':
-                    lapso = [3, 4, 5, 6, 7, 8, 9];
-                    break;
-                case 'MONTH':
-                    lapso = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-                    break;
-                case 'YEAR':
-                    lapso = [2, 3, 4];
-                    break;
-            }
-            select.cargaDatosEnSelect(lapso, 'select-lapso-VGT')
+//            let lapso = null;
+//            switch (_this.informacion['tiempo']) {
+//                case 'WEEK':
+//                    lapso = [3, 4, 5, 6, 7, 8, 9];
+//                    break;
+//                case 'MONTH':
+//                    lapso = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+//                    break;
+//                case 'YEAR':
+//                    lapso = [2, 3, 4];
+//                    break;
+//            }
+//            select.cargaDatosEnSelect(lapso, 'select-lapso-VGT')
+            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Datos_Tendencia', _this.informacion, function (respuesta) {
+                console.log(respuesta);
+            });
         });
     }
 
@@ -65,7 +68,7 @@ class DashboardTendencias extends Dashboard {
         let _this = this;
         select.evento('change', function () {
             _this.informacion['lapso'] = select.obtenerValor();
-            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Graficas', _this.informacion, function (respuesta) {
+            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Datos_Tendencia', _this.informacion, function (respuesta) {
                 console.log(respuesta);
             });
         });

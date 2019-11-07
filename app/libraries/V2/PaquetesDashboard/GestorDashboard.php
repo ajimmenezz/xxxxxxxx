@@ -100,6 +100,10 @@ class GestorDashboard {
     }
 
     public function getDatosVGT(array $datos) {
+        if(!isset($datos['cliente'])){
+            $datos['cliente'] = 1;
+        }
+        
         $arrayTendecia = array();
         $arrayTendencia[0] = ["SEMANA", "Incidentes", ['role' => 'annotation', 'type' => 'number']];
 
@@ -113,7 +117,7 @@ class GestorDashboard {
                 }
             }
         }
-
+//        var_dump($arrayTendecia);
         return array('VGT' => $arrayTendencia);
     }
 
