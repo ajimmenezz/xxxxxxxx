@@ -62,8 +62,8 @@ class GestorDashboard {
     private function getDatosVGC(array $datos) {
         $arrayComparacion = array();
         $arrayTitulos = array();
-        $arrayConsulta = $this->getConsultas(array('numeroSemana' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
-        $arrayTitulos[0] = 'Semana';
+        $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
+        $arrayTitulos[0] = 'Tiempo';
 
         foreach ($arrayConsulta as $key => $value) {
             foreach ($value as $k => $v) {
@@ -83,7 +83,7 @@ class GestorDashboard {
                 $contadorArregloAdentro = $contadorArreglo;
                 foreach ($value as $k => $v) {
                     if ($contador === 0) {
-                        $arrayComparacion[$key + $contador + 1][$contador] = $value[0]['Semana'];
+                        $arrayComparacion[$key + $contador + 1][$contador] = $value[0]['Tiempo'];
                     }
                     $arrayComparacion[$key + 1][$k + $contadorArregloAdentro] = (int) $v['SumaEstatus'];
                     $contadorArregloAdentro = $contadorArregloAdentro + 1;
@@ -101,25 +101,44 @@ class GestorDashboard {
     }
 
     public function getDatosVGT(array $datos) {
-        if (!isset($datos['cliente'])) {
-            $datos['cliente'] = 1;
-        }
-
         $arrayTendecia = array();
-        $arrayTendencia[0] = ["SEMANA", "Incidentes", ['role' => 'annotation', 'type' => 'number']];
+        $arrayTendencia[0] = ["TIEMPO", "Incidentes", ['role' => 'annotation', 'type' => 'number']];
 
         if ($datos['cliente'] === '1') {
-            $arrayConsulta = $this->getConsultas(array('numeroSemana' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
+            $arrayConsulta = $this->mostrarConsultaVGT($datos);
 
             foreach ($arrayConsulta as $key => $value) {
                 if (!empty($value)) {
                     $incidentes = (int) $value[0]['Incidentes'];
-                    array_push($arrayTendencia, array($value[0]['Semana'], $incidentes, $incidentes));
+                    array_push($arrayTendencia, array($value[0]['Tiempo'], $incidentes, $incidentes));
                 }
             }
         }
 
         return array('VGT' => $arrayTendencia);
+    }
+
+    private function mostrarConsultaVGT(array $datos) {
+        if (!isset($datos['tiempo'])) {
+            $datos['tiempo'] = 'WEEK';
+        }
+
+        switch ($datos['tiempo']) {
+            case 'MONTH':
+                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTMes'));
+                break;
+            case 'WEEK':
+                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTSemana'));
+                break;
+            case 'YEAR':
+                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTAnual'));
+                break;
+            default :
+                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
+                break;
+        }
+
+        return $arrayConsulta;
     }
 
     public function getDatosVGHI(array $datos) {
@@ -140,11 +159,11 @@ class GestorDashboard {
 
     private function getConsultas(array $datos) {
         $arrayConsulta = array();
-        $contador = $datos['numeroSemana'];
+        $contador = $datos['numeroTiempo'];
         $nombreConsulta = $datos['nombreConsulta'];
 
         while ($contador >= 0) {
-            $consulta = $this->db->$nombreConsulta(array('numeroSemana' => $contador));
+            $consulta = $this->db->$nombreConsulta(array('numeroTiempo' => $contador));
             array_push($arrayConsulta, $consulta);
             $contador--;
         }

@@ -38,7 +38,10 @@ class DashboardTendencias extends Dashboard {
     eventoSelectCliente(select) {
         let _this = this;
         select.evento('change', function () {
-             _this.informacion['cliente']= select.obtenerValor();
+            _this.informacion['cliente'] = select.obtenerValor();
+            _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
+                console.log(respuesta);
+            });
         });
     }
 
@@ -46,6 +49,9 @@ class DashboardTendencias extends Dashboard {
         let _this = this;
         select.evento('change', function () {
             _this.informacion['tiempo'] = select.obtenerValor();
+            _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
+                console.log(respuesta);
+            });
         });
     }
     
@@ -55,5 +61,6 @@ class DashboardTendencias extends Dashboard {
             _this.informacion['zona'] = select.obtenerValor();
         });
     }
+
 
 }

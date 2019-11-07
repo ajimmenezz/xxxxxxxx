@@ -38,35 +38,74 @@ class Modelo_GestorDashboard extends Base {
 
     public function getDatosVGC(array $datos) {
         $consulta = $this->consulta("SELECT 
-                                        CONCAT('SEMANA', ' ', WEEK(ts.FechaCreacion, 1)) AS Semana,
+                                        CONCAT('SEMANA', ' ', WEEK(ts.FechaCreacion, 1)) AS Tiempo,
                                         ESTATUS(ts.IdEstatus) AS EstatusTicketAdIST,
                                         COUNT(DISTINCT ts.Folio) AS SumaEstatus
                                     FROM
                                         t_solicitudes ts
                                     WHERE
                                         YEAR(ts.FechaCreacion) = YEAR(CURRENT_DATE())
-                                            AND WEEK(ts.FechaCreacion, 1) = WEEK(CURRENT_DATE(), 1)- " . $datos['numeroSemana'] . "
+                                            AND WEEK(ts.FechaCreacion, 1) = WEEK(CURRENT_DATE(), 1)- " . $datos['numeroTiempo'] . "
                                             AND ts.Folio IS NOT NULL
                                             AND ts.Folio != '0'
                                             AND ts.IdEstatus != '6'
                                             AND ts.IdEstatus IN (1 , 2, 3, 4)
-                                    GROUP BY Semana, EstatusTicketAdIST");
+                                    GROUP BY Tiempo, EstatusTicketAdIST");
         return $consulta;
     }
 
-    public function getDatosVGT(array $datos) {
+    public function getDatosVGTSemana(array $datos) {
         $consulta = $this->consulta("SELECT 
-                                        CONCAT('SEMANA', ' ', WEEK(ts.FechaCreacion, 1)) AS Semana,
-                                        COUNT(DISTINCT ts.Folio) AS Incidentes
+                                        Tiempo, COUNT(*) AS Incidentes
                                     FROM
-                                        t_solicitudes ts
-                                    WHERE
-                                        YEAR(ts.FechaCreacion) = YEAR(CURRENT_DATE())
-                                            AND WEEK(ts.FechaCreacion, 1) = WEEK(CURRENT_DATE(), 1)- " . $datos['numeroSemana'] . "
-                                            AND ts.Folio IS NOT NULL
-                                            AND ts.Folio != '0'
-                                            AND ts.IdEstatus != '6'
-                                    GROUP BY Semana");
+                                        (SELECT 
+                                            Folio, CONCAT('SEMANA', ' ', WEEK(CreatedTime, 1)) AS Tiempo
+                                        FROM
+                                            t_solicitudes
+                                        WHERE
+                                            YEAR(CreatedTime) = YEAR(CURRENT_DATE())
+                                                AND WEEK(CreatedTime, 1) = WEEK(CURRENT_DATE(), 1) - " . $datos['numeroTiempo'] . "
+                                                AND Technician IS NOT NULL
+                                                AND Technician <> ''
+                                        GROUP BY Folio) AS tf
+                                    GROUP BY Tiempo");
+        return $consulta;
+    }
+    
+    public function getDatosVGTMes(array $datos) {
+        $consulta = $this->consulta("SELECT 
+                                        Tiempo, COUNT(*) AS Incidentes
+                                    FROM
+                                        (SELECT 
+                                            Folio,
+                                            CONCAT('Mes', ' ', MONTH(CreatedTime)) AS Tiempo
+                                        FROM
+                                            t_solicitudes
+                                        WHERE
+                                            YEAR(CreatedTime) = YEAR(CURRENT_DATE())
+                                                AND MONTH(CreatedTime) = MONTH(CURRENT_DATE()) - " . $datos['numeroTiempo'] . "
+                                                AND Technician IS NOT NULL
+                                                AND Technician <> ''
+                                        GROUP BY Folio) AS tf
+                                    GROUP BY Tiempo");
+        return $consulta;
+    }
+    
+    public function getDatosVGTAnual(array $datos) {
+        $consulta = $this->consulta("SELECT 
+                                        Tiempo, COUNT(*) AS Incidentes
+                                    FROM
+                                        (SELECT 
+                                            Folio,
+                                            CONCAT('AÑO', ' ', YEAR(CreatedTime)) AS Tiempo
+                                        FROM
+                                            t_solicitudes
+                                        WHERE
+                                            YEAR(CreatedTime) = YEAR(CURRENT_DATE()) - " . $datos['numeroTiempo'] . "
+                                                AND Technician IS NOT NULL
+                                                AND Technician <> ''
+                                        GROUP BY Folio) AS tf
+                                    GROUP BY Tiempo");
         return $consulta;
     }
 

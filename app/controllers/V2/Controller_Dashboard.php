@@ -20,11 +20,12 @@ class Controller_Dashboard extends CI_Controller {
         }
     }
 
-    public function getDatosTendecia() {
+    public function getDatosActualizados() {
         try {
             $datos = $this->input->post();
-            $datos['nombreConsulta'] = 'getDatosVGT';
-            $resultado = $this->gestorDashboard->getDatosVGT($datos);
+            $metodo = 'getDatos' . $datos['clave'];
+            $datos['nombreConsulta'] = $metodo;
+            $resultado = $this->gestorDashboard->$metodo($datos);
             echo json_encode($resultado);
         } catch (\Exception $ex) {
             return ['code' => 400, 'message' => $ex->getMessage()];
