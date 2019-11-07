@@ -63,35 +63,25 @@ class GestorDashboard {
         $arrayComparacion = array();
         $arrayTitulos = array();
         $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
-        $arrayTitulos[0] = 'Tiempo';
+        $arrayTitulos = ["TIEMPO",
+            "Abierto", ['role' => 'annotation', 'type' => 'number'],
+            "En Atencion", ['role' => 'annotation', 'type' => 'number'],
+            "Problema", ['role' => 'annotation', 'type' => 'number'],
+            "Cerrado", ['role' => 'annotation', 'type' => 'number']];
+        $arrayComparacion[0] = $arrayTitulos;
 
         foreach ($arrayConsulta as $key => $value) {
-            foreach ($value as $k => $v) {
-                if (!in_array($v['EstatusTicketAdIST'], $arrayTitulos)) {
-                    array_push($arrayTitulos, $v['EstatusTicketAdIST']);
-                    array_push($arrayTitulos, ['role' => 'annotation', 'type' => 'number']);
-                }
-            }
-        }
-
-        $arrayComparacion[0] = $arrayTitulos;
-        $contador = 0;
-        $contadorArreglo = 1;
-
-        while ($contador < 2) {
-            foreach ($arrayConsulta as $key => $value) {
-                $contadorArregloAdentro = $contadorArreglo;
-                foreach ($value as $k => $v) {
-                    if ($contador === 0) {
-                        $arrayComparacion[$key + $contador + 1][$contador] = $value[0]['Tiempo'];
-                    }
-                    $arrayComparacion[$key + 1][$k + $contadorArregloAdentro] = (int) $v['SumaEstatus'];
-                    $contadorArregloAdentro = $contadorArregloAdentro + 1;
-                }
-                ksort($arrayComparacion[$key + 1]);
-            }
-            $contador ++;
-            $contadorArreglo ++;
+            array_push(
+                    $arrayComparacion, array($value[0]['Tiempo'],
+                (int) $value[0]['Abierto'],
+                (int) $value[0]['Abierto'],
+                (int) $value[0]['En Atencion'],
+                (int) $value[0]['En Atencion'],
+                (int) $value[0]['Problema'],
+                (int) $value[0]['Problema'],
+                (int) $value[0]['Cerrado'],
+                (int) $value[0]['Cerrado'])
+            );
         }
 
         $this->gestorClientes = new GestorClientes();
