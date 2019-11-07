@@ -2,7 +2,8 @@
 <div id="panel-grafica-VGT" class="panel panel-inverse" >
     <!--Comienzo titulo panel-->
     <div class="panel-heading">
-        <div class="panel-heading-btn">                           
+        <div class="panel-heading-btn">
+            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
             <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
         </div>
         <h3 class="panel-title">&nbsp;</h3>
@@ -12,7 +13,7 @@
     <div class="panel-body">
         <div class="row">
             <!--Comienzo seccion de selects-->
-            <div class="col-md-12 col-md-offset-8">
+            <div class="col-md-12 col-md-offset-6">
                 <!--Comienzo conjunto select Cliente-->
                 <div class="col-md-2">
                     <div class="form-group">
@@ -39,6 +40,20 @@
                     </div>
                 </div>
                 <!--Fin conjunto select Semana-->
+                <!--Comienzo conjunto select Zonas-->
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Zonas</label>
+                        <select id="select-zona-VGT" style="width: 100%">
+                            <option value="">Seleccionar</option>
+                            <option value="1">Zona 1</option>
+                            <option value="2">Zona 2</option>
+                            <option value="3">Zona 3</option>
+                            <option value="4">Zona 4</option>
+                        </select>
+                    </div>
+                </div>
+                <!--Fin conjunto select Zonas-->
             </div>
             <!--Fin seccion de selects-->
             <!--comienzo de encabezado-->

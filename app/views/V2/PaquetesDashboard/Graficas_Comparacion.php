@@ -2,7 +2,8 @@
 <div id="panel-grafica-VGC" class="panel panel-inverse">
     <!--Comienzo titulo panel-->
     <div class="panel-heading">
-        <div class="panel-heading-btn">                        
+        <div class="panel-heading-btn">
+            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
             <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
         </div>
         <h3 class="panel-title">&nbsp;</h3>
@@ -62,18 +63,11 @@
             <!--fin de encabezado-->
         </div>
         <div class="row">
+            <!--Comienzo seccion de grafica-->
             <div class="col-md-12">
-                <!--Comienzo seccion de grafica-->
-                <div class="col-md-8">
-                    <div id="grafica-VGC-1" class="height-md"></div>
-                </div>
-                <!--Fin seccion de grafica-->
-                <!--Comienzo seccion de tabla-->
-                <div class="col-md-4">
-                    <div id="grafica-VGC-2" class="height-md"></div>
-                </div>
-                <!--Fin seccion de tabla-->
+                <div id="grafica-VGC-1" class="height-md"></div>
             </div>
+            <!--Fin seccion de grafica-->
         </div>
     </div>
     <!--Fin cuerpo del panel-->

@@ -88,7 +88,7 @@ class GestorDashboard {
                     $arrayComparacion[$key + 1][$k + $contadorArregloAdentro] = (int) $v['SumaEstatus'];
                     $contadorArregloAdentro = $contadorArregloAdentro + 1;
                 }
-                ksort($arrayComparacion[$key + 1]);
+                ksort($arrayComparacion);
             }
             $contador ++;
             $contadorArreglo ++;

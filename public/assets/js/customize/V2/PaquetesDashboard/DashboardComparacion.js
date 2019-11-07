@@ -10,7 +10,9 @@ class DashboardComparacion extends Dashboard {
             graficas: ['grafica-VGC-1']
         };
         this.informacion = {
-            clave: "VGC"
+            clave: "VGC",
+            cliente: "1",
+            tiempo: "WEEK"
         };
     }
 

@@ -11,7 +11,6 @@ class Dashboard {
 
     setComponentes() {
         let _this = this;
-
         $.each(this.componentes, function (key, value) {
             switch (key) {
                 case 'selects':
@@ -42,7 +41,9 @@ class Dashboard {
             var clave = value.split("-");
             $(`#${value}`).on('click', function () {
                 _this.peticion.enviar('panel-grafica-' + clave[2], 'Dashboard_Generico/Mostrar_Datos_Tendencia', _this.informacion, function (respuesta) {
-                    console.log(_this.informacion);
+                    $(`#grafica-${clave[2]}-1`).empty();
+                    _this.datos = respuesta[clave[2]];
+                    _this.setGrafica([`grafica-${clave[2]}-1`]);
                     console.log(respuesta);
                 });
             });
