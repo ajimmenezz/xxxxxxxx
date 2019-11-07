@@ -85,7 +85,7 @@ class GestorDashboard {
                     if ($contador === 0) {
                         $arrayComparacion[$key + $contador + 1][$contador] = $value[0]['Semana'];
                     }
-                    $arrayComparacion[$key + 1][$k + $contadorArregloAdentro] = (int) $v['SumaEstatus'];
+                    array_push($arrayComparacion[$key + 1], array((int) $v['SumaEstatus']));
                     $contadorArregloAdentro = $contadorArregloAdentro + 1;
                 }
             }

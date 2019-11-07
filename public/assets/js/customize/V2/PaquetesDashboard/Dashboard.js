@@ -16,6 +16,9 @@ class Dashboard {
                 case 'selects':
                     _this.setSelect(value);
                     break;
+                case 'botones':
+                    _this.setBotones(value);
+                    break;
                 case 'graficas':
                     _this.setGrafica(value);
                     break;
@@ -29,6 +32,13 @@ class Dashboard {
         $.each(selects, function (key, value) {
             _this.objetos[value] = new SelectBasico(value);
             _this.objetos[value].iniciarSelect();
+        });
+    }
+    
+    setBotones(botones) {
+        let _this = this;
+        $.each(botones, function (key, value) {
+            console.log(value);
         });
     }
 
@@ -62,7 +72,9 @@ class Dashboard {
             _this.objetos[value].inicilizarGrafica({
                 curveType: 'function',
                 pointSize: 10,
-                is3D: true,
+                tooltip: {
+                    trigger: 'none'
+                }
             });
         });
     }
