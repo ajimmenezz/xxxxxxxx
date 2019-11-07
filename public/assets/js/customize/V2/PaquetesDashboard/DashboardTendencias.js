@@ -56,7 +56,7 @@ class DashboardTendencias extends Dashboard {
 //                    break;
 //            }
 //            select.cargaDatosEnSelect(lapso, 'select-lapso-VGT')
-            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Datos_Tendencia', _this.informacion, function (respuesta) {
+            _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Tendencia', _this.informacion, function (respuesta) {
                 console.log(respuesta);
             });
         });
@@ -66,7 +66,7 @@ class DashboardTendencias extends Dashboard {
         let _this = this;
         select.evento('change', function () {
             _this.informacion['lapso'] = select.obtenerValor();
-            _this.peticion.enviar('', 'Dashboard_Generico/Mostrar_Datos_Tendencia', _this.informacion, function (respuesta) {
+            _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Tendencia', _this.informacion, function (respuesta) {
                 console.log(respuesta);
             });
         });
