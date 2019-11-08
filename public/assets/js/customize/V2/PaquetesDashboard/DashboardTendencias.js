@@ -49,12 +49,14 @@ class DashboardTendencias extends Dashboard {
     eventoSelectTiempo(select) {
         let _this = this;
         select.evento('change', function () {
-            _this.informacion['tiempo'] = select.obtenerValor();
-            _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
-                $(`#grafica-VGT-1`).empty();
-                _this.datos = respuesta['VGT'];
-                _this.setGrafica([`grafica-VGT-1`]);
-            });
+            if (select.obtenerValor() != "") {
+                _this.informacion['tiempo'] = select.obtenerValor();
+                _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
+                    $(`#grafica-VGT-1`).empty();
+                    _this.datos = respuesta['VGT'];
+                    _this.setGrafica([`grafica-VGT-1`]);
+                });
+            }
         });
     }
 

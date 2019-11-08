@@ -36,20 +36,25 @@
                             <option value="">Seleccionar</option>
                             <option value="WEEK">Semana</option>
                             <option value="MONTH">Mes</option>
-                            <option value="YEAR">Año</option>
+                            <!--<option value="YEAR">Año</option>-->
                         </select>
                     </div>
                 </div>
                 <!--Fin conjunto select Semana-->
-                <!--Comienzo conjunto select actual-->
+                <!--Comienzo conjunto select Zonas-->
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label>Lapso</label>
-                        <select id="select-lapso-VGC" style="width: 100%">
+                        <label>Zonas</label>
+                        <select id="select-zona-VGC" style="width: 100%">
                             <option value="">Seleccionar</option>
+                            <option value="ZONA 1">Zona 1</option>
+                            <option value="ZONA 2">Zona 2</option>
+                            <option value="ZONA 3">Zona 3</option>
+                            <option value="ZONA 4">Zona 4</option>
                         </select>
                     </div>
                 </div>
+                <!--Fin conjunto select Zonas-->
                 <div class="col-md-12" style="background: #FCAC31"><br></div>
                 <!--Fin conjunto select actual-->
             </div>
@@ -81,7 +86,30 @@
             <div class="tab-pane fade" id="vista-tabla-VGC">
                 <!--Empezando cuerpo del panel de Tabla VGC-->
                 <div class="panel-body">
-
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table id="tabla-VGC" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="all">Zona</th>
+                                        <th class="all">Completado</th>
+                                        <th class="all">Atención</th>
+                                        <th class="all">Problema</th>
+                                        <th class="all">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>x</td>
+                                        <td>x</td>
+                                        <td>x</td>
+                                        <td>x</td>
+                                        <td>x</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>  
+                    </div>
                 </div>
                 <!--Finaliza cuerpo del panel de Tabla VGC-->
             </div>

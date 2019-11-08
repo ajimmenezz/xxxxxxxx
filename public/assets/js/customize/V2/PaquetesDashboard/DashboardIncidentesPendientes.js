@@ -18,7 +18,6 @@ class DashboardIncidentesPendientes extends Dashboard{
         $.each(this.objetos, function (key, value) {
             switch (key) {
                 case 'select-tiempo-VGIP':
-                    console.log("evento select VGIP");
                     break;
             }
         });
