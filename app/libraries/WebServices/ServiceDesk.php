@@ -268,7 +268,7 @@ class ServiceDesk extends General
 
     public function getFolios2019(int $from)
     {
-        $url = 'http://mesadeayuda.cinemex.net:8080/api/v3/requests?input_data={"list_info":{"get_total_count":true,"row_count":100,"start_index":' . $from . ',"filter_by":{"name":"36931_MyView"},"fields_required":["created_by","created_time","site","requester","assigned_time","last_updated_time","technician","status","id","category","subcategory","item","priority","group"]}}';
+        $url = 'http://mesadeayuda.cinemex.net:8080/api/v3/requests?input_data={"list_info":{"get_total_count":true,"row_count":100,"start_index":' . $from . ',"filter_by":{"name":"36931_MyView"},"fields_required":["created_by","created_time","site","requester","assigned_time","resolved_time","last_updated_time","technician","status","id","category","subcategory","item","priority","group"]}}';
 
         $opts = array(
             'http' => array(

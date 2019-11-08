@@ -1756,34 +1756,66 @@ class Solicitud extends General
         set_time_limit('1800');
         $from = 0;
         $i = 0;
+        $this->DBS->queryBolean('truncate temporal_sd');
         do {
             $folios = array();
             $folios = $this->ServiceDesk->getFolios2019($from);
             foreach ($folios["requests"] as $key => $value) {
-                $textTechnician = 'No Asignado';
-                if (isset($value["technician"])) {
-                    $textTechnician = $value["technician"]["name"];
+                $resolvedTime = '';
+                if ($value['resolved_time'] != null && $value['resolved_time'] != 'null') {
+                    $resolvedTime = date('Y-m-d H:i:s', $value["resolved_time"]["value"] / 1000);
                 }
 
-                $this->DBS->actualizar('t_solicitudes', array(
-                    'Technician' => $textTechnician,
-                    'CreatedBy' => $value["created_by"]["name"],
-                    'Requester' => $value["requester"]["name"],
-                    'Status' => $value["status"]["name"],
-                    'CreatedTime' => date('Y-m-d H:i:s', $value["created_time"]["value"] / 1000),
-                    'AssignedTime' => date('Y-m-d H:i:s', $value["assigned_time"]["value"] / 1000),
-                    'Category' => $value["category"]["name"],
-                    'SubCategory' => $value["subcategory"]["name"],
-                    'Item' => $value["item"]["name"],
-                    'Group' => $value["group"]["name"],
-                    'Priority' => $value["priority"]["name"]
-                ), array(
-                    'Folio' => $value['id']
-                ));
+                if (isset($value["technician"])) {
+                    $this->DBS->insertar('temporal_sd', array(
+                        'ID' => $value["id"],
+                        'Technician' => $value["technician"]["name"],
+                        'CreatedBy' => $value["created_by"]["name"],
+                        'Requester' => $value["requester"]["name"],
+                        'Status' => $value["status"]["name"],
+                        'CreatedTime' => date('Y-m-d H:i:s', $value["created_time"]["value"] / 1000),
+                        'AssignedTime' => date('Y-m-d H:i:s', $value["assigned_time"]["value"] / 1000),
+                        'Category' => $value["category"]["name"],
+                        'SubCategory' => $value["subcategory"]["name"],
+                        'Item' => $value["item"]["name"],
+                        'Group' => $value["group"]["name"],
+                        'Priority' => $value["priority"]["name"],
+                        'ResolvedTime' => $resolvedTime
+                    ));
+                } else {
+                    $this->DBS->insertar('temporal_sd', array(
+                        'ID' => $value["id"],
+                        'Technician' => 'No Asignado',
+                        'CreatedBy' => $value["created_by"]["name"],
+                        'Requester' => $value["requester"]["name"],
+                        'Status' => $value["status"]["name"],
+                        'CreatedTime' => date('Y-m-d H:i:s', $value["created_time"]["value"] / 1000),
+                        'AssignedTime' => date('Y-m-d H:i:s', $value["assigned_time"]["value"] / 1000),
+                        'Category' => $value["category"]["name"],
+                        'SubCategory' => $value["subcategory"]["name"],
+                        'Item' => $value["item"]["name"],
+                        'Group' => $value["group"]["name"],
+                        'Priority' => $value["priority"]["name"],
+                        'ResolvedTime' => $resolvedTime
+                    ));
+                }
             }
             $i += 1;
             $from = $i . '01';
         } while (count($folios["requests"]) > 0);
+
+        //        $arrayTitulos = ['Semana Creacion SD',
+        //            'Mes Creacion SD',
+        //            'Año Creacion SD',
+        //            'Fecha Creacion SD',
+        //            'Ticket SD',
+        //            'Estatus SD',
+        //            'Tecnico SD',
+        //            'Solicitud Adist',
+        //            'Ticket Adist',
+        //            'Estatus Solicitud Adist',
+        //            'Fecha Creacion Solicitud Adist'];
+        //        return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
     }
 
     public function getFoliosAnterior()
