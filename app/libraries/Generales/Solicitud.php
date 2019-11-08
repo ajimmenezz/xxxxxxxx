@@ -1818,6 +1818,35 @@ class Solicitud extends General
         //        return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
     }
 
+    public function updateRequestWithSDInfo(){
+        $sdInfo = $this->DBS->consulta(
+            "select
+            Id        
+            from t_solicitudes ts
+            where ts.Folio between (select MIN(ID) from temporal_sd) and (select MAX(ID) from temporal_sd) limit 561"
+        );
+
+        foreach($sdInfo as $key => $value){
+            $this->DBS->queryBolean(
+                "update t_solicitudes ts 
+                inner join temporal_sd temp on ts.Folio = temp.ID
+                set ts.Technician = temp.Technician,
+                ts.CreatedBy = temp.CreatedBy,
+                ts.Requester = temp.Requester,
+                ts.`Status` = temp.`Status`,
+                ts.CreatedTime = temp.CreatedTime,
+                ts.AssignedTime = temp.AssignedTime,
+                ts.Category = temp.Category,
+                ts.SubCategory = temp.SubCategory,
+                ts.Item = temp.Item,
+                ts.`Group` = temp.`Group`,
+                ts.Priority = temp.Priority,
+                ts.ResolvedTime = temp.ResolvedTime
+                where ts.Id = '".$value['Id']."'"
+            );
+        }
+    }
+
     public function getFoliosAnterior()
     {
         $foliosAdist = array();
