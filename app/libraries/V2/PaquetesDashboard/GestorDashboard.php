@@ -62,21 +62,24 @@ class GestorDashboard {
     private function getDatosVGC(array $datos) {
         $arrayComparacion = array();
         $arrayTitulos = array();
-        $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
+        $metodoConsulta = $datos['nombreConsulta'];
+        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4));
         $arrayTitulos = $this->titulosArrayGrafica('TIEMPO');
         $arrayComparacion[0] = $arrayTitulos;
 
+//        $arrayConsulta = $this->mostrarConsultaVGC($datos);
+
         foreach ($arrayConsulta as $key => $value) {
             array_push(
-                    $arrayComparacion, array($value[0]['Tiempo'],
-                (int) $value[0]['Abierto'],
-                (int) $value[0]['Abierto'],
-                (int) $value[0]['En Atencion'],
-                (int) $value[0]['En Atencion'],
-                (int) $value[0]['Problema'],
-                (int) $value[0]['Problema'],
-                (int) $value[0]['Cerrado'],
-                (int) $value[0]['Cerrado'])
+                    $arrayComparacion, array($value['Tiempo'],
+                (int) $value['Abierto'],
+                (int) $value['Abierto'],
+                (int) $value['En Atencion'],
+                (int) $value['En Atencion'],
+                (int) $value['Problema'],
+                (int) $value['Problema'],
+                (int) $value['Cerrado'],
+                (int) $value['Cerrado'])
             );
         }
 
@@ -84,6 +87,23 @@ class GestorDashboard {
         $clientes = $this->gestorClientes->getIdNombreClientes();
 
         return array('VGC' => $arrayComparacion, 'clientes' => $clientes);
+    }
+
+    private function mostrarConsultaVGC(array $datos) {
+        if (!isset($datos['tiempo'])) {
+            $datos['tiempo'] = 'WEEK';
+        }
+
+        if (!isset($datos['tipoServicio']) || $datos['tipoServicio'] === '') {
+            $whereTipoServicio = "";
+        } else {
+            $whereTipoServicio = "AND Tipo = '" . $datos['tipoServicio'] . "'";
+        }
+
+        $metodoConsulta = 'getDatosVGT' . $datos['tiempo'];
+        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $whereZona));
+
+        return $arrayConsulta;
     }
 
     public function getDatosVGT(array $datos) {
@@ -94,11 +114,10 @@ class GestorDashboard {
 
         if ($datos['cliente'] === '1') {
             $arrayConsulta = $this->mostrarConsultaVGT($datos);
-
             foreach ($arrayConsulta as $key => $value) {
                 if (!empty($value)) {
-                    $incidentes = (int) $value[0]['Incidentes'];
-                    array_push($arrayTendencia, array($value[0]['Tiempo'], $incidentes, $incidentes));
+                    $incidentes = (int) $value['Incidentes'];
+                    array_push($arrayTendencia, array($value['Tiempo'], $incidentes, $incidentes));
                 }
             }
         }
@@ -117,20 +136,8 @@ class GestorDashboard {
             $whereZona = "AND Region = '" . $datos['zona'] . "'";
         }
 
-        switch ($datos['tiempo']) {
-            case 'MONTH':
-                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTMes', 'where' => $whereZona));
-                break;
-            case 'WEEK':
-                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTSemana', 'where' => $whereZona));
-                break;
-            case 'YEAR':
-                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTAnual', 'where' => $whereZona));
-                break;
-            default :
-                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTSemana', 'where' => $whereZona));
-                break;
-        }
+        $metodoConsulta = 'getDatosVGT' . $datos['tiempo'];
+        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $whereZona));
 
         return $arrayConsulta;
     }
@@ -142,7 +149,8 @@ class GestorDashboard {
     public function getDatosVGIP(array $datos) {
         $arrayComparacion = array();
         $arrayTitulos = array();
-        $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
+        $metodoConsulta = $datos['nombreConsulta'];
+        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4));
         $arrayTitulos = ["TIEMPO",
             "Abierto", ['role' => 'annotation', 'type' => 'number'],
             "En Atencion", ['role' => 'annotation', 'type' => 'number'],
@@ -151,13 +159,13 @@ class GestorDashboard {
 
         foreach ($arrayConsulta as $key => $value) {
             array_push(
-                    $arrayComparacion, array($value[0]['Tiempo'],
-                (int) $value[0]['Abierto'],
-                (int) $value[0]['Abierto'],
-                (int) $value[0]['En Atencion'],
-                (int) $value[0]['En Atencion'],
-                (int) $value[0]['Problema'],
-                (int) $value[0]['Problema']
+                    $arrayComparacion, array($value['Tiempo'],
+                (int) $value['Abierto'],
+                (int) $value['Abierto'],
+                (int) $value['En Atencion'],
+                (int) $value['En Atencion'],
+                (int) $value['Problema'],
+                (int) $value['Problema']
             ));
         }
 
@@ -190,24 +198,6 @@ class GestorDashboard {
 
     public function getDatosVGTO(array $datos) {
         return array('VGTO' => []);
-    }
-
-    private function getConsultas(array $datos) {
-        $arrayConsulta = array();
-        $contador = $datos['numeroTiempo'];
-        $nombreConsulta = $datos['nombreConsulta'];
-
-        if (!isset($datos['where'])) {
-            $datos['where'] = '';
-        }
-
-        while ($contador >= 0) {
-            $consulta = $this->db->$nombreConsulta(array('numeroTiempo' => $contador, 'where' => $datos['where']));
-            array_push($arrayConsulta, $consulta);
-            $contador--;
-        }
-
-        return $arrayConsulta;
     }
 
     private function titulosArrayGrafica(string $tipo) {
