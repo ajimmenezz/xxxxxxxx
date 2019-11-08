@@ -1,5 +1,5 @@
 <!--Comienzo del panel-->
-<div class="panel panel-inverse">
+<div id="panel-grafica-VGIP" class="panel panel-inverse">
     <!--Comienzo titulo panel-->
     <div class="panel-heading">
         <div class="panel-heading-btn">
@@ -22,6 +22,13 @@
                 <div class="col-md-12" style="background: #FCAC31"><br></div>
             </div>
             <!--fin encabezado del cuerpo-->
+        </div>
+        <div class="row">
+            <!--Comienzo seccion de grafica-->
+            <div class="col-md-12">
+                <div id="grafica-VGIP-1" class="height-md"></div>
+            </div>
+            <!--Fin seccion de grafica-->
         </div>
     </div>
     <!--Fin cuerpo del panel-->

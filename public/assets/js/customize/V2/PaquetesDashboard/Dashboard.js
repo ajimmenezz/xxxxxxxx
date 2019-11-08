@@ -45,11 +45,11 @@ class Dashboard {
                 case 'VGHI':
                     this.objeto = null;
                     break;
-                case 'VGIP':
-                    this.objeto = null;
+                case 'grafica-VGIP-1':
+                    _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'LineChart', true);
                     break;
-                case 'VGZ':
-                    this.objeto = null;
+                case 'grafica-VGZ-1':
+                    _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'ColumnChart', true);
                     break;
                 case 'VGTO':
                     this.objeto = null;
@@ -61,10 +61,7 @@ class Dashboard {
             }
             _this.objetos[value].inicilizarGrafica({
                 curveType: 'function',
-                pointSize: 10,
-                tooltip: {
-                    trigger: 'none'
-                }
+                pointSize: 10
             });
         });
     }

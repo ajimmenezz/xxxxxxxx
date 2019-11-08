@@ -80,7 +80,9 @@ $config['Generales'] = array(
             'V2/PaquetesDashboard/FactoryDashboard',
             'V2/PaquetesDashboard/Dashboard',
             'V2/PaquetesDashboard/DashboardTendencias',
-            'V2/PaquetesDashboard/DashboardComparacion'
+            'V2/PaquetesDashboard/DashboardComparacion',
+            'V2/PaquetesDashboard/DashboardIncidentesPendientes',
+            'V2/PaquetesDashboard/DashboardGraficaZonas'
         ),
         'pluginsJs' => array(
             'select2/dist/js/select2.min',

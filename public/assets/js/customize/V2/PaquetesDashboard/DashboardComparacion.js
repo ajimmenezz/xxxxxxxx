@@ -20,10 +20,6 @@ class DashboardComparacion extends Dashboard {
                 case 'select-servicio-VGC':
                     _this.eventoSelectServicio(value);
                     break;
-
-                default:
-
-                    break;
             }
         });
     }

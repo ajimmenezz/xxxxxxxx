@@ -7,25 +7,25 @@ class FactoryDashboard {
 
     getInstance(clave, datos = {}) {
         switch (clave) {
-            case 'VGT':                
+            case 'VGT':
                 this.objeto = new DashboardTendencias(clave, datos);
                 break;
-            case 'VGC':                
+            case 'VGC':
                 this.objeto = new DashboardComparacion(clave, datos);
                 break;
-            case 'VGHI':                
+            case 'VGHI':
                 this.objeto = null;
                 break;
-            case 'VGIP':                
+            case 'VGIP':
+                this.objeto = new DashboardIncidentesPendientes(clave, datos);
+                break;
+            case 'VGZ':
+                this.objeto = new DashboardGraficaZonas(clave, datos);
+                break;
+            case 'VGTO':
                 this.objeto = null;
                 break;
-            case 'VGZ':                
-                this.objeto = null;
-                break;
-            case 'VGTO':                
-                this.objeto = null;
-                break;
-            case 'clientes':        
+            case 'clientes':
                 let select = new SelectBasico();
                 select.cargaDatosEnSelect(datos, 'select-cliente-VGT');
                 break;
