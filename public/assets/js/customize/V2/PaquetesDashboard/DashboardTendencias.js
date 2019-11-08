@@ -6,14 +6,14 @@ class DashboardTendencias extends Dashboard {
         this.panel = 'panel-grafica-VGT';
         this.datos = datos;
         this.componentes = {
-            selects: ['select-cliente-VGT', 'select-tiempo-VGT'],
-            botones: ['btn-actualizar-VGT'],
+            selects: ['select-cliente-VGT', 'select-tiempo-VGT', 'select-zona-VGT'],
             graficas: ['grafica-VGT-1']
         };
         this.informacion = {
             clave: "VGT",
             cliente: "1",
-            tiempo: "WEEK"
+            tiempo: "WEEK",
+            zona: ""
         };
     }
 
@@ -26,6 +26,9 @@ class DashboardTendencias extends Dashboard {
                     break;
                 case 'select-tiempo-VGT':
                     _this.eventoSelectTiempo(value);
+                    break;
+                case 'select-zona-VGT':
+                    _this.eventoSelectZona(value);
                     break;
             }
         });
@@ -45,6 +48,16 @@ class DashboardTendencias extends Dashboard {
         let _this = this;
         select.evento('change', function () {
             _this.informacion['tiempo'] = select.obtenerValor();
+            _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
+                console.log(respuesta);
+            });
+        });
+    }
+    
+    eventoSelectZona(select) {
+        let _this = this;
+        select.evento('change', function () {
+            _this.informacion['zona'] = select.obtenerValor();
             _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
                 console.log(respuesta);
             });
