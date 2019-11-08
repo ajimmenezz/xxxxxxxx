@@ -47,10 +47,10 @@
                         <label>Zonas</label>
                         <select id="select-zona-VGT" style="width: 100%">
                             <option value="">Seleccionar</option>
-                            <option value="1">Zona 1</option>
-                            <option value="2">Zona 2</option>
-                            <option value="3">Zona 3</option>
-                            <option value="4">Zona 4</option>
+                            <option value="ZONA 1">Zona 1</option>
+                            <option value="ZONA 2">Zona 2</option>
+                            <option value="ZONA 3">Zona 3</option>
+                            <option value="ZONA 4">Zona 4</option>
                         </select>
                     </div>
                 </div>
