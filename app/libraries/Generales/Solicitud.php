@@ -1823,7 +1823,7 @@ class Solicitud extends General
             "select
             Id        
             from t_solicitudes ts
-            where ts.Folio between (select MIN(ID) from temporal_sd) and (select MAX(ID) from temporal_sd) limit 561"
+            where ts.Folio between (select MIN(ID) from temporal_sd) and (select MAX(ID) from temporal_sd)"
         );
 
         foreach($sdInfo as $key => $value){
