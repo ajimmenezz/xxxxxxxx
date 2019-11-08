@@ -29,6 +29,10 @@ class FactoryDashboard {
                 let select = new SelectBasico();
                 select.cargaDatosEnSelect(datos, 'select-cliente-VGT');
                 break;
+            case 'tipoServicios':
+                let selectServicios = new SelectBasico();
+                selectServicios.cargaDatosEnSelect(datos, 'select-servicio-VGC');
+                break;
 
             default:
                 console.log("No se encontro la clave");

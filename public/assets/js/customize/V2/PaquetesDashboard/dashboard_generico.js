@@ -18,7 +18,7 @@ $(function () {
     
     $('#page-container').addClass('page-sidebar-minified');
 
-    peticion.enviar('', 'Dashboard_Generico/Mostrar_Graficas', null, function (respuesta) {
+    peticion.enviar('initialPage', 'Dashboard_Generico/Mostrar_Graficas', null, function (respuesta) {
         dashboards = {};
         
         $.each(respuesta, function (key, value) {

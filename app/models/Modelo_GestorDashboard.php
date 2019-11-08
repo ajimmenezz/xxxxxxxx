@@ -178,7 +178,7 @@ class Modelo_GestorDashboard extends Base {
 
     public function getDatosTiposServicios() {
         $consulta = $this->consulta("SELECT
-                                        Id, Nombre 
+                                        Id AS id, Nombre AS text
                                     FROM cat_v3_servicios_departamento 
                                     WHERE IdDepartamento = '11' 
                                     AND Flag = '1'

@@ -36,7 +36,7 @@
                             <option value="">Seleccionar</option>
                             <option value="WEEK">Semana</option>
                             <option value="MONTH">Mes</option>
-                            <option value="YEAR">Año</option>
+                            <!--<option value="YEAR">Año</option>-->
                         </select>
                     </div>
                 </div>
