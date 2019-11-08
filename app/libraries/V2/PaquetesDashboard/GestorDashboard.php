@@ -63,11 +63,7 @@ class GestorDashboard {
         $arrayComparacion = array();
         $arrayTitulos = array();
         $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
-        $arrayTitulos = ["TIEMPO",
-            "Abierto", ['role' => 'annotation', 'type' => 'number'],
-            "En Atencion", ['role' => 'annotation', 'type' => 'number'],
-            "Problema", ['role' => 'annotation', 'type' => 'number'],
-            "Cerrado", ['role' => 'annotation', 'type' => 'number']];
+        $arrayTitulos = $this->titulosArrayGrafica('TIEMPO');
         $arrayComparacion[0] = $arrayTitulos;
 
         foreach ($arrayConsulta as $key => $value) {
@@ -136,11 +132,52 @@ class GestorDashboard {
     }
 
     public function getDatosVGIP(array $datos) {
-        return array('VGIP' => []);
+        $arrayComparacion = array();
+        $arrayTitulos = array();
+        $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
+        $arrayTitulos = ["TIEMPO",
+            "Abierto", ['role' => 'annotation', 'type' => 'number'],
+            "En Atencion", ['role' => 'annotation', 'type' => 'number'],
+            "Problema", ['role' => 'annotation', 'type' => 'number']];
+        $arrayComparacion[0] = $arrayTitulos;
+
+        foreach ($arrayConsulta as $key => $value) {
+            array_push(
+                    $arrayComparacion, array($value[0]['Tiempo'],
+                (int) $value[0]['Abierto'],
+                (int) $value[0]['Abierto'],
+                (int) $value[0]['En Atencion'],
+                (int) $value[0]['En Atencion'],
+                (int) $value[0]['Problema'],
+                (int) $value[0]['Problema']
+            ));
+        }
+
+        return array('VGIP' => $arrayComparacion);
     }
 
     public function getDatosVGZ(array $datos) {
-        return array('VGZ' => []);
+        $arrayZonas = array();
+        $nombreConsulta = $datos['nombreConsulta'];
+        $arrayConsultaZonas = $this->db->$nombreConsulta(array('numeroTiempo' => 0));
+        $arrayTitulos = $this->titulosArrayGrafica('REGION');
+        $arrayZonas[0] = $arrayTitulos;
+
+        foreach ($arrayConsultaZonas as $key => $value) {
+            array_push(
+                    $arrayZonas, array($value['Region'],
+                (int) $value['Abierto'],
+                (int) $value['Abierto'],
+                (int) $value['En Atencion'],
+                (int) $value['En Atencion'],
+                (int) $value['Problema'],
+                (int) $value['Problema'],
+                (int) $value['Cerrado'],
+                (int) $value['Cerrado'])
+            );
+        }
+
+        return array('VGZ' => $arrayZonas);
     }
 
     public function getDatosVGTO(array $datos) {
@@ -159,6 +196,15 @@ class GestorDashboard {
         }
 
         return $arrayConsulta;
+    }
+
+    private function titulosArrayGrafica(string $tipo) {
+        $arrayTitulos = [$tipo,
+            "Abierto", ['role' => 'annotation', 'type' => 'number'],
+            "En Atencion", ['role' => 'annotation', 'type' => 'number'],
+            "Problema", ['role' => 'annotation', 'type' => 'number'],
+            "Cerrado", ['role' => 'annotation', 'type' => 'number']];
+        return $arrayTitulos;
     }
 
 }
