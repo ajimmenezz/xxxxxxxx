@@ -63,11 +63,9 @@ class GestorDashboard {
         $arrayComparacion = array();
         $arrayTitulos = array();
         $metodoConsulta = $datos['nombreConsulta'];
-        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4));
         $arrayTitulos = $this->titulosArrayGrafica('TIEMPO');
         $arrayComparacion[0] = $arrayTitulos;
-
-//        $arrayConsulta = $this->mostrarConsultaVGC($datos);
+        $arrayConsulta = $this->mostrarConsultaVGC($datos);
 
         foreach ($arrayConsulta as $key => $value) {
             array_push(
@@ -100,8 +98,9 @@ class GestorDashboard {
             $whereTipoServicio = "AND Tipo = '" . $datos['tipoServicio'] . "'";
         }
 
-        $metodoConsulta = 'getDatosVGT' . $datos['tiempo'];
-        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $whereZona));
+        $metodoConsulta = 'getDatosVGC' . $datos['tiempo'];
+
+        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $whereTipoServicio));
 
         return $arrayConsulta;
     }
@@ -110,7 +109,6 @@ class GestorDashboard {
         $arrayTendecia = array();
         $arrayTendencia[0] = ["TIEMPO", "Incidentes", ['role' => 'annotation', 'type' => 'number']];
         $tiposServicios = $this->db->getDatosTiposServicios();
-
 
         if ($datos['cliente'] === '1') {
             $arrayConsulta = $this->mostrarConsultaVGT($datos);
@@ -150,7 +148,7 @@ class GestorDashboard {
         $arrayComparacion = array();
         $arrayTitulos = array();
         $metodoConsulta = $datos['nombreConsulta'];
-        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4));
+        $arrayConsulta = $this->mostrarConsultaVGIP($datos);
         $arrayTitulos = ["TIEMPO",
             "Abierto", ['role' => 'annotation', 'type' => 'number'],
             "En Atencion", ['role' => 'annotation', 'type' => 'number'],
@@ -170,6 +168,23 @@ class GestorDashboard {
         }
 
         return array('VGIP' => $arrayComparacion);
+    }
+
+    private function mostrarConsultaVGIP(array $datos) {
+        if (!isset($datos['tiempo'])) {
+            $datos['tiempo'] = 'WEEK';
+        }
+
+        if (!isset($datos['zona']) || $datos['zona'] === '') {
+            $whereZona = "";
+        } else {
+            $whereZona = "AND Region = '" . $datos['zona'] . "'";
+        }
+
+        $metodoConsulta = 'getDatosVGIP' . $datos['tiempo'];
+        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $whereZona));
+
+        return $arrayConsulta;
     }
 
     public function getDatosVGZ(array $datos) {
