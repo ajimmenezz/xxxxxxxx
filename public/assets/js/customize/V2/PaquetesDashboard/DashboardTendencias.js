@@ -39,7 +39,9 @@ class DashboardTendencias extends Dashboard {
         select.evento('change', function () {
             _this.informacion['cliente'] = select.obtenerValor();
             _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
-                console.log(respuesta);
+                $(`#grafica-VGT-1`).empty();
+                _this.datos = respuesta['VGT'];
+                _this.setGrafica([`grafica-VGT-1`]);
             });
         });
     }
@@ -49,20 +51,23 @@ class DashboardTendencias extends Dashboard {
         select.evento('change', function () {
             _this.informacion['tiempo'] = select.obtenerValor();
             _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
-                console.log(respuesta);
+                $(`#grafica-VGT-1`).empty();
+                _this.datos = respuesta['VGT'];
+                _this.setGrafica([`grafica-VGT-1`]);
             });
         });
     }
-    
+
     eventoSelectZona(select) {
         let _this = this;
         select.evento('change', function () {
             _this.informacion['zona'] = select.obtenerValor();
             _this.peticion.enviar('panel-grafica-VGT', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
-                console.log(respuesta);
+                $(`#grafica-VGT-1`).empty();
+                _this.datos = respuesta['VGT'];
+                _this.setGrafica([`grafica-VGT-1`]);
             });
         });
     }
-
 
 }

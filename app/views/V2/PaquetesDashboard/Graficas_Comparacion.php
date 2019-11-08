@@ -3,15 +3,15 @@
     <!--Comienzo titulo panel-->
     <div class="panel-heading">
         <div class="panel-heading-btn">
-            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
-            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
+            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
         </div>
-        <h3 class="panel-title">&nbsp;</h3>
+        <h3 class="panel-title">Grafica de Comparación de Incidencias</h3>
     </div>
     <!--Fin titulo panel-->
     <!--Comienzo cuerpo del panel-->
     <div class="panel-body">
         <div class="row">
+            <!--Empieza encabezado con selects-->
             <div class="col-md-12">
                 <!--comienza titulo-->
                 <div class="col-md-6">
@@ -45,7 +45,7 @@
                 <div class="col-md-2">
                     <div class="form-group">
                         <label>Lapso</label>
-                        <select id="select-lapso-VGC" style="width: 100%" disabled="true">
+                        <select id="select-lapso-VGC" style="width: 100%">
                             <option value="">Seleccionar</option>
                         </select>
                     </div>
@@ -53,14 +53,40 @@
                 <div class="col-md-12" style="background: #FCAC31"><br></div>
                 <!--Fin conjunto select actual-->
             </div>
-        </div>
-        <div class="row">
-            <!--Comienzo seccion de grafica-->
+            <!--Finaliza encabezado con selects-->
+            <!--Comienzo navegador vista-->
             <div class="col-md-12">
-                <div id="grafica-VGC-1" class="height-md"></div>
+                <ul class="nav nav-pills">
+                    <li class="active"><a href="#vista-grafica-VGC" data-toggle="tab" class="f-w-600 f-s-14">Grafica</a></li>
+                    <li><a href="#vista-tabla-VGC" data-toggle="tab" class="f-w-600 f-s-14">Tabla</a></li>          
+                </ul>
             </div>
-            <!--Fin seccion de grafica-->
+            <!--Finaliza navegador vista-->
         </div>
+        <!--Empieza contenedor de las pestañas-->
+        <div class="tab-content">
+            <div class="tab-pane fade active in" id="vista-grafica-VGC">
+                <!--Empezando cuerpo del panel de Grafica VGC-->
+                <div class="panel-body">
+                    <div class="row">
+                        <!--Empieza grafica VGC-->
+                        <div class="col-md-12">
+                            <div id="grafica-VGC-1" class="height-md"></div>
+                        </div>
+                        <!--Finaliza grafica VGC-->
+                    </div>
+                </div>
+                <!--Finaliza cuerpo del panel de Grafica VGC-->
+            </div>
+            <div class="tab-pane fade" id="vista-tabla-VGC">
+                <!--Empezando cuerpo del panel de Tabla VGC-->
+                <div class="panel-body">
+
+                </div>
+                <!--Finaliza cuerpo del panel de Tabla VGC-->
+            </div>
+        </div>
+        <!--Finaliza contenedor de las pestañas-->
     </div>
     <!--Fin cuerpo del panel-->
 </div>

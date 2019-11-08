@@ -11,7 +11,18 @@
     <!--Fin titulo panel-->
     <!--Comienzo cuerpo del panel-->
     <div class="panel-body">
-        
+        <div class="row">
+            <!--empieza encabezado del cuerpo-->
+            <div class="col-md-12">
+                <!--comienza titulo-->
+                <div class="col-md-6">
+                    <h3>Grafica de Comparaciòn por Zonas</h3>
+                </div>
+                <!--termina titulo-->
+                <div class="col-md-12" style="background: #FCAC31"><br></div>
+            </div>
+            <!--fin encabezado del cuerpo-->
+        </div>
     </div>
     <!--Fin cuerpo del panel-->
 </div>

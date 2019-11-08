@@ -32,21 +32,6 @@ class Dashboard {
         });
     }
 
-    setBotones(botones) {
-        let _this = this;
-        $.each(botones, function (key, value) {
-            var clave = value.split("-");
-            $(`#${value}`).on('click', function () {
-                _this.peticion.enviar('panel-grafica-' + clave[2], 'Dashboard_Generico/Mostrar_Datos_Tendencia', _this.informacion, function (respuesta) {
-                    $(`#grafica-${clave[2]}-1`).empty();
-                    _this.datos = respuesta[clave[2]];
-                    _this.setGrafica([`grafica-${clave[2]}-1`]);
-                    console.log(respuesta);
-                });
-            });
-        });
-    }
-
     setGrafica(graficas) {
         let _this = this;
         $.each(graficas, function (key, value) {

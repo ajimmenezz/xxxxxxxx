@@ -3,10 +3,9 @@
     <!--Comienzo titulo panel-->
     <div class="panel-heading">
         <div class="panel-heading-btn">
-            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
             <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
         </div>
-        <h3 class="panel-title">&nbsp;</h3>
+        <h3 class="panel-title">Grafica de Tendencia</h3>
     </div>
     <!--Fin titulo panel-->
     <!--Comienzo cuerpo del panel-->
@@ -21,13 +20,10 @@
                 <!--comienzo de titulo-->
                 <!--fin conjunto select Cliente-->
                 <div class="col-md-2">
-                    <div class="form-group">
+                    <div class="form-group hidden">
                         <label>Cliente</label>
                         <select id="select-cliente-VGT" style="width: 100%">
                             <option value="">Seleccionar</option>
-                            <option value="1">Cinemex</option>
-                            <option value="2">Siccob</option>
-                            <option value="3">A&AT</option>
                         </select>
                     </div>
                 </div>
