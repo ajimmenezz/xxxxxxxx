@@ -89,6 +89,8 @@ class GestorDashboard {
     public function getDatosVGT(array $datos) {
         $arrayTendecia = array();
         $arrayTendencia[0] = ["TIEMPO", "Incidentes", ['role' => 'annotation', 'type' => 'number']];
+        $tiposServicios = $this->db->getDatosTiposServicios();
+
 
         if ($datos['cliente'] === '1') {
             $arrayConsulta = $this->mostrarConsultaVGT($datos);
@@ -101,7 +103,7 @@ class GestorDashboard {
             }
         }
 
-        return array('VGT' => $arrayTendencia);
+        return array('VGT' => $arrayTendencia, 'tipoServicios' => $tiposServicios);
     }
 
     private function mostrarConsultaVGT(array $datos) {
@@ -109,18 +111,24 @@ class GestorDashboard {
             $datos['tiempo'] = 'WEEK';
         }
 
+        if (!isset($datos['zona']) || $datos['zona'] === '') {
+            $whereZona = "";
+        } else {
+            $whereZona = "AND Region = '" . $datos['zona'] . "'";
+        }
+
         switch ($datos['tiempo']) {
             case 'MONTH':
-                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTMes'));
+                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTMes', 'where' => $whereZona));
                 break;
             case 'WEEK':
-                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTSemana'));
+                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTSemana', 'where' => $whereZona));
                 break;
             case 'YEAR':
-                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTAnual'));
+                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTAnual', 'where' => $whereZona));
                 break;
             default :
-                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => $datos['nombreConsulta']));
+                $arrayConsulta = $this->getConsultas(array('numeroTiempo' => 4, 'nombreConsulta' => 'getDatosVGTSemana', 'where' => $whereZona));
                 break;
         }
 
@@ -189,8 +197,12 @@ class GestorDashboard {
         $contador = $datos['numeroTiempo'];
         $nombreConsulta = $datos['nombreConsulta'];
 
+        if (!isset($datos['where'])) {
+            $datos['where'] = '';
+        }
+
         while ($contador >= 0) {
-            $consulta = $this->db->$nombreConsulta(array('numeroTiempo' => $contador));
+            $consulta = $this->db->$nombreConsulta(array('numeroTiempo' => $contador, 'where' => $datos['where']));
             array_push($arrayConsulta, $consulta);
             $contador--;
         }
