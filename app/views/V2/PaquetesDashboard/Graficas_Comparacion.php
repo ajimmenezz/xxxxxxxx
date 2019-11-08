@@ -81,7 +81,30 @@
             <div class="tab-pane fade" id="vista-tabla-VGC">
                 <!--Empezando cuerpo del panel de Tabla VGC-->
                 <div class="panel-body">
-
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table id="tabla-VGC" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="all">Zona</th>
+                                        <th class="all">Completado</th>
+                                        <th class="all">Atención</th>
+                                        <th class="all">Problema</th>
+                                        <th class="all">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>x</td>
+                                        <td>x</td>
+                                        <td>x</td>
+                                        <td>x</td>
+                                        <td>x</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>  
+                    </div>
                 </div>
                 <!--Finaliza cuerpo del panel de Tabla VGC-->
             </div>

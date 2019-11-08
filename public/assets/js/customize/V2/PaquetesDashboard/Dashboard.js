@@ -16,6 +16,9 @@ class Dashboard {
                 case 'selects':
                     _this.setSelect(value);
                     break;
+                case 'tablas':
+                    _this.setTabla(value);
+                    break;
                 case 'graficas':
                     _this.setGrafica(value);
                     break;
@@ -29,6 +32,13 @@ class Dashboard {
         $.each(selects, function (key, value) {
             _this.objetos[value] = new SelectBasico(value);
             _this.objetos[value].iniciarSelect();
+        });
+    }
+    
+    setTabla(tabla) {
+        let _this = this;
+        $.each(tabla, function (key, value) {
+//            _this.objetos[value] = new TablaBasica(value);
         });
     }
 
@@ -61,7 +71,7 @@ class Dashboard {
             }
             _this.objetos[value].inicilizarGrafica({
                 curveType: 'function',
-                pointSize: 10
+                pointSize: 10,
             });
         });
     }

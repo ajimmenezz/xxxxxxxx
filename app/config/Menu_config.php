@@ -68,6 +68,7 @@ $config['Generales'] = array(
         ),
         'pluginsCss' => array(
             'select2/dist/css/select2.min',
+            'DataTables/css/data-table'
         ),
         'js' => array(
             'Base/Base',
@@ -75,6 +76,8 @@ $config['Generales'] = array(
             'Componentes/HerramientasWeb/Utileria',
             'Componentes/selects/select',
             'Componentes/selects/selectBasico',
+            'Componentes/Tablas/Tabla',
+            'Componentes/Tablas/TablaBasica',
             'Componentes/graficas/GraficaGoogle',
             'V2/PaquetesDashboard/dashboard_generico',
             'V2/PaquetesDashboard/FactoryDashboard',
@@ -92,6 +95,8 @@ $config['Generales'] = array(
             'flot/jquery.flot.pie.min',
             'flot/jquery.flot.stack.min',
             'flot/jquery.flot.crosshair.min',
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
             'flot/jquery.flot.categories'
         ),
         'Permiso' => 'VGDASHG'

@@ -18,7 +18,6 @@ class DashboardGraficaZonas extends Dashboard{
         $.each(this.objetos, function (key, value) {
             switch (key) {
                 case 'select-tiempo-VGZ':
-                    console.log("evento select VGZ");
                     break;
             }
         });

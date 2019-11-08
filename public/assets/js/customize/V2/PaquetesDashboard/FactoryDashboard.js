@@ -14,7 +14,7 @@ class FactoryDashboard {
                 this.objeto = new DashboardComparacion(clave, datos);
                 break;
             case 'VGHI':
-                this.objeto = null;
+//                this.objeto = new DashboardHistoricoIncidencias(clave, datos);
                 break;
             case 'VGIP':
                 this.objeto = new DashboardIncidentesPendientes(clave, datos);
@@ -23,7 +23,7 @@ class FactoryDashboard {
                 this.objeto = new DashboardGraficaZonas(clave, datos);
                 break;
             case 'VGTO':
-                this.objeto = null;
+//                this.objeto = new DashboardGraficasTop(clave, datos);
                 break;
             case 'clientes':
                 let select = new SelectBasico();

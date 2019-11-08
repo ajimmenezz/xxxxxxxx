@@ -2,8 +2,7 @@
 <div id="panel-grafica-VGIP" class="panel panel-inverse">
     <!--Comienzo titulo panel-->
     <div class="panel-heading">
-        <div class="panel-heading-btn">
-            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>                            
+        <div class="panel-heading-btn">                           
             <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
         </div>
         <h3 class="panel-title">Grafica de Incidentes Pendientes</h3>
