@@ -15,6 +15,7 @@ class DashboardComparacion extends Dashboard {
             tiempo: "WEEK",
             zona: ""
         };
+        let pruebaTabla = new TablaBasica('tabla-VGC');
     }
 
     setEvento() {
@@ -37,7 +38,7 @@ class DashboardComparacion extends Dashboard {
     eventoSelectServicio(select) {
         let _this = this;
         select.evento('change', function () {
-            _this.informacion['tipoServicio'] = select.obtenerValor();
+            _this.informacion['tipoServicio'] = select.obtenerTexto();
             _this.peticion.enviar('panel-grafica-VGC', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
                 console.log(respuesta);
                 $(`#grafica-VGC-1`).empty();
