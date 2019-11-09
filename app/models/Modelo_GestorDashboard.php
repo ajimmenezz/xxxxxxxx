@@ -36,21 +36,6 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getDatosVGC(array $datos) {
-        $consulta = $this->consulta("select
-                                    CONCAT('SEMANA' , ' ', Semana) AS Tiempo,
-                                    SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
-                                    SUM(if(Estatus = 'En Atencion',1,0)) as 'En Atencion',
-                                    SUM(if(Estatus = 'Problema',1,0)) as Problema,
-                                    SUM(if(Estatus = 'Cerrado',1,0)) as Cerrado
-                                    from v_base_dashboard_sd
-                                        WHERE
-                                        YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-                                            and Semana between WEEK(NOW(), 1) - (" . $datos['numeroTiempo'] . "-1) and WEEK(NOW(),1)
-                                    group by Tiempo");
-        return $consulta;
-    }
-
     public function getDatosVGCWEEK(array $datos) {
         $consulta = $this->consulta("select
                                     CONCAT('SEMANA' , ' ', Semana) AS Tiempo,
@@ -59,31 +44,33 @@ class Modelo_GestorDashboard extends Base {
                                     SUM(if(Estatus = 'Problema',1,0)) as Problema,
                                     SUM(if(Estatus = 'Cerrado',1,0)) as Cerrado
                                     from v_base_dashboard_sd
+                                    WHERE
                                          YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-                                            AND WEEK(CreatedTime, 1) = WEEK(CURRENT_DATE(), 1) - " . $datos['numeroTiempo'] . "
+                                            and Semana between WEEK(NOW(), 1) - (" . $datos['numeroTiempo'] . ") and WEEK(NOW(),1)
                                             " . $datos['where'] . " 
-                                    group by Tiempo;");
+                                    group by Tiempo");
         return $consulta;
     }
 
     public function getDatosVGCMONTH(array $datos) {
         $consulta = $this->consulta("select
-                                    CONCAT('SEMANA' , ' ', Semana) AS Tiempo,
+                                    CONCAT('MES', ' ', Mes) AS Tiempo,
                                     SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
                                     SUM(if(Estatus = 'En Atencion',1,0)) as 'En Atencion',
                                     SUM(if(Estatus = 'Problema',1,0)) as Problema,
                                     SUM(if(Estatus = 'Cerrado',1,0)) as Cerrado
                                     from v_base_dashboard_sd
+                                        WHERE
                                             YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-                                                AND MONTH(CreatedTime) = MONTH(CURRENT_DATE()) - " . $datos['numeroTiempo'] . "
+                                           and Mes between MONTH(NOW()) - (" . $datos['numeroTiempo'] . ") and MONTH(NOW())
                                                 " . $datos['where'] . "
-                                    group by Tiempo;");
+                                    group by Tiempo");
         return $consulta;
     }
 
     public function getDatosVGCYEAR(array $datos) {
         $consulta = $this->consulta("select
-                                    CONCAT('SEMANA' , ' ', Semana) AS Tiempo,
+                                    CONCAT('AÑO', ' ', Anio) AS Tiempo,
                                     SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
                                     SUM(if(Estatus = 'En Atencion',1,0)) as 'En Atencion',
                                     SUM(if(Estatus = 'Problema',1,0)) as Problema,
@@ -92,7 +79,7 @@ class Modelo_GestorDashboard extends Base {
                                         WHERE
                                             YEAR(CreatedTime) = YEAR(CURRENT_DATE()) - " . $datos['numeroTiempo'] . "
                                             " . $datos['where'] . " 
-                                    group by Tiempo;");
+                                    group by Tiempo");
         return $consulta;
     }
 
@@ -103,7 +90,7 @@ class Modelo_GestorDashboard extends Base {
                                         v_base_dashboard_sd
                                     WHERE
                                         YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-                                            and Semana between WEEK(NOW(), 1) - (" . $datos['numeroTiempo'] . "-1) and WEEK(NOW(),1) 
+                                            and Semana between WEEK(NOW(), 1) - (" . $datos['numeroTiempo'] . ") and WEEK(NOW(),1) 
                                             " . $datos['where'] . " 
                                     GROUP BY Tiempo;");
         return $consulta;
@@ -116,7 +103,7 @@ class Modelo_GestorDashboard extends Base {
                                         v_base_dashboard_sd
                                         WHERE
                                             YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-                                                AND MONTH(CreatedTime) = MONTH(CURRENT_DATE()) - " . $datos['numeroTiempo'] . "
+                                                and Mes between MONTH(NOW()) - (" . $datos['numeroTiempo'] . ") and MONTH(NOW())
                                                 " . $datos['where'] . "
                                     GROUP BY Tiempo");
         return $consulta;
@@ -128,19 +115,36 @@ class Modelo_GestorDashboard extends Base {
                                     FROM
                                         v_base_dashboard_sd
                                         WHERE
-                                            YEAR(CreatedTime) = YEAR(CURRENT_DATE()) - " . $datos['numeroTiempo'] . "
+                                            Anio between YEAR(NOW()) - (" . $datos['numeroTiempo'] . ") and YEAR(NOW())
                                             " . $datos['where'] . " 
                                     GROUP BY Tiempo");
         return $consulta;
     }
 
     public function getDatosVGHI(array $datos) {
-        $consulta = $this->consulta('SELECT * FROM t_permisos_dashboard');
-        $consulta = [];
+        $consulta = $this->consulta("select
+                                    Semana,
+                                    count(*) as Total
+                                    from (
+                                    select
+                                    *
+                                    from v_base_dashboard_sd
+                                    where Semana = WEEK(now(),1)
+                                    and Anio = YEAR(now())
+                                    and Estatus = 'Cerrado'
+                                    union
+                                    select
+                                    *
+                                    from v_base_dashboard_sd
+                                    where Semana <> WEEK(now(),1)
+                                    and WEEK(ResolvedTime,1) = WEEK(now(),1)
+                                    and YEAR(ResolvedTime) = YEAR(now())
+                                    and Estatus = 'Cerrado'
+                                    ) as tf  WHERE Semana != WEEK(now(),1) group by Anio, Semana");
         return $consulta;
     }
 
-    public function getDatosVGIP(array $datos) {
+    public function getDatosVGIPWEEK(array $datos) {
         $consulta = $this->consulta("select
                                     CONCAT('SEMANA' , ' ', Semana) AS Tiempo,
                                     SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
@@ -149,7 +153,32 @@ class Modelo_GestorDashboard extends Base {
                                     from v_base_dashboard_sd
                                         WHERE
                                         YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-                                            and Semana between WEEK(NOW(), 1) - (" . $datos['numeroTiempo'] . "-1) and WEEK(NOW(),1)
+                                        and Semana between WEEK(NOW(), 1) - (" . $datos['numeroTiempo'] . ") and WEEK(NOW(),1) 
+                                    group by Tiempo");
+        return $consulta;
+    }
+    public function getDatosVGIPMONTH(array $datos) {
+        $consulta = $this->consulta("select
+                                    CONCAT('MES', ' ', Mes) AS Tiempo,
+                                    SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
+                                    SUM(if(Estatus = 'En Atencion',1,0)) as 'En Atencion',
+                                    SUM(if(Estatus = 'Problema',1,0)) as Problema
+                                    from v_base_dashboard_sd
+                                        WHERE
+                                        YEAR(CreatedTime) = YEAR(CURRENT_DATE())
+                                            and Mes between MONTH(NOW()) - (" . $datos['numeroTiempo'] . ") and MONTH(NOW())
+                                    group by Tiempo");
+        return $consulta;
+    }
+    public function getDatosVGIPYEAR(array $datos) {
+        $consulta = $this->consulta("select
+                                    CONCAT('AÑO', ' ', Anio) AS Tiempo,
+                                    SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
+                                    SUM(if(Estatus = 'En Atencion',1,0)) as 'En Atencion',
+                                    SUM(if(Estatus = 'Problema',1,0)) as Problema
+                                    from v_base_dashboard_sd
+                                        WHERE
+                                        Anio between YEAR(NOW()) - (" . $datos['numeroTiempo'] . ") and YEAR(NOW())
                                     group by Tiempo");
         return $consulta;
     }

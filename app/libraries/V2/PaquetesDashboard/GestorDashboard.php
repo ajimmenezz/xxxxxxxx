@@ -59,15 +59,13 @@ class GestorDashboard {
         return $arrayConsultas;
     }
 
-    private function getDatosVGC(array $datos) {
+    public function getDatosVGC(array $datos) {
         $arrayComparacion = array();
         $arrayTitulos = array();
         $metodoConsulta = $datos['nombreConsulta'];
-        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4));
         $arrayTitulos = $this->titulosArrayGrafica('TIEMPO');
         $arrayComparacion[0] = $arrayTitulos;
-
-//        $arrayConsulta = $this->mostrarConsultaVGC($datos);
+        $arrayConsulta = $this->mostrarConsultaVGC($datos);
 
         foreach ($arrayConsulta as $key => $value) {
             array_push(
@@ -94,14 +92,19 @@ class GestorDashboard {
             $datos['tiempo'] = 'WEEK';
         }
 
-        if (!isset($datos['tipoServicio']) || $datos['tipoServicio'] === '') {
-            $whereTipoServicio = "";
+        if (isset($datos['tipoServicio']) && $datos['tipoServicio'] !== '' && isset($datos['zona']) && $datos['zona'] !== '') {
+            $where = "AND Tipo = '" . $datos['tipoServicio'] . "' AND Region = '" . $datos['zona'] . "'";
+        } else if (isset($datos['tipoServicio']) && $datos['tipoServicio'] !== '') {
+            $where = "AND Tipo = '" . $datos['tipoServicio'] . "'";
+        } else if (isset($datos['zona']) && $datos['zona'] !== '') {
+            $where = "AND Region = '" . $datos['zona'] . "'";
         } else {
-            $whereTipoServicio = "AND Tipo = '" . $datos['tipoServicio'] . "'";
+            $where = "";
         }
 
-        $metodoConsulta = 'getDatosVGT' . $datos['tiempo'];
-        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $whereZona));
+        $metodoConsulta = 'getDatosVGC' . $datos['tiempo'];
+
+        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $where));
 
         return $arrayConsulta;
     }
@@ -110,7 +113,6 @@ class GestorDashboard {
         $arrayTendecia = array();
         $arrayTendencia[0] = ["TIEMPO", "Incidentes", ['role' => 'annotation', 'type' => 'number']];
         $tiposServicios = $this->db->getDatosTiposServicios();
-
 
         if ($datos['cliente'] === '1') {
             $arrayConsulta = $this->mostrarConsultaVGT($datos);
@@ -143,14 +145,16 @@ class GestorDashboard {
     }
 
     public function getDatosVGHI(array $datos) {
-        return array('VGHI' => []);
+        $nombreConsulta = $datos['nombreConsulta'];
+        $arrayConsultaZonas = $this->db->$nombreConsulta(array('numeroTiempo' => 0));
+        return array('VGHI' => $arrayConsultaZonas);
     }
 
     public function getDatosVGIP(array $datos) {
         $arrayComparacion = array();
         $arrayTitulos = array();
         $metodoConsulta = $datos['nombreConsulta'];
-        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4));
+        $arrayConsulta = $this->mostrarConsultaVGIP($datos);
         $arrayTitulos = ["TIEMPO",
             "Abierto", ['role' => 'annotation', 'type' => 'number'],
             "En Atencion", ['role' => 'annotation', 'type' => 'number'],
@@ -170,6 +174,23 @@ class GestorDashboard {
         }
 
         return array('VGIP' => $arrayComparacion);
+    }
+
+    private function mostrarConsultaVGIP(array $datos) {
+        if (!isset($datos['tiempo'])) {
+            $datos['tiempo'] = 'WEEK';
+        }
+
+        if (!isset($datos['zona']) || $datos['zona'] === '') {
+            $whereZona = "";
+        } else {
+            $whereZona = "AND Region = '" . $datos['zona'] . "'";
+        }
+
+        $metodoConsulta = 'getDatosVGIP' . $datos['tiempo'];
+        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $whereZona));
+
+        return $arrayConsulta;
     }
 
     public function getDatosVGZ(array $datos) {
