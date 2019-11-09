@@ -59,7 +59,7 @@ class GestorDashboard {
         return $arrayConsultas;
     }
 
-    private function getDatosVGC(array $datos) {
+    public function getDatosVGC(array $datos) {
         $arrayComparacion = array();
         $arrayTitulos = array();
         $metodoConsulta = $datos['nombreConsulta'];
@@ -92,15 +92,19 @@ class GestorDashboard {
             $datos['tiempo'] = 'WEEK';
         }
 
-        if (!isset($datos['tipoServicio']) || $datos['tipoServicio'] === '') {
-            $whereTipoServicio = "";
+        if (isset($datos['tipoServicio']) && $datos['tipoServicio'] !== '' && isset($datos['zona']) && $datos['zona'] !== '') {
+            $where = "AND Tipo = '" . $datos['tipoServicio'] . "' AND Region = '" . $datos['zona'] . "'";
+        } else if (isset($datos['tipoServicio']) && $datos['tipoServicio'] !== '') {
+            $where = "AND Tipo = '" . $datos['tipoServicio'] . "'";
+        } else if (isset($datos['zona']) && $datos['zona'] !== '') {
+            $where = "AND Region = '" . $datos['zona'] . "'";
         } else {
-            $whereTipoServicio = "AND Tipo = '" . $datos['tipoServicio'] . "'";
+            $where = "";
         }
 
         $metodoConsulta = 'getDatosVGC' . $datos['tiempo'];
 
-        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $whereTipoServicio));
+        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $where));
 
         return $arrayConsulta;
     }
@@ -141,7 +145,9 @@ class GestorDashboard {
     }
 
     public function getDatosVGHI(array $datos) {
-        return array('VGHI' => []);
+        $nombreConsulta = $datos['nombreConsulta'];
+        $arrayConsultaZonas = $this->db->$nombreConsulta(array('numeroTiempo' => 0));
+        return array('VGHI' => $arrayConsultaZonas);
     }
 
     public function getDatosVGIP(array $datos) {

@@ -60,6 +60,7 @@ class Modelo_GestorDashboard extends Base {
                                     SUM(if(Estatus = 'Problema',1,0)) as Problema,
                                     SUM(if(Estatus = 'Cerrado',1,0)) as Cerrado
                                     from v_base_dashboard_sd
+                                        WHERE
                                             YEAR(CreatedTime) = YEAR(CURRENT_DATE())
                                            and Mes between MONTH(NOW()) - (" . $datos['numeroTiempo'] . ") and MONTH(NOW())
                                                 " . $datos['where'] . "
@@ -121,8 +122,25 @@ class Modelo_GestorDashboard extends Base {
     }
 
     public function getDatosVGHI(array $datos) {
-        $consulta = $this->consulta('SELECT * FROM t_permisos_dashboard');
-        $consulta = [];
+        $consulta = $this->consulta("select
+                                    Semana,
+                                    count(*) as Total
+                                    from (
+                                    select
+                                    *
+                                    from v_base_dashboard_sd
+                                    where Semana = WEEK(now(),1)
+                                    and Anio = YEAR(now())
+                                    and Estatus = 'Cerrado'
+                                    union
+                                    select
+                                    *
+                                    from v_base_dashboard_sd
+                                    where Semana <> WEEK(now(),1)
+                                    and WEEK(ResolvedTime,1) = WEEK(now(),1)
+                                    and YEAR(ResolvedTime) = YEAR(now())
+                                    and Estatus = 'Cerrado'
+                                    ) as tf  WHERE Semana != WEEK(now(),1) group by Anio, Semana");
         return $consulta;
     }
 
