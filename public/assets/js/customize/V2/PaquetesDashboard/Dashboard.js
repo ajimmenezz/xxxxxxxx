@@ -12,13 +12,9 @@ class Dashboard {
     setComponentes() {
         let _this = this;
         $.each(this.componentes, function (key, value) {
-            console.log(key);
             switch (key) {
                 case 'selects':
                     _this.setSelect(value);
-                    break;
-                case 'tablas':
-                    _this.setTabla(value);
                     break;
                 case 'graficas':
                     _this.setGrafica(value);
@@ -33,14 +29,6 @@ class Dashboard {
         $.each(selects, function (key, value) {
             _this.objetos[value] = new SelectBasico(value);
             _this.objetos[value].iniciarSelect();
-        });
-    }
-    
-    setTabla(tabla) {
-        let _this = this;
-        $.each(tabla, function (key, value) {
-            console.log(value);
-//            _this.objetos[value] = new TablaBasica(value);
         });
     }
 
