@@ -121,7 +121,7 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getDatosVGHI(array $datos) {
+    public function getDatosVGHIWEEK(array $datos) {
         $consulta = $this->consulta("select
                                     Semana,
                                     count(*) as Total
@@ -131,6 +131,7 @@ class Modelo_GestorDashboard extends Base {
                                     from v_base_dashboard_sd
                                     where Semana = WEEK(now(),1)
                                     and Anio = YEAR(now())
+                                    " . $datos['where'] . "
                                     and Estatus = 'Cerrado'
                                     union
                                     select
@@ -139,8 +140,55 @@ class Modelo_GestorDashboard extends Base {
                                     where Semana <> WEEK(now(),1)
                                     and WEEK(ResolvedTime,1) = WEEK(now(),1)
                                     and YEAR(ResolvedTime) = YEAR(now())
+                                    " . $datos['where'] . "
                                     and Estatus = 'Cerrado'
                                     ) as tf  WHERE Semana != WEEK(now(),1) group by Anio, Semana");
+        return $consulta;
+    }
+    public function getDatosVGHIMONTH(array $datos) {
+        $consulta = $this->consulta("select
+                                    Mes,
+                                    count(*) as Total
+                                    from (
+                                    select
+                                    *
+                                    from v_base_dashboard_sd
+                                    where Mes = MONTH(NOW())
+                                    and Anio = YEAR(now())
+                                    " . $datos['where'] . "
+                                    and Estatus = 'Cerrado'
+                                    union
+                                    select
+                                    *
+                                    from v_base_dashboard_sd
+                                    where Mes <> MONTH(NOW())
+                                    and MONTH(ResolvedTime) = MONTH(NOW())
+                                    and YEAR(ResolvedTime) = YEAR(now())
+                                    " . $datos['where'] . "
+                                    and Estatus = 'Cerrado'
+                                    ) as tf  WHERE Mes != MONTH(NOW()) group by Anio, Mes");
+        return $consulta;
+    }
+    public function getDatosVGHIYEAR(array $datos) {
+        $consulta = $this->consulta("select
+                                    Anio,
+                                    count(*) as Total
+                                    from (
+                                    select
+                                    *
+                                    from v_base_dashboard_sd
+                                    where Anio = YEAR(now())
+                                    " . $datos['where'] . "
+                                    and Estatus = 'Cerrado'
+                                    union
+                                    select
+                                    *
+                                    from v_base_dashboard_sd
+                                    where Anio <> YEAR(NOW())
+                                    and YEAR(ResolvedTime) = YEAR(now())
+                                    " . $datos['where'] . "
+                                    and Estatus = 'Cerrado'
+                                    ) as tf  WHERE Anio != MONTH(NOW()) group by Anio");
         return $consulta;
     }
 
@@ -183,7 +231,7 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getDatosVGZ(array $datos) {
+    public function getDatosVGZWEEK(array $datos) {
         $consulta = $this->consulta("SELECT 
                                         IF(Region IS NULL,  'SIN ZONA', Region) Region,
                                         SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
@@ -194,7 +242,39 @@ class Modelo_GestorDashboard extends Base {
                                             v_base_dashboard_sd
                                         WHERE
                                             YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-                                            AND WEEK(CreatedTime, 1) = WEEK(CURRENT_DATE(), 1) - " . $datos['numeroTiempo'] . "
+                                            and Semana between WEEK(NOW(), 1) - (" . $datos['numeroTiempo'] . ") and WEEK(NOW(),1)
+                                            " . $datos['where'] . " 
+                                    GROUP BY Region");
+        return $consulta;
+    }
+    public function getDatosVGZMONTH(array $datos) {
+        $consulta = $this->consulta("SELECT 
+                                        IF(Region IS NULL,  'SIN ZONA', Region) Region,
+                                        SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
+                                        SUM(IF(Estatus = 'En Atencion', 1, 0)) AS 'En Atencion',
+                                        SUM(IF(Estatus = 'Problema', 1, 0)) AS Problema,
+                                        SUM(IF(Estatus = 'Cerrado', 1, 0)) AS Cerrado
+                                    FROM
+                                            v_base_dashboard_sd
+                                        WHERE
+                                            YEAR(CreatedTime) = YEAR(CURRENT_DATE())
+                                            and Mes between MONTH(NOW()) - (" . $datos['numeroTiempo'] . ") and MONTH(NOW())
+                                            " . $datos['where'] . " 
+                                    GROUP BY Region");
+        return $consulta;
+    }
+    public function getDatosVGZYEAR(array $datos) {
+        $consulta = $this->consulta("SELECT 
+                                        IF(Region IS NULL,  'SIN ZONA', Region) Region,
+                                        SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
+                                        SUM(IF(Estatus = 'En Atencion', 1, 0)) AS 'En Atencion',
+                                        SUM(IF(Estatus = 'Problema', 1, 0)) AS Problema,
+                                        SUM(IF(Estatus = 'Cerrado', 1, 0)) AS Cerrado
+                                    FROM
+                                            v_base_dashboard_sd
+                                        WHERE
+                                            Anio between YEAR(NOW()) - (" . $datos['numeroTiempo'] . ") and YEAR(NOW())
+                                            " . $datos['where'] . " 
                                     GROUP BY Region");
         return $consulta;
     }
