@@ -4,9 +4,11 @@ namespace Modelos;
 
 use Librerias\V2\PaquetesGenerales\Interfaces\Modelo_Base as Base;
 
-class Modelo_GestorDashboard extends Base {
+class Modelo_GestorDashboard extends Base
+{
 
-    public function getVistasDashboards(string $claves) {
+    public function getVistasDashboards(string $claves)
+    {
         $consulta = $this->consulta("SELECT 
                                         VistaHtml
                                     FROM
@@ -15,17 +17,20 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getClavesPermisos(string $permisos) {
+    public function getClavesPermisos(string $permisos)
+    {
         $consulta = $this->consulta('SELECT Permiso FROM cat_v3_permisos WHERE Id IN(' . $permisos . ')');
         return $consulta;
     }
 
-    public function getIdPermisos(string $permisos) {
+    public function getIdPermisos(string $permisos)
+    {
         $consulta = $this->consulta('SELECT Id FROM cat_v3_permisos WHERE Id IN(' . $permisos . ')');
         return $consulta;
     }
 
-    public function getPermisosDashboard(string $permisos) {
+    public function getPermisosDashboard(string $permisos)
+    {
         $consulta = $this->consulta('SELECT 
                                         tpd.ClavePermiso
                                     FROM
@@ -36,7 +41,8 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getDatosVGCWEEK(array $datos) {
+    public function getDatosVGCWEEK(array $datos)
+    {
         $consulta = $this->consulta("select
                                     CONCAT('SEMANA' , ' ', Semana) AS Tiempo,
                                     SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
@@ -52,7 +58,8 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getDatosVGCMONTH(array $datos) {
+    public function getDatosVGCMONTH(array $datos)
+    {
         $consulta = $this->consulta("select
                                     CONCAT('MES', ' ', Mes) AS Tiempo,
                                     SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
@@ -68,7 +75,8 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getDatosVGCYEAR(array $datos) {
+    public function getDatosVGCYEAR(array $datos)
+    {
         $consulta = $this->consulta("select
                                     CONCAT('AÑO', ' ', Anio) AS Tiempo,
                                     SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
@@ -83,7 +91,8 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getDatosVGTWEEK(array $datos) {
+    public function getDatosVGTWEEK(array $datos)
+    {
         $consulta = $this->consulta("SELECT 
                                         CONCAT('SEMANA', ' ', Semana) AS Tiempo, COUNT(*) AS Incidentes
                                     FROM
@@ -96,7 +105,8 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getDatosVGTMONTH(array $datos) {
+    public function getDatosVGTMONTH(array $datos)
+    {
         $consulta = $this->consulta("SELECT 
                                         CONCAT('MES', ' ', Mes) AS Tiempo, COUNT(*) AS Incidentes
                                     FROM
@@ -109,7 +119,8 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getDatosVGTYEAR(array $datos) {
+    public function getDatosVGTYEAR(array $datos)
+    {
         $consulta = $this->consulta("SELECT 
                                         CONCAT('AÑO', ' ', Anio) AS Tiempo, COUNT(*) AS Incidentes
                                     FROM
@@ -121,78 +132,71 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getDatosVGHIWEEK(array $datos) {
-        $consulta = $this->consulta("select
-                                    Semana,
-                                    count(*) as Total
-                                    from (
-                                    select
-                                    *
+    public function getDatosVGHIWEEK(array $datos)
+    {
+        $conditions = ' where 1 = 1 ';
+
+        if (isset($datos['week']) && $datos['week'] > 0) {
+            $conditions .= " AND WEEK(ResolvedTime,1) = '" . $datos['week'] . "' ";
+        } else {
+            $conditions .= " AND WEEK(ResolvedTime,1) = WEEK(now(),1) ";
+        }
+
+        if (isset($datos['year']) && $datos['year'] > 2018) {
+            $conditions .= " AND YEAR(ResolvedTime) = '" . $datos['year'] . "' ";
+        } else {
+            $conditions .= " AND YEAR(ResolvedTime) = YEAR(now()) ";
+        }
+
+        if (isset($datos['zona']) && $datos['zona'] !== '') {
+            $conditions .= " AND Region = '" . $datos['zona'] . "' ";
+        }
+
+        $consulta = $this->consulta("select 
+                                    Anio as year,
+                                    Semana as concept,
+                                    count(*) as total
                                     from v_base_dashboard_sd
-                                    where Semana = WEEK(now(),1)
-                                    and Anio = YEAR(now())
-                                    " . $datos['where'] . "
-                                    and Estatus = 'Cerrado'
-                                    union
-                                    select
-                                    *
-                                    from v_base_dashboard_sd
-                                    where Semana <> WEEK(now(),1)
-                                    and WEEK(ResolvedTime,1) = WEEK(now(),1)
-                                    and YEAR(ResolvedTime) = YEAR(now())
-                                    " . $datos['where'] . "
-                                    and Estatus = 'Cerrado'
-                                    ) as tf  WHERE Semana != WEEK(now(),1) group by Anio, Semana");
+                                    " . $conditions . "
+                                    group by Anio, Semana
+                                    order by Anio, Semana");
         return $consulta;
     }
-    public function getDatosVGHIMONTH(array $datos) {
-        $consulta = $this->consulta("select
-                                    Mes,
-                                    count(*) as Total
-                                    from (
-                                    select
-                                    *
+    public function getDatosVGHIMONTH(array $datos)
+    {
+        $conditions = ' where 1 = 1 ';
+
+        if (isset($datos['month']) && $datos['month'] > 0) {
+            $conditions .= " AND MONTH(ResolvedTime) = '" . $datos['month'] . "' ";
+        } else {
+            $conditions .= " AND MONTH(ResolvedTime) = MONTH(now()) ";
+        }
+
+        if (isset($datos['year']) && $datos['year'] > 2018) {
+            $conditions .= " AND YEAR(ResolvedTime) = '" . $datos['year'] . "' ";
+        } else {
+            $conditions .= " AND YEAR(ResolvedTime) = YEAR(now()) ";
+        }
+
+        if (isset($datos['zona']) && $datos['zona'] !== '') {
+            $conditions .= " AND Region = '" . $datos['zona'] . "' ";
+        }
+
+        $this->query("SET lc_time_names = 'es_ES'");
+        $consulta = $this->consulta("
+                                    select 
+                                    Anio as year,
+                                    cap_first(MONTHNAME(CreatedTime)) as concept,
+                                    count(*) as total
                                     from v_base_dashboard_sd
-                                    where Mes = MONTH(NOW())
-                                    and Anio = YEAR(now())
-                                    " . $datos['where'] . "
-                                    and Estatus = 'Cerrado'
-                                    union
-                                    select
-                                    *
-                                    from v_base_dashboard_sd
-                                    where Mes <> MONTH(NOW())
-                                    and MONTH(ResolvedTime) = MONTH(NOW())
-                                    and YEAR(ResolvedTime) = YEAR(now())
-                                    " . $datos['where'] . "
-                                    and Estatus = 'Cerrado'
-                                    ) as tf  WHERE Mes != MONTH(NOW()) group by Anio, Mes");
-        return $consulta;
-    }
-    public function getDatosVGHIYEAR(array $datos) {
-        $consulta = $this->consulta("select
-                                    Anio,
-                                    count(*) as Total
-                                    from (
-                                    select
-                                    *
-                                    from v_base_dashboard_sd
-                                    where Anio = YEAR(now())
-                                    " . $datos['where'] . "
-                                    and Estatus = 'Cerrado'
-                                    union
-                                    select
-                                    *
-                                    from v_base_dashboard_sd
-                                    where Anio <> YEAR(NOW())
-                                    and YEAR(ResolvedTime) = YEAR(now())
-                                    " . $datos['where'] . "
-                                    and Estatus = 'Cerrado'
-                                    ) as tf  WHERE Anio != MONTH(NOW()) group by Anio");
+                                    " . $conditions . "
+                                    group by Anio, Mes
+                                    order by Anio, Mes");
         return $consulta;
     }
 
-    public function getDatosVGIPWEEK(array $datos) {
+    public function getDatosVGIPWEEK(array $datos)
+    {
         $consulta = $this->consulta("select
                                     CONCAT('SEMANA' , ' ', Semana) AS Tiempo,
                                     SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
@@ -205,7 +209,8 @@ class Modelo_GestorDashboard extends Base {
                                     group by Tiempo");
         return $consulta;
     }
-    public function getDatosVGIPMONTH(array $datos) {
+    public function getDatosVGIPMONTH(array $datos)
+    {
         $consulta = $this->consulta("select
                                     CONCAT('MES', ' ', Mes) AS Tiempo,
                                     SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
@@ -218,7 +223,8 @@ class Modelo_GestorDashboard extends Base {
                                     group by Tiempo");
         return $consulta;
     }
-    public function getDatosVGIPYEAR(array $datos) {
+    public function getDatosVGIPYEAR(array $datos)
+    {
         $consulta = $this->consulta("select
                                     CONCAT('AÑO', ' ', Anio) AS Tiempo,
                                     SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
@@ -231,7 +237,8 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getDatosVGZWEEK(array $datos) {
+    public function getDatosVGZWEEK(array $datos)
+    {
         $consulta = $this->consulta("SELECT 
                                         IF(Region IS NULL,  'SIN ZONA', Region) Region,
                                         SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
@@ -247,7 +254,8 @@ class Modelo_GestorDashboard extends Base {
                                     GROUP BY Region");
         return $consulta;
     }
-    public function getDatosVGZMONTH(array $datos) {
+    public function getDatosVGZMONTH(array $datos)
+    {
         $consulta = $this->consulta("SELECT 
                                         IF(Region IS NULL,  'SIN ZONA', Region) Region,
                                         SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
@@ -263,7 +271,8 @@ class Modelo_GestorDashboard extends Base {
                                     GROUP BY Region");
         return $consulta;
     }
-    public function getDatosVGZYEAR(array $datos) {
+    public function getDatosVGZYEAR(array $datos)
+    {
         $consulta = $this->consulta("SELECT 
                                         IF(Region IS NULL,  'SIN ZONA', Region) Region,
                                         SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
@@ -279,13 +288,15 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-    public function getDatosVGTO(array $datos) {
+    public function getDatosVGTO(array $datos)
+    {
         $consulta = $this->consulta('SELECT * FROM t_permisos_dashboard');
         $consulta = [];
         return $consulta;
     }
 
-    public function getDatosTiposServicios() {
+    public function getDatosTiposServicios()
+    {
         $consulta = $this->consulta("SELECT
                                         Id AS id, Nombre AS text
                                     FROM cat_v3_servicios_departamento 
@@ -294,5 +305,4 @@ class Modelo_GestorDashboard extends Base {
                                     ORDER BY Nombre ASC");
         return $consulta;
     }
-
 }
