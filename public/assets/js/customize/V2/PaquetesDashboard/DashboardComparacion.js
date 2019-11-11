@@ -15,7 +15,8 @@ class DashboardComparacion extends Dashboard {
             tiempo: "WEEK",
             zona: ""
         };
-        let pruebaTabla = new TablaBasica('tabla-VGC');
+//        let pruebaTabla = new TablaBasica('tabla-VGC');
+//        pruebaTabla.agregarContenidoTabla(this.datos)
     }
 
     setEvento() {

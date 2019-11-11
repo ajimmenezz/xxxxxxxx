@@ -60,7 +60,7 @@
             </div>
             <!--Finaliza encabezado con selects-->
             <!--Comienzo navegador vista-->
-            <div class="col-md-12">
+            <div class="col-md-12 hidden">
                 <ul class="nav nav-pills">
                     <li class="active"><a href="#vista-grafica-VGC" data-toggle="tab" class="f-w-600 f-s-14">Grafica</a></li>
                     <li><a href="#vista-tabla-VGC" data-toggle="tab" class="f-w-600 f-s-14">Tabla</a></li>          
@@ -91,21 +91,14 @@
                             <table id="tabla-VGC" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
                                 <thead>
                                     <tr>
-                                        <th class="all">Zona</th>
-                                        <th class="all">Completado</th>
+                                        <th class="all"></th>
+                                        <th class="all">Abierto</th>
                                         <th class="all">Atención</th>
                                         <th class="all">Problema</th>
-                                        <th class="all">Total</th>
+                                        <th class="all">Cerrado</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>x</td>
-                                        <td>x</td>
-                                        <td>x</td>
-                                        <td>x</td>
-                                        <td>x</td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>  

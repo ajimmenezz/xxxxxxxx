@@ -20,7 +20,7 @@ $(function () {
 
     peticion.enviar('initialPage', 'Dashboard_Generico/Mostrar_Graficas', null, function (respuesta) {
         dashboards = {};
-        
+        console.log(respuesta);
         $.each(respuesta, function (key, value) {
             $.each(value, function (llave, datos) {
                 if (datos.length > 0) {
