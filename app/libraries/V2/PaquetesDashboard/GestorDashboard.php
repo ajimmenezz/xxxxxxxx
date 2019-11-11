@@ -145,15 +145,30 @@ class GestorDashboard {
     }
 
     public function getDatosVGHI(array $datos) {
-        $nombreConsulta = $datos['nombreConsulta'];
-        $arrayConsultaZonas = $this->db->$nombreConsulta(array('numeroTiempo' => 0));
-        return array('VGHI' => $arrayConsultaZonas);
+        $arrayConsulta = $this->mostrarConsultaVGHI($datos);
+        return array('VGHI' => $arrayConsulta);
+    }
+
+    private function mostrarConsultaVGHI(array $datos) {
+        if (!isset($datos['tiempo'])) {
+            $datos['tiempo'] = 'WEEK';
+        }
+
+        if (!isset($datos['zona']) || $datos['zona'] === '') {
+            $whereZona = "";
+        } else {
+            $whereZona = "AND Region = '" . $datos['zona'] . "'";
+        }
+
+        $metodoConsulta = 'getDatosVGHI' . $datos['tiempo'];
+        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 0, 'where' => $whereZona));
+
+        return $arrayConsulta;
     }
 
     public function getDatosVGIP(array $datos) {
         $arrayComparacion = array();
         $arrayTitulos = array();
-        $metodoConsulta = $datos['nombreConsulta'];
         $arrayConsulta = $this->mostrarConsultaVGIP($datos);
         $arrayTitulos = ["TIEMPO",
             "Abierto", ['role' => 'annotation', 'type' => 'number'],
@@ -195,8 +210,7 @@ class GestorDashboard {
 
     public function getDatosVGZ(array $datos) {
         $arrayZonas = array();
-        $nombreConsulta = $datos['nombreConsulta'];
-        $arrayConsultaZonas = $this->db->$nombreConsulta(array('numeroTiempo' => 0));
+        $arrayConsultaZonas = $this->mostrarConsultaVGZ($datos);
         $arrayTitulos = $this->titulosArrayGrafica('REGION');
         $arrayZonas[0] = $arrayTitulos;
 
@@ -215,6 +229,23 @@ class GestorDashboard {
         }
 
         return array('VGZ' => $arrayZonas);
+    }
+
+    private function mostrarConsultaVGZ(array $datos) {
+        if (!isset($datos['tiempo'])) {
+            $datos['tiempo'] = 'WEEK';
+        }
+
+        if (!isset($datos['zona']) || $datos['zona'] === '') {
+            $whereZona = "";
+        } else {
+            $whereZona = "AND Region = '" . $datos['zona'] . "'";
+        }
+
+        $metodoConsulta = 'getDatosVGZ' . $datos['tiempo'];
+        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $whereZona));
+
+        return $arrayConsulta;
     }
 
     public function getDatosVGTO(array $datos) {
