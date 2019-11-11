@@ -15,8 +15,7 @@ class DashboardComparacion extends Dashboard {
             tiempo: "WEEK",
             zona: ""
         };
-//        let pruebaTabla = new TablaBasica('tabla-VGC');
-//        pruebaTabla.agregarContenidoTabla(this.datos)
+        this.objetos['tabla-VGC'] = new TablaBasica('tabla-VGC');
     }
 
     setEvento() {
@@ -32,6 +31,9 @@ class DashboardComparacion extends Dashboard {
                 case 'select-zona-VGC':
                     _this.eventoSelectZona(value);
                     break;
+                case 'tabla-VGC':
+                    _this.setDatosTabla(value);
+                    break;
             }
         });
     }
@@ -41,14 +43,14 @@ class DashboardComparacion extends Dashboard {
         select.evento('change', function () {
             _this.informacion['tipoServicio'] = select.obtenerTexto();
             _this.peticion.enviar('panel-grafica-VGC', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
-                console.log(respuesta);
                 $(`#grafica-VGC-1`).empty();
                 _this.datos = respuesta['VGC'];
                 _this.setGrafica([`grafica-VGC-1`]);
+                _this.setDatosTabla(_this.objetos['tabla-VGC']);
             });
         });
     }
-    
+
     eventoSelectTiempo(select) {
         let _this = this;
         select.evento('change', function () {
@@ -57,10 +59,11 @@ class DashboardComparacion extends Dashboard {
                 $(`#grafica-VGC-1`).empty();
                 _this.datos = respuesta['VGC'];
                 _this.setGrafica([`grafica-VGC-1`]);
+                _this.setDatosTabla(_this.objetos['tabla-VGC']);
             });
         });
     }
-    
+
     eventoSelectZona(select) {
         let _this = this;
         select.evento('change', function () {
@@ -69,10 +72,31 @@ class DashboardComparacion extends Dashboard {
                 $(`#grafica-VGC-1`).empty();
                 _this.datos = respuesta['VGC'];
                 _this.setGrafica([`grafica-VGC-1`]);
+                _this.setDatosTabla(_this.objetos['tabla-VGC']);
             });
         });
     }
 
+    setDatosTabla(tabla) {
+        let _this = this;
+        let sinLlave = 1;
+        _this.objetos[tabla.tabla].limpiartabla();
+//        $.each(_this.datos, function (key, value) {
+//            for (var i = 0; i < Object.keys(value).length; i++) {
+//                if (key !== 0) {
+//                    console.log(value[sinLlave]);
+//                }
+//                sinLlave+=2;
+//            }
+//            $.each(value, function (llave, valor) {
+//            if (key !== 0) {
+//                
+//                console.log(value);
+//            }
+//            });
+//        });
+        _this.objetos[tabla.tabla].agregarContenidoTabla(_this.datos);
+    }
 }
 
 
