@@ -42,8 +42,8 @@ class Dashboard {
                 case 'grafica-VGC-1':
                     _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'LineChart', true);
                     break;
-                case 'VGHI':
-                    this.objeto = null;
+                case 'grafica-VGHI-1':
+                    _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'PieChart', true);
                     break;
                 case 'grafica-VGIP-1':
                     _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'LineChart', true);

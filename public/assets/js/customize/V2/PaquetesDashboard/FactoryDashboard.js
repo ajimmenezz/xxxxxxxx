@@ -14,7 +14,7 @@ class FactoryDashboard {
                 this.objeto = new DashboardComparacion(clave, datos);
                 break;
             case 'VGHI':
-//                this.objeto = new DashboardHistoricoIncidencias(clave, datos);
+                this.objeto = new DashboardHistoricoIncidencias(clave, datos);
                 break;
             case 'VGIP':
                 this.objeto = new DashboardIncidentesPendientes(clave, datos);
