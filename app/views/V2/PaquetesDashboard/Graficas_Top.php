@@ -27,8 +27,8 @@
                             <option value="branches">Sucursales</option>
                             <option value="lexmark">Lexmark</option>
                             <option value="technician">Técnicos</option>
-<!--                            <option value="product"></option>
-                            <option value="productline"></option>-->
+                            <option value="product">Equipo</option>
+                            <option value="productline">Linea de Equipo</option>
                         </select>
                     </div>
                 </div>

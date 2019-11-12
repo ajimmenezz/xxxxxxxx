@@ -36,7 +36,7 @@ class DashboardGraficasTop extends Dashboard{
     eventoSelectTipo(select){
         let _this = this;
         select.evento('change', function () {
-            _this.informacion['reportType'] = select.obtenerTexto();
+            _this.informacion['reportType'] = select.obtenerValor();
             _this.peticion.enviar('panel-grafica-VGTO', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
                 $(`#grafica-VGTO-1`).empty();
                 _this.datos = respuesta['VGTO'];
@@ -48,7 +48,7 @@ class DashboardGraficasTop extends Dashboard{
     eventoSelectTiempo(select){
         let _this = this;
         select.evento('change', function () {
-            _this.informacion['tiempo'] = select.obtenerTexto();
+            _this.informacion['tiempo'] = select.obtenerValor();
             $('#select-lapso-VGTO').attr('disabled', false);
             switch (select.obtenerValor()) {
                 case 'WEEK':
