@@ -215,9 +215,15 @@ class GestorDashboard {
         $arrayZonas[0] = $arrayTitulos;
 
         foreach ($arrayConsultaZonas as $key => $value) {
+            if(!isset($datos['zona'])){
+                $titulo = $value['Region'];
+            }else{
+                $titulo = $value['Tiempo'];
+            }
+            
             array_push(
                     $arrayZonas, array(
-                $value['Region'],
+                $titulo,
                 (int) $value['Abierto'],
                 (int) $value['Abierto'],
                 (int) $value['En Atencion'],
@@ -271,20 +277,19 @@ class GestorDashboard {
         ];
         $arrayTop[0] = $arrayTitulos;
         $arrayConsulta = $this->db->$metodoConsulta($datos);
-        
+
         foreach ($arrayConsulta as $key => $value) {
-            array_push($arrayTop, 
-                    array($value[0], 
-                        array($value[0], 
-                            (int) $value[1],
-                            (int) $value[2],
-                            (int) $value[3],
-                            (int) $value[4],
-                            (int) $value[5],
-                            (int) $value[6],
-                            (int) $value[7],
-                            (int) $value[8])));
-        }        
+            array_push($arrayTop, array($value[0],
+                array($value[0],
+                    (int) $value[1],
+                    (int) $value[2],
+                    (int) $value[3],
+                    (int) $value[4],
+                    (int) $value[5],
+                    (int) $value[6],
+                    (int) $value[7],
+                    (int) $value[8])));
+        }
 
         return array('VGTO' => $arrayTop);
     }
