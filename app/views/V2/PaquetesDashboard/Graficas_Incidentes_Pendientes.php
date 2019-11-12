@@ -14,7 +14,7 @@
             <!--empieza encabezado del cuerpo-->
             <div class="col-md-12">
                 <!--comienza titulo-->
-                <div class="col-md-8">
+                <div class="col-md-6">
                     <h3>Grafica de Incidentes Pendientes</h3>
                 </div>
                 <!--termina titulo-->
@@ -31,6 +31,16 @@
                     </div>
                 </div>
                 <!--Fin conjunto select tiempo-->
+                <!--Comienzo conjunto select complemento tiempo-->
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <select id="select-numero-VGIP" style="width: 100%" disabled="true">
+                            <option value="">Seleccionar</option>
+                        </select>
+                    </div>
+                </div>
+                <!--Fin conjunto select complemento tiempo-->
                 <!--Comienzo conjunto select Zonas-->
                 <div class="col-md-2">
                     <div class="form-group">

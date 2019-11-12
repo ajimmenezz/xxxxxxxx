@@ -23,11 +23,9 @@ $(function () {
         
         $.each(respuesta, function (key, value) {
             $.each(value, function (llave, datos) {
-                if (datos.length > 0) {
                     dashboards[llave] = factory.getInstance(llave, datos);
                     dashboards[llave].setComponentes();
                     dashboards[llave].setEvento();
-                }
             });
         });
     });

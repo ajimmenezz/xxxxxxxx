@@ -69,7 +69,8 @@ class DashboardComparacion extends Dashboard {
                         _this.objetos['select-numero-VGC'].cargaDatosEnSelect(semanas);
                         break;
                     case 'MONTH':
-                        _this.objetos['select-numero-VGC'].cargaDatosEnSelect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+                        _this.objetos['select-numero-VGC'].cargaDatosEnSelect([{id: 1, text: 'Enero'},{id: 2, text: 'Febrero'},{id: 3, text: 'Marzo'}
+                        ,{id: 4, text: 'Abril'},{id: 5, text: 'Mayo'},{id: 6, text: 'Junio'},{id: 7, text: 'Julio'},{id: 8, text: 'Agosto'},{id: 9, text: 'Septiembre'},{id: 10, text: 'Octubre'},{id: 11, text: 'Noviembre'},{id: 12, text: 'Diciembre'}]);
                         break;
                 }
             }
