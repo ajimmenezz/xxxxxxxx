@@ -534,4 +534,120 @@ class Modelo_GestorDashboard extends Base {
         return $arrayReturn;
     }
 
+    public function getDatosVGTOproduct($datos) {
+        $arrayReturn = array();
+        $conditions = ' where 1 = 1 ';
+
+        if (isset($datos['year']) && $datos['year'] > 2018) {
+            $conditions .= " and base.Anio = '" . $datos['year'] . "' ";
+        } else {
+            $conditions .= " and base.Anio = YEAR(now()) ";
+        }
+
+        if (isset($datos['zona']) && $datos['zona'] !== '') {
+            $conditions .= " and base.Region = '" . $datos['zona'] . "' ";
+        }
+
+        switch ($datos['tiempo']) {
+            case 'MONTH':
+                if (isset($datos['month']) && $datos['month'] > 0) {
+                    $conditions .= " and base.Mes = '" . $datos['month'] . "' ";
+                } else {
+                    $conditions .= " and base.Mes = MONTH(now()) ";
+                }
+
+                break;
+
+            default:
+                if (isset($datos['week']) && $datos['week'] > 0) {
+                    $conditions .= " and base.Semana = '" . $datos['week'] . "' ";
+                } else {
+                    $conditions .= " and base.Semana = WEEK(now(),1) - 1";
+                }
+
+                break;
+        }
+
+        $consulta = $this->consulta("
+        select 
+        modelo(tcg.IdModelo) as Equipo,
+        count(*) as Total
+        from v_base_dashboard_sd base
+        inner join t_solicitudes ts on base.Folio = ts.Folio
+        inner join t_servicios_ticket tst on ts.Id = tst.IdSolicitud
+        inner join t_correctivos_generales tcg on tst.Id = tcg.IdServicio
+        " . $conditions . " 
+        group by tcg.IdModelo
+        order by Total desc 
+        limit 5");
+
+        foreach ($consulta as $key => $value) {
+            array_push($arrayReturn, [
+                $value['Equipo'],
+                $value['Total'],
+                $value['Total']                
+            ]);
+        }
+
+        return $arrayReturn;
+    }
+
+    public function getDatosVGTOproductline($datos) {
+        $arrayReturn = array();
+        $conditions = ' where 1 = 1 ';
+
+        if (isset($datos['year']) && $datos['year'] > 2018) {
+            $conditions .= " and base.Anio = '" . $datos['year'] . "' ";
+        } else {
+            $conditions .= " and base.Anio = YEAR(now()) ";
+        }
+
+        if (isset($datos['zona']) && $datos['zona'] !== '') {
+            $conditions .= " and base.Region = '" . $datos['zona'] . "' ";
+        }
+
+        switch ($datos['tiempo']) {
+            case 'MONTH':
+                if (isset($datos['month']) && $datos['month'] > 0) {
+                    $conditions .= " and base.Mes = '" . $datos['month'] . "' ";
+                } else {
+                    $conditions .= " and base.Mes = MONTH(now()) ";
+                }
+
+                break;
+
+            default:
+                if (isset($datos['week']) && $datos['week'] > 0) {
+                    $conditions .= " and base.Semana = '" . $datos['week'] . "' ";
+                } else {
+                    $conditions .= " and base.Semana = WEEK(now(),1) - 1";
+                }
+
+                break;
+        }
+
+        $consulta = $this->consulta("
+        select 
+        linea(lineaByModelo(tcg.Idmodelo)) as Linea,
+        count(*) as Total
+        from v_base_dashboard_sd base
+        inner join t_solicitudes ts on base.Folio = ts.Folio
+        inner join t_servicios_ticket tst on ts.Id = tst.IdSolicitud
+        inner join t_correctivos_generales tcg on tst.Id = tcg.IdServicio
+        " . $conditions . " 
+        group by lineaByModelo(tcg.Idmodelo)
+        order by Total desc 
+        limit 5");
+
+        foreach ($consulta as $key => $value) {
+            array_push($arrayReturn, [
+                $value['Linea'],
+                $value['Total'],
+                $value['Total']                
+            ]);
+        }
+
+        return $arrayReturn;
+    }
+
 }
