@@ -139,7 +139,7 @@ class Modelo_GestorDashboard extends Base
         if (isset($datos['week']) && $datos['week'] > 0) {
             $conditions .= " AND WEEK(ResolvedTime,1) = '" . $datos['week'] . "' ";
         } else {
-            $conditions .= " AND WEEK(ResolvedTime,1) = WEEK(now(),1) ";
+            $conditions .= " AND WEEK(ResolvedTime,1) = WEEK(now(),1) - 1";
         }
 
         if (isset($datos['year']) && $datos['year'] > 2018) {
@@ -335,12 +335,12 @@ class Modelo_GestorDashboard extends Base
                 if (isset($datos['week']) && $datos['week'] > 0) {
                     $conditions .= " and WEEK(DATE_SUB(b1.FileDate,INTERVAL 1 DAY),1) = '" . $datos['week'] . "' ";
                 } else {
-                    $conditions .= " and WEEK(DATE_SUB(b1.FileDate,INTERVAL 1 DAY),1) = WEEK(now(),1) ";
+                    $conditions .= " and WEEK(DATE_SUB(b1.FileDate,INTERVAL 1 DAY),1) = WEEK(now(),1) - 1 ";
                 }
 
                 break;
         }
-
+        
         $consulta = $this->consulta(" 
                                 select
                                 Contacto as concept,
@@ -397,7 +397,7 @@ class Modelo_GestorDashboard extends Base
                 if (isset($datos['week']) && $datos['week'] > 0) {
                     $conditions .= " and base.Semana = '" . $datos['week'] . "' ";
                 } else {
-                    $conditions .= " and base.Semana = WEEK(now(),1) ";
+                    $conditions .= " and base.Semana = WEEK(now(),1) - 1";
                 }
 
                 break;
@@ -463,7 +463,7 @@ class Modelo_GestorDashboard extends Base
                 if (isset($datos['week']) && $datos['week'] > 0) {
                     $conditions .= " and base.Semana = '" . $datos['week'] . "' ";
                 } else {
-                    $conditions .= " and base.Semana = WEEK(now(),1) ";
+                    $conditions .= " and base.Semana = WEEK(now(),1) - 1";
                 }
 
                 break;
