@@ -254,7 +254,7 @@ class Modelo_GestorDashboard extends Base {
                                             v_base_dashboard_sd
                                         WHERE
                                             YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-                                            and Semana between WEEK(NOW(), 1) - (" . $datos['numeroTiempo'] . ") and WEEK(NOW(),1)
+                                            and Mes between MONTH(NOW()) - (" . $datos['numeroTiempo'] . ") and MONTH(NOW())
                                             " . $datos['where'] . " 
                                     GROUP BY Region, Tiempo");
         }
@@ -311,7 +311,7 @@ class Modelo_GestorDashboard extends Base {
                                     GROUP BY Region");
         } else {
             $consulta = $this->consulta("SELECT 
-                                        CONCAT('AÑO', ' ', Anio) AS Tiempo,
+                                CONCAT('AÑO', ' ', Anio) AS Tiempo,
                                         IF(Region IS NULL,  'SIN ZONA', Region) Region,
                                         SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
                                         SUM(IF(Estatus = 'En Atencion', 1, 0)) AS 'En Atencion',
@@ -322,7 +322,7 @@ class Modelo_GestorDashboard extends Base {
                                         WHERE
                                             Anio between YEAR(NOW()) - (" . $datos['numeroTiempo'] . ") and YEAR(NOW())
                                             " . $datos['where'] . " 
-                                    GROUP BY Region, Tiempo");
+                                    GROUP BY Region");
         }
         return $consulta;
     }

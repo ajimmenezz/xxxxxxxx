@@ -215,12 +215,12 @@ class GestorDashboard {
         $arrayZonas[0] = $arrayTitulos;
 
         foreach ($arrayConsultaZonas as $key => $value) {
-            if(!isset($datos['zona'])){
+            if (!isset($datos['zona'])) {
                 $titulo = $value['Region'];
-            }else{
+            } else {
                 $titulo = $value['Tiempo'];
             }
-            
+
             array_push(
                     $arrayZonas, array(
                 $titulo,
@@ -268,30 +268,48 @@ class GestorDashboard {
         }
 
         $metodoConsulta = 'getDatosVGTO' . $datos['reportType'];
-        $arrayTitulos = [
-            "TIPO",
-            "Abierto", ['role' => 'annotation', 'type' => 'number'],
-            "Abierto", ['role' => 'annotation', 'type' => 'number'],
-            "Abierto", ['role' => 'annotation', 'type' => 'number'],
-            "Abierto", ['role' => 'annotation', 'type' => 'number']
-        ];
-        $arrayTop[0] = $arrayTitulos;
+        $arrayTop[0] = $this->titulosArrayTop($datos['reportType']);
         $arrayConsulta = $this->db->$metodoConsulta($datos);
 
         foreach ($arrayConsulta as $key => $value) {
-            array_push($arrayTop, 
-                    array($value[0], 
-                            (int) $value[1],
-                            (int) $value[2],
-                            (int) $value[3],
-                            (int) $value[4],
-                            (int) $value[5],
-                            (int) $value[6],
-                            (int) $value[7],
-                            (int) $value[8]));
-        }        
+            if (!isset($datos['reportType'])) {
+                array_push($arrayTop, array($value[0],
+                    (int) $value[1],
+                    (int) $value[2],
+                    (int) $value[3],
+                    (int) $value[4],
+                    (int) $value[5],
+                    (int) $value[6],
+                    (int) $value[7],
+                    (int) $value[8]));
+            } else {
+                array_push($arrayTop, array($value[0],
+                    (int) $value[1],
+                    (int) $value[2]));
+            }
+        }
 
         return array('VGTO' => $arrayTop);
+    }
+
+    private function titulosArrayTop(string $tipoTop) {
+        $arrayTitulos = array();
+        switch ($tipoTop) {
+            case 'branches':
+                $arrayTitulos = $this->titulosArrayGrafica('TIPO');
+                break;
+            case 'technician':
+                $arrayTitulos = $this->titulosArrayGrafica('TIPO');
+                break;
+            case 'lexmark':
+                $arrayTitulos = [
+                    'TIPO',
+                    "Total", ['role' => 'annotation', 'type' => 'number']
+                ];
+                break;
+        }
+
+        return $arrayTitulos;
     }
 
     private function titulosArrayGrafica(string $tipo) {
