@@ -21,7 +21,7 @@
                 <!--Comienzo conjunto select tipo-->
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label>Tiempo</label>
+                        <label>Tipo de Reporte</label>
                         <select id="select-tipo-VGTO" style="width: 100%">
                             <option value="">Seleccionar</option>
                         </select>

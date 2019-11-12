@@ -60,7 +60,7 @@
             </div>
             <!--Finaliza encabezado con selects-->
             <!--Comienzo navegador vista-->
-            <div class="col-md-12">
+            <div class="col-md-12 hidden">
                 <ul class="nav nav-pills">
                     <li class="active"><a href="#vista-grafica-VGC" data-toggle="tab" class="f-w-600 f-s-14">Grafica</a></li>
                     <li><a href="#vista-tabla-VGC" data-toggle="tab" class="f-w-600 f-s-14">Tabla</a></li>          

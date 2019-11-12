@@ -14,10 +14,37 @@
             <!--empieza encabezado del cuerpo-->
             <div class="col-md-12">
                 <!--comienza titulo-->
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <h3>Grafica de Incidentes Pendientes</h3>
                 </div>
                 <!--termina titulo-->
+                <!--Comienzo conjunto select tiempo-->
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Tiempo</label>
+                        <select id="select-tiempo-VGIP" style="width: 100%">
+                            <option value="">Seleccionar</option>
+                            <option value="WEEK">Semana</option>
+                            <option value="MONTH">Mes</option>
+                            <!--<option value="YEAR">Año</option>-->
+                        </select>
+                    </div>
+                </div>
+                <!--Fin conjunto select tiempo-->
+                <!--Comienzo conjunto select Zonas-->
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Zonas</label>
+                        <select id="select-zona-VGIP" style="width: 100%">
+                            <option value="">Seleccionar</option>
+                            <option value="ZONA 1">Zona 1</option>
+                            <option value="ZONA 2">Zona 2</option>
+                            <option value="ZONA 3">Zona 3</option>
+                            <option value="ZONA 4">Zona 4</option>
+                        </select>
+                    </div>
+                </div>
+                <!--Fin conjunto select Zonas-->
                 <div class="col-md-12" style="background: #FCAC31"><br></div>
             </div>
             <!--fin encabezado del cuerpo-->

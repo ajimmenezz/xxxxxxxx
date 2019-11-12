@@ -5,7 +5,7 @@ class DashboardGraficasTop extends Dashboard{
         this.panel = 'panel-grafica-VGTO';
         this.datos = datos;
         this.componentes = {
-            selects: ['select-zona-VGTO'],
+            selects: ['select-tipo-VGTO','select-tiempo-VGTO','select-lapso-VGTO','select-zona-VGTO'],
             graficas: ['grafica-VGTO-1']
         };
         this.informacion = {
