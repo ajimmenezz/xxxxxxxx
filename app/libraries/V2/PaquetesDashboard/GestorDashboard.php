@@ -165,7 +165,7 @@ class GestorDashboard
     private function mostrarConsultaVGHI(array $datos)
     {
         if (!isset($datos['tiempo'])) {
-            $datos['tiempo'] = 'MONTH';
+            $datos['tiempo'] = 'WEEK';
         }
 
         $metodoConsulta = 'getDatosVGHI' . $datos['tiempo'];
@@ -270,7 +270,13 @@ class GestorDashboard
 
     public function getDatosVGTO(array $datos)
     {
-        return array('VGTO' => []);
+        $arrayConsulta = array();
+        if (isset($datos['reportType'])) {
+            $metodoConsulta = 'getDatosVGTO' . $datos['reportType'];
+            $arrayConsulta = $this->db->$metodoConsulta($datos);
+        }
+
+        return $arrayConsulta;
     }
 
     private function titulosArrayGrafica(string $tipo)
