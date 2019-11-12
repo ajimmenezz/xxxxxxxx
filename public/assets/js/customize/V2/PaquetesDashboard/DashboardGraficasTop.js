@@ -37,7 +37,11 @@ class DashboardGraficasTop extends Dashboard{
         let _this = this;
         select.evento('change', function () {
             _this.informacion['tipoReporte'] = select.obtenerTexto();
-            console.log(_this.informacion);
+            _this.peticion.enviar('panel-grafica-VGTO', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
+                $(`#grafica-VGTO-1`).empty();
+                _this.datos = respuesta['VGTO'];
+                _this.setGrafica([`grafica-VGTO-1`]);
+            });
         });
     }
     
@@ -65,7 +69,11 @@ class DashboardGraficasTop extends Dashboard{
         let _this = this;
         select.evento('change', function () {
             _this.informacion['lapso'] = select.obtenerTexto();
-            console.log(_this.informacion);
+            _this.peticion.enviar('panel-grafica-VGTO', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
+                $(`#grafica-VGTO-1`).empty();
+                _this.datos = respuesta['VGTO'];
+                _this.setGrafica([`grafica-VGTO-1`]);
+            });
         });
     }
     
@@ -75,7 +83,6 @@ class DashboardGraficasTop extends Dashboard{
             _this.informacion['zona'] = select.obtenerTexto();
             _this.peticion.enviar('panel-grafica-VGTO', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
                 $(`#grafica-VGTO-1`).empty();
-                console.log(respuesta);
                 _this.datos = respuesta['VGTO'];
                 _this.setGrafica([`grafica-VGTO-1`]);
             });

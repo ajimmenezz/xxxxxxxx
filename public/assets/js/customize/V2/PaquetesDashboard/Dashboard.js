@@ -53,7 +53,7 @@ class Dashboard {
                     break;
 
                 default:
-                    console.log("No se encontro la clave");
+                    console.log("No se encontro la clave de grafica");
                     break;
             }
             _this.objetos[value].inicilizarGrafica({

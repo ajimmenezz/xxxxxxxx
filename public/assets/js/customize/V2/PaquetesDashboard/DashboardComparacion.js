@@ -79,21 +79,15 @@ class DashboardComparacion extends Dashboard {
 
     setDatosTabla(tabla) {
         let _this = this;
-        let datosTemporal = _this.datos;
-//        let arregloTabla = datosTemporal.shift();
+        let datosTemporal = _this.datos.slice();
+        datosTemporal.shift();
         _this.objetos[tabla.tabla].limpiartabla();
-//        $.each(_this.datos, function (key, value) {
+        $.each(datosTemporal, function (key, value) {
 //            console.log(value);
-//            if (key !== 0) {
-//                for (var i = 0; i < Object.keys(value).length; i++) {
-//                    if(typeof  value[i] == 'string'){
-//                        arregloTitulos.push(value[i]);
-//                    }else{
-//                        
-//                    }
-//                }
-//            }
-//        });
+                for (var i = 0; i < Object.keys(value).length; i+=2) {
+                    console.log(value[i]);
+                }
+        });
 //        console.log(arregloTabla);
         _this.objetos[tabla.tabla].agregarContenidoTabla(datosTemporal);
     }
