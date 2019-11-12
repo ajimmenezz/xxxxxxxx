@@ -272,7 +272,7 @@ class GestorDashboard {
         $arrayConsulta = $this->db->$metodoConsulta($datos);
 
         foreach ($arrayConsulta as $key => $value) {
-            if (!isset($datos['reportType'])) {
+            if ($datos['reportType'] !== 'lexmark') {
                 array_push($arrayTop, array($value[0],
                     (int) $value[1],
                     (int) $value[2],
