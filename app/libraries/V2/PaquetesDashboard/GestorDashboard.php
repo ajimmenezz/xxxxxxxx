@@ -275,7 +275,6 @@ class GestorDashboard {
         foreach ($arrayConsulta as $key => $value) {
             array_push($arrayTop, 
                     array($value[0], 
-                        array($value[0], 
                             (int) $value[1],
                             (int) $value[2],
                             (int) $value[3],
@@ -283,7 +282,7 @@ class GestorDashboard {
                             (int) $value[5],
                             (int) $value[6],
                             (int) $value[7],
-                            (int) $value[8])));
+                            (int) $value[8]));
         }        
 
         return array('VGTO' => $arrayTop);

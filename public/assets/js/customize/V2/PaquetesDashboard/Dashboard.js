@@ -48,8 +48,8 @@ class Dashboard {
                 case 'grafica-VGZ-1':
                     _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'ColumnChart', true);
                     break;
-                case 'VGTO':
-                    this.objeto = null;
+                case 'grafica-VGTO-1':
+                    _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'ColumnChart', true);
                     break;
 
                 default:
