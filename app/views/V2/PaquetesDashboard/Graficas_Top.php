@@ -24,6 +24,11 @@
                         <label>Tipo de Reporte</label>
                         <select id="select-tipo-VGTO" style="width: 100%">
                             <option value="">Seleccionar</option>
+                            <option value="branches">Sucursales</option>
+                            <option value="lexmark">Lexmark</option>
+                            <option value="technician">Técnicos</option>
+<!--                            <option value="product"></option>
+                            <option value="productline"></option>-->
                         </select>
                     </div>
                 </div>
