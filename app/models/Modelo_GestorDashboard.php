@@ -127,7 +127,7 @@ class Modelo_GestorDashboard extends Base {
         if (isset($datos['week']) && $datos['week'] > 0) {
             $conditions .= " AND WEEK(ResolvedTime,1) = '" . $datos['week'] . "' ";
         } else {
-            $conditions .= " AND WEEK(ResolvedTime,1) = WEEK(now(),1) - 1";
+            $conditions .= " AND WEEK(ResolvedTime,1) = WEEK(now(),1)";
         }
 
         if (isset($datos['year']) && $datos['year'] > 2018) {
@@ -239,7 +239,7 @@ class Modelo_GestorDashboard extends Base {
                                             v_base_dashboard_sd
                                         WHERE
                                             YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-                                            and Semana between WEEK(NOW(), 1) - (" . $datos['numeroTiempo'] . ") and WEEK(NOW(),1)
+                                            and Semana = WEEK(NOW(), 1)
                                             " . $datos['where'] . " 
                                     GROUP BY Region");
         } else {
@@ -273,7 +273,7 @@ class Modelo_GestorDashboard extends Base {
                                             v_base_dashboard_sd
                                         WHERE
                                             YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-                                            and Mes between MONTH(NOW()) - (" . $datos['numeroTiempo'] . ") and MONTH(NOW())
+                                            and Mes = MONTH(NOW())
                                             " . $datos['where'] . " 
                                     GROUP BY Region");
         } else {
@@ -306,7 +306,7 @@ class Modelo_GestorDashboard extends Base {
                                     FROM
                                             v_base_dashboard_sd
                                         WHERE
-                                            Anio between YEAR(NOW()) - (" . $datos['numeroTiempo'] . ") and YEAR(NOW())
+                                            Anio = YEAR(NOW())
                                             " . $datos['where'] . " 
                                     GROUP BY Region");
         } else {
@@ -371,7 +371,7 @@ class Modelo_GestorDashboard extends Base {
                 if (isset($datos['week']) && $datos['week'] > 0) {
                     $conditions .= " and WEEK(DATE_SUB(b1.FileDate,INTERVAL 1 DAY),1) = '" . $datos['week'] . "' ";
                 } else {
-                    $conditions .= " and WEEK(DATE_SUB(b1.FileDate,INTERVAL 1 DAY),1) = WEEK(now(),1) - 1 ";
+                    $conditions .= " and WEEK(DATE_SUB(b1.FileDate,INTERVAL 1 DAY),1) = WEEK(now(),1)";
                 }
 
                 break;
@@ -432,7 +432,7 @@ class Modelo_GestorDashboard extends Base {
                 if (isset($datos['week']) && $datos['week'] > 0) {
                     $conditions .= " and base.Semana = '" . $datos['week'] . "' ";
                 } else {
-                    $conditions .= " and base.Semana = WEEK(now(),1) - 1";
+                    $conditions .= " and base.Semana = WEEK(now(),1)";
                 }
 
                 break;
@@ -497,7 +497,7 @@ class Modelo_GestorDashboard extends Base {
                 if (isset($datos['week']) && $datos['week'] > 0) {
                     $conditions .= " and base.Semana = '" . $datos['week'] . "' ";
                 } else {
-                    $conditions .= " and base.Semana = WEEK(now(),1) - 1";
+                    $conditions .= " and base.Semana = WEEK(now(),1)";
                 }
 
                 break;
