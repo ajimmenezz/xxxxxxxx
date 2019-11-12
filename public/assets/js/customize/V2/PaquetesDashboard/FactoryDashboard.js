@@ -23,7 +23,7 @@ class FactoryDashboard {
                 this.objeto = new DashboardGraficaZonas(clave, datos);
                 break;
             case 'VGTO':
-//                this.objeto = new DashboardGraficasTop(clave, datos);
+                this.objeto = new DashboardGraficasTop(clave, datos);
                 break;
             case 'clientes':
                 let select = new SelectBasico();

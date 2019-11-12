@@ -86,6 +86,7 @@ $config['Generales'] = array(
             'V2/PaquetesDashboard/DashboardComparacion',
             'V2/PaquetesDashboard/DashboardIncidentesPendientes',
             'V2/PaquetesDashboard/DashboardHistoricoIncidencias',
+            'V2/PaquetesDashboard/DashboardGraficasTop',
             'V2/PaquetesDashboard/DashboardGraficaZonas'
         ),
         'pluginsJs' => array(

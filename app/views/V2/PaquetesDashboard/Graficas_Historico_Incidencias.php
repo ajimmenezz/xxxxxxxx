@@ -18,6 +18,18 @@
                     <h3>Grafica de Incidentes Pendientes Completados</h3>
                 </div>
                 <!--termina titulo-->
+                <!--Comienzo conjunto select Año-->
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Año</label>
+                        <select id="select-year-VGHI" style="width: 100%">
+                            <option value="">Seleccionar</option>
+                            <option value="2019">2019</option>
+                            <option value="2018">2018</option>
+                        </select>
+                    </div>
+                </div>
+                <!--Fin conjunto select Año-->
                 <!--Comienzo conjunto select tiempo-->
                 <div class="col-md-2">
                     <div class="form-group">
@@ -32,7 +44,7 @@
                 </div>
                 <!--Fin conjunto select tiempo-->
                 <!--Comienzo conjunto select complemento tiempo-->
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <div class="form-group">
                         <label>&nbsp;</label>
                         <select id="select-lapso-VGHI" style="width: 100%" disabled="true">
@@ -59,12 +71,22 @@
             </div>
             <!--fin encabezado del cuerpo-->
         </div>
-        <div class="row">
-            <!--Empieza grafica-->
-            <div class="col-md-12">
-                <div id="grafica-VGHI-1" class="height-md"></div>
+        <div class="col-md-12"><br>
+            <!--Empieza tabla de incidentes pendientes completados-->
+            <div class="table-responsive">
+                <table id="tabla-VGHI" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="all">Año</th>
+                            <th class="all">Tiempo</th>
+                            <th class="all">Total Concluidos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
-            <!--Finaliza grafica-->
+            <!--Finaliza tabla de incidentes pendientes completados-->
         </div>
     </div>
     <!--Fin cuerpo del panel-->
