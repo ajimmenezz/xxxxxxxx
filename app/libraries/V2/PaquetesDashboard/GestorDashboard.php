@@ -7,28 +7,24 @@ use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
 use Librerias\V2\PaquetesGenerales\Utilerias\GestorClientes as GestorClientes;
 use CI_Controller;
 
-class GestorDashboard
-{
+class GestorDashboard {
 
     private $db;
     static private $CI;
     private $gestorClientes;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->db = new Modelo();
         $this->setCI();
     }
 
-    private function setCI()
-    {
+    private function setCI() {
         if (empty(self::$CI)) {
             self::$CI = &get_instance();
         }
     }
 
-    public function getDashboards()
-    {
+    public function getDashboards() {
         $dashboars = array();
         $arrayClaves = array();
         $idPermisos = Usuario::getPermisos();
@@ -49,8 +45,7 @@ class GestorDashboard
         return $dashboars;
     }
 
-    public function getDatosDashboards()
-    {
+    public function getDatosDashboards() {
         $arrayConsultas = array();
         $idPermisos = Usuario::getPermisos();
         $stringPermisos = implode(',', $idPermisos);
@@ -64,8 +59,7 @@ class GestorDashboard
         return $arrayConsultas;
     }
 
-    public function getDatosVGC(array $datos)
-    {
+    public function getDatosVGC(array $datos) {
         $arrayComparacion = array();
         $arrayTitulos = $this->titulosArrayGrafica('TIEMPO');
         $arrayComparacion[0] = $arrayTitulos;
@@ -79,18 +73,17 @@ class GestorDashboard
 
         foreach ($arrayConsulta as $key => $value) {
             array_push(
-                $arrayComparacion,
-                array(
-                    $value['Tiempo'],
-                    (int) $value['Abierto'],
-                    (int) $value['Abierto'],
-                    (int) $value['En Atencion'],
-                    (int) $value['En Atencion'],
-                    (int) $value['Problema'],
-                    (int) $value['Problema'],
-                    (int) $value['Cerrado'],
-                    (int) $value['Cerrado']
-                )
+                    $arrayComparacion, array(
+                $value['Tiempo'],
+                (int) $value['Abierto'],
+                (int) $value['Abierto'],
+                (int) $value['En Atencion'],
+                (int) $value['En Atencion'],
+                (int) $value['Problema'],
+                (int) $value['Problema'],
+                (int) $value['Cerrado'],
+                (int) $value['Cerrado']
+                    )
             );
         }
 
@@ -100,8 +93,7 @@ class GestorDashboard
         return array('VGC' => $arrayComparacion, 'clientes' => $clientes);
     }
 
-    public function getDatosVGT(array $datos)
-    {
+    public function getDatosVGT(array $datos) {
         $arrayTendecia = array();
         $arrayTendencia[0] = ["TIEMPO", "Incidentes", ['role' => 'annotation', 'type' => 'number']];
         $tiposServicios = $this->db->getDatosTiposServicios();
@@ -123,14 +115,12 @@ class GestorDashboard
         return array('VGT' => $arrayTendencia, 'tipoServicios' => $tiposServicios);
     }
 
-    public function getDatosVGHI(array $datos)
-    {
+    public function getDatosVGHI(array $datos) {
         $arrayConsulta = $this->mostrarConsultaVGHI($datos);
         return array('VGHI' => $arrayConsulta);
     }
 
-    private function mostrarConsultaVGHI(array $datos)
-    {
+    private function mostrarConsultaVGHI(array $datos) {
         if (!isset($datos['tiempo'])) {
             $datos['tiempo'] = 'WEEK';
         }
@@ -141,11 +131,16 @@ class GestorDashboard
         return $arrayConsulta;
     }
 
-    public function getDatosVGIP(array $datos)
-    {
+    public function getDatosVGIP(array $datos) {
         $arrayComparacion = array();
         $arrayTitulos = array();
-        $arrayConsulta = $this->mostrarConsultaVGIP($datos);
+        $datos['numeroTiempo'] = 5;
+
+        if (!isset($datos['tiempo'])) {
+            $datos['tiempo'] = 'WEEK';
+        }
+
+        $arrayConsulta = $this->db->getDatosVGIP($datos);
         $arrayTitulos = [
             "TIEMPO",
             "Abierto", ['role' => 'annotation', 'type' => 'number'],
@@ -156,44 +151,30 @@ class GestorDashboard
 
         foreach ($arrayConsulta as $key => $value) {
             array_push(
-                $arrayComparacion,
-                array(
-                    $value['Tiempo'],
-                    (int) $value['Abierto'],
-                    (int) $value['Abierto'],
-                    (int) $value['En Atencion'],
-                    (int) $value['En Atencion'],
-                    (int) $value['Problema'],
-                    (int) $value['Problema']
-                )
+                    $arrayComparacion, array(
+                $value['Tiempo'],
+                (int) $value['Abierto'],
+                (int) $value['Abierto'],
+                (int) $value['En Atencion'],
+                (int) $value['En Atencion'],
+                (int) $value['Problema'],
+                (int) $value['Problema']
+                    )
             );
         }
 
         return array('VGIP' => $arrayComparacion);
     }
 
-    private function mostrarConsultaVGIP(array $datos)
-    {
+    public function getDatosVGZ(array $datos) {
+        $arrayZonas = array();
+        $datos['numeroTiempo'] = 5;
+
         if (!isset($datos['tiempo'])) {
             $datos['tiempo'] = 'WEEK';
         }
 
-        if (!isset($datos['zona']) || $datos['zona'] === '') {
-            $whereZona = "";
-        } else {
-            $whereZona = "AND Region = '" . $datos['zona'] . "'";
-        }
-
-        $metodoConsulta = 'getDatosVGIP' . $datos['tiempo'];
-        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $whereZona));
-
-        return $arrayConsulta;
-    }
-
-    public function getDatosVGZ(array $datos)
-    {
-        $arrayZonas = array();
-        $arrayConsultaZonas = $this->mostrarConsultaVGZ($datos);
+        $arrayConsultaZonas = $this->db->getDatosVGZ($datos);
         $arrayTitulos = $this->titulosArrayGrafica('REGION');
         $arrayZonas[0] = $arrayTitulos;
 
@@ -205,26 +186,24 @@ class GestorDashboard
             }
 
             array_push(
-                $arrayZonas,
-                array(
-                    $titulo,
-                    (int) $value['Abierto'],
-                    (int) $value['Abierto'],
-                    (int) $value['En Atencion'],
-                    (int) $value['En Atencion'],
-                    (int) $value['Problema'],
-                    (int) $value['Problema'],
-                    (int) $value['Cerrado'],
-                    (int) $value['Cerrado']
-                )
+                    $arrayZonas, array(
+                $titulo,
+                (int) $value['Abierto'],
+                (int) $value['Abierto'],
+                (int) $value['En Atencion'],
+                (int) $value['En Atencion'],
+                (int) $value['Problema'],
+                (int) $value['Problema'],
+                (int) $value['Cerrado'],
+                (int) $value['Cerrado']
+                    )
             );
         }
 
         return array('VGZ' => $arrayZonas);
     }
 
-    private function mostrarConsultaVGZ(array $datos)
-    {
+    private function mostrarConsultaVGZ(array $datos) {
         if (!isset($datos['tiempo'])) {
             $datos['tiempo'] = 'WEEK';
         }
@@ -241,8 +220,7 @@ class GestorDashboard
         return $arrayConsulta;
     }
 
-    public function getDatosVGTO(array $datos)
-    {
+    public function getDatosVGTO(array $datos) {
         $arrayTop = array();
 
         if (!isset($datos['reportType'])) {
@@ -282,19 +260,18 @@ class GestorDashboard
         return array('VGTO' => $arrayTop);
     }
 
-    private function titulosArrayTop(string $tipoTop)
-    {
+    private function titulosArrayTop(string $tipoTop) {
         $arrayTitulos = array();
         switch ($tipoTop) {
             case 'branches':
-                $arrayTitulos = $this->titulosArrayGrafica('TIPO');
+                $arrayTitulos = $this->titulosArrayGrafica('Sucursal');
                 break;
             case 'technician':
-                $arrayTitulos = $this->titulosArrayGrafica('TIPO');
+                $arrayTitulos = $this->titulosArrayGrafica('Tecnicos');
                 break;
             case 'lexmark':
                 $arrayTitulos = [
-                    'TIPO',
+                    'Sucursales',
                     "Total", ['role' => 'annotation', 'type' => 'number']
                 ];
                 break;
@@ -303,8 +280,7 @@ class GestorDashboard
         return $arrayTitulos;
     }
 
-    private function titulosArrayGrafica(string $tipo)
-    {
+    private function titulosArrayGrafica(string $tipo) {
         $arrayTitulos = [
             $tipo,
             "Abierto", ['role' => 'annotation', 'type' => 'number'],
@@ -314,4 +290,5 @@ class GestorDashboard
         ];
         return $arrayTitulos;
     }
+
 }
