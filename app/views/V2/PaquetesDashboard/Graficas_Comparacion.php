@@ -14,7 +14,7 @@
             <!--Empieza encabezado con selects-->
             <div class="col-md-12">
                 <!--comienza titulo-->
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <h3>Grafica de Comparación de Incidencias</h3>
                 </div>
                 <!--termina titulo-->
@@ -41,6 +41,16 @@
                     </div>
                 </div>
                 <!--Fin conjunto select Semana-->
+                <!--Comienzo conjunto select complemento tiempo-->
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <select id="select-numero-VGC" style="width: 100%" disabled="true">
+                            <option value="">Seleccionar</option>
+                        </select>
+                    </div>
+                </div>
+                <!--Fin conjunto select complemento tiempo-->
                 <!--Comienzo conjunto select Zonas-->
                 <div class="col-md-2">
                     <div class="form-group">
@@ -60,7 +70,7 @@
             </div>
             <!--Finaliza encabezado con selects-->
             <!--Comienzo navegador vista-->
-            <div class="col-md-12">
+            <div class="col-md-12 hidden">
                 <ul class="nav nav-pills">
                     <li class="active"><a href="#vista-grafica-VGC" data-toggle="tab" class="f-w-600 f-s-14">Grafica</a></li>
                     <li><a href="#vista-tabla-VGC" data-toggle="tab" class="f-w-600 f-s-14">Tabla</a></li>          

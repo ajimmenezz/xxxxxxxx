@@ -14,7 +14,7 @@
             <!--Comienzo seccion de selects-->
             <div class="col-md-12">
                 <!--comienzo de titulo-->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <h3>Grafica de Tendencia</h3>
                 </div>
                 <!--comienzo de titulo-->
@@ -41,6 +41,16 @@
                     </div>
                 </div>
                 <!--Fin conjunto select Semana-->
+                <!--Comienzo conjunto select complemento tiempo-->
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <select id="select-numero-VGT" style="width: 100%" disabled="true">
+                            <option value="">Seleccionar</option>
+                        </select>
+                    </div>
+                </div>
+                <!--Fin conjunto select complemento tiempo-->
                 <!--Comienzo conjunto select Zonas-->
                 <div class="col-md-2">
                     <div class="form-group">
