@@ -47,7 +47,7 @@
                 <div class="col-md-1">
                     <div class="form-group">
                         <label>&nbsp;</label>
-                        <select id="select-lapso-VGHI" style="width: 100%" disabled="true">
+                        <select id="select-numero-VGHI" style="width: 100%" disabled="true">
                             <option value="">Seleccionar</option>
                         </select>
                     </div>

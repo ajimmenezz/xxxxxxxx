@@ -5,7 +5,7 @@ class DashboardHistoricoIncidencias extends Dashboard {
         this.panel = 'panel-grafica-VGHI';
         this.datos = datos;
         this.componentes = {
-            selects: ['select-tiempo-VGHI', 'select-lapso-VGHI', 'select-zona-VGHI', 'select-year-VGHI']
+            selects: ['select-tiempo-VGHI', 'select-numero-VGHI', 'select-zona-VGHI', 'select-year-VGHI']
         };
         this.informacion = {
             clave: "VGHI"
@@ -31,8 +31,8 @@ class DashboardHistoricoIncidencias extends Dashboard {
                 case 'select-tiempo-VGHI':
                     _this.eventoSelectTiempo(value);
                     break;
-                case 'select-lapso-VGHI':
-                    _this.eventoSelectLapso(value);
+                case 'select-numero-VGHI':
+                    _this.eventoSelectNumero(value);
                     break;
                 case 'select-zona-VGHI':
                     _this.eventoSelectZona(value);
@@ -53,27 +53,31 @@ class DashboardHistoricoIncidencias extends Dashboard {
         let _this = this;
         select.evento('change', function () {
             _this.informacion['tiempo'] = select.obtenerValor();
-            $('#select-lapso-VGHI').attr('disabled', false);
+            $('#select-numero-VGHI').attr('disabled', false);
             switch (select.obtenerValor()) {
                 case 'WEEK':
                     let semanas = [];
                     for (var i = 1; i < 53; i++) {
                         semanas.push(i);
                     }
-                    _this.objetos['select-lapso-VGHI'].cargaDatosEnSelect(semanas);
+                    _this.objetos['select-numero-VGHI'].cargaDatosEnSelect(semanas);
                     break;
                 case 'MONTH':
-                    _this.objetos['select-lapso-VGHI'].cargaDatosEnSelect([{id: 1, text: 'Enero'},{id: 2, text: 'Febrero'},{id: 3, text: 'Marzo'}
+                    _this.objetos['select-numero-VGHI'].cargaDatosEnSelect([{id: 1, text: 'Enero'},{id: 2, text: 'Febrero'},{id: 3, text: 'Marzo'}
                         ,{id: 4, text: 'Abril'},{id: 5, text: 'Mayo'},{id: 6, text: 'Junio'},{id: 7, text: 'Julio'},{id: 8, text: 'Agosto'},{id: 9, text: 'Septiembre'},{id: 10, text: 'Octubre'},{id: 11, text: 'Noviembre'},{id: 12, text: 'Diciembre'}]);
                     break;
             }
         });
     }
 
-    eventoSelectLapso(select) {
+    eventoSelectNumero(select) {
         let _this = this;
         select.evento('change', function () {
-            _this.informacion['week'] = select.obtenerValor();
+            if (_this.informacion['tiempo'] == 'WEEK') {
+                _this.informacion['week'] = select.obtenerValor();
+            } else {
+                _this.informacion['month'] = select.obtenerValor();
+            }
             _this.cambiarTablaHistorico();
         });
     }

@@ -21,7 +21,7 @@ class DashboardIncidentesPendientes extends Dashboard{
                     _this.eventoSelectTiempo(value);
                     break;
                 case 'select-numero-VGIP':
-                    _this.eventoSelectTiempo(value);
+                    _this.eventoSelectNumero(value);
                     break;
                 case 'select-zona-VGIP':
                     _this.eventoSelectZona(value);
@@ -75,7 +75,6 @@ class DashboardIncidentesPendientes extends Dashboard{
             _this.informacion['zona'] = select.obtenerValor();
             _this.peticion.enviar('panel-grafica-VGIP', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
                 $(`#grafica-VGIP-1`).empty();
-                console.log(respuesta);
                 _this.datos = respuesta['VGIP'];
                 _this.setGrafica([`grafica-VGIP-1`]);
             });

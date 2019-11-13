@@ -50,7 +50,7 @@
                 <div class="col-md-2">
                     <div class="form-group">
                         <label>&nbsp;</label>
-                        <select id="select-lapso-VGTO" style="width: 100%" disabled="true">
+                        <select id="select-numero-VGTO" style="width: 100%" disabled="true">
                             <option value="">Seleccionar</option>
                         </select>
                     </div>

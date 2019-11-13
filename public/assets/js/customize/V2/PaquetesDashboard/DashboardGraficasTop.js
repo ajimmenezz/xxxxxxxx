@@ -5,7 +5,7 @@ class DashboardGraficasTop extends Dashboard{
         this.panel = 'panel-grafica-VGTO';
         this.datos = datos;
         this.componentes = {
-            selects: ['select-tipo-VGTO','select-tiempo-VGTO','select-lapso-VGTO','select-zona-VGTO'],
+            selects: ['select-tipo-VGTO','select-tiempo-VGTO','select-numero-VGTO','select-zona-VGTO'],
             graficas: ['grafica-VGTO-1']
         };
         this.informacion = {
@@ -23,8 +23,8 @@ class DashboardGraficasTop extends Dashboard{
                 case 'select-tiempo-VGTO':
                     _this.eventoSelectTiempo(value);
                     break;
-                case 'select-lapso-VGTO':
-                    _this.eventoSelectLapso(value);
+                case 'select-numero-VGTO':
+                    _this.eventoSelectNumero(value);
                     break;
                 case 'select-zona-VGTO':
                     _this.eventoSelectZona(value);
@@ -49,24 +49,24 @@ class DashboardGraficasTop extends Dashboard{
         let _this = this;
         select.evento('change', function () {
             _this.informacion['tiempo'] = select.obtenerValor();
-            $('#select-lapso-VGTO').attr('disabled', false);
+            $('#select-numero-VGTO').attr('disabled', false);
             switch (select.obtenerValor()) {
                 case 'WEEK':
                     let semanas = [];
                     for (var i = 1; i < 53; i++) {
                         semanas.push(i);
                     }
-                    _this.objetos['select-lapso-VGTO'].cargaDatosEnSelect(semanas);
+                    _this.objetos['select-numero-VGTO'].cargaDatosEnSelect(semanas);
                     break;
                 case 'MONTH':
-                    _this.objetos['select-lapso-VGTO'].cargaDatosEnSelect([{id: 1, text: 'Enero'},{id: 2, text: 'Febrero'},{id: 3, text: 'Marzo'}
+                    _this.objetos['select-numero-VGTO'].cargaDatosEnSelect([{id: 1, text: 'Enero'},{id: 2, text: 'Febrero'},{id: 3, text: 'Marzo'}
                         ,{id: 4, text: 'Abril'},{id: 5, text: 'Mayo'},{id: 6, text: 'Junio'},{id: 7, text: 'Julio'},{id: 8, text: 'Agosto'},{id: 9, text: 'Septiembre'},{id: 10, text: 'Octubre'},{id: 11, text: 'Noviembre'},{id: 12, text: 'Diciembre'}]);
                     break;
             }
         });
     }
     
-    eventoSelectLapso(select){
+    eventoSelectNumero(select){
         let _this = this;
         select.evento('change', function () {
             if (_this.informacion['tiempo'] == 'WEEK') {
@@ -85,7 +85,7 @@ class DashboardGraficasTop extends Dashboard{
     eventoSelectZona(select){
         let _this = this;
         select.evento('change', function () {
-            _this.informacion['zona'] = select.obtenerTexto();
+            _this.informacion['zona'] = select.obtenerValor();
             _this.peticion.enviar('panel-grafica-VGTO', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
                 $(`#grafica-VGTO-1`).empty();
                 _this.datos = respuesta['VGTO'];
