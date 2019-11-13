@@ -59,8 +59,8 @@ class DashboardGraficasTop extends Dashboard{
                     _this.objetos['select-numero-VGTO'].cargaDatosEnSelect(semanas);
                     break;
                 case 'MONTH':
-                    _this.objetos['select-numero-VGTO'].cargaDatosEnSelect([{id: 1, text: 'Enero'},{id: 2, text: 'Febrero'},{id: 3, text: 'Marzo'}
-                        ,{id: 4, text: 'Abril'},{id: 5, text: 'Mayo'},{id: 6, text: 'Junio'},{id: 7, text: 'Julio'},{id: 8, text: 'Agosto'},{id: 9, text: 'Septiembre'},{id: 10, text: 'Octubre'},{id: 11, text: 'Noviembre'},{id: 12, text: 'Diciembre'}]);
+                    _this.objetos['select-numero-VGTO'].cargaDatosEnSelect([{id: '01', text: 'Enero'},{id: '02', text: 'Febrero'},{id: '03', text: 'Marzo'}
+                        ,{id: '04', text: 'Abril'},{id: '05', text: 'Mayo'},{id: '06', text: 'Junio'},{id: '07', text: 'Julio'},{id: '08', text: 'Agosto'},{id: '09', text: 'Septiembre'},{id: '10', text: 'Octubre'},{id: '11', text: 'Noviembre'},{id: '12', text: 'Diciembre'}]);
                     break;
             }
         });

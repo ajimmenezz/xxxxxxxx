@@ -203,23 +203,6 @@ class GestorDashboard {
         return array('VGZ' => $arrayZonas);
     }
 
-    private function mostrarConsultaVGZ(array $datos) {
-        if (!isset($datos['tiempo'])) {
-            $datos['tiempo'] = 'WEEK';
-        }
-
-        if (!isset($datos['zona']) || $datos['zona'] === '') {
-            $whereZona = "";
-        } else {
-            $whereZona = "AND Region = '" . $datos['zona'] . "'";
-        }
-
-        $metodoConsulta = 'getDatosVGZ' . $datos['tiempo'];
-        $arrayConsulta = $this->db->$metodoConsulta(array('numeroTiempo' => 4, 'where' => $whereZona));
-
-        return $arrayConsulta;
-    }
-
     public function getDatosVGTO(array $datos) {
         $arrayTop = array();
 
@@ -236,7 +219,7 @@ class GestorDashboard {
         $arrayConsulta = $this->db->$metodoConsulta($datos);
 
         foreach ($arrayConsulta as $key => $value) {
-            if ($datos['reportType'] !== 'lexmark') {
+            if (!in_array($datos['reportType'], array('lexmark', 'product', 'productline'))) {
                 array_push($arrayTop, array(
                     $value[0],
                     (int) $value[1],
@@ -270,6 +253,8 @@ class GestorDashboard {
                 $arrayTitulos = $this->titulosArrayGrafica('Tecnicos');
                 break;
             case 'lexmark':
+            case 'product':
+            case 'productline':
                 $arrayTitulos = [
                     'Sucursales',
                     "Total", ['role' => 'annotation', 'type' => 'number']

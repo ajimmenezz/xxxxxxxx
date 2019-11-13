@@ -50,7 +50,9 @@ class Modelo_GestorDashboard extends Base {
         }
 
         if (isset($datos['tipoServicio']) && $datos['tipoServicio'] !== '') {
-            $conditions .= " and base.Tipo = '" . $datos['tipoServicio'] . "' ";
+            if ($datos['tipoServicio'] !== 'Seleccionar') {
+                $conditions .= " and base.Tipo = '" . $datos['tipoServicio'] . "' ";
+            }
         }
 
         switch ($datos['tiempo']) {
@@ -312,106 +314,6 @@ class Modelo_GestorDashboard extends Base {
         return $consulta;
     }
 
-//    public function getDatosVGZWEEK(array $datos) {
-//        if ($datos['where'] === '') {
-//            $consulta = $this->consulta("SELECT 
-//                                        IF(Region IS NULL,  'SIN ZONA', Region) Region,
-//                                        SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
-//                                        SUM(IF(Estatus = 'En Atencion', 1, 0)) AS 'En Atencion',
-//                                        SUM(IF(Estatus = 'Problema', 1, 0)) AS Problema,
-//                                        SUM(IF(Estatus = 'Cerrado', 1, 0)) AS Cerrado
-//                                    FROM
-//                                            v_base_dashboard_sd
-//                                        WHERE
-//                                            YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-//                                            and Semana = WEEK(NOW(), 1)
-//                                            " . $datos['where'] . " 
-//                                    GROUP BY Region");
-//        } else {
-//            $consulta = $this->consulta("SELECT
-//                                        CONCAT('SEMANA' , ' ', Semana) AS Tiempo,
-//                                        IF(Region IS NULL,  'SIN ZONA', Region) Region,
-//                                        SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
-//                                        SUM(IF(Estatus = 'En Atencion', 1, 0)) AS 'En Atencion',
-//                                        SUM(IF(Estatus = 'Problema', 1, 0)) AS Problema,
-//                                        SUM(IF(Estatus = 'Cerrado', 1, 0)) AS Cerrado
-//                                    FROM
-//                                            v_base_dashboard_sd
-//                                        WHERE
-//                                            YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-//                                            and Mes between MONTH(NOW()) - (" . $datos['numeroTiempo'] . ") and MONTH(NOW())
-//                                            " . $datos['where'] . " 
-//                                    GROUP BY Region, Tiempo");
-//        }
-//        return $consulta;
-//    }
-//
-//    public function getDatosVGZMONTH(array $datos) {
-//        if ($datos['where'] === '') {
-//            $consulta = $this->consulta("SELECT 
-//                                        IF(Region IS NULL,  'SIN ZONA', Region) Region,
-//                                        SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
-//                                        SUM(IF(Estatus = 'En Atencion', 1, 0)) AS 'En Atencion',
-//                                        SUM(IF(Estatus = 'Problema', 1, 0)) AS Problema,
-//                                        SUM(IF(Estatus = 'Cerrado', 1, 0)) AS Cerrado
-//                                    FROM
-//                                            v_base_dashboard_sd
-//                                        WHERE
-//                                            YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-//                                            and Mes = MONTH(NOW())
-//                                            " . $datos['where'] . " 
-//                                    GROUP BY Region");
-//        } else {
-//            $consulta = $this->consulta("SELECT
-//                                        CONCAT('MES', ' ', Mes) AS Tiempo,
-//                                        IF(Region IS NULL,  'SIN ZONA', Region) Region,
-//                                        SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
-//                                        SUM(IF(Estatus = 'En Atencion', 1, 0)) AS 'En Atencion',
-//                                        SUM(IF(Estatus = 'Problema', 1, 0)) AS Problema,
-//                                        SUM(IF(Estatus = 'Cerrado', 1, 0)) AS Cerrado
-//                                    FROM
-//                                            v_base_dashboard_sd
-//                                        WHERE
-//                                            YEAR(CreatedTime) = YEAR(CURRENT_DATE())
-//                                            and Mes between MONTH(NOW()) - (" . $datos['numeroTiempo'] . ") and MONTH(NOW())
-//                                            " . $datos['where'] . " 
-//                                    GROUP BY Region, Tiempo");
-//        }
-//        return $consulta;
-//    }
-//
-//    public function getDatosVGZYEAR(array $datos) {
-//        if ($datos['where'] === '') {
-//            $consulta = $this->consulta("SELECT 
-//                                        IF(Region IS NULL,  'SIN ZONA', Region) Region,
-//                                        SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
-//                                        SUM(IF(Estatus = 'En Atencion', 1, 0)) AS 'En Atencion',
-//                                        SUM(IF(Estatus = 'Problema', 1, 0)) AS Problema,
-//                                        SUM(IF(Estatus = 'Cerrado', 1, 0)) AS Cerrado
-//                                    FROM
-//                                            v_base_dashboard_sd
-//                                        WHERE
-//                                            Anio = YEAR(NOW())
-//                                            " . $datos['where'] . " 
-//                                    GROUP BY Region");
-//        } else {
-//            $consulta = $this->consulta("SELECT 
-//                                CONCAT('AÑO', ' ', Anio) AS Tiempo,
-//                                        IF(Region IS NULL,  'SIN ZONA', Region) Region,
-//                                        SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
-//                                        SUM(IF(Estatus = 'En Atencion', 1, 0)) AS 'En Atencion',
-//                                        SUM(IF(Estatus = 'Problema', 1, 0)) AS Problema,
-//                                        SUM(IF(Estatus = 'Cerrado', 1, 0)) AS Cerrado
-//                                    FROM
-//                                            v_base_dashboard_sd
-//                                        WHERE
-//                                            Anio between YEAR(NOW()) - (" . $datos['numeroTiempo'] . ") and YEAR(NOW())
-//                                            " . $datos['where'] . " 
-//                                    GROUP BY Region");
-//        }
-//        return $consulta;
-//    }
-
     public function getDatosVGTO(array $datos) {
         $consulta = $this->consulta('SELECT * FROM t_permisos_dashboard');
         $consulta = [];
@@ -469,8 +371,8 @@ class Modelo_GestorDashboard extends Base {
                                 from (
                                     select 
                                     Contacto,
-                                    (select CarasCargadas from v_base_lexmark where Contacto = v1.Contacto and FileDate = v1.InitialDate) as InitialNumber,
-                                    (select CarasCargadas from v_base_lexmark where Contacto = v1.Contacto and FileDate = v1.EndDate) as FinalNumber
+                                    (select CarasCargadas from v_base_lexmark where Contacto = v1.Contacto and FileDate = v1.InitialDate GROUP BY Contacto) as InitialNumber,
+                                    (select CarasCargadas from v_base_lexmark where Contacto = v1.Contacto and FileDate = v1.EndDate GROUP BY Contacto) as FinalNumber
                                     from (
                                         select
                                         b1.Contacto,
