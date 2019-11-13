@@ -35,6 +35,11 @@ class Dashboard {
     setGrafica(graficas) {
         let _this = this;
         $.each(graficas, function (key, value) {
+            if (_this.datos.length == 1) {
+                _this.datos = [["TIEMPO", "Sin Datos"],
+                ["SEMANA", 0]]
+
+            }
             switch (value) {
                 case 'grafica-VGT-1':
                     _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'LineChart', true);
