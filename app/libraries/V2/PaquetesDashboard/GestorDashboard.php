@@ -179,11 +179,20 @@ class GestorDashboard {
         $arrayZonas[0] = $arrayTitulos;
 
         foreach ($arrayConsultaZonas as $key => $value) {
-            if (!isset($datos['zona'])) {
-                $titulo = $value['Region'];
-            } else {
-                $titulo = $value['Tiempo'];
-            }
+            $titulo = $value['Region'];
+
+                switch ($datos['tiempo']) {
+                    case 'MONTH':
+                        if (isset($datos['month']) && $datos['month'] > 0 && isset($datos['zona']) && $datos['zona'] !== '') {
+                            $titulo = $value['Tiempo'];
+                        }
+                        break;
+                    case 'WEEK':
+                        if (isset($datos['week']) && $datos['week'] > 0 && isset($datos['zona']) && $datos['zona'] !== '') {
+                            $titulo = $value['Tiempo'];
+                        }
+                        break;
+                }
 
             array_push(
                     $arrayZonas, array(
