@@ -10,7 +10,7 @@
                 <li id="btnGeneraExcelReportesComprasSAE"><a href="#"><i class="fa fa-file-pdf-o"></i> Generar Excel</a></li>
             </ul>
         </div>
-        <label id="btnRegresarBusquerdaReporteComprasSAE" class="btn btn-success btn-xs">
+        <label id="btnRegresar" class="btn btn-success btn-xs">
             <i class="fa fa fa-reply"></i> Regresar
         </label>
         <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-expand"><i class="fa fa-expand"></i></a>

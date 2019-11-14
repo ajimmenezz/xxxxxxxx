@@ -1,4 +1,4 @@
-$(function () {
+$(function() {
 
     var evento = new Base();
     var websocket = new Socket();
@@ -21,16 +21,24 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
-    tabla.generaTablaPersonal("#data-table-gastos", null, null, true, true, [[0, 'asc']]);
+    tabla.generaTablaPersonal("#data-table-gastos", null, null, true, true, [
+        [0, 'asc']
+    ]);
 
+    $('#btnExportarMisGastos').off('click');
+    $("#btnExportarMisGastos").on("click", function() {
+        evento.enviarEvento('Gasto/ExportMisGastos', {}, '#panelListaGastos', function(respuesta) {
+            window.open(respuesta.ruta, '_blank');
+        });
+    });
 
-    $('#data-table-gastos tbody').on('click', 'tr', function () {
+    $('#data-table-gastos tbody').on('click', 'tr', function() {
         var _fila = $(this);
         var datos = $('#data-table-gastos').DataTable().row(this).data();
         if (datos !== undefined) {
             var idGasto = datos[0];
 
-            evento.enviarEvento('Gasto/CargaGasto', {id: idGasto}, '#panelListaGastos', function (respuesta) {
+            evento.enviarEvento('Gasto/CargaGasto', { id: idGasto }, '#panelListaGastos', function(respuesta) {
                 $("#divFormularioGasto").empty().append(respuesta.html);
                 evento.cambiarDiv("#divListaGastos", "#divFormularioGasto", initFormulario(_fila));
             });
@@ -42,14 +50,14 @@ $(function () {
         select.crearSelect("select");
         _fila = arguments[0];
         file.crearUpload('#fotosGasto', 'Gasto/GuardarCambiosGasto', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'xml', 'msg']);
-        $("#listClientes").on("change", function () {
+        $("#listClientes").on("change", function() {
             $("#listProyectos").empty().append('<option value="">Selecciona . . .</option>');
             if ($(this).val() !== '') {
                 var datos = {
                     'id': $(this).val()
                 }
-                evento.enviarEvento('Gasto/ProyectosByCliente', datos, '#panelFormularioGasto', function (respuesta) {
-                    $.each(respuesta.proyectos, function (k, v) {
+                evento.enviarEvento('Gasto/ProyectosByCliente', datos, '#panelFormularioGasto', function(respuesta) {
+                    $.each(respuesta.proyectos, function(k, v) {
                         $("#listProyectos").append('<option data-tipo="' + v.Tipo + '" value="' + v.ID + '">' + v.Tipo + ' - ' + v.Nombre + '</option>')
                     });
                     $("#listProyectos").removeAttr("disabled");
@@ -61,14 +69,14 @@ $(function () {
             }
         });
 
-        $("#listProyectos").on("change", function () {
+        $("#listProyectos").on("change", function() {
             $("#listSucursales").empty().append('<option value="">Selecciona . . .</option>');
             if ($(this).val() !== '') {
                 var datos = {
                     'id': $(this).val()
                 }
-                evento.enviarEvento('Gasto/SucursalesByProyecto', datos, '#panelFormularioGasto', function (respuesta) {
-                    $.each(respuesta.sucursales, function (k, v) {
+                evento.enviarEvento('Gasto/SucursalesByProyecto', datos, '#panelFormularioGasto', function(respuesta) {
+                    $.each(respuesta.sucursales, function(k, v) {
                         $("#listSucursales").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
                     });
                     $("#listSucursales").removeAttr("disabled");
@@ -84,15 +92,15 @@ $(function () {
             }
         });
 
-        $("#listTipoBeneficiario").on("change", function () {
+        $("#listTipoBeneficiario").on("change", function() {
             $("#listBeneficiarios").empty().append('<option value="">Selecciona . . .</option>');
             if ($(this).val() !== '') {
                 var datos = {
                     'id': $(this).val(),
                     'proyecto': $("#listProyectos").val()
                 }
-                evento.enviarEvento('Gasto/BeneficiarioByTipo', datos, '#panelFormularioGasto', function (respuesta) {
-                    $.each(respuesta.beneficiarios, function (k, v) {
+                evento.enviarEvento('Gasto/BeneficiarioByTipo', datos, '#panelFormularioGasto', function(respuesta) {
+                    $.each(respuesta.beneficiarios, function(k, v) {
                         $("#listBeneficiarios").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
                     });
                     $("#listBeneficiarios").removeAttr("disabled");
@@ -102,15 +110,15 @@ $(function () {
             }
         });
 
-        $("#listTipoTrasnferencia").on("change", function () {
+        $("#listTipoTrasnferencia").on("change", function() {
             $("#listCategoria").empty().append('<option value="">Selecciona . . .</option>');
             select.cambiarOpcion("#listCategoria", '');
             if ($(this).val() !== '') {
                 var datos = {
                     'id': $(this).val()
                 }
-                evento.enviarEvento('Gasto/CategoriasByTipoTrans', datos, '#panelFormularioGasto', function (respuesta) {
-                    $.each(respuesta.categorias, function (k, v) {
+                evento.enviarEvento('Gasto/CategoriasByTipoTrans', datos, '#panelFormularioGasto', function(respuesta) {
+                    $.each(respuesta.categorias, function(k, v) {
                         $("#listCategoria").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
                     });
                     $("#listCategoria").removeAttr("disabled");
@@ -131,7 +139,7 @@ $(function () {
         }
 
         $("#checkCredito").on("click");
-        $("#checkCredito").on("click", function () {
+        $("#checkCredito").on("click", function() {
             if ($(this).is(":checked")) {
                 $("#fechaCredito").removeAttr("disabled");
                 $("#fechaCredito").attr("data-parsley-required", "true");
@@ -142,15 +150,15 @@ $(function () {
             }
         });
 
-        $("#listCategoria").on("change", function () {
+        $("#listCategoria").on("change", function() {
             $("#listSubcategoria").empty().append('<option value="">Selecciona . . .</option>');
             select.cambiarOpcion("#listSubcategoria", '');
             if ($(this).val() !== '') {
                 var datos = {
                     'id': $(this).val()
                 }
-                evento.enviarEvento('Gasto/SubcategoriasByCategoria', datos, '#panelFormularioGasto', function (respuesta) {
-                    $.each(respuesta.subcategorias, function (k, v) {
+                evento.enviarEvento('Gasto/SubcategoriasByCategoria', datos, '#panelFormularioGasto', function(respuesta) {
+                    $.each(respuesta.subcategorias, function(k, v) {
                         $("#listSubcategoria").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
                     });
                     $("#listSubcategoria").removeAttr("disabled");
@@ -161,15 +169,15 @@ $(function () {
             }
         });
 
-        $("#listSubcategoria").on("change", function () {
+        $("#listSubcategoria").on("change", function() {
             $("#listConceptos").empty().append('<option value="">Selecciona . . .</option>');
             select.cambiarOpcion("#listConceptos", '');
             if ($(this).val() !== '') {
                 var datos = {
                     'id': $(this).val()
                 }
-                evento.enviarEvento('Gasto/ConceptosBySubcategoria', datos, '#panelFormularioGasto', function (respuesta) {
-                    $.each(respuesta.conceptos, function (k, v) {
+                evento.enviarEvento('Gasto/ConceptosBySubcategoria', datos, '#panelFormularioGasto', function(respuesta) {
+                    $.each(respuesta.conceptos, function(k, v) {
                         $("#listConceptos").append('<option value="' + v.ID + '">' + v.Nombre + '</option>')
                     });
                     $("#listConceptos").removeAttr("disabled");
@@ -181,24 +189,24 @@ $(function () {
         });
 
         $("#btnAddConcepto").off("click");
-        $("#btnAddConcepto").on("click", function () {
+        $("#btnAddConcepto").on("click", function() {
             addConcepto();
         });
 
-        $("#txtMonto").on('keyup', function (e) {
+        $("#txtMonto").on('keyup', function(e) {
             if (e.keyCode == 13) {
                 addConcepto();
             }
         });
 
         $("#btnGuardarGasto").off("click");
-        $("#btnGuardarGasto").on("click", function () {
+        $("#btnGuardarGasto").on("click", function() {
             if (evento.validarFormulario('#formGasto')) {
                 var _conceptos = '[';
                 var total = 0;
                 var count = 0;
 
-                $('#table-conceptos-gasto tbody tr').each(function () {
+                $('#table-conceptos-gasto tbody tr').each(function() {
                     _conceptos += '{"categoria":"' + $(this).find('.value-categoria').val() + '"';
                     _conceptos += ',"subcategoria":"' + $(this).find('.value-subcategoria').val() + '"';
                     _conceptos += ',"concepto":"' + $(this).find('.value-concepto').val() + '"';
@@ -216,7 +224,7 @@ $(function () {
                 } else {
 
                     var _evidenciasAntes = '';
-                    $('.imagenesSolicitud').each(function () {
+                    $('.imagenesSolicitud').each(function() {
                         _evidenciasAntes += ',' + $(this).attr("href");
                     });
 
@@ -243,7 +251,7 @@ $(function () {
                         'Conceptos': _conceptos
                     };
 
-                    file.enviarArchivos('#fotosGasto', 'Gasto/GuardarCambiosGasto', '#panelFormularioGasto', datos, function (respuesta) {
+                    file.enviarArchivos('#fotosGasto', 'Gasto/GuardarCambiosGasto', '#panelFormularioGasto', datos, function(respuesta) {
                         if (respuesta.code == 200) {
                             _fila.click();
                         } else {
@@ -258,7 +266,7 @@ $(function () {
         });
 
         $(".deleteButton").off("click");
-        $(".deleteButton").on("click", function () {
+        $(".deleteButton").on("click", function() {
             var _thisButton = $(this);
             var _thisSource = $(this).attr("data-src");
             var filename = _thisSource.split('/').pop();
@@ -268,13 +276,13 @@ $(function () {
             evento.mostrarModal("Warning", _htmlModal);
 
             $("#btnModalConfirmar").off("click");
-            $("#btnModalConfirmar").on("click", function () {
+            $("#btnModalConfirmar").on("click", function() {
                 var datos = {
                     'Id': $("#IDGasto").val(),
                     'Source': _thisSource
                 };
 
-                evento.enviarEvento('Gasto/EliminarArchivo', datos, '#panelFormularioGasto', function (respuesta) {
+                evento.enviarEvento('Gasto/EliminarArchivo', datos, '#panelFormularioGasto', function(respuesta) {
                     if (respuesta.code == 200) {
                         evento.cerrarModal();
                         _thisButton.closest("div.thumbnail-pic").remove();
@@ -290,11 +298,11 @@ $(function () {
 
 
         $("#btnMarcarLeido").off("click");
-        $("#btnMarcarLeido").on("click", function () {
+        $("#btnMarcarLeido").on("click", function() {
             var datos = {
                 'Id': $("#IDGasto").val()
             };
-            evento.enviarEvento('Gasto/MarcarLeido', datos, '#panelFormularioGasto', function (respuesta) {
+            evento.enviarEvento('Gasto/MarcarLeido', datos, '#panelFormularioGasto', function(respuesta) {
                 if (respuesta.code == 200) {
                     evento.empezarCargando('#panelFormularioGasto');
                     location.reload();
@@ -343,7 +351,7 @@ $(function () {
 
     function actualizaTotal() {
         var total = 0;
-        $(".value-monto").each(function () {
+        $(".value-monto").each(function() {
             total = parseFloat(total) + parseFloat($(this).val());
         });
         total = parseFloat(Math.round(total * 100) / 100).toFixed(2);
@@ -352,7 +360,7 @@ $(function () {
 
     function actionsRemove() {
         $(".btnRemoveConcepto").off("click");
-        $(".btnRemoveConcepto").on("click", function () {
+        $(".btnRemoveConcepto").on("click", function() {
             $(this).closest("tr").remove();
             actualizaTotal();
         });
