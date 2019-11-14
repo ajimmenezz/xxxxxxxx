@@ -67,7 +67,7 @@ $(function () {
                     var requester = $("#requester-sd").val();
                     var sucursal_interna = $("#id-sucursal-interna").val();
                     var _cliente = $(this).val();
-                    
+
                     if (_cliente !== "") {
                         evento.enviarEvento('/Proyectos2/Planeacion/SucursalesByCliente', {'id': _cliente}, '#modal-dialogo', function (respuesta) {
                             $("#selectSucursal").empty().append("<option value=''>Selecciona . . .</option>");
@@ -152,9 +152,10 @@ $(function () {
                             evento.enviarEvento('Solicitud/Generar_Ticket', data, '#modal-dialogo', function (respuesta) {
                                 var fila = [];
                                 if (typeof respuesta === 'object') {
-                                    var numeroTicket = respuesta.ticket;
+                                    if (respuesta.responce === true) {
+                                        var numeroTicket = respuesta.ticket;
 //                                        eventoCalendario(numeroTicket);
-                                    evento.cargaContenidoModal('<div class="row">\n\
+                                        evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12 text-center">\n\
                                                                     <div class="form-group">\n\
                                                                         <p>Se genero el ticket <strong>' + respuesta.ticket + '</strong>  con exito y el personal encargado de brindar \n\
@@ -162,8 +163,53 @@ $(function () {
                                                                     </div>\n\
                                                                 </div>\n\
                                                             </div>');
-                                    $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
-                                    $('#data-table-solicitudes-asignadas').DataTable().row(_fila).remove().draw();
+                                        $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                        $('#data-table-solicitudes-asignadas').DataTable().row(this).remove().draw();
+                                    } else {
+                                        let htmlfolio = '';
+                                        if (respuesta.folios != null && respuesta.folios != 0) {
+                                            htmlfolio = ' y el folio <strong>' + respuesta.folios + '</strong>'
+                                        }
+                                        let html = '<div class="row">\n\
+                                                <div class="col-md-12 text-center">\n\
+                                                    <div class="form-group">\n\
+                                                        <p>Existe el Ticket <strong>' + respuesta.ticket + '</strong>' + htmlfolio + ' para esta solicitud</p>\n\
+                                                        <p>¿Quieres generar otro?</p>\n\
+                                                    </div>\n\
+                                                </div>\n\
+                                            </div>';
+                                        evento.cargaContenidoModal(html);
+                                        $('#btnModalConfirmar').removeClass('hidden').empty().append('Aceptar');
+                                        $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                        $('#btnModalConfirmar').on('click', function () {
+                                            $('#btnModalConfirmar').off('click');
+                                            data['generaOtro'] = true;
+                                            evento.enviarEvento('Solicitud/Generar_Ticket', data, '#modal-dialogo', function (respuesta) {
+                                                if (typeof respuesta === 'object') {
+                                                    var numeroTicket = respuesta.ticket;
+                                                    evento.cargaContenidoModal('<div class="row">\n\
+                                                                <div class="col-md-12 text-center">\n\
+                                                                    <div class="form-group">\n\
+                                                                        <p>Se genero el ticket <strong>' + respuesta.ticket + '</strong>  con exito y el personal encargado de brindar \n\
+                                                                           seguimiento al servicio ya fue notificado para su seguimiento. </p>\n\
+                                                                    </div>\n\
+                                                                </div>\n\
+                                                            </div>');
+                                                    $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                                    $('#data-table-solicitudes-asignadas').DataTable().row(this).remove().draw();
+                                                } else {
+                                                    evento.cargaContenidoModal('<div class="row">\n\
+                                                                <div class="col-md-12">\n\
+                                                                    <div class="form-group">\n\
+                                                                        <p>No se pudo generar el ticket por favor de volver a intentarlo. </p>\n\
+                                                                    </div>\n\
+                                                                </div>\n\
+                                                            </div>');
+                                                    $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                                }
+                                            });
+                                        });
+                                    }
                                 } else {
                                     evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12">\n\
@@ -538,9 +584,10 @@ $(function () {
                     evento.enviarEvento('Solicitud/Generar_Ticket', data, '#modal-dialogo', function (respuesta) {
                         var fila = [];
                         if (typeof respuesta === 'object') {
-                            var numeroTicket = respuesta.ticket;
-//                            eventoCalendario(numeroTicket);
-                            evento.cargaContenidoModal('<div class="row">\n\
+                            if (respuesta.responce === true) {
+                                var numeroTicket = respuesta.ticket;
+//                              eventoCalendario(numeroTicket);
+                                evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12 text-center">\n\
                                                                     <div class="form-group">\n\
                                                                         <p>Se genero el ticket <strong>' + respuesta.ticket + '</strong>  con exito y el personal encargado de brindar \n\
@@ -548,8 +595,53 @@ $(function () {
                                                                     </div>\n\
                                                                 </div>\n\
                                                             </div>');
-                            $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
-                            $('#data-table-solicitudes-asignadas').DataTable().row(this).remove().draw();
+                                $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                $('#data-table-solicitudes-asignadas').DataTable().row(this).remove().draw();
+                            } else {
+                                let htmlfolio = '';
+                                if (respuesta.folios != null && respuesta.folios != 0) {
+                                    htmlfolio = ' y el folio <strong>' + respuesta.folios + '</strong>'
+                                }
+                                let html = '<div class="row">\n\
+                                                <div class="col-md-12 text-center">\n\
+                                                    <div class="form-group">\n\
+                                                        <p>Existe el Ticket <strong>' + respuesta.ticket + '</strong>' + htmlfolio + ' para esta solicitud</p>\n\
+                                                        <p>¿Quieres generar otro?</p>\n\
+                                                    </div>\n\
+                                                </div>\n\
+                                            </div>';
+                                evento.cargaContenidoModal(html);
+                                $('#btnModalConfirmar').removeClass('hidden').empty().append('Aceptar');
+                                $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                $('#btnModalConfirmar').on('click', function () {
+                                    $('#btnModalConfirmar').off('click');
+                                    data['generaOtro'] = true;
+                                    evento.enviarEvento('Solicitud/Generar_Ticket', data, '#modal-dialogo', function (respuesta) {
+                                        if (typeof respuesta === 'object') {
+                                            var numeroTicket = respuesta.ticket;
+                                            evento.cargaContenidoModal('<div class="row">\n\
+                                                                <div class="col-md-12 text-center">\n\
+                                                                    <div class="form-group">\n\
+                                                                        <p>Se genero el ticket <strong>' + respuesta.ticket + '</strong>  con exito y el personal encargado de brindar \n\
+                                                                           seguimiento al servicio ya fue notificado para su seguimiento. </p>\n\
+                                                                    </div>\n\
+                                                                </div>\n\
+                                                            </div>');
+                                            $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                            $('#data-table-solicitudes-asignadas').DataTable().row(this).remove().draw();
+                                        } else {
+                                            evento.cargaContenidoModal('<div class="row">\n\
+                                                                <div class="col-md-12">\n\
+                                                                    <div class="form-group">\n\
+                                                                        <p>No se pudo generar el ticket por favor de volver a intentarlo. </p>\n\
+                                                                    </div>\n\
+                                                                </div>\n\
+                                                            </div>');
+                                            $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                        }
+                                    });
+                                });
+                            }
                         } else {
                             evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12">\n\

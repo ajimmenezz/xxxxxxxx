@@ -609,6 +609,11 @@ class Solicitud extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $solicitante = $this->DBS->getDatosSolicitante($datosSolicitud['Solicita']);
 
+        if (!is_null($datosSolicitud['Ticket'])) {
+            if(!isset($datos['generaOtro']))
+                return array('ticket' => $datosSolicitud['Ticket'], 'folios' => $datosSolicitud['Folio'], 'responce' => false);
+        }
+        
         if (empty($datos['ticket']) || is_null($datos['ticket'])) {
             $ticket = $this->Ticket->setTicket($datosSolicitud, $datos);
 
@@ -681,7 +686,7 @@ class Solicitud extends General {
                     echo $exc->getTraceAsString();
                 }
 
-                return array('ticket' => $ticket, 'folios' => $foliosServicios, 'solicitudes' => $this->getSolicitudesAsignadas());
+                return array('ticket' => $ticket, 'folios' => $foliosServicios, 'solicitudes' => $this->getSolicitudesAsignadas(), 'responce' => true);
             } else {
                 return FALSE;
             }
