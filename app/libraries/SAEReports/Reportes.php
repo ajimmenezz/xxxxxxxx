@@ -220,7 +220,7 @@ class Reportes extends General
         $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
         $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 25.0, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
         $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
-        $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', '','center', 'center', 'center', '', 'center', 'center', 'center'];
+        $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', '', 'center', 'center', 'center', '', 'center', 'center', 'center'];
         $this->Excel->setTableContent('A', 1, $movimientos, true, $arrayAlignMovimientos);
         /* End Hoja 2 */
 
@@ -531,18 +531,20 @@ class Reportes extends General
 
     public function mostrarReporteComprasSAEProyecto(array $datos)
     {
-        $claves = explode(",", $datos['claves']);
+        if ($datos['claves'] == "") {
+            $condicion = " where compras.FECHAELAB between '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 00:00:00'";
+        } else {
+            $claves = explode(",", $datos['claves']);
+            $condicion = " where compras.FECHAELAB between '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 00:00:00' and (1 <> 1";
+            foreach ($claves as $key => $value) {
+                $condicion .= " or compras.SU_REFER like '%" . $value . "%'
+              or libres.CAMPLIB1 like '%" . $value . "%'
+              or compras.SU_REFER like '%" . strtoupper($value) . "%'
+              or libres.CAMPLIB1 like '%" . strtoupper($value) . "%'";
+            }
 
-        $condicion = " where compras.FECHAELAB between '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 00:00:00' and (1 <> 1";
-
-        foreach ($claves as $key => $value) {
-            $condicion .= " or compras.SU_REFER like '%" . $value . "%'
-          or libres.CAMPLIB1 like '%" . $value . "%'
-          or compras.SU_REFER like '%" . strtoupper($value) . "%'
-          or libres.CAMPLIB1 like '%" . strtoupper($value) . "%'";
+            $condicion .= ")";
         }
-
-        $condicion .= ")";
 
         $query = "select
                   compras.CVE_DOC as OC,

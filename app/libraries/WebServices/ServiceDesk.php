@@ -9,7 +9,8 @@ use Controladores\Controller_Datos_Usuario as General;
  *
  * @author Freddy
  */
-class ServiceDesk extends General {
+class ServiceDesk extends General
+{
 
     private $Url;
     private $FIELDS;
@@ -17,7 +18,8 @@ class ServiceDesk extends General {
     private $modeloServiceDesck;
     private $error;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         ini_set('max_execution_time', 300);
         $this->Url = "http://mesadeayuda.cinemex.net:8080/sdpapi/request";
@@ -25,7 +27,8 @@ class ServiceDesk extends General {
         $this->modeloServiceDesck = \Modelos\Modelo_ServiceDesk::factory();
     }
 
-    private function getErrorPHP($errno, $errstr, $errfile, $errline) {
+    private function getErrorPHP($errno, $errstr, $errfile, $errline)
+    {
         $this->error = array();
 
         switch ($errno) {
@@ -46,7 +49,8 @@ class ServiceDesk extends General {
         throw new \Exception('Error para ingresar al SD');
     }
 
-    private function getDatosSD(string $url) {
+    private function getDatosSD(string $url)
+    {
         set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
         set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $datosSD = json_decode(file_get_contents($url));
@@ -56,7 +60,8 @@ class ServiceDesk extends General {
         return $datosSD;
     }
 
-    private function validarError(\stdClass $datos) {
+    private function validarError(\stdClass $datos, $folio = '')
+    {
         $estatus = null;
         $message = null;
 
@@ -67,12 +72,13 @@ class ServiceDesk extends General {
 
         if ($estatus == 'Failed') {
             $this->error['algo'] = $message;
-            $mensageError = $this->textoError($message);
+            $mensageError = $this->textoError($message . ' Folio SD: ' . $folio);
             throw new \Exception($mensageError);
         }
     }
 
-    private function textoError(string $error) {
+    private function textoError(string $error)
+    {
         switch ($error) {
             case 'API key received is not associated to any technician. Authentication failed.':
                 $textoError = 'La clave API recibida no está asociada a ningún técnico. Autenticación fallida.';
@@ -86,7 +92,7 @@ class ServiceDesk extends General {
             case 'Error when validating URL - Invalid URL for the requested operation.':
                 $textoError = 'URL no válida para la operación solicitada.';
                 break;
-            default :
+            default:
                 $textoError = $error;
                 break;
         }
@@ -102,7 +108,8 @@ class ServiceDesk extends General {
         return $textoError;
     }
 
-    public function validarKey(string $key) {
+    public function validarKey(string $key)
+    {
         try {
             $this->getFoliosTecnico($key);
             return array('code' => 200, 'messege' => $key);
@@ -111,24 +118,30 @@ class ServiceDesk extends General {
         }
     }
 
-    public function validarAPIKey(string $key) {
-        $respuestaKey = $this->validarKey($key);
-        $respuestaUsuario['code'] = 200;
-        $respuestaJefe['code'] = 200;
+    public function validarAPIKey(string $key = NULL)
+    {
         $usuario = $this->Usuario->getDatosUsuario();
 
-        if ($respuestaKey['code'] === 400) {
-            $key = $this->modeloServiceDesck->apiKeyUsuario($usuario['Id']);
-            $respuestaUsuario = $this->validarKey($key);
-        }
+        if (!empty($key)) {
+            $respuestaKey = $this->validarKey($key);
+            $respuestaUsuario['code'] = 200;
+            $respuestaJefe['code'] = 200;
 
-        if ($respuestaUsuario['code'] === 400) {
+            if ($respuestaKey['code'] === 400) {
+                $key = $this->modeloServiceDesck->apiKeyUsuario($usuario['Id']);
+                $respuestaUsuario = $this->validarKey($key);
+            }
+
+            if ($respuestaUsuario['code'] === 400) {
+                $key = $this->modeloServiceDesck->apiKeyJefe($usuario['Id']);
+                $respuestaJefe = $this->validarKey($key);
+            }
+
+            if ($respuestaJefe['code'] === 400) {
+                $key = '';
+            }
+        } else {
             $key = $this->modeloServiceDesck->apiKeyJefe($usuario['Id']);
-            $respuestaJefe = $this->validarKey($key);
-        }
-
-        if ($respuestaJefe['code'] === 400) {
-            $key = '';
         }
 
         return $key;
@@ -139,7 +152,8 @@ class ServiceDesk extends General {
      * 
      */
 
-    public function getFoliosTecnico(string $key) {
+    public function getFoliosTecnico(string $key)
+    {
         $input_data = '{"operation":{"details":{ "from": "0","limit": "5000","filterby": "All_Pending_User"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUESTS&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->Url . '?' . $this->FIELDS);
@@ -152,7 +166,8 @@ class ServiceDesk extends General {
      * 
      */
 
-    public function getDetallesFolio(string $key, string $folio) {
+    public function getDetallesFolio(string $key, string $folio)
+    {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '?' . $this->FIELDS);
 
@@ -169,7 +184,8 @@ class ServiceDesk extends General {
      * 
      */
 
-    public function getResolucionFolio(string $key, string $folio) {
+    public function getResolucionFolio(string $key, string $folio)
+    {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_RESOLUTION&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '?' . $this->FIELDS);
 
@@ -186,7 +202,8 @@ class ServiceDesk extends General {
      * 
      */
 
-    public function getTecnicosSD(string $key) {
+    public function getTecnicosSD(string $key)
+    {
         $Url2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/technician";
         $input_data = '{"operation":{"details":{ "parameter": { "name":"department", "value" : ""}}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
@@ -200,7 +217,8 @@ class ServiceDesk extends General {
      * 
      */
 
-    public function reasignarFolioSD(string $folio, string $tecnico, string $key) {
+    public function reasignarFolioSD(string $folio, string $tecnico, string $key)
+    {
         $input_data = '{"operation":{"details":{"technicianid":"' . $tecnico . '"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=ASSIGN_REQUEST&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '?' . $this->FIELDS);
@@ -213,7 +231,8 @@ class ServiceDesk extends General {
      * 
      */
 
-    public function resolucionFolioSD(string $folio, string $tecnico, string $key, string $descripcion) {
+    public function resolucionFolioSD(string $folio, string $tecnico, string $key, string $descripcion)
+    {
         $input_data = '{"operation":{"details":{"resolution":{"resolutiontext":"' . $descripcion . '"}}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=EDIT_RESOLUTION&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '/resolution?' . $this->FIELDS);
@@ -226,7 +245,8 @@ class ServiceDesk extends General {
      * 
      */
 
-    public function getFolios(string $key) {
+    public function getFolios(string $key)
+    {
         $input_data = '{"operation":{"details":{ "from": "0","limit": "5000","filterby": "All_Pending"}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST_FILTERS&TECHNICIAN_KEY=' . $key;
         $datos = file_get_contents($this->Url . '?' . $this->FIELDS);
@@ -245,44 +265,46 @@ class ServiceDesk extends General {
         $this->validarError($datosSD);
         return $datosSD;
     }
-    
-    public function getFolios2019(int $from) {
-        $url = 'http://mesadeayuda.cinemex.net:8080/api/v3/requests?input_data={"list_info":{"get_total_count":true,"row_count":100,"start_index":'.$from.',"filter_by":{"name":"36931_MyView"},"fields_required":["created_by","created_time","site","requester","assigned_time","last_updated_time","technician","status","id","category","subcategory","item","priority","group"]}}';
-        
+
+    public function getFolios2019(int $from)
+    {
+        $url = 'http://mesadeayuda.cinemex.net:8080/api/v3/requests?input_data={"list_info":{"get_total_count":true,"row_count":100,"start_index":' . $from . ',"filter_by":{"name":"36931_MyView"},"fields_required":["created_by","created_time","site","requester","assigned_time","resolved_time","last_updated_time","technician","status","id","category","subcategory","item","priority","group"]}}';
+
         $opts = array(
             'http' => array(
                 'method' => 'GET',
                 'header' => 'Authtoken: A8D6001B-EB63-4996-A158-1B968E19AB84'
             )
         );
-        
+
         $context = stream_context_create($opts);
         $result = json_decode(file_get_contents($url, false, $context), true);
-        
+
         return $result;
     }
-    
+
     /*
      * Encargado de obtener e insertar una resolicion en Service Desk
      * 
      */
 
-    public function setResolucionServiceDesk(string $key, string $folio, string $datos) {
+    public function setResolucionServiceDesk(string $key, string $folio, string $datos)
+    {
         $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/resolution/";
         $input_data = ''
-                . '{'
-                . ' "operation": {'
-                . '     "details": {'
-                . '         "resolution": {'
-                . '             "resolutiontext": "' . $this->mres($datos) . '"'
-                . '         }'
-                . '     }'
-                . ' }'
-                . '}';
+            . '{'
+            . ' "operation": {'
+            . '     "details": {'
+            . '         "resolution": {'
+            . '             "resolutiontext": "' . $this->mres($datos) . '"'
+            . '         }'
+            . '     }'
+            . ' }'
+            . '}';
         $FIELDS = "format=json&"
-                . "OPERATION_NAME=EDIT_RESOLUTION&"
-                . "INPUT_DATA=" . urlencode($input_data) . "&"
-                . "TECHNICIAN_KEY=" . $key;
+            . "OPERATION_NAME=EDIT_RESOLUTION&"
+            . "INPUT_DATA=" . urlencode($input_data) . "&"
+            . "TECHNICIAN_KEY=" . $key;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $URL2);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -296,34 +318,37 @@ class ServiceDesk extends General {
         return $jsonDecode;
     }
 
-    public function setNoteServiceDesk(string $key, string $folio, string $datos) {
+    public function setNoteServiceDesk(string $key, string $folio, string $datos)
+    {
         $html = str_replace('&nbsp', '', $datos);
         $html = str_replace('style="color:#FF0000";', '', $datos);
         $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/notes/";
         $input_data = '{operation:{details:{notes:{note:{isPublic:true,notesText:"' . $this->mres($html) . '"}}}}}';
         $FIELDS = "format=json"
-                . "&OPERATION_NAME=ADD_NOTE"
-                . "&TECHNICIAN_KEY=" . $key
-                . "&INPUT_DATA=" . urlencode($input_data);
+            . "&OPERATION_NAME=ADD_NOTE"
+            . "&TECHNICIAN_KEY=" . $key
+            . "&INPUT_DATA=" . urlencode($input_data);
         $datosSD = $this->getDatosSD($URL2 . '?' . $FIELDS);
         $this->validarError($datosSD);
         return $datosSD;
     }
 
-    public function setWorkLogServiceDesk(string $key, string $folio, string $datos) {
+    public function setWorkLogServiceDesk(string $key, string $folio, string $datos)
+    {
         $html = strip_tags($datos);
         $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio . "/worklogs/";
         $input_data = '{operation:{details:{worklogs:{worklog:{description:"' . $this->mres($html) . '",workMinutes:1}}}}}';
         $FIELDS = "format=json"
-                . "&OPERATION_NAME=ADD_WORKLOG"
-                . "&TECHNICIAN_KEY=" . $key
-                . "&INPUT_DATA=" . urlencode($input_data);
+            . "&OPERATION_NAME=ADD_WORKLOG"
+            . "&TECHNICIAN_KEY=" . $key
+            . "&INPUT_DATA=" . urlencode($input_data);
         $datosSD = $this->getDatosSD($URL2 . '?' . $FIELDS);
         $this->validarError($datosSD);
         return $datosSD;
     }
 
-    private function generateLogResolverSD(array $dataOperationSD) {
+    private function generateLogResolverSD(array $dataOperationSD)
+    {
         if ($dataOperationSD[0]->operation->result->status !== 'Success') {
             $user = $this->Usuario->getDatosUsuario();
             $date = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
@@ -332,12 +357,14 @@ class ServiceDesk extends General {
                 'Fecha' => $date,
                 'Codigo' => $dataOperationSD[0]->operation->result->status,
                 'Mensaje' => $dataOperationSD[0]->operation->result->message,
-                'Folio' => $dataOperationSD[1]);
+                'Folio' => $dataOperationSD[1]
+            );
             $this->modeloServiceDesck->saveLogUpgradeSD($dataToInsert);
         }
     }
 
-    private function mres($value) {
+    private function mres($value)
+    {
         $search = array("\\", "\x00", "\n", "\r", "'", '"', "\x1a");
         $replace = array("\\\\", "\\0", "\\n", "\\r", "\'", '\"', "\\Z");
 
@@ -349,7 +376,8 @@ class ServiceDesk extends General {
      * 
      */
 
-    public function nombreUsuarioServiceDesk(string $key, string $idUsuario) {
+    public function nombreUsuarioServiceDesk(string $key, string $idUsuario)
+    {
         $url2 = 'http://mesadeayuda.cinemex.net:8080/sdpapi/requester/?format=json&OPERATION_NAME=GET_ALL&INPUT_DATA={%22operation%22:{%22details%22:{%22department%22:%22Soporte%20TI%22}}}&TECHNICIAN_KEY=' . $key;
         $stringUsuarios = file_get_contents($url2);
         $objetoUsuarios = json_decode($stringUsuarios);
@@ -370,23 +398,24 @@ class ServiceDesk extends General {
      * 
      */
 
-    public function cambiarEstatusServiceDesk(string $key, string $estatus, string $folio) {
+    public function cambiarEstatusServiceDesk(string $key, string $estatus, string $folio)
+    {
         $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio;
         $input_data = ''
-                . '{'
-                . ' "operation": {'
-                . '     "details": {'
-                . '             "status": ' . $this->mres($estatus)
-                . '     }'
-                . ' }'
-                . '}';
+            . '{'
+            . ' "operation": {'
+            . '     "details": {'
+            . '             "status": ' . $this->mres($estatus)
+            . '     }'
+            . ' }'
+            . '}';
         $FIELDS = "format=json&"
-                . "OPERATION_NAME=EDIT_REQUEST&"
-                . "INPUT_DATA=" . urlencode($input_data) . "&"
-                . "TECHNICIAN_KEY=" . $key;
+            . "OPERATION_NAME=EDIT_REQUEST&"
+            . "INPUT_DATA=" . urlencode($input_data) . "&"
+            . "TECHNICIAN_KEY=" . $key;
 
         $datosSD = $this->getDatosSD($URL2 . '?' . $FIELDS);
-        $this->validarError($datosSD);
+        // $this->validarError($datosSD, $folio);
         return $datosSD;
     }
 
@@ -395,7 +424,8 @@ class ServiceDesk extends General {
      * 
      */
 
-    public function consultarDepartamentoTI(string $key) {
+    public function consultarDepartamentoTI(string $key)
+    {
         $input_data = '{"operation":{"details":{"department":""}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->UrlUsers . '?' . $this->FIELDS);
@@ -413,7 +443,8 @@ class ServiceDesk extends General {
         return $returnArray;
     }
 
-    public function getViewId(string $viewname, string $key) {
+    public function getViewId(string $viewname, string $key)
+    {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST_FILTERS&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->Url . '?' . $this->FIELDS);
         $this->validarError($datosSD);
@@ -426,7 +457,8 @@ class ServiceDesk extends General {
         return $viewid;
     }
 
-    public function getRequestsByFilter(string $viewId, string $key, int $resolucionAux = 1) {
+    public function getRequestsByFilter(string $viewId, string $key, int $resolucionAux = 1)
+    {
         $_key = $key;
         $usuarios = $this->consultarDepartamentoTI($_key);
 
@@ -467,20 +499,23 @@ class ServiceDesk extends General {
         }
     }
 
-    public function getRequestDetails($_id, $_key) {
+    public function getRequestDetails($_id, $_key)
+    {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST&TECHNICIAN_KEY=' . $_key;
         $datosSD = $this->getDatosSD($this->Url . '/' . $_id . '?' . $this->FIELDS);
         $this->validarError($datosSD);
         return $datosSD;
     }
 
-    public function getNotas(string $key, string $folio) {
+    public function getNotas(string $key, string $folio)
+    {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_NOTES&TECHNICIAN_KEY=' . $key;
         $data = json_decode(file_get_contents($this->Url . '/' . $folio . '/notes/?' . $this->FIELDS));
         return $data;
     }
 
-    public function getTicketServiceDesk(string $key, string $informacionSD) {
+    public function getTicketServiceDesk(string $key, string $informacionSD)
+    {
         $input_data = '{
                         "operation":{
                             "details": {
@@ -489,12 +524,11 @@ class ServiceDesk extends General {
                         }
                     }';
         $FIELDS = "format=json"
-                . "&OPERATION_NAME=ADD_REQUEST"
-                . "&TECHNICIAN_KEY=" . $key
-                . "&INPUT_DATA=" . urlencode($input_data);
+            . "&OPERATION_NAME=ADD_REQUEST"
+            . "&TECHNICIAN_KEY=" . $key
+            . "&INPUT_DATA=" . urlencode($input_data);
         $datosSD = $this->getDatosSD($this->Url . '/?' . $FIELDS);
         $this->validarError($datosSD);
         return $datosSD;
     }
-
 }

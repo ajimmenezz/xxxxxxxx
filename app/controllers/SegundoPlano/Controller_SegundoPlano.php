@@ -503,4 +503,8 @@ class Controller_SegundoPlano extends \CI_Controller {
         $this->mail->enviarCorreo('notificaciones@siccob.solutions', $correosPoliza[0], 'Reportes de Folios', $mensaje);
     }
 
+    public function updateRequestWithSDInfo(){
+        $this->solicitud->updateRequestWithSDInfo();
+    }
+
 }

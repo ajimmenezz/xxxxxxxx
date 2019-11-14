@@ -1310,6 +1310,8 @@ class Servicio extends General {
         $generales = $this->InformacionServicios->consultaInformacionCorrectivo($servicio);
         $idSolicitud = $this->DBS->consultaGeneral('SELECT IdSolicitud FROM t_servicios_ticket WHERE Id = "' . $servicio . '"');
         $detallesSD = 'Sin Información';
+        $avanceServicio = $this->Servicio->consultaAvanceServicio($servicio);
+        $sumaTipoDiagnostico = $this->getSumaTipoDiagnostico($servicio);
 
         if (empty($generales)) {
             $generales[0] = 'Sin Información';
@@ -1326,10 +1328,10 @@ class Servicio extends General {
                 $evidenciasDiagnostico = '';
             }
             $correctivosDiagnostico[0]['Evidencias'] = $evidenciasDiagnostico;
-            
-            if($correctivosDiagnostico[0]['IdTipoDiagnostico'] === '1'){
+
+            if ($correctivosDiagnostico[0]['IdTipoDiagnostico'] === '1') {
                 $bitacoraObservaciones = $this->InformacionServicios->getHistorialReporteEnFalso($servicio);
-                $correctivosDiagnostico[0]['BitacoraObservaciones'] = $bitacoraObservaciones; 
+                $correctivosDiagnostico[0]['BitacoraObservaciones'] = $bitacoraObservaciones;
             }
         }
         $tipoProblema = $this->DBS->consultaGeneral('SELECT Id, IdTipoProblema FROM t_correctivos_problemas WHERE IdServicio = "' . $servicio . '" ORDER BY Id DESC LIMIT 1');
@@ -1498,7 +1500,9 @@ class Servicio extends General {
             'notas' => $notas,
             'notasPdf' => $notasPdf,
             'detallesServicio' => $detallesServicio,
-            'detallesSD' => $detallesSD
+            'detallesSD' => $detallesSD,
+            'avanceServicio' => $avanceServicio,
+            'sumaTipoDiagnostico' => $sumaTipoDiagnostico
         ];
 
         return parent::getCI()->load->view('Poliza/Detalles/correctivoPdf', $data, TRUE);
@@ -1714,12 +1718,14 @@ class Servicio extends General {
                     );
                 }
             }
-            if($datos['perfil'] == 54 || $datos['perfil'] == 78){
-                $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-                $folio = $this->DBS->consultaGeneral('SELECT Folio from t_solicitudes where Id = "'.$datos['solicitud'].'"');
-                $htmlAvanceProblema = $datos["descripcion"].'<br><a href="https://'. $_SERVER['SERVER_NAME'] .$archivos.'">Link de Evidencia</a>';
-                $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
-                var_dump($htmlAvanceProblema);
+            if (isset($datos['perfil'])) {
+                if ($datos['perfil'] == 54 || $datos['perfil'] == 78) {
+                    $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
+                    $folio = $this->DBS->consultaGeneral('SELECT Folio from t_solicitudes where Id = "' . $datos['solicitud'] . '"');
+                    $htmlAvanceProblema = $datos["descripcion"] . '<br><a href="https://' . $_SERVER['SERVER_NAME'] . $archivos . '">Link de Evidencia</a>';
+                    $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
+                    var_dump($htmlAvanceProblema);
+                }
             }
             $consulta = '';
         } else {
@@ -1757,7 +1763,7 @@ class Servicio extends General {
                 }
 
                 if ($verificarServicioSinClaficar[0]['IdTipoServicio'] === '41') {
-                    if($datos['perfil'] != 54 || $datos['perfil'] != 78){
+                    if ($datos['perfil'] != 54 || $datos['perfil'] != 78) {
                         $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
                     }
                 } else {
@@ -2834,10 +2840,10 @@ class Servicio extends General {
 
         if (!empty($servicio['folio']) && $servicio['folio'] !== '0') {
             $ruta = 'http://' . $_SERVER['HTTP_HOST'] . '/Phantom/Folio/' . $servicio['folio'];
-        }else{
+        } else {
             $ruta = 'http://' . $_SERVER['HTTP_HOST'] . '/Phantom/Servicio/' . $servicio['servicio'];
         }
-        
+
         $datosServicio = $this->DBS->getServicios('SELECT
                                                 sucursal(IdSucursal) Sucursal,
                                                 (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
@@ -2868,6 +2874,13 @@ class Servicio extends General {
                     $titulo = 'Resumen de Servicio - Correctivo';
                     $contenido .= $this->getDetallesCorrectivo($value['Id']);
                     break;
+                case '11': case 11:
+                    $titulo = 'Resumen de Servicio - Censo';
+                    $contenido = $this->getDetallesCenso($value['Id']);
+                    break;
+                case '12': case 12:
+                    $titulo = 'Resumen de Servicio - Mantenimiento General';
+                    $contenido = $this->Servicio->getDetallesMantenimientoPoliza($value['Id']);
             }
 
             if ($verificarSeguimiento[0]['Seguimiento'] === '0') {
