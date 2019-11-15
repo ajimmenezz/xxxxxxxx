@@ -168,6 +168,11 @@ $(function () {
                         validarExpresion = expresion.test(validarInput);
                         mensajeError = 'Deben ser solo números.';
                         break;
+                    case 'SDKey':
+                        var expresion = /^([a-z]+[0-9]+)|([0-9]+[a-z]+)/i;;
+                        validarExpresion = expresion.test(validarInput);
+                        mensajeError = 'Deben ser números y letras.';
+                        break;
                     default:
                         expresion = /^$/;
                 }
@@ -272,6 +277,17 @@ $(function () {
 
     $('#inputToken').off("click");
     $('#inputToken').on('click', function () {
+        mostrarCargaPagina();
+        var data = {};
+        evento.enviarEvento('PerfilUsuario/ActualizarTokenUsuario', data, '', function (respuesta) {
+            if (respuesta) {
+                recargarPagina();
+            }
+        });
+    });
+    
+    $('#inputSD').off("click");
+    $('#inputSD').on('click', function () {
         mostrarCargaPagina();
         var data = {};
         evento.enviarEvento('PerfilUsuario/ActualizarTokenUsuario', data, '', function (respuesta) {
