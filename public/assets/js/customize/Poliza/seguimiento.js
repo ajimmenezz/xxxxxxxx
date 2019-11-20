@@ -142,15 +142,16 @@ $(function () {
                         personalizarDependiendoSucursalMantenimiento(respuesta);
                         break;
                     case '20':
+                    case '27':
                         iniciarElementosPaginaSeguimientoCorrectivo(respuesta, datosTabla);
                         eventosParaSeccionSeguimientoCorrectivo(datosTabla, respuesta);
                         personalizarDependiendoSucursalCorrectivo(respuesta);
                         break;
                         //Servicio Checklist
-                    case '27':
-                        iniciarVistaChecklist(data, datosTabla, respuesta);
-                        eventosChecklist(datosTabla, respuesta);
-                        break;
+//                    case '27':
+//                        iniciarVistaChecklist(data, datosTabla, respuesta);
+//                        eventosChecklist(datosTabla, respuesta);
+//                        break;
                 }
             }
         });

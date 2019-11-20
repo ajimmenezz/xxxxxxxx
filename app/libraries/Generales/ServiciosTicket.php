@@ -436,7 +436,7 @@ class ServiciosTicket extends General {
                         $data['informacionServicio']['serviciosAsignados'] = $this->getServiciosAsignados('11');
                         break;
                 }
-            } else if ($datosServicio['IdTipoServicio'] === '20') {
+            } else if ($datosServicio['IdTipoServicio'] === '20' || $datosServicio['IdTipoServicio'] === '27') {
                 $data['historialAvancesProblemas'] = $this->mostrarHistorialAvancesProblemas($datos['servicio']);
                 $data['bitacoraReporteFalso'] = $this->SeguimientoPoliza->mostrarBitacoraReporteFalso($datos['servicio']);
                 /* Aqui comienzan las lineas de seguimiento de los servicios de Correctivo */
@@ -500,22 +500,23 @@ class ServiciosTicket extends General {
                         $data['informacionServicio']['serviciosAsignados'] = $this->getServiciosAsignados('11');
                         break;
                 }
-            } else if ($datosServicio['IdTipoServicio'] === '27') {
-                switch ($datos['operacion']) {
-                    case '1':
-                        $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '2', '4');
-                        $this->setStatusSD($datosServicio['Folio']);
-                        $data['informacion']['serviciosAsignados'] = $this->getServiciosAsignados('11');
-                        $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $datosServicio['Ticket'] . '"');
-                        break;
-                    case '2':
-                        $data['informacion'] = $this->getServicioChecklist(array('ticket' => $datosServicio['Ticket'], 'servicio' => $datos['servicio']));
-                        $data['catalogoCategorias'] = $this->DBMP->consultaCategorias();
-                        $data['categoriasRevisionPunto'] = $this->DBMP->mostrarCategoriaRevisionPunto();
-                        $data['formulario'] = parent::getCI()->load->view('Poliza/InformacionGeneralChecklist', $data, TRUE);
-                        break;
-                }
-            }
+            } 
+//            else if ($datosServicio['IdTipoServicio'] === '27') {
+//                switch ($datos['operacion']) {
+//                    case '1':
+//                        $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '2', '4');
+//                        $this->setStatusSD($datosServicio['Folio']);
+//                        $data['informacion']['serviciosAsignados'] = $this->getServiciosAsignados('11');
+//                        $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $datosServicio['Ticket'] . '"');
+//                        break;
+//                    case '2':
+//                        $data['informacion'] = $this->getServicioChecklist(array('ticket' => $datosServicio['Ticket'], 'servicio' => $datos['servicio']));
+//                        $data['catalogoCategorias'] = $this->DBMP->consultaCategorias();
+//                        $data['categoriasRevisionPunto'] = $this->DBMP->mostrarCategoriaRevisionPunto();
+//                        $data['formulario'] = parent::getCI()->load->view('Poliza/InformacionGeneralChecklist', $data, TRUE);
+//                        break;
+//                }
+//            }
         } else {
             $request_url = explode("/", $_SERVER['REQUEST_URI']);
             $idDepartamento = 0;
