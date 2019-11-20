@@ -58,8 +58,10 @@ Botones.prototype.iniciarBotonesGenerales = function () {
 
     $("#btnGeneraPdfServicio").off("click");
     $("#btnGeneraPdfServicio").on("click", function () {                  
+            console.log('pumas');
         evento.enviarEvento('/Servicio/Servicio_ToPdf', data, '#seccion-datos-seguimiento', function (respuesta) {
-            window.open('/' + respuesta.link);
+            console.log(respuesta);
+            window.open(respuesta.link);
         });
     });
 

@@ -1013,7 +1013,7 @@ class InformacionServicios extends General {
     public function getApiKeyByUser(string $usuario) {
         $keyTecnico = $this->MSP->getApiKeyByUser($usuario);
 
-        if(empty($keyTecnico)){
+        if (empty($keyTecnico)) {
             $keyTecnico = $this->MSD->apiKeyJefe($usuario);
         }
 
@@ -1021,7 +1021,7 @@ class InformacionServicios extends General {
 
         if ($respuestaKey['code'] === 400) {
             $key = $this->MSD->apiKeyJefe($usuario);
-        }else{
+        } else {
             $key = $respuestaKey['messege'];
         }
 
@@ -1105,7 +1105,12 @@ class InformacionServicios extends General {
         inner join t_correctivos_diagnostico tcd on tcg.IdServicio = tcd.IdServicio
         where tcg.IdServicio = '" . $id . "'
         order by tcd.Id desc limit 1");
-        return $consulta[0];
+
+        if (!empty($consulta)) {
+            return $consulta[0];
+        } else {
+            return $consulta;
+        }
     }
 
     private function getProblemaCorrectivoForPDF(int $id) {
@@ -1290,6 +1295,30 @@ class InformacionServicios extends General {
                 return ["code" => 500, "message" => "The Folio " . $datos['folio'] . " doesn't have any registered service"];
             }
         }
+    }
+
+    public function definirPDF(array $datos) {
+        $tipoServicio = $this->DBST->getTipoByServicio($datos['servicio']);
+        $verificarSeguimiento = $this->DBST->verificarServiciosDepartamento($tipoServicio[0]['IdTipoServicio']);
+        $infoServicio = $this->getGeneralesServicio($datos['servicio']);
+
+        if ($verificarSeguimiento === '0') {
+            $this->setPDFContentSinSeguimiento($infoServicio['Id'], $datos);
+        } else {
+            switch ($infoServicio['IdTipoServicio']) {
+                case 20:
+                case '20':
+                    $this->setPDFContentCorrectivo($infoServicio['Id'], $datos);
+                    break;
+            }
+        }
+
+        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', 'Ticket_' . $infoServicio['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $infoServicio['TipoServicio']);
+        
+        $this->pdf->Output('F', $carpeta, true);
+        $carpeta = substr($carpeta, 1);
+        
+        return $carpeta;
     }
 
     private function setPDFContentSinSeguimiento(int $id, array $datos) {
@@ -1495,10 +1524,13 @@ class InformacionServicios extends General {
 
     private function setPDFContentCorrectivo(int $id, array $datos) {
         $diagnostico = $this->getDiagnosticoCorrectivoForPDF($id);
-        $this->setDiagnosticoCorrectivoPDF($diagnostico, $datos);
 
-        if (in_array($diagnostico['IdTipoDiagnostico'], [1, '1',])) {
-            $this->setHistorialReporteEnFalso($id, $datos);
+        if (!empty($diagnostico)) {
+            $this->setDiagnosticoCorrectivoPDF($diagnostico, $datos);
+
+            if (in_array($diagnostico['IdTipoDiagnostico'], [1, '1',])) {
+                $this->setHistorialReporteEnFalso($id, $datos);
+            }
         }
 
         $this->setAvancesProblemasPDF($id, $datos);
@@ -1530,7 +1562,6 @@ class InformacionServicios extends General {
         $this->setCellValue(75, 5, $diagnostico['Area'] . " " . $diagnostico['Punto'], 'L');
         $this->setCoordinates(125, $this->y - 5);
         $this->setCellValue(75, 5, $diagnostico['Serie'], 'L');
-        ;
 
         $fill = false;
         if (in_array($diagnostico['IdTipoDiagnostico'], [4, '4'])) {
