@@ -273,26 +273,41 @@ class Modelo_GestorDashboard extends Base {
 
         switch ($datos['tiempo']) {
             case 'MONTH':
-                if (isset($datos['month']) && $datos['month'] > 0) {
-                    $conditions .= " and base.Mes between ('" . $datos['month'] . "' - 4) and '" . $datos['month'] . "' ";
+                if (isset($datos['month']) && $datos['month'] > 0 && isset($datos['zona']) && $datos['zona'] !== '') {
+                    $conditions .= " and base.Mes between ('" . $datos['month'] . "' - " . $datos['numeroTiempo'] . ") and '" . $datos['month'] . "' ";
+                    $field = " cap_first(MONTHNAME(CreatedTime)) as Tiempo,";
+                    $order = " order by Anio, Mes ";
+                    $group = " GROUP BY Tiempo";
+                } elseif (isset($datos['month']) && $datos['month'] > 0) {
+                    $conditions .= " and base.Mes = ". $datos['month'];
+                    $field = "";
+                    $order = "";
+                    $group = " GROUP BY Region";
                 } else {
-//                    $conditions .= " and base.Mes between (MONTH(now()) - " . $datos['numeroTiempo'] . ") and MONTH(now()) ";
                     $conditions .= " and base.Mes = MONTH(now())";
+                    $field = "";
+                    $order = "";
+                    $group = " GROUP BY Region";
                 }
-                $field = " cap_first(MONTHNAME(CreatedTime)) as Tiempo,";
-                $order = " order by Anio, Mes ";
-
                 break;
 
             default:
-                if (isset($datos['week']) && $datos['week'] > 0) {
-                    $conditions .= " and base.Semana between ('" . $datos['week'] . "' - 4) and '" . $datos['week'] . "' ";
+                if (isset($datos['week']) && $datos['week'] > 0 && isset($datos['zona']) && $datos['zona'] !== '') {
+                    $conditions .= " and base.Semana between ('" . $datos['week'] . "' - " . $datos['numeroTiempo'] . ") and '" . $datos['week'] . "' ";
+                    $field = " CONCAT('SEMANA', ' ', Semana) as Tiempo,";
+                    $order = " order by Anio, Semana";
+                    $group = "GROUP BY Tiempo";
+                } elseif (isset($datos['week']) && $datos['week'] > 0) {
+                    $conditions .= " and base.Semana = " . $datos['week'];
+                    $field = "";
+                    $order = "";
+                    $group = " GROUP BY Region";
                 } else {
-//                    $conditions .= " and base.Semana between (WEEK(now(),1) - " . $datos['numeroTiempo'] . ") and WEEK(now(),1)	";
                     $conditions .= " and base.Semana = WEEK(now(),1)";
+                    $field = "";
+                    $order = "";
+                    $group = " GROUP BY Region";
                 }
-                $field = " CONCAT('SEMANA', ' ', Semana) as Tiempo,";
-                $order = " order by Anio, Semana";
 
                 break;
         }
@@ -308,9 +323,42 @@ class Modelo_GestorDashboard extends Base {
                                         SUM(IF(Estatus = 'Cerrado', 1, 0)) AS Cerrado
                                     FROM
                                     v_base_dashboard_sd base
-                                    " . $conditions . "
-                                    GROUP BY Tiempo " . $order);
+                                    " . $conditions . $group . $order);
 
+        return $consulta;
+    }
+
+    public function getDatosVGZWEEK(array $datos) {
+        if ($datos['where'] === '') {
+            $consulta = $this->consulta("SELECT 
+                                        IF(Region IS NULL,  'SIN ZONA', Region) Region,
+                                        SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
+                                        SUM(IF(Estatus = 'En Atencion', 1, 0)) AS 'En Atencion',
+                                        SUM(IF(Estatus = 'Problema', 1, 0)) AS Problema,
+                                        SUM(IF(Estatus = 'Cerrado', 1, 0)) AS Cerrado
+                                    FROM
+                                            v_base_dashboard_sd
+                                        WHERE
+                                            YEAR(CreatedTime) = YEAR(CURRENT_DATE())
+                                            and Semana = WEEK(NOW(), 1)
+                                            " . $datos['where'] . " 
+                                    GROUP BY Region");
+        } else {
+            $consulta = $this->consulta("SELECT
+                                        CONCAT('SEMANA' , ' ', Semana) AS Tiempo,
+                                        IF(Region IS NULL,  'SIN ZONA', Region) Region,
+                                        SUM(IF(Estatus = 'Abierto', 1, 0)) AS Abierto,
+                                        SUM(IF(Estatus = 'En Atencion', 1, 0)) AS 'En Atencion',
+                                        SUM(IF(Estatus = 'Problema', 1, 0)) AS Problema,
+                                        SUM(IF(Estatus = 'Cerrado', 1, 0)) AS Cerrado
+                                    FROM
+                                            v_base_dashboard_sd
+                                        WHERE
+                                            YEAR(CreatedTime) = YEAR(CURRENT_DATE())
+                                            and Mes between MONTH(NOW()) - (" . $datos['numeroTiempo'] . ") and MONTH(NOW())
+                                            " . $datos['where'] . " 
+                                    GROUP BY Region, Tiempo");
+        }
         return $consulta;
     }
 
