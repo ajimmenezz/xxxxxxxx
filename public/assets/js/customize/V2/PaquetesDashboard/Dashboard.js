@@ -37,7 +37,7 @@ class Dashboard {
         $.each(graficas, function (key, value) {
             if (_this.datos.length == 1) {
                 _this.datos = [["TIEMPO", "Sin Datos"],
-                ["SEMANA", 0]]
+                    ["SEMANA", 0]]
 
             }
             switch (value) {
@@ -54,7 +54,11 @@ class Dashboard {
                     _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'ColumnChart', true);
                     break;
                 case 'grafica-VGTO-1':
-                    _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'ColumnChart', true);
+                    if (_this.informacion.reportType === "product") {
+                        _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'LineChart', true);
+                    } else {
+                        _this.objetos[value] = new GraficaGoogle(value, _this.datos, 'ColumnChart', true);
+                    }
                     break;
 
                 default:
@@ -64,6 +68,7 @@ class Dashboard {
             _this.objetos[value].inicilizarGrafica({
                 curveType: 'function',
                 pointSize: 10,
+                colors: ['blue', 'yellow', 'red', 'green']
             });
         });
     }
