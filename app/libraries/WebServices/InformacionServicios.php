@@ -28,6 +28,7 @@ class InformacionServicios extends General {
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
         $this->MSD = \Modelos\Modelo_ServiceDesk::factory();
         $this->DBST = \Modelos\Modelo_ServicioTicket::factory();
+        $this->DBC = \Modelos\Modelo_Censos::factory();
         $this->pdf = new PDFAux();
     }
 
@@ -1779,7 +1780,6 @@ class InformacionServicios extends General {
     }
 
     private function setCensoPDF(string $idServicio, $datos) {
-//        if (($this->y + 26) > 276) {
         $fill = false;
         if (isset($datos['folio'])) {
             $this->setHeaderPDF("Resumen de Censo", $datos['folio']);
@@ -1789,44 +1789,79 @@ class InformacionServicios extends General {
 
         $fill = !$fill;
 
+        $this->setTotalLineas(array('servicio' => $datos['servicio'], 'fill' => $fill));
+        $this->setTotalAreas(array('servicio' => $datos['servicio'], 'fill' => $fill));
+        $this->setCensos(array('servicio' => $datos['servicio'], 'fill' => $fill, 'folio' => $datos['folio']));
+    }
 
+    private function setTotalLineas(array $datos) {
         $this->setStyleHeader();
         $this->setHeaderValue("Total de Campos en Pos", 90);
 
         $this->setCoordinates(10);
-        $this->setStyleSubtitle();
-        $this->setCellValue(45, 5, "Área", 'L', $fill);
-        $this->setStyleSubtitle();
-        $this->setCoordinates(55, $this->y - 5);
-        $this->setCellValue(45, 5, 'Total', 'L', $fill);
+        $this->setStyleTitle();
+        $this->setCellValue(70, 5, "Área", 'L', $datos['fill']);
+        $this->setStyleTitle();
+        $this->setCoordinates(80, $this->y - 5);
+        $this->setCellValue(20, 5, 'Total', 'L', $datos['fill']);
 
+        $totalAreas = $this->DBC->getTotalAreas($datos['servicio']);
 
-        $this->setCoordinates(110, $this->y - 11);
+        foreach ($totalAreas as $key => $value) {
+            $this->setCoordinates(10);
+            $this->setStyleSubtitle();
+            $this->setCellValue(70, 5, $value['Area'], 'L');
+            $this->setStyleSubtitle();
+            $this->setCoordinates(80, $this->y - 5);
+            $this->setCellValue(20, 5, $value['Total'], 'L');
+        }
+    }
+
+    private function setTotalAreas(array $datos) {
+        $this->setCoordinates(110, $this->y - 96);
         $this->setStyleHeader();
         $this->setHeaderValue("Total de Equipos", 90);
-        
+
         $this->setCoordinates(110);
-        $this->setStyleSubtitle();
-        $this->setCellValue(45, 5, "Línea", 'L', $fill);
-        $this->setStyleSubtitle();
-        $this->setCoordinates(155, $this->y - 5);
-        $this->setCellValue(45, 5, 'Total', 'L', $fill);
+        $this->setStyleTitle();
+        $this->setCellValue(70, 5, "Línea", 'L', $datos['fill']);
+        $this->setStyleTitle();
+        $this->setCoordinates(180, $this->y - 5);
+        $this->setCellValue(20, 5, 'Total', 'L', $datos['fill']);
 
+        $totalLineas = $this->DBC->getTotalLineas($datos['servicio']);
 
+        foreach ($totalLineas as $key => $value) {
+            $this->setCoordinates(110);
+            $this->setStyleSubtitle();
+            $this->setCellValue(70, 5, $value['Linea'], 'L');
+            $this->setStyleSubtitle();
+            $this->setCoordinates(180, $this->y - 5);
+            $this->setCellValue(20, 5, $value['Total'], 'L');
+        }
+    }
 
+    private function setCensos(array $datos) {
+        $this->setHeaderPDF('Resumen de Censo', $datos['folio']);
+
+        $this->setStyleHeader();
+        $this->setHeaderValue("Información del Censo");
 
         $this->setCoordinates(10);
-        $this->setStyleSubtitle();
-        $this->setCellValue(45, 5, "Área2", 'L');
-        $this->setStyleSubtitle();
-        $this->setCoordinates(55, $this->y - 5);
-        $this->setCellValue(45, 5, 'Total2', 'L');
-        $this->setCoordinates(110, $this->y - 5);
-        $this->setStyleSubtitle();
-        $this->setCellValue(45, 5, "Línea2", 'L');
-        $this->setStyleSubtitle();
-        $this->setCoordinates(155, $this->y - 5);
-        $this->setCellValue(45, 5, 'Total2', 'L');
+        $this->setStyleTitle();
+        $this->setCellValue(45, 5, "Área", 'L', $datos['fill']);
+//        $this->setStyleTitle();
+//        $this->setCoordinates(45, $this->y - 5);
+//        $this->setCellValue(15, 5, 'Punto', 'L', $datos['fill']);
+//        $this->setStyleTitle();
+//        $this->setCoordinates(70, $this->y - 5);
+//        $this->setCellValue(60, 5, 'Modelo', 'L', $datos['fill']);
+//        $this->setStyleTitle();
+//        $this->setCoordinates(105, $this->y - 5);
+//        $this->setCellValue(35, 5, 'Serie', 'L', $datos['fill']);
+//        $this->setStyleTitle();
+//        $this->setCoordinates(140, $this->y - 5);
+//        $this->setCellValue(35, 5, 'No. Terminal', 'L', $datos['fill']);
     }
 
     private function setHeaderPDF(string $titulo, string $folio = '') {
