@@ -818,11 +818,13 @@ class Servicio extends General {
 //                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
 //                                            FROM t_servicios_ticket
 //                                            WHERE Id = "' . $servicio['servicio'] . '"');
+        
         $pdf = $this->InformacionServicios->definirPDF(array('servicio' => $servicio['servicio']));
 //
 //
 //
 //        $link = $this->Phantom->htmlToPdf($archivo, $ruta, $datosServicio[0]);
+//        var_dump($link);
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'http://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
@@ -831,6 +833,7 @@ class Servicio extends General {
         }
         
         return ['link' => $path];
+//        return ['link' => $link];
     }
 
     public function getTipoByServicio(string $servicio) {
