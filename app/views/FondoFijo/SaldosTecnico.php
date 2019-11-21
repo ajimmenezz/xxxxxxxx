@@ -19,42 +19,39 @@
                             <table id="table-cuentas" class="table table-bordered table-striped table-condensed">
                                 <thead>
                                     <?php
-                                    
-                                         if (isset($datos['SaldoTecnico']) && !empty($datos['SaldoTecnico'])) {
-                                             echo "<tr>";
-                                             echo "<th class='none'>IdUsuario</th>";
-                                             echo "<th class='all'>Técnico</th>";
-                                             foreach ($datos['SaldoTecnico']['TiposSaldo'] as $key => $value1) {
-                                                 echo "". " <th> SALDO " . $value1['Nombre'] . "</th>";
-                                             }
-                                             echo "</tr>";
-                                         }
+
+                                    if (isset($datos['SaldoTecnico']) && !empty($datos['SaldoTecnico'])) {
+                                        echo "<tr>";
+                                        echo "<th class='none'>IdUsuario</th>";
+                                        echo "<th class='all'>Técnico</th>";
+                                        foreach ($datos['SaldoTecnico']['TiposSaldo'] as $key => $value1) {
+                                            echo "" . " <th> SALDO " . $value1['Nombre'] . "</th>";
+                                        }
+                                        echo "</tr>";
+                                    }
                                     ?>
                                 </thead>
                                 <tbody>
                                     <?php
-//                                    var_dump($datos['SaldoTecnico']);
+                                    //                                    var_dump($datos['SaldoTecnico']);
                                     if (isset($datos['SaldoTecnico']) && !empty($datos['SaldoTecnico'])) {
                                         foreach ($datos['SaldoTecnico']['datosTecnico'] as $key => $value) {
-                                            if($value['E1']=="" or $value['E1']==Null or $value['E1']==0)
-                                            {
-                                                $value['E1']="0.00";
+                                            if ($value['E1'] == "" or $value['E1'] == Null or $value['E1'] == 0) {
+                                                $value['E1'] = "0.00";
                                             }
-                                            if($value['E2']=="" or $value['E1']==Null or $value['E1']==0)
-                                            {
-                                                $value['E2']="0.00";
+                                            if ($value['E2'] == "" or $value['E2'] == Null or $value['E2'] == 0) {
+                                                $value['E2'] = "0.00";
                                             }
-                                            if($value['E3']=="" or $value['E1']==Null or $value['E1']==0)
-                                            {
-                                                $value['E3']="0.00";
+                                            if ($value['E3'] == "" or $value['E3'] == Null or $value['E3'] == 0) {
+                                                $value['E3'] = "0.00";
                                             }
                                             echo ""
                                                 . "<tr>"
                                                 . " <td>" . $value['Id'] . "</td>"
                                                 . " <td>" . $value['Nombre'] . "</td>"
-                                                . " <td> $" . number_format( $value['E1'],2,'.',',') . "</td>"
-                                                . " <td> $" . number_format( $value['E2'],2,'.',',') . "</td>"
-                                                . " <td> $" . number_format( $value['E3'],2,'.',','). "</td>"
+                                                . " <td> $" . number_format($value['E1'], 2, '.', ',') . "</td>"
+                                                . " <td> $" . number_format($value['E2'], 2, '.', ',') . "</td>"
+                                                . " <td> $" . number_format($value['E3'], 2, '.', ',') . "</td>"
                                                 . "</tr>";
                                         }
                                     }
