@@ -1472,7 +1472,7 @@ $(function () {
         $('#btnGeneraPdfServicio').on('click', function () {
             var data = {servicio: datosTabla[0]};
             evento.enviarEvento('Seguimiento/Servicio_ToPdf', data, '#seccion-servicio-censo', function (respuesta) {
-                window.open('/' + respuesta.link);
+                window.open(respuesta.link);
             });
         });
         if (respuesta.informacionDatosGenerales.length > 0) {
@@ -1727,7 +1727,7 @@ $(function () {
         $('#btnGeneraPdfServicio').on('click', function () {
             var data = {servicio: servicio};
             evento.enviarEvento('Seguimiento/Servicio_ToPdf', data, '#seccion-servicio-mantemiento', function (respuesta) {
-                window.open('/' + respuesta.link);
+                window.open(respuesta.link);
             });
         });
         if (respuesta.informacion.idSucursal !== undefined) {
@@ -3671,7 +3671,7 @@ $(function () {
         $('#btnGeneraPdfServicio').on('click', function () {
             var data = {servicio: servicio};
             evento.enviarEvento('Seguimiento/Servicio_ToPdf', data, '#seccion-servicio-correctivo', function (respuesta) {
-                window.open('/' + respuesta.link);
+                window.open(respuesta.link);
             });
         });
 

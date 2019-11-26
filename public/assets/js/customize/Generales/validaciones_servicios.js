@@ -46,7 +46,7 @@ $(function () {
                     'servicio': $(this).attr("data-id-servicio")
                 }
                 evento.enviarEvento('Servicio/Servicio_ToPdf', data, '#seccion-detalles', function (respuesta) {
-                    window.open('/' + respuesta.link);
+                    window.open(respuesta.link);
                 });
             });
         });

@@ -255,7 +255,7 @@ $(function () {
                     $("#btnGeneraPdfServicio").off("click");
                     $("#btnGeneraPdfServicio").on("click", function () {
                         evento.enviarEvento('Servicio/Servicio_ToPdf', data, '#divDetallesServicio', function (respuesta) {
-                            window.open('/' + respuesta.link);
+                            window.open(respuesta.link);
                         });
                     });
 

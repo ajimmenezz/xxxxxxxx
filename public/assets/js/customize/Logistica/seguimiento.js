@@ -736,7 +736,7 @@ $(function () {
         $('#btnGeneraPdfServicio').on('click', function () {
             var data = {servicio: datosTabla[0]};
             evento.enviarEvento('Seguimiento/Servicio_ToPdf', data, '#seccion-datos-logistica', function (respuesta) {
-                window.open('/' + respuesta.link);
+                window.open(respuesta.link);
             });
         });
 

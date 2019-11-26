@@ -323,7 +323,7 @@ $(function () {
                     'servicio': $(this).attr("data-id-servicio")
                 }
                 evento.enviarEvento('Servicio/Servicio_ToPdf', data, '#seccion-detalles', function (respuesta) {
-                    window.open('/' + respuesta.link);
+                    window.open(respuesta.link);
                 });
             });
 
@@ -334,7 +334,7 @@ $(function () {
                     'servicio': datos[1]
                 }
                 evento.enviarEvento('Servicio/Servicio_ToPdf_ProblemasEquipo', data, '#seccion-detalles', function (respuesta) {
-                    window.open('/' + respuesta.link);
+                    window.open(respuesta.link);
                 });
             });
 
@@ -343,7 +343,7 @@ $(function () {
                     'servicio': datos[1]
                 }
                 evento.enviarEvento('Servicio/Servicio_ToPdf_EquipoFaltante', data, '#seccion-detalles', function (respuesta) {
-                    window.open('/' + respuesta.link);
+                    window.open(respuesta.link);
                 });
             });
 
@@ -352,7 +352,7 @@ $(function () {
                     'servicio': datos[1]
                 }
                 evento.enviarEvento('Servicio/Servicio_ToPdf_OtrosProblemas', data, '#seccion-detalles', function (respuesta) {
-                    window.open('/' + respuesta.link);
+                    window.open(respuesta.link);
                 });
             });
 
