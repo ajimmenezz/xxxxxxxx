@@ -389,7 +389,7 @@ class InformacionServicios extends General {
         $pdf = $this->definirPDF($datos);
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'http://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+            $path = 'http://siccob.solutions/' . $pdf;
         } else {
             $path = 'http://' . $host . '/' . $pdf;
         }
