@@ -486,7 +486,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
     $("#btnGeneraPdfServicio").off("click");
     $("#btnGeneraPdfServicio").on("click", function () {
         _this.enviarEvento('/Servicio/Servicio_ToPdf', dataServicio, '#seccion-servicio-sin-clasificar', function (respuesta) {
-            window.open('/' + respuesta.link);
+            window.open(respuesta.link);
         });
     });
 

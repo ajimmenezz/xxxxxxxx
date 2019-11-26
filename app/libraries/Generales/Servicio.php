@@ -804,26 +804,20 @@ class Servicio extends General {
     }
 
     public function getServicioToPdf(array $servicio, string $nombreExtra = NULL) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $infoServicio = $this->getInformacionServicio($servicio['servicio']);
-        $tServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-        $tipoServicio = str_replace(".", "_", $tServicio);
-        $nombreExtra = (is_null($nombreExtra)) ? '' : $nombreExtra;
-        $archivo = 'storage/Archivos/Servicios/Servicio-' . $servicio['servicio'] . '/Pdf/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $servicio['servicio'] . '_' . $tipoServicio . $nombreExtra . '.pdf ';
-        $ruta = 'http://' . $_SERVER['HTTP_HOST'] . '/Phantom/Servicio/' . $servicio['servicio'] . '/' . $nombreExtra;
+        $host = $_SERVER['SERVER_NAME'];
+        $pdf = $this->InformacionServicios->definirPDF(array('servicio' => $servicio['servicio']));
 
-        $datosServicio = $this->DBS->getServicios('SELECT
-                                                sucursal(IdSucursal) Sucursal,
-                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
-                                            FROM t_servicios_ticket
-                                            WHERE Id = "' . $servicio['servicio'] . '"');
-
-        $link = $this->Phantom->htmlToPdf($archivo, $ruta, $datosServicio[0]);
-        return ['link' => $link];
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'http://siccob.solutions/' . $pdf;
+        } else {
+            $path = 'http://' . $host . '/' . $pdf;
+        }
+        
+        return ['link' => $path];
     }
 
     public function getTipoByServicio(string $servicio) {
-        return $this->DBS->consultaGeneral("select IdTipoServicio from t_servicios_ticket where Id = '" . $servicio . "';");
+        return $this->DBS->consultaGeneral("select IdTipoServicio from t_servicios_ticket where Id = '" . $servicio . "'");
     }
 
     public function getInformacionServicio(string $servicio) {

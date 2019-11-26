@@ -536,4 +536,37 @@ class Modelo_Censos extends Modelo_Base {
         return $nomenclatura[0]['Clave'];
     }
 
+    public function getTotalAreas(string $idServicio) {
+        $consulta = $this->consulta('select 
+                                                    areaAtencion(IdArea) as Area,
+                                                    count(*) as Total
+                                                from t_censos  
+                                                WHERE IdServicio = "' . $idServicio . '"
+                                                group by Area order by Area');
+        return $consulta;
+    }
+
+    public function getTotalLineas(string $idServicio) {
+        $consulta = $this->consulta('select
+                                                    cap_first(strSplit(modelo(IdModelo)," - ",1)) as Linea,
+                                                    count(*) as Total
+                                                from t_censos  
+                                                WHERE IdServicio = "' . $idServicio . '" 
+                                                group by Linea');
+        return $consulta;
+    }
+    
+    public function getCensos(string $idServicio) {
+        $consulta = $this->consulta('SELECT 
+                                                areaAtencion(tc.IdArea) AS Area,
+                                                tc.Punto,
+                                                (SELECT Equipo FROM v_equipos WHERE Id = tc.IdModelo) AS Equipo, 
+                                                tc.Serie,
+                                                tc.Extra
+                                            FROM t_censos tc 
+                                            WHERE tc.IdServicio = "' . $idServicio . '"
+                                            ORDER BY Area, Punto ASC');
+        return $consulta;
+    }
+
 }
