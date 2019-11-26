@@ -2050,9 +2050,7 @@ class InformacionServicios extends General {
     private function setMantenimientoPDF(array $datos) {
         $this->setMantenimiento($datos);
 
-        $this->setFirmaGerente($datos['servicio'], $datos);
-        
-        $this->state;
+        $this->setFirmaGerente($datos['servicio'], $datos);        
     }
 
     private function setMantenimiento(array $datos) {
