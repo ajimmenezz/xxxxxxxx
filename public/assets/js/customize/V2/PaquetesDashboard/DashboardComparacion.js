@@ -45,6 +45,20 @@ class DashboardComparacion extends Dashboard {
         let _this = this;
         select.evento('change', function () {
             _this.informacion['tipoServicio'] = select.obtenerTexto();
+            switch (select.obtenerTexto()) {
+                case 'Cableado':
+                case 'Levantamiento para Cotización':
+                case 'Punto Adicional':
+                    $('#select-tiempo-VGC').attr('disabled', true);
+                    $('#select-numero-VGC').attr('disabled', true);
+                    $('#select-zona-VGC').attr('disabled', true);
+                    break;
+                default:
+                    $('#select-tiempo-VGC').attr('disabled', false);
+                    $('#select-numero-VGC').attr('disabled', false);
+                    $('#select-zona-VGC').attr('disabled', false);
+                    break;
+            }
             _this.peticion.enviar('panel-grafica-VGC', 'Dashboard_Generico/Mostrar_Datos_Actualizados', _this.informacion, function (respuesta) {
                 $(`#grafica-VGC-1`).empty();
                 _this.datos = respuesta['VGC'];
@@ -69,8 +83,8 @@ class DashboardComparacion extends Dashboard {
                         _this.objetos['select-numero-VGC'].cargaDatosEnSelect(semanas);
                         break;
                     case 'MONTH':
-                        _this.objetos['select-numero-VGC'].cargaDatosEnSelect([{id: 1, text: 'Enero'},{id: 2, text: 'Febrero'},{id: 3, text: 'Marzo'}
-                        ,{id: 4, text: 'Abril'},{id: 5, text: 'Mayo'},{id: 6, text: 'Junio'},{id: 7, text: 'Julio'},{id: 8, text: 'Agosto'},{id: 9, text: 'Septiembre'},{id: 10, text: 'Octubre'},{id: 11, text: 'Noviembre'},{id: 12, text: 'Diciembre'}]);
+                        _this.objetos['select-numero-VGC'].cargaDatosEnSelect([{id: 1, text: 'Enero'}, {id: 2, text: 'Febrero'}, {id: 3, text: 'Marzo'}
+                            , {id: 4, text: 'Abril'}, {id: 5, text: 'Mayo'}, {id: 6, text: 'Junio'}, {id: 7, text: 'Julio'}, {id: 8, text: 'Agosto'}, {id: 9, text: 'Septiembre'}, {id: 10, text: 'Octubre'}, {id: 11, text: 'Noviembre'}, {id: 12, text: 'Diciembre'}]);
                         break;
                 }
             }
@@ -107,10 +121,10 @@ class DashboardComparacion extends Dashboard {
     }
 
     setDatosTabla(tabla) {
-        let _this = this;
-        let datosTemporal = _this.datos.slice();
-        datosTemporal.shift();
-        _this.objetos[tabla.tabla].limpiartabla();
+//        let _this = this;
+//        let datosTemporal = _this.datos.slice();
+//        datosTemporal.shift();
+//        _this.objetos[tabla.tabla].limpiartabla();
 //        let titulos = [];
 //        let semana1 = [];
 //        let semana2 = [];
@@ -178,7 +192,7 @@ class DashboardComparacion extends Dashboard {
 //        }
 //        console.log(titulos);
 //        console.log(datosTemporal);
-        _this.objetos[tabla.tabla].agregarContenidoTabla(datosTemporal);
+//        _this.objetos[tabla.tabla].agregarContenidoTabla(datosTemporal);
     }
 }
 

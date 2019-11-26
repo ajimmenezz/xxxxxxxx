@@ -53,6 +53,8 @@ class Modelo_GestorDashboard extends Base {
             if ($datos['tipoServicio'] !== 'Seleccionar') {
                 $conditions .= " and base.Tipo = '" . $datos['tipoServicio'] . "' ";
             }
+        }else{
+            $datos['tipoServicio'] = 'Seleccionar';
         }
 
         switch ($datos['tiempo']) {
@@ -81,7 +83,22 @@ class Modelo_GestorDashboard extends Base {
 
         $this->query("SET lc_time_names = 'es_ES'");
 
-        $consulta = $this->consulta("SELECT 
+        switch ($datos['tipoServicio']) {
+            case 'Cableado':
+            case 'Levantamiento para Cotización':
+            case 'Punto Adicional':
+                $consulta = $this->consulta("select cap_first(MONTHNAME(tst.FechaCreacion)) as Tiempo,
+                                                SUM(if(tst.IdEstatus = 1,1,0)) as Abierto,
+                                                SUM(if(tst.IdEstatus = 2,1,0)) as 'En Atencion',
+                                                SUM(if(tst.IdEstatus = 3,1,0)) as Problema,
+                                                SUM(if(tst.IdEstatus = 4,1,0)) as Cerrado
+                                            from t_servicios_ticket as tst 
+                                            inner join t_solicitudes as ts on tst.IdSolicitud = ts.Id
+                                            inner join cat_v3_servicios_departamento as csd on tst.IdTipoServicio = csd.Id
+                                            where csd.Nombre = '" . $datos['tipoServicio'] . "' GROUP BY Tiempo");
+                break;
+            default:
+                $consulta = $this->consulta("SELECT 
                                     " . $field . " as Tiempo,
                                     SUM(if(Estatus = 'Abierto',1,0)) as Abierto,
                                     SUM(if(Estatus = 'En Atencion',1,0)) as 'En Atencion',
@@ -91,6 +108,9 @@ class Modelo_GestorDashboard extends Base {
                                     v_base_dashboard_sd base
                                     " . $conditions . "
                                     GROUP BY Tiempo " . $order);
+                break;
+        }
+        
         return $consulta;
     }
 
@@ -279,7 +299,7 @@ class Modelo_GestorDashboard extends Base {
                     $order = " order by Anio, Mes ";
                     $group = " GROUP BY Tiempo";
                 } elseif (isset($datos['month']) && $datos['month'] > 0) {
-                    $conditions .= " and base.Mes = ". $datos['month'];
+                    $conditions .= " and base.Mes = " . $datos['month'];
                     $field = "";
                     $order = "";
                     $group = " GROUP BY Region";
@@ -372,7 +392,7 @@ class Modelo_GestorDashboard extends Base {
         $consulta = $this->consulta("SELECT
                                         Id AS id, Nombre AS text
                                     FROM cat_v3_servicios_departamento 
-                                    WHERE IdDepartamento = '11' 
+                                    WHERE IdDepartamento in (11, 5)
                                     AND Flag = '1'
                                     ORDER BY Nombre ASC");
         return $consulta;
