@@ -430,7 +430,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
                     });
                 });
             } else {
-                var data = {servicio: servicio};
+                var data = {servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}};
 //                _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, panel, function (respuesta) {
 //                    if (respuesta === true) {
                 _this.validarTecnicoPoliza();
@@ -451,7 +451,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
                 $('#btnModalConfirmar').addClass('hidden');
                 $('#btnModalConfirmar').off('click');
                 _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
-                _this.validarCamposFirma(ticket, servicio, true, true, '5');
+                _this.validarCamposFirma(ticket, servicio, true, true, '5', data);
 //                    } else {
 //                        _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
 //                    }
@@ -772,7 +772,7 @@ Servicio.prototype.eventosFolio = function () {
                 var perfil = $('#nombreAtiende').attr('att-IdPerfil');
                 if (_this.validarFormulario('#formReasignarSD') && descripcion !== '') {
                     var usuarioSD = $("#usuarioSD").val();
-                    var data = {ticket: ticket, servicio: servicio, personalSD: usuarioSD, solicitud: solicitud, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, perfil: perfil, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}};
+                    var data = {servicio: servicio, personalSD: usuarioSD, solicitud: solicitud, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, perfil: perfil, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}};
                     _this.enviarEvento('/Generales/Solicitud/ReasignarFolioSD', data, '#modal-dialogo', function (respuesta) {
                         _this.cerrarModal();
                         if (respuesta.code === 200) {
@@ -1320,6 +1320,7 @@ Servicio.prototype.validarCamposFirma = function () {
     var campoFirmaTecnico = arguments[2] || false;
     var concluirServicio = arguments[3] || false;
     var estatus = arguments[4] || false;
+    var evidencias = arguments[5] || false;
 
     var myBoard = _this.campoLapiz('campoLapiz');
 
@@ -1354,7 +1355,11 @@ Servicio.prototype.validarCamposFirma = function () {
                                 if (imgInputFirmaTecnico !== '') {
                                     _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                         if (respuesta === true) {
-                                            _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                            if(evidencias != false){
+                                                _this.enviarEvidenciaAsociado(evidencias);
+                                            } else {
+                                                _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                            }
                                         } else {
                                             _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                         }
@@ -1370,7 +1375,11 @@ Servicio.prototype.validarCamposFirma = function () {
                                 var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
                                 _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
-                                        _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                        if(evidencias != false){
+                                            _this.enviarEvidenciaAsociado(evidencias);
+                                        } else {
+                                            _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                        }
                                     } else {
                                         _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                     }
@@ -1398,7 +1407,11 @@ Servicio.prototype.validarCamposFirma = function () {
                             if (imgInputFirmaTecnico !== '') {
                                 _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
-                                        _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                        if(evidencias != false){
+                                            _this.enviarEvidenciaAsociado(evidencias);
+                                        } else {
+                                            _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                        }
                                     } else {
                                         _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                     }
@@ -1414,7 +1427,11 @@ Servicio.prototype.validarCamposFirma = function () {
                             var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
                             _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                 if (respuesta === true) {
-                                    _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                    if(evidencias != false){
+                                        _this.enviarEvidenciaAsociado(evidencias);
+                                    } else {
+                                        _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                    }
                                 } else {
                                     _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                 }
@@ -1432,6 +1449,17 @@ Servicio.prototype.validarCamposFirma = function () {
         }
     });
 };
+
+Servicio.prototype.enviarEvidenciaAsociado = function (evidencias){
+    var _this = this;
+    _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#modal-dialogo', evidencias, function (respuesta) {
+        if (respuesta === true) {
+            _this.mensajeModal('Se envió la información correctamente', 'Correcto');
+        } else {
+            _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+        }
+    });
+}
 
 Servicio.prototype.validarCorreoArray = function (correo) {
     var resultado;
