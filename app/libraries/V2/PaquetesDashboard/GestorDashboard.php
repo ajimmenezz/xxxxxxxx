@@ -46,6 +46,8 @@ class GestorDashboard {
     }
 
     public function getDatosDashboards() {
+        ini_set('max_execution_time', 90);
+        set_time_limit(90);
         $arrayConsultas = array();
         $idPermisos = Usuario::getPermisos();
         $stringPermisos = implode(',', $idPermisos);
@@ -181,18 +183,18 @@ class GestorDashboard {
         foreach ($arrayConsultaZonas as $key => $value) {
             $titulo = $value['Region'];
 
-                switch ($datos['tiempo']) {
-                    case 'MONTH':
-                        if (isset($datos['month']) && $datos['month'] > 0 && isset($datos['zona']) && $datos['zona'] !== '') {
-                            $titulo = $value['Tiempo'];
-                        }
-                        break;
-                    case 'WEEK':
-                        if (isset($datos['week']) && $datos['week'] > 0 && isset($datos['zona']) && $datos['zona'] !== '') {
-                            $titulo = $value['Tiempo'];
-                        }
-                        break;
-                }
+            switch ($datos['tiempo']) {
+                case 'MONTH':
+                    if (isset($datos['month']) && $datos['month'] > 0 && isset($datos['zona']) && $datos['zona'] !== '') {
+                        $titulo = $value['Tiempo'];
+                    }
+                    break;
+                case 'WEEK':
+                    if (isset($datos['week']) && $datos['week'] > 0 && isset($datos['zona']) && $datos['zona'] !== '') {
+                        $titulo = $value['Tiempo'];
+                    }
+                    break;
+            }
 
             array_push(
                     $arrayZonas, array(
