@@ -1513,7 +1513,7 @@ class InformacionServicios extends General {
                 $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             }
 
-            $this->setCoordinates(55, $this->y + 60);
+            $this->setCoordinates(55, $this->y + 50);
             $this->setStyleHeader();
             $this->setHeaderValue("Firmas del Servicio", 95);
 
@@ -2050,7 +2050,7 @@ class InformacionServicios extends General {
     private function setMantenimientoPDF(array $datos) {
         $this->setMantenimiento($datos);
 
-        $this->setFirmaGerente($datos['servicio'], $datos);
+        $this->setFirmaGerente($datos['servicio'], $datos);        
     }
 
     private function setMantenimiento(array $datos) {
@@ -2110,13 +2110,13 @@ class InformacionServicios extends General {
         $fill = !$fill;
         $problemasEquipo = $this->DBM->getProblemasEquipo($datos['servicio']);
 
-        if (isset($datos['folio'])) {
-            $this->setHeaderPDF("Problemas por equipo", $datos['folio']);
-        } else {
-            $this->setHeaderPDF('Problemas por equipo.');
-        }
-
         if (!empty($problemasEquipo)) {
+            if (isset($datos['folio'])) {
+                $this->setHeaderPDF("Problemas por equipo", $datos['folio']);
+            } else {
+                $this->setHeaderPDF('Problemas por equipo.');
+            }
+
             foreach ($problemasEquipo as $key => $value) {
 
                 if (($this->y + 26) > 276) {
@@ -2154,13 +2154,13 @@ class InformacionServicios extends General {
         $fill = !$fill;
         $equiposFaltante = $this->DBM->getEquiposFaltante($datos['servicio']);
 
-        if (isset($datos['folio'])) {
-            $this->setHeaderPDF("Equipo Faltante", $datos['folio']);
-        } else {
-            $this->setHeaderPDF('Equipo Faltante');
-        }
-
         if (!empty($equiposFaltante)) {
+            if (isset($datos['folio'])) {
+                $this->setHeaderPDF("Equipo Faltante", $datos['folio']);
+            } else {
+                $this->setHeaderPDF('Equipo Faltante');
+            }
+
             foreach ($equiposFaltante as $key => $value) {
 
                 if (($this->y + 26) > 276) {
@@ -2205,13 +2205,13 @@ class InformacionServicios extends General {
         $fill = !$fill;
         $problemasAdicionales = $this->DBM->getProblemasAdicionales($datos['servicio']);
 
-        if (isset($datos['folio'])) {
-            $this->setHeaderPDF("Problemas Adicionales", $datos['folio']);
-        } else {
-            $this->setHeaderPDF('Problemas Adicionales');
-        }
-
         if (!empty($problemasAdicionales)) {
+            if (isset($datos['folio'])) {
+                $this->setHeaderPDF("Problemas Adicionales", $datos['folio']);
+            } else {
+                $this->setHeaderPDF('Problemas Adicionales');
+            }
+
             foreach ($problemasAdicionales as $key => $value) {
 
                 if (($this->y + 26) > 276) {
