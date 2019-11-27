@@ -3,7 +3,6 @@ class Select {
     constructor(nombreSelect) {
         this.select = nombreSelect;
         this.objetoSelect = $(`#${this.select}`);
-
 //        this.iniciarSelect();
     }
 
