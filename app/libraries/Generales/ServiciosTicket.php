@@ -1550,6 +1550,7 @@ class ServiciosTicket extends General
     {
         try {
             $this->DBST->iniciaTransaccion();
+            $host = $_SERVER['SERVER_NAME'];
             $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
             $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '4');
             $serviciosTicket = $this->DBST->consultaGeneral('SELECT Id FROM t_servicios_ticket WHERE Ticket = "' . $datos['ticket'] . '" AND IdEstatus in(10,5,2,1)');
@@ -1566,17 +1567,7 @@ class ServiciosTicket extends General
                                            INNER JOIN t_solicitudes_internas tsi
                                            ON tsi.IdSolicitud = tst.IdSolicitud
                                            WHERE tst.Id = "' . $datos['servicio'] . '"');
-
-            //$linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
-            $linkPdf = $pdf = $this->InformacionServicios->definirPDF(array('servicio' => $datos['servicio']));
-            $host = $_SERVER['SERVER_NAME'];
-
-            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-                $path = 'http://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
-            } else {
-                $path = 'http://' . $host . '/' . $linkPdf;
-            }
-
+            
             if (empty($serviciosTicket)) {
                 $this->concluirSolicitud($fecha, $datos['idSolicitud']);
                 $this->concluirTicket($datos['ticket']);
@@ -2546,8 +2537,8 @@ class ServiciosTicket extends General
                                                 cliente(IdCliente) Cliente
                                             FROM cat_v3_sucursales
                                             WHERE Flag = 1
+                                            AND IdCliente = "' . $sucursal[0]['Cliente'] . '"
                                             ORDER BY Nombre ASC');
-        //                                            AND IdCliente = "' . $sucursal[0]['Cliente'] . '"
         return $return;
     }
 

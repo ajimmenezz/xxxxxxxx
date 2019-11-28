@@ -275,6 +275,13 @@ class InformacionServicios extends General
         $solucionDiv = '';
 
         $linkPdf = $this->definirPDF($datos);
+        
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $linkPdf = 'http://siccob.solutions/' . $linkPdf;
+        } else {
+            $linkPdf = 'http://' . $host . '/' . $linkPdf;
+        }
+
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($usuario['Id']));
 
@@ -1564,24 +1571,22 @@ class InformacionServicios extends General
                 $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             }
 
-            $this->setCoordinates(10);
-            $this->setStyleHeader();
-            $this->setHeaderValue("Firmas del Servicio");
-
-            $this->setStyleTitle();
-            $this->setCellValue(95, 40, "", 'C');
-            $this->setCoordinates(10, $this->y - 40);
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->Cell(95, 1, "Firmas de Cierre", 0, 0, 'C');
 
             $gerente = '';
             if (!is_null($firmas['Firma']) && $firmas['Firma'] != '') {
-                $this->pdf->Image('.' . $firmas['Firma'], $this->x + 7.5, $this->y + 2.5, 80, 35, pathinfo($firmas['Firma'], PATHINFO_EXTENSION));
+                $this->pdf->Image('.' . $firmas['Firma'], 7.5, $this->y + 2.5, 80, 35, pathinfo($firmas['Firma'], PATHINFO_EXTENSION));
                 $gerente = utf8_decode($firmas['Gerente']);
             }
 
-            $this->setCoordinates(105);
+            $this->setCoordinates(10, $this->y + 40);
+            $this->pdf->Cell(95, 5, utf8_decode($gerente), 0, 0, 'C');
 
-            $this->setCellValue(95, 40, "", 'C');
-            $this->setCoordinates(105, $this->y - 40);
+            $this->setCoordinates(10, $this->y + 5);
+            $this->pdf->Cell(95, 5, 'Gerente Cinemex', 0, 0, 'C');
+
+            $this->setCoordinates(105, $this->y - 45);
 
             $tecnico = '';
             if (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '') {
@@ -1589,15 +1594,11 @@ class InformacionServicios extends General
                 $tecnico = utf8_decode($firmas['Tecnico']);
             }
 
-            $this->setCoordinates(10, $this->y + 40);
-            $this->setCellValue(95, 5, $gerente, 'C', true);
-            $this->setCoordinates(105, $this->y - 5);
-            $this->setCellValue(95, 5, $tecnico, 'C', true);
+            $this->setCoordinates(100, $this->y + 40);
+            $this->pdf->Cell(95, 5, utf8_decode($tecnico), 0, 0, 'C');
 
-            $this->setCoordinates(10);
-            $this->setCellValue(95, 5, 'Gerente Cinemex', 'C', true);
-            $this->setCoordinates(105, $this->y - 5);
-            $this->setCellValue(95, 5, "Técnico Siccob", 'C', true);
+            $this->setCoordinates(100, $this->y + 5);
+            $this->pdf->Cell(95, 5, utf8_decode("Técnico Siccob"), 0, 0, 'C');
         }
     }
 
@@ -1622,10 +1623,10 @@ class InformacionServicios extends General
             $gerente = utf8_decode($firmas['Gerente']);
 
             $this->setCoordinates(55, $this->y + 40);
-            $this->setCellValue(95, 5, $gerente, 'C', true);
+            $this->pdf->Cell(95, 5, $gerente, 0, 0, 'C');
 
-            $this->setCoordinates(55);
-            $this->setCellValue(95, 5, 'Gerente Cinemex', 'C', true);
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->Cell(95, 5, 'Gerente Cinemex', 0, 0, 'C');
         }
     }
 
@@ -2195,7 +2196,6 @@ class InformacionServicios extends General
         $antesDespues = $this->DBM->getAntesDespues($datos['servicio']);
 
         foreach ($antesDespues as $key => $value) {
-
             if (isset($datos['folio'])) {
                 $this->setHeaderPDF("Resumen de Mantenimiento", $datos['folio']);
             } else {
@@ -2204,7 +2204,6 @@ class InformacionServicios extends General
 
             $this->setStyleHeader();
             $this->setHeaderValue($value['Area'] . ' - ' . $value['Punto']);
-
             $this->setCoordinates(10, $this->y + 5);
             $this->setStyleTitle();
             $this->setCellValue(190, 5, "Información Antes", 'L', $fill);
