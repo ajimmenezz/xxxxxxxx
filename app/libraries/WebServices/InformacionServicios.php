@@ -265,6 +265,13 @@ class InformacionServicios extends General {
         $solucionDiv = '';
 
         $linkPdf = $this->definirPDF($datos);
+        
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $linkPdf = 'http://siccob.solutions/' . $linkPdf;
+        } else {
+            $linkPdf = 'http://' . $host . '/' . $linkPdf;
+        }
+
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($usuario['Id']));
 
@@ -2327,7 +2334,7 @@ class PDFAux extends PDF {
         // Print centered page number
         $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
         $this->AliasNbPages();
-        $this->Cell(68, 10, utf8_decode('Página ') . $this->PageNo().'/{nb}', 0, 0, 'R');
+        $this->Cell(68, 10, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
 }
