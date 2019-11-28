@@ -2436,7 +2436,7 @@ class InformacionServicios extends General
         $this->setCoordinates();
     }
 
-    private function setCellValue($width, $height, string $value = '', string $align, bool $fill = false, bool $trueFill = true)
+    private function setCellValue($width, $height, $value = '', string $align, bool $fill = false, bool $trueFill = true)
     {
         if ($fill) {
             $this->setFillGray();
