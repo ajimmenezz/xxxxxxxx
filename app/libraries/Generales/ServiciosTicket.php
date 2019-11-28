@@ -1574,8 +1574,9 @@ class ServiciosTicket extends General
             if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
                 $path = 'http://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
             } else {
-                $path = 'http://' . $host . '/' . $linkPdf['link'];
+                $path = 'http://' . $host . '/' . $linkPdf;
             }
+
             if (empty($serviciosTicket)) {
                 $this->concluirSolicitud($fecha, $datos['idSolicitud']);
                 $this->concluirTicket($datos['ticket']);
@@ -1601,7 +1602,7 @@ class ServiciosTicket extends General
                         $path = 'http://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicioServiciosConcluidos . '.pdf';
                         $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
                     } else {
-                        $path = 'http://' . $host . '/' . $linkPdfServiciosConcluidos['link'];
+                        $path = 'http://' . $host . '/' . $linkPdfServiciosConcluidos;
                         $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
                     }
 
@@ -1632,10 +1633,10 @@ class ServiciosTicket extends General
             }
 
             $this->DBST->commitTransaccion();
-            return ['code' => 200, 'message' => 'correcto'];
+            return ['code' => 200, 'message' => 'correcto', 'link' => $linkPDF];
         } catch (\Exception $ex) {
             $this->DBST->roolbackTransaccion();
-            return array('code' => 400, 'message' => $ex->getMessage());
+            return array('code' => 400, 'message' => $ex->getMessage(), 'link' => $linkPDF);
         }
     }
 
