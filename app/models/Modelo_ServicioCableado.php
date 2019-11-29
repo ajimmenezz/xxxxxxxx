@@ -105,7 +105,8 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                 ' . $idServicio . ',
                                 "' . $datos['observaciones'] . '",
                                 "' . $datos['archivos'] . '",
-                                now()    
+                                now(),
+                                ""   
                              )');
     }
 

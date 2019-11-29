@@ -879,7 +879,7 @@ $(function () {
             modal.mostrarModal('Aviso', '<h4>Si realizas esta acción se Borrara la Evidencia y cambios guardados</h4>');
 
             modal.btnAceptar('btnAceptar', function () {
-                peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/borrarEvidencias', datoServicioTabla, function (respuesta) {
+                peticion.enviar('modal-dialogo', 'SeguimientoCE/SeguimientoGeneral/borrarEvidencias', datoServicioTabla, function (respuesta) {
                     if (!validarError(respuesta, 'modal-dialogo')) {
                         return;
                     }
@@ -987,6 +987,7 @@ $(function () {
                         return;
                     }
                     modal.mostrarModal("Exito", '<h4>Se han guardado los cambios correctamente</h4>');
+                    $('#btnAceptar').addClass('hidden');
                     evidenciaFija.limpiarElemento();
                     $('#evidenciasMaterialFija').empty();
                     archivosEstablecidos = respuesta.solucion.solucion[0].Archivos;

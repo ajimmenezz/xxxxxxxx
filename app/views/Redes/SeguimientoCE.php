@@ -267,10 +267,10 @@
                         <div class="col-md-12 row">
                             <div class="panel-heading-btn">
                                 <label id="btnSinMaterial" class="btn btn-default btn-xs hidden bloqueoConclusionBtn">
-                                    <i class="fa fa-toggle-off"></i> solo Evidencia
+                                    <i class="fa fa-toggle-off"></i> Con Uso de Material
                                 </label>
                                 <label id="btnConMaterial" class="btn btn-primary btn-xs bloqueoConclusionBtn">
-                                    <i class="fa fa-toggle-off fa-rotate-180"></i> Con Uso de Material
+                                    <i class="fa fa-toggle-off fa-rotate-180"></i> Solo Evidencia
                                 </label>
                             </div>
                             <h4>Datos de solución</h4>
@@ -408,10 +408,10 @@
                                         <input id="agregarEvidenciaFija" name="agregarEvidenciaProblema[]" type="file" multiple data-parsley-required="true">
                                     </div>
                                 </div>
+                                <label>Oprime el botón "Examinar" para agregar la Evidencia</label>
                                 <div class="col-md-12">
                                     <div id="evidenciasMaterialFija"></div>
                                 </div>
-                                <label>Oprime el botón "Examinar" para agregar la Evidencia</label>
                             </form>
                         </div>
                         <!--Finaliza seccion agregar evidencia-->
@@ -503,29 +503,37 @@
                     <form id="formMaterial" data-parsley-validate="true" enctype="multipart/form-data">
                         <!--Empieza seccion agregar Material-->
                         <div class="col-md-12">
-                            <div class="col-md-5">
+                            <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Material</label>
+                                    <label><br>Tipo de Material</label>
+                                    <select id="selectTipoMaterial" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label><br>Material</label>
                                     <select id="selectMaterial" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"></select>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label>Cantidad Disponible</label>
                                     <input id="materialDisponible" class="form-control" style="width: 100%" disabled/>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label>Cantidad Utilizar</label>
                                     <input id="materialUtilizar" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"/>
                                 </div>
                             </div>
                             <div class="col-md-1">
-                                <br>
-                                <label id="btnAgregarMaterialATablaNodo" class="btn btn-success bloqueoConclusionBtn">
-                                    <i class="fa fa-plus"></i>
-                                </label>
+                                <div class="form-group">
+                                    <label><br><br></label>
+                                    <label id="btnAgregarMaterialATablaNodo" class="btn btn-success bloqueoConclusionBtn">
+                                        <i class="fa fa-plus"></i>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <!--Finaliza seccion agregar Material-->
