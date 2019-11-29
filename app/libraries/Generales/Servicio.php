@@ -1800,6 +1800,9 @@ class Servicio extends General {
                 $infoServicio = $this->getInformacionServicio($datos['servicio']);
                 $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
                 $path = $linkPdf['link'];
+                
+                $this->eventoSolicitud($datos, $fecha, $path);
+                
                 $dataPDF = $this->enviarReportePDFCorrectivo($datos, $dataFirma, $dataFirmaTecnico);
                 $linkPDF = $dataPDF['linkPDF'];
                 $linkExtraEquiposFaltante = $dataPDF['linkExtraEquiposFaltante'];
@@ -1844,10 +1847,11 @@ class Servicio extends General {
                 $infoServicio = $this->getInformacionServicio($datos['servicio']);
                 $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
 
-
                 $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
                 $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
                 $linkPDF = '<br>Ver PDF Resumen General <a href="' . $path . '" target="_blank">Aquí</a>';
+                
+                $this->eventoSolicitud($datos, $fecha, $path);
 
                 $datosDescripcionConclusion = $this->DBS->getServicios('SELECT
                                             tst.Descripcion AS DescripcionServicio,
@@ -1919,7 +1923,6 @@ class Servicio extends General {
                 $this->agregarVueltaAsociado($datos);
             }
 
-            $this->eventoSolicitud($datos, $fecha, $path);
             $this->DBS->terminaTransaccion();
             return TRUE;
         } catch (\Exception $ex) {
@@ -1990,7 +1993,7 @@ class Servicio extends General {
                 $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'FirmaTecnico_' . $value['Ticket'] . '_' . $value['Id']) . '.png';
                 file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $dataFirmaTecnico);
 
-                $this->DBS->actualizarServicio('t_servicios_ticket', array(
+                $respuesta = $this->DBS->actualizarServicio('t_servicios_ticket', array(
                     'Firma' => $direccionFirma,
                     'NombreFirma' => $datos['recibe'],
                     'CorreoCopiaFirma' => $correo,
@@ -1999,6 +2002,7 @@ class Servicio extends General {
                     'FirmaTecnico' => $direccionFirmaTecnico,
                     'IdValidaCinemex' => $encargadoTI
                         ), array('Id' => $value['Id']));
+                var_dump($respuesta);
                 $linkPdf = $this->getServicioToPdf(array('servicio' => $value['Id']));
                 $infoServicio = $this->getInformacionServicio($value['Id']);
                 $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
