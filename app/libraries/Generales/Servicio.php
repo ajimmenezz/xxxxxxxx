@@ -1780,73 +1780,76 @@ class Servicio extends General {
     }
 
     public function enviar_Reporte_PDF(array $datos) {
-        $titulo = 'Se concluyo Solicitud';
-        $usuario = $this->Usuario->getDatosUsuario();
-        $host = $_SERVER['SERVER_NAME'];
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $imgFirma = $datos['img'];
-        $imgFirma = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirma));
-        $dataFirma = base64_decode($imgFirma);
-        $imgFirmaTecnico = $datos['imgFirmaTecnico'];
-        $imgFirmaTecnico = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirmaTecnico));
-        $dataFirmaTecnico = base64_decode($imgFirmaTecnico);
-        $verificarServicioCorrectivo = $this->DBS->getServicios('SELECT IdTipoServicio FROM t_servicios_ticket WHERE Id = "' . $datos['servicio'] . '"');
-        $folio = $this->DBS->consultaFolio($datos['servicio']);
+        try {
+            $this->DBS->iniciaTransaccion();
+            $titulo = 'Se concluyo Solicitud';
+            $usuario = $this->Usuario->getDatosUsuario();
+            $host = $_SERVER['SERVER_NAME'];
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $imgFirma = $datos['img'];
+            $imgFirma = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirma));
+            $dataFirma = base64_decode($imgFirma);
+            $imgFirmaTecnico = $datos['imgFirmaTecnico'];
+            $imgFirmaTecnico = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirmaTecnico));
+            $dataFirmaTecnico = base64_decode($imgFirmaTecnico);
+            $verificarServicioCorrectivo = $this->DBS->getServicios('SELECT IdTipoServicio FROM t_servicios_ticket WHERE Id = "' . $datos['servicio'] . '"');
+            $folio = $this->DBS->consultaFolio($datos['servicio']);
 
-        if ($verificarServicioCorrectivo[0]['IdTipoServicio'] === '20') {
-            $linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
-            $infoServicio = $this->getInformacionServicio($datos['servicio']);
-            $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-            $path = $linkPdf['link'];
-            $dataPDF = $this->enviarReportePDFCorrectivo($datos, $dataFirma, $dataFirmaTecnico);
-            $linkPDF = $dataPDF['linkPDF'];
-            $linkExtraEquiposFaltante = $dataPDF['linkExtraEquiposFaltante'];
-        } else {
-            $direccionFirma = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'Firma_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
-            $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'FirmaTecnico_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
-            file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $dataFirma);
-            file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $dataFirmaTecnico);
-            if ($datos['encargadoTI'] !== NULL) {
-                $encargadoTI = $datos['encargadoTI'];
+            if ($verificarServicioCorrectivo[0]['IdTipoServicio'] === '20') {
+                $linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
+                $infoServicio = $this->getInformacionServicio($datos['servicio']);
+                $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+                $path = $linkPdf['link'];
+                $dataPDF = $this->enviarReportePDFCorrectivo($datos, $dataFirma, $dataFirmaTecnico);
+                $linkPDF = $dataPDF['linkPDF'];
+                $linkExtraEquiposFaltante = $dataPDF['linkExtraEquiposFaltante'];
             } else {
-                $encargadoTI = NULL;
-            }
+                $direccionFirma = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'Firma_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
+                $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'FirmaTecnico_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
+                file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $dataFirma);
+                file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $dataFirmaTecnico);
+                if ($datos['encargadoTI'] !== NULL) {
+                    $encargadoTI = $datos['encargadoTI'];
+                } else {
+                    $encargadoTI = NULL;
+                }
 
-            if (isset($datos['correo'])) {
-                $correo = implode(",", $datos['correo']);
-            } else {
-                $correo = '';
-            }
+                if (isset($datos['correo'])) {
+                    $correo = implode(",", $datos['correo']);
+                } else {
+                    $correo = '';
+                }
 
-            if ($datos['imgFirmaTecnico'] !== NULL) {
-                $imgFirmaTecnico = $direccionFirmaTecnico;
-                $idTecnico = $usuario['Id'];
-            } else {
-                $imgFirmaTecnico = NULL;
-                $idTecnico = NULL;
-            }
+                if ($datos['imgFirmaTecnico'] !== NULL) {
+                    $imgFirmaTecnico = $direccionFirmaTecnico;
+                    $idTecnico = $usuario['Id'];
+                } else {
+                    $imgFirmaTecnico = NULL;
+                    $idTecnico = NULL;
+                }
 
-            $this->DBS->actualizarServicio('t_servicios_ticket', array(
-                'Firma' => $direccionFirma,
-                'NombreFirma' => $datos['recibe'],
-                'CorreoCopiaFirma' => $correo,
-                'FechaFirma' => $fecha,
-                'IdTecnicoFirma' => $idTecnico,
-                'FirmaTecnico' => $imgFirmaTecnico,
-                'IdValidaCinemex' => $encargadoTI
-                    ), array('Id' => $datos['servicio']));
-
-            $path = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
-            $path = $path['link'];
-            $infoServicio = $this->getInformacionServicio($datos['servicio']);
-            $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+                $this->DBS->actualizarServicio('t_servicios_ticket', array(
+                    'Firma' => $direccionFirma,
+                    'NombreFirma' => $datos['recibe'],
+                    'CorreoCopiaFirma' => $correo,
+                    'FechaFirma' => $fecha,
+                    'IdTecnicoFirma' => $idTecnico,
+                    'FirmaTecnico' => $imgFirmaTecnico,
+                    'IdValidaCinemex' => $encargadoTI
+                        ), array('Id' => $datos['servicio']));
 
 
-            $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
-            $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
-            $linkPDF = '<br>Ver PDF Resumen General <a href="' . $path . '" target="_blank">Aquí</a>';
+                $path = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
+                $path = $path['link'];
+                $infoServicio = $this->getInformacionServicio($datos['servicio']);
+                $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
 
-            $datosDescripcionConclusion = $this->DBS->getServicios('SELECT
+
+                $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
+                $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
+                $linkPDF = '<br>Ver PDF Resumen General <a href="' . $path . '" target="_blank">Aquí</a>';
+
+                $datosDescripcionConclusion = $this->DBS->getServicios('SELECT
                                             tst.Descripcion AS DescripcionServicio,
                                             tst.IdSolicitud,
                                             tsi.Asunto AS AsuntoSolicitud,
@@ -1856,12 +1859,12 @@ class Servicio extends General {
                                            ON tsi.IdSolicitud = tst.IdSolicitud
                                            WHERE tst.Id = "' . $datos['servicio'] . '"');
 
-            if ($folio !== FALSE) {
-                $textoFolio = '<br>Folio: <strong>' . $folio . '</strong>';
-            } else {
-                $textoFolio = '';
-            }
-            $descripcionConclusion = '<br><br>Solicitud: <strong>' . $datosDescripcionConclusion[0]['IdSolicitud'] . '</strong>
+                if ($folio !== FALSE) {
+                    $textoFolio = '<br>Folio: <strong>' . $folio . '</strong>';
+                } else {
+                    $textoFolio = '';
+                }
+                $descripcionConclusion = '<br><br>Solicitud: <strong>' . $datosDescripcionConclusion[0]['IdSolicitud'] . '</strong>
                 <br>Asunto de la Solicitud: <strong>' . $datosDescripcionConclusion[0]['AsuntoSolicitud'] . '</strong>
                 <br>Descripcion de la Solcitud: <strong>' . $datosDescripcionConclusion[0]['AsuntoSolicitud'] . '</strong>
                 <br><br>Ticket: <strong>' . $datos['ticket'] . '</strong>
@@ -1869,28 +1872,28 @@ class Servicio extends General {
                 <br><br>Servicio: <strong>' . $datos['servicio'] . '</strong>
                 <br>Descripcion del Servicio: <strong>' . $datosDescripcionConclusion[0]['DescripcionServicio'] . '</strong>';
 
-            $contadorEquiposFaltantes = $this->SeguimientoPoliza->contadorEquiposFaltantes($datos['servicio']);
+                $contadorEquiposFaltantes = $this->SeguimientoPoliza->contadorEquiposFaltantes($datos['servicio']);
 
-            if ($contadorEquiposFaltantes[0]['Contador'] > 0) {
-                $linkPdfEquipoFaltante = $this->getServicioToPdf(array('servicio' => $datos['servicio']), '/EquipoFaltante');
-                $pathEquipoFaltante = $linkPdfEquipoFaltante['link'];
-                $linkExtraEquiposFaltante = '<br>Ver PDF Equipo Faltante <a href="' . $pathEquipoFaltante . '" target="_blank">Aquí</a>';
-            } else {
-                $linkExtraEquiposFaltante = '';
-            }
+                if ($contadorEquiposFaltantes[0]['Contador'] > 0) {
+                    $linkPdfEquipoFaltante = $this->getServicioToPdf(array('servicio' => $datos['servicio']), '/EquipoFaltante');
+                    $pathEquipoFaltante = $linkPdfEquipoFaltante['link'];
+                    $linkExtraEquiposFaltante = '<br>Ver PDF Equipo Faltante <a href="' . $pathEquipoFaltante . '" target="_blank">Aquí</a>';
+                } else {
+                    $linkExtraEquiposFaltante = '';
+                }
 
-            $textoUsuario = '<p><strong>Estimado(a) ' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la conclusión del servicio que realizo.</p>' . $linkPDF . $linkDetallesServicio . $descripcionConclusion;
-            $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Se concluyo el servicio', $textoUsuario);
+                $textoUsuario = '<p><strong>Estimado(a) ' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la conclusión del servicio que realizo.</p>' . $linkPDF . $linkDetallesServicio . $descripcionConclusion;
+                $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Se concluyo el servicio', $textoUsuario);
 
-            $datosSolicita = $this->DBS->getServicios('SELECT
+                $datosSolicita = $this->DBS->getServicios('SELECT
                                             (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = tst.Solicita) AS CorreoSolicita,
                                             nombreUsuario(tst.Solicita) NombreSolicita
                                             FROM t_servicios_ticket tst
                                             WHERE tst.Id = "' . $datos['servicio'] . '"');
-            $textoSolicita = '<p>Estimado(a) <strong>' . $datosSolicita[0]['NombreSolicita'] . ',</strong> se le ha mandado el documento de la conclusión del servicio que ha solicitado en el ticket: </p><strong>' . $datos['ticket'] . '</strong>' . $linkPDF . $linkDetallesServicio . $descripcionConclusion;
-            $this->enviarCorreoConcluido(array($datosSolicita[0]['CorreoSolicita']), $titulo, $textoSolicita);
+                $textoSolicita = '<p>Estimado(a) <strong>' . $datosSolicita[0]['NombreSolicita'] . ',</strong> se le ha mandado el documento de la conclusión del servicio que ha solicitado en el ticket: </p><strong>' . $datos['ticket'] . '</strong>' . $linkPDF . $linkDetallesServicio . $descripcionConclusion;
+                $this->enviarCorreoConcluido(array($datosSolicita[0]['CorreoSolicita']), $titulo, $textoSolicita);
 
-            $idArea = $this->DBS->getServicios('SELECT
+                $idArea = $this->DBS->getServicios('SELECT
                                             cvds.IdArea
                                             FROM t_servicios_ticket tst
                                            INNER JOIN t_solicitudes ts
@@ -1898,27 +1901,30 @@ class Servicio extends General {
                                            INNER JOIN cat_v3_departamentos_siccob cvds
                                             ON ts.IdDepartamento = cvds.Id
                                            WHERE tst.Id = "' . $datos['servicio'] . '"');
-            if ($idArea[0]['IdArea'] === '8') {
-                $correoCordinadorPoliza = $this->DBS->getServicios('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 46');
-                $textoCoordinadorPoliza = '<p><strong>Cordinador de Poliza,</strong> se le ha mandado el documento de la conclusión del servicio que realizo el personal ' . $usuario['Nombre'] . '.</p>' . $linkPDF . $linkDetallesServicio . $descripcionConclusion;
-                foreach ($correoCordinadorPoliza as $key => $value) {
-                    $this->enviarCorreoConcluido(array($value['EmailCorporativo']), $titulo, $textoCoordinadorPoliza);
+                if ($idArea[0]['IdArea'] === '8') {
+                    $correoCordinadorPoliza = $this->DBS->getServicios('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 46');
+                    $textoCoordinadorPoliza = '<p><strong>Cordinador de Poliza,</strong> se le ha mandado el documento de la conclusión del servicio que realizo el personal ' . $usuario['Nombre'] . '.</p>' . $linkPDF . $linkDetallesServicio . $descripcionConclusion;
+                    foreach ($correoCordinadorPoliza as $key => $value) {
+                        $this->enviarCorreoConcluido(array($value['EmailCorporativo']), $titulo, $textoCoordinadorPoliza);
+                    }
+                }
+
+                if (isset($datos['correo'])) {
+                    $textoCorreo = '<p>Estimado(a) <strong>' . $datos['recibe'] . ',</strong> se le he mandado el documento que ha firmado de la conclusión del servicio(s) a solicitado.</p>' . $linkPDF . $linkDetallesServicio . $linkExtraEquiposFaltante;
+                    $this->enviarCorreoConcluido($datos['correo'], $titulo, $textoCorreo);
                 }
             }
 
-            if (isset($datos['correo'])) {
-                $textoCorreo = '<p>Estimado(a) <strong>' . $datos['recibe'] . ',</strong> se le he mandado el documento que ha firmado de la conclusión del servicio(s) a solicitado.</p>' . $linkPDF . $linkDetallesServicio . $linkExtraEquiposFaltante;
-                $this->enviarCorreoConcluido($datos['correo'], $titulo, $textoCorreo);
+            if ($usuario['IdPerfil'] == '83') {
+                $this->agregarVueltaAsociado($datos);
             }
+
+            $this->eventoSolicitud($datos, $fecha, $path);
+            $this->DBS->terminaTransaccion();
+            return TRUE;
+        } catch (\Exception $ex) {
+            return $ex;
         }
-
-        if ($usuario['IdPerfil'] == '83') {
-            $this->agregarVueltaAsociado($datos);
-        }
-
-        $this->eventoSolicitud($datos, $fecha, $path);
-
-        return TRUE;
     }
 
     private function eventoSolicitud(array $datos, string $fecha, string $path) {
@@ -2015,25 +2021,26 @@ class Servicio extends General {
     }
 
     public function concluirServicioSolicitudTicket(string $fecha, array $datos, string $path = NULL) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $infoServicio = $this->getInformacionServicio($datos['servicio']);
-        $host = $_SERVER['SERVER_NAME'];
-        $linkPDF = '';
-        $contador = 0;
-        $correctivos = $this->DBS->getServicios('SELECT Id, Ticket FROM t_servicios_ticket WHERE Ticket = ' . $datos['ticket'] . ' AND IdTipoServicio = 20');
+        try {
+            $usuario = $this->Usuario->getDatosUsuario();
+            $infoServicio = $this->getInformacionServicio($datos['servicio']);
+            $host = $_SERVER['SERVER_NAME'];
+            $linkPDF = '';
+            $contador = 0;
+            $correctivos = $this->DBS->getServicios('SELECT Id, Ticket FROM t_servicios_ticket WHERE Ticket = ' . $datos['ticket'] . ' AND IdTipoServicio = 20');
 
-        $this->DBS->actualizarServicio('t_servicios_ticket', array(
-            'IdEstatus' => '4',
-            'FechaConclusion' => $fecha
-                ), array('Id' => $datos['servicio']));
-        $this->DBP->actualizaInventariosMovimientosXConslusionCorrectivo($datos['servicio']);
-        $verificarEstatusTicket = $this->DBS->getServicios('SELECT 
+            $this->DBS->actualizarServicio('t_servicios_ticket', array(
+                'IdEstatus' => '4',
+                'FechaConclusion' => $fecha
+                    ), array('Id' => $datos['servicio']));
+            $this->DBP->actualizaInventariosMovimientosXConslusionCorrectivo($datos['servicio']);
+            $verificarEstatusTicket = $this->DBS->getServicios('SELECT 
                                                                 IdEstatus,
                                                                 IdSolicitud
                                                             FROM t_servicios_ticket tst
                                                             WHERE ticket = ' . $datos['ticket'] . '
                                                             AND IdEstatus IN(10,5,2,1,3)');
-        $verificarSolicitud = $this->DBS->getServicios('SELECT
+            $verificarSolicitud = $this->DBS->getServicios('SELECT
                                                             Id,
                                                             Folio,
                                                             (SELECT EmailCorporativo From cat_v3_usuarios WHERE ID = Atiende) CorreoAtiende,
@@ -2041,47 +2048,50 @@ class Servicio extends General {
                                                         FROM t_solicitudes
                                                         WHERE Ticket =  "' . $datos['ticket'] . '"');
 
-        if (!$verificarEstatusTicket) {
-            foreach ($verificarSolicitud as $key => $value) {
-                $this->DBS->actualizarServicio('t_solicitudes', array(
-                    'IdEstatus' => '4',
-                    'FechaConclusion' => $fecha
-                        ), array('Id' => $value['Id']));
-            }
-
-            $this->DBS->concluirTicketAdist2(array(
-                'Estatus' => 'CONCLUIDO',
-                'Flag' => '1',
-                'F_Cierre' => '0',
-                'Id_Orden' => $datos['ticket']
-            ));
-
-            if (!empty($correctivos)) {
-                foreach ($correctivos as $key => $value) {
-                    $contador++;
-                    $linkPdf = $this->getServicioToPdf(array('servicio' => $value['Id']));
-                    $infoServicio = $this->getInformacionServicio($value['Id']);
-                    $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-
-                    if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-                        $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
-                    } else {
-                        $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
-                    }
-
-                    $path = $linkPdf['link'];
-                    $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
+            if (!$verificarEstatusTicket) {
+                foreach ($verificarSolicitud as $key => $value) {
+                    $this->DBS->actualizarServicio('t_solicitudes', array(
+                        'IdEstatus' => '4',
+                        'FechaConclusion' => $fecha
+                            ), array('Id' => $value['Id']));
                 }
-                $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
-            } else {
-                $linkSolicitud = '';
+
+                $this->DBS->concluirTicketAdist2(array(
+                    'Estatus' => 'CONCLUIDO',
+                    'Flag' => '1',
+                    'F_Cierre' => '0',
+                    'Id_Orden' => $datos['ticket']
+                ));
+
+                if (!empty($correctivos)) {
+                    foreach ($correctivos as $key => $value) {
+                        $contador++;
+                        $linkPdf = $this->getServicioToPdf(array('servicio' => $value['Id']));
+                        $infoServicio = $this->getInformacionServicio($value['Id']);
+                        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+
+                        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                            $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
+                        } else {
+                            $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
+                        }
+
+                        $path = $linkPdf['link'];
+                        $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
+                    }
+                    $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
+                } else {
+                    $linkSolicitud = '';
+                }
+
+                $titulo = 'Solicitud Concluida';
+                $textoCorreo = '<p>Estimado(a) <strong>' . $verificarSolicitud[0]['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $datos['ticket'] . '</strong><br> Número Solicitud: <strong>' . $verificarSolicitud[0]['Id'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
+                $this->enviarCorreoConcluido(array($verificarSolicitud[0]['CorreoAtiende']), $titulo, $textoCorreo);
+
+                return 'serviciosConcluidos';
             }
-
-            $titulo = 'Solicitud Concluida';
-            $textoCorreo = '<p>Estimado(a) <strong>' . $verificarSolicitud[0]['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $datos['ticket'] . '</strong><br> Número Solicitud: <strong>' . $verificarSolicitud[0]['Id'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
-            $this->enviarCorreoConcluido(array($verificarSolicitud[0]['CorreoAtiende']), $titulo, $textoCorreo);
-
-            return 'serviciosConcluidos';
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
         }
     }
 

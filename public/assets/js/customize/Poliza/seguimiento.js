@@ -4593,7 +4593,7 @@ $(function () {
                     }
                 } else {
                     file.limpiar('#evidenciasSolucionReparacionSinEquipo');
-                    evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', false, 'Falta llenar los datos de Información General.', 5000);
+                    evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', false, respuesta, 5000);
                 }
             });
         } else {
@@ -4629,7 +4629,7 @@ $(function () {
                     }
                 } else {
                     file.limpiar('#evidenciasSolucionReparacionSinEquipo');
-                    evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', false, 'Falta llenar los datos de Información General.', 5000);
+                    evento.mostrarMensaje('.errorFormularioSolucionReparacionSinEquipo', false, respuesta, 5000);
                 }
             });
         }
@@ -4708,7 +4708,7 @@ $(function () {
                     }
                 } else {
                     file.limpiar('#evidenciasSolucionReparacionConRefaccion');
-                    evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, 'Falta llenar los datos de Información General.', 5000);
+                    evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, respuesta, 5000);
                 }
             });
         } else {
@@ -4744,7 +4744,7 @@ $(function () {
                     }
                 } else {
                     file.limpiar('#evidenciasSolucionReparacionConRefaccion');
-                    evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, 'Falta llenar los datos de Información General.', 5000);
+                    evento.mostrarMensaje('.errorFormularioSolucionReparacionConRefaccion', false, respuesta, 5000);
                 }
             });
         }
@@ -4823,7 +4823,7 @@ $(function () {
                     }
                 } else {
                     file.limpiar('#evidenciasSolucionCambioEquipo');
-                    evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, 'Falta llenar los datos de Información General.', 5000);
+                    evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, respuesta, 5000);
                 }
             });
         } else {
@@ -4858,7 +4858,7 @@ $(function () {
                     }
                 } else {
                     file.limpiar('#evidenciasSolucionCambioEquipo');
-                    evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, 'Falta llenar los datos de Información General.', 5000);
+                    evento.mostrarMensaje('.errorFormularioSolucionCambioEquipo', false, respuesta, 5000);
                 }
             });
         }

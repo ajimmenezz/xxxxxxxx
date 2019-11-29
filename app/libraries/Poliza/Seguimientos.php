@@ -1584,210 +1584,222 @@ class Seguimientos extends General {
     }
 
     public function guardarReparacionSinEquipo(array $datos) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $archivos = null;
-        $CI = parent::getCI();
-        $evidenciasAnteriores = '';
-        $verificarCorrectivosGenerales = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_generales WHERE IdServicio = "' . $datos['servicio'] . '"');
-        $verificarCorrectivosDiagnostico = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_diagnostico WHERE IdServicio = "' . $datos['servicio'] . '"');
+        try {
+            $usuario = $this->Usuario->getDatosUsuario();
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $archivos = null;
+            $CI = parent::getCI();
+            $evidenciasAnteriores = '';
+            $verificarCorrectivosGenerales = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_generales WHERE IdServicio = "' . $datos['servicio'] . '"');
+            $verificarCorrectivosDiagnostico = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_diagnostico WHERE IdServicio = "' . $datos['servicio'] . '"');
 
-        if (!empty($verificarCorrectivosGenerales)) {
-            if (!empty($verificarCorrectivosDiagnostico)) {
-                $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencia_Correctivo_Reparacion_Sin_Equipo/';
-                $archivos = setMultiplesArchivos($CI, 'evidenciasSolucionReparacionSinEquipo', $carpeta);
+            if (!empty($verificarCorrectivosGenerales)) {
+                if (!empty($verificarCorrectivosDiagnostico)) {
+                    $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencia_Correctivo_Reparacion_Sin_Equipo/';
+                    $archivos = setMultiplesArchivos($CI, 'evidenciasSolucionReparacionSinEquipo', $carpeta);
 
-                $dataCorrectivosSoluciones = array(
-                    'IdServicio' => $datos['servicio'],
-                    'IdTipoSolucion' => '1',
-                    'IdUsuario' => $usuario['Id'],
-                    'Fecha' => $fecha,
-                    'Observaciones' => $datos['observaciones']
-                );
-                if ($archivos) {
-                    $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionEquipo($dataCorrectivosSoluciones, $datos['solucion']);
-                    $archivos = implode(',', $archivos);
-                    if ($datos['evidencias'] !== NULL) {
-                        if ($datos['evidencias'] !== '') {
-                            if ($datos['idTipoSolucion'] === '1') {
-                                $evidenciasAnteriores = $datos['evidencias'] . ',';
+                    $dataCorrectivosSoluciones = array(
+                        'IdServicio' => $datos['servicio'],
+                        'IdTipoSolucion' => '1',
+                        'IdUsuario' => $usuario['Id'],
+                        'Fecha' => $fecha,
+                        'Observaciones' => $datos['observaciones']
+                    );
+                    if ($archivos) {
+                        $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionEquipo($dataCorrectivosSoluciones, $datos['solucion']);
+                        $archivos = implode(',', $archivos);
+                        if ($datos['evidencias'] !== NULL) {
+                            if ($datos['evidencias'] !== '') {
+                                if ($datos['idTipoSolucion'] === '1') {
+                                    $evidenciasAnteriores = $datos['evidencias'] . ',';
+                                }
                             }
                         }
-                    }
 
-                    if (!empty($IdCorrectivoSoluciones)) {
-                        $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
-                            'Evidencias' => $evidenciasAnteriores . $archivos
-                                ), array('Id' => $IdCorrectivoSoluciones)
-                        );
+                        if (!empty($IdCorrectivoSoluciones)) {
+                            $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
+                                'Evidencias' => $evidenciasAnteriores . $archivos
+                                    ), array('Id' => $IdCorrectivoSoluciones)
+                            );
+                        } else {
+                            return FALSE;
+                        }
                     } else {
-                        return FALSE;
+                        $evidencias = $this->DBS->consultaGeneralSeguimiento('SELECT Evidencias FROM t_correctivos_soluciones WHERE IdServicio = ' . $datos['servicio'] . ' order by Fecha DESC LIMIT 1');
+                        $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionEquipo($dataCorrectivosSoluciones, $datos['solucion']);
+                        if (!empty($IdCorrectivoSoluciones)) {
+                            $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
+                                'Evidencias' => $evidencias[0]['Evidencias']
+                                    ), array('Id' => $IdCorrectivoSoluciones)
+                            );
+                        } else {
+                            return FALSE;
+                        }
                     }
                 } else {
-                    $evidencias = $this->DBS->consultaGeneralSeguimiento('SELECT Evidencias FROM t_correctivos_soluciones WHERE IdServicio = ' . $datos['servicio'] . ' order by Fecha DESC LIMIT 1');
-                    $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionEquipo($dataCorrectivosSoluciones, $datos['solucion']);
-                    if (!empty($IdCorrectivoSoluciones)) {
-                        $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
-                            'Evidencias' => $evidencias[0]['Evidencias']
-                                ), array('Id' => $IdCorrectivoSoluciones)
-                        );
-                    } else {
-                        return FALSE;
-                    }
+                    return 'faltaDatosDiagnostico';
                 }
             } else {
-                return 'faltaDatosDiagnostico';
+                return 'faltaDatosGenerales';
             }
-        } else {
-            return 'faltaDatosGenerales';
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
         }
     }
 
     public function guardarReparacionConRefaccion(array $datos) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $archivos = null;
-        $CI = parent::getCI();
-        $evidenciasAnteriores = '';
-        $verificarCorrectivosGenerales = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_generales WHERE IdServicio = "' . $datos['servicio'] . '"');
-        $verificarCorrectivosDiagnostico = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_diagnostico WHERE IdServicio = "' . $datos['servicio'] . '"');
+        try {
+            $usuario = $this->Usuario->getDatosUsuario();
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $archivos = null;
+            $CI = parent::getCI();
+            $evidenciasAnteriores = '';
+            $verificarCorrectivosGenerales = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_generales WHERE IdServicio = "' . $datos['servicio'] . '"');
+            $verificarCorrectivosDiagnostico = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_diagnostico WHERE IdServicio = "' . $datos['servicio'] . '"');
 
-        if (!empty($verificarCorrectivosGenerales)) {
-            if (!empty($verificarCorrectivosDiagnostico)) {
-                $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencia_Correctivo_Reparacion_Con_Refaccoion/';
-                $archivos = setMultiplesArchivos($CI, 'evidenciasSolucionReparacionConRefaccion', $carpeta);
+            if (!empty($verificarCorrectivosGenerales)) {
+                if (!empty($verificarCorrectivosDiagnostico)) {
+                    $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencia_Correctivo_Reparacion_Con_Refaccoion/';
+                    $archivos = setMultiplesArchivos($CI, 'evidenciasSolucionReparacionConRefaccion', $carpeta);
 
-                $dataCorrectivosSoluciones = array(
-                    'IdServicio' => $datos['servicio'],
-                    'IdTipoSolucion' => '2',
-                    'IdUsuario' => $usuario['Id'],
-                    'Fecha' => $fecha,
-                    'Observaciones' => $datos['observaciones']
-                );
+                    $dataCorrectivosSoluciones = array(
+                        'IdServicio' => $datos['servicio'],
+                        'IdTipoSolucion' => '2',
+                        'IdUsuario' => $usuario['Id'],
+                        'Fecha' => $fecha,
+                        'Observaciones' => $datos['observaciones']
+                    );
 
-                if (isset($datos['usaStock']) && $datos['usaStock'] != 'false') {
-                    $datosTablaReparacionRefaccion = $this->DBP->getDatosTablaReparacionRefaccionInventario($datos['datosTablaReparacionRefaccion']);
-                } else {
-                    if (is_array($datos['datosTablaReparacionRefaccion'])) {
-                        $datosTablaReparacionRefaccion = $datos['datosTablaReparacionRefaccion'];
+                    if (isset($datos['usaStock']) && $datos['usaStock'] != 'false') {
+                        $datosTablaReparacionRefaccion = $this->DBP->getDatosTablaReparacionRefaccionInventario($datos['datosTablaReparacionRefaccion']);
                     } else {
-                        $datosTablaReparacionRefaccion = divideString($datos['datosTablaReparacionRefaccion'], 3);
-                    }
-                }
-
-
-                if ($archivos) {
-                    $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionRefaccion($dataCorrectivosSoluciones, $datosTablaReparacionRefaccion);
-                    $archivos = implode(',', $archivos);
-
-                    if ($datos['evidencias'] !== NULL) {
-                        if ($datos['evidencias'] !== '') {
-                            if ($datos['idTipoSolucion'] === '2') {
-                                $evidenciasAnteriores = $datos['evidencias'] . ',';
-                            }
+                        if (is_array($datos['datosTablaReparacionRefaccion'])) {
+                            $datosTablaReparacionRefaccion = $datos['datosTablaReparacionRefaccion'];
+                        } else {
+                            $datosTablaReparacionRefaccion = divideString($datos['datosTablaReparacionRefaccion'], 3);
                         }
                     }
 
-                    if (!empty($IdCorrectivoSoluciones)) {
-                        $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
-                            'Evidencias' => $evidenciasAnteriores . $archivos
-                                ), array('Id' => $IdCorrectivoSoluciones)
-                        );
+
+                    if ($archivos) {
+                        $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionRefaccion($dataCorrectivosSoluciones, $datosTablaReparacionRefaccion);
+                        $archivos = implode(',', $archivos);
+
+                        if ($datos['evidencias'] !== NULL) {
+                            if ($datos['evidencias'] !== '') {
+                                if ($datos['idTipoSolucion'] === '2') {
+                                    $evidenciasAnteriores = $datos['evidencias'] . ',';
+                                }
+                            }
+                        }
+
+                        if (!empty($IdCorrectivoSoluciones)) {
+                            $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
+                                'Evidencias' => $evidenciasAnteriores . $archivos
+                                    ), array('Id' => $IdCorrectivoSoluciones)
+                            );
+                        } else {
+                            return FALSE;
+                        }
                     } else {
-                        return FALSE;
+                        $evidencias = $this->DBS->consultaGeneralSeguimiento('SELECT Evidencias FROM t_correctivos_soluciones WHERE IdServicio = ' . $datos['servicio'] . ' order by Fecha DESC LIMIT 1');
+                        $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionRefaccion($dataCorrectivosSoluciones, $datosTablaReparacionRefaccion);
+                        if (!empty($IdCorrectivoSoluciones)) {
+                            $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
+                                'Evidencias' => $evidencias[0]['Evidencias']
+                                    ), array('Id' => $IdCorrectivoSoluciones)
+                            );
+                        } else {
+                            return FALSE;
+                        }
                     }
                 } else {
-                    $evidencias = $this->DBS->consultaGeneralSeguimiento('SELECT Evidencias FROM t_correctivos_soluciones WHERE IdServicio = ' . $datos['servicio'] . ' order by Fecha DESC LIMIT 1');
-                    $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionRefaccion($dataCorrectivosSoluciones, $datosTablaReparacionRefaccion);
-                    if (!empty($IdCorrectivoSoluciones)) {
-                        $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
-                            'Evidencias' => $evidencias[0]['Evidencias']
-                                ), array('Id' => $IdCorrectivoSoluciones)
-                        );
-                    } else {
-                        return FALSE;
-                    }
+                    return 'faltaDatosDiagnostico';
                 }
             } else {
-                return 'faltaDatosDiagnostico';
+                return 'faltaDatosGenerales';
             }
-        } else {
-            return 'faltaDatosGenerales';
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
         }
     }
 
     public function guardarCambioEquipo(array $datos) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $archivos = null;
-        $CI = parent::getCI();
-        $evidenciasAnteriores = '';
-        $verificarCorrectivosGenerales = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_generales WHERE IdServicio = "' . $datos['servicio'] . '"');
-        $verificarCorrectivosDiagnostico = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_diagnostico WHERE IdServicio = "' . $datos['servicio'] . '"');
+        try {
+            $usuario = $this->Usuario->getDatosUsuario();
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $archivos = null;
+            $CI = parent::getCI();
+            $evidenciasAnteriores = '';
+            $verificarCorrectivosGenerales = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_generales WHERE IdServicio = "' . $datos['servicio'] . '"');
+            $verificarCorrectivosDiagnostico = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_correctivos_diagnostico WHERE IdServicio = "' . $datos['servicio'] . '"');
 
-        if (!empty($verificarCorrectivosGenerales)) {
-            if (!empty($verificarCorrectivosDiagnostico)) {
-                $sucursal = $this->DBS->consultaGeneralSeguimiento('SELECT IdSucursal FROM t_servicios_ticket WHERE Id = "' . $datos['servicio'] . '"');
-                $censoGeneral = $this->DBS->consultaGeneralSeguimiento('SELECT 
+            if (!empty($verificarCorrectivosGenerales)) {
+                if (!empty($verificarCorrectivosDiagnostico)) {
+                    $sucursal = $this->DBS->consultaGeneralSeguimiento('SELECT IdSucursal FROM t_servicios_ticket WHERE Id = "' . $datos['servicio'] . '"');
+                    $censoGeneral = $this->DBS->consultaGeneralSeguimiento('SELECT 
                                                                         IdServicio 
                                                                     FROM t_censos_generales
                                                                     WHERE IdSucursal = "' . $sucursal[0]['IdSucursal'] . '"
                                                                     ORDER BY Id DESC LIMIT 1');
 
-                $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencia_Correctivo_Cambio_Equipo/';
-                $archivos = setMultiplesArchivos($CI, 'evidenciasSolucionCambioEquipo', $carpeta);
-                $dataCorrectivosSoluciones = array(
-                    'IdServicio' => $datos['servicio'],
-                    'IdTipoSolucion' => '3',
-                    'IdUsuario' => $usuario['Id'],
-                    'Fecha' => $fecha,
-                    'Observaciones' => $datos['observaciones'],
-                );
+                    $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/Evidencia_Correctivo_Cambio_Equipo/';
+                    $archivos = setMultiplesArchivos($CI, 'evidenciasSolucionCambioEquipo', $carpeta);
+                    $dataCorrectivosSoluciones = array(
+                        'IdServicio' => $datos['servicio'],
+                        'IdTipoSolucion' => '3',
+                        'IdUsuario' => $usuario['Id'],
+                        'Fecha' => $fecha,
+                        'Observaciones' => $datos['observaciones'],
+                    );
 
-                $dataCenso = array(
-                    'IdServicioCenso' => $censoGeneral[0]['IdServicio'],
-                    'IdArea' => $verificarCorrectivosGenerales[0]['IdArea'],
-                    'IdModelo' => $verificarCorrectivosGenerales[0]['IdModelo'],
-                    'Punto' => $verificarCorrectivosGenerales[0]['Punto'],
-                    'Terminal' => $verificarCorrectivosGenerales[0]['Terminal']
-                );
+                    $dataCenso = array(
+                        'IdServicioCenso' => $censoGeneral[0]['IdServicio'],
+                        'IdArea' => $verificarCorrectivosGenerales[0]['IdArea'],
+                        'IdModelo' => $verificarCorrectivosGenerales[0]['IdModelo'],
+                        'Punto' => $verificarCorrectivosGenerales[0]['Punto'],
+                        'Terminal' => $verificarCorrectivosGenerales[0]['Terminal']
+                    );
 
-                if ($archivos) {
-                    $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionCambio($dataCorrectivosSoluciones, $datos['equipo'], $datos['serie'], $dataCenso, $datos['idsInventario'], $datos['operacion']);
-                    $archivos = implode(',', $archivos);
-                    if ($datos['evidencias'] !== NULL) {
-                        if ($datos['evidencias'] !== '') {
-                            if ($datos['idTipoSolucion'] === '3') {
-                                $evidenciasAnteriores = $datos['evidencias'] . ',';
+                    if ($archivos) {
+                        $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionCambio($dataCorrectivosSoluciones, $datos['equipo'], $datos['serie'], $dataCenso, $datos['idsInventario'], $datos['operacion']);
+                        $archivos = implode(',', $archivos);
+                        if ($datos['evidencias'] !== NULL) {
+                            if ($datos['evidencias'] !== '') {
+                                if ($datos['idTipoSolucion'] === '3') {
+                                    $evidenciasAnteriores = $datos['evidencias'] . ',';
+                                }
                             }
                         }
-                    }
 
-                    if (!empty($IdCorrectivoSoluciones)) {
-                        $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
-                            'Evidencias' => $evidenciasAnteriores . $archivos
-                                ), array('Id' => $IdCorrectivoSoluciones)
-                        );
+                        if (!empty($IdCorrectivoSoluciones)) {
+                            $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
+                                'Evidencias' => $evidenciasAnteriores . $archivos
+                                    ), array('Id' => $IdCorrectivoSoluciones)
+                            );
+                        } else {
+                            return FALSE;
+                        }
                     } else {
-                        return FALSE;
+                        $evidencias = $this->DBS->consultaGeneralSeguimiento('SELECT Evidencias FROM t_correctivos_soluciones WHERE IdServicio = ' . $datos['servicio'] . ' order by Fecha DESC LIMIT 1');
+                        $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionCambio($dataCorrectivosSoluciones, $datos['equipo'], $datos['serie'], $dataCenso, $datos['idsInventario'], $datos['operacion']);
+                        if (!empty($IdCorrectivoSoluciones)) {
+                            $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
+                                'Evidencias' => $evidencias[0]['Evidencias']
+                                    ), array('Id' => $IdCorrectivoSoluciones)
+                            );
+                        } else {
+                            return FALSE;
+                        }
                     }
                 } else {
-                    $evidencias = $this->DBS->consultaGeneralSeguimiento('SELECT Evidencias FROM t_correctivos_soluciones WHERE IdServicio = ' . $datos['servicio'] . ' order by Fecha DESC LIMIT 1');
-                    $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionCambio($dataCorrectivosSoluciones, $datos['equipo'], $datos['serie'], $dataCenso, $datos['idsInventario'], $datos['operacion']);
-                    if (!empty($IdCorrectivoSoluciones)) {
-                        $this->DBS->actualizarSeguimiento('t_correctivos_soluciones', array(
-                            'Evidencias' => $evidencias[0]['Evidencias']
-                                ), array('Id' => $IdCorrectivoSoluciones)
-                        );
-                    } else {
-                        return FALSE;
-                    }
+                    return 'faltaDatosDiagnostico';
                 }
             } else {
-                return 'faltaDatosDiagnostico';
+                return 'faltaDatosGenerales';
             }
-        } else {
-            return 'faltaDatosGenerales';
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
         }
     }
 
