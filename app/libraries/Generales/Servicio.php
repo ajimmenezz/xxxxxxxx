@@ -2169,13 +2169,9 @@ class Servicio extends General {
         $linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-        $host = $_SERVER['SERVER_NAME'];
-
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'http://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
-        } else {
-            $path = 'http://' . $host . '/' . $linkPdf['link'];
-        }
+        $host = $_SERVER['SERVER_NAME'];       
+        $path = $linkPdf['link'];
+        
         if ($datosExtra !== NULL) {
             if (isset($datos['correo'])) {
                 $correo = $datos['correo'];
