@@ -1624,10 +1624,10 @@ class ServiciosTicket extends General
             }
 
             $this->DBST->commitTransaccion();
-            return ['code' => 200, 'message' => 'correcto'];
+            return ['code' => 200, 'message' => 'correcto', 'link' => $linkPDF];
         } catch (\Exception $ex) {
             $this->DBST->roolbackTransaccion();
-            return array('code' => 400, 'message' => $ex->getMessage());
+            return array('code' => 400, 'message' => $ex->getMessage(), 'link' => $linkPDF);
         }
     }
 
