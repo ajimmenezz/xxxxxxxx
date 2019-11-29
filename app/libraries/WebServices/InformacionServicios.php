@@ -1325,9 +1325,9 @@ class InformacionServicios extends General {
         $datos['SD'] = $generales['SD'];
         $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', 'Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio']);
 
-//        if (file_exists($carpeta . '.pdf')) {
-//            unlink($carpeta . '.pdf');
-//        }
+        if (file_exists($carpeta)) {
+            unlink($carpeta);
+        }
 
         if ($generales['HasSeguimiento'] === '0') {
             $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
