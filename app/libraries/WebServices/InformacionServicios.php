@@ -1105,7 +1105,6 @@ class InformacionServicios extends General {
         tcg.Punto,
         modelo(tcg.IdModelo) as Modelo,
         tcg.Serie,
-        tcd.IdTipoDiagnostico,
         (select Nombre from cat_v3_tipos_diagnostico_correctivo where Id = tcd.IdTipoDiagnostico) as TipoDiagnostico,
         (select Nombre from cat_v3_componentes_equipo where Id = tcd.IdComponente) as Componente,
         concat(
@@ -1118,8 +1117,7 @@ class InformacionServicios extends General {
                 (select Nombre from cat_v3_tipos_falla where Id = (select IdTipoFalla from cat_v3_fallas_equipo where Id = tcd.IdFalla))
             ),')'
         ) as Falla,
-        tcd.Evidencias,
-        tcd.Observaciones
+        tcd.*
         from t_correctivos_generales tcg
         inner join t_correctivos_diagnostico tcd on tcg.IdServicio = tcd.IdServicio
         where tcg.IdServicio = '" . $id . "'
@@ -1345,7 +1343,6 @@ class InformacionServicios extends General {
                 case 20:
                 case '20':
                     $this->setPDFContentCorrectivo($generales['Id'], $datos);
-                    $this->setFirmasServicio($datos);
                     break;
             }
         }
@@ -1539,6 +1536,29 @@ class InformacionServicios extends General {
             $this->pdf->Cell(95, 5, 'Gerente Cinemex', 0, 0, 'C');
         }
     }
+    
+    private function setFirmaGerenteDiagnosticoCorrectivo(int $id, array $datos) {
+        $diagnostico = $this->getDiagnosticoCorrectivoForPDF($id);
+
+        if ((!is_null($diagnostico['Firma']) && $diagnostico['Firma'] != '')) {
+            if (($this->y + 56) > 276) {
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+            }
+
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->Cell(95, 1, "Firma", 0, 0, 'C');
+
+            $gerente = '';
+            $this->pdf->Image('.' . $diagnostico['Firma'], $this->x + 2.5, $this->y + 2.5, 80, 35, pathinfo($diagnostico['Firma'], PATHINFO_EXTENSION));
+            $gerente = utf8_decode($diagnostico['Gerente']);
+
+            $this->setCoordinates(55, $this->y + 40);
+            $this->pdf->Cell(95, 5, $gerente, 0, 0, 'C');
+
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->Cell(95, 5, 'Gerente Cinemex', 0, 0, 'C');
+        }
+    }
 
     private function setEvidenciasPDF($datos, $evidencias, $header) {
         $evidencias = explode(",", $evidencias);
@@ -1629,6 +1649,14 @@ class InformacionServicios extends General {
 
         $solucion = $this->getSolucionCorrectivoForPDF($id);
         $this->setSolucionCorrectivoPDF($solucion, $datos);
+
+        $firmas = $this->getFirmasServicio($datos['servicio']);
+
+        if (!empty($firmas['Firma'])) {
+            $this->setFirmasServicio($datos);
+        } elseif (!empty($diagnostico['Firma'])) {
+            $this->setFirmaGerenteDiagnosticoCorrectivo($id, $datos);
+        }
     }
 
     private function setDiagnosticoCorrectivoPDF($diagnostico, $datos) {
