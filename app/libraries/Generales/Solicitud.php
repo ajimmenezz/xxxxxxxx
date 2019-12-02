@@ -624,10 +624,10 @@ class Solicitud extends General
         $solicitante = $this->DBS->getDatosSolicitante($datosSolicitud['Solicita']);
 
         if (!is_null($datosSolicitud['Ticket'])) {
-            if(!isset($datos['generaOtro']))
+            if (!isset($datos['generaOtro']))
                 return array('ticket' => $datosSolicitud['Ticket'], 'folios' => $datosSolicitud['Folio'], 'responce' => false);
         }
-        
+
         if (empty($datos['ticket']) || is_null($datos['ticket'])) {
             $ticket = $this->Ticket->setTicket($datosSolicitud, $datos);
 
@@ -1766,10 +1766,10 @@ class Solicitud extends General
             $folios = array();
             $folios = $this->ServiceDesk->getFolios2019($from);
             foreach ($folios["requests"] as $key => $value) {
-                $resolvedTime = '';
-                if ($value['resolved_time'] != null && $value['resolved_time'] != 'null') {
-                    $resolvedTime = date('Y-m-d H:i:s', $value["resolved_time"]["value"] / 1000);
-                }
+                // $resolvedTime = '';
+                // if ($value['resolved_time'] != null && $value['resolved_time'] != 'null') {
+                //     $resolvedTime = date('Y-m-d H:i:s', $value["resolved_time"]["value"] / 1000);
+                // }
 
                 if (isset($value["technician"])) {
                     $this->DBS->insertar('temporal_sd', array(
@@ -1795,18 +1795,19 @@ class Solicitud extends General
                         'Requester' => $value["requester"]["name"],
                         'Status' => $value["status"]["name"],
                         'CreatedTime' => date('Y-m-d H:i:s', $value["created_time"]["value"] / 1000),
-                        'AssignedTime' => date('Y-m-d H:i:s', $value["assigned_time"]["value"] / 1000),
-                        'Category' => $value["category"]["name"],
-                        'SubCategory' => $value["subcategory"]["name"],
-                        'Item' => $value["item"]["name"],
-                        'Group' => $value["group"]["name"],
+                        //'AssignedTime' => date('Y-m-d H:i:s', $value["assigned_time"]["value"] / 1000),
+                        //'Category' => $value["category"]["name"],
+                        //'SubCategory' => $value["subcategory"]["name"],
+                        //'Item' => $value["item"]["name"],
+                        //'Group' => $value["group"]["name"],
                         'Priority' => $value["priority"]["name"],
-                        'ResolvedTime' => $resolvedTime
+                        //'ResolvedTime' => $resolvedTime
                     ));
                 }
             }
             $i += 1;
             $from = $i . '01';
+            echo $i . '01';
         } while (count($folios["requests"]) > 0);
 
         //        $arrayTitulos = ['Semana Creacion SD',
@@ -1823,7 +1824,8 @@ class Solicitud extends General
         //        return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
     }
 
-    public function updateRequestWithSDInfo(){
+    public function updateRequestWithSDInfo()
+    {
         $sdInfo = $this->DBS->consulta(
             "select
             Id        
@@ -1831,7 +1833,7 @@ class Solicitud extends General
             where ts.Folio between (select MIN(ID) from temporal_sd) and (select MAX(ID) from temporal_sd)"
         );
 
-        foreach($sdInfo as $key => $value){
+        foreach ($sdInfo as $key => $value) {
             $this->DBS->queryBolean(
                 "update t_solicitudes ts 
                 inner join temporal_sd temp on ts.Folio = temp.ID
@@ -1847,7 +1849,7 @@ class Solicitud extends General
                 ts.`Group` = temp.`Group`,
                 ts.Priority = temp.Priority,
                 ts.ResolvedTime = temp.ResolvedTime
-                where ts.Id = '".$value['Id']."'"
+                where ts.Id = '" . $value['Id'] . "'"
             );
         }
     }

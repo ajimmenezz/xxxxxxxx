@@ -280,13 +280,13 @@ class ServiceDesk extends General
         $opts = array(
             'http' => array(
                 'method' => 'GET',
-                'header' => 'Authtoken: A8D6001B-EB63-4996-A158-1B968E19AB84',
-                'content' => $postData
+                'header' => "Content-Type: application/x-www-form-urlencoded\r\n" .
+                    "Authtoken: A8D6001B-EB63-4996-A158-1B968E19AB84"
             )
         );
 
         $context = stream_context_create($opts);
-        $result = json_decode(file_get_contents($url, false, $context), true);
+        $result = json_decode(file_get_contents($url . '?' . $postData, false, $context), true);
 
         return $result;
     }
