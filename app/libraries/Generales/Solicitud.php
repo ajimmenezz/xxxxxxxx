@@ -1779,13 +1779,13 @@ class Solicitud extends General
                         'Requester' => $value["requester"]["name"],
                         'Status' => $value["status"]["name"],
                         'CreatedTime' => date('Y-m-d H:i:s', $value["created_time"]["value"] / 1000),
-                        'AssignedTime' => date('Y-m-d H:i:s', $value["assigned_time"]["value"] / 1000),
-                        'Category' => $value["category"]["name"],
-                        'SubCategory' => $value["subcategory"]["name"],
-                        'Item' => $value["item"]["name"],
+                        //'AssignedTime' => date('Y-m-d H:i:s', $value["assigned_time"]["value"] / 1000),
+                        //'Category' => $value["category"]["name"],
+                        //'SubCategory' => $value["subcategory"]["name"],
+                        //'Item' => $value["item"]["name"],
                         'Group' => $value["group"]["name"],
                         'Priority' => $value["priority"]["name"],
-                        'ResolvedTime' => $resolvedTime
+                        //'ResolvedTime' => $resolvedTime
                     ));
                 } else {
                     $this->DBS->insertar('temporal_sd', array(
