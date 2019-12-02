@@ -2002,7 +2002,7 @@ class Servicio extends General {
                     'FirmaTecnico' => $direccionFirmaTecnico,
                     'IdValidaCinemex' => $encargadoTI
                         ), array('Id' => $value['Id']));
-                var_dump($respuesta);
+
                 $linkPdf = $this->getServicioToPdf(array('servicio' => $value['Id']));
                 $infoServicio = $this->getInformacionServicio($value['Id']);
                 $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
