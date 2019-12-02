@@ -20,8 +20,8 @@
             <!--Finaliza el encabezado del panel-->
             <!--Empieza tabla de servicios-->
             <div class="col-md-12">
-                <label id="nombreTrabajador" class="hidden"><?php echo $datos['infoServicios']["nombre"];?></label>
-                <label id="rolTrabajador" class="hidden"><?php echo $datos['infoServicios']["rol"];?></label>
+                <label id="nombreTrabajador" class="hidden"><?php echo $datos['infoServicios']["nombre"]; ?></label>
+                <label id="rolTrabajador" class="hidden"><?php echo $datos['infoServicios']["rol"]; ?></label>
                 <div class="table-responsive">
                     <table id="table-ServiciosGeneralesRedes" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
                         <thead>
@@ -506,10 +506,10 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label><br>Tipo de Material</label>
-                                    <select id="selectTipoMaterial" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"></select>
+                                    <select id="selectTipoMaterial" class="form-control bloqueoConclusion" style="width: 100%"></select>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 <div class="form-group">
                                     <label><br>Material</label>
                                     <select id="selectMaterial" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"></select>
@@ -517,19 +517,13 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label>Cantidad Disponible</label>
-                                    <input id="materialDisponible" class="form-control" style="width: 100%" disabled/>
+                                    <label>Cantidad Utilizar</label>
+                                    <input id="materialUtilizar" type="number" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"/>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label>Cantidad Utilizar</label>
-                                    <input id="materialUtilizar" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"/>
-                                </div>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <label><br><br></label>
+                                    <br><br>
                                     <label id="btnAgregarMaterialATablaNodo" class="btn btn-success bloqueoConclusionBtn">
                                         <i class="fa fa-plus"></i>
                                     </label>
@@ -542,7 +536,10 @@
                 </div>
                 <!--Inicio Nota de material extra-->
                 <div id="notaMaterial" class="col-md-12 hidden">
-                    <label style="color: red">Has seleccionado material que no tienes disponible</label>
+                    <label style="color: red">Has seleccionado material no disponible</label>
+                </div>
+                <div id="notaAgregarMaterial" class="col-md-12 hidden">
+                    <label style="color: red">Falta agregar material</label>
                 </div>
                 <!--Fin Nota de material extra-->
                 <form id="formEvidenciaMaterial" data-parsley-validate="true" enctype="multipart/form-data">
@@ -582,6 +579,7 @@
                                 <input id="actualizarEvidenciaNodo" name="actualizarEvidenciaNodo[]" type="file" multiple data-parsley-required="true">
                             </div>
                         </div>
+                        <label>Oprime el botón "Examinar" para agregar Evidencia u orpime <i class="fa fa-trash"></i> en la imagen para eliminar evidencia</label>
                         <div id="notaEvidencia" class="col-md-12 hidden">
                             <label style="color: red">Es necesario enviar una evidencia</label>
                         </div>
@@ -593,7 +591,6 @@
                                 </div>
                             </div>
                         </div>
-                        <label>Oprime el botón "Examinar" para agregar Evidencia</label>
                         <div class="col-md-12"><br></div>
                     </div>
                     <!--Finaliza seccion de evidencia-->

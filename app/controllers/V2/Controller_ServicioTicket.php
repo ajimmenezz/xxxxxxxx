@@ -153,6 +153,12 @@ class Controller_ServicioTicket extends CI_Controller {
             echo json_encode($this->datos);
         }
     }
+    
+    public function getMaterial() {
+        $datosServicio = $this->input->post();
+        $this->datos['materialAlmacen'] = $this->almacenVirtual->getAlmacen($datosServicio["tipoMaterial"]);
+        echo json_encode($this->datos);
+    }
 
     public function setSolucion() {
         try {

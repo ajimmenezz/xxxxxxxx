@@ -41,7 +41,8 @@ Class GestorServicios {
                 $this->almacenUsuario = new AlmacenUsuario();
                 $this->sucursal = new Sucursal($datos['datosServicio']['Sucursal']);
                 $this->censo = new Censo($this->sucursal);
-                $informacion['materialUsuario'] = $this->almacenUsuario->getAlmacen();
+                $informacion['tipoMaterialAlmacen'] = $this->almacenUsuario->getTipoMaterialAlmacen();
+                $informacion['materialAlmacen'] = $this->almacenUsuario->getAlmacen(null);
                 $informacion['areasSucursal'] = $this->sucursal->getAreas();
                 $informacion['censoSwitch'] = $this->censo->getRegistrosComponente('switch');
                 break;

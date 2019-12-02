@@ -19,6 +19,7 @@ $(function () {
     let actualizarEvidencia = null;
     let selectArea = null;
     let selectSwitch = null;
+    let selectTipoMaterial = null;
     let selectMaterial = null;
     let evidenciaMaterial = null;
     let evidenciaProblema = null;
@@ -154,7 +155,7 @@ $(function () {
         listaTotalNodos = infoServicio.solucion.nodos;
         censoSwitches = infoServicio.datosServicio.censoSwitch;
         areasSucursales = infoServicio.datosServicio.areasSucursal;
-        materialTecnico = infoServicio.datosServicio.materialUsuario;
+        materialTecnico = infoServicio.datosServicio.materialAlmacen;
         listaTotalMaterialUsado = infoServicio.solucion.totalMaterial;
         iniciarObjetos();
         if (infoServicio.servicio.Folio != 0 && infoServicio.servicio.Folio != null) {
@@ -188,6 +189,7 @@ $(function () {
         selectSucursal = new SelectBasico('selectSucursal');
         selectArea = new SelectBasico('selectArea');
         selectSwitch = new SelectBasico('selectSwith');
+        selectTipoMaterial = new SelectBasico('selectTipoMaterial');
         selectMaterial = new SelectBasico('selectMaterial');
         evidenciaMaterial = new FileUpload_Basico('agregarEvidenciaNodo', {url: 'SeguimientoCE/SeguimientoGeneral/Accion/agregarNodo', extensiones: ['jpg', 'jpeg', 'png']});
         evidenciaMaterial.iniciarFileUpload();
@@ -201,6 +203,7 @@ $(function () {
         selectSucursal.iniciarSelect();
         selectArea.iniciarSelect();
         selectSwitch.iniciarSelect();
+        selectTipoMaterial.iniciarSelect();
         selectMaterial.iniciarSelect();
     }
 
@@ -298,7 +301,7 @@ $(function () {
                             return;
                         }
                         listaTotalNodos = respuesta.solucion.nodos;
-                        materialTecnico = respuesta.datosServicio.materialUsuario;
+                        materialTecnico = respuesta.datosServicio.materialAlmacen;
                         listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
                         cargarContenidoModalMaterial(respuesta.datosServicio);
                         ocultarElementosDefault(respuesta.solucion);
@@ -342,22 +345,23 @@ $(function () {
         if (materialNodo.censoSwitch.length > 0) {
             selectSwitch.cargaDatosEnSelect(materialNodo.censoSwitch);
         }
-        if (materialNodo.materialUsuario.length > 0) {
-            selectMaterial.cargaDatosEnSelect(materialNodo.materialUsuario);
-            selectMaterial.evento('change', function () {
-                let materialSeleccionado = selectMaterial.obtenerValor();
-                $.each(materialNodo.materialUsuario, function (key, value) {
-                    if (value.id == materialSeleccionado) {
-                        $('#materialDisponible').val(value.cantidad);
-                    }
+        if (materialNodo.tipoMaterialAlmacen.length > 0) {
+            selectTipoMaterial.cargaDatosEnSelect(materialNodo.tipoMaterialAlmacen);
+            selectTipoMaterial.evento('change', function () {
+                datoServicioTabla.tipoMaterial = selectTipoMaterial.obtenerValor();
+                peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/material', datoServicioTabla, function (respuesta) {
+                    selectMaterial.cargaDatosEnSelect(respuesta.materialAlmacen);
                 });
             });
+        }
+        if (materialNodo.materialAlmacen.length > 0) {
+            selectMaterial.cargaDatosEnSelect(materialNodo.materialAlmacen);
         }
     }
 
     $('#btnAgregarMaterialATablaNodo').on('click', function () {
         if (evento.validarFormulario('#formMaterial')) {
-            if (parseFloat($('#materialUtilizar').val()) <= parseFloat($('#materialDisponible').val()) && parseFloat($('#materialUtilizar').val()) > 0) {
+            if (parseFloat($('#materialUtilizar').val()) > 0) {
                 let resta = null;
                 $.each(materialTecnico, function (key, value) {
                     if (value.id === selectMaterial.obtenerValor()) {
@@ -370,8 +374,8 @@ $(function () {
                     selectMaterial.obtenerTexto(),
                     $('#materialUtilizar').val()
                 ]);
-                selectMaterial.cargaDatosEnSelect(materialTecnico);
-                $('#materialDisponible').val('');
+                selectTipoMaterial.limpiarElemento();
+                selectMaterial.limpiarElemento();
                 $('#materialUtilizar').val('');
             } else {
                 $("#notaMaterial").removeClass("hidden").delay(4000).queue(function (next) {
@@ -383,7 +387,8 @@ $(function () {
     });
 
     $('#btnAceptarAgregarMaterial').on('click', function () {
-        if (evento.validarFormulario('#formDatosNodo')) {
+        let infoTabla = tablaAgregarMateriales.validarNumeroFilas();
+        if (evento.validarFormulario('#formDatosNodo') && infoTabla == true) {
             infoMaterialNodo.id = datoServicioTabla.id;
             infoMaterialNodo.tipo = datoServicioTabla.tipo;
             infoMaterialNodo.area = selectArea.obtenerValor();
@@ -410,7 +415,7 @@ $(function () {
                     tablaNodos.limpiartabla();
                     listaTotalNodos = respuesta.solucion.nodos;
                     listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
-                    materialTecnico = respuesta.datosServicio.materialUsuario;
+                    materialTecnico = respuesta.datosServicio.materialAlmacen;
                     cargarContenidoModalMaterial(respuesta.datosServicio);
                     cargarContenidoTablaNodos();
                     cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
@@ -427,30 +432,22 @@ $(function () {
                     tablaNodos.limpiartabla();
                     listaTotalNodos = respuesta.solucion.nodos;
                     listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
-                    materialTecnico = respuesta.datosServicio.materialUsuario;
+                    materialTecnico = respuesta.datosServicio.materialAlmacen;
                     cargarContenidoModalMaterial(respuesta.datosServicio);
                     cargarContenidoTablaNodos();
                     ocultarElementosDefault(respuesta.solucion);
                     $('#modalMaterialNodo').modal('toggle');
                 });
             }
+        } else {
+            $("#notaAgregarMaterial").removeClass("hidden").delay(4000).queue(function (next) {
+                $(this).addClass("hidden");
+                next();
+            });
         }
     });
 
     $('#btnCancelarAgregarMaterial').on('click', function () {
-        let suma = 0, infoTabla = tablaAgregarMateriales.datosTabla();
-        if (idNodo === null) {
-            if (infoTabla.length > 0) {
-                $.each(materialTecnico, function (key, value) {
-                    $.each(infoTabla, function (llave, valor) {
-                        if (value.id == valor[0]) {
-                            suma = parseFloat(value.cantidad) + parseFloat(valor[2]);
-                            value.cantidad = suma;
-                        }
-                    });
-                });
-            }
-        }
         limpiarElementosModalMaterial();
         restaurarElementosModal();
         idNodo = null;
@@ -475,16 +472,37 @@ $(function () {
         });
         let evidenciaOpcional = $('#actualizarEvidenciaNodo').val();
         let evidenciaEstablecida = jQuery.isEmptyObject(evidenciasNodo);
-        if (evidenciaOpcional == '') {
-            if (evidenciaEstablecida == true) {
-                $("#notaEvidencia").removeClass("hidden").delay(4000).queue(function (next) {
-                    $(this).addClass("hidden");
-                    next();
-                });
+        let infoTabla = tablaAgregarMateriales.validarNumeroFilas();
+        if (infoTabla == true) {
+            if (evidenciaOpcional == '') {
+                if (evidenciaEstablecida == true) {
+                    $("#notaEvidencia").removeClass("hidden").delay(4000).queue(function (next) {
+                        $(this).addClass("hidden");
+                        next();
+                    });
+                } else {
+                    infoMaterialNodo.archivos = evidenciaOpcional;
+                    infoMaterialNodo.evidencias = false;
+                    peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
+                        if (!validarError(respuesta, 'modalMaterialNodo')) {
+                            return;
+                        }
+                        limpiarElementosModalMaterial();
+                        restaurarElementosModal();
+                        listaTotalNodos = respuesta.solucion.nodos;
+                        listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
+                        materialTecnico = respuesta.datosServicio.materialAlmacen;
+                        cargarContenidoModalMaterial(respuesta.datosServicio);
+                        tablaNodos.limpiartabla();
+                        cargarContenidoTablaNodos();
+                        cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
+                        $('#modalMaterialNodo').modal('toggle');
+                    });
+                }
             } else {
-                infoMaterialNodo.archivos = '';
-                infoMaterialNodo.evidencias = false;
-                peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
+                infoMaterialNodo.archivos = evidenciaOpcional;
+                infoMaterialNodo.evidencias = true;
+                actualizarEvidencia.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
                     if (!validarError(respuesta, 'modalMaterialNodo')) {
                         return;
                     }
@@ -492,7 +510,7 @@ $(function () {
                     restaurarElementosModal();
                     listaTotalNodos = respuesta.solucion.nodos;
                     listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
-                    materialTecnico = respuesta.datosServicio.materialUsuario;
+                    materialTecnico = respuesta.datosServicio.materialAlmacen;
                     cargarContenidoModalMaterial(respuesta.datosServicio);
                     tablaNodos.limpiartabla();
                     cargarContenidoTablaNodos();
@@ -501,21 +519,9 @@ $(function () {
                 });
             }
         } else {
-            infoMaterialNodo.evidencias = true;
-            actualizarEvidencia.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
-                if (!validarError(respuesta, 'modalMaterialNodo')) {
-                    return;
-                }
-                limpiarElementosModalMaterial();
-                restaurarElementosModal();
-                listaTotalNodos = respuesta.solucion.nodos;
-                listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
-                materialTecnico = respuesta.datosServicio.materialUsuario;
-                cargarContenidoModalMaterial(respuesta.datosServicio);
-                tablaNodos.limpiartabla();
-                cargarContenidoTablaNodos();
-                cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
-                $('#modalMaterialNodo').modal('toggle');
+            $("#notaAgregarMaterial").removeClass("hidden").delay(4000).queue(function (next) {
+                $(this).addClass("hidden");
+                next();
             });
         }
         idNodo = null;
@@ -526,22 +532,14 @@ $(function () {
         datos.id = datoServicioTabla.id;
         datos.tipo = datoServicioTabla.tipo;
         datos.idNodo = idNodo;
-        let suma = 0, datosMaterial = [];
+        let datosMaterial = [];
         $.each(listaTotalNodos, function (key, value) {
             if (value.IdNodo === idNodo) {
                 datosMaterial.push(value);
             }
         });
-        $.each(materialTecnico, function (key, value) {
-            $.each(datosMaterial, function (llave, valor) {
-                if (value.id == valor.IdMaterialTecnico) {
-                    suma = parseFloat(value.cantidad) + parseFloat(valor.Cantidad);
-                    value.cantidad = suma;
-                }
-            });
-        });
 
-        peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodo', datos, function (respuesta) {
+        peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodo', datos, function (respuesta) {
             if (!validarError(respuesta, 'modalMaterialNodo')) {
                 return;
             }
@@ -551,7 +549,7 @@ $(function () {
             tablaNodos.limpiartabla();
             listaTotalNodos = respuesta.solucion.nodos;
             listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
-            materialTecnico = respuesta.datosServicio.materialUsuario;
+            materialTecnico = respuesta.datosServicio.materialAlmacen;
             cargarContenidoModalMaterial(respuesta.datosServicio);
             cargarContenidoTablaNodos();
             cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
@@ -564,8 +562,8 @@ $(function () {
         $('#inputNodo').val('');
         selectSwitch.limpiarElemento();
         $('#inputNumSwith').val('');
+        selectTipoMaterial.limpiarElemento();
         selectMaterial.limpiarElemento();
-        $('#materialDisponible').val('');
         $('#materialUtilizar').val('');
         tablaAgregarMateriales.limpiartabla();
         evidenciaMaterial.limpiarElemento();
@@ -646,23 +644,14 @@ $(function () {
         });
 
         tablaAgregarMateriales.evento(function () {
-            let suma = 0, datosFila = tablaAgregarMateriales.datosFila(this);
-            $.each(materialTecnico, function (key, value) {
-                if (value.id === datosFila[0]) {
-                    suma = parseFloat(value.cantidad) + parseFloat(datosFila[2]);
-                    value.cantidad = suma;
-                }
-            });
             tablaAgregarMateriales.eliminarFila(this);
-            selectMaterial.cargaDatosEnSelect(materialTecnico);
-            $('#materialDisponible').val('');
             $('#materialUtilizar').val('');
         });
     }
 
     function actualizarContenidoModalMaterial(id) {
         evidenciasNodo = null
-        idNodo = null;
+        idNodo = id;
         let listaTemporalNodos = [], evidencias = '';
         $.each(listaTotalNodos, function (key, value) {
             if (value.IdNodo === id) {
@@ -726,8 +715,8 @@ $(function () {
                 listaTotalNodos = respuesta.solucion.nodos;
                 $(`#img-${indice}`).addClass('hidden');
             });
+            idNodo = null;
         });
-        idNodo = id;
     }
 
     function cargarEvidenciaArchivos() {
@@ -913,7 +902,7 @@ $(function () {
                         return;
                     }
                     listaTotalNodos = respuesta.solucion.nodos;
-                    materialTecnico = respuesta.datosServicio.materialUsuario;
+                    materialTecnico = respuesta.datosServicio.materialAlmacen;
                     listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
                     cargarContenidoModalMaterial(respuesta.datosServicio);
                     ocultarElementosDefault(respuesta.solucion);

@@ -10,8 +10,18 @@ class Modelo_AlmacenVirtual extends Modelo {
         parent::__construct();
     }
 
-    public function getMaterial(string $idUsuario) {
-        return $this->ejecutaFuncion('call getInventoryByUser(' . $idUsuario . ')');
+    public function getTipoMaterial() {
+        return $this->consulta('select Id, Nombre from cat_v3_accesorios_proyecto where Flag = 1');
+    }
+
+    public function getMaterial(string $condicion) {
+        return $this->consulta('select 
+                                    ces.Id, 
+                                    Clave, 
+                                    ces.Nombre 
+                                from cat_v3_equipos_sae as ces
+                                join cat_v3_material_proyectos as cmp on ces.Id = cmp.IdMaterial
+                                join cat_v3_accesorios_proyecto as cap on cmp.IdAccesorio = cap.Id ' . $condicion);
     }
 
     public function insertarMovimientosInventario(array $datos) {
