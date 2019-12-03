@@ -251,7 +251,7 @@ class InformacionServicios extends General {
             } else {
                 $path = 'http://' . $host . '/' . $path;
             }
-            
+
             $descripcionConclusionSD = '<div>Descripción: ' . $datosDescripcionConclusion[0]['DescripcionServicio'] . '</div>';
             $descripcion = $datosDescripcionConclusion[0]['Sucursal'] . ' ' . $infoServicio[0]['TipoServicio'] . ' se concluyo con exito';
             $datosResolucion = '<br>' . $descripcion . $descripcionConclusionSD . $linkImagenesSolucion . "<div><a href='" . $path . "' target='_blank'>Documento PDF</a></div>";
@@ -1329,7 +1329,12 @@ class InformacionServicios extends General {
 
         $generales = $this->getGeneralesServicio($datos['servicio']);
         $datos['folio'] = $generales['SD'];
-        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', 'Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio']);
+
+        if (isset($datos['archivo'])) {
+            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/', $datos['archivo']);
+        } else {
+            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', 'Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio']);
+        }
 
         if (file_exists($carpeta)) {
             unlink($carpeta);

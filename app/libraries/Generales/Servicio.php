@@ -1800,9 +1800,9 @@ class Servicio extends General {
                 $infoServicio = $this->getInformacionServicio($datos['servicio']);
                 $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
                 $path = $linkPdf['link'];
-                
+
                 $this->eventoSolicitud($datos, $fecha, $path);
-                
+
                 $dataPDF = $this->enviarReportePDFCorrectivo($datos, $dataFirma, $dataFirmaTecnico);
                 $linkPDF = $dataPDF['linkPDF'];
                 $linkExtraEquiposFaltante = $dataPDF['linkExtraEquiposFaltante'];
@@ -1850,7 +1850,7 @@ class Servicio extends General {
                 $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
                 $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
                 $linkPDF = '<br>Ver PDF Resumen General <a href="' . $path . '" target="_blank">Aquí</a>';
-                
+
                 $this->eventoSolicitud($datos, $fecha, $path);
 
                 $datosDescripcionConclusion = $this->DBS->getServicios('SELECT
@@ -2173,9 +2173,9 @@ class Servicio extends General {
         $linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-        $host = $_SERVER['SERVER_NAME'];       
+        $host = $_SERVER['SERVER_NAME'];
         $path = $linkPdf['link'];
-        
+
         if ($datosExtra !== NULL) {
             if (isset($datos['correo'])) {
                 $correo = $datos['correo'];
@@ -2744,18 +2744,21 @@ class Servicio extends General {
             'FechaEstatus' => $fecha
                 )
         );
+        
         $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
         $host = $_SERVER['SERVER_NAME'];
 
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $infoServicio = $this->getInformacionServicio($datos['servicio']);
-            $path = 'http://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
-        } else {
-            $path = 'http://' . $host . '/' . $linkPdf['link'];
-        }
+//        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+//            $infoServicio = $this->getInformacionServicio($datos['servicio']);
+//            $path = 'http://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
+////        } else {
+////            $path = 'http://' . $host . '/' . $linkPdf['link'];
+////        }
 
+
+        $path = $linkPdf['link'];
         $consulta = $this->DBS->actualizarServicio('t_facturacion_outsourcing', array(
             'Archivo' => $path,
                 ), array('Id' => $idFacturacionOutSourcing)
