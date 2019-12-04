@@ -46,7 +46,8 @@ class InformacionServicios extends General {
     //        return array('html' => $html);
     //    }
 
-    public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key) {
+    public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key)
+    {
         $html = '';
         $estatus = TRUE;
 
@@ -66,7 +67,10 @@ class InformacionServicios extends General {
                     UNION ';
         } else {
             $union = '';
-            $html .= $this->consultaCorrectivoProblema($servicio, $folio, $key);
+            $generales = $this->getGeneralesServicio($servicio);
+            if ($generales['IdEstatus'] == 3) {
+                $html .= $this->consultaCorrectivoProblema($servicio, $folio, $key);
+            }
         }
 
         $serviciosConcluidos = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM (' . $union . 'SELECT 
@@ -84,6 +88,7 @@ class InformacionServicios extends General {
                                                                         AND (tse.IdEstatus in (3,4)
                                                                         OR (tse.IdTipoServicio = 20 AND tse.IdEstatus = 2))
                                                                         ) TABLAS
+                                                                        GROUP BY TABLAS.Id
                                                                         ORDER BY FIELD (IdEstatus, 2,4), FechaConclusion DESC');
 
         if (!empty($serviciosConcluidos)) {
