@@ -21,9 +21,9 @@
                                 <select id="marcaEquipo" class="form-control" style="width: 100%" data-parsley-required="true">
                                     <option value="">Seleccionar</option>
                                     <?php
-                                        foreach ($datos["infoSwitch"]["marcaEquipo"] as $marcaEquipo) {
-                                            echo '<option value="'.$marcaEquipo['id'].'">'.$marcaEquipo['text'].'</option>';
-                                        }
+                                    foreach ($datos["infoSwitch"]["marcaEquipo"] as $marcaEquipo) {
+                                        echo '<option value="' . $marcaEquipo['id'] . '">' . $marcaEquipo['text'] . '</option>';
+                                    }
                                     ?>
                                 </select>
                             </div>
@@ -76,19 +76,27 @@
                                     <th class="all">Modelo</th>
                                     <th class="all">No. Parte</th>
                                     <th class="all">Marca</th>
+                                    <th class="never">IdMarca</th>
+                                    <th class="all">Flag</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            <?php
+                                <?php
                                 foreach ($datos['infoSwitch']["censoSwitch"] as $value) {
                                     echo "<tr>";
-                                        echo '<td>'.$value['id'].'</td>';
-                                        echo '<td>'.$value['Modelo'].'</td>';
-                                        echo '<td>'.$value['Parte'].'</td>';
-                                        echo '<td>'.$value['Marca'].'</td>';
+                                    echo '<td>' . $value['id'] . '</td>';
+                                    echo '<td>' . $value['Modelo'] . '</td>';
+                                    echo '<td>' . $value['Parte'] . '</td>';
+                                    echo '<td>' . $value['Marca'] . '</td>';
+                                    echo '<td>' . $value['IdMarca'] . '</td>';
+                                    if ($value["Flag"] == 1) {
+                                        echo '<th>Habilitado</th>';
+                                    } else {
+                                        echo '<th>Deshabilitado</th>';
+                                    }
                                     echo "</tr>";
                                 }
-                            ?>
+                                ?>
                             </tbody>
                         </table>
                     </div>
@@ -101,3 +109,49 @@
     <!--Finaliza contenido general-->
 </div>
 <!--Finaliza Vista catalogo de Switch-->
+
+<!--Empieza modal de editar-->
+<div id="modalEditarSwitch" class="hidden">
+    <div class="col-md-12">
+        <!--Empieza seccion de edición-->
+        <form class="formEditarSwith" data-parsley-validate="true" enctype="multipart/form-data">
+            <div class="col-md-12">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <div class="form-group">
+                        <label>Marca de Equipo</label>
+                        <select id="marcaEquipoEditar" class="marcaEquipoEditar form-control" style="width: 100%" data-parsley-required="true">
+                            <?php
+                            foreach ($datos["infoSwitch"]["marcaEquipo"] as $marcaEquipo) {
+                                echo '<option value="' . $marcaEquipo['id'] . '">' . $marcaEquipo['text'] . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select id="estadoEquipoEditar" class="estadoEquipoEditar form-control" style="width: 100%" data-parsley-required="true">
+                            <option value="1">Habilitado</option>
+                            <option value="2">Deshabilitado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <div class="form-group">
+                        <label>Modelo</label>
+                        <input id="nombreEquipoEditar" type="text" class="nombreEquipoEditar form-control" style="width: 100%" data-parsley-required="true"/>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <div class="form-group">
+                        <label>No. Parte</label>
+                        <input id="noParteEquipoEditar" type="text" class="noParteEquipoEditar form-control" style="width: 100%" data-parsley-required="true"/>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--Finaliza seccion de edición-->
+    </div>
+</div>
+<!--Finaliza modal de editar-->

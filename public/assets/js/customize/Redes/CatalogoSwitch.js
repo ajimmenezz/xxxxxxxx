@@ -12,6 +12,8 @@ $(function () {
     let tablaSwitch = new TablaBasica('table-catalogo-switch');
     let selectMarca = new SelectBasico('marcaEquipo');
     selectMarca.iniciarSelect();
+//    let selectMarcaEditar = new SelectBasico('marcaEquipoEditar');
+//    selectMarcaEditar.iniciarSelect();
 
     $('#agregarSwitch').on('click', function () {
         if (evento.validarFormulario('#formAgregarSwitch')) {
@@ -37,5 +39,20 @@ $(function () {
         $('#nombreEquipo').val('');
         $('#noParteEquipo').val('');
     });
-    
+
+    tablaSwitch.evento(function () {
+        let datosFila = tablaSwitch.datosFila(this);
+        modalEditar(datosFila);
+    });
+
+    function modalEditar(infoTabla) {
+        $('.marcaEquipoEditar').select2().val(infoTabla[4]).trigger('change');
+        $('.nombreEquipoEditar').val(infoTabla[1]);
+        $('.noParteEquipoEditar').val(infoTabla[2]);
+        if (infoTabla[5] === 'Habilitado') {
+            $('.estadoEquipoEditar').select2().val(1).trigger('change');
+        } else {
+            $('.estadoEquipoEditar').select2().val(2).trigger('change');
+        }
+    }
 });

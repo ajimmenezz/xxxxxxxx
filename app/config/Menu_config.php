@@ -2041,7 +2041,7 @@ $config['Redes'] = array(
             'parsley/dist/parsley',
             'parsley/src/i18n/es'
         ),
-        'Permiso' => 'VCSRCE'
+        'Permiso' => 'VSGRCE'
     )
 );
 

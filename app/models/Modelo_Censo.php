@@ -15,7 +15,9 @@ class Modelo_Censo extends Base {
                 cvmoe.Id as IdModelo,
                 cvmoe.Nombre as Modelo,
                 cvmoe.NoParte as Parte,
+                cvme.Id as IdMarca,
                 cvme.Nombre as Marca,
+                cvmoe.Flag,
                 concat(
                     marca(marcaByModelo(cvmoe.Id)),
                     " ",
@@ -26,7 +28,7 @@ class Modelo_Censo extends Base {
                 inner join cat_v3_marcas_equipo cvme
                 on cvse.Id = cvme.Sublinea
                 inner join cat_v3_modelos_equipo cvmoe
-                on cvme.Id = cvmoe.Marca WHERE cvmoe.Flag = 1 and cvse.Id = ' . $componente . '
+                on cvme.Id = cvmoe.Marca WHERE cvse.Id = ' . $componente . '
                 order by cvmoe.Id desc');
         return $consulta;
     }

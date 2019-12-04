@@ -25,7 +25,9 @@ class Censo {
                 'text' => $value['Equipo'],
                 'Modelo' => $value['Modelo'],
                 'Parte' => $value['Parte'],
-                'Marca' => $value['Marca']                   
+                'IdMarca' => $value['IdMarca'],                 
+                'Marca' => $value['Marca'],                 
+                'Flag' => $value['Flag']                 
             ));
         }
         return $datos;       
