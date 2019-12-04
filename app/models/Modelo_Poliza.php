@@ -1838,7 +1838,8 @@ class Modelo_Poliza extends Modelo_Base {
 
     public function consultaTicketsUsuario(array $datos) {
         $consulta = $this->consulta('SELECT
-                                        tst.Ticket
+                                        tst.Ticket,
+                                        (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) AS Folio
                                     FROM
                                         t_servicios_ticket tst
                                     WHERE
