@@ -26,7 +26,7 @@ if (!function_exists('setMultiplesArchivos')) {
 
         $files = $_FILES;
         if (!file_exists($carpeta)) {
-            mkdir($carpeta, 0777, true);
+            mkdir($carpeta, 0775, true);
         }
         $config['upload_path'] = $carpeta;
         $config['allowed_types'] = 'jpg|bmp|jpeg|gif|png|doc|docx|xls|xlsx|pdf|xml|csv';
