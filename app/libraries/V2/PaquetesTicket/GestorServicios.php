@@ -11,7 +11,7 @@ use Modelos\Modelo_GestorServicio as ModeloServicio;
 Class GestorServicios {
 
     private $DBServicios;
-     private $almacenUsuario;
+    private $almacenUsuario;
     private $sucursal;
     private $censo;
 
@@ -44,7 +44,7 @@ Class GestorServicios {
                 $informacion['tipoMaterialAlmacen'] = $this->almacenUsuario->getTipoMaterialAlmacen();
                 $informacion['materialAlmacen'] = $this->almacenUsuario->getAlmacen(null);
                 $informacion['areasSucursal'] = $this->sucursal->getAreas();
-                $informacion['censoSwitch'] = $this->censo->getRegistrosComponente('switch');
+                $informacion['censoSwitch'] = $this->censo->getRegistrosComponente(28);
                 break;
 
             default:
@@ -52,6 +52,15 @@ Class GestorServicios {
         }
 
         return $informacion;
+    }
+
+    public function getCatalogoSwitch() {
+        $this->almacenUsuario = new AlmacenUsuario();
+        $this->sucursal = new Sucursal(1);
+        $this->censo = new Censo($this->sucursal);
+        $datos['marcaEquipo'] = $this->almacenUsuario->getMarcaEquipo();
+        $datos['censoSwitch'] = $this->censo->getRegistrosComponente(28);
+        return $datos;
     }
 
 }

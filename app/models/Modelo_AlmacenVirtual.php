@@ -38,4 +38,15 @@ class Modelo_AlmacenVirtual extends Modelo {
         return $consulta;
     }
 
+    public function getMarcaEquipo() {
+        $consulta = $this->consulta('select 
+                                        cvme.Id as IdMar,
+                                        cvme.Nombre as Marca
+                                    from cat_v3_lineas_equipo cvle inner join cat_v3_sublineas_equipo cvse
+                                        on cvle.Id = cvse.Linea
+                                    inner join cat_v3_marcas_equipo cvme
+                                        on cvse.Id = cvme.Sublinea 
+                                    where cvse.Id = 28 and cvme.Flag = 1;');
+        return $consulta;
+    }
 }

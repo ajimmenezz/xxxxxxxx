@@ -591,7 +591,7 @@ $(function () {
                 }
             });
             $.each(censoSwitches, function (llave, valor) {
-                if (value.IdSwitch === valor.modelo) {
+                if (value.IdSwitch === valor.id) {
                     value.IdSwitch = valor.text;
                 }
             });

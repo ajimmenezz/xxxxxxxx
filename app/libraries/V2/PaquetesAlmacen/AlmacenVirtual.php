@@ -70,4 +70,15 @@ class AlmacenVirtual {
         $this->DBAlmacenVirtual->finalizarTransaccion();
     }
 
+    public function getMarcaEquipo() {
+        $informacion = array();
+        $consulta = $this->DBAlmacenVirtual->getMarcaEquipo();
+
+        foreach ($consulta as $value) {
+            array_push($informacion, array(
+                'id' => $value['IdMar'],
+                'text' => $value['Marca']));
+        }
+        return $informacion;
+    }
 }

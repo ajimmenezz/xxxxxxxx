@@ -4,39 +4,31 @@ namespace Modelos;
 
 use \Librerias\V2\PaquetesGenerales\Interfaces\Modelo_Base as Base;
 
-class Modelo_Censo extends Base{
-    
+class Modelo_Censo extends Base {
+
     public function __construct() {
         parent::__construct();
     }
-    
-    public function getCensoComponente(string $idSucursal, string $componente) {              
-        $consulta = $this->consulta('select 
-	tc.Id,
-	tc.IdArea,
-	tc.IdModelo,
-	areaAtencion(tc.IdArea) as Area,
-	tc.Punto,
-	tet.Equipo,
-	tc.Serie
-	from t_censos tc
-	inner join (
-		select
-		Id,
-		concat(
-		linea(lineaByModelo(cme.Id)),
-		" ",
-		sublinea(sublineaByModelo(cme.Id)),
-		" ",
-		marca(marcaByModelo(cme.Id)),
-		" ",
-		Nombre
-		) COLLATE utf8_general_ci
-		as Equipo
-		from cat_v3_modelos_equipo cme
-	) as tet on tc.IdModelo = tet.Id
 
-	where tet.Equipo like concat("%","'.$componente.'","%") group by IdModelo;');
+    public function getCensoComponente(int $componente) {
+        $consulta = $this->consulta('select 
+                cvmoe.Id as IdModelo,
+                cvmoe.Nombre as Modelo,
+                cvmoe.NoParte as Parte,
+                cvme.Nombre as Marca,
+                concat(
+                    marca(marcaByModelo(cvmoe.Id)),
+                    " ",
+                    cvmoe.Nombre
+                ) as Equipo
+                from cat_v3_lineas_equipo cvle inner join cat_v3_sublineas_equipo cvse
+                on cvle.Id = cvse.Linea
+                inner join cat_v3_marcas_equipo cvme
+                on cvse.Id = cvme.Sublinea
+                inner join cat_v3_modelos_equipo cvmoe
+                on cvme.Id = cvmoe.Marca WHERE cvmoe.Flag = 1 and cvse.Id = ' . $componente . '
+                order by cvmoe.Id desc');
         return $consulta;
     }
+
 }

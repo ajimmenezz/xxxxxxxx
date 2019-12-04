@@ -15,18 +15,17 @@ class Censo {
         $this->DBCenso = new Modelo();
     }
     
-    public function getRegistrosComponente(string $componente){
+    public function getRegistrosComponente(int $componente){
         $datos = array();
-        $consulta = $this->DBCenso->getCensoComponente($this->idSucursal, $componente);
+        $consulta = $this->DBCenso->getCensoComponente($componente);
         
         foreach ($consulta as $value) {
             array_push($datos, array(
                 'id' => $value['IdModelo'],
                 'text' => $value['Equipo'],
-                'idArea' => $value['IdArea'],
-                'area' => $value['Area'],
-                'idRegistro' => $value['Id'],
-                'serie' => $value['Serie']                    
+                'Modelo' => $value['Modelo'],
+                'Parte' => $value['Parte'],
+                'Marca' => $value['Marca']                   
             ));
         }
         return $datos;       
