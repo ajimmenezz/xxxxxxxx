@@ -90,6 +90,7 @@ class InformacionServicios extends General
                                                                         AND (tse.IdEstatus in (3,4)
                                                                         OR (tse.IdTipoServicio = 20 AND tse.IdEstatus = 2))
                                                                         ) TABLAS
+                                                                        GROUP BY TABLAS.Id
                                                                         ORDER BY FIELD (IdEstatus, 2,4), FechaConclusion DESC');
 
         if (!empty($serviciosConcluidos)) {
@@ -1627,8 +1628,9 @@ class InformacionServicios extends General
             $this->pdf->Cell(95, 5, $firmas['FechaFirma'], 0, 0, 'C');
         }
     }
-    
-    private function setFirmaGerenteDiagnosticoCorrectivo(int $id, array $datos) {
+
+    private function setFirmaGerenteDiagnosticoCorrectivo(int $id, array $datos)
+    {
         $diagnostico = $this->getDiagnosticoCorrectivoForPDF($id);
 
         if ((!is_null($diagnostico['Firma']) && $diagnostico['Firma'] != '')) {
@@ -1955,7 +1957,7 @@ class InformacionServicios extends General
     }
 
     private function setCensoPDF(array $datos)
-    {                
+    {
         if (($this->y + 26) > 276) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
         }
