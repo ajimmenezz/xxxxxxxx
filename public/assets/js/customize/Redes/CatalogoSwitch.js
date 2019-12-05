@@ -68,9 +68,12 @@ $(function () {
                     estatus: $('#estadoEquipoEditar').val()
                 };
                 evento.enviarEvento('SeguimientoCE/Catalogo/ActualizarModelo', data, '#modalEditarSwitch', function (respuesta) {
-                    modal.mostrarModal('Exito', '<h3>Se ha agregado el Switch al catálogo</h3>');
-                    $('#btnAceptar').addClass('hidden');
-                    $('#btnCerrar').on('click', function () {
+                    $('#modalEditarSwitch').modal('hide');
+                    evento.mostrarModal('Exito', '<h3 class="text-center">Se ha agregado el Switch al catálogo</h3>');
+                    $('#btnModalConfirmar').addClass('hidden');
+                    $('#btnModalAbortar').empty();
+                    $('#btnModalAbortar').html('<a id="btnCerrarM" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"> Cerrar</a>');
+                    $('#btnCerrarM').on('click', function () {
                         location.reload();
                     });
                 });
