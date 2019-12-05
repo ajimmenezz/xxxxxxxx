@@ -110,48 +110,64 @@
 </div>
 <!--Finaliza Vista catalogo de Switch-->
 
-<!--Empieza modal de editar-->
-<div id="modalEditarSwitch" class="hidden">
-    <div class="col-md-12">
-        <!--Empieza seccion de edición-->
-        <form class="formEditarSwith" data-parsley-validate="true" enctype="multipart/form-data">
-            <div class="col-md-12">
-                <div class="col-md-6 col-sm-6 col-xs-6">
-                    <div class="form-group">
-                        <label>Marca de Equipo</label>
-                        <select id="marcaEquipoEditar" class="marcaEquipoEditar form-control" style="width: 100%" data-parsley-required="true">
-                            <?php
-                            foreach ($datos["infoSwitch"]["marcaEquipo"] as $marcaEquipo) {
-                                echo '<option value="' . $marcaEquipo['id'] . '">' . $marcaEquipo['text'] . '</option>';
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 col-sm-6 col-xs-6">
-                    <div class="form-group">
-                        <label>Estado</label>
-                        <select id="estadoEquipoEditar" class="estadoEquipoEditar form-control" style="width: 100%" data-parsley-required="true">
-                            <option value="1">Habilitado</option>
-                            <option value="2">Deshabilitado</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 col-sm-6 col-xs-6">
-                    <div class="form-group">
-                        <label>Modelo</label>
-                        <input id="nombreEquipoEditar" type="text" class="nombreEquipoEditar form-control" style="width: 100%" data-parsley-required="true"/>
-                    </div>
-                </div>
-                <div class="col-md-6 col-sm-6 col-xs-6">
-                    <div class="form-group">
-                        <label>No. Parte</label>
-                        <input id="noParteEquipoEditar" type="text" class="noParteEquipoEditar form-control" style="width: 100%" data-parsley-required="true"/>
-                    </div>
-                </div>
+<div id="modalEditarSwitch" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="loader"></div>
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Editar</h4>
             </div>
-        </form>
-        <!--Finaliza seccion de edición-->
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <!--Empieza seccion de edición-->
+                <form id="formEditarSwith" data-parsley-validate="true" enctype="multipart/form-data">
+                    <div class="col-md-12">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <label>Marca de Equipo</label>
+                                <select id="marcaEquipoEditar" class="marcaEquipoEditar form-control" style="width: 100%" data-parsley-required="true">
+                                    <?php
+                                    foreach ($datos["infoSwitch"]["marcaEquipo"] as $marcaEquipo) {
+                                        echo '<option value="' . $marcaEquipo['id'] . '">' . $marcaEquipo['text'] . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <label>Estado</label>
+                                <select id="estadoEquipoEditar" class="estadoEquipoEditar form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="1">Habilitado</option>
+                                    <option value="0">Deshabilitado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <label>Modelo</label>
+                                <input id="nombreEquipoEditar" type="text" class="nombreEquipoEditar form-control" style="width: 100%" data-parsley-required="true"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <label>No. Parte</label>
+                                <input id="noParteEquipoEditar" type="text" class="noParteEquipoEditar form-control" style="width: 100%" data-parsley-required="true"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!--Finaliza seccion de edición-->
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptar" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCerrar" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
     </div>
 </div>
-<!--Finaliza modal de editar-->
