@@ -313,7 +313,8 @@ class Controller_SegundoPlano extends \CI_Controller {
                     'IdSucursal' => $sucursal,
                     'IdPrioridad' => $prioridad,
                     'Folio' => $details->WORKORDERID,
-                    'FechaCreacion' => date('Y-m-d H:i:s', $details->CREATEDTIME / 1000),
+                    'CreatedTime' => date('Y-m-d H:i:s', $details->CREATEDTIME / 1000),
+                    'FechaCreacion' => date('Y-m-d H:i:s'),
                     'Solicita' => '1'
                 ];
 
