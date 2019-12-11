@@ -4547,6 +4547,8 @@ class Seguimientos extends General {
                 'code' => 500];
             return $mensaje;
         } else {
+            $usuario = $this->Usuario->getDatosUsuario();
+            $datos['idTecnicoSolicita'] = $usuario['Id'];
             $nuevaValidacion = $this->DBP->insertarValidacionTecnico($datos);
             if ($nuevaValidacion) {
                 $equipoAllabNuevo = $this->DBP->consultaEquiposAllab($idServicio);
@@ -4561,7 +4563,6 @@ class Seguimientos extends General {
                         $estatusSolicitudRefaccion = '7';
                     }
 
-                    $usuario = $this->Usuario->getDatosUsuario();
                     $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
                     $arraySolicitudRefaccion = array(
@@ -5553,7 +5554,7 @@ class Seguimientos extends General {
 
     public function sendTextSD(array $dataSendTextSD) {
         $dataService = $this->DBP->consultationServiceAndRequest($dataSendTextSD['service']);
-        
+
         if (!empty($dataService[0]['Folio']) && $dataService[0]['Folio'] === '0') {
             $user = $this->Usuario->getDatosUsuario();
             $viewHtml = '';
