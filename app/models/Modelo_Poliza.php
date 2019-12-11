@@ -1183,7 +1183,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         (SELECT Nombre FROM cat_v3_fallas_equipo WHERE Id= tcd.IdFalla) AS Falla,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS Movimiento,
                                         ve.Equipo" . $valor . "
-                                        ,'Lectura'
+                                        ,'Lectura',
+                                        nombreUsuario(tea.IdTecnicoSolicita) AS TecnicoSolicita
                                     FROM 
                                             t_equipos_allab tea
                                     INNER JOIN 
@@ -1930,6 +1931,7 @@ class Modelo_Poliza extends Modelo_Base {
             'IdUsuario' => $this->usuario['Id'],
             'IdEstatus' => 2,
             'FechaEstatus' => $fecha,
+            'IdTecnicoSolicita' => $dato['idTecnicoSolicita'],
             'Flag' => 0);
 
         $insertar = $this->insertar('t_equipos_allab', $datos);
