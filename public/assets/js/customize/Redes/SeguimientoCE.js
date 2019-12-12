@@ -121,15 +121,14 @@ $(function () {
                 if (rol === 'Jefe' && nombre !== datosFila[6]) {
                     $('.bloqueoConclusion').prop("disabled", true);
                     $('.bloqueoConclusionBtn').addClass('hidden');
-                    $('#scciones').removeClass('hidden');
-                    $('·table-materialNodo').off("click");
+                    $('#table-materialNodo tbody').off("click");
                     validacion = "EN VALIDACIÓN";
                 }
                 if (datosFila[tamañoDatosFila - 1] === "EN VALIDACIÓN") {
                     $('.bloqueoConclusion').prop("disabled", true);
                     $('.bloqueoConclusionBtn').addClass('hidden');
                     $('#scciones').removeClass('hidden');
-                    $('·table-materialNodo').off("click");
+                    $('#table-materialNodo tbody').off("click");
                     validacion = "EN VALIDACIÓN";
                 }
             });
@@ -215,7 +214,7 @@ $(function () {
     }
 
     function mostrarInformacionFolio(infoFolio) {
-        if (infoFolio.Error === "") {
+        if (infoFolio instanceof Object) {
             $('#infoFolio').removeClass('hidden');
             $('#editarFolio').removeClass('hidden');
             $('#eliminarFolio').removeClass('hidden');
@@ -230,14 +229,21 @@ $(function () {
             $("#estatusFolio").text(infoFolio.STATUS);
             $("#asuntoFolio").text(infoFolio.SHORTDESCRIPTION);
         } else {
-            $('#agregarFolio').empty();
-            $('#agregarFolio').append('<div class="col-md-12"><br>\n\
-                                            <form id="errorFolio">\n\
-                                                <div class="form-group">\n\
-                                                   <label class="col-md-10">La clave del técnico en la solicitud no es válida. Imposible de autenticar.</label>\n\
-                                                </div>\n\
-                                            </form><br><br><br>\n\
+            $('#formularioAgregarFolio').addClass('hidden');
+            $('#infoFolio').addClass('hidden');
+            $('#agregarFolio').append('<div class="notaFolioError" class="col-md-12">\n\
+                                            <br>\n\
+                                            <div class="col-md-10">\n\
+                                                <label class="col-md-10">No es posible obtener la información de SD por la siguiente razon: La clave del técnico en la solicitud no es válida. Imposible de autenticar.</label>\n\
+                                            </div>\n\
+                                            <div class="col-md-2">\n\
+                                                <a class="recargarFolio"><i data-toggle="tooltip" data-placement="top" data-title="Recargar" class="fa fa-2x fa-refresh  text-success"></i>Recargar</a>\n\
+                                            </div>\n\
                                         </div>');
+            $(".recargarFolio").on('click', function () {
+                $('#formularioAgregarFolio').removeClass('hidden');
+                $('.notaFolioError').addClass('hidden');
+            });
         }
     }
 
@@ -255,7 +261,15 @@ $(function () {
 
     function cargarContenidoProblemas(infoProblemas) {
         let problema = '';
+        let iconoImagen = '';
         $.each(infoProblemas, function (key, value) {
+            if (value.archivos[0] !== "") {
+                iconoImagen = '<div class="col-md-1 col-sm-2 col-xs-1">\n\
+                                <a href="' + value.archivos[0] + '" data-lightbox="problema"><i class="fa fa-file-photo-o "></i></a>\n\
+                            </div>';
+            } else {
+                iconoImagen = '';
+            }
             problema += '<div class="problema col-md-12 row">\n\
                             <div class="col-md-6 col-sm-12">\n\
                                 Usuario: <label class="semi-bold">' + value.usuario + '</label>\n\
@@ -265,11 +279,8 @@ $(function () {
                             </div>\n\
                             <div class="col-md-11 col-sm-11 col-xs-10">\n\
                                 <textarea class="form-control" rows="2" disabled>' + value.descripcion + '</textarea>\n\
-                            </div>\n\
-                            <div class="col-md-1 col-sm-2 col-xs-1">\n\
-                                <a href="' + value.archivos[0] + '" data-lightbox="problema"><i class="fa fa-file-photo-o "></i></a>\n\
-                            </div>\n\
-                        </div><br><br><br><br><br><br>';
+                            </div>' + iconoImagen +
+                    '</div><br><br><br><br><br><br>';
         });
         $('#observacionesProblemas').append(problema);
     }
@@ -374,7 +385,6 @@ $(function () {
                     selectMaterial.obtenerTexto(),
                     $('#materialUtilizar').val()
                 ]);
-                selectTipoMaterial.limpiarElemento();
                 selectMaterial.limpiarElemento();
                 $('#materialUtilizar').val('');
             } else {
@@ -435,6 +445,7 @@ $(function () {
                     materialTecnico = respuesta.datosServicio.materialAlmacen;
                     cargarContenidoModalMaterial(respuesta.datosServicio);
                     cargarContenidoTablaNodos();
+                    cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
                     ocultarElementosDefault(respuesta.solucion);
                     $('#modalMaterialNodo').modal('toggle');
                 });
@@ -471,11 +482,10 @@ $(function () {
             }
         });
         let evidenciaOpcional = $('#actualizarEvidenciaNodo').val();
-        let evidenciaEstablecida = jQuery.isEmptyObject(evidenciasNodo);
         let infoTabla = tablaAgregarMateriales.validarNumeroFilas();
         if (infoTabla == true) {
             if (evidenciaOpcional == '') {
-                if (evidenciaEstablecida == true) {
+                if (evidenciasNodo == null) {
                     $("#notaEvidencia").removeClass("hidden").delay(4000).queue(function (next) {
                         $(this).addClass("hidden");
                         next();
@@ -484,9 +494,6 @@ $(function () {
                     infoMaterialNodo.archivos = evidenciaOpcional;
                     infoMaterialNodo.evidencias = false;
                     peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
-                        if (!validarError(respuesta, 'modalMaterialNodo')) {
-                            return;
-                        }
                         limpiarElementosModalMaterial();
                         restaurarElementosModal();
                         listaTotalNodos = respuesta.solucion.nodos;
@@ -503,9 +510,6 @@ $(function () {
                 infoMaterialNodo.archivos = evidenciaOpcional;
                 infoMaterialNodo.evidencias = true;
                 actualizarEvidencia.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
-                    if (!validarError(respuesta, 'modalMaterialNodo')) {
-                        return;
-                    }
                     limpiarElementosModalMaterial();
                     restaurarElementosModal();
                     listaTotalNodos = respuesta.solucion.nodos;
@@ -562,7 +566,6 @@ $(function () {
         $('#inputNodo').val('');
         selectSwitch.limpiarElemento();
         $('#inputNumSwith').val('');
-        selectTipoMaterial.limpiarElemento();
         selectMaterial.limpiarElemento();
         $('#materialUtilizar').val('');
         tablaAgregarMateriales.limpiartabla();
@@ -681,9 +684,7 @@ $(function () {
             $('#evidenciasMaterialUtilizado').append(evidencias);
             if (validacion === "EN VALIDACIÓN") {
                 $('.bloqueoConclusionBtn').addClass('hidden');
-                tablaAgregarMateriales.evento(function () {
-                    console.log(validacion)
-                });
+                $('#table-materialNodo tbody').off("click");
             }
         }
         $.each(listaTemporalNodos, function (key, value) {
@@ -709,9 +710,6 @@ $(function () {
             datoServicioTabla.evidencia = archivo;
             datoServicioTabla.idNodo = idNodo;
             peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarArchivo', datoServicioTabla, function (respuesta) {
-                if (!validarError(respuesta)) {
-                    return;
-                }
                 listaTotalNodos = respuesta.solucion.nodos;
                 $(`#img-${indice}`).addClass('hidden');
             });
@@ -765,16 +763,19 @@ $(function () {
     $('#guardarFolio').on('click', function () {
         if (evento.validarFormulario('#folio')) {
             datoServicioTabla.folio = $('#addFolio').val();
-            peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/guardar', datoServicioTabla, function (respuesta) {
-                if (!validarError(respuesta)) {
-                    return;
+            peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/guardar', datoServicioTabla, function (respuesta) {
+                if (respuesta.operacionFolio) {
+                    mostrarElementosAgregarFolio();
+                    if (respuesta.Folio != 0 && respuesta.Folio != null) {
+                        mostrarInformacionFolio(respuesta.folio);
+                        arreglarNotas(respuesta.notasFolio);
+                    }
+                } else {
+                    datoServicioTabla.folio = 0;
+                    peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/guardar', datoServicioTabla, function (respuesta) {
+                        mostrarInformacionFolio(respuesta.folio);
+                    });
                 }
-                if (!respuesta.operacion) {
-                    datoServicioTabla.folio = null;
-                }
-                mostrarElementosAgregarFolio();
-                mostrarInformacionFolio(respuesta.folio);
-                arreglarNotas(respuesta.notasFolio);
             });
         }
     });
@@ -804,7 +805,7 @@ $(function () {
         modal.mostrarModal('Eliminar Folio', '<h4>¿Estas Seguro de eliminar este FOLIO?</h4>');
         $('#btnAceptar').on('click', function () {
             datoServicioTabla.folio = '';
-            peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/eliminar', datoServicioTabla, function (respuesta) {
+            peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/eliminar', datoServicioTabla, function (respuesta) {
                 if (!validarError(respuesta)) {
                     return;
                 }
@@ -926,16 +927,37 @@ $(function () {
     $('#btnAceptarProblema').on('click', function () {
         if (evento.validarFormulario('#formEvidenciaProblema')) {
             datoServicioTabla.descripcion = $('#textareaDescProblema').val();
-            evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', datoServicioTabla, function (respuesta) {
-                if (!validarError(respuesta, 'modalDefinirProblema')) {
-                    return;
-                }
-                mostrarInformacionFolio(respuesta.folio);
-                arreglarNotas(respuesta.notasFolio);
-                cargarContenidoProblemas(respuesta.problemas);
-                $('#textareaDescProblema').val('');
-                evidenciaProblema.limpiarElemento();
-            });
+            if ($('#agregarEvidenciaProblema').val() !== '') {
+                datoServicioTabla.evidencia = true;
+                evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', datoServicioTabla, function (respuesta) {
+                    if (!validarError(respuesta, 'modalDefinirProblema')) {
+                        return;
+                    }
+                    if (respuesta.Folio != 0 && respuesta.Folio != null) {
+                        mostrarInformacionFolio(respuesta.folio);
+                        arreglarNotas(respuesta.notasFolio);
+                    }
+                    cargarContenidoProblemas(respuesta.problemas);
+                    $('#textareaDescProblema').val('');
+                    evidenciaProblema.limpiarElemento();
+                    $('#modalDefinirProblema').modal('toggle');
+                });
+            } else {
+                datoServicioTabla.evidencia = false;
+                peticion.enviar('modalDefinirProblema', 'SeguimientoCE/SeguimientoGeneral/agregarProblema', datoServicioTabla, function (respuesta) {
+                    if (!validarError(respuesta, 'modalDefinirProblema')) {
+                        return;
+                    }
+                    if (respuesta.Folio != 0 && respuesta.Folio != null) {
+                        mostrarInformacionFolio(respuesta.folio);
+                        arreglarNotas(respuesta.notasFolio);
+                    }
+                    cargarContenidoProblemas(respuesta.problemas);
+                    $('#textareaDescProblema').val('');
+                    evidenciaProblema.limpiarElemento();
+                    $('#modalDefinirProblema').modal('toggle');
+                });
+            }
         }
     });
 
@@ -992,7 +1014,7 @@ $(function () {
         let faltaEvidencia = true;
         if (listaTotalNodos.length > 0) {
             $.each(listaTotalNodos, function (key, value) {
-                if (value.Archivos == "") {
+                if (value.Archivos == "" || value.Archivos == ",") {
                     faltaEvidencia += 1;
                     modal.mostrarModal('AVISO', '<h4>El Nodo <b>' + value.Nombre + '</b> no tiene evidencia</h4>');
                     $('#btnAceptar').addClass('hidden');

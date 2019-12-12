@@ -192,7 +192,6 @@ class ServicioCableado implements Servicio {
         } else {
             $this->DBServiciosGeneralRedes->updateServicio($this->id, $datos);
         }
-
         $this->DBServiciosGeneralRedes->setSucursal($this->id, $datos['idSucursal']);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
@@ -239,7 +238,7 @@ class ServicioCableado implements Servicio {
         $pdf->tablaImagenes($evidencias);
         $pdf->tituloTabla('Firmas del Servicio');
         $pdf->firma($informacionServicio['infoFirmas'][0]);
-        $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
+        $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', $this->id . '-PDF');
         $pdf->Output('F', $carpeta, true);
         $archivo = substr($carpeta, 1);
         return $archivo;

@@ -180,7 +180,7 @@
                     <!--Empieza seccion de agregar Folio-->
                     <div id="agregarFolio" class="col-md-6 hidden" style="background: #F9EAC6">
                         <!--Empieza panel y eventos de folio-->
-                        <div class="col-md-12">
+                        <div id="formularioAgregarFolio" class="col-md-12">
                             <br>
                             <form id="folio" data-parsley-validate="true" enctype="multipart/form-data">
                                 <div class="form-group">
@@ -636,7 +636,7 @@
                         <div class="col-md-12">
                             <label>Evidencia</label><br>
                             <div id="archivoProblema" class="form-group">
-                                <input id="agregarEvidenciaProblema" name="agregarEvidenciaProblema[]" type="file" multiple data-parsley-required="true">
+                                <input id="agregarEvidenciaProblema" name="agregarEvidenciaProblema[]" type="file" multiple>
                             </div>
                         </div>
                     </form>
@@ -645,7 +645,7 @@
             <!--Finaliza cuerpo del modal-->
             <!--Empieza pie del modal-->
             <div class="modal-footer text-center">
-                <a id="btnAceptarProblema" class="btn btn-sm btn-success" data-dismiss="modal"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnAceptarProblema" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
                 <a id="btnCancelarProblema" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
             </div>
             <!--Finaliza pie del modal-->

@@ -79,10 +79,12 @@ class Controller_ServicioTicket extends CI_Controller {
             if (!empty($this->servicio->getFolio())) {
                 $this->datos['folio'] = ServiceDesk::getDatos($this->servicio->getFolio());
                 $this->datos['notasFolio'] = ServiceDesk::getNotas($this->servicio->getFolio());
+                $this->datos['operacionFolio'] = TRUE;
             }
         } catch (Exception $ex) {
             $this->datos['folio'] = array('Error' => $ex->getMessage());
             $this->datos['notasFolio'] = array('Error' => $ex->getMessage());
+            $this->datos['operacionFolio'] = FALSE;
         }
     }
 
@@ -137,9 +139,13 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $datosServicio['idUsuario'] = Usuario::getId();
-            $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciaProblemas/';
-            Archivo::saveArchivos($carpeta);
-            $datosServicio['archivos'] = Archivo::getString();
+            if ($datosServicio['evidencia'] !== 'false') {
+                $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciaProblemas/';
+                Archivo::saveArchivos($carpeta);
+                $datosServicio['archivos'] = Archivo::getString();
+            } else {
+                $datosServicio['archivos'] = null;
+            }
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->setProblema($datosServicio);
             $this->setNotaServiceDesk($datosServicio);
@@ -153,7 +159,7 @@ class Controller_ServicioTicket extends CI_Controller {
             echo json_encode($this->datos);
         }
     }
-    
+
     public function getMaterial() {
         $datosServicio = $this->input->post();
         $this->datos['materialAlmacen'] = $this->almacenVirtual->getAlmacen($datosServicio["tipoMaterial"]);
