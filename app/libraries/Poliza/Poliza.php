@@ -276,8 +276,8 @@ class Poliza extends General {
                                                                     WHERE
                                                                         cvrc.IdResponsableInterno = "' . $usuario['Id'] . '"
                                                                             AND (CASE
-                                                                            WHEN tfo.Vuelta > 1 THEN tst.IdEstatus IN (3 , 4)
-                                                                            WHEN tfo.Vuelta = 1 THEN tst.IdEstatus = 4
+                                                                            WHEN tfo.Vuelta > 1 THEN tst.IdEstatus IN (3, 4)
+                                                                            WHEN tfo.Vuelta = 1 THEN tst.IdEstatus IN (4, 6)
                                                                         END)
                                                                             AND tfo.IdEstatus = 8
                                                                             AND tfo.Fecha >= ' . $fechaLimiteVueltas . '
@@ -306,8 +306,8 @@ class Poliza extends General {
                                                                             t_servicios_ticket tst ON tst.Id = tfo.IdServicio
                                                                         WHERE
                                                                             (CASE
-                                                                                WHEN tfo.Vuelta = 1 THEN tst.IdEstatus IN (3 , 4)
-                                                                                WHEN tfo.Vuelta > 1 THEN tst.IdEstatus = 4
+                                                                                WHEN tfo.Vuelta = 1 THEN tst.IdEstatus IN (3, 4)
+                                                                                WHEN tfo.Vuelta > 1 THEN tst.IdEstatus IN (4, 6)
                                                                             END)
                                                                                 AND tfo.IdEstatus = 8
                                                                         AND tfo.Fecha >= ' . $fechaLimiteVueltas . '
