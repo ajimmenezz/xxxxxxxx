@@ -125,7 +125,8 @@ $(function () {
                         idSucursal,
                         datosSD,
                         datosTabla[3],
-                        idPerfil
+                        idPerfil,
+                        respuesta.informacionServicioGeneral
                         );
             } else {
                 switch (datosDelServicio.IdTipoServicio) {
