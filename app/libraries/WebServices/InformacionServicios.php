@@ -1593,6 +1593,7 @@ class InformacionServicios extends General
             }
 
             $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->SetTextColor(0,0,0);
             $this->pdf->Cell(95, 1, "Firmas de Cierre", 0, 0, 'C');
 
             $gerente = '';
@@ -1711,8 +1712,6 @@ class InformacionServicios extends General
                     $indice++;
                 }
             }
-            // $this->setStyleSubtitle();
-            // $this->setCellValue(25, 5, $indice, 'R', true);
         }
     }
 
