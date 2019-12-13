@@ -3,7 +3,7 @@
     <!--Empezando cuerpo del panel-->
     <div class="panel-body">
         <form class="margin-bottom-0" id="formActualizarUsuarios" data-parsley-validate="true">
-            <div class="row m-t-10">
+            <div id="primerColumna" class="row m-t-10">
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="nombreActualizarUsuarios">Perfil *</label>
@@ -53,6 +53,8 @@
                         <input type="text" class="form-control" id="inputActualizarSDKey" placeholder="Ingresa el API Service Desk"/> 
                     </div>
                 </div>
+            </div>
+            <div id="tercerCalumna" class="row">
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="catalogoActualizarPermisos">Permisos Adicionales</label>
@@ -65,17 +67,21 @@
                         </select>
                     </div>
                 </div> 
+            </div>     
+            <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
                         <div class="form-inline muestraCarga"></div>
                     </div>
                 </div>
+            </div>
+            <div class="row">
                 <!--Empezando error--> 
                 <div class="col-md-12">
                     <div class="errorActualizarUsuario"></div>
                 </div>
                 <!--Finalizando Error-->
-            </div>     
+            </div>
         </form>
     </div>
 </div>

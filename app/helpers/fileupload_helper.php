@@ -143,7 +143,11 @@ if (!function_exists('eliminarArchivo')) {
      */
 
     function eliminarArchivo(string $carpeta) {
-        return unlink('.' . $carpeta);
+        if (file_exists($carpeta)) {
+            return unlink('.' . $carpeta);
+        }else{
+            return TRUE;
+        }
     }
 
 }

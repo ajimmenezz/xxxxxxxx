@@ -218,26 +218,30 @@ class Catalogo extends General {
                 break;
             //actualiza los usuarios
             case '2' :
-                $existeEmail = $this->DBC->getJuntarTablas('SELECT Id FROM cat_v3_usuarios WHERE Email = "' . $datos['email'] . '" AND Id <> "' . $datos['id'] . '"');
-                $existeEmailCorporativo = $this->DBC->getJuntarTablas('SELECT Id FROM cat_v3_usuarios WHERE EmailCorporativo = "' . $datos['email'] . '" AND Id <> "' . $datos['id'] . '"');
-                if (empty($existeEmail)) {
-                    if (empty($existeEmailCorporativo)) {
-                        if (!empty($datos['permisos'])) {
-                            $permisos = implode(',', $datos['permisos']);
-                        } else {
-                            $permisos = '';
-                        }
-                        $consulta = $this->DBC->actualizarUnicoDato('cat_v3_usuarios', array(
-                            'IdPerfil' => $datos['perfil'],
-                            'EmailCorporativo' => $datos['email'],
-                            'PermisosAdicionales' => $permisos,
-                            'Flag' => $datos['estatus'],
-                            'SDKey' => $datos['SDKey']
-                                ), array('Id' => $datos['id'])
-                        );
-                        if (!empty($consulta)) {
-                            $tabla = $this->catUsuarios('3');
-                            return $tabla;
+                if (isset($datos['email'])) {
+                    $existeEmail = $this->DBC->getJuntarTablas('SELECT Id FROM cat_v3_usuarios WHERE Email = "' . $datos['email'] . '" AND Id <> "' . $datos['id'] . '"');
+                    $existeEmailCorporativo = $this->DBC->getJuntarTablas('SELECT Id FROM cat_v3_usuarios WHERE EmailCorporativo = "' . $datos['email'] . '" AND Id <> "' . $datos['id'] . '"');
+                    if (empty($existeEmail)) {
+                        if (empty($existeEmailCorporativo)) {
+                            if (!empty($datos['permisos'])) {
+                                $permisos = implode(',', $datos['permisos']);
+                            } else {
+                                $permisos = '';
+                            }
+                            $consulta = $this->DBC->actualizarUnicoDato('cat_v3_usuarios', array(
+                                'IdPerfil' => $datos['perfil'],
+                                'EmailCorporativo' => $datos['email'],
+                                'PermisosAdicionales' => $permisos,
+                                'Flag' => $datos['estatus'],
+                                'SDKey' => $datos['SDKey']
+                                    ), array('Id' => $datos['id'])
+                            );
+                            if (!empty($consulta)) {
+                                $tabla = $this->catUsuarios('3');
+                                return $tabla;
+                            } else {
+                                return FALSE;
+                            }
                         } else {
                             return FALSE;
                         }
@@ -245,7 +249,16 @@ class Catalogo extends General {
                         return FALSE;
                     }
                 } else {
-                    return FALSE;
+                    $consulta = $this->DBC->actualizarUnicoDato('cat_v3_usuarios', array(
+                        'SDKey' => $datos['SDKey']
+                            ), array('Id' => $datos['id'])
+                    );
+                    if (!empty($consulta)) {
+                        $tabla = $this->catUsuarios('3');
+                        return $tabla;
+                    } else {
+                        return FALSE;
+                    }
                 }
                 break;
             case '3':
