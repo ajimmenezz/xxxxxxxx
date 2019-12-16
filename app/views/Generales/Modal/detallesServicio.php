@@ -107,6 +107,22 @@ if (!in_array($datos['FechaResolucion'], ['', NULL])) {
     </div>
     <?php
 }
+?>
+<?php
+if (!in_array($datos['Modelo'], ['', NULL]) || !in_array($datos['Modelo'], ['', 0])) {
+    ?>
+    <div class="row">
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <h5 class="f-w-700">Área y Punto</h5>
+            <pre><?php echo $datos['Area'] . ' - ' . $datos['Punto'];  ?></pre>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <h5 class="f-w-700">Equipo</h5>
+            <pre><?php echo $datos['Modelo']; ?></pre>
+        </div>
+    </div>
+    <?php
+}
 
 if (!in_array($datos['Firma'], ['', NULL])) {
     ?>
@@ -135,7 +151,7 @@ if (!in_array($datos['Evidencias'], ['', NULL])) {
                         $htmlArchivos = '';
                         foreach ($archivos as $key => $value) {
                             echo '<div class="thumbnail-pic m-5 p-5">';
-                            $extencion = pathinfo($value, PATHINFO_EXTENSION);                            
+                            $extencion = pathinfo($value, PATHINFO_EXTENSION);
                             switch ($extencion) {
                                 case 'png': case 'jpeg': case 'jpg': case 'gif':
                                     echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="' . $value . '" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
