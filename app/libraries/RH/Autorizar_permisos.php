@@ -254,20 +254,20 @@ class Autorizar_permisos extends General {
         $this->pdf->AddPage();
         $tplIdx = $this->pdf->importPage(1);
         $this->pdf->useTemplate($tplIdx);
-        
+
         $this->pdf->SetXY(150, 2);
         $this->pdf->SetFillColor(255, 255, 255);
         $this->pdf->Cell(50, 10, '', 0, 0, 'C', True);
-        if ($datosFirmas['IdRechazo'] != ""){
+        if ($datosFirmas['IdRechazo'] != "") {
             $this->pdf->SetXY(165, 10);
             $this->pdf->SetFont("Arial", "B", 11);
-           $this->pdf->SetTextColor(254,159,159);
+            $this->pdf->SetTextColor(254, 159, 159);
             $this->pdf->Cell(14, 0, "Rechazado");
         }
-        if ($estadoPermiso == "Autorizado y Concluido por: "){
+        if ($estadoPermiso == "Autorizado y Concluido por: ") {
             $this->pdf->SetXY(165, 10);
             $this->pdf->SetFont("Arial", "B", 11);
-            $this->pdf->SetTextColor(147,240,252);
+            $this->pdf->SetTextColor(147, 240, 252);
             $this->pdf->Cell(14, 0, "Autorizado");
         }
 
@@ -299,7 +299,7 @@ class Autorizar_permisos extends General {
             case 44:
                 $this->pdf->SetXY(150, 204);
                 $this->pdf->Cell(0, 0, utf8_decode(mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))));
-                if ($datosFirmas['IdRechazo'] != ""){
+                if ($datosFirmas['IdRechazo'] != "") {
                     $this->pdf->SetFont("helvetica", "", 11);
                     $this->pdf->SetXY(15, 225);
                     $this->pdf->Cell(0, 0, 'Motivo de Rechazo:');
@@ -366,28 +366,28 @@ class Autorizar_permisos extends General {
                                             FROM t_permisos_ausencia_rh AS tpa
                                             INNER JOIN cat_v3_motivos_ausencia_personal AS cmap ON tpa.IdMotivoAusencia = cmap.Id
                                             LEFT JOIN cat_v3_tipos_rechazos_ausencia_personal AS ctrap ON tpa.IdRechazo = ctrap.Id
-                                            WHERE FechaAusenciaDesde BETWEEN "'.$filtroFechas['comienzo'].'" AND "'.$filtroFechas['fin'].'"');
+                                            WHERE FechaAusenciaDesde BETWEEN "' . $filtroFechas['comienzo'] . '" AND "' . $filtroFechas['fin'] . '"');
 
         $this->Excel->createSheet('Permisos', 0);
         $this->Excel->setActiveSheet(0);
         $arrayTitulos = ['Personal',
-                    'Estado',
-                    'Tipo Ausencia',
-                    'Motivo Ausencia',
-                    'Fecha de Tramite',
-                    'Motivo',
-                    'Folio IMSS',
-                    'Fecha de Ausencia (Desde)',
-                    'Fecha de Ausencia (Hasta)',
-                    'Hora de Entrada',
-                    'Hora de Salida',
-                    'Tipo de Rechazo',
-                    'Jefe Directo',
-                    'Fecha Revisión Jefe',
-                    'Recursos Humanos',
-                    'Fecha Revisión RH',
-                    'Contabilidad',
-                    'Fecha Revisión Contabilidad'];
+            'Estado',
+            'Tipo Ausencia',
+            'Motivo Ausencia',
+            'Fecha de Tramite',
+            'Motivo',
+            'Folio IMSS',
+            'Fecha de Ausencia (Desde)',
+            'Fecha de Ausencia (Hasta)',
+            'Hora de Entrada',
+            'Hora de Salida',
+            'Tipo de Rechazo',
+            'Jefe Directo',
+            'Fecha Revisión Jefe',
+            'Recursos Humanos',
+            'Fecha Revisión RH',
+            'Contabilidad',
+            'Fecha Revisión Contabilidad'];
         $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
         $arrayWidth = [30, 20, 20, 20, 15, 40, 15, 15, 15, 15, 15, 30, 30, 15, 30, 15, 30, 15];
         $this->Excel->setColumnsWidth('A', $arrayWidth);
@@ -396,18 +396,18 @@ class Autorizar_permisos extends General {
 
         $this->Excel->setTableContent('A', 2, $permisos, true, $arrayAlign);
 
-        $time = date("ymd_H_i");
+        $time = date("dmy_H_i");
         $nombreArchivo = 'Reporte_Permisos_Ausencia_' . $time . '.xlsx';
         $nombreArchivo = trim($nombreArchivo);
-        $ruta = '../public/storage/Archivos/RH/Reportes/' . $nombreArchivo;
+        $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
 
-        $path = "../public/storage/Archivos/RH/Reportes";
+        $path = "../public/storage/Archivos/Reportes/";
         if (!is_dir($path)) {
             mkdir($path, 775, true);
         }
         $this->Excel->saveFile($ruta);
 
-        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/RH/Reportes/' . $nombreArchivo];
+        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . '/public/storage/Archivos/Reportes/' . $nombreArchivo];
     }
 
     public function cancelarPermisoAutorizado(array $datosPermiso) {
