@@ -353,13 +353,18 @@ Servicio.prototype.ServicioSinClasificar = function () {
     var datosSD = arguments[11];
     var tipoServicio = arguments[12] || '';
     var idPerfil = arguments[13] || '';
+    var informacionServicioGeneral = arguments[14] || null;
+
     var dataServicio = {servicio: servicio, ticket: ticket};
 
     $(resumenSeguimiento).addClass('hidden');
     $(seccion).removeClass('hidden').empty().append(formulario);
 
     _this.select.crearSelect('select');
-    _this.select.cambiarOpcion('#selectSucursalesSinClasificar', idSucursal);
+
+    if (datosDelServicio.IdTipoServicio === "50") {
+        $('.divAreaPuntoEquipo').removeClass('hidden');
+    }
 
     //evento para mostrar los detalles de las descripciones
     $('#detallesServicioSinClasificar').on('click', function (e) {
@@ -462,15 +467,82 @@ Servicio.prototype.ServicioSinClasificar = function () {
         }
     });
 
+    $('#selectSucursalesSinClasificar').on('change', function (event, data) {
+        console.log($(this).val());
+        $('#selectAreaPuntoSinClasificar').empty().append('<option data-punto="" value="">Seleccionar</option>');
+        _this.select.cambiarOpcion('#selectAreaPuntoSinClasificar', '');
+        if ($('#selectSucursalesSinClasificar').val() !== '') {
+            $('#selectAreaPuntoSinClasificar').removeAttr('disabled');
+            var sucursal = $('#selectSucursalesSinClasificar').val();
+            var dataSucursal = {sucursal: sucursal};
+            _this.enviarEvento('/Poliza/Seguimiento/ConsultaAreaPuntoXSucursal', dataSucursal, '#seccion-servicio-sin-clasificar', function (respuesta) {
+                if (respuesta !== false) {
+                    $.each(respuesta, function (key, valor) {
+                        $("#selectAreaPuntoSinClasificar").append('<option value="' + valor.IdArea + '-' + valor.Punto + '">' + valor.Area + ' ' + valor.Punto + '</option>');
+                    });
+                    if (informacionServicioGeneral[0].IdModelo !== '0') {
+                        $('#selectAreaPuntoSinClasificar > option[value="' + informacionServicioGeneral[0].IdArea + '-' + informacionServicioGeneral[0].Punto + '"]').attr('selected', 'selected', 'selected', 'selected').trigger('change');
+                    }
+                } else {
+                    if (informacionServicioGeneral[0].IdModelo !== '0') {
+                        _this.mostrarMensaje('.errorGeneralServicioSinClasificar', false, 'No hay equipos reguistrados para el Area y Punto.', 5000);
+                    }
+                    $('#selectAreaPuntoSinClasificar').attr('disabled', 'disabled');
+                }
+            });
+        } else {
+            $('#selectAreaPuntoSinClasificar').attr('disabled', 'disabled');
+            $('#selectEquipoSinClasificar').attr('disabled', 'disabled');
+        }
+    });
+
+    _this.select.cambiarOpcion('#selectSucursalesSinClasificar', idSucursal);
+
+    $('#selectAreaPuntoSinClasificar').on('change', function (event, data) {
+        $('#selectEquipoSinClasificar').empty().append('<option data-serie="" data-terminal="" value="">Seleccionar</option>');
+        _this.select.cambiarOpcion('#selectEquipoSinClasificar', '');
+
+        if ($('#selectAreaPuntoSinClasificar').val() !== '') {
+            $('#selectEquipoSinClasificar').removeAttr('disabled');
+            var sucursal = $('#selectSucursalesSinClasificar').val();
+            var areaPunto = $('#selectAreaPuntoSinClasificar').val();
+            var aux = areaPunto.split("-");
+            var punto = aux[1];
+            var area = aux[0];
+
+            if (area !== '') {
+                var dataEquipo = {sucursal: sucursal, area: area, punto: punto};
+                _this.enviarEvento('/Poliza/Seguimiento/ConsultaEquipoXAreaPuntoUltimoCenso', dataEquipo, '#seccion-servicio-sin-clasificar', function (respuesta) {
+                    var nuevoArrayIdModelos = [];
+                    $.each(respuesta, function (key, valor) {
+                        $("#selectEquipoSinClasificar").append('<option data-serie="' + valor.Serie + '" data-terminal="' + valor.Extra + '" value=' + valor.IdModelo + '>' + valor.Equipo + ' (' + valor.Serie + ')</option>');
+                        nuevoArrayIdModelos.push(valor.IdModelo);
+                    });
+                    if (informacionServicioGeneral[0].IdModelo !== '0') {
+                        _this.select.cambiarOpcion('#selectEquipoSinClasificar', informacionServicioGeneral[0].IdModelo);
+                    }
+                });
+            }
+        } else {
+            $('#selectEquipoSinClasificar').attr('disabled', 'disabled');
+        }
+    });
+
     $("#btnGuardarServicioSinClasificar").off("click");
     $('#btnGuardarServicioSinClasificar').on('click', function (e) {
         var sucursal = $('#selectSucursalesSinClasificar').val();
         var descripcion = $('#inputDescripcionSinClasificar').val();
         var evidencias = $('#evidenciaSinClasificar').val();
         var archivosPreview = _this.file.previews('.previewSinClasificar');
+        var areaPunto = $('#selectAreaPuntoSinClasificar').val();
+        var equipo = $('#selectEquipoSinClasificar').val();
+        var numeroRenglon = areaPunto.search(/-/i);
+        var punto = areaPunto.substr(2, 2);
+        var area = areaPunto.substr(0, numeroRenglon);
+        punto = Math.abs(punto);
 
         if (descripcion !== '') {
-            var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, soloGuardar: true};
+            var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, soloGuardar: true, equipo: equipo, area: area, punto: punto};
             _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#seccion-servicio-sin-clasificar', data, function (respuesta) {
                 if (respuesta === true) {
                     _this.mostrarMensaje('.errorGeneralServicioSinClasificar', true, 'Datos guardados correctamente.', 3000);
@@ -786,7 +858,7 @@ Servicio.prototype.eventosFolio = function () {
                             $('#seccionSD').empty().html(mensajeSinDatos);
                         }
                     });
-                }else{
+                } else {
                     _this.mostrarMensaje('.errorGuardarFactura', false, 'Revisa los campos faltantes.', 3000);
                 }
             });
@@ -1355,7 +1427,7 @@ Servicio.prototype.validarCamposFirma = function () {
                                 if (imgInputFirmaTecnico !== '') {
                                     _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                         if (respuesta === true) {
-                                            if(evidencias != false){
+                                            if (evidencias != false) {
                                                 _this.enviarEvidenciaAsociado(evidencias);
                                             } else {
                                                 _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
@@ -1375,7 +1447,7 @@ Servicio.prototype.validarCamposFirma = function () {
                                 var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
                                 _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
-                                        if(evidencias != false){
+                                        if (evidencias != false) {
                                             _this.enviarEvidenciaAsociado(evidencias);
                                         } else {
                                             _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
@@ -1407,7 +1479,7 @@ Servicio.prototype.validarCamposFirma = function () {
                             if (imgInputFirmaTecnico !== '') {
                                 _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
-                                        if(evidencias != false){
+                                        if (evidencias != false) {
                                             _this.enviarEvidenciaAsociado(evidencias);
                                         } else {
                                             _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
@@ -1427,7 +1499,7 @@ Servicio.prototype.validarCamposFirma = function () {
                             var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
                             _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                 if (respuesta === true) {
-                                    if(evidencias != false){
+                                    if (evidencias != false) {
                                         _this.enviarEvidenciaAsociado(evidencias);
                                     } else {
                                         _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
@@ -1450,7 +1522,7 @@ Servicio.prototype.validarCamposFirma = function () {
     });
 };
 
-Servicio.prototype.enviarEvidenciaAsociado = function (evidencias){
+Servicio.prototype.enviarEvidenciaAsociado = function (evidencias) {
     var _this = this;
     _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#modal-dialogo', evidencias, function (respuesta) {
         if (respuesta === true) {

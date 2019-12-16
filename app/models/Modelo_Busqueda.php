@@ -67,7 +67,10 @@ class Modelo_Busqueda extends Modelo_Base {
                         . "tsg.Fecha as FechaResolucion, "
                         . "tst.Firma, "
                         . "tst.NombreFirma, "
-                        . "tst.FechaFirma "
+                        . "tst.FechaFirma, "
+                        . "modelo(tsg.IdModelo) AS Modelo, "
+                        . "areaAtencion(tsg.IdArea) AS Area, "
+                        . "tsg.Punto AS Punto "
                         . "from t_servicios_ticket tst LEFT JOIN t_servicios_generales tsg "
                         . "on tst.Id = tsg.IdServicio "
                         . "where tst.Id = '" . $servicio . "';");

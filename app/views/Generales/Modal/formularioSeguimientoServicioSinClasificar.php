@@ -218,7 +218,7 @@
                                     <a id="btnEliminarFolioServicioSinClasificar" href="javascript:;" class="btn btn-danger <?php echo $mostrarActulizarEliminarFolio; ?>"><i class="fa fa-eraser"></i> Eliminar</a>   
                                     <?php
                                     if ($idPerfil == '54' && $idPerfil == '78') {
-                                        echo '<a id="btnReasignarFolioServicioSinClasificar" href="javascript:;" class="btn btn-primary '. $mostrarActulizarEliminarFolio .'"><i class="fa fa-external-link"></i> Reasignar SD</a>';
+                                        echo '<a id="btnReasignarFolioServicioSinClasificar" href="javascript:;" class="btn btn-primary ' . $mostrarActulizarEliminarFolio . '"><i class="fa fa-external-link"></i> Reasignar SD</a>';
                                     }
                                     ?>
                                 </div>
@@ -269,8 +269,27 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-6 divAreaPuntoEquipo hidden">
+                            <div class="form-group">
+                                <label for="selectAreaPunto">Área y Punto</label>
+                                <select id="selectAreaPuntoSinClasificar" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
+                                    <option value="">Seleccionar</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <!--Finalizando-->
+
+                    <div class="row">
+                        <div class="col-md-6 divAreaPuntoEquipo hidden">
+                            <div class="form-group">
+                                <label for="selectEquipoSinClasificar">Equipo</label>
+                                <select id="selectEquipoSinClasificar" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
+                                    <option data-serie="" data-terminal="" value="">Seleccionar</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
                     <!--Empezando Decripcion-->
                     <div class="row">
@@ -310,10 +329,10 @@
                         if ($idPerfil == '54' || $idPerfil == '78') {
                             echo '<div class="col-md-6">
                                     <div class="form-group text-center">
-                                        <a id="btnConcluirReasignarFolioServicioSinClasificar" href="javascript:;" class="btn btn-danger m-r-5 '. $mostrarActulizarEliminarFolio .'"><i class="fa fa-external-link"></i> Terminar y Reasignar</a>
+                                        <a id="btnConcluirReasignarFolioServicioSinClasificar" href="javascript:;" class="btn btn-danger m-r-5 ' . $mostrarActulizarEliminarFolio . '"><i class="fa fa-external-link"></i> Terminar y Reasignar</a>
                                     </div>
                                 </div>';
-                        }else{
+                        } else {
                             echo '<div class="col-md-6">
                                     <div class="form-group text-center">
                                         <a id="btnConcluirServicioSinClasificar" href="javascript:;" class="btn btn-danger m-r-5 "><i class="fa fa-unlock-alt"></i> Concluir Servicio</a>                            
