@@ -1698,7 +1698,10 @@ class Servicio extends General {
                         'IdServicio' => $datos['servicio'],
                         'Descripcion' => $descripcion,
                         'Archivos' => $evidenciasAnteriores . $consulta[0]['Archivos'],
-                        'Fecha' => $fecha
+                        'Fecha' => $fecha,
+                        'IdArea' => $datos['area'],
+                        'Punto' => $datos['punto'],
+                        'IdModelo' => $datos['equipo']
                             ), array('IdServicio' => $datos['servicio'])
                     );
                 } else {
@@ -1707,7 +1710,10 @@ class Servicio extends General {
                         'IdServicio' => $datos['servicio'],
                         'Descripcion' => $descripcion,
                         'Archivos' => $archivos,
-                        'Fecha' => $fecha
+                        'Fecha' => $fecha,
+                        'IdArea' => $datos['area'],
+                        'Punto' => $datos['punto'],
+                        'IdModelo' => $datos['equipo']
                             )
                     );
                 }
@@ -1724,7 +1730,10 @@ class Servicio extends General {
                     'IdUsuario' => $usuario['Id'],
                     'IdServicio' => $datos['servicio'],
                     'Descripcion' => $descripcion,
-                    'Fecha' => $fecha
+                    'Fecha' => $fecha,
+                    'IdArea' => $datos['area'],
+                    'Punto' => $datos['punto'],
+                    'IdModelo' => $datos['equipo']
                 );
                 if (!empty($consulta)) {
                     $resultado = $this->DBS->actualizarServicio('t_servicios_generales', $datosServicio, array('IdServicio' => $datos['servicio']));
@@ -2744,7 +2753,7 @@ class Servicio extends General {
             'FechaEstatus' => $fecha
                 )
         );
-        
+
         $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
