@@ -407,7 +407,7 @@ class Autorizar_permisos extends General {
         }
         $this->Excel->saveFile($ruta);
 
-        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . '/public/storage/Archivos/Reportes/' . $nombreArchivo];
+        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/Reportes/' . $nombreArchivo];
     }
 
     public function cancelarPermisoAutorizado(array $datosPermiso) {
