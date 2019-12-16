@@ -368,7 +368,8 @@
                 if (!empty($datos['Folio'])) {
                     if (!empty($usuarioApiKey)) {
                         ?>
-                        <button id="btnRechazarSolicitud" type="button" class="btn btn-sm btn-danger m-r-5" >Reasignar Folio SD</button>
+                        <button id="btnRechazarSolicitud" type="button" class="btn btn-sm btn-warning m-r-5" >Reasignar Folio SD</button>
+                        <button id="btnRechazarSolicitudSD" type="button" class="btn btn-sm btn-danger m-r-5" >Rechazar Folio SD</button>
                         <?php
                     }
                 }

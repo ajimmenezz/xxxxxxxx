@@ -64,6 +64,12 @@ class Controller_Solicitud extends Base {
                 case 'MostrarSucursalesCliente':
                     $resultado = $this->Solicitud->sucursalesCliente($this->input->post());
                     break;
+                case 'FormularioRechazarSolicitud':
+                    $resultado = $this->Solicitud->getFormularioRechazarSolicitud($this->input->post());
+                    break;
+                case 'RechazarSolicitudSD':
+                    $resultado = $this->Solicitud->rechazarSolicitudSD($this->input->post());
+                    break;
                 default:
                     $resultado = FALSE;
                     break;
