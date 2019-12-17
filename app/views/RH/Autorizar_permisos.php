@@ -24,6 +24,13 @@
             <!--Empezando cuerpo del panel de Tabla Permisos-->
             <div class="tab-pane fade active in" id="misPermisos">
                 <div class="panel-body">
+                    <!--Empezando mensaje--> 
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mensajeErrorExcel"></div>
+                        </div>
+                    </div>
+                    <!--Finalizando mensaje-->
                     <div class="row">
                         <div class="table-responsive">
                             <table id="data-table-autorizar-permisos-ausencia" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">

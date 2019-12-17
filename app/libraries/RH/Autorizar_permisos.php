@@ -367,47 +367,51 @@ class Autorizar_permisos extends General {
                                             INNER JOIN cat_v3_motivos_ausencia_personal AS cmap ON tpa.IdMotivoAusencia = cmap.Id
                                             LEFT JOIN cat_v3_tipos_rechazos_ausencia_personal AS ctrap ON tpa.IdRechazo = ctrap.Id
                                             WHERE FechaAusenciaDesde BETWEEN "' . $filtroFechas['comienzo'] . '" AND "' . $filtroFechas['fin'] . '"');
+        
+        if($permisos){
+            $this->Excel->createSheet('Permisos', 0);
+            $this->Excel->setActiveSheet(0);
+            $arrayTitulos = ['Personal',
+                'Estado',
+                'Tipo Ausencia',
+                'Motivo Ausencia',
+                'Fecha de Tramite',
+                'Motivo',
+                'Folio IMSS',
+                'Fecha de Ausencia (Desde)',
+                'Fecha de Ausencia (Hasta)',
+                'Hora de Entrada',
+                'Hora de Salida',
+                'Tipo de Rechazo',
+                'Jefe Directo',
+                'Fecha Revisión Jefe',
+                'Recursos Humanos',
+                'Fecha Revisión RH',
+                'Contabilidad',
+                'Fecha Revisión Contabilidad'];
+            $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
+            $arrayWidth = [30, 20, 20, 20, 15, 40, 15, 15, 15, 15, 15, 30, 30, 15, 30, 15, 30, 15];
+            $this->Excel->setColumnsWidth('A', $arrayWidth);
+            $this->Excel->setTableTitle("A1", "L1", "Permisos Ausencia", array('titulo'));
+            $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'];
 
-        $this->Excel->createSheet('Permisos', 0);
-        $this->Excel->setActiveSheet(0);
-        $arrayTitulos = ['Personal',
-            'Estado',
-            'Tipo Ausencia',
-            'Motivo Ausencia',
-            'Fecha de Tramite',
-            'Motivo',
-            'Folio IMSS',
-            'Fecha de Ausencia (Desde)',
-            'Fecha de Ausencia (Hasta)',
-            'Hora de Entrada',
-            'Hora de Salida',
-            'Tipo de Rechazo',
-            'Jefe Directo',
-            'Fecha Revisión Jefe',
-            'Recursos Humanos',
-            'Fecha Revisión RH',
-            'Contabilidad',
-            'Fecha Revisión Contabilidad'];
-        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
-        $arrayWidth = [30, 20, 20, 20, 15, 40, 15, 15, 15, 15, 15, 30, 30, 15, 30, 15, 30, 15];
-        $this->Excel->setColumnsWidth('A', $arrayWidth);
-        $this->Excel->setTableTitle("A1", "L1", "Permisos Ausencia", array('titulo'));
-        $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'];
+            $this->Excel->setTableContent('A', 2, $permisos, true, $arrayAlign);
 
-        $this->Excel->setTableContent('A', 2, $permisos, true, $arrayAlign);
+            $time = date("dmy_H_i");
+            $nombreArchivo = 'Reporte_Permisos_Ausencia_' . $time . '.xlsx';
+            $nombreArchivo = trim($nombreArchivo);
+            $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
 
-        $time = date("dmy_H_i");
-        $nombreArchivo = 'Reporte_Permisos_Ausencia_' . $time . '.xlsx';
-        $nombreArchivo = trim($nombreArchivo);
-        $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
+            $path = "../public/storage/Archivos/Reportes/";
+            if (!is_dir($path)) {
+                mkdir($path, 775, true);
+            }
+            $this->Excel->saveFile($ruta);
 
-        $path = "../public/storage/Archivos/Reportes/";
-        if (!is_dir($path)) {
-            mkdir($path, 775, true);
+            return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/Reportes/' . $nombreArchivo];
+        } else {
+            return false;
         }
-        $this->Excel->saveFile($ruta);
-
-        return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/Reportes/' . $nombreArchivo];
     }
 
     public function cancelarPermisoAutorizado(array $datosPermiso) {

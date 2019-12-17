@@ -18,9 +18,11 @@ $(function () {
 
     //Inicializa funciones de la plantilla
     App.init();
-    
+
     $('.input-daterange').datepicker({
         autoclose: true,
+        language: 'es',
+        endDate: '0d',
         format: 'yyyy-mm-dd'
     });
 
@@ -37,17 +39,17 @@ $(function () {
             if (respuesta) {
                 $('#contentRevisarPermiso').removeClass('hidden').empty().append(respuesta.formulario);
                 $('#contentPermisosPendientes').addClass('hidden');
-                if (respuesta.consulta.datosAusencia['0'].IdUsuarioJefe !== null) { 
-                    $('.ocultarPermiso').addClass('hidden'); 
-                    if (respuesta.consulta.datosAusencia['0'].IdUsuarioRH == null && perfilUsuario == '21') { 
-                        $('.ocultarPermiso').removeClass('hidden'); 
-                    } else { 
-                        if (respuesta.consulta.datosAusencia['0'].IdUsuarioContabilidad == null && perfilUsuario == '37') { 
-                            $('.ocultarPermiso').removeClass('hidden'); 
-                        } 
+                if (respuesta.consulta.datosAusencia['0'].IdUsuarioJefe !== null) {
+                    $('.ocultarPermiso').addClass('hidden');
+                    if (respuesta.consulta.datosAusencia['0'].IdUsuarioRH == null && perfilUsuario == '21') {
+                        $('.ocultarPermiso').removeClass('hidden');
+                    } else {
+                        if (respuesta.consulta.datosAusencia['0'].IdUsuarioContabilidad == null && perfilUsuario == '37') {
+                            $('.ocultarPermiso').removeClass('hidden');
+                        }
                     }
                 }
-                if(datosPermiso.estatus === 'Cancelado'){
+                if (datosPermiso.estatus === 'Cancelado') {
                     $('.ocultarPermiso').addClass('hidden');
                 }
                 if (datosPermiso.estatus === 'Autorizado' && respuesta.consulta.datosAusencia['0'].Cancelacion == 1) {
@@ -137,8 +139,12 @@ $(function () {
                 fin: $('#fin').val()
             }
             evento.enviarEvento('EventoPermisosVacaciones/exportarExcel', filtroFechas, '#modal-dialogo', function (respuesta) {
-                window.open(respuesta.ruta, '_blank');
                 $('#modalExportar').modal('hide');
+                if (respuesta !== false) {
+                    window.open(respuesta.ruta, '_blank');
+                } else {
+                    evento.mostrarMensaje('.mensajeErrorExcel', false, 'No existen registros para este periodo.', 3000);
+                }
             });
         }
     });
