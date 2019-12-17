@@ -229,44 +229,6 @@ $(function () {
                     }
                 });
 
-//                    //crear un evento en calendario
-//                    var eventoCalendario = function () {
-//                        var ticketCalendario = arguments[0];
-//                        var atiende = $('#selectAtiendeServicio option:selected').text();
-//                        var tipoServicio = $('#selectServicioDepartamento option:selected').text();
-//                        var sucursal = $('#selectSucursal option:selected').text();
-//                        var emailCorporativo = $('#selectAtiendeServicio option:selected').attr('data');
-//                        var descripcion = $('#inputDescripcionServicio').val();
-//                        var now = new Date();
-//                        today = now.toISOString();
-//
-//                        resource = {
-//                            "summary": "Atención a ticket",
-//                            "description": "Nuevo servicio. Se a agregado para su atención del ticket " + ticketCalendario + " con la siguiente descripcion " + descripcion,
-//                            "location": sucursal,
-//                            "timeZone": "America/Mexico_City",
-//                            "start": {
-//                                "dateTime": now
-//                            },
-//                            "end": {
-//                                "dateTime": now
-//                            },
-//                            "attendees": [
-//                                {
-//                                    "email": emailCorporativo,
-//                                    "displayName": atiende,
-//                                    "organizer": false,
-//                                    "self": false,
-//                                    "resource": false,
-//                                    "optional": false,
-//                                    "responseStatus": "accepted"
-//                                }],
-//                            "colorId": "4"
-//
-//                        };
-//                        handleClientLoad(resource, true);
-//                    };
-
                 //Evento de select personal para seleccionar su area y departamento
                 $('#selectReasignarParsonal').on('change', function () {
                     var perfil = $(this).val();
@@ -365,6 +327,32 @@ $(function () {
                         $('#seccionSeguimiento').addClass('hidden');
                         $('#seccionRechazar').removeClass('hidden');
                     }
+                });
+
+                $('#btnRechazarSolicitudSD').on('click', function () {
+                    evento.enviarEvento('Solicitud/FormularioRechazarSolicitud', {}, '#modal-dialogo', function (respuesta) {
+                        evento.cargaContenidoModal(respuesta.html);
+                        $('#btnRechazarSD').on('click', function () {
+                            var descripcion = $('#inputDescripcionRechazo').val();
+
+                            if (descripcion !== '') {
+                                var data = {solicitud: datos[0], descripcion: descripcion};
+                                evento.enviarEvento('Solicitud/RechazarSolicitudSD', data, '#modal-dialogo', function (respuesta) {
+                                    if (respuesta.code === 200) {
+                                        location.reload();
+                                    } else {
+                                        evento.mostrarMensaje('#errorRechazar', false, respuesta.message, 3000);
+                                    }
+                                });
+                            } else {
+                                evento.mostrarMensaje('#errorRechazar', false, 'Debes escribir la descripción del rechazo.', 3000);
+                            }
+                        });
+
+                        $('#btnCancelarRechazar').on('click', function () {
+                            evento.cerrarModal();
+                        });
+                    });
                 });
 
                 //Muestra la seccion de seguimiento cuando se cancela el rechazo
