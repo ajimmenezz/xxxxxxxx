@@ -120,14 +120,15 @@ class Modelo_NodoRedes extends Base {
 
     public function getTotalMaterial(string $idServicio) {
         return $this->consulta('select 
-                                        cap.Nombre as TipoProducto, 
-                                        ces.Nombre as Producto, 
-                                        trm.Cantidad from t_redes_nodos trn 
+                                    cap.Nombre as TipoProducto, 
+                                    ces.Nombre as Producto, 
+                                    SUM(trm.Cantidad) as Cantidad
+                                from t_redes_nodos trn 
                                     inner join t_redes_material trm on trn.Id = trm.IdNodo
                                     inner join cat_v3_equipos_sae ces on trm.IdMaterialTecnico = ces.Id
                                     join cat_v3_material_proyectos cmp on ces.Id = cmp.IdMaterial
                                     join cat_v3_accesorios_proyecto cap on cmp.IdAccesorio = cap.Id
-                                where trn.IdServicio =' . $idServicio);
+                                where trn.IdServicio = ' . $idServicio . ' group by cap.Id');
     }
 
     public function deleteArchivo(string $idServicio, array $datos) {

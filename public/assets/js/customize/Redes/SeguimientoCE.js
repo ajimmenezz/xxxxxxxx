@@ -248,7 +248,7 @@ $(function () {
     }
 
     function arreglarNotas(notas) {
-        if (notas.length > 0) {
+        if (notas !== null) {
             let datos = [];
             let contador = 0;
             $.each(notas, function (key, value) {
@@ -260,17 +260,20 @@ $(function () {
     }
 
     function cargarContenidoProblemas(infoProblemas) {
+        $('#observacionesProblemas').empty();
         let problema = '';
         let iconoImagen = '';
         $.each(infoProblemas, function (key, value) {
             if (value.archivos[0] !== "") {
-                iconoImagen = '<div class="col-md-1 col-sm-2 col-xs-1">\n\
-                                <a href="' + value.archivos[0] + '" data-lightbox="problema"><i class="fa fa-file-photo-o "></i></a>\n\
-                            </div>';
+                iconoImagen = '<div class="col-md-1 col-sm-2 col-xs-1">';
+                $.each(value.archivos, function (llave, imagen) {
+                    iconoImagen += '<a href="' + imagen + '" data-lightbox="problema' + value.fecha + '">';
+                });
+                iconoImagen += '<i class="fa fa-file-photo-o "></i></a></div>';
             } else {
                 iconoImagen = '';
             }
-            problema += '<div class="problema col-md-12 row">\n\
+            problema += '<div class="problema' + value.fecha + ' col-md-12 row">\n\
                             <div class="col-md-6 col-sm-12">\n\
                                 Usuario: <label class="semi-bold">' + value.usuario + '</label>\n\
                             </div>\n\
@@ -766,10 +769,8 @@ $(function () {
             peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/guardar', datoServicioTabla, function (respuesta) {
                 if (respuesta.operacionFolio) {
                     mostrarElementosAgregarFolio();
-                    if (respuesta.Folio != 0 && respuesta.Folio != null) {
-                        mostrarInformacionFolio(respuesta.folio);
-                        arreglarNotas(respuesta.notasFolio);
-                    }
+                    mostrarInformacionFolio(respuesta.folio);
+                    arreglarNotas(respuesta.notasFolio);
                 } else {
                     datoServicioTabla.folio = 0;
                     peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/guardar', datoServicioTabla, function (respuesta) {
@@ -933,10 +934,8 @@ $(function () {
                     if (!validarError(respuesta, 'modalDefinirProblema')) {
                         return;
                     }
-                    if (respuesta.Folio != 0 && respuesta.Folio != null) {
-                        mostrarInformacionFolio(respuesta.folio);
-                        arreglarNotas(respuesta.notasFolio);
-                    }
+                    mostrarInformacionFolio(respuesta.folio);
+                    arreglarNotas(respuesta.notasFolio);
                     cargarContenidoProblemas(respuesta.problemas);
                     $('#textareaDescProblema').val('');
                     evidenciaProblema.limpiarElemento();
@@ -948,10 +947,8 @@ $(function () {
                     if (!validarError(respuesta, 'modalDefinirProblema')) {
                         return;
                     }
-                    if (respuesta.Folio != 0 && respuesta.Folio != null) {
-                        mostrarInformacionFolio(respuesta.folio);
-                        arreglarNotas(respuesta.notasFolio);
-                    }
+                    mostrarInformacionFolio(respuesta.folio);
+                    arreglarNotas(respuesta.notasFolio);
                     cargarContenidoProblemas(respuesta.problemas);
                     $('#textareaDescProblema').val('');
                     evidenciaProblema.limpiarElemento();
