@@ -136,7 +136,7 @@ $(function () {
         $('#seccionFormulariosValidacion').removeClass('hidden').empty().append(respuesta.formularioValidacion.formularioValidacion);
 
         if ($.inArray('306', respuesta.permisos) !== -1 || $.inArray('306', respuesta.permisosAdicionales) !== -1 || $.inArray('307', respuesta.permisos) !== -1 || $.inArray('307', respuesta.permisosAdicionales) !== -1) {
-            bloquerTodosCampos();
+//            bloquerTodosCampos();
         }
 
         if (respuesta.formularioEnvioSeguimientoLog !== undefined) {

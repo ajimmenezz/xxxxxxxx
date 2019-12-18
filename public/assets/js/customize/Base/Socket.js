@@ -3,7 +3,9 @@ function Socket() {
 
     if (host !== 'siccob.solutions') {
         var socket = new WebSocket('ws://localhost:8081');
-    }else{
+    } else if (host !== 'pruebas.siccob.solutions') {
+        var socket = new WebSocket('ws://pruebas.siccob.solutions:8081');
+    } else {
         var socket = new WebSocket('wss://siccob.solutions:8081');
     }
 

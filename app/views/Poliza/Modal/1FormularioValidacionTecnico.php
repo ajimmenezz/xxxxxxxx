@@ -12,6 +12,7 @@ if (!empty($datosValidacion)) {
         $tipoDiagnostico = $item['TipoDiagnostico'];
         $tipoFalla = $item['TipoFalla'];
         $falla = $item['Falla'];
+        $tecnicoSolicita = $item['TecnicoSolicita'];
         if ($item['Lectura'] === 'Lectura') {
             $mostrarSelect = "hidden";
             $mostrarInput = "";
@@ -33,6 +34,7 @@ if (!empty($datosValidacion)) {
     $falla = "";
     $tipoMovimiento = "";
     $idServicio = "";
+    $tecnicoSolicita = "";
 }
 ?>
 <div id="envioAlmacenSinGuia" class="hidden"></div>
@@ -52,12 +54,12 @@ if (!empty($datosValidacion)) {
             <div class="row">
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="form-group <?php echo $mostrarSelect; ?>">
-                        <label class="f-w-600 f-s-13">Ticket *</label>
+                        <label class="f-w-600 f-s-13">Ticket AdIST - Ticket SD *</label>
                         <select id="listaTicket" class="form-control" style="width: 100%" data-parsley-required="true">
                             <option value="">Selecciona . . .</option>
                             <?php
                             foreach ($ticketTecnico as $item) {
-                                echo '<option value="' . $item['Ticket'] . '">' . $item['Ticket'] . '</option>';
+                                echo '<option value="' . $item['Ticket'] . '">' . $item['Ticket'] . ' - ' . $item['Folio'] . '</option>';
                             }
                             ?>
                         </select>    
@@ -205,6 +207,12 @@ if (!empty($datosValidacion)) {
                     <div class="form-group <?php echo $mostrarInput; ?>">
                         <label class="f-w-600 f-s-13">Falla *</label>
                         <input type="text" class="form-control" placeholder="<?php echo $falla; ?>" disabled/>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-4">
+                    <div class="form-group <?php echo $mostrarInput; ?>">
+                        <label class="f-w-600 f-s-13">Técnico que solicita *</label>
+                        <input type="text" class="form-control" placeholder="<?php echo $tecnicoSolicita; ?>" disabled/>
                     </div>
                 </div>
             </div>

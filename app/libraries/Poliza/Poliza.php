@@ -786,7 +786,9 @@ class Poliza extends General {
         $pdf = $this->pdfServicioChecklist(array('servicio' => $datos['servicio'], 'ticket' => $datos['ticket'], 'generarPDF' => false));
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'http://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist.pdf';
+            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist.pdf';
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist.pdf';
         } else {
             $path = 'http://' . $host . '/' . $pdf;
         }

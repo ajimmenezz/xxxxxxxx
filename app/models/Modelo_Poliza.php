@@ -921,7 +921,7 @@ class Modelo_Poliza extends Modelo_Base {
         if (!empty($idServicio)) {
             $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "'");
             foreach ($consulta as $value) {
-                return ['Id' => $value['Id'], 'IdEstatus' => $value['IdEstatus'], 'Flag' => $value['Flag']];
+                return ['Id' => $value['Id'], 'IdEstatus' => $value['IdEstatus'], 'Flag' => $value['Flag'], 'IdTipoMovimiento' => $value['IdTipoMovimiento']];
             }
         } else {
             return false;
@@ -1113,6 +1113,7 @@ class Modelo_Poliza extends Modelo_Base {
                                     WHERE
                                         (CASE
                                             WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4', '12', '28', '29', '30', '32', '33', '34', '36', '39')
+                                            WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('2','4', '12', '28', '29', '30', '31',  '32', '33', '34', '36', '39')
                                             WHEN
                                                 tea.IdTipoMovimiento = '3'
                                             THEN
@@ -1151,7 +1152,7 @@ class Modelo_Poliza extends Modelo_Base {
                                     WHERE
                                     (CASE
                                         WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','36','39') OR tea.IdEstatus = '2' AND Flag = '1' OR tea.IdEstatus = '12' AND Flag = '0'
-                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','29','33','39') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '0'
+                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','28','29','33','39') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '1'
                                         WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('41')
                                     END)");
 
@@ -1182,7 +1183,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         (SELECT Nombre FROM cat_v3_fallas_equipo WHERE Id= tcd.IdFalla) AS Falla,
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS Movimiento,
                                         ve.Equipo" . $valor . "
-                                        ,'Lectura'
+                                        ,'Lectura',
+                                        nombreUsuario(tea.IdTecnicoSolicita) AS TecnicoSolicita
                                     FROM 
                                             t_equipos_allab tea
                                     INNER JOIN 
@@ -1837,7 +1839,8 @@ class Modelo_Poliza extends Modelo_Base {
 
     public function consultaTicketsUsuario(array $datos) {
         $consulta = $this->consulta('SELECT
-                                        tst.Ticket
+                                        tst.Ticket,
+                                        (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) AS Folio
                                     FROM
                                         t_servicios_ticket tst
                                     WHERE
@@ -1928,6 +1931,7 @@ class Modelo_Poliza extends Modelo_Base {
             'IdUsuario' => $this->usuario['Id'],
             'IdEstatus' => 2,
             'FechaEstatus' => $fecha,
+            'IdTecnicoSolicita' => $dato['idTecnicoSolicita'],
             'Flag' => 0);
 
         $insertar = $this->insertar('t_equipos_allab', $datos);

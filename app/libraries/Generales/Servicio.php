@@ -1649,26 +1649,7 @@ class Servicio extends General {
         $tipoServicio = $verificarServicioSinClaficar[0]['IdTipoServicio'];
 
         if (in_array($tipoServicio, [11, '11'])) {
-            $consultaPuntosCensos = $this->DBS->consulta("select * from t_censos_puntos where IdServicio = '" . $datos['servicio'] . "'");
-            if (!empty($consultaPuntosCensos)) {
-                foreach ($consultaPuntosCensos as $key => $value) {
-                    $this->DBS->queryBolean(""
-                            . "delete "
-                            . "from t_censos "
-                            . "where IdServicio = '" . $value['IdServicio'] . "' "
-                            . "and IdArea = '" . $value['IdArea'] . "' "
-                            . "and Punto > " . $value['Puntos']);
-                }
-            }
-
-            $this->DBS->queryBolean("delete
-                                    from t_censos
-                                    where IdServicio = '" . $value['IdServicio'] . "'
-                                    and IdArea not in (
-                                                    select 
-                                                    IdArea 
-                                                    from t_censos_puntos 
-                                                    where IdServicio = '" . $value['IdServicio'] . "')");
+            $this->borrarCensos($datos['servicio']);
         }
 
         if (!empty($datos['sucursal'])) {
@@ -1676,79 +1657,11 @@ class Servicio extends General {
         }
 
         if (!empty($_FILES)) {
-            $descripcion = $datos['datosConcluir'];
-            if ($descripcion === '[object Object]') {
-                $descripcion = $datos['descripcion'];
-            }
-            $CI = parent::getCI();
-            $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/EvidenciasServicioGeneral/';
-            $archivos = setMultiplesArchivos($CI, 'evidenciasSinClasificar', $carpeta);
-            $archivos = implode(',', $archivos);
-
-            if (!empty($archivos) && $archivos != '') {
-                $resultado = '';
-                if (!empty($consulta)) {
-                    if ($archivos !== NULL) {
-                        if ($archivos !== '') {
-                            $evidenciasAnteriores = $archivos . ',';
-                        }
-                    }
-                    $resultado = $this->DBS->actualizarServicio('t_servicios_generales', array(
-                        'IdUsuario' => $usuario['Id'],
-                        'IdServicio' => $datos['servicio'],
-                        'Descripcion' => $descripcion,
-                        'Archivos' => $evidenciasAnteriores . $consulta[0]['Archivos'],
-                        'Fecha' => $fecha,
-                        'IdArea' => $datos['area'],
-                        'Punto' => $datos['punto'],
-                        'IdModelo' => $datos['equipo']
-                            ), array('IdServicio' => $datos['servicio'])
-                    );
-                } else {
-                    $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', array(
-                        'IdUsuario' => $usuario['Id'],
-                        'IdServicio' => $datos['servicio'],
-                        'Descripcion' => $descripcion,
-                        'Archivos' => $archivos,
-                        'Fecha' => $fecha,
-                        'IdArea' => $datos['area'],
-                        'Punto' => $datos['punto'],
-                        'IdModelo' => $datos['equipo']
-                            )
-                    );
-                }
-            }
+            $this->guardarEvidenciasServicioSinClasificar($datos, 'evidenciasSinClasificar');
             $consulta = '';
         } else {
             if ($verificarServicioSinClaficar[0]['Seguimiento'] === '0') {
-                if (is_array($datos['datosConcluir'])) {
-                    $descripcion = $datos['datosConcluir']['descripcion'];
-                } else {
-                    $descripcion = $datos['datosConcluir'];
-                }
-                $datosServicio = array(
-                    'IdUsuario' => $usuario['Id'],
-                    'IdServicio' => $datos['servicio'],
-                    'Descripcion' => $descripcion,
-                    'Fecha' => $fecha,
-                    'IdArea' => $datos['area'],
-                    'Punto' => $datos['punto'],
-                    'IdModelo' => $datos['equipo']
-                );
-                if (!empty($consulta)) {
-                    $resultado = $this->DBS->actualizarServicio('t_servicios_generales', $datosServicio, array('IdServicio' => $datos['servicio']));
-                } else {
-                    $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', $datosServicio);
-                }
-            }
-        }
-
-        if (isset($datos['perfil'])) {
-            if ($datos['perfil'] == 54 || $datos['perfil'] == 78) {
-                $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-                $folio = $this->DBS->consultaGeneral('SELECT Folio from t_solicitudes where Id = "' . $datos['solicitud'] . '"');
-                $htmlAvanceProblema = $datos["descripcion"] . '<br><a href="https://' . $_SERVER['SERVER_NAME'] . $archivos . '">Link de Evidencia</a>';
-                $datosNotasSD = $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $folio[0]['Folio'], 'html' => $htmlAvanceProblema));
+                $this->guardarDescripcionServicionSinClasificar($datos);
             }
         }
 
@@ -1788,66 +1701,158 @@ class Servicio extends General {
         }
     }
 
-    public function enviar_Reporte_PDF(array $datos) {
+    public function servicioEnValidacion(array $datos = null) {
         try {
-            $usuario = $this->Usuario->getDatosUsuario();
+            $this->DBS->iniciaTransaccion();
             $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-            $imgFirma = $datos['img'];
-            $imgFirma = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirma));
-            $dataFirma = base64_decode($imgFirma);
-            $imgFirmaTecnico = $datos['imgFirmaTecnico'];
-            $imgFirmaTecnico = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirmaTecnico));
-            $dataFirmaTecnico = base64_decode($imgFirmaTecnico);
-            $folio = $this->DBS->consultaFolio($datos['servicio']);
-            $direccionFirma = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'Firma_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
-            $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'FirmaTecnico_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
-            file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $dataFirma);
-            file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $dataFirmaTecnico);
+            $verificarServicioSinClaficar = $this->DBS->consultaGeneral('SELECT 
+                                                                        (SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = tst.IdTipoServicio) AS Seguimiento,
+                                                                        tst.IdTipoServicio
+                                                                    FROM t_servicios_ticket tst WHERE tst.Id = "' . $datos['servicio'] . '"');
 
-            if ($datos['encargadoTI'] !== NULL) {
-                $encargadoTI = $datos['encargadoTI'];
-            } else {
-                $encargadoTI = NULL;
+            $tipoServicio = $verificarServicioSinClaficar[0]['IdTipoServicio'];
+
+            if (in_array($tipoServicio, [11, '11'])) {
+                $this->borrarCensos($datos['servicio']);
             }
 
-            if (isset($datos['correo'])) {
-                $correo = implode(",", $datos['correo']);
-            } else {
-                $correo = '';
+            if (!empty($datos['sucursal'])) {
+                $this->DBS->actualizarServicio('t_servicios_ticket', array('IdSucursal' => $datos['sucursal']), array('Id' => $datos['servicio']));
             }
 
-            if ($datos['imgFirmaTecnico'] !== NULL) {
-                $imgFirmaTecnico = $direccionFirmaTecnico;
-                $idTecnico = $usuario['Id'];
+            if (!empty($_FILES)) {
+                $this->guardarEvidenciasServicioSinClasificar($datos, 'evidenciasCambiosSinClasificar');
             } else {
-                $imgFirmaTecnico = NULL;
-                $idTecnico = NULL;
+                if ($verificarServicioSinClaficar[0]['Seguimiento'] === '0') {
+                    $this->guardarDescripcionServicionSinClasificar($datos);
+                }
             }
 
-            $this->DBS->actualizarServicio('t_servicios_ticket', array(
-                'Firma' => $direccionFirma,
-                'NombreFirma' => $datos['recibe'],
-                'CorreoCopiaFirma' => $correo,
-                'FechaFirma' => $fecha,
-                'IdTecnicoFirma' => $idTecnico,
-                'FirmaTecnico' => $imgFirmaTecnico,
-                'IdValidaCinemex' => $encargadoTI
-                    ), array('Id' => $datos['servicio']));
+            $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '5');
 
-            $this->DBS->actualizarServicio('t_servicios_ticket', array(
-                'IdEstatus' => '5',
-                'FechaConclusion' => $fecha
-                    ), array('Id' => $datos['servicio'])
-            );
+            if (!$cambiarEstatus) {
+                throw new \Exception("Error con la Base de Datos.");
+            }
 
-            $this->getServicioToPdf(array('servicio' => $datos['servicio']));
-
-            $this->enviarReportePDFCorrectivo($datos, $dataFirma, $dataFirmaTecnico);
-
-            $this->DBS->terminaTransaccion();
-            return TRUE;
+            $this->DBS->commitTransaccion();
+            return array('code' => 200, 'message' => 'correcto');
         } catch (\Exception $ex) {
-            return $ex;
+            $this->DBS->roolbackTransaccion();
+            return array('code' => 400, 'message' => $ex->getMessage());
+        }
+    }
+
+    private function guardarEvidenciasServicioSinClasificar(array $datos, string $campoEvidencias) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $descripcion = $datos['datosConcluir'];
+        $evidenciasAnteriores = '';
+        $consulta = $this->DBS->consultaGeneral('SELECT Id, Archivos FROM t_servicios_generales WHERE IdServicio =' . $datos['servicio']);
+
+        if ($descripcion === '[object Object]') {
+            $descripcion = $datos['descripcion'];
+        }
+
+        $CI = parent::getCI();
+        $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/EvidenciasServicioGeneral/';
+        $archivos = setMultiplesArchivos($CI, $campoEvidencias, $carpeta);
+        $archivos = implode(',', $archivos);
+
+        if (!empty($archivos) && $archivos != '') {
+            $resultado = '';
+            if (!empty($consulta)) {
+                if ($archivos !== NULL) {
+                    if ($archivos !== '') {
+                        $evidenciasAnteriores = $archivos . ',';
+                    }
+                }
+                $resultado = $this->DBS->actualizarServicio('t_servicios_generales', array(
+                    'IdUsuario' => $usuario['Id'],
+                    'IdServicio' => $datos['servicio'],
+                    'Descripcion' => $descripcion,
+                    'Archivos' => $evidenciasAnteriores . $consulta[0]['Archivos'],
+                    'Fecha' => $fecha
+                        ), array('IdServicio' => $datos['servicio'])
+                );
+            } else {
+                $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', array(
+                    'IdUsuario' => $usuario['Id'],
+                    'IdServicio' => $datos['servicio'],
+                    'Descripcion' => $descripcion,
+                    'Archivos' => $archivos,
+                    'Fecha' => $fecha
+                        )
+                );
+            }
+        }
+    }
+
+    private function guardarDescripcionServicionSinClasificar(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $consulta = $this->DBS->consultaGeneral('SELECT Id, Archivos FROM t_servicios_generales WHERE IdServicio =' . $datos['servicio']);
+
+        if (is_array($datos['datosConcluir'])) {
+            $descripcion = $datos['datosConcluir']['descripcion'];
+        } else {
+            $descripcion = $datos['datosConcluir'];
+        }
+
+        $datosServicio = array(
+            'IdUsuario' => $usuario['Id'],
+            'IdServicio' => $datos['servicio'],
+            'Descripcion' => $descripcion,
+            'Fecha' => $fecha
+        );
+        if (!empty($consulta)) {
+            $resultado = $this->DBS->actualizarServicio('t_servicios_generales', $datosServicio, array('IdServicio' => $datos['servicio']));
+        } else {
+            $resultado = $this->DBS->setNuevoElemento('t_servicios_generales', $datosServicio);
+        }
+    }
+
+    private function borrarCensos(string $servicio) {
+        $consultaPuntosCensos = $this->DBS->consulta("select * from t_censos_puntos where IdServicio = '" . $servicio . "'");
+        if (!empty($consultaPuntosCensos)) {
+            foreach ($consultaPuntosCensos as $key => $value) {
+                $this->DBS->queryBolean(""
+                        . "delete "
+                        . "from t_censos "
+                        . "where IdServicio = '" . $value['IdServicio'] . "' "
+                        . "and IdArea = '" . $value['IdArea'] . "' "
+                        . "and Punto > " . $value['Puntos']);
+            }
+        }
+
+        $this->DBS->queryBolean("delete
+                                    from t_censos
+                                    where IdServicio = '" . $value['IdServicio'] . "'
+                                    and IdArea not in (
+                                                    select 
+                                                    IdArea 
+                                                    from t_censos_puntos 
+                                                    where IdServicio = '" . $value['IdServicio'] . "')");
+    }
+
+    public function enviar_Reporte_PDF(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $imgFirma = $datos['img'];
+        $imgFirma = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirma));
+        $dataFirma = base64_decode($imgFirma);
+        $imgFirmaTecnico = $datos['imgFirmaTecnico'];
+        $imgFirmaTecnico = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirmaTecnico));
+        $dataFirmaTecnico = base64_decode($imgFirmaTecnico);
+        $folio = $this->DBS->consultaFolio($datos['servicio']);
+        $direccionFirma = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'Firma_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
+        $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'FirmaTecnico_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $dataFirma);
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $dataFirmaTecnico);
+
+        if ($datos['encargadoTI'] !== NULL) {
+            $encargadoTI = $datos['encargadoTI'];
+        } else {
+            $encargadoTI = NULL;
         }
     }
 
@@ -1980,24 +1985,20 @@ class Servicio extends General {
                         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
 
                         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicio . '.pdf';
                             $linkDetallesSolicitud = 'http://siccob.solutions/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
+                        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+                            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $value['Id'] . '/Pdf/Ticket_' . $value['Ticket'] . '_Servicio_' . $value['Id'] . '_' . $tipoServicio . '.pdf';
+                            $linkDetallesSolicitud = 'http://pruebas.siccob.solutions/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
                         } else {
+                            $path = 'http://' . $host . '/' . $linkPdf['link'];
                             $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $verificarSolicitud[0]['Id'];
                         }
-
-                        $path = $linkPdf['link'];
-                        $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
+                        $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
                     }
-                    $linkSolicitud = 'Ver detalles de la Solicitud <a href="' . $linkDetallesSolicitud . '" target="_blank">Aquí</a>';
                 } else {
                     $linkSolicitud = '';
                 }
-
-                $titulo = 'Solicitud Concluida';
-                $textoCorreo = '<p>Estimado(a) <strong>' . $verificarSolicitud[0]['Atiende'] . ',</strong> se ha concluido la Solicitud.</p><br>Ticket: <strong>' . $datos['ticket'] . '</strong><br> Número Solicitud: <strong>' . $verificarSolicitud[0]['Id'] . '</strong><br><br>' . $linkSolicitud . '<br>' . $linkPDF;
-                $this->enviarCorreoConcluido(array($verificarSolicitud[0]['CorreoAtiende']), $titulo, $textoCorreo);
-
-                return 'serviciosConcluidos';
             }
         } catch (\Exception $ex) {
             return $ex->getMessage();
@@ -2947,6 +2948,20 @@ class Servicio extends General {
                 )
         );
 
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $infoServicio = $this->getInformacionServicio($datos['servicio']);
+            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'pruebas.siccob.solutions') {
+            $infoServicio = $this->getInformacionServicio($datos['servicio']);
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
+        } else {
+            $path = 'http://' . $host . '/' . $linkPdf['link'];
+        }
+
+        $consulta = $this->DBS->actualizarServicio('t_facturacion_outsourcing', array(
+            'Archivo' => $path,
+                ), array('Id' => $idFacturacionOutSourcing)
+        );
         $datos['idFacturacionOutSourcing'] = $idFacturacionOutSourcing;
         $datos['folio'] = $folio[0]['Folio'];
         $consulta = $this->crearPdfVuelta($datos);

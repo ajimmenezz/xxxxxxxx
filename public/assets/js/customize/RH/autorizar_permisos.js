@@ -37,6 +37,7 @@ $(function () {
         }
         evento.enviarEvento('EventoPermisosVacaciones/Autorizar', datosPermiso, '#panelAutorizarPermisos', function (respuesta) {
             if (respuesta) {
+                console.log(perfilUsuario)
                 $('#contentRevisarPermiso').removeClass('hidden').empty().append(respuesta.formulario);
                 $('#contentPermisosPendientes').addClass('hidden');
                 if (respuesta.consulta.datosAusencia['0'].IdUsuarioJefe !== null) {
