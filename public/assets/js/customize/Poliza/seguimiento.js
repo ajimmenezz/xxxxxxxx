@@ -4617,10 +4617,10 @@ $(function () {
         data = {servicio: servicio, solucion: solucion, observaciones: observaciones, evidencias: evidencias, idTipoSolucion: idTipoSolucion, operacion: operacion, ticket: datosTablaPoliza[1], idSolicitud: datosTablaPoliza[2]};
         if ($('#evidenciasSolucionReparacionSinEquipo').val() !== '') {
             file.enviarArchivos('#evidenciasSolucionReparacionSinEquipo', 'Seguimiento/guardarReparacionSinEquipo', '#seccion-servicio-correctivo', data, function (respuesta) {
-                if (respuesta !== 'faltaDatosGenerales') {
-                    if (respuesta !== 'faltaDatosDiagnostico') {
+                if (respuesta.message !== 'faltaDatosGenerales') {
+                    if (respuesta.message !== 'faltaDatosDiagnostico') {
                         var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
-                        if (operacion === '2' && respuesta !== 'faltanServicios') {
+                        if (operacion === '2' && respuesta.message !== 'faltanServicios') {
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {
                                     if (respuesta.message === 'serviciosConcluidos') {
@@ -4653,10 +4653,10 @@ $(function () {
             });
         } else {
             evento.enviarEvento('Seguimiento/guardarReparacionSinEquipo', data, '#seccion-servicio-correctivo', function (respuesta) {
-                if (respuesta !== 'faltaDatosGenerales') {
-                    if (respuesta !== 'faltaDatosDiagnostico') {
+                if (respuesta.message !== 'faltaDatosGenerales') {
+                    if (respuesta.message !== 'faltaDatosDiagnostico') {
                         var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
-                        if (operacion === '2' && respuesta !== 'faltanServicios') {
+                        if (operacion === '2' && message !== 'faltanServicios') {
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {
                                     if (respuesta.message === 'serviciosConcluidos') {
@@ -4732,9 +4732,9 @@ $(function () {
         };
         if ($('#evidenciasSolucionReparacionConRefaccion').val() !== '') {
             file.enviarArchivos('#evidenciasSolucionReparacionConRefaccion', 'Seguimiento/guardarReparacionConRefaccion', '#seccion-servicio-correctivo', data, function (respuesta) {
-                if (respuesta !== 'faltaDatosGenerales') {
-                    if (respuesta !== 'faltaDatosDiagnostico') {
-                        if (operacion === '2' && respuesta !== 'faltanServicios') {
+                if (respuesta.message !== 'faltaDatosGenerales') {
+                    if (respuesta.message !== 'faltaDatosDiagnostico') {
+                        if (operacion === '2' && respuesta.message !== 'faltanServicios') {
                             var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {
@@ -4768,9 +4768,9 @@ $(function () {
             });
         } else {
             evento.enviarEvento('Seguimiento/guardarReparacionConRefaccion', data, '#seccion-servicio-correctivo', function (respuesta) {
-                if (respuesta !== 'faltaDatosGenerales') {
-                    if (respuesta !== 'faltaDatosDiagnostico') {
-                        if (operacion === '2' && respuesta !== 'faltanServicios') {
+                if (respuesta.message !== 'faltaDatosGenerales') {
+                    if (respuesta.message !== 'faltaDatosDiagnostico') {
+                        if (operacion === '2' && respuesta.message !== 'faltanServicios') {
                             var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {
@@ -4848,9 +4848,9 @@ $(function () {
         };
         if ($('#evidenciasSolucionCambioEquipo').val() !== '') {
             file.enviarArchivos('#evidenciasSolucionCambioEquipo', 'Seguimiento/guardarCambioEquipo', '#seccion-servicio-correctivo', data, function (respuesta) {
-                if (respuesta !== 'faltaDatosGenerales') {
-                    if (respuesta !== 'faltaDatosDiagnostico') {
-                        if (operacion === '2' && respuesta !== 'faltanServicios') {
+                if (respuesta.message !== 'faltaDatosGenerales') {
+                    if (respuesta.message !== 'faltaDatosDiagnostico') {
+                        if (operacion === '2' && respuesta.message !== 'faltanServicios') {
                             var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {
@@ -4883,9 +4883,9 @@ $(function () {
             });
         } else {
             evento.enviarEvento('Seguimiento/guardarCambioEquipo', data, '#seccion-servicio-correctivo', function (respuesta) {
-                if (respuesta !== 'faltaDatosGenerales') {
-                    if (respuesta !== 'faltaDatosDiagnostico') {
-                        if (operacion === '2' && respuesta !== 'faltanServicios') {
+                if (respuesta.message !== 'faltaDatosGenerales') {
+                    if (respuesta.message !== 'faltaDatosDiagnostico') {
+                        if (operacion === '2' && respuesta.message !== 'faltanServicios') {
                             var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {

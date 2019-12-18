@@ -1620,6 +1620,7 @@ class Seguimientos extends General {
                                 'Evidencias' => $evidenciasAnteriores . $archivos
                                     ), array('Id' => $IdCorrectivoSoluciones)
                             );
+                            return array('code' => 200, 'message' => 'Correcto');
                         } else {
                             return FALSE;
                         }
@@ -1631,15 +1632,16 @@ class Seguimientos extends General {
                                 'Evidencias' => $evidencias[0]['Evidencias']
                                     ), array('Id' => $IdCorrectivoSoluciones)
                             );
+                            return array('code' => 200, 'message' => 'Correcto');
                         } else {
                             return FALSE;
                         }
                     }
                 } else {
-                    return 'faltaDatosDiagnostico';
+                    return array('code' => 400, 'message' => 'faltaDatosDiagnostico');
                 }
             } else {
-                return 'faltaDatosGenerales';
+                return array('code' => 400, 'message' => 'faltaDatosGenerales');
             }
         } catch (\Exception $ex) {
             return $ex->getMessage();
@@ -1679,7 +1681,6 @@ class Seguimientos extends General {
                         }
                     }
 
-
                     if ($archivos) {
                         $IdCorrectivoSoluciones = $this->DBP->insertarServicioCorrectivoSolicitudesSolucionRefaccion($dataCorrectivosSoluciones, $datosTablaReparacionRefaccion);
                         $archivos = implode(',', $archivos);
@@ -1697,6 +1698,7 @@ class Seguimientos extends General {
                                 'Evidencias' => $evidenciasAnteriores . $archivos
                                     ), array('Id' => $IdCorrectivoSoluciones)
                             );
+                            return array('code' => 200, 'message' => 'Correcto');
                         } else {
                             return FALSE;
                         }
@@ -1708,15 +1710,16 @@ class Seguimientos extends General {
                                 'Evidencias' => $evidencias[0]['Evidencias']
                                     ), array('Id' => $IdCorrectivoSoluciones)
                             );
+                            return array('code' => 200, 'message' => 'Correcto');
                         } else {
                             return FALSE;
                         }
                     }
                 } else {
-                    return 'faltaDatosDiagnostico';
+                    return array('code' => 400, 'message' => 'faltaDatosDiagnostico');
                 }
             } else {
-                return 'faltaDatosGenerales';
+                return array('code' => 400, 'message' => 'faltaDatosGenerales');
             }
         } catch (\Exception $ex) {
             return $ex->getMessage();
@@ -1776,6 +1779,7 @@ class Seguimientos extends General {
                                 'Evidencias' => $evidenciasAnteriores . $archivos
                                     ), array('Id' => $IdCorrectivoSoluciones)
                             );
+                            return array('code' => 200, 'message' => 'Correcto');
                         } else {
                             return FALSE;
                         }
@@ -1787,15 +1791,16 @@ class Seguimientos extends General {
                                 'Evidencias' => $evidencias[0]['Evidencias']
                                     ), array('Id' => $IdCorrectivoSoluciones)
                             );
+                            return array('code' => 200, 'message' => 'Correcto');
                         } else {
                             return FALSE;
                         }
                     }
                 } else {
-                    return 'faltaDatosDiagnostico';
+                    return array('code' => 400, 'message' => 'faltaDatosDiagnostico');
                 }
             } else {
-                return 'faltaDatosGenerales';
+                return array('code' => 400, 'message' => 'faltaDatosGenerales');
             }
         } catch (\Exception $ex) {
             return $ex->getMessage();
@@ -1917,7 +1922,6 @@ class Seguimientos extends General {
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }
-
 
         $correoSupervisor = $this->consultaCorreoSupervisorXSucursal($datos['sucursal']);
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
@@ -2059,15 +2063,7 @@ class Seguimientos extends General {
     }
 
     public function enviarSolucionCorrectivoSD(array $datos) {
-        try {
-            $this->InformacionServicios->verifyProcess($datos);
-        } catch (\Exception $ex) {
-            
-        }
-
         $verificarEstatusTicket = $this->consultaCorrectivosServiciosTicket($datos['ticket'], $datos['servicio']);
-
-        $this->enviar_Reporte_PDF($datos);
 
         if (!empty($verificarEstatusTicket)) {
             return array('code' => 200, 'message' => 'faltanServicios');
