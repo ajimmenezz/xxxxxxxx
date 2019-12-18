@@ -497,8 +497,7 @@ class Seguimientos extends General {
                         WHERE ticket = "' . $ticket . '"
                         AND Id <> "' . $servicio . '"
                         AND IdTipoServicio = 20
-                        AND IdEstatus IN(10,5,2,1)';
-
+                        AND IdEstatus IN(10,3,2,1)';
         return $this->DBS->consultaGeneralSeguimiento($sentencia);
     }
 

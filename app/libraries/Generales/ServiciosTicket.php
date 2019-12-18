@@ -1562,12 +1562,28 @@ class ServiciosTicket extends General
                                             tst.IdSolicitud,
                                             tsi.Asunto AS AsuntoSolicitud,
                                             tsi.Descripcion AS DescripcionSolicitud,
-                                            (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
+                                            (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio,
+                                            tst.IdTipoServicio,
+                                            tst.Firma,
+                                            tst.FirmaTecnico,
+                                            tst.IdValidaCinemex,
+                                            tst.NombreFirma
                                            FROM t_servicios_ticket tst
                                            INNER JOIN t_solicitudes_internas tsi
                                            ON tsi.IdSolicitud = tst.IdSolicitud
                                            WHERE tst.Id = "' . $datos['servicio'] . '"');
-            
+
+            $linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
+            $infoServicio = $this->getInformacionServicio($datos['servicio']);
+            $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
+            $host = $_SERVER['SERVER_NAME'];
+
+            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+            } else {
+                $path = 'http://' . $host . '/' . $linkPdf['link'];
+            }
+
             if (empty($serviciosTicket)) {
                 $this->concluirSolicitud($fecha, $datos['idSolicitud']);
                 $this->concluirTicket($datos['ticket']);

@@ -4867,7 +4867,7 @@ $(function () {
     };
     var concluirServicio = function () {
         var servicio = arguments[0];
-        var dataConclusion = {servicio: servicio, estatus: '4'};
+        var dataConclusion = {servicio: servicio, estatus: '5'};
         evento.enviarEvento('Seguimiento/CambiarEstatus', dataConclusion, '#seccion-servicio-correctivo', function (respuesta) {
             servicios.mensajeModal('Servicio Concluido', 'Correcto');
         });
