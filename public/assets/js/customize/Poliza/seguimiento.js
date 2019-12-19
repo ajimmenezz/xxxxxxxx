@@ -4656,7 +4656,7 @@ $(function () {
                 if (respuesta.message !== 'faltaDatosGenerales') {
                     if (respuesta.message !== 'faltaDatosDiagnostico') {
                         var dataSD = {servicio: servicio, ticket: datosTablaPoliza[1], servicioConcluir: true};
-                        if (operacion === '2' && message !== 'faltanServicios') {
+                        if (operacion === '2' && respuesta.message !== 'faltanServicios') {
                             evento.enviarEvento('Seguimiento/enviarSolucionCorrectivoSD', dataSD, '#seccion-servicio-correctivo', function (respuesta) {
                                 if (respuesta.code === 200) {
                                     if (respuesta.message === 'serviciosConcluidos') {
