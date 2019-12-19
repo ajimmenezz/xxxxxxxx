@@ -1184,7 +1184,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS Movimiento,
                                         ve.Equipo" . $valor . "
                                         ,'Lectura',
-                                        nombreUsuario(tea.IdTecnicoSolicita) AS TecnicoSolicita
+                                        nombreUsuario(tea.IdTecnicoSolicita) AS TecnicoSolicita,
+                                        sucursal(tst.IdSucursal) AS Sucursal
                                     FROM 
                                             t_equipos_allab tea
                                     INNER JOIN 

@@ -13,6 +13,7 @@ if (!empty($datosValidacion)) {
         $tipoFalla = $item['TipoFalla'];
         $falla = $item['Falla'];
         $tecnicoSolicita = $item['TecnicoSolicita'];
+        $sucursal = $item['Sucursal'];
         if ($item['Lectura'] === 'Lectura') {
             $mostrarSelect = "hidden";
             $mostrarInput = "";
@@ -35,13 +36,14 @@ if (!empty($datosValidacion)) {
     $tipoMovimiento = "";
     $idServicio = "";
     $tecnicoSolicita = "";
+    $sucursal = "";
 }
 ?>
 <div id="envioAlmacenSinGuia" class="hidden"></div>
 <div id="envioAlmacenConGuia" class="hidden"></div>
 <div id="panelValidacion" class="panel panel-inverse">
     <div class="panel-heading">
-        <h4 class="panel-title">1) Validación</h4>
+        <h4 class="panel-title">Validación</h4>
     </div>
     <div class="panel-body">
         <div class="row">
@@ -211,8 +213,16 @@ if (!empty($datosValidacion)) {
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-4">
                     <div class="form-group <?php echo $mostrarInput; ?>">
-                        <label class="f-w-600 f-s-13">Técnico que solicita *</label>
+                        <label class="f-w-600 f-s-13">Técnico que solicita</label>
                         <input type="text" class="form-control" placeholder="<?php echo $tecnicoSolicita; ?>" disabled/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-sm-4 col-xs-4">
+                    <div class="form-group <?php echo $mostrarInput; ?>">
+                        <label class="f-w-600 f-s-13">Sucursal</label>
+                        <input type="text" class="form-control" placeholder="<?php echo $sucursal; ?>" disabled/>
                     </div>
                 </div>
             </div>
