@@ -4834,14 +4834,14 @@ class Seguimientos extends General {
             $datos['fecha'] = $fecha;
             $datos['flag'] = '1';
 
-//            $idRecepcion = $this->DBP->consultaIdRegistro(array(
-//                'idRegistro' => $datos['id'],
-//                'idDepartamento' => $datos['idDepartamento']));
-//            if (empty($idRecepcion)) {
-            $resultado = $this->DBP->insertarEquiposAllabRecepcionesCambiarEstatus($datos);
-//            } else {
-//                $resultado = $this->DBP->actualizarEquiposAllabRecepciones($datos);
-//            }
+            $idRecepcion = $this->DBP->consultaIdRegistro(array(
+                'idRegistro' => $datos['id'],
+                'idDepartamento' => $datos['idDepartamento']));
+            if (empty($idRecepcion)) {
+                $resultado = $this->DBP->insertarEquiposAllabRecepcionesCambiarEstatus($datos);
+            } else {
+                $resultado = $this->DBP->actualizarEquiposAllabRecepciones($datos);
+            }
 
             if ($resultado['code'] === 200) {
                 $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
@@ -5782,7 +5782,7 @@ class Seguimientos extends General {
         $dataService = $this->DBP->consultationServiceAndRequest($dataToCreateEmailList['idService']);
         $reassignment = '';
 
-        if (!empty($dataService[0]['Folio']) && $dataService[0]['Folio'] === '0') {
+        if (!empty($dataService[0]['Folio']) && $dataService[0]['Folio'] !== '0') {
             $user = $this->Usuario->getDatosUsuario();
             $idSDWarehouse = '28801';
             $idSDLaboratory = '14731';
@@ -5791,13 +5791,13 @@ class Seguimientos extends General {
 
             switch ($dataToCreateEmailList['idStatus']) {
                 case 2 :
+                case '2' :
                     if ($dataToCreateEmailList['movementType'] === '2') {
-                        $idSD = $idSDLaboratory;
-                    } elseif ($dataToCreateEmailList['movementType'] === '3') {
                         $idSD = $idSDWarehouse;
                     }
                     break;
                 case 12 :
+                case '12' :
                     if ($dataToCreateEmailList['movementType'] === '1') {
                         $idSD = $idSDWarehouse;
                     } else {
@@ -5805,39 +5805,45 @@ class Seguimientos extends General {
                     }
                     break;
                 case 26 :
+                case '26' :
                     $idSD = $idSDLogistics;
                     break;
                 case 28 :
-                    if ($dataToCreateEmailList['movementType'] === '1') {
-                        $idSD = $idSDLaboratory;
-                    }
+                case '28' :
+                    $idSD = $idSDLaboratory;
                     break;
                 case 36 :
+                case '36' :
                 case 38 :
+                case '38' :
                     if ($dataToCreateEmailList['movementType'] === '3') {
                         $idSD = $this->findTechnicalId(array('SDKey' => $user['SDKey'], 'idService' => $dataToCreateEmailList['idService']));
                     }
                     break;
                 case 39 :
-                    if ($dataToCreateEmailList['movementType'] === '1') {
-                        $idSD = $idSDLogistics;
-                    } elseif ($dataToCreateEmailList['movementType'] === '2') {
-                        $idSD = $idSDLaboratory;
-                    }
+                case '39' :
+                    $idSD = $idSDWarehouse;
                     break;
                 case 41:
+                case '41':
                     $idSD = $idSDLaboratory;
+                    break;
+                case 48:
+                case '48':
+                    if ($dataToCreateEmailList['movementType'] === '1') {
+                        $idSD = $idSDLogistics;
+                    } else {
+                        $idSD = $this->findTechnicalId(array('SDKey' => $user['SDKey'], 'idService' => $dataToCreateEmailList['idService']));
+                    }
                     break;
                 default :
                     $idSD = $this->findTechnicalId(array('SDKey' => $user['SDKey'], 'idService' => $dataToCreateEmailList['idService']));
                     break;
             }
-
             if ($idSD !== '') {
                 $reassignment = $this->ServiceDesk->reasignarFolioSD($dataService[0]['Folio'], $idSD, $user['SDKey']);
             }
         }
-
         return $reassignment;
     }
 
@@ -5850,8 +5856,16 @@ class Seguimientos extends General {
 
             if (isset($sdTechnicalList->operation->details)) {
                 foreach ($sdTechnicalList->operation->details as $key => $value) {
-                    if ($datosAllab[0]['NombreUsuario'] . ' - Siccob' === $value->TECHNICIANNAME) {
-                        $idSD = $value->TECHNICIANID;
+                    $pos = strpos($value->TECHNICIANNAME, 'Siccob');
+
+                    if (!$pos) {
+                        if ($datosAllab[0]['NombreUsuario'] . '' == $value->TECHNICIANNAME) {
+                            $idSD = $value->TECHNICIANID;
+                        }
+                    } else {
+                        if ($datosAllab[0]['NombreUsuario'] . ' - Siccob' == $value->TECHNICIANNAME) {
+                            $idSD = $value->TECHNICIANID;
+                        }
                     }
                 }
             }
@@ -5952,7 +5966,7 @@ class Seguimientos extends General {
     public function sendTextSD(array $dataSendTextSD) {
         $dataService = $this->DBP->consultationServiceAndRequest($dataSendTextSD['service']);
 
-        if (!empty($dataService[0]['Folio']) && $dataService[0]['Folio'] === '0') {
+        if (!empty($dataService[0]['Folio']) && $dataService[0]['Folio'] !== '0') {
             $user = $this->Usuario->getDatosUsuario();
             $viewHtml = '';
             $key = $this->ServiceDesk->validarAPIKey($user['SDKey']);
@@ -5974,12 +5988,22 @@ class Seguimientos extends General {
         $viewHtml .= '<br><div>***El usuario <strong>' . $user['Nombre'] . '</strong> ha creado una solicitud de equipo o refacción.***</div>';
 
         switch ($dataCreateTextSD['statusRequest']) {
+            case 2 :
+            case '2' :
+                if ($dataCreateTextSD['movementType'] === '2') {
+                    $dataWarehouse = $this->DBP->consultaRecepcionAlmacen(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
+                    $viewHtml .= $this->validationView(array('IdServicio' => $dataCreateTextSD['service']));
+                    $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
+                }
+                break;
             case 12 :
+            case '12' :
                 if ($dataCreateTextSD['movementType'] === '1') {
                     $viewHtml .= $this->validationView(array('IdServicio' => $dataCreateTextSD['service']));
                 }
                 break;
             case 28 :
+            case '28' :
                 if ($dataCreateTextSD['movementType'] === '1') {
                     $dataWarehouse = $this->DBP->consultaRecepcionAlmacen(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
                     $viewHtml .= $this->validationView(array('IdServicio' => $dataCreateTextSD['service']));
@@ -5987,6 +6011,7 @@ class Seguimientos extends General {
                 }
                 break;
             case 37 :
+            case '37' :
                 if ($dataCreateTextSD['movementType'] === '1') {
                     $viewHtml .= $this->requestGuideView(array('service' => $dataCreateTextSD['service']));
                 } elseif ($dataCreateTextSD['movementType'] === '3') {
@@ -5994,12 +6019,14 @@ class Seguimientos extends General {
                 }
                 break;
             case 36 :
+            case '36' :
                 $viewHtml .= $this->validationView(array('IdServicio' => $dataCreateTextSD['service']));
                 $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
                 $viewHtml .= $this->laboratoryView(array('Id' => $datosAllab[0]['Id']));
                 $viewHtml .= $this->logisticsView(array('Id' => $datosAllab[0]['Id'], 'IdServicio' => $dataCreateTextSD['service']));
                 break;
             case 39 :
+            case '39' :
                 if ($dataCreateTextSD['movementType'] === '1') {
                     $dataWarehouse = $this->DBP->consultaRecepcionAlmacen(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
                     $dataRecord = $this->DBP->consultaComentariosAdjuntosSolicitudEquipo($datosAllab[0]['Id']);
@@ -6011,6 +6038,7 @@ class Seguimientos extends General {
                 }
                 break;
             case 31 :
+            case '31' :
                 if ($dataCreateTextSD['movementType'] === '1') {
                     $viewHtml .= $this->validationView(array('IdServicio' => $dataCreateTextSD['service']));
                     $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
@@ -6060,7 +6088,6 @@ class Seguimientos extends General {
         $viewHtml = '';
         $counter = 0;
         $dataWarehouse = $this->DBP->consultaRecepcionAlmacen(array('Id' => $dataStoreView['Id'], 'IdDepartamento' => $dataStoreView['IdDepartamento'], 'IdEstatus' => $dataStoreView['IdEstatus'], 'IdServicio' => $dataStoreView['IdServicio']));
-
         $viewHtml .= '<div>**Recepción por Almacén**</div>';
         $viewHtml .= '<div>Recibió en almacén: ' . $dataWarehouse['recepcion'][0]['UsuarioRecibe'] . '</div>';
         $viewHtml .= '<div>Fecha recibida en almacén: ' . $dataWarehouse['recepcion'][0]['Fecha'] . '</div>';

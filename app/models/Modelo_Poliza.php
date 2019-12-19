@@ -1230,7 +1230,6 @@ class Modelo_Poliza extends Modelo_Base {
     public function consultaRecepcionAlmacen(array $datos) {
         $datosServcio = $this->estatusAllab($datos['IdServicio']);
         $idRecepcion = null;
-
         $consultaRecepcion = $this->consulta("SELECT 
                                                 tear.Id,
                                                 CONCAT(trp.Nombres,' ',trp.ApMaterno,' ',trp.ApPaterno) AS UsuarioRecibe,
