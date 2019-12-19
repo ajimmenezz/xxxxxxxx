@@ -123,7 +123,6 @@ $(function () {
     };
 
     var vistasDeFormularios = function (respuesta) {
-        console.log(respuesta);
         $('#panelTablaEquiposEnviados').addClass('hidden');
         $('#seccionFormulariosRecepcionTecnico').removeClass('hidden').empty().append(respuesta.formularioRecepcionTecnico.formularioRecepcionTecnico);
         $('#seccionFormulariosEnvSegLog').removeClass('hidden').empty().append(respuesta.formularioEnvioSeguimientoLog.formularioEnvioSeguimientoLog);
@@ -1165,7 +1164,9 @@ $(function () {
                     'id': idTabla,
                     'comentarios': comentarios,
                     'tipoProblema': 'almacen',
-                    'idServicio': idServicio
+                    'idServicio': idServicio,
+                    'idEstatus': '28',
+                    'idEstatusProblema': '32'
                 };
 
                 file.enviarArchivos('#adjuntosProblemaAlm', 'Seguimiento/AgregarRecepcionesProblemasSeguimientosEquipos', '#panelRecepcionAlmacen', datos, function (respuesta) {
@@ -1174,6 +1175,37 @@ $(function () {
                         $("#txtNotaAlmacen").val('').text('');
                         file.limpiar('#adjuntosProblemaAlm');
                         cargaRecepcionesProblemas(idTabla, '1', '28', '#panelRecepcionAlmacen', '#divNotasAdjuntosAlmacen');
+                        recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
+                    } else {
+                        evento.mostrarMensaje("#errorAgregarProblemaAlm", false, "Ocurrió un error al guardar la nota. Por favor recargue su página y vuelva a intentarlo.", 4000);
+                    }
+                });
+            } else {
+                evento.mostrarMensaje("#errorAgregarProblemaAlm", false, "Al menos debe agregar la nota o un adjunto para poder agregar la información", 4000);
+            }
+        });
+
+        $('#btnAgregarProblemaAlmRegreso').off('click');
+        $('#btnAgregarProblemaAlmRegreso').on('click', function () {
+            var comentarios = $.trim($("#txtNotaAlmacen").val());
+            var adjunto = $("#adjuntosProblemaAlm").val();
+
+            if (comentarios !== '' || adjunto !== '') {
+                var datos = {
+                    'id': idTabla,
+                    'comentarios': comentarios,
+                    'tipoProblema': 'almacen',
+                    'idServicio': idServicio,
+                    'idEstatus': '48',
+                    'idEstatusProblema': '49'
+                };
+
+                file.enviarArchivos('#adjuntosProblemaAlm', 'Seguimiento/AgregarRecepcionesProblemasSeguimientosEquipos', '#panelRecepcionAlmacen', datos, function (respuesta) {
+                    if (respuesta.code == 200) {
+                        evento.mostrarMensaje("#errorAgregarProblemaAlm", true, "Se ha guardado la nota correctamente", 6000);
+                        $("#txtNotaAlmacen").val('').text('');
+                        file.limpiar('#adjuntosProblemaAlm');
+                        cargaRecepcionesProblemas(idTabla, '1', '48', '#panelRecepcionAlmacen', '#divNotasAdjuntosAlmacen');
                         recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                     } else {
                         evento.mostrarMensaje("#errorAgregarProblemaAlm", false, "Ocurrió un error al guardar la nota. Por favor recargue su página y vuelva a intentarlo.", 4000);

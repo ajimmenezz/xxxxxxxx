@@ -1065,7 +1065,7 @@ class Modelo_Poliza extends Modelo_Base {
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '30', '32','33','34','36','37','39')
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '30', '32','33','34','36','37','48')
                                         WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '30', '34', '36') OR tea.IdEstatus = '38' AND Flag = '0'
                                     END)");
 
@@ -1112,8 +1112,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                         (CASE
-                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4', '12', '28', '29', '30', '32', '33', '34', '36', '39')
-                                            WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('2','4', '12', '28', '29', '30', '31',  '32', '33', '34', '36', '39')
+                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4', '12', '28', '29', '30', '32', '33', '34', '36', '39', '48', '49')
+                                            WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('2','4', '12', '28', '29', '30', '31',  '32', '33', '34', '36', '39', '48', '49')
                                             WHEN
                                                 tea.IdTipoMovimiento = '3'
                                             THEN
@@ -1151,8 +1151,8 @@ class Modelo_Poliza extends Modelo_Base {
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','36','39') OR tea.IdEstatus = '2' AND Flag = '1' OR tea.IdEstatus = '12' AND Flag = '0'
-                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','28','29','33','39') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '1'
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','36','39','48','49') OR tea.IdEstatus = '2' AND Flag = '1' OR tea.IdEstatus = '12' AND Flag = '0'
+                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','28','29','33','39','48','49') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '1'
                                         WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('41')
                                     END)");
 
@@ -1260,48 +1260,6 @@ class Modelo_Poliza extends Modelo_Base {
             return array('recepcion' => $consultaRecepcion, 'recepcionProblema' => $recpcionProblema);
         } else {
             return array('recepcion' => $consultaRecepcion, 'recepcionProblema' => []);
-        }
-    }
-
-    public function consultaRecepcionAlmacenRegreso(array $datos) {
-        $datosServcio = $this->estatusAllab($datos['IdServicio']);
-        $idRecepcion = null;
-
-        $consultaRecepcion = $this->consulta("SELECT 
-                                                tear.Id,
-                                                CONCAT(trp.Nombres,' ',trp.ApMaterno,' ',trp.ApPaterno) AS UsuarioRecibe,
-                                                tear.Fecha,
-                                                tear.Archivos,
-                                                Count(tear.Id) AS RecepcionesAlmacen
-                                            FROM
-                                                t_equipos_allab_recepciones tear
-                                            INNER JOIN
-                                                t_rh_personal trp ON trp.IdUsuario = tear.IdUsuario
-                                            WHERE
-                                                tear.IdRegistro = '" . $datosServcio['Id'] . "' AND
-                                                tear.IdDepartamento = '" . $datos['IdDepartamento'] . "' AND
-                                                tear.IdEstatus = '" . $datos['IdEstatus'] . "'");
-
-        foreach ($consultaRecepcion as $value) {
-            $idRecepcion = $value['Id'];
-        }
-
-        if ($consultaRecepcion[0]['RecepcionesAlmacen'] === '2') {
-            $recpcionProblema = $this->consulta("SELECT 
-                                                tearp.Fecha,
-                                                tearp.Problema,
-                                                tearp.Archivos
-                                            FROM
-                                                t_equipos_allab_recepciones_problemas tearp
-                                            WHERE
-                                                    tearp.Id = '" . $idRecepcion . "'");
-            if (!empty($recpcionProblema)) {
-                return array('recepcion' => $consultaRecepcion, 'recepcionProblema' => $recpcionProblema);
-            } else {
-                return array('recepcion' => $consultaRecepcion, 'recepcionProblema' => []);
-            }
-        } else {
-            return array('recepcion' => [], 'recepcionProblema' => []);
         }
     }
 

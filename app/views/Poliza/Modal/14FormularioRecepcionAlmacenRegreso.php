@@ -52,7 +52,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
     <div class="panel-body">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-                <legend>Documentación de recepción en Almacén</legend>
+                <legend>Documentación de recepción en Almacén para Entrega</legend>
             </div>
         </div>
         <div class="row"></div>
@@ -140,7 +140,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                             </div>
                         </div>
                         <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelectInput ?>">
-                            <a id="btnGuardarRecepcionAlm" class="btn btn-primary m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-save"></i> Guardar Recepción</a>
+                            <a id="btnGuardarRecepcionAlmRegreso" class="btn btn-primary m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-save"></i> Guardar Recepción</a>
                         </div>
                     </fieldset>
                 </form>
@@ -170,7 +170,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                     </div>
                     <div>
                         <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php echo $mostrarSelectInput ?>">
-                            <a id="btnAgregarProblemaAlm" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-plus"></i> Agregar Problema</a>
+                            <a id="btnAgregarProblemaAlmRegreso" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-plus"></i> Agregar Problema</a>
                         </div>
                     </div>
                 </form>
