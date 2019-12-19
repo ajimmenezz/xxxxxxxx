@@ -2742,6 +2742,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => [],
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => [],
@@ -2753,6 +2754,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => $this->vistaSeguimientoSolicitudRefaccionEquipo($datos),
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => [],
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => [],
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => [],
@@ -2769,6 +2771,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => [],
@@ -2782,6 +2785,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => [],
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -2794,6 +2798,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => [],
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -2814,12 +2819,14 @@ class Seguimientos extends General {
                                 'formularioRecepcionLog' => [],
                                 'formularioEnvioSeguimientoLog' => [],
                                 'formularioRecepcionTecnico' => [],
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
                         } else {
                             return array('formularioValidacion' => $this->vistaValidacion($datos),
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => [],
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => [],
@@ -2837,6 +2844,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => [],
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => [],
@@ -2848,6 +2856,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => [],
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => [],
@@ -2863,6 +2872,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -2876,9 +2886,6 @@ class Seguimientos extends General {
                         if ($equipoAllab[0]['IdTipoMovimiento'] === '1') {
                             $departamentoEspera = "Logistica";
                             $textoEspera = "Esperando información del Departamento de Logistica";
-                        } else {
-                            $departamentoEspera = "Técnico";
-                            $textoEspera = "Esperando información del Técnico";
                         }
 
                         if ($equipoAllab[0]['IdTipoMovimiento'] === '1') {
@@ -2886,6 +2893,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                 'formularioRecepcionLog' => [],
@@ -2897,12 +2905,13 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => $this->recepcionAlmacenRegreso($datos),
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                 'formularioRecepcionLog' => [],
                                 'formularioEnvioSeguimientoLog' => [],
                                 'formularioRecepcionTecnico' => [],
-                                'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
+                                'PanelEspera' => []);
                         }
                     }
 
@@ -2913,6 +2922,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                             'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                             'formularioRecepcionLog' => [],
@@ -2928,6 +2938,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                             'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                             'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -2942,6 +2953,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                             'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                             'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -2958,6 +2970,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                 'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -2969,6 +2982,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => $this->vistaRefaccionEquipoUtilizadaAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => [],
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -2984,6 +2998,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => [],
                             'formularioRecepcionAlmacen' => $this->vistaRefaccionEquipoUtilizadaAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => [],
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -2998,6 +3013,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => [],
                             'formularioRecepcionAlmacen' => $this->vistaRefaccionEquipoUtilizadaAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => [],
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -3012,6 +3028,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => [],
                             'formularioRecepcionAlmacen' => [],
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => [],
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -3027,6 +3044,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => [],
                             'formularioRecepcionAlmacen' => [],
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -3039,6 +3057,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -3052,6 +3071,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => [],
@@ -3063,6 +3083,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => [],
@@ -3076,6 +3097,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => [],
                             'formularioRecepcionAlmacen' => [],
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -3090,6 +3112,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                 'formularioRecepcionLog' => [],
@@ -3101,6 +3124,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => [],
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                 'formularioRecepcionLog' => [],
@@ -3116,6 +3140,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                 'formularioRecepcionLog' => [],
@@ -3127,6 +3152,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => [],
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                 'formularioRecepcionLog' => [],
@@ -3144,6 +3170,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                 'formularioRecepcionLog' => [],
@@ -3152,12 +3179,13 @@ class Seguimientos extends General {
                                 'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera));
                         } else {
                             $departamentoEspera = "Técnico";
-                            $textoEspera = "Esperando información del Técnico";
+                            $textoEspera = "Esperando información de Almacén";
                             if ($equipoAllab[0]['IdTipoMovimiento'] === '2') {
                                 return array('formularioValidacion' => $this->vistaValidacion($datos),
                                     'formularioGuia' => [],
                                     'formularioEnvioAlmacen' => [],
                                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                    'formularioRecepcionAlmacenRegreso' => [],
                                     'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                     'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                     'formularioRecepcionLog' => [],
@@ -3169,6 +3197,7 @@ class Seguimientos extends General {
                                     'formularioGuia' => [],
                                     'formularioEnvioAlmacen' => [],
                                     'formularioRecepcionAlmacen' => [],
+                                    'formularioRecepcionAlmacenRegreso' => [],
                                     'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                     'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                     'formularioRecepcionLog' => [],
@@ -3185,6 +3214,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                             'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                             'formularioRecepcionLog' => [],
@@ -3201,6 +3231,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                 'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3212,6 +3243,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => $this->vistaRefaccionEquipoUtilizadaAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => [],
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3227,6 +3259,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                             'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                             'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3241,6 +3274,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                             'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                             'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3253,6 +3287,7 @@ class Seguimientos extends General {
                             'formularioGuia' => $this->vistaSeguimientoSolicitudRefaccionEquipo($datos),
                             'formularioEnvioAlmacen' => [],
                             'formularioRecepcionAlmacen' => [],
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => [],
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -3269,6 +3304,7 @@ class Seguimientos extends General {
                             'formularioGuia' => $this->vistaDeGuia($datos),
                             'formularioEnvioAlmacen' => [],
                             'formularioRecepcionAlmacen' => [],
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => [],
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -3281,6 +3317,7 @@ class Seguimientos extends General {
                             'formularioGuia' => $this->vistaDeGuia($datos),
                             'formularioEnvioAlmacen' => [],
                             'formularioRecepcionAlmacen' => [],
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => [],
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -3294,6 +3331,7 @@ class Seguimientos extends General {
                             'formularioGuia' => $this->vistaDeGuia($datos),
                             'formularioEnvioAlmacen' => [],
                             'formularioRecepcionAlmacen' => [],
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => [],
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -3315,6 +3353,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => [],
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => [],
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -3328,6 +3367,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                             'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                             'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3341,6 +3381,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                             'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                             'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                             'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3356,6 +3397,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                 'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3367,6 +3409,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => $this->vistaRefaccionEquipoUtilizadaAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => [],
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3383,6 +3426,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                 'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3401,6 +3445,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                                 'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3412,6 +3457,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => $this->vistaRefaccionEquipoUtilizadaAlmacen($datos),
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => [],
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3426,6 +3472,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => [],
                             'formularioRecepcionAlmacen' => $this->vistaRefaccionEquipoUtilizadaAlmacen($datos),
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => [],
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3450,6 +3497,7 @@ class Seguimientos extends General {
                         'formularioGuia' => [],
                         'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                         'formularioRecepcionAlmacen' => [],
+                        'formularioRecepcionAlmacenRegreso' => [],
                         'formularioRecepcionLab' => [],
                         'formularioHistorialRefaccion' => [],
                         'formularioRecepcionLog' => [],
@@ -3466,6 +3514,7 @@ class Seguimientos extends General {
                         'formularioGuia' => [],
                         'formularioEnvioAlmacen' => [],
                         'formularioRecepcionAlmacen' => [],
+                        'formularioRecepcionAlmacenRegreso' => [],
                         'formularioRecepcionLab' => [],
                         'formularioHistorialRefaccion' => [],
                         'formularioRecepcionLog' => [],
@@ -3487,6 +3536,7 @@ class Seguimientos extends General {
                                     'formularioGuia' => $this->vistaValidacionSupervisor($datos),
                                     'formularioEnvioAlmacen' => [],
                                     'formularioRecepcionAlmacen' => [],
+                                    'formularioRecepcionAlmacenRegreso' => [],
                                     'formularioRecepcionLab' => [],
                                     'formularioHistorialRefaccion' => [],
                                     'formularioRecepcionLog' => [],
@@ -3502,6 +3552,7 @@ class Seguimientos extends General {
                                     'formularioGuia' => [],
                                     'formularioEnvioAlmacen' => [],
                                     'formularioRecepcionAlmacen' => [],
+                                    'formularioRecepcionAlmacenRegreso' => [],
                                     'formularioRecepcionLab' => [],
                                     'formularioHistorialRefaccion' => [],
                                     'formularioRecepcionLog' => [],
@@ -3518,6 +3569,7 @@ class Seguimientos extends General {
                                 'formularioGuia' => [],
                                 'formularioEnvioAlmacen' => [],
                                 'formularioRecepcionAlmacen' => [],
+                                'formularioRecepcionAlmacenRegreso' => [],
                                 'formularioRecepcionLab' => [],
                                 'formularioHistorialRefaccion' => [],
                                 'formularioRecepcionLog' => [],
@@ -3541,6 +3593,7 @@ class Seguimientos extends General {
                             'formularioGuia' => [],
                             'formularioEnvioAlmacen' => [],
                             'formularioRecepcionAlmacen' => [],
+                            'formularioRecepcionAlmacenRegreso' => [],
                             'formularioRecepcionLab' => [],
                             'formularioHistorialRefaccion' => [],
                             'formularioRecepcionLog' => [],
@@ -3559,6 +3612,7 @@ class Seguimientos extends General {
                 'formularioGuia' => $this->vistaDeGuia($datos),
                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                 'formularioRecepcionAlmacen' => [],
+                'formularioRecepcionAlmacenRegreso' => [],
                 'formularioRecepcionLab' => [],
                 'formularioHistorialRefaccion' => [],
                 'formularioRecepcionLog' => [],
@@ -3574,6 +3628,7 @@ class Seguimientos extends General {
                 'formularioGuia' => $this->vistaDeGuia($datos),
                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                 'formularioRecepcionAlmacen' => [],
+                'formularioRecepcionAlmacenRegreso' => [],
                 'formularioRecepcionLab' => [],
                 'formularioHistorialRefaccion' => [],
                 'formularioRecepcionLog' => [],
@@ -3589,6 +3644,7 @@ class Seguimientos extends General {
                 'formularioGuia' => $this->vistaDeGuia($datos),
                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                 'formularioRecepcionAlmacen' => [],
+                'formularioRecepcionAlmacenRegreso' => [],
                 'formularioRecepcionLab' => [],
                 'formularioHistorialRefaccion' => [],
                 'formularioRecepcionLog' => [],
@@ -3607,6 +3663,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                     'formularioRecepcionAlmacen' => [],
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => [],
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => [],
@@ -3622,6 +3679,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => [],
                     'formularioRecepcionAlmacen' => [],
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => [],
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => [],
@@ -3641,6 +3699,7 @@ class Seguimientos extends General {
                 'formularioGuia' => [],
                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                 'formularioRecepcionAlmacen' => [],
+                'formularioRecepcionAlmacenRegreso' => [],
                 'formularioRecepcionLab' => [],
                 'formularioHistorialRefaccion' => [],
                 'formularioRecepcionLog' => [],
@@ -3661,6 +3720,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => [],
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => [],
@@ -3674,6 +3734,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => [],
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => [],
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => [],
@@ -3695,6 +3756,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => [],
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => [],
@@ -3708,6 +3770,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => [],
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => [],
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => [],
@@ -3721,6 +3784,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => [],
                     'formularioRecepcionAlmacen' => [],
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => [],
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => [],
@@ -3741,6 +3805,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => [],
@@ -3754,6 +3819,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => [],
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => [],
@@ -3774,6 +3840,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => [],
@@ -3787,6 +3854,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => [],
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => [],
@@ -3807,6 +3875,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                     'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                     'formularioRecepcionLog' => [],
@@ -3817,16 +3886,19 @@ class Seguimientos extends General {
                     'permisosAdicionales' => $permisosAdicionales);
             } else {
                 if ($equipoAllab[0]['IdTipoMovimiento'] === '2') {
+                    $departamentoEspera = "Almacén";
+                    $textoEspera = "Esperando información del Departamento de Almacén";
                     return array('formularioValidacion' => $this->vistaValidacion($datos),
                         'formularioGuia' => [],
                         'formularioEnvioAlmacen' => [],
-                        'formularioRecepcionAlmacen' => $this->vistaEnvioAlmacen($datos),
+                        'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                        'formularioRecepcionAlmacenRegreso' => [],
                         'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                         'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                         'formularioRecepcionLog' => [],
                         'formularioEnvioSeguimientoLog' => [],
-                        'formularioRecepcionTecnico' => $this->recepcionTecnico($datos),
-                        'PanelEspera' => [],
+                        'formularioRecepcionTecnico' => [],
+                        'PanelEspera' => $this->vistaEsperaInformacion($departamentoEspera, $textoEspera),
                         'permisos' => $permisos,
                         'permisosAdicionales' => $permisosAdicionales);
                 } else {
@@ -3834,6 +3906,7 @@ class Seguimientos extends General {
                         'formularioGuia' => [],
                         'formularioEnvioAlmacen' => [],
                         'formularioRecepcionAlmacen' => [],
+                        'formularioRecepcionAlmacenRegreso' => [],
                         'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                         'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                         'formularioRecepcionLog' => [],
@@ -3855,6 +3928,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                     'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                     'formularioRecepcionLog' => [],
@@ -3868,6 +3942,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => [],
                     'formularioRecepcionAlmacen' => [],
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                     'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                     'formularioRecepcionLog' => [],
@@ -3886,6 +3961,7 @@ class Seguimientos extends General {
                 'formularioGuia' => [],
                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                'formularioRecepcionAlmacenRegreso' => [],
                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                 'formularioRecepcionLog' => [],
@@ -3905,6 +3981,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                     'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                     'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3918,6 +3995,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => [],
                     'formularioRecepcionAlmacen' => $this->vistaRefaccionEquipoUtilizadaAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => [],
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3936,6 +4014,7 @@ class Seguimientos extends General {
                 'formularioGuia' => [],
                 'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                 'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                'formularioRecepcionAlmacenRegreso' => [],
                 'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                 'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                 'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3953,6 +4032,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => $this->vistaEnvioAlmacen($datos),
                     'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                     'formularioHistorialRefaccion' => $this->revisionHistorial($datos),
                     'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3966,6 +4046,7 @@ class Seguimientos extends General {
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => [],
                     'formularioRecepcionAlmacen' => $this->vistaRefaccionEquipoUtilizadaAlmacen($datos),
+                    'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => [],
                     'formularioHistorialRefaccion' => [],
                     'formularioRecepcionLog' => $this->recepcionLogistica($datos),
@@ -3982,6 +4063,7 @@ class Seguimientos extends General {
                 'formularioGuia' => [],
                 'formularioEnvioAlmacen' => [],
                 'formularioRecepcionAlmacen' => $this->vistaRefaccionEquipoUtilizadaAlmacen($datos),
+                'formularioRecepcionAlmacenRegreso' => [],
                 'formularioRecepcionLab' => [],
                 'formularioHistorialRefaccion' => [],
                 'formularioRecepcionLog' => [],
@@ -4000,6 +4082,7 @@ class Seguimientos extends General {
                 'formularioGuia' => [],
                 'formularioEnvioAlmacen' => [],
                 'formularioRecepcionAlmacen' => $this->vistaRefaccionEquipoUtilizadaAlmacen($datos),
+                'formularioRecepcionAlmacenRegreso' => [],
                 'formularioRecepcionLab' => [],
                 'formularioHistorialRefaccion' => [],
                 'formularioRecepcionLog' => [],
@@ -4017,6 +4100,7 @@ class Seguimientos extends General {
                 'formularioGuia' => [],
                 'formularioEnvioAlmacen' => [],
                 'formularioRecepcionAlmacen' => [],
+                'formularioRecepcionAlmacenRegreso' => [],
                 'formularioRecepcionLab' => [],
                 'formularioHistorialRefaccion' => [],
                 'formularioRecepcionLog' => [],
@@ -4031,6 +4115,7 @@ class Seguimientos extends General {
                 'formularioRecepcionTecnico' => [],
                 'formularioEnvioAlmacen' => [],
                 'formularioRecepcionAlmacen' => [],
+                'formularioRecepcionAlmacenRegreso' => [],
                 'formularioRecepcionLab' => [],
                 'formularioHistorialRefaccion' => [],
                 'formularioRecepcionLog' => [],
@@ -4118,6 +4203,16 @@ class Seguimientos extends General {
         $datosRecepcionAlmacen['usuario'] = $usuario['Nombre'];
 
         $formulario = array('formularioRecepcionAlmacen' => parent::getCI()->load->view('Poliza/Modal/4FormularioRecepcionAlmacen', $datosRecepcionAlmacen, TRUE));
+        return $formulario;
+    }
+
+    public function recepcionAlmacenRegreso(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $infoRecepcion = array('IdServicio' => $datos['idServicio'], 'IdDepartamento' => 1, 'IdEstatus' => 28);
+        $datosRecepcionAlmacen['datosRecepcion'] = $this->DBP->consultaRecepcionAlmacenRegreso($infoRecepcion);
+        $datosRecepcionAlmacen['usuario'] = $usuario['Nombre'];
+
+        $formulario = array('formularioRecepcionAlmacenRegreso' => parent::getCI()->load->view('Poliza/Modal/14FormularioRecepcionAlmacenRegreso', $datosRecepcionAlmacen, TRUE));
         return $formulario;
     }
 
@@ -4430,42 +4525,46 @@ class Seguimientos extends General {
             }
         }
 
-        $datos['idUsuario'] = $usuario['Id'];
-        $datos['idDepartamento'] = '1';
-        $datos['idEstatus'] = '28';
-        $datos['archivos'] = $archivos;
-        $datos['fecha'] = $fecha;
-        $datos['flag'] = '1';
+        if ($datos['tipoRecepcion'] === '1') {
+            $datos['idUsuario'] = $usuario['Id'];
+            $datos['idDepartamento'] = '1';
+            $datos['idEstatus'] = '28';
+            $datos['archivos'] = $archivos;
+            $datos['fecha'] = $fecha;
+            $datos['flag'] = '1';
 
-        $idRecepcion = $this->DBP->consultaIdRegistro(array(
-            'idRegistro' => $datos['id'],
-            'idDepartamento' => $datos['idDepartamento']));
+            $idRecepcion = $this->DBP->consultaIdRegistro(array(
+                'idRegistro' => $datos['id'],
+                'idDepartamento' => $datos['idDepartamento']));
 
-        if (empty($idRecepcion)) {
-            $resultado = $this->DBP->insertarEquiposAllabRecepcionesCambiarEstatus($datos);
+            if (empty($idRecepcion)) {
+                $resultado = $this->DBP->insertarEquiposAllabRecepcionesCambiarEstatus($datos);
+            } else {
+                $resultado = $this->DBP->actualizarEquiposAllabRecepciones($datos);
+            }
+
+            if ($resultado['code'] === 200) {
+                $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+                $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
+                $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 28, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
+                $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
+                $this->toAssignSD(array('idStatus' => 28, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
+                $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 28, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
+
+                $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => $datos['idEstatus']));
+                $mensaje = ['mensaje' => "Correcto",
+                    'datos' => $formularios,
+                    'idServicio' => $datos['idServicio'],
+                    'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
+                    'code' => 200];
+                return $mensaje;
+            } else {
+                $mensaje = ['mensaje' => "Hay un problema con la información",
+                    'code' => 400];
+                return $mensaje;
+            }
         } else {
-            $resultado = $this->DBP->actualizarEquiposAllabRecepciones($datos);
-        }
-
-        if ($resultado['code'] === 200) {
-            $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
-            $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
-            $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 28, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
-            $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
-            $this->toAssignSD(array('idStatus' => 28, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
-            $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 28, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
-
-            $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => $datos['idEstatus']));
-            $mensaje = ['mensaje' => "Correcto",
-                'datos' => $formularios,
-                'idServicio' => $datos['idServicio'],
-                'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
-                'code' => 200];
-            return $mensaje;
-        } else {
-            $mensaje = ['mensaje' => "Hay un problema con la información",
-                'code' => 400];
-            return $mensaje;
+            var_dump('pumas');
         }
     }
 

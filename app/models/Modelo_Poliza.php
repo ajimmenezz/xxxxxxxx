@@ -1263,6 +1263,48 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
+    public function consultaRecepcionAlmacenRegreso(array $datos) {
+        $datosServcio = $this->estatusAllab($datos['IdServicio']);
+        $idRecepcion = null;
+
+        $consultaRecepcion = $this->consulta("SELECT 
+                                                tear.Id,
+                                                CONCAT(trp.Nombres,' ',trp.ApMaterno,' ',trp.ApPaterno) AS UsuarioRecibe,
+                                                tear.Fecha,
+                                                tear.Archivos,
+                                                Count(tear.Id) AS RecepcionesAlmacen
+                                            FROM
+                                                t_equipos_allab_recepciones tear
+                                            INNER JOIN
+                                                t_rh_personal trp ON trp.IdUsuario = tear.IdUsuario
+                                            WHERE
+                                                tear.IdRegistro = '" . $datosServcio['Id'] . "' AND
+                                                tear.IdDepartamento = '" . $datos['IdDepartamento'] . "' AND
+                                                tear.IdEstatus = '" . $datos['IdEstatus'] . "'");
+
+        foreach ($consultaRecepcion as $value) {
+            $idRecepcion = $value['Id'];
+        }
+
+        if ($consultaRecepcion[0]['RecepcionesAlmacen'] === '2') {
+            $recpcionProblema = $this->consulta("SELECT 
+                                                tearp.Fecha,
+                                                tearp.Problema,
+                                                tearp.Archivos
+                                            FROM
+                                                t_equipos_allab_recepciones_problemas tearp
+                                            WHERE
+                                                    tearp.Id = '" . $idRecepcion . "'");
+            if (!empty($recpcionProblema)) {
+                return array('recepcion' => $consultaRecepcion, 'recepcionProblema' => $recpcionProblema);
+            } else {
+                return array('recepcion' => $consultaRecepcion, 'recepcionProblema' => []);
+            }
+        } else {
+            return array('recepcion' => [], 'recepcionProblema' => []);
+        }
+    }
+
     public function consultaEnvioLogistica(array $datos) {
         $datosServcio = $this->estatusAllab($datos['IdServicio']);
 

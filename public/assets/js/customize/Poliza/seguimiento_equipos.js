@@ -123,6 +123,7 @@ $(function () {
     };
 
     var vistasDeFormularios = function (respuesta) {
+        console.log(respuesta);
         $('#panelTablaEquiposEnviados').addClass('hidden');
         $('#seccionFormulariosRecepcionTecnico').removeClass('hidden').empty().append(respuesta.formularioRecepcionTecnico.formularioRecepcionTecnico);
         $('#seccionFormulariosEnvSegLog').removeClass('hidden').empty().append(respuesta.formularioEnvioSeguimientoLog.formularioEnvioSeguimientoLog);
@@ -130,6 +131,7 @@ $(function () {
         $('#seccionFormulariosRevisionHistorial').removeClass('hidden').empty().append(respuesta.formularioHistorialRefaccion.formularioRevisionHistorial);
         $('#seccionFormulariosRecepcionLaboratorio').removeClass('hidden').empty().append(respuesta.formularioRecepcionLab.formularioRecepcionLaboratorio);
         $('#seccionFormulariosRecepcionAlmacen').removeClass('hidden').empty().append(respuesta.formularioRecepcionAlmacen.formularioRecepcionAlmacen);
+        $('#seccionFormulariosRecepcionAlmacenRegreso').removeClass('hidden').empty().append(respuesta.formularioRecepcionAlmacenRegreso.formularioRecepcionAlmacenRegreso);
         $('#seccionPanelEspera').removeClass('hidden').empty().append(respuesta.PanelEspera.panelEspera);
         $('#seccionFormulariosGuia').removeClass('hidden').empty().append(respuesta.formularioEnvioAlmacen.formularioGuia);
         $('#seccionFormulariosSinGuia').removeClass('hidden').empty().append(respuesta.formularioGuia.formularioParaGuia);
@@ -174,6 +176,7 @@ $(function () {
             $('#seccionFormulariosRevisionHistorial').addClass('hidden');
             $('#seccionFormulariosRecepcionLaboratorio').addClass('hidden');
             $('#seccionFormulariosRecepcionAlmacen').addClass('hidden');
+            $('#seccionFormulariosRecepcionAlmacenRegreso').addClass('hidden');
             $('#seccionFormulariosAsignacionGuiaLogistica').addClass('hidden');
             $('#seccionFormulariosAsignacionGuia').addClass('hidden');
             $('#seccionFormulariosGuiaLogistica').addClass('hidden');
@@ -383,7 +386,7 @@ $(function () {
             if (guia === '') {
                 guia = $('#guiaColocada').val();
             }
-            
+
             var datos = {'IdPaqueteria': paqueteria, 'Guia': guia, 'Fecha': fecha, 'idServicio': idServicio};
 
             if (evento.validarFormulario('#formEnvioAlmacen')) {
@@ -471,7 +474,36 @@ $(function () {
             if (camposFormularioValidados) {
                 var data = {
                     'id': idTabla,
-                    'idServicio': idServicio
+                    'idServicio': idServicio,
+                    'tipoRecepcion': '1'
+                }
+
+                file.enviarArchivos('#evidenciaRecepcionAlmacen', 'Seguimiento/GuardarRecepcionAlmacen', '#panelRecepcionAlmacen', data, function (respuesta) {
+                    if (respuesta.code == 200) {
+                        vistasDeFormularios(respuesta.datos);
+                        incioEtiquetas();
+                        eventosGenerales(idTabla, respuesta.idServicio);
+                        eventosComentarios(idTabla, respuesta.idServicio);
+                        recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
+                    }
+                });
+            }
+        });
+
+        $('#btnGuardarRecepcionAlmRegreso').off('click');
+        $('#btnGuardarRecepcionAlmRegreso').on('click', function () {
+            var arrayCampos = [
+                {'objeto': '#fechaRecepcionAlm', 'mensajeError': 'Falta seleccionar la Fecha de Recepción.'},
+                {'objeto': '#evidenciaRecepcionAlmacen', 'mensajeError': 'Falta seleccionar la evidencia de recepción.'}
+            ];
+
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorFormularioAlmacen');
+
+            if (camposFormularioValidados) {
+                var data = {
+                    'id': idTabla,
+                    'idServicio': idServicio,
+                    'tipoRecepcion': '2'
                 }
 
                 file.enviarArchivos('#evidenciaRecepcionAlmacen', 'Seguimiento/GuardarRecepcionAlmacen', '#panelRecepcionAlmacen', data, function (respuesta) {
