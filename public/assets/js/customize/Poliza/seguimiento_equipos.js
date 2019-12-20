@@ -750,19 +750,21 @@ $(function () {
                 'idService': idServicio
             }
             evento.enviarEvento('Seguimiento/MostrarFormularioInformacionGeneracionGuia', dataToShowTheForm, '#panelEnvioConGuia', function (respuesta) {
-                evento.iniciarModal('#modalEdit', 'Información para generar guía', respuesta.modal);
+                evento.mostrarModal('Información para generar guía', respuesta.modal);
+                select.crearSelect('#selectOrigen');
+                select.crearSelect('#selectDestino');
                 select.crearSelect('#lista-TI');
 
                 $("#inputNumeroCajas").bind('keyup mouseup', function () {
                     createChecklistInformation();
                 });
 
-                $('#btnGuardarCambios').off('click');
-                $('#btnGuardarCambios').on('click', function () {
+                $('#btnModalConfirmar').off('click');
+                $('#btnModalConfirmar').on('click', function () {
                     var informationGuide = creatingInformationGenerateGuide();
 
                     var data = {'id': idTabla, 'idServicio': idServicio, informationGuide: informationGuide};
-                    evento.enviarEvento('Seguimiento/SolicitarGuia', data, '#modalEdit', function (respuesta) {
+                    evento.enviarEvento('Seguimiento/SolicitarGuia', data, '#modal-dialogo', function (respuesta) {
                         if (respuesta.code === 200) {
                             vistasDeFormularios(respuesta.datos);
                             incioEtiquetas();
@@ -1494,8 +1496,8 @@ $(function () {
 
     var creatingInformationGenerateGuide = function () {
         var dataToValidateForm = [
-            {'objeto': '#inputOrigen', 'mensajeError': 'Falta escribir origen.'},
-            {'objeto': '#inputDestino', 'mensajeError': 'Falta escribir destino.'},
+            {'objeto': '#selectOrigen', 'mensajeError': 'Falta escribir origen.'},
+            {'objeto': '#selectDestino', 'mensajeError': 'Falta escribir destino.'},
             {'objeto': '#lista-TI', 'mensajeError': 'Falta seleccionar personal de TI que autoriza.'},
             {'objeto': '#inputNumeroCajas', 'mensajeError': 'Falta el no. de cajas.'}
         ];
@@ -1506,8 +1508,8 @@ $(function () {
                 if (evento.validarFormulario('#formInformationBoxes')) {
                     var noIncidente = $('#inputNoIncidente').val();
                     var nombreTecnico = $('#inputNombreTecnico').val();
-                    var origen = $('#inputOrigen').val();
-                    var destino = $('#inputDestino').val();
+                    var origen = $('#selectOrigen').val();
+                    var destino = $('#selectDestino').val();
                     var personalAutoriza = $('#lista-TI').val();
                     var numeroCajas = $('#inputNumeroCajas').val();
                     var textoInformacionGuia = 'No. Incidente: ' + noIncidente + '\n';

@@ -355,10 +355,12 @@ class ServiceDesk extends General {
         $i = 0;
 
         foreach ($datosSD->operation->details as $key => $value) {
-            $returnArray[$i]['userId'] = $value->userid;
-            $returnArray[$i]['userName'] = $value->username;
-            $returnArray[$i]['userEmail'] = $value->emailid;
-            $i++;
+            if ($value->department === 'Soporte TI') {
+                $returnArray[$i]['userId'] = $value->userid;
+                $returnArray[$i]['userName'] = $value->username;
+                $returnArray[$i]['userEmail'] = $value->emailid;
+                $i++;
+            }
         }
 
         return $returnArray;
