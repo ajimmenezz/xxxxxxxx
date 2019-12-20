@@ -1900,7 +1900,8 @@ class Modelo_Poliza extends Modelo_Base {
     public function consultaEquiposAllab(int $idServicio = null) {
         if (!empty($idServicio)) {
             $consulta = $this->consulta("SELECT
-                                             *, nombreUsuario(IdUsuario) NombreUsuario 
+                                             *, nombreUsuario(IdUsuario) NombreUsuario,
+                                             nombreUsuario(IdTecnicoSolicita) Tecnico
                                          FROM t_equipos_allab 
                                          WHERE IdServicio = '" . $idServicio . "'");
         } else {
@@ -1995,12 +1996,19 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function consultaIdRegistro(array $datos) {
+        if(isset($datos['idEstatus'])){
+            $idEstatus = 'AND IdEstatus = "' . $datos['idEstatus'] . '"';
+        }else{
+            $idEstatus = '';
+        }
+        
         $equipoDanado = $this->consulta('SELECT 
                                             Id
                                         FROM
                                             t_equipos_allab_recepciones tear
                                         WHERE IdRegistro = "' . $datos['idRegistro'] . '"
-                                        AND IdDepartamento = "' . $datos['idDepartamento'] . '"');
+                                        AND IdDepartamento = "' . $datos['idDepartamento'] . '"
+                                        ' . $idEstatus);
 
         return $equipoDanado;
     }

@@ -4798,7 +4798,8 @@ class Seguimientos extends General {
 
             $idRecepcion = $this->DBP->consultaIdRegistro(array(
                 'idRegistro' => $datos['id'],
-                'idDepartamento' => $datos['idDepartamento']));
+                'idDepartamento' => $datos['idDepartamento'],
+                'idEstatus' => $datos['idEstatus']));
 
             if (empty($idRecepcion)) {
                 $resultado = $this->DBP->insertarEquiposAllabRecepcionesCambiarEstatus($datos);
@@ -4836,7 +4837,8 @@ class Seguimientos extends General {
 
             $idRecepcion = $this->DBP->consultaIdRegistro(array(
                 'idRegistro' => $datos['id'],
-                'idDepartamento' => $datos['idDepartamento']));
+                'idDepartamento' => $datos['idDepartamento'],
+                'idEstatus' => $datos['idEstatus']));
             if (empty($idRecepcion)) {
                 $resultado = $this->DBP->insertarEquiposAllabRecepcionesCambiarEstatus($datos);
             } else {
@@ -5050,10 +5052,6 @@ class Seguimientos extends General {
             'ArchivosSolicitud' => null
         );
 
-        $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
-        $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 12, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
-        $this->toAssignSD(array('idStatus' => 12, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
-        $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 12, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
 
         $datosEstatus = array(
             'idEstatus' => 12,
@@ -5074,13 +5072,17 @@ class Seguimientos extends General {
                     $resultado = $this->DBP->actualizarEnvioGuia($info, $datosEstatus, $idRegistro[0]['Id']);
                 }
                 if ($resultado['code'] === 200) {
-                    $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
                     $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 12));
                     $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
                         'datos' => $formularios,
                         'idTabla' => $idAllab['Id'],
                         'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                         'code' => 200];
+                    $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
+                    $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 12, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
+                    $this->toAssignSD(array('idStatus' => 12, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
+                    $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 12, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
+                    $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
                     return $mensaje;
                 } else {
                     return $resultado;
@@ -5093,13 +5095,17 @@ class Seguimientos extends General {
                 $resultado = $this->DBP->actualizarEnvioGuia($info, $datosEstatus, $idRegistro[0]['Id']);
             }
             if ($resultado['code'] === 200) {
-                $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
                 $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 12));
                 $mensaje = ['mensaje' => "Se ha registrado un nuevo seguimiento",
                     'datos' => $formularios,
                     'idTabla' => $idAllab['Id'],
                     'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                     'code' => 200];
+                $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
+                $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 12, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
+                $this->toAssignSD(array('idStatus' => 12, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
+                $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 12, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
+                $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
                 return $mensaje;
             } else {
                 return $resultado;
@@ -5985,17 +5991,9 @@ class Seguimientos extends General {
         $datosAllab = $this->DBP->consultaEquiposAllab($dataCreateTextSD['service']);
 
         $viewHtml = '';
-        $viewHtml .= '<br><div>***El usuario <strong>' . $user['Nombre'] . '</strong> ha creado una solicitud de equipo o refacción.***</div>';
+        $viewHtml .= '<br><div>***El usuario <strong>' . $datosAllab[0]['Tecnico'] . '</strong> ha creado una solicitud de equipo o refacción.***</div>';
 
         switch ($dataCreateTextSD['statusRequest']) {
-            case 2 :
-            case '2' :
-                if ($dataCreateTextSD['movementType'] === '2') {
-                    $dataWarehouse = $this->DBP->consultaRecepcionAlmacen(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
-                    $viewHtml .= $this->validationView(array('IdServicio' => $dataCreateTextSD['service']));
-                    $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
-                }
-                break;
             case 12 :
             case '12' :
                 if ($dataCreateTextSD['movementType'] === '1') {
@@ -6007,6 +6005,8 @@ class Seguimientos extends General {
                 if ($dataCreateTextSD['movementType'] === '1') {
                     $dataWarehouse = $this->DBP->consultaRecepcionAlmacen(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
                     $viewHtml .= $this->validationView(array('IdServicio' => $dataCreateTextSD['service']));
+                    $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
+                } elseif ($dataCreateTextSD['movementType'] === '2') {
                     $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
                 }
                 break;
@@ -6023,6 +6023,7 @@ class Seguimientos extends General {
                 $viewHtml .= $this->validationView(array('IdServicio' => $dataCreateTextSD['service']));
                 $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
                 $viewHtml .= $this->laboratoryView(array('Id' => $datosAllab[0]['Id']));
+                $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '48', 'IdServicio' => $dataCreateTextSD['service']));
                 $viewHtml .= $this->logisticsView(array('Id' => $datosAllab[0]['Id'], 'IdServicio' => $dataCreateTextSD['service']));
                 break;
             case 39 :
@@ -6034,6 +6035,7 @@ class Seguimientos extends General {
                     $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
                     $viewHtml .= $this->laboratoryView(array('Id' => $datosAllab[0]['Id']));
                 } elseif ($dataCreateTextSD['movementType'] === '2') {
+                    $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
                     $viewHtml .= $this->laboratoryView(array('Id' => $datosAllab[0]['Id']));
                 }
                 break;
@@ -6046,10 +6048,28 @@ class Seguimientos extends General {
                     $viewHtml .= $this->logisticsView(array('Id' => $datosAllab[0]['Id'], 'IdServicio' => $dataCreateTextSD['service']));
                     $viewHtml .= $this->technicalReceptionView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '4', 'IdEstatus' => '31', 'IdServicio' => $dataCreateTextSD['service']));
                 } elseif ($dataCreateTextSD['movementType'] === '2') {
+                    $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
                     $viewHtml .= $this->laboratoryView(array('Id' => $datosAllab[0]['Id']));
+                    $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '48', 'IdServicio' => $dataCreateTextSD['service']));
                     $viewHtml .= $this->technicalReceptionView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '4', 'IdEstatus' => '31', 'IdServicio' => $dataCreateTextSD['service']));
                 } else {
                     $viewHtml .= $this->technicalReceptionView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '4', 'IdEstatus' => '31', 'IdServicio' => $dataCreateTextSD['service']));
+                }
+                break;
+            case 48 :
+            case '48' :
+                if ($dataCreateTextSD['movementType'] === '1') {
+                    $dataWarehouse = $this->DBP->consultaRecepcionAlmacen(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
+                    $dataRecord = $this->DBP->consultaComentariosAdjuntosSolicitudEquipo($datosAllab[0]['Id']);
+                    $viewHtml .= $this->validationView(array('IdServicio' => $dataCreateTextSD['service']));
+                    $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
+                    $viewHtml .= $this->laboratoryView(array('Id' => $datosAllab[0]['Id']));
+                    $dataWarehouse = $this->DBP->consultaRecepcionAlmacen(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '48', 'IdServicio' => $dataCreateTextSD['service']));
+                    $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '48', 'IdServicio' => $dataCreateTextSD['service']));
+                } elseif ($dataCreateTextSD['movementType'] === '2') {
+                    $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '28', 'IdServicio' => $dataCreateTextSD['service']));
+                    $viewHtml .= $this->laboratoryView(array('Id' => $datosAllab[0]['Id']));
+                    $viewHtml .= $this->storeView(array('Id' => $datosAllab[0]['Id'], 'IdDepartamento' => '1', 'IdEstatus' => '48', 'IdServicio' => $dataCreateTextSD['service']));
                 }
                 break;
         }
