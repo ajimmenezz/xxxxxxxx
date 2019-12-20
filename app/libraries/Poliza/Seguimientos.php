@@ -1828,6 +1828,7 @@ class Seguimientos extends General {
     }
 
     public function enviarReporteImpericia(array $datos) {
+        $host = $_SERVER['SERVER_NAME'];
         $descripcionDiagnostico = '';
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
@@ -1853,7 +1854,14 @@ class Seguimientos extends General {
             'FechaFirma' => $fecha
                 ), array('Id' => $datosDiagnostico[0]['Id']));
 
-        $path = $this->generarPDFImpericia($datos['img'], $direccion, $datos['servicio'], $datos['ticket']);
+        $archivo = 'Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_CorrectivoImpericia.pdf ';
+        $pdf = $this->InformacionServicios->definirPDF(array('servicio' => $datos['servicio'], 'archivo' => $archivo));
+
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'http://siccob.solutions/' . $pdf;
+        } else {
+            $path = 'http://' . $host . '/' . $pdf;
+        }
 
         $correoSupervisor = $this->consultaCorreoSupervisorXSucursal($datos['datosConcluir']['sucursal']);
         $consultaSucursal = $this->DBS->consultaGeneralSeguimiento('SELECT Nombre FROM cat_v3_sucursales WHERE Id = "' . $datos['datosConcluir']['sucursal'] . '"');
