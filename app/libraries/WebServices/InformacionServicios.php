@@ -1388,7 +1388,14 @@ class InformacionServicios extends General {
         $this->setCellValue(0, 5, $generales['Sucursal'], 'L');
         $this->setCellValue(75, 5, $generales['TipoServicio'], 'L', true);
         $this->setCoordinates(127, $this->y - 5);
-        $this->setCellValue(73, 5, $generales['Estatus'], 'L', true);
+        
+        if($generales['IdEstatus'] === '5'){
+            $estatus = 'EN ATENCIÓN';
+        }else{
+            $estatus = $generales['Estatus'];
+        }
+        
+        $this->setCellValue(73, 5, $estatus, 'L', true);
         $this->setCoordinates(37);
         $this->setCellValue(0, 5, $generales['Atiende'], 'L');
         if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
