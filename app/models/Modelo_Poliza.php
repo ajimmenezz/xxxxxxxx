@@ -1882,7 +1882,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         FROM
                                             t_rh_personal trp INNER JOIN cat_v3_usuarios cvu on trp.IdUsuario = cvu.Id
                                         WHERE 
-                                            IdPerfil = '" . $datos . "'");
+                                            IdPerfil = '" . $datos . "'
+                                        AND Flag = '1'");
 
         return $datosPersonal;
     }
