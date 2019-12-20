@@ -22,14 +22,18 @@ Class GestorServicios {
     public function getServicios() {
         $idUsuario = Usuario::getId();
         $rol = Usuario::getRol();
+        $permisos = Usuario::getPermisos();
         $nombre = Usuario::getNombre();
+        $acceso = in_array("AMC", $permisos);
 
-        if ($rol == "Jefe") {
-            $informacion['servicios'] = $this->DBServicios->getServicios($idUsuario);
+        if ($acceso) {
+            $informacion['servicios'] = $this->DBServicios->getTodosServiciosCableado();
         } else {
             $informacion['servicios'] = $this->DBServicios->getServiciosDeTecnico($idUsuario);
         }
+
         $informacion['rol'] = $rol;
+        $informacion['acceso'] = $acceso;
         $informacion['nombre'] = $nombre;
         return $informacion;
     }

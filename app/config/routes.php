@@ -204,6 +204,7 @@ $route['Redes/SeguimientoCE/SeguimientoGeneral/concluir'] = 'V2/Controller_Servi
 $route['Redes/SeguimientoCE/SeguimientoGeneral/exportarPDF'] = 'V2/Controller_ServicioTicket/getPDF';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/borrarEvidencias'] = 'V2/Controller_ServicioTicket/deleteEvidencias';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/validarServicio'] = 'V2/Controller_ServicioTicket/validarServicio';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/rechazarServicio'] = 'V2/Controller_ServicioTicket/rechazarServicio';
 $route['Redes/SeguimientoCE/Catalogo/(:any)'] = 'Almacen/Controller_Catalogos/manejarEvento/$1';
 
 /* Routers para el manejo de MesaDeAyuda */

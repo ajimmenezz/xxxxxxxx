@@ -21,7 +21,7 @@
             <!--Empieza tabla de servicios-->
             <div class="col-md-12">
                 <label id="nombreTrabajador" class="hidden"><?php echo $datos['infoServicios']["nombre"]; ?></label>
-                <label id="rolTrabajador" class="hidden"><?php echo $datos['infoServicios']["rol"]; ?></label>
+                <label id="accesoTrabajador" class="hidden"><?php echo $datos['infoServicios']["acceso"]; ?></label>
                 <div class="table-responsive">
                     <table id="table-ServiciosGeneralesRedes" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
                         <thead>
@@ -33,7 +33,7 @@
                                 <th class="all">Servicio</th>
                                 <th class="all">Fecha de Creación</th>
                                 <?php
-                                if ($datos['infoServicios']['rol'] == "Jefe") {
+                                if ($datos['infoServicios']["acceso"] == true) {
                                     echo '<th class="all">Técnico</th>';
                                 }
                                 ?>
@@ -44,20 +44,18 @@
                         <tbody>
                             <?php
                             foreach ($datos['infoServicios']['servicios'] as $valor) {
-                                if ($datos['infoServicios']['rol'] == "Jefe") {
-                                    foreach ($valor as $dato) {
-                                        echo '<tr>
-                                                <th>' . $dato['Id'] . '</th>
-                                                <th>' . $dato['Folio'] . '</th>
-                                                <th>' . $dato['Ticket'] . '</th>
-                                                <th>' . $dato['IdSolicitud'] . '</th>
-                                                <th>' . $dato['TipoServicio'] . '</th>
-                                                <th>' . $dato['FechaCreacion'] . '</th>
-                                                <th>' . $dato['Atiende'] . '</th>
-                                                <th>' . $dato['Descripcion'] . '</th>
-                                                <th>' . $dato['Estatus'] . '</th>
-                                            </tr>';
-                                    }
+                                if ($datos['infoServicios']["acceso"] == true) {
+                                    echo '<tr>
+                                        <th>' . $valor['Id'] . '</th>
+                                        <th>' . $valor['Folio'] . '</th>
+                                        <th>' . $valor['Ticket'] . '</th>
+                                        <th>' . $valor['IdSolicitud'] . '</th>
+                                        <th>' . $valor['TipoServicio'] . '</th>
+                                        <th>' . $valor['FechaCreacion'] . '</th>
+                                        <th>' . $valor['Atiende'] . '</th>
+                                        <th>' . $valor['Descripcion'] . '</th>
+                                        <th>' . $valor['Estatus'] . '</th>
+                                    </tr>';
                                 } else {
                                     echo '<tr>
                                             <th>' . $valor['Id'] . '</th>
@@ -107,14 +105,17 @@
                 <div class="col-md-12">
                     <div class="panel-heading-btn">
                         <?php
-                        if ($datos['infoServicios']['rol'] == "Jefe") {
-                            echo '<div id="scciones" class="btn-group btn-sm hidden">
+                        foreach ($usuario["PermisosString"] as $permiso) {
+                            if ($permiso == "AMC") {
+                                echo '<div id="scciones" class="btn-group btn-sm hidden">
                                     <a href="javascript:;" data-toggle="dropdown" class="btn btn-warning dropdown-toggle">Acciones <span class="caret"></span></a>
                                     <ul class="dropdown-menu">
                                         <li><a href="#" id="validarServicio"><span class="fa fa-check"></span> Validar Servicio</a></li>
+                                        <li><a href="#" id="rechazarServicio"><span class="fa fa-times"></span> Cancelar Servicio</a></li>
                                         <li><a href="#" id="exportarPDF"><span class="fa fa-file-pdf-o"></span> Exportar PDF</a></li>
                                     </ul>
                                 </div>';
+                            }
                         }
                         ?>
                         <label id="btnAgregarFolio" class="btn btn-warning btn-sm bloqueoConclusionBtn">
@@ -638,6 +639,7 @@
                             <div id="archivoProblema" class="form-group">
                                 <input id="agregarEvidenciaProblema" name="agregarEvidenciaProblema[]" type="file" multiple>
                             </div>
+                            <label>Puedes agregar maximo 8 imagenes</label>
                         </div>
                     </form>
                 </div>   

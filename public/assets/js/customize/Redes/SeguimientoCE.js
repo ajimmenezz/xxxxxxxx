@@ -87,7 +87,7 @@ $(function () {
         let tamañoDatosFila = 0, datosFila = tablaPrincipal.datosFila(this);
 
         let nombre = $('#nombreTrabajador').text();
-        let rol = $('#rolTrabajador').text();
+        let acceso = $('#accesoTrabajador').text();
 
         $.each(datosFila, function () {
             tamañoDatosFila += 1;
@@ -118,7 +118,7 @@ $(function () {
                 }
                 cambioVistaSinMaterial(respuesta.solucion);
                 cambioVistaNodos(respuesta);
-                if (rol === 'Jefe' && nombre !== datosFila[6]) {
+                if (acceso === '1' && nombre !== datosFila[6]) {
                     $('.bloqueoConclusion').prop("disabled", true);
                     $('.bloqueoConclusionBtn').addClass('hidden');
                     $('#table-materialNodo tbody').off("click");
@@ -433,7 +433,7 @@ $(function () {
                     cargarContenidoTablaNodos();
                     cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
                     ocultarElementosDefault(respuesta.solucion);
-                    $('#modalMaterialNodo').modal('toggle');
+                    $('#modalMaterialNodo').modal('hide');
                 });
             } else {
                 infoMaterialNodo.evidencias = false;
@@ -450,7 +450,7 @@ $(function () {
                     cargarContenidoTablaNodos();
                     cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
                     ocultarElementosDefault(respuesta.solucion);
-                    $('#modalMaterialNodo').modal('toggle');
+                    $('#modalMaterialNodo').modal('hide');
                 });
             }
         } else {
@@ -464,7 +464,6 @@ $(function () {
     $('#btnCancelarAgregarMaterial').on('click', function () {
         limpiarElementosModalMaterial();
         restaurarElementosModal();
-        idNodo = null;
     });
 
     $('#btnActualizarAgregarMaterial').on('click', function () {
@@ -487,13 +486,13 @@ $(function () {
         let evidenciaOpcional = $('#actualizarEvidenciaNodo').val();
         let infoTabla = tablaAgregarMateriales.validarNumeroFilas();
         if (infoTabla == true) {
-            if (evidenciaOpcional == '') {
-                if (evidenciasNodo == null) {
-                    $("#notaEvidencia").removeClass("hidden").delay(4000).queue(function (next) {
-                        $(this).addClass("hidden");
-                        next();
-                    });
-                } else {
+            if (evidenciaOpcional == '' || evidenciasNodo == null) {
+//                if (evidenciasNodo == null) {
+//                    $("#notaEvidencia").removeClass("hidden").delay(4000).queue(function (next) {
+//                        $(this).addClass("hidden");
+//                        next();
+//                    });
+//                } else {
                     infoMaterialNodo.archivos = evidenciaOpcional;
                     infoMaterialNodo.evidencias = false;
                     peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
@@ -506,9 +505,9 @@ $(function () {
                         tablaNodos.limpiartabla();
                         cargarContenidoTablaNodos();
                         cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
-                        $('#modalMaterialNodo').modal('toggle');
+                        $('#modalMaterialNodo').modal('hide');
                     });
-                }
+//                }
             } else {
                 infoMaterialNodo.archivos = evidenciaOpcional;
                 infoMaterialNodo.evidencias = true;
@@ -522,7 +521,7 @@ $(function () {
                     tablaNodos.limpiartabla();
                     cargarContenidoTablaNodos();
                     cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
-                    $('#modalMaterialNodo').modal('toggle');
+                    $('#modalMaterialNodo').modal('hide');
                 });
             }
         } else {
@@ -531,7 +530,6 @@ $(function () {
                 next();
             });
         }
-        idNodo = null;
     });
 
     $('#btnEliminarAgregarMaterial').on('click', function () {
@@ -552,7 +550,7 @@ $(function () {
             }
             limpiarElementosModalMaterial();
             restaurarElementosModal();
-            $('#modalMaterialNodo').modal('toggle');
+            $('#modalMaterialNodo').modal('hide');
             tablaNodos.limpiartabla();
             listaTotalNodos = respuesta.solucion.nodos;
             listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
@@ -560,7 +558,6 @@ $(function () {
             cargarContenidoModalMaterial(respuesta.datosServicio);
             cargarContenidoTablaNodos();
             cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
-            idNodo = null;
         });
     });
 
@@ -716,7 +713,6 @@ $(function () {
                 listaTotalNodos = respuesta.solucion.nodos;
                 $(`#img-${indice}`).addClass('hidden');
             });
-            idNodo = null;
         });
     }
 
@@ -939,7 +935,7 @@ $(function () {
                     cargarContenidoProblemas(respuesta.problemas);
                     $('#textareaDescProblema').val('');
                     evidenciaProblema.limpiarElemento();
-                    $('#modalDefinirProblema').modal('toggle');
+                    $('#modalDefinirProblema').modal('hide');
                 });
             } else {
                 datoServicioTabla.evidencia = false;
@@ -952,7 +948,7 @@ $(function () {
                     cargarContenidoProblemas(respuesta.problemas);
                     $('#textareaDescProblema').val('');
                     evidenciaProblema.limpiarElemento();
-                    $('#modalDefinirProblema').modal('toggle');
+                    $('#modalDefinirProblema').modal('hide');
                 });
             }
         }
@@ -1037,6 +1033,21 @@ $(function () {
             }
 
             modal.mostrarModal("Exito", '<h4>Servicio validado correctamente</h4>');
+            $('#btnAceptar').addClass('hidden');
+            modal.btnAceptar('btnCerrar', function () {
+                modal.cerrarModal();
+                location.reload();
+            });
+        });
+    });
+    
+    $('#rechazarServicio').on('click', function () {
+        peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/rechazarServicio', datoServicioTabla, function (respuesta) {
+            if (!validarError(respuesta)) {
+                return;
+            }
+
+            modal.mostrarModal("Exito", '<h4>Servicio En Atención Nuevamente</h4>');
             $('#btnAceptar').addClass('hidden');
             modal.btnAceptar('btnCerrar', function () {
                 modal.cerrarModal();

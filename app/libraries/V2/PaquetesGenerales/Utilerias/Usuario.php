@@ -47,5 +47,9 @@ Class Usuario {
         self::setDatos();
         return self::$datos['Nombre'];
     }
-
+    
+    static public function getPermisos() {
+        self::setDatos();
+        return self::$datos['PermisosString'];
+    }
 }
