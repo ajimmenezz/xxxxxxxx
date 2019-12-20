@@ -1573,19 +1573,6 @@ class ServiciosTicket extends General
                                            ON tsi.IdSolicitud = tst.IdSolicitud
                                            WHERE tst.Id = "' . $datos['servicio'] . '"');
 
-            $linkPdf = $this->getServicioToPdf(array('servicio' => $datos['servicio']));
-            $infoServicio = $this->getInformacionServicio($datos['servicio']);
-            $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-            $host = $_SERVER['SERVER_NAME'];
-
-            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-                $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
-            } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
-                $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
-            } else {
-                $path = 'http://' . $host . '/' . $linkPdf['link'];
-            }
-
             if (empty($serviciosTicket)) {
                 $this->concluirSolicitud($fecha, $datos['idSolicitud']);
                 $this->concluirTicket($datos['ticket']);
@@ -1648,7 +1635,7 @@ class ServiciosTicket extends General
             return ['code' => 200, 'message' => 'correcto', 'link' => $linkPDF];
         } catch (\Exception $ex) {
             $this->DBST->roolbackTransaccion();
-            return array('code' => 400, 'message' => $ex->getMessage(), 'link' => $linkPDF);
+            return array('code' => 400, 'message' => $ex->getMessage());
         }
     }
 
