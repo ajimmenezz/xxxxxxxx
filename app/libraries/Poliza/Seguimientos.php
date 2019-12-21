@@ -1833,7 +1833,8 @@ class Seguimientos extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $direccion = '/storage/Archivos/imagenesFirmas/Correctivo/Impericia/' . str_replace(' ', '_', 'Firma_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
-        $datosDiagnostico = $this->InformacionServicios->consultaCorrectivosDiagnostico($datos['servicio']);
+        $this->generarPDFImpericia($datos['img'], $direccion, $datos['servicio'], $datos['ticket']);
+	$datosDiagnostico = $this->InformacionServicios->consultaCorrectivosDiagnostico($datos['servicio']);
 
         if ($datosDiagnostico[0]['IdTipoDiagnostico'] === '4') {
             $descripcionDiagnostico .= 'Componente: <strong>' . $datosDiagnostico[0]['Componente'] . '</strong><br>';
