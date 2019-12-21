@@ -2,6 +2,7 @@
 
 namespace Modelos;
 
+use DateTime;
 use Librerias\Modelos\Base as Modelo_Base;
 
 class Modelo_SAE7 extends Modelo_Base
@@ -1266,5 +1267,81 @@ class Modelo_SAE7 extends Modelo_Base
         $query .= $this->getQueryFacturacion('SAE7EMPRE5', '05', 'CIMOS');
         $consulta = parent::connectDBSAE7()->query($query);
         return $consulta->result_array();
+    }
+
+    private function setPagoSinComprobante($factura, $empresa)
+    {
+        $empresaDB = '';
+        $tableNumber = '';
+        switch ($empresa) {
+            case 'Siccob':
+                $empresaDB = 'SAE7EMPRESA3';
+                $tableNumber = '03';
+                break;
+            case 'SCPV':
+                $empresaDB = 'SAE7EMPRESACUATRO';
+                $tableNumber = '04';
+                break;
+            case 'CIMOS':
+                $empresaDB = 'SAE7EMPRE5';
+                $tableNumber = '05';
+                break;
+        }
+
+        $query = "
+        select
+            DETALLE.FECHA_APLI as Fecha,
+            (select CVE_MONED from " . $empresaDB . ".dbo.MONED" . $tableNumber . " where NUM_MONED = DETALLE.NUM_MONED) as Moneda,
+            DETALLE.TCAMBIO as TipoCambio,
+            ABS(DETALLE.IMPORTE) as Monto,
+            DETALLE.NUM_CARGO as Parcialidad,
+            DETALLE.NO_FACTURA as Factura
+        FROM
+            " . $empresaDB . ".dbo.CUEN_DET" . $tableNumber . " DETALLE	
+        WHERE
+            DETALLE.NO_FACTURA = '" . $factura . "'";
+        $consulta = parent::connectDBSAE7()->query($query);
+        $array = $consulta->result_array();
+        foreach ($array as $k => $v) {
+            $date = new DateTime($v['Fecha']);
+            $this->insertar("temporal_comprobante_pagos_sae", [
+                'ClaveComprobante' => 'NA',
+                'FechaPago' => $date->format('Y-m-d H:i:s'),
+                'FormaPago' => '',
+                'Moneda' => $v['Moneda'],
+                'TipoCambio' => $v['TipoCambio'],
+                'Monto' => $v['Monto'],
+                'Parcialidad' => $v['Parcialidad'],
+                'Factura' => $factura,
+                'Emisor' => '',
+                'CuentaOrdenante' => '',
+                'EmisorCuentaBeneficiario' => '',
+                'CtaBeneficiario' => '',
+                'Empresa' => $empresa
+            ]);
+            echo "<pre>";
+            var_dump($v);
+            echo "</pre>";
+        }
+    }
+
+    public function checkFacturasSinComprobante()
+    {
+        $query = "
+        SELECT
+            fac.ClaveFactura,
+            fac.Empresa	
+        FROM
+            temporal_facturas_sae fac
+            LEFT JOIN temporal_comprobante_pagos_sae com ON fac.ClaveFactura = com.Factura 
+            AND fac.Empresa = com.Empresa 
+        WHERE com.ClaveComprobante is null or com.ClaveComprobante = ''
+        ORDER BY
+            Empresa,
+            Fecha DESC";
+        $consulta = $this->consulta($query);
+        foreach ($consulta as $k => $v) {
+            $this->setPagoSinComprobante($v['ClaveFactura'], $v['Empresa']);
+        }
     }
 }

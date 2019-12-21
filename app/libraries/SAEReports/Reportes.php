@@ -846,37 +846,39 @@ class Reportes extends General
             $sxml->registerXPathNamespace('tfd', 'http://www.sat.gob.mx/TimbreFiscalDigital');
             $sxml->registerXPathNamespace('pago10', 'http://www.sat.gob.mx/Pagos');
             // if ($v['CVE_DOC'] == 'RP0000000603') {
-                $pagos = $sxml->xpath('//pago10:Pago');
-                for($i=0; $i<count($pagos); $i++){
-                    $atributos = $pagos[$i]->attributes();
-                    echo "***********************************<br />";
-                    $documentosRelacionados = $pagos[$i]->xpath('pago10:DoctoRelacionado');
-                    echo "<pre>";
-                    var_dump($documentosRelacionados);
-                    echo "</pre>";
-                    for($j=0;$j<count($documentosRelacionados);$j++){
-                        $attrDoctoRel = $documentosRelacionados[$j]->attributes();
-                        $arrayInsert = [
-                            'ClaveComprobante' => $v['CVE_DOC'],
-                            'FechaPago' => str_replace("T", " ", $atributos['FechaPago']),
-                            'FormaPago' => $atributos['FormaDePagoP'],
-                            'TipoCambio' => $atributos['TipoCambioP'],
-                            'Emisor' => $atributos['RfcEmisorCtaOrd'],
-                            'CuentaOrdenante' => $atributos['CtaOrdenante'],
-                            'EmisorCuentaBeneficiario' => $atributos['RfcEmisorCtaBen'],
-                            'CtaBeneficiario' => $atributos['CtaBeneficiario'],
-                            'Empresa' => $v['Empresa'],
-                            'Moneda' => $attrDoctoRel['MonedaDR'],
-                            'Monto' => $attrDoctoRel['ImpPagado'],
-                            'Parcialidad' => $attrDoctoRel['NumParcialidad'],
-                            'Factura' => $attrDoctoRel['Serie'] . sprintf("%'.010d", $attrDoctoRel['Folio']),
-                        ];
-    
-                        $this->DBS->insertar('temporal_comprobante_pagos_sae', $arrayInsert);
-                    }
+            $pagos = $sxml->xpath('//pago10:Pago');
+            for ($i = 0; $i < count($pagos); $i++) {
+                $atributos = $pagos[$i]->attributes();
+                // echo "***********************************<br />";
+                $documentosRelacionados = $pagos[$i]->xpath('pago10:DoctoRelacionado');
+                // echo "<pre>";
+                // var_dump($documentosRelacionados);
+                // echo "</pre>";
+                for ($j = 0; $j < count($documentosRelacionados); $j++) {
+                    $attrDoctoRel = $documentosRelacionados[$j]->attributes();
+                    $arrayInsert = [
+                        'ClaveComprobante' => $v['CVE_DOC'],
+                        'FechaPago' => str_replace("T", " ", $atributos['FechaPago']),
+                        'FormaPago' => $atributos['FormaDePagoP'],
+                        'TipoCambio' => $atributos['TipoCambioP'],
+                        'Emisor' => $atributos['RfcEmisorCtaOrd'],
+                        'CuentaOrdenante' => $atributos['CtaOrdenante'],
+                        'EmisorCuentaBeneficiario' => $atributos['RfcEmisorCtaBen'],
+                        'CtaBeneficiario' => $atributos['CtaBeneficiario'],
+                        'Empresa' => $v['Empresa'],
+                        'Moneda' => $attrDoctoRel['MonedaDR'],
+                        'Monto' => $attrDoctoRel['ImpPagado'],
+                        'Parcialidad' => $attrDoctoRel['NumParcialidad'],
+                        'Factura' => $attrDoctoRel['Serie'] . sprintf("%'.010d", $attrDoctoRel['Folio']),
+                    ];
+
+                    $this->DBS->insertar('temporal_comprobante_pagos_sae', $arrayInsert);
                 }
+            }
             // }
         }
+
+        $this->DBSAE->checkFacturasSinComprobante();
     }
 }
 
