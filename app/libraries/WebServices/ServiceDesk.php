@@ -43,7 +43,7 @@ class ServiceDesk extends General {
                 break;
         }
 
-        throw new \Exception('Error para ingresar al SD');
+        // throw new \Exception('Error para ingresar al SD');
     }
 
     private function getDatosSD(string $url) {
