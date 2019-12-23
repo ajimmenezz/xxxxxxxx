@@ -1,7 +1,7 @@
 <?php
 if (!empty($datosValidacion)) {
     foreach ($datosValidacion as $value) {
-        if ($value['IdEstatus'] === '39' || $value['IdEstatus'] === '34' || $value['IdEstatus'] === '30' || $value['IdEstatus'] === '35' || $value['IdEstatus'] === '12' || $value['IdEstatus'] === '36') {
+        if ($value['IdEstatus'] === '39' || $value['IdEstatus'] === '34' || $value['IdEstatus'] === '30' || $value['IdEstatus'] === '35' || $value['IdEstatus'] === '12' || $value['IdEstatus'] === '36' || $value['IdEstatus'] === '48' || $value['IdEstatus'] === '49') {
             $datosCloncluirRevision = "hidden";
             $tablaRefaccionUtilizada = "";
         } else {
@@ -16,7 +16,7 @@ if (!empty($datosValidacion)) {
 ?>
 <div id="panelLaboratorioHistorial" class="panel panel-inverse">
     <div class="panel-heading">
-        <h4 class="panel-title">5) Revisión en Laboratorio</h4>
+        <h4 class="panel-title">Revisión en Laboratorio</h4>
     </div>
     <div class="panel-body">
         <div class="row">

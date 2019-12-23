@@ -16,13 +16,27 @@
     <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="form-group">
             <label class="f-w-600">Origen *</label>
-            <input class="form-control" type="text" id="inputOrigen" />
+            <select id="selectOrigen" class="form-control" style="width: 100%">
+                <option value="">Selecciona . . .</option>
+                <?php
+                foreach ($sucursales as $key => $value) {
+                    echo '<option value="' . $value['Nombre'] . '">' . $value['Nombre'] . '</option>';
+                }
+                ?>
+            </select>
         </div>
     </div>
     <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="form-group">
             <label class="f-w-600">Destino *</label>
-            <input class="form-control" type="text" id="inputDestino" />
+            <select id="selectDestino" class="form-control" style="width: 100%">
+                <option value="">Selecciona . . .</option>
+                <?php
+                foreach ($sucursales as $key => $value) {
+                    echo '<option value="' . $value['Nombre'] . '">' . $value['Nombre'] . '</option>';
+                }
+                ?>
+            </select>
         </div>
     </div>
 </div>
@@ -89,7 +103,7 @@
             </div>
         </div>
     </div>
-    
+
     <!--Empezando error--> 
     <div class="row m-t-10">
         <div class="col-md-12">

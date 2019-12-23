@@ -130,6 +130,7 @@ $(function () {
         $('#seccionFormulariosRevisionHistorial').removeClass('hidden').empty().append(respuesta.formularioHistorialRefaccion.formularioRevisionHistorial);
         $('#seccionFormulariosRecepcionLaboratorio').removeClass('hidden').empty().append(respuesta.formularioRecepcionLab.formularioRecepcionLaboratorio);
         $('#seccionFormulariosRecepcionAlmacen').removeClass('hidden').empty().append(respuesta.formularioRecepcionAlmacen.formularioRecepcionAlmacen);
+        $('#seccionFormulariosRecepcionAlmacenRegreso').removeClass('hidden').empty().append(respuesta.formularioRecepcionAlmacenRegreso.formularioRecepcionAlmacenRegreso);
         $('#seccionPanelEspera').removeClass('hidden').empty().append(respuesta.PanelEspera.panelEspera);
         $('#seccionFormulariosGuia').removeClass('hidden').empty().append(respuesta.formularioEnvioAlmacen.formularioGuia);
         $('#seccionFormulariosSinGuia').removeClass('hidden').empty().append(respuesta.formularioGuia.formularioParaGuia);
@@ -174,6 +175,7 @@ $(function () {
             $('#seccionFormulariosRevisionHistorial').addClass('hidden');
             $('#seccionFormulariosRecepcionLaboratorio').addClass('hidden');
             $('#seccionFormulariosRecepcionAlmacen').addClass('hidden');
+            $('#seccionFormulariosRecepcionAlmacenRegreso').addClass('hidden');
             $('#seccionFormulariosAsignacionGuiaLogistica').addClass('hidden');
             $('#seccionFormulariosAsignacionGuia').addClass('hidden');
             $('#seccionFormulariosGuiaLogistica').addClass('hidden');
@@ -383,7 +385,7 @@ $(function () {
             if (guia === '') {
                 guia = $('#guiaColocada').val();
             }
-            
+
             var datos = {'IdPaqueteria': paqueteria, 'Guia': guia, 'Fecha': fecha, 'idServicio': idServicio};
 
             if (evento.validarFormulario('#formEnvioAlmacen')) {
@@ -471,7 +473,36 @@ $(function () {
             if (camposFormularioValidados) {
                 var data = {
                     'id': idTabla,
-                    'idServicio': idServicio
+                    'idServicio': idServicio,
+                    'tipoRecepcion': '1'
+                }
+
+                file.enviarArchivos('#evidenciaRecepcionAlmacen', 'Seguimiento/GuardarRecepcionAlmacen', '#panelRecepcionAlmacen', data, function (respuesta) {
+                    if (respuesta.code == 200) {
+                        vistasDeFormularios(respuesta.datos);
+                        incioEtiquetas();
+                        eventosGenerales(idTabla, respuesta.idServicio);
+                        eventosComentarios(idTabla, respuesta.idServicio);
+                        recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
+                    }
+                });
+            }
+        });
+
+        $('#btnGuardarRecepcionAlmRegreso').off('click');
+        $('#btnGuardarRecepcionAlmRegreso').on('click', function () {
+            var arrayCampos = [
+                {'objeto': '#fechaRecepcionAlm', 'mensajeError': 'Falta seleccionar la Fecha de Recepción.'},
+                {'objeto': '#evidenciaRecepcionAlmacen', 'mensajeError': 'Falta seleccionar la evidencia de recepción.'}
+            ];
+
+            var camposFormularioValidados = evento.validarCamposObjetos(arrayCampos, '#errorFormularioAlmacen');
+
+            if (camposFormularioValidados) {
+                var data = {
+                    'id': idTabla,
+                    'idServicio': idServicio,
+                    'tipoRecepcion': '2'
                 }
 
                 file.enviarArchivos('#evidenciaRecepcionAlmacen', 'Seguimiento/GuardarRecepcionAlmacen', '#panelRecepcionAlmacen', data, function (respuesta) {
@@ -719,19 +750,21 @@ $(function () {
                 'idService': idServicio
             }
             evento.enviarEvento('Seguimiento/MostrarFormularioInformacionGeneracionGuia', dataToShowTheForm, '#panelEnvioConGuia', function (respuesta) {
-                evento.iniciarModal('#modalEdit', 'Información para generar guía', respuesta.modal);
+                evento.mostrarModal('Información para generar guía', respuesta.modal);
+                select.crearSelect('#selectOrigen');
+                select.crearSelect('#selectDestino');
                 select.crearSelect('#lista-TI');
 
                 $("#inputNumeroCajas").bind('keyup mouseup', function () {
                     createChecklistInformation();
                 });
 
-                $('#btnGuardarCambios').off('click');
-                $('#btnGuardarCambios').on('click', function () {
+                $('#btnModalConfirmar').off('click');
+                $('#btnModalConfirmar').on('click', function () {
                     var informationGuide = creatingInformationGenerateGuide();
 
                     var data = {'id': idTabla, 'idServicio': idServicio, informationGuide: informationGuide};
-                    evento.enviarEvento('Seguimiento/SolicitarGuia', data, '#modalEdit', function (respuesta) {
+                    evento.enviarEvento('Seguimiento/SolicitarGuia', data, '#modal-dialogo', function (respuesta) {
                         if (respuesta.code === 200) {
                             vistasDeFormularios(respuesta.datos);
                             incioEtiquetas();
@@ -1133,7 +1166,9 @@ $(function () {
                     'id': idTabla,
                     'comentarios': comentarios,
                     'tipoProblema': 'almacen',
-                    'idServicio': idServicio
+                    'idServicio': idServicio,
+                    'idEstatus': '28',
+                    'idEstatusProblema': '32'
                 };
 
                 file.enviarArchivos('#adjuntosProblemaAlm', 'Seguimiento/AgregarRecepcionesProblemasSeguimientosEquipos', '#panelRecepcionAlmacen', datos, function (respuesta) {
@@ -1142,6 +1177,37 @@ $(function () {
                         $("#txtNotaAlmacen").val('').text('');
                         file.limpiar('#adjuntosProblemaAlm');
                         cargaRecepcionesProblemas(idTabla, '1', '28', '#panelRecepcionAlmacen', '#divNotasAdjuntosAlmacen');
+                        recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
+                    } else {
+                        evento.mostrarMensaje("#errorAgregarProblemaAlm", false, "Ocurrió un error al guardar la nota. Por favor recargue su página y vuelva a intentarlo.", 4000);
+                    }
+                });
+            } else {
+                evento.mostrarMensaje("#errorAgregarProblemaAlm", false, "Al menos debe agregar la nota o un adjunto para poder agregar la información", 4000);
+            }
+        });
+
+        $('#btnAgregarProblemaAlmRegreso').off('click');
+        $('#btnAgregarProblemaAlmRegreso').on('click', function () {
+            var comentarios = $.trim($("#txtNotaAlmacen").val());
+            var adjunto = $("#adjuntosProblemaAlm").val();
+
+            if (comentarios !== '' || adjunto !== '') {
+                var datos = {
+                    'id': idTabla,
+                    'comentarios': comentarios,
+                    'tipoProblema': 'almacen',
+                    'idServicio': idServicio,
+                    'idEstatus': '48',
+                    'idEstatusProblema': '49'
+                };
+
+                file.enviarArchivos('#adjuntosProblemaAlm', 'Seguimiento/AgregarRecepcionesProblemasSeguimientosEquipos', '#panelRecepcionAlmacen', datos, function (respuesta) {
+                    if (respuesta.code == 200) {
+                        evento.mostrarMensaje("#errorAgregarProblemaAlm", true, "Se ha guardado la nota correctamente", 6000);
+                        $("#txtNotaAlmacen").val('').text('');
+                        file.limpiar('#adjuntosProblemaAlm');
+                        cargaRecepcionesProblemas(idTabla, '1', '48', '#panelRecepcionAlmacen', '#divNotasAdjuntosAlmacen');
                         recargandoTablaEquiposEnviadosSolicitados(respuesta.tablaEquiposEnviadosSolicitados.datosTabla);
                     } else {
                         evento.mostrarMensaje("#errorAgregarProblemaAlm", false, "Ocurrió un error al guardar la nota. Por favor recargue su página y vuelva a intentarlo.", 4000);
@@ -1430,8 +1496,8 @@ $(function () {
 
     var creatingInformationGenerateGuide = function () {
         var dataToValidateForm = [
-            {'objeto': '#inputOrigen', 'mensajeError': 'Falta escribir origen.'},
-            {'objeto': '#inputDestino', 'mensajeError': 'Falta escribir destino.'},
+            {'objeto': '#selectOrigen', 'mensajeError': 'Falta escribir origen.'},
+            {'objeto': '#selectDestino', 'mensajeError': 'Falta escribir destino.'},
             {'objeto': '#lista-TI', 'mensajeError': 'Falta seleccionar personal de TI que autoriza.'},
             {'objeto': '#inputNumeroCajas', 'mensajeError': 'Falta el no. de cajas.'}
         ];
@@ -1442,8 +1508,8 @@ $(function () {
                 if (evento.validarFormulario('#formInformationBoxes')) {
                     var noIncidente = $('#inputNoIncidente').val();
                     var nombreTecnico = $('#inputNombreTecnico').val();
-                    var origen = $('#inputOrigen').val();
-                    var destino = $('#inputDestino').val();
+                    var origen = $('#selectOrigen').val();
+                    var destino = $('#selectDestino').val();
                     var personalAutoriza = $('#lista-TI').val();
                     var numeroCajas = $('#inputNumeroCajas').val();
                     var textoInformacionGuia = 'No. Incidente: ' + noIncidente + '\n';

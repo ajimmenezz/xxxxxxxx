@@ -1065,7 +1065,7 @@ class Modelo_Poliza extends Modelo_Base {
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '30', '32','33','34','36','37','39')
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '30', '32','33','34','36','37','48')
                                         WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '30', '34', '36') OR tea.IdEstatus = '38' AND Flag = '0'
                                     END)");
 
@@ -1112,8 +1112,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                         (CASE
-                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4', '12', '28', '29', '30', '32', '33', '34', '36', '39')
-                                            WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('2','4', '12', '28', '29', '30', '31',  '32', '33', '34', '36', '39')
+                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4', '12', '28', '29', '30', '32', '33', '34', '36', '39', '48', '49')
+                                            WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('2','4', '12', '28', '29', '30', '31',  '32', '33', '34', '36', '39', '48', '49')
                                             WHEN
                                                 tea.IdTipoMovimiento = '3'
                                             THEN
@@ -1151,8 +1151,8 @@ class Modelo_Poliza extends Modelo_Base {
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','36','39') OR tea.IdEstatus = '2' AND Flag = '1' OR tea.IdEstatus = '12' AND Flag = '0'
-                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','28','29','33','39') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '1'
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','36','39','48','49') OR tea.IdEstatus = '2' AND Flag = '1' OR tea.IdEstatus = '12' AND Flag = '0'
+                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','28','29','33','39','48','49') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '1'
                                         WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('41')
                                     END)");
 
@@ -1184,7 +1184,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         (SELECT Nombre FROM cat_v3_equipos_allab_tipo_movimiento cveatm WHERE cveatm.Id = tea.IdTipoMovimiento) AS Movimiento,
                                         ve.Equipo" . $valor . "
                                         ,'Lectura',
-                                        nombreUsuario(tea.IdTecnicoSolicita) AS TecnicoSolicita
+                                        nombreUsuario(tea.IdTecnicoSolicita) AS TecnicoSolicita,
+                                        sucursal(tst.IdSucursal) AS Sucursal
                                     FROM 
                                             t_equipos_allab tea
                                     INNER JOIN 
@@ -1229,7 +1230,6 @@ class Modelo_Poliza extends Modelo_Base {
     public function consultaRecepcionAlmacen(array $datos) {
         $datosServcio = $this->estatusAllab($datos['IdServicio']);
         $idRecepcion = null;
-
         $consultaRecepcion = $this->consulta("SELECT 
                                                 tear.Id,
                                                 CONCAT(trp.Nombres,' ',trp.ApMaterno,' ',trp.ApPaterno) AS UsuarioRecibe,
@@ -1882,7 +1882,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         FROM
                                             t_rh_personal trp INNER JOIN cat_v3_usuarios cvu on trp.IdUsuario = cvu.Id
                                         WHERE 
-                                            IdPerfil = '" . $datos . "'");
+                                            IdPerfil = '" . $datos . "'
+                                        AND Flag = '1'");
 
         return $datosPersonal;
     }
@@ -1900,7 +1901,8 @@ class Modelo_Poliza extends Modelo_Base {
     public function consultaEquiposAllab(int $idServicio = null) {
         if (!empty($idServicio)) {
             $consulta = $this->consulta("SELECT
-                                             *, nombreUsuario(IdUsuario) NombreUsuario 
+                                             *, nombreUsuario(IdUsuario) NombreUsuario,
+                                             nombreUsuario(IdTecnicoSolicita) Tecnico
                                          FROM t_equipos_allab 
                                          WHERE IdServicio = '" . $idServicio . "'");
         } else {
@@ -1995,12 +1997,19 @@ class Modelo_Poliza extends Modelo_Base {
     }
 
     public function consultaIdRegistro(array $datos) {
+        if(isset($datos['idEstatus'])){
+            $idEstatus = 'AND IdEstatus = "' . $datos['idEstatus'] . '"';
+        }else{
+            $idEstatus = '';
+        }
+        
         $equipoDanado = $this->consulta('SELECT 
                                             Id
                                         FROM
                                             t_equipos_allab_recepciones tear
                                         WHERE IdRegistro = "' . $datos['idRegistro'] . '"
-                                        AND IdDepartamento = "' . $datos['idDepartamento'] . '"');
+                                        AND IdDepartamento = "' . $datos['idDepartamento'] . '"
+                                        ' . $idEstatus);
 
         return $equipoDanado;
     }
