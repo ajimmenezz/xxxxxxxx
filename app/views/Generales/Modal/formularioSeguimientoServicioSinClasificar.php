@@ -303,8 +303,7 @@
                     </div>
                     <!--Finalizando-->
 
-                    <!--Empezando Decripcion-->
-                    <div class="row">
+                    <div class="row divBotonesServicioSinClasificar">
                         <div class="col-md-12">                                    
                             <div class="form-group">
                                 <label for="seguimientoSinClasificar">Evidencias</label>
@@ -312,13 +311,23 @@
                             </div>
                         </div>
                     </div>
-                    <!--Finalizando-->
+
+                    <div class="row divGuardarCambiosServicioSinClasificar hidden">
+                        <div class="col-md-12">                                    
+                            <div class="form-group">
+                                <label Evidencias</label>
+                                <input id="evidenciaCambiosSinClasificar"  name="evidenciasCambiosSinClasificar[]" type="file" multiple/>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="row m-t-10">
                         <!--Empezando error--> 
                         <div class="col-md-12">
                             <div class="errorGeneralServicioSinClasificar"></div>
                         </div>
+                    </div>
+                    <div class="row divBotonesServicioSinClasificar">
                         <!--Finalizando Error-->
                         <div class="col-md-6">
                             <div class="form-group text-center">
@@ -341,7 +350,14 @@
                         }
                         ?>
                     </div>
-
+                    <div class="row divGuardarCambiosServicioSinClasificar hidden">
+                        <div class="col-md-12">
+                            <div class="form-group text-center">
+                                <br>
+                                <a id="btnGuardarCambiosServicioSinClasificar" href="javascript:;" class="btn btn-inverse m-r-5 "><i class="fa fa-unlock-alt"></i> Guardar cambios y Concluir servicio</a>                            
+                            </div>
+                        </div>
+                    </div>
                 </form>
                 <!--Finalizando formulario servicio sin clasificar-->
             </div>

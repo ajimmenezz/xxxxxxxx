@@ -89,7 +89,7 @@ $(function () {
         datosSelect();
     });
 
-    function datosSelect(motivosCancelacion) {
+    function datosSelect() {
         selectCancelacion.iniciarSelect();
         $('input[type="checkbox"]').click(function () {
             if ($(this).prop("checked") === true) {

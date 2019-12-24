@@ -100,7 +100,7 @@ class Secciones extends General {
         $this->fondoFijo = \Librerias\FondoFijo\FondoFijo::factory();
         $this->instalaciones = \Librerias\Instalaciones\Instalaciones::factory();
         $this->prime = \Librerias\Prime\Inventario::factory();
-        $this->seccionCE = \Librerias\V2\PaquetesTicket\GestorServicios::factory();
+        $this->seccionCE = new \Librerias\V2\PaquetesTicket\GestorServicios();
         
         $this->factoryCatalogos = new \Librerias\V2\Factorys\FactoryCatalogos();
         $this->CatalogoMotivosPermiso = $this->factoryCatalogos->getCatalogo('CatalogoMotivoPermisos');
@@ -272,6 +272,9 @@ class Secciones extends General {
                 break;
             case 'RH/Autorizar_permisos':
                 $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id'], $usuario['IdPerfil']);
+                break;
+            case 'RH/CalendarioPermisos':
+                $datos['motivosCancelacion'] = $this->motivosCancelacion->getMotivoCancelaciones();
                 break;
             case 'RH/CalendarioPermisos': 
                 $datos['motivosCancelacion'] = $this->motivosCancelacion->getMotivoCancelaciones(); 
@@ -575,7 +578,7 @@ class Secciones extends General {
                 $datos['Sucursales'] = $this->prime->getSucursalesPrime();
                 break;
             case 'Redes/SeguimientoCE':
-                $datos['infoServicios'] = $this->seccionCE->getDatosServicios();
+                $datos['infoServicios'] = $this->seccionCE->getServicios();
                 break;
 
             case 'FondoFijo/SaldosTecnico':

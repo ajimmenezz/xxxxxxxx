@@ -89,6 +89,7 @@
     <div id="seccionFormulariosRecepcionTecnico" class="hidden"></div>
     <div id="seccionFormulariosEnvSegLog" class="hidden"></div>
     <div id="seccionFormulariosRecepcionLogistica" class="hidden"></div>
+    <div id="seccionFormulariosRecepcionAlmacenRegreso" class="hidden"></div>
     <div id="seccionFormulariosRevisionHistorial" class="hidden"></div>
     <div id="seccionFormulariosRecepcionLaboratorio" class="hidden"></div>
     <div id="seccionFormulariosRecepcionAlmacen" class="hidden"></div>

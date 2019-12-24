@@ -50,11 +50,7 @@ class Calendario {
             },
 
             eventClick: function (evento, jsEvento, objetoVista) {                
-//                if (_this.callback !== null) {
                     _this.callback(evento, jsEvento, objetoVista);
-//                }
-//                $("<div>").dialog({modal: true, title: evento.nombreUsuario, width: 350});
-//                $('#modalDatosPermiso').modal();
             }
         });
     }

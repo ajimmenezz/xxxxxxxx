@@ -13,11 +13,13 @@ class Reportes extends General
     private $DBSAE;
     private $Excel;
     private $pdf;
+    private $DBS;
 
     public function __construct()
     {
         parent::__construct();
         $this->DBSAE = \Modelos\Modelo_SAE7::factory();
+        $this->DBS = \Modelos\Modelo_Solicitud::factory();
         $this->Excel = new \Librerias\Generales\CExcel();
         parent::getCI()->load->helper(array('FileUpload', 'date'));
     }
@@ -483,7 +485,7 @@ class Reportes extends General
                                                             ROUND(partidas.COST,2) as Precio,
                                                             ROUND(partidas.TOT_PARTIDA,2) as Total
                                                         from
-                                                        SAE7EMPRESA3.dbo.COMPO03 ordenes inner join SAE7EMPRESA3.dbo.PAR_COMPO03 partidas
+                                                        SAE7EMPRESA3.dbo.  ordenes inner join SAE7EMPRESA3.dbo.PAR_COMPO03 partidas
                                                             ON ordenes.CVE_DOC = partidas.CVE_DOC
                                                         INNER JOIN SAE7EMPRESA3.dbo.INVE03 inventario
                                                             ON partidas.CVE_ART = inventario.CVE_ART
@@ -801,6 +803,82 @@ class Reportes extends General
         $this->pdf->Output('F', $carpeta, true);
         $carpeta = substr($carpeta, 1);
         return $carpeta;
+    }
+
+    private function simpleXmlToArray($xmlObject)
+    {
+        $array = [];
+        foreach ($xmlObject->children() as $node) {
+            $array[$node->getName()] = is_array($node) ? \simplexml_to_array($node) : (string) $node;
+        }
+        return $array;
+    }
+
+    public function getComprobantesPagoSAE7()
+    {
+        $this->DBS->queryBolean('truncate temporal_facturas_sae');
+        $consulta = $this->DBSAE->getFacturacionSAE();
+        foreach ($consulta as $k => $v) {
+            $this->DBS->insertar('temporal_facturas_sae', [
+                'ClaveFactura' => $v['ClaveFactura'],
+                'Cliente' => $v['Cliente'],
+                'RFC' => $v['RFCCliente'],
+                'Estatus' => $v['Estatus'],
+                'Pedido' => $v['Pedido'],
+                'Fecha' => $v['FechaElaboracion'],
+                'Subtotal' => $v['Subtotal'],
+                'Impuesto' => $v['Impuesto'],
+                'Importe' => $v['ImporteTotal'],
+                'UUID' => $v['UUID'],
+                'FormaPago' => $v['FormaPago'],
+                'UsoCFDI' => $v['UsoCFDI'],
+                'Empresa' => $v['Empresa']
+            ]);
+        }
+
+        $this->DBS->queryBolean('truncate temporal_comprobante_pagos_sae');
+        $consulta = $this->DBSAE->getComprobantesEmpresa();
+        foreach ($consulta as $k => $v) {
+            $xml = simplexml_load_string($v['XML_DOC']);
+            $sxml = new \SimpleXMLElement($v['XML_DOC']);
+            $sxml->registerXPathNamespace('cfdi', 'http://www.sat.gob.mx/cfd/3');
+            $sxml->registerXPathNamespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+            $sxml->registerXPathNamespace('tfd', 'http://www.sat.gob.mx/TimbreFiscalDigital');
+            $sxml->registerXPathNamespace('pago10', 'http://www.sat.gob.mx/Pagos');
+            // if ($v['CVE_DOC'] == 'RP0000000603') {
+            $pagos = $sxml->xpath('//pago10:Pago');
+            for ($i = 0; $i < count($pagos); $i++) {
+                $atributos = $pagos[$i]->attributes();
+                // echo "***********************************<br />";
+                $documentosRelacionados = $pagos[$i]->xpath('pago10:DoctoRelacionado');
+                // echo "<pre>";
+                // var_dump($documentosRelacionados);
+                // echo "</pre>";
+                for ($j = 0; $j < count($documentosRelacionados); $j++) {
+                    $attrDoctoRel = $documentosRelacionados[$j]->attributes();
+                    $arrayInsert = [
+                        'ClaveComprobante' => $v['CVE_DOC'],
+                        'FechaPago' => str_replace("T", " ", $atributos['FechaPago']),
+                        'FormaPago' => $atributos['FormaDePagoP'],
+                        'TipoCambio' => $atributos['TipoCambioP'],
+                        'Emisor' => $atributos['RfcEmisorCtaOrd'],
+                        'CuentaOrdenante' => $atributos['CtaOrdenante'],
+                        'EmisorCuentaBeneficiario' => $atributos['RfcEmisorCtaBen'],
+                        'CtaBeneficiario' => $atributos['CtaBeneficiario'],
+                        'Empresa' => $v['Empresa'],
+                        'Moneda' => $attrDoctoRel['MonedaDR'],
+                        'Monto' => $attrDoctoRel['ImpPagado'],
+                        'Parcialidad' => $attrDoctoRel['NumParcialidad'],
+                        'Factura' => $attrDoctoRel['Serie'] . sprintf("%'.010d", $attrDoctoRel['Folio']),
+                    ];
+
+                    $this->DBS->insertar('temporal_comprobante_pagos_sae', $arrayInsert);
+                }
+            }
+            // }
+        }
+
+        $this->DBSAE->checkFacturasSinComprobante();
     }
 }
 

@@ -15,6 +15,7 @@ class Controller_SegundoPlano extends \CI_Controller
     private $ubicaphone;
     private $informacionServicios;
     private $solicitud;
+    private $sae;
 
     public function __construct()
     {
@@ -27,6 +28,7 @@ class Controller_SegundoPlano extends \CI_Controller
         $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
         $this->informacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         $this->solicitud = \Librerias\Generales\Solicitud::factory();
+        $this->sae = \Librerias\SAEReports\Reportes::factory();
     }
 
     public function actulizarTablaEquiposSae()
@@ -521,5 +523,10 @@ class Controller_SegundoPlano extends \CI_Controller
     public function updateRequestWithSDInfo()
     {
         $this->solicitud->updateRequestWithSDInfo();
+    }
+
+    public function getComprobantesPagoSAE7()
+    {
+        $this->sae->getComprobantesPagoSAE7();
     }
 }

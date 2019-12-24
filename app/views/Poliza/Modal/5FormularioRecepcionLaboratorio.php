@@ -91,11 +91,42 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                                     <?php
                                     $archivosEnvia = explode(',', $archivoRecepcion);
                                     foreach ($archivosEnvia as $value) {
-                                        ?>
-                                        <a class="m-l-5 m-r-5" href="<?php echo $value ?>" data-lightbox="image-<?php echo $value ?>">
-                                            <img src="<?php echo $value ?>" style="max-height:115px !important;" />
-                                        </a>
-                                    <?php } ?>
+                                        $pathInfo = pathinfo($value);
+                                        if (array_key_exists("extension", $pathInfo)) {
+                                            switch (strtolower($pathInfo['extension'])) {
+                                                case 'doc': case 'docx':
+                                                    $scr = '/assets/img/Iconos/word_icon.png';
+                                                    break;
+                                                case 'xls': case 'xlsx':
+                                                    $scr = '/assets/img/Iconos/excel_icon.png';
+                                                    break;
+                                                case 'pdf':
+                                                    $scr = '/assets/img/Iconos/pdf_icon.png';
+                                                    break;
+                                                case 'jpg': case 'jpeg': case 'bmp': case 'gif': case 'png':
+                                                    $scr = $value;
+                                                    break;
+                                                default :
+                                                    $scr = '/assets/img/Iconos/file_icon.png';
+                                                    break;
+                                            }
+                                        } else {
+                                            $scr = '/assets/img/Iconos/file_icon.png';
+                                        }
+
+                                        if (strtolower($pathInfo['extension']) === 'jpg' || strtolower($pathInfo['extension']) === 'jpeg' || strtolower($pathInfo['extension']) === 'bmp' || strtolower($pathInfo['extension']) === 'gif' || strtolower($pathInfo['extension']) === 'png') {
+                                            ?>
+                                            <a class="m-l-5 m-r-5" href="<?php echo $scr ?>" data-lightbox="image-<?php echo$scr ?>">
+                                                <img src="<?php echo $scr ?>" style="max-height:115px !important;" />
+                                            </a>
+                                            <?php
+                                        } else {
+                                            ?>
+                                            <a href="<?php echo $value ?>" target="_blank"><img src="<?php echo $scr ?>" style="max-height:115px !important;" /></a>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +147,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label class="f-w-600 f-s-13">Nota *</label>
-                                <textarea class="form-control" rows="5" id="txtNotaLaboratorio" value="" <?php echo $mostrarNota  ?>></textarea>                            
+                                <textarea class="form-control" rows="5" id="txtNotaLaboratorio" value="" <?php echo $mostrarNota ?>></textarea>                            
                             </div>
                         </div>
                     </div>
@@ -124,7 +155,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label class="f-w-600 f-s-13">Adjuntos *</label>
-                                <input id="adjuntosProblemaLab" name="adjuntosProblemaLab[]" type="file" multiple="" <?php echo $mostrarSelectInputProblema  ?>/>    
+                                <input id="adjuntosProblemaLab" name="adjuntosProblemaLab[]" type="file" multiple="" <?php echo $mostrarSelectInputProblema ?>/>    
                             </div>
                         </div>
                     </div>
@@ -134,7 +165,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         </div>
                     </div>
                     <div>
-                        <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php // echo $mostrarBtnProblema  ?>">
+                        <div class="col-md-12 col-sm-12 col-xs-12 text-center <?php // echo $mostrarBtnProblema    ?>">
                             <a id="btnAgregarProblemaLab" class="btn btn-success m-t-10 m-r-10 f-w-600 f-s-13"><i class="fa fa-plus"></i> Agregar Problema</a>
                         </div>
                     </div>

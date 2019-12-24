@@ -49,7 +49,8 @@ class InformacionServicios extends General {
     //        return array('html' => $html);
     //    }
 
-    public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key) {
+    public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key)
+    {
         $html = '';
         $estatus = TRUE;
 
@@ -785,7 +786,9 @@ class InformacionServicios extends General {
         $host = $_SERVER['SERVER_NAME'];
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $detallesServicio = 'http://siccob.solutions/Detalles/Servicio/' . $servicio;
+            $detallesServicio = 'https://siccob.solutions/Detalles/Servicio/' . $servicio;
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $detallesServicio = 'https://pruebas.siccob.solutions/Detalles/Servicio/' . $servicio;
         } else {
             $detallesServicio = 'http://' . $host . '/Detalles/Servicio/' . $servicio;
         }
@@ -799,7 +802,9 @@ class InformacionServicios extends General {
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'http://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }
@@ -1224,11 +1229,15 @@ class InformacionServicios extends General {
                     WHEN 1 THEN 'Equipo'
                     WHEN 2 THEN 'Material'
                     WHEN 3 THEN 'Refacción'
+                    WHEN 4 THEN 'Elemento'
+                    WHEN 5 THEN 'Sub-Elemento'
                 END as Tipo, 
                 CASE IdItem 
                     WHEN 1 THEN (SELECT Equipo FROM v_equipos WHERE Id = TipoItem) 
                     WHEN 2 THEN (SELECT Nombre FROM cat_v3_equipos_sae WHERE Id = TipoItem)
-                    WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = TipoItem) 
+                    WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = TipoItem)
+                    WHEN 4 THEN (SELECT Nombre FROM cat_v3_x4d_elementos WHERE Id = TipoItem) 
+                    WHEN 5 THEN (SELECT Nombre FROM cat_v3_x4d_subelementos WHERE Id = TipoItem) 
                 END as EquipoMaterial,
                 Serie,
                 Cantidad
@@ -1379,7 +1388,14 @@ class InformacionServicios extends General {
         $this->setCellValue(0, 5, $generales['Sucursal'], 'L');
         $this->setCellValue(75, 5, $generales['TipoServicio'], 'L', true);
         $this->setCoordinates(127, $this->y - 5);
-        $this->setCellValue(73, 5, $generales['Estatus'], 'L', true);
+        
+        if($generales['IdEstatus'] === '5'){
+            $estatus = 'EN ATENCIÓN';
+        }else{
+            $estatus = $generales['Estatus'];
+        }
+        
+        $this->setCellValue(73, 5, $estatus, 'L', true);
         $this->setCoordinates(37);
         $this->setCellValue(0, 5, $generales['Atiende'], 'L');
         if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
