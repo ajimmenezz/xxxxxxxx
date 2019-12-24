@@ -179,7 +179,7 @@ class Modelo_Gapsi extends Modelo_Base
 
     public function getMisGastos()
     {
-        ini_set('memory_limit', '5048M');
+        ini_set('memory_limit', '60048M');
 
         $condicion = '';
         $todos = true;
