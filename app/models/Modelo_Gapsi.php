@@ -4,41 +4,48 @@ namespace Modelos;
 
 use Librerias\Modelos\Base as Modelo_Base;
 
-class Modelo_Gapsi extends Modelo_Base {
+class Modelo_Gapsi extends Modelo_Base
+{
 
     private $usuario;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
     }
 
-    public function getClientes() {
+    public function getClientes()
+    {
         $query = "select * from db_Clientes where Nombre <> '' order by Nombre";
         $consulta = parent::connectDBGapsi()->query($query);
 
         return $consulta->result_array();
     }
 
-    public function getSucursales() {
+    public function getSucursales()
+    {
         $query = "select * from db_Sucursales where Nombre <> '' order by Nombre";
         $consulta = parent::connectDBGapsi()->query($query);
         return $consulta->result_array();
     }
 
-    public function getTiposServicio() {
+    public function getTiposServicio()
+    {
         $query = "select * from db_TipoServicio order by Nombre";
         $consulta = parent::connectDBGapsi()->query($query);
         return $consulta->result_array();
     }
 
-    public function getTiposBeneficiario() {
+    public function getTiposBeneficiario()
+    {
         $query = "select * from db_TipoBeneficiario order by Nombre";
         $consulta = parent::connectDBGapsi()->query($query);
         return $consulta->result_array();
     }
 
-    public function getBeneficiarioByTipo(array $datos) {
+    public function getBeneficiarioByTipo(array $datos)
+    {
         if ($datos['id'] == 1) {
             $query = "select 
                     db.ID, 
@@ -56,13 +63,15 @@ class Modelo_Gapsi extends Modelo_Base {
         return $consulta->result_array();
     }
 
-    public function proyectosByCliente(int $id) {
+    public function proyectosByCliente(int $id)
+    {
         $query = "select ID, Tipo, Descripcion as Nombre from db_Proyectos where Cliente = '" . $id . "' and Descripcion <> '' order by Descripcion";
         $consulta = parent::connectDBGapsi()->query($query);
         return $consulta->result_array();
     }
 
-    public function sucursalesByProyecto(int $id) {
+    public function sucursalesByProyecto(int $id)
+    {
         $query = "select 
                     suc.ID,
                     suc.Nombre
@@ -75,31 +84,36 @@ class Modelo_Gapsi extends Modelo_Base {
         return $consulta->result_array();
     }
 
-    public function getTiposTransferencia() {
+    public function getTiposTransferencia()
+    {
         $query = "select * from db_TipoTrans order by Nombre";
         $consulta = parent::connectDBGapsi()->query($query);
         return $consulta->result_array();
     }
 
-    public function getCategoriasByTipoTrans(int $id) {
+    public function getCategoriasByTipoTrans(int $id)
+    {
         $query = "select ID, Nombre from db_Categorias where TipoTrans = '" . $id . "' and Nombre <> '' order by Nombre";
         $consulta = parent::connectDBGapsi()->query($query);
         return $consulta->result_array();
     }
 
-    public function getSubcategoriasByCategoria(int $id) {
+    public function getSubcategoriasByCategoria(int $id)
+    {
         $query = "select ID, Nombre from db_SubCategorias where Categoria = '" . $id . "' and Nombre <> '' order by Nombre";
         $consulta = parent::connectDBGapsi()->query($query);
         return $consulta->result_array();
     }
 
-    public function getConceptosBySubcategoria(int $id) {
+    public function getConceptosBySubcategoria(int $id)
+    {
         $query = "select ID, Nombre from db_SubSubCategorias where SubCategoria = '" . $id . "' and Nombre <> '' order by Nombre";
         $consulta = parent::connectDBGapsi()->query($query);
         return $consulta->result_array();
     }
 
-    public function solicitarGasto(array $datos) {
+    public function solicitarGasto(array $datos)
+    {
         $consulta = $this->consulta("select nombreUsuario('" . $this->usuario['Id'] . "') as Usuario");
         $solicita = $consulta[0]['Usuario'];
         $fechaCredito = 'null';
@@ -110,17 +124,17 @@ class Modelo_Gapsi extends Modelo_Base {
 
         parent::connectDBGapsi()->trans_begin();
         $query = "select "
-                . "count(*) as Total "
-                . "from db_Registro "
-                . "where Tipo = '" . $datos['Tipo'] . "' "
-                . "and TipoServicio = '" . $datos['TipoServicio'] . "' "
-                . "and Proyecto = '" . $datos['Proyecto'] . "' "
-                . "and Beneficiario = '" . $datos['Beneficiario'] . "' "
-                . "and TipoTrans = '" . $datos['TipoTrans'] . "' "
-                . "and Descripcion = '" . $datos['Descripcion'] . "' "
-                . "and Importe = '" . $datos['Importe'] . "' "
-                . "and Moneda = '" . $datos['Moneda'] . "' "
-                . "and DATEDIFF(minute, FechaSolicitud, GETDATE()) <= 10";
+            . "count(*) as Total "
+            . "from db_Registro "
+            . "where Tipo = '" . $datos['Tipo'] . "' "
+            . "and TipoServicio = '" . $datos['TipoServicio'] . "' "
+            . "and Proyecto = '" . $datos['Proyecto'] . "' "
+            . "and Beneficiario = '" . $datos['Beneficiario'] . "' "
+            . "and TipoTrans = '" . $datos['TipoTrans'] . "' "
+            . "and Descripcion = '" . $datos['Descripcion'] . "' "
+            . "and Importe = '" . $datos['Importe'] . "' "
+            . "and Moneda = '" . $datos['Moneda'] . "' "
+            . "and DATEDIFF(minute, FechaSolicitud, GETDATE()) <= 10";
         $consulta = parent::connectDBGapsi()->query($query);
         $row = $consulta->result_array();
 
@@ -130,10 +144,10 @@ class Modelo_Gapsi extends Modelo_Base {
         }
 
         $query = "insert into "
-                . "db_Registro "
-                . "(Beneficiario, IDBeneficiario, Tipo, TipoTrans, TipoServicio, Descripcion, FCaptura, Importe, Observaciones, Proyecto, GastoFrecuente, Sucursal, Status, UsuarioSolicitud, FechaSolicitud, Fecha, Moneda, OrdenCompra, SolicADIST, FechaPagoCredito) "
-                . "VALUES "
-                . "('" . $datos['Beneficiario'] . "', '" . $datos['IDBeneficiario'] . "', '" . $datos['Tipo'] . "', '" . $datos['TipoTrans'] . "', '" . $datos['TipoServicio'] . "', '" . $datos['Descripcion'] . "', GETDATE(), '" . $datos['Importe'] . "', '" . $datos['Observaciones'] . "', '" . $datos['Proyecto'] . "', '', '" . $datos['Sucursal'] . "', 'Solicitado', null, GETDATE(), GETDATE(), '" . $datos['Moneda'] . "', '" . $datos['OC'] . "', '" . $solicita . "', " . $fechaCredito . ")";
+            . "db_Registro "
+            . "(Beneficiario, IDBeneficiario, Tipo, TipoTrans, TipoServicio, Descripcion, FCaptura, Importe, Observaciones, Proyecto, GastoFrecuente, Sucursal, Status, UsuarioSolicitud, FechaSolicitud, Fecha, Moneda, OrdenCompra, SolicADIST, FechaPagoCredito) "
+            . "VALUES "
+            . "('" . $datos['Beneficiario'] . "', '" . $datos['IDBeneficiario'] . "', '" . $datos['Tipo'] . "', '" . $datos['TipoTrans'] . "', '" . $datos['TipoServicio'] . "', '" . $datos['Descripcion'] . "', GETDATE(), '" . $datos['Importe'] . "', '" . $datos['Observaciones'] . "', '" . $datos['Proyecto'] . "', '', '" . $datos['Sucursal'] . "', 'Solicitado', null, GETDATE(), GETDATE(), '" . $datos['Moneda'] . "', '" . $datos['OC'] . "', '" . $solicita . "', " . $fechaCredito . ")";
 
         parent::connectDBGapsi()->query($query);
         $ultimo = parent::connectDBGapsi()->insert_id();
@@ -144,10 +158,10 @@ class Modelo_Gapsi extends Modelo_Base {
         if (isset($conceptos) && count($conceptos) > 0) {
             foreach ($conceptos as $key => $value) {
                 $query = "insert into "
-                        . "db_DetalleGasto "
-                        . "(Gasto, Categoria, SubCategoria, Concepto, Monto) "
-                        . "VALUES "
-                        . "('" . $ultimo . "', '" . $value['categoria'] . "', '" . $value['subcategoria'] . "', '" . $value['concepto'] . "', '" . $value['monto'] . "')";
+                    . "db_DetalleGasto "
+                    . "(Gasto, Categoria, SubCategoria, Concepto, Monto) "
+                    . "VALUES "
+                    . "('" . $ultimo . "', '" . $value['categoria'] . "', '" . $value['subcategoria'] . "', '" . $value['concepto'] . "', '" . $value['monto'] . "')";
                 parent::connectDBGapsi()->query($query);
                 $ultimoDetalle = parent::connectDBGapsi()->insert_id();
                 array_push($registros, $ultimoDetalle);
@@ -163,7 +177,8 @@ class Modelo_Gapsi extends Modelo_Base {
         }
     }
 
-    public function getMisGastos() {        
+    public function getMisGastos()
+    {
         ini_set('memory_limit', '500M');
 
         $condicion = '';
@@ -178,35 +193,35 @@ class Modelo_Gapsi extends Modelo_Base {
                 }
                 $stringIds = implode(",", $arrayTrabajadores);
             }
-            $condicion = " and IdUsuario IN ('" . $this->usuario['Id'] . "','" . $stringIds . "')";
+            $condicion = " and IdUsuario IN ('" . $this->usuario['Id'] . "'," . $stringIds . ")";
             $todos = TRUE;
-        }else{
+        } else {
             $condicion = " and IdUsuario = '" . $this->usuario['Id'] . "'";
             $todos = FALSE;
         }
-        
+
 
         $this->queryBolean("SET SESSION group_concat_max_len = 1000000");
 
         $ids = $this->consulta(""
-                        . "select "
-                        . "group_concat(IdGasto) as Ids "
-                        . "from t_archivos_gastos_gapsi "
-                        . "where 1 = 1 "
-                        . " " . $condicion . " "
-                        . "and if((CONCAT(',', Leido, ',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) = 0")[0]['Ids'];
+            . "select "
+            . "group_concat(IdGasto) as Ids "
+            . "from t_archivos_gastos_gapsi "
+            . "where 1 = 1 "
+            . " " . $condicion . " "
+            . "and if((CONCAT(',', Leido, ',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) = 0")[0]['Ids'];
 
         $ids = ($ids !== '') ? ',' . $ids : '';
 
         $consulta = $this->consulta("select "
-                . "IdGasto, "
-                . "nombreUsuario(IdUsuario) as Usuario, "
-                . "IdUsuario, "
-                . "Email, "
-                . "if((CONCAT(',', Leido, ',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) as Leido "
-                . "from t_archivos_gastos_gapsi "
-                . "where 1 = 1 " . $condicion);
-       
+            . "IdGasto, "
+            . "nombreUsuario(IdUsuario) as Usuario, "
+            . "IdUsuario, "
+            . "Email, "
+            . "if((CONCAT(',', Leido, ',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) as Leido "
+            . "from t_archivos_gastos_gapsi "
+            . "where 1 = 1 " . $condicion);
+
         $usuarios = [];
         foreach ($consulta as $key => $value) {
             if ($value['Leido'] != 1) {
@@ -219,10 +234,10 @@ class Modelo_Gapsi extends Modelo_Base {
         }
 
         $query = "select "
-                . "registro.*, "
-                . "(select Descripcion from db_Proyectos where ID = registro.Proyecto) as NameProyecto "
-                . "from db_Registro registro "
-                . "where ID in (''" . $ids . ")";
+            . "registro.*, "
+            . "(select Descripcion from db_Proyectos where ID = registro.Proyecto) as NameProyecto "
+            . "from db_Registro registro "
+            . "where ID in (''" . $ids . ")";
 
         if ($ids !== ',') {
             $consulta = parent::connectDBGapsi()->query($query);
@@ -230,7 +245,7 @@ class Modelo_Gapsi extends Modelo_Base {
         } else {
             $gastos = array();
         }
-              
+
         return [
             'gastos' => $gastos,
             'usuarios' => $usuarios,
@@ -238,7 +253,8 @@ class Modelo_Gapsi extends Modelo_Base {
         ];
     }
 
-    public function exportMisGastos() {
+    public function exportMisGastos()
+    {
         ini_set('memory_limit', '2048M');
 
         $condicion = '';
@@ -260,11 +276,11 @@ class Modelo_Gapsi extends Modelo_Base {
         $this->queryBolean("SET SESSION group_concat_max_len = 1000000");
 
         $ids = $this->consulta(""
-                        . "select "
-                        . "group_concat(IdGasto) as Ids "
-                        . "from t_archivos_gastos_gapsi "
-                        . "where 1 = 1 "
-                        . " " . $condicion . " ")[0]['Ids'];
+            . "select "
+            . "group_concat(IdGasto) as Ids "
+            . "from t_archivos_gastos_gapsi "
+            . "where 1 = 1 "
+            . " " . $condicion . " ")[0]['Ids'];
         $ids = ($ids !== '') ? ',' . $ids : '';
 
         $query = "select
@@ -293,29 +309,30 @@ class Modelo_Gapsi extends Modelo_Base {
         return $gastos;
     }
 
-    public function getComprobarGastos() {
+    public function getComprobarGastos()
+    {
         $condicion = '';
         $todos = false;
 
         $ids = $this->consulta(""
-                        . "select "
-                        . "group_concat(IdGasto) as Ids "
-                        . "from t_archivos_gastos_gapsi "
-                        . "where 1 = 1 "
-                        . "and Comprobado = 0"
-                        . " and IdUsuario = '" . $this->usuario['Id'] . "' "
-                        . "and if((CONCAT(',', Leido, ',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) = 0")[0]['Ids'];
+            . "select "
+            . "group_concat(IdGasto) as Ids "
+            . "from t_archivos_gastos_gapsi "
+            . "where 1 = 1 "
+            . "and Comprobado = 0"
+            . " and IdUsuario = '" . $this->usuario['Id'] . "' "
+            . "and if((CONCAT(',', Leido, ',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) = 0")[0]['Ids'];
         $ids = ($ids !== '') ? ',' . $ids : '';
 
         $consulta = $this->consulta("select "
-                . "IdGasto, "
-                . "nombreUsuario(IdUsuario) as Usuario, "
-                . "IdUsuario, "
-                . "Email, "
-                . "if((CONCAT(',', Leido, ',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) as Leido "
-                . "from t_archivos_gastos_gapsi "
-                . "where 1 = 1 "
-                . " and IdUsuario = '" . $this->usuario['Id'] . "' ");
+            . "IdGasto, "
+            . "nombreUsuario(IdUsuario) as Usuario, "
+            . "IdUsuario, "
+            . "Email, "
+            . "if((CONCAT(',', Leido, ',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) as Leido "
+            . "from t_archivos_gastos_gapsi "
+            . "where 1 = 1 "
+            . " and IdUsuario = '" . $this->usuario['Id'] . "' ");
         $usuarios = [];
         foreach ($consulta as $key => $value) {
             if ($value['Leido'] != 1) {
@@ -328,11 +345,11 @@ class Modelo_Gapsi extends Modelo_Base {
         }
 
         $query = "select "
-                . "registro.*, "
-                . "(select Descripcion from db_Proyectos where ID = registro.Proyecto) as NameProyecto "
-                . "from db_Registro registro "
-                . "where ID in (''" . $ids . ") "
-                . "and Status in ('Aprobado')";
+            . "registro.*, "
+            . "(select Descripcion from db_Proyectos where ID = registro.Proyecto) as NameProyecto "
+            . "from db_Registro registro "
+            . "where ID in (''" . $ids . ") "
+            . "and Status in ('Aprobado')";
         //                . "and AplicaComprobacion = 1";
 
         if ($ids !== ',') {
@@ -343,15 +360,16 @@ class Modelo_Gapsi extends Modelo_Base {
         }
 
         $datos = ['Gastos' => [
-                'gastos' => $gastos,
-                'usuarios' => $usuarios,
-                'permiso' => $todos
+            'gastos' => $gastos,
+            'usuarios' => $usuarios,
+            'permiso' => $todos
         ]];
 
         return $datos;
     }
 
-    public function detallesGasto($id) {
+    public function detallesGasto($id)
+    {
         $query = "select
 gasto.*,
  proyecto.Cliente,
@@ -379,7 +397,8 @@ where gasto.ID = '" . $id . "'";
         ];
     }
 
-    public function guardarCambiosGasto(array $datos) {
+    public function guardarCambiosGasto(array $datos)
+    {
         $fechaCredito = 'null';
         if ($datos['Credito'] == 1) {
             $time = strtotime($datos['FechaCredito']);
@@ -388,22 +407,22 @@ where gasto.ID = '" . $id . "'";
 
         parent::connectDBGapsi()->trans_begin();
         $query = "update "
-                . "db_Registro "
-                . "set Beneficiario = '" . $datos['Beneficiario'] . "', "
-                . "IDBeneficiario = '" . $datos['IDBeneficiario'] . "', "
-                . "Tipo = '" . $datos['Tipo'] . "', "
-                . "TipoTrans = '" . $datos['TipoTrans'] . "', "
-                . "TipoServicio = '" . $datos['TipoServicio'] . "', "
-                . "Descripcion = '" . $datos['Descripcion'] . "', "
-                . "Importe = '" . $datos['Importe'] . "', "
-                . "Observaciones = '" . $datos['Observaciones'] . "', "
-                . "Proyecto = '" . $datos['Proyecto'] . "', "
-                . "Sucursal = '" . $datos['Sucursal'] . "', "
-                . "Moneda = '" . $datos['Moneda'] . "', "
-                . "OrdenCompra = '" . $datos['OC'] . "',"
-                . "FechaPagoCredito = " . $fechaCredito . ", "
-                . "Status = 'Solicitado' "
-                . "where ID = '" . $datos['ID'] . "'";
+            . "db_Registro "
+            . "set Beneficiario = '" . $datos['Beneficiario'] . "', "
+            . "IDBeneficiario = '" . $datos['IDBeneficiario'] . "', "
+            . "Tipo = '" . $datos['Tipo'] . "', "
+            . "TipoTrans = '" . $datos['TipoTrans'] . "', "
+            . "TipoServicio = '" . $datos['TipoServicio'] . "', "
+            . "Descripcion = '" . $datos['Descripcion'] . "', "
+            . "Importe = '" . $datos['Importe'] . "', "
+            . "Observaciones = '" . $datos['Observaciones'] . "', "
+            . "Proyecto = '" . $datos['Proyecto'] . "', "
+            . "Sucursal = '" . $datos['Sucursal'] . "', "
+            . "Moneda = '" . $datos['Moneda'] . "', "
+            . "OrdenCompra = '" . $datos['OC'] . "',"
+            . "FechaPagoCredito = " . $fechaCredito . ", "
+            . "Status = 'Solicitado' "
+            . "where ID = '" . $datos['ID'] . "'";
 
         parent::connectDBGapsi()->query($query);
 
@@ -415,10 +434,10 @@ where gasto.ID = '" . $id . "'";
         if (isset($conceptos) && count($conceptos) > 0) {
             foreach ($conceptos as $key => $value) {
                 $query = "insert into "
-                        . "db_DetalleGasto "
-                        . "(Gasto, Categoria, SubCategoria, Concepto, Monto) "
-                        . "VALUES "
-                        . "('" . $datos['ID'] . "', '" . $value['categoria'] . "', '" . $value['subcategoria'] . "', '" . $value['concepto'] . "', '" . $value['monto'] . "')";
+                    . "db_DetalleGasto "
+                    . "(Gasto, Categoria, SubCategoria, Concepto, Monto) "
+                    . "VALUES "
+                    . "('" . $datos['ID'] . "', '" . $value['categoria'] . "', '" . $value['subcategoria'] . "', '" . $value['concepto'] . "', '" . $value['monto'] . "')";
                 parent::connectDBGapsi()->query($query);
                 $ultimoDetalle = parent::connectDBGapsi()->insert_id();
                 array_push($registros, $ultimoDetalle);
@@ -434,7 +453,8 @@ where gasto.ID = '" . $id . "'";
         }
     }
 
-    public function eliminarArchivo(array $datos) {
+    public function eliminarArchivo(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $this->queryBolean("
@@ -463,7 +483,8 @@ where IdGasto = '" . $datos['Id'] . "'");
         }
     }
 
-    public function marcarLeido(array $datos) {
+    public function marcarLeido(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $leidos = $this->consulta("select Leido from t_archivos_gastos_gapsi where IdGasto = '" . $datos['Id'] . "'")[0]['Leido'];
@@ -488,13 +509,14 @@ where IdGasto = '" . $datos['Id'] . "'");
         }
     }
 
-    public function ordenCompra(array $datos) {
+    public function ordenCompra(array $datos)
+    {
         parent::connectDBGapsi()->trans_begin();
         $query = "insert into "
-                . "db_Registro "
-                . "(Beneficiario, IDBeneficiario, Tipo, TipoTrans, TipoServicio, Descripcion, FCaptura, Importe, Observaciones, Proyecto, GastoFrecuente, Sucursal, Status, UsuarioSolicitud, FechaSolicitud, Fecha, Moneda, OrdenCompra) "
-                . "VALUES "
-                . "('" . $datos['Beneficiario'] . "', '" . $datos['IDBeneficiario'] . "', '" . $datos['Tipo'] . "', '" . $datos['TipoTrans'] . "', '" . $datos['TipoServicio'] . "', '" . $datos['Descripcion'] . "', GETDATE(), '" . $datos['Importe'] . "', '" . $datos['Observaciones'] . "', '" . $datos['Proyecto'] . "', '', '" . $datos['Sucursal'] . "', 'Solicitado', null, GETDATE(), GETDATE(), '" . $datos['Moneda'] . "', '" . $datos['OC'] . "')";
+            . "db_Registro "
+            . "(Beneficiario, IDBeneficiario, Tipo, TipoTrans, TipoServicio, Descripcion, FCaptura, Importe, Observaciones, Proyecto, GastoFrecuente, Sucursal, Status, UsuarioSolicitud, FechaSolicitud, Fecha, Moneda, OrdenCompra) "
+            . "VALUES "
+            . "('" . $datos['Beneficiario'] . "', '" . $datos['IDBeneficiario'] . "', '" . $datos['Tipo'] . "', '" . $datos['TipoTrans'] . "', '" . $datos['TipoServicio'] . "', '" . $datos['Descripcion'] . "', GETDATE(), '" . $datos['Importe'] . "', '" . $datos['Observaciones'] . "', '" . $datos['Proyecto'] . "', '', '" . $datos['Sucursal'] . "', 'Solicitado', null, GETDATE(), GETDATE(), '" . $datos['Moneda'] . "', '" . $datos['OC'] . "')";
 
         parent::connectDBGapsi()->query($query);
         $ultimo = parent::connectDBGapsi()->insert_id();
@@ -508,7 +530,8 @@ where IdGasto = '" . $datos['Id'] . "'");
         }
     }
 
-    public function actualizarOrdenCompra(array $datos) {
+    public function actualizarOrdenCompra(array $datos)
+    {
         parent::connectDBGapsi()->trans_begin();
         $query = "update db_Registro set
 Beneficiario = '" . $datos['Beneficiario'] . "',
@@ -539,7 +562,8 @@ WHERE OrdenCompra = '" . $datos['OC'] . "'";
         }
     }
 
-    public function consultaIdOrdenCompra(array $datos) {
+    public function consultaIdOrdenCompra(array $datos)
+    {
         $query = "select
 *
 from db_Registro
@@ -549,7 +573,8 @@ where OrdenCompra = '" . $datos['ordenCompra'] . "'";
         return $gasto;
     }
 
-    public function consultaDatosGasto(array $datos) {
+    public function consultaDatosGasto(array $datos)
+    {
         $query = "select
 *,
  (SELECT Cliente FROM db_Proyectos WHERE ID = Proyecto) Cliente,
@@ -564,14 +589,15 @@ where OrdenCompra = '" . $datos['ordenCompra'] . "'";
         return $gasto;
     }
 
-    public function registrarSinXML($datos) {
+    public function registrarSinXML($datos)
+    {
 
         parent::connectDBGapsi()->trans_begin();
         $query = "insert into "
-                . "db_ComprobacionRegistro"
-                . "(Registro, Monto, Comentario, Status, UUID) "
-                . "VALUES "
-                . "('" . $datos['idGasto'] . "', '" . $datos['monto'] . "', null, 'Enviado', null)";
+            . "db_ComprobacionRegistro"
+            . "(Registro, Monto, Comentario, Status, UUID) "
+            . "VALUES "
+            . "('" . $datos['idGasto'] . "', '" . $datos['monto'] . "', null, 'Enviado', null)";
 
         parent::connectDBGapsi()->query($query);
         $ultimo = parent::connectDBGapsi()->insert_id();
@@ -585,14 +611,15 @@ where OrdenCompra = '" . $datos['ordenCompra'] . "'";
         }
     }
 
-    public function insertarComprobanteGapsi($datos) {
+    public function insertarComprobanteGapsi($datos)
+    {
         parent::connectDBGapsi()->trans_begin();
 
         $query = "insert into "
-                . "db_ComprobacionRegistro"
-                . "(Registro, Monto, Comentario, Status, UUID) "
-                . "VALUES "
-                . "('" . $datos['idGasto'] . "', '" . $datos['Monto'] . "', 'null', '" . $datos['Status'] . "', '" . $datos['UUID'] . "')";
+            . "db_ComprobacionRegistro"
+            . "(Registro, Monto, Comentario, Status, UUID) "
+            . "VALUES "
+            . "('" . $datos['idGasto'] . "', '" . $datos['Monto'] . "', 'null', '" . $datos['Status'] . "', '" . $datos['UUID'] . "')";
 
         parent::connectDBGapsi()->query($query);
         $ultimo = parent::connectDBGapsi()->insert_id();
@@ -606,7 +633,8 @@ where OrdenCompra = '" . $datos['ordenCompra'] . "'";
         }
     }
 
-    public function marcarComprobado($datos) {
+    public function marcarComprobado($datos)
+    {
         $this->iniciaTransaccion();
 
         $this->queryBolean("
@@ -624,7 +652,8 @@ where IdGasto = '" . $datos['idGasto'] . "'");
         }
     }
 
-    public function consultaRegistro($datos) {
+    public function consultaRegistro($datos)
+    {
         $consultaComprobante = "select Monto from db_ComprobacionRegistro where Registro = '" . $datos['idGasto'] . "'";
         $consulta = parent::connectDBGapsi()->query($consultaComprobante);
         $montoComprobante = $consulta->result_array();
@@ -640,7 +669,8 @@ where IdGasto = '" . $datos['idGasto'] . "'");
         }
     }
 
-    public function actualizarMontoComprobado($datos) {
+    public function actualizarMontoComprobado($datos)
+    {
         parent::connectDBGapsi()->trans_begin();
 
         $consultaMontoCR = "select SUM(Monto) as monto from db_ComprobacionRegistro where Registro = '" . $datos['idGasto'] . "'";
@@ -668,17 +698,17 @@ WHERE ID = '" . $datos['idGasto'] . "'";
         }
     }
 
-    public function insertarArchivosGastosGapsi(array $datos) {
+    public function insertarArchivosGastosGapsi(array $datos)
+    {
         $consulta = parent::connectDBPrueba()->query("insert into "
-                . "t_archivos_gastos_gapsi"
-                . "(IdGasto, Archivos, Email, IdUsuario)"
-                . "VALUES "
-                . "('" . $datos['idGapsi'] . "', '" . $datos['archivos'] . "', '" . $datos['email'] . "', '" . $datos['idUsuario'] . "')");
+            . "t_archivos_gastos_gapsi"
+            . "(IdGasto, Archivos, Email, IdUsuario)"
+            . "VALUES "
+            . "('" . $datos['idGapsi'] . "', '" . $datos['archivos'] . "', '" . $datos['email'] . "', '" . $datos['idUsuario'] . "')");
         if (!empty($consulta)) {
             return $consulta;
         } else {
             return FALSE;
         }
     }
-
 }
