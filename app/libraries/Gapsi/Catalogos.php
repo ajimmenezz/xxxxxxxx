@@ -320,12 +320,32 @@ class Catalogos extends General
 
     public function exportMisGastos()
     {
-        $gastos = $this->DB->exportMisGastos();
+        $array = $this->DB->exportMisGastos();
+        $usuarios = $array['usuarios'];
+        $gastos = [];
+        foreach ($array['gastos'] as $k => $v) {
+            array_push($gastos, [
+                $v['ID'],
+                $usuarios[$v['ID']]['usuario'],
+                $v['OrdenCompra'],
+                $v['FechaCaptura'],
+                $v['FechaAutorizacion'],
+                $v['FechaAplicacionGasto'],
+                $v['FechaTransferencia'],
+                $v['Status'],
+                $v['Beneficiario'],
+                $v['Proyecto'],
+                $v['Descripcion'],
+                $v['Importe'],
+                $v['Moneda']
+            ]);
+        }
 
         $this->Excel->createSheet('Mis Gastos', 0);
         $this->Excel->setActiveSheet(0);
         $arrayTitulosMovimientos = [
             'ID',
+            'Solicita',
             'OC',
             'Fecha Captura',
             'Fecha Autorización',
@@ -339,9 +359,9 @@ class Catalogos extends General
             'Moneda'
         ];
         $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
-        $arrayWidthMovimientos = [15, 15, 25, 25, 25, 25, 20, 35, 35, 40, 15, 15];
+        $arrayWidthMovimientos = [15, 30, 15, 25, 25, 25, 25, 20, 35, 35, 40, 15, 15];
         $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
-        $arrayAlignMovimientos = ['center', 'center', 'center', 'center', 'center', 'center', '', '', '', '', 'center', 'center'];
+        $arrayAlignMovimientos = ['center', '', 'center', 'center', 'center', 'center', 'center', '', '', '', '', 'center', 'center'];
         $this->Excel->setTableContent('A', 1, $gastos, true, $arrayAlignMovimientos);
 
         $time = date("ymd_H_i_s");
@@ -768,7 +788,8 @@ class Catalogos extends General
         foreach ($archivos as $k => $v) {
             try {
                 unlink('.' . $v);
-            } catch (Exception $ex) { }
+            } catch (Exception $ex) {
+            }
         }
     }
 
@@ -797,7 +818,8 @@ class Catalogos extends General
 
             if (isset($nodoComprobante['Total'])) {
                 $totalFloat = (float) $nodoComprobante['Total'];
-                if ($totalFloat >= ((float) $total - 0.99) && $totalFloat <= ((float) $total) + 0.99) { } else {
+                if ($totalFloat >= ((float) $total - 0.99) && $totalFloat <= ((float) $total) + 0.99) {
+                } else {
                     $arrayReturn['code'] = 400;
                     $arrayReturn['error'] = 'El total de la factura no corresponde al capturado para comprobacion. Factura:$' . $totalFloat . ' y Monto:$' . $total;
                 }
@@ -820,7 +842,8 @@ class Catalogos extends General
 
         foreach ($datos as $k => $nodoReceptor) {
             if (isset($nodoReceptor['Rfc'])) {
-                if (in_array($nodoReceptor['Rfc'], ['SSO0101179Z7', 'RSD130305DI7', 'RRC130605555', 'SSS140225LT6'])) { } else {
+                if (in_array($nodoReceptor['Rfc'], ['SSO0101179Z7', 'RSD130305DI7', 'RRC130605555', 'SSS140225LT6'])) {
+                } else {
                     $arrayReturn['code'] = 400;
                     $arrayReturn['error'] = 'El receptor (RFC) no coincide con SSO0101179Z7. Verifique su archivo';
                 }
