@@ -64,6 +64,7 @@ class Modelo_ServicioCableado extends Modelo_Base {
     }
 
     public function setFolioServiceDesk(string $idSolicitud, string $idFolio) {
+        $exiteFolio = $this->consulta('SELECT * from t_solicitudes where Folio = "' . $idSolicitud . '"');
         $this->actualizar('UPDATE t_solicitudes
                                             SET Folio = "' . $idFolio . '" 
                                             WHERE Id = "' . $idSolicitud . '"');
@@ -122,15 +123,23 @@ class Modelo_ServicioCableado extends Modelo_Base {
     }
 
     public function setConclusion(string $idServicio, array $datos) {
-        $this->actualizar('update t_servicios_ticket set 
+        if ($datos['nombreCliente'] !== '') {
+            $this->actualizar('update t_servicios_ticket set 
                            IdEstatus = 5,
                            FechaConclusion = NOW(),
                            Firma = "' . $datos['archivos'][0] . '",
-                           NombreFirma = "' . $datos['nombreCliente'] . '",
+                           NombreFirma = "' . $$nombre . '",
                            FechaFirma = NOW(),                           
                            IdTecnicoFirma = ' . $datos['idUsuario'] . ',
                            FirmaTecnico = "' . $datos['archivos'][1] . '"
                            where Id = ' . $idServicio);
+        } else {
+            $this->actualizar('update t_servicios_ticket set 
+                           IdEstatus = 5,
+                           FechaConclusion = NOW(),
+                           FechaFirma = NOW()
+                           where Id = ' . $idServicio);
+        }
     }
 
     public function getEvidencias(string $idServicio) {

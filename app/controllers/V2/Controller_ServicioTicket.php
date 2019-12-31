@@ -80,6 +80,7 @@ class Controller_ServicioTicket extends CI_Controller {
                 $this->datos['folio'] = ServiceDesk::getDatos($this->servicio->getFolio());
                 $this->datos['notasFolio'] = ServiceDesk::getNotas($this->servicio->getFolio());
                 $this->datos['operacionFolio'] = TRUE;
+                return true;
             }
         } catch (Exception $ex) {
             $this->datos['folio'] = array('Error' => $ex->getMessage());
@@ -108,8 +109,10 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $this->servicio->setFolioServiceDesk($datosServicio['folio']);
-            $this->getInformacionFolio();
+            $SD = $this->getInformacionFolio();
+            if($SD){
+                $this->servicio->setFolioServiceDesk($datosServicio['folio']);
+            }
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {

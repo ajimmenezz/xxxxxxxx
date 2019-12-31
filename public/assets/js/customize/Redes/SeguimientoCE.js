@@ -82,6 +82,7 @@ $(function () {
     let archivosEstablecidos = null;
     let idNodo = null;
     let validacion = null;
+    let tieneFirmas = null;
 
     tablaPrincipal.evento(function () {
         let tamañoDatosFila = 0, datosFila = tablaPrincipal.datosFila(this);
@@ -115,6 +116,11 @@ $(function () {
             peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Seguimiento/' + datosFila[4], datoServicioTabla, function (respuesta) {
                 if (!validarError(respuesta)) {
                     return;
+                }
+                if (respuesta.firmas != null) {
+                    tieneFirmas = true;
+                } else {
+                    tieneFirmas = false;
                 }
                 cambioVistaSinMaterial(respuesta.solucion);
                 cambioVistaNodos(respuesta);
@@ -234,7 +240,7 @@ $(function () {
             $('#agregarFolio').append('<div class="notaFolioError" class="col-md-12">\n\
                                             <br>\n\
                                             <div class="col-md-10">\n\
-                                                <label class="col-md-10">No es posible obtener la información de SD por la siguiente razon: La clave del técnico en la solicitud no es válida. Imposible de autenticar.</label>\n\
+                                                <label class="col-md-10">Error en el folio agregado, revisa que sea el correcto.<br></label>\n\
                                             </div>\n\
                                             <div class="col-md-2">\n\
                                                 <a class="recargarFolio"><i data-toggle="tooltip" data-placement="top" data-title="Recargar" class="fa fa-2x fa-refresh  text-success"></i>Recargar</a>\n\
@@ -243,6 +249,7 @@ $(function () {
             $(".recargarFolio").on('click', function () {
                 $('#formularioAgregarFolio').removeClass('hidden');
                 $('.notaFolioError').addClass('hidden');
+                datoServicioTabla.folio = '';
             });
         }
     }
@@ -493,20 +500,20 @@ $(function () {
 //                        next();
 //                    });
 //                } else {
-                    infoMaterialNodo.archivos = evidenciaOpcional;
-                    infoMaterialNodo.evidencias = false;
-                    peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
-                        limpiarElementosModalMaterial();
-                        restaurarElementosModal();
-                        listaTotalNodos = respuesta.solucion.nodos;
-                        listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
-                        materialTecnico = respuesta.datosServicio.materialAlmacen;
-                        cargarContenidoModalMaterial(respuesta.datosServicio);
-                        tablaNodos.limpiartabla();
-                        cargarContenidoTablaNodos();
-                        cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
-                        $('#modalMaterialNodo').modal('hide');
-                    });
+                infoMaterialNodo.archivos = evidenciaOpcional;
+                infoMaterialNodo.evidencias = false;
+                peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
+                    limpiarElementosModalMaterial();
+                    restaurarElementosModal();
+                    listaTotalNodos = respuesta.solucion.nodos;
+                    listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
+                    materialTecnico = respuesta.datosServicio.materialAlmacen;
+                    cargarContenidoModalMaterial(respuesta.datosServicio);
+                    tablaNodos.limpiartabla();
+                    cargarContenidoTablaNodos();
+                    cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
+                    $('#modalMaterialNodo').modal('hide');
+                });
 //                }
             } else {
                 infoMaterialNodo.archivos = evidenciaOpcional;
@@ -743,8 +750,6 @@ $(function () {
             let firma = firmas.split(',');
             $('#firmaExistenteCliente').append('<img src ="' + firma[0] + '" />');
             $('#firmaExistenteTecnico').append('<img src ="' + firma[1] + '" />');
-        } else {
-            $('#firmasExistentes').addClass('hidden');
     }
     }
 
@@ -1004,25 +1009,43 @@ $(function () {
     });
 
     $('#btnConcluir').on('click', function () {
-        let faltaEvidencia = true;
-        if (listaTotalNodos.length > 0) {
-            $.each(listaTotalNodos, function (key, value) {
-                if (value.Archivos == "" || value.Archivos == ",") {
-                    faltaEvidencia += 1;
-                    modal.mostrarModal('AVISO', '<h4>El Nodo <b>' + value.Nombre + '</b> no tiene evidencia</h4>');
-                    $('#btnAceptar').addClass('hidden');
-                    faltaEvidencia = false;
+        if (!tieneFirmas) {
+            let faltaEvidencia = true;
+            if (listaTotalNodos.length > 0) {
+                $.each(listaTotalNodos, function (key, value) {
+                    if (value.Archivos == "" || value.Archivos == ",") {
+                        faltaEvidencia += 1;
+                        modal.mostrarModal('AVISO', '<h4>El Nodo <b>' + value.Nombre + '</b> no tiene evidencia</h4>');
+                        $('#btnAceptar').addClass('hidden');
+                        faltaEvidencia = false;
+                    }
+                });
+                if (faltaEvidencia === true) {
+                    $('#contentFirmasConclucion').removeClass('hidden');
+                    $('#contentServiciosRedes').addClass('hidden');
                 }
-            });
-            if (faltaEvidencia === true) {
-                $('#contentFirmasConclucion').removeClass('hidden');
-                $('#contentServiciosRedes').addClass('hidden');
+            } else {
+                if (archivosEstablecidos !== null) {
+                    $('#contentFirmasConclucion').removeClass('hidden');
+                    $('#contentServiciosRedes').addClass('hidden');
+                }
             }
         } else {
-            if (archivosEstablecidos !== null) {
-                $('#contentFirmasConclucion').removeClass('hidden');
-                $('#contentServiciosRedes').addClass('hidden');
-            }
+            datoServicioTabla.firmaCliente = firmaClienet.getImg();
+            datoServicioTabla.firmaTecnico = firmaTecnico.getImg();
+            datoServicioTabla.nodos = listaTotalNodos;
+
+            peticion.enviar('panelFirmas', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
+                if (!validarError(respuesta)) {
+                    return;
+                }
+                modal.mostrarModal("Exito", '<h4>Se han concluido el servicio correctamente</h4>');
+                $('#btnCerrar').addClass('hidden');
+                modal.btnAceptar('btnAceptar', function () {
+                    modal.cerrarModal();
+                    location.reload();
+                });
+            });
         }
     });
 
@@ -1040,7 +1063,7 @@ $(function () {
             });
         });
     });
-    
+
     $('#rechazarServicio').on('click', function () {
         peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/rechazarServicio', datoServicioTabla, function (respuesta) {
             if (!validarError(respuesta)) {
