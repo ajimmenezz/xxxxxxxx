@@ -1,13 +1,13 @@
 $(function () {
     //Objetos
     var evento = new Base();
-    var websocket = new Socket();
+//    var websocket = new Socket();
     var tabla = new Tabla();
     var select = new Select();
     var servicios = new Servicio();
 
     //Evento que maneja las peticiones del socket
-    websocket.socketMensaje();
+//    websocket.socketMensaje();
 
     //Muestra la hora en el sistema
     evento.horaServidor($('#horaServidor').val());
@@ -111,21 +111,21 @@ $(function () {
                 });
 
                 //Agrega el servicio en la tabla 
-                $('#btnAgregarServicio').on('click', function () {
-                    if (evento.validarFormulario('#formAgregarSservicio')) {
-                        tabla.agregarFila('#data-table-servicio', [
-                            $('#selectServicioDepartamento option:selected').text(),
-                            $('#selectSucursal option:selected').text(),
-                            $('#selectAtiendeServicio option:selected').text(),
-                            $('#inputDescripcionServicio').val(),
-                            $('#selectServicioDepartamento').val(),
-                            $('#selectSucursal').val(),
-                            $('#selectAtiendeServicio').val()
-                        ]);
-                        $('#formAgregarSservicio').parsley().reset();
-                        select.cambiarOpcion("#selectServicioDepartamento");
-                    }
-                });
+//                $('#btnAgregarServicio').on('click', function () {
+//                    if (evento.validarFormulario('#formAgregarSservicio')) {
+//                        tabla.agregarFila('#data-table-servicio', [
+//                            $('#selectServicioDepartamento option:selected').text(),
+//                            $('#selectSucursal option:selected').text(),
+//                            $('#selectAtiendeServicio option:selected').text(),
+//                            $('#inputDescripcionServicio').val(),
+//                            $('#selectServicioDepartamento').val(),
+//                            $('#selectSucursal').val(),
+//                            $('#selectAtiendeServicio').val()
+//                        ]);
+//                        $('#formAgregarSservicio').parsley().reset();
+//                        select.cambiarOpcion("#selectServicioDepartamento");
+//                    }
+//                });
 
                 //Muestra la seccion de reasignar solicitud
                 $('#btnReasignarSolicitud').on('click', function () {
@@ -543,7 +543,7 @@ $(function () {
                     $('#selectAtiendeServicio').val()
                 ]);
                 $('#formAgregarSservicio').parsley().reset();
-                select.cambiarOpcion("#selectServicioDepartamento");
+//                select.cambiarOpcion("#selectServicioDepartamento");
             }
         });
 
