@@ -111,21 +111,21 @@ $(function () {
                 });
 
                 //Agrega el servicio en la tabla 
-//                $('#btnAgregarServicio').on('click', function () {
-//                    if (evento.validarFormulario('#formAgregarSservicio')) {
-//                        tabla.agregarFila('#data-table-servicio', [
-//                            $('#selectServicioDepartamento option:selected').text(),
-//                            $('#selectSucursal option:selected').text(),
-//                            $('#selectAtiendeServicio option:selected').text(),
-//                            $('#inputDescripcionServicio').val(),
-//                            $('#selectServicioDepartamento').val(),
-//                            $('#selectSucursal').val(),
-//                            $('#selectAtiendeServicio').val()
-//                        ]);
-//                        $('#formAgregarSservicio').parsley().reset();
-//                        select.cambiarOpcion("#selectServicioDepartamento");
-//                    }
-//                });
+                $('#btnAgregarServicio').on('click', function () {
+                    if (evento.validarFormulario('#formAgregarSservicio')) {
+                        tabla.agregarFila('#data-table-servicio', [
+                            $('#selectServicioDepartamento option:selected').text(),
+                            $('#selectSucursal option:selected').text(),
+                            $('#selectAtiendeServicio option:selected').text(),
+                            $('#inputDescripcionServicio').val(),
+                            $('#selectServicioDepartamento').val(),
+                            $('#selectSucursal').val(),
+                            $('#selectAtiendeServicio').val()
+                        ]);
+                        $('#formAgregarSservicio').parsley().reset();
+                        select.cambiarOpcion("#selectServicioDepartamento");
+                    }
+                });
 
                 //Muestra la seccion de reasignar solicitud
                 $('#btnReasignarSolicitud').on('click', function () {
