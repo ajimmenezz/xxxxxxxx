@@ -179,11 +179,11 @@ class Modelo_Gapsi extends Modelo_Base
 
     public function getMisGastos()
     {
-        ini_set('memory_limit', '5048M');
+        ini_set('memory_limit', '500M');
 
         $condicion = '';
         $todos = true;
-        if (!in_array(284, $this->usuario['Permisos'])) {
+        if (in_array(284, $this->usuario['Permisos'])) {
             $arrayTrabajadores = array();
             $stringIds = '';
             $trabajadores = $this->consulta("SELECT Id FROM `cat_v3_usuarios` WHERE IdJefe = '" . $this->usuario['Id'] . "'");
@@ -193,9 +193,13 @@ class Modelo_Gapsi extends Modelo_Base
                 }
                 $stringIds = implode(",", $arrayTrabajadores);
             }
-            $condicion = " and IdUsuario IN ('" . $this->usuario['Id'] . "','" . $stringIds . "')";
-            $todos = false;
+            $condicion = " and IdUsuario IN ('" . $this->usuario['Id'] . "'," . $stringIds . ")";
+            $todos = TRUE;
+        } else {
+            $condicion = " and IdUsuario = '" . $this->usuario['Id'] . "'";
+            $todos = FALSE;
         }
+
 
         $this->queryBolean("SET SESSION group_concat_max_len = 1000000");
 
@@ -206,6 +210,7 @@ class Modelo_Gapsi extends Modelo_Base
             . "where 1 = 1 "
             . " " . $condicion . " "
             . "and if((CONCAT(',', Leido, ',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) = 0")[0]['Ids'];
+
         $ids = ($ids !== '') ? ',' . $ids : '';
 
         $consulta = $this->consulta("select "
@@ -216,6 +221,7 @@ class Modelo_Gapsi extends Modelo_Base
             . "if((CONCAT(',', Leido, ',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) as Leido "
             . "from t_archivos_gastos_gapsi "
             . "where 1 = 1 " . $condicion);
+
         $usuarios = [];
         foreach ($consulta as $key => $value) {
             if ($value['Leido'] != 1) {
@@ -247,14 +253,13 @@ class Modelo_Gapsi extends Modelo_Base
         ];
     }
 
-
     public function exportMisGastos()
     {
         ini_set('memory_limit', '2048M');
 
         $condicion = '';
         $todos = true;
-        if (!in_array(284, $this->usuario['Permisos'])) {
+        if (in_array(284, $this->usuario['Permisos'])) {
             $arrayTrabajadores = array();
             $stringIds = '';
             $trabajadores = $this->consulta("SELECT Id FROM `cat_v3_usuarios` WHERE IdJefe = '" . $this->usuario['Id'] . "'");
@@ -264,11 +269,34 @@ class Modelo_Gapsi extends Modelo_Base
                 }
                 $stringIds = implode(",", $arrayTrabajadores);
             }
-            $condicion = " and IdUsuario IN ('" . $this->usuario['Id'] . "','" . $stringIds . "')";
+            $condicion = " and IdUsuario IN ('" . $this->usuario['Id'] . "'," . $stringIds . ")";
             $todos = false;
+        } else {
+            $condicion = " and IdUsuario = '" . $this->usuario['Id'] . "'";
+            $todos = FALSE;
         }
 
         $this->queryBolean("SET SESSION group_concat_max_len = 1000000");
+
+        $consulta = $this->consulta("select "
+            . "IdGasto, "
+            . "nombreUsuario(IdUsuario) as Usuario, "
+            . "IdUsuario, "
+            . "Email, "
+            . "if((CONCAT(',', Leido, ',') like '%," . $this->usuario['Id'] . ",%'), 1, 0) as Leido "
+            . "from t_archivos_gastos_gapsi "
+            . "where 1 = 1 " . $condicion);
+
+        $usuarios = [];
+        foreach ($consulta as $key => $value) {
+            if ($value['Leido'] != 1) {
+                $usuarios[$value['IdGasto']] = [
+                    'idUsuario' => $value['IdUsuario'],
+                    'usuario' => $value['Usuario'],
+                    'email' => $value['Email']
+                ];
+            }
+        }
 
         $ids = $this->consulta(""
             . "select "
@@ -301,7 +329,12 @@ class Modelo_Gapsi extends Modelo_Base
             $gastos = array();
         }
 
-        return $gastos;
+        $arrayReturn = [
+            'gastos' => $gastos,
+            'usuarios' => $usuarios
+        ];
+
+        return $arrayReturn;
     }
 
     public function getComprobarGastos()
