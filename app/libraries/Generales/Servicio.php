@@ -2728,103 +2728,95 @@ class Servicio extends General {
     }
 
     public function guardarVueltaAsociados(array $datos) {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
-        $folio = $this->DBS->consultaServicio($datos['servicio']);
-
-        if (isset($datos['correo'])) {
-            $correo = implode(",", $datos['correo']);
-        } else {
-            $correo = '';
-        }
-
-        $img = $datos['img'];
-        $img = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $img));
-        $imagenFirmaGerente = base64_decode($img);
-        $direccionFirma = '/storage/Archivos/imagenesFirmas/Asociados/' . str_replace(' ', '_', 'Firma_' . $folio[0]['Folio']) . $fechaAsociado . '.png';
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $imagenFirmaGerente);
-
-        $imgFirmaTecnico = $datos['imgFirmaTecnico'];
-        $imgFirmaTecnico = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirmaTecnico));
-        $imagenFirmaTecnico = base64_decode($imgFirmaTecnico);
-        $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/Asociados/' . str_replace(' ', '_', 'FirmaTecnico_' . $folio[0]['Folio']) . $fechaAsociado . '.png';
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $imagenFirmaTecnico);
-
-        $vuelta = $this->crearVueltaAsociado($folio[0]['Folio'], $datos['servicio']);
-        $idFacturacionOutSourcing = $this->DBS->setServicioId('t_facturacion_outsourcing', array(
-            'IdServicio' => $datos['servicio'],
-            'Vuelta' => $vuelta,
-            'Folio' => $folio[0]['Folio'],
-            'Fecha' => $fecha,
-            'IdUsuario' => $usuario['Id'],
-            'FirmaUsuario' => $direccionFirmaTecnico,
-            'Gerente' => $datos['recibe'],
-            'FirmaGerente' => $direccionFirma,
-            'Correos' => $correo,
-            'IdEstatus' => '8',
-            'FechaEstatus' => $fecha
-                )
-        );
-
-        $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
-        $infoServicio = $this->getInformacionServicio($datos['servicio']);
-        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-        $host = $_SERVER['SERVER_NAME'];
-
-//        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-//            $infoServicio = $this->getInformacionServicio($datos['servicio']);
-//            $path = 'http://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
-////        } else {
-////            $path = 'http://' . $host . '/' . $linkPdf['link'];
-////        }
-
-
-        $path = $linkPdf['link'];
-        $consulta = $this->DBS->actualizarServicio('t_facturacion_outsourcing', array(
-            'Archivo' => $path,
-                ), array('Id' => $idFacturacionOutSourcing)
-        );
-
-        if ($consulta) {
-            $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-
-            if ($folio[0]['Folio'] !== NULL && $folio[0]['Folio'] !== '0') {
-                $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
-            }
-
-            if (isset($informacionSD->SHORTDESCRIPTION)) {
-                $detallesSD = $informacionSD->SHORTDESCRIPTION;
-            } else {
-                $detallesSD = '';
-            }
-
-            $titulo = 'Documentación de Vuelta';
-            $linkPDF = '<br>Ver PDF Resumen Vuelta <a href="' . $path . '" target="_blank">Aquí</a>';
-
-            $descripcionVuelta = '<br><br>Folio: <strong>' . $folio[0]['Folio'] . '</strong>
-                <br>Descripción de Service Desk: <strong>' . $detallesSD . '</strong>';
+        try {
+            $usuario = $this->Usuario->getDatosUsuario();
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $fechaAsociado = mdate('%Y-%m-%d_%H-%i-%s', now('America/Mexico_City'));
+            $folio = $this->DBS->consultaServicio($datos['servicio']);
 
             if (isset($datos['correo'])) {
-                $textoCorreo = '<p>Estimado(a) <strong>' . $datos['recibe'] . ',</strong> se le he mandado el documento que ha firmado de la vuelta que realizo del técnico <strong>' . $usuario['Nombre'] . '</strong>.</p>' . $linkPDF;
-                $this->enviarCorreoConcluido($datos['correo'], $titulo, $textoCorreo);
+                $correo = implode(",", $datos['correo']);
+            } else {
+                $correo = '';
             }
 
-            $textoUsuario = '<p>Estimado(a) <strong>' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la vuelta que realizo.</p>' . $linkPDF . $descripcionVuelta;
-            $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), $titulo, $textoUsuario);
+            $img = $datos['img'];
+            $img = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $img));
+            $imagenFirmaGerente = base64_decode($img);
+            $direccionFirma = '/storage/Archivos/imagenesFirmas/Asociados/' . str_replace(' ', '_', 'Firma_' . $folio[0]['Folio']) . $fechaAsociado . '.png';
+            file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $imagenFirmaGerente);
 
-            $correoSupervisorZona = $this->DBS->getServicios('SELECT 
+            $imgFirmaTecnico = $datos['imgFirmaTecnico'];
+            $imgFirmaTecnico = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirmaTecnico));
+            $imagenFirmaTecnico = base64_decode($imgFirmaTecnico);
+            $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/Asociados/' . str_replace(' ', '_', 'FirmaTecnico_' . $folio[0]['Folio']) . $fechaAsociado . '.png';
+            file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $imagenFirmaTecnico);
+
+            $vuelta = $this->crearVueltaAsociado($folio[0]['Folio'], $datos['servicio']);
+            $idFacturacionOutSourcing = $this->DBS->setServicioId('t_facturacion_outsourcing', array(
+                'IdServicio' => $datos['servicio'],
+                'Vuelta' => $vuelta,
+                'Folio' => $folio[0]['Folio'],
+                'Fecha' => $fecha,
+                'IdUsuario' => $usuario['Id'],
+                'FirmaUsuario' => $direccionFirmaTecnico,
+                'Gerente' => $datos['recibe'],
+                'FirmaGerente' => $direccionFirma,
+                'Correos' => $correo,
+                'IdEstatus' => '8',
+                'FechaEstatus' => $fecha
+                    )
+            );
+
+            $linkPdf = $this->pdfAsociadoVueltas(array('servicio' => $datos['servicio'], 'folio' => $folio[0]['Folio']), $fechaAsociado);
+            $path = $linkPdf['link'];
+            $consulta = $this->DBS->actualizarServicio('t_facturacion_outsourcing', array(
+                'Archivo' => $path,
+                    ), array('Id' => $idFacturacionOutSourcing)
+            );
+
+            if ($consulta) {
+                $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
+
+                if ($folio[0]['Folio'] !== NULL && $folio[0]['Folio'] !== '0') {
+                    $informacionSD = $this->ServiceDesk->getDetallesFolio($key, $folio[0]['Folio']);
+                }
+
+                if (isset($informacionSD->SHORTDESCRIPTION)) {
+                    $detallesSD = $informacionSD->SHORTDESCRIPTION;
+                } else {
+                    $detallesSD = '';
+                }
+
+                $titulo = 'Documentación de Vuelta';
+                $linkPDF = '<br>Ver PDF Resumen Vuelta <a href="' . $path . '" target="_blank">Aquí</a>';
+
+                $descripcionVuelta = '<br><br>Folio: <strong>' . $folio[0]['Folio'] . '</strong>
+                <br>Descripción de Service Desk: <strong>' . $detallesSD . '</strong>';
+
+                if (isset($datos['correo'])) {
+                    $textoCorreo = '<p>Estimado(a) <strong>' . $datos['recibe'] . ',</strong> se le he mandado el documento que ha firmado de la vuelta que realizo del técnico <strong>' . $usuario['Nombre'] . '</strong>.</p>' . $linkPDF;
+                    $this->enviarCorreoConcluido($datos['correo'], $titulo, $textoCorreo);
+                }
+
+                $textoUsuario = '<p>Estimado(a) <strong>' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la vuelta que realizo.</p>' . $linkPDF . $descripcionVuelta;
+                $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), $titulo, $textoUsuario);
+
+                $correoSupervisorZona = $this->DBS->getServicios('SELECT 
                                                         (SELECT IdResponsableInterno FROM cat_v3_regiones_cliente WHERE Id = IdRegionCliente)SupervisorZona,
                                                         (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = SupervisorZona)CorreoSupervisorZona
                                                     FROM cat_v3_sucursales
                                                     WHERE Id = "' . $folio[0]['IdSucursal'] . '"');
 
-            $textoSupervisorZona = '<p><strong>Supervisor,</strong> se le ha mandado el documento de la vuelta que realizo el técnico <strong>' . $usuario['Nombre'] . '</strong>.</p>' . $linkPDF . $descripcionVuelta;
-            $this->enviarCorreoConcluido(array($correoSupervisorZona[0]['CorreoSupervisorZona']), $titulo, $textoSupervisorZona);
+                $textoSupervisorZona = '<p><strong>Supervisor,</strong> se le ha mandado el documento de la vuelta que realizo el técnico <strong>' . $usuario['Nombre'] . '</strong>.</p>' . $linkPDF . $descripcionVuelta;
+                $this->enviarCorreoConcluido(array($correoSupervisorZona[0]['CorreoSupervisorZona']), $titulo, $textoSupervisorZona);
 
-            return TRUE;
-        } else {
-            return FALSE;
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        } catch (\Exception $ex) {
+            return ['code' => 400, 'message' => $ex->getMessage()];
         }
     }
 
@@ -2833,7 +2825,7 @@ class Servicio extends General {
         $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
         $nombreExtra = (is_null($nombreExtra)) ? '' : $nombreExtra;
         $host = $_SERVER['SERVER_NAME'];
-        $archivo = 'Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $servicio['servicio'] . '_' . $nombreExtra . '.pdf ';
+        $archivo = 'Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $servicio['servicio'] . '_' . $nombreExtra;
         $pdf = $this->InformacionServicios->definirPDF(array('servicio' => $servicio['servicio'], 'archivo' => $archivo));
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {

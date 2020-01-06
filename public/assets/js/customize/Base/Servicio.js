@@ -2223,7 +2223,7 @@ Servicio.prototype.guardarVueltaAsociado = function () {
         if (respuesta === true) {
             _this.mensajeModal('Documento enviado.', 'Correcto', true);
         } else {
-            _this.mensajeModal('Por favor contacte al administrador del Sistema AdIST.', 'Error', true);
+            _this.mensajeModal('Se agregó la vuelta, pero surgió el siguiente detalle: ' + respuesta.message, 'Advertencia', true);
         }
         myBoard.clearWebStorage();
         myBoardTecnico.clearWebStorage();

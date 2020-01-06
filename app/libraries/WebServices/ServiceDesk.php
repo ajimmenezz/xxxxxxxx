@@ -97,6 +97,10 @@ class ServiceDesk extends General {
             }
         }
 
+        if (strpos($error, 'Error when getting request details for request') !== FALSE) {
+            $textoError = 'Error al obtener detalles de solicitud para solicitud.';
+        }
+
         return $textoError;
     }
 
