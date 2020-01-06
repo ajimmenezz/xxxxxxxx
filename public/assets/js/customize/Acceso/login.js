@@ -44,7 +44,7 @@ $(function () {
             var data = {usuario: $('#inputUsuario').val(), password: $('#inputPassword').val()};
             acceso.enviarEvento('Acceso/Ingresar', data, this, function (respuesta) {
                 var url = respuesta.url;
-
+                
                 if (respuesta.acceso) {
                     acceso.mostrarModal('Definir nuevo Password',
                             '<form class="margin-bottom-0" id="formNuevoPsw" data-parsley-validate="true">\n\
@@ -95,6 +95,7 @@ $(function () {
                         }
                     });
                 } else {
+                    console.log(respuesta.logueo);
                     if (respuesta.logueo !== null) {
                         data = {tipoServicio: 'acceso', respuestaRegistroLogueo: respuesta.resultado, logueo: respuesta.logueo};
                         acceso.enviarEvento('Api/reportar', data, _this, function (respuesta) {

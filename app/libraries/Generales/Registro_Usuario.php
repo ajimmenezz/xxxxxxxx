@@ -46,20 +46,15 @@ class Registro_Usuario extends General {
         if (empty($usuario)) {
             return array('resultado' => FALSE, 'logueo' => NULL);
         } else {
-            $logueo = $this->DBRU->buscarRegistroLogueo($usuario['Id']);
             $acceso = $this->DBRU->buscarRegistroAcceso($usuario['Id']);
+            $idLogueo = $this->DBRU->idRegistroLogueo($usuario['Id']);
             parent::getCI()->session->set_userdata($usuario);
             $fechaIngreso = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
             $registroLogueo = $this->DBRU->generarRegistroLogueo(array('IdUsuario' => parent::getCI()->session->Id, 'FechaIngreso' => $fechaIngreso, 'DireccionIp' => $ip));
             parent::getCI()->session->set_userdata('Logueo', (string) $registroLogueo);
             $url = $this->getUrlPerfil($usuario['Permisos'], $usuario['IdPerfil']);
 
-            if (empty($logueo)) {
-                $usuarioAcceso = parent::getCI()->security->xss_clean(strip_tags($user));
-                return array('resultado' => TRUE, 'logueo' => NULL, 'url' => $url, 'acceso' => $acceso, 'id' => parent::getCI()->session->Id, 'usuario' => $usuarioAcceso);
-            } else {
-                return array('resultado' => FALSE, 'logueo' => $logueo['id'], 'url' => $url);
-            }
+            return array('resultado' => FALSE, 'logueo' => $idLogueo['id'], 'url' => $url, 'acceso' => $acceso);
         }
     }
 
