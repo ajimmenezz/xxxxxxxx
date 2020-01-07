@@ -1892,6 +1892,7 @@ class Solicitud extends General {
         set_time_limit('1200');
         $foliosAdist = $this->DBS->obtenerFoliosAnualAdist();
         $titulos = [
+            'Año',
             'Mes',
             'Semana',
             'Ticket Service Desk',
