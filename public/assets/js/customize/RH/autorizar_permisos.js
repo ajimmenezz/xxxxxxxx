@@ -1,14 +1,10 @@
 $(function () {
 
     var evento = new Base();
-    var websocket = new Socket();
     var select = new Select();
     var file = new Upload();
     this.calendario = new Fecha();
     var tabla = new Tabla();
-
-    //Evento que maneja las peticiones del socket
-    websocket.socketMensaje();
 
     //Muestra la hora en el sistema
     evento.horaServidor($('#horaServidor').val());
@@ -54,7 +50,8 @@ $(function () {
                 if(datosPermiso.estatus === 'Cancelado'){
                     $('.ocultarPermiso').addClass('hidden');
                 }
-                if (datosPermiso.estatus === 'Autorizado' && respuesta.consulta.datosAusencia['0'].Cancelacion == 1) {
+                let hoy = moment().format('YYYY-MM-DD');
+                if (respuesta.consulta.datosAusencia['0'].Cancelacion == 1 && hoy <= respuesta.consulta.datosAusencia['0'].FechaAusenciaDesde) {
                     $('#btnPeticionCancelar').removeClass('hidden');
                 }
                 $('#btnCancelarRevisarPermiso').on('click', function () {

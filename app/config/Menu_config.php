@@ -1567,6 +1567,8 @@ $config['RH'] = array(
             'select2/dist/js/select2.min',
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
+            'moment/moment-locales.min',
+            'moment/es',
             'masked-input/masked-input.min'
         ),
         'Permiso' => 'VAPARH'

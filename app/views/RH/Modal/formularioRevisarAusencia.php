@@ -22,14 +22,16 @@
             </label>
             <?php
             if ($datosAusencia[0]['NivelCancelacion'] == null) {
-                echo '<label id="btnPeticionCancelar" class="btn btn-danger btn-xs hidden" href="#modalCancelarPeticion" data-toggle="modal">
-                        <i class="fa fa"></i> Cancelar
-                    </label>';
+                if ($perfilUsuario != 21 && $perfilUsuario != 37) {
+                    echo '<label id="btnPeticionCancelar" class="btn btn-danger btn-xs hidden" href="#modalCancelarPeticion" data-toggle="modal">
+                            <i class="fa fa"></i> Cancelar
+                        </label>&nbsp;';
+                }
             } else {
                 if ($perfilUsuario == $datosAusencia[0]['NivelCancelacion']) {
                     echo '<label id="btnPeticionCancelar" class="btn btn-danger btn-xs hidden" href="#modalCancelarPeticion" data-toggle="modal">
                             <i class="fa fa"></i> Cancelar
-                        </label>';
+                        </label>&nbsp;';
                 }
             }
             if ($perfilUsuario != 44) {
@@ -37,29 +39,17 @@
                     <i class="fa fa"></i> Autorizar
                 </label>&nbsp';
             }
-//            $fechaDoc = explode(" ", $datosAusencia[0]["FechaDocumento"]);
-//            if ($datosAusencia[0]["FechaAusenciaDesde"] > $fechaDoc[0] && $datosAusencia[0]['IdMotivoAusencia'] != 3 && $datosAusencia[0]['IdMotivoAusencia'] != 4) {
-//                echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
-//                    <i class="fa fa"></i>Autorizar y Concluir
-//                </label>';
-//            } else {
-                if ($perfilUsuario == 37 || $perfilUsuario == 44) {
-                    echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
-                        <i class="fa fa"></i>Autorizar y Concluir
-                    </label>';
-                }
-//            }
+            if ($perfilUsuario == 37 || $perfilUsuario == 44) {
+                echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
+                    <i class="fa fa"></i>Autorizar y Concluir
+                </label>';
+            }
             ?>
         </div>
         <h4 class="panel-title">Revisar Permiso</h4>
     </div>
     <div class="tab-content">
         <div class="panel-body">
-            <?php
-//            if (($datosAusencia[0]['IdMotivoAusencia'] == '3' || $datosAusencia[0]['IdMotivoAusencia'] == '4') && $datosAusencia[0]["ArchivosOriginales"] == '') {
-//                echo '<label style="color: red">Sin archivo de cita o incapacidad</label>';
-//            }
-            ?>
             <form id="formRevisarPermiso" class="margin-bottom-0" data-parsley-validate="true" enctype="multipart/form-data">
 
                 <div class="col-md-3">
@@ -94,7 +84,7 @@
                         <label>Puesto</label>
                         <?php
                         echo
-                        '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="' . $datosAusencia[0]["Puesto"] . '"/>';
+                        '<input type="text" class="form-control" id="inputPuesto" style="width: 100%" disabled value="' . $datosAusencia[0]["Puesto"] . '"/>';
                         ?>
                     </div>
                 </div>
