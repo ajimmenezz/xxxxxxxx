@@ -12,6 +12,7 @@ class Busqueda extends General {
     private $notas;
     private $fechas;
     private $Excel;
+    private $InformacionServicios;
 
     public function __construct() {
         parent::__construct();
@@ -21,6 +22,7 @@ class Busqueda extends General {
         $this->notas = \Librerias\Generales\Notas::factory();
         $this->fechas = \Librerias\Generales\Dashboard::factory();
         $this->Excel = new \Librerias\Generales\CExcel();
+        $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         parent::getCI()->load->helper('date');
     }
 
@@ -525,6 +527,12 @@ class Busqueda extends General {
                         /* Datos solciones del servicio correctivo */
                         'correctivoSoluciones' => $this->DBB->getCorrectivosSoluciones($servicio),
                     ];
+                    
+                    if ($data['diagnosticoEquipo'][0]['IdTipoDiagnostico']) {
+                        $bitacoraObservaciones = $this->InformacionServicios->getHistorialReporteEnFalso($servicio);
+                        $data['diagnosticoEquipo'][0]['BitacoraObservaciones'] = $bitacoraObservaciones;
+                    }
+
                     return parent::getCI()->load->view("Generales/Modal/detallesServicio_20", $data, TRUE);
                     break;
                 case '5': case 5:

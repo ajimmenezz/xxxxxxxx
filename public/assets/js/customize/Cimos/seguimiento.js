@@ -94,6 +94,7 @@ $(function () {
                         '#panelSeguimientoCimos',
                         datosTabla[1],
                         avanceServicio,
+                        idSucursal,
                         datosSD
                         );
             } else {

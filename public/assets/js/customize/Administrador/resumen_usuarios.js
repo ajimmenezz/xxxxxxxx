@@ -29,10 +29,18 @@ $(function () {
         var datos = $('#data-table-usuarios').DataTable().row(this).data();
         var data = {Usuario: datos[0]};
         evento.enviarEvento('EventoUsuario/MostrarUsuarioActualizar', data, '#seccionUsuario', function (respuesta) {
+            var permisosUsuario = verificarPermisoApiKeySD(respuesta.datos.permisosUsuario);
+            var permisosAdicionalUsuario = verificarPermisoApiKeySD(respuesta.datos.permisosAdicionales);
             var perfil = respuesta.datos.idPerfil[0].IdPerfil;
             var permiso = (respuesta.datos.permiso[0].PermisosAdicionales);
             evento.mostrarModal('Actualizar Usuario', respuesta.formulario);
             select.crearSelect('select');
+
+            if (permisosUsuario || permisosAdicionalUsuario) {
+                $('#primerColumna').addClass('hidden');
+                $('#tercerCalumna').addClass('hidden');
+            }
+
             var array = JSON.parse("[" + permiso + "]");
             $('#selectActualizarPerfil').val(perfil).trigger('change');
             $('#selectActualizarPermisos').val(array).trigger('change');
@@ -48,7 +56,14 @@ $(function () {
                 var SDKey = $('#inputActualizarSDKey').val();
                 var activacion;
                 if (evento.validarFormulario('#formActualizarUsuarios')) {
-                    var data = {id: datos[0], perfil: perfil, email: email, permisos: permisos, estatus: estatus, SDKey: SDKey};
+                    if (permisosUsuario || permisosAdicionalUsuario) {
+                        var data = {
+                            id: datos[0],
+                            SDKey: SDKey
+                        }
+                    } else {
+                        var data = {id: datos[0], perfil: perfil, email: email, permisos: permisos, estatus: estatus, SDKey: SDKey};
+                    }
                     evento.enviarEvento('EventoUsuario/Actualizar_Usuario', data, '#actualizarUsuario', function (respuesta) {
                         if (respuesta instanceof Array) {
                             tabla.limpiarTabla('#data-table-usuarios');
@@ -71,4 +86,14 @@ $(function () {
 
         });
     });
+
+    var verificarPermisoApiKeySD = function (datos) {
+        var resultado = false
+
+        if ($.inArray("334", datos) !== -1) {
+            resultado = true;
+        }
+
+        return resultado;
+    };
 });

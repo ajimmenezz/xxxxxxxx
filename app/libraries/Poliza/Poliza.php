@@ -276,8 +276,8 @@ class Poliza extends General {
                                                                     WHERE
                                                                         cvrc.IdResponsableInterno = "' . $usuario['Id'] . '"
                                                                             AND (CASE
-                                                                            WHEN tfo.Vuelta > 1 THEN tst.IdEstatus IN (3 , 4)
-                                                                            WHEN tfo.Vuelta = 1 THEN tst.IdEstatus = 4
+                                                                            WHEN tfo.Vuelta > 1 THEN tst.IdEstatus IN (3, 4)
+                                                                            WHEN tfo.Vuelta = 1 THEN tst.IdEstatus IN (4, 6)
                                                                         END)
                                                                             AND tfo.IdEstatus = 8
                                                                             AND tfo.Fecha >= ' . $fechaLimiteVueltas . '
@@ -306,8 +306,8 @@ class Poliza extends General {
                                                                             t_servicios_ticket tst ON tst.Id = tfo.IdServicio
                                                                         WHERE
                                                                             (CASE
-                                                                                WHEN tfo.Vuelta = 1 THEN tst.IdEstatus IN (3 , 4)
-                                                                                WHEN tfo.Vuelta > 1 THEN tst.IdEstatus = 4
+                                                                                WHEN tfo.Vuelta = 1 THEN tst.IdEstatus IN (3, 4)
+                                                                                WHEN tfo.Vuelta > 1 THEN tst.IdEstatus IN (4, 6)
                                                                             END)
                                                                                 AND tfo.IdEstatus = 8
                                                                         AND tfo.Fecha >= ' . $fechaLimiteVueltas . '
@@ -787,6 +787,8 @@ class Poliza extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist.pdf';
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist.pdf';
         } else {
             $path = 'http://' . $host . '/' . $pdf;
         }

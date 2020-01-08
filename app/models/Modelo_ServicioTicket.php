@@ -1008,4 +1008,24 @@ class Modelo_ServicioTicket extends Modelo_Base {
         }
     }
 
+    public function getTipoByServicio(string $servicio) {
+        $consulta = $this->consulta("select IdTipoServicio from t_servicios_ticket where Id = '" . $servicio . "'");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+    
+    public function verificarServiciosDepartamento(string $tipoServicio) {
+        $consulta = $this->consulta('SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = "' . $tipoServicio . '"');
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
 }

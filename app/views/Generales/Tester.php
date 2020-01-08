@@ -120,8 +120,11 @@
         <!--Finalizando cabecera del panel-->
         <!--Empezando cuerpo del panel-->
         <div class="panel-body">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <button  id="solicitarFolios">Solicitar Folios</button>
+            </div>
+            <div class="col-md-6">
+                <button  id="solicitarFoliosAnterior">Solicitar Folios Anterior</button>
             </div>
         </div>
         <!--Finalizando cuerpo del panel-->

@@ -41,8 +41,8 @@
             }
             if ($perfilUsuario == 37 || $perfilUsuario == 44) {
                 echo '<label id="btnConluirAutorizacion" class="btn btn-primary btn-xs ocultarPermiso">
-                    <i class="fa fa"></i>Autorizar y Concluir
-                </label>';
+                        <i class="fa fa"></i>Autorizar y Concluir
+                    </label>';
             }
             ?>
         </div>

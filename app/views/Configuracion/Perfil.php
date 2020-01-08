@@ -166,6 +166,15 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td class="field">API KEY SD</td>
+                                    <td>
+                                        <div class="col-xs-12">
+                                            <?php echo $datosUsuario['SDKey']; ?>
+                                            <a class="editarPerfil m-l-5" data-campo="SDKey" data-input="<?php echo $datosUsuario['SDKey']; ?>" data-nombreInput="API KEY SD" data-tabla="usuario" href="javascript:;">Editar</a>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

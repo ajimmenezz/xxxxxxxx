@@ -24,6 +24,9 @@ class Administrador extends General {
     //Obtiene datos para mandar al modal Actualizar Usuario 
     public function mostrarFormularioUsuarios(array $datos) {
         $data = array();
+        $usuario = $this->usuario->getDatosUsuario();   
+        $data['permisosUsuario'] = $usuario['Permisos'];
+        $data['permisosAdicionales'] = $usuario['PermisosAdicionales'];
         $data['perfiles'] = $this->catalogo->catPerfiles('3');
         $data['permisos'] = $this->catalogo->catPermisos('3');
         $data['idPerfil'] = $this->catalogo->catConsultaGeneral('SELECT IdPerfil FROM cat_v3_usuarios WHERE Id = \'' . $datos[0] . '\'');

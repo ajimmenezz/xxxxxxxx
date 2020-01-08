@@ -189,7 +189,7 @@ class Servicedesk extends General
         $time = date("Ymd_His");
         $nombreArchivo = 'Pendientes_Redes_' . $time . '.xlsx';
         if (!file_exists('./storage/Archivos/Reportes/Redes')) {
-            mkdir('./storage/Archivos/Reportes/Redes', 0755, true);
+            mkdir('./storage/Archivos/Reportes/Redes', 0775, true);
         }
         $ruta = 'storage/Archivos/Reportes/Redes/' . $nombreArchivo;
 

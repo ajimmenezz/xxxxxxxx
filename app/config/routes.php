@@ -90,6 +90,7 @@ $route['Poliza/EventoCatalogos/(:any)'] = 'Poliza/Controller_Catalogos/manejarEv
 $route['Poliza/ReportesPoliza/(:any)'] = 'Poliza/Controller_ReportesPoliza/manejarEvento/$1';
 $route['Poliza/Tester/(:any)'] = 'Generales/Controller_Tester/manejarEvento/$1';
 $route['Poliza/EventoCatalogoRevisionFisica/(:any)'] = 'Poliza/Controller_Poliza/manejarEvento/$1';
+$route['Poliza/Inventarios/(:any)'] = 'Poliza/Controller_ReportesPoliza/manejarEvento/$1';
 
 /* Routers para el manejo nuevo de Proyectos */
 $route['Proyectos2/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
@@ -126,6 +127,8 @@ $route['Generales/Dispositivos/(:any)'] = 'Generales/Controller_Dispositivos/man
 $route['Generales/Dashboard/(:any)'] = 'Generales/Controller_Dashboard/manejarEvento/$1';
 $route['Generales/Dashboard_Gapsi/(:any)'] = 'Gapsi/Controller_GestorProyectos/manejarEvento/$1';
 $route['Generales/Tester/(:any)'] = 'Generales/Controller_Tester/manejarEvento/$1';
+$route['Generales/Dashboard_Generico/Mostrar_Graficas'] = 'V2/Controller_Dashboard/getDatosDashboards';
+$route['Generales/Dashboard_Generico/Mostrar_Datos_Actualizados'] = 'V2/Controller_Dashboard/getDatosActualizados';
 
 /* Routers para el manejo de páginas de PhantomJS */
 $route['Phantom/Servicio/(:any)'] = 'Phantom/Controller_Phantom/servicioPhantom/$1';
@@ -195,7 +198,16 @@ $route['Salas4D/EventoCatalogos/(:any)'] = 'Salas4D/Controller_Catalogos/manejar
 /* Routers para el manejo de Redes */
 $route['Redes/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Redes/Seguimiento/(:any)'] = 'Redes/Controller_Seguimiento/manejarEvento/$1';
-$route['Redes/SeguimientoCE/atender'] = 'V2/Controller_ServicioTicket/atenderServicio';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/Atender/(:any)'] = 'V2/Controller_ServicioTicket/atenderServicio/$1';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/Seguimiento/(:any)'] = 'V2/Controller_ServicioTicket/seguimientoServicio/$1';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/Folio/(:any)'] = 'V2/Controller_ServicioTicket/setFolio';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/Accion/(:any)'] = 'V2/Controller_ServicioTicket/runEvento/$1';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/agregarProblema'] = 'V2/Controller_ServicioTicket/setProblema';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/guardarSolucion'] = 'V2/Controller_ServicioTicket/setSolucion';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/concluir'] = 'V2/Controller_ServicioTicket/setConcluir';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/exportarPDF'] = 'V2/Controller_ServicioTicket/getPDF';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/borrarEvidencias'] = 'V2/Controller_ServicioTicket/deleteEvidencias';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/validarServicio'] = 'V2/Controller_ServicioTicket/validarServicio';
 
 /* Routers para el manejo de MesaDeAyuda */
 $route['MesaDeAyuda/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';

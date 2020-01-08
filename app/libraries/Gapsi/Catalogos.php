@@ -5,18 +5,22 @@ namespace Librerias\Gapsi;
 use Controladores\Controller_Base_General as General;
 use Aws\S3\S3Client;
 
-class Catalogos extends General {
+class Catalogos extends General
+{
 
     private $DB;
     private $Correo;
     private $usuario;
     private $S3;
+    private $Excel;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->DB = \Modelos\Modelo_Gapsi::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
         $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
+        $this->Excel = new \Librerias\Generales\CExcel();
         $this->S3 = new S3Client([
             'version' => 'latest',
             'region' => 'us-west-2',
@@ -27,67 +31,80 @@ class Catalogos extends General {
         ]);
     }
 
-    public function getClientes() {
+    public function getClientes()
+    {
         $clientes = $this->DB->getClientes();
         return $clientes;
     }
 
-    public function getSucursales() {
+    public function getSucursales()
+    {
         $sucursales = $this->DB->getSucursales();
         return $sucursales;
     }
 
-    public function getTiposServicio() {
+    public function getTiposServicio()
+    {
         $sucursales = $this->DB->getTiposServicio();
         return $sucursales;
     }
 
-    public function getTiposBeneficiario() {
+    public function getTiposBeneficiario()
+    {
         $sucursales = $this->DB->getTiposBeneficiario();
         return $sucursales;
     }
 
-    public function getTiposTransferencia() {
+    public function getTiposTransferencia()
+    {
         $sucursales = $this->DB->getTiposTransferencia();
         return $sucursales;
     }
 
-    public function getCategorias() {
+    public function getCategorias()
+    {
         $sucursales = $this->DB->getCategorias();
         return $sucursales;
     }
 
-    public function beneficiarioByTipo(array $datos = []) {
+    public function beneficiarioByTipo(array $datos = [])
+    {
         $beneficiarios = $this->DB->getBeneficiarioByTipo($datos);
         return ['beneficiarios' => $beneficiarios];
     }
 
-    public function categoriasByTipoTrans(array $datos = []) {
+    public function categoriasByTipoTrans(array $datos = [])
+    {
         $categorias = $this->DB->getCategoriasByTipoTrans($datos['id']);
         return ['categorias' => $categorias];
     }
 
-    public function subcategoriasByCategoria(array $datos = []) {
+    public function subcategoriasByCategoria(array $datos = [])
+    {
         $subcategorias = $this->DB->getSubcategoriasByCategoria($datos['id']);
         return ['subcategorias' => $subcategorias];
     }
 
-    public function conceptosBySubcategoria(array $datos = []) {
+    public function conceptosBySubcategoria(array $datos = [])
+    {
         $conceptos = $this->DB->getConceptosBySubcategoria($datos['id']);
         return ['conceptos' => $conceptos];
     }
 
-    public function proyectosByCliente(array $datos = []) {
+    public function proyectosByCliente(array $datos = [])
+    {
         $proyectos = $this->DB->proyectosByCliente($datos['id']);
         return ['proyectos' => $proyectos];
     }
 
-    public function sucursalesByProyecto(array $datos = []) {
+    public function sucursalesByProyecto(array $datos = [])
+    {
         $sucursales = $this->DB->sucursalesByProyecto($datos['id']);
         return ['sucursales' => $sucursales];
     }
 
-    public function solicitarGasto(array $datos) {
+    public function solicitarGasto(array $datos)
+    {
         $resultado = $this->DB->solicitarGasto($datos);
         if ($resultado['code'] == 508) {
             return $resultado;
@@ -106,7 +123,7 @@ class Catalogos extends General {
         }
 
         $style = ''
-                . '<style>
+            . '<style>
                         table{
                         font-size: 16px;
                             font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -217,7 +234,7 @@ class Catalogos extends General {
 
         if ($resultado['code'] == 200) {
             $bodyMail = ''
-                    . ' <div class="encabezado" style="width:100%;  color:white;" >
+                . ' <div class="encabezado" style="width:100%;  color:white;" >
                             <h1>SOLICITUD DE GASTOS  -   GAPSI</h1>   
                         </div>
                         <div class="Titulo" ><h2>Proyecto: ' . $datos['ProyectoString'] . '</h2>
@@ -242,28 +259,28 @@ class Catalogos extends General {
             if (isset($conceptos) && count($conceptos) > 0) {
                 foreach ($conceptos as $key => $value) {
                     $bodyMail .= ''
-                            . '<tr>'
-                            . ' <td>'
-                            . '     <p>'
-                            . '     ' . $value['categoria']
-                            . '     </p>'
-                            . ' </td>'
-                            . ' <td>'
-                            . '     <p>'
-                            . '     ' . $value['subcategoria']
-                            . '     </p>'
-                            . ' </td>'
-                            . ' <td>'
-                            . '     <p>'
-                            . '     ' . $value['concepto']
-                            . '     </p>'
-                            . ' </td>'
-                            . ' <td>'
-                            . '     <p>'
-                            . '     ' . number_format($value['monto'], 2, '.', ",")
-                            . '     </p>'
-                            . ' </td>'
-                            . '</tr>';
+                        . '<tr>'
+                        . ' <td>'
+                        . '     <p>'
+                        . '     ' . $value['categoria']
+                        . '     </p>'
+                        . ' </td>'
+                        . ' <td>'
+                        . '     <p>'
+                        . '     ' . $value['subcategoria']
+                        . '     </p>'
+                        . ' </td>'
+                        . ' <td>'
+                        . '     <p>'
+                        . '     ' . $value['concepto']
+                        . '     </p>'
+                        . ' </td>'
+                        . ' <td>'
+                        . '     <p>'
+                        . '     ' . number_format($value['monto'], 2, '.', ",")
+                        . '     </p>'
+                        . ' </td>'
+                        . '</tr>';
                 }
             }
 
@@ -279,10 +296,10 @@ class Catalogos extends General {
             }
 
             $bodyMail .= ''
-                    . '</table>'
-                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra en las oficinas de SICCOB <a href="http://192.168.0.30/GAPSI/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p><br/><br/>'
-                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://gapsi.dyndns.org/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>'
-                    . '<br />' . $adjuntos;
+                . '</table>'
+                . '<p>Para aplicarlo de click en el siguiente link Si se encuentra en las oficinas de SICCOB <a href="http://192.168.0.30/GAPSI/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p><br/><br/>'
+                . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://gapsi.dyndns.org/AplicaGastoSolic?ID=' . $resultado['last'] . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>'
+                . '<br />' . $adjuntos;
 
             $titulo = "Solicitud de Gasto";
             $this->Correo->enviarCorreo('gastos@siccob.solutions', array('mrodriguez@siccob.com.mx', 'pruebasiccob@ioitconsulting.com', 'ajimenez@siccob.com.mx', $this->usuario['EmailCorporativo']), $titulo, $bodyMail, explode(",", $archivos), $style);
@@ -295,12 +312,71 @@ class Catalogos extends General {
         }
     }
 
-    public function misGastos() {
+    public function misGastos()
+    {
         $gastos = $this->DB->getMisGastos();
         return $gastos;
     }
 
-    public function cargaGasto(array $data) {
+    public function exportMisGastos()
+    {
+        $array = $this->DB->exportMisGastos();
+        $usuarios = $array['usuarios'];
+        $gastos = [];
+        foreach ($array['gastos'] as $k => $v) {
+            array_push($gastos, [
+                $v['ID'],
+                $usuarios[$v['ID']]['usuario'],
+                $v['OrdenCompra'],
+                $v['FechaCaptura'],
+                $v['FechaAutorizacion'],
+                $v['FechaAplicacionGasto'],
+                $v['FechaTransferencia'],
+                $v['Status'],
+                $v['Beneficiario'],
+                $v['Proyecto'],
+                $v['Descripcion'],
+                $v['Importe'],
+                $v['Moneda']
+            ]);
+        }
+
+        $this->Excel->createSheet('Mis Gastos', 0);
+        $this->Excel->setActiveSheet(0);
+        $arrayTitulosMovimientos = [
+            'ID',
+            'Solicita',
+            'OC',
+            'Fecha Captura',
+            'Fecha Autorización',
+            'Fecha Aplicación de Gasto',
+            'Fecha Transferencia',
+            'Estatus',
+            'Beneficiario',
+            'Proyecto',
+            'Descripción',
+            'Importe',
+            'Moneda'
+        ];
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
+        $arrayWidthMovimientos = [15, 30, 15, 25, 25, 25, 25, 20, 35, 35, 40, 15, 15];
+        $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
+        $arrayAlignMovimientos = ['center', '', 'center', 'center', 'center', 'center', 'center', '', '', '', '', 'center', 'center'];
+        $this->Excel->setTableContent('A', 1, $gastos, true, $arrayAlignMovimientos);
+
+        $time = date("ymd_H_i_s");
+        $nombreArchivo = 'Mis Gastos_' . $time . '.xlsx';
+        $nombreArchivo = trim($nombreArchivo);
+        $ruta = 'storage/Archivos/Gapsi/Exports/' . $nombreArchivo;
+
+        //Guarda la hoja envíandole la ruta y el nombre del archivo que se va a guardar.
+        $this->Excel->saveFile($ruta);
+
+        return ['ruta' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
+    }
+
+    public function cargaGasto(array $data)
+    {
         $gasto = $this->detallesGasto($data['id']);
 
         $prefix = 'Gastos/' . $data['id'] . '/PAG/';
@@ -341,12 +417,14 @@ class Catalogos extends General {
         ];
     }
 
-    public function detallesGasto(int $id) {
+    public function detallesGasto(int $id)
+    {
         $gasto = $this->DB->detallesGasto($id);
         return $gasto;
     }
 
-    public function guardarCambiosGasto(array $datos) {
+    public function guardarCambiosGasto(array $datos)
+    {
         $resultado = $this->DB->guardarCambiosGasto($datos);
         $last = $datos['ID'];
 
@@ -370,7 +448,7 @@ class Catalogos extends General {
         }
 
         $style = ''
-                . '<style>
+            . '<style>
                         table{
                         font-size: 16px;
                             font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -481,7 +559,7 @@ class Catalogos extends General {
 
         if ($resultado['code'] == 200) {
             $bodyMail = ''
-                    . ' <div class="encabezado" style="width:100%;  color:white;" >
+                . ' <div class="encabezado" style="width:100%;  color:white;" >
                             <h1>SOLICITUD DE GASTOS  -   GAPSI</h1>   
                         </div>
                         <div class="Titulo" ><h2>Proyecto: ' . $datos['ProyectoString'] . '</h2>
@@ -506,28 +584,28 @@ class Catalogos extends General {
             if (isset($conceptos) && count($conceptos) > 0) {
                 foreach ($conceptos as $key => $value) {
                     $bodyMail .= ''
-                            . '<tr>'
-                            . ' <td>'
-                            . '     <p>'
-                            . '     ' . $value['categoria']
-                            . '     </p>'
-                            . ' </td>'
-                            . ' <td>'
-                            . '     <p>'
-                            . '     ' . $value['subcategoria']
-                            . '     </p>'
-                            . ' </td>'
-                            . ' <td>'
-                            . '     <p>'
-                            . '     ' . $value['concepto']
-                            . '     </p>'
-                            . ' </td>'
-                            . ' <td>'
-                            . '     <p>'
-                            . '     ' . number_format($value['monto'], 2, '.', ",")
-                            . '     </p>'
-                            . ' </td>'
-                            . '</tr>';
+                        . '<tr>'
+                        . ' <td>'
+                        . '     <p>'
+                        . '     ' . $value['categoria']
+                        . '     </p>'
+                        . ' </td>'
+                        . ' <td>'
+                        . '     <p>'
+                        . '     ' . $value['subcategoria']
+                        . '     </p>'
+                        . ' </td>'
+                        . ' <td>'
+                        . '     <p>'
+                        . '     ' . $value['concepto']
+                        . '     </p>'
+                        . ' </td>'
+                        . ' <td>'
+                        . '     <p>'
+                        . '     ' . number_format($value['monto'], 2, '.', ",")
+                        . '     </p>'
+                        . ' </td>'
+                        . '</tr>';
                 }
             }
 
@@ -543,10 +621,10 @@ class Catalogos extends General {
             }
 
             $bodyMail .= ''
-                    . '</table>'
-                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra en las oficinas de SICCOB <a href="http://192.168.0.30/GAPSI/AplicaGastoSolic?ID=' . $last . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p><br/><br/>'
-                    . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://gapsi.dyndns.org/AplicaGastoSolic?ID=' . $last . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>'
-                    . '<br />' . $adjuntos;
+                . '</table>'
+                . '<p>Para aplicarlo de click en el siguiente link Si se encuentra en las oficinas de SICCOB <a href="http://192.168.0.30/GAPSI/AplicaGastoSolic?ID=' . $last . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p><br/><br/>'
+                . '<p>Para aplicarlo de click en el siguiente link Si se encuentra FUERA de las oficinas de SICCOB <a href="http://gapsi.dyndns.org/AplicaGastoSolic?ID=' . $last . '" style="text-decoration:none;"><span class="boton"> Ingresar >></span></a></p>'
+                . '<br />' . $adjuntos;
 
             $titulo = "Solicitud de Gasto";
             $this->Correo->enviarCorreo('gastos@siccob.solutions', array('mrodriguez@siccob.com.mx', 'pruebasiccob@ioitconsulting.com', 'ajimenez@siccob.com.mx', $this->usuario['EmailCorporativo']), $titulo, $bodyMail, explode(",", $archivos), $style);
@@ -559,7 +637,8 @@ class Catalogos extends General {
         }
     }
 
-    public function eliminarArchivo(array $datos) {
+    public function eliminarArchivo(array $datos)
+    {
         $return = $this->DB->eliminarArchivo($datos);
         if ($return['code'] == 200) {
             $s3Result = $this->S3->deleteObject([
@@ -573,24 +652,27 @@ class Catalogos extends General {
         return $return;
     }
 
-    public function marcarLeido(array $datos) {
+    public function marcarLeido(array $datos)
+    {
         $return = $this->DB->marcarLeido($datos);
         return $return;
     }
 
-    public function comprobarGastos() {
+    public function comprobarGastos()
+    {
         $datos = $this->DB->getComprobarGastos();
         $resultado = ['datos' => $datos];
         return array('resultado' => $resultado, 'vistaTabla' => parent::getCI()->load->view('Gapsi/Mis-Gastos', $resultado, TRUE));
     }
 
-    public function comprobacionRegistro($datos) {
+    public function comprobacionRegistro($datos)
+    {
         $idRegistro = $datos['idGasto'];
         $monto = $datos['monto'];
         $typeFiles = null;
         $CI = parent::getCI();
         $carpeta = './storage/Gastos/' . $idRegistro . '/FACT/';
-//        $carpeta = 'Gastos/' . $idRegistro . '/FACT/';
+        //        $carpeta = 'Gastos/' . $idRegistro . '/FACT/';
 
         if (!empty($_FILES)) {
             $typeFiles = $_FILES['inputArchivoComprobante']['type'];
@@ -606,13 +688,14 @@ class Catalogos extends General {
         } else {
             $archivos = setMultiplesArchivos($CI, 'inputArchivoComprobante', $carpeta, 'gapsi');
             return $this->cambiarNombre($archivos, $idRegistro);
-//            $respuesta = $this->DB->registrarSinXML($datos);
+            //            $respuesta = $this->DB->registrarSinXML($datos);
         }
         return $respuesta;
     }
 
     // Comprobar numero de archivos XML y PDF
-    public function comprobarXML($archivosComprobantes) {
+    public function comprobarXML($archivosComprobantes)
+    {
 
         $nombreComprobante = [];
         foreach ($archivosComprobantes as $key => $archivoComprobante) {
@@ -658,7 +741,8 @@ class Catalogos extends General {
     }
 
     //Obtener UUID y validar monto y version de XML
-    public function validarComprobanteGastos($monto, $archivos, $datos) {
+    public function validarComprobanteGastos($monto, $archivos, $datos)
+    {
 
         foreach ($archivos as $key => $value) {
             $extension = pathinfo($value, PATHINFO_EXTENSION);
@@ -683,11 +767,13 @@ class Catalogos extends General {
                 $cfdi->cargaXml(getcwd() . $value);
                 $valorUUID = $cfdi->uuid();
                 if (isset($valorUUID)) {
-                    $datos = ['idGasto' => $datos['idGasto'],
+                    $datos = [
+                        'idGasto' => $datos['idGasto'],
                         'Monto' => $datos['monto'],
                         'Comentario' => null,
                         'Status' => 'Enviado',
-                        'UUID' => $valorUUID];
+                        'UUID' => $valorUUID
+                    ];
 
                     return $this->DB->insertarComprobanteGapsi($datos);
                 } else {
@@ -697,18 +783,19 @@ class Catalogos extends General {
         }
     }
 
-    public function eliminaArchivos(array $archivos) {
+    public function eliminaArchivos(array $archivos)
+    {
         foreach ($archivos as $k => $v) {
             try {
                 unlink('.' . $v);
             } catch (Exception $ex) {
-                
             }
         }
     }
 
     //Validar Version de archivo XML
-    public function validarTotalXML(array $datos, float $total) {
+    public function validarTotalXML(array $datos, float $total)
+    {
         $arrayReturn = [
             'code' => 200,
             'error' => 'OK'
@@ -732,7 +819,6 @@ class Catalogos extends General {
             if (isset($nodoComprobante['Total'])) {
                 $totalFloat = (float) $nodoComprobante['Total'];
                 if ($totalFloat >= ((float) $total - 0.99) && $totalFloat <= ((float) $total) + 0.99) {
-                    
                 } else {
                     $arrayReturn['code'] = 400;
                     $arrayReturn['error'] = 'El total de la factura no corresponde al capturado para comprobacion. Factura:$' . $totalFloat . ' y Monto:$' . $total;
@@ -747,7 +833,8 @@ class Catalogos extends General {
     }
 
     //Validar monto de archivo XML
-    public function validarReceptorXML(array $datos) {
+    public function validarReceptorXML(array $datos)
+    {
         $arrayReturn = [
             'code' => 200,
             'error' => 'OK'
@@ -755,8 +842,7 @@ class Catalogos extends General {
 
         foreach ($datos as $k => $nodoReceptor) {
             if (isset($nodoReceptor['Rfc'])) {
-                if (in_array($nodoReceptor['Rfc'], ['SSO0101179Z7', 'RSD130305DI7','RRC130605555','SSS140225LT6'])) {
-                    
+                if (in_array($nodoReceptor['Rfc'], ['SSO0101179Z7', 'RSD130305DI7', 'RRC130605555', 'SSS140225LT6'])) {
                 } else {
                     $arrayReturn['code'] = 400;
                     $arrayReturn['error'] = 'El receptor (RFC) no coincide con SSO0101179Z7. Verifique su archivo';
@@ -769,7 +855,8 @@ class Catalogos extends General {
         return $arrayReturn;
     }
 
-    public function cambiarNombre($archivos, $idRegistro) {
+    public function cambiarNombre($archivos, $idRegistro)
+    {
 
         $nuevoNombre = "./storage/Gastos/" . $idRegistro . "/FACT/" . $idRegistro;
         $contador = 0;
@@ -799,7 +886,8 @@ class Catalogos extends General {
         return $respuestaArchivo;
     }
 
-    public function actualizarComprobacion($datos) {
+    public function actualizarComprobacion($datos)
+    {
 
         $consulta = $this->DB->consultaRegistro($datos);
         if ($consulta) {
@@ -811,7 +899,8 @@ class Catalogos extends General {
         }
     }
 
-    public function terminarComprobante($datos) {
+    public function terminarComprobante($datos)
+    {
         $consulta = $this->DB->consultaRegistro($datos);
 
         if ($consulta) {
@@ -820,11 +909,11 @@ class Catalogos extends General {
             return ['code' => 500, "error" => "No es posible teminar comprobacion"];
         }
     }
-
 }
 
 //Clase para obtener informacion de XML
-class LeerCFDI {
+class LeerCFDI
+{
 
     /**
      * Namespaces
@@ -879,7 +968,8 @@ class LeerCFDI {
     /**
      * archivoXML Ruta del archivo XML
      */
-    function cargaXml($archivoXML) {
+    function cargaXml($archivoXML)
+    {
 
         if (file_exists($archivoXML)) {
             libxml_use_internal_errors(true);
@@ -893,7 +983,8 @@ class LeerCFDI {
     /**
      * Obtener el RFC del Emisor
      */
-    function rfcEmisor() {
+    function rfcEmisor()
+    {
 
         foreach ($this->xml->xpath('//cfdi:Comprobante//cfdi:Emisor') as $emisor) {
             $this->rfcEmisor = $emisor['rfc'] != "" ? $emisor['rfc'] : $emisor['Rfc'];
@@ -905,7 +996,8 @@ class LeerCFDI {
     /**
      * Obtener el RFC del Receptor
      */
-    function rfcReceptor() {
+    function rfcReceptor()
+    {
 
         foreach ($this->xml->xpath('//cfdi:Comprobante//cfdi:Receptor') as $receptor) {
             $this->rfcReceptor = $receptor['rfc'] != "" ? $receptor['rfc'] : $receptor['Rfc'];
@@ -917,7 +1009,8 @@ class LeerCFDI {
     /**
      * Obtener el RFC  del CFDI
      */
-    function total() {
+    function total()
+    {
 
         foreach ($this->xml->xpath('//cfdi:Comprobante') as $comprobante) {
             $this->total = $comprobante['total'] != "" ? $comprobante['total'] : $comprobante['Total'];
@@ -928,7 +1021,8 @@ class LeerCFDI {
     /**
      * Obtener la serie del CFDI
      */
-    function serie() {
+    function serie()
+    {
 
         foreach ($this->xml->xpath('//cfdi:Comprobante') as $comprobante) {
             $this->serie = $comprobante['serie'] != "" ? $comprobante['serie'] : $comprobante['Serie'];
@@ -940,7 +1034,8 @@ class LeerCFDI {
     /**
      * Obtener elfolio del CFDI
      */
-    function folio() {
+    function folio()
+    {
 
         foreach ($this->xml->xpath('//cfdi:Comprobante') as $comprobante) {
             $this->folio = $comprobante['folio'] != "" ? $comprobante['folio'] : $comprobante['Folio'];
@@ -952,7 +1047,8 @@ class LeerCFDI {
     /**
      * Obtener el la fecha del CFDI
      */
-    function fecha() {
+    function fecha()
+    {
 
         foreach ($this->xml->xpath('//cfdi:Comprobante') as $comprobante) {
             $this->fecha = $comprobante['fecha'] != "" ? $comprobante['fecha'] : $comprobante['Fecha'];
@@ -964,7 +1060,8 @@ class LeerCFDI {
     /**
      * Obtener el tipo del comprobante del  CFDI (Ingreso o Egreso);
      */
-    function tipoComprobante() {
+    function tipoComprobante()
+    {
 
         foreach ($this->xml->xpath('//cfdi:Comprobante') as $comprobante) {
             $this->tipoComprobante = $comprobante['tipoDeComprobante'] != "" ? $comprobante['tipoDeComprobante'] : $comprobante['TipoDeComprobante'];
@@ -982,7 +1079,8 @@ class LeerCFDI {
     /**
      * Obtener el UUID de la factura
      */
-    function uuid() {
+    function uuid()
+    {
 
         $this->xml->registerXPathNamespace('t', $this->namespaces['tfd']);
 
@@ -992,5 +1090,4 @@ class LeerCFDI {
 
         return $this->uuid;
     }
-
 }

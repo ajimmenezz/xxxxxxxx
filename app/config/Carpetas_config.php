@@ -12,6 +12,7 @@ $config['Secciones'] = array(
     'Acceso' => array('Login', 'Recuperar_Acceso', 'Nuevo_Password'),
     'Configuracion' => array('Perfil-Configuracion' => 'Perfil'),
     'Generales' => array(
+        'Dashboard-Generico' => 'Dashboard_Generico',
         'Dashboard-Siccob' => 'Dashboard',
         'Disp-Moviles' => 'Dispositivos-Moviles',
         'Notificaciones' => 'Notificaciones',
@@ -98,7 +99,8 @@ $config['Secciones'] = array(
         'Servicios-Correctivos-Sin-Firma' => 'Servicios_Sin_Firma',
         'Resumen-Vueltas-Asocidaos' => 'Resumen_Vueltas_Asociados',
         'Catalogo-Checklist' => 'Catalogo_Checklist',
-        'Seguimiento-Equipos' => 'Seguimiento_Equipos'
+        'Seguimiento-Equipos' => 'Seguimiento_Equipos',
+        'Reporte-Inventario' => 'Inventarios'
     ),
     'Redes' => array(
         'Dashboard-Redes' => 'Dashboard',

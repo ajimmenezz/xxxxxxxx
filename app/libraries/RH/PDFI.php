@@ -16,7 +16,7 @@ class PDFI extends FPDI {
     public function definirArchivo(string $carpeta, string $archivo) {
         $this->carpeta = './storage/Archivos/' . $carpeta;
         if (!file_exists($this->carpeta)) {
-            mkdir($this->carpeta, 0777, true);
+            mkdir($this->carpeta, 0775, true);
         }
         return $this->carpeta .= '/' . $archivo . '.pdf';
     }

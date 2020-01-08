@@ -141,6 +141,17 @@ class Modelo_Registro_Usuario extends Modelo_Base {
         }
         return $datos;
     }
+    
+    public function idRegistroLogueo(string $usuario) {
+        $datos = array();
+        $consulta = $this->consulta('select Id from t_log_acceso where IdUsuario = ' . $usuario . ' ORDER BY Id DESC LIMIT 1');
+        if (!empty($consulta)) {
+            foreach ($consulta as $value) {
+                $datos['id'] = $value['Id'];
+            }
+        }
+        return $datos;
+    }
 
     /*
      * Encargado de generar el registro del logueo del usuario

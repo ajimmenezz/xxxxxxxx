@@ -353,6 +353,8 @@ Servicio.prototype.ServicioSinClasificar = function () {
     var datosSD = arguments[11];
     var tipoServicio = arguments[12] || '';
     var idPerfil = arguments[13] || '';
+    var informacionServicioGeneral = arguments[14] || null;
+
     var dataServicio = {servicio: servicio, ticket: ticket};
 
     $(resumenSeguimiento).addClass('hidden');
@@ -360,6 +362,11 @@ Servicio.prototype.ServicioSinClasificar = function () {
 
     _this.select.crearSelect('select');
     _this.select.cambiarOpcion('#selectSucursalesSinClasificar', idSucursal);
+    _this.colocarBotonGuardarCambiosSinClasificar(datosDelServicio, archivo);
+
+    if (datosDelServicio.IdTipoServicio === "50") {
+        $('.divAreaPuntoEquipo').removeClass('hidden');
+    }
 
     //evento para mostrar los detalles de las descripciones
     $('#detallesServicioSinClasificar').on('click', function (e) {
@@ -399,14 +406,6 @@ Servicio.prototype.ServicioSinClasificar = function () {
                 );
     });
 
-    _this.file.crearUpload('#evidenciaSinClasificar',
-            '/Generales/Servicio/Concluir_SinClasificar',
-            null,
-            null,
-            archivo,
-            '/Generales/Servicio/EliminarEvidenciaServicio',
-            );
-
     //Evento para concluir el servicio
     $("#btnConcluirServicioSinClasificar").off("click");
     $('#btnConcluirServicioSinClasificar').on('click', function (e) {
@@ -430,7 +429,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
                     });
                 });
             } else {
-                var data = {servicio: servicio};
+                var data = {servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}};
 //                _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, panel, function (respuesta) {
 //                    if (respuesta === true) {
                 _this.validarTecnicoPoliza();
@@ -451,7 +450,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
                 $('#btnModalConfirmar').addClass('hidden');
                 $('#btnModalConfirmar').off('click');
                 _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
-                _this.validarCamposFirma(ticket, servicio, true, true, '5');
+                _this.validarCamposFirma(ticket, servicio, true, true, '5', data);
 //                    } else {
 //                        _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
 //                    }
@@ -462,15 +461,82 @@ Servicio.prototype.ServicioSinClasificar = function () {
         }
     });
 
+    $('#selectSucursalesSinClasificar').on('change', function (event, data) {
+        console.log($(this).val());
+        $('#selectAreaPuntoSinClasificar').empty().append('<option data-punto="" value="">Seleccionar</option>');
+        _this.select.cambiarOpcion('#selectAreaPuntoSinClasificar', '');
+        if ($('#selectSucursalesSinClasificar').val() !== '') {
+            $('#selectAreaPuntoSinClasificar').removeAttr('disabled');
+            var sucursal = $('#selectSucursalesSinClasificar').val();
+            var dataSucursal = {sucursal: sucursal};
+            _this.enviarEvento('/Poliza/Seguimiento/ConsultaAreaPuntoXSucursal', dataSucursal, '#seccion-servicio-sin-clasificar', function (respuesta) {
+                if (respuesta !== false) {
+                    $.each(respuesta, function (key, valor) {
+                        $("#selectAreaPuntoSinClasificar").append('<option value="' + valor.IdArea + '-' + valor.Punto + '">' + valor.Area + ' ' + valor.Punto + '</option>');
+                    });
+                    if (informacionServicioGeneral[0].IdModelo !== '0') {
+                        $('#selectAreaPuntoSinClasificar > option[value="' + informacionServicioGeneral[0].IdArea + '-' + informacionServicioGeneral[0].Punto + '"]').attr('selected', 'selected', 'selected', 'selected').trigger('change');
+                    }
+                } else {
+                    if (informacionServicioGeneral[0].IdModelo !== '0') {
+                        _this.mostrarMensaje('.errorGeneralServicioSinClasificar', false, 'No hay equipos reguistrados para el Area y Punto.', 5000);
+                    }
+                    $('#selectAreaPuntoSinClasificar').attr('disabled', 'disabled');
+                }
+            });
+        } else {
+            $('#selectAreaPuntoSinClasificar').attr('disabled', 'disabled');
+            $('#selectEquipoSinClasificar').attr('disabled', 'disabled');
+        }
+    });
+
+    _this.select.cambiarOpcion('#selectSucursalesSinClasificar', idSucursal);
+
+    $('#selectAreaPuntoSinClasificar').on('change', function (event, data) {
+        $('#selectEquipoSinClasificar').empty().append('<option data-serie="" data-terminal="" value="">Seleccionar</option>');
+        _this.select.cambiarOpcion('#selectEquipoSinClasificar', '');
+
+        if ($('#selectAreaPuntoSinClasificar').val() !== '') {
+            $('#selectEquipoSinClasificar').removeAttr('disabled');
+            var sucursal = $('#selectSucursalesSinClasificar').val();
+            var areaPunto = $('#selectAreaPuntoSinClasificar').val();
+            var aux = areaPunto.split("-");
+            var punto = aux[1];
+            var area = aux[0];
+
+            if (area !== '') {
+                var dataEquipo = {sucursal: sucursal, area: area, punto: punto};
+                _this.enviarEvento('/Poliza/Seguimiento/ConsultaEquipoXAreaPuntoUltimoCenso', dataEquipo, '#seccion-servicio-sin-clasificar', function (respuesta) {
+                    var nuevoArrayIdModelos = [];
+                    $.each(respuesta, function (key, valor) {
+                        $("#selectEquipoSinClasificar").append('<option data-serie="' + valor.Serie + '" data-terminal="' + valor.Extra + '" value=' + valor.IdModelo + '>' + valor.Equipo + ' (' + valor.Serie + ')</option>');
+                        nuevoArrayIdModelos.push(valor.IdModelo);
+                    });
+                    if (informacionServicioGeneral[0].IdModelo !== '0') {
+                        _this.select.cambiarOpcion('#selectEquipoSinClasificar', informacionServicioGeneral[0].IdModelo);
+                    }
+                });
+            }
+        } else {
+            $('#selectEquipoSinClasificar').attr('disabled', 'disabled');
+        }
+    });
+
     $("#btnGuardarServicioSinClasificar").off("click");
     $('#btnGuardarServicioSinClasificar').on('click', function (e) {
         var sucursal = $('#selectSucursalesSinClasificar').val();
         var descripcion = $('#inputDescripcionSinClasificar').val();
         var evidencias = $('#evidenciaSinClasificar').val();
         var archivosPreview = _this.file.previews('.previewSinClasificar');
+        var areaPunto = $('#selectAreaPuntoSinClasificar').val();
+        var equipo = $('#selectEquipoSinClasificar').val();
+        var numeroRenglon = areaPunto.search(/-/i);
+        var punto = areaPunto.substr(2, 2);
+        var area = areaPunto.substr(0, numeroRenglon);
+        punto = Math.abs(punto);
 
         if (descripcion !== '') {
-            var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, soloGuardar: true};
+            var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, soloGuardar: true, equipo: equipo, area: area, punto: punto};
             _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#seccion-servicio-sin-clasificar', data, function (respuesta) {
                 if (respuesta === true) {
                     _this.mostrarMensaje('.errorGeneralServicioSinClasificar', true, 'Datos guardados correctamente.', 3000);
@@ -483,10 +549,21 @@ Servicio.prototype.ServicioSinClasificar = function () {
         }
     });
 
+    $("#btnGuardarCambiosServicioSinClasificar").off("click");
+    $('#btnGuardarCambiosServicioSinClasificar').on('click', function (e) {
+        var sucursal = $('#selectSucursalesSinClasificar').val();
+        var descripcion = $('#inputDescripcionSinClasificar').val();
+        var evidencias = $('#evidenciaSinClasificar').val();
+        var archivosPreview = _this.file.previews('.previewSinClasificar');
+        var data = {ticket: ticket, servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}, correo: '', operacion: '9', seccion: '#seccion-servicio-sin-clasificar'};
+
+        _this.servicioValidacion(data);
+    });
+
     $("#btnGeneraPdfServicio").off("click");
     $("#btnGeneraPdfServicio").on("click", function () {
         _this.enviarEvento('/Servicio/Servicio_ToPdf', dataServicio, '#seccion-servicio-sin-clasificar', function (respuesta) {
-            window.open('/' + respuesta.link);
+            window.open(respuesta.link);
         });
     });
 
@@ -510,6 +587,32 @@ Servicio.prototype.ServicioSinClasificar = function () {
     _this.eventosFolio(datosDelServicio.IdSolicitud, '#seccion-servicio-sin-clasificar', servicio);
     _this.botonEliminarAvanceProblema(servicio);
     _this.botonEditarAvanceProblema(servicio);
+};
+
+Servicio.prototype.colocarBotonGuardarCambiosSinClasificar = function () {
+    var datosServicio = arguments[0];
+    var archivo = arguments[1];
+    var _this = this;
+
+    if (datosServicio.Firma !== null) {
+        $('.divBotonesServicioSinClasificar').addClass('hidden');
+        $('.divGuardarCambiosServicioSinClasificar').removeClass('hidden');
+        _this.file.crearUpload('#evidenciaCambiosSinClasificar',
+                '/Generales/Servicio/ServicioEnValidacion',
+                null,
+                null,
+                archivo,
+                '/Generales/Servicio/EliminarEvidenciaServicio',
+                );
+    } else {
+        _this.file.crearUpload('#evidenciaSinClasificar',
+                '/Generales/Servicio/Concluir_SinClasificar',
+                null,
+                null,
+                archivo,
+                '/Generales/Servicio/EliminarEvidenciaServicio',
+                );
+    }
 };
 
 Servicio.prototype.botonAgregarAvance = function () {
@@ -732,6 +835,62 @@ Servicio.prototype.eventosFolio = function () {
                             $('#seccionSD').empty().html(mensajeSinDatos);
                         }
                     });
+                }
+            });
+        });
+    });
+    $('#btnConcluirReasignarFolioServicioSinClasificar').off('click');
+    $('#btnConcluirReasignarFolioServicioSinClasificar').on('click', function () {
+        _this.enviarEvento('/Generales/ServiceDesk/CatalogoUsuariosSD', {}, seccion, function (respuesta) {
+            var html = '<form class="margin-bottom-0" id="formReasignarSD" data-parsley-validate="true">\n\
+                            <div class="row" m-t-10">\n\
+                                <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
+                                    <div class="form-group">\n\
+                                        <label for="usuarioSD">Asignar en SD a *</label>\n\
+                                        <select id="usuarioSD" class="form-control" style="width: 100%" data-parsley-required="true">\n\
+                                           <option value="">Seleccionar</option>\n\
+                                        </select>\n\
+                                    </div>\n\
+                                </div>\n\
+                            </div>\n\
+                            <div class="row" m-t-10">\n\
+                                <div class="col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">\n\
+                                    <div class="errorGuardarFactura"></div>\n\
+                                </div>\n\
+                            </div>\n\
+                        </form>';
+            _this.mostrarModal('Reasignar SD', html);
+            $.each(respuesta, function (key, valor) {
+                $("#usuarioSD").append('<option value=' + valor.TECHNICIANID + '>' + valor.TECHNICIANNAME + '</option>');
+            });
+
+            _this.select.crearSelect('#usuarioSD');
+
+            $('#btnModalConfirmar').off('click');
+            $('#btnModalConfirmar').on('click', function () {
+                var sucursal = $('#selectSucursalesSinClasificar').val();
+                var descripcion = $('#inputDescripcionSinClasificar').val();
+                var evidencias = $('#evidenciaSinClasificar').val();
+                var archivosPreview = _this.file.previews('.previewSinClasificar');
+                var perfil = $('#nombreAtiende').attr('att-IdPerfil');
+                if (_this.validarFormulario('#formReasignarSD') && descripcion !== '') {
+                    var usuarioSD = $("#usuarioSD").val();
+                    var data = {servicio: servicio, personalSD: usuarioSD, solicitud: solicitud, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, perfil: perfil, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}};
+                    _this.enviarEvento('/Generales/Solicitud/ReasignarFolioSD', data, '#modal-dialogo', function (respuesta) {
+                        _this.cerrarModal();
+                        if (respuesta.code === 200) {
+                            _this.mostrarMensaje('.errorFolioSolicitudSinClasificar', true, 'Datos actualizados correctamente.', 3000);
+                            var datosSDHTML = _this.camposSD(respuesta.message);
+                            $('#seccionSD').empty().html(datosSDHTML);
+                            _this.detallesDescripcionResolucion();
+                        } else {
+                            _this.mostrarMensaje('.errorFolioSolicitudSinClasificar', false, respuesta.message, 3000);
+                            var mensajeSinDatos = _this.mensajeAlerta(respuesta.message)
+                            $('#seccionSD').empty().html(mensajeSinDatos);
+                        }
+                    });
+                } else {
+                    _this.mostrarMensaje('.errorGuardarFactura', false, 'Revisa los campos faltantes.', 3000);
                 }
             });
         });
@@ -1200,7 +1359,6 @@ Servicio.prototype.modalCampoFirmaExtra = function () {
 
 };
 
-
 Servicio.prototype.formConcluirServicio = function () {
     var html = ' <div id="modal-concluir-servicio">\n\
                     <div class="panel-body">\n\
@@ -1264,6 +1422,7 @@ Servicio.prototype.validarCamposFirma = function () {
     var campoFirmaTecnico = arguments[2] || false;
     var concluirServicio = arguments[3] || false;
     var estatus = arguments[4] || false;
+    var evidencias = arguments[5] || false;
 
     var myBoard = _this.campoLapiz('campoLapiz');
 
@@ -1298,7 +1457,11 @@ Servicio.prototype.validarCamposFirma = function () {
                                 if (imgInputFirmaTecnico !== '') {
                                     _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                         if (respuesta === true) {
-                                            _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                            if (evidencias != false) {
+                                                _this.enviarEvidenciaAsociado(evidencias);
+                                            } else {
+                                                _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                            }
                                         } else {
                                             _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                         }
@@ -1314,7 +1477,11 @@ Servicio.prototype.validarCamposFirma = function () {
                                 var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
                                 _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
-                                        _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                        if (evidencias != false) {
+                                            _this.enviarEvidenciaAsociado(evidencias);
+                                        } else {
+                                            _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                        }
                                     } else {
                                         _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                     }
@@ -1342,7 +1509,11 @@ Servicio.prototype.validarCamposFirma = function () {
                             if (imgInputFirmaTecnico !== '') {
                                 _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
-                                        _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                        if (evidencias != false) {
+                                            _this.enviarEvidenciaAsociado(evidencias);
+                                        } else {
+                                            _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                        }
                                     } else {
                                         _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                     }
@@ -1358,7 +1529,11 @@ Servicio.prototype.validarCamposFirma = function () {
                             var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
                             _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                 if (respuesta === true) {
-                                    _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                    if (evidencias != false) {
+                                        _this.enviarEvidenciaAsociado(evidencias);
+                                    } else {
+                                        _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+                                    }
                                 } else {
                                     _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                 }
@@ -1376,6 +1551,17 @@ Servicio.prototype.validarCamposFirma = function () {
         }
     });
 };
+
+Servicio.prototype.enviarEvidenciaAsociado = function (evidencias) {
+    var _this = this;
+    _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#modal-dialogo', evidencias, function (respuesta) {
+        if (respuesta === true) {
+            _this.mensajeModal('Se envió la información correctamente', 'Correcto');
+        } else {
+            _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+        }
+    });
+}
 
 Servicio.prototype.validarCorreoArray = function (correo) {
     var resultado;
@@ -2037,7 +2223,7 @@ Servicio.prototype.guardarVueltaAsociado = function () {
         if (respuesta === true) {
             _this.mensajeModal('Documento enviado.', 'Correcto', true);
         } else {
-            _this.mensajeModal('Por favor contacte al administrador del Sistema AdIST.', 'Error', true);
+            _this.mensajeModal('Se agregó la vuelta, pero surgió el siguiente detalle: ' + respuesta.message, 'Advertencia', true);
         }
         myBoard.clearWebStorage();
         myBoardTecnico.clearWebStorage();
@@ -2074,4 +2260,34 @@ Servicio.prototype.validarTecnicoPoliza = function () {
             $('#divCampoCorreo').addClass('hidden');
         }
     });
+}
+
+Servicio.prototype.servicioValidacion = function () {
+    var _this = this;
+    var ticket = arguments[0].ticket || null;
+    var servicio = arguments[0].servicio;
+    var estatus = '5';
+    var sucursal = arguments[0].sucursal;
+    var seccion = arguments[0].seccion;
+    var descripcion = arguments[0].descripcion;
+    var datosConcluir = arguments[0].datosConcluir || null;
+    var dataMandar = {ticket: ticket, servicio: servicio, estatus: estatus, sucursal: sucursal, descripcion: descripcion, datosConcluir: datosConcluir};
+
+    if ($('#evidenciaCambiosSinClasificar').val() !== undefined) {
+        _this.file.enviarArchivos('#evidenciaCambiosSinClasificar', '/Generales/Servicio/ServicioEnValidacion', seccion, dataMandar, function (respuesta) {
+            if (respuesta.code === 200) {
+                _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+            } else {
+                _this.mensajeModal('Ocurrió el error "' + respuesta.message + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+            }
+        });
+    } else {
+        _this.enviarEvento('/Generales/Servicio/ServicioEnValidacion', dataMandar, seccion, function (respuesta) {
+            if (respuesta.code === 200) {
+                _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+            } else {
+                _this.mensajeModal('Ocurrió el error "' + respuesta.message + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+            }
+        });
+    }
 }

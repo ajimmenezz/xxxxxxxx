@@ -14,6 +14,8 @@ class InformacionServicios extends General {
     private $MSP;
     private $MSD;
     private $DBST;
+    private $DBC;
+    private $DBM;
     private $pdf;
     private $x;
     private $y;
@@ -28,7 +30,8 @@ class InformacionServicios extends General {
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
         $this->MSD = \Modelos\Modelo_ServiceDesk::factory();
         $this->DBST = \Modelos\Modelo_ServicioTicket::factory();
-        $this->pdf = new PDFAux();
+        $this->DBC = \Modelos\Modelo_Censos::factory();
+        $this->DBM = \Modelos\Modelo_Mantenimiento::factory();
     }
 
     //    public function MostrarDatosSD(string $folio) {
@@ -46,7 +49,8 @@ class InformacionServicios extends General {
     //        return array('html' => $html);
     //    }
 
-    public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key) {
+    public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key)
+    {
         $html = '';
         $estatus = TRUE;
 
@@ -66,7 +70,10 @@ class InformacionServicios extends General {
                     UNION ';
         } else {
             $union = '';
-            $html .= $this->consultaCorrectivoProblema($servicio, $folio, $key);
+            $generales = $this->getGeneralesServicio($servicio);
+            if ($generales['IdEstatus'] == 3) {
+                $html .= $this->consultaCorrectivoProblema($servicio, $folio, $key);
+            }
         }
 
         $serviciosConcluidos = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM (' . $union . 'SELECT 
@@ -84,6 +91,7 @@ class InformacionServicios extends General {
                                                                         AND (tse.IdEstatus in (3,4)
                                                                         OR (tse.IdTipoServicio = 20 AND tse.IdEstatus = 2))
                                                                         ) TABLAS
+                                                                        GROUP BY TABLAS.Id
                                                                         ORDER BY FIELD (IdEstatus, 2,4), FechaConclusion DESC');
 
         if (!empty($serviciosConcluidos)) {
@@ -149,7 +157,7 @@ class InformacionServicios extends General {
                 if (!empty($servicios)) {
                     foreach ($servicios as $key => $value) {
                         if ($value['IdEstatus'] === '3') {
-//                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
+                            //                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
                         } else {
                             $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
                         }
@@ -166,7 +174,7 @@ class InformacionServicios extends General {
             if (!empty($servicios)) {
                 foreach ($servicios as $key => $value) {
                     if ($value['IdEstatus'] === '3') {
-//                        $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
+                        //                        $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
                     } else {
                         $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
                     }
@@ -241,11 +249,19 @@ class InformacionServicios extends General {
                 }
             }
 
-            $path = $this->cargarPDF($datos);
+            $path = $this->definirPDF($datos);
+
+            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                $path = 'http://siccob.solutions/' . $path;
+            } else {
+                $path = 'http://' . $host . '/' . $path;
+            }
+
             $descripcionConclusionSD = '<div>Descripción: ' . $datosDescripcionConclusion[0]['DescripcionServicio'] . '</div>';
             $descripcion = $datosDescripcionConclusion[0]['Sucursal'] . ' ' . $infoServicio[0]['TipoServicio'] . ' se concluyo con exito';
             $datosResolucion = '<br>' . $descripcion . $descripcionConclusionSD . $linkImagenesSolucion . "<div><a href='" . $path . "' target='_blank'>Documento PDF</a></div>";
         }
+
         return $datosResolucion;
     }
 
@@ -260,7 +276,14 @@ class InformacionServicios extends General {
         $descripcion = '';
         $solucionDiv = '';
 
-        $linkPdf = $this->cargarPDF($datos);
+        $linkPdf = $this->definirPDF($datos);
+
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $linkPdf = 'http://siccob.solutions/' . $linkPdf;
+        } else {
+            $linkPdf = 'http://' . $host . '/' . $linkPdf;
+        }
+
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($usuario['Id']));
 
@@ -374,6 +397,7 @@ class InformacionServicios extends General {
     }
 
     public function servicioSinDetalles($datos) {
+        $host = $_SERVER['SERVER_NAME'];
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
 
         $datosDescripcionConclusion = $this->DBS->consultaGeneralSeguimiento('SELECT
@@ -381,7 +405,14 @@ class InformacionServicios extends General {
                                                                             FROM t_servicios_ticket tst
                                                                             WHERE tst.Id = "' . $datos['servicio'] . '"');
 
-        $path = $this->cargarPDF($datos);
+        $pdf = $this->definirPDF($datos);
+
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'http://siccob.solutions/' . $pdf;
+        } else {
+            $path = 'http://' . $host . '/' . $pdf;
+        }
+
         $descripcion = $datosDescripcionConclusion[0]['Sucursal'] . ' ' . $infoServicio[0]['TipoServicio'] . ' se concluyo con exito';
         $datosResolucion = '<br>' . $descripcion . "<div><a href='" . $path . "' target='_blank'>Documento PDF</a></div>";
 
@@ -632,7 +663,7 @@ class InformacionServicios extends General {
 
 
         if (!empty($data['idTipoProblema'])) {
-//            $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $folio);
+            //            $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $folio);
             switch ($data['idTipoProblema'][0]['IdTipoProblema']) {
                 case '1':
                     $solicitudRefaccion = $this->DBS->consultaGeneralSeguimiento('SELECT 
@@ -699,7 +730,13 @@ class InformacionServicios extends General {
                 'ticket' => $informacionSolicitud['ticket']
             );
 
-            $path = $this->cargarPDF($datos);
+            $path = $this->definirPDF($datos);
+            $host = $_SERVER['SERVER_NAME'];
+            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                $path = 'https://siccob.solutions/' . $path;
+            } else {
+                $path = 'http://' . $host . '/' . $path;
+            }
             $link = "<div><a href='" . $path . "' target='_blank'>DOCUMENTO PDF</a></div>";
             $datosProblema .= '<br><div style="color:#FF0000";>***PROBLEMA***</div><div>' . $descripcionProblema . $recibeSolicitud . '</div>' . $tabla . $link;
 
@@ -750,6 +787,8 @@ class InformacionServicios extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $detallesServicio = 'https://siccob.solutions/Detalles/Servicio/' . $servicio;
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $detallesServicio = 'https://pruebas.siccob.solutions/Detalles/Servicio/' . $servicio;
         } else {
             $detallesServicio = 'http://' . $host . '/Detalles/Servicio/' . $servicio;
         }
@@ -764,6 +803,8 @@ class InformacionServicios extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
+        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
         } else {
             $path = 'http://' . $host . '/' . $linkPdf['link'];
         }
@@ -941,14 +982,14 @@ class InformacionServicios extends General {
     }
 
     public function checklist(array $datos) {
-        $linkPdf = $this->cargarPDF($datos);
+        $linkPdf = $this->definirPDF($datos);
         $descripcion = "<div>Ha concluido el Servicio Checklist</div><br/><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a>";
 
         return $descripcion;
     }
 
     public function trafficService(array $datos) {
-        $linkPdf = $this->cargarPDF($datos);
+        $linkPdf = $this->definirPDF($datos);
         $descripcion = "<br/><div>Se ha realizo un servicio de Tráfico</div><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a><br/>";
         return $descripcion;
     }
@@ -1013,7 +1054,7 @@ class InformacionServicios extends General {
     public function getApiKeyByUser(string $usuario) {
         $keyTecnico = $this->MSP->getApiKeyByUser($usuario);
 
-        if(empty($keyTecnico)){
+        if (empty($keyTecnico)) {
             $keyTecnico = $this->MSD->apiKeyJefe($usuario);
         }
 
@@ -1021,7 +1062,7 @@ class InformacionServicios extends General {
 
         if ($respuestaKey['code'] === 400) {
             $key = $this->MSD->apiKeyJefe($usuario);
-        }else{
+        } else {
             $key = $respuestaKey['messege'];
         }
 
@@ -1047,7 +1088,7 @@ class InformacionServicios extends General {
 
         $consulta = $this->DBS->consulta("select 
         tst.Id,        
-        folioByServicio(tst.Id) as SD,
+        if(folioByServicio(tst.Id) is null, '', folioByServicio(tst.Id)) as SD,
         tst.Ticket,
         nombreUsuario(tst.Atiende) as Atiende,
         (select FechaCreacion from t_solicitudes where Id = tst.IdSolicitud) as FechaSolicitud,
@@ -1064,6 +1105,7 @@ class InformacionServicios extends General {
         estatus(tst.IdEstatus) as Estatus,
         tst.IdTipoServicio,
         tipoServicio(tst.IdTipoServicio) as TipoServicio,
+        (select Seguimiento from cat_v3_servicios_departamento where Id = tst.IdTipoServicio) as HasSeguimiento,
         sucursal(tst.IdSucursal) as Sucursal, 
         (select IdCliente from cat_v3_sucursales where Id = tst.IdSucursal) as IdCliente,
         cliente((select IdCliente from cat_v3_sucursales where Id = tst.IdSucursal)) as Cliente,
@@ -1086,7 +1128,6 @@ class InformacionServicios extends General {
         tcg.Punto,
         modelo(tcg.IdModelo) as Modelo,
         tcg.Serie,
-        tcd.IdTipoDiagnostico,
         (select Nombre from cat_v3_tipos_diagnostico_correctivo where Id = tcd.IdTipoDiagnostico) as TipoDiagnostico,
         (select Nombre from cat_v3_componentes_equipo where Id = tcd.IdComponente) as Componente,
         concat(
@@ -1099,13 +1140,17 @@ class InformacionServicios extends General {
                 (select Nombre from cat_v3_tipos_falla where Id = (select IdTipoFalla from cat_v3_fallas_equipo where Id = tcd.IdFalla))
             ),')'
         ) as Falla,
-        tcd.Evidencias,
-        tcd.Observaciones
+        tcd.*
         from t_correctivos_generales tcg
         inner join t_correctivos_diagnostico tcd on tcg.IdServicio = tcd.IdServicio
         where tcg.IdServicio = '" . $id . "'
         order by tcd.Id desc limit 1");
-        return $consulta[0];
+
+        if (!empty($consulta)) {
+            return $consulta[0];
+        } else {
+            return $consulta;
+        }
     }
 
     private function getProblemaCorrectivoForPDF(int $id) {
@@ -1157,7 +1202,10 @@ class InformacionServicios extends General {
         $consulta = $this->DBS->consulta("select 
         Descripcion,
         Archivos as Evidencias,
-        Fecha
+        Fecha,
+        modelo(IdModelo) AS Modelo,
+        areaAtencion(IdArea) AS Area,
+        Punto AS Punto
         from t_servicios_generales 
         where IdServicio = '" . $id . "'");
         return $consulta;
@@ -1181,11 +1229,15 @@ class InformacionServicios extends General {
                     WHEN 1 THEN 'Equipo'
                     WHEN 2 THEN 'Material'
                     WHEN 3 THEN 'Refacción'
+                    WHEN 4 THEN 'Elemento'
+                    WHEN 5 THEN 'Sub-Elemento'
                 END as Tipo, 
                 CASE IdItem 
                     WHEN 1 THEN (SELECT Equipo FROM v_equipos WHERE Id = TipoItem) 
                     WHEN 2 THEN (SELECT Nombre FROM cat_v3_equipos_sae WHERE Id = TipoItem)
-                    WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = TipoItem) 
+                    WHEN 3 THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = TipoItem)
+                    WHEN 4 THEN (SELECT Nombre FROM cat_v3_x4d_elementos WHERE Id = TipoItem) 
+                    WHEN 5 THEN (SELECT Nombre FROM cat_v3_x4d_subelementos WHERE Id = TipoItem) 
                 END as EquipoMaterial,
                 Serie,
                 Cantidad
@@ -1198,7 +1250,7 @@ class InformacionServicios extends General {
         return $arrayReturn;
     }
 
-    private function getHistorialReporteEnFalso(int $id) {
+    public function getHistorialReporteEnFalso(int $id) {
         $consulta = $this->DBS->consulta("select
         tcbrf.Id,
         nombreUsuario(tcbrf.IdUsuario) as Usuario,
@@ -1223,6 +1275,7 @@ class InformacionServicios extends General {
     }
 
     public function pdfFromFolio(array $datos) {
+        $this->pdf = new PDFAux();
         if (!isset($datos['folio'])) {
             return ["code" => 500, "message" => "The parameter 'folio' is mandatory"];
         } else if (!is_numeric($datos['folio'])) {
@@ -1231,13 +1284,13 @@ class InformacionServicios extends General {
             $servicios = $this->getServiciosByFolio($datos['folio']);
 
             if (!empty($servicios)) {
-                $this->setHeaderPDF($datos['folio']);
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
 
                 foreach ($servicios as $k => $v) {
                     $generales = $this->getGeneralesServicio($v['Id']);
 
                     if (($this->y + 26) > 276) {
-                        $this->setHeaderPDF($datos['folio']);
+                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
                     }
 
                     $this->setStyleHeader();
@@ -1292,15 +1345,104 @@ class InformacionServicios extends General {
         }
     }
 
+    public function definirPDF(array $datos) {
+        $this->pdf = new PDFAux();
+        $this->pdf->AliasNbPages();
+
+        $generales = $this->getGeneralesServicio($datos['servicio']);
+        $datos['folio'] = $generales['SD'];
+
+        if (isset($datos['archivo'])) {
+            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/', $datos['archivo']);
+        } else {
+            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', 'Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio']);
+        }
+
+        if (file_exists($carpeta)) {
+            unlink($carpeta);
+        }
+
+        $this->setHeaderPDF("Resumen de Incidente Service Desk", $generales['SD']);
+
+        $this->setCoordinates(10);
+        $this->setStyleHeader();
+        $this->setHeaderValue("Información General");
+
+        $this->setStyleTitle();
+        $this->setCellValue(27, 5, "Cliente:", 'R', true);
+        $this->setCellValue(27, 5, "Sucursal:", 'R');
+        $this->setCellValue(27, 5, "Tipo Serv:", 'R', true);
+        $this->setCoordinates(100, $this->y - 5);
+        $this->setCellValue(27, 5, "Estatus:", 'R', true);
+        $this->setCoordinates(10);
+        $this->setCellValue(27, 5, "Atiende:", 'R');
+        $restarY = 20;
+        if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
+            $this->setCellValue(27, 5, "Falla Reportada:", 'R');
+            $restarY = 25;
+        }
+
+        $this->setStyleSubtitle();
+        $this->setCoordinates(37, $this->y - $restarY);
+        $this->setCellValue(0, 5, $generales['Cliente'], 'L', true);
+        $this->setCellValue(0, 5, $generales['Sucursal'], 'L');
+        $this->setCellValue(75, 5, $generales['TipoServicio'], 'L', true);
+        $this->setCoordinates(127, $this->y - 5);
+        
+        if($generales['IdEstatus'] === '5'){
+            $estatus = 'EN ATENCIÓN';
+        }else{
+            $estatus = $generales['Estatus'];
+        }
+        
+        $this->setCellValue(73, 5, $estatus, 'L', true);
+        $this->setCoordinates(37);
+        $this->setCellValue(0, 5, $generales['Atiende'], 'L');
+        if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
+            $this->setCellValue(0, 5, $generales['FallaReportada'], 'L');
+        }
+
+        if ($generales['HasSeguimiento'] === '0') {
+            $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
+            $this->setFirmaGerente($generales['Id'], $datos);
+        } else {
+            switch ($generales['IdTipoServicio']) {
+                case 11:
+                case '11':
+                    $this->setCensoPDF($datos);
+                    $this->setFirmaGerente($generales['Id'], $datos);
+                    break;
+                case 12:
+                case '12':
+                    $this->setMantenimientoPDF($datos);
+                    $this->setFirmaGerente($generales['Id'], $datos);
+                    break;
+                case 20:
+                case '20':
+                    $this->setPDFContentCorrectivo($generales['Id'], $datos);
+                    break;
+            }
+        }
+
+        $this->pdf->Output('F', $carpeta, true);
+        $this->pdf->Close();
+        $carpeta = substr($carpeta, 1);
+
+        return $carpeta;
+    }
+
     private function setPDFContentSinSeguimiento(int $id, array $datos) {
         $this->setAvancesProblemasPDF($id, $datos);
 
         $resolucion = $this->getResolucionSinClasificarForPDF($id);
+
         if (isset($resolucion[0])) {
             $resolucion = $resolucion[0];
+
             if (($this->y + 26) > 276) {
-                $this->setHeaderPDF($datos['folio']);
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             }
+
             $this->setCoordinates(10);
             $this->setStyleHeader();
             $this->setHeaderValue("Documentación del Servicio");
@@ -1315,6 +1457,17 @@ class InformacionServicios extends General {
 
             $this->setStyleTitle();
             $this->setCellValue(25, $heightMulti, "Resolución:", 'R', true);
+            
+            if ($resolucion['Modelo'] !== NULL && $resolucion['Modelo'] !== 0) {
+                $this->setStyleTitle();
+                $this->setCellValue(25, 5, "Equipo:", 'R');
+                $this->setCellValue(25, 5, "Área y Punto:", 'R', true);
+
+                $this->setStyleSubtitle();
+                $this->setCoordinates(35, $this->y - 10);
+                $this->setCellValue(0, 5, $resolucion['Modelo'], 'L');
+                $this->setCellValue(0, 5, $resolucion['Area'] . ' - ' . $resolucion['Punto'], 'L', true);
+            }
 
             $this->setCoordinates(10, $this->pdf->GetY());
 
@@ -1324,10 +1477,12 @@ class InformacionServicios extends General {
 
     private function setAvancesProblemasPDF(int $id, array $datos) {
         $registros = $this->getAvancesProblemasForPDF($id);
+
         if (!empty($registros)) {
             if (($this->y + 26) > 276) {
-                $this->setHeaderPDF($datos['folio']);
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             }
+
             $this->setCoordinates(10);
             $this->setStyleHeader();
             $this->setHeaderValue("Historial de Avances y Problemas");
@@ -1372,7 +1527,7 @@ class InformacionServicios extends General {
         $registros = $this->getHistorialReporteEnFalso($id);
         if (!empty($registros)) {
             if (($this->y + 26) > 276) {
-                $this->setHeaderPDF($datos['folio']);
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             }
             $this->setCoordinates(10);
             $this->setStyleHeader();
@@ -1411,31 +1566,30 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setFirmasServicio(int $id, array $datos) {
-        $firmas = $this->getFirmasServicio($id);
+    private function setFirmasServicio(array $datos) {
+        $firmas = $this->getFirmasServicio($datos['servicio']);
         if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '') || (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '')) {
             if (($this->y + 56) > 276) {
-                $this->setHeaderPDF($datos['folio']);
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             }
 
-            $this->setCoordinates(10);
-            $this->setStyleHeader();
-            $this->setHeaderValue("Firmas del Servicio");
-
-            $this->setStyleTitle();
-            $this->setCellValue(95, 40, "", 'C');
-            $this->setCoordinates(10, $this->y - 40);
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->SetTextColor(0, 0, 0);
+            $this->pdf->Cell(95, 1, "Firmas de Cierre", 0, 0, 'C');
 
             $gerente = '';
             if (!is_null($firmas['Firma']) && $firmas['Firma'] != '') {
-                $this->pdf->Image('.' . $firmas['Firma'], $this->x + 7.5, $this->y + 2.5, 80, 35, pathinfo($firmas['Firma'], PATHINFO_EXTENSION));
+                $this->pdf->Image('.' . $firmas['Firma'], 7.5, $this->y + 2.5, 80, 35, pathinfo($firmas['Firma'], PATHINFO_EXTENSION));
                 $gerente = utf8_decode($firmas['Gerente']);
             }
 
-            $this->setCoordinates(105);
+            $this->setCoordinates(10, $this->y + 40);
+            $this->pdf->Cell(95, 5, utf8_decode($gerente), 0, 0, 'C');
 
-            $this->setCellValue(95, 40, "", 'C');
-            $this->setCoordinates(105, $this->y - 40);
+            $this->setCoordinates(10, $this->y + 5);
+            $this->pdf->Cell(95, 5, 'Gerente Cinemex', 0, 0, 'C');
+
+            $this->setCoordinates(105, $this->y - 45);
 
             $tecnico = '';
             if (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '') {
@@ -1443,15 +1597,61 @@ class InformacionServicios extends General {
                 $tecnico = utf8_decode($firmas['Tecnico']);
             }
 
-            $this->setCoordinates(10, $this->y + 40);
-            $this->setCellValue(95, 5, $gerente, 'C', true);
-            $this->setCoordinates(105, $this->y - 5);
-            $this->setCellValue(95, 5, $tecnico, 'C', true);
+            $this->setCoordinates(100, $this->y + 40);
+            $this->pdf->Cell(95, 5, utf8_decode($tecnico), 0, 0, 'C');
 
-            $this->setCoordinates(10);
-            $this->setCellValue(95, 5, 'Gerente Cinemex', 'C', true);
-            $this->setCoordinates(105, $this->y - 5);
-            $this->setCellValue(95, 5, "Técnico Siccob", 'C', true);
+            $this->setCoordinates(100, $this->y + 5);
+            $this->pdf->Cell(95, 5, utf8_decode("Técnico Siccob"), 0, 0, 'C');
+        }
+    }
+
+    private function setFirmaGerente(int $id, array $datos) {
+        $firmas = $this->getFirmasServicio($id);
+        if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '')) {
+            if (($this->y + 61) > 276) {
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+            }
+
+            $this->setStyleSubtitle();
+
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->Cell(95, 1, "Firma de Cierre", 0, 0, 'C');
+
+            $gerente = '';
+            $this->pdf->Image('.' . $firmas['Firma'], $this->x + 2.5, $this->y + 2.5, 80, 35, pathinfo($firmas['Firma'], PATHINFO_EXTENSION));
+            $gerente = utf8_decode($firmas['Gerente']);
+
+            $this->setCoordinates(55, $this->y + 40);
+            $this->pdf->Cell(95, 5, $gerente, 0, 0, 'C');
+
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->Cell(95, 5, 'Gerente Cinemex', 0, 0, 'C');
+
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->Cell(95, 5, $firmas['FechaFirma'], 0, 0, 'C');
+        }
+    }
+
+    private function setFirmaGerenteDiagnosticoCorrectivo(int $id, array $datos) {
+        $diagnostico = $this->getDiagnosticoCorrectivoForPDF($id);
+
+        if ((!is_null($diagnostico['Firma']) && $diagnostico['Firma'] != '')) {
+            if (($this->y + 56) > 276) {
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+            }
+
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->Cell(95, 1, "Firma", 0, 0, 'C');
+
+            $gerente = '';
+            $this->pdf->Image('.' . $diagnostico['Firma'], $this->x + 2.5, $this->y + 2.5, 80, 35, pathinfo($diagnostico['Firma'], PATHINFO_EXTENSION));
+            $gerente = utf8_decode($diagnostico['Gerente']);
+
+            $this->setCoordinates(55, $this->y + 40);
+            $this->pdf->Cell(95, 5, $gerente, 0, 0, 'C');
+
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->Cell(95, 5, 'Gerente Cinemex', 0, 0, 'C');
         }
     }
 
@@ -1465,7 +1665,7 @@ class InformacionServicios extends General {
             $indice = 0;
             for ($f = 1; $f <= $filas; $f++) {
                 if (($this->y + 45) > 276) {
-                    $this->setHeaderPDF($datos['folio']);
+                    $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
                     $this->setStyleHeader();
                     $this->setHeaderValue($header);
                 }
@@ -1495,26 +1695,37 @@ class InformacionServicios extends General {
 
     private function setPDFContentCorrectivo(int $id, array $datos) {
         $diagnostico = $this->getDiagnosticoCorrectivoForPDF($id);
-        $this->setDiagnosticoCorrectivoPDF($diagnostico, $datos);
 
-        if (in_array($diagnostico['IdTipoDiagnostico'], [1, '1',])) {
-            $this->setHistorialReporteEnFalso($id, $datos);
+        if (!empty($diagnostico)) {
+            $this->setDiagnosticoCorrectivoPDF($diagnostico, $datos);
+
+            if (in_array($diagnostico['IdTipoDiagnostico'], [1, '1',])) {
+                $this->setHistorialReporteEnFalso($id, $datos);
+            }
         }
 
         $this->setAvancesProblemasPDF($id, $datos);
-
         $problema = $this->getProblemaCorrectivoForPDF($id);
         $this->setProblemaCorrectivoPDF($problema, $datos);
 
         $solucion = $this->getSolucionCorrectivoForPDF($id);
         $this->setSolucionCorrectivoPDF($solucion, $datos);
+
+        $firmas = $this->getFirmasServicio($datos['servicio']);
+
+        if (!empty($firmas['Firma'])) {
+            $this->setFirmasServicio($datos);
+        } elseif (!empty($diagnostico['Firma'])) {
+            $this->setFirmaGerenteDiagnosticoCorrectivo($id, $datos);
+        }
     }
 
     private function setDiagnosticoCorrectivoPDF($diagnostico, $datos) {
         if (($this->y + 26) > 276) {
-            $this->setHeaderPDF($datos['folio']);
+            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
         }
 
+        $this->setCoordinates(10, $this->y + 5);
         $this->setStyleHeader();
         $this->setHeaderValue("Diagnóstico " . $diagnostico['TipoDiagnostico']);
 
@@ -1523,16 +1734,14 @@ class InformacionServicios extends General {
         $this->setCellValue(25, 5, "Ubicación:", 'R');
         $this->setCoordinates(100, $this->y - 5);
         $this->setCellValue(25, 5, "Serie:", 'R');
-
         $this->setStyleSubtitle();
         $this->setCoordinates(35, $this->y - 10);
         $this->setCellValue(0, 5, $diagnostico['Modelo'], 'L', true);
         $this->setCellValue(75, 5, $diagnostico['Area'] . " " . $diagnostico['Punto'], 'L');
         $this->setCoordinates(125, $this->y - 5);
         $this->setCellValue(75, 5, $diagnostico['Serie'], 'L');
-        ;
-
         $fill = false;
+
         if (in_array($diagnostico['IdTipoDiagnostico'], [4, '4'])) {
             $fill = !$fill;
             $this->setCoordinates(10);
@@ -1587,7 +1796,7 @@ class InformacionServicios extends General {
         if (isset($problema[0])) {
             $problema = $problema[0];
             if (($this->y + 26) > 276) {
-                $this->setHeaderPDF($datos['folio']);
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             }
             $this->setStyleHeader();
             $this->setHeaderValue("Problema del Servicio");
@@ -1633,17 +1842,19 @@ class InformacionServicios extends General {
                     $this->setCoordinates(10);
                     $this->setStyleTitle();
                     if ($problema['DejaRespaldo'] == 1 || 1 == 1) {
-                        $this->setCellValue(25, 5, "Respaldo:", 'R');
-                        $this->setCoordinates(130, $this->y - 5);
-                        $this->setCellValue(25, 5, "Serie:", 'R');
+                        if (!empty($problema['EquipoRespaldo'])) {
+                            $this->setCellValue(25, 5, "Respaldo:", 'R');
+                            $this->setCoordinates(130, $this->y - 5);
+                            $this->setCellValue(25, 5, "Serie:", 'R');
 
-                        $this->setCoordinates(10);
+                            $this->setCoordinates(10);
 
-                        $this->setStyleSubtitle();
-                        $this->setCoordinates(35, $this->y - 5);
-                        $this->setCellValue(95, 5, $problema['EquipoRespaldo'], 'L');
-                        $this->setCoordinates(155, $this->y - 5);
-                        $this->setCellValue(0, 5, $problema['SerieRespaldo'], 'L');
+                            $this->setStyleSubtitle();
+                            $this->setCoordinates(35, $this->y - 5);
+                            $this->setCellValue(95, 5, $problema['EquipoRespaldo'], 'L');
+                            $this->setCoordinates(155, $this->y - 5);
+                            $this->setCellValue(0, 5, $problema['SerieRespaldo'], 'L');
+                        }
                     } else {
                         $this->setCellValue(45, 5, "Autoriza Sin Respaldo:", 'R');
 
@@ -1660,7 +1871,7 @@ class InformacionServicios extends General {
         if (isset($solucion[0])) {
             $solucion = $solucion[0];
             if (($this->y + 16) > 276) {
-                $this->setHeaderPDF($datos['folio']);
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             }
             $this->setCoordinates(10);
             $this->setStyleHeader();
@@ -1740,12 +1951,418 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setHeaderPDF(int $folio) {
+    private function setCensoPDF(array $datos) {
+        if (($this->y + 26) > 276) {
+            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+        }
+
+        $this->setCoordinates(10);
+        $this->setCensos($datos);
+        $this->setTotalAreasCenso($datos);
+        $this->setTotalLineasCenso($datos);
+    }
+
+    private function setCensos(array $datos) {
+        if (($this->y + 26) > 276) {
+            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+        }
+
+        $this->setHeadersCensoData();
+
+        $censo = $this->DBC->getCensos($datos['servicio']);
+
+        foreach ($censo as $key => $value) {
+            $this->pdf->SetX('10');
+            $this->setStyleMinisubtitle();
+            $this->setCellValue(55, 5, $value['Area'], 'L');
+            $this->setCoordinates(65, $this->y - 5);
+            $this->setCellValue(15, 5, $value['Punto'], 'L');
+            $this->setCoordinates(80, $this->y - 5);
+            $this->setCellValue(80, 5, $value['Equipo'], 'L');
+            $this->setCoordinates(160, $this->y - 5);
+            $this->setCellValue(40, 5, $value['Serie'], 'L');
+
+            if (($this->y + 5) > 276) {
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                $this->setHeadersCensoData();
+            }
+
+            // $height = $this->setHeightMaximo(array(
+            //     'area' => $value['Area'],
+            //     'equipo' => $value['Equipo'],
+            //     'serie' => $value['Serie']                
+            // ));
+            // $cellHeight = $height[0]['nuevoHeight'];
+            // if (in_array(0, $height[2])) {
+            //     $cellHeight = 5;
+            // }
+            // $this->pdf->SetX('10');
+            // $this->pdf->MultiCell(45, $cellHeight, $value['Area'], 1, 'L');
+            // $cellHeight = $height[0]['nuevoHeight'];
+            // $xPos = $this->pdf->GetX();
+            // $yPos = $this->pdf->GetY();
+            // $this->pdf->SetXY(55, $yPos - $height[0]['nuevoHeight']);
+            // $this->pdf->MultiCell(12, $cellHeight, $value['Punto'], 1, 'C');
+            // $cellHeight = $height[0]['nuevoHeight'];
+            // if (in_array(1, $height[2])) {
+            //     $cellHeight = 5;
+            // }
+            // $xPos = $this->pdf->GetX();
+            // $yPos = $this->pdf->GetY();
+            // $this->pdf->SetXY(67, $yPos - $height[0]['nuevoHeight']);
+            // $this->pdf->MultiCell(76, $cellHeight, $value['Equipo'], 1, 'L');
+            // $cellHeight = $height[0]['nuevoHeight'];
+            // if (in_array(2, $height[2])) {
+            //     $cellHeight = 5;
+            // }
+            // $xPos = $this->pdf->GetX();
+            // $yPos = $this->pdf->GetY();
+            // $this->pdf->SetXY(143, $yPos - $height[0]['nuevoHeight']);
+            // $this->pdf->MultiCell(32, $cellHeight, $value['Serie'], 1, 'L');
+            // $cellHeight = $height[0]['nuevoHeight'];
+            // if (in_array(3, $height[2])) {
+            //     if (sizeof($height[2]) >= 1) {
+            //         $cellHeight = 5;
+            //     } else {
+            //         $cellHeight = 7.5;
+            //     }
+            // }
+            // $xPos = $this->pdf->GetX();
+            // $yPos = $this->pdf->GetY();
+            // $this->pdf->SetXY(175, $yPos - $height[0]['nuevoHeight']);
+            // $this->pdf->MultiCell(25, $cellHeight, $noTerminal, 1, 'L');
+        }
+    }
+
+    private function setHeadersCensoData() {
+        $this->setStyleHeader();
+        $this->setHeaderValue("Información del Censo");
+
+        $this->setCoordinates(10);
+        $this->setStyleTitle();
+        $this->setCellValue(55, 5, "Área", 'L', true);
+        $this->setCoordinates(65, $this->y - 5);
+        $this->setCellValue(15, 5, 'Punto', 'L', true);
+        $this->setCoordinates(80, $this->y - 5);
+        $this->setCellValue(80, 5, 'Modelo', 'L', true);
+        $this->setCoordinates(160, $this->y - 5);
+        $this->setCellValue(40, 5, 'Serie', 'L', true);
+    }
+
+    private function setTotalLineasCenso(array $datos) {
+        if (($this->y + 21) > 276) {
+            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+            $this->setCoordinates(10);
+        } else {
+            $this->setCoordinates(10, $this->y + 5);
+        }
+
+        $this->setHeadersTotalLineasCenso();
+
+        $totalLineas = $this->DBC->getTotalLineas($datos['servicio']);
+
+        foreach ($totalLineas as $key => $value) {
+            $this->setCoordinates(10);
+            $this->setStyleSubtitle();
+            $this->setCellValue(100, 5, $value['Linea'], 'L');
+            $this->setStyleSubtitle();
+            $this->setCoordinates(110, $this->y - 5);
+            $this->setCellValue(30, 5, $value['Total'], 'C');
+            if (($this->y + 5) > 276) {
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                $this->setHeadersTotalLineasCenso();
+            }
+        }
+        $this->setCoordinates(10, $this->y + 5);
+    }
+
+    private function setHeadersTotalLineasCenso() {
+        $this->setStyleHeader();
+        $this->setHeaderValue("Total de Equipos", 130);
+
+        $this->setCoordinates(10);
+        $this->setStyleTitle();
+        $this->setCellValue(100, 5, "Línea", 'C', true);
+        $this->setStyleTitle();
+        $this->setCoordinates(110, $this->y - 5);
+        $this->setCellValue(30, 5, 'Total', 'C', true);
+    }
+
+    private function setTotalAreasCenso(array $datos) {
+        if (($this->y + 21) > 276) {
+            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+            $this->setCoordinates(10);
+        } else {
+            $this->setCoordinates(10, $this->y + 5);
+        }
+
+        $this->setHeadersTotalAreasCenso();
+
+        $totalAreas = $this->DBC->getTotalAreas($datos['servicio']);
+
+        foreach ($totalAreas as $key => $value) {
+            $this->setCoordinates(10);
+            $this->setStyleSubtitle();
+            $this->setCellValue(100, 5, $value['Area'], 'L');
+            $this->setCoordinates(110, $this->y - 5);
+            $this->setCellValue(30, 5, $value['Total'], 'C');
+            if (($this->y + 5) > 276) {
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                $this->setHeadersTotalAreasCenso();
+            }
+        }
+    }
+
+    private function setHeadersTotalAreasCenso() {
+        $this->setStyleHeader();
+        $this->setHeaderValue("Equipos y Perifericos por Área", 130);
+
+        $this->setCoordinates(10);
+        $this->setStyleTitle();
+        $this->setCellValue(100, 5, "Área", 'C', true);
+        $this->setStyleTitle();
+        $this->setCoordinates(110, $this->y - 5);
+        $this->setCellValue(30, 5, 'Total', 'C', true);
+    }
+
+    private function setHeightMaximo(array $datos) {
+        $arrayHeight = array();
+        $arrayHeight[0] = $this->setHeight(array('width' => 45, 'height' => 5, 'campo' => $datos['area']));
+        $arrayHeight[1] = $this->setHeight(array('width' => 76, 'height' => 5, 'campo' => $datos['equipo']));
+        $arrayHeight[2] = $this->setHeight(array('width' => 30, 'height' => 5, 'campo' => $datos['serie']));
+        $arrayHeight[3] = $this->setHeight(array('width' => 25, 'height' => 5, 'campo' => $datos['noTerminal']));
+        $contador = 0;
+        $numeroMasAlto = 0;
+        $indiceArray = 0;
+        $arrayAltos = array();
+
+        while ($contador < sizeof($arrayHeight)) {
+            if ($arrayHeight[$contador]['nuevoHeight'] > 5) {
+                $numeroMasAlto = $arrayHeight[$contador]['nuevoHeight'];
+                $indiceArray = $contador;
+                array_push($arrayAltos, $contador);
+            }
+            $contador++;
+        }
+
+        return array($arrayHeight[$indiceArray], $indiceArray, $arrayAltos);
+    }
+
+    private function setHeight(array $datos) {
+        $cellWidth = $datos['width'];
+        $cellHeight = $datos['height'];
+
+        if ($this->pdf->GetStringWidth($datos['campo']) < $cellWidth) {
+            $line = 1;
+        } else {
+            $textLength = strlen($datos['campo']);
+            $errMargin = 10;
+            $startChar = 0;
+            $maxChar = 0;
+            $textArray = array();
+            $tmpString = "";
+
+            while ($startChar < $textLength) {
+                while (
+                $this->pdf->GetStringWidth($tmpString) < ($cellWidth - $errMargin) && ($startChar + $maxChar) < $textLength
+                ) {
+                    $maxChar++;
+                    $tmpString = substr($datos['campo'], $startChar, $maxChar);
+                }
+
+                $startChar = $startChar + $maxChar;
+                array_push($textArray, $tmpString);
+                $maxChar = 0;
+                $tmpString = '';
+            }
+            $line = count($textArray);
+        }
+
+        return array('nuevoHeight' => ($line * $cellHeight), 'cellHeight' => $cellHeight, 'cellWidth' => $cellWidth);
+    }
+
+    private function setMantenimientoPDF(array $datos) {
+        $this->setAntesDespues($datos);
+
+        $this->setProblemasEquipo($datos);
+
+        $this->setEquiposFaltante($datos);
+
+        $this->setProblemasAdicionales($datos);
+    }
+
+    private function setAntesDespues(array $datos) {
+        $antesDespues = $this->DBM->getAntesDespues($datos['servicio']);
+
+        if (!empty($antesDespues)) {
+            foreach ($antesDespues as $key => $value) {
+                if (($this->y + 61) > 276) {
+                    $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                }
+
+                $this->setCoordinates(10);
+                $this->setStyleHeader();
+                $this->setHeaderValue($value['Area'] . ' - ' . $value['Punto'] . ' ANTES');
+                $this->setStyleTitle();
+                $this->setCoordinates(10);
+                $this->setCellValue(190, 5, $value['ObservacionesAntes'], 'L');
+                $this->setEvidenciasPDF($datos, $value['EvidenciasAntes'], $value['Area'] . ' - ' . $value['Punto'] . ' ANTES');
+
+                if (($this->y + 66) > 276) {
+                    $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                }
+                $this->setCoordinates(10);
+                $this->setStyleHeader();
+                $this->setHeaderValue($value['Area'] . ' - ' . $value['Punto'] . ' DESPUÉS');
+                $this->setStyleTitle();
+                $this->setCoordinates(10);
+                $this->setCellValue(190, 5, $value['ObservacionesDespues'], 'L');
+                $this->setEvidenciasPDF($datos, $value['EvidenciasDespues'], $value['Area'] . ' - ' . $value['Punto'] . ' DESPUÉS');
+                $this->setCoordinates(10, $this->y + 5);
+            }
+        }
+    }
+
+    private function setProblemasEquipo($datos) {
+        $fill = false;
+        $fill = !$fill;
+        $problemasEquipo = $this->DBM->getProblemasEquipo($datos['servicio']);
+
+        if (!empty($problemasEquipo)) {
+            if (isset($datos['folio'])) {
+                $this->setHeaderPDF("Problemas por equipo", $datos['folio']);
+            } else {
+                $this->setHeaderPDF('Problemas por equipo.');
+            }
+
+            foreach ($problemasEquipo as $key => $value) {
+
+                if (($this->y + 26) > 276) {
+                    if (isset($datos['folio'])) {
+                        $this->setHeaderPDF("Problemas por equipo", $datos['folio']);
+                    } else {
+                        $this->setHeaderPDF('Problemas por equipo');
+                    }
+                }
+
+                $this->setStyleHeader();
+                $this->setHeaderValue($value['Area'] . ' - ' . $value['Punto']);
+
+                $this->setCoordinates(10);
+                $this->setStyleTitle();
+                $this->setCellValue(190, 5, "Equipo", 'L', $fill);
+
+                $this->setCoordinates(60, $this->y - 5);
+                $this->setCellValue(140, 5, $value['Equipo'], 'L');
+
+                $this->setCoordinates(10);
+                $this->setStyleTitle();
+                $this->setCellValue(190, 5, "Observaciones", 'L', $fill);
+
+                $this->setCoordinates(60, $this->y - 5);
+                $this->setCellValue(140, 5, $value['Observaciones'], 'L');
+
+                $this->setEvidenciasPDF($datos, $value['Evidencias'], '');
+            }
+        }
+    }
+
+    private function setEquiposFaltante($datos) {
+        $fill = false;
+        $fill = !$fill;
+        $equiposFaltante = $this->DBM->getEquiposFaltante($datos['servicio']);
+
+        if (!empty($equiposFaltante)) {
+            if (isset($datos['folio'])) {
+                $this->setHeaderPDF("Equipo Faltante", $datos['folio']);
+            } else {
+                $this->setHeaderPDF('Equipo Faltante');
+            }
+
+            foreach ($equiposFaltante as $key => $value) {
+
+                if (($this->y + 26) > 276) {
+                    if (isset($datos['folio'])) {
+                        $this->setHeaderPDF("Problemas por equipo", $datos['folio']);
+                    } else {
+                        $this->setHeaderPDF('Problemas por equipo.');
+                    }
+                }
+
+                $this->setCoordinates(10, $this->y + 5);
+
+                $this->setStyleHeader();
+                $this->setHeaderValue($value['Area'] . ' - ' . $value['Punto']);
+
+                $this->setCoordinates(10);
+                $this->setStyleTitle();
+                $this->setCellValue(190, 5, "Tipo de Artículo", 'L', $fill);
+
+                $this->setCoordinates(60, $this->y - 5);
+                $this->setCellValue(140, 5, $value['NombreItem'], 'L');
+
+                $this->setCoordinates(10);
+                $this->setStyleTitle();
+                $this->setCellValue(190, 5, "Artículo", 'L', $fill);
+
+                $this->setCoordinates(60, $this->y - 5);
+                $this->setCellValue(140, 5, $value['Equipo'], 'L');
+
+                $this->setCoordinates(10);
+                $this->setStyleTitle();
+                $this->setCellValue(190, 5, "Cantidad", 'L', $fill);
+
+                $this->setCoordinates(60, $this->y - 5);
+                $this->setCellValue(140, 5, $value['Cantidad'], 'L');
+            }
+        }
+    }
+
+    private function setProblemasAdicionales($datos) {
+        $fill = false;
+        $fill = !$fill;
+        $problemasAdicionales = $this->DBM->getProblemasAdicionales($datos['servicio']);
+
+        if (!empty($problemasAdicionales)) {
+            if (isset($datos['folio'])) {
+                $this->setHeaderPDF("Problemas Adicionales", $datos['folio']);
+            } else {
+                $this->setHeaderPDF('Problemas Adicionales');
+            }
+
+            foreach ($problemasAdicionales as $key => $value) {
+
+                if (($this->y + 26) > 276) {
+                    if (isset($datos['folio'])) {
+                        $this->setHeaderPDF("Problemas por equipo", $datos['folio']);
+                    } else {
+                        $this->setHeaderPDF('Problemas por equipo.');
+                    }
+                }
+
+                $this->setCoordinates(10, $this->y + 5);
+
+                $this->setStyleHeader();
+                $this->setHeaderValue($value['Area'] . ' - ' . $value['Punto']);
+
+                $this->setCoordinates(10);
+                $this->setStyleTitle();
+                $this->setCellValue(190, 5, "Descripción", 'L', $fill);
+
+                $this->setCoordinates(60, $this->y - 5);
+                $this->setCellValue(140, 5, $value['Descripcion'], 'L');
+
+                $this->setEvidenciasPDF($datos, $value['Evidencias'], '');
+            }
+        }
+    }
+
+    private function setHeaderPDF(string $titulo, string $folio = '') {
         $this->pdf->AddPage();
         $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
         $this->pdf->SetXY(0, 13);
         $this->pdf->SetFont("helvetica", "B", 15);
-        $this->pdf->Cell(0, 0, utf8_decode("Resumen de Incidente Service Desk"), 0, 0, 'C');
+        $this->pdf->Cell(0, 0, utf8_decode($titulo), 0, 0, 'C');
 
         $this->pdf->SetXY(0, 20);
         $this->pdf->SetFont("helvetica", "I", 13);
@@ -1794,13 +2411,13 @@ class InformacionServicios extends General {
         $this->pdf->SetXY($this->x, $this->y);
     }
 
-    private function setHeaderValue(string $value) {
-        $this->pdf->Cell(0, 6, utf8_decode($value), 1, 0, 'L', true);
+    private function setHeaderValue(string $value, int $width = 0, int $height = 6) {
+        $this->pdf->Cell($width, $height, utf8_decode($value), 1, 0, 'L', true);
         $this->y += 6;
         $this->setCoordinates();
     }
 
-    private function setCellValue($width, $height, string $value, string $align, bool $fill = false, bool $trueFill = true) {
+    private function setCellValue($width, $height, $value = '', string $align, bool $fill = false, bool $trueFill = true) {
         if ($fill) {
             $this->setFillGray();
         } else {
@@ -1833,8 +2450,8 @@ class PDFAux extends PDF {
         // Select Arial italic 8
         $this->SetFont('Helvetica', 'I', 10);
         // Print centered page number
-        $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
-        $this->Cell(68, 10, utf8_decode('Página ') . $this->PageNo(), 0, 0, 'R');
+        // $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
+        $this->Cell(100, 10, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
 }

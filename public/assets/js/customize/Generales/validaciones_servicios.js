@@ -46,7 +46,7 @@ $(function () {
                     'servicio': $(this).attr("data-id-servicio")
                 }
                 evento.enviarEvento('Servicio/Servicio_ToPdf', data, '#seccion-detalles', function (respuesta) {
-                    window.open('/' + respuesta.link);
+                    window.open(respuesta.link);
                 });
             });
         });
@@ -78,17 +78,18 @@ $(function () {
                 evento.cerrarModal();
             });
         });
+        
         $('#btnRechazarServicio').on('click', function () {
-            var modalMensaje = evento.mensajeValidar("¿Realmente quiere Rechazar el Servicio?");
+            var modalMensaje = evento.mensajeValidar("¿Realmente quiere rechazar el servicio?");
             $('#btnModalConfirmar').addClass('hidden');
             $('#btnModalAbortar').addClass('hidden');
-            evento.mostrarModal('"Advertencia"', modalMensaje);
+            evento.mostrarModal('Advertencia', modalMensaje);
             $('#btnModalConfirmar').off('click');
             $('#btnAceptarConfirmacion').on('click', function () {
                 var formularioRechazarServicio = modalRecharServicio();
                 $('#btnModalConfirmar').addClass('hidden');
                 $('#btnModalAbortar').addClass('hidden');
-                evento.mostrarModal('"Rechazar Servicio"', formularioRechazarServicio);
+                evento.mostrarModal('Rechazar Servicio', formularioRechazarServicio);
                 $('#btnModalConfirmar').off('click');
                 $('#btnGuardarDescripionServicio').on('click', function () {
                     if (evento.validarFormulario('#formRechazarFormulario')) {
@@ -96,9 +97,9 @@ $(function () {
                         var data = {'servicio': datosTablaServicios[1], idSolicitud: datosTablaServicios[0], descripcion: descripcion, atiende: datosTablaServicios[9], ticket: datosTablaServicios[2]};
                         $('#btnGuardarDescripionServicio').attr('disabled', 'disabled');
                         $('#btnCancelarRechazarServicio').attr('disabled', 'disabled');
-                        evento.enviarEvento('Servicio/Rechazar_Servicio', data, '#seccionRechazarServicio', function (respuesta) {
+                        evento.enviarEvento('Servicio/Rechazar_Servicio', data, '#modal-dialogo', function (respuesta) {
                             if (respuesta instanceof Array || respuesta instanceof Object) {
-                                evento.mensajeConfirmacion('Se Rechazo con Exito', 'Correcto');
+                                evento.mensajeConfirmacion('Se rechazo con exito.', 'Correcto');
                             }
                         });
                     }

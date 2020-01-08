@@ -89,7 +89,7 @@ $(function () {
         datosSelect();
     });
 
-    function datosSelect(motivosCancelacion) {
+    function datosSelect() {
         selectCancelacion.iniciarSelect();
         $('input[type="checkbox"]').click(function () {
             if ($(this).prop("checked") === true) {
@@ -126,12 +126,9 @@ $(function () {
                 fechaAusencia: infoPermiso.fechaAusencia,
                 idJefe: infoPermiso.idJefe
             }
-            peticion.enviar('', 'CalendarioPermisos/peticionCancelar', datos, function (respuesta) {
-                if(respuesta){ 
-                    location.reload(); 
-                }else{ 
-                    console.log("Error"); 
-                }
+            peticion.enviar('modalDatosPermiso', 'CalendarioPermisos/peticionCancelar', datos, function (respuesta) {
+                location.reload();
+                evento.mostrarMensaje('.mensajeSolicitarCancelacion', true, 'Se ha solicitado la petición.', 3000);
             });
         }
     });

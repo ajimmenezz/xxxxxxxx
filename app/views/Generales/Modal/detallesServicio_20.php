@@ -161,14 +161,19 @@ if (!in_array($datos['FirmaGerente'], ['', NULL])) {
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <h5 class="f-w-700">Observaciones</h5>
-                                <pre><?php echo $v['Observaciones']; ?></pre>
-                            </div>
-                        </div>
-
                         <?php
+                        if ($v['IdTipoDiagnostico'] !== '1') {
+                            ?> 
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <h5 class="f-w-700">Observaciones</h5>
+                                    <pre><?php echo $v['Observaciones']; ?></pre>
+                                </div>
+                            </div>
+
+                            <?php
+                        }
+
                         if ($v['IdTipoDiagnostico'] === '3') {
                             ?> 
 
@@ -256,6 +261,73 @@ if (!in_array($datos['FirmaGerente'], ['', NULL])) {
                                 </div>
                             </div>
                             <?php
+                        }
+
+                        if ($v['IdTipoDiagnostico'] === '1') {
+                            ?>
+                            <div class="row m-t-30">
+                                <div class="col-md-12">                            
+                                    <fieldset>
+                                        <legend class="pull-left width-full f-s-17">Bitácora Observaciones del Diagnóstico.</legend>
+                                    </fieldset>  
+                                </div>
+                            </div>
+                            <?php
+                                foreach ($v['BitacoraObservaciones'] as $key => $value) {
+                                    $fecha = strftime('%A %e de %B, %G ', strtotime($value['Fecha'])) . date("h:ma", strtotime($value['Fecha']));
+                            ?>
+                                    <div class="row m-t-25">
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <p class="f-w-600 pull-left"><?php echo $value['Usuario']; ?></p>            
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <p class="f-w-600 pull-right"><?php echo $fecha; ?></p>            
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <div class="form-group">                        
+                                                <div class="p-5" style="background: #e5e9ed; opacity: .9; border: 1px solid #ccd0d4; border-radius: 3px;">
+                                                    <p class="f-w-500 f-s-15 m-8"><?php echo $value['Descripcion']; ?></p>
+                                                </div>                        
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php
+                                    if (!empty($value['Evidencias']) && $value['Evidencias'] != '') {
+                                    ?>               
+                                        <div class="row">
+                                            <div class="col-md-12 col-sm-12 col-xs-12">                                                          
+                                                <?php
+                                                $evidencias = explode(",", $value['Evidencias']);
+                                                foreach ($evidencias as $key => $valueEvidencias) {
+                                                    echo '<div class="thumbnail-pic m-5 p-5">';
+                                                        $ext = strtolower(pathinfo($valueEvidencias, PATHINFO_EXTENSION));
+                                                        switch ($ext) {
+                                                            case 'png': case 'jpeg': case 'jpg': case 'gif':
+                                                                echo '<a class="imagenesSolicitud" target="_blank" href="' . $valueEvidencias . '"><img src="' . $valueEvidencias . '" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                                                break;
+                                                            case 'xls': case 'xlsx':
+                                                                echo '<a class="imagenesSolicitud" target="_blank" href="' . $valueEvidencias . '"><img src="/assets/img/Iconos/excel_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                                                break;
+                                                            case 'doc': case 'docx':
+                                                                echo '<a class="imagenesSolicitud" target="_blank" href="' . $valueEvidencias . '"><img src="/assets/img/Iconos/word_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                                                break;
+                                                            case 'pdf':
+                                                                echo '<a class="imagenesSolicitud" target="_blank" href="' . $valueEvidencias . '"><img src="/assets/img/Iconos/pdf_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                                                break;
+                                                            default :
+                                                                echo '<a class="imagenesSolicitud" target="_blank" href="' . $valueEvidencias . '"><img src="/assets/img/Iconos/no-thumbnail.jpg" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
+                                                                break;
+                                                        }
+                                                    echo '</div>';
+                                                }
+                                                ?>                                
+                                            </div>
+                                        </div>
+                                    <?php
+                                    }
+                                 }
                         }
                     }
                 } else {
@@ -357,10 +429,10 @@ if (!in_array($datos['FirmaGerente'], ['', NULL])) {
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                         <h5 class="f-w-700">Equipo Retirado</h5>
-                                        <pre><?php 
-                                            if($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información'){
+                                        <pre><?php
+                                            if ($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información') {
                                                 echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'];
-                                            }else{
+                                            } else {
                                                 echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreEquipoRetira'];
                                             }
                                             ?>
@@ -368,10 +440,10 @@ if (!in_array($datos['FirmaGerente'], ['', NULL])) {
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                         <h5 class="f-w-700">Serie Equipo Retirado</h5>
-                                        <pre><?php 
-                                            if($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información'){
+                                        <pre><?php
+                                            if ($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información') {
                                                 echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'];
-                                            }else{
+                                            } else {
                                                 echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['SerieRetira'];
                                             }
                                             ?>
@@ -382,10 +454,10 @@ if (!in_array($datos['FirmaGerente'], ['', NULL])) {
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                         <h5 class="f-w-700">Equipo Respaldo</h5>
-                                        <pre><?php 
-                                            if($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información'){
+                                        <pre><?php
+                                            if ($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información') {
                                                 echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'];
-                                            }else{
+                                            } else {
                                                 echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreEquipoRespaldo'];
                                             }
                                             ?>
@@ -393,10 +465,10 @@ if (!in_array($datos['FirmaGerente'], ['', NULL])) {
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                         <h5 class="f-w-700">Serie Equipo Respaldo</h5>
-                                        <pre><?php 
-                                            if($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información'){
+                                        <pre><?php
+                                            if ($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información') {
                                                 echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'];
-                                            }else{
+                                            } else {
                                                 echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['SerieRespaldo'];
                                             }
                                             ?>
@@ -408,15 +480,15 @@ if (!in_array($datos['FirmaGerente'], ['', NULL])) {
                                 <div class="row">
                                     <div class="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6 col-xs-offset-12 col-xs-12">
                                         <h5 class="f-w-700 text-center">Firma</h5>
-                                        <?php 
-                                        if($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información'){
+                                        <?php
+                                        if ($problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'] === 'Sin Información') {
                                             echo '<pre>';
                                             echo $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'];
                                             echo '</pre>';
-                                        }else{
-                                            echo '<img style="max-height: 120px;" src="'.$problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['Firma'].'" alt="Firma" />
-                                            <h6 class="f-w-700 text-center">'. $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreFirma'].'</h6>            
-                                            <h6 class="f-w-700 text-center">'. $problemasServicio['garantiaRespaldo'][0]['Fecha'].'</h6>';
+                                        } else {
+                                            echo '<img style="max-height: 120px;" src="' . $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['Firma'] . '" alt="Firma" />
+                                            <h6 class="f-w-700 text-center">' . $problemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreFirma'] . '</h6>            
+                                            <h6 class="f-w-700 text-center">' . $problemasServicio['garantiaRespaldo'][0]['Fecha'] . '</h6>';
                                         }
                                         ?>           
                                     </div>

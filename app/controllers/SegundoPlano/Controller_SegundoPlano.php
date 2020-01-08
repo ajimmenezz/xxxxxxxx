@@ -5,7 +5,8 @@
  *
  * @author Freddy
  */
-class Controller_SegundoPlano extends \CI_Controller {
+class Controller_SegundoPlano extends \CI_Controller
+{
 
     private $DB;
     private $DBS;
@@ -14,8 +15,10 @@ class Controller_SegundoPlano extends \CI_Controller {
     private $ubicaphone;
     private $informacionServicios;
     private $solicitud;
+    private $sae;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         ini_set('max_execution_time', 300);
         $this->DB = \Modelos\Modelo_SegundoPlano::factory();
@@ -25,9 +28,11 @@ class Controller_SegundoPlano extends \CI_Controller {
         $this->ubicaphone = \Librerias\WebServices\Ubicaphone::factory();
         $this->informacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         $this->solicitud = \Librerias\Generales\Solicitud::factory();
+        $this->sae = \Librerias\SAEReports\Reportes::factory();
     }
 
-    public function actulizarTablaEquiposSae() {
+    public function actulizarTablaEquiposSae()
+    {
         $materiales = $this->DB->obtenerMaterialSae();
         $this->DB->truncar('truncate tmp_cat_v3_equipos_sae');
         foreach ($materiales as $material) {
@@ -37,13 +42,15 @@ class Controller_SegundoPlano extends \CI_Controller {
         echo 'Termino de actualizar material SAE en las base de datos adist3';
     }
 
-    private function getViewFilterId($apiKey = '') {
+    private function getViewFilterId($apiKey = '')
+    {
         $filterId = $this->SD->getViewId('Todos Ingenieros', $apiKey);
         return $filterId;
     }
 
-    public function getAllRequests() {
-        $apiKey = $this->DB->getApiKeyByUser();
+    public function getAllRequests()
+    {
+        $apiKey = $this->DB->getApiKeyByUser(2);
         $filterId = $this->getViewFilterId($apiKey);
 
         $requests = $this->SD->getRequestsByFilter($filterId, $apiKey);
@@ -150,7 +157,7 @@ class Controller_SegundoPlano extends \CI_Controller {
                     $datos = $value;
                     $datos['fechaLectura'] = $infoDatabase['FechaLectura'];
                     $mensaje = ''
-                            . '<p>Se han detectado algunos cambios en el Folio ' . $datos['folio'] . ' y es posible que pueda ser de su interés.</p>';
+                        . '<p>Se han detectado algunos cambios en el Folio ' . $datos['folio'] . ' y es posible que pueda ser de su interés.</p>';
                     foreach ($cambios as $kc => $vc) {
                         switch ($kc) {
                             case 'Creador':
@@ -190,15 +197,16 @@ class Controller_SegundoPlano extends \CI_Controller {
 
                     $this->DB->insertInfoCambiosSD($datos);
 
-//                    echo "***********************************************************************<br />"
-//                        . "<pre style='text-color:red !important;'>", var_dump($mensaje), "</pre>"
-//                        . "<br /<<br />";
+                    //                    echo "***********************************************************************<br />"
+                    //                        . "<pre style='text-color:red !important;'>", var_dump($mensaje), "</pre>"
+                    //                        . "<br /<<br />";
                 }
             }
         }
     }
 
-    public function getAsignacionesSD() {
+    public function getAsignacionesSD()
+    {
         date_default_timezone_set("America/Mexico_City");
         $apiKey = $this->DB->getApiKeyByUser('2');
         //var_dump($apiKey);
@@ -255,13 +263,16 @@ class Controller_SegundoPlano extends \CI_Controller {
 
             $this->DB->insertaAsignacionesSD($arrayInsert);
 
-//            echo "<pre>";
-//            var_dump($arrayInsert);
-//            var_dump($details->CREATEDTIME);
-//            echo "</pre>";
+            //            echo "<pre>";
+            //            var_dump($arrayInsert);
+            //            var_dump($details->CREATEDTIME);
+            //            echo "</pre>";
         }
 
         $cont = 0;
+        echo "<pre>";
+        var_dump($foliosParaSolicitudes);
+        echo "</pre>";
         foreach ($foliosParaSolicitudes as $key => $value) {
             $cont++;
             if ($cont <= 1) {
@@ -277,12 +288,12 @@ class Controller_SegundoPlano extends \CI_Controller {
                 }
 
                 $sucursal = $this->DB->consulta("select "
-                        . "cs.Id, "
-                        . "(select EmailCorporativo from cat_v3_usuarios where Id = cs.IdResponsable) as Email, "
-                        . "(select EmailCorporativo from cat_v3_usuarios where Id = (select IdResponsableInterno from cat_v3_regiones_cliente where Id = cs.IdRegionCliente)) as EmailSupervisor "
-                        . "from cat_v3_sucursales cs "
-                        . "where NombreCinemex = '" . $details->CREATEDBY . "' "
-                        . "or NombreCinemex = '" . $details->REQUESTER . "' limit 1");
+                    . "cs.Id, "
+                    . "(select EmailCorporativo from cat_v3_usuarios where Id = cs.IdResponsable) as Email, "
+                    . "(select EmailCorporativo from cat_v3_usuarios where Id = (select IdResponsableInterno from cat_v3_regiones_cliente where Id = cs.IdRegionCliente)) as EmailSupervisor "
+                    . "from cat_v3_sucursales cs "
+                    . "where NombreCinemex = '" . $details->CREATEDBY . "' "
+                    . "or NombreCinemex = '" . $details->REQUESTER . "' limit 1");
                 if (!empty($sucursal)) {
                     if (!in_array($sucursal[0]['Email'], ['', 'NULL'])) {
                         array_push($correos, $sucursal[0]['Email']);
@@ -313,7 +324,8 @@ class Controller_SegundoPlano extends \CI_Controller {
                     'IdSucursal' => $sucursal,
                     'IdPrioridad' => $prioridad,
                     'Folio' => $details->WORKORDERID,
-                    'FechaCreacion' => date('Y-m-d H:i:s', $details->CREATEDTIME / 1000),
+                    'CreatedTime' => date('Y-m-d H:i:s', $details->CREATEDTIME / 1000),
+                    'FechaCreacion' => date('Y-m-d H:i:s'),
                     'Solicita' => '1'
                 ];
 
@@ -347,24 +359,24 @@ class Controller_SegundoPlano extends \CI_Controller {
 
                     //                    $correos = ['ajimenez@siccob.com.mx'];
                     $texto = '<p>Se ha generado una solicitud automática ligada al Folio: <strong>' . $arrayInsert['Folio'] . '</strong>.</p>'
-                            . '<p><strong>Solicitante:</strong> ' . $details->REQUESTER . ' </p>'
-                            . '<p><strong>Asunto:</strong> ' . $arrayInsertAsunto['Asunto'] . ' </p>'
-                            . '<p><strong>Descripción:</strong> ' . $arrayInsertAsunto['Descripcion'] . ' </p>'
-                            . '<br><br>';
+                        . '<p><strong>Solicitante:</strong> ' . $details->REQUESTER . ' </p>'
+                        . '<p><strong>Asunto:</strong> ' . $arrayInsertAsunto['Asunto'] . ' </p>'
+                        . '<p><strong>Descripción:</strong> ' . $arrayInsertAsunto['Descripcion'] . ' </p>'
+                        . '<br><br>';
                     $mensaje = $this->mail->mensajeCorreo('Nueva Solicitud por Folio ' . $arrayInsert['Folio'], $texto);
                     $this->mail->enviarCorreo('notificaciones@siccob.solutions', $correos, 'Nueva Solicitud por Folio ' . $arrayInsert['Folio'], $mensaje);
                 }
 
-//                echo "<pre>";
-//                var_dump($details);
-//                echo "</pre>";
-//                echo "<pre>";
-//                var_dump($arrayInsert);
-//                echo "</pre>";
+                //                echo "<pre>";
+                //                var_dump($details);
+                //                echo "</pre>";
+                //                echo "<pre>";
+                //                var_dump($arrayInsert);
+                //                echo "</pre>";
             }
         }
 
-        echo $cont;
+        //        echo $cont;
 
         //Se coloca en Completado los SD que anteriormente no cambio su estatus 
         $logSDCierres = $this->DBS->consultarFlagLogSDCierres();
@@ -380,7 +392,8 @@ class Controller_SegundoPlano extends \CI_Controller {
         }
     }
 
-    public function checkUbicaphoneEstatus() {
+    public function checkUbicaphoneEstatus()
+    {
         //        $result = $this->ubicaphone->getAllDevices();
         //        $array = [];
         //        date_default_timezone_set("America/Mexico_City");
@@ -422,7 +435,8 @@ class Controller_SegundoPlano extends \CI_Controller {
         //        echo "</pre>";
     }
 
-    public function getUbicaphoneGeofenceActivations() {
+    public function getUbicaphoneGeofenceActivations()
+    {
         //        $from = strtotime("2018-10-30 00:00:00");
         //        $to = strtotime("2018-10-30 23:59:59");
         //        $data = [
@@ -479,15 +493,18 @@ class Controller_SegundoPlano extends \CI_Controller {
         //        echo "</pre>";
     }
 
-    public function concluirSolicitudesAbiertas() {
+    public function concluirSolicitudesAbiertas()
+    {
         $this->solicitud->concluirSolicitudesAbiertas();
     }
 
-    public function cancelarPermisos() {
+    public function cancelarPermisos()
+    {
         $permisosPendientes = $this->DB->getPermisosSNArchivo();
     }
 
-    public function enviarReportes() {
+    public function enviarReportes()
+    {
         $correosPoliza = $this->DB->getCorreosPoliza();
 
         $reporteFolios = $this->solicitud->getFolios();
@@ -503,4 +520,13 @@ class Controller_SegundoPlano extends \CI_Controller {
         $this->mail->enviarCorreo('notificaciones@siccob.solutions', $correosPoliza[0], 'Reportes de Folios', $mensaje);
     }
 
+    public function updateRequestWithSDInfo()
+    {
+        $this->solicitud->updateRequestWithSDInfo();
+    }
+
+    public function getComprobantesPagoSAE7()
+    {
+        $this->sae->getComprobantesPagoSAE7();
+    }
 }

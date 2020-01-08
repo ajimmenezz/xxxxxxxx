@@ -1,13 +1,13 @@
 $(function () {
     //Objetos
     var evento = new Base();
-    var websocket = new Socket();
+//    var websocket = new Socket();
     var tabla = new Tabla();
     var select = new Select();
     var servicios = new Servicio();
 
     //Evento que maneja las peticiones del socket
-    websocket.socketMensaje();
+//    websocket.socketMensaje();
 
     //Muestra la hora en el sistema
     evento.horaServidor($('#horaServidor').val());
@@ -67,7 +67,7 @@ $(function () {
                     var requester = $("#requester-sd").val();
                     var sucursal_interna = $("#id-sucursal-interna").val();
                     var _cliente = $(this).val();
-                    
+
                     if (_cliente !== "") {
                         evento.enviarEvento('/Proyectos2/Planeacion/SucursalesByCliente', {'id': _cliente}, '#modal-dialogo', function (respuesta) {
                             $("#selectSucursal").empty().append("<option value=''>Selecciona . . .</option>");
@@ -152,9 +152,10 @@ $(function () {
                             evento.enviarEvento('Solicitud/Generar_Ticket', data, '#modal-dialogo', function (respuesta) {
                                 var fila = [];
                                 if (typeof respuesta === 'object') {
-                                    var numeroTicket = respuesta.ticket;
+                                    if (respuesta.responce === true) {
+                                        var numeroTicket = respuesta.ticket;
 //                                        eventoCalendario(numeroTicket);
-                                    evento.cargaContenidoModal('<div class="row">\n\
+                                        evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12 text-center">\n\
                                                                     <div class="form-group">\n\
                                                                         <p>Se genero el ticket <strong>' + respuesta.ticket + '</strong>  con exito y el personal encargado de brindar \n\
@@ -162,8 +163,53 @@ $(function () {
                                                                     </div>\n\
                                                                 </div>\n\
                                                             </div>');
-                                    $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
-                                    $('#data-table-solicitudes-asignadas').DataTable().row(_fila).remove().draw();
+                                        $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                        $('#data-table-solicitudes-asignadas').DataTable().row(this).remove().draw();
+                                    } else {
+                                        let htmlfolio = '';
+                                        if (respuesta.folios != null && respuesta.folios != 0) {
+                                            htmlfolio = ' y el folio <strong>' + respuesta.folios + '</strong>'
+                                        }
+                                        let html = '<div class="row">\n\
+                                                <div class="col-md-12 text-center">\n\
+                                                    <div class="form-group">\n\
+                                                        <p>Existe el Ticket <strong>' + respuesta.ticket + '</strong>' + htmlfolio + ' para esta solicitud</p>\n\
+                                                        <p>¿Quieres generar otro?</p>\n\
+                                                    </div>\n\
+                                                </div>\n\
+                                            </div>';
+                                        evento.cargaContenidoModal(html);
+                                        $('#btnModalConfirmar').removeClass('hidden').empty().append('Aceptar');
+                                        $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                        $('#btnModalConfirmar').on('click', function () {
+                                            $('#btnModalConfirmar').off('click');
+                                            data['generaOtro'] = true;
+                                            evento.enviarEvento('Solicitud/Generar_Ticket', data, '#modal-dialogo', function (respuesta) {
+                                                if (typeof respuesta === 'object') {
+                                                    var numeroTicket = respuesta.ticket;
+                                                    evento.cargaContenidoModal('<div class="row">\n\
+                                                                <div class="col-md-12 text-center">\n\
+                                                                    <div class="form-group">\n\
+                                                                        <p>Se genero el ticket <strong>' + respuesta.ticket + '</strong>  con exito y el personal encargado de brindar \n\
+                                                                           seguimiento al servicio ya fue notificado para su seguimiento. </p>\n\
+                                                                    </div>\n\
+                                                                </div>\n\
+                                                            </div>');
+                                                    $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                                    $('#data-table-solicitudes-asignadas').DataTable().row(this).remove().draw();
+                                                } else {
+                                                    evento.cargaContenidoModal('<div class="row">\n\
+                                                                <div class="col-md-12">\n\
+                                                                    <div class="form-group">\n\
+                                                                        <p>No se pudo generar el ticket por favor de volver a intentarlo. </p>\n\
+                                                                    </div>\n\
+                                                                </div>\n\
+                                                            </div>');
+                                                    $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                                }
+                                            });
+                                        });
+                                    }
                                 } else {
                                     evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12">\n\
@@ -182,44 +228,6 @@ $(function () {
                         evento.mostrarMensaje('#errorGenerarTicket', false, 'Debes definir el cliente para el servicio.', 3000);
                     }
                 });
-
-//                    //crear un evento en calendario
-//                    var eventoCalendario = function () {
-//                        var ticketCalendario = arguments[0];
-//                        var atiende = $('#selectAtiendeServicio option:selected').text();
-//                        var tipoServicio = $('#selectServicioDepartamento option:selected').text();
-//                        var sucursal = $('#selectSucursal option:selected').text();
-//                        var emailCorporativo = $('#selectAtiendeServicio option:selected').attr('data');
-//                        var descripcion = $('#inputDescripcionServicio').val();
-//                        var now = new Date();
-//                        today = now.toISOString();
-//
-//                        resource = {
-//                            "summary": "Atención a ticket",
-//                            "description": "Nuevo servicio. Se a agregado para su atención del ticket " + ticketCalendario + " con la siguiente descripcion " + descripcion,
-//                            "location": sucursal,
-//                            "timeZone": "America/Mexico_City",
-//                            "start": {
-//                                "dateTime": now
-//                            },
-//                            "end": {
-//                                "dateTime": now
-//                            },
-//                            "attendees": [
-//                                {
-//                                    "email": emailCorporativo,
-//                                    "displayName": atiende,
-//                                    "organizer": false,
-//                                    "self": false,
-//                                    "resource": false,
-//                                    "optional": false,
-//                                    "responseStatus": "accepted"
-//                                }],
-//                            "colorId": "4"
-//
-//                        };
-//                        handleClientLoad(resource, true);
-//                    };
 
                 //Evento de select personal para seleccionar su area y departamento
                 $('#selectReasignarParsonal').on('change', function () {
@@ -319,6 +327,32 @@ $(function () {
                         $('#seccionSeguimiento').addClass('hidden');
                         $('#seccionRechazar').removeClass('hidden');
                     }
+                });
+
+                $('#btnRechazarSolicitudSD').on('click', function () {
+                    evento.enviarEvento('Solicitud/FormularioRechazarSolicitud', {}, '#modal-dialogo', function (respuesta) {
+                        evento.cargaContenidoModal(respuesta.html);
+                        $('#btnRechazarSD').on('click', function () {
+                            var descripcion = $('#inputDescripcionRechazo').val();
+
+                            if (descripcion !== '') {
+                                var data = {solicitud: datos[0], descripcion: descripcion};
+                                evento.enviarEvento('Solicitud/RechazarSolicitudSD', data, '#modal-dialogo', function (respuesta) {
+                                    if (respuesta.code === 200) {
+                                        location.reload();
+                                    } else {
+                                        evento.mostrarMensaje('#errorRechazar', false, respuesta.message, 3000);
+                                    }
+                                });
+                            } else {
+                                evento.mostrarMensaje('#errorRechazar', false, 'Debes escribir la descripción del rechazo.', 3000);
+                            }
+                        });
+
+                        $('#btnCancelarRechazar').on('click', function () {
+                            evento.cerrarModal();
+                        });
+                    });
                 });
 
                 //Muestra la seccion de seguimiento cuando se cancela el rechazo
@@ -509,7 +543,7 @@ $(function () {
                     $('#selectAtiendeServicio').val()
                 ]);
                 $('#formAgregarSservicio').parsley().reset();
-                select.cambiarOpcion("#selectServicioDepartamento");
+//                select.cambiarOpcion("#selectServicioDepartamento");
             }
         });
 
@@ -538,9 +572,10 @@ $(function () {
                     evento.enviarEvento('Solicitud/Generar_Ticket', data, '#modal-dialogo', function (respuesta) {
                         var fila = [];
                         if (typeof respuesta === 'object') {
-                            var numeroTicket = respuesta.ticket;
-//                            eventoCalendario(numeroTicket);
-                            evento.cargaContenidoModal('<div class="row">\n\
+                            if (respuesta.responce === true) {
+                                var numeroTicket = respuesta.ticket;
+//                              eventoCalendario(numeroTicket);
+                                evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12 text-center">\n\
                                                                     <div class="form-group">\n\
                                                                         <p>Se genero el ticket <strong>' + respuesta.ticket + '</strong>  con exito y el personal encargado de brindar \n\
@@ -548,8 +583,53 @@ $(function () {
                                                                     </div>\n\
                                                                 </div>\n\
                                                             </div>');
-                            $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
-                            $('#data-table-solicitudes-asignadas').DataTable().row(this).remove().draw();
+                                $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                $('#data-table-solicitudes-asignadas').DataTable().row(this).remove().draw();
+                            } else {
+                                let htmlfolio = '';
+                                if (respuesta.folios != null && respuesta.folios != 0) {
+                                    htmlfolio = ' y el folio <strong>' + respuesta.folios + '</strong>'
+                                }
+                                let html = '<div class="row">\n\
+                                                <div class="col-md-12 text-center">\n\
+                                                    <div class="form-group">\n\
+                                                        <p>Existe el Ticket <strong>' + respuesta.ticket + '</strong>' + htmlfolio + ' para esta solicitud</p>\n\
+                                                        <p>¿Quieres generar otro?</p>\n\
+                                                    </div>\n\
+                                                </div>\n\
+                                            </div>';
+                                evento.cargaContenidoModal(html);
+                                $('#btnModalConfirmar').removeClass('hidden').empty().append('Aceptar');
+                                $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                $('#btnModalConfirmar').on('click', function () {
+                                    $('#btnModalConfirmar').off('click');
+                                    data['generaOtro'] = true;
+                                    evento.enviarEvento('Solicitud/Generar_Ticket', data, '#modal-dialogo', function (respuesta) {
+                                        if (typeof respuesta === 'object') {
+                                            var numeroTicket = respuesta.ticket;
+                                            evento.cargaContenidoModal('<div class="row">\n\
+                                                                <div class="col-md-12 text-center">\n\
+                                                                    <div class="form-group">\n\
+                                                                        <p>Se genero el ticket <strong>' + respuesta.ticket + '</strong>  con exito y el personal encargado de brindar \n\
+                                                                           seguimiento al servicio ya fue notificado para su seguimiento. </p>\n\
+                                                                    </div>\n\
+                                                                </div>\n\
+                                                            </div>');
+                                            $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                            $('#data-table-solicitudes-asignadas').DataTable().row(this).remove().draw();
+                                        } else {
+                                            evento.cargaContenidoModal('<div class="row">\n\
+                                                                <div class="col-md-12">\n\
+                                                                    <div class="form-group">\n\
+                                                                        <p>No se pudo generar el ticket por favor de volver a intentarlo. </p>\n\
+                                                                    </div>\n\
+                                                                </div>\n\
+                                                            </div>');
+                                            $('#btnModalAbortar').removeClass('hidden').empty().append('Cerrar');
+                                        }
+                                    });
+                                });
+                            }
                         } else {
                             evento.cargaContenidoModal('<div class="row">\n\
                                                                 <div class="col-md-12">\n\

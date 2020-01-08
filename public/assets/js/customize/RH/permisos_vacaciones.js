@@ -153,7 +153,7 @@ $(function () {
             } else {
                 if (data.archivoMotivoAusencia == 1) {
                     modal.mostrarModalBasico('Aviso', '<h4>Falta la respectiva documentación para tu permiso.<br>\n\
-                                            Recuerda que tienes 3 días avilés para entregarla o adjuntarla,\n\
+                                            Recuerda que tienes 3 días hábiles para entregarla o adjuntarla,\n\
                                             en caso de no finalizarse se cancelara de forma automática la presente solicitud</h4>');
                     $('#btnAceptar').on('click', function () {
                         peticionCrearPermiso('#modal-dialogo', data);

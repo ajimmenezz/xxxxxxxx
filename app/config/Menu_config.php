@@ -57,8 +57,50 @@ $config['Generales'] = array(
         'pluginsCss' => array(),
         'js' => array('Base/Base', 'Base/Socket', 'Generales/tester'),
         'pluginsJs' => array(),
-//        'Permiso' => 'VGTESTER'
+        //        'Permiso' => 'VGTESTER'
         'Permiso' => 'VGDASH'
+    ),
+    'Dashboard-Generico' => array(
+        'liga' => 'Dashboard',
+        'icono' => 'fa fa-dashboard',
+        'Url' => '/Generales/Dashboard_Generico',
+        'css' => array(),
+        'pluginsCss' => array(
+            'select2/dist/css/select2.min',
+            'DataTables/css/data-table'
+        ),
+        'js' => array(
+            'Base/Base',
+            'Base/Socket',
+            'Componentes/HerramientasWeb/Utileria',
+            'Componentes/Selects/Select',
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Tablas/Tabla',
+            'Componentes/Tablas/TablaBasica',
+            'Componentes/Graficas/GraficaGoogle',
+            'V2/PaquetesDashboard/dashboard_generico',
+            'V2/PaquetesDashboard/FactoryDashboard',
+            'V2/PaquetesDashboard/Dashboard',
+            'V2/PaquetesDashboard/DashboardTendencias',
+            'V2/PaquetesDashboard/DashboardComparacion',
+            'V2/PaquetesDashboard/DashboardIncidentesPendientes',
+            'V2/PaquetesDashboard/DashboardHistoricoIncidencias',
+            'V2/PaquetesDashboard/DashboardGraficasTop',
+            'V2/PaquetesDashboard/DashboardGraficaZonas'
+        ),
+        'pluginsJs' => array(
+            'select2/dist/js/select2.min',
+            'flot/jquery.flot.min',
+            'flot/jquery.flot.time.min',
+            'flot/jquery.flot.resize.min',
+            'flot/jquery.flot.pie.min',
+            'flot/jquery.flot.stack.min',
+            'flot/jquery.flot.crosshair.min',
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'flot/jquery.flot.categories'
+        ),
+        'Permiso' => 'VGDASHG'
     ),
     'Dashboard-Siccob' => array(
         'liga' => 'Dashboard General',
@@ -119,7 +161,7 @@ $config['Generales'] = array(
         'Permiso' => 'VD4D'
     ),
     'Dashboard-Logistica' => array(
-        'liga' => 'Dashboard',
+        'liga' => 'Dashboard Logistica',
         'icono' => 'fa fa-dashboard',
         'Url' => '/Logistica/Dashboard',
         'css' => array(
@@ -672,135 +714,135 @@ $config['Proyectos'] = array(
         ),
         'Permiso' => 'VSTP'
     ),
-        //    'Seguimiento-Proyectos' => array(
-        //        'liga' => 'Seguimiento',
-        //        'icono' => 'fa fa-eye',
-        //        'Url' => '/Proyectos/Seguimiento',
-        //        'css' => array('Proyecto/seguimiento'),
-        //        'pluginsCss' => array(
-        //            'bootstrap-datepicker/css/datepicker',
-        //            'bootstrap-datepicker/css/datepicker3',
-        //            'jquery-fileUpload/css/fileinput.min',
-        //            'DataTables/css/data-table',
-        //            'select2/dist/css/select2.min',
-        //            'parsley/src/parsley',
-        //            'Gantt/codebase/dhtmlxgantt'
-        //        ),
-        //        'js' => array(
-        //            'Componentes/Pagina',
-        //            'Componentes/Tablas/Tabla',
-        //            'Componentes/Tablas/TablaBasica',
-        //            'Componentes/Tablas/TablaColumnaOculta',
-        //            'Componentes/Formulario',
-        //            'Componentes/Socket',
-        //            'Componentes/FileUpload/Upload',
-        //            'Componentes/FileUpload/FileUpload_Basico',
-        //            'Componentes/Selects/Select',
-        //            'Componentes/Selects/SelectBasico',
-        //            'Componentes/Selects/SelectMultiple',
-        //            'Componentes/Fecha',
-        //            'Componentes/Inputs/Input',
-        //            'Componentes/Modal/ModalBase',
-        //            'Componentes/Modal/Modal',
-        //            'Componentes/Modal/Alertas',
-        //            'Componentes/Gantt/Gantt',
-        //            'Proyectos/Paginas/PaginaProyecto',
-        //            'Proyectos/Paginas/PaginaSeguimiento',
-        //            'Proyectos/Controladores/Controller_Seguimiento'
-        //        ),
-        //        'pluginsJs' => array(
-        //            'bootstrap-datepicker/js/bootstrap-datepicker',
-        //            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
-        //            'DataTables/js/jquery.dataTables',
-        //            'DataTables/js/dataTables.responsive',
-        //            'select2/dist/js/select2.min',
-        //            'jquery-fileUpload/js/fileinput',
-        //            'jquery-fileUpload/js/es',
-        //            'parsley/dist/parsley',
-        //            'parsley/src/i18n/es',
-        //            'Gantt/codebase/dhtmlxgantt',
-        //            'Gantt/codebase/locale/locale_es',
-        //            'Gantt/codebase/ext/dhtmlxgantt_tooltip'
-        //        ),
-        //        'Permiso' => 'VPSE'
-        //    ),
-        //    'Tareas-Proyectos' => array(
-        //        'liga' => 'Tareas',
-        //        'icono' => 'fa fa-tasks',
-        //        'Url' => '/Proyectos/TareasTecnico',
-        //        'css' => array('Proyecto/tareasTecnico'),
-        //        'pluginsCss' => array(
-        //            'bootstrap-datepicker/css/datepicker',
-        //            'bootstrap-datepicker/css/datepicker3',
-        //            'jquery-fileUpload/css/fileinput.min',
-        //            'DataTables/css/data-table',
-        //            'select2/dist/css/select2.min',
-        //            'parsley/src/parsley',
-        //            'Gantt/codebase/dhtmlxgantt'
-        //        ),
-        //        'js' => array(
-        //            'Componentes/Pagina',
-        //            'Componentes/Tablas/Tabla',
-        //            'Componentes/Tablas/TablaBasica',
-        //            'Componentes/Tablas/TablaColumnaOculta',
-        //            'Componentes/Formulario',
-        //            'Componentes/Socket',
-        //            'Componentes/FileUpload/Upload',
-        //            'Componentes/FileUpload/FileUpload_Basico',
-        //            'Componentes/Selects/Select',
-        //            'Componentes/Selects/SelectBasico',
-        //            'Componentes/Selects/SelectMultiple',
-        //            'Componentes/Fecha',
-        //            'Componentes/Inputs/Input',
-        //            'Componentes/Modal/ModalBase',
-        //            'Componentes/Modal/Modal',
-        //            'Componentes/Modal/Alertas',
-        //            'Proyectos/Paginas/PaginaProyecto',
-        //            'Proyectos/Paginas/PaginaTareas',
-        //            'Proyectos/Controladores/Controller_TareasTecnico'
-        //        ),
-        //        'pluginsJs' => array(
-        //            'bootstrap-datepicker/js/bootstrap-datepicker',
-        //            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
-        //            'DataTables/js/jquery.dataTables',
-        //            'DataTables/js/dataTables.responsive',
-        //            'select2/dist/js/select2.min',
-        //            'jquery-fileUpload/js/fileinput',
-        //            'jquery-fileUpload/js/es',
-        //            'parsley/dist/parsley',
-        //            'parsley/src/i18n/es',
-        //            'Gantt/codebase/dhtmlxgantt',
-        //            'Gantt/codebase/locale/locale_es',
-        //            'Gantt/codebase/ext/dhtmlxgantt_tooltip'
-        //        ),
-        //        'Permiso' => 'VTP'
-        //    )
-        //    'Gantt-Proyectos' => array(
-        //        'liga' => 'Gantt',
-        //        'icono' => 'fa fa-bar-chart',
-        //        'Url' => 'javascript:;',
-        //        'css' => array(),
-        //        'pluginsCss' => array(),
-        //        'js' => array(),
-        //        'pluginsJs' => array(),
-        //        'Permiso' => 'VPG'
-        //    ),
-        //    'Concluidos-Proyectos' => array(
-        //        'liga' => 'Concluidos',
-        //        'icono' => 'fa fa-check-square-o',
-        //        'Url' => 'javascript:;',
-        //        'css' => array(),
-        //        'pluginsCss' => array(),
-        //        'js' => array(),
-        //        'pluginsJs' => array(),
-        //        'Permiso' => 'VPC'
-        //    )
+    //    'Seguimiento-Proyectos' => array(
+    //        'liga' => 'Seguimiento',
+    //        'icono' => 'fa fa-eye',
+    //        'Url' => '/Proyectos/Seguimiento',
+    //        'css' => array('Proyecto/seguimiento'),
+    //        'pluginsCss' => array(
+    //            'bootstrap-datepicker/css/datepicker',
+    //            'bootstrap-datepicker/css/datepicker3',
+    //            'jquery-fileUpload/css/fileinput.min',
+    //            'DataTables/css/data-table',
+    //            'select2/dist/css/select2.min',
+    //            'parsley/src/parsley',
+    //            'Gantt/codebase/dhtmlxgantt'
+    //        ),
+    //        'js' => array(
+    //            'Componentes/Pagina',
+    //            'Componentes/Tablas/Tabla',
+    //            'Componentes/Tablas/TablaBasica',
+    //            'Componentes/Tablas/TablaColumnaOculta',
+    //            'Componentes/Formulario',
+    //            'Componentes/Socket',
+    //            'Componentes/FileUpload/Upload',
+    //            'Componentes/FileUpload/FileUpload_Basico',
+    //            'Componentes/Selects/Select',
+    //            'Componentes/Selects/SelectBasico',
+    //            'Componentes/Selects/SelectMultiple',
+    //            'Componentes/Fecha',
+    //            'Componentes/Inputs/Input',
+    //            'Componentes/Modal/ModalBase',
+    //            'Componentes/Modal/Modal',
+    //            'Componentes/Modal/Alertas',
+    //            'Componentes/Gantt/Gantt',
+    //            'Proyectos/Paginas/PaginaProyecto',
+    //            'Proyectos/Paginas/PaginaSeguimiento',
+    //            'Proyectos/Controladores/Controller_Seguimiento'
+    //        ),
+    //        'pluginsJs' => array(
+    //            'bootstrap-datepicker/js/bootstrap-datepicker',
+    //            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+    //            'DataTables/js/jquery.dataTables',
+    //            'DataTables/js/dataTables.responsive',
+    //            'select2/dist/js/select2.min',
+    //            'jquery-fileUpload/js/fileinput',
+    //            'jquery-fileUpload/js/es',
+    //            'parsley/dist/parsley',
+    //            'parsley/src/i18n/es',
+    //            'Gantt/codebase/dhtmlxgantt',
+    //            'Gantt/codebase/locale/locale_es',
+    //            'Gantt/codebase/ext/dhtmlxgantt_tooltip'
+    //        ),
+    //        'Permiso' => 'VPSE'
+    //    ),
+    //    'Tareas-Proyectos' => array(
+    //        'liga' => 'Tareas',
+    //        'icono' => 'fa fa-tasks',
+    //        'Url' => '/Proyectos/TareasTecnico',
+    //        'css' => array('Proyecto/tareasTecnico'),
+    //        'pluginsCss' => array(
+    //            'bootstrap-datepicker/css/datepicker',
+    //            'bootstrap-datepicker/css/datepicker3',
+    //            'jquery-fileUpload/css/fileinput.min',
+    //            'DataTables/css/data-table',
+    //            'select2/dist/css/select2.min',
+    //            'parsley/src/parsley',
+    //            'Gantt/codebase/dhtmlxgantt'
+    //        ),
+    //        'js' => array(
+    //            'Componentes/Pagina',
+    //            'Componentes/Tablas/Tabla',
+    //            'Componentes/Tablas/TablaBasica',
+    //            'Componentes/Tablas/TablaColumnaOculta',
+    //            'Componentes/Formulario',
+    //            'Componentes/Socket',
+    //            'Componentes/FileUpload/Upload',
+    //            'Componentes/FileUpload/FileUpload_Basico',
+    //            'Componentes/Selects/Select',
+    //            'Componentes/Selects/SelectBasico',
+    //            'Componentes/Selects/SelectMultiple',
+    //            'Componentes/Fecha',
+    //            'Componentes/Inputs/Input',
+    //            'Componentes/Modal/ModalBase',
+    //            'Componentes/Modal/Modal',
+    //            'Componentes/Modal/Alertas',
+    //            'Proyectos/Paginas/PaginaProyecto',
+    //            'Proyectos/Paginas/PaginaTareas',
+    //            'Proyectos/Controladores/Controller_TareasTecnico'
+    //        ),
+    //        'pluginsJs' => array(
+    //            'bootstrap-datepicker/js/bootstrap-datepicker',
+    //            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+    //            'DataTables/js/jquery.dataTables',
+    //            'DataTables/js/dataTables.responsive',
+    //            'select2/dist/js/select2.min',
+    //            'jquery-fileUpload/js/fileinput',
+    //            'jquery-fileUpload/js/es',
+    //            'parsley/dist/parsley',
+    //            'parsley/src/i18n/es',
+    //            'Gantt/codebase/dhtmlxgantt',
+    //            'Gantt/codebase/locale/locale_es',
+    //            'Gantt/codebase/ext/dhtmlxgantt_tooltip'
+    //        ),
+    //        'Permiso' => 'VTP'
+    //    )
+    //    'Gantt-Proyectos' => array(
+    //        'liga' => 'Gantt',
+    //        'icono' => 'fa fa-bar-chart',
+    //        'Url' => 'javascript:;',
+    //        'css' => array(),
+    //        'pluginsCss' => array(),
+    //        'js' => array(),
+    //        'pluginsJs' => array(),
+    //        'Permiso' => 'VPG'
+    //    ),
+    //    'Concluidos-Proyectos' => array(
+    //        'liga' => 'Concluidos',
+    //        'icono' => 'fa fa-check-square-o',
+    //        'Url' => 'javascript:;',
+    //        'css' => array(),
+    //        'pluginsCss' => array(),
+    //        'js' => array(),
+    //        'pluginsJs' => array(),
+    //        'Permiso' => 'VPC'
+    //    )
 );
 
 $config['Poliza'] = array(
     'Seguimiento-Poliza' => array(
         'liga' => 'Seguimiento',
-        'icono' => 'fa fa-eye',
+        'icono' => '',
         'Url' => '/Poliza/Seguimiento',
         'css' => array('Generales/notas', 'Generales/servicios'),
         'pluginsCss' => array(
@@ -841,7 +883,7 @@ $config['Poliza'] = array(
     ),
     'Servicios-Correctivos-Sin-Firma' => array(
         'liga' => 'Servicios Correctivos',
-        'icono' => 'fa fa-eye',
+        'icono' => '',
         'Url' => '/Poliza/Servicios_Sin_Firma',
         'css' => array('Generales/notas', 'Generales/servicios'),
         'pluginsCss' => array(
@@ -957,7 +999,7 @@ $config['Poliza'] = array(
     ),
     'Solicitudes-Multimedia' => array(
         'liga' => 'Solicitudes a Mutimedia',
-        'icono' => 'fa fa-list-alt',
+        'icono' => '',
         'Url' => '/Poliza/Solicitudes_Multimedia',
         'css' => array('Base/Base'),
         'pluginsCss' => array(
@@ -988,7 +1030,7 @@ $config['Poliza'] = array(
         'Permiso' => 'VPSM'
     ), 'Resumen-Vueltas-Asocidaos' => array(
         'liga' => 'Resumen Vueltas',
-        'icono' => 'fa fa-file',
+        'icono' => '',
         'Url' => '/Poliza/Resumen_Vueltas_Asociados',
         'css' => array(),
         'pluginsCss' => array(
@@ -1070,6 +1112,34 @@ $config['Poliza'] = array(
             'jquery-fileUpload/js/es'
         ),
         'Permiso' => 'SEAL'
+    ),
+    'Reporte-Inventario' => array(
+        'liga' => 'Inventarios',
+        'icono' => '',
+        'Url' => '/Poliza/Inventarios',
+        'css' => array('Generales/notas', 'Generales/servicios'),
+        'pluginsCss' => array(
+            'bootstrap-datepicker/css/datepicker',
+            'bootstrap-datepicker/css/datepicker3',
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'jquery-tag-it/css/jquery.tagit',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla', 'Base/Botones', 'Base/Nota', 'Poliza/inventarios'),
+        'pluginsJs' => array(
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'jquery-tag-it/js/tag-it.min',
+            'select2/dist/js/select2.min',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-daterangepicker/daterangepicker',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
+        ),
+        'Permiso' => 'VPOSE'
     )
 );
 
@@ -1437,8 +1507,7 @@ $config['RH'] = array(
         'liga' => 'Calendario Permisos',
         'icono' => 'fa fa-calendar',
         'Url' => '/RH/CalendarioPermisos',
-        'css' => array(
-        ),
+        'css' => array(),
         'pluginsCss' => array(
             'select2/dist/css/select2.min',
             'parsley/src/parsley',
@@ -1524,14 +1593,16 @@ $config['RH'] = array(
             'parsley/src/parsley',
             'select2/dist/css/select2.min',
         ),
-        'js' => array('Base/Base',
+        'js' => array(
+            'Base/Base',
             'Componentes/HerramientasWeb/Utileria',
             'Componentes/HerramientasWeb/Modal',
             'Componentes/Tablas/Tabla',
             'Componentes/Tablas/TablaBasica',
             'Componentes/Selects/Select',
             'Componentes/Selects/SelectBasico',
-            'RH/catalogo_permisos'),
+            'RH/catalogo_permisos'
+        ),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'select2/dist/js/select2.min',
@@ -1555,7 +1626,7 @@ $config['RH'] = array(
             'select2/dist/css/select2.min',
             'parsley/src/parsley'
         ),
-        'js' => array('calendar.demo', 'Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Fecha', 'Base/Tabla', 'Base/Botones', 'Base/Nota', 'RH/autorizar_permisos'),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Fecha', 'Base/Tabla', 'Base/Botones', 'Base/Nota', 'RH/autorizar_permisos'),
         'pluginsJs' => array(
             'bootstrap-datepicker/js/bootstrap-datepicker',
             'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
@@ -2004,31 +2075,41 @@ $config['Redes'] = array(
         'liga' => 'Seguimiento CE',
         'icono' => '',
         'Url' => '/Redes/SeguimientoCE',
-        'css' => array(),
+        'css' => array(
+            'Proyecto/tareasTecnico'
+        ),
         'pluginsCss' => array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
+            'DrawingBoard/css/drawingboard.min',
             'jquery-fileUpload/css/fileinput.min',
-            'parsley/src/parsley'
+            'parsley/src/parsley',
+            'switchery/switchery'
         ),
-        'js' => array('Base/Base',
+        'js' => array(
+            'Base/Base',
             'Componentes/HerramientasWeb/Utileria',
             'Componentes/HerramientasWeb/Modal',
+            'Componentes/HerramientasWeb/Collapse',
+            'Componentes/HerramientasWeb/Fecha',
             'Componentes/Selects/Select',
             'Componentes/Selects/SelectBasico',
             'Componentes/Tablas/Tabla',
             'Componentes/Tablas/TablaBasica',
             'Componentes/FileUpload/Upload',
             'Componentes/FileUpload/FileUpload_Basico',
-            'Redes/SeguimientoCE'),
+            'Redes/SeguimientoCE'
+        ),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
             'select2/dist/js/select2.min',
             'jquery-fileUpload/js/fileinput',
             'jquery-fileUpload/js/es',
+            'DrawingBoard/js/drawingboard.min',
             'parsley/dist/parsley',
-            'parsley/src/i18n/es'
+            'parsley/src/i18n/es',
+            'switchery/switchery.min'
         ),
         'Permiso' => 'VSGRCE'
     )

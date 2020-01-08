@@ -466,7 +466,7 @@
                             <div class="row m-t-15">
                                 <div class="col-md-12">                            
                                     <fieldset>
-                                        <legend class="pull-left width-full f-s-17">Bitácora Observaciones del Diagnotico.</legend>
+                                        <legend class="pull-left width-full f-s-17">Bitácora Observaciones del Diagnóstico.</legend>
                                     </fieldset> 
                                 </div>
                             </div>

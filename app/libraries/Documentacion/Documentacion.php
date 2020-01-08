@@ -109,6 +109,8 @@ class Documentacion extends General {
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'https://siccob.solutions/storage/Archivos/Usuarios/Usuario-' . $usuario['Id'] . '/Carta_Responsiva_Usuario_' . $usuario['Id'] . '.pdf';
+        } else if ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+            $path = 'https://siccob.solutions/storage/Archivos/Usuarios/Usuario-' . $usuario['Id'] . '/Carta_Responsiva_Usuario_' . $usuario['Id'] . '.pdf';
         } else {
             $path = 'http://' . $host . '/' . $pdf;
         }

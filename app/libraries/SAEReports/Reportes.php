@@ -13,11 +13,13 @@ class Reportes extends General
     private $DBSAE;
     private $Excel;
     private $pdf;
+    private $DBS;
 
     public function __construct()
     {
         parent::__construct();
         $this->DBSAE = \Modelos\Modelo_SAE7::factory();
+        $this->DBS = \Modelos\Modelo_Solicitud::factory();
         $this->Excel = new \Librerias\Generales\CExcel();
         parent::getCI()->load->helper(array('FileUpload', 'date'));
     }
@@ -93,6 +95,12 @@ class Reportes extends General
                                                             case movimientos.TIPO_DOC when 'M' then 'Traspaso' when 'r' then 'Compra/Remisión' end as Movimiento,
                                                             movimientos.REFER as Referencia,
                                                             movimientos.CANT as Cantidad,
+                                                            (select Series = STUFF((
+                                                                select  '\n' + [NUM_SER]
+                                                                from HNUMSER03 
+                                                                where REG_SERIE = movimientos.REG_SERIE 
+                                                                for XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'),1,2,'')
+                                                            ) as Series,
                                                             CAST(movimientos.COSTO as CHAR) as Costo,
                                                             CAST(movimientos.COSTO_PROM_INI as CHAR) as Costo_Promo_Inicial,
                                                             CAST(movimientos.COSTO_PROM_FIN as CHAR) as Costo_Promo_Final,
@@ -202,6 +210,7 @@ class Reportes extends General
             'Movimiento',
             'Referencia',
             'Cantidad',
+            'Series',
             'Costo',
             'Costo Promo Inicial',
             'Costo Promo Final',
@@ -211,9 +220,9 @@ class Reportes extends General
             'Movimiento Enlazado'
         ];
         $this->Excel->setTableSubtitles('A', 1, $arrayTitulosMovimientos);
-        $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
+        $arrayWidthMovimientos = [24.71, 9.46, 17.57, 33.71, 15.29, 16.71, 16.43, 17.14, 13.43, 25.0, 12.14, 22.43, 21, 17.15, 14.14, 16.29, 24.29];
         $this->Excel->setColumnsWidth('A', $arrayWidthMovimientos);
-        $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', 'center', 'center', 'center', '', 'center', 'center', 'center'];
+        $arrayAlignMovimientos = ['center', 'center', 'center', '', '', '', '', '', 'center', '', 'center', 'center', 'center', '', 'center', 'center', 'center'];
         $this->Excel->setTableContent('A', 1, $movimientos, true, $arrayAlignMovimientos);
         /* End Hoja 2 */
 
@@ -476,7 +485,7 @@ class Reportes extends General
                                                             ROUND(partidas.COST,2) as Precio,
                                                             ROUND(partidas.TOT_PARTIDA,2) as Total
                                                         from
-                                                        SAE7EMPRESA3.dbo.COMPO03 ordenes inner join SAE7EMPRESA3.dbo.PAR_COMPO03 partidas
+                                                        SAE7EMPRESA3.dbo.  ordenes inner join SAE7EMPRESA3.dbo.PAR_COMPO03 partidas
                                                             ON ordenes.CVE_DOC = partidas.CVE_DOC
                                                         INNER JOIN SAE7EMPRESA3.dbo.INVE03 inventario
                                                             ON partidas.CVE_ART = inventario.CVE_ART
@@ -524,18 +533,20 @@ class Reportes extends General
 
     public function mostrarReporteComprasSAEProyecto(array $datos)
     {
-        $claves = explode(",", $datos['claves']);
+        if ($datos['claves'] == "") {
+            $condicion = " where compras.FECHAELAB between '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 00:00:00'";
+        } else {
+            $claves = explode(",", $datos['claves']);
+            $condicion = " where compras.FECHAELAB between '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 00:00:00' and (1 <> 1";
+            foreach ($claves as $key => $value) {
+                $condicion .= " or compras.SU_REFER like '%" . $value . "%'
+              or libres.CAMPLIB1 like '%" . $value . "%'
+              or compras.SU_REFER like '%" . strtoupper($value) . "%'
+              or libres.CAMPLIB1 like '%" . strtoupper($value) . "%'";
+            }
 
-        $condicion = " where compras.FECHAELAB between '" . $datos['desde'] . " 00:00:00' and '" . $datos['hasta'] . " 00:00:00' and (1 <> 1";
-
-        foreach ($claves as $key => $value) {
-            $condicion .= " or compras.SU_REFER like '%" . $value . "%'
-          or libres.CAMPLIB1 like '%" . $value . "%'
-          or compras.SU_REFER like '%" . strtoupper($value) . "%'
-          or libres.CAMPLIB1 like '%" . strtoupper($value) . "%'";
+            $condicion .= ")";
         }
-
-        $condicion .= ")";
 
         $query = "select
                   compras.CVE_DOC as OC,
@@ -792,6 +803,82 @@ class Reportes extends General
         $this->pdf->Output('F', $carpeta, true);
         $carpeta = substr($carpeta, 1);
         return $carpeta;
+    }
+
+    private function simpleXmlToArray($xmlObject)
+    {
+        $array = [];
+        foreach ($xmlObject->children() as $node) {
+            $array[$node->getName()] = is_array($node) ? \simplexml_to_array($node) : (string) $node;
+        }
+        return $array;
+    }
+
+    public function getComprobantesPagoSAE7()
+    {
+        $this->DBS->queryBolean('truncate temporal_facturas_sae');
+        $consulta = $this->DBSAE->getFacturacionSAE();
+        foreach ($consulta as $k => $v) {
+            $this->DBS->insertar('temporal_facturas_sae', [
+                'ClaveFactura' => $v['ClaveFactura'],
+                'Cliente' => $v['Cliente'],
+                'RFC' => $v['RFCCliente'],
+                'Estatus' => $v['Estatus'],
+                'Pedido' => $v['Pedido'],
+                'Fecha' => $v['FechaElaboracion'],
+                'Subtotal' => $v['Subtotal'],
+                'Impuesto' => $v['Impuesto'],
+                'Importe' => $v['ImporteTotal'],
+                'UUID' => $v['UUID'],
+                'FormaPago' => $v['FormaPago'],
+                'UsoCFDI' => $v['UsoCFDI'],
+                'Empresa' => $v['Empresa']
+            ]);
+        }
+
+        $this->DBS->queryBolean('truncate temporal_comprobante_pagos_sae');
+        $consulta = $this->DBSAE->getComprobantesEmpresa();
+        foreach ($consulta as $k => $v) {
+            $xml = simplexml_load_string($v['XML_DOC']);
+            $sxml = new \SimpleXMLElement($v['XML_DOC']);
+            $sxml->registerXPathNamespace('cfdi', 'http://www.sat.gob.mx/cfd/3');
+            $sxml->registerXPathNamespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+            $sxml->registerXPathNamespace('tfd', 'http://www.sat.gob.mx/TimbreFiscalDigital');
+            $sxml->registerXPathNamespace('pago10', 'http://www.sat.gob.mx/Pagos');
+            // if ($v['CVE_DOC'] == 'RP0000000603') {
+            $pagos = $sxml->xpath('//pago10:Pago');
+            for ($i = 0; $i < count($pagos); $i++) {
+                $atributos = $pagos[$i]->attributes();
+                // echo "***********************************<br />";
+                $documentosRelacionados = $pagos[$i]->xpath('pago10:DoctoRelacionado');
+                // echo "<pre>";
+                // var_dump($documentosRelacionados);
+                // echo "</pre>";
+                for ($j = 0; $j < count($documentosRelacionados); $j++) {
+                    $attrDoctoRel = $documentosRelacionados[$j]->attributes();
+                    $arrayInsert = [
+                        'ClaveComprobante' => $v['CVE_DOC'],
+                        'FechaPago' => str_replace("T", " ", $atributos['FechaPago']),
+                        'FormaPago' => $atributos['FormaDePagoP'],
+                        'TipoCambio' => $atributos['TipoCambioP'],
+                        'Emisor' => $atributos['RfcEmisorCtaOrd'],
+                        'CuentaOrdenante' => $atributos['CtaOrdenante'],
+                        'EmisorCuentaBeneficiario' => $atributos['RfcEmisorCtaBen'],
+                        'CtaBeneficiario' => $atributos['CtaBeneficiario'],
+                        'Empresa' => $v['Empresa'],
+                        'Moneda' => $attrDoctoRel['MonedaDR'],
+                        'Monto' => $attrDoctoRel['ImpPagado'],
+                        'Parcialidad' => $attrDoctoRel['NumParcialidad'],
+                        'Factura' => $attrDoctoRel['Serie'] . sprintf("%'.010d", $attrDoctoRel['Folio']),
+                    ];
+
+                    $this->DBS->insertar('temporal_comprobante_pagos_sae', $arrayInsert);
+                }
+            }
+            // }
+        }
+
+        $this->DBSAE->checkFacturasSinComprobante();
     }
 }
 

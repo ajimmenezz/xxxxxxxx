@@ -4,7 +4,8 @@ namespace Librerias\Generales;
 
 use Controladores\Controller_Datos_Usuario as General;
 
-class Secciones extends General {
+class Secciones extends General
+{
 
     private $Catalogo;
     private $Notificacion;
@@ -48,15 +49,18 @@ class Secciones extends General {
     private $CatalogoMotivosPermiso;
     private $CatalogoRechazoPermiso;
     private $CatalogoCancelacionPermiso;
-    private $motivosCancelacion; 
-    
-    private $gestorProyectos;
+    private $motivosCancelacion;
 
-    public function __construct() {
+    private $gestorProyectos;
+    private $gestorDashboard;
+    private $inventarios;
+
+    public function __construct()
+    {
         parent::__construct();
         parent::getCI()->config->load('Menu_config');
         parent::getCI()->config->load('Pagina_config');
-        
+
         $this->Personal = \Librerias\Generales\Usuario::factory();
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();
         $this->Notificacion = \Librerias\Generales\Notificacion::factory();
@@ -94,17 +98,20 @@ class Secciones extends General {
         $this->ModeloDashboard = \Modelos\Modelo_Dashboard::factory();
         $this->permisosVacaciones = \Librerias\RH\Permisos_Vacaciones::factory();
         $this->autorizarpermisos = \Librerias\RH\Autorizar_permisos::factory();
-        $this->motivosCancelacion = \Librerias\RH\CalendarioPermisos::factory(); 
+        $this->motivosCancelacion = \Librerias\RH\CalendarioPermisos::factory();
         $this->GapsiProyecto = \Librerias\Gapsi\GerstorProyectosGAPSI::factory();
         $this->fondoFijo = \Librerias\FondoFijo\FondoFijo::factory();
         $this->instalaciones = \Librerias\Instalaciones\Instalaciones::factory();
         $this->prime = \Librerias\Prime\Inventario::factory();
-        $this->seccionCE = \Librerias\V2\PaquetesTicket\GestorServicios::factory();
-        
+        $this->seccionCE = new \Librerias\V2\PaquetesTicket\GestorServicios();
+        $this->inventarios = \Librerias\Poliza\Inventario::factory();
+
         $this->factoryCatalogos = new \Librerias\V2\Factorys\FactoryCatalogos();
         $this->CatalogoMotivosPermiso = $this->factoryCatalogos->getCatalogo('CatalogoMotivoPermisos');
         $this->CatalogoRechazoPermiso = $this->factoryCatalogos->getCatalogo('CatalogoRechazoPermisos');
         $this->CatalogoCancelacionPermiso = $this->factoryCatalogos->getCatalogo('CatalogoCancelarPermisos');
+
+        $this->gestorDashboard = new \Librerias\V2\PaquetesDashboard\GestorDashboard();
     }
 
     /*
@@ -114,7 +121,8 @@ class Secciones extends General {
      * @return array regresa la lista de menu y modulos para el usuario
      */
 
-    public function getSecciones(array $usuario) {
+    public function getSecciones(array $usuario)
+    {
         $menu = array();
         $permisos = array();
         $catalogo = null;
@@ -154,7 +162,8 @@ class Secciones extends General {
      * Se encarga de obtener la notificaciones del usuario.
      */
 
-    public function getNotificaciones(string $usuario) {
+    public function getNotificaciones(string $usuario)
+    {
         return $this->Notificacion->getNotificacionesMenuCabecera($usuario);
     }
 
@@ -166,7 +175,8 @@ class Secciones extends General {
      *  
      */
 
-    public function getDatosPagina(string $url) {
+    public function getDatosPagina(string $url)
+    {
         $datos = array();
         $usuario = $this->Usuario->getDatosUsuario();
         switch ($url) {
@@ -269,14 +279,17 @@ class Secciones extends General {
             case 'RH/Autorizar_permisos':
                 $datos['misSubordinados'] = $this->autorizarpermisos->buscarSubordinados($usuario['Id'], $usuario['IdPerfil']);
                 break;
-            case 'RH/CalendarioPermisos': 
-                $datos['motivosCancelacion'] = $this->motivosCancelacion->getMotivoCancelaciones(); 
-                break; 
+            case 'RH/CalendarioPermisos':
+                $datos['motivosCancelacion'] = $this->motivosCancelacion->getMotivoCancelaciones();
+                break;
+            case 'RH/CalendarioPermisos':
+                $datos['motivosCancelacion'] = $this->motivosCancelacion->getMotivoCancelaciones();
+                break;
             case 'RH/Catalogos_Permisos':
-                  $datos['TipoMotivo'] = $this->CatalogoMotivosPermiso->getDatos();
-                  $datos['TipoRechazo'] = $this->CatalogoRechazoPermiso->getDatos();
-                  $datos['TipoCancelacion'] = $this->CatalogoCancelacionPermiso->getDatos();
-                  $datos['ListaPerfiles'] = $this->Catalogo->catPerfiles("3");
+                $datos['TipoMotivo'] = $this->CatalogoMotivosPermiso->getDatos();
+                $datos['TipoRechazo'] = $this->CatalogoRechazoPermiso->getDatos();
+                $datos['TipoCancelacion'] = $this->CatalogoCancelacionPermiso->getDatos();
+                $datos['ListaPerfiles'] = $this->Catalogo->catPerfiles("3");
                 break;
             case 'Poliza':
                 $datos['TiposProyectos'] = $this->DBPO->getTiposProyecto();
@@ -301,8 +314,8 @@ class Secciones extends General {
                 break;
             case 'Administrador/Sucursales':
                 $datos['ListaSucursales'] = $this->Catalogo->catSucursales("3");
-                $datos['PermisoAgregarSucursal'] = false;                            
-                if (in_array('318', $usuario['PermisosAdicionales'])||in_array('318', $usuario['Permisos'])) {
+                $datos['PermisoAgregarSucursal'] = false;
+                if (in_array('318', $usuario['PermisosAdicionales']) || in_array('318', $usuario['Permisos'])) {
                     $datos['PermisoAgregarSucursal'] = true;
                 }
                 break;
@@ -546,7 +559,7 @@ class Secciones extends General {
                 $datos['Software'] = $this->Catalogo->catRhHabilidadesSoftware('3');
                 break;
             case 'Generales/Dashboard_Gapsi':
-//                $datos['Datos'] = $this->GapsiProyecto->getDatosGeneralesProyectos();
+                //                $datos['Datos'] = $this->GapsiProyecto->getDatosGeneralesProyectos();
                 $datos['Proyectos'] = $this->GapsiProyecto->getListProjects();
                 $datos['TiposProyectos'] = $this->GapsiProyecto->getProjectTypes();
                 break;
@@ -561,7 +574,6 @@ class Secciones extends General {
             case 'FondoFijo/MiFondo':
                 $datos['Cuentas'] = $this->fondoFijo->getSaldosCuentasXUsuario($usuario['Id']);
                 break;
-            
             case 'FondoFijo/Autorizar':
                 $datos['Pendientes'] = $this->fondoFijo->pendientesXAutorizar($usuario['Id']);
                 break;
@@ -572,12 +584,18 @@ class Secciones extends General {
                 $datos['Sucursales'] = $this->prime->getSucursalesPrime();
                 break;
             case 'Redes/SeguimientoCE':
-                $datos['infoServicios'] = $this->seccionCE->getDatosServicios();
+                $datos['infoServicios'] = $this->seccionCE->getServicios();
                 break;
 
             case 'FondoFijo/SaldosTecnico':
                 $datos['SaldoTecnico'] = $this->fondoFijo->getTecnicos();
                 //Este va a la vista
+                break;
+            case 'Generales/Dashboard_Generico':
+                $datos['dashboard'] = $this->gestorDashboard->getDashboards();
+                break;
+            case 'Poliza/Inventarios':
+                $datos['data'] = $this->inventarios->getInventoryFiltersData();
                 break;
             default:
                 break;
@@ -590,7 +608,8 @@ class Secciones extends General {
      * 
      */
 
-    public function getAlcance($tipoProyecto, $idProyecto) {
+    public function getAlcance($tipoProyecto, $idProyecto)
+    {
         $data = array();
         $indice = array();
         $data['tipoProyecto'] = $tipoProyecto;
@@ -629,8 +648,8 @@ class Secciones extends General {
      * 
      */
 
-    public function getAyuda(string $ayuda) {
+    public function getAyuda(string $ayuda)
+    {
         return array('informacion' => parent::getCI()->load->view('Ayuda/' . $ayuda, '', TRUE));
     }
-
 }

@@ -106,7 +106,7 @@
                                         <option value="">Seleccionar</option>
                                         <?php
                                         foreach ($datos['motivosCancelacion'] as $value) {
-                                            echo '<option value="'.$value['Id'].'">'.$value['text'].'</option>';
+                                            echo '<option value="' . $value['Id'] . '">' . $value['text'] . '</option>';
                                         }
                                         ?>
                                     </select>
@@ -121,6 +121,9 @@
                                     <textarea id="textareaMotivoSolicitarCancelacion" class="form-control" placeholder="Ingresa el motivo de la cancelación " rows="3"></textarea>
                                 </div>
                             </form>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mensajeSolicitarCancelacion"></div>
                         </div>
                     </div>
                     <!--Finaliza la seccion de solicitud de cancelacion-->

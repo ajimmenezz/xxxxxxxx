@@ -53,4 +53,12 @@ $(function () {
             }
         });
     });
+    
+    $('#solicitarFoliosAnterior').on('click', function () {
+        evento.enviarEvento('Tester/solicitarFoliosAnterior',  {}, '#panelComparacionTickets', function (respuesta) {
+            if (respuesta) {
+                window.open(respuesta.ruta, '_blank');
+            }
+        });
+    });
 });

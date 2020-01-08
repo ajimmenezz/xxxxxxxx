@@ -163,14 +163,61 @@
                 </div>
                 <?php
             }
-            ?>
-            <div class="row m-t-10">
-                <div class="col-md-12 col-xs-12">
-                    <h6 class="f-w-700">Observaciones</h6>
-                    <h5><?php echo $correctivosDiagnostico['Observaciones']; ?></h5>
-                </div>  
-            </div>
-            <?php
+            if ($correctivosDiagnostico['IdTipoDiagnostico'] === '1') {
+                ?>
+                <div style="page-break-after:always;">
+                    <div class="row">
+                        <div class="col-md-12">                            
+                            <fieldset>
+                                <legend class="pull-left width-full f-s-17">Bitácora Observaciones del Diagnóstico.</legend>
+                            </fieldset>  
+                        </div>
+                    </div>
+
+                    <?php
+                    foreach ($correctivosDiagnostico['BitacoraObservaciones'] as $key => $value) {
+                        $fecha = strftime('%A %e de %B, %G ', strtotime($value['Fecha'])) . date("h:ma", strtotime($value['Fecha']));
+                        ?>
+                        <div class="row m-t-25">
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <p class="f-w-600 pull-left"><?php echo $value['Usuario']; ?></p>            
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <p class="f-w-600 pull-right"><?php echo $fecha; ?></p>            
+                            </div>
+                        </div>
+                        <div class="row m-t-25">
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <pre><?php echo $value['Descripcion']; ?></pre>
+                            </div>
+                        </div>
+                        <?php
+                        if (!empty($value['Evidencias']) && $value['Evidencias'] != '') {
+                            $archivos = explode(",", $value['Evidencias']);
+                            foreach ($archivos as $k => $v) {
+                                ?>
+                                <div style="display:inline-block; max-width: 180px; max-height: 250px;" >
+                                    <a href="<?php echo $v; ?>" target="_blank" style="font-size:0px;" >
+                                        <img class="img-thumbnail img-responsive" src="<?php echo $v; ?>">
+                                    </a>
+                                </div>
+                                <?php
+                            }
+                        }
+                    }
+                    ?>
+                </div>
+                <?php
+            } else {
+                ?>
+                <div class="row m-t-10">
+                    <div class="col-md-12 col-xs-12">
+                        <h6 class="f-w-700">Observaciones</h6>
+                        <h5><?php echo $correctivosDiagnostico['Observaciones']; ?></h5>
+                    </div>  
+                </div>
+                <?php
+            }
             if ($correctivosDiagnostico['Evidencias'] !== '') {
                 $arrayEvidencias = explode(",", $correctivosDiagnostico['Evidencias']['htmlArchivos']);
                 ?>
@@ -186,8 +233,10 @@
                     }
                     ?>
                 </div>
-            <?php }
-        } ?>
+                <?php
+            }
+        }
+        ?>
     </div>
 <?php } ?>
 <!-- Finaliza Informacion Diagnostico del Equipo -->
@@ -259,46 +308,46 @@
                 break;
             case '3':
                 if ($returnArrayProblemasServicio['garantiaRespaldo'][0]['EsRespaldo'] === '1' && $returnArrayProblemasServicio['garantiaRespaldo'][0]['SolicitaEquipo'] === '0') {
-                    if(!empty($returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'])){
-                    ?>
-                    <div class="row">
-                        <div class="col-md-12 col-xs-12">
-                            <h1 class="f-w-700">Se deja Equipo de Respaldo:</h1>
-                        </div> 
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="f-w-700">Equipo Retirado</h6>
-                            <h5><?php echo $returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreEquipoRetira']; ?></h5>
-                        </div>                                            
-                        <div class="col-md-6">
-                            <h6 class="f-w-700">Serie Equipo Retirado</h6>
-                            <h5><?php echo $returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['SerieRetira']; ?></h5>
-                        </div>                                                              
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="f-w-700">Equipo Respaldo</h6>
-                            <h5><?php echo $returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreEquipoRespaldo']; ?></h5>
-                        </div>                                            
-                        <div class="col-md-6">
-                            <h6 class="f-w-700">Serie Equipo Respaldo</h6>
-                            <h5><?php echo $returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['SerieRespaldo']; ?></h5>
-                        </div>                                                              
-                    </div>
-
-                    <!-- Comienza Firma -->
-                    <div class="row m-t-40">
-                        <div class = "col-md-4 col-md-offset-4 text-center">
-                            <h5 class = 'f-w-700 text-center'>Firma de Retiro de Equipo</h5>
-                            <?php echo '<img style="max-height: 120px" src="/storage/Archivos/imagenesFirmas/Correctivo/RetiroGarantiaRespaldo/Firma_' . $solicitud['ticket'] . '_' . $solicitud['servicio'] . '.png" >';
-                            ?>  
-                            <h6 class='f-w-700 text-center'><?php echo $returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreFirma'] ?></h6>               
-                            <h6 class='f-w-700 text-center'><?php echo $returnArrayProblemasServicio['garantiaRespaldo'][0]['Fecha'] ?></h6>               
+                    if (!empty($returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'])) {
+                        ?>
+                        <div class="row">
+                            <div class="col-md-12 col-xs-12">
+                                <h1 class="f-w-700">Se deja Equipo de Respaldo:</h1>
+                            </div> 
                         </div>
-                    </div>
-                    <!-- Termina Firma -->
-                    <?php
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="f-w-700">Equipo Retirado</h6>
+                                <h5><?php echo $returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreEquipoRetira']; ?></h5>
+                            </div>                                            
+                            <div class="col-md-6">
+                                <h6 class="f-w-700">Serie Equipo Retirado</h6>
+                                <h5><?php echo $returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['SerieRetira']; ?></h5>
+                            </div>                                                              
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="f-w-700">Equipo Respaldo</h6>
+                                <h5><?php echo $returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreEquipoRespaldo']; ?></h5>
+                            </div>                                            
+                            <div class="col-md-6">
+                                <h6 class="f-w-700">Serie Equipo Respaldo</h6>
+                                <h5><?php echo $returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['SerieRespaldo']; ?></h5>
+                            </div>                                                              
+                        </div>
+
+                        <!-- Comienza Firma -->
+                        <div class="row m-t-40">
+                            <div class = "col-md-4 col-md-offset-4 text-center">
+                                <h5 class = 'f-w-700 text-center'>Firma de Retiro de Equipo</h5>
+                                <?php echo '<img style="max-height: 120px" src="/storage/Archivos/imagenesFirmas/Correctivo/RetiroGarantiaRespaldo/Firma_' . $solicitud['ticket'] . '_' . $solicitud['servicio'] . '.png" >';
+                                ?>  
+                                <h6 class='f-w-700 text-center'><?php echo $returnArrayProblemasServicio['informacionGarantiaRespaldo']['equiposGarantiaRespaldo'][0]['NombreFirma'] ?></h6>               
+                                <h6 class='f-w-700 text-center'><?php echo $returnArrayProblemasServicio['garantiaRespaldo'][0]['Fecha'] ?></h6>               
+                            </div>
+                        </div>
+                        <!-- Termina Firma -->
+                        <?php
                     }
                 }
                 if ($returnArrayProblemasServicio['garantiaRespaldo'][0]['EsRespaldo'] === '0' && $returnArrayProblemasServicio['garantiaRespaldo'][0]['SolicitaEquipo'] === '0') {
@@ -330,7 +379,7 @@
                                 <div style="display:inline-block; max-width: 200px;" >                                
                                     <img class="img-thumbnail img-responsive" src="<?php echo $value; ?>">                                  
                                 </div>
-                        <?php } ?>
+                            <?php } ?>
                         </div>
                         <?php
                     }
@@ -388,7 +437,7 @@
                         <div class="row">
                             <div class="col-md-4 col-md-offset-4 text-center"> 
                                 <h5 class='f-w-700 text-center'>Firma Entrega</h5>
-                    <?php echo '<img style="max-height: 90px" src="/storage/Archivos/imagenesFirmas/Correctivo/AcuseEntrega/Firma_' . $solicitud['ticket'] . '_' . $solicitud['servicio'] . '.png" >'; ?>  
+                                <?php echo '<img style="max-height: 90px" src="/storage/Archivos/imagenesFirmas/Correctivo/AcuseEntrega/Firma_' . $solicitud['ticket'] . '_' . $solicitud['servicio'] . '.png" >'; ?>  
                                 <h6 class='f-w-700 text-center'><?php echo $returnArrayEnvioEntrega['entregaEquipo'][0]['Recibe'] ?></h6>               
                                 <h6 class='f-w-700 text-center'><?php echo $returnArrayEnvioEntrega['entregaEquipo'][0]['Fecha'] ?></h6>               
                             </div>
@@ -448,25 +497,25 @@ if ($tipoProblema !== 'Sin Información') {
                             <div style="display:inline-block; max-width: 200px;" >                                
                                 <img class="img-thumbnail img-responsive" src="<?php echo $value; ?>">                                  
                             </div>
-                <?php } ?>
+                        <?php } ?>
                     </div>
                     <br>
                     <div class="row">
                         <div class="col-md-6">
                             <h6 class="f-w-700">Fecha y Hora de Entrega</h6>
-                <?php (empty($returnArrayEnvioEntrega['envioEquipo'][0]['FechaCapturaRecepcion'])) ? $FechaCapturaRecepcion = 'Sin información' : $FechaCapturaRecepcion = $returnArrayEnvioEntrega['envioEquipo'][0]['FechaCapturaRecepcion']; ?>
+                            <?php (empty($returnArrayEnvioEntrega['envioEquipo'][0]['FechaCapturaRecepcion'])) ? $FechaCapturaRecepcion = 'Sin información' : $FechaCapturaRecepcion = $returnArrayEnvioEntrega['envioEquipo'][0]['FechaCapturaRecepcion']; ?>
                             <h5><?php echo $FechaCapturaRecepcion; ?></h5>
                         </div>                                            
                         <div class="col-md-6">
                             <h6 class="f-w-700">Persona quien recibe</h6>
-                <?php (empty($returnArrayEnvioEntrega['envioEquipo'][0]['NombreRecibe'])) ? $NombreRecibe = 'Sin información' : $NombreRecibe = $returnArrayEnvioEntrega['envioEquipo'][0]['NombreRecibe']; ?>
+                            <?php (empty($returnArrayEnvioEntrega['envioEquipo'][0]['NombreRecibe'])) ? $NombreRecibe = 'Sin información' : $NombreRecibe = $returnArrayEnvioEntrega['envioEquipo'][0]['NombreRecibe']; ?>
                             <h5><?php echo $NombreRecibe; ?></h5>
                         </div>                                                              
                     </div>
                     <div class="row m-t-10">
                         <div class="col-md-12 col-xs-12">
                             <h6 class="f-w-700">Comentarios de Entrega</h6>
-                <?php (empty($returnArrayEnvioEntrega['envioEquipo'][0]['ComentariosEntrega'])) ? $ComentariosEntrega = 'Sin información' : $ComentariosEntrega = $returnArrayEnvioEntrega['envioEquipo'][0]['ComentariosEntrega']; ?>
+                            <?php (empty($returnArrayEnvioEntrega['envioEquipo'][0]['ComentariosEntrega'])) ? $ComentariosEntrega = 'Sin información' : $ComentariosEntrega = $returnArrayEnvioEntrega['envioEquipo'][0]['ComentariosEntrega']; ?>
                             <h5><?php echo $ComentariosEntrega; ?></h5>
                         </div>  
                     </div>
@@ -686,5 +735,153 @@ if (count($notasPdf) > 0) {
     </div>
     <?php
 }
+
+if (!empty($avanceServicio)) {
+    ?>
+    <div style="page-break-after:always;">
+        <div class="row">
+            <div class="col-md-12">                            
+                <fieldset>
+                    <legend class="pull-left width-full f-s-17">Historial.</legend>
+                </fieldset>  
+            </div>
+        </div>
+
+        <?php
+        foreach ($avanceServicio as $key => $value) {
+            $fecha = strftime('%A %e de %B, %G ', strtotime($value['Fecha'])) . date("h:ma", strtotime($value['Fecha']));
+            ?>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <p class="f-w-600 pull-left"><?php echo $value['TipoAvance']; ?></p>            
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <p class="f-w-600 pull-left"><?php echo $value['Usuario']; ?></p>            
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <p class="f-w-600 pull-right"><?php echo $fecha; ?></p>            
+                </div>
+            </div>
+            <?php
+            if ($value['Descripcion'] != '') {
+                ?>
+                <pre><?php echo $value['Descripcion']; ?></pre>
+                <?php
+            }
+            if ($value['Archivos'] != '') {
+                $archivos = explode(",", $value['Archivos']);
+                foreach ($archivos as $k => $v) {
+                    ?>
+                    <div style="display:inline-block; width: 140px; height: 140px; font-size:10px;" >
+                        <a href="<?php echo $v; ?>" target="_blank" >
+                            <img class="img-thumbnail img-responsive" style="width:100% !important; height: 100% !important;" src="<?php echo $v; ?>" />
+                        </a>
+                    </div>
+                    <?php
+                }
+            }
+
+            if (!empty($value[0]['tablaEquipos'])) {
+                ?>
+                <div class="timeline-footer">
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4 class="m-t-10">Lista de Equipos o Materiales</h4>
+                        </div>
+                    </div>
+
+                    <!--Empezando Separador-->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="underline m-b-15 m-t-15"></div>
+                        </div>
+                    </div>
+                    <!--Finalizando Separador-->
+
+                    <table class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%" height="3px">
+                        <thead>
+                            <tr>
+                                <th class="never">Tipo Item</th>
+                                <th class="all">Descripción</th>
+                                <th class="all">Serie</th>
+                                <th class="all">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            foreach ($value[0]['tablaEquipos'] as $key => $valor) {
+                                switch ($valor['IdItem']) {
+                                    case '1':
+                                        $tipoItem = 'Equipo';
+                                        break;
+                                    case '2':
+                                        $tipoItem = 'Material';
+                                        break;
+                                    case '3':
+                                        $tipoItem = 'Refacción';
+                                }
+                                echo '<tr>';
+                                echo '<td>' . $tipoItem . '</td>';
+                                echo '<td>' . $valor['EquipoMaterial'] . '</td>';
+                                echo '<td>' . $valor['Serie'] . '</td>';
+                                echo '<td>' . $valor['Cantidad'] . '</td>';
+                                echo '</tr>';
+                            }
+                            ?>                                        
+                        </tbody>
+                    </table>
+                </div>
+                <?php
+            }
+        }
+        ?>
+    </div>
+    <?php
+}
+
+if ($sumaTipoDiagnostico !== FALSE) {
+    ?>
+    <div style="page-break-after:always;">
+        <div class="row">
+            <div class="col-md-12">                            
+                <fieldset>
+                    <legend class="pull-left width-full f-s-17">Tipos de Fallas.</legend>
+                </fieldset>  
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%" height="3px">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Nombre</th>
+                            <th>Cantidad</th>
+                            <th>Tipo Falla</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($sumaTipoDiagnostico as $key => $valor) {
+                            (empty($valor['TipoDiagnostico'])) ? $tipoDiagnostico = 'Sin Tipo de Falla' : $tipoDiagnostico = $valor['TipoDiagnostico'];
+                            echo '<tr>';
+                            echo '<td>' . $valor['Tipo'] . '</td>';
+                            echo '<td>' . $valor['EquipoMaterial'] . '</td>';
+                            echo '<td>' . $valor['Cantidad'] . '</td>';
+                            echo '<td>' . $tipoDiagnostico . '</td>';
+                            echo '</tr>';
+                        }
+                        ?>                                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <?php
+        ?>
+    </div>
+    <?php
+}
 ?>
-<!-- Finaliza Notas -->

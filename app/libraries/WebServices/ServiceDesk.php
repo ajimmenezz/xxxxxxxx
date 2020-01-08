@@ -25,7 +25,7 @@ class ServiceDesk extends General {
         $this->modeloServiceDesck = \Modelos\Modelo_ServiceDesk::factory();
     }
 
-    private function getErrorPHP($errno, $errstr, $errfile, $errline) {
+    public function getErrorPHP($errno, $errstr, $errfile, $errline) {
         $this->error = array();
 
         switch ($errno) {
@@ -43,20 +43,18 @@ class ServiceDesk extends General {
                 break;
         }
 
-        throw new \Exception('Error para ingresar al SD');
+        // throw new \Exception('Error para ingresar al SD');
     }
 
     private function getDatosSD(string $url) {
         set_error_handler(array($this, 'getErrorPHP'), E_WARNING);
         set_error_handler(array($this, 'getErrorPHP'), E_NOTICE);
         $datosSD = json_decode(file_get_contents($url));
-
         restore_error_handler();
-
         return $datosSD;
     }
 
-    private function validarError(\stdClass $datos) {
+    private function validarError(\stdClass $datos, $folio = '') {
         $estatus = null;
         $message = null;
 
@@ -67,7 +65,7 @@ class ServiceDesk extends General {
 
         if ($estatus == 'Failed') {
             $this->error['algo'] = $message;
-            $mensageError = $this->textoError($message);
+            $mensageError = $this->textoError($message . ' Folio SD: ' . $folio);
             throw new \Exception($mensageError);
         }
     }
@@ -86,7 +84,7 @@ class ServiceDesk extends General {
             case 'Error when validating URL - Invalid URL for the requested operation.':
                 $textoError = 'URL no válida para la operación solicitada.';
                 break;
-            default :
+            default:
                 $textoError = $error;
                 break;
         }
@@ -97,6 +95,10 @@ class ServiceDesk extends General {
             } else {
                 $textoError = 'No cuenta con información para subirlo al ServiceDesk.';
             }
+        }
+
+        if (strpos($error, 'Error when getting request details for request') !== FALSE) {
+            $textoError = 'Error al obtener detalles de solicitud para solicitud.';
         }
 
         return $textoError;
@@ -111,24 +113,29 @@ class ServiceDesk extends General {
         }
     }
 
-    public function validarAPIKey(string $key) {
-        $respuestaKey = $this->validarKey($key);
-        $respuestaUsuario['code'] = 200;
-        $respuestaJefe['code'] = 200;
+    public function validarAPIKey(string $key = NULL) {
         $usuario = $this->Usuario->getDatosUsuario();
 
-        if ($respuestaKey['code'] === 400) {
-            $key = $this->modeloServiceDesck->apiKeyUsuario($usuario['Id']);
-            $respuestaUsuario = $this->validarKey($key);
-        }
+        if (!empty($key)) {
+            $respuestaKey = $this->validarKey($key);
+            $respuestaUsuario['code'] = 200;
+            $respuestaJefe['code'] = 200;
 
-        if ($respuestaUsuario['code'] === 400) {
+            if ($respuestaKey['code'] === 400) {
+                $key = $this->modeloServiceDesck->apiKeyUsuario($usuario['Id']);
+                $respuestaUsuario = $this->validarKey($key);
+            }
+
+            if ($respuestaUsuario['code'] === 400) {
+                $key = $this->modeloServiceDesck->apiKeyJefe($usuario['Id']);
+                $respuestaJefe = $this->validarKey($key);
+            }
+
+            if ($respuestaJefe['code'] === 400) {
+                $key = '';
+            }
+        } else {
             $key = $this->modeloServiceDesck->apiKeyJefe($usuario['Id']);
-            $respuestaJefe = $this->validarKey($key);
-        }
-
-        if ($respuestaJefe['code'] === 400) {
-            $key = '';
         }
 
         return $key;
@@ -246,6 +253,30 @@ class ServiceDesk extends General {
         return $datosSD;
     }
 
+    public function getFolios2019(int $from) {
+        // $url = 'http://mesadeayuda.cinemex.net:8080/api/v3/requests?input_data={"list_info":{"get_total_count":true,"row_count":100,"start_index":' . $from . ',"filter_by":{"name":"36931_MyView"},"fields_required":["created_by","created_time","site","requester","assigned_time","resolved_time","last_updated_time","technician","status","id","category","subcategory","item","priority","group"]}}';
+        $url = 'http://mesadeayuda.cinemex.net:8080/api/v3/requests';
+
+        $postData = http_build_query(
+                array(
+                    'input_data' => '{"list_info":{"get_total_count":true,"row_count":100,"start_index":' . $from . ',"filter_by":{"name": "36931_MyView"}}}'
+                )
+        );
+
+        $opts = array(
+            'http' => array(
+                'method' => 'GET',
+                'header' => "Content-Type: application/x-www-form-urlencoded\r\n" .
+                "Authtoken: A8D6001B-EB63-4996-A158-1B968E19AB84"
+            )
+        );
+
+        $context = stream_context_create($opts);
+        $result = json_decode(file_get_contents($url . '?' . $postData, false, $context), true);
+
+        return $result;
+    }
+
     /*
      * Encargado de obtener e insertar una resolicion en Service Desk
      * 
@@ -289,9 +320,17 @@ class ServiceDesk extends General {
                 . "&OPERATION_NAME=ADD_NOTE"
                 . "&TECHNICIAN_KEY=" . $key
                 . "&INPUT_DATA=" . urlencode($input_data);
-        $datosSD = $this->getDatosSD($URL2 . '?' . $FIELDS);
-        $this->validarError($datosSD);
-        return $datosSD;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL2);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $FIELDS);
+        $return = curl_exec($ch);
+        curl_close($ch);
+        $jsonDecode = json_decode($return);
+        $this->generateLogResolverSD(array($jsonDecode, $folio));
+
+        return $jsonDecode;
     }
 
     public function setWorkLogServiceDesk(string $key, string $folio, string $datos) {
@@ -316,7 +355,8 @@ class ServiceDesk extends General {
                 'Fecha' => $date,
                 'Codigo' => $dataOperationSD[0]->operation->result->status,
                 'Mensaje' => $dataOperationSD[0]->operation->result->message,
-                'Folio' => $dataOperationSD[1]);
+                'Folio' => $dataOperationSD[1]
+            );
             $this->modeloServiceDesck->saveLogUpgradeSD($dataToInsert);
         }
     }
@@ -370,7 +410,7 @@ class ServiceDesk extends General {
                 . "TECHNICIAN_KEY=" . $key;
 
         $datosSD = $this->getDatosSD($URL2 . '?' . $FIELDS);
-        $this->validarError($datosSD);
+        // $this->validarError($datosSD, $folio);
         return $datosSD;
     }
 
@@ -388,10 +428,12 @@ class ServiceDesk extends General {
         $i = 0;
 
         foreach ($datosSD->operation->details as $key => $value) {
-            $returnArray[$i]['userId'] = $value->userid;
-            $returnArray[$i]['userName'] = $value->username;
-            $returnArray[$i]['userEmail'] = $value->emailid;
-            $i++;
+            if ($value->department === 'Soporte TI') {
+                $returnArray[$i]['userId'] = $value->userid;
+                $returnArray[$i]['userName'] = $value->username;
+                $returnArray[$i]['userEmail'] = $value->emailid;
+                $i++;
+            }
         }
 
         return $returnArray;
