@@ -49,8 +49,7 @@ class InformacionServicios extends General {
     //        return array('html' => $html);
     //    }
 
-    public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key)
-    {
+    public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key) {
         $html = '';
         $estatus = TRUE;
 
@@ -1096,6 +1095,7 @@ class InformacionServicios extends General {
         tst.FechaInicio,
         tst.Descripcion,
         tst.IdSolicitud,
+        tst.FechaConclusion,
         nombreUsuario(ts.Solicita) as Solicita,
         ts.FechaCreacion,
         tsi.Asunto,
@@ -1331,7 +1331,7 @@ class InformacionServicios extends General {
                         }
                     }
 
-                    $this->setFirmasServicio($generales['Id'], $datos);
+                    $this->setFirmasGerenteTecnico($generales['Id'], $datos);
                     $this->setCoordinates(10, $this->y + 10);
                 }
 
@@ -1369,53 +1369,71 @@ class InformacionServicios extends General {
         $this->setHeaderValue("Información General");
 
         $this->setStyleTitle();
-        $this->setCellValue(27, 5, "Cliente:", 'R', true);
-        $this->setCellValue(27, 5, "Sucursal:", 'R');
-        $this->setCellValue(27, 5, "Tipo Serv:", 'R', true);
+        $this->setCellValue(30, 5, "Cliente:", 'R', true);
+        $this->setCellValue(30, 5, "Sucursal:", 'R');
+        $this->setCellValue(30, 5, "Tipo Serv:", 'R', true);
         $this->setCoordinates(100, $this->y - 5);
         $this->setCellValue(27, 5, "Estatus:", 'R', true);
         $this->setCoordinates(10);
-        $this->setCellValue(27, 5, "Atiende:", 'R');
+        $this->setCellValue(30, 5, "Atiende:", 'R');
+
+        $restarYFallaReportada = 25;
         $restarY = 20;
-        if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
-            $this->setCellValue(27, 5, "Falla Reportada:", 'R');
-            $restarY = 25;
+
+        if ($generales['IdEstatus'] === '4') {
+            $this->setCellValue(30, 5, "Fecha Conclusión:", 'R', true);
+            if ($generales['IdTipoServicio'] === '20') {
+                $restarYFallaReportada = 30;
+            } else {
+                $restarY = 25;
+            }
         }
 
+        if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
+            $this->setCellValue(30, 5, "Falla Reportada:", 'R');
+            $restarY = $restarYFallaReportada;
+        }
+
+
         $this->setStyleSubtitle();
-        $this->setCoordinates(37, $this->y - $restarY);
+        $this->setCoordinates(40, $this->y - $restarY);
         $this->setCellValue(0, 5, $generales['Cliente'], 'L', true);
         $this->setCellValue(0, 5, $generales['Sucursal'], 'L');
-        $this->setCellValue(75, 5, $generales['TipoServicio'], 'L', true);
+        $this->setCellValue(70, 5, $generales['TipoServicio'], 'L', true);
         $this->setCoordinates(127, $this->y - 5);
-        
-        if($generales['IdEstatus'] === '5'){
+
+        if ($generales['IdEstatus'] === '5') {
             $estatus = 'EN ATENCIÓN';
-        }else{
+        } else {
             $estatus = $generales['Estatus'];
         }
-        
+
         $this->setCellValue(73, 5, $estatus, 'L', true);
-        $this->setCoordinates(37);
+        $this->setCoordinates(40);
         $this->setCellValue(0, 5, $generales['Atiende'], 'L');
+
+        if ($generales['IdEstatus'] === '4') {
+            $this->setCellValue(0, 5, $generales['FechaConclusion'], 'L', true);
+        }
+
         if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
             $this->setCellValue(0, 5, $generales['FallaReportada'], 'L');
         }
 
         if ($generales['HasSeguimiento'] === '0') {
             $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
-            $this->setFirmaGerente($generales['Id'], $datos);
+            $this->setFirmasServicio($generales['Id'], $datos);
         } else {
             switch ($generales['IdTipoServicio']) {
                 case 11:
                 case '11':
                     $this->setCensoPDF($datos);
-                    $this->setFirmaGerente($generales['Id'], $datos);
+                    $this->setFirmasServicio($generales['Id'], $datos);
                     break;
                 case 12:
                 case '12':
                     $this->setMantenimientoPDF($datos);
-                    $this->setFirmaGerente($generales['Id'], $datos);
+                    $this->setFirmasServicio($generales['Id'], $datos);
                     break;
                 case 20:
                 case '20':
@@ -1457,7 +1475,7 @@ class InformacionServicios extends General {
 
             $this->setStyleTitle();
             $this->setCellValue(25, $heightMulti, "Resolución:", 'R', true);
-            
+
             if ($resolucion['Modelo'] !== NULL && $resolucion['Modelo'] !== 0) {
                 $this->setStyleTitle();
                 $this->setCellValue(25, 5, "Equipo:", 'R');
@@ -1566,7 +1584,7 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setFirmasServicio(array $datos) {
+    private function setFirmasGerenteTecnico(array $datos) {
         $firmas = $this->getFirmasServicio($datos['servicio']);
         if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '') || (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '')) {
             if (($this->y + 56) > 276) {
@@ -1578,16 +1596,22 @@ class InformacionServicios extends General {
             $this->pdf->Cell(95, 1, "Firmas de Cierre", 0, 0, 'C');
 
             $gerente = '';
+            $fechaFirma = '';
+
             if (!is_null($firmas['Firma']) && $firmas['Firma'] != '') {
                 $this->pdf->Image('.' . $firmas['Firma'], 7.5, $this->y + 2.5, 80, 35, pathinfo($firmas['Firma'], PATHINFO_EXTENSION));
                 $gerente = utf8_decode($firmas['Gerente']);
+                $fechaFirma = utf8_decode($firmas['FechaFirma']);
             }
 
-            $this->setCoordinates(10, $this->y + 40);
+            $this->setCoordinates(10, $this->y + 45);
             $this->pdf->Cell(95, 5, utf8_decode($gerente), 0, 0, 'C');
 
             $this->setCoordinates(10, $this->y + 5);
             $this->pdf->Cell(95, 5, 'Gerente Cinemex', 0, 0, 'C');
+
+            $this->setCoordinates(10, $this->y + 5);
+            $this->pdf->Cell(95, 5, utf8_decode($fechaFirma), 0, 0, 'C');
 
             $this->setCoordinates(105, $this->y - 45);
 
@@ -1597,16 +1621,27 @@ class InformacionServicios extends General {
                 $tecnico = utf8_decode($firmas['Tecnico']);
             }
 
-            $this->setCoordinates(100, $this->y + 40);
+            $this->setCoordinates(100, $this->y + 35);
             $this->pdf->Cell(95, 5, utf8_decode($tecnico), 0, 0, 'C');
 
             $this->setCoordinates(100, $this->y + 5);
             $this->pdf->Cell(95, 5, utf8_decode("Técnico Siccob"), 0, 0, 'C');
+
+            $this->setCoordinates(100, $this->y + 5);
+            $this->pdf->Cell(95, 5, utf8_decode($fechaFirma), 0, 0, 'C');
         }
     }
 
-    private function setFirmaGerente(int $id, array $datos) {
+    private function setFirmasServicio(int $id, array $datos) {
         $firmas = $this->getFirmasServicio($id);
+        if (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '') {
+            $this->setFirmasGerenteTecnico($datos);
+        } else {
+            $this->setFirmaGerente($firmas, $datos);
+        }
+    }
+
+    private function setFirmaGerente(array $firmas, array $datos) {
         if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '')) {
             if (($this->y + 61) > 276) {
                 $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
@@ -1714,7 +1749,7 @@ class InformacionServicios extends General {
         $firmas = $this->getFirmasServicio($datos['servicio']);
 
         if (!empty($firmas['Firma'])) {
-            $this->setFirmasServicio($datos);
+            $this->setFirmasGerenteTecnico($datos);
         } elseif (!empty($diagnostico['Firma'])) {
             $this->setFirmaGerenteDiagnosticoCorrectivo($id, $datos);
         }
