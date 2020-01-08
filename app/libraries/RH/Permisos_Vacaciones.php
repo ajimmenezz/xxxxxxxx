@@ -59,7 +59,7 @@ class Permisos_Vacaciones extends General {
                     tpa.IdUsuarioRH, tpa.IdUsuarioContabilidad, tpa.IdUsuarioDireccion 
                     FROM t_permisos_ausencia_rh AS tpa INNER JOIN cat_v3_tipos_ausencia_personal AS tap ON tpa.IdTipoAusencia = tap.Id
                     INNER JOIN cat_v3_motivos_ausencia_personal AS map ON tpa.IdMotivoAusencia = map.Id WHERE IdUsuario = "' . $idUsuario . '" 
-                    AND DATE(tpa.FechaDocumento) BETWEEN CURDATE()-20 AND CURDATE() order by FechaAusenciaDesde desc');
+                    AND tpa.FechaDocumento BETWEEN (SELECT (NOW() - INTERVAL 1 MONTH)) and (SELECT NOW()) order by FechaAusenciaDesde desc');
     }
 
     public function jefeDirecto($idUsuario) {
