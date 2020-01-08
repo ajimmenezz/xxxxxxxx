@@ -3055,21 +3055,6 @@ class Servicio extends General {
             'FechaEstatus' => $fecha
                 )
         );
-
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $infoServicio = $this->getInformacionServicio($datos['servicio']);
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
-        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'pruebas.siccob.solutions') {
-            $infoServicio = $this->getInformacionServicio($datos['servicio']);
-            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaAsociado . '.pdf';
-        } else {
-            $path = 'http://' . $host . '/' . $linkPdf['link'];
-        }
-
-        $consulta = $this->DBS->actualizarServicio('t_facturacion_outsourcing', array(
-            'Archivo' => $path,
-                ), array('Id' => $idFacturacionOutSourcing)
-        );
         $datos['idFacturacionOutSourcing'] = $idFacturacionOutSourcing;
         $datos['folio'] = $folio[0]['Folio'];
         $consulta = $this->crearPdfVuelta($datos);

@@ -546,6 +546,7 @@ class Modelo_Solicitud extends Modelo_Base {
 
     public function obtenerFoliosAnualAdist() {
         return $this->consulta("select 
+                                    YEAR(ts.FechaCreacion) AS Anio,
                                     CASE
                                         WHEN MONTH(ts.FechaCreacion) = 1 THEN 'Enero'
                                         WHEN MONTH(ts.FechaCreacion) = 2 THEN 'Febrero'
@@ -722,10 +723,11 @@ class Modelo_Solicitud extends Modelo_Base {
                                         where
                                             IdServicio = tst.Id)
                                 WHERE
-                                    YEAR(ts.FechaCreacion) = YEAR(CURRENT_DATE())
+                                    YEAR(ts.FechaCreacion) IN(2019,2020)
                                         AND tst.IdTipoServicio IN (20 , 27, 50)
                                         AND ts.Folio IS NOT NULL
-                                        AND ts.Folio != '0'");
+                                        AND ts.Folio != '0'
+                                ORDER BY Anio, Semana ASC");
     }
 
 }
