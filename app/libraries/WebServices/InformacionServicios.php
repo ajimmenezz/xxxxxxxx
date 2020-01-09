@@ -1631,7 +1631,7 @@ class InformacionServicios extends General {
             }
 
             $this->setCoordinates(10, $this->y + 45);
-            $this->pdf->Cell(95, 5, utf8_decode($gerente), 0, 0, 'Cgi');
+            $this->pdf->Cell(95, 5, utf8_decode($gerente), 0, 0, 'C');
 
             $this->setCoordinates(10, $this->y + 5);
             $this->pdf->Cell(95, 5, 'Gerente Cinemex', 0, 0, 'C');
