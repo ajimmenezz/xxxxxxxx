@@ -436,10 +436,15 @@ class Autorizar_permisos extends General {
                     <br>El motivo de la Cancelación es: " . $datosPermiso["motivoCancelacion"] . ".";
         $mensaje = $this->Correo->mensajeCorreo('Cancelar Permiso de Ausencia ', $texto);
         $correoEnviado = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($arregloCorreos), 'Cancelar Permiso de Ausencia', $mensaje);
-
+        
+        if($datosPermiso['idMotivoCancelacion'] == ''){
+            $idCancelacion = null;
+        }else{
+            $idCancelacion = $datosPermiso['idMotivoCancelacion'];
+        }
         $consulta = $this->DBS->actualizar('t_permisos_ausencia_rh', array(
             'IdEstatus' => '6',
-            'IdCancelacion' => $datosPermiso['idMotivoCancelacion']
+            'IdCancelacion' => $idCancelacion
                 ), array('Id' => $datosPermiso['idPermiso']));
 
         return $consulta;
