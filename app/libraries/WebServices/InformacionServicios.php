@@ -8,7 +8,6 @@ use Librerias\Generales\PDF as PDF;
 class InformacionServicios extends General {
 
     private $DBS;
-    private $Phantom;
     private $Correo;
     private $ServiceDesk;
     private $MSP;
@@ -24,7 +23,6 @@ class InformacionServicios extends General {
         parent::__construct();
         ini_set('max_execution_time', 300);
         $this->DBS = \Modelos\Modelo_Loguistica_Seguimiento::factory();
-        $this->Phantom = \Librerias\Generales\Phantom::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
         $this->ServiceDesk = \Librerias\WebServices\ServiceDesk::factory();
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
@@ -794,38 +792,6 @@ class InformacionServicios extends General {
         return $detallesServicio;
     }
 
-    public function cargarPDF(array $datos) {
-        $host = $_SERVER['SERVER_NAME'];
-        $linkPdf = $this->getServicioToPdf($datos);
-        $infoServicio = $this->getInformacionServicio($datos['servicio']);
-        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
-        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
-            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . '.pdf';
-        } else {
-            $path = 'http://' . $host . '/' . $linkPdf['link'];
-        }
-
-        return $path;
-    }
-
-    public function getServicioToPdf(array $servicio, string $nombreExtra = NULL) {
-        $infoServicio = $this->getInformacionServicio($servicio['servicio']);
-        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-        $nombreExtra = (is_null($nombreExtra)) ? '' : $nombreExtra;
-        $archivo = 'storage/Archivos/Servicios/Servicio-' . $servicio['servicio'] . '/Pdf/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $servicio['servicio'] . '_' . $tipoServicio . $nombreExtra . '.pdf ';
-        $ruta = 'http://' . $_SERVER['HTTP_HOST'] . '/Phantom/Servicio/' . $servicio['servicio'] . '/' . $nombreExtra;
-        $datosServicio = $this->DBS->consultaGeneralSeguimiento('SELECT
-                                                sucursal(IdSucursal) Sucursal,
-                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
-                                            FROM t_servicios_ticket
-                                            WHERE Id = "' . $servicio['servicio'] . '"');
-        $link = $this->Phantom->htmlToPdf($archivo, $ruta, $datosServicio[0]);
-        return ['link' => $link];
-    }
-
     public function enviarCorreoConcluido(array $correo, string $titulo, string $texto) {
         $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $correo, $titulo, $mensaje);
@@ -1340,7 +1306,7 @@ class InformacionServicios extends General {
                     if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
                         $this->setCellValue(0, 5, $generales['FallaReportada'], 'L');
                     }
-                    
+
                     $this->setCoordinates(10);
 
                     $datos['servicio'] = $generales['Id'];
@@ -1375,14 +1341,19 @@ class InformacionServicios extends General {
     public function definirPDF(array $datos) {
         $this->pdf = new PDFAux();
         $this->pdf->AliasNbPages();
+        $nombreExtra = '';
 
         $generales = $this->getGeneralesServicio($datos['servicio']);
         $datos['folio'] = $generales['SD'];
 
+        if (!empty($datos['nombreExtra'])) {
+            $nombreExtra = $datos['nombreExtra'];
+        }
+
         if (isset($datos['archivo'])) {
-            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/', $datos['archivo']);
+            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/', $datos['archivo'] . $nombreExtra);
         } else {
-            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', 'Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio']);
+            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', 'Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio'] . $nombreExtra);
         }
 
         if (file_exists($carpeta)) {
@@ -1634,7 +1605,7 @@ class InformacionServicios extends General {
             $this->pdf->Cell(95, 5, utf8_decode($gerente), 0, 0, 'C');
 
             $this->setCoordinates(10, $this->y + 5);
-            $this->pdf->Cell(95, 5, 'Gerente Cinemex', 0, 0, 'C');
+            $this->pdf->Cell(95, 5, 'Gerente en turno Cinemex', 0, 0, 'C');
 
             $this->setCoordinates(10, $this->y + 5);
             $this->pdf->Cell(95, 5, utf8_decode($fechaFirma), 0, 0, 'C');
@@ -1686,10 +1657,34 @@ class InformacionServicios extends General {
             $this->pdf->Cell(95, 5, $gerente, 0, 0, 'C');
 
             $this->setCoordinates(55, $this->y + 5);
-            $this->pdf->Cell(95, 5, 'Gerente Cinemex', 0, 0, 'C');
+            $this->pdf->Cell(95, 5, 'Gerente en turno Cinemex', 0, 0, 'C');
 
             $this->setCoordinates(55, $this->y + 5);
             $this->pdf->Cell(95, 5, $firmas['FechaFirma'], 0, 0, 'C');
+        } else {
+            $servicioDocumentacion = $this->DBST->consultaDocumentacioFirmadaServicio($datos['servicio'], TRUE);
+
+            if (($this->y + 61) > 276) {
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+            }
+
+            $this->setStyleSubtitle();
+
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->Cell(95, 1, "Firma de Cierre", 0, 0, 'C');
+
+            $gerente = '';
+            $this->pdf->Image('.' . $servicioDocumentacion[0]['Firma'], $this->x + 2.5, $this->y + 2.5, 89, 35, pathinfo($servicioDocumentacion[0]['Firma'], PATHINFO_EXTENSION));
+            $gerente = utf8_decode($servicioDocumentacion[0]['Recibe']);
+
+            $this->setCoordinates(55, $this->y + 40);
+            $this->pdf->Cell(95, 5, $gerente, 0, 0, 'C');
+
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->Cell(95, 5, 'Gerente en turno Cinemex', 0, 0, 'C');
+
+            $this->setCoordinates(55, $this->y + 5);
+            $this->pdf->Cell(95, 5, $servicioDocumentacion[0]['Fecha'], 0, 0, 'C');
         }
     }
 
@@ -1712,7 +1707,7 @@ class InformacionServicios extends General {
             $this->pdf->Cell(95, 5, $gerente, 0, 0, 'C');
 
             $this->setCoordinates(55, $this->y + 5);
-            $this->pdf->Cell(95, 5, 'Gerente Cinemex', 0, 0, 'C');
+            $this->pdf->Cell(95, 5, 'Gerente en turno Cinemex', 0, 0, 'C');
         }
     }
 

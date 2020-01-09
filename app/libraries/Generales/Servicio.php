@@ -19,7 +19,6 @@ class Servicio extends General {
     private $DBP;
     private $DBT;
     private $Notas;
-    private $Phantom;
     private $TicketOld;
     private $Correo;
     private $Catalogo;
@@ -39,7 +38,6 @@ class Servicio extends General {
         $this->Notificacion = \Librerias\Generales\Notificacion::factory();
         $this->Servicio = \Librerias\Generales\ServiciosTicket::factory();
         $this->Notas = \Librerias\Generales\Notas::factory();
-        $this->Phantom = \Librerias\Generales\Phantom::factory();
         $this->TicketOld = \Librerias\Generales\TicketsOld::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();

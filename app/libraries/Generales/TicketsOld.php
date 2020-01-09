@@ -12,12 +12,10 @@ use Controladores\Controller_Datos_Usuario as General;
 class TicketsOld extends General {
 
     private $DBTO;
-    private $Phantom;
 
     public function __construct() {
         parent::__construct();
         $this->DBTO = \Modelos\Modelo_TicketsOld::factory();
-        $this->Phantom = \Librerias\Generales\Phantom::factory();
         parent::getCI()->load->helper(array('FileUpload', 'date', 'conversionpalabra'));
     }
 
@@ -680,21 +678,6 @@ class TicketsOld extends General {
         }
 
         return $src;
-    }
-
-    public function getServicioToPdf(array $servicio) {
-        $infoServicio = $this->getInformacionServicio($servicio['servicio']);
-        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-        $archivo = 'storage/Archivos/Servicios/Servicio-' . $servicio['servicio'] . '/Pdf/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $servicio['servicio'] . '_' . $tipoServicio . '.pdf ';
-        $ruta = 'http://' . $_SERVER['HTTP_HOST'] . '/Phantom/Servicio/' . $servicio['servicio'];
-        $datosServicio = $this->DBS->consultaGeneral('SELECT
-                                                sucursal(IdSucursal) Sucursal,
-                                                (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
-                                            FROM t_servicios_ticket
-                                            WHERE Id = "' . $servicio['servicio'] . '"');
-        $link = $this->Phantom->htmlToPdf($archivo, $ruta, $datosServicio[0]);
-
-        return ['link' => $link];
     }
 
     public function getTipoByServicio(string $servicio) {
