@@ -12,6 +12,7 @@
                     Acciones <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
+                    <li id="btnRestaurarCenso"><a href="#"><i class="fa fa-undo"></i> Restaurar Último Censo</a></li>
                     <li id="btnCancelarServicioSeguimiento"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
                     <li id="btnDocumentacionFirma"><a href="#"><i class="fa fa-pencil-square-o"></i> Firmar Servicio</a></li>
                     <li id="btnGeneraPdfServicio"><a href="#"><i class="fa fa-file-pdf-o"></i> Generar Pdf</a></li>
