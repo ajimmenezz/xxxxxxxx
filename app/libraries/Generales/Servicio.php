@@ -1138,7 +1138,7 @@ class Servicio extends General {
         $equiposCensados = $this->getEquiposCensados($servicio);
         $idSolicitud = $this->DBS->consultaGeneral('SELECT IdSolicitud FROM t_servicios_ticket WHERE Id = "' . $servicio . '"');
         $notasPdf = $this->getNotasByServicio($servicio);
-        $documentacionFirmada = $this->Servicio->consultaDocumentacioFirmadaServicio($servicio, '1');
+        $documentacionFirmada = $this->DBS->consultaDocumentacioFirmadaServicio($servicio, '1');
 
         $data = [
             'solicitud' => $generalesSolicitud,
@@ -1197,7 +1197,7 @@ class Servicio extends General {
         $generalesMantenimiento = $this->getGeneralesMantenimiento($servicio, $restringirDatos);
         $idSolicitud = $this->DBS->consultaGeneral('SELECT IdSolicitud FROM t_servicios_ticket WHERE Id = "' . $servicio . '"');
         $notasPdf = $this->getNotasByServicio($servicio);
-        $documentacionFirmada = $this->Servicio->consultaDocumentacioFirmadaServicio($servicio, '1');
+        $documentacionFirmada = $this->DBS->consultaDocumentacioFirmadaServicio($servicio, '1');
 
         $data = [
             'solicitud' => $generalesSolicitud,

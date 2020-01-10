@@ -400,7 +400,7 @@ class ServiciosTicket extends General {
                         //$data['Infostatus']= $this->DBST->consulta('select * from hist_salas4d_mantto_actividades'); 
                         $data['modelos'] = $this->Catalogo->catModelosEquipo('3', array('Flag' => '1'));
                         $data['folio'] = $this->DBST->consultaGeneral('SELECT Folio FROM t_solicitudes WHERE Ticket = "' . $datosServicio['Ticket'] . '"');
-                        $data['documentacionFirmada'] = $this->consultaDocumentacioFirmadaServicio($datos['servicio']);
+                        $data['documentacionFirmada'] = $this->DBST->consultaDocumentacioFirmadaServicio($datos['servicio']);
                         $data['formulario'] = parent::getCI()->load->view('Poliza/Modal/formularioSeguimientoServicioCenso', $data, TRUE);
                         break;
                     /* Concluye el servicio de censo y retorna los servicios del departamento */
@@ -2065,7 +2065,7 @@ class ServiciosTicket extends General {
             $data['areaYPunto'] = $this->SeguimientoPoliza->consultaAreaPuntoXSucursal($sucursal, 'Area, Punto');
             $data['areaAtencion'] = $this->SeguimientoPoliza->consultaAreaPuntoXSucursal($sucursal, 'Area');
             $data['idSucursal'] = $sucursal;
-            $data['documentacionFirmada'] = $this->consultaDocumentacioFirmadaServicio($servicio);
+            $data['documentacionFirmada'] = $this->DBST->consultaDocumentacioFirmadaServicio($servicio);
         }
         $data['modelos'] = $this->Catalogo->catModelosEquipo('3', array('Flag' => '1'));
         $data['problemasAdicionales'] = $this->SeguimientoPoliza->consultaProblemasAdicionales($servicio);
