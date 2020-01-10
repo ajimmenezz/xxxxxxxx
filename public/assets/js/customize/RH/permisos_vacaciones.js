@@ -31,14 +31,7 @@ $(function () {
         maxDate: moment().add(1, 'year'),
         minDate: moment().add(-15, 'day')
     });
-    $('#selectSolicitudHora').timepicker();
-    $('#selectSolicitudHora').on("change", function () {
-        var dia = $(this).val().split(' ');
-        if (dia[0] < '09:00' && dia[1] == 'AM')
-            $('#selectSolicitudHora').val('09:00 AM')
-        if (dia[0] > '07:00' && dia[1] == 'PM')
-            $('#selectSolicitudHora').val('07:00 PM')
-    });
+    $('#selectSolicitudHora').timepicker({showMeridian: false});
 
     $('#inputFechaHasta').datetimepicker({
         format: 'YYYY-MM-DD',
@@ -228,14 +221,7 @@ $(function () {
                         maxDate: moment().add(1, 'year'),
                         minDate: moment().add(-15, 'day')
                     });
-                    $('#selectSolicitudHoraAct').timepicker();
-                    $('#selectSolicitudHoraAct').on("change", function () {
-                        var dia = $(this).val().split(' ');
-                        if (dia[0] < '09:00' && dia[1] == 'AM')
-                            $('#selectSolicitudHoraAct').val('09:00 AM')
-                        if (dia[0] > '07:00' && dia[1] == 'PM')
-                            $('#selectSolicitudHoraAct').val('07:00 PM')
-                    });
+                    $('#selectSolicitudHoraAct').timepicker({showMeridian: false});
                     $('#inputFechaHastaAct').datetimepicker({
                         format: 'YYYY-MM-DD',
                         useCurrent: false
