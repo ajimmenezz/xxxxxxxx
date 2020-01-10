@@ -272,17 +272,16 @@ $(function () {
         let iconoImagen = '';
         $.each(infoProblemas, function (key, value) {
             if (value.archivos[0] !== "") {
-                iconoImagen = '<div class="col-md-1 col-sm-2 col-xs-1">';
+                iconoImagen = '<div class="col-md-1 col-sm-1 col-xs-2 text-left">';
                 $.each(value.archivos, function (llave, imagen) {
-                    console.log(imagen);
                     iconoImagen += '<a href="' + imagen + '" data-lightbox="problema' + value.fecha + '">';
-                    iconoImagen += '<i class="fa fa-file-photo-o "></i></a></div>';
+                    iconoImagen += '<i class="fa fa-file-photo-o "></i></a>';
                 });
             } else {
                 iconoImagen = '';
             }
-            console.log(iconoImagen);
-            problema += '<div class="problema' + value.fecha + ' col-md-12 row">\n\
+
+            problema += '<div class="problema' + value.fecha + ' row m-b-5">\n\
                             <div class="col-md-6 col-sm-12">\n\
                                 Usuario: <label class="semi-bold">' + value.usuario + '</label>\n\
                             </div>\n\
@@ -291,8 +290,10 @@ $(function () {
                             </div>\n\
                             <div class="col-md-11 col-sm-11 col-xs-10">\n\
                                 <textarea class="form-control" rows="2" disabled>' + value.descripcion + '</textarea>\n\
-                            </div>' + iconoImagen +
-                    '</div><br><br><br><br><br><br>';
+                            </div>\n\
+                            ' + iconoImagen + '\n\
+                            </div>\n\
+                </div>';
         });
         $('#observacionesProblemas').append(problema);
     }

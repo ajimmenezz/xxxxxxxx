@@ -261,7 +261,7 @@
                 </div>
                 <!--Finaliza detalles de servicio-->
                 <!--Empieza seccion de Solucion y Problemas-->
-                <div class="col-md-12">
+                <div class="col-md-12 m-b-30">
                     <!--Empieza datos solucion-->
                     <div class="col-md-6">
                         <!--Empieza Titulo solucion-->
