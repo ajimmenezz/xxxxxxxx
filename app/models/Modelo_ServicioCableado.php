@@ -103,15 +103,11 @@ class Modelo_ServicioCableado extends Modelo_Base {
     }
 
     public function setServicio(string $idServicio, array $datos) {
-        $this->insertar('insert into t_servicios_generales values(
-                                null,
-                                ' . $datos['idUsuario'] . ',
-                                ' . $idServicio . ',
-                                "' . $datos['observaciones'] . '",
-                                "' . $datos['archivos'] . '",
-                                now(),
-                                ""   
-                             )');
+        $this->insertarArray('t_servicios_generales', array('IdUsuario' => $datos['idUsuario'],
+            'IdServicio' => $idServicio,
+            'Descripcion' => $datos['observaciones'],
+            'Archivos' => $datos['archivos'],
+            'Fecha' => $datos['fecha']));
     }
 
     public function updateServicio(string $idServicio, array $datos) {

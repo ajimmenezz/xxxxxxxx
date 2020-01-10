@@ -320,7 +320,7 @@ $(function () {
                 modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara la Información y cambios guardados</h4>');
 
                 modal.btnAceptar('btnAceptar', function () {
-                    peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
+                    peticion.enviar('modal-dialogo', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
                         if (!validarError(respuesta, 'modal-dialogo')) {
                             return;
                         }
@@ -342,7 +342,7 @@ $(function () {
                 modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara la Evidencia y cambios guardados</h4>');
 
                 modal.btnAceptar('btnAceptar', function () {
-                    peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/borrarEvidencias', datoServicioTabla, function (respuesta) {
+                    peticion.enviar('modal-dialogo', 'SeguimientoCE/SeguimientoGeneral/borrarEvidencias', datoServicioTabla, function (respuesta) {
                         if (!validarError(respuesta, 'modal-dialogo')) {
                             return;
                         }
@@ -985,7 +985,7 @@ $(function () {
             datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
             if (validarImagen == '') {
                 datoServicioTabla.material = false;
-                peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
+                peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/guardarSolucion', datoServicioTabla, function (respuesta) {
                     if (!validarError(respuesta)) {
                         return;
                     }

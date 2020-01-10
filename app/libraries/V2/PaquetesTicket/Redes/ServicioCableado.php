@@ -172,6 +172,9 @@ class ServicioCableado implements Servicio {
     }
 
     public function setSolucion(array $datos) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $datos['fecha'] = $fecha;
+
         $this->DBServiciosGeneralRedes->empezarTransaccion();
         $consulta = $this->DBServiciosGeneralRedes->getEvidencias($this->id);
 
@@ -190,8 +193,9 @@ class ServicioCableado implements Servicio {
         if (empty($consulta)) {
             $this->DBServiciosGeneralRedes->setServicio($this->id, $datos);
         } else {
-            $this->DBServiciosGeneralRedes->updateServicio($this->id, $datos);
+            $consulta = $this->DBServiciosGeneralRedes->updateServicio($this->id, $datos);
         }
+
         $this->DBServiciosGeneralRedes->setSucursal($this->id, $datos['idSucursal']);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
