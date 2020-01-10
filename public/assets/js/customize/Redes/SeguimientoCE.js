@@ -274,12 +274,14 @@ $(function () {
             if (value.archivos[0] !== "") {
                 iconoImagen = '<div class="col-md-1 col-sm-2 col-xs-1">';
                 $.each(value.archivos, function (llave, imagen) {
+                    console.log(imagen);
                     iconoImagen += '<a href="' + imagen + '" data-lightbox="problema' + value.fecha + '">';
+                    iconoImagen += '<i class="fa fa-file-photo-o "></i></a></div>';
                 });
-                iconoImagen += '<i class="fa fa-file-photo-o "></i></a></div>';
             } else {
                 iconoImagen = '';
             }
+            console.log(iconoImagen);
             problema += '<div class="problema' + value.fecha + ' col-md-12 row">\n\
                             <div class="col-md-6 col-sm-12">\n\
                                 Usuario: <label class="semi-bold">' + value.usuario + '</label>\n\
