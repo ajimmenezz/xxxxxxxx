@@ -1,8 +1,10 @@
 <?php
 
 namespace Librerias\Generales;
+
 use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as User;
 use Controladores\Controller_Datos_Usuario as General;
+use Librerias\V2\PaquetesGenerales\Utilerias\Archivo as Archivo;
 
 /**
  * Description of Catalogo
@@ -432,13 +434,31 @@ class Usuario extends General {
         $datos['IdUsuario'] = User::getId();
         $datos['IdPersonal'] = $personal['id'];
         $datos['Fecha'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        if($personal['fechaBaja'] !== ''){
+        if ($personal['fechaBaja'] !== '') {
             $datos['FechaEstatus'] = $personal['fechaBaja'];
-        }else{
+        } else {
             $datos['FechaEstatus'] = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         }
-        
+
         $bajaPersonal = $this->DBU->bajaUsuarios($datos);
         return $bajaPersonal;
     }
+
+    public function actualizarFirmaUsuario(array $datosUsuario) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $datosUsuario['id'] = $usuario['Id'];
+
+        $carpeta = 'archivosPersonales/' . $usuario['Id'];
+        $firma = array(
+            'FirmaUsuario-' . $usuario['Id'] => $datosUsuario['firmaUsuario']
+        );
+
+        Archivo::saveArchivos64($carpeta, $firma);
+        $nuevaFirma = Archivo::getArray();
+        $datosUsuario['firma'] = $nuevaFirma[0];
+        
+        $cambioFirma = $this->DBU->actualizarFirmaUsuario($datosUsuario);
+        return $nuevaFirma[0];
+    }
+
 }

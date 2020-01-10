@@ -102,7 +102,8 @@ class Modelo_Usuario extends Modelo_Base {
                                         (SELECT Nombre FROM cat_rh_sexo WHERE Id = IdSexo) Genero,
                                         (SELECT Email FROM cat_v3_usuarios WHERE Id = IdUsuario) Email,
                                         (SELECT Token FROM cat_v3_usuarios WHERE Id = IdUsuario) Token,
-                                        (SELECT SDKey FROM cat_v3_usuarios WHERE Id = IdUsuario) SDKey
+                                        (SELECT SDKey FROM cat_v3_usuarios WHERE Id = IdUsuario) SDKey,
+                                        (SELECT Firma FROM cat_v3_usuarios WHERE Id = IdUsuario) Firma
                                     FROM t_rh_personal 
                                     WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
         return $consulta[0];
@@ -381,6 +382,12 @@ class Modelo_Usuario extends Modelo_Base {
             'Fecha' => $datos['Fecha'],
             'FechaEstatus' => $datos['FechaEstatus']
         ]);       
+        return $consulta;
+    }
+    
+    public function actualizarFirmaUsuario(array $datos) {
+        $consulta = $this->actualizar('cat_v3_usuarios', [
+            $datos['campo'] => $datos['firma']], ['Id' => $datos['id']]);
         return $consulta;
     }
 }
