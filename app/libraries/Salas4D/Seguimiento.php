@@ -13,7 +13,6 @@ class Seguimiento extends General {
     private $DBS;
     private $DBM;
     private $Correo;
-    private $Phantom;
 
     public function __construct() {
         parent::__construct();
@@ -23,7 +22,6 @@ class Seguimiento extends General {
         $this->DBCS = \Modelos\Modelo_Salas4D::factory();
         $this->DBS = \Modelos\Modelo_Loguistica_Seguimiento::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
-        $this->Phantom = \Librerias\Generales\Phantom::factory();
 
         parent::getCI()->load->helper('date');
     }
@@ -314,13 +312,15 @@ class Seguimiento extends General {
     }
 
     public function enviarPDF(array $datos, string $nombreExtra = NULL) {
-        $infoServicio = $this->DBCS->getInformacionServicio($datos['servicio']);
-        $tipoServicio = stripAccents($infoServicio[0]['NTipoServicio']);
-        $nombreExtra = (is_null($nombreExtra)) ? '' : $nombreExtra;
-        $archivo = 'storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $infoServicio[0]['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $tipoServicio . $nombreExtra . '.pdf ';
-        $ruta = 'http://' . $_SERVER['HTTP_HOST'] . '/Phantom/Servicio/' . $datos['servicio'] . '/' . $nombreExtra;
-        $link = $this->Phantom->htmlToPdf($archivo, $ruta);
-        return ['link' => $link];
+        $pdf = $this->InformacionServicios->definirPDF(array('servicio' => $datos['servicio'], 'nombreExtra' =>  $nombreExtra));
+
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'http://siccob.solutions/' . $pdf;
+        } else {
+            $path = 'http://' . $host . '/' . $pdf;
+        }
+
+        return ['link' => $pdf];
     }
 
     public function concluirServicioFirma(array $datos) {

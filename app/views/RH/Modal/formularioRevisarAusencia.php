@@ -22,14 +22,16 @@
             </label>
             <?php
             if ($datosAusencia[0]['NivelCancelacion'] == null) {
-                echo '<label id="btnPeticionCancelar" class="btn btn-danger btn-xs hidden" href="#modalCancelarPeticion" data-toggle="modal">
-                        <i class="fa fa"></i> Cancelar
-                    </label>';
+                if ($perfilUsuario != 21 && $perfilUsuario != 37) {
+                    echo '<label id="btnPeticionCancelar" class="btn btn-danger btn-xs hidden" href="#modalCancelarPeticion" data-toggle="modal">
+                            <i class="fa fa"></i> Cancelar
+                        </label>&nbsp;';
+                }
             } else {
                 if ($perfilUsuario == $datosAusencia[0]['NivelCancelacion']) {
                     echo '<label id="btnPeticionCancelar" class="btn btn-danger btn-xs hidden" href="#modalCancelarPeticion" data-toggle="modal">
                             <i class="fa fa"></i> Cancelar
-                        </label>';
+                        </label>&nbsp;';
                 }
             }
             if ($perfilUsuario != 44) {
@@ -48,11 +50,6 @@
     </div>
     <div class="tab-content">
         <div class="panel-body">
-                <?php
-//            if (($datosAusencia[0]['IdMotivoAusencia'] == '3' || $datosAusencia[0]['IdMotivoAusencia'] == '4') && $datosAusencia[0]["ArchivosOriginales"] == '') {
-//                echo '<label style="color: red">Sin archivo de cita o incapacidad</label>';
-//            }
-                ?>
             <form id="formRevisarPermiso" class="margin-bottom-0" data-parsley-validate="true" enctype="multipart/form-data">
 
                 <div class="col-md-3">
@@ -87,7 +84,7 @@
                         <label>Puesto</label>
                         <?php
                         echo
-                        '<input type="text" class="form-control" id="inputPuestoRevisar" style="width: 100%" disabled value="' . $datosAusencia[0]["Puesto"] . '"/>';
+                        '<input type="text" class="form-control" id="inputPuesto" style="width: 100%" disabled value="' . $datosAusencia[0]["Puesto"] . '"/>';
                         ?>
                     </div>
                 </div>
@@ -113,7 +110,7 @@
                     <div class="form-group">
                         <label>Motivo Ausencia</label>
                         <?php
-                        echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="'.$datosAusencia[0]["MotivoAusencia"].'"/>';
+                        echo '<input type="text" class="form-control" id="inputMotivoAusencia" style="width: 100%" disabled value="' . $datosAusencia[0]["MotivoAusencia"] . '"/>';
                         ?>
                     </div>
                 </div>
@@ -302,14 +299,24 @@
                 <div class="form-group">
                     <form id="motivoSolicitudCancelacion" class="margin-bottom-0" data-parsley-validate="true" enctype="multipart/form-data">
                         <label>Motivo de Cancelación del permiso</label>
-                        <select id="motivoCancelarPermiso" class="form-control efectoDescuento" name="motivoRechazo" style="width: 100%" data-parsley-required="true">
-                            <option value="">Seleccionar...</option>
-                            <?php
-                            foreach ($tipoCancelacion as $value) {
-                                echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
-                            }
-                            ?>
-                        </select>
+                        <div id="listaCancelacion">
+                            <select id="motivoCancelarPermiso" class="form-control efectoDescuento" name="motivoRechazo" style="width: 100%" data-parsley-required="true">
+                                <option value="">Seleccionar...</option>
+                                <?php
+                                foreach ($tipoCancelacion as $value) {
+                                    echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div id="checkOtro" class="checkbox">
+                            <label>
+                                <input type="checkbox" value="" />Otro
+                            </label>
+                        </div>
+                        <div id="otroMotivo" class="hidden">
+                            <textarea id="textareaMotivoSolicitarCancelacion" class="form-control" placeholder="Ingresa el motivo de la cancelación " rows="3"></textarea>
+                        </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="mensajeCancelarAutorizacion"></div>

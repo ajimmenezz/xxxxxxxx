@@ -124,24 +124,23 @@ class Autorizar_permisos extends General {
             switch ($datosPermiso['idPerfil']) {
                 case 21:
                     $revisor = array(
-                        'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
+                        'IdUsuarioJefe' => 0, 'FechaAutorizacionJefe' => '-',
                         'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                     );
-                    $correoRevisorSig = array('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 37'));
+                    $correoRevisorSig = $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 37');
                     break;
                 case 37:
-
                     $revisor = array(
-                        'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City')),
+                        'IdUsuarioJefe' => 0, 'FechaAutorizacionJefe' => '-',
                         'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                     );
-                    $correoRevisorSig = array('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 44'));
+                    $correoRevisorSig = $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 44');
                     break;
                 default :
                     $revisor = array(
                         'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                     );
-                    $correoRevisorSig = array('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 21'));
+                    $correoRevisorSig = $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 21');
                     break;
             }
         } else {
@@ -151,19 +150,19 @@ class Autorizar_permisos extends General {
                     $revisor = array(
                         'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                     );
-                    $correoRevisorSig = array('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 37'));
+                    $correoRevisorSig = $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 37');
                     break;
                 case 37:
                     $revisor = array(
                         'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                     );
-                    $correoRevisorSig = array('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 44'));
+                    $correoRevisorSig = $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 44');
                     break;
                 default :
                     $revisor = array(
                         'IdUsuarioJefe' => $datosPermiso['idUser'], 'FechaAutorizacionJefe' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                     );
-                    $correoRevisorSig = array('correoRevisorSig' => $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 21'));
+                    $correoRevisorSig = $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 21');
                     break;
             }
         }
@@ -174,7 +173,7 @@ class Autorizar_permisos extends General {
                     Permiso Solicitado: <p>' . $infoCorreo['tipoAusencia'] . ' para el día ' . $infoCorreo[0]['FechaAusenciaDesde'] . '</p><br><br>
                     <a href="https://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/' . $datosPermiso['archivo'] . '">Archivo</a>';
         $mensaje = $this->Correo->mensajeCorreo('Permiso de Ausencia Autorizado', $texto);
-        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig['correoRevisorSig'][0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
+        $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($correoRevisorSig[0]['EmailCorporativo']), 'Permiso de Ausencia', $mensaje);
         $this->agregarFirmasPDF($datosPermiso, $rechazado = "Autorizado por: ", $motivo = array('IdRechazo' => ""));
         return $this->DBS->actualizar('t_permisos_ausencia_rh', $revisor, array('Id' => $datosPermiso['idPermiso']));
     }
@@ -437,10 +436,15 @@ class Autorizar_permisos extends General {
                     <br>El motivo de la Cancelación es: " . $datosPermiso["motivoCancelacion"] . ".";
         $mensaje = $this->Correo->mensajeCorreo('Cancelar Permiso de Ausencia ', $texto);
         $correoEnviado = $this->Correo->enviarCorreo('notificaciones@siccob.solutions', array($arregloCorreos), 'Cancelar Permiso de Ausencia', $mensaje);
-
+        
+        if($datosPermiso['idMotivoCancelacion'] == ''){
+            $idCancelacion = null;
+        }else{
+            $idCancelacion = $datosPermiso['idMotivoCancelacion'];
+        }
         $consulta = $this->DBS->actualizar('t_permisos_ausencia_rh', array(
             'IdEstatus' => '6',
-            'IdCancelacion' => $datosPermiso['idMotivoCancelacion']
+            'IdCancelacion' => $idCancelacion
                 ), array('Id' => $datosPermiso['idPermiso']));
 
         return $consulta;

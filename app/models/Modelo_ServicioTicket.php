@@ -1017,9 +1017,29 @@ class Modelo_ServicioTicket extends Modelo_Base {
             return FALSE;
         }
     }
-    
+
     public function verificarServiciosDepartamento(string $tipoServicio) {
         $consulta = $this->consulta('SELECT Seguimiento FROM cat_v3_servicios_departamento WHERE Id = "' . $tipoServicio . '"');
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function consultaDocumentacioFirmadaServicio(string $servicio, string $limite = null) {
+        ($limite !== null) ? $limitarServicio = 'ORDER BY Id DESC LIMIT 1' : $limitarServicio = '';
+        $consulta = $this->consulta('SELECT 
+                                                        Fecha,
+                                                        Recibe,
+                                                        Correos,
+                                                        (SELECT Nombre FROM cat_v3_estatus WHERE Id = tsdf.IdEstatus) Estatus,
+                                                        UrlArchivo,
+                                                        Firma
+                                                    FROM t_servicios_documentacion_firmada tsdf
+                                                    WHERE tsdf.IdServicio =  "' . $servicio . '"'
+                . $limitarServicio);
 
         if (!empty($consulta)) {
             return $consulta;

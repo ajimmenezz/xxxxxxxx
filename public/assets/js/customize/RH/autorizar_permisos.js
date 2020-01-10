@@ -1,7 +1,6 @@
 $(function () {
 
     var evento = new Base();
-    var select = new Select();
     var file = new Upload();
     this.calendario = new Fecha();
     var tabla = new Tabla();
@@ -37,7 +36,6 @@ $(function () {
         }
         evento.enviarEvento('EventoPermisosVacaciones/Autorizar', datosPermiso, '#panelAutorizarPermisos', function (respuesta) {
             if (respuesta) {
-                console.log(perfilUsuario)
                 $('#contentRevisarPermiso').removeClass('hidden').empty().append(respuesta.formulario);
                 $('#contentPermisosPendientes').addClass('hidden');
                 if (respuesta.consulta.datosAusencia['0'].IdUsuarioJefe !== null) {
@@ -53,7 +51,8 @@ $(function () {
                 if (datosPermiso.estatus === 'Cancelado') {
                     $('.ocultarPermiso').addClass('hidden');
                 }
-                if (datosPermiso.estatus === 'Autorizado' && respuesta.consulta.datosAusencia['0'].Cancelacion == 1) {
+                let hoy = moment().format('YYYY-MM-DD');
+                if (respuesta.consulta.datosAusencia['0'].Cancelacion == 1 && hoy <= respuesta.consulta.datosAusencia['0'].FechaAusenciaDesde) {
                     $('#btnPeticionCancelar').removeClass('hidden');
                 }
                 $('#btnCancelarRevisarPermiso').on('click', function () {
@@ -70,6 +69,9 @@ $(function () {
                 $("#btnVerPDFAutorizar").on("click", function () {
                     window.open('/storage/Archivos/' + $('#archivoPDF').val(), '_blank');
                 });
+                
+                let selectRechazo = new SelectBasico('motivoRechazo');
+                selectRechazo.iniciarSelect();
                 $("#btnCancelarPermiso").on("click", function () {
                     $('#btnAceptarRechazo').on('click', function () {
                         if ($('#motivoRechazo').val() !== "") {
@@ -89,6 +91,7 @@ $(function () {
                         }
                     });
                 });
+
                 $("#btnAutorizarPermiso").on("click", function () {
                     evento.enviarEvento('EventoPermisosVacaciones/AutorizarPermiso', data, '#panelRevisarPermisos', function (respuesta) {
                         if (respuesta) {
@@ -98,6 +101,7 @@ $(function () {
                         }
                     });
                 });
+
                 $("#btnConluirAutorizacion").on("click", function () {
                     evento.enviarEvento('EventoPermisosVacaciones/ConluirAutorizacion', data, '#panelRevisarPermisos', function (respuesta) {
                         if (respuesta) {
@@ -107,18 +111,39 @@ $(function () {
                         }
                     });
                 });
+
+                let selectCancelacion = new SelectBasico('motivoCancelarPermiso');
+                selectCancelacion.iniciarSelect();
+                $('input[type="checkbox"]').click(function () {
+                    if ($(this).prop("checked") === true) {
+                        $('#otroMotivo').removeClass('hidden');
+                        $('#motivoCancelarPermiso').attr('data-parsley-required', 'false');
+                        $('#listaCancelacion').addClass('hidden');
+                        $('#textareaMotivoSolicitarCancelacion').attr('data-parsley-required', 'true');
+                    } else {
+                        $('#otroMotivo').addClass('hidden');
+                        $('#textareaMotivoSolicitarCancelacion').attr('data-parsley-required', 'false');
+                        $('#listaCancelacion').removeClass('hidden');
+                        $('#motivoCancelarPermiso').attr('data-parsley-required', 'true');
+                    }
+                });
                 $('#btnAceptarCancelarPeticion').on('click', function () {
                     if (evento.validarFormulario('#motivoSolicitudCancelacion')) {
                         var data = {
                             idPermiso: $('#idPermisoRevisar').val(),
                             idUserRev: idUsuario,
-                            motivoCancelacion: $('#motivoCancelarPermiso option:selected').text(),
-                            idMotivoCancelacion: $('#motivoCancelarPermiso').val(),
                             nombreUsuario: $('#inputNombreRevisar').val(),
                             fechaAusencia: $('#inputFechaPermisoDesdeRevisar').val(),
                             MotivoAusencia: $('#inputMotivoAusencia').val()
                         }
-                        evento.enviarEvento('EventoPermisosVacaciones/cancelarPermisoAutorizado', data, '#modal-dialogo', function (respuesta) {
+                        if ($('input[type="checkbox"]').prop("checked") === true) {
+                            data.motivoCancelacion = $('#textareaMotivoSolicitarCancelacion').val();
+                            data.idMotivoCancelacion = null;
+                        } else {
+                            data.motivoCancelacion = $('#motivoCancelarPermiso option:selected').text();
+                            data.idMotivoCancelacion = $('#motivoCancelarPermiso').val();
+                        }
+                        evento.enviarEvento('EventoPermisosVacaciones/cancelarPermisoAutorizado', data, '#modalCancelarPeticion', function (respuesta) {
                             if (respuesta) {
                                 location.reload();
                             } else {

@@ -1626,7 +1626,14 @@ $config['RH'] = array(
             'select2/dist/css/select2.min',
             'parsley/src/parsley'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Fecha', 'Base/Tabla', 'Base/Botones', 'Base/Nota', 'RH/autorizar_permisos'),
+        'js' => array(
+            'Base/Base',
+            'Componentes/Selects/Select', 
+            'Componentes/Selects/SelectBasico',
+            'Base/fileUpload',
+            'Base/Fecha', 
+            'Base/Tabla',
+            'RH/autorizar_permisos'),
         'pluginsJs' => array(
             'bootstrap-datepicker/js/bootstrap-datepicker',
             'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
@@ -1638,6 +1645,8 @@ $config['RH'] = array(
             'select2/dist/js/select2.min',
             'parsley/dist/parsley',
             'parsley/src/i18n/es',
+            'moment/moment-locales.min',
+            'moment/es',
             'masked-input/masked-input.min'
         ),
         'Permiso' => 'VAPARH'
