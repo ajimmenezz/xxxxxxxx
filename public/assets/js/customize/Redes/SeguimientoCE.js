@@ -496,13 +496,7 @@ $(function () {
         let evidenciaOpcional = $('#actualizarEvidenciaNodo').val();
         let infoTabla = tablaAgregarMateriales.validarNumeroFilas();
         if (infoTabla == true) {
-            if (evidenciaOpcional == '' || evidenciasNodo == null) {
-//                if (evidenciasNodo == null) {
-//                    $("#notaEvidencia").removeClass("hidden").delay(4000).queue(function (next) {
-//                        $(this).addClass("hidden");
-//                        next();
-//                    });
-//                } else {
+            if (evidenciaOpcional === '' && evidenciasNodo === null) {
                 infoMaterialNodo.archivos = evidenciaOpcional;
                 infoMaterialNodo.evidencias = false;
                 peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/actualizarNodo', infoMaterialNodo, function (respuesta) {
@@ -517,7 +511,6 @@ $(function () {
                     cargarContenidoTablaMaterial(respuesta.solucion.totalMaterial);
                     $('#modalMaterialNodo').modal('hide');
                 });
-//                }
             } else {
                 infoMaterialNodo.archivos = evidenciaOpcional;
                 infoMaterialNodo.evidencias = true;
