@@ -93,7 +93,7 @@ class ServiceDesk {
         return $textoError;
     }
 
-    static private function validarAPIKey(string $key) {
+    static public function validarAPIKey(string $key) {
         try {
             self::getFoliosTecnico($key);
         } catch (\Exception $ex) {

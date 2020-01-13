@@ -310,7 +310,7 @@
                         <div class="col-md-12">
                             <div class="col-md-12">
                                 <span>Sección donde podras reportar y ver todos los problemas del Servicio</span><br><br>
-                                <label id="btnReportar" href="#modalDefinirProblema" class="btn btn-success bloqueoConclusionBtn" data-toggle="modal">Reportar</label>
+                                <label id="btnReportar" href="#modalDefinirProblema" class="btn btn-success bloqueoConclusionBtn" data-toggle="modal"><i class="fa fa-exclamation-triangle"></i> Reportar</label>
                                 <br><br>
                             </div>
                             <div class="col-md-12">
@@ -439,13 +439,15 @@
                     <div class="col-md-12">
                         <br><br>
                         <div class="col-md-6">
-                            <a id="btnGuardar" class="btn btn-success bloqueoConclusionBtn">
-                                GUARDAR
+                            <a id="btnGuardar" class="btn btn-primary bloqueoConclusionBtn">
+                                <i class="fa fa-save"></i>
+                                 GUARDAR
                             </a>
                         </div>
                         <div class="col-md-6">
                             <a id="btnConcluir" class="btn btn-danger bloqueoConclusionBtn" data-toggle="modal">
-                                CONCLUIR
+                                <i class="fa fa-unlock-alt"></i>
+                                 CONCLUIR
                             </a>
                         </div>
                     </div>

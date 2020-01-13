@@ -75,7 +75,6 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $this->datos['folio'] = null;
             $this->datos['notasFolio'] = null;
-
             if (!empty($this->servicio->getFolio())) {
                 $this->datos['folio'] = ServiceDesk::getDatos($this->servicio->getFolio());
                 $this->datos['notasFolio'] = ServiceDesk::getNotas($this->servicio->getFolio());
@@ -109,11 +108,9 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $SD = $this->getInformacionFolio();
-            if($SD){
-                $this->servicio->setFolioServiceDesk($datosServicio['folio']);
-            }
-            $this->datos['operacion'] = TRUE;
+            $nuevoFolio = $this->servicio->setFolioServiceDesk($datosServicio['folio']);
+            $this->datos['nuevoFolio'] = $nuevoFolio;
+            $this->getInformacionFolio();
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
@@ -151,9 +148,16 @@ class Controller_ServicioTicket extends CI_Controller {
             }
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->setProblema($datosServicio);
-            $this->setNotaServiceDesk($datosServicio);
+
+            $key = Usuario::getAPIKEY();
+            $key = ServiceDesk::validarAPIKey(strval($key));
+
+            if ($key !== '') {
+                $this->setNotaServiceDesk($datosServicio);
+                $this->getInformacionFolio();
+            }
+
             $this->datos['problemas'] = $this->servicio->getProblemas();
-            $this->getInformacionFolio();
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {
@@ -292,7 +296,7 @@ class Controller_ServicioTicket extends CI_Controller {
             echo json_encode($this->datos);
         }
     }
-    
+
     public function rechazarServicio() {
         try {
             $datosServicio = $this->input->post();
@@ -306,5 +310,5 @@ class Controller_ServicioTicket extends CI_Controller {
             echo json_encode($this->datos);
         }
     }
-    
+
 }

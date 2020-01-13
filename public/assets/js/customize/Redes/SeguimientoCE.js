@@ -163,18 +163,26 @@ $(function () {
         materialTecnico = infoServicio.datosServicio.materialAlmacen;
         listaTotalMaterialUsado = infoServicio.solucion.totalMaterial;
         iniciarObjetos();
+
         if (infoServicio.servicio.Folio != 0 && infoServicio.servicio.Folio != null) {
-            mostrarElementosAgregarFolio();
-            mostrarInformacionFolio(infoServicio.folio);
-            arreglarNotas(infoServicio.notasFolio);
+            if (infoServicio.folio.Error !== undefined) {
+                mostrarErrorFolio(infoServicio.folio.Error);
+            } else {
+                mostrarElementosAgregarFolio();
+                mostrarInformacionFolio(infoServicio.folio);
+                arreglarNotas(infoServicio.notasFolio);
+            }
         }
+
         if (infoServicio.sucursales.length > 0) {
             selectSucursal.cargaDatosEnSelect(infoServicio.sucursales);
             selectSucursal.definirValor(infoServicio.solucion.IdSucursal);
         }
+
         if (infoServicio.problemas !== null) {
             cargarContenidoProblemas(infoServicio.problemas);
         }
+
         cargarContenidoServicio(infoServicio.servicio);
         cargarContenidoSolucion(infoServicio.solucion);
         cargarContenidoModalMaterial(infoServicio.datosServicio);
@@ -235,23 +243,27 @@ $(function () {
             $("#estatusFolio").text(infoFolio.STATUS);
             $("#asuntoFolio").text(infoFolio.SHORTDESCRIPTION);
         } else {
-            $('#formularioAgregarFolio').addClass('hidden');
-            $('#infoFolio').addClass('hidden');
-            $('#agregarFolio').append('<div class="notaFolioError" class="col-md-12">\n\
+            mostrarErrorFolio(infoFolio.Error);
+        }
+    }
+
+    function mostrarErrorFolio(error) {
+        $('#formularioAgregarFolio').addClass('hidden');
+        $('#infoFolio').addClass('hidden');
+        $('#agregarFolio').append('<div class="notaFolioError" class="col-md-12">\n\
                                             <br>\n\
                                             <div class="col-md-10">\n\
-                                                <label class="col-md-10">Error en el folio agregado, revisa que sea el correcto.<br></label>\n\
+                                                <label class="col-md-10">' + error + '<br></label>\n\
                                             </div>\n\
                                             <div class="col-md-2">\n\
                                                 <a class="recargarFolio"><i data-toggle="tooltip" data-placement="top" data-title="Recargar" class="fa fa-2x fa-refresh  text-success"></i>Recargar</a>\n\
                                             </div>\n\
                                         </div>');
-            $(".recargarFolio").on('click', function () {
-                $('#formularioAgregarFolio').removeClass('hidden');
-                $('.notaFolioError').addClass('hidden');
-                datoServicioTabla.folio = '';
-            });
-        }
+        $(".recargarFolio").on('click', function () {
+            $('#formularioAgregarFolio').removeClass('hidden');
+            $('.notaFolioError').addClass('hidden');
+            datoServicioTabla.folio = '';
+        });
     }
 
     function arreglarNotas(notas) {
@@ -760,19 +772,21 @@ $(function () {
     /**Finalizan eventos de botones del encabezado**/
 
     /**Empiezan eventos de botones para folio**/
+    $('#guardarFolio').off('click');
     $('#guardarFolio').on('click', function () {
         if (evento.validarFormulario('#folio')) {
             datoServicioTabla.folio = $('#addFolio').val();
             peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/guardar', datoServicioTabla, function (respuesta) {
-                if (respuesta.operacionFolio) {
-                    mostrarElementosAgregarFolio();
-                    mostrarInformacionFolio(respuesta.folio);
-                    arreglarNotas(respuesta.notasFolio);
-                } else {
-                    datoServicioTabla.folio = 0;
-                    peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/guardar', datoServicioTabla, function (respuesta) {
+                if (respuesta.nuevoFolio !== false) {
+                    if (respuesta.operacionFolio) {
+                        mostrarElementosAgregarFolio();
                         mostrarInformacionFolio(respuesta.folio);
-                    });
+                        arreglarNotas(respuesta.notasFolio);
+                    } else {
+                        mostrarErrorFolio(respuesta.folio.Error);
+                    }
+                } else {
+                    modal.mostrarModal('Aviso', '<h4>El folio ya esta siendo atendido en otra solicitud.</h4>');
                 }
             });
         }
@@ -931,8 +945,12 @@ $(function () {
                     if (!validarError(respuesta, 'modalDefinirProblema')) {
                         return;
                     }
-                    mostrarInformacionFolio(respuesta.folio);
-                    arreglarNotas(respuesta.notasFolio);
+
+                    if (respuesta.folio !== undefined) {
+                        mostrarInformacionFolio(respuesta.folio);
+                        arreglarNotas(respuesta.notasFolio);
+                    }
+
                     cargarContenidoProblemas(respuesta.problemas);
                     $('#textareaDescProblema').val('');
                     evidenciaProblema.limpiarElemento();
@@ -944,8 +962,12 @@ $(function () {
                     if (!validarError(respuesta, 'modalDefinirProblema')) {
                         return;
                     }
-                    mostrarInformacionFolio(respuesta.folio);
-                    arreglarNotas(respuesta.notasFolio);
+
+                    if (respuesta.folio !== undefined) {
+                        mostrarInformacionFolio(respuesta.folio);
+                        arreglarNotas(respuesta.notasFolio);
+                    }
+
                     cargarContenidoProblemas(respuesta.problemas);
                     $('#textareaDescProblema').val('');
                     evidenciaProblema.limpiarElemento();

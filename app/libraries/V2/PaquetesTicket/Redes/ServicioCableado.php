@@ -5,6 +5,7 @@ namespace Librerias\V2\PaquetesTicket\Redes;
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesTicket\Redes\GestorNodosRedes as GestorNodo;
 use Librerias\V2\PaquetesGenerales\Utilerias\PDF as PDF;
+use Librerias\V2\PaquetesTicket\Utilerias\Solicitud as Solicitud;
 use Modelos\Modelo_ServicioCableado as Modelo;
 use Modelos\Modelo_ServicioTicket as ModeloServicioTicket;
 use Librerias\Generales\Correo as Correo;
@@ -83,10 +84,18 @@ class ServicioCableado implements Servicio {
     }
 
     public function setFolioServiceDesk(string $folio) {
-        $this->DBServiciosGeneralRedes->empezarTransaccion();
-        $this->DBServiciosGeneralRedes->setFolioServiceDesk($this->idSolicitud, $folio);
-        $this->setDatos();
-        $this->DBServiciosGeneralRedes->finalizarTransaccion();
+        $solicitud = new solicitud($this->idSolicitud);
+        $folioSolicitudes = $solicitud->folioSolicitudes(array('folio' => $this->folioSolicitud));
+
+        if (empty($folioSolicitudes)) {
+            $this->DBServiciosGeneralRedes->empezarTransaccion();
+            $this->DBServiciosGeneralRedes->setFolioServiceDesk($this->idSolicitud, $folio);
+            $this->setDatos();
+            $this->DBServiciosGeneralRedes->finalizarTransaccion();
+            return TRUE;
+        }else{
+            return FALSE;
+        }
     }
 
     public function getCliente() {

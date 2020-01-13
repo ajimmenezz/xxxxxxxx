@@ -39,4 +39,9 @@ class Modelo_ServicioTicketV2 extends Modelo_Base {
         }
     }
 
+    public function folioSolicitudes(array $datos) {
+        $consulta = $this->consulta('SELECT Id FROM t_solicitudes WHERE Folio = "' . $datos['folio'] . '"');
+        return $consulta;
+    }
+
 }
