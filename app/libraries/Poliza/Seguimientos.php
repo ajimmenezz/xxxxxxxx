@@ -2774,7 +2774,6 @@ class Seguimientos extends General
         }
     }
 
-<<<<<<< HEAD
     public function cargarPDF(array $datos)
     {
         $host = $_SERVER['SERVER_NAME'];
@@ -2795,9 +2794,6 @@ class Seguimientos extends General
 
     public function linkDetallesServicio(string $servicio)
     {
-=======
-    public function linkDetallesServicio(string $servicio) {
->>>>>>> 8e79caf09ed6e96998e3348a9268f249354affce
         $host = $_SERVER['SERVER_NAME'];
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
