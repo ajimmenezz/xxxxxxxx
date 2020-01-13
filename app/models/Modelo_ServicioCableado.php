@@ -124,7 +124,7 @@ class Modelo_ServicioCableado extends Modelo_Base {
                            IdEstatus = 5,
                            FechaConclusion = NOW(),
                            Firma = "' . $datos['archivos'][0] . '",
-                           NombreFirma = "' . $$nombre . '",
+                           NombreFirma = "' . $datos['nombreCliente'] . '",
                            FechaFirma = NOW(),                           
                            IdTecnicoFirma = ' . $datos['idUsuario'] . ',
                            FirmaTecnico = "' . $datos['archivos'][1] . '"
