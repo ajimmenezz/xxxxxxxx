@@ -232,7 +232,7 @@ class ServicioCableado implements Servicio {
 
     public function getPDF(array $datos) {
         $informacionServicio = $this->DBServiciosGeneralRedes->getDatosSolucionPDF($datos);
-        $pdf = new PDF($this->folioSolicitud);
+        $pdf = new PDF($this->id);
         $pdf->AddPage();
         $pdf->tituloTabla('#1 Información General');
         $pdf->tabla(array(), $informacionServicio['infoGeneral']);
