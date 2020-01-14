@@ -160,6 +160,12 @@ foreach ($paises as $item) {
                 <input type="tel" class="form-control" id="inputActualizarTelefono2Sucursales" placeholder="01-555-5555555" style="width: 100%" <?php echo $habilitar ?>/>                            
             </div>
         </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="catalogoActualizarSucursales">Dominio</label>
+                <input type="tel" class="form-control" id="inputActualizarDominio" placeholder="000" maxlength="4" style="width: 100%" <?php echo $habilitar ?>/>                            
+            </div>
+        </div>
         <div id='estatus' class="col-md-2">
             <div class="form-group">
                 <label for="CatalogoActualizarSucursales">Estatus</label>

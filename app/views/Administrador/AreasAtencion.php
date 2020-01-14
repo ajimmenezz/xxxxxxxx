@@ -64,6 +64,7 @@
                                     <th class="all">Cliente</th>
                                     <th class="all">Descripcion</th>
                                     <th class="all">Estatus</th>
+                                    <th class="never">Clave</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -80,6 +81,7 @@
                                         } else {
                                             echo '<td data-flag="' . $value['Flag'] . '">Inactivo</td>';
                                         }
+                                        echo '<td>' . $value['ClaveCorta'] . '</td>';
                                         echo '</tr>';
                                     }
                                 }
