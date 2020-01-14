@@ -59,6 +59,12 @@
                 </select>
             </div>
         </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="catalogoActualizarSucursales">Clave</label>
+                <input type="tel" class="form-control" id="inputActualizarClave" placeholder="000" maxlength="4" style="width: 100%" />                            
+            </div>
+        </div>
     </div>
     <div class="row m-t-10">
         <!--Empezando error--> 

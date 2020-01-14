@@ -69,6 +69,7 @@ $(function () {
         $('#inputActualizarNombreAreasAtencion').val(datos[1]);
         $('#selectActualizarClienteAreasAtencion').val(cliente).trigger('change');
         $('#inputActualizarDescripcionAreasAtencion').val(datos[3]);
+        $('#inputActualizarClave').val(datos[5]);
     };
 
     var cargarEventosFormulario = function () {
@@ -88,6 +89,7 @@ $(function () {
             var nombre = $('#inputActualizarNombreAreasAtencion').val();
             var cliente = $('#selectActualizarClienteAreasAtencion').val();
             var descripcion = $('#inputActualizarDescripcionAreasAtencion').val();
+            var clave = $('#inputActualizarClave').val();
             var activacion;
 
             if (operacion === '2') {
@@ -96,7 +98,7 @@ $(function () {
                 var estatus = '';
             }
             if (evento.validarFormulario('#formActualizarAreaAtencion')) {
-                var data = {id: id, nombre: nombre, cliente: cliente, descripcion: descripcion, estatus: estatus, operacion: operacion};
+                var data = {id: id, nombre: nombre, cliente: cliente, descripcion: descripcion, estatus: estatus, operacion: operacion, clave: clave};
                 evento.enviarEvento('EventoCatalogoAreasAtencion/Actualizar_AreaAtencion', data, '#seccionArasAtencion', function (respuesta) {
                     if (respuesta instanceof Array) {
                         tabla.limpiarTabla('#data-table-areasAtencion');
@@ -106,7 +108,7 @@ $(function () {
                             } else {
                                 activacion = 'Inactivo';
                             }
-                            tabla.agregarFila('#data-table-areasAtencion', [valor.Id, valor.Nombre, valor.Cliente, valor.Descripcion, activacion, valor.NombreCinemex], true);
+                            tabla.agregarFila('#data-table-areasAtencion', [valor.Id, valor.Nombre, valor.Cliente, valor.Descripcion, activacion, valor.ClaveCorta], true);
                         });
                         $('#listaAreasAtencion').removeClass('hidden');
                         $('#formularioAreasAtencion').addClass('hidden');

@@ -181,6 +181,7 @@ $(function () {
         $('#inputActualizarTelefono2Sucursales').val(datos[14]);
         $('#inputAlias').val(datos[17]);
         $('#inputCentroCostos').val(datos[18]);
+        $('#inputActualizarDominio').val(datos[19]);
     };
 
     var cargarEventosFormulario = function () {
@@ -248,6 +249,7 @@ $(function () {
             var telefono2 = $('#inputActualizarTelefono2Sucursales').val();
             var alias = $('#inputAlias').val();
             var centroCostos = $('#inputCentroCostos').val();
+            var dominio = $('#inputActualizarDominio').val();
             var activacion;
 
             if (operacion === '2') {
@@ -256,7 +258,7 @@ $(function () {
                 var estatus = '';
             }
             if (evento.validarFormulario('#formActualizarSucursales')) {
-                var data = {id: id, nombre: nombre, cinemex: cinemex, responsable: responsable, cliente: cliente, region: region, unidadNegocio: unidadNegocio, pais: pais, estado: estado, municipio: municipio, colonia: colonia, calle: calle, ext: ext, int: int, telefono1: telefono1, telefono2: telefono2, estatus: estatus, operacion: operacion, alias: alias, centroCostos: centroCostos};
+                var data = {id: id, nombre: nombre, cinemex: cinemex, responsable: responsable, cliente: cliente, region: region, unidadNegocio: unidadNegocio, pais: pais, estado: estado, municipio: municipio, colonia: colonia, calle: calle, ext: ext, int: int, telefono1: telefono1, telefono2: telefono2, estatus: estatus, operacion: operacion, alias: alias, centroCostos: centroCostos, dominio: dominio};
                 evento.enviarEvento('EventoCatalogoSucursales/Actualizar_Sucursal', data, '#seccionSucursales', function (respuesta) {
                     if (respuesta instanceof Array) {
                         tabla.limpiarTabla('#data-table-sucursales');
@@ -266,7 +268,7 @@ $(function () {
                             } else {
                                 activacion = 'Inactivo';
                             }
-                            tabla.agregarFila('#data-table-sucursales', [valor.Id, valor.Nombre, valor.Cliente, valor.Region, valor.Responsable, valor.UnidadNegocio, valor.Pais, valor.Estado, valor.Municipio, valor.CP, valor.Calle, valor.NoInt, valor.NoExt, valor.Telefono1, valor.Telefono2, activacion, valor.NombreCinemex, valor.Alias, valor.CentroCostos], true);
+                            tabla.agregarFila('#data-table-sucursales', [valor.Id, valor.Nombre, valor.Cliente, valor.Region, valor.Responsable, valor.UnidadNegocio, valor.Pais, valor.Estado, valor.Municipio, valor.CP, valor.Calle, valor.NoInt, valor.NoExt, valor.Telefono1, valor.Telefono2, activacion, valor.NombreCinemex, valor.Alias, valor.CentroCostos, valor.Dominio], true);
                         });
                         $('#listaSucursales').removeClass('hidden');
                         $('#formularioSucursal').addClass('hidden');

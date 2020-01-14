@@ -69,7 +69,8 @@ class Administrador extends General {
                                                                     e.Id AS IdMunicipio, 
                                                                     f.Id AS IdColonia, 
                                                                     g.Id AS IdUsuario,
-                                                                    a.IdUnidadNegocio
+                                                                    a.IdUnidadNegocio,
+                                                                    a.Dominio
                                                                 FROM cat_v3_sucursales a 
                                                                 INNER JOIN cat_v3_clientes b 
                                                                         ON b.Id = a.IdCliente

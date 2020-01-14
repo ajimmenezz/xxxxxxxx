@@ -501,7 +501,8 @@ class Catalogo extends General {
                         'Flag' => '1',
                         'IdUnidadNegocio' => $datos['unidadNegocio'],
                         'Alias' => $datos["alias"],
-                        'CentroCostos' => $datos["centroCostos"]
+                        'CentroCostos' => $datos["centroCostos"],
+                        'Dominio' => $datos["dominio"]
                     ));
                     if (!empty($consulta)) {
                         return $this->catSucursales('3');
@@ -538,7 +539,8 @@ class Catalogo extends General {
                         'Flag' => $datos['estatus'],
                         'IdUnidadNegocio' => $datos['unidadNegocio'],
                         'Alias' => $datos["alias"],
-                        'CentroCostos' => $datos["centroCostos"]
+                        'CentroCostos' => $datos["centroCostos"],
+                        'Dominio' => $datos["dominio"]
                             ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
@@ -1840,6 +1842,7 @@ class Catalogo extends General {
                         'Nombre' => $datos['nombre'],
                         'IdCliente' => $datos['cliente'],
                         'Descripcion' => $datos['descripcion'],
+                        'ClaveCorta' => $datos['clave'],
                         'Flag' => '1'
                     ));
                     if (!empty($consulta)) {
@@ -1863,6 +1866,7 @@ class Catalogo extends General {
                         'Nombre' => strtoupper($datos['nombre']),
                         'IdCliente' => $datos['cliente'],
                         'Descripcion' => $datos['descripcion'],
+                        'ClaveCorta' => $datos['clave'],
                         'Flag' => $datos['estatus']
                             ), array('Id' => $datos['id'])
                     );
