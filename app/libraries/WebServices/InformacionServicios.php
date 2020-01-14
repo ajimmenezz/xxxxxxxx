@@ -1106,6 +1106,8 @@ class InformacionServicios extends General {
                 (select Nombre from cat_v3_tipos_falla where Id = (select IdTipoFalla from cat_v3_fallas_equipo where Id = tcd.IdFalla))
             ),')'
         ) as Falla,
+        (SELECT FirmaTecnico FROM t_servicios_ticket WHERE Id = tcg.IdServicio) AS FirmaTecnico,
+        (SELECT nombreUsuario(IdTecnicoFirma) FROM t_servicios_ticket WHERE Id = tcg.IdServicio) AS Tecnico,
         tcd.*
         from t_correctivos_generales tcg
         inner join t_correctivos_diagnostico tcd on tcg.IdServicio = tcd.IdServicio
@@ -1613,7 +1615,6 @@ class InformacionServicios extends General {
                 }
             }
 
-
             $tecnico = '';
 
             if (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '') {
@@ -1646,7 +1647,7 @@ class InformacionServicios extends General {
     private function setFirmaGerente(array $firmas, array $datos) {
         if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '')) {
             if (file_exists('.' . $firmas['Firma'])) {
-                if (($this->y + 61) > 276) {
+                if (($this->y + 62) > 276) {
                     $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
                 }
 
@@ -1673,7 +1674,7 @@ class InformacionServicios extends General {
 
             if (!empty($servicioDocumentacion)) {
 
-                if (($this->y + 61) > 276) {
+                if (($this->y + 62) > 276) {
                     $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
                 }
 
@@ -1700,25 +1701,48 @@ class InformacionServicios extends General {
 
     private function setFirmaGerenteDiagnosticoCorrectivo(int $id, array $datos) {
         $diagnostico = $this->getDiagnosticoCorrectivoForPDF($id);
+        $fechaFirma = utf8_decode($diagnostico['FechaFirma']);
 
         if ((!is_null($diagnostico['Firma']) && $diagnostico['Firma'] != '')) {
             if (file_exists('.' . $diagnostico['Firma'])) {
-                if (($this->y + 56) > 276) {
+                if (($this->y + 62) > 276) {
                     $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
                 }
 
-                $this->setCoordinates(55, $this->y + 5);
-                $this->pdf->Cell(95, 1, "Firma", 0, 0, 'C');
+                if (!is_null($diagnostico['Firma']) && $diagnostico['Firma'] != '') {
+                    if (file_exists('.' . $diagnostico['Firma'])) {
+                        $this->pdf->Image('.' . $diagnostico['Firma'], 12, $this->y + 12, 80, 35, pathinfo($diagnostico['Firma'], PATHINFO_EXTENSION));
+                        $gerente = utf8_decode($diagnostico['Gerente']);
+                        $this->setCoordinates(10, $this->y + 45);
+                        $this->pdf->Cell(95, 5, utf8_decode($gerente), 0, 0, 'C');
 
-                $gerente = '';
-                $this->pdf->Image('.' . $diagnostico['Firma'], $this->x + 2.5, $this->y + 2.5, 80, 35, pathinfo($diagnostico['Firma'], PATHINFO_EXTENSION));
-                $gerente = utf8_decode($diagnostico['Gerente']);
+                        $this->setCoordinates(10, $this->y + 5);
+                        $this->pdf->Cell(95, 5, 'Gerente en turno Cinemex', 0, 0, 'C');
 
-                $this->setCoordinates(55, $this->y + 40);
-                $this->pdf->Cell(95, 5, $gerente, 0, 0, 'C');
+                        $this->setCoordinates(10, $this->y + 5);
+                        $this->pdf->Cell(95, 5, utf8_decode($fechaFirma), 0, 0, 'C');
 
-                $this->setCoordinates(55, $this->y + 5);
-                $this->pdf->Cell(95, 5, 'Gerente en turno Cinemex', 0, 0, 'C');
+                        $this->setCoordinates(105, $this->y - 45);
+                    }
+                }
+
+                $tecnico = '';
+
+                if (!is_null($diagnostico['FirmaTecnico']) && $diagnostico['FirmaTecnico'] != '') {
+                    if (file_exists('.' . $diagnostico['FirmaTecnico'])) {
+                        $this->pdf->Image('.' . $diagnostico['FirmaTecnico'], $this->x, $this->y + 2.5, 80, 35, pathinfo($diagnostico['FirmaTecnico'], PATHINFO_EXTENSION));
+                        $tecnico = utf8_decode($diagnostico['Tecnico']);
+
+                        $this->setCoordinates(100, $this->y + 35);
+                        $this->pdf->Cell(95, 5, utf8_decode($diagnostico['Tecnico']), 0, 0, 'C');
+
+                        $this->setCoordinates(100, $this->y + 5);
+                        $this->pdf->Cell(95, 5, utf8_decode("Técnico Siccob"), 0, 0, 'C');
+
+                        $this->setCoordinates(100, $this->y + 5);
+                        $this->pdf->Cell(95, 5, utf8_decode($fechaFirma), 0, 0, 'C');
+                    }
+                }
             }
         }
     }
