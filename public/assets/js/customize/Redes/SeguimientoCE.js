@@ -787,6 +787,7 @@ $(function () {
                     }
                 } else {
                     modal.mostrarModal('Aviso', '<h4>El folio ya esta siendo atendido en otra solicitud.</h4>');
+                    $('#btnAceptar').addClass('hidden');
                 }
             });
         }

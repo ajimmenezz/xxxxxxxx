@@ -85,7 +85,7 @@ class ServicioCableado implements Servicio {
 
     public function setFolioServiceDesk(string $folio) {
         $solicitud = new solicitud($this->idSolicitud);
-        $folioSolicitudes = $solicitud->folioSolicitudes(array('folio' => $this->folioSolicitud));
+        $folioSolicitudes = $solicitud->folioSolicitudes(array('folio' => $folio));
 
         if (empty($folioSolicitudes)) {
             $this->DBServiciosGeneralRedes->empezarTransaccion();
