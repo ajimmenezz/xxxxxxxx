@@ -24,8 +24,8 @@ class Controller_ServicioTicket extends CI_Controller {
         $this->gestorSucursales = new GestorSucursal();
         $this->gestorServicios = new GestorServicio();
         $this->almacenVirtual = new AlmacenVirtual();
-
         $this->datos = array();
+        $this->load->helper(array('conversionpalabra'));
     }
 
     public function atenderServicio(string $tipoServicio) {
@@ -219,9 +219,11 @@ class Controller_ServicioTicket extends CI_Controller {
             $datosServicio = $this->input->post();
             $datosServicio['idUsuario'] = Usuario::getId();
             $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciasFirmas';
+            $firmaCliente = stripAccents($datosServicio['nombreCliente']);
+            $firmaUsuario = stripAccents(Usuario::getNombre());
             $firmas = array(
-                'Firma-Cliente-' . $datosServicio['nombreCliente'] => $datosServicio['firmaCliente'],
-                'Firma-Tecnico-' . Usuario::getNombre() => $datosServicio['firmaTecnico']
+                'Firma-Cliente-' . str_replace(" ", "_", $firmaCliente) => $datosServicio['firmaCliente'],
+                'Firma-Tecnico-' . str_replace(" ", "_", $firmaUsuario) => $datosServicio['firmaTecnico']
             );
             Archivo::saveArchivos64($carpeta, $firmas);
             $datosServicio['archivos'] = Archivo::getArray();
