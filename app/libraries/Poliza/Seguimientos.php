@@ -1841,6 +1841,25 @@ class Seguimientos extends General {
             'CopiasCorreo' => $correo,
             'FechaFirma' => $fecha
                 ), array('Id' => $datosDiagnostico[0]['Id']));
+        
+        $datosTecnico = $this->DBS->consultaGeneralSeguimiento('SELECT 
+                                                                    (SELECT 
+                                                                            Firma
+                                                                        FROM
+                                                                            cat_v3_usuarios
+                                                                        WHERE
+                                                                            Id = Atiende) AS Firma,
+                                                                    Atiende AS Tecnico
+                                                                FROM
+                                                                    t_servicios_ticket
+                                                                WHERE
+                                                                    Id = "' . $datos['servicio'] . '"');
+        
+        $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
+            'FechaFirma' => $fecha,
+            'IdTecnicoFirma' => $datosTecnico[0]['Tecnico'],
+            'FirmaTecnico' => $datosTecnico[0]['Firma']
+                ), array('Id' => $datos['servicio']));
 
         $archivo = 'Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_CorrectivoImpericia.pdf ';
         $pdf = $this->InformacionServicios->definirPDF(array('servicio' => $datos['servicio'], 'archivo' => $archivo));
