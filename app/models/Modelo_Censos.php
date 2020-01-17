@@ -98,11 +98,13 @@ class Modelo_Censos extends Modelo_Base
             if ($value['Cantidad'] <= 0) {
                 $this->queryBolean("
                 delete from t_censos where Id in (
-                    select 
-                    tc.Id
-                    from t_censos tc
-                    inner join t_censos_puntos tcp on tc.IdServicio = tcp.IdServicio and tc.IdArea = tcp.IdArea
-                    where tcp.Id = '" . $value['Id'] . "'
+                    select tf.Id from (
+                        select 
+                        tc.Id
+                        from t_censos tc
+                        inner join t_censos_puntos tcp on tc.IdServicio = tcp.IdServicio and tc.IdArea = tcp.IdArea
+                        where tcp.Id = '" . $value['Id'] . "'
+                    ) as tf
                 )");
                 $this->queryBolean("delete from t_censos_puntos where Id = '" . $value['Id'] . "'");
             } else {
@@ -668,6 +670,158 @@ class Modelo_Censos extends Modelo_Base
             where tc.IdServicio = (
                 select MAX(Id) from t_servicios_ticket where IdSucursal = '" . $sucursal . "' and IdTipoServicio = 11 and IdEstatus = 4
             )");
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'error' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function getAreasForCensoTemplate()
+    {
+        return $this->consulta("
+        select 
+        Nombre, ClaveCorta
+        from cat_v3_areas_atencion
+        where Flag = 1
+        and ClaveCorta <> ''
+        order by Nombre");
+    }
+
+    public function getDevicesForCensoTemplate()
+    {
+        return $this->consulta("
+        select 
+        marca(Marca) as MarcaS,
+        Nombre
+        from cat_v3_modelos_equipo
+        where Flag = 1
+        order by MarcaS, Nombre");
+    }
+
+    public function getCensoForTemplate($servicio)
+    {
+        return $this->consulta("
+        select 
+        (select ClaveCorta from cat_v3_areas_atencion where Id = tc.IdArea) as Area,
+        tc.Punto,
+        (select Nombre from cat_v3_modelos_equipo where Id = tc.IdModelo) as Modelo,
+        tc.Serie,
+        tc.Forced
+        from t_censos tc
+        inner join t_censos_puntos tcp on tc.IdServicio = tcp.IdServicio and tc.IdArea = tcp.IdArea and tc.Punto <= tcp.Puntos
+        where tc.IdServicio = '" . $servicio . "'
+        order by Area, Punto");
+    }
+
+    public function getAreasForCensoCompare()
+    {
+        $consulta = $this->consulta("
+        select 
+        Id,
+        ClaveCorta
+        from cat_v3_areas_atencion
+        where Flag = 1
+        and ClaveCorta <> ''");
+
+        $array = [];
+        foreach ($consulta as $k => $v) {
+            $array[$v['ClaveCorta']] = $v['Id'];
+        }
+
+        return $array;
+    }
+
+    public function getDevicesForCensoCompare()
+    {
+        $consulta = $this->consulta("
+        select 
+        Id,
+        Nombre
+        from cat_v3_modelos_equipo
+        where Flag = 1");
+
+        $array = [];
+        foreach ($consulta as $k => $v) {
+            $array[$v['Nombre']] = $v['Id'];
+        }
+
+        return $array;
+    }
+
+    public function getDuplicitySeries($servicio, $series)
+    {
+        $consulta = $this->consulta("
+        select
+        ticketByServicio(tc.IdServicio) as Ticket,
+        sucursalByServicio(tc.IdServicio) as Sucursal,
+        tc.*
+        from t_censos tc
+        inner join t_censos_puntos tcp on tc.IdServicio = tcp.IdServicio and tc.IdArea = tcp.IdArea and tc.Punto <= tcp.Puntos
+        where tc.IdServicio in (
+            select 
+            tst.Id
+            from cat_v3_sucursales cs
+            inner join t_servicios_ticket tst on tst.Id = (select MAX(Id) from t_servicios_ticket where IdSucursal = cs.Id and IdTipoServicio = 11 and IdEstatus in(4,2,5))
+            where cs.Flag = 1
+            and cs.IdCliente = (select IdCliente  from cat_v3_sucursales where Id = (select IdSucursal from t_servicios_ticket where Id = '" . $servicio . "'))
+        ) and tc.Serie in (\"" . $series . "\")
+        and tc.IdServicio <> '" . $servicio . "'");
+
+        $array = [];
+        foreach ($consulta as $k => $v) {
+            $array[$v['Serie']] = $v;
+        }
+
+        return $array;
+    }
+
+    public function getDomainBranchByService($servicio)
+    {
+        return $this->consulta("
+        select 
+        Dominio
+        from cat_v3_sucursales
+        where Id = (select IdSucursal from t_servicios_ticket where Id = '" . $servicio . "')")[0]['Dominio'];
+    }
+
+    public function updateCensoFromTemplate($servicio, $data)
+    {
+        $this->iniciaTransaccion();
+        $this->queryBolean("delete from t_censos_areas_puntos_revisados where IdServicio = '" . $servicio . "'");
+        $this->queryBolean("delete from t_censos where IdServicio = '" . $servicio . "'");
+        $this->queryBolean("delete from t_censos_puntos where IdServicio = '" . $servicio . "'");
+        $this->insertarBatch('t_censos', $data);
+        $this->queryBolean("
+        insert into t_censos_puntos (IdServicio, IdArea, Puntos)
+        select
+        '" . $servicio . "',
+        IdArea,
+        MAX(Punto)
+        from t_censos
+        where IdServicio = '" . $servicio . "'
+        group by IdArea");
+
+        $this->queryBolean("
+        update        
+        t_censos tc
+        inner join t_censos_puntos tcp on tc.IdServicio = tcp.IdServicio and tc.IdArea = tcp.IdArea and tc.Punto <= tcp.Puntos
+        set tc.Forced = 2
+        where tc.IdServicio in (
+            select 
+            tst.Id
+            from cat_v3_sucursales cs
+            inner join t_servicios_ticket tst on tst.Id = (select MAX(Id) from t_servicios_ticket where IdSucursal = cs.Id and IdTipoServicio = 11 and IdEstatus in(4,2,5))
+            where cs.Flag = 1
+            and cs.IdCliente = 1
+        ) and tc.Serie in (select * from (select Serie from t_censos where IdServicio = '" . $servicio . "' and Forced = 1)as tf)
+        and tc.IdServicio <> '" . $servicio . "'");
 
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();

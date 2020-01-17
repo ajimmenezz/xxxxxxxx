@@ -4,6 +4,7 @@ namespace Librerias\Poliza;
 
 use Controladores\Controller_Datos_Usuario as General;
 use Librerias\Componentes\Error as Error;
+use SimpleXLSX;
 
 class Seguimientos extends General
 {
@@ -21,6 +22,7 @@ class Seguimientos extends General
     private $usuario;
     private $MSicsa;
     private $DBCensos;
+    private $Excel;
 
     public function __construct()
     {
@@ -38,6 +40,7 @@ class Seguimientos extends General
         $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
         $this->MSicsa = \Modelos\Modelo_Sicsa::factory();
         $this->DBCensos = \Modelos\Modelo_Censos::factory();
+        $this->Excel = new \Librerias\Generales\CExcel();
 
         parent::getCI()->load->helper('dividestringconviertearray');
     }
@@ -2061,9 +2064,9 @@ class Seguimientos extends General
             'CorreoCopiaFirma' => $correo,
             'Firma' => $direccion
         ));
-        
+
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccion, $data);
-        
+
         $path = $this->getServicioToPdf(array('servicio' => $datos['servicio']), 'RetiroGarantiaRespaldo');
         $correoSupervisor = $this->consultaCorreoSupervisorXSucursal($datos['sucursal']);
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
@@ -2590,7 +2593,8 @@ class Seguimientos extends General
         }
     }
 
-    public function getServicioToPdf(array $servicio, string $nombreExtra = NULL) {
+    public function getServicioToPdf(array $servicio, string $nombreExtra = NULL)
+    {
         $host = $_SERVER['SERVER_NAME'];
         $pdf = $this->InformacionServicios->definirPDF(array('servicio' => $servicio['servicio'], 'nombreExtra' => $nombreExtra));
 
@@ -6897,6 +6901,249 @@ class Seguimientos extends General
     public function RestaurarCenso(array $datos)
     {
         $servicio = $this->getInformacionServicio($datos['servicio']);
-        return $this->DBCensos->restaurarCenso($servicio[0]['IdSucursal'], $datos['servicio']);        
+        return $this->DBCensos->restaurarCenso($servicio[0]['IdSucursal'], $datos['servicio']);
+    }
+
+    public function DownloadCensoTemplate(array $data)
+    {
+        $dataArray = [
+            'areas' => $this->DBCensos->getAreasForCensoTemplate(),
+            'modelos' => $this->DBCensos->getDevicesForCensoTemplate(),
+            'censo' => $this->DBCensos->getCensoForTemplate($data['servicio']),
+            'sucursal' => $this->DBCensos->consulta("select REPLACE(cap_first(sucursalByServicio(" . $data['servicio'] . ")),' ','_') as Sucursal")[0]['Sucursal'],
+            'fecha' => $this->DBCensos->consulta("select DATE_FORMAT(NOW(),'%Y%m%d_%H%i%s') as Fecha")[0]['Fecha']
+        ];
+
+        $arrayTitulos = [
+            'AREA',
+            'PUNTO',
+            'MODELO',
+            'SERIE',
+            'FORZAR'
+        ];
+        $arrayWidth = [10, 12, 30, 30, 15];
+        $arrayAlign = ['', 'center', '', '', 'center'];
+
+        $this->Excel->createSheet('Censo', 0);
+        $this->Excel->setActiveSheet(0);
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $this->Excel->setTableContent('A', 1, $dataArray['censo'], true, $arrayAlign);
+
+
+        $arrayTitulos = [
+            'AREA',
+            'NOMENCLATURA'
+        ];
+        $arrayWidth = [30, 22];
+        $arrayAlign = ['', ''];
+
+        $this->Excel->createSheet('Áreas', 1);
+        $this->Excel->setActiveSheet(1);
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $this->Excel->setTableContent('A', 1, $dataArray['areas'], true, $arrayAlign);
+
+        $arrayTitulos = [
+            'MARCA',
+            'MODELO'
+        ];
+        $arrayWidth = [30, 30];
+        $arrayAlign = ['', ''];
+
+        $this->Excel->createSheet('Modelos', 2);
+        $this->Excel->setActiveSheet(2);
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $this->Excel->setTableContent('A', 1, $dataArray['modelos'], true, $arrayAlign);
+
+
+        $this->Excel->setActiveSheet(0);
+
+        $nombreArchivo = 'Censo_' . $dataArray['sucursal'] . '_' . $dataArray['fecha'] . '.xlsx';
+        $ruta = 'storage/Archivos/Templates/' . $nombreArchivo;
+        foreach (glob("./storage/Archivos/Templates/Censo_" . $dataArray['sucursal'] . "*.*") as $filename) {
+            unlink($filename);
+        }
+        $this->Excel->saveFile($ruta);
+        return ['link' => 'http://' . $_SERVER['SERVER_NAME'] . '/' . $ruta];
+    }
+
+    public function UploadCensoTemplate(array $data)
+    {
+        if ($xlsx = SimpleXLSX::parse($_FILES['censoTemplate']['tmp_name'][0])) {
+            $catalogos = [
+                'areas' => $this->DBCensos->getAreasForCensoCompare(),
+                'devices' => $this->DBCensos->getDevicesForCensoCompare(),
+                'domain' => $this->DBCensos->getDomainBranchByService($data['servicio'])
+            ];
+
+            $allRows = [];
+            $corrects = [];
+            $incorrects = [];
+            $arraySeries = [];
+            $series = '';
+            $rows = $xlsx->rows();
+            if (!empty($rows)) {
+
+                foreach ($rows as $key => $value) {
+                    $serie = str_replace(' ', '', $value[3]);
+                    if ($key > 0 && !in_array($serie, ['I', 'i', 'ILEGIBLE', 'ilegible'])) {
+                        array_push($arraySeries, $serie);
+                    }
+                }
+                $series = implode('","', $arraySeries);
+                $arraySeriesDuplicadas = $this->DBCensos->getDuplicitySeries($data['servicio'], $series);
+
+                foreach ($rows as $key => $value) {
+                    $serie = str_replace(' ', '', $value[3]);
+                    if (in_array($serie, ['I', 'i', 'ILEGIBLE', 'ilegible'])) {
+                        $serie = 'ILEGIBLE';
+                    }
+                    $rowIncorrect = [
+                        $value[0],
+                        $value[1],
+                        $value[2],
+                        $serie,                        
+                        $value[4]
+                    ];
+                    if ($key > 0) {
+                        $pasa = true;
+                        if (!array_key_exists($value[0], $catalogos['areas'])) {
+                            $pasa = false;
+                            $rowIncorrect[5] = 'La clave de área no coincide con ningún registro';
+                            array_push($incorrects, $rowIncorrect);
+                        } else if (!array_key_exists($value[2], $catalogos['devices'])) {
+                            $pasa = false;
+                            $rowIncorrect[5] = 'El modelo no coincide con ningún registro';
+                            array_push($incorrects, $rowIncorrect);
+                        } else if (!in_array($serie, ['I', 'i', 'ILEGIBLE', 'ilegible'])) {
+                            if ($this->count_value_in_array($arraySeries, $serie) > 1) {
+                                $pasa = false;
+                                $rowIncorrect[5] = 'La serie está duplicada en este archivo';
+                                array_push($incorrects, $rowIncorrect);
+                            } else if (array_key_exists($serie, $arraySeriesDuplicadas) && $value[4] != 1) {
+                                $pasa = false;
+                                $rowIncorrect[5] = 'La serie está duplicada en la sucursal ' . $arraySeriesDuplicadas[$serie]['Sucursal'] . ' en el ticket ' . $arraySeriesDuplicadas[$serie]['Ticket'];
+                                array_push($incorrects, $rowIncorrect);
+                            }
+                        }
+
+                        if ($pasa) {
+                            array_push($corrects, $rowIncorrect);
+                        }
+
+                        array_push($allRows, $rowIncorrect);
+                    }
+                }
+
+                if (!empty($incorrects)) {
+                    $dataErrorFile = [
+                        'censo' => $allRows,
+                        'incorrects' => $incorrects,
+                        'servicio' => $data['servicio']
+                    ];
+                    $errorFile = $this->getErrorFileCensoUpload($dataErrorFile);
+                    return ['code' => 500, 'rows' => $allRows, 'message' => 'Se encontraron algunos errores en la información. <a href="' . $errorFile . '">ESTE ARCHIVO</a> contiene el resumen de los problemas que se encuentran.'];
+                } else {
+                    $arrayInsert = [];
+                    foreach ($corrects as $k => $v) {
+                        array_push($arrayInsert, [
+                            'IdServicio' => $data['servicio'],
+                            'IdArea' => $catalogos['areas'][$v[0]],
+                            'IdModelo' => $catalogos['devices'][$v[2]],
+                            'Punto' => $v[1],
+                            'Serie' => $v[3],
+                            'Extra' => $catalogos['domain'] . $v[0] . sprintf('%02d', $v[1]),
+                            'Forced' => $v[4]
+                        ]);
+                    }
+                    $result = $this->DBCensos->updateCensoFromTemplate($data['servicio'], $arrayInsert);
+                    return $result;
+                }
+            } else {
+                return ['code' => 500, 'message' => 'No se encontraron registros en el archivo proporcionado'];
+            }
+        } else {
+            return ['code' => 500, 'message' => SimpleXLSX::parseError()];
+        }
+    }
+
+    private function getErrorFileCensoUpload(array $data)
+    {
+        $dataArray = [
+            'areas' => $this->DBCensos->getAreasForCensoTemplate(),
+            'modelos' => $this->DBCensos->getDevicesForCensoTemplate(),
+            'censo' => $data['censo'],
+            'sucursal' => $this->DBCensos->consulta("select REPLACE(cap_first(sucursalByServicio(" . $data['servicio'] . ")),' ','_') as Sucursal")[0]['Sucursal'],
+            'fecha' => $this->DBCensos->consulta("select DATE_FORMAT(NOW(),'%Y%m%d_%H%i%s') as Fecha")[0]['Fecha'],
+            'incorrectos' => $data['incorrects'],
+            'servicio' => $data['servicio']
+        ];
+
+        $arrayTitulos = [
+            'AREA',
+            'PUNTO',
+            'MODELO',
+            'SERIE',
+            'FORZAR',
+            'OBSERVACIONES'
+        ];
+        $arrayWidth = [10, 12, 30, 30, 15, 50];
+        $arrayAlign = ['', 'center', '', '', 'center', 'justify'];
+
+        $this->Excel->createSheet('Censo', 0);
+        $this->Excel->setActiveSheet(0);
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $this->Excel->setTableContent('A', 1, $dataArray['censo'], true, $arrayAlign);
+
+        $arrayTitulos = [
+            'AREA',
+            'NOMENCLATURA'
+        ];
+        $arrayWidth = [30, 22];
+        $arrayAlign = ['', ''];
+
+        $this->Excel->createSheet('Áreas', 1);
+        $this->Excel->setActiveSheet(1);
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $this->Excel->setTableContent('A', 1, $dataArray['areas'], true, $arrayAlign);
+
+        $arrayTitulos = [
+            'MARCA',
+            'MODELO'
+        ];
+        $arrayWidth = [30, 30];
+        $arrayAlign = ['', ''];
+
+        $this->Excel->createSheet('Modelos', 2);
+        $this->Excel->setActiveSheet(2);
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $this->Excel->setTableContent('A', 1, $dataArray['modelos'], true, $arrayAlign);
+
+
+        $this->Excel->setActiveSheet(0);
+
+        $nombreArchivo = 'Errores_Censo_' . $dataArray['sucursal'] . '_' . $dataArray['fecha'] . '.xlsx';
+        $folder = 'storage/Archivos/Servicios/Servicio-' . $dataArray['servicio'] . '/';
+        if (!file_exists("./" . $folder)) {
+            mkdir("./" . $folder, 0775);
+        }
+        $ruta = $folder . '/' . $nombreArchivo;
+        foreach (glob("./" . $folder . "Errores_Censo*.*") as $filename) {
+            unlink($filename);
+        }
+        $this->Excel->saveFile($ruta);
+        return "http://" . $_SERVER['SERVER_NAME'] . "/" . $ruta;
+    }
+
+
+    private function count_value_in_array($array, $value)
+    {
+        $counts = array_count_values($array);
+        return $counts[$value];
     }
 }

@@ -1675,7 +1675,77 @@ $(function() {
     $("#btnRestaurarCenso").on("click", function() {
       restauraCensoAnterior(respuesta.servicio);
     });
+
+    $("#btnDownloadTemplate").off("click");
+    $("#btnDownloadTemplate").on("click", function() {
+      downloadCensoTemplate(respuesta.servicio);
+    });
+
+    $("#btnUploadTemplate").off("click");
+    $("#btnUploadTemplate").on("click", function() {
+      uploadCensoTemplateForm(respuesta.servicio);
+    });
   };
+
+  function uploadCensoTemplateForm(servicio) {
+    evento.mostrarModal(
+      "Subir Censo con Plantilla",
+      `<div class="row">
+        <div class="col-md-12">                                    
+          <div class="form-group">
+            <label>Plantilla de Excel (Solo archivos xlsx) *</label>
+            <input id="censoTemplate" name="censoTemplate[]" type="file"/>
+          </div>
+        </div>        
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div id="uploadTemplateError"></div>
+        </div>
+      </div>
+        `
+    );
+
+    file.crearUpload(
+      "#censoTemplate",
+      "/Poliza/Seguimiento/UploadCensoTemplate"
+    );
+
+    $("#btnModalConfirmar").off("click");
+    $("#btnModalConfirmar").on("click", function() {
+      file.enviarArchivos(
+        "#censoTemplate",
+        "/Poliza/Seguimiento/UploadCensoTemplate",
+        "#modal-dialogo",
+        { servicio: servicio },
+        function(respuesta) {
+          if (respuesta.code == 200) {
+            evento.cerrarModal();
+            reloadCenso(servicio);
+          } else {
+            file.limpiar("#censoTemplate");
+            evento.mostrarMensaje(
+              "#uploadTemplateError",
+              false,
+              respuesta.message,
+              30000
+            );
+          }
+        }
+      );
+    });
+  }
+
+  function downloadCensoTemplate(servicio) {
+    evento.enviarEvento(
+      "/Poliza/Seguimiento/DownloadCensoTemplate",
+      { servicio: servicio },
+      "#seccion-servicio-censo",
+      function(respuesta) {
+        window.open(respuesta.link);
+      }
+    );
+  }
 
   function restauraCensoAnterior() {
     var servicio = arguments[0];
@@ -1689,34 +1759,49 @@ $(function() {
           respuesta.message
         );
 
-        if(respuesta.code == 200){
+        if (respuesta.code == 200) {
           $("#btnModalConfirmar").off("click");
-          $("#btnModalConfirmar").on("click", function(){
-            $("[href=#General]").click();
+          $("#btnModalConfirmar").on("click", function() {
             evento.enviarEvento(
               "/Poliza/Seguimiento/RestaurarCenso",
-              { servicio: servicio },                
+              { servicio: servicio },
               "#modal-dialogo",
-              function(resp){
-                if(resp.code == 200){                    
-                  evento.cerrarModal();      
-                }else{
-                  $("#modal-body").empty().append("<p>Ocurrió un error al restaurar el censo anterior. Intente de nuevo o pongáse en contácto con el Administrador</p>");
+              function(resp) {
+                if (resp.code == 200) {
+                  evento.cerrarModal();
+                  reloadCenso(servicio);
+                } else {
+                  $("#modal-body")
+                    .empty()
+                    .append(
+                      "<p>Ocurrió un error al restaurar el censo anterior. Intente de nuevo o pongáse en contácto con el Administrador</p>"
+                    );
                   $("#btnModalConfirmar").off("click");
-                  $("#btnModalConfirmar").on("click", function(){
+                  $("#btnModalConfirmar").on("click", function() {
                     evento.cerrarModal();
                   });
                 }
-            });
+              }
+            );
           });
-        }else{
+        } else {
           $("#btnModalConfirmar").off("click");
-          $("#btnModalConfirmar").on("click", function(){
+          $("#btnModalConfirmar").on("click", function() {
             evento.cerrarModal();
           });
         }
       }
     );
+  }
+
+  function reloadCenso(servicio) {
+    if ($("#AreaPuntos").hasClass("active")) {
+      cargaAreasPuntosCenso(servicio);
+    }
+
+    if ($("#EquiposPunto").hasClass("active")) {
+      cargaEquiposPuntoCenso(servicio);
+    }
   }
 
   function cargaEquiposPuntoCenso() {

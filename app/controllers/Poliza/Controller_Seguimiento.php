@@ -416,6 +416,12 @@ class Controller_Seguimiento extends Base
             case 'RestaurarCenso':
                 $resultado = $this->Seguimientos->RestaurarCenso($this->input->post());
                 break;
+            case 'DownloadCensoTemplate':
+                $resultado = $this->Seguimientos->DownloadCensoTemplate($this->input->post());
+                break;
+            case 'UploadCensoTemplate':
+                $resultado = $this->Seguimientos->UploadCensoTemplate($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
