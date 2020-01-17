@@ -1404,16 +1404,23 @@ class ServiciosTicket extends General {
     public function cambiarEstatusServicioTicket(string $servicio, string $fecha, string $estatus, string $departamento = null) {
         $data = array();
 
-        if ($estatus === '4' || $estatus === '5' || $estatus === '10') {
+        if ($estatus === '4' || $estatus === '10') {
             $campoFecha = 'FechaConclusion';
         } elseif ($estatus === '1' || $estatus === '2') {
             $campoFecha = 'FechaInicio';
         }
 
-        $consulta = $this->DBST->actualizarServicio('t_servicios_ticket', array(
-            'IdEstatus' => $estatus,
-            $campoFecha => $fecha
-                ), array('Id' => $servicio));
+        if ($estatus !== '5') {
+            $consulta = $this->DBST->actualizarServicio('t_servicios_ticket', array(
+                'IdEstatus' => $estatus,
+                $campoFecha => $fecha
+                    ), array('Id' => $servicio));
+        } else {
+            $consulta = $this->DBST->actualizarServicio('t_servicios_ticket', array(
+                'IdEstatus' => $estatus
+                    ), array('Id' => $servicio));
+        }
+
         if (!empty($consulta)) {
             if ($departamento !== null) {
                 return $data['serviciosAsignados'] = $this->getServiciosAsignados($departamento);
@@ -1511,10 +1518,16 @@ class ServiciosTicket extends General {
 
     public function verificarServicio(array $datos) {
         try {
+            $usuario = $this->Usuario->getDatosUsuario();
             $this->DBST->iniciaTransaccion();
             $host = $_SERVER['SERVER_NAME'];
             $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+            $this->DBST->actualizarServicio('t_servicios_ticket', array('IdUsuarioValida' => $usuario['Id'],
+                'FechaValidacion' => $fecha), array('Id' => $datos['servicio']));
+
             $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '4');
+
             $serviciosTicket = $this->DBST->consultaGeneral('SELECT Id FROM t_servicios_ticket WHERE Ticket = "' . $datos['ticket'] . '" AND IdEstatus in(10,5,2,1)');
             $contador = 0;
             $linkPDF = '';

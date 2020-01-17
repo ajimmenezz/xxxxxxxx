@@ -14,6 +14,7 @@
                     <li id="btnAgregarProblema"><a href="#"><i class="fa fa-plus"></i> Agregar Problema</a></li>
                     <?php echo $botonAgregarVuelta ?>
                     <li id="btnCancelarServicioSinEspecificar"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
+                    <li id="btnDocumentacionFirmaSinEspecificar"><a href="#"><i class="fa fa-pencil-square-o"></i> Firmar Servicio</a></li>
                     <li id="btnGeneraPdfServicio"><a href="#"><i class="fa fa-file-pdf-o"></i> Generar Pdf</a></li>
                     <li id="btnNuevoServicioSinEspecificar"><a href="#"><i class="fa fa-plus"></i> Nuevo Servicio</a></li>
                     <li id="btnReasignarServicio"><a href="#"><i class="fa fa-mail-reply-all"></i> Reasignar Servicio</a></li>

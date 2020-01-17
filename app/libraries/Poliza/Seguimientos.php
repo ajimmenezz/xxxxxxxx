@@ -1998,7 +1998,26 @@ class Seguimientos extends General
             'Gerente' => $datos['recibe'],
             'CopiasCorreo' => $correo,
             'FechaFirma' => $fecha
-        ), array('Id' => $datosDiagnostico[0]['Id']));
+                ), array('Id' => $datosDiagnostico[0]['Id']));
+        
+        $datosTecnico = $this->DBS->consultaGeneralSeguimiento('SELECT 
+                                                                    (SELECT 
+                                                                            Firma
+                                                                        FROM
+                                                                            cat_v3_usuarios
+                                                                        WHERE
+                                                                            Id = Atiende) AS Firma,
+                                                                    Atiende AS Tecnico
+                                                                FROM
+                                                                    t_servicios_ticket
+                                                                WHERE
+                                                                    Id = "' . $datos['servicio'] . '"');
+        
+        $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
+            'FechaFirma' => $fecha,
+            'IdTecnicoFirma' => $datosTecnico[0]['Tecnico'],
+            'FirmaTecnico' => $datosTecnico[0]['Firma']
+                ), array('Id' => $datos['servicio']));
 
         $archivo = 'Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_CorrectivoImpericia.pdf ';
         $pdf = $this->InformacionServicios->definirPDF(array('servicio' => $datos['servicio'], 'archivo' => $archivo));
@@ -2719,7 +2738,7 @@ class Seguimientos extends General
                             'FechaCreacion' => $fecha,
                         );
 
-                        $this->cambiarEstatus(array('servicio' => $datos['servicio'], 'estatus' => '3'));
+                        $this->cambiarEstatus(array('servicio' => $datos['servicio'], 'estatus' => '2'));
 
                         $linkPDF = $this->getServicioToPdf($datos);
 
@@ -2727,6 +2746,7 @@ class Seguimientos extends General
                         $this->asignarMultimedia($linkPDF, $folio[0]['Folio'], $key);
                         $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                         $this->InformacionServicios->setHTMLService($datos);
+<<<<<<< HEAD
                         $this->DBS->actualizarSeguimiento(
                             't_servicios_ticket',
                             array(
@@ -2734,6 +2754,8 @@ class Seguimientos extends General
                             ),
                             array('Id' => $datos['servicio'])
                         );
+=======
+>>>>>>> 4770e21806d637398c2bc36bc290d52befd2f569
 
                         if ($datos['tipoSolicitud'] === 'equipo') {
                             $respuesta = $this->consultaCorrectivosSolicitudEquipo($datos['servicio']);

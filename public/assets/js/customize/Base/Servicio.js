@@ -462,7 +462,6 @@ Servicio.prototype.ServicioSinClasificar = function () {
     });
 
     $('#selectSucursalesSinClasificar').on('change', function (event, data) {
-        console.log($(this).val());
         $('#selectAreaPuntoSinClasificar').empty().append('<option data-punto="" value="">Seleccionar</option>');
         _this.select.cambiarOpcion('#selectAreaPuntoSinClasificar', '');
         if ($('#selectSucursalesSinClasificar').val() !== '') {
@@ -565,6 +564,11 @@ Servicio.prototype.ServicioSinClasificar = function () {
         _this.enviarEvento('/Servicio/Servicio_ToPdf', dataServicio, '#seccion-servicio-sin-clasificar', function (respuesta) {
             window.open(respuesta.link);
         });
+    });
+    
+    $("#btnDocumentacionFirmaSinEspecificar").off("click");
+    $("#btnDocumentacionFirmaSinEspecificar").on("click", function () {
+        _this.modalCampoFirma(null, {servicio: servicio, operacion: '1', estatus: datosDelServicio.IdEstatus, sucursal: idSucursal}, '/Generales/Servicio/GuardarDocumentacionFirma');
     });
 
     //Encargado de agregar un problema
@@ -1210,6 +1214,7 @@ Servicio.prototype.modalCampoFirma = function () {
                                 var dataMandar = {ticket: ticket, img: img, datosConcluir: data, recibe: recibe, correo: correo, servicio: data.servicio, idCorrectivoDiagnostico: idCorrectivoDiagnostico, sucursal: data.sucursal};
                                 _this.enviarEvento(controladorEventoExtra, dataMandar, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
+                                        $('#modal-dialogo').modal('hide');
                                         _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
                                     } else if (respuesta instanceof Array || respuesta instanceof Object) {
                                         _this.tabla.limpiarTabla('#data-table-documetacion-firmada');
@@ -1264,6 +1269,7 @@ Servicio.prototype.modalCampoFirma = function () {
                             var dataMandar = {ticket: ticket, img: img, datosConcluir: data, recibe: recibe, correo: correo, servicio: data.servicio, idCorrectivoDiagnostico: idCorrectivoDiagnostico, sucursal: data.sucursal};
                             _this.enviarEvento(controladorEventoExtra, dataMandar, '#modal-dialogo', function (respuesta) {
                                 if (respuesta === true) {
+                                    $('#modal-dialogo').modal('hide');
                                     _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
                                 } else if (respuesta instanceof Array || respuesta instanceof Object) {
                                     _this.tabla.limpiarTabla('#data-table-documetacion-firmada');
