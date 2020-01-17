@@ -1421,7 +1421,7 @@ class InformacionServicios extends General {
 
         if ($generales['HasSeguimiento'] === '0') {
             $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
-//            $this->agregarPDFListaEquipoMaterialServicio($datos['servicio']);
+            $this->agregarPDFListaEquipoMaterialServicio($datos['servicio']);
             $this->setFirmasServicio($generales['Id'], $datos);
         } else {
             switch ($generales['IdTipoServicio']) {
@@ -2534,14 +2534,17 @@ class InformacionServicios extends General {
     
     private function agregarPDFListaEquipoMaterialServicio(string $servicio) {
         $serviciosAvance = $this->DBST->servicioAvanceProblema($servicio);
+        $equipoMaterial = array();
         
         if($serviciosAvance){
             foreach ($serviciosAvance as $avance) {
                 $avanceEquipo = $this->DBST->serviciosAvanceEquipo($avance['Id']);
-//                var_dump($avanceEquipo);
+                if($avanceEquipo){
+                    array_push($equipoMaterial, $avanceEquipo);
+                }
             }
         }
-//        var_dump($serviciosAvance);
+//        var_dump($equipoMaterial);
     }
 
 }

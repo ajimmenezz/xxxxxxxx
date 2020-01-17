@@ -1214,6 +1214,7 @@ Servicio.prototype.modalCampoFirma = function () {
                                 var dataMandar = {ticket: ticket, img: img, datosConcluir: data, recibe: recibe, correo: correo, servicio: data.servicio, idCorrectivoDiagnostico: idCorrectivoDiagnostico, sucursal: data.sucursal};
                                 _this.enviarEvento(controladorEventoExtra, dataMandar, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
+                                        $('#modal-dialogo').modal('hide');
                                         _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
                                     } else if (respuesta instanceof Array || respuesta instanceof Object) {
                                         _this.tabla.limpiarTabla('#data-table-documetacion-firmada');
@@ -1268,6 +1269,7 @@ Servicio.prototype.modalCampoFirma = function () {
                             var dataMandar = {ticket: ticket, img: img, datosConcluir: data, recibe: recibe, correo: correo, servicio: data.servicio, idCorrectivoDiagnostico: idCorrectivoDiagnostico, sucursal: data.sucursal};
                             _this.enviarEvento(controladorEventoExtra, dataMandar, '#modal-dialogo', function (respuesta) {
                                 if (respuesta === true) {
+                                    $('#modal-dialogo').modal('hide');
                                     _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
                                 } else if (respuesta instanceof Array || respuesta instanceof Object) {
                                     _this.tabla.limpiarTabla('#data-table-documetacion-firmada');
