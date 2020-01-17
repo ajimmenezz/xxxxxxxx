@@ -2746,16 +2746,6 @@ class Seguimientos extends General
                         $this->asignarMultimedia($linkPDF, $folio[0]['Folio'], $key);
                         $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                         $this->InformacionServicios->setHTMLService($datos);
-<<<<<<< HEAD
-                        $this->DBS->actualizarSeguimiento(
-                            't_servicios_ticket',
-                            array(
-                                'IdEstatus' => '3',
-                            ),
-                            array('Id' => $datos['servicio'])
-                        );
-=======
->>>>>>> 4770e21806d637398c2bc36bc290d52befd2f569
 
                         if ($datos['tipoSolicitud'] === 'equipo') {
                             $respuesta = $this->consultaCorrectivosSolicitudEquipo($datos['servicio']);
