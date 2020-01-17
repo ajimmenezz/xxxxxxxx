@@ -1587,7 +1587,7 @@ class InformacionServicios extends General {
     private function setFirmasGerenteTecnico(array $datos) {
         $firmas = $this->getFirmasServicio($datos['servicio']);
         if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '') || (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '')) {
-            if (($this->y + 62) > 276) {
+            if (($this->y + 66) > 276) {
                 $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             }
 
