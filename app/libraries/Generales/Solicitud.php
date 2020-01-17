@@ -34,7 +34,7 @@ class Solicitud extends General {
         $this->Correo = \Librerias\Generales\Correo::factory();
         $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         $this->SegundoPlano = \Modelos\Modelo_SegundoPlano::factory();
-        parent::getCI()->load->helper(array('FileUpload', 'date'));
+        parent::getCI()->load->helper(array('FileUpload', 'date', 'archivosAdjuntosCorreo'));
         $this->Excel = new \Librerias\Generales\CExcel();
         $this->ServicioConcluirFyC = \Librerias\Generales\Servicio::factory();
     }
@@ -1664,124 +1664,40 @@ class Solicitud extends General {
     }
 
     public function concluirSolicitudesAbiertas() {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $solicitudes = $this->DBS->getFolioSolicitudesAbiertas();
 
-        if (!function_exists('imap_open')) {
-            echo "IMAP is not configured.";
-            exit();
-        } else {
-            /* Connecting Gmail server with IMAP */
-            $connection = imap_open('{imap.gmail.com:993/imap/ssl}INBOX', 'abarcenas@siccob.com.mx', 'Alberto-132') or die('Cannot connect to Gmail: ' . imap_last_error());
+        foreach ($solicitudes as $key => $value) {
+            try {
+                $detallesSD = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $value['Folio']);
+                if ($detallesSD->STATUS === 'Cerrado' || $detallesSD->STATUS === 'Completado') {
+                    $resolucion = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $value['Folio']);
 
-            /* Buscar correos electrónicos que tengan la palabra clave especificada en el asunto del correo electrónico */
-            $emailData = imap_search($connection, 'SUBJECT "Proyecto 1 Correcto"');
-//            $emails = imap_search($inbox,'ALL');
-//            var_dump($emailData);
-            if (!empty($emailData)) {
-//                var_dump($emailData);
-                foreach ($emailData as $emailIdent) {
-                    $overview = imap_fetch_overview($connection, $emailIdent, 0);
-                    $message = imap_fetchbody($connection, $emailIdent, '1.1');
-                    $structure = imap_fetchstructure($connection, $emailIdent);
-                    $messageExcerpt = substr($message, 0, 150);
-                    $partialMessage = trim(quoted_printable_decode($messageExcerpt));
-                    $date = date("d F, Y", strtotime($overview[0]->date));
-
-                    $body = imap_fetchstructure($connection, $emailIdent);
-                    $attachments = '';
-                    $att = count($body->parts);
-
-                    if ($att >= 2) {
-                        for ($a = 0; $a < $att; $a++) {
-//                            var_dump($body->parts);
-                            if (isset($body->parts[$a]->disposition)) {
-                                if ($body->parts[$a]->disposition == 'ATTACHMENT') {
-                                    $file = imap_base64(imap_fetchbody($connection, $emailIdent, $a + 1));
-//                                    var_dump($file);
-//                                    $string = genRandomString();
-//                                    var_dump($string);
-//                        if (!file_exists('/var/www/email_store/' . $_SESSION['site_user_id'])) {
-//                            mkdir('/var/www/email_store/' . $_SESSION['site_user_id'] . '/');
-//                        }
-//                        $attachments .= $body->parts[$a]->dparameters[0]->value . '[#]' . $string . ',';
-                        $attachments .= $body->parts[$a]->dparameters[0]->value;
-                        var_dump($attachments);
-                        file_put_contents('/var/www/email_store/' . $_SESSION['site_user_id'] . '/' . $string, $file);
-                                }
-                            }
-                        }
+                    if (!empty($resolucion->operation->Details->RESOLUTION)) {
+                        $textoResolucion = $resolucion->operation->Details->RESOLUTION;
+                    } else {
+                        $textoResolucion = 'Se concluye solicitud ya que esta concluido en SD';
                     }
-//                    var_dump($structure->parts[0]->parts);
+
+                    $this->DBS->setNotasSolicitud(array(
+                        'IdSolicitud' => $value['Id'],
+                        'IdEstatus' => '4',
+                        'IdUsuario' => $usuario['Id'],
+                        'Nota' => $textoResolucion,
+                        'Fecha' => $fecha
+                    ));
+
+                    $textoReporte = 'Folio: ' . $value['Folio'] . ' Solicitud: ' . $value['Id'] . ' Fecha: ' . $fecha . ' Resolución: ' . $textoResolucion;
+
+                    $this->crearReporteSolicitudesConcluidas($textoReporte);
+
+                    $this->DBS->cambiarEstatusSolicitud(array('IdEstatus' => '4'), array('Id' => $value['Id']));
                 }
+            } catch (\Exception $ex) {
+                
             }
-
-
-
-
-
-
-
-////            
-//
-//            foreach ($emailData as $email_number) {
-//                $output = '';
-//                /* get information specific to this email */
-//                $overview = imap_fetch_overview($connection, $email_number, 0);
-//                $message = imap_fetchbody($connection, $email_number, 2);
-//
-//                /* output the email header information */
-//                $output .= '<div class="toggler ' . ($overview[0]->seen ? 'read' : 'unread') . '">';
-//                $output .= '<span class="subject">' . $overview[0]->subject . '</span> ';
-//                $output .= '<span class="from">' . $overview[0]->from . '</span>';
-//                $output .= '<span class="date">on ' . $overview[0]->date . '</span>';
-//                $output .= '</div>';
-//
-//                /* output the email body */
-//                $output .= '<div class="body">' . $message . '</div>';
-//            }
-//
-//            echo $output;
-//
-//            var_dump($output);
-//
-            imap_close($connection);
         }
-
-//        $mbox = imap_open("{localhost:110/pop3}INBOX", 'abarnceas@siccob.com.mx', 'Alberto-132');
-//        var_dump($mbox);
-//        $usuario = $this->Usuario->getDatosUsuario();
-//        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-//        $solicitudes = $this->DBS->getFolioSolicitudesAbiertas();
-//
-//        foreach ($solicitudes as $key => $value) {
-//            try {
-//                $detallesSD = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $value['Folio']);
-//                if ($detallesSD->STATUS === 'Cerrado' || $detallesSD->STATUS === 'Completado') {
-//                    $resolucion = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $value['Folio']);
-//
-//                    if (!empty($resolucion->operation->Details->RESOLUTION)) {
-//                        $textoResolucion = $resolucion->operation->Details->RESOLUTION;
-//                    } else {
-//                        $textoResolucion = 'Se concluye solicitud ya que esta concluido en SD';
-//                    }
-//
-//                    $this->DBS->setNotasSolicitud(array(
-//                        'IdSolicitud' => $value['Id'],
-//                        'IdEstatus' => '4',
-//                        'IdUsuario' => $usuario['Id'],
-//                        'Nota' => $textoResolucion,
-//                        'Fecha' => $fecha
-//                    ));
-//
-//                    $textoReporte = 'Folio: ' . $value['Folio'] . ' Solicitud: ' . $value['Id'] . ' Fecha: ' . $fecha . ' Resolución: ' . $textoResolucion;
-//
-//                    $this->crearReporteSolicitudesConcluidas($textoReporte);
-//
-//                    $this->DBS->cambiarEstatusSolicitud(array('IdEstatus' => '4'), array('Id' => $value['Id']));
-//                }
-//            } catch (\Exception $ex) {
-//                
-//            }
-//        }
     }
 
     private function crearReporteSolicitudesConcluidas(string $contenido) {
