@@ -774,11 +774,11 @@ $(function () {
     /**Empiezan eventos de botones para folio**/
     $('#guardarFolio').off('click');
     $('#guardarFolio').on('click', function () {
+        datoServicioTabla.folio = $('#addFolio').val();
         if (evento.validarFormulario('#folio')) {
             peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/guardar', datoServicioTabla, function (respuesta) {
                 if (respuesta.nuevoFolio !== false) {
                     if (respuesta.operacionFolio) {
-                        datoServicioTabla.folio = $('#addFolio').val();
                         mostrarElementosAgregarFolio();
                         mostrarInformacionFolio(respuesta.folio);
                         arreglarNotas(respuesta.notasFolio);
@@ -818,10 +818,7 @@ $(function () {
         modal.mostrarModal('Eliminar Folio', '<h4>¿Estas Seguro de eliminar este FOLIO?</h4>');
         $('#btnAceptar').on('click', function () {
             datoServicioTabla.folio = '';
-            peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/eliminar', datoServicioTabla, function (respuesta) {
-                if (!validarError(respuesta)) {
-                    return;
-                }
+            peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/eliminarFolio', datoServicioTabla, function (respuesta) {
                 $('#addFolio').prop('disabled', false);
                 $('#addFolio').val('');
 
@@ -835,6 +832,7 @@ $(function () {
                 $("#asuntoFolio").empty();
                 $('#editarFolio').addClass('hidden');
                 $('#guardarFolio').removeClass('hidden');
+
             });
             modal.cerrarModal();
         });

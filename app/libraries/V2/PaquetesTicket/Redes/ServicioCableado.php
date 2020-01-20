@@ -83,7 +83,7 @@ class ServicioCableado implements Servicio {
         );
     }
 
-    public function setFolioServiceDesk(string $folio) {
+    public function setFolioServiceDesk(string $folio = NULL) {
         $solicitud = new solicitud($this->idSolicitud);
         $folioSolicitudes = $solicitud->folioSolicitudes(array('folio' => $folio));
 
@@ -232,6 +232,11 @@ class ServicioCableado implements Servicio {
         $this->DBServiciosGeneralRedes->deleteEvidencias($this->id);
         $this->DBServiciosGeneralRedes->finalizarTransaccion();
         return $evidencias;
+    }
+    
+    public function deleteFolio() {
+        $datos = $this->getDatos();
+        $this->DBServiciosGeneralRedes->setFolioServiceDesk($datos['idSolicitud']);
     }
 
     public function getFirmas(string $idServicio) {

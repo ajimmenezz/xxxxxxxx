@@ -63,7 +63,7 @@ class Modelo_ServicioCableado extends Modelo_Base {
         return $consulta;
     }
 
-    public function setFolioServiceDesk(string $idSolicitud, string $idFolio) {
+    public function setFolioServiceDesk(string $idSolicitud, string $idFolio = '') {
         $exiteFolio = $this->consulta('SELECT * from t_solicitudes where Folio = "' . $idSolicitud . '"');
         $this->actualizar('UPDATE t_solicitudes
                                             SET Folio = "' . $idFolio . '" 

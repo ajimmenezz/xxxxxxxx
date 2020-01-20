@@ -138,6 +138,19 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
+    public function eliminarFolio() {
+        try {
+            $datosServicio = $this->input->post();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->deleteFolio();
+            echo json_encode(TRUE);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
+
     public function runEvento(string $evento) {
         try {
             $datosServicio = $this->input->post();
