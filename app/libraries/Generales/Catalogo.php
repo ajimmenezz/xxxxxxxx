@@ -2853,7 +2853,7 @@ class Catalogo extends General {
                         'Flag' => '1',
                     ));
                     if (!empty($consulta)) {
-                        return $this->catCinemexValidaciones('3');
+                        return $this->traerinfobd('3');
                     } else {
                         return FALSE;
                     }
@@ -2876,7 +2876,7 @@ class Catalogo extends General {
                             ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
-                        return $this->catCinemexValidaciones('3');
+                        return $this->traerinfobd('3');
                     } else {
                         return FALSE;
                     }

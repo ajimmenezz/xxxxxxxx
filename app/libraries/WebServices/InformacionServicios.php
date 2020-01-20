@@ -1421,7 +1421,7 @@ class InformacionServicios extends General {
 
         if ($generales['HasSeguimiento'] === '0') {
             $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
-            $this->agregarPDFListaEquipoMaterialServicio($datos['servicio']);
+            $this->obtenerEquipoMaterialServicio($datos['servicio']);
             $this->setFirmasServicio($generales['Id'], $datos);
         } else {
             switch ($generales['IdTipoServicio']) {
@@ -2532,7 +2532,7 @@ class InformacionServicios extends General {
         $this->pdf->MultiCell($width, $height, utf8_decode($value), 1, $align, $trueFill);
     }
     
-    private function agregarPDFListaEquipoMaterialServicio(string $servicio) {
+    private function obtenerEquipoMaterialServicio(string $servicio) {
         $serviciosAvance = $this->DBST->servicioAvanceProblema($servicio);
         $equipoMaterial = array();
         
@@ -2540,13 +2540,54 @@ class InformacionServicios extends General {
             foreach ($serviciosAvance as $avance) {
                 $avanceEquipo = $this->DBST->serviciosAvanceEquipo($avance['Id']);
                 if($avanceEquipo){
-                    array_push($equipoMaterial, $avanceEquipo);
+                    foreach ($avanceEquipo as $equipo) {
+                        array_push($equipoMaterial, $equipo);
+                    }
                 }
             }
         }
-//        var_dump($equipoMaterial);
+        if (!empty($equipoMaterial)) {
+            $this->agregarPDFEquipoMaterial($equipoMaterial);
+       }
     }
+    
+    private function agregarPDFEquipoMaterial(array $materialEquipo) {
+        if (($this->y + 26) > 276) {
+            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+        }
 
+        $this->setCoordinates(10);
+        $this->setStyleHeader();
+        $this->setHeaderValue("Equipo y Material Utilizado");
+        
+        $this->setStyleTitle();
+        $this->setCellValue(30, 5, "Tipo", 'C', true);
+        $this->setCoordinates(40, $this->y - 5);
+        $this->setCellValue(100, 5, "Nombre", 'C', true);
+        $this->setCoordinates(140, $this->y - 5);
+        $this->setCellValue(30, 5, "Serie", 'C', true);
+        $this->setCoordinates(170, $this->y - 5);
+        $this->setCellValue(30, 5, "Cantidad", 'C', true);
+
+        foreach ($materialEquipo as $value) {
+            $this->setCoordinates(10);
+            $this->setStyleSubtitle();
+            $this->setCellValue(30, 5, $value['Tipo'], 'C');
+            $this->setCoordinates(40, $this->y - 5);
+            $this->setCellValue(100, 5, $value['EquipoMaterial'], 'C');
+            $this->setCoordinates(140, $this->y - 5);
+            $this->setCellValue(30, 5, $value['Serie'], 'C');
+            $this->setCoordinates(170, $this->y - 5);
+            $this->setCellValue(30, 5, $value['Cantidad'], 'C');
+        
+            if (($this->y + 26) > 276) {
+                $this->setCoordinates(10, $this->pdf->GetY());
+            }
+//            $this->setCoordinates(10);
+
+//            $this->setCoordinates(10, $this->pdf->GetY());
+        }
+    }
 }
 
 class PDFAux extends PDF {
