@@ -121,7 +121,13 @@ class ServiceDesk {
         self::$FIELDS = 'format=json&OPERATION_NAME=GET_NOTES&TECHNICIAN_KEY=' . $key;
         $respuesta = self::sendSolicitud(self::$url . '/' . $folio . '/notes/?' . self::$FIELDS);
         self::validarError($respuesta);
-        $respuesta = $respuesta->operation->Details;
+
+        if (strpos($respuesta->operation->result->message, "No Notes present for request") === '') {
+            $respuesta = $respuesta->operation->Details;
+        }else{
+            $respuesta = FALSE;
+        }
+        
         return $respuesta;
     }
 

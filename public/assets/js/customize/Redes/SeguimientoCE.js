@@ -261,8 +261,8 @@ $(function () {
                                         </div>');
         $(".recargarFolio").on('click', function () {
             $('#formularioAgregarFolio').removeClass('hidden');
+            $('#infoFolio').removeClass('hidden');
             $('.notaFolioError').addClass('hidden');
-            datoServicioTabla.folio = '';
         });
     }
 
@@ -775,19 +775,18 @@ $(function () {
     $('#guardarFolio').off('click');
     $('#guardarFolio').on('click', function () {
         if (evento.validarFormulario('#folio')) {
-            datoServicioTabla.folio = $('#addFolio').val();
             peticion.enviar('panelServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/guardar', datoServicioTabla, function (respuesta) {
                 if (respuesta.nuevoFolio !== false) {
                     if (respuesta.operacionFolio) {
+                        datoServicioTabla.folio = $('#addFolio').val();
                         mostrarElementosAgregarFolio();
                         mostrarInformacionFolio(respuesta.folio);
                         arreglarNotas(respuesta.notasFolio);
                     } else {
-                        mostrarErrorFolio(respuesta.folio.Error);
+                        mostrarErrorFolio(respuesta.errorFolio.Error);
                     }
                 } else {
-                    modal.mostrarModal('Aviso', '<h4>El folio ya esta siendo atendido en otra solicitud.</h4>');
-                    $('#btnAceptar').addClass('hidden');
+                    mostrarErrorFolio(respuesta.errorFolio.Error);
                 }
             });
         }
@@ -801,6 +800,7 @@ $(function () {
         $('#cancelarFolio').removeClass('hidden');
     });
 
+    $('#cancelarFolio').off('click');
     $('#cancelarFolio').on('click', function () {
         if (datoServicioTabla.folio !== '' && datoServicioTabla.folio !== '0') {
             $('#addFolio').prop('disabled', true);

@@ -71,17 +71,26 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
-    private function getInformacionFolio() {
+    private function getInformacionFolio(array $datos = NULL) {
         try {
             $this->datos['folio'] = null;
             $this->datos['notasFolio'] = null;
-            if (!empty($this->servicio->getFolio())) {
-                $this->datos['folio'] = ServiceDesk::getDatos($this->servicio->getFolio());
-                $this->datos['notasFolio'] = ServiceDesk::getNotas($this->servicio->getFolio());
+
+            if (empty($datos)) {
+                if (!empty($this->servicio->getFolio())) {
+                    $this->datos['folio'] = ServiceDesk::getDatos($this->servicio->getFolio());
+                    $this->datos['notasFolio'] = ServiceDesk::getNotas($this->servicio->getFolio());
+                    $this->datos['operacionFolio'] = TRUE;
+                    return true;
+                }
+            } else {
+                $this->datos['folio'] = ServiceDesk::getDatos($datos['folio']);
+                $this->datos['notasFolio'] = ServiceDesk::getNotas($datos['folio']);
                 $this->datos['operacionFolio'] = TRUE;
                 return true;
             }
         } catch (Exception $ex) {
+            $this->datos['errorFolio'] = array('Error' => $ex->getMessage());
             $this->datos['folio'] = array('Error' => $ex->getMessage());
             $this->datos['notasFolio'] = array('Error' => $ex->getMessage());
             $this->datos['operacionFolio'] = FALSE;
@@ -108,9 +117,19 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $nuevoFolio = $this->servicio->setFolioServiceDesk($datosServicio['folio']);
-            $this->datos['nuevoFolio'] = $nuevoFolio;
-            $this->getInformacionFolio();
+            $informacionFolio = $this->getInformacionFolio($datosServicio);
+
+            if (!empty($informacionFolio)) {
+                $nuevoFolio = $this->servicio->setFolioServiceDesk($datosServicio['folio']);
+
+                $this->datos['nuevoFolio'] = $nuevoFolio;
+
+                if ($nuevoFolio === FALSE && $informacionFolio) {
+                    $this->datos['errorFolio'] = array('Error' => 'El folio ya esta siendo atendido en otra solicitud.');
+                }
+                $informacionFolio = $this->getInformacionFolio($datosServicio);
+            }
+
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
