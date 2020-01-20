@@ -2122,7 +2122,8 @@ class Seguimientos extends General {
 				    IdSistemaOperativo,
 				    MAC,
                                     NombreRed,
-                                    IdEstatusSoftwareRQ
+                                    IdEstatusSoftwareRQ,
+				    Forced
                                     from t_censos 
                                     where IdServicio = (
                                                     select IdServicio 
