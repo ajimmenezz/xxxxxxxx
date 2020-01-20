@@ -1664,40 +1664,63 @@ class Solicitud extends General {
     }
 
     public function concluirSolicitudesAbiertas() {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $solicitudes = $this->DBS->getFolioSolicitudesAbiertas();
+        $direccion = archivosAdjuntosCorreo(array('correo' => 'abarcenas@siccob.com.mx',
+            'password' => 'Alberto-132',
+            'asunto' => 'Catalogo Item SD'));
 
-        foreach ($solicitudes as $key => $value) {
-            try {
-                $detallesSD = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $value['Folio']);
-                if ($detallesSD->STATUS === 'Cerrado' || $detallesSD->STATUS === 'Completado') {
-                    $resolucion = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $value['Folio']);
+        $arrayExcel = $this->Excel->dataImportExcel(array('direccion' => $_SERVER['DOCUMENT_ROOT'] . $direccion['message']));
+        $arrayExcelNuevo = array();
 
-                    if (!empty($resolucion->operation->Details->RESOLUTION)) {
-                        $textoResolucion = $resolucion->operation->Details->RESOLUTION;
-                    } else {
-                        $textoResolucion = 'Se concluye solicitud ya que esta concluido en SD';
-                    }
 
-                    $this->DBS->setNotasSolicitud(array(
-                        'IdSolicitud' => $value['Id'],
-                        'IdEstatus' => '4',
-                        'IdUsuario' => $usuario['Id'],
-                        'Nota' => $textoResolucion,
-                        'Fecha' => $fecha
-                    ));
-
-                    $textoReporte = 'Folio: ' . $value['Folio'] . ' Solicitud: ' . $value['Id'] . ' Fecha: ' . $fecha . ' Resolución: ' . $textoResolucion;
-
-                    $this->crearReporteSolicitudesConcluidas($textoReporte);
-
-                    $this->DBS->cambiarEstatusSolicitud(array('IdEstatus' => '4'), array('Id' => $value['Id']));
-                }
-            } catch (\Exception $ex) {
-                
-            }
+        foreach ($arrayExcel as $key => $value) {
+            $arrayExcelNuevo[$key]['IdItem'] = $value[1];
+            $arrayExcelNuevo[$key]['IdSubcategoria'] = $value[2];
+            $arrayExcelNuevo[$key]['Nombre'] = $value[3];
         }
+        
+        $this->SegundoPlano->truncar('TRUNCATE cat_v3_sd_item');
+
+        foreach ($arrayExcelNuevo as $key => $value) {
+            $this->DBS->setDatosSolicitudInternas('cat_v3_sd_item', $value);
+        }
+
+
+
+
+//        $usuario = $this->Usuario->getDatosUsuario();
+//        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+//        $solicitudes = $this->DBS->getFolioSolicitudesAbiertas();
+//
+//        foreach ($solicitudes as $key => $value) {
+//            try {
+//                $detallesSD = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $value['Folio']);
+//                if ($detallesSD->STATUS === 'Cerrado' || $detallesSD->STATUS === 'Completado') {
+//                    $resolucion = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $value['Folio']);
+//
+//                    if (!empty($resolucion->operation->Details->RESOLUTION)) {
+//                        $textoResolucion = $resolucion->operation->Details->RESOLUTION;
+//                    } else {
+//                        $textoResolucion = 'Se concluye solicitud ya que esta concluido en SD';
+//                    }
+//
+//                    $this->DBS->setNotasSolicitud(array(
+//                        'IdSolicitud' => $value['Id'],
+//                        'IdEstatus' => '4',
+//                        'IdUsuario' => $usuario['Id'],
+//                        'Nota' => $textoResolucion,
+//                        'Fecha' => $fecha
+//                    ));
+//
+//                    $textoReporte = 'Folio: ' . $value['Folio'] . ' Solicitud: ' . $value['Id'] . ' Fecha: ' . $fecha . ' Resolución: ' . $textoResolucion;
+//
+//                    $this->crearReporteSolicitudesConcluidas($textoReporte);
+//
+//                    $this->DBS->cambiarEstatusSolicitud(array('IdEstatus' => '4'), array('Id' => $value['Id']));
+//                }
+//            } catch (\Exception $ex) {
+//                
+//            }
+//        }
     }
 
     private function crearReporteSolicitudesConcluidas(string $contenido) {

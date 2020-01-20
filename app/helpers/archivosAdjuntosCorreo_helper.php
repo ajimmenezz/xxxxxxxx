@@ -10,10 +10,10 @@ if (!function_exists('archivosAdjuntosCorreo')) {
                 exit();
             } else {
                 /* Conectando el servidor de Gmail con IMAP */
-                $conexion = imap_open('{imap.gmail.com:993/imap/ssl}INBOX', 'abarcenas@siccob.com.mx', 'Alberto-132') or die('Cannot connect to Gmail: ' . imap_last_error());
+                $conexion = imap_open('{imap.gmail.com:993/imap/ssl}INBOX', $datos['correo'], $datos['password']) or die('Cannot connect to Gmail: ' . imap_last_error());
 
                 /* Buscar correos electrónicos que tengan la palabra clave especificada en el asunto del correo electrónico */
-                $datosCorreo = imap_search($conexion, 'SUBJECT "Proyecto 1 Correcto"');
+                $datosCorreo = imap_search($conexion, 'SUBJECT "' . $datos['asunto'] . '"');
                 if (!empty($datosCorreo)) {
                     foreach ($datosCorreo as $correoIdentidad) {
                         $visionGeneral = imap_fetch_overview($conexion, $correoIdentidad, 0);
@@ -25,7 +25,12 @@ if (!function_exists('archivosAdjuntosCorreo')) {
                                 if (isset($estructura->parts[$a]->disposition)) {
                                     if ($estructura->parts[$a]->disposition == 'ATTACHMENT') {
                                         $archivo = imap_base64(imap_fetchbody($conexion, $correoIdentidad, $a + 1));
-                                        $archivosAdjuntos .= $estructura->parts[$a]->dparameters[0]->value;
+                                        foreach ($estructura->parts[$a]->dparameters as $key => $value) {
+                                            $extencion = strpos(strtolower($value->value), '.xls');
+                                            if ($extencion !== FALSE) {
+                                                $archivosAdjuntos .= $value->value;
+                                            }
+                                        }
                                         $direccion = '/storage/Archivos/Reportes/' . $archivosAdjuntos;
                                         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccion, $archivo);
                                     }
@@ -35,6 +40,8 @@ if (!function_exists('archivosAdjuntosCorreo')) {
                     }
                 }
                 imap_close($conexion);
+                
+                return array('code' => 200, 'message' => $direccion);
             }
         } catch (\Exception $ex) {
             return array('code' => 400, 'message' => $ex->getMessage());
