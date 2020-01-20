@@ -438,6 +438,30 @@ class ServiceDesk extends General {
 
         return $returnArray;
     }
+    
+    public function consultarValidadoresTI(string $key) {
+        $input_data = '{"operation":{"details":{"department":""}}}';
+        $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
+        $datosSD = $this->getDatosSD($this->UrlUsers . '?' . $this->FIELDS);
+        $this->validarError($datosSD);
+        $returnArray = [];
+        $i = 0;
+
+        foreach ($datosSD->operation->details as $key => $value) {
+            if ($value->department === 'Soporte TI' || $value->department === 'Mesa de Ayuda - Zona 1' || 
+                    $value->department === 'Mesa de Ayuda - Zona 2' || 
+                    $value->department === 'Mesa de Ayuda - Zona 3' || 
+                    $value->department === 'Mesa de Ayuda - Zona 4') {
+                $returnArray[$i]['userId'] = $value->userid;
+                $returnArray[$i]['userName'] = $value->username;
+                $returnArray[$i]['userEmail'] = $value->emailid;
+                $returnArray[$i]['department'] = $value->department;
+                $i++;
+            }
+        }
+
+        return $returnArray;
+    }
 
     public function getViewId(string $viewname, string $key) {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST_FILTERS&TECHNICIAN_KEY=' . $key;

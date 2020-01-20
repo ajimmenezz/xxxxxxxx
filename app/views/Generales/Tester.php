@@ -139,7 +139,7 @@
     <h1 class="page-header"></h1>
     <!-- Finalizando titulo de la pagina -->
     <!--Empezando Panel-->
-    <div id="panelActualizaciones" class="panel panel-inverse">
+    <div id="panelValidaciones" class="panel panel-inverse">
         <!--Empezando cabecera del panel-->
         <div class="panel-heading">
             <div id="botonesExtra" class="panel-heading-btn">
@@ -152,8 +152,15 @@
         <!--Empezando cuerpo del panel-->
         <div class="panel-body">
             <div class="col-md-3">
-                <button  id="solicitarValidadoresSD">Solicitar Validadores SD</button>
+                <button  id="validarSD">Valida-dores SD</button>
             </div>
+            <!--Empezando mensaje respuesta--> 
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="mensajeRespuesta"></div>
+                </div>
+            </div>
+            <!--Finalizando mensaje respuesta-->
         </div>
         <!--Finalizando cuerpo del panel-->
     </div>
