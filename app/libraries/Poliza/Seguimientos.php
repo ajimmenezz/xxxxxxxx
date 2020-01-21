@@ -1808,8 +1808,12 @@ class Seguimientos extends General {
     public function generarPDFImpericia(string $img, string $direccion, string $servicio, string $ticket) {
         $img = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $img));
         $data = base64_decode($img);
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccion, $data);
-        $path = $this->getServicioToPdf(array('servicio' => $servicio), 'Impericia');
+        $result = file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccion, $data);
+        if ($result) {
+            $path = $this->getServicioToPdf(array('servicio' => $servicio), 'Impericia');
+        } else {
+            $path = false;
+        }
 
         return $path;
     }
@@ -1841,7 +1845,7 @@ class Seguimientos extends General {
             'CopiasCorreo' => $correo,
             'FechaFirma' => $fecha
                 ), array('Id' => $datosDiagnostico[0]['Id']));
-        
+
         $datosTecnico = $this->DBS->consultaGeneralSeguimiento('SELECT 
                                                                     (SELECT 
                                                                             Firma
@@ -1854,7 +1858,7 @@ class Seguimientos extends General {
                                                                     t_servicios_ticket
                                                                 WHERE
                                                                     Id = "' . $datos['servicio'] . '"');
-        
+
         $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
             'FechaFirma' => $fecha,
             'IdTecnicoFirma' => $datosTecnico[0]['Tecnico'],
@@ -1924,9 +1928,9 @@ class Seguimientos extends General {
             'CorreoCopiaFirma' => $correo,
             'Firma' => $direccion
         ));
-        
+
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccion, $data);
-        
+
         $path = $this->getServicioToPdf(array('servicio' => $datos['servicio']), 'RetiroGarantiaRespaldo');
         $correoSupervisor = $this->consultaCorreoSupervisorXSucursal($datos['sucursal']);
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);

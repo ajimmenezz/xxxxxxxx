@@ -1772,7 +1772,7 @@ class InformacionServicios extends General {
                         if (!in_array(pathinfo($url, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
                             $image = '/assets/img/Iconos/no-thumbnail.jpg';
                         }
-                        $this->pdf->Image('.' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), 'http://siccob.solutions' . $url);
+                        $this->pdf->Image('..' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), 'http://siccob.solutions' . $url);
                     }
 
                     $this->setCoordinates($this->x + 47.5);

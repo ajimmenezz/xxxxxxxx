@@ -1203,8 +1203,10 @@ Servicio.prototype.modalCampoFirma = function () {
                                 var dataMandar = {ticket: ticket, img: img, datosConcluir: data, recibe: recibe, correo: correo, servicio: data.servicio, estatus: estatus, sucursal: data.sucursal};
                                 _this.enviarEvento('/Generales/Servicio/Concluir_SinClasificar', dataMandar, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
-                                        _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+                                        $('#modal-dialogo').modal('hide');
+//                                        _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                     } else {
+                                        $('#modal-dialogo').modal('hide');
                                         _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                     }
                                 });
@@ -1215,13 +1217,15 @@ Servicio.prototype.modalCampoFirma = function () {
                                 _this.enviarEvento(controladorEventoExtra, dataMandar, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
                                         $('#modal-dialogo').modal('hide');
-                                        _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
+//                                        _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
                                     } else if (respuesta instanceof Array || respuesta instanceof Object) {
                                         _this.tabla.limpiarTabla('#data-table-documetacion-firmada');
                                         var columnas = _this.datosTablaDocumentacionFirmada();
                                         _this.tabla.generaTablaPersonal('#data-table-documetacion-firmada', respuesta, columnas, null, null, [[0, 'desc']]);
-                                        _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
+                                        $('#modal-dialogo').modal('hide');
+//                                        _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
                                     } else {
+                                        $('#modal-dialogo').modal('hide');
                                         _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error', true);
                                     }
                                 });
@@ -1231,10 +1235,13 @@ Servicio.prototype.modalCampoFirma = function () {
                                 var dataMandar = {ticket: ticket, img: img, datosConcluir: data.descripcion, recibe: recibe, correo: correo, servicio: data.servicio, operacion: '9', sucursal: data.sucursal};
                                 _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#modal-dialogo', dataMandar, function (respuesta) {
                                     if (respuesta.result === true) {
-                                        _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+                                        $('#modal-dialogo').modal('hide');
+//                                        _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                     } else if (respuesta === true) {
-                                        _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+                                        $('#modal-dialogo').modal('hide');
+//                                        _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                     } else {
+                                        $('#modal-dialogo').modal('hide');
                                         _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                     }
                                 });
@@ -1258,8 +1265,10 @@ Servicio.prototype.modalCampoFirma = function () {
                             var dataMandar = {ticket: ticket, img: img, datosConcluir: data, recibe: recibe, correo: correo, servicio: data.servicio, estatus: estatus, sucursal: data.sucursal};
                             _this.enviarEvento('/Generales/Servicio/Concluir_SinClasificar', dataMandar, '#modal-dialogo', function (respuesta) {
                                 if (respuesta === true) {
-                                    _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+                                    $('#modal-dialogo').modal('hide');
+//                                    _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                 } else {
+                                    $('#modal-dialogo').modal('hide');
                                     _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                 }
                             });
@@ -1275,8 +1284,10 @@ Servicio.prototype.modalCampoFirma = function () {
                                     _this.tabla.limpiarTabla('#data-table-documetacion-firmada');
                                     var columnas = _this.datosTablaDocumentacionFirmada();
                                     _this.tabla.generaTablaPersonal('#data-table-documetacion-firmada', respuesta, columnas, null, null, [[0, 'desc']]);
-                                    _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
+                                    $('#modal-dialogo').modal('hide');
+//                                    _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
                                 } else {
+                                    $('#modal-dialogo').modal('hide');
                                     _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error', true);
                                 }
                             });
@@ -1286,10 +1297,13 @@ Servicio.prototype.modalCampoFirma = function () {
                             var dataMandar = {ticket: ticket, img: img, datosConcluir: data.descripcion, recibe: recibe, correo: correo, servicio: data.servicio, operacion: '9', sucursal: data.sucursal};
                             _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#modal-dialogo', dataMandar, function (respuesta) {
                                 if (respuesta.result === true) {
-                                    _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+                                    $('#modal-dialogo').modal('hide');
+//                                    _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                 } else if (respuesta === true) {
-                                    _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
+                                    $('#modal-dialogo').modal('hide');
+//                                    _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                 } else {
+                                    $('#modal-dialogo').modal('hide');
                                     _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                 }
                             });
