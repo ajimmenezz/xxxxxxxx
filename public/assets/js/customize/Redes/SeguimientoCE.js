@@ -284,16 +284,15 @@ $(function () {
         let iconoImagen = '';
         $.each(infoProblemas, function (key, value) {
             if (value.archivos[0] !== "") {
-                iconoImagen = '<div class="col-md-1 col-sm-1 col-xs-2 text-left">';
+                iconoImagen = '<div class="col-md-1 col-sm-2 col-xs-1">';
                 $.each(value.archivos, function (llave, imagen) {
                     iconoImagen += '<a href="' + imagen + '" data-lightbox="problema' + value.fecha + '">';
-                    iconoImagen += '<i class="fa fa-file-photo-o "></i></a>';
                 });
+                iconoImagen += '<i class="fa fa-file-photo-o "></i></a></div>';
             } else {
                 iconoImagen = '';
             }
-
-            problema += '<div class="problema' + value.fecha + ' row m-b-5">\n\
+            problema += '<div class="problema' + value.fecha + ' col-md-12 row">\n\
                             <div class="col-md-6 col-sm-12">\n\
                                 Usuario: <label class="semi-bold">' + value.usuario + '</label>\n\
                             </div>\n\
@@ -302,10 +301,8 @@ $(function () {
                             </div>\n\
                             <div class="col-md-11 col-sm-11 col-xs-10">\n\
                                 <textarea class="form-control" rows="2" disabled>' + value.descripcion + '</textarea>\n\
-                            </div>\n\
-                            ' + iconoImagen + '\n\
-                            </div>\n\
-                </div>';
+                            </div>' + iconoImagen +
+                    '</div><br><br><br><br><br><br>';
         });
         $('#observacionesProblemas').append(problema);
     }
@@ -325,52 +322,6 @@ $(function () {
         if (solucion.solucion.length > 0) {
             $('#textareaObservaciones').text(solucion.solucion[0].Observaciones);
         }
-
-        selectSucursal.evento('change', function () {
-            datoServicioTabla.idSucursal = selectSucursal.obtenerValor();
-            if (listaTotalNodos.length > 0) {
-                modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara la Información y cambios guardados</h4>');
-
-                modal.btnAceptar('btnAceptar', function () {
-                    peticion.enviar('modal-dialogo', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
-                        if (!validarError(respuesta, 'modal-dialogo')) {
-                            return;
-                        }
-                        listaTotalNodos = respuesta.solucion.nodos;
-                        materialTecnico = respuesta.datosServicio.materialAlmacen;
-                        listaTotalMaterialUsado = respuesta.solucion.totalMaterial;
-                        cargarContenidoModalMaterial(respuesta.datosServicio);
-                        ocultarElementosDefault(respuesta.solucion);
-                        tablaNodos.limpiartabla();
-                        modal.cerrarModal();
-                    });
-                });
-
-                $('#btnCerrar').on('click', function () {
-                    selectSucursal.definirValor(solucion.IdSucursal);
-                    modal.cerrarModal();
-                });
-            } else if (archivosEstablecidos !== null) {
-                modal.mostrarModal('Aviso', '<h4>Si realizas el cambio de sucursal se Borrara la Evidencia y cambios guardados</h4>');
-
-                modal.btnAceptar('btnAceptar', function () {
-                    peticion.enviar('modal-dialogo', 'SeguimientoCE/SeguimientoGeneral/borrarEvidencias', datoServicioTabla, function (respuesta) {
-                        if (!validarError(respuesta, 'modal-dialogo')) {
-                            return;
-                        }
-                        modal.cerrarModal();
-                        $('#evidenciasMaterialFija').empty();
-                        ocultarElementosDefault(respuesta.solucion);
-                    });
-                });
-
-                $('#btnCerrar').on('click', function () {
-                    selectSucursal.definirValor(solucion.IdSucursal);
-                    modal.cerrarModal();
-                });
-            }
-
-        });
     }
 
     /**Empiesan eventos del modal Material**/
@@ -909,7 +860,7 @@ $(function () {
             modal.mostrarModal('Aviso', '<h4>Si realizas esta acción se Borrara la Información y cambios guardados</h4>');
 
             modal.btnAceptar('btnAceptar', function () {
-                peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
+                peticion.enviar('modal-dialogo', 'SeguimientoCE/SeguimientoGeneral/Accion/borrarNodos', datoServicioTabla, function (respuesta) {
                     if (!validarError(respuesta, 'modal-dialogo')) {
                         return;
                     }
@@ -940,12 +891,12 @@ $(function () {
             datoServicioTabla.descripcion = $('#textareaDescProblema').val();
             if ($('#agregarEvidenciaProblema').val() !== '') {
                 datoServicioTabla.evidencia = true;
-                evidenciaProblema.enviarPeticionServidor('#modalDefinirProblema', datoServicioTabla, function (respuesta) {
+                evidenciaProblema.enviarPeticionServidor('#modal-content', datoServicioTabla, function (respuesta) {
                     if (!validarError(respuesta, 'modalDefinirProblema')) {
                         return;
                     }
 
-                    if (respuesta.folio !== undefined) {
+                    if (respuesta.folio !== undefined && respuesta.folio !== null) {
                         mostrarInformacionFolio(respuesta.folio);
                         arreglarNotas(respuesta.notasFolio);
                     }

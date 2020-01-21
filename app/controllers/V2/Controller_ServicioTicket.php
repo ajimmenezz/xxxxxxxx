@@ -191,6 +191,7 @@ class Controller_ServicioTicket extends CI_Controller {
 
             $this->datos['problemas'] = $this->servicio->getProblemas();
             $this->datos['operacion'] = TRUE;
+
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
