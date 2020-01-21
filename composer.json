@@ -22,6 +22,7 @@
         "setasign/fpdf": "1.8.1",        
         "aws/aws-sdk-php": "dev-master",
         "google/apiclient": "dev-master",
-        "setasign/fpdi": "2.2.0"
+        "setasign/fpdi": "2.2.0",
+        "shuchkin/simplexlsx": "^0.8.10"
     }
 }
