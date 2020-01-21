@@ -101,27 +101,7 @@ class Modelo_Inventario extends Modelo_Base
 
     public function branchListInventories($params)
     {
-        $conditions = '';
-        $dateCondition = $this->convertDateParamsToConditionSQL($params['iniDate'], $params['endDate']);
-        if ($dateCondition !== '') {
-            $conditions .= ' and tst.FechaCreacion ' . $dateCondition;
-        }
-
-        if (isset($params['estatus']) && $params['estatus'] !== '') {
-            $conditions .= " and tst.IdEstatus = '" . $params['estatus'] . "'";
-        }
-
-        if (isset($params['technician']) && $params['technician'] !== '') {
-            $conditions .= " and tst.Atiende = '" . $params['technician'] . "'";
-        }
-
-        if (isset($params['region']) && $params['region'] !== '' && count($params['region']) > 0) {
-            $conditions .= " and cs.IdRegionCliente in (" . implode(",", $params['region']) . ")";
-        }
-
-        if (isset($params['branch']) && $params['branch'] !== '' && count($params['branch']) > 0) {
-            $conditions .= " and tst.IdSucursal in (" . implode(",", $params['branch']) . ")";
-        }
+        $conditions = $this->convertParamsToFilterContitionSQL($params);
 
         return $this->consulta("
         select
@@ -145,6 +125,99 @@ class Modelo_Inventario extends Modelo_Base
         and tst.IdEstatus <> 6
         group by tst.IdSucursal
         order by Sucursal");
+    }
+
+    public function branchListAreasAnDevices($params)
+    {
+        $conditions = $this->convertParamsToFilterContitionSQL($params);
+        $areaAndDevicesConditions = $this->sqlAreaAndDevicesConditions($params['areas'], $params['devices']);
+
+        return $this->consulta("
+        select
+        ticketByServicio(MAX(tst.Id)) as Ticket,
+        folioByServicio(MAX(tst.Id)) as SD,
+        MAX(tst.Id) as Servicio,
+        nombreUsuario(tst.Atiende) as Usuario,
+        cs.Nombre as Sucursal,
+        regionBySucursal(cs.Id) as Region,
+        (select estatus(IdEstatus) from t_servicios_ticket where Id = MAX(tst.Id)) as Estatus,
+        (select MAX(FechaConclusion) from t_servicios_ticket where IdTipoServicio = 11 and IdSucursal = tst.IdSucursal and IdEstatus = 4) as UltimaActualizacion,
+        " . $areaAndDevicesConditions['sqlSubquery'] . " as Total
+        from t_servicios_ticket tst
+        left join cat_v3_sucursales cs on tst.IdSucursal = cs.Id
+        where IdTipoServicio = 11                                
+        " . $conditions . " " . $areaAndDevicesConditions['sqlCondition'] . "
+        and tst.IdSucursal is not null
+        and tst.IdSucursal > 0  
+        and cs.IdCliente = 1
+        and cs.Flag = 1
+        and tst.IdEstatus <> 6
+        group by tst.IdSucursal
+        order by Sucursal");
+    }
+
+    private function sqlAreaAndDevicesConditions($areas, $devices)
+    {
+
+        $areaCondition = "";
+        $deviceContidion = "";
+        if ($areas !== '' && !empty($areas)) {
+            $areaCondition = " and tcp.IdArea in (" . implode(",", $areas) . ") ";
+        }
+
+        if ($devices !== '' && !empty($devices)) {
+            $deviceContidion = " and tc.IdModelo in (" . implode(",", $devices) . ") ";
+        }
+
+        $sql = " 
+        and (
+            select
+            count(*) 
+            from t_censos tc
+            inner join t_censos_puntos tcp 
+            on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
+            where tc.IdServicio = tst.Id " . $areaCondition . " " . $deviceContidion . "
+        ) >  0 ";
+
+        $sqlSubquery = "
+        (
+            select
+            count(*) 
+            from t_censos tc
+            inner join t_censos_puntos tcp 
+            on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
+            where tc.IdServicio = tst.Id " . $areaCondition . " " . $deviceContidion . "
+        )
+        ";
+
+        return ['sqlCondition' => $sql, 'sqlSubquery' => $sqlSubquery];
+    }
+
+    private function convertParamsToFilterContitionSQL($params)
+    {
+        $conditions = '';
+        $dateCondition = $this->convertDateParamsToConditionSQL($params['iniDate'], $params['endDate']);
+        if ($dateCondition !== '') {
+            $conditions .= ' and tst.FechaCreacion ' . $dateCondition;
+        }
+
+        if (isset($params['estatus']) && $params['estatus'] !== '') {
+            $conditions .= " and tst.IdEstatus = '" . $params['estatus'] . "'";
+        }
+
+        if (isset($params['technician']) && $params['technician'] !== '') {
+            $conditions .= " and tst.Atiende = '" . $params['technician'] . "'";
+        }
+
+        if (isset($params['region']) && $params['region'] !== '' && count($params['region']) > 0) {
+            $conditions .= " and cs.IdRegionCliente in (" . implode(",", $params['region']) . ")";
+        }
+
+        if (isset($params['branch']) && $params['branch'] !== '' && count($params['branch']) > 0) {
+            $conditions .= " and tst.IdSucursal in (" . implode(",", $params['branch']) . ")";
+        }
+
+        return $conditions;
     }
 
     private function convertDateParamsToConditionSQL($iniDate, $endDate)
@@ -171,77 +244,180 @@ class Modelo_Inventario extends Modelo_Base
         return $condition;
     }
 
-    public function totalPointsByArea($servicio)
+    private function sqlServicesWithConditions($formFieldsValues)
     {
-        return $this->consulta("
-        select
-        tcp.IdArea as Id,
-        areaAtencion(tcp.IdArea) as Nombre,
-        tcp.Puntos as Total
-        from t_censos_puntos tcp
-        where IdServicio = '" . $servicio . "'
-        order by Nombre");
+        $conditions = $this->convertParamsToFilterContitionSQL($formFieldsValues);
+        $sql = "in (
+            select
+            MAX(tst.Id) as Servicio
+            from t_servicios_ticket tst
+            left join cat_v3_sucursales cs on tst.IdSucursal = cs.Id
+            where IdTipoServicio = 11                                
+            " . $conditions . "
+            and tst.IdSucursal is not null
+            and tst.IdSucursal > 0  
+            and cs.IdCliente = 1
+            and cs.Flag = 1
+            and tst.IdEstatus <> 6
+            group by tst.IdSucursal
+        )";
+
+        return $sql;
     }
 
-    public function totalDevicesByArea($servicio)
+    public function totalPointsByArea($servicio = '', array $formFieldsValues = [])
     {
-        return $this->consulta("
-        select
-        tcp.IdArea as Id,
-        areaAtencion(tcp.IdArea) as Nombre,
-        count(*) as Total
-        from t_censos tc
-        inner join t_censos_puntos tcp 
-        on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
-        where tc.IdServicio = '" . $servicio . "'
-        group by tc.IdArea
-        order by Nombre");
+        if (empty($formFieldsValues) && $servicio !== '') {
+            return $this->consulta("
+            select
+            tcp.IdArea as Id,
+            areaAtencion(tcp.IdArea) as Nombre,
+            tcp.Puntos as Total
+            from t_censos_puntos tcp
+            where IdServicio = '" . $servicio . "'
+            order by Nombre");
+        } else {
+            $areasCondition = " and tcp.IdArea in (" . implode(",", $formFieldsValues['areas']) . ") ";
+            return $this->consulta("
+            select
+            tcp.IdArea as Id,
+            areaAtencion(tcp.IdArea) as Nombre,
+            sum(tcp.Puntos) as Total
+            from t_censos_puntos tcp
+            where IdServicio " . $this->sqlServicesWithConditions($formFieldsValues) . " 
+            " . $areasCondition . "
+            group by tcp.IdArea
+            order by Nombre");
+        }
     }
 
-    public function totalDevicesByLine($servicio)
+    public function totalDevicesByArea($servicio = '', array $formFieldsValues = [])
     {
-        return $this->consulta("
-        select
-        lineaByModelo(IdModelo) as Id2,
-        linea(lineaByModelo(IdModelo)) as Nombre,
-        count(*) as Total
-        from t_censos tc
-        inner join t_censos_puntos tcp 
-        on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
-        where tc.IdServicio = '" . $servicio . "'
-        group by Id2
-        order by Nombre");
+        if (empty($formFieldsValues) && $servicio !== '') {
+            return $this->consulta("
+            select
+            tcp.IdArea as Id,
+            areaAtencion(tcp.IdArea) as Nombre,
+            count(*) as Total
+            from t_censos tc
+            inner join t_censos_puntos tcp 
+            on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
+            where tc.IdServicio = '" . $servicio . "'
+            group by tc.IdArea
+            order by Nombre");
+        } else {
+            $areasCondition = " and tcp.IdArea in (" . implode(",", $formFieldsValues['areas']) . ") ";
+            return $this->consulta("
+            select
+            tcp.IdArea as Id,
+            areaAtencion(tcp.IdArea) as Nombre,
+            count(*) as Total
+            from t_censos tc
+            inner join t_censos_puntos tcp 
+            on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
+            where tc.IdServicio " . $this->sqlServicesWithConditions($formFieldsValues) . " 
+            " . $areasCondition . "
+            group by tc.IdArea
+            order by Nombre");
+        }
     }
 
-    public function totalDevicesBySubline($servicio)
+    public function totalDevicesByLine($servicio = '', array $formFieldsValues = [])
     {
-        return $this->consulta("
-        select
-        sublineaByModelo(IdModelo) as Id2,
-        sublinea(sublineaByModelo(IdModelo)) as Nombre,
-        count(*) as Total
-        from t_censos tc
-        inner join t_censos_puntos tcp 
-        on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
-        where tc.IdServicio = '" . $servicio . "'
-        group by Id2
-        order by Nombre");
+        if (empty($formFieldsValues) && $servicio !== '') {
+            return $this->consulta("
+            select
+            lineaByModelo(IdModelo) as Id2,
+            linea(lineaByModelo(IdModelo)) as Nombre,
+            count(*) as Total
+            from t_censos tc
+            inner join t_censos_puntos tcp 
+            on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
+            where tc.IdServicio = '" . $servicio . "'
+            group by Id2
+            order by Nombre");
+        } else {
+            $areasCondition = " and tc.IdArea in (" . implode(",", $formFieldsValues['areas']) . ") ";
+
+            return $this->consulta("
+            select
+            lineaByModelo(IdModelo) as Id2,
+            linea(lineaByModelo(IdModelo)) as Nombre,
+            count(*) as Total
+            from t_censos tc
+            inner join t_censos_puntos tcp 
+            on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
+            where tc.IdServicio " . $this->sqlServicesWithConditions($formFieldsValues) . " 
+            " . $areasCondition . "
+            group by Id2
+            order by Nombre");
+        }
     }
 
-    public function totalDevicesByModel($servicio)
+    public function totalDevicesBySubline($servicio = '', array $formFieldsValues = [])
     {
-        return $this->consulta("
-        select
-        tc.IdModelo as Id2,
-        concat(marca(cme.Marca),' ',cme.Nombre) as Nombre,
-        count(*) as Total
-        from t_censos tc
-        inner join t_censos_puntos tcp 
-        on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
-        inner join cat_v3_modelos_equipo cme on tc.IdModelo = cme.Id
-        where tc.IdServicio = '" . $servicio . "'
-        group by Id2
-        order by Nombre");
+        if (empty($formFieldsValues) && $servicio !== '') {
+            return $this->consulta("
+            select
+            sublineaByModelo(IdModelo) as Id2,
+            sublinea(sublineaByModelo(IdModelo)) as Nombre,
+            count(*) as Total
+            from t_censos tc
+            inner join t_censos_puntos tcp 
+            on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
+            where tc.IdServicio = '" . $servicio . "'
+            group by Id2
+            order by Nombre");
+        } else {
+            $areasCondition = " and tc.IdArea in (" . implode(",", $formFieldsValues['areas']) . ") ";
+
+            return $this->consulta("
+            select
+            sublineaByModelo(IdModelo) as Id2,
+            sublinea(sublineaByModelo(IdModelo)) as Nombre,
+            count(*) as Total
+            from t_censos tc
+            inner join t_censos_puntos tcp 
+            on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
+            where tc.IdServicio " . $this->sqlServicesWithConditions($formFieldsValues) . " 
+            " . $areasCondition . "
+            group by Id2
+            order by Nombre");
+        }
+    }
+
+    public function totalDevicesByModel($servicio = '', array $formFieldsValues = [])
+    {
+        if (empty($formFieldsValues) && $servicio !== '') {
+            return $this->consulta("
+            select
+            tc.IdModelo as Id2,
+            concat(marca(cme.Marca),' ',cme.Nombre) as Nombre,
+            count(*) as Total
+            from t_censos tc
+            inner join t_censos_puntos tcp 
+            on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
+            inner join cat_v3_modelos_equipo cme on tc.IdModelo = cme.Id
+            where tc.IdServicio = '" . $servicio . "'
+            group by Id2
+            order by Nombre");
+        } else {
+            $areasCondition = " and tc.IdArea in (" . implode(",", $formFieldsValues['areas']) . ") ";
+
+            return $this->consulta("
+            select
+            tc.IdModelo as Id2,
+            concat(marca(cme.Marca),' ',cme.Nombre) as Nombre,
+            count(*) as Total
+            from t_censos tc
+            inner join t_censos_puntos tcp 
+            on tc.IdArea = tcp.IdArea and tc.IdServicio = tcp.IdServicio and tc.Punto <= tcp.Puntos
+            inner join cat_v3_modelos_equipo cme on tc.IdModelo = cme.Id
+            where tc.IdServicio " . $this->sqlServicesWithConditions($formFieldsValues) . " 
+            " . $areasCondition . "
+            group by Id2
+            order by Nombre");
+        }
     }
 
     public function detailsInventory($servicio)
