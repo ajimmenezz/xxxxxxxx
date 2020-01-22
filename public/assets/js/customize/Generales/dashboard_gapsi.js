@@ -233,7 +233,7 @@ $(function () {
                 datosFiltros.conciliado = '';
             }
             validarConcilacion()
-            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
         });
         $('#checkboxConciliado').change(function () {
             if (this.checked) {
@@ -251,7 +251,7 @@ $(function () {
                 datosFiltros.sinConciliado = '';
             }
             validarConcilacion()
-            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+            enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
         });
         $('#checkboxSinConciliado').change(function () {
             if (this.checked) {
