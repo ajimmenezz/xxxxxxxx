@@ -50,6 +50,17 @@
                 </div>
             </div>
             <!--Finaliza selector modena-->
+            <!--Empieza selector conciliado-->
+            <div class="col-md-12">
+                <label style="color: #A8ACB1">
+                    <input type="checkbox" id="checkboxConciliado" value="conciliado"/> Conciliado
+                </label>
+                <label style="color: #A8ACB1">
+                    <input type="checkbox" id="checkboxSinConciliado" value="sinConciliado" /> Sin Conciliar
+                </label>
+                <div class="divider"></div>
+            </div>
+            <!--Finaliza selector conciliado-->
             <!--Empieza filtro de fecha-->
             <div class="row">
                 <form id="filtroFecha" data-parsley-validate="true" class="input-group input-daterange">
@@ -258,6 +269,17 @@
             <div class="divider"></div>
         </div>
         <!--Finaliza selector modena-->
+        <!--Empieza selector conciliado-->
+        <div class="col-md-12">
+            <label>
+                <input type="checkbox" id="checkboxConciliadoPrincipal" value="conciliado" checked="checked"/> Conciliado
+            </label>
+            <label>
+                <input type="checkbox" id="checkboxSinConciliadoPrincipal" value="sinConciliado" /> Sin Conciliar
+            </label>
+            <div class="divider"></div>
+        </div>
+        <!--Finaliza selector conciliado-->
         <h5 class="m-t-0">Filtros de fechas</h5>
         <!--Empieza filtro Fecha-->
         <form id="filtroFechaPrincipal" data-parsley-validate="true" class="input-group input-daterange">

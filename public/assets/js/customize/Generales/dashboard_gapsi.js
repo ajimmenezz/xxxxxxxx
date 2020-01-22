@@ -70,6 +70,8 @@ $(function () {
     let datosFiltros = {
         tipoProyecto: null,
         moneda: 'MN',
+        conciliado: 'conciliado',
+        sinConciliado: '',
         fechaInicio: null,
         fechaFinal: null,
         proyecto: null,
@@ -82,6 +84,8 @@ $(function () {
     let anterioresFiltros = {
         tipoProyecto: null,
         moneda: 'MN',
+        conciliado: 'conciliado',
+        sinConciliado: '',
         fechaInicio: null,
         fechaFinal: null,
         proyecto: null,
@@ -195,7 +199,7 @@ $(function () {
         $('#fechaComienzoPrincipal').datepicker('setDate', '2016-07-07');
         $('#fechaFinPrincipal').datepicker('setDate', fecha.getFullYear() + '-' + fecha.getMonth() + 1);
         $("#btnFiltrarDashboardPrincipal").on('click', function () {
-            if(evento.validarFormulario('#filtroFechaPrincipal')){
+            if (evento.validarFormulario('#filtroFechaPrincipal')) {
                 datosFiltros.fechaInicio = $('#fechaComienzoPrincipal').val() + "T00:00:00.000";
                 datosFiltros.fechaFinal = $('#fechaFinPrincipal').val() + "T23:59:59.999";
                 enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
@@ -203,7 +207,7 @@ $(function () {
         });
 
         $("#btnFiltrarDashboard").on('click', function () {
-            if(evento.validarFormulario('#filtroFecha')){
+            if (evento.validarFormulario('#filtroFecha')) {
                 datosFiltros.fechaInicio = $("#fechaComienzo").val() + "T00:00:00.000";
                 datosFiltros.fechaFinal = $("#fechaFin").val() + "T23:59:59.999";
                 enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
@@ -222,6 +226,48 @@ $(function () {
             datosFiltros.moneda = radioValueFiltros;
             enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
+        $('#checkboxConciliadoPrincipal').change(function () {
+            if (this.checked) {
+                datosFiltros.conciliado = 'conciliado';
+            }else{
+                datosFiltros.conciliado = '';
+            }
+            validarConcilacion()
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+        });
+        $('#checkboxConciliado').change(function () {
+            if (this.checked) {
+                datosFiltros.conciliado = 'conciliado';
+            }else{
+                datosFiltros.conciliado = '';
+            }
+            validarConcilacion()
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+        });
+        $('#checkboxSinConciliadoPrincipal').change(function () {
+            if (this.checked) {
+                datosFiltros.sinConciliado = 'sinConciliado';
+            }else{
+                datosFiltros.sinConciliado = '';
+            }
+            validarConcilacion()
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+        });
+        $('#checkboxSinConciliado').change(function () {
+            if (this.checked) {
+                datosFiltros.sinConciliado = 'sinConciliado';
+            }else{
+                datosFiltros.sinConciliado = '';
+            }
+            validarConcilacion()
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+        });
+    }
+    
+    function validarConcilacion() {
+        if(datosFiltros.conciliado == '' && datosFiltros.sinConciliado == ''){
+            datosFiltros.conciliado = 'conciliado';
+        }
     }
 
     function enviarFiltrosPrincipal(objeto, datosFiltros) {
