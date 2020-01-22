@@ -168,14 +168,13 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                                     caa.Nombre AS Area,  
                                                     trn.Nombre AS Nodo,  
                                                     cme.Nombre AS Switch,  
-                                                    trn.NumeroSwitch 
+                                                    trn.NumeroSwitch,
+                                                    trn.Archivos AS Evidencias
                                                 FROM t_servicios_ticket AS tst 
                                                 INNER JOIN t_redes_nodos AS trn ON tst.Id = trn.IdServicio 
                                                 INNER JOIN cat_v3_areas_atencion AS caa ON trn.IdArea = caa.Id 
                                                 INNER JOIN cat_v3_modelos_equipo AS cme ON trn.IdSwitch = cme.Id 
                                                 WHERE tst.Id =' . $datosServicio['id']);
-
-        $datos['evidencias'] = $this->consulta('SELECT Archivos FROM t_redes_nodos WHERE IdServicio =' . $datosServicio['id']);
 
         $datos['infoFirmas'] = $this->consulta('SELECT  
                                                     tst.Firma,  
