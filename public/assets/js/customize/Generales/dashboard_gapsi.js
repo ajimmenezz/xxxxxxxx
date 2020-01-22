@@ -568,7 +568,7 @@ $(function () {
         $('#ocultarDetalles').addClass('hidden');
         $.each(datosFiltros, function (key, value) {
             if (datosFiltros[key] !== null && datosFiltros[key] !== 'MN' && datosFiltros[key] !== 'USD'
-                    && key !== 'fechaInicio' && key !== 'fechaFinal') {
+                    && key !== 'fechaInicio' && key !== 'fechaFinal' && key !== 'conciliado' && key !== 'sinConciliado') {
                 switch (key) {
                     case 'tipoProyecto':
                         alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], value, '<br>' + key);
