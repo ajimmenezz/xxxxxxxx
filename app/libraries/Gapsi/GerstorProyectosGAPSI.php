@@ -245,7 +245,8 @@ class GerstorProyectosGAPSI extends General {
         $dataRecords = array();
         $parametersDate = $this->parametersDate($filters);
         $parameters = $this->defineParameters($filters);
-        $parameters = $parameters . $parametersDate;
+        $parametersConciliation = $this->parametersConciliation($filters);
+        $parameters = $parameters . $parametersDate . $parametersConciliation;
         $dataRecords = $this->DBGestorProyectoGAPSI->getProjectRecords($parameters);
         return $dataRecords;
     }
