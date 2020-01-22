@@ -18,7 +18,8 @@ class GerstorProyectosGAPSI extends General {
     public function getListProjects(array $filters = []) {
         $parametersDate = $this->parametersDate($filters);
         $parameters = $this->parametersCurrency($filters);
-        $parameters = $parameters . $parametersDate;
+        $parametersConciliation = $this->parametersConciliation($filters);
+        $parameters = $parameters . $parametersDate . $parametersConciliation;
         $dataProjects = $this->DBGestorProyectoGAPSI->getProjects($parameters);
 
         if ($dataProjects['code'] === 200) {
@@ -31,7 +32,8 @@ class GerstorProyectosGAPSI extends General {
     public function getProjectTypes(array $filters = []) {
         $parametersDate = $this->parametersDate($filters);
         $parameters = $this->parametersCurrency($filters);
-        $parameters = $parameters . $parametersDate;
+        $parametersConciliation = $this->parametersConciliation($filters);
+        $parameters = $parameters . $parametersDate . $parametersConciliation;
         $dataProjects = $this->DBGestorProyectoGAPSI->getProjectTypes($parameters);
 
         if ($dataProjects['code'] === 200) {
@@ -45,7 +47,8 @@ class GerstorProyectosGAPSI extends General {
         $dataProjectsInfo = array();
         $parametersDate = $this->parametersDate($filters);
         $parameters = $this->defineParameters($filters);
-        $parameters = $parameters . $parametersDate;
+        $parametersConciliation = $this->parametersConciliation($filters);
+        $parameters = $parameters . $parametersDate . $parametersConciliation;
         $proyectos = $this->DBGestorProyectoGAPSI->getProjectsByType($parameters);
         $servicios = $this->DBGestorProyectoGAPSI->getServicesByType($parameters);
         $sucursales = $this->DBGestorProyectoGAPSI->getBranchOfficesByType($parameters);
@@ -99,6 +102,24 @@ class GerstorProyectosGAPSI extends General {
             $parameters = "AND Moneda = '" . $filters['moneda'] . "'";
         } else {
             $parameters = "AND Moneda = 'MN'";
+        }
+
+        return $parameters;
+    }
+
+    private function parametersConciliation(array $filters) {
+        if (!empty($filters)) {
+            if (!empty($filters['conciliado'] && !empty($filters['sinConciliar']))) {
+                $parameters = "";
+            } elseif (!empty($filters['conciliado'])) {
+                $parameters = "AND dr.StatusConciliacion = 'Conciliado'";
+            } elseif (!empty($filters['sinConciliar'])) {
+                $parameters = "AND dr.StatusConciliacion != 'Conciliar'";
+            } else {
+                $parameters = "AND dr.StatusConciliacion = 'Conciliado'";
+            }
+        } else {
+            $parameters = "AND dr.StatusConciliacion = 'Conciliado'";
         }
 
         return $parameters;
@@ -265,7 +286,7 @@ class GerstorProyectosGAPSI extends General {
                         $records['Fecha']),
                 ));
             }
-            
+
             $carpeta = $this->pdf->definirArchivo('Gapsi/PDF', 'Lista de Registros');
             $this->pdf->Output('F', $carpeta, true);
             $carpeta = substr($carpeta, 1);
