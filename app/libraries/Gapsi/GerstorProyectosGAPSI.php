@@ -114,9 +114,9 @@ class GerstorProyectosGAPSI extends General {
             } elseif ($filters['conciliado'] === 'Conciliado') {
                 $parameters = " AND dr.StatusConciliacion = 'Conciliado'";
             } elseif ($filters['conciliado'] === 'sinConciliado') {
-                $parameters = " AND (dr.StatusConciliacion <> 'Conciliado' OR dr.StatusConciliacion IS NULL)";
-            } elseif ($filters['conciliado'] === 'Diferencias') {
-                $parameters = " AND (dr.StatusConciliacion = 'Diferencias'";
+                $parameters = " AND (dr.StatusConciliacion = 'Sin Conciliar' OR dr.StatusConciliacion IS NULL)";
+            } elseif ($filters['conciliado'] === 'Diferencia') {
+                $parameters = " AND dr.StatusConciliacion = 'Diferencias'";
             } else {
                 $parameters = " AND dr.StatusConciliacion = 'Conciliado'";
             }
@@ -245,7 +245,8 @@ class GerstorProyectosGAPSI extends General {
         $dataRecords = array();
         $parametersDate = $this->parametersDate($filters);
         $parameters = $this->defineParameters($filters);
-        $parameters = $parameters . $parametersDate;
+        $parametersConciliation = $this->parametersConciliation($filters);
+        $parameters = $parameters . $parametersDate . $parametersConciliation;
         $dataRecords = $this->DBGestorProyectoGAPSI->getProjectRecords($parameters);
         return $dataRecords;
     }
