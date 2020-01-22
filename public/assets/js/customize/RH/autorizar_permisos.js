@@ -40,12 +40,12 @@ $(function () {
                 $('#contentPermisosPendientes').addClass('hidden');
                 if (respuesta.consulta.datosAusencia['0'].IdUsuarioJefe !== null) {
                     $('.ocultarPermiso').addClass('hidden');
-                    if (respuesta.consulta.datosAusencia['0'].IdUsuarioRH == null && perfilUsuario == '21') {
+                    if ((respuesta.consulta.datosAusencia['0'].IdUsuarioRH == null && perfilUsuario == '21')||(respuesta.consulta.datosAusencia['0'].IdUsuarioContabilidad == null && perfilUsuario == '37')) {
                         $('.ocultarPermiso').removeClass('hidden');
-                    } else {
-                        if (respuesta.consulta.datosAusencia['0'].IdUsuarioContabilidad == null && perfilUsuario == '37') {
-                            $('.ocultarPermiso').removeClass('hidden');
-                        }
+                    }
+                } else {
+                    if ((respuesta.consulta.datosAusencia['0'].IdUsuarioRH !== null && perfilUsuario == '21')||(respuesta.consulta.datosAusencia['0'].IdUsuarioContabilidad !== null && perfilUsuario == '37')) {
+                        $('.ocultarPermiso').addClass('hidden');
                     }
                 }
                 if (datosPermiso.estatus === 'Cancelado') {
@@ -69,7 +69,7 @@ $(function () {
                 $("#btnVerPDFAutorizar").on("click", function () {
                     window.open('/storage/Archivos/' + $('#archivoPDF').val(), '_blank');
                 });
-                
+
                 let selectRechazo = new SelectBasico('motivoRechazo');
                 selectRechazo.iniciarSelect();
                 $("#btnCancelarPermiso").on("click", function () {
