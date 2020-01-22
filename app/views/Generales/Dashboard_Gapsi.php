@@ -52,12 +52,21 @@
             <!--Finaliza selector modena-->
             <!--Empieza selector conciliado-->
             <div class="col-md-12">
-                <label style="color: #A8ACB1">
-                    <input type="checkbox" id="checkboxConciliado" value="conciliado"/> Conciliado
-                </label>
-                <label style="color: #A8ACB1">
-                    <input type="checkbox" id="checkboxSinConciliado" value="sinConciliado" /> Sin Conciliar
-                </label>
+                <div class="radio">
+                    <label style="color: #A8ACB1">
+                        <input type="radio" name="optionsConciliado" value="Conciliado" checked="checked"/> Conciliado
+                    </label>
+                </div>
+                <div class="radio">
+                    <label style="color: #A8ACB1">
+                        <input type="radio" name="optionsConciliado" value="Conciliar" /> Sin Conciliar
+                    </label>
+                </div>
+                <div class="radio">
+                    <label style="color: #A8ACB1">
+                        <input type="radio" name="optionsConciliado" value="Ambos" /> Ambos
+                    </label>
+                </div>
                 <div class="divider"></div>
             </div>
             <!--Finaliza selector conciliado-->
@@ -271,12 +280,21 @@
         <!--Finaliza selector modena-->
         <!--Empieza selector conciliado-->
         <div class="col-md-12">
-            <label>
-                <input type="checkbox" id="checkboxConciliadoPrincipal" value="conciliado" checked="checked"/> Conciliado
-            </label>
-            <label>
-                <input type="checkbox" id="checkboxSinConciliadoPrincipal" value="sinConciliado" /> Sin Conciliar
-            </label>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsConciliadoPrincipal" value="Conciliado" checked="checked"/> Conciliado
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsConciliadoPrincipal" value="Conciliar" /> Sin Conciliar
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsConciliadoPrincipal" value="Ambos" /> Ambos
+                </label>
+            </div>
             <div class="divider"></div>
         </div>
         <!--Finaliza selector conciliado-->

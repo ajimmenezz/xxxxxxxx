@@ -70,8 +70,7 @@ $(function () {
     let datosFiltros = {
         tipoProyecto: null,
         moneda: 'MN',
-        conciliado: 'conciliado',
-        sinConciliado: '',
+        conciliado: 'Conciliado',
         fechaInicio: null,
         fechaFinal: null,
         proyecto: null,
@@ -84,8 +83,7 @@ $(function () {
     let anterioresFiltros = {
         tipoProyecto: null,
         moneda: 'MN',
-        conciliado: 'conciliado',
-        sinConciliado: '',
+        conciliado: 'Conciliado',
         fechaInicio: null,
         fechaFinal: null,
         proyecto: null,
@@ -226,53 +224,23 @@ $(function () {
             datosFiltros.moneda = radioValueFiltros;
             enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
-        $('#checkboxConciliadoPrincipal').change(function () {
-            if (this.checked) {
-                datosFiltros.conciliado = 'conciliado';
-            }else{
-                datosFiltros.conciliado = '';
-            }
-            validarConcilacion()
+        
+        $("input[name='optionsConciliadoPrincipal").click(function () {
+            var radioValueConciliadoP = $("input[name='optionsConciliadoPrincipal']:checked").val();
+            datosFiltros.conciliado = radioValueConciliadoP;
             enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
         });
-        $('#checkboxConciliado').change(function () {
-            if (this.checked) {
-                datosFiltros.conciliado = 'conciliado';
-            }else{
-                datosFiltros.conciliado = '';
-            }
-            validarConcilacion()
+        $("input[name='optionsConciliado").click(function () {
+            var radioValueConciliado = $("input[name='optionsConciliado']:checked").val();
+            datosFiltros.conciliado = radioValueConciliado;
             enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
-        $('#checkboxSinConciliadoPrincipal').change(function () {
-            if (this.checked) {
-                datosFiltros.sinConciliado = 'sinConciliado';
-            }else{
-                datosFiltros.sinConciliado = '';
-            }
-            validarConcilacion()
-            enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
-        });
-        $('#checkboxSinConciliado').change(function () {
-            if (this.checked) {
-                datosFiltros.sinConciliado = 'sinConciliado';
-            }else{
-                datosFiltros.sinConciliado = '';
-            }
-            validarConcilacion()
-            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
-        });
-    }
-    
-    function validarConcilacion() {
-        if(datosFiltros.conciliado == '' && datosFiltros.sinConciliado == ''){
-            datosFiltros.conciliado = 'conciliado';
-        }
     }
 
     function enviarFiltrosPrincipal(objeto, datosFiltros) {
         peticion.enviar(objeto, 'Dashboard_Gapsi/filtroPrincipal', datosFiltros, function (respuesta) {
             $("input[name='optionsRadiosMonedaPrincipal'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
+            $("input[name='optionsConciliadoPrincipal'][value='" + datosFiltros['conciliado'] + "']").attr('checked', true);
             if (respuesta.tipoProyectos.length !== 0) {
                 anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
                 actualizarObjetosPrincipal(respuesta);
@@ -450,6 +418,7 @@ $(function () {
                 tablasCostosFiltros();
                 costosTotales();
                 $("input[name='optionsRadiosMoneda'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
+                $("input[name='optionsConciliado'][value='" + datosFiltros['conciliado'] + "']").attr('checked', true);
                 anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
                 $('html, body').animate({
                     scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
