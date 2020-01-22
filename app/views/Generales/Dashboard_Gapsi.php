@@ -59,7 +59,7 @@
                 </div>
                 <div class="radio">
                     <label style="color: #A8ACB1">
-                        <input type="radio" name="optionsConciliado" value="Conciliar" /> Sin Conciliar
+                        <input type="radio" name="optionsConciliado" value="sinConciliado" /> Sin Conciliar
                     </label>
                 </div>
                 <div class="radio">
@@ -287,7 +287,7 @@
             </div>
             <div class="radio">
                 <label>
-                    <input type="radio" name="optionsConciliadoPrincipal" value="Conciliar" /> Sin Conciliar
+                    <input type="radio" name="optionsConciliadoPrincipal" value="sinConciliado" /> Sin Conciliar
                 </label>
             </div>
             <div class="radio">
