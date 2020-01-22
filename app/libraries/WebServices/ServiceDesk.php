@@ -448,7 +448,8 @@ class ServiceDesk extends General {
         $i = 0;
 
         foreach ($datosSD->operation->details as $key => $value) {
-            if ($value->department === 'Soporte TI' || $value->department === 'Mesa de Ayuda - Zona 1' || 
+            if ($value->department === 'Soporte TI' || 
+                    $value->department === 'Mesa de Ayuda - Zona 1' || 
                     $value->department === 'Mesa de Ayuda - Zona 2' || 
                     $value->department === 'Mesa de Ayuda - Zona 3' || 
                     $value->department === 'Mesa de Ayuda - Zona 4') {

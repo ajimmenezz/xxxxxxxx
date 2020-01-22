@@ -1135,7 +1135,7 @@ class InformacionServicios extends General {
         tcgr.Evidencia as EvidenciaAutoriza
         from t_correctivos_problemas tcp
         left join t_correctivos_solicitudes_refaccion tcsr
-        on tcsr.Id = (select MAX(Id) from t_correctivos_solicitudes_refaccion where IdServicio = tcp.IdServicio)
+        on tcsr.Id = (select MAX(Id) from t_correctivos_solicitudes_refaccion where IdServicioOrigen = tcp.IdServicio)
         left join t_correctivos_solicitudes_equipo tcse
         on tcse.Id = (select MAX(Id) from t_correctivos_solicitudes_equipo where IdServicioOrigen = tcp.IdServicio)
         left join t_correctivos_garantia_respaldo tcgr

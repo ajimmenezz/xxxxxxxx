@@ -571,7 +571,7 @@ class Seguimientos extends General
     {
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-        $listaTI = $this->ServiceDesk->consultarDepartamentoTI($key);
+        $listaTI = $this->ServiceDesk->consultarValidadoresTI($key);
 
         return $listaTI;
     }
