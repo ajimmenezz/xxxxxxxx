@@ -473,14 +473,19 @@ Servicio.prototype.ServicioSinClasificar = function () {
                     $.each(respuesta, function (key, valor) {
                         $("#selectAreaPuntoSinClasificar").append('<option value="' + valor.IdArea + '-' + valor.Punto + '">' + valor.Area + ' ' + valor.Punto + '</option>');
                     });
-                    if (informacionServicioGeneral[0].IdModelo !== '0') {
-                        $('#selectAreaPuntoSinClasificar > option[value="' + informacionServicioGeneral[0].IdArea + '-' + informacionServicioGeneral[0].Punto + '"]').attr('selected', 'selected', 'selected', 'selected').trigger('change');
+
+                    if (informacionServicioGeneral !== null) {
+                        if (informacionServicioGeneral[0].IdModelo !== '0') {
+                            $('#selectAreaPuntoSinClasificar > option[value="' + informacionServicioGeneral[0].IdArea + '-' + informacionServicioGeneral[0].Punto + '"]').attr('selected', 'selected', 'selected', 'selected').trigger('change');
+                        }
                     }
                 } else {
-                    if (informacionServicioGeneral[0].IdModelo !== '0') {
-                        _this.mostrarMensaje('.errorGeneralServicioSinClasificar', false, 'No hay equipos reguistrados para el Area y Punto.', 5000);
+                    if (informacionServicioGeneral !== null) {
+                        if (informacionServicioGeneral[0].IdModelo !== '0') {
+                            _this.mostrarMensaje('.errorGeneralServicioSinClasificar', false, 'No hay equipos reguistrados para el Area y Punto.', 5000);
+                        }
+                        $('#selectAreaPuntoSinClasificar').attr('disabled', 'disabled');
                     }
-                    $('#selectAreaPuntoSinClasificar').attr('disabled', 'disabled');
                 }
             });
         } else {

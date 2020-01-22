@@ -34,7 +34,7 @@ class Solicitud extends General {
         $this->Correo = \Librerias\Generales\Correo::factory();
         $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         $this->SegundoPlano = \Modelos\Modelo_SegundoPlano::factory();
-        parent::getCI()->load->helper(array('FileUpload', 'date'));
+        parent::getCI()->load->helper(array('FileUpload', 'date', 'archivosAdjuntosCorreo'));
         $this->Excel = new \Librerias\Generales\CExcel();
         $this->ServicioConcluirFyC = \Librerias\Generales\Servicio::factory();
     }
@@ -89,10 +89,10 @@ class Solicitud extends General {
         $data = array();
         $usuario = $this->Usuario->getDatosUsuario();
         $data['SolicitudesSD'] = array();
-        //No eliminar se ocupara despues
-        //        if (!empty($usuario['SDKey'])) {
-        //            $data['SolicitudesSD'] = $this->setSolicitudesSD($usuario['SDKey'], $usuario);
-        //        }
+//No eliminar se ocupara despues
+//        if (!empty($usuario['SDKey'])) {
+//            $data['SolicitudesSD'] = $this->setSolicitudesSD($usuario['SDKey'], $usuario);
+//        }
 
         if ($usuario['Id'] === '44') {
             $where = 'where ts.IdDepartamento IN(' . $usuario['IdDepartamento'] . ', 21)';
@@ -219,7 +219,7 @@ class Solicitud extends General {
             $textoNotificacionFechaLimite = ' La fecha límite para atender es <b>' . $datos['fechaLimiteAtencion'] . '</b>.';
         }
 
-        //Se genera la solicitud donde se define si es por SD o por un usuario
+//Se genera la solicitud donde se define si es por SD o por un usuario
         if (!empty($sistemaExterno)) {
             $solicitudNueva = 'insert t_solicitudes set
                 Ticket = ' . $ticket . ',
@@ -273,11 +273,11 @@ class Solicitud extends General {
         }
 
         $this->eliminarSolicitudSinDatos();
-        //Genera Solicitud  
+//Genera Solicitud  
         $numeroSolicitud = $this->DBS->setSolicitud($solicitudNueva);
         $carpeta = 'solicitudes/' . $numeroSolicitud . '/';
 
-        //Valida si existen archivos
+//Valida si existen archivos
         if (!empty($_FILES)) {
             $archivos = setMultiplesArchivos($CI, 'evidenciasSolicitud', $carpeta);
             if ($archivos) {
@@ -295,7 +295,7 @@ class Solicitud extends General {
             }
         }
 
-        //Guarda los detalles de la solicitud segun el tipo de solicitud
+//Guarda los detalles de la solicitud segun el tipo de solicitud
         if ($datos['tipo'] === '3' || $datos['tipo'] === '4') {
             if ($this->setSolicitudInterna($numeroSolicitud, $datos['descripcion'], $datos['asunto'], $archivos)) {
                 if (isset($datos['folio'])) {
@@ -469,21 +469,21 @@ class Solicitud extends General {
             $data['autorizacionAtenderServicio'] = FALSE;
         }
         if ($datosSolicitud['TipoSolicitud'] === '1') {
-            //Datos solicitud Personal
+//Datos solicitud Personal
             if ($datos['operacion'] === '1') {
-                //Solo muestra la informacion de la solicitud para la seccion Solicitud asignada
+//Solo muestra la informacion de la solicitud para la seccion Solicitud asignada
                 $data['formularioSolicitud'] = parent::getCI()->load->view('Generales/Modal/formularioAsignadaSolicitudPersonal', $data, TRUE);
             } else if ($datos['operacion'] === '2') {
-                //Regresa la formulario para editar solicitud en la seccion autorizacion                
+//Regresa la formulario para editar solicitud en la seccion autorizacion                
                 $data['formularioSolicitud'] = parent::getCI()->load->view('Generales/Modal/formularioAutorizacionSolicitudPersonalProyecto', $data, TRUE);
             }
         } else if ($datosSolicitud['TipoSolicitud'] === '2') {
-            //Datos solicitud material
+//Datos solicitud material
             if ($datos['operacion'] === '1') {
-                //Solo muestra la informacion de la solicitud para la seccion Solicitud asignada                                       
+//Solo muestra la informacion de la solicitud para la seccion Solicitud asignada                                       
                 $data['formularioSolicitud'] = parent::getCI()->load->view('Generales/Modal/formularioAsignadaSolicitudMaterial', $data, TRUE);
             } else if ($datos['operacion'] === '2') {
-                //Regresa la formulario para editar solicitud en la seccion autorizacion
+//Regresa la formulario para editar solicitud en la seccion autorizacion
                 $listaMaterial = $data['datos']['detalles'];
                 $data['datos']['detalles'] = array();
                 foreach ($listaMaterial as $value) {
@@ -496,7 +496,7 @@ class Solicitud extends General {
                 $data['formularioSolicitud'] = parent::getCI()->load->view('Generales/Modal/formularioAutorizacionSolicitudMaterialProyecto', $data, TRUE);
             }
         } else if ($datosSolicitud['TipoSolicitud'] === '3' || $datosSolicitud['TipoSolicitud'] === '4') {
-            //Datos solicitud Internas
+//Datos solicitud Internas
             $data['datos']['detalles'][0]['Descripcion'] = strip_tags($datosSolicitud['detalles'][0]['Descripcion']);
             $data['usuarios'] = $this->Catalogo->catUsuarios('3', array('Flag' => '1'));
             $data['areas'] = $this->Catalogo->catAreas('3', array('Flag' => '1'));
@@ -508,17 +508,17 @@ class Solicitud extends General {
             $data['departamentos'] = $this->getDepartamentos();
             $data['sucursales'] = $this->Catalogo->catSucursales('3', array('Flag' => '1'));
             if ($datos['operacion'] === '1') {
-                //Solo muestra la informacion de la solicitud para la seccion Solicitud asignada 
+//Solo muestra la informacion de la solicitud para la seccion Solicitud asignada 
                 $data['evidenciasUrl'] = explode(',', $datosSolicitud['detalles'][0]['Evidencias']);
                 $data['notas'] = $this->DBS->getNotasSolicitud($datos['solicitud']);
                 $data['formularioSolicitud'] = parent::getCI()->load->view('Generales/Modal/formularioAsignadaSolicitudInterna', $data, true);
             } else if ($datos['operacion'] === '2') {
-                //Regresa la formulario para editar solicitud utilizado para la seccion Autorizacxion
+//Regresa la formulario para editar solicitud utilizado para la seccion Autorizacxion
             }
         } else if ($datosSolicitud['TipoSolicitud'] === '5' || $datosSolicitud['TipoSolicitud'] === '6') {
-            //Datos solicitud Service Desk
+//Datos solicitud Service Desk
             if ($datos['operacion'] === '1') {
-                //Solo muestra la informacion de la solicitud para la seccion Solicitud asignada                                
+//Solo muestra la informacion de la solicitud para la seccion Solicitud asignada                                
                 if (!empty($datosSolicitud['Folio'])) {
                     $apiKey = $this->ServiceDesk->validarAPIKey($usuario['SDKey']);
                     $data['datosSD'] = $this->ServiceDesk->getDetallesFolio($apiKey, $datosSolicitud['Folio']);
@@ -533,9 +533,9 @@ class Solicitud extends General {
                 $data['usuarioApiKey'] = $apiKey;
                 $data['formularioSolicitud'] = parent::getCI()->load->view('Generales/Modal/formularioAsignadaSolicitudSistemasExternos', $data, TRUE);
             } else if ($datos['operacion'] === '2') {
-                //Regresa la formulario para editar solicitud en la seccion autorizacion                
+//Regresa la formulario para editar solicitud en la seccion autorizacion                
             } else if ($datos['operacion'] === '3') {
-                //Obtiene tecnicos del sistmea de service desk
+//Obtiene tecnicos del sistmea de service desk
                 $data['tecnicosSD'] = $this->getTecnicosSistemaSD($usuario);
             }
         }
@@ -717,12 +717,12 @@ class Solicitud extends General {
 
         $this->Notificacion->setNuevaNotificacion($data, $datos['titulo'], $datos['mensaje'], $atiende);
 
-        //        if($usuario['Id'] === '92'){
-        //            $data['destinatario'] = '9';
-        //            $this->Notificacion->enviarNotificacionEspecifica($data, $datos['titulo'], $datos['mensaje']);
-        //            $data['destinatario'] = '8';
-        //            $this->Notificacion->enviarNotificacionEspecifica($data, $datos['titulo'], $datos['mensaje']);
-        //        }
+//        if($usuario['Id'] === '92'){
+//            $data['destinatario'] = '9';
+//            $this->Notificacion->enviarNotificacionEspecifica($data, $datos['titulo'], $datos['mensaje']);
+//            $data['destinatario'] = '8';
+//            $this->Notificacion->enviarNotificacionEspecifica($data, $datos['titulo'], $datos['mensaje']);
+//        }
 
         if ($data['departamento'] === '7') {
             $data['destinatario'] = '9';
@@ -746,47 +746,47 @@ class Solicitud extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $solicitante = $this->DBS->getDatosSolicitante($datosSolicitud['Solicita']);
         switch ($datosSolicitud['TipoSolicitud']) {
-            //Solicitud Personal Proyecto
+//Solicitud Personal Proyecto
             case '1':
                 if ($datos['operacion'] === '1') {
-                    //Actualiza información
+//Actualiza información
                     $data['respuesta'] = $this->actualizarSolicitudPersonal($datos, $usuario, $solicitante);
                 } else if ($datos['operacion'] === '2') {
-                    //Autoriza solicitud
+//Autoriza solicitud
                     $data['solicitudes'] = $this->autorizarSolicitud($datos, $usuario, $fecha, $datosSolicitud, $solicitante, '1');
                 } else if ($datos['operacion'] === '3') {
-                    //No autoriza la solicitud
+//No autoriza la solicitud
                     $data['solicitudes'] = $this->noAutorizarSolicitud($datos, $usuario, $fecha, $datosSolicitud, $solicitante, '1');
                 }
                 break;
-            //Solicitud Material Proyecto
+//Solicitud Material Proyecto
             case '2':
                 if ($datos['operacion'] === '1') {
-                    //Actualiza información
+//Actualiza información
                     $data['respuesta'] = $this->actualizarSolicitudMaterial($datos, $usuario, $datosSolicitud, $solicitante, $fecha);
                 } else if ($datos['operacion'] === '2') {
-                    //Autoriza solicitud
+//Autoriza solicitud
                     $data['solicitudes'] = $this->autorizarSolicitud($datos, $usuario, $fecha, $datosSolicitud, $solicitante, '2');
                 } else if ($datos['operacion'] === '3') {
-                    //No autoriza la solicitud
+//No autoriza la solicitud
                     $data['solicitudes'] = $this->noAutorizarSolicitud($datos, $usuario, $fecha, $datosSolicitud, $solicitante, '2');
                 }
                 break;
-            //Solicitud Nueva Interna
+//Solicitud Nueva Interna
             case '3':
                 if ($datos['operacion'] === '1') {
-                    //Actualiza información                    
+//Actualiza información                    
                     $evidencias = explode(',', $datosSolicitud['detalles'][0]['Evidencias']);
                     $data['solicitudes'] = $this->actualizarSolicitudInterna($datos, $evidencias, $usuario, $datosSolicitud, $fecha);
                 } else if ($datos['operacion'] === '2') {
-                    //Autoriza solicitud
+//Autoriza solicitud
                 } else if ($datos['operacion'] === '3') {
-                    //No autoriza la solicitud
+//No autoriza la solicitud
                 } else if ($datos['operacion'] === '4') {
-                    //Rechazar solicitud
+//Rechazar solicitud
                     $data['solicitudes'] = $this->rechazarSolictud($datos, $usuario, $datosSolicitud, $solicitante, $fecha);
                 } else if ($datos['operacion'] === '5') {
-                    //Reasignar solicitud
+//Reasignar solicitud
                     $data['solicitudes'] = $this->reasignarSolicitud($datos, $usuario, $datosSolicitud, $fecha);
                 } else if ($datos['operacion'] === '6') {
                     $data['solicitudes'] = $this->cancelarSolicitudInterna($datos, $datosSolicitud, $usuario, $fecha);
@@ -794,7 +794,7 @@ class Solicitud extends General {
                 break;
             case '5':
                 if ($datos['operacion'] === '4') {
-                    //Reasigna folio en sistema externo SD                                        
+//Reasigna folio en sistema externo SD                                        
                     $data['solicitudes'] = $this->rechazarFolioSistemaSD($datos, $usuario, $datosSolicitud, $fecha);
                 }
                 break;
@@ -1664,40 +1664,63 @@ class Solicitud extends General {
     }
 
     public function concluirSolicitudesAbiertas() {
-        $usuario = $this->Usuario->getDatosUsuario();
-        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $solicitudes = $this->DBS->getFolioSolicitudesAbiertas();
+        $direccion = archivosAdjuntosCorreo(array('correo' => 'abarcenas@siccob.com.mx',
+            'password' => 'Alberto-132',
+            'asunto' => 'Catalogo Item SD'));
 
-        foreach ($solicitudes as $key => $value) {
-            try {
-                $detallesSD = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $value['Folio']);
-                if ($detallesSD->STATUS === 'Cerrado' || $detallesSD->STATUS === 'Completado') {
-                    $resolucion = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $value['Folio']);
+        $arrayExcel = $this->Excel->dataImportExcel(array('direccion' => $_SERVER['DOCUMENT_ROOT'] . $direccion['message']));
+        $arrayExcelNuevo = array();
 
-                    if (!empty($resolucion->operation->Details->RESOLUTION)) {
-                        $textoResolucion = $resolucion->operation->Details->RESOLUTION;
-                    } else {
-                        $textoResolucion = 'Se concluye solicitud ya que esta concluido en SD';
-                    }
 
-                    $this->DBS->setNotasSolicitud(array(
-                        'IdSolicitud' => $value['Id'],
-                        'IdEstatus' => '4',
-                        'IdUsuario' => $usuario['Id'],
-                        'Nota' => $textoResolucion,
-                        'Fecha' => $fecha
-                    ));
-
-                    $textoReporte = 'Folio: ' . $value['Folio'] . ' Solicitud: ' . $value['Id'] . ' Fecha: ' . $fecha . ' Resolución: ' . $textoResolucion;
-
-                    $this->crearReporteSolicitudesConcluidas($textoReporte);
-
-                    $this->DBS->cambiarEstatusSolicitud(array('IdEstatus' => '4'), array('Id' => $value['Id']));
-                }
-            } catch (\Exception $ex) {
-                
-            }
+        foreach ($arrayExcel as $key => $value) {
+            $arrayExcelNuevo[$key]['IdItem'] = $value[1];
+            $arrayExcelNuevo[$key]['IdSubcategoria'] = $value[2];
+            $arrayExcelNuevo[$key]['Nombre'] = $value[3];
         }
+        
+        $this->SegundoPlano->truncar('TRUNCATE cat_v3_sd_item');
+
+        foreach ($arrayExcelNuevo as $key => $value) {
+            $this->DBS->setDatosSolicitudInternas('cat_v3_sd_item', $value);
+        }
+
+
+
+
+//        $usuario = $this->Usuario->getDatosUsuario();
+//        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+//        $solicitudes = $this->DBS->getFolioSolicitudesAbiertas();
+//
+//        foreach ($solicitudes as $key => $value) {
+//            try {
+//                $detallesSD = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $value['Folio']);
+//                if ($detallesSD->STATUS === 'Cerrado' || $detallesSD->STATUS === 'Completado') {
+//                    $resolucion = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $value['Folio']);
+//
+//                    if (!empty($resolucion->operation->Details->RESOLUTION)) {
+//                        $textoResolucion = $resolucion->operation->Details->RESOLUTION;
+//                    } else {
+//                        $textoResolucion = 'Se concluye solicitud ya que esta concluido en SD';
+//                    }
+//
+//                    $this->DBS->setNotasSolicitud(array(
+//                        'IdSolicitud' => $value['Id'],
+//                        'IdEstatus' => '4',
+//                        'IdUsuario' => $usuario['Id'],
+//                        'Nota' => $textoResolucion,
+//                        'Fecha' => $fecha
+//                    ));
+//
+//                    $textoReporte = 'Folio: ' . $value['Folio'] . ' Solicitud: ' . $value['Id'] . ' Fecha: ' . $fecha . ' Resolución: ' . $textoResolucion;
+//
+//                    $this->crearReporteSolicitudesConcluidas($textoReporte);
+//
+//                    $this->DBS->cambiarEstatusSolicitud(array('IdEstatus' => '4'), array('Id' => $value['Id']));
+//                }
+//            } catch (\Exception $ex) {
+//                
+//            }
+//        }
     }
 
     private function crearReporteSolicitudesConcluidas(string $contenido) {
@@ -1729,10 +1752,10 @@ class Solicitud extends General {
             $folios = array();
             $folios = $this->ServiceDesk->getFolios2019($from);
             foreach ($folios["requests"] as $key => $value) {
-                // $resolvedTime = '';
-                // if ($value['resolved_time'] != null && $value['resolved_time'] != 'null') {
-                //     $resolvedTime = date('Y-m-d H:i:s', $value["resolved_time"]["value"] / 1000);
-                // }
+// $resolvedTime = '';
+// if ($value['resolved_time'] != null && $value['resolved_time'] != 'null') {
+//     $resolvedTime = date('Y-m-d H:i:s', $value["resolved_time"]["value"] / 1000);
+// }
 
                 if (isset($value["technician"])) {
                     $this->DBS->insertar('temporal_sd', array(
@@ -1743,9 +1766,9 @@ class Solicitud extends General {
                         'Status' => $value["status"]["name"],
                         'CreatedTime' => date('Y-m-d H:i:s', $value["created_time"]["value"] / 1000),
                         //'AssignedTime' => date('Y-m-d H:i:s', $value["assigned_time"]["value"] / 1000),
-                        //'Category' => $value["category"]["name"],
-                        //'SubCategory' => $value["subcategory"]["name"],
-                        //'Item' => $value["item"]["name"],
+//'Category' => $value["category"]["name"],
+//'SubCategory' => $value["subcategory"]["name"],
+//'Item' => $value["item"]["name"],
                         'Group' => $value["group"]["name"],
                         'Priority' => $value["priority"]["name"],
                             //'ResolvedTime' => $resolvedTime
@@ -1759,10 +1782,10 @@ class Solicitud extends General {
                         'Status' => $value["status"]["name"],
                         'CreatedTime' => date('Y-m-d H:i:s', $value["created_time"]["value"] / 1000),
                         //'AssignedTime' => date('Y-m-d H:i:s', $value["assigned_time"]["value"] / 1000),
-                        //'Category' => $value["category"]["name"],
-                        //'SubCategory' => $value["subcategory"]["name"],
-                        //'Item' => $value["item"]["name"],
-                        //'Group' => $value["group"]["name"],
+//'Category' => $value["category"]["name"],
+//'SubCategory' => $value["subcategory"]["name"],
+//'Item' => $value["item"]["name"],
+//'Group' => $value["group"]["name"],
                         'Priority' => $value["priority"]["name"],
                             //'ResolvedTime' => $resolvedTime
                     ));
@@ -1773,18 +1796,18 @@ class Solicitud extends General {
             echo $i . '01';
         } while (count($folios["requests"]) > 0);
 
-        //        $arrayTitulos = ['Semana Creacion SD',
-        //            'Mes Creacion SD',
-        //            'Año Creacion SD',
-        //            'Fecha Creacion SD',
-        //            'Ticket SD',
-        //            'Estatus SD',
-        //            'Tecnico SD',
-        //            'Solicitud Adist',
-        //            'Ticket Adist',
-        //            'Estatus Solicitud Adist',
-        //            'Fecha Creacion Solicitud Adist'];
-        //        return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
+//        $arrayTitulos = ['Semana Creacion SD',
+//            'Mes Creacion SD',
+//            'Año Creacion SD',
+//            'Fecha Creacion SD',
+//            'Ticket SD',
+//            'Estatus SD',
+//            'Tecnico SD',
+//            'Solicitud Adist',
+//            'Ticket Adist',
+//            'Estatus Solicitud Adist',
+//            'Fecha Creacion Solicitud Adist'];
+//        return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
     }
 
     public function updateRequestWithSDInfo() {
@@ -1819,8 +1842,8 @@ class Solicitud extends General {
     public function getFoliosAnterior() {
         $foliosAdist = array();
         $foliosSD = array();
-        //        ini_set('memory_limit', '4096M');
-        //        set_time_limit('1800');
+//        ini_set('memory_limit', '4096M');
+//        set_time_limit('1800');
 
         $folios = $this->ServiceDesk->getFolios('A8D6001B-EB63-4996-A158-1B968E19AB84');
         $sd = json_decode(json_encode($folios), True);
@@ -2004,7 +2027,7 @@ class Solicitud extends General {
             $this->Excel->removeColumn('A', 26);
         }
 
-        //        $nombreArchivo = trim($nombreArchivo);
+//        $nombreArchivo = trim($nombreArchivo);
         $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
 
         $path = "../public/storage/Archivos/Reportes";
@@ -2018,12 +2041,12 @@ class Solicitud extends General {
 
     public function rechazarSolicitudSD(array $datos) {
         $this->DBS->iniciaTransaccion();
-        
+
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $respuestaKey = $this->ServiceDesk->validarKey($usuario['SDKey']);
         $datosSolicitud = $this->DBS->getDatosSolicitud($datos['solicitud']);
-        
+
         $this->ServiceDesk->resolucionFolioSD($datosSolicitud['Folio'], '', $respuestaKey['messege'], $datos['descripcion']);
 
         $this->DBS->actualizarSolicitud('t_solicitudes', array(
@@ -2047,7 +2070,7 @@ class Solicitud extends General {
             'Nota' => $datos['descripcion'],
             'Fecha' => $fecha
         ));
-        
+
         $this->ServiceDesk->cambiarEstatusServiceDesk($respuestaKey['messege'], 'Completado', $datosSolicitud['Folio']);
 
         if ($this->DBS->estatusTransaccion() === FALSE) {

@@ -21,7 +21,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                       ORDER BY Fecha DESC) AS UltimoRegistro
                                                     FROM db_Registro dr
                                                     WHERE 1=1
-                                                    AND dr.StatusConciliacion = 'Conciliado'
                                                     " . $parameters . "
                                                     GROUP BY dr.Tipo, dr.Proyecto
                                                     ORDER BY Gasto DESC");
@@ -40,11 +39,10 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                     SUM(Importe) AS Importe
                                                     FROM (
                                                     SELECT 
-                                                    Tipo,
-                                                    SUM(Importe) AS Importe
-                                                    FROM db_Registro
+                                                    dr.Tipo,
+                                                    SUM(dr.Importe) AS Importe
+                                                    FROM db_Registro dr
                                                     WHERE 1=1
-                                                    AND StatusConciliacion = 'Conciliado'
                                                     " . $parameters . "
                                                     GROUP BY Tipo, Proyecto) AS T
                                                     GROUP BY T.Tipo
@@ -68,7 +66,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         LEFT JOIN db_DetalleGasto AS ddg
                                                         ON ddg.ID = dr.ID
                                                         WHERE 1=1
-                                                        AND dr.StatusConciliacion = 'Conciliado'
                                                         " . $parameters . "
                                                         GROUP BY Proyecto
                                                         ORDER BY Fecha ASC) AS Fecha
@@ -76,7 +73,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
-                                                AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
                                                 GROUP BY Proyecto
                                                 ORDER BY Gasto DESC");
@@ -99,7 +95,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         LEFT JOIN db_DetalleGasto AS ddg
                                                         ON ddg.ID = dr.ID
                                                         WHERE 1=1
-                                                        AND dr.StatusConciliacion = 'Conciliado'
                                                         " . $parameters . "
                                                         Group by TipoServicio
                                                         ORDER BY Fecha ASC) AS Fecha
@@ -107,7 +102,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
-                                                AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
                                                 Group by TipoServicio
                                                 ORDER BY Gasto DESC");
@@ -133,7 +127,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         LEFT JOIN db_DetalleGasto AS ddg
                                                         ON ddg.ID = dr.ID
                                                         WHERE 1=1
-                                                        AND dr.StatusConciliacion = 'Conciliado'
                                                         " . $parameters . "
                                                         GROUP BY Sucursal
                                                         ORDER BY Fecha ASC) AS Fecha
@@ -141,7 +134,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
-                                                AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
                                                 GROUP BY Sucursal
                                                 ORDER BY Gasto DESC");
@@ -163,7 +155,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         LEFT JOIN db_DetalleGasto AS ddg
                                                         ON ddg.ID = dr.ID
                                                         WHERE 1=1
-                                                        AND dr.StatusConciliacion = 'Conciliado'
                                                         " . $parameters . "
                                                         GROUP BY ddg.Categoria
                                                         ORDER BY Fecha ASC) AS Fecha
@@ -171,7 +162,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
-                                                AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
                                                 GROUP BY ddg.Categoria
                                                 ORDER BY Gasto DESC");
@@ -193,7 +183,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         LEFT JOIN db_DetalleGasto AS ddg
                                                         ON ddg.ID = dr.ID
                                                         WHERE 1=1
-                                                        AND dr.StatusConciliacion = 'Conciliado'
                                                         " . $parameters . "
                                                         GROUP BY ddg.SubCategoria
                                                         ORDER BY Fecha ASC) AS Fecha
@@ -201,7 +190,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
-                                                AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
                                                 GROUP BY ddg.SubCategoria
                                                 ORDER BY Gasto DESC");
@@ -223,7 +211,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                         LEFT JOIN db_DetalleGasto AS ddg
                                                         ON ddg.ID = dr.ID
                                                         WHERE 1=1
-                                                        AND dr.StatusConciliacion = 'Conciliado'
                                                         " . $parameters . "
                                                         GROUP BY ddg.Concepto
                                                         ORDER BY Fecha ASC) AS Fecha
@@ -231,7 +218,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
-                                                AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
                                                 GROUP BY ddg.Concepto
                                                 ORDER BY Gasto DESC");
@@ -251,7 +237,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
-                                                AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters . "
                                                 GROUP BY dr.TipoTrans");
 
@@ -277,7 +262,6 @@ class Modelo_GapsiGestorProyectos extends Modelo_Base {
                                                 LEFT JOIN db_DetalleGasto ddg
                                                 ON ddg.Gasto = dr.ID
                                                 WHERE 1=1
-                                                AND dr.StatusConciliacion = 'Conciliado'
                                                 " . $parameters);
 
         if (!empty($query)) {

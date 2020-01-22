@@ -374,11 +374,11 @@ class ServiceDesk extends General {
      */
 
     public function nombreUsuarioServiceDesk(string $key, string $idUsuario) {
-        $url2 = 'http://mesadeayuda.cinemex.net:8080/sdpapi/requester/?format=json&OPERATION_NAME=GET_ALL&INPUT_DATA={%22operation%22:{%22details%22:{%22department%22:%22Soporte%20TI%22}}}&TECHNICIAN_KEY=' . $key;
-        $stringUsuarios = file_get_contents($url2);
-        $objetoUsuarios = json_decode($stringUsuarios);
-        $this->validarError($objetoUsuarios);
         $nombreUsuario = '';
+        $input_data = '{"operation":{"details":{"department":"Soporte TI"}}}';
+        $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
+        $stringUsuarios = file_get_contents($this->UrlUsers . '?' . $this->FIELDS);
+        $objetoUsuarios = json_decode($stringUsuarios);
 
         foreach ($objetoUsuarios->operation->details as $value) {
             if ($idUsuario === (string) $value->userid) {
