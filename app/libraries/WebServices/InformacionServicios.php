@@ -5,8 +5,7 @@ namespace Librerias\WebServices;
 use Controladores\Controller_Datos_Usuario as General;
 use Librerias\Generales\PDF as PDF;
 
-class InformacionServicios extends General
-{
+class InformacionServicios extends General {
 
     private $DBS;
     private $Correo;
@@ -20,8 +19,7 @@ class InformacionServicios extends General
     private $x;
     private $y;
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         ini_set('max_execution_time', 300);
         $this->DBS = \Modelos\Modelo_Loguistica_Seguimiento::factory();
@@ -34,23 +32,22 @@ class InformacionServicios extends General
         $this->DBM = \Modelos\Modelo_Mantenimiento::factory();
     }
 
-    //    public function MostrarDatosSD(string $folio) {
-    //        $host = $_SERVER['SERVER_NAME'];
-    //        $pdf = $this->pdfFromFolio(array('folio' => $folio));
-    //
-    //        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-    //            $path = 'https://siccob.solutions/' . $pdf['uri'];
-    //        } else {
-    //            $path = 'http://' . $host . '/' . $pdf['uri'];
-    //        }
-    //
-    //        $html = "<div>Se resuelve el incidente del folio:" . $folio . "</div>";
-    //        $html .= "<div><a href='" . $path . "' target='_blank'>Resumen documento PDF</a></div>";
-    //        return array('html' => $html);
-    //    }
+//    public function MostrarDatosSD(string $folio) {
+//        $host = $_SERVER['SERVER_NAME'];
+//        $pdf = $this->pdfFromFolio(array('folio' => $folio));
+//
+//        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+//            $path = 'https://siccob.solutions/' . $pdf['uri'];
+//        } else {
+//            $path = 'http://' . $host . '/' . $pdf['uri'];
+//        }
+//
+//        $html = "<div>Se resuelve el incidente del folio:" . $folio . "</div>";
+//        $html .= "<div><a href='" . $path . "' target='_blank'>Resumen documento PDF</a></div>";
+//        return array('html' => $html);
+//    }
 
-    public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key)
-    {
+    public function MostrarDatosSD(string $folio, string $servicio = NULL, bool $servicioConcluir = FALSE, string $key) {
         $html = '';
         $estatus = TRUE;
 
@@ -105,8 +102,7 @@ class InformacionServicios extends General
         return array('html' => $html);
     }
 
-    public function vistaHTMLServicio(array $value)
-    {
+    public function vistaHTMLServicio(array $value) {
         if ($value['Seguimiento'] === '1') {
             switch ($value['IdTipoServicio']) {
                 case '27':
@@ -145,8 +141,7 @@ class InformacionServicios extends General
         return $html;
     }
 
-    public function cambiarEstatusResolucionSD(array $datos, array $servicios)
-    {
+    public function cambiarEstatusResolucionSD(array $datos, array $servicios) {
         $datosServicios = $this->DBST->consultaServicio($datos['Servicio']);
         if (isset($datos['Servicio'])) {
             $servicioLaboratorio = $this->DBST->consultaServicioLaboratorio($datos['Servicio']);
@@ -159,7 +154,7 @@ class InformacionServicios extends General
                 if (!empty($servicios)) {
                     foreach ($servicios as $key => $value) {
                         if ($value['IdEstatus'] === '3') {
-                            //                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
+//                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
                         } else {
                             $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
                         }
@@ -176,7 +171,7 @@ class InformacionServicios extends General
             if (!empty($servicios)) {
                 foreach ($servicios as $key => $value) {
                     if ($value['IdEstatus'] === '3') {
-                        //                        $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
+//                        $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
                     } else {
                         $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
                     }
@@ -193,8 +188,7 @@ class InformacionServicios extends General
         return ['code' => 200, 'message' => 'correcto'];
     }
 
-    public function verificarTodosServiciosFolio(array $datos)
-    {
+    public function verificarTodosServiciosFolio(array $datos) {
         if ($datos['ServicioConcluir']) {
             $datosExtraServicio = 'AND	tse.Id <> "' . $datos['Servicio'] . '"';
         } else {
@@ -207,14 +201,13 @@ class InformacionServicios extends General
                                                             INNER JOIN t_solicitudes tso 
                                                             ON tse.IdSolicitud = tso.Id 
                                                             WHERE tso.Folio = "' . $datos['Folio'] . '"'
-            . $datosExtraServicio .
-            'AND tse.IdEstatus in (1,2,3,5,10,12)
+                . $datosExtraServicio .
+                'AND tse.IdEstatus in (1,2,3,5,10,12)
                                                                     AND tse.IdTipoServicio not in (21,41)');
         return $servicios;
     }
 
-    public function guardarLogSD($resultadoSD, string $folio)
-    {
+    public function guardarLogSD($resultadoSD, string $folio) {
         if ($resultadoSD->operation->result->status === 'Failed') {
             $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
@@ -228,8 +221,7 @@ class InformacionServicios extends General
         }
     }
 
-    public function sinClasificar($datos)
-    {
+    public function sinClasificar($datos) {
         $host = $_SERVER['SERVER_NAME'];
         $contSolucion = 0;
         $linkImagenesSolucion = '';
@@ -270,8 +262,7 @@ class InformacionServicios extends General
         return $datosResolucion;
     }
 
-    public function correctivo(array $datos)
-    {
+    public function correctivo(array $datos) {
         $informacionSolicitud = $this->getGeneralesSolicitudServicio($datos['servicio']);
         $informacionCorrectivo = $this->consultaInformacionCorrectivo($datos['servicio']);
         $informacionDiagnostico = $this->consultaCorrectivosDiagnostico($datos['servicio']);
@@ -377,22 +368,21 @@ class InformacionServicios extends General
             }
 
             $descripcion = "<br>"
-                . "<div>***DIAGNÓSTICO DEL EQUIPO***</div>"
-                . "<div>" . $informacionSolicitud['sucursal'] . " &nbsp " . $informacionCorrectivo[0]['NombreArea'] . " " . $informacionCorrectivo[0]['Punto'] . " &nbsp " . $informacionCorrectivo[0]['Equipo'] . "&nbsp Serie: " . $informacionCorrectivo[0]['Serie'] . "&nbsp Terminal: " . $informacionCorrectivo[0]['Serie'] . "</div>"
-                . "<div>" . $informacionDiagnostico[0]['NombreTipoDiagnostico'] . " &nbsp " . $componente . "</div>"
-                . $datosFalla
-                . "<div>Observaciones: " . $informacionDiagnostico[0]['Observaciones'] . "</div>"
-                . $linkImagenesDiagnostico
-                . $informacionProblema
-                . $solucionDiv
-                . "<div><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a></div>";
+                    . "<div>***DIAGNÓSTICO DEL EQUIPO***</div>"
+                    . "<div>" . $informacionSolicitud['sucursal'] . " &nbsp " . $informacionCorrectivo[0]['NombreArea'] . " " . $informacionCorrectivo[0]['Punto'] . " &nbsp " . $informacionCorrectivo[0]['Equipo'] . "&nbsp Serie: " . $informacionCorrectivo[0]['Serie'] . "&nbsp Terminal: " . $informacionCorrectivo[0]['Serie'] . "</div>"
+                    . "<div>" . $informacionDiagnostico[0]['NombreTipoDiagnostico'] . " &nbsp " . $componente . "</div>"
+                    . $datosFalla
+                    . "<div>Observaciones: " . $informacionDiagnostico[0]['Observaciones'] . "</div>"
+                    . $linkImagenesDiagnostico
+                    . $informacionProblema
+                    . $solucionDiv
+                    . "<div><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a></div>";
 
             return $descripcion;
         }
     }
 
-    public function asignarMultimedia(string $linkPdf, string $folio, string $key, string $servicio = null)
-    {
+    public function asignarMultimedia(string $linkPdf, string $folio, string $key, string $servicio = null) {
         $usuario = $this->Usuario->getDatosUsuario();
         $linkPDF = '<br>Ver PDF Resumen General <a href="' . $linkPdf . '" target="_blank">Aquí</a>';
         $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'En Atención', $folio);
@@ -403,8 +393,7 @@ class InformacionServicios extends General
         $this->ServiceDesk->reasignarFolioSD($folio, '9304', $key);
     }
 
-    public function servicioSinDetalles($datos)
-    {
+    public function servicioSinDetalles($datos) {
         $host = $_SERVER['SERVER_NAME'];
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
 
@@ -427,8 +416,7 @@ class InformacionServicios extends General
         return $datosResolucion;
     }
 
-    public function avancesProblemasServicio(string $folio)
-    {
+    public function avancesProblemasServicio(string $folio) {
         $datosAvancesProblemas = '';
         $datosAvances = '***AVANCES***<br>';
         $datosProblemas = "<br><p style='color:#FF0000';>***PROBLEMAS***</p>";
@@ -467,8 +455,7 @@ class InformacionServicios extends General
         return $datosAvancesProblemas;
     }
 
-    public function crearVistaAvanceProblema(array $datos)
-    {
+    public function crearVistaAvanceProblema(array $datos) {
         $host = $_SERVER['SERVER_NAME'];
         $contAvanceProblema = 0;
         $linkImagenes = '';
@@ -510,24 +497,23 @@ class InformacionServicios extends General
         return array('datosAvancesProblemas' => $datosAvancesProblemas, 'tipo' => $tipo);
     }
 
-    public function getGeneralesSolicitudServicio(string $servicio)
-    {
+    public function getGeneralesSolicitudServicio(string $servicio) {
         $sentencia = ""
-            . "select ts.Id as Solicitud, "
-            . "ts.Folio, "
-            . "tst.Id as Servicio, "
-            . "nombreUsuario(ts.Solicita) as Solicitante, "
-            . "ts.FechaCreacion as FechaSolicitud, "
-            . "(select Nombre from cat_v3_departamentos_siccob where Id = ts.IdDepartamento) as DepartamentoSolicitud, "
-            . "(select cvas.Nombre from cat_v3_departamentos_siccob cvs INNER JOIN cat_v3_areas_siccob cvas ON cvas.Id = cvs.IdArea where cvs.Id = ts.IdDepartamento) as AreaSolicitud, "
-            . "estatus(ts.IdEstatus) as EstatusSolicitud, "
-            . "(select Asunto from t_solicitudes_internas tsi where tsi.IdSolicitud = ts.Id) as AsuntoSolicitud, "
-            . "(select Descripcion from t_solicitudes_internas tsi where tsi.IdSolicitud = ts.Id) as DescripcionSolicitud, "
-            . "(select Nombre from cat_v3_prioridades where Id = ts.IdPrioridad) as Prioridad, "
-            . "tst.Ticket, "
-            . "tipoServicio(tst.IdTipoServicio) as TipoServicio, "
-            . "replace(tipoServicio(tst.IdTipoServicio),' ','') as NTipoServicio, "
-            . "if(
+                . "select ts.Id as Solicitud, "
+                . "ts.Folio, "
+                . "tst.Id as Servicio, "
+                . "nombreUsuario(ts.Solicita) as Solicitante, "
+                . "ts.FechaCreacion as FechaSolicitud, "
+                . "(select Nombre from cat_v3_departamentos_siccob where Id = ts.IdDepartamento) as DepartamentoSolicitud, "
+                . "(select cvas.Nombre from cat_v3_departamentos_siccob cvs INNER JOIN cat_v3_areas_siccob cvas ON cvas.Id = cvs.IdArea where cvs.Id = ts.IdDepartamento) as AreaSolicitud, "
+                . "estatus(ts.IdEstatus) as EstatusSolicitud, "
+                . "(select Asunto from t_solicitudes_internas tsi where tsi.IdSolicitud = ts.Id) as AsuntoSolicitud, "
+                . "(select Descripcion from t_solicitudes_internas tsi where tsi.IdSolicitud = ts.Id) as DescripcionSolicitud, "
+                . "(select Nombre from cat_v3_prioridades where Id = ts.IdPrioridad) as Prioridad, "
+                . "tst.Ticket, "
+                . "tipoServicio(tst.IdTipoServicio) as TipoServicio, "
+                . "replace(tipoServicio(tst.IdTipoServicio),' ','') as NTipoServicio, "
+                . "if(
                             tst.IdSucursal is not null and tst.IdSucursal > 0, 
                         sucursal(tst.IdSucursal), 
                             case tst.IdTipoServicio
@@ -535,37 +521,37 @@ class InformacionServicios extends General
                             when 12 then sucursal((select IdSucursal from t_mantenimientos_generales where IdServicio = tst.Id order by Id desc limit 1))
                             end
                     ) as Sucursal, "
-            . "tst.FechaCreacion as FechaServicio, "
-            . "tst.FechaInicio, "
-            . "if(tst.FechaFirma is not null and tst.FechaFirma <> '', tst.FechaFirma, tst.FechaConclusion) as FechaConclusion, "
-            . "estatus(tst.IdEstatus) as EstatusServicio, "
-            . "tst.Descripcion as DescripcionServicio, "
-            . "tst.Firma, "
-            . "tst.NombreFirma, "
-            . "tst.CorreoCopiaFirma, "
-            . "tst.FechaFirma, "
-            . "nombreUsuario(tst.Atiende) as AtiendeServicio, "
-            . "tst.Atiende, "
-            . "case "
-            . " when ts.IdEstatus in (4,'4') then "
-            . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , ts.FechaCreacion, ts.FechaConclusion))*60) "
-            . " when ts.IdEstatus in (6,'6') then "
-            . "     '' "
-            . " else "
-            . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , ts.FechaCreacion, now()))*60) "
-            . "end as TiempoSolicitud, "
-            . ""
-            . "case "
-            . " when tst.IdEstatus  in (4,'4') then "
-            . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , tst.FechaCreacion, tst.FechaConclusion))*60) "
-            . " when tst.IdEstatus  in (6,'6') then "
-            . "     '' "
-            . " else "
-            . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , tst.FechaCreacion, now()))*60) "
-            . "end as TiempoServicio "
-            . "from t_servicios_ticket tst INNER JOIN t_solicitudes ts "
-            . "on tst.IdSolicitud = ts.Id "
-            . "where tst.Id = '" . $servicio . "';";
+                . "tst.FechaCreacion as FechaServicio, "
+                . "tst.FechaInicio, "
+                . "if(tst.FechaFirma is not null and tst.FechaFirma <> '', tst.FechaFirma, tst.FechaConclusion) as FechaConclusion, "
+                . "estatus(tst.IdEstatus) as EstatusServicio, "
+                . "tst.Descripcion as DescripcionServicio, "
+                . "tst.Firma, "
+                . "tst.NombreFirma, "
+                . "tst.CorreoCopiaFirma, "
+                . "tst.FechaFirma, "
+                . "nombreUsuario(tst.Atiende) as AtiendeServicio, "
+                . "tst.Atiende, "
+                . "case "
+                . " when ts.IdEstatus in (4,'4') then "
+                . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , ts.FechaCreacion, ts.FechaConclusion))*60) "
+                . " when ts.IdEstatus in (6,'6') then "
+                . "     '' "
+                . " else "
+                . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , ts.FechaCreacion, now()))*60) "
+                . "end as TiempoSolicitud, "
+                . ""
+                . "case "
+                . " when tst.IdEstatus  in (4,'4') then "
+                . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , tst.FechaCreacion, tst.FechaConclusion))*60) "
+                . " when tst.IdEstatus  in (6,'6') then "
+                . "     '' "
+                . " else "
+                . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , tst.FechaCreacion, now()))*60) "
+                . "end as TiempoServicio "
+                . "from t_servicios_ticket tst INNER JOIN t_solicitudes ts "
+                . "on tst.IdSolicitud = ts.Id "
+                . "where tst.Id = '" . $servicio . "';";
         $detallesSolicitud = $this->DBS->consultaGeneralSeguimiento($sentencia);
 
         $arrayReturn = array();
@@ -601,8 +587,7 @@ class InformacionServicios extends General
         return $arrayReturn;
     }
 
-    public function consultaInformacionCorrectivo(string $servicio)
-    {
+    public function consultaInformacionCorrectivo(string $servicio) {
         $sentencia = 'SELECT 
                         tcg.*,
                         areaAtencion(IdArea) AS NombreArea,
@@ -612,8 +597,7 @@ class InformacionServicios extends General
         return $this->DBS->consultaGeneralSeguimiento($sentencia);
     }
 
-    public function consultaCorrectivosDiagnostico(string $servicio)
-    {
+    public function consultaCorrectivosDiagnostico(string $servicio) {
         $sentencia = 'SELECT 
                         tcd . *,
                         (SELECT 
@@ -666,8 +650,7 @@ class InformacionServicios extends General
         }
     }
 
-    public function consultaCorrectivoProblema(string $servicio, string $folio, string $key)
-    {
+    public function consultaCorrectivoProblema(string $servicio, string $folio, string $key) {
         $informacionSolicitud = $this->getGeneralesSolicitudServicio($servicio);
         $tabla = '';
         $descripcionProblema = '';
@@ -677,7 +660,7 @@ class InformacionServicios extends General
 
 
         if (!empty($data['idTipoProblema'])) {
-            //            $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $folio);
+//            $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $folio);
             switch ($data['idTipoProblema'][0]['IdTipoProblema']) {
                 case '1':
                     $solicitudRefaccion = $this->DBS->consultaGeneralSeguimiento('SELECT 
@@ -758,47 +741,45 @@ class InformacionServicios extends General
         }
     }
 
-    public function getInformacionServicio(string $servicio)
-    {
+    public function getInformacionServicio(string $servicio) {
         $sentencia = ""
-            . "select ts.Id as Solicitud, "
-            . "nombreUsuario(ts.Solicita) as Solicitante, "
-            . "ts.FechaCreacion as FechaSolicitud, "
-            . "estatus(ts.IdEstatus) as EstatusSolicitud, "
-            . "(select Descripcion from t_solicitudes_internas tsi where tsi.IdSolicitud = ts.Id) as DescripcionSolicitud, "
-            . "tst.Ticket, "
-            . "if(tst.IdSucursal is not null and tst.IdSucursal > 0, sucursal(tst.IdSucursal),'') as Sucursal, "
-            . "tst.IdTipoServicio, "
-            . "tipoServicio(tst.IdTipoServicio) as TipoServicio, "
-            . "replace(tipoServicio(tst.IdTipoServicio),' ','') as NTipoServicio, "
-            . "tst.FechaCreacion as FechaServicio, "
-            . "estatus(tst.IdEstatus) as EstatusServicio, "
-            . "tst.Descripcion as DescripcionServicio, "
-            . "case "
-            . " when ts.IdEstatus in (4,'4') then "
-            . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , ts.FechaCreacion, ts.FechaConclusion))*60) "
-            . " when ts.IdEstatus in (6,'6') then "
-            . "     '' "
-            . " else "
-            . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , ts.FechaCreacion, now()))*60) "
-            . "end as TiempoSolicitud, "
-            . ""
-            . "case "
-            . " when tst.IdEstatus  in (4,'4') then "
-            . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , tst.FechaCreacion, tst.FechaConclusion))*60) "
-            . " when tst.IdEstatus  in (6,'6') then "
-            . "     '' "
-            . " else "
-            . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , tst.FechaCreacion, now()))*60) "
-            . "end as TiempoServicio "
-            . "from t_servicios_ticket tst INNER JOIN t_solicitudes ts "
-            . "on tst.IdSolicitud = ts.Id "
-            . "where tst.Id = '" . $servicio . "';";
+                . "select ts.Id as Solicitud, "
+                . "nombreUsuario(ts.Solicita) as Solicitante, "
+                . "ts.FechaCreacion as FechaSolicitud, "
+                . "estatus(ts.IdEstatus) as EstatusSolicitud, "
+                . "(select Descripcion from t_solicitudes_internas tsi where tsi.IdSolicitud = ts.Id) as DescripcionSolicitud, "
+                . "tst.Ticket, "
+                . "if(tst.IdSucursal is not null and tst.IdSucursal > 0, sucursal(tst.IdSucursal),'') as Sucursal, "
+                . "tst.IdTipoServicio, "
+                . "tipoServicio(tst.IdTipoServicio) as TipoServicio, "
+                . "replace(tipoServicio(tst.IdTipoServicio),' ','') as NTipoServicio, "
+                . "tst.FechaCreacion as FechaServicio, "
+                . "estatus(tst.IdEstatus) as EstatusServicio, "
+                . "tst.Descripcion as DescripcionServicio, "
+                . "case "
+                . " when ts.IdEstatus in (4,'4') then "
+                . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , ts.FechaCreacion, ts.FechaConclusion))*60) "
+                . " when ts.IdEstatus in (6,'6') then "
+                . "     '' "
+                . " else "
+                . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , ts.FechaCreacion, now()))*60) "
+                . "end as TiempoSolicitud, "
+                . ""
+                . "case "
+                . " when tst.IdEstatus  in (4,'4') then "
+                . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , tst.FechaCreacion, tst.FechaConclusion))*60) "
+                . " when tst.IdEstatus  in (6,'6') then "
+                . "     '' "
+                . " else "
+                . "     SEC_TO_TIME((TIMESTAMPDIFF(MINUTE , tst.FechaCreacion, now()))*60) "
+                . "end as TiempoServicio "
+                . "from t_servicios_ticket tst INNER JOIN t_solicitudes ts "
+                . "on tst.IdSolicitud = ts.Id "
+                . "where tst.Id = '" . $servicio . "';";
         return $this->DBS->consultaGeneralSeguimiento($sentencia);
     }
 
-    public function linkDetallesServicio(string $servicio)
-    {
+    public function linkDetallesServicio(string $servicio) {
         $host = $_SERVER['SERVER_NAME'];
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
@@ -811,14 +792,12 @@ class InformacionServicios extends General
         return $detallesServicio;
     }
 
-    public function enviarCorreoConcluido(array $correo, string $titulo, string $texto)
-    {
+    public function enviarCorreoConcluido(array $correo, string $titulo, string $texto) {
         $mensaje = $this->Correo->mensajeCorreo($titulo, $texto);
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $correo, $titulo, $mensaje);
     }
 
-    public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE)
-    {
+    public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE) {
         $folio = $this->DBST->consultaFolio($servicio);
 
         if ($folio !== '0') {
@@ -839,8 +818,7 @@ class InformacionServicios extends General
         return ['code' => 200, 'message' => 'correcto'];
     }
 
-    public function validarServicio(array $datos)
-    {
+    public function validarServicio(array $datos) {
         $dataServicio = $this->DBS->consultaGeneralSeguimiento('SELECT
                                                             Id,
                                                             (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
@@ -859,8 +837,7 @@ class InformacionServicios extends General
         }
     }
 
-    public function validarFolioServicio(array $datos)
-    {
+    public function validarFolioServicio(array $datos) {
         $dataServicio = $this->DBS->consultaGeneralSeguimiento('SELECT
                                                             Id,
                                                             (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
@@ -882,8 +859,7 @@ class InformacionServicios extends General
      * 
      */
 
-    public function datosSD(string $solicitud)
-    {
+    public function datosSD(string $solicitud) {
         $data = array();
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($usuario['Id']));
@@ -948,15 +924,13 @@ class InformacionServicios extends General
         return $data;
     }
 
-    public function catalogoSD()
-    {
+    public function catalogoSD() {
         $usuario = $this->Usuario->getDatosUsuario();
         $catalogoUsuariosSD = $this->ServiceDesk->getTecnicosSD($usuario['SDKey']);
         return $catalogoUsuariosSD->operation->details;
     }
 
-    public function sucursalServicio(string $servicio = null)
-    {
+    public function sucursalServicio(string $servicio = null) {
         $sucursal = '';
 
         if ($servicio !== null) {
@@ -972,23 +946,20 @@ class InformacionServicios extends General
         return $sucursal;
     }
 
-    public function checklist(array $datos)
-    {
+    public function checklist(array $datos) {
         $linkPdf = $this->definirPDF($datos);
         $descripcion = "<div>Ha concluido el Servicio Checklist</div><br/><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a>";
 
         return $descripcion;
     }
 
-    public function trafficService(array $datos)
-    {
+    public function trafficService(array $datos) {
         $linkPdf = $this->definirPDF($datos);
         $descripcion = "<br/><div>Se ha realizo un servicio de Tráfico</div><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a><br/>";
         return $descripcion;
     }
 
-    public function verifyProcess(array $datos)
-    {
+    public function verifyProcess(array $datos) {
         if (isset($datos['servicioConcluir']) && $datos['servicioConcluir'] === 'true') {
             $servicioConcluir = TRUE;
         } else {
@@ -1000,8 +971,7 @@ class InformacionServicios extends General
         return ['code' => 200, 'message' => 'correcto'];
     }
 
-    public function setHTMLService(array $datos)
-    {
+    public function setHTMLService(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $datosServicios = $this->DBS->consultaGeneralSeguimiento('SELECT 
                                             ts.Folio,
@@ -1023,8 +993,7 @@ class InformacionServicios extends General
         return $datosNotasSD;
     }
 
-    public function setNoteAndWorkLog(array $data)
-    {
+    public function setNoteAndWorkLog(array $data) {
         try {
             if (!empty($data['folio'])) {
                 if ($data['folio'] !== '0') {
@@ -1047,8 +1016,7 @@ class InformacionServicios extends General
         }
     }
 
-    public function getApiKeyByUser(string $usuario)
-    {
+    public function getApiKeyByUser(string $usuario) {
         $keyTecnico = $this->MSP->getApiKeyByUser($usuario);
 
         if (empty($keyTecnico)) {
@@ -1066,8 +1034,7 @@ class InformacionServicios extends General
         return $key;
     }
 
-    private function getServiciosByFolio($folio)
-    {
+    private function getServiciosByFolio($folio) {
         $consulta = $this->DBS->consulta("select 
         tst.Id,
 		tst.IdTipoServicio,
@@ -1082,8 +1049,7 @@ class InformacionServicios extends General
         return $consulta;
     }
 
-    private function getGeneralesServicio($servicio)
-    {
+    private function getGeneralesServicio($servicio) {
 
         $consulta = $this->DBS->consulta("select 
         tst.Id,        
@@ -1122,8 +1088,7 @@ class InformacionServicios extends General
         return $consulta[0];
     }
 
-    private function getDiagnosticoCorrectivoForPDF(int $id)
-    {
+    private function getDiagnosticoCorrectivoForPDF(int $id) {
         $consulta = $this->DBS->consulta("select 
         areaAtencion(tcg.IdArea) as Area,
         tcg.Punto,
@@ -1156,8 +1121,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function getProblemaCorrectivoForPDF(int $id)
-    {
+    private function getProblemaCorrectivoForPDF(int $id) {
         $consulta = $this->DBS->consulta("select
         tcp.IdTipoProblema,
         (select Nombre from cat_v3_correctivos_problemas where Id = tcp.IdTipoProblema) as TipoProblema,
@@ -1181,8 +1145,7 @@ class InformacionServicios extends General
         return $consulta;
     }
 
-    private function getSolucionCorrectivoForPDF(int $id)
-    {
+    private function getSolucionCorrectivoForPDF(int $id) {
         $consulta = $this->DBS->consulta("select 
         tcs.IdTipoSolucion,
         (select Nombre from cat_v3_correctivos_soluciones where Id = tcs.IdTipoSolucion) as TipoSolucion,
@@ -1203,8 +1166,7 @@ class InformacionServicios extends General
         return $consulta;
     }
 
-    private function getResolucionSinClasificarForPDF(int $id)
-    {
+    private function getResolucionSinClasificarForPDF(int $id) {
         $consulta = $this->DBS->consulta("select 
         Descripcion,
         Archivos as Evidencias,
@@ -1217,8 +1179,7 @@ class InformacionServicios extends General
         return $consulta;
     }
 
-    private function getAvancesProblemasForPDF(int $id)
-    {
+    private function getAvancesProblemasForPDF(int $id) {
         $arrayReturn = [];
         $consulta = $this->DBS->consulta("select
         tsa.Id,
@@ -1257,8 +1218,7 @@ class InformacionServicios extends General
         return $arrayReturn;
     }
 
-    public function getHistorialReporteEnFalso(int $id)
-    {
+    public function getHistorialReporteEnFalso(int $id) {
         $consulta = $this->DBS->consulta("select
         tcbrf.Id,
         nombreUsuario(tcbrf.IdUsuario) as Usuario,
@@ -1270,8 +1230,7 @@ class InformacionServicios extends General
         return $consulta;
     }
 
-    private function getFirmasServicio(int $servicio)
-    {
+    private function getFirmasServicio(int $servicio) {
         $consulta = $this->DBS->consulta("
         select 
         Firma,
@@ -1283,8 +1242,7 @@ class InformacionServicios extends General
         return $consulta[0];
     }
 
-    public function pdfFromFolio(array $datos)
-    {
+    public function pdfFromFolio(array $datos) {
         $this->pdf = new PDFAux();
         if (!isset($datos['folio'])) {
             return ["code" => 500, "message" => "The parameter 'folio' is mandatory"];
@@ -1382,8 +1340,7 @@ class InformacionServicios extends General
         }
     }
 
-    public function definirPDF(array $datos)
-    {
+    public function definirPDF(array $datos) {
         $this->pdf = new PDFAux();
         $this->pdf->AliasNbPages();
         $nombreExtra = '';
@@ -1492,8 +1449,7 @@ class InformacionServicios extends General
         return $carpeta;
     }
 
-    private function setPDFContentSinSeguimiento(int $id, array $datos)
-    {
+    private function setPDFContentSinSeguimiento(int $id, array $datos) {
         $this->setAvancesProblemasPDF($id, $datos);
 
         $resolucion = $this->getResolucionSinClasificarForPDF($id);
@@ -1537,8 +1493,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setAvancesProblemasPDF(int $id, array $datos)
-    {
+    private function setAvancesProblemasPDF(int $id, array $datos) {
         $registros = $this->getAvancesProblemasForPDF($id);
 
         if (!empty($registros)) {
@@ -1586,8 +1541,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setHistorialReporteEnFalso(int $id, array $datos)
-    {
+    private function setHistorialReporteEnFalso(int $id, array $datos) {
         $registros = $this->getHistorialReporteEnFalso($id);
         if (!empty($registros)) {
             if (($this->y + 26) > 276) {
@@ -1630,8 +1584,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setFirmasGerenteTecnico(array $datos)
-    {
+    private function setFirmasGerenteTecnico(array $datos) {
         $firmas = $this->getFirmasServicio($datos['servicio']);
         if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '') || (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '')) {
             if (($this->y + 66) > 276) {
@@ -1683,8 +1636,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setFirmasServicio(int $id, array $datos)
-    {
+    private function setFirmasServicio(int $id, array $datos) {
         $firmas = $this->getFirmasServicio($id);
         if (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '') {
             $this->setFirmasGerenteTecnico($datos);
@@ -1693,8 +1645,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setFirmaGerente(array $firmas, array $datos)
-    {
+    private function setFirmaGerente(array $firmas, array $datos) {
         if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '')) {
             if (file_exists('.' . $firmas['Firma'])) {
                 if (($this->y + 62) > 276) {
@@ -1749,8 +1700,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setFirmaGerenteDiagnosticoCorrectivo(int $id, array $datos)
-    {
+    private function setFirmaGerenteDiagnosticoCorrectivo(int $id, array $datos) {
         $diagnostico = $this->getDiagnosticoCorrectivoForPDF($id);
         $fechaFirma = utf8_decode($diagnostico['FechaFirma']);
 
@@ -1798,8 +1748,8 @@ class InformacionServicios extends General
         }
     }
 
-    private function setEvidenciasPDF($datos, $evidencias, $header)
-    {
+    private function setEvidenciasPDF($datos, $evidencias, $header) {
+        $host = $_SERVER['SERVER_NAME'];
         $evidencias = explode(",", $evidencias);
         $totalEvidencias = count($evidencias);
         if ($totalEvidencias > 0) {
@@ -1818,10 +1768,10 @@ class InformacionServicios extends General
 
                 for ($i = 1; $i <= 4; $i++) {
                     if (isset($evidencias[$indice]) && $evidencias[$indice] != '') {
-                        $url = $evidencias[$indice];
-                        $image = "." . $url;
+                        $image = $evidencias[$indice];
+//                        var_dump($image);
                         if (!in_array(pathinfo($image, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
-                            $image = '/assets/img/Iconos/no-thumbnail.jpg';
+                            $image = './assets/img/Iconos/no-thumbnail.jpg';
                         }
                         $this->pdf->Image('.' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), 'http://siccob.solutions' . $image);
                     }
@@ -1837,8 +1787,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setPDFContentCorrectivo(int $id, array $datos)
-    {
+    private function setPDFContentCorrectivo(int $id, array $datos) {
         $diagnostico = $this->getDiagnosticoCorrectivoForPDF($id);
 
         if (!empty($diagnostico)) {
@@ -1865,8 +1814,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setDiagnosticoCorrectivoPDF($diagnostico, $datos)
-    {
+    private function setDiagnosticoCorrectivoPDF($diagnostico, $datos) {
         if (($this->y + 26) > 276) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
         }
@@ -1938,8 +1886,7 @@ class InformacionServicios extends General
         $this->setEvidenciasPDF($datos, $diagnostico['Evidencias'], "Diagnóstico " . $diagnostico['TipoDiagnostico']);
     }
 
-    private function setProblemaCorrectivoPDF($problema, $datos)
-    {
+    private function setProblemaCorrectivoPDF($problema, $datos) {
         if (isset($problema[0])) {
             $problema = $problema[0];
             if (($this->y + 26) > 276) {
@@ -2014,8 +1961,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setSolucionCorrectivoPDF($solucion, $datos)
-    {
+    private function setSolucionCorrectivoPDF($solucion, $datos) {
         if (isset($solucion[0])) {
             $solucion = $solucion[0];
             if (($this->y + 16) > 276) {
@@ -2099,8 +2045,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setCensoPDF(array $datos)
-    {
+    private function setCensoPDF(array $datos) {
         if (($this->y + 26) > 276) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
         }
@@ -2111,8 +2056,7 @@ class InformacionServicios extends General
         $this->setTotalLineasCenso($datos);
     }
 
-    private function setCensos(array $datos)
-    {
+    private function setCensos(array $datos) {
         if (($this->y + 26) > 276) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
         }
@@ -2137,55 +2081,54 @@ class InformacionServicios extends General
                 $this->setHeadersCensoData();
             }
 
-            // $height = $this->setHeightMaximo(array(
-            //     'area' => $value['Area'],
-            //     'equipo' => $value['Equipo'],
-            //     'serie' => $value['Serie']                
-            // ));
-            // $cellHeight = $height[0]['nuevoHeight'];
-            // if (in_array(0, $height[2])) {
-            //     $cellHeight = 5;
-            // }
-            // $this->pdf->SetX('10');
-            // $this->pdf->MultiCell(45, $cellHeight, $value['Area'], 1, 'L');
-            // $cellHeight = $height[0]['nuevoHeight'];
-            // $xPos = $this->pdf->GetX();
-            // $yPos = $this->pdf->GetY();
-            // $this->pdf->SetXY(55, $yPos - $height[0]['nuevoHeight']);
-            // $this->pdf->MultiCell(12, $cellHeight, $value['Punto'], 1, 'C');
-            // $cellHeight = $height[0]['nuevoHeight'];
-            // if (in_array(1, $height[2])) {
-            //     $cellHeight = 5;
-            // }
-            // $xPos = $this->pdf->GetX();
-            // $yPos = $this->pdf->GetY();
-            // $this->pdf->SetXY(67, $yPos - $height[0]['nuevoHeight']);
-            // $this->pdf->MultiCell(76, $cellHeight, $value['Equipo'], 1, 'L');
-            // $cellHeight = $height[0]['nuevoHeight'];
-            // if (in_array(2, $height[2])) {
-            //     $cellHeight = 5;
-            // }
-            // $xPos = $this->pdf->GetX();
-            // $yPos = $this->pdf->GetY();
-            // $this->pdf->SetXY(143, $yPos - $height[0]['nuevoHeight']);
-            // $this->pdf->MultiCell(32, $cellHeight, $value['Serie'], 1, 'L');
-            // $cellHeight = $height[0]['nuevoHeight'];
-            // if (in_array(3, $height[2])) {
-            //     if (sizeof($height[2]) >= 1) {
-            //         $cellHeight = 5;
-            //     } else {
-            //         $cellHeight = 7.5;
-            //     }
-            // }
-            // $xPos = $this->pdf->GetX();
-            // $yPos = $this->pdf->GetY();
-            // $this->pdf->SetXY(175, $yPos - $height[0]['nuevoHeight']);
-            // $this->pdf->MultiCell(25, $cellHeight, $noTerminal, 1, 'L');
+// $height = $this->setHeightMaximo(array(
+//     'area' => $value['Area'],
+//     'equipo' => $value['Equipo'],
+//     'serie' => $value['Serie']                
+// ));
+// $cellHeight = $height[0]['nuevoHeight'];
+// if (in_array(0, $height[2])) {
+//     $cellHeight = 5;
+// }
+// $this->pdf->SetX('10');
+// $this->pdf->MultiCell(45, $cellHeight, $value['Area'], 1, 'L');
+// $cellHeight = $height[0]['nuevoHeight'];
+// $xPos = $this->pdf->GetX();
+// $yPos = $this->pdf->GetY();
+// $this->pdf->SetXY(55, $yPos - $height[0]['nuevoHeight']);
+// $this->pdf->MultiCell(12, $cellHeight, $value['Punto'], 1, 'C');
+// $cellHeight = $height[0]['nuevoHeight'];
+// if (in_array(1, $height[2])) {
+//     $cellHeight = 5;
+// }
+// $xPos = $this->pdf->GetX();
+// $yPos = $this->pdf->GetY();
+// $this->pdf->SetXY(67, $yPos - $height[0]['nuevoHeight']);
+// $this->pdf->MultiCell(76, $cellHeight, $value['Equipo'], 1, 'L');
+// $cellHeight = $height[0]['nuevoHeight'];
+// if (in_array(2, $height[2])) {
+//     $cellHeight = 5;
+// }
+// $xPos = $this->pdf->GetX();
+// $yPos = $this->pdf->GetY();
+// $this->pdf->SetXY(143, $yPos - $height[0]['nuevoHeight']);
+// $this->pdf->MultiCell(32, $cellHeight, $value['Serie'], 1, 'L');
+// $cellHeight = $height[0]['nuevoHeight'];
+// if (in_array(3, $height[2])) {
+//     if (sizeof($height[2]) >= 1) {
+//         $cellHeight = 5;
+//     } else {
+//         $cellHeight = 7.5;
+//     }
+// }
+// $xPos = $this->pdf->GetX();
+// $yPos = $this->pdf->GetY();
+// $this->pdf->SetXY(175, $yPos - $height[0]['nuevoHeight']);
+// $this->pdf->MultiCell(25, $cellHeight, $noTerminal, 1, 'L');
         }
     }
 
-    private function setHeadersCensoData()
-    {
+    private function setHeadersCensoData() {
         $this->setStyleHeader();
         $this->setHeaderValue("Información del Censo");
 
@@ -2200,8 +2143,7 @@ class InformacionServicios extends General
         $this->setCellValue(40, 5, 'Serie', 'L', true);
     }
 
-    private function setTotalLineasCenso(array $datos)
-    {
+    private function setTotalLineasCenso(array $datos) {
         if (($this->y + 21) > 276) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             $this->setCoordinates(10);
@@ -2228,8 +2170,7 @@ class InformacionServicios extends General
         $this->setCoordinates(10, $this->y + 5);
     }
 
-    private function setHeadersTotalLineasCenso()
-    {
+    private function setHeadersTotalLineasCenso() {
         $this->setStyleHeader();
         $this->setHeaderValue("Total de Equipos", 130);
 
@@ -2241,8 +2182,7 @@ class InformacionServicios extends General
         $this->setCellValue(30, 5, 'Total', 'C', true);
     }
 
-    private function setTotalAreasCenso(array $datos)
-    {
+    private function setTotalAreasCenso(array $datos) {
         if (($this->y + 21) > 276) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             $this->setCoordinates(10);
@@ -2267,8 +2207,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setHeadersTotalAreasCenso()
-    {
+    private function setHeadersTotalAreasCenso() {
         $this->setStyleHeader();
         $this->setHeaderValue("Equipos y Perifericos por Área", 130);
 
@@ -2280,8 +2219,7 @@ class InformacionServicios extends General
         $this->setCellValue(30, 5, 'Total', 'C', true);
     }
 
-    private function setHeightMaximo(array $datos)
-    {
+    private function setHeightMaximo(array $datos) {
         $arrayHeight = array();
         $arrayHeight[0] = $this->setHeight(array('width' => 45, 'height' => 5, 'campo' => $datos['area']));
         $arrayHeight[1] = $this->setHeight(array('width' => 76, 'height' => 5, 'campo' => $datos['equipo']));
@@ -2304,8 +2242,7 @@ class InformacionServicios extends General
         return array($arrayHeight[$indiceArray], $indiceArray, $arrayAltos);
     }
 
-    private function setHeight(array $datos)
-    {
+    private function setHeight(array $datos) {
         $cellWidth = $datos['width'];
         $cellHeight = $datos['height'];
 
@@ -2321,7 +2258,7 @@ class InformacionServicios extends General
 
             while ($startChar < $textLength) {
                 while (
-                    $this->pdf->GetStringWidth($tmpString) < ($cellWidth - $errMargin) && ($startChar + $maxChar) < $textLength
+                $this->pdf->GetStringWidth($tmpString) < ($cellWidth - $errMargin) && ($startChar + $maxChar) < $textLength
                 ) {
                     $maxChar++;
                     $tmpString = substr($datos['campo'], $startChar, $maxChar);
@@ -2338,8 +2275,7 @@ class InformacionServicios extends General
         return array('nuevoHeight' => ($line * $cellHeight), 'cellHeight' => $cellHeight, 'cellWidth' => $cellWidth);
     }
 
-    private function setMantenimientoPDF(array $datos)
-    {
+    private function setMantenimientoPDF(array $datos) {
         $this->setAntesDespues($datos);
 
         $this->setProblemasEquipo($datos);
@@ -2349,8 +2285,7 @@ class InformacionServicios extends General
         $this->setProblemasAdicionales($datos);
     }
 
-    private function setAntesDespues(array $datos)
-    {
+    private function setAntesDespues(array $datos) {
         $antesDespues = $this->DBM->getAntesDespues($datos['servicio']);
 
         if (!empty($antesDespues)) {
@@ -2382,8 +2317,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setProblemasEquipo($datos)
-    {
+    private function setProblemasEquipo($datos) {
         $fill = false;
         $fill = !$fill;
         $problemasEquipo = $this->DBM->getProblemasEquipo($datos['servicio']);
@@ -2427,8 +2361,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setEquiposFaltante($datos)
-    {
+    private function setEquiposFaltante($datos) {
         $fill = false;
         $fill = !$fill;
         $equiposFaltante = $this->DBM->getEquiposFaltante($datos['servicio']);
@@ -2479,8 +2412,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setProblemasAdicionales($datos)
-    {
+    private function setProblemasAdicionales($datos) {
         $fill = false;
         $fill = !$fill;
         $problemasAdicionales = $this->DBM->getProblemasAdicionales($datos['servicio']);
@@ -2519,8 +2451,7 @@ class InformacionServicios extends General
         }
     }
 
-    private function setHeaderPDF(string $titulo, string $folio = '')
-    {
+    private function setHeaderPDF(string $titulo, string $folio = '') {
         $this->pdf->AddPage();
         $this->pdf->Image('./assets/img/siccob-logo.png', 10, 8, 20, 0, 'PNG');
         $this->pdf->SetXY(0, 13);
@@ -2533,43 +2464,36 @@ class InformacionServicios extends General
         $this->setCoordinates(10, 36);
     }
 
-    private function setStyleHeader()
-    {
+    private function setStyleHeader() {
         $this->pdf->SetFillColor(31, 56, 100);
         $this->pdf->SetTextColor(255, 255, 255);
         $this->pdf->SetFont("helvetica", "BI", 10);
     }
 
-    private function setStyleTitle()
-    {
+    private function setStyleTitle() {
         $this->pdf->SetTextColor(10, 10, 10);
         $this->pdf->SetFont("helvetica", "BI", 9);
     }
 
-    private function setStyleSubtitle()
-    {
+    private function setStyleSubtitle() {
         $this->pdf->SetTextColor(10, 10, 10);
         $this->pdf->SetFont("helvetica", "", 9);
     }
 
-    private function setStyleMinisubtitle()
-    {
+    private function setStyleMinisubtitle() {
         $this->pdf->SetTextColor(10, 10, 10);
         $this->pdf->SetFont("helvetica", "", 7);
     }
 
-    private function setFillGray()
-    {
+    private function setFillGray() {
         $this->pdf->SetFillColor(217, 217, 217);
     }
 
-    private function setFillWhite()
-    {
+    private function setFillWhite() {
         $this->pdf->SetFillColor(255, 255, 255);
     }
 
-    private function setCoordinates(int $x = null, int $y = null)
-    {
+    private function setCoordinates(int $x = null, int $y = null) {
         if (!is_null($x)) {
             $this->x = $x;
         }
@@ -2581,15 +2505,13 @@ class InformacionServicios extends General
         $this->pdf->SetXY($this->x, $this->y);
     }
 
-    private function setHeaderValue(string $value, int $width = 0, int $height = 6)
-    {
+    private function setHeaderValue(string $value, int $width = 0, int $height = 6) {
         $this->pdf->Cell($width, $height, utf8_decode($value), 1, 0, 'L', true);
         $this->y += 6;
         $this->setCoordinates();
     }
 
-    private function setCellValue($width, $height, $value = '', string $align, bool $fill = false, bool $trueFill = true)
-    {
+    private function setCellValue($width, $height, $value = '', string $align, bool $fill = false, bool $trueFill = true) {
         if ($fill) {
             $this->setFillGray();
         } else {
@@ -2601,8 +2523,7 @@ class InformacionServicios extends General
         $this->setCoordinates();
     }
 
-    private function setMulticellValue($width, $height, string $value, string $align, bool $fill = false, bool $trueFill = true)
-    {
+    private function setMulticellValue($width, $height, string $value, string $align, bool $fill = false, bool $trueFill = true) {
         if ($fill) {
             $this->setFillGray();
         } else {
@@ -2611,16 +2532,15 @@ class InformacionServicios extends General
 
         $this->pdf->MultiCell($width, $height, utf8_decode($value), 1, $align, $trueFill);
     }
-
-    private function obtenerEquipoMaterialServicio(string $servicio)
-    {
+    
+    private function obtenerEquipoMaterialServicio(string $servicio) {
         $serviciosAvance = $this->DBST->servicioAvanceProblema($servicio);
         $equipoMaterial = array();
-
-        if ($serviciosAvance) {
+        
+        if($serviciosAvance){
             foreach ($serviciosAvance as $avance) {
                 $avanceEquipo = $this->DBST->serviciosAvanceEquipo($avance['Id']);
-                if ($avanceEquipo) {
+                if($avanceEquipo){
                     foreach ($avanceEquipo as $equipo) {
                         array_push($equipoMaterial, $equipo);
                     }
@@ -2629,11 +2549,10 @@ class InformacionServicios extends General
         }
         if (!empty($equipoMaterial)) {
             $this->agregarPDFEquipoMaterial($equipoMaterial);
-        }
+       }
     }
-
-    private function agregarPDFEquipoMaterial(array $materialEquipo)
-    {
+    
+    private function agregarPDFEquipoMaterial(array $materialEquipo) {
         if (($this->y + 26) > 276) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
         }
@@ -2641,7 +2560,7 @@ class InformacionServicios extends General
         $this->setCoordinates(10);
         $this->setStyleHeader();
         $this->setHeaderValue("Equipo y Material Utilizado");
-
+        
         $this->setStyleTitle();
         $this->setCellValue(30, 5, "Tipo", 'C', true);
         $this->setCoordinates(40, $this->y - 5);
@@ -2661,29 +2580,28 @@ class InformacionServicios extends General
             $this->setCellValue(30, 5, $value['Serie'], 'C');
             $this->setCoordinates(170, $this->y - 5);
             $this->setCellValue(30, 5, $value['Cantidad'], 'C');
-
+        
             if (($this->y + 26) > 276) {
                 $this->setCoordinates(10, $this->pdf->GetY());
             }
-            //            $this->setCoordinates(10);
+//            $this->setCoordinates(10);
 
-            //            $this->setCoordinates(10, $this->pdf->GetY());
+//            $this->setCoordinates(10, $this->pdf->GetY());
         }
     }
 }
 
-class PDFAux extends PDF
-{
+class PDFAux extends PDF {
 
-    function Footer()
-    {
+    function Footer() {
         $fecha = date('d/m/Y');
-        // Go to 1.5 cm from bottom
+// Go to 1.5 cm from bottom
         $this->SetY(-15);
-        // Select Arial italic 8
+// Select Arial italic 8
         $this->SetFont('Helvetica', 'I', 10);
-        // Print centered page number
-        // $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
+// Print centered page number
+// $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
         $this->Cell(100, 10, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
+
 }
