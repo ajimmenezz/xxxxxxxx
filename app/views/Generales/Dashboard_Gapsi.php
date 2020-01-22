@@ -64,7 +64,12 @@
                 </div>
                 <div class="radio">
                     <label style="color: #A8ACB1">
-                        <input type="radio" name="optionsConciliado" value="Ambos" /> Ambos
+                        <input type="radio" name="optionsConciliado" value="Diferencias" /> Diferencia
+                    </label>
+                </div>
+                <div class="radio">
+                    <label style="color: #A8ACB1">
+                        <input type="radio" name="optionsConciliado" value="Todos" /> Todos
                     </label>
                 </div>
                 <div class="divider"></div>
@@ -292,7 +297,12 @@
             </div>
             <div class="radio">
                 <label>
-                    <input type="radio" name="optionsConciliadoPrincipal" value="Ambos" /> Ambos
+                    <input type="radio" name="optionsConciliado" value="Diferencias" /> Diferencia
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsConciliado" value="Todos" /> Todos
                 </label>
             </div>
             <div class="divider"></div>
