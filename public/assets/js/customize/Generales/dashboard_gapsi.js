@@ -233,7 +233,7 @@ $(function () {
                 datosFiltros.conciliado = '';
             }
             validarConcilacion()
-            enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
+            enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
         });
         $('#checkboxConciliado').change(function () {
             if (this.checked) {
@@ -251,7 +251,7 @@ $(function () {
                 datosFiltros.sinConciliado = '';
             }
             validarConcilacion()
-            enviarFiltrosPrincipal('panelDashboardGapsiFilters', datosFiltros);
+            enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
         });
         $('#checkboxSinConciliado').change(function () {
             if (this.checked) {
@@ -568,7 +568,7 @@ $(function () {
         $('#ocultarDetalles').addClass('hidden');
         $.each(datosFiltros, function (key, value) {
             if (datosFiltros[key] !== null && datosFiltros[key] !== 'MN' && datosFiltros[key] !== 'USD'
-                    && key !== 'fechaInicio' && key !== 'fechaFinal') {
+                    && key !== 'fechaInicio' && key !== 'fechaFinal' && key !== 'conciliado' && key !== 'sinConciliado') {
                 switch (key) {
                     case 'tipoProyecto':
                         alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], value, '<br>' + key);
