@@ -109,17 +109,17 @@ class GerstorProyectosGAPSI extends General {
 
     private function parametersConciliation(array $filters) {
         if (!empty($filters)) {
-            if (!empty($filters['conciliado'] && !empty($filters['sinConciliar']))) {
+            if ($filters['conciliado'] === 'conciliado' && $filters['sinConciliado'] === 'sinConciliado') {
                 $parameters = "";
-            } elseif (!empty($filters['conciliado'])) {
-                $parameters = "AND dr.StatusConciliacion = 'Conciliado'";
-            } elseif (!empty($filters['sinConciliar'])) {
-                $parameters = "AND dr.StatusConciliacion != 'Conciliar'";
+            } elseif ($filters['conciliado'] === 'conciliado') {
+                $parameters = " AND dr.StatusConciliacion = 'Conciliado'";
+            } elseif ($filters['sinConciliado'] === 'sinConciliado') {
+                $parameters = " AND dr.StatusConciliacion != 'Conciliar'";
             } else {
-                $parameters = "AND dr.StatusConciliacion = 'Conciliado'";
+                $parameters = " AND dr.StatusConciliacion = 'Conciliado'";
             }
         } else {
-            $parameters = "AND dr.StatusConciliacion = 'Conciliado'";
+            $parameters = " AND dr.StatusConciliacion = 'Conciliado'";
         }
 
         return $parameters;
