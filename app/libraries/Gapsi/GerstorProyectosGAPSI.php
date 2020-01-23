@@ -8,7 +8,7 @@ class GerstorProyectosGAPSI extends General {
 
     private $DBGestorProyectoGAPSI;
     private $pdf;
-    private $parametersStatus = " AND dr.Status <> 'Cancelado' ";
+    private $parametersStatus = " AND dr.Status = 'Aprobado' ";
 
     public function __construct() {
         parent::__construct();
