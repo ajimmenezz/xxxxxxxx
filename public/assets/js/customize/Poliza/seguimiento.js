@@ -74,10 +74,7 @@ $(function() {
 
   //Evento que carga la seccion de seguimiento de un servicio de tipo Poliza
   $("#data-table-poliza tbody").on("click", "tr", function() {
-    var datos = $("#data-table-poliza")
-      .DataTable()
-      .row(this)
-      .data();
+    var datos = $("#data-table-poliza").DataTable().row(this).data();
     if (datos !== undefined) {
       var servicio = datos[0];
       var operacion = datos[7];
@@ -144,9 +141,8 @@ $(function() {
     var data = arguments[0];
     var datosTabla = arguments[1];
     var panel = arguments[2];
-    evento.enviarEvento("Seguimiento/Servicio_Datos", data, panel, function(
-      respuesta
-    ) {
+    evento.enviarEvento("Seguimiento/Servicio_Datos", data, panel, function(respuesta) {
+    
       var datosDelServicio = respuesta.datosServicio;
       var formulario = respuesta.formulario;
       var archivo = respuesta.archivo;

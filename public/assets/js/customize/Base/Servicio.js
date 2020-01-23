@@ -364,9 +364,6 @@ Servicio.prototype.ServicioSinClasificar = function () {
     _this.select.cambiarOpcion('#selectSucursalesSinClasificar', idSucursal);
     _this.colocarBotonGuardarCambiosSinClasificar(datosDelServicio, archivo);
 
-    if (datosDelServicio.IdTipoServicio === "50") {
-        $('.divAreaPuntoEquipo').removeClass('hidden');
-    }
 
     //evento para mostrar los detalles de las descripciones
     $('#detallesServicioSinClasificar').on('click', function (e) {
