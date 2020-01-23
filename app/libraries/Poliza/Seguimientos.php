@@ -2951,6 +2951,7 @@ class Seguimientos extends General
         } else {
             switch ($idPerfil) {
                 case '57': // Tecnico
+                case '83': // Asociado
                     return $this->formulariosTecnico($datos, $idEstatus, $flag, $permisos, $permisosAdionales);
                     break;
                 case '51':
