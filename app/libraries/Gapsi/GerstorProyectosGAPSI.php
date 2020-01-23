@@ -8,6 +8,7 @@ class GerstorProyectosGAPSI extends General {
 
     private $DBGestorProyectoGAPSI;
     private $pdf;
+    private $parametersStatus = " AND dr.Status <> 'Cancelado' ";
 
     public function __construct() {
         parent::__construct();
@@ -19,7 +20,7 @@ class GerstorProyectosGAPSI extends General {
         $parametersDate = $this->parametersDate($filters);
         $parameters = $this->parametersCurrency($filters);
         $parametersConciliation = $this->parametersConciliation($filters);
-        $parameters = $parameters . $parametersDate . $parametersConciliation;
+        $parameters = $parameters . $parametersDate . $parametersConciliation . $this->parametersStatus;
         $dataProjects = $this->DBGestorProyectoGAPSI->getProjects($parameters);
 
         if ($dataProjects['code'] === 200) {
@@ -33,7 +34,7 @@ class GerstorProyectosGAPSI extends General {
         $parametersDate = $this->parametersDate($filters);
         $parameters = $this->parametersCurrency($filters);
         $parametersConciliation = $this->parametersConciliation($filters);
-        $parameters = $parameters . $parametersDate . $parametersConciliation;
+        $parameters = $parameters . $parametersDate . $parametersConciliation . $this->parametersStatus;
         $dataProjects = $this->DBGestorProyectoGAPSI->getProjectTypes($parameters);
 
         if ($dataProjects['code'] === 200) {
@@ -48,7 +49,7 @@ class GerstorProyectosGAPSI extends General {
         $parametersDate = $this->parametersDate($filters);
         $parameters = $this->defineParameters($filters);
         $parametersConciliation = $this->parametersConciliation($filters);
-        $parameters = $parameters . $parametersDate . $parametersConciliation;
+        $parameters = $parameters . $parametersDate . $parametersConciliation . $this->parametersStatus;
         $proyectos = $this->DBGestorProyectoGAPSI->getProjectsByType($parameters);
         $servicios = $this->DBGestorProyectoGAPSI->getServicesByType($parameters);
         $sucursales = $this->DBGestorProyectoGAPSI->getBranchOfficesByType($parameters);
@@ -89,7 +90,7 @@ class GerstorProyectosGAPSI extends General {
 
     private function parametersDate(array $filters) {
         if (!empty($filters['fechaInicio']) && !empty($filters['fechaFinal'])) {
-            $parameters = " AND Fecha BETWEEN '" . $filters['fechaInicio'] . "' AND '" . $filters['fechaFinal'] . "'";
+            $parameters = " AND Fecha BETWEEN '" . substr($filters['fechaInicio'], 0, -4) . "' AND '" . substr($filters['fechaFinal'], 0, -4) . "'";
         } else {
             $parameters = '';
         }
@@ -246,7 +247,7 @@ class GerstorProyectosGAPSI extends General {
         $parametersDate = $this->parametersDate($filters);
         $parameters = $this->defineParameters($filters);
         $parametersConciliation = $this->parametersConciliation($filters);
-        $parameters = $parameters . $parametersDate . $parametersConciliation;
+        $parameters = $parameters . $parametersDate . $parametersConciliation . $this->parametersStatus;
         $dataRecords = $this->DBGestorProyectoGAPSI->getProjectRecords($parameters);
         return $dataRecords;
     }
