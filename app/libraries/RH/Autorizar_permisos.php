@@ -124,14 +124,12 @@ class Autorizar_permisos extends General {
             switch ($datosPermiso['idPerfil']) {
                 case 21:
                     $revisor = array(
-                        'IdUsuarioJefe' => 0, 'FechaAutorizacionJefe' => '-',
                         'IdUsuarioRH' => $datosPermiso['idUser'], 'FechaAutorizacionRH' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                     );
                     $correoRevisorSig = $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 37');
                     break;
                 case 37:
                     $revisor = array(
-                        'IdUsuarioJefe' => 0, 'FechaAutorizacionJefe' => '-',
                         'IdUsuarioContabilidad' => $datosPermiso['idUser'], 'FechaAutorizacionContabilidad' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
                     );
                     $correoRevisorSig = $this->DBS->consultaGral('SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 44');
