@@ -230,6 +230,8 @@ $(function () {
     function mostrarInformacionFolio(infoFolio) {
         if (infoFolio instanceof Object) {
             $('#infoFolio').removeClass('hidden');
+            $('#infoFolio').attr('data-infoFolio', 'true');
+            $('#infoFolio').attr('data-folio', infoFolio.WORKORDERID);
             $('#editarFolio').removeClass('hidden');
             $('#eliminarFolio').removeClass('hidden');
             $('#guardarFolio').addClass('hidden');
@@ -243,25 +245,47 @@ $(function () {
             $("#estatusFolio").text(infoFolio.STATUS);
             $("#asuntoFolio").text(infoFolio.SHORTDESCRIPTION);
         } else {
-            mostrarErrorFolio(infoFolio.Error);
+            if (infoFolio !== null) {
+                mostrarErrorFolio(infoFolio.Error);
+            }
         }
     }
 
     function mostrarErrorFolio(error) {
+        let mensajeError = arguments[0];
+        let operacionFolio = arguments[1] = false;
+
         $('#formularioAgregarFolio').addClass('hidden');
         $('#infoFolio').addClass('hidden');
         $('#agregarFolio').append('<div class="notaFolioError" class="col-md-12">\n\
                                             <br>\n\
                                             <div class="col-md-10">\n\
-                                                <label class="col-md-10">' + error + '<br></label>\n\
+                                                <label class="col-md-10">' + mensajeError + '<br></label>\n\
                                             </div>\n\
                                             <div class="col-md-2">\n\
                                                 <a class="recargarFolio"><i data-toggle="tooltip" data-placement="top" data-title="Recargar" class="fa fa-2x fa-refresh  text-success"></i>Recargar</a>\n\
                                             </div>\n\
                                         </div>');
         $(".recargarFolio").on('click', function () {
-            $('#formularioAgregarFolio').removeClass('hidden');
-            $('#infoFolio').removeClass('hidden');
+            if (operacionFolio === false) {
+                if ($('#infoFolio').attr('data-infoFolio') !== undefined) {
+                    if ($('#infoFolio').attr('data-infoFolio') === 'true') {
+                        $('#addFolio').val('');
+                        $('#formularioAgregarFolio').removeClass('hidden');
+                        $('#agregarFolio').removeClass('hidden');
+                    } else {
+                        $('#formularioAgregarFolio').removeClass('hidden');
+                    }
+                    $('#infoFolio').removeClass('hidden');
+                } else {
+                    $('#addFolio').val('');
+                    $('#formularioAgregarFolio').removeClass('hidden');
+                    $('#agregarFolio').removeClass('hidden');
+                }
+            } else {
+                $('#addFolio').val('');
+                $('#agregarFolio').removeClass('hidden');
+            }
             $('.notaFolioError').addClass('hidden');
         });
     }
@@ -735,10 +759,10 @@ $(function () {
                         mostrarInformacionFolio(respuesta.folio);
                         arreglarNotas(respuesta.notasFolio);
                     } else {
-                        mostrarErrorFolio(respuesta.errorFolio.Error);
+                        mostrarErrorFolio(respuesta.errorFolio.Error, respuesta.operacionFolio);
                     }
                 } else {
-                    mostrarErrorFolio(respuesta.errorFolio.Error);
+                    mostrarErrorFolio(respuesta.errorFolio.Error, respuesta.operacionFolio);
                 }
             });
         }
@@ -755,12 +779,21 @@ $(function () {
     $('#cancelarFolio').off('click');
     $('#cancelarFolio').on('click', function () {
         if (datoServicioTabla.folio !== '' && datoServicioTabla.folio !== '0') {
-            $('#addFolio').prop('disabled', true);
-            $('#infoFolio').removeClass('hidden');
-            $('#editarFolio').removeClass('hidden');
-            $('#eliminarFolio').removeClass('hidden');
-            $('#guardarFolio').addClass('hidden');
-            $('#cancelarFolio').addClass('hidden');
+            if ($('#infoFolio').attr('data-infoFolio') !== undefined) {
+                if ($('#infoFolio').attr('data-infoFolio') === 'true') {
+                    $('#addFolio').val($('#infoFolio').attr('data-folio'));
+                    $('#addFolio').prop('disabled', true);
+                    $('#infoFolio').removeClass('hidden');
+                    $('#editarFolio').removeClass('hidden');
+                    $('#eliminarFolio').removeClass('hidden');
+                    $('#guardarFolio').addClass('hidden');
+                    $('#cancelarFolio').addClass('hidden');
+                } else {
+                    ocultarElementosAgregarFolio();
+                }
+            } else {
+                ocultarElementosAgregarFolio();
+            }
         } else {
             ocultarElementosAgregarFolio();
         }
@@ -796,6 +829,7 @@ $(function () {
         $('#infoFolio').addClass('hidden');
         $('#btnAgregarFolio').removeClass('hidden');
         $('#agregarFolio').addClass('hidden');
+        $('#addFolio').val('');
     }
     /**Finalizan eventos de botones para folio**/
 
