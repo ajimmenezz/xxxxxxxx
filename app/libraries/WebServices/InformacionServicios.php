@@ -962,11 +962,13 @@ class InformacionServicios extends General {
     public function verifyProcess(array $datos) {
         if (isset($datos['servicioConcluir']) && $datos['servicioConcluir'] === 'true') {
             $servicioConcluir = TRUE;
+            var_dump("algo");
         } else {
             $servicioConcluir = FALSE;
+            var_dump("noo");
         }
 
-        $this->guardarDatosServiceDesk($datos['servicio'], $servicioConcluir);
+//        $this->guardarDatosServiceDesk($datos['servicio'], $servicioConcluir);
 
         return ['code' => 200, 'message' => 'correcto'];
     }
@@ -2535,6 +2537,7 @@ class InformacionServicios extends General {
     
     private function obtenerEquipoMaterialServicio(string $servicio) {
         $serviciosAvance = $this->DBST->servicioAvanceProblema($servicio);
+        $folio = $this->DBST->consulta('select folioByServicio('.$servicio.') as folio')[0]['folio'];
         $equipoMaterial = array();
         
         if($serviciosAvance){
@@ -2548,13 +2551,13 @@ class InformacionServicios extends General {
             }
         }
         if (!empty($equipoMaterial)) {
-            $this->agregarPDFEquipoMaterial($equipoMaterial);
+            $this->agregarPDFEquipoMaterial($equipoMaterial, $folio);
        }
     }
     
-    private function agregarPDFEquipoMaterial(array $materialEquipo) {
+    private function agregarPDFEquipoMaterial(array $materialEquipo, string $folio = '') {
         if (($this->y + 26) > 276) {
-            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+            $this->setHeaderPDF("Resumen de Incidente Service Desk", $folio);
         }
 
         $this->setCoordinates(10);
