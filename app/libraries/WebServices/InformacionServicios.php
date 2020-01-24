@@ -962,13 +962,11 @@ class InformacionServicios extends General {
     public function verifyProcess(array $datos) {
         if (isset($datos['servicioConcluir']) && $datos['servicioConcluir'] === 'true') {
             $servicioConcluir = TRUE;
-            var_dump("algo");
         } else {
             $servicioConcluir = FALSE;
-            var_dump("noo");
         }
 
-//        $this->guardarDatosServiceDesk($datos['servicio'], $servicioConcluir);
+        $this->guardarDatosServiceDesk($datos['servicio'], $servicioConcluir);
 
         return ['code' => 200, 'message' => 'correcto'];
     }
