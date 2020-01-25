@@ -246,17 +246,15 @@ class Controller_ServicioTicket extends CI_Controller {
             ServiceDesk::setNota($datosServicio['folio'], $descripcion);
         }
     }
-
+    
     public function setConcluir() {
         try {
             $datosServicio = $this->input->post();
             $datosServicio['idUsuario'] = Usuario::getId();
             $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciasFirmas';
             $firmaCliente = stripAccents($datosServicio['nombreCliente']);
-            $firmaUsuario = stripAccents(Usuario::getNombre());
             $firmas = array(
                 'Firma-Cliente-' . str_replace(" ", "_", $firmaCliente) => $datosServicio['firmaCliente'],
-                'Firma-Tecnico-' . str_replace(" ", "_", $firmaUsuario) => $datosServicio['firmaTecnico']
             );
             Archivo::saveArchivos64($carpeta, $firmas);
             $datosServicio['archivos'] = Archivo::getArray();

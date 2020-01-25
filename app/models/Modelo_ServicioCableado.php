@@ -125,9 +125,7 @@ class Modelo_ServicioCableado extends Modelo_Base {
                            FechaConclusion = NOW(),
                            Firma = "' . $datos['archivos'][0] . '",
                            NombreFirma = "' . $datos['nombreCliente'] . '",
-                           FechaFirma = NOW(),                           
-                           IdTecnicoFirma = ' . $datos['idUsuario'] . ',
-                           FirmaTecnico = "' . $datos['archivos'][1] . '"
+                           FechaFirma = NOW()                           
                            where Id = ' . $idServicio);
         } else {
             $this->actualizar('update t_servicios_ticket set 

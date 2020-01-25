@@ -247,32 +247,53 @@ class ServicioCableado implements Servicio {
 
     public function getPDF(array $datos) {
         $informacionServicio = $this->DBServiciosGeneralRedes->getDatosSolucionPDF($datos);
+
         $this->pdf = new PDF($this->id);
         $this->pdf->AddPage();
-        $this->pdf->tituloTabla('#1 Información General');
+        $this->pdf->tituloTabla('Información General');
         $this->pdf->tabla(array(), $informacionServicio['infoGeneral']);
 
         $totalMaterial = $this->gestorNodos->getTotalMaterial();
         $arrayNuevoTotalMaterial = array();
 
         foreach ($totalMaterial as $key => $value) {
-            $arrayNuevoTotalMaterial[$key] = array($value['TipoProducto'], $value['Producto'], $value['Cantidad']);
+            $arrayNuevoTotalMaterial[$key] = array($value['Producto'], $value['Cantidad']);
         }
 
-        $this->FancyTable(array('Tipo Producto', 'Material', 'Cantidad'), $arrayNuevoTotalMaterial);
+        $this->FancyTable(array('Material', 'Cantidad'), $arrayNuevoTotalMaterial);
 
         $contador = 1;
         foreach ($informacionServicio['infoNodos'] as $key => $value) {
-            $arrayNuevo = array(
-                'Area' => $value['Area'],
-                'Nodo' => $value['Nodo'],
-                'Switch' => $value['Switch'],
-                'NumeroSwitch' => $value['NumeroSwitch']);
-            $this->pdf->tituloTabla('Solución del Nodo: ' . $contador);
-            $this->pdf->tabla(array(), array($arrayNuevo));
-            $evidencias = explode(',', $value['Evidencias']);
-            $this->pdf->tablaImagenes($evidencias);
-            $contador ++;
+            $ancho = $this->pdf->GetPageWidth() - 20;
+//            var_dump($ancho);
+            $y = $this->pdf->GetY();
+            $x = 30;
+
+            if ($x < $ancho) {
+                $arrayNuevo = array(
+                    'Area' => $value['Area'],
+                    'Nodo' => $value['Nodo'],
+                    'Switch' => $value['Switch'],
+                    'NumeroSwitch' => $value['NumeroSwitch']);
+                $this->pdf->tituloTabla('Solución del Nodo: ' . $contador);
+                $this->pdf->tabla(array(), array($arrayNuevo));
+                $evidencias = explode(',', $value['Evidencias']);
+                $this->pdf->tablaImagenes($evidencias);
+                $contador ++;
+                $x += 80;
+            } else {
+                $x = 30;
+                $y += 50;
+            }
+            $altura = $y + 35;
+
+//            var_dump($altura);
+//            var_dump($this->pdf->GetPageHeight() - 80);
+
+            if ($altura > ($this->pdf->GetPageHeight() - 250)) {
+                $this->pdf->AddPage();
+//                $y = 25;
+            }
         }
 
         $this->pdf->tituloTabla('Firmas del Servicio');
@@ -290,7 +311,7 @@ class ServicioCableado implements Servicio {
         $this->pdf->SetLineWidth(.3);
         $this->pdf->SetFont('', 'B');
         // Header
-        $w = array(70, 80, 40);
+        $w = array(95, 95);
         for ($i = 0; $i < count($header); $i++)
             $this->pdf->Cell($w[$i], 7, $header[$i], 1, 0, 'C', true);
         $this->pdf->Ln();
@@ -304,7 +325,6 @@ class ServicioCableado implements Servicio {
         foreach ($data as $row) {
             $this->pdf->Cell($w[0], 6, $row[0], 'LR', 0, 'L', $fill);
             $this->pdf->Cell($w[1], 6, $row[1], 'LR', 0, 'L', $fill);
-            $this->pdf->Cell($w[2], 6, $row[2], 'LR', 0, 'L', $fill);
             $this->pdf->Ln();
             $fill = !$fill;
         }

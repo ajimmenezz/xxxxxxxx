@@ -699,40 +699,10 @@
                     <div class="col-md-12"><br><br></div>
                 </form>
             </div>
-            <div id="contentfirmaTecnico" class="col-md-12 text-center hidden">
-                <form id="formAgregarTecnico" data-parsley-validate="true" enctype="multipart/form-data">
-                    <div class="col-md-12">
-                        <div class="col-md-2"></div>
-                        <div class="col-md-7">
-                            <div class="form-group">
-                                <label>Firma de Técnico</label>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Empezando mensaje--> 
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div id="errorMessageFirmaTecnico"></div>
-                        </div>
-                    </div>
-                    <!--Finalizando mensaje-->
-                    <div class="col-md-12">
-                        <div class="col-md-2"></div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <div id="firmaTecnico" style="width: 600px; height: 300px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12"><br><br></div>
-                </form>
-            </div>
             <div class="col-md-12 text-center">
                 <a id="btnResumen" class="btn btn-sm btn-info hidden"><i class="fa fa-info-circle"></i> Resumen</a>
-                <a id="btnContinuar" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> Continuar</a>
-                <a id="btnTerminar" class="btn btn-sm btn-success hidden"><i class="fa fa-sign-in"></i> Concluir</a>
+                <a id="btnTerminar" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> Concluir</a>
                 <a id="btnRegresarServicio" class="btn btn-sm btn-danger"><i class="fa fa-rotate-180 fa-sign-in"></i> Regresar</a>
-                <a id="btnRegresarServicio2" class="btn btn-sm btn-danger hidden"><i class="fa fa-rotate-180 fa-sign-in"></i> Regresar</a>
             </div>
             <!--Finaliza contenido de elementos-->
         </div>

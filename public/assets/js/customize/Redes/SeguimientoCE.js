@@ -1095,33 +1095,14 @@ $(function () {
         $('#btnRegresarServicio2').addClass('hidden');
     });
 
-    $('#btnContinuar').on('click', function () {
+    $('#btnTerminar').on('click', function () {
         let imgFirmaCliente = firmaClienet.getImg();
         let inputFirmaCliente = (firmaClienet.blankCanvas == imgFirmaCliente) ? '' : imgFirmaCliente;
-
-        if (evento.validarFormulario('#formAgregarCliente')) {
-            if (inputFirmaCliente == '') {
-                evento.mostrarMensaje("#errorMessageFirmaCliente", false, 'Falta firma del Cliente', 2000);
-            } else {
-                datoServicioTabla.nombreCliente = $('#inputCliente').val()
-                $('#contentfirmaTecnico').removeClass('hidden');
-                $('#btnTerminar').removeClass('hidden');
-                $('#btnRegresarServicio2').removeClass('hidden');
-                $('#contentfirmaCliente').addClass('hidden');
-                $('#btnContinuar').addClass('hidden');
-                $('#btnRegresarServicio').addClass('hidden');
-            }
-        }
-    });
-
-    $('#btnTerminar').on('click', function () {
-        let imgFirmaTecnico = firmaTecnico.getImg();
-        let inputFirmaTecnico = (firmaTecnico.blankCanvas == imgFirmaTecnico) ? '' : imgFirmaTecnico;
-        if (inputFirmaTecnico == '') {
-            evento.mostrarMensaje("#errorMessageFirmaTecnico", false, 'Falta firma del Tecnico', 2000);
+        if (inputFirmaCliente == '') {
+            evento.mostrarMensaje("#errorMessageFirmaCliente", false, 'Falta firma del Cliente', 2000);
         } else {
+            datoServicioTabla.nombreCliente = $('#inputCliente').val()
             datoServicioTabla.firmaCliente = firmaClienet.getImg();
-            datoServicioTabla.firmaTecnico = firmaTecnico.getImg();
             datoServicioTabla.nodos = listaTotalNodos;
 
             peticion.enviar('panelFirmas', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
