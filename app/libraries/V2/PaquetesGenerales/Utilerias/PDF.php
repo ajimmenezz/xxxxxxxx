@@ -264,8 +264,8 @@ class PDF extends \FPDF {
         $this->SetTextColor(0, 0, 0);
         $this->SetFillColor(217, 217, 217);
         $this->SetFont('Courier', 'BI', 12);
-
         $totalFirmas = count($datosPersona);
+
         if ($totalFirmas > 2) {
 //            $countFilas = (($totalFirmas / 2) < 0.5) ? round($totalFirmas / 2, 0, PHP_ROUND_HALF_UP) + 1 : ceil($totalFirmas / 2);
 //            $columna = 0;
@@ -289,24 +289,31 @@ class PDF extends \FPDF {
             $ancho = $this->GetPageWidth() - 20;
             $y = $this->GetY();
             $x = 30;
-            foreach ($datosPersona as $key) {
-                if ($x < $ancho) {
-                    if ($this->compararNombreOArchivo($key)) {
-                        $this->Image('.' . $key, $x, $y, 80, 30);
+
+            if ((!is_null($datosPersona['FirmaTecnico']) && $datosPersona['FirmaTecnico'] != '')) {
+                foreach ($datosPersona as $key) {
+                    if ($x < $ancho) {
+                        if ($this->compararNombreOArchivo($key)) {
+                            $this->Image('.' . $key, $x, $y, 80, 30);
+                        } else {
+                            $this->SetXY($x, $y + 35);
+                            $this->Cell(70, 7, utf8_decode($key), 1, 1, 'C', true);
+                            $x += 80;
+                        }
                     } else {
-                        $this->SetXY($x, $y + 35);
-                        $this->Cell(70, 7, utf8_decode($key), 1, 1, 'C', true);
-                    $x += 80;
+                        $x = 30;
+                        $y += 50;
                     }
-                } else {
-                    $x = 30;
-                    $y += 50;
+                    $altura = $y + 35;
+                    if ($altura > ($this->GetPageHeight() - 40)) {
+                        $this->AddPage();
+                        $y = 25;
+                    }
                 }
-                $altura = $y + 35;
-                if ($altura > ($this->GetPageHeight() - 40)) {
-                    $this->AddPage();
-                    $y = 25;
-                }
+            } else {
+                $this->Image('.' . $datosPersona['Firma'], 60, $y, 80, 30);
+                $this->SetXY(70, $y + 35);
+                $this->Cell(70, 7, utf8_decode($datosPersona['NombreFirma']), 1, 1, 'C', true);
             }
             $this->SetY($y);
         } else {

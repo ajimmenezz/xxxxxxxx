@@ -203,11 +203,15 @@ $route['Redes/SeguimientoCE/SeguimientoGeneral/Seguimiento/(:any)'] = 'V2/Contro
 $route['Redes/SeguimientoCE/SeguimientoGeneral/Folio/(:any)'] = 'V2/Controller_ServicioTicket/setFolio';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/Accion/(:any)'] = 'V2/Controller_ServicioTicket/runEvento/$1';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/agregarProblema'] = 'V2/Controller_ServicioTicket/setProblema';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/eliminarFolio'] = 'V2/Controller_ServicioTicket/eliminarFolio';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/material'] = 'V2/Controller_ServicioTicket/getMaterial';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/guardarSolucion'] = 'V2/Controller_ServicioTicket/setSolucion';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/concluir'] = 'V2/Controller_ServicioTicket/setConcluir';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/exportarPDF'] = 'V2/Controller_ServicioTicket/getPDF';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/borrarEvidencias'] = 'V2/Controller_ServicioTicket/deleteEvidencias';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/validarServicio'] = 'V2/Controller_ServicioTicket/validarServicio';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/rechazarServicio'] = 'V2/Controller_ServicioTicket/rechazarServicio';
+$route['Redes/SeguimientoCE/Catalogo/(:any)'] = 'Almacen/Controller_Catalogos/manejarEvento/$1';
 
 /* Routers para el manejo de MesaDeAyuda */
 $route['MesaDeAyuda/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';

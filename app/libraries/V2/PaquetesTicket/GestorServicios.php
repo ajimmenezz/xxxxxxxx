@@ -11,7 +11,7 @@ use Modelos\Modelo_GestorServicio as ModeloServicio;
 Class GestorServicios {
 
     private $DBServicios;
-     private $almacenUsuario;
+    private $almacenUsuario;
     private $sucursal;
     private $censo;
 
@@ -22,14 +22,18 @@ Class GestorServicios {
     public function getServicios() {
         $idUsuario = Usuario::getId();
         $rol = Usuario::getRol();
+        $permisos = Usuario::getPermisos();
         $nombre = Usuario::getNombre();
+        $acceso = in_array("AMC", $permisos);
 
-        if ($rol == "Jefe") {
-            $informacion['servicios'] = $this->DBServicios->getServicios($idUsuario);
+        if ($acceso) {
+            $informacion['servicios'] = $this->DBServicios->getTodosServiciosCableado();
         } else {
             $informacion['servicios'] = $this->DBServicios->getServiciosDeTecnico($idUsuario);
         }
+
         $informacion['rol'] = $rol;
+        $informacion['acceso'] = $acceso;
         $informacion['nombre'] = $nombre;
         return $informacion;
     }
@@ -41,9 +45,10 @@ Class GestorServicios {
                 $this->almacenUsuario = new AlmacenUsuario();
                 $this->sucursal = new Sucursal($datos['datosServicio']['Sucursal']);
                 $this->censo = new Censo($this->sucursal);
-                $informacion['materialUsuario'] = $this->almacenUsuario->getAlmacen();
+                $informacion['tipoMaterialAlmacen'] = $this->almacenUsuario->getTipoMaterialAlmacen();
+                $informacion['materialAlmacen'] = $this->almacenUsuario->getAlmacen(null);
                 $informacion['areasSucursal'] = $this->sucursal->getAreas();
-                $informacion['censoSwitch'] = $this->censo->getRegistrosComponente('switch');
+                $informacion['censoSwitch'] = $this->censo->getRegistrosComponente(28);
                 break;
 
             default:
@@ -51,6 +56,15 @@ Class GestorServicios {
         }
 
         return $informacion;
+    }
+
+    public function getCatalogoSwitch() {
+        $this->almacenUsuario = new AlmacenUsuario();
+        $this->sucursal = new Sucursal(1);
+        $this->censo = new Censo($this->sucursal);
+        $datos['marcaEquipo'] = $this->almacenUsuario->getMarcaEquipo();
+        $datos['censoSwitch'] = $this->censo->getRegistrosComponente(28);
+        return $datos;
     }
 
 }

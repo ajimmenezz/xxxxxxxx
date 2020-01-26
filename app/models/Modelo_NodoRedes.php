@@ -24,18 +24,20 @@ class Modelo_NodoRedes extends Base {
     }
 
     public function setMaterialNodo(string $idNodo, array $material) {
-        foreach ($material as $value) {
-            $this->insertar('insert into t_redes_material values(
-                           "",
-                           ' . $idNodo . ',
-                           ' . $value['idMaterial'] . ',
-                           ' . $value['cantidad'] . '                           
-                         )');
-            $consulta = $this->consulta('select Bloqueado from t_inventario where Id = ' . $value['idMaterial']);
-            $totalMaterialUsado = $consulta[0]['Bloqueado'] + $value['cantidad'];
-            $this->actualizar('update t_inventario 
-                            set Bloqueado = ' . $totalMaterialUsado . '                            
-                            where Id = ' . $value['idMaterial']);
+        if($idNodo != '' || $idNodo != null){
+            foreach ($material as $value) {
+                $this->insertar('insert into t_redes_material values(
+                               "",
+                               ' . $idNodo . ',
+                               ' . $value['idMaterial'] . ',
+                               ' . $value['cantidad'] . '                           
+                             )');
+                $consulta = $this->consulta('select Bloqueado from t_inventario where Id = ' . $value['idMaterial']);
+                $totalMaterialUsado = $consulta[0]['Bloqueado'] + $value['cantidad'];
+                $this->actualizar('update t_inventario 
+                                set Bloqueado = ' . $totalMaterialUsado . '                            
+                                where Id = ' . $value['idMaterial']);
+            }
         }
     }
 
@@ -117,7 +119,16 @@ class Modelo_NodoRedes extends Base {
     }
 
     public function getTotalMaterial(string $idServicio) {
-        return $this->ejecutaFuncion('call getTotalRedesServiceMaterial(' . $idServicio . ')');
+        return $this->consulta('select 
+                                    cap.Nombre as TipoProducto, 
+                                    ces.Nombre as Producto, 
+                                    SUM(trm.Cantidad) as Cantidad
+                                from t_redes_nodos trn 
+                                    inner join t_redes_material trm on trn.Id = trm.IdNodo
+                                    inner join cat_v3_equipos_sae ces on trm.IdMaterialTecnico = ces.Id
+                                    join cat_v3_material_proyectos cmp on ces.Id = cmp.IdMaterial
+                                    join cat_v3_accesorios_proyecto cap on cmp.IdAccesorio = cap.Id
+                                where trn.IdServicio = ' . $idServicio . ' group by cap.Id');
     }
 
     public function deleteArchivo(string $idServicio, array $datos) {
@@ -125,24 +136,26 @@ class Modelo_NodoRedes extends Base {
         $temporal = null;
         $key = null;
 
-        $consulta = $this->consulta('select Archivos from t_redes_nodos where Id = ' . $datos['idNodo']);
+        if($datos['idNodo'] != '' || $datos['idNodo'] != null){
+            $consulta = $this->consulta('select Archivos from t_redes_nodos where Id = ' . $datos['idNodo']);
 
-        if (!empty($consulta)) {
-            foreach ($consulta as $value) {
-                $temporal = explode(',', $value['Archivos']);
+            if (!empty($consulta)) {
+                foreach ($consulta as $value) {
+                    $temporal = explode(',', $value['Archivos']);
+                }
             }
+
+            if (in_array($datos['evidencia'], $temporal)) {
+                $key = array_search($datos['evidencia'], $temporal);
+                unset($temporal[$key]);
+            }
+
+            $archivos = implode(',', $temporal);
+
+            $this->actualizar('update t_redes_nodos set
+                                Archivos = "' . $archivos . '"
+                                where Id = ' . $datos['idNodo']);
         }
-
-        if (in_array($datos['evidencia'], $temporal)) {
-            $key = array_search($datos['evidencia'], $temporal);
-            unset($temporal[$key]);
-        }
-
-        $archivos = implode(',', $temporal);
-
-        $this->actualizar('update t_redes_nodos set
-                            Archivos = "' . $archivos . '"
-                            where Id = ' . $datos['idNodo']);
     }
 
 }
