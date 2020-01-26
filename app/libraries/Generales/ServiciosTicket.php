@@ -2381,7 +2381,7 @@ class ServiciosTicket extends General {
         $img = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $img));
         $data = base64_decode($img);
         $ticket = $this->DBST->consulta("select Ticket from t_servicios_ticket where Id = '".$datos['servicio']."'")[0]['Ticket'];
-        $direccionFirma = '/storage/Archivos/imagenesFirmas/DocumentacionFirma/' . str_replace(' ', '_', 'Firma_' . $ticket . '_' . $datos['servicio']) . '.png';
+        $direccionFirma = 'storage/Archivos/imagenesFirmas/DocumentacionFirma/' . str_replace(' ', '_', 'Firma_' . $ticket . '_' . $datos['servicio']) . '.png';
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $data);
         $fechaNueva = str_replace(' ', '_', $fecha);
         $fechaNueva = str_replace(':', '-', $fechaNueva);
