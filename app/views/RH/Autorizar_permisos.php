@@ -98,38 +98,20 @@
                                                     echo '<td></td>';
                                                     break;
                                                 case '9':
-                                                    echo '<td>Pendiente por Autorizar</td>';
+                                                    echo '<td>Pendiente por Autorizar</td><td>';
                                                     if ($valores['IdUsuarioJefe'] == NULL) {
-                                                        echo '<td>
-                                                                    <li>Jefe Inmediato</li>
-                                                                    <li>RH</li>
-                                                                    <li>Contador</li>
-                                                                    <li>Director</li>
-                                                                </td>';
-                                                    } else {
-                                                        if ($valores['IdUsuarioRH'] == NULL) {
-                                                            echo '<td>
-                                                                        <li>RH</li>
-                                                                        <li>Contador</li>
-                                                                        <li>Director</li>
-                                                                    </td>';
-                                                        } else {
-                                                            if ($valores['IdUsuarioContabilidad'] == NULL) {
-                                                                echo '<td>
-                                                                            <li>Contador</li>
-                                                                            <li>Director</li>
-                                                                        </td>';
-                                                            } else {
-                                                                if ($valores['IdUsuarioDireccion'] == NULL) {
-                                                                    echo '<td>
-                                                                                <li>Director</li>
-                                                                            </td>';
-                                                                } else {
-                                                                    echo '<td></td>';
-                                                                }
-                                                            }
-                                                        }
+                                                        echo '<li>Jefe Inmediato</li>';
                                                     }
+                                                    if ($valores['IdUsuarioRH'] == NULL) {
+                                                        echo '<li>RH</li>';
+                                                    }
+                                                    if ($valores['IdUsuarioContabilidad'] == NULL) {
+                                                        echo '<li>Contador</li>';
+                                                    }
+                                                    if ($valores['IdUsuarioDireccion'] == NULL) {
+                                                        echo '<li>Director</li>';
+                                                    }
+                                                    echo '</td>';
                                                     $date1 = new DateTime($fecha);
                                                     $date2 = new DateTime($valores['FechaAusenciaDesde']);
                                                     $diff = $date1->diff($date2);

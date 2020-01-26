@@ -383,9 +383,9 @@ $config['Configuracion'] = array(
         'icono' => '',
         'Url' => '',
         'css' => array('Configuracion/perfil'),
-        'pluginsCss' => array(),
+        'pluginsCss' => array('DrawingBoard/css/drawingboard.min'),
         'js' => array('Base/Base', 'Base/Socket', 'Configuracion/perfil'),
-        'pluginsJs' => array(),
+        'pluginsJs' => array('DrawingBoard/js/drawingboard.min'),
         'Permiso' => 'VCPE'
     )
 );

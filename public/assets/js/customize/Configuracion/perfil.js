@@ -24,6 +24,7 @@ $(function () {
 
     var globals = {viewGlobals: true},
             newGlobals = [];
+    var dataFirma = null;
 
     calendario.crearFecha('.calendario');
 
@@ -169,7 +170,7 @@ $(function () {
                         mensajeError = 'Deben ser solo números.';
                         break;
                     case 'SDKey':
-                        var expresion = /^([a-z]+[0-9]+)|([0-9]+[a-z]+)/i;;
+                        var expresion = /^([a-z]+[0-9]+)|([0-9]+[a-z]+)/i;
                         validarExpresion = expresion.test(validarInput);
                         mensajeError = 'Deben ser números y letras.';
                         break;
@@ -197,6 +198,73 @@ $(function () {
 
             cerrarModalCambios();
         });
+    });
+
+    let firmaUsuario = new DrawingBoard.Board("firmaUsuario", {
+        background: "#fff",
+        color: "#000",
+        size: 1,
+        controlsPosition: "right",
+        controls: [
+            {
+                Navigation: {
+                    back: false,
+                    forward: false
+                }
+            }
+        ],
+        webStorage: false
+    });
+    $('.editarFirma').on('click', function () {
+        dataFirma = {
+            'campo': $(this).attr('data-campo'),
+            'input': $(this).attr('data-input')
+        };
+
+        if (dataFirma.input != '') {
+            $('#firmaExistente').removeClass('hidden');
+            $('#checkOtro').removeClass('hidden');
+            $('#imagenFirmaUsuario').append('<img src ="' + dataFirma.input + '" />');
+            $('#btnAceptarModal').addClass('hidden');
+        } else {
+            $('#firmaExistente').addClass('hidden');
+            $('#checkOtro').addClass('hidden');
+            $('#contentfirmaUsuario').removeClass('hidden');
+            $('#btnAceptarModal').removeClass('hidden');
+        }
+        $('#modalDefinirFirma').modal('toggle');
+    });
+    $('input[type="checkbox"]').click(function () {
+        if ($(this).prop("checked") === true) {
+            $('#firmaExistente').addClass('hidden');
+            $('#contentfirmaUsuario').removeClass('hidden');
+            $('#btnAceptarModal').removeClass('hidden');
+        } else {
+            $('#firmaExistente').removeClass('hidden');
+            $('#contentfirmaUsuario').addClass('hidden');
+            $('#btnAceptarModal').addClass('hidden');
+        }
+    });
+    $('#btnAceptarModal').on("click", function () {
+        let imgFirmaUsuario = firmaUsuario.getImg();
+        let inputFirmaUsuario = (firmaUsuario.blankCanvas == imgFirmaUsuario) ? '' : imgFirmaUsuario;
+
+        if (inputFirmaUsuario == '') {
+            evento.mostrarMensaje("#errorMessageFirma", false, 'Falta la firma', 2000);
+        } else {
+            dataFirma.firmaUsuario = firmaUsuario.getImg();
+            evento.enviarEvento('PerfilUsuario/ActualizarFirmaUsuario', dataFirma, '#modalDefinirFirma', function (respuesta) {
+                if (respuesta) {
+                    evento.mostrarMensaje("#errorMessageFirma", true, 'Cambio realizado', 2000);
+                    location.reload();
+                }
+            });
+        }
+    });
+    $('#btnCancelarModal').on("click", function () {
+        $('#imagenFirmaUsuario').html('');
+        $('#contentfirmaUsuario').addClass('hidden');
+        $('#btnAceptarModal').addClass('hidden');
     });
 
     $('#btnSubirFotoUsuario').off("click");
@@ -285,7 +353,7 @@ $(function () {
             }
         });
     });
-    
+
     $('#inputSD').off("click");
     $('#inputSD').on('click', function () {
         mostrarCargaPagina();

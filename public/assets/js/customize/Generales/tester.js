@@ -61,4 +61,10 @@ $(function () {
             }
         });
     });
+    
+    $('#validarSD').on('click', function () {
+        evento.enviarEvento('Tester/solicitarValidacion',  {}, '#panelValidaciones', function (respuesta) {
+            evento.mostrarMensaje("#mensajeRespuesta", true, respuesta, 2000);
+        });
+    });
 });

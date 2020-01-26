@@ -58,8 +58,16 @@ $(function() {
   }
 
   function initFirstView(init) {
-    if (init == "branchList") {
-      initFirstViewBranches();
+    switch (init) {
+      case "branchList":
+        initFirstViewBranches();
+        break;
+      case "areas":
+        initFirstViewAreas();
+        break;
+
+      default:
+        break;
     }
   }
 
@@ -96,6 +104,35 @@ $(function() {
     initBtnCountViewInventory();
   }
 
+  function initFirstViewAreas() {
+    tabla.generaTablaPersonal(".table-details");
+    initBtnBranchListViewAreas();
+    initBtnCountViewAreas();
+    $("#branchListTable tbody").on("click", "tr", function() {
+      let rowData = $("#branchListTable")
+        .DataTable()
+        .row(this)
+        .data();
+      let servicio = rowData[0];
+      let sucursal = rowData[3];
+      evento.enviarEvento(
+        "/Poliza/Inventarios/loadInventoryDetails",
+        { servicio: servicio, sucursal: sucursal },
+        "#areasViewPanel",
+        function(respuesta) {
+          $("#secondViewContent")
+            .empty()
+            .append(respuesta.form);
+          evento.cambiarDiv(
+            "#firstViewContent",
+            "#secondViewContent",
+            initInventoryDetails()
+          );
+        }
+      );
+    });
+  }
+
   function initBtnCountViewInventory() {
     $("#btnCountView").off();
     $("#btnCountView").on("click", function() {
@@ -109,6 +146,22 @@ $(function() {
     $("#btnDetailsView").on("click", function() {
       $("#countView, #btnDetailsView").hide();
       $("#detailsView, #btnCountView").show();
+    });
+  }
+
+  function initBtnBranchListViewAreas() {
+    $("#btnBranchListView").off();
+    $("#btnBranchListView").on("click", function() {
+      $("#countView, #btnBranchListView").hide();
+      $("#branchListView, #btnCountView").show();
+    });
+  }
+
+  function initBtnCountViewAreas() {
+    $("#btnCountView").off();
+    $("#btnCountView").on("click", function() {
+      $("#branchListView, #btnCountView").hide();
+      $("#countView, #btnBranchListView").show();
     });
   }
 });

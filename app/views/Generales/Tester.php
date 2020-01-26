@@ -132,3 +132,38 @@
     <!--Finalizando Panel-->
 </div>
 <!--Finalizando contenido Comparacion tickets-->
+
+<!--Empezando contenido Actualizaciones-->
+<div id="contentActualizaciones" class="content">
+    <!-- Empezando titulo de la pagina -->
+    <h1 class="page-header"></h1>
+    <!-- Finalizando titulo de la pagina -->
+    <!--Empezando Panel-->
+    <div id="panelValidaciones" class="panel panel-inverse">
+        <!--Empezando cabecera del panel-->
+        <div class="panel-heading">
+            <div id="botonesExtra" class="panel-heading-btn">
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>                            
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
+            </div>
+            <h4 class="panel-title">Otros</h4>
+        </div>
+        <!--Finalizando cabecera del panel-->
+        <!--Empezando cuerpo del panel-->
+        <div class="panel-body">
+            <div class="col-md-3">
+                <button  id="validarSD">Valida-dores SD</button>
+            </div>
+            <!--Empezando mensaje respuesta--> 
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="mensajeRespuesta"></div>
+                </div>
+            </div>
+            <!--Finalizando mensaje respuesta-->
+        </div>
+        <!--Finalizando cuerpo del panel-->
+    </div>
+    <!--Finalizando Panel-->
+</div>
+<!--Finalizando contenido Actualizaciones-->

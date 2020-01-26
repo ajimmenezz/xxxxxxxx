@@ -70,6 +70,7 @@ $(function () {
     let datosFiltros = {
         tipoProyecto: null,
         moneda: 'MN',
+        conciliado: 'Conciliado',
         fechaInicio: null,
         fechaFinal: null,
         proyecto: null,
@@ -82,6 +83,7 @@ $(function () {
     let anterioresFiltros = {
         tipoProyecto: null,
         moneda: 'MN',
+        conciliado: 'Conciliado',
         fechaInicio: null,
         fechaFinal: null,
         proyecto: null,
@@ -195,7 +197,7 @@ $(function () {
         $('#fechaComienzoPrincipal').datepicker('setDate', '2016-07-07');
         $('#fechaFinPrincipal').datepicker('setDate', fecha.getFullYear() + '-' + fecha.getMonth() + 1);
         $("#btnFiltrarDashboardPrincipal").on('click', function () {
-            if(evento.validarFormulario('#filtroFechaPrincipal')){
+            if (evento.validarFormulario('#filtroFechaPrincipal')) {
                 datosFiltros.fechaInicio = $('#fechaComienzoPrincipal').val() + "T00:00:00.000";
                 datosFiltros.fechaFinal = $('#fechaFinPrincipal').val() + "T23:59:59.999";
                 enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
@@ -203,7 +205,7 @@ $(function () {
         });
 
         $("#btnFiltrarDashboard").on('click', function () {
-            if(evento.validarFormulario('#filtroFecha')){
+            if (evento.validarFormulario('#filtroFecha')) {
                 datosFiltros.fechaInicio = $("#fechaComienzo").val() + "T00:00:00.000";
                 datosFiltros.fechaFinal = $("#fechaFin").val() + "T23:59:59.999";
                 enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
@@ -222,11 +224,23 @@ $(function () {
             datosFiltros.moneda = radioValueFiltros;
             enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
+        
+        $("input[name='optionsConciliadoPrincipal").click(function () {
+            var radioValueConciliadoP = $("input[name='optionsConciliadoPrincipal']:checked").val();
+            datosFiltros.conciliado = radioValueConciliadoP;
+            enviarFiltrosPrincipal('panelDashboardGapsi', datosFiltros);
+        });
+        $("input[name='optionsConciliado").click(function () {
+            var radioValueConciliado = $("input[name='optionsConciliado']:checked").val();
+            datosFiltros.conciliado = radioValueConciliado;
+            enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
+        });
     }
 
     function enviarFiltrosPrincipal(objeto, datosFiltros) {
         peticion.enviar(objeto, 'Dashboard_Gapsi/filtroPrincipal', datosFiltros, function (respuesta) {
             $("input[name='optionsRadiosMonedaPrincipal'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
+            $("input[name='optionsConciliadoPrincipal'][value='" + datosFiltros['conciliado'] + "']").attr('checked', true);
             if (respuesta.tipoProyectos.length !== 0) {
                 anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
                 actualizarObjetosPrincipal(respuesta);
@@ -404,6 +418,7 @@ $(function () {
                 tablasCostosFiltros();
                 costosTotales();
                 $("input[name='optionsRadiosMoneda'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
+                $("input[name='optionsConciliado'][value='" + datosFiltros['conciliado'] + "']").attr('checked', true);
                 anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
                 $('html, body').animate({
                     scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
@@ -522,7 +537,7 @@ $(function () {
         $('#ocultarDetalles').addClass('hidden');
         $.each(datosFiltros, function (key, value) {
             if (datosFiltros[key] !== null && datosFiltros[key] !== 'MN' && datosFiltros[key] !== 'USD'
-                    && key !== 'fechaInicio' && key !== 'fechaFinal') {
+                    && key !== 'fechaInicio' && key !== 'fechaFinal' && key !== 'conciliado' && key !== 'sinConciliado') {
                 switch (key) {
                     case 'tipoProyecto':
                         alertaFiltros.iniciarAlerta('msg-' + datosFiltros[key], value, '<br>' + key);
