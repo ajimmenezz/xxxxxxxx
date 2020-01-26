@@ -10,7 +10,7 @@ class Modelo_NodoRedes extends Base {
         parent::__construct();
     }
 
-    public function setNodo(string $idServicio, array $datos) {       
+    public function setNodo(string $idServicio, array $datos) {
         $consulta = $this->insertar('insert into t_redes_nodos values(
                            null,
                            ' . $idServicio . ',
@@ -24,7 +24,7 @@ class Modelo_NodoRedes extends Base {
     }
 
     public function setMaterialNodo(string $idNodo, array $material) {
-        if($idNodo != '' || $idNodo != null){
+        if ($idNodo != '' || $idNodo != null) {
             foreach ($material as $value) {
                 $this->insertar('insert into t_redes_material values(
                                "",
@@ -84,13 +84,13 @@ class Modelo_NodoRedes extends Base {
         $consulta = $this->consulta('select Archivos from t_redes_nodos where Id = ' . $datos['idNodo']);
 
         if (!empty($consulta)) {
-            $archivos = $consulta[0]['Archivos'];
-        }
-
-        if (!empty($archivos)) {
-            $archivos .= ',' . $datos['archivos'];
+            if (!empty($datos['archivos'])) {
+                $archivos = $datos['archivos'] . ',' . $consulta[0]['Archivos'];
+            }else{
+                $archivos = $consulta[0]['Archivos'];
+            }
         } else {
-            $archivos = $datos['archivos'];
+            $archivos .= $datos['archivos'];
         }
 
         $this->actualizar('update t_redes_nodos set
@@ -136,7 +136,7 @@ class Modelo_NodoRedes extends Base {
         $temporal = null;
         $key = null;
 
-        if($datos['idNodo'] != '' || $datos['idNodo'] != null){
+        if ($datos['idNodo'] != '' || $datos['idNodo'] != null) {
             $consulta = $this->consulta('select Archivos from t_redes_nodos where Id = ' . $datos['idNodo']);
 
             if (!empty($consulta)) {

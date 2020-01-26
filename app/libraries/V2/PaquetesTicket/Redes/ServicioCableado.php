@@ -265,7 +265,6 @@ class ServicioCableado implements Servicio {
         $contador = 1;
         foreach ($informacionServicio['infoNodos'] as $key => $value) {
             $ancho = $this->pdf->GetPageWidth() - 20;
-//            var_dump($ancho);
             $y = $this->pdf->GetY();
             $x = 30;
 
@@ -287,12 +286,9 @@ class ServicioCableado implements Servicio {
             }
             $altura = $y + 35;
 
-//            var_dump($altura);
-//            var_dump($this->pdf->GetPageHeight() - 80);
 
-            if ($altura > ($this->pdf->GetPageHeight() - 250)) {
+            if ($altura > ($this->pdf->GetPageHeight() - 200)) {
                 $this->pdf->AddPage();
-//                $y = 25;
             }
         }
 
