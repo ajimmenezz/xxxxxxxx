@@ -267,25 +267,6 @@ class PDF extends \FPDF {
         $totalFirmas = count($datosPersona);
 
         if ($totalFirmas > 2) {
-//            $countFilas = (($totalFirmas / 2) < 0.5) ? round($totalFirmas / 2, 0, PHP_ROUND_HALF_UP) + 1 : ceil($totalFirmas / 2);
-//            $columna = 0;
-//            $listaFirmas = array();
-//            $tempFirmas = array();
-//
-//            for ($j = 0; $j < $countFilas; $j++) {
-//
-//                foreach ($datosPersona as $key => $firma) {
-//                    if ($columna < 2) {
-//                        array_push($tempFirmas, $firma);
-//                        $columna += 1;
-//                        unset($datosPersona[$key]);
-//                    }
-//                }
-//                array_push($listaFirmas, $tempFirmas);
-//                $tempFirmas = array();
-//                $columna = 0;
-//            }
-
             $ancho = $this->GetPageWidth() - 20;
             $y = $this->GetY();
             $x = 30;

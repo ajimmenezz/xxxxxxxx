@@ -284,10 +284,10 @@ class ServicioCableado implements Servicio {
                 $x = 30;
                 $y += 50;
             }
-            $altura = $y + 35;
 
+            $altura = $y + 258;
 
-            if ($altura > ($this->pdf->GetPageHeight() - 200)) {
+            if ($altura > ($this->pdf->GetPageHeight())) {
                 $this->pdf->AddPage();
             }
         }

@@ -415,7 +415,8 @@ $(function () {
                 }
             });
 
-            if ($('#agregarEvidenciaNodo').val() !== '') {
+            try {
+                evidenciaMaterial.validarArchivos()
                 infoMaterialNodo.evidencias = true;
                 evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
                     if (!validarError(respuesta, 'modalMaterialNodo')) {
@@ -432,7 +433,7 @@ $(function () {
                     ocultarElementosDefault(respuesta.solucion);
                     $('#modalMaterialNodo').modal('hide');
                 });
-            } else {
+            } catch (exception) {
                 infoMaterialNodo.evidencias = false;
                 peticion.enviar('modalMaterialNodo', 'SeguimientoCE/SeguimientoGeneral/Accion/agregarNodo', infoMaterialNodo, function (respuesta) {
                     if (!validarError(respuesta, 'modalMaterialNodo')) {
@@ -1035,7 +1036,6 @@ $(function () {
             }
         } else {
             datoServicioTabla.firmaCliente = firmaClienet.getImg();
-            datoServicioTabla.firmaTecnico = firmaTecnico.getImg();
             datoServicioTabla.nodos = listaTotalNodos;
 
             peticion.enviar('panelFirmas', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
