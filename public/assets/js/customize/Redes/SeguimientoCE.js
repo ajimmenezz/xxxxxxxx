@@ -925,7 +925,9 @@ $(function () {
     $('#btnAceptarProblema').on('click', function () {
         if (evento.validarFormulario('#formEvidenciaProblema')) {
             datoServicioTabla.descripcion = $('#textareaDescProblema').val();
-            if ($('#agregarEvidenciaProblema').val() !== '') {
+
+            try {
+                evidenciaProblema.validarArchivos();
                 datoServicioTabla.evidencia = true;
                 evidenciaProblema.enviarPeticionServidor('#modal-content', datoServicioTabla, function (respuesta) {
                     if (!validarError(respuesta, 'modalDefinirProblema')) {
@@ -942,7 +944,7 @@ $(function () {
                     evidenciaProblema.limpiarElemento();
                     $('#modalDefinirProblema').modal('hide');
                 });
-            } else {
+            } catch (exception) {
                 datoServicioTabla.evidencia = false;
                 peticion.enviar('modalDefinirProblema', 'SeguimientoCE/SeguimientoGeneral/agregarProblema', datoServicioTabla, function (respuesta) {
                     if (!validarError(respuesta, 'modalDefinirProblema')) {
