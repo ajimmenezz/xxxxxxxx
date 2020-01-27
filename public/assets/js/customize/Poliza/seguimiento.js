@@ -6850,6 +6850,10 @@ $(function () {
                     }
             );
         });
+        $('#solicitarTraslado').on("click", function () {
+            console.log("generar traslado");
+//            window.open('/Poliza/Seguimiento_Equipos');
+        });
 
         $("#btnAgregarObservacionesReporteFalso").off("click");
         $("#btnAgregarObservacionesReporteFalso").on("click", function () {

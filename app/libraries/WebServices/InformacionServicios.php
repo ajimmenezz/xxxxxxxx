@@ -2040,8 +2040,10 @@ class InformacionServicios extends General {
 
                 $this->setCoordinates(10, $this->pdf->GetY());
             }
+            
+            $totalEvidencias = $this->totalEvidenciasSolicitud($datos['servicio']);
 
-            $this->setEvidenciasPDF($datos, $solucion['Evidencias'], "Solución del Servicio");
+            $this->setEvidenciasPDF($datos, $totalEvidencias, "Solución del Servicio");
         }
     }
 
@@ -2589,6 +2591,17 @@ class InformacionServicios extends General {
 
 //            $this->setCoordinates(10, $this->pdf->GetY());
         }
+    }
+    
+    function totalEvidenciasSolicitud($servicio) {
+        $consulta = $this->DBS->consulta("select Evidencias from t_correctivos_soluciones where IdServicio = '" . $servicio . "'");
+        
+        foreach ($consulta as $evidencias) {
+            $concatena = $evidencias['Evidencias'] . ',';
+        }
+        
+        $todaEvidencia = substr($concatena, 0, -1);
+        return $todaEvidencia;
     }
 }
 

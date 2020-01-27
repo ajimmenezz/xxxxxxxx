@@ -46,6 +46,10 @@
                 <li class=""><a href="#Historial" data-toggle="tab">Historial</a></li>
                 <li class=""><a href="#Notas" data-toggle="tab">Conversación</a></li>
                 <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
+                <?php
+                if($datosServicio["IdEstatus"] == 3)
+//                    echo '<a id="solicitarTraslado" class="btn btn-xs btn-primary"><i class=""></i>Traslado</a>';
+                ?>
             </ul>
         </div>
     </div>
