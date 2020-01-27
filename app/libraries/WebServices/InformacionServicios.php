@@ -1771,9 +1771,9 @@ class InformacionServicios extends General {
                         $image = $evidencias[$indice];
 //                        var_dump($image);
                         if (!in_array(pathinfo($image, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
-                            $image = './assets/img/Iconos/no-thumbnail.jpg';
+                            $image = '/assets/img/Iconos/no-thumbnail.jpg';
                         }
-                        $this->pdf->Image('.' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), 'http://siccob.solutions' . $image);
+                        $this->pdf->Image('.' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), 'http://siccob.solutions' . $evidencias[$indice]);
                     }
 
                     $this->setCoordinates($this->x + 47.5);
@@ -2040,8 +2040,10 @@ class InformacionServicios extends General {
 
                 $this->setCoordinates(10, $this->pdf->GetY());
             }
+            
+            $totalEvidencias = $this->totalEvidenciasSolicitud($datos['servicio']);
 
-            $this->setEvidenciasPDF($datos, $solucion['Evidencias'], "Solución del Servicio");
+            $this->setEvidenciasPDF($datos, $totalEvidencias, "Solución del Servicio");
         }
     }
 
@@ -2535,6 +2537,7 @@ class InformacionServicios extends General {
     
     private function obtenerEquipoMaterialServicio(string $servicio) {
         $serviciosAvance = $this->DBST->servicioAvanceProblema($servicio);
+        $folio = $this->DBST->consulta('select folioByServicio('.$servicio.') as folio')[0]['folio'];
         $equipoMaterial = array();
         
         if($serviciosAvance){
@@ -2548,13 +2551,13 @@ class InformacionServicios extends General {
             }
         }
         if (!empty($equipoMaterial)) {
-            $this->agregarPDFEquipoMaterial($equipoMaterial);
+            $this->agregarPDFEquipoMaterial($equipoMaterial, $folio);
        }
     }
     
-    private function agregarPDFEquipoMaterial(array $materialEquipo) {
+    private function agregarPDFEquipoMaterial(array $materialEquipo, string $folio = '') {
         if (($this->y + 26) > 276) {
-            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+            $this->setHeaderPDF("Resumen de Incidente Service Desk", $folio);
         }
 
         $this->setCoordinates(10);
@@ -2588,6 +2591,17 @@ class InformacionServicios extends General {
 
 //            $this->setCoordinates(10, $this->pdf->GetY());
         }
+    }
+    
+    function totalEvidenciasSolicitud($servicio) {
+        $consulta = $this->DBS->consulta("select Evidencias from t_correctivos_soluciones where IdServicio = '" . $servicio . "'");
+        
+        foreach ($consulta as $evidencias) {
+            $concatena = $evidencias['Evidencias'] . ',';
+        }
+        
+        $todaEvidencia = substr($concatena, 0, -1);
+        return $todaEvidencia;
     }
 }
 

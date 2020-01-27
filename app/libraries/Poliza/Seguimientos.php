@@ -6348,7 +6348,7 @@ class Seguimientos extends General
         $key = $this->InformacionServicios->getApiKeyByUser($user['Id']);
 
         $dataShowFormHtmlView['sucursales'] = $this->Catalogo->catSucursales('3', array('Flag' => '1'));
-        $dataShowFormHtmlView['TIList'] = $this->ServiceDesk->consultarDepartamentoTI($key);
+        $dataShowFormHtmlView['TIList'] = $this->ServiceDesk->consultarValidadoresTI($key);
         $dataShowFormHtmlView['orderNumber'] = 'Ticket - ' . $consultationServiceAndRequest[0]['Ticket'] . ', Folio - ' . $consultationServiceAndRequest[0]['Folio'];
         $dataShowFormHtmlView['technicalName'] = $user['Nombre'];
         return ['modal' => parent::getCI()->load->view('Poliza/Formularios/InformacionGeneracionGuia.php', $dataShowFormHtmlView, TRUE)];
