@@ -1390,6 +1390,11 @@ class ServiciosTicket extends General {
         } else {
             $data['botonAgregarVuelta'] = '';
         }
+        
+        if($datosServicio['TipoServicio'] === 'Cotización'){
+            $data['catalogoSubcategoriaSD'] = $this->DBST->catalogoSubcategoriaSD();
+            $data['catalogoItemSD'] = $this->DBST->catalogoItemSD();
+        }
 
         $data['formulario'] = parent::getCI()->load->view('Generales/Modal/formularioSeguimientoServicioSinClasificar', $data, TRUE);
         return $data;
