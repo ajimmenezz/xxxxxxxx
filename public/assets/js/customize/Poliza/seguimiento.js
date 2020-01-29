@@ -179,6 +179,9 @@ $(function () {
                         //                        break;
                 }
             }
+            if(respuesta.pdf == false){
+                $('#btnGeneraPdfServicio').addClass('hidden');
+            }
         });
     };
     // inicia servicio Checklist
@@ -4421,10 +4424,10 @@ $(function () {
                     "#selectSucursalesCorrectivo",
                     respuesta.informacion.sucursal
                     );
-            $("#inputFallaReportadaDiagnostico").val(
-                    respuesta.informacion.informacionDatosGeneralesCorrectivo[0]
-                    .FallaReportada
-                    );
+//            $("#inputFallaReportadaDiagnostico").val(
+//                    respuesta.informacion.informacionDatosGeneralesCorrectivo[0]
+//                    .FallaReportada
+//                    );
             $("#selectComponenteDiagnosticoCorrectivo").removeAttr("disabled");
             $("#selectRefaccionSolicitud").removeAttr("disabled");
             $("#inputCantidadRefaccionSolicitud").removeAttr("disabled");
@@ -5109,7 +5112,7 @@ $(function () {
             var data = {servicio: servicio};
             if (
                     validarCampos(
-                            $("#inputFallaReportadaDiagnostico").val(),
+//                            $("#inputFallaReportadaDiagnostico").val(),
                             ".errorFormularioReporteFalsoCorrectivo",
                             "Falla reportada en sitio."
                             )
@@ -5198,7 +5201,7 @@ $(function () {
         $("#btnGuardarImpericiaCorrectivo").on("click", function (e) {
             if (
                     validarCampos(
-                            $("#inputFallaReportadaDiagnostico").val(),
+//                            $("#inputFallaReportadaDiagnostico").val(),
                             ".errorFormularioImpericiaCorrectivo",
                             "Falla reportada en sitio."
                             )
@@ -5292,7 +5295,7 @@ $(function () {
         $("#btnGuardarFallaEquipoCorrectivo").on("click", function (e) {
             if (
                     validarCampos(
-                            $("#inputFallaReportadaDiagnostico").val(),
+//                            $("#inputFallaReportadaDiagnostico").val(),
                             ".errorFormularioFallaEquipoCorrectivo",
                             "Falla reportada en sitio."
                             )
@@ -5386,7 +5389,7 @@ $(function () {
         $("#btnGuardarFallaComponenteCorrectivo").on("click", function (e) {
             if (
                     validarCampos(
-                            $("#inputFallaReportadaDiagnostico").val(),
+//                            $("#inputFallaReportadaDiagnostico").val(),
                             ".errorFormularioFallaComponenteCorrectivo",
                             "Falla reportada en sitio."
                             )
@@ -5490,7 +5493,7 @@ $(function () {
         $("#btnGuardarReporteMultimediaCorrectivo").on("click", function (e) {
             if (
                     validarCampos(
-                            $("#inputFallaReportadaDiagnostico").val(),
+//                            $("#inputFallaReportadaDiagnostico").val(),
                             ".errorFormularioReporteMultimediaCorrectivo",
                             "Falla reportada en sitio."
                             )
@@ -6851,8 +6854,7 @@ $(function () {
             );
         });
         $('#solicitarTraslado').on("click", function () {
-            console.log("generar traslado");
-//            window.open('/Poliza/Seguimiento_Equipos');
+            window.open('/Poliza/Seguimiento_Equipos', '_self');
         });
 
         $("#btnAgregarObservacionesReporteFalso").off("click");
@@ -7325,7 +7327,7 @@ $(function () {
             default:
         }
 
-        data.fallaReportada = fallaReportada;
+        data.fallaReportada = '';
 
         if ($(nombreEvidencias).val() !== "") {
             file.enviarArchivos(

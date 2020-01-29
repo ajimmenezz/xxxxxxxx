@@ -20,6 +20,10 @@
                 <li id="btnReasignarServicio"><a href="#"><i class="fa fa-mail-reply-all"></i> Reasignar Servicio</a></li>
                 <li id="btnNuevaSolicitud"><a href="#"><i class="fa fa-puzzle-piece"></i> Solicitar Apoyo</a></li>
                 <li id="btnSubirInformacionSD"><a href="#"><i class="fa fa-cloud-upload"></i> Subir Información SD</a></li>
+                <?php
+                if($datosServicio["IdEstatus"] == 3)
+                    echo '<li id="solicitarTraslado"><a href="#"><i class="fa fa-mail-reply-all"></i> Generar Traslado</a></li>';
+                ?>
             </ul>
         </div>
         <label id="btnRegresarSeguimientoCorrectivo" class="btn btn-success">
@@ -46,10 +50,6 @@
                 <li class=""><a href="#Historial" data-toggle="tab">Historial</a></li>
                 <li class=""><a href="#Notas" data-toggle="tab">Conversación</a></li>
                 <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
-                <?php
-                if($datosServicio["IdEstatus"] == 3)
-//                    echo '<a id="solicitarTraslado" class="btn btn-xs btn-primary"><i class=""></i>Traslado</a>';
-                ?>
             </ul>
         </div>
     </div>
@@ -375,12 +375,12 @@
                 </div>
                 <!--Finalizando Separador-->
 
-                <div class="row m-b-15">
+<!--                <div class="row m-b-15">
                     <div class="col-md-12">
                         <label>Falla reportada en sitio *</label>
                         <input id="inputFallaReportadaDiagnostico" type="text" class="form-control"  placeholder="Ingrese la persona que recibe" value="" maxlength="250"/>
                     </div>
-                </div>
+                </div>-->
 
 
                 <ul class="nav nav-pills">

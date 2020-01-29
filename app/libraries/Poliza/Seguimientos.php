@@ -1980,6 +1980,11 @@ class Seguimientos extends General
         $host = $_SERVER['SERVER_NAME'];
         $descripcionDiagnostico = '';
         $usuario = $this->Usuario->getDatosUsuario();
+        if (in_array("PPDFP", $usuario["PermisosString"])) {
+            $permisoPDF = true;
+        } else {
+            $permisoPDF = false;
+        }
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $direccion = '/storage/Archivos/imagenesFirmas/Correctivo/Impericia/' . str_replace(' ', '_', 'Firma_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
         $this->generarPDFImpericia($datos['img'], $direccion, $datos['servicio'], $datos['ticket']);
@@ -2037,7 +2042,11 @@ class Seguimientos extends General
 
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
-        $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+        if($permisoPDF == true){
+            $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+        }else{
+            $PDF = '';
+        }
         $descripcionImpericia = $descripcionDiagnostico . 'Descripción: <strong>' . $datosDiagnostico[0]['Observaciones'] . '</strong><br>';
         $titulo = 'Reporte Correctivo - ' . $consultaSucursal[0]['Nombre'];
         $texto = '<p>Estimado(a) <strong>' . $datos['recibe'] . ',</strong> se le ha mandado el reporte que ha firmado.</p>' . $descripcionImpericia . $PDF . $linkDetallesServicio;
@@ -2066,6 +2075,11 @@ class Seguimientos extends General
     {
         $dataNotificacion = array();
         $usuario = $this->Usuario->getDatosUsuario();
+        if (in_array("PPDFP", $usuario["PermisosString"])) {
+            $permisoPDF = true;
+        } else {
+            $permisoPDF = false;
+        }
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $img = $datos['img'];
         $img = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $img));
@@ -2094,7 +2108,11 @@ class Seguimientos extends General
         $correoSupervisor = $this->consultaCorreoSupervisorXSucursal($datos['sucursal']);
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
-        $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+        if($permisoPDF){
+            $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+        }else{
+            $PDF = '';
+        }
         $titulo = 'Retiro a Garantía con Respaldo';
         $texto = '<p><strong>Estimado(a) ' . $datos['recibe'] . ',</strong> se le ha mandado el documento del retiro a garantía con respaldo que ha firmado.</p>' . $PDF . $linkDetallesServicio;
 
@@ -2138,6 +2156,11 @@ class Seguimientos extends General
     {
         $dataNotificacion = array();
         $usuario = $this->Usuario->getDatosUsuario();
+        if (in_array("PPDFP", $usuario["PermisosString"])) {
+            $permisoPDF = true;
+        } else {
+            $permisoPDF = false;
+        }
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $img = $datos['img'];
         $img = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $img));
@@ -2180,7 +2203,11 @@ class Seguimientos extends General
         $correoSupervisor = $this->consultaCorreoSupervisorXSucursal($datos['sucursal']);
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
-        $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+        if($permisoPDF){
+            $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+        }else{
+            $PDF = '';
+        }
         $titulo = 'Acuse de Entrega';
         $texto = '<p>Se le ha mandado una copia del documento de Acuse de Entrega que ha entregado el técnico' . $usuario['Nombre'] . '.</p>' . $PDF . $linkDetallesServicio;
 
@@ -2830,6 +2857,11 @@ class Seguimientos extends General
     public function enviar_Reporte_PDF(array $datos)
     {
         $usuario = $this->Usuario->getDatosUsuario();
+        if (in_array("PPDFP", $usuario["PermisosString"])) {
+            $permisoPDF = true;
+        } else {
+            $permisoPDF = false;
+        }
         $host = $_SERVER['SERVER_NAME'];
         $titulo = 'Se concluyo el servicio';
         $infoServicio = $this->getInformacionServicio($datos['servicio']);
@@ -2837,7 +2869,11 @@ class Seguimientos extends General
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
         $path = $this->getServicioToPdf($datos);
+        if($permisoPDF){
         $linkPDF = '<br>Ver PDF Resumen General <a href="' . $path . '" target="_blank">Aquí</a>';
+        }else{
+            $linkPDF = '';
+        }
         $datosDescripcionConclusion = $this->DBS->consultaGeneralSeguimiento('SELECT
                                             tst.Descripcion AS DescripcionServicio,
                                             tst.IdSolicitud,
@@ -2929,7 +2965,7 @@ class Seguimientos extends General
         } else {
             $datosServicio = array();
         }
-
+        
         if (!empty($datosServicio)) {
             return ['code' => 200, 'mensaje' => 'Correcto', 'datosTabla' => $datosServicio];
         } else {

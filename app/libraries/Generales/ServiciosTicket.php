@@ -262,6 +262,11 @@ class ServiciosTicket extends General {
         $data = array();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $usuario = $this->Usuario->getDatosUsuario();
+        if (in_array("PPDFP", $usuario["PermisosString"])) {
+            $data['pdf'] = true;
+        } else {
+            $data['pdf'] = false;
+        }
         $datosServicio = $this->DBST->getDatosServicio($datos['servicio']);
         $idSolicitud = $datosServicio['IdSolicitud'];
         $data['datosServicio'] = $datosServicio;
@@ -1350,7 +1355,11 @@ class ServiciosTicket extends General {
     public function modalServicioSinEspecificar(array $datosServicio, string $servicio, string $fecha = null, string $departamento = null, $idSolcitud = null) {
         $usuario = $this->Usuario->getDatosUsuario();
         $data = array();
-
+        if (in_array("PPDFP", $usuario["PermisosString"])) {
+            $data['pdf'] = true;
+        } else {
+            $data['pdf'] = false;
+        }
         if ($datosServicio['IdEstatus'] === '1') {
             $data['informacion']['serviciosAsignados'] = $this->cambiarEstatusServicioTicket($servicio, $fecha, '2', $departamento);
             $this->setStatusSD($datosServicio['Folio']);
@@ -1524,6 +1533,11 @@ class ServiciosTicket extends General {
     public function verificarServicio(array $datos) {
         try {
             $usuario = $this->Usuario->getDatosUsuario();
+            if (in_array("PPDFP", $usuario["PermisosString"])) {
+                $permisoPDF = true;
+            } else {
+                $permisoPDF = false;
+            }
             $this->DBST->iniciaTransaccion();
             $host = $_SERVER['SERVER_NAME'];
             $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
@@ -1584,8 +1598,10 @@ class ServiciosTicket extends General {
                         $path = 'http://' . $host . '/' . $linkPdfServiciosConcluidos;
                         $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
                     }
-
-                    $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
+                    
+                    if($permisoPDF == true){
+                        $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
+                    }
                 }
 
                 $titulo = 'Solicitud Concluida';
@@ -2381,11 +2397,16 @@ class ServiciosTicket extends General {
 
     public function guardarDocumentacionFirma(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
+        if (in_array("PPDFP", $usuario["PermisosString"])) {
+            $permisoPDF = true;
+        } else {
+            $permisoPDF = false;
+        }
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $img = $datos['img'];
         $img = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $img));
         $data = base64_decode($img);
-        $ticket = $this->DBST->consulta("select Ticket from t_servicios_ticket where Id = '".$datos['servicio']."'")[0]['Ticket'];
+        $ticket = $this->DBST->consulta("select Ticket from t_servicios_ticket where Id = '" . $datos['servicio'] . "'")[0]['Ticket'];
         $direccionFirma = '/storage/Archivos/imagenesFirmas/DocumentacionFirma/' . str_replace(' ', '_', 'Firma_' . $ticket . '_' . $datos['servicio']) . '.png';
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $data);
         $fechaNueva = str_replace(' ', '_', $fecha);
@@ -2407,7 +2428,11 @@ class ServiciosTicket extends General {
             'Firma' => $direccionFirma,
             'UrlArchivo' => $path
         ));
-        $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+        if($permisoPDF){
+            $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+        }else{
+            $PDF = '';
+        }
         $descripcion = 'Descripción: <strong>Se le ha mandado un documento del avance del día de hoy.</strong><br>';
         $titulo = 'Documento Firmado - Avance';
         $texto = '<p>Estimado(a) <strong>' . $datos['recibe'] . '</strong>, se le ha mandado el reporte firmado.</p>' . $descripcion . $PDF;
