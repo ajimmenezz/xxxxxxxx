@@ -24,6 +24,7 @@ $(function () {
             url = 'Seguimiento/Servicio_Datos';
         }
         
+//        console.log(servicio);
         if (datosFila[6] === 'ABIERTO') {
             modal.mostrarModal(); 
             modal.eventoCancelar();

@@ -45,6 +45,8 @@ class Utileria {
                 }
             } catch (exception) {
                 $('#btnModalConfirmar').addClass('hidden');
+                $('#btnModalAbortar').removeClass('hidden');
+                
                 _this.evento.mostrarModal('Error en el Servidor', '<div id="modal-dialogo" class="col-md-12">\n\
                     <div class="col-md-3" style="text-align: right;">\n\
                         <i class="fa fa-exclamation-triangle fa-4x text-danger"></i>\n\
