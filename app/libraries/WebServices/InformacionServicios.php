@@ -1286,10 +1286,10 @@ class InformacionServicios extends General {
                         }
                     }
 
-                    if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
-                        $this->setCellValue(30, 5, "Falla Reportada:", 'R');
-                        $restarY = $restarYFallaReportada;
-                    }
+//                    if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
+//                        $this->setCellValue(30, 5, "Falla Reportada:", 'R');
+//                        $restarY = $restarYFallaReportada;
+//                    }
 
                     $this->setStyleSubtitle();
                     $this->setCoordinates(40, $this->y - $restarY);
@@ -1305,9 +1305,9 @@ class InformacionServicios extends General {
                         $this->setCellValue(0, 5, $generales['FechaConclusion'], 'L', true);
                     }
 
-                    if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
-                        $this->setCellValue(0, 5, $generales['FallaReportada'], 'L');
-                    }
+//                    if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
+//                        $this->setCellValue(0, 5, $generales['FallaReportada'], 'L');
+//                    }
 
                     $this->setCoordinates(10);
 
@@ -1389,10 +1389,10 @@ class InformacionServicios extends General {
             }
         }
 
-        if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
-            $this->setCellValue(30, 5, "Falla Reportada:", 'R');
-            $restarY = $restarYFallaReportada;
-        }
+//        if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
+//            $this->setCellValue(30, 5, "Falla Reportada:", 'R');
+//            $restarY = $restarYFallaReportada;
+//        }
 
         $this->setStyleSubtitle();
         $this->setCoordinates(40, $this->y - $restarY);
@@ -1415,9 +1415,9 @@ class InformacionServicios extends General {
             $this->setCellValue(0, 5, $generales['FechaConclusion'], 'L', true);
         }
 
-        if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
-            $this->setCellValue(0, 5, $generales['FallaReportada'], 'L');
-        }
+//        if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
+//            $this->setCellValue(0, 5, $generales['FallaReportada'], 'L');
+//        }
 
         if ($generales['HasSeguimiento'] === '0') {
             $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
@@ -1769,7 +1769,6 @@ class InformacionServicios extends General {
                 for ($i = 1; $i <= 4; $i++) {
                     if (isset($evidencias[$indice]) && $evidencias[$indice] != '') {
                         $image = $evidencias[$indice];
-//                        var_dump($image);
                         if (!in_array(pathinfo($image, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
                             $image = '/assets/img/Iconos/no-thumbnail.jpg';
                         }

@@ -5110,13 +5110,6 @@ $(function () {
         $("#btnGuardarReporteFalsoCorrectivo").off("click");
         $("#btnGuardarReporteFalsoCorrectivo").on("click", function (e) {
             var data = {servicio: servicio};
-            if (
-                    validarCampos(
-//                            $("#inputFallaReportadaDiagnostico").val(),
-                            ".errorFormularioReporteFalsoCorrectivo",
-                            "Falla reportada en sitio."
-                            )
-                    ) {
                 evento.enviarEvento(
                         "Seguimiento/varifiarBitacora",
                         data,
@@ -5195,17 +5188,9 @@ $(function () {
                             }
                         }
                 );
-            }
         });
         $("#btnGuardarImpericiaCorrectivo").off("click");
         $("#btnGuardarImpericiaCorrectivo").on("click", function (e) {
-            if (
-                    validarCampos(
-//                            $("#inputFallaReportadaDiagnostico").val(),
-                            ".errorFormularioImpericiaCorrectivo",
-                            "Falla reportada en sitio."
-                            )
-                    ) {
                 if (
                         validarCampos(
                                 $("#inputObservacionesImpericiaCorrectivo").val(),
@@ -5289,17 +5274,9 @@ $(function () {
                         }
                     }
                 }
-            }
         });
         $("#btnGuardarFallaEquipoCorrectivo").off("click");
         $("#btnGuardarFallaEquipoCorrectivo").on("click", function (e) {
-            if (
-                    validarCampos(
-//                            $("#inputFallaReportadaDiagnostico").val(),
-                            ".errorFormularioFallaEquipoCorrectivo",
-                            "Falla reportada en sitio."
-                            )
-                    ) {
                 if (
                         validarCampos(
                                 $("#inputObservacionesFallaEquipoCorrectivo").val(),
@@ -5383,17 +5360,9 @@ $(function () {
                         }
                     }
                 }
-            }
         });
         $("#btnGuardarFallaComponenteCorrectivo").off("click");
         $("#btnGuardarFallaComponenteCorrectivo").on("click", function (e) {
-            if (
-                    validarCampos(
-//                            $("#inputFallaReportadaDiagnostico").val(),
-                            ".errorFormularioFallaComponenteCorrectivo",
-                            "Falla reportada en sitio."
-                            )
-                    ) {
                 if (
                         validarCampos(
                                 $("#inputObservacionesFallaComponenteCorrectivo").val(),
@@ -5487,17 +5456,9 @@ $(function () {
                         }
                     }
                 }
-            }
         });
         $("#btnGuardarReporteMultimediaCorrectivo").off("click");
         $("#btnGuardarReporteMultimediaCorrectivo").on("click", function (e) {
-            if (
-                    validarCampos(
-//                            $("#inputFallaReportadaDiagnostico").val(),
-                            ".errorFormularioReporteMultimediaCorrectivo",
-                            "Falla reportada en sitio."
-                            )
-                    ) {
                 if (
                         validarCampos(
                                 $("#inputObservacionesReporteMultimediaCorrectivo").val(),
@@ -5568,7 +5529,6 @@ $(function () {
                                 );
                     }
                 }
-            }
         });
         $("#btnAgregarSolicitudRefaccion").off("click");
         $("#btnAgregarSolicitudRefaccion").on("click", function (e) {
