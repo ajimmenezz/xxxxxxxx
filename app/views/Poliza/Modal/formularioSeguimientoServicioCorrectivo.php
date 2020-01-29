@@ -47,7 +47,7 @@
                 <li class=""><a href="#Notas" data-toggle="tab">Conversación</a></li>
                 <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
                 <?php
-                if($datosServicio["IdEstatus"] == 3)
+//                if($datosServicio["IdEstatus"] == 3)
 //                    echo '<a id="solicitarTraslado" class="btn btn-xs btn-primary"><i class=""></i>Traslado</a>';
                 ?>
             </ul>
@@ -375,12 +375,12 @@
                 </div>
                 <!--Finalizando Separador-->
 
-                <div class="row m-b-15">
+<!--                <div class="row m-b-15">
                     <div class="col-md-12">
                         <label>Falla reportada en sitio *</label>
                         <input id="inputFallaReportadaDiagnostico" type="text" class="form-control"  placeholder="Ingrese la persona que recibe" value="" maxlength="250"/>
                     </div>
-                </div>
+                </div>-->
 
 
                 <ul class="nav nav-pills">

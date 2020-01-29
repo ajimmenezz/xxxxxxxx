@@ -2537,7 +2537,8 @@ class InformacionServicios extends General {
     
     private function obtenerEquipoMaterialServicio(string $servicio) {
         $serviciosAvance = $this->DBST->servicioAvanceProblema($servicio);
-        $folio = $this->DBST->consulta('select folioByServicio('.$servicio.') as folio')[0]['folio'];
+        $folio = '';
+        $folio .= $this->DBST->consulta('select folioByServicio('.$servicio.') as folio')[0]['folio'];
         $equipoMaterial = array();
         
         if($serviciosAvance){
