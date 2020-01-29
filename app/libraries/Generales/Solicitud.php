@@ -1664,24 +1664,45 @@ class Solicitud extends General {
     }
 
     public function concluirSolicitudesAbiertas() {
-        $direccion = archivosAdjuntosCorreo(array('correo' => 'abarcenas@siccob.com.mx',
+        $direccionItem = archivosAdjuntosCorreo(array('correo' => 'abarcenas@siccob.com.mx',
             'password' => 'Alberto-132',
             'asunto' => 'Catalogo Item SD'));
+        $direccionSubcategoria = archivosAdjuntosCorreo(array('correo' => 'abarcenas@siccob.com.mx',
+            'password' => 'Alberto-132',
+            'asunto' => 'Catalogo Subcategorias SD'));
 
-        $arrayExcel = $this->Excel->dataImportExcel(array('direccion' => $_SERVER['DOCUMENT_ROOT'] . $direccion['message']));
-        $arrayExcelNuevo = array();
+        $arrayExcelItem = $this->Excel->dataImportExcel(array('direccion' => $_SERVER['DOCUMENT_ROOT'] . $direccionItem['message']));
+        $arrayExcelSubcategoria = $this->Excel->dataImportExcel(array('direccion' => $_SERVER['DOCUMENT_ROOT'] . $direccionSubcategoria['message']));
+        
+        $arrayExcelItemNuevo = array();
+        $arrayExcelSubcategoriaNuevo = array();
+        
 
 
-        foreach ($arrayExcel as $key => $value) {
-            $arrayExcelNuevo[$key]['IdItem'] = $value[1];
-            $arrayExcelNuevo[$key]['IdSubcategoria'] = $value[2];
-            $arrayExcelNuevo[$key]['Nombre'] = $value[3];
+        foreach ($arrayExcelItem as $key => $value) {
+            $arrayExcelItemNuevo[$key]['IdItem'] = $value[1];
+            $arrayExcelItemNuevo[$key]['IdSubcategoria'] = $value[2];
+            $arrayExcelItemNuevo[$key]['Nombre'] = $value[3];
         }
         
         $this->SegundoPlano->truncar('TRUNCATE cat_v3_sd_item');
 
-        foreach ($arrayExcelNuevo as $key => $value) {
+        foreach ($arrayExcelItemNuevo as $key => $value) {
             $this->DBS->setDatosSolicitudInternas('cat_v3_sd_item', $value);
+        }
+        
+        
+        
+        
+        foreach ($arrayExcelSubcategoria as $key => $value) {
+            $arrayExcelSubcategoriaNuevo[$key]['IdSubcategoria'] = $value[1];
+            $arrayExcelSubcategoriaNuevo[$key]['Nombre'] = $value[2];
+        }
+        
+        $this->SegundoPlano->truncar('TRUNCATE cat_v3_sd_subcategoria');
+
+        foreach ($arrayExcelSubcategoriaNuevo as $key => $value) {
+            $this->DBS->setDatosSolicitudInternas('cat_v3_sd_subcategoria', $value);
         }
 
 

@@ -1189,7 +1189,8 @@ class InformacionServicios extends General {
         tsa.Descripcion,
         tsa.Archivos as Evidencias
         from t_servicios_avance tsa
-        where tsa.IdServicio = '" . $id . "'");
+        where tsa.IdServicio = '" . $id . "'
+        and tsa.Flag = '1'");
         if (!empty($consulta)) {
             foreach ($consulta as $key => $value) {
                 $cmateriales = $this->DBS->consulta("SELECT 
