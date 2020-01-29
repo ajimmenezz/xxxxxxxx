@@ -6854,12 +6854,7 @@ $(function () {
             );
         });
         $('#solicitarTraslado').on("click", function () {
-            var datos = {ticket: respuesta.datosServicio.Ticket, extra: true, idServicio: ''};
-//            evento.enviarEvento('/Poliza/Seguimiento_Equipos', datos, '#seccion-servicio-correctivo', function (respuesta) {
-//                console.log(_this);
-//                _this.replaceWith(respuesta);
-                window.open('/Poliza/Seguimiento_Equipos');
-//            });
+            window.open('/Poliza/Seguimiento_Equipos', '_self');
         });
 
         $("#btnAgregarObservacionesReporteFalso").off("click");
