@@ -1,6 +1,6 @@
-$(function () {
-    var evento = new Base();
-    var websocket = new Socket();
+function seguimientoOld(evento) {
+    //var evento = new Base();
+    //var websocket = new Socket();
     var file = new Upload();
     var file3 = new Upload();
     var tabla = new Tabla();
@@ -12,15 +12,15 @@ $(function () {
     tablaAuxiliar = new Tabla();
     servicioAuxiliar = new Servicio();
     //Evento que maneja las peticiones del socket
-    websocket.socketMensaje();
+    //websocket.socketMensaje();
     //Muestra la hora en el sistema
-    evento.horaServidor($("#horaServidor").val());
+   // evento.horaServidor($("#horaServidor").val());
     //Evento para cerra la session
-    evento.cerrarSesion();
+    //evento.cerrarSesion();
     //Creando tabla de areas
-    tabla.generaTablaPersonal("#data-table-poliza", null, null, true, true, [
-        [0, "desc"]
-    ]);
+//    tabla.generaTablaPersonal("#data-table-poliza", null, null, true, true, [
+//        [0, "desc"]
+//    ]);
     //Evento para mostrar la ayuda del sistema
     evento.mostrarAyuda("Ayuda_Proyectos");
     //Inicializa funciones de la plantilla
@@ -54,68 +54,68 @@ $(function () {
     });
 
     //Evento que carga la seccion de seguimiento de un servicio de tipo Poliza
-    $("#data-table-poliza tbody").on("click", "tr", function () {
-        var datos = $("#data-table-poliza").DataTable().row(this).data();
-        if (datos !== undefined) {
-            var servicio = datos[0];
-            var operacion = datos[7];
-            if (operacion === "1") {
-                var html =
-                        '<div id="confirmacionServicioPoliza">\n\
-                                <div class="row">\n\
-                                    <div id="mensaje-modal" class="col-md-12 text-center">\n\
-                                        <h3>¿Quieres atender el servicio?</h3>\n\
-                                    </div>\n\
-                                </div>\n\
-                            </div>';
-                html +=
-                        '<div class="row m-t-20">\n\
-                                <div class="col-md-12 text-center">\n\
-                                    <button id="btnIniciarServicio" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
-                                    <button id="btnCancelarIniciarServicio" type="button" class="btn btn-sm btn-danger"><i class="fa fa-times"></i> Cerrar</button>\n\
-                                </div>\n\
-                            </div>';
-                $("#btnModalConfirmar").addClass("hidden");
-                $("#btnModalAbortar").addClass("hidden");
-                evento.mostrarModal("Iniciar Servicio", html);
-                $("#btnModalConfirmar").empty().append("Eliminar");
-                $("#btnModalConfirmar").off("click");
-                $("#btnIniciarServicio").off("click");
-                $("#btnIniciarServicio").on("click", function () {
-                    $(this).addClass("disabled");
-                    $("#btnCancelarIniciarServicio").addClass("disabled");
-                    var data = {servicio: servicio, operacion: "1"};
-                    evento.enviarEvento(
-                            "Seguimiento/Servicio_Datos",
-                            data,
-                            "#modal-dialogo",
-                            function (respuesta) {
-                                evento.cerrarModal();
-                                data = {servicio: servicio, operacion: "2"};
-                                cargarFormularioSeguimiento(
-                                        data,
-                                        datos,
-                                        "#panelSeguimientoPoliza"
-                                        );
-                                recargandoTablaPoliza(respuesta.informacion);
-                            }
-                    );
-                });
-                //Envento para concluir con la cancelacion
-                $("#btnCancelarIniciarServicio").on("click", function () {
-                    evento.cerrarModal();
-                });
-            } else if (
-                    operacion === "2" ||
-                    operacion === "3" ||
-                    operacion === "12" ||
-                    operacion === "10"
-                    ) {
-                var data = {servicio: servicio, operacion: "2"};
-                cargarFormularioSeguimiento(data, datos, "#panelSeguimientoPoliza");
-            }
-        }
-    });
+//    $("#data-table-poliza tbody").on("click", "tr", function () {
+//        var datos = $("#data-table-poliza").DataTable().row(this).data();
+//        if (datos !== undefined) {
+//            var servicio = datos[0];
+//            var operacion = datos[7];
+//            if (operacion === "1") {
+//                var html =
+//                        '<div id="confirmacionServicioPoliza">\n\
+//                                <div class="row">\n\
+//                                    <div id="mensaje-modal" class="col-md-12 text-center">\n\
+//                                        <h3>¿Quieres atender el servicio?</h3>\n\
+//                                    </div>\n\
+//                                </div>\n\
+//                            </div>';
+//                html +=
+//                        '<div class="row m-t-20">\n\
+//                                <div class="col-md-12 text-center">\n\
+//                                    <button id="btnIniciarServicio" type="button" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</button>\n\
+//                                    <button id="btnCancelarIniciarServicio" type="button" class="btn btn-sm btn-danger"><i class="fa fa-times"></i> Cerrar</button>\n\
+//                                </div>\n\
+//                            </div>';
+//                $("#btnModalConfirmar").addClass("hidden");
+//                $("#btnModalAbortar").addClass("hidden");
+//                evento.mostrarModal("Iniciar Servicio", html);
+//                $("#btnModalConfirmar").empty().append("Eliminar");
+//                $("#btnModalConfirmar").off("click");
+//                $("#btnIniciarServicio").off("click");
+//                $("#btnIniciarServicio").on("click", function () {
+//                    $(this).addClass("disabled");
+//                    $("#btnCancelarIniciarServicio").addClass("disabled");
+//                    var data = {servicio: servicio, operacion: "1"};
+//                    evento.enviarEvento(
+//                            "Seguimiento/Servicio_Datos",
+//                            data,
+//                            "#modal-dialogo",
+//                            function (respuesta) {
+//                                evento.cerrarModal();
+//                                data = {servicio: servicio, operacion: "2"};
+//                                cargarFormularioSeguimiento(
+//                                        data,
+//                                        datos,
+//                                        "#panelSeguimientoPoliza"
+//                                        );
+//                                recargandoTablaPoliza(respuesta.informacion);
+//                            }
+//                    );
+//                });
+//                //Envento para concluir con la cancelacion
+//                $("#btnCancelarIniciarServicio").on("click", function () {
+//                    evento.cerrarModal();
+//                });
+//            } else if (
+//                    operacion === "2" ||
+//                    operacion === "3" ||
+//                    operacion === "12" ||
+//                    operacion === "10"
+//                    ) {
+//                var data = {servicio: servicio, operacion: "2"};
+//                cargarFormularioSeguimiento(data, datos, "#panelSeguimientoPoliza");
+//            }
+//        }
+//    });
     var cargarFormularioSeguimiento = function () {
         var data = arguments[0];
         var datosTabla = arguments[1];
@@ -9597,22 +9597,22 @@ $(function () {
     //radio inputs valor
     $("input:radio[name=optionsRadios]:checked").val();
     //tablas
-    tabla.generaTablaPersonal(
-            "#lista-equipos-enviados-solicitados",
-            null,
-            null,
-            true,
-            true,
-            [[0, "desc"]]
-            );
-    tabla.generaTablaPersonal(
-            "#listaRefaccionUtilizada",
-            null,
-            null,
-            true,
-            true,
-            [[0, "desc"]]
-            );
+//    tabla.generaTablaPersonal(
+//            "#lista-equipos-enviados-solicitados",
+//            null,
+//            null,
+//            true,
+//            true,
+//            [[0, "desc"]]
+//            );
+//    tabla.generaTablaPersonal(
+//            "#listaRefaccionUtilizada",
+//            null,
+//            null,
+//            true,
+//            true,
+//            [[0, "desc"]]
+//            );
     //Iniciar input archivos
     file.crearUpload("#archivosProblemaGuia", "Seguimiento/subirProblema");
     file.crearUpload("#evidenciaEnvio", "Seguimiento/subirEvidenciaEnvio");
@@ -9640,7 +9640,7 @@ $(function () {
             "#evidenciaRecepcionTecnico",
             "Seguimiento/subirAdjuntosLabHistorial"
             );
-});
+};
 var eventoAuxiliar;
 var tablaAuxiliar;
 var servicioAuxiliar;
