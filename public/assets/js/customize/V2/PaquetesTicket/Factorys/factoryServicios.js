@@ -1,18 +1,16 @@
  class factoryServicio{
      
      constructor() {
-        this.objeto = null;
+        this.objeto = undefined;
     }
 
     getInstance(tipoServicio, datos = {}) {
+        
         switch (tipoServicio) {
             case 'Instalaciones':
                 this.objeto = new ServicioInstalaciones();
                 console.log(tipoServicio);
-                break;            
-            default:
-                throw (`No se encontro el servicio ${tipoServicio}`);                
-                break;
+                break;                        
         }
         return this.objeto;
     }

@@ -1,9 +1,11 @@
 $(function () {
-    var evento = new Base();
-    let tablaServicios = new TablaBasica('data-table-poliza');
-    let factoryServicios = new factoryServicio();
+    let evento = new Base();
+    let tablaServicios = new TablaBasica('data-table-poliza');    
     let modal = new ModalServicio('modal-dialogo');
     let servicio = undefined;
+    let servidor = new Utileria();
+    
+    
     //Muestra la hora en el sistema
     evento.horaServidor($("#horaServidor").val());
     //Evento para cerra la session
@@ -12,21 +14,26 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
-    tablaServicios.evento(function () {
-        let datos = tablaServicios.datosFila(this);
+    tablaServicios.evento(function () {                
+        let url = 'Seguimiento/Atender/';
+        let factoryServicios = new factoryServicio();
+        let datosFila = tablaServicios.datosFila(this);
+        servicio = factoryServicios.getInstance(datosFila[3]);
         
-        try {
-            servicio = factoryServicios.getInstance(datos[3]);
-        } catch (error) {
-            console.log(error, datos);
-        } finally {
-            if (datos[6] === 'ABIERTO') {
-                modal.mostrarModal(); 
-                modal.eventoCancelar();                
-            } else {
-
-            }
+        if(typeof servicio !== undefined){
+            url = 'Seguimiento/Servicio_Datos';
         }
+        
+        if (datosFila[6] === 'ABIERTO') {
+            modal.mostrarModal(); 
+            modal.eventoCancelar();
+            modal.eventoIniciar(function(){
+                servidor.enviar('modal-dialogo','',{},datos => {
+                    console.log(datos);
+                });                
+            });
+        }
+        
 
 
     });

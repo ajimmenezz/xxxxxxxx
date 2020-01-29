@@ -1,5 +1,5 @@
 class ModalServicio extends Modal {
-    
+
     constructor(nombreModal = '') {
         super(nombreModal);
     }
@@ -7,8 +7,8 @@ class ModalServicio extends Modal {
     mostrarModal() {
 
         let titulo = 'Iniciar Servicio';
-        
-         var contenido = `<div id="confirmacionServicioPoliza">  
+
+        var contenido = `<div id="confirmacionServicioPoliza">  
                             <div class="row">
                                 <div id="mensaje-modal" class="col-md-12 text-center">
                                     <h3>¿Quieres atender el servicio?</h3>
@@ -22,21 +22,21 @@ class ModalServicio extends Modal {
                             </div>
                           </div>`;
         super.ocultarBotonAceptar();
-        super.ocultarBotonCanelar();               
-        super.mostrarModal(titulo,contenido);
+        super.ocultarBotonCanelar();
+        super.mostrarModal(titulo, contenido);
     }
-    
-    eventoIniciar(callback){
-        callback;
+
+    eventoIniciar(callback) {
+        $('#btnIniciarServicio').on('click', callback);
     }
-    
-    eventoCancelar(){
+
+    eventoCancelar() {
         let _this = this;
-        $('#btnCancelarIniciarServicio').on('click', function(){
-            _this.cerrarModal();            
+        $('#btnCancelarIniciarServicio').on('click', function () {
+            _this.cerrarModal();
         });
     }
-        
+
 }
 
 

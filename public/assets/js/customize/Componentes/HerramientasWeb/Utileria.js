@@ -53,7 +53,7 @@ class Utileria {
                         <h4>No Existe la información que solicita. Contacte con el administrador</h4>\n\
                     </div>\n\
                 </div>');
-                console.log('Error', `Surgio un problema de comunicación con el servidor`);
+                console.log('Error', `Surgio un problema de comunicación con el servidor : ${exception}`);
             }
         });
     }
