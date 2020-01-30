@@ -771,6 +771,7 @@ class Modelo_Censos extends Modelo_Base
             inner join t_servicios_ticket tst on tst.Id = (select MAX(Id) from t_servicios_ticket where IdSucursal = cs.Id and IdTipoServicio = 11 and IdEstatus in(4,2,5))
             where cs.Flag = 1
             and cs.IdCliente = (select IdCliente  from cat_v3_sucursales where Id = (select IdSucursal from t_servicios_ticket where Id = '" . $servicio . "'))
+            and cs.Id <> (select IdSucursal from t_servicios_ticket where Id = '" . $servicio . "')
         ) and tc.Serie in (\"" . $series . "\")
         and tc.IdServicio <> '" . $servicio . "'");
 

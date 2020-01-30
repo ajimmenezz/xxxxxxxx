@@ -2007,7 +2007,7 @@ class Seguimientos extends General
             'Gerente' => $datos['recibe'],
             'CopiasCorreo' => $correo,
             'FechaFirma' => $fecha
-                ), array('Id' => $datosDiagnostico[0]['Id']));
+        ), array('Id' => $datosDiagnostico[0]['Id']));
 
         $datosTecnico = $this->DBS->consultaGeneralSeguimiento('SELECT 
                                                                     (SELECT 
@@ -2026,7 +2026,7 @@ class Seguimientos extends General
             'FechaFirma' => $fecha,
             'IdTecnicoFirma' => $datosTecnico[0]['Tecnico'],
             'FirmaTecnico' => $datosTecnico[0]['Firma']
-                ), array('Id' => $datos['servicio']));
+        ), array('Id' => $datos['servicio']));
 
         $archivo = 'Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_CorrectivoImpericia.pdf ';
         $pdf = $this->InformacionServicios->definirPDF(array('servicio' => $datos['servicio'], 'archivo' => $archivo));
@@ -2042,9 +2042,9 @@ class Seguimientos extends General
 
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
-        if($permisoPDF == true){
+        if ($permisoPDF == true) {
             $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
-        }else{
+        } else {
             $PDF = '';
         }
         $descripcionImpericia = $descripcionDiagnostico . 'Descripción: <strong>' . $datosDiagnostico[0]['Observaciones'] . '</strong><br>';
@@ -2108,9 +2108,9 @@ class Seguimientos extends General
         $correoSupervisor = $this->consultaCorreoSupervisorXSucursal($datos['sucursal']);
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
-        if($permisoPDF){
+        if ($permisoPDF) {
             $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
-        }else{
+        } else {
             $PDF = '';
         }
         $titulo = 'Retiro a Garantía con Respaldo';
@@ -2203,9 +2203,9 @@ class Seguimientos extends General
         $correoSupervisor = $this->consultaCorreoSupervisorXSucursal($datos['sucursal']);
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
-        if($permisoPDF){
+        if ($permisoPDF) {
             $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
-        }else{
+        } else {
             $PDF = '';
         }
         $titulo = 'Acuse de Entrega';
@@ -2869,9 +2869,9 @@ class Seguimientos extends General
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
         $path = $this->getServicioToPdf($datos);
-        if($permisoPDF){
-        $linkPDF = '<br>Ver PDF Resumen General <a href="' . $path . '" target="_blank">Aquí</a>';
-        }else{
+        if ($permisoPDF) {
+            $linkPDF = '<br>Ver PDF Resumen General <a href="' . $path . '" target="_blank">Aquí</a>';
+        } else {
             $linkPDF = '';
         }
         $datosDescripcionConclusion = $this->DBS->consultaGeneralSeguimiento('SELECT
@@ -2965,7 +2965,7 @@ class Seguimientos extends General
         } else {
             $datosServicio = array();
         }
-        
+
         if (!empty($datosServicio)) {
             return ['code' => 200, 'mensaje' => 'Correcto', 'datosTabla' => $datosServicio];
         } else {
@@ -7058,7 +7058,7 @@ class Seguimientos extends General
                         $value[0],
                         $value[1],
                         $value[2],
-                        $serie,                        
+                        $serie,
                         $value[4]
                     ];
                     if ($key > 0) {
@@ -7199,5 +7199,81 @@ class Seguimientos extends General
     {
         $counts = array_count_values($array);
         return $counts[$value];
+    }
+
+    public function verificarDuplicidadCenso($data)
+    {
+        $censo = $this->DBCensos->getCensoForTemplate($data['servicio']);
+        $catalogos = [
+            'areas' => $this->DBCensos->getAreasForCensoCompare(),
+            'devices' => $this->DBCensos->getDevicesForCensoCompare(),
+            'domain' => $this->DBCensos->getDomainBranchByService($data['servicio'])
+        ];
+
+        $allRows = [];
+        $corrects = [];
+        $incorrects = [];
+        $arraySeries = [];
+        $series = '';
+
+        foreach ($censo as $key => $value) {
+            $serie = str_replace(' ', '', $value['Serie']);
+            if (!in_array($serie, ['ILEGIBLE', 'ilegible'])) {
+                array_push($arraySeries, $serie);
+            }
+        }
+        $series = implode('","', $arraySeries);
+        $arraySeriesDuplicadas = $this->DBCensos->getDuplicitySeries($data['servicio'], $series);
+
+        foreach ($censo as $key => $value) {
+            $serie = str_replace(' ', '', $value['Serie']);
+
+            $rowIncorrect = [
+                $value['Area'],
+                $value['Punto'],
+                $value['Modelo'],
+                $serie,
+                $value['Forced']
+            ];
+
+            $pasa = true;
+            if (!array_key_exists($value['Area'], $catalogos['areas'])) {
+                $pasa = false;
+                $rowIncorrect[5] = 'La clave de área no coincide con ningún registro';
+                array_push($incorrects, $rowIncorrect);
+            } else if (!array_key_exists($value['Modelo'], $catalogos['devices'])) {
+                $pasa = false;
+                $rowIncorrect[5] = 'El modelo no coincide con ningún registro';
+                array_push($incorrects, $rowIncorrect);
+            } else if (!in_array($serie, ['ILEGIBLE', 'ilegible'])) {
+                if ($this->count_value_in_array($arraySeries, $serie) > 1) {
+                    $pasa = false;
+                    $rowIncorrect[5] = 'La serie está duplicada en este archivo';
+                    array_push($incorrects, $rowIncorrect);
+                } else if (array_key_exists($serie, $arraySeriesDuplicadas) && $value['Forced'] != 1) {
+                    $pasa = false;
+                    $rowIncorrect[5] = 'La serie está duplicada en la sucursal ' . $arraySeriesDuplicadas[$serie]['Sucursal'] . ' en el ticket ' . $arraySeriesDuplicadas[$serie]['Ticket'];
+                    array_push($incorrects, $rowIncorrect);
+                }
+            }
+
+            if ($pasa) {
+                array_push($corrects, $rowIncorrect);
+            }
+
+            array_push($allRows, $rowIncorrect);
+        }
+
+        if (!empty($incorrects)) {
+            $dataErrorFile = [
+                'censo' => $allRows,
+                'incorrects' => $incorrects,
+                'servicio' => $data['servicio']
+            ];
+            $errorFile = $this->getErrorFileCensoUpload($dataErrorFile);
+            return ['code' => 500, 'message' => '<p class="text-center">Se encontraron algunos errores en la información. <a href="' . $errorFile . '">ESTE ARCHIVO</a> contiene el resumen de los problemas<br />Se recomienda que lleve a cabo los cambios en el archivo y despues suba la plantilla para evitar errores</p>'];
+        } else {
+            return ['code' => 200];
+        }
     }
 }
