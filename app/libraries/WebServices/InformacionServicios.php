@@ -1807,6 +1807,7 @@ class InformacionServicios extends General {
 
         $firmas = $this->getFirmasServicio($datos['servicio']);
 
+        $this->setStyleSubtitle();
         if (!empty($firmas['Firma'])) {
             $this->setFirmasGerenteTecnico($datos);
         } elseif (!empty($diagnostico['Firma'])) {
