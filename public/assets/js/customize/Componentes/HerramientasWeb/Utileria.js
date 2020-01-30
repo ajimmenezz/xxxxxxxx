@@ -44,18 +44,18 @@ class Utileria {
                     throw 'Sin atrapar el Error: ' + jqXHR.responseText;
                 }
             } catch (exception) {
-                $('#btnModalConfirmar').addClass('hidden');
-                $('#btnModalAbortar').removeClass('hidden');
-                
-                _this.evento.mostrarModal('Error en el Servidor', '<div id="modal-dialogo" class="col-md-12">\n\
-                    <div class="col-md-3" style="text-align: right;">\n\
-                        <i class="fa fa-exclamation-triangle fa-4x text-danger"></i>\n\
-                    </div>\n\
-                    <div class="col-md-9">\n\
-                        <h4>No Existe la información que solicita. Contacte con el administrador</h4>\n\
-                    </div>\n\
-                </div>');
-                console.log('Error', `Surgio un problema de comunicación con el servidor : ${exception}`);
+//                $('#btnModalConfirmar').addClass('hidden');
+//                
+//                _this.evento.mostrarModal('Error en el Servidor', '<div id="modal-dialogo" class="col-md-12">\n\
+//                    <div class="col-md-3" style="text-align: right;">\n\
+//                        <i class="fa fa-exclamation-triangle fa-4x text-danger"></i>\n\
+//                    </div>\n\
+//                    <div class="col-md-9">\n\
+//                        <h4>No Existe la información que solicita. Contacte con el administrador</h4>\n\
+//                    </div>\n\
+//                </div>');
+//                console.log('Error', `Surgio un problema de comunicación con el servidor : ${exception}`);
+                callback({'error': false, 'mensage': exception});
             }
         });
     }
@@ -115,7 +115,7 @@ class Utileria {
             window.location.href = "Logout";
         } else {
             window.location.href = url;
-        }
+    }
     }
 
     //Plugin Elementos
@@ -128,7 +128,7 @@ class Utileria {
 
         if (elemento.hasClass('hidden')) {
             elemento.removeClass('hidden');
-        }
+    }
     }
 
     ocultarElemento(objeto = null) {
@@ -140,7 +140,7 @@ class Utileria {
 
         if (!elemento.hasClass('hidden')) {
             elemento.addClass('hidden');
-        }
+    }
     }
 }
 

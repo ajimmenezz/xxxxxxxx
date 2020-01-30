@@ -1,5 +1,5 @@
 function seguimientoOld(evento) {
-    //var evento = new Base();
+//    var evento = new Base();
     //var websocket = new Socket();
     var file = new Upload();
     var file3 = new Upload();
@@ -53,7 +53,7 @@ function seguimientoOld(evento) {
         });
     });
 
-    //Evento que carga la seccion de seguimiento de un servicio de tipo Poliza
+//    Evento que carga la seccion de seguimiento de un servicio de tipo Poliza
 //    $("#data-table-poliza tbody").on("click", "tr", function () {
 //        var datos = $("#data-table-poliza").DataTable().row(this).data();
 //        if (datos !== undefined) {
@@ -116,7 +116,13 @@ function seguimientoOld(evento) {
 //            }
 //        }
 //    });
-    var cargarFormularioSeguimiento = function () {
+    
+    
+    prueba = function(){
+        console.log('entro');
+    }
+    
+    this.cargarFormularioSeguimiento = function () {
         var data = arguments[0];
         var datosTabla = arguments[1];
         var panel = arguments[2];
@@ -1585,7 +1591,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var recargandoTablaPoliza = function (informacionServicio) {
+    this.recargandoTablaPoliza = function (informacionServicio) {
         tabla.limpiarTabla("#data-table-poliza");
         $.each(informacionServicio.serviciosAsignados, function (key, item) {
             tabla.agregarFila("#data-table-poliza", [
