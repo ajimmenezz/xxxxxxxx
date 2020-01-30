@@ -422,6 +422,9 @@ class Controller_Seguimiento extends Base
             case 'UploadCensoTemplate':
                 $resultado = $this->Seguimientos->UploadCensoTemplate($this->input->post());
                 break;
+            case 'VerificarDuplicidadCenso':
+                $resultado = $this->Seguimientos->verificarDuplicidadCenso($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
