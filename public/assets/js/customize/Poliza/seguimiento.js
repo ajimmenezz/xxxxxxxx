@@ -5236,359 +5236,469 @@ $(function() {
                 3000
               );
             }
-          }
-        );
-      }
-    });
-    $("#btnGuardarImpericiaCorrectivo").off("click");
-    $("#btnGuardarImpericiaCorrectivo").on("click", function(e) {
-      if (
-        validarCampos(
-          //                            $("#inputFallaReportadaDiagnostico").val(),
-          ".errorFormularioImpericiaCorrectivo",
-          "Falla reportada en sitio."
-        )
-      ) {
-        if (
-          validarCampos(
-            $("#inputObservacionesImpericiaCorrectivo").val(),
-            ".errorFormularioImpericiaCorrectivo",
-            "Debes llenar el campo de Observaciones."
-          )
-        ) {
-          if (
-            validarCampos(
-              $("#selectImpericiaTipoFallaEquipoCorrectivo").val(),
-              ".errorFormularioImpericiaCorrectivo",
-              "Debes seleccionar el campo Tipo de Falla."
-            )
-          ) {
+        });
+        $("#btnGuardarDatosCorrectivo").off("click");
+        $("#btnGuardarDatosCorrectivo").on("click", function (e) {
+            validarFormularioDatosGeneralesCorrectivo(datosTabla);
+        });
+        $("#btnGuardarReporteFalsoCorrectivo").off("click");
+        $("#btnGuardarReporteFalsoCorrectivo").on("click", function (e) {
+            var data = {servicio: servicio};
+                evento.enviarEvento(
+                        "Seguimiento/varifiarBitacora",
+                        data,
+                        "#seccion-servicio-correctivo",
+                        function (resultado) {
+                            if (resultado.code === 200) {
+                                if (respuesta.informacion.diagnosticoEquipo === null) {
+                                    if ($("#evidenciasReporteFalsoCorrectivo").val() !== "") {
+                                        guardarFormularioDiagnosticoEquipoCorrectivo(
+                                                servicio,
+                                                "1",
+                                                $("#inputObservacionesReporteFalsoCorrectivo").val(),
+                                                "#evidenciasReporteFalsoCorrectivo",
+                                                datosTabla,
+                                                "3",
+                                                null,
+                                                respuesta.informacion.diagnosticoEquipo,
+                                                respuesta
+                                                );
+                                    } else {
+                                        evento.mostrarMensaje(
+                                                ".errorFormularioReporteFalsoCorrectivo",
+                                                false,
+                                                "Debes llenar el campo de Evidencias.",
+                                                3000
+                                                );
+                                    }
+                                } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
+                                    if ($("#evidenciasReporteFalsoCorrectivo").val() !== "") {
+                                        guardarFormularioDiagnosticoEquipoCorrectivo(
+                                                servicio,
+                                                "1",
+                                                $("#inputObservacionesReporteFalsoCorrectivo").val(),
+                                                "#evidenciasReporteFalsoCorrectivo",
+                                                datosTabla,
+                                                "3",
+                                                null,
+                                                respuesta.informacion.diagnosticoEquipo,
+                                                respuesta
+                                                );
+                                    } else {
+                                        evento.mostrarMensaje(
+                                                ".errorFormularioReporteFalsoCorrectivo",
+                                                false,
+                                                "Debes llenar el campo de Evidencias.",
+                                                3000
+                                                );
+                                    }
+                                } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+                                    guardarFormularioDiagnosticoEquipoCorrectivo(
+                                            servicio,
+                                            "1",
+                                            $("#inputObservacionesReporteFalsoCorrectivo").val(),
+                                            "#evidenciasReporteFalsoCorrectivo",
+                                            datosTabla,
+                                            "3",
+                                            null,
+                                            respuesta.informacion.diagnosticoEquipo,
+                                            respuesta
+                                            );
+                                } else {
+                                    evento.mostrarMensaje(
+                                            ".errorFormularioReporteFalsoCorrectivo",
+                                            false,
+                                            "Debes llenar el campo de Evidencias.",
+                                            3000
+                                            );
+                                }
+                            } else {
+                                evento.mostrarMensaje(
+                                        ".errorFormularioReporteFalsoCorrectivo",
+                                        false,
+                                        resultado.message,
+                                        3000
+                                        );
+                            }
+                        }
+                );
+        });
+        $("#btnGuardarImpericiaCorrectivo").off("click");
+        $("#btnGuardarImpericiaCorrectivo").on("click", function (e) {
+                if (
+                        validarCampos(
+                                $("#inputObservacionesImpericiaCorrectivo").val(),
+                                ".errorFormularioImpericiaCorrectivo",
+                                "Debes llenar el campo de Observaciones."
+                                )
+                        ) {
+                    if (
+                            validarCampos(
+                                    $("#selectImpericiaTipoFallaEquipoCorrectivo").val(),
+                                    ".errorFormularioImpericiaCorrectivo",
+                                    "Debes seleccionar el campo Tipo de Falla."
+                                    )
+                            ) {
+                        if (
+                                validarCampos(
+                                        $("#selectImpericiaFallaDiagnosticoCorrectivo").val(),
+                                        ".errorFormularioImpericiaCorrectivo",
+                                        "Debes seleccionar el campo Falla."
+                                        )
+                                ) {
+                            if (respuesta.informacion.diagnosticoEquipo === null) {
+                                if ($("#evidenciasImpericiaCorrectivo").val() !== "") {
+                                    guardarFormularioDiagnosticoEquipoCorrectivo(
+                                            servicio,
+                                            "2",
+                                            $("#inputObservacionesImpericiaCorrectivo").val(),
+                                            "#evidenciasImpericiaCorrectivo",
+                                            datosTabla,
+                                            "1",
+                                            "Seguimiento/enviarReporteImpericia",
+                                            respuesta.informacion.diagnosticoEquipo
+                                            );
+                                } else {
+                                    evento.mostrarMensaje(
+                                            ".errorFormularioImpericiaCorrectivo",
+                                            false,
+                                            "Debes llenar el campo de Evidencias.",
+                                            3000
+                                            );
+                                }
+                            } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
+                                if ($("#evidenciasImpericiaCorrectivo").val() !== "") {
+                                    guardarFormularioDiagnosticoEquipoCorrectivo(
+                                            servicio,
+                                            "2",
+                                            $("#inputObservacionesImpericiaCorrectivo").val(),
+                                            "#evidenciasImpericiaCorrectivo",
+                                            datosTabla,
+                                            "1",
+                                            "Seguimiento/enviarReporteImpericia",
+                                            respuesta.informacion.diagnosticoEquipo
+                                            );
+                                } else {
+                                    evento.mostrarMensaje(
+                                            ".errorFormularioImpericiaCorrectivo",
+                                            false,
+                                            "Debes llenar el campo de Evidencias.",
+                                            3000
+                                            );
+                                }
+                            } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+                                guardarFormularioDiagnosticoEquipoCorrectivo(
+                                        servicio,
+                                        "2",
+                                        $("#inputObservacionesImpericiaCorrectivo").val(),
+                                        "#evidenciasImpericiaCorrectivo",
+                                        datosTabla,
+                                        "1",
+                                        "Seguimiento/enviarReporteImpericia",
+                                        respuesta.informacion.diagnosticoEquipo
+                                        );
+                            } else {
+                                evento.mostrarMensaje(
+                                        ".errorFormularioImpericiaCorrectivo",
+                                        false,
+                                        "Debes llenar el campo de Evidencias.",
+                                        3000
+                                        );
+                            }
+                        }
+                    }
+                }
+        });
+        $("#btnGuardarFallaEquipoCorrectivo").off("click");
+        $("#btnGuardarFallaEquipoCorrectivo").on("click", function (e) {
+                if (
+                        validarCampos(
+                                $("#inputObservacionesFallaEquipoCorrectivo").val(),
+                                ".errorFormularioFallaEquipoCorrectivo",
+                                "Debes llenar el campo de Observaciones."
+                                )
+                        ) {
+                    if (
+                            validarCampos(
+                                    $("#selectTipoFallaEquipoCorrectivo").val(),
+                                    ".errorFormularioFallaEquipoCorrectivo",
+                                    "Debes seleccionar el campo Tipo de Falla."
+                                    )
+                            ) {
+                        if (
+                                validarCampos(
+                                        $("#selectFallaDiagnosticoCorrectivo").val(),
+                                        ".errorFormularioFallaEquipoCorrectivo",
+                                        "Debes seleccionar el campo Falla."
+                                        )
+                                ) {
+                            if (respuesta.informacion.diagnosticoEquipo === null) {
+                                if ($("#evidenciasFallaEquipoCorrectivo").val() !== "") {
+                                    guardarFormularioDiagnosticoEquipoCorrectivo(
+                                            servicio,
+                                            "3",
+                                            $("#inputObservacionesFallaEquipoCorrectivo").val(),
+                                            "#evidenciasFallaEquipoCorrectivo",
+                                            datosTabla,
+                                            "",
+                                            "",
+                                            respuesta.informacion.diagnosticoEquipo
+                                            );
+                                } else {
+                                    evento.mostrarMensaje(
+                                            ".errorFormularioFallaEquipoCorrectivo",
+                                            false,
+                                            "Debes llenar el campo de Evidencias.",
+                                            3000
+                                            );
+                                }
+                            } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
+                                if ($("#evidenciasFallaEquipoCorrectivo").val() !== "") {
+                                    guardarFormularioDiagnosticoEquipoCorrectivo(
+                                            servicio,
+                                            "3",
+                                            $("#inputObservacionesFallaEquipoCorrectivo").val(),
+                                            "#evidenciasFallaEquipoCorrectivo",
+                                            datosTabla,
+                                            "",
+                                            "",
+                                            respuesta.informacion.diagnosticoEquipo
+                                            );
+                                } else {
+                                    evento.mostrarMensaje(
+                                            ".errorFormularioFallaEquipoCorrectivo",
+                                            false,
+                                            "Debes llenar el campo de Evidencias.",
+                                            3000
+                                            );
+                                }
+                            } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+                                guardarFormularioDiagnosticoEquipoCorrectivo(
+                                        servicio,
+                                        "3",
+                                        $("#inputObservacionesFallaEquipoCorrectivo").val(),
+                                        "#evidenciasFallaEquipoCorrectivo",
+                                        datosTabla,
+                                        "",
+                                        "",
+                                        respuesta.informacion.diagnosticoEquipo
+                                        );
+                            } else {
+                                evento.mostrarMensaje(
+                                        ".errorFormularioFallaEquipoCorrectivo",
+                                        false,
+                                        "Debes llenar el campo de Evidencias.",
+                                        3000
+                                        );
+                            }
+                        }
+                    }
+                }
+        });
+        $("#btnGuardarFallaComponenteCorrectivo").off("click");
+        $("#btnGuardarFallaComponenteCorrectivo").on("click", function (e) {
+                if (
+                        validarCampos(
+                                $("#inputObservacionesFallaComponenteCorrectivo").val(),
+                                ".errorFormularioFallaComponenteCorrectivo",
+                                "Debes llenar el campo de Observaciones."
+                                )
+                        ) {
+                    if (
+                            validarCampos(
+                                    $("#selectComponenteDiagnosticoCorrectivo").val(),
+                                    ".errorFormularioFallaComponenteCorrectivo",
+                                    "Debes seleccionar el campo Componente."
+                                    )
+                            ) {
+                        if (
+                                validarCampos(
+                                        $("#selectTipoFallaComponenteCorrectivo").val(),
+                                        ".errorFormularioFallaComponenteCorrectivo",
+                                        "Debes seleccionar el campo Tipo de Falla."
+                                        )
+                                ) {
+                            if (
+                                    validarCampos(
+                                            $("#selectFallaComponenteDiagnosticoCorrectivo").val(),
+                                            ".errorFormularioFallaComponenteCorrectivo",
+                                            "Debes seleccionar el campo Falla."
+                                            )
+                                    ) {
+                                if (respuesta.informacion.diagnosticoEquipo === null) {
+                                    if ($("#evidenciasFallaComponenteCorrectivo").val() !== "") {
+                                        guardarFormularioDiagnosticoEquipoCorrectivo(
+                                                servicio,
+                                                "4",
+                                                $("#inputObservacionesFallaComponenteCorrectivo").val(),
+                                                "#evidenciasFallaComponenteCorrectivo",
+                                                datosTabla,
+                                                "",
+                                                "",
+                                                respuesta.informacion.diagnosticoEquipo
+                                                );
+                                    } else {
+                                        evento.mostrarMensaje(
+                                                ".errorFormularioFallaComponenteCorrectivo",
+                                                false,
+                                                "Debes llenar el campo de Evidencias.",
+                                                3000
+                                                );
+                                    }
+                                } else if (
+                                        respuesta.informacion.diagnosticoEquipo.length <= 0
+                                        ) {
+                                    if ($("#evidenciasFallaComponenteCorrectivo").val() !== "") {
+                                        guardarFormularioDiagnosticoEquipoCorrectivo(
+                                                servicio,
+                                                "4",
+                                                $("#inputObservacionesFallaComponenteCorrectivo").val(),
+                                                "#evidenciasFallaComponenteCorrectivo",
+                                                datosTabla,
+                                                "",
+                                                "",
+                                                respuesta.informacion.diagnosticoEquipo
+                                                );
+                                    } else {
+                                        evento.mostrarMensaje(
+                                                ".errorFormularioFallaComponenteCorrectivo",
+                                                false,
+                                                "Debes llenar el campo de Evidencias.",
+                                                3000
+                                                );
+                                    }
+                                } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+                                    guardarFormularioDiagnosticoEquipoCorrectivo(
+                                            servicio,
+                                            "4",
+                                            $("#inputObservacionesFallaComponenteCorrectivo").val(),
+                                            "#evidenciasFallaComponenteCorrectivo",
+                                            datosTabla,
+                                            "",
+                                            "",
+                                            respuesta.informacion.diagnosticoEquipo
+                                            );
+                                } else {
+                                    evento.mostrarMensaje(
+                                            ".errorFormularioFallaComponenteCorrectivo",
+                                            false,
+                                            "Debes llenar el campo de Evidencias.",
+                                            3000
+                                            );
+                                }
+                            }
+                        }
+                    }
+                }
+        });
+        $("#btnGuardarReporteMultimediaCorrectivo").off("click");
+        $("#btnGuardarReporteMultimediaCorrectivo").on("click", function (e) {
+                if (
+                        validarCampos(
+                                $("#inputObservacionesReporteMultimediaCorrectivo").val(),
+                                ".errorFormularioReporteMultimediaCorrectivo",
+                                "Debes llenar el campo de Observaciones."
+                                )
+                        ) {
+                    if (respuesta.informacion.diagnosticoEquipo === null) {
+                        if ($("#evidenciasReporteMultimediaCorrectivo").val() !== "") {
+                            guardarFormularioDiagnosticoEquipoCorrectivo(
+                                    servicio,
+                                    "5",
+                                    $("#inputObservacionesReporteMultimediaCorrectivo").val(),
+                                    "#evidenciasReporteMultimediaCorrectivo",
+                                    datosTabla,
+                                    "3",
+                                    null,
+                                    respuesta.informacion.diagnosticoEquipo,
+                                    respuesta
+                                    );
+                        } else {
+                            evento.mostrarMensaje(
+                                    ".errorFormularioReporteMultimediaCorrectivo",
+                                    false,
+                                    "Debes llenar el campo de Evidencias.",
+                                    3000
+                                    );
+                        }
+                    } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
+                        if ($("#evidenciasReporteMultimediaCorrectivo").val() !== "") {
+                            guardarFormularioDiagnosticoEquipoCorrectivo(
+                                    servicio,
+                                    "5",
+                                    $("#inputObservacionesReporteMultimediaCorrectivo").val(),
+                                    "#evidenciasReporteMultimediaCorrectivo",
+                                    datosTabla,
+                                    "3",
+                                    null,
+                                    respuesta.informacion.diagnosticoEquipo,
+                                    respuesta
+                                    );
+                        } else {
+                            evento.mostrarMensaje(
+                                    ".errorFormularioReporteMultimediaCorrectivo",
+                                    false,
+                                    "Debes llenar el campo de Evidencias.",
+                                    3000
+                                    );
+                        }
+                    } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
+                        guardarFormularioDiagnosticoEquipoCorrectivo(
+                                servicio,
+                                "5",
+                                $("#inputObservacionesReporteMultimediaCorrectivo").val(),
+                                "#evidenciasReporteMultimediaCorrectivo",
+                                datosTabla,
+                                "3",
+                                null,
+                                respuesta.informacion.diagnosticoEquipo,
+                                respuesta
+                                );
+                    } else {
+                        evento.mostrarMensaje(
+                                ".errorFormularioReporteMultimediaCorrectivo",
+                                false,
+                                "Debes llenar el campo de Evidencias.",
+                                3000
+                                );
+                    }
+                }
+        });
+        $("#btnAgregarSolicitudRefaccion").off("click");
+        $("#btnAgregarSolicitudRefaccion").on("click", function (e) {
             if (
-              validarCampos(
-                $("#selectImpericiaFallaDiagnosticoCorrectivo").val(),
-                ".errorFormularioImpericiaCorrectivo",
-                "Debes seleccionar el campo Falla."
-              )
-            ) {
-              if (respuesta.informacion.diagnosticoEquipo === null) {
-                if ($("#evidenciasImpericiaCorrectivo").val() !== "") {
-                  guardarFormularioDiagnosticoEquipoCorrectivo(
-                    servicio,
-                    "2",
-                    $("#inputObservacionesImpericiaCorrectivo").val(),
-                    "#evidenciasImpericiaCorrectivo",
-                    datosTabla,
-                    "1",
-                    "Seguimiento/enviarReporteImpericia",
-                    respuesta.informacion.diagnosticoEquipo
-                  );
-                } else {
-                  evento.mostrarMensaje(
-                    ".errorFormularioImpericiaCorrectivo",
-                    false,
-                    "Debes llenar el campo de Evidencias.",
-                    3000
-                  );
+                    validarCampos(
+                            $("#selectRefaccionSolicitud").val(),
+                            ".errorRefaccionSolicitud",
+                            "Debes seleccionar el campo Refacción."
+                            )
+                    ) {
+                if (
+                        validarCampos(
+                                $("#inputCantidadRefaccionSolicitud").val(),
+                                ".errorRefaccionSolicitud",
+                                "Debes llenar el campo de Cantidad."
+                                )
+                        ) {
+                    if ($("#inputCantidadRefaccionSolicitud").val() > 0) {
+                        if (
+                                validarSolitud(
+                                        "#data-table-solicitud-refacciones",
+                                        $("#selectRefaccionSolicitud").val(),
+                                        ".errorRefaccionSolicitud"
+                                        )
+                                ) {
+                            agregandoSolcitudRefaccion();
+                        }
+                    } else {
+                        evento.mostrarMensaje(
+                                ".errorRefaccionSolicitud",
+                                false,
+                                "Debe ser un número positivo.",
+                                3000
+                                );
+                    }
                 }
-              } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
-                if ($("#evidenciasImpericiaCorrectivo").val() !== "") {
-                  guardarFormularioDiagnosticoEquipoCorrectivo(
-                    servicio,
-                    "2",
-                    $("#inputObservacionesImpericiaCorrectivo").val(),
-                    "#evidenciasImpericiaCorrectivo",
-                    datosTabla,
-                    "1",
-                    "Seguimiento/enviarReporteImpericia",
-                    respuesta.informacion.diagnosticoEquipo
-                  );
-                } else {
-                  evento.mostrarMensaje(
-                    ".errorFormularioImpericiaCorrectivo",
-                    false,
-                    "Debes llenar el campo de Evidencias.",
-                    3000
-                  );
-                }
-              } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
-                guardarFormularioDiagnosticoEquipoCorrectivo(
-                  servicio,
-                  "2",
-                  $("#inputObservacionesImpericiaCorrectivo").val(),
-                  "#evidenciasImpericiaCorrectivo",
-                  datosTabla,
-                  "1",
-                  "Seguimiento/enviarReporteImpericia",
-                  respuesta.informacion.diagnosticoEquipo
-                );
-              } else {
-                evento.mostrarMensaje(
-                  ".errorFormularioImpericiaCorrectivo",
-                  false,
-                  "Debes llenar el campo de Evidencias.",
-                  3000
-                );
-              }
-            }
-          }
-        }
-      }
-    });
-    $("#btnGuardarFallaEquipoCorrectivo").off("click");
-    $("#btnGuardarFallaEquipoCorrectivo").on("click", function(e) {
-      if (
-        validarCampos(
-          //                            $("#inputFallaReportadaDiagnostico").val(),
-          ".errorFormularioFallaEquipoCorrectivo",
-          "Falla reportada en sitio."
-        )
-      ) {
-        if (
-          validarCampos(
-            $("#inputObservacionesFallaEquipoCorrectivo").val(),
-            ".errorFormularioFallaEquipoCorrectivo",
-            "Debes llenar el campo de Observaciones."
-          )
-        ) {
-          if (
-            validarCampos(
-              $("#selectTipoFallaEquipoCorrectivo").val(),
-              ".errorFormularioFallaEquipoCorrectivo",
-              "Debes seleccionar el campo Tipo de Falla."
-            )
-          ) {
-            if (
-              validarCampos(
-                $("#selectFallaDiagnosticoCorrectivo").val(),
-                ".errorFormularioFallaEquipoCorrectivo",
-                "Debes seleccionar el campo Falla."
-              )
-            ) {
-              if (respuesta.informacion.diagnosticoEquipo === null) {
-                if ($("#evidenciasFallaEquipoCorrectivo").val() !== "") {
-                  guardarFormularioDiagnosticoEquipoCorrectivo(
-                    servicio,
-                    "3",
-                    $("#inputObservacionesFallaEquipoCorrectivo").val(),
-                    "#evidenciasFallaEquipoCorrectivo",
-                    datosTabla,
-                    "",
-                    "",
-                    respuesta.informacion.diagnosticoEquipo
-                  );
-                } else {
-                  evento.mostrarMensaje(
-                    ".errorFormularioFallaEquipoCorrectivo",
-                    false,
-                    "Debes llenar el campo de Evidencias.",
-                    3000
-                  );
-                }
-              } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
-                if ($("#evidenciasFallaEquipoCorrectivo").val() !== "") {
-                  guardarFormularioDiagnosticoEquipoCorrectivo(
-                    servicio,
-                    "3",
-                    $("#inputObservacionesFallaEquipoCorrectivo").val(),
-                    "#evidenciasFallaEquipoCorrectivo",
-                    datosTabla,
-                    "",
-                    "",
-                    respuesta.informacion.diagnosticoEquipo
-                  );
-                } else {
-                  evento.mostrarMensaje(
-                    ".errorFormularioFallaEquipoCorrectivo",
-                    false,
-                    "Debes llenar el campo de Evidencias.",
-                    3000
-                  );
-                }
-              } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
-                guardarFormularioDiagnosticoEquipoCorrectivo(
-                  servicio,
-                  "3",
-                  $("#inputObservacionesFallaEquipoCorrectivo").val(),
-                  "#evidenciasFallaEquipoCorrectivo",
-                  datosTabla,
-                  "",
-                  "",
-                  respuesta.informacion.diagnosticoEquipo
-                );
-              } else {
-                evento.mostrarMensaje(
-                  ".errorFormularioFallaEquipoCorrectivo",
-                  false,
-                  "Debes llenar el campo de Evidencias.",
-                  3000
-                );
-              }
-            }
-          }
-        }
-      }
-    });
-    $("#btnGuardarFallaComponenteCorrectivo").off("click");
-    $("#btnGuardarFallaComponenteCorrectivo").on("click", function(e) {
-      if (
-        validarCampos(
-          //                            $("#inputFallaReportadaDiagnostico").val(),
-          ".errorFormularioFallaComponenteCorrectivo",
-          "Falla reportada en sitio."
-        )
-      ) {
-        if (
-          validarCampos(
-            $("#inputObservacionesFallaComponenteCorrectivo").val(),
-            ".errorFormularioFallaComponenteCorrectivo",
-            "Debes llenar el campo de Observaciones."
-          )
-        ) {
-          if (
-            validarCampos(
-              $("#selectComponenteDiagnosticoCorrectivo").val(),
-              ".errorFormularioFallaComponenteCorrectivo",
-              "Debes seleccionar el campo Componente."
-            )
-          ) {
-            if (
-              validarCampos(
-                $("#selectTipoFallaComponenteCorrectivo").val(),
-                ".errorFormularioFallaComponenteCorrectivo",
-                "Debes seleccionar el campo Tipo de Falla."
-              )
-            ) {
-              if (
-                validarCampos(
-                  $("#selectFallaComponenteDiagnosticoCorrectivo").val(),
-                  ".errorFormularioFallaComponenteCorrectivo",
-                  "Debes seleccionar el campo Falla."
-                )
-              ) {
-                if (respuesta.informacion.diagnosticoEquipo === null) {
-                  if ($("#evidenciasFallaComponenteCorrectivo").val() !== "") {
-                    guardarFormularioDiagnosticoEquipoCorrectivo(
-                      servicio,
-                      "4",
-                      $("#inputObservacionesFallaComponenteCorrectivo").val(),
-                      "#evidenciasFallaComponenteCorrectivo",
-                      datosTabla,
-                      "",
-                      "",
-                      respuesta.informacion.diagnosticoEquipo
-                    );
-                  } else {
-                    evento.mostrarMensaje(
-                      ".errorFormularioFallaComponenteCorrectivo",
-                      false,
-                      "Debes llenar el campo de Evidencias.",
-                      3000
-                    );
-                  }
-                } else if (
-                  respuesta.informacion.diagnosticoEquipo.length <= 0
-                ) {
-                  if ($("#evidenciasFallaComponenteCorrectivo").val() !== "") {
-                    guardarFormularioDiagnosticoEquipoCorrectivo(
-                      servicio,
-                      "4",
-                      $("#inputObservacionesFallaComponenteCorrectivo").val(),
-                      "#evidenciasFallaComponenteCorrectivo",
-                      datosTabla,
-                      "",
-                      "",
-                      respuesta.informacion.diagnosticoEquipo
-                    );
-                  } else {
-                    evento.mostrarMensaje(
-                      ".errorFormularioFallaComponenteCorrectivo",
-                      false,
-                      "Debes llenar el campo de Evidencias.",
-                      3000
-                    );
-                  }
-                } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
-                  guardarFormularioDiagnosticoEquipoCorrectivo(
-                    servicio,
-                    "4",
-                    $("#inputObservacionesFallaComponenteCorrectivo").val(),
-                    "#evidenciasFallaComponenteCorrectivo",
-                    datosTabla,
-                    "",
-                    "",
-                    respuesta.informacion.diagnosticoEquipo
-                  );
-                } else {
-                  evento.mostrarMensaje(
-                    ".errorFormularioFallaComponenteCorrectivo",
-                    false,
-                    "Debes llenar el campo de Evidencias.",
-                    3000
-                  );
-                }
-              }
-            }
-          }
-        }
-      }
-    });
-    $("#btnGuardarReporteMultimediaCorrectivo").off("click");
-    $("#btnGuardarReporteMultimediaCorrectivo").on("click", function(e) {
-      if (
-        validarCampos(
-          //                            $("#inputFallaReportadaDiagnostico").val(),
-          ".errorFormularioReporteMultimediaCorrectivo",
-          "Falla reportada en sitio."
-        )
-      ) {
-        if (
-          validarCampos(
-            $("#inputObservacionesReporteMultimediaCorrectivo").val(),
-            ".errorFormularioReporteMultimediaCorrectivo",
-            "Debes llenar el campo de Observaciones."
-          )
-        ) {
-          if (respuesta.informacion.diagnosticoEquipo === null) {
-            if ($("#evidenciasReporteMultimediaCorrectivo").val() !== "") {
-              guardarFormularioDiagnosticoEquipoCorrectivo(
-                servicio,
-                "5",
-                $("#inputObservacionesReporteMultimediaCorrectivo").val(),
-                "#evidenciasReporteMultimediaCorrectivo",
-                datosTabla,
-                "3",
-                null,
-                respuesta.informacion.diagnosticoEquipo,
-                respuesta
-              );
-            } else {
-              evento.mostrarMensaje(
-                ".errorFormularioReporteMultimediaCorrectivo",
-                false,
-                "Debes llenar el campo de Evidencias.",
-                3000
-              );
-            }
-          } else if (respuesta.informacion.diagnosticoEquipo.length <= 0) {
-            if ($("#evidenciasReporteMultimediaCorrectivo").val() !== "") {
-              guardarFormularioDiagnosticoEquipoCorrectivo(
-                servicio,
-                "5",
-                $("#inputObservacionesReporteMultimediaCorrectivo").val(),
-                "#evidenciasReporteMultimediaCorrectivo",
-                datosTabla,
-                "3",
-                null,
-                respuesta.informacion.diagnosticoEquipo,
-                respuesta
-              );
-            } else {
-              evento.mostrarMensaje(
-                ".errorFormularioReporteMultimediaCorrectivo",
-                false,
-                "Debes llenar el campo de Evidencias.",
-                3000
-              );
             }
           } else if (respuesta.informacion.diagnosticoEquipo.length > 0) {
             guardarFormularioDiagnosticoEquipoCorrectivo(
