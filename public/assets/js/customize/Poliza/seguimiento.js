@@ -1,4 +1,4 @@
-function seguimientoOld(evento) {
+function seguimientoOld(evento, datos, datosTabla) {
 //    var evento = new Base();
     //var websocket = new Socket();
     var file = new Upload();
@@ -8,13 +8,13 @@ function seguimientoOld(evento) {
     var servicios = new Servicio();
     var nota = new Nota();
     var dataCategoria;
-    eventoAuxiliar = new Base();
-    tablaAuxiliar = new Tabla();
-    servicioAuxiliar = new Servicio();
+    var eventoAuxiliar = new Base();
+    var tablaAuxiliar = new Tabla();
+    var servicioAuxiliar = new Servicio();
     //Evento que maneja las peticiones del socket
     //websocket.socketMensaje();
     //Muestra la hora en el sistema
-   // evento.horaServidor($("#horaServidor").val());
+    // evento.horaServidor($("#horaServidor").val());
     //Evento para cerra la session
     //evento.cerrarSesion();
     //Creando tabla de areas
@@ -24,7 +24,9 @@ function seguimientoOld(evento) {
     //Evento para mostrar la ayuda del sistema
     evento.mostrarAyuda("Ayuda_Proyectos");
     //Inicializa funciones de la plantilla
-    App.init();
+//    App.init();
+    var data = {servicio: datos.servicio, operacion: datos.operacion};
+    cargarFormularioSeguimiento(data, datosTabla, "#panelSeguimientoPoliza");
 
     $("#btnBuscarFolio").off("click");
     $("#btnBuscarFolio").on("click", function () {
@@ -116,15 +118,12 @@ function seguimientoOld(evento) {
 //            }
 //        }
 //    });
-    
-    
-    prueba = function(){
-        console.log('entro');
-    }
-    
-    this.cargarFormularioSeguimiento = function () {
+
+
+    function cargarFormularioSeguimiento() {
         var data = arguments[0];
         var datosTabla = arguments[1];
+       
         var panel = arguments[2];
         evento.enviarEvento("Seguimiento/Servicio_Datos", data, panel, function (respuesta) {
 
@@ -173,7 +172,7 @@ function seguimientoOld(evento) {
                         colocarBotonGuardarCambiosMantenimiento(respuesta.datosServicio);
                         break;
                     case "20":
-                    case "27":
+                    case "27":                         
                         iniciarElementosPaginaSeguimientoCorrectivo(respuesta, datosTabla);
                         eventosParaSeccionSeguimientoCorrectivo(datosTabla, respuesta);
                         personalizarDependiendoSucursalCorrectivo(respuesta);
@@ -188,7 +187,7 @@ function seguimientoOld(evento) {
         });
     };
     // inicia servicio Checklist
-    var iniciarVistaChecklist = function (data, datosTabla, respuesta) {
+    function iniciarVistaChecklist(data, datosTabla, respuesta) {
         var sucursal = respuesta.informacion.sucursal;
         $("#listaPoliza").addClass("hidden");
         $("#seccionSeguimientoServicio")
@@ -263,7 +262,7 @@ function seguimientoOld(evento) {
             }
         });
     };
-    var limpiarRevisionArea = function () {
+    function limpiarRevisionArea() {
         $(".categoriaRevisionArea li").each(function () {
             $(this).removeClass("active");
         });
@@ -276,7 +275,7 @@ function seguimientoOld(evento) {
                 .siblings("#listaPregunta")
                 .addClass("hidden");
     };
-    var limpiarRevisionPunto = function () {
+    function limpiarRevisionPunto() {
         $(".categoriaRevisionPunto li").each(function () {
             $(this).removeClass("active");
         });
@@ -285,7 +284,7 @@ function seguimientoOld(evento) {
                 .siblings("#checklistRevisionPunto")
                 .addClass("hidden");
     };
-    var concluirServicioChecklist = function () {
+    function concluirServicioChecklist() {
         var servicio = arguments[0];
         var datosTabla = arguments[1];
         var sucursal = arguments[2];
@@ -392,7 +391,7 @@ function seguimientoOld(evento) {
             }
         });
     };
-    var mostrarTabla = function (sucursal, respuesta, datosTabla) {
+    function mostrarTabla(sucursal, respuesta, datosTabla) {
         $("#tab-checklist > li").removeClass("disabled");
         $('#tab-checklist > li > a[href="#revisionArea"]').attr(
                 "data-toggle",
@@ -420,7 +419,7 @@ function seguimientoOld(evento) {
                 "tab"
                 );
     };
-    var iniciarRevisionTecnica = function () {
+    function iniciarRevisionTecnica() {
         var servicio = $("#hiddenServicio").val();
         evento.enviarEvento(
                 "Seguimiento/RevisionTecnica",
@@ -813,7 +812,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var initDiagnosticoEquipo = function () {
+    function initDiagnosticoEquipo() {
         var _tab = arguments[0];
         var _servicio = arguments[1];
         var _modelo = $("#selectEquipo option:selected").attr("data-modelo");
@@ -892,7 +891,7 @@ function seguimientoOld(evento) {
             );
         }
     };
-    var guardarRevisionTecnicaChecklist = function () {
+    function guardarRevisionTecnicaChecklist() {
         var _servicio = $("#hiddenServicio").val();
         var _tipoDiagnostico = arguments[0];
         var _componente = arguments[1] || null;
@@ -987,7 +986,7 @@ function seguimientoOld(evento) {
                     );
         }
     };
-    var limpiarRevisionTecnica = function (limpiarFormulario, tipoDiagnostico) {
+    function limpiarRevisionTecnica(limpiarFormulario, tipoDiagnostico) {
         if (limpiarFormulario) {
             select.cambiarOpcion("#selectAreaPunto", "");
             select.cambiarOpcion("#selectEquipo", "");
@@ -1038,11 +1037,7 @@ function seguimientoOld(evento) {
                 break;
         }
     };
-    var mostrarPreguntaPorCategoria = function (
-            dataCategoria,
-            sucursal,
-            respuesta
-            ) {
+    function mostrarPreguntaPorCategoria(dataCategoria, sucursal, respuesta) {
         var datos = {IdCategoria: dataCategoria, sucursal: sucursal};
         evento.enviarEvento(
                 "Seguimiento/MostrarPreguntas",
@@ -1083,12 +1078,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var mostrarPuntoPorCategoria = function (
-            dataCategoria,
-            sucursal,
-            respuesta,
-            datosTabla
-            ) {
+    function mostrarPuntoPorCategoria(dataCategoria, sucursal, respuesta, datosTabla) {
         var servicio = $("#hiddenServicio").val();
         var datos = {
             servicio: servicio,
@@ -1104,7 +1094,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var mostrarInformacionPuntos = function (datosPuntos, categoria, servicio) {
+    function mostrarInformacionPuntos(datosPuntos, categoria, servicio) {
         var puntos = null;
         var html = "";
         var idArea = null;
@@ -1128,7 +1118,7 @@ function seguimientoOld(evento) {
         elimininarEvidenciaPunto(dataCategoria, servicio);
         eventoChecklist(servicio);
     };
-    var imprimirAreaPregunta = function (area, pregunta, html) {
+    function imprimirAreaPregunta(area, pregunta, html) {
         var puntos = null;
         $.each(pregunta, function (etiqueta, listaPuntos) {
             html +=
@@ -1141,15 +1131,7 @@ function seguimientoOld(evento) {
         });
         return [puntos, html];
     };
-    var imprimirPuntos = function (
-            puntos,
-            html,
-            idArea,
-            checkList,
-            categoria,
-            servicio,
-            area
-            ) {
+    function imprimirPuntos(puntos, html, idArea, checkList, categoria, servicio, area) {
         $.each(puntos, function (key, punto) {
             var checked = "";
             $.each(checkList, function (key, valor) {
@@ -1191,14 +1173,7 @@ function seguimientoOld(evento) {
         html += `</div>`;
         return html;
     };
-    var cargarEvidencias = function (
-            checkList,
-            idArea,
-            categoria,
-            punto,
-            servicio,
-            area
-            ) {
+    function cargarEvidencias(checkList, idArea, categoria, punto, servicio, area) {
         var html = "";
         $.each(checkList, function (index, checked) {
             var area = checked.Area.replace(/\s/g, "-");
@@ -1221,14 +1196,7 @@ function seguimientoOld(evento) {
         });
         return html;
     };
-    var obtenerHtmlEvidencias = function (
-            evidencias,
-            idImagen,
-            punto,
-            servicio,
-            area,
-            categoria
-            ) {
+    function obtenerHtmlEvidencias(evidencias, idImagen, punto, servicio, area, categoria) {
         var html = "";
         var listaEvidencias = evidencias.split(",");
         $.each(listaEvidencias, function (index, evidencia) {
@@ -1247,7 +1215,7 @@ function seguimientoOld(evento) {
         });
         return html;
     };
-    var agregarNuevaImagen = function (dataCategoria, servicio) {
+    function agregarNuevaImagen(dataCategoria, servicio) {
         var datos = null;
         var evidenciaHtml = `<div class="row">
                                 <div class="col-md-12">
@@ -1294,7 +1262,7 @@ function seguimientoOld(evento) {
             );
         });
     };
-    var elimininarEvidenciaPunto = function (dataCategoria, servicio) {
+    function elimininarEvidenciaPunto(dataCategoria, servicio) {
         var urlEvidencia = null;
         var datos = null;
         $(".eliminarImagenPunto").off("click");
@@ -1319,7 +1287,7 @@ function seguimientoOld(evento) {
             );
         });
     };
-    var eventoChecklist = function (servicio) {
+    function eventoChecklist(servicio) {
         var datos = null;
         var evidenciaHtml = `<div class="row">
                                 <div class="col-md-12">
@@ -1396,7 +1364,7 @@ function seguimientoOld(evento) {
             }
         });
     };
-    var iniciarElementosChecklist = function (respuesta) {
+    function iniciarElementosChecklist(respuesta) {
         var servicio = $("#hiddenServicio").val();
         var datos = {servicio: servicio, idCategoria: dataCategoria};
         evento.enviarEvento(
@@ -1422,7 +1390,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var guardarInformacionChecklist = function (datos) {
+    function guardarInformacionChecklist(datos) {
         evento.enviarEvento(
                 "Seguimiento/GuardarInformacionChecklist",
                 datos,
@@ -1448,7 +1416,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var eventosChecklist = function () {
+    function eventosChecklist() {
         var datosTabla = arguments[0];
         var respuesta = arguments[1];
         var servicio = datosTabla[0];
@@ -1535,7 +1503,7 @@ function seguimientoOld(evento) {
         });
         servicios.eventosFolio(datosTabla[2], "#informacionRevision", servicio);
     };
-    var guardarRevisionArea = function (servicio) {
+    function guardarRevisionArea(servicio) {
         var listaConceptos = $("#tabla-categorias")
                 .DataTable()
                 .rows()
@@ -1591,7 +1559,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    this.recargandoTablaPoliza = function (informacionServicio) {
+    function recargandoTablaPoliza(informacionServicio) {
         tabla.limpiarTabla("#data-table-poliza");
         $.each(informacionServicio.serviciosAsignados, function (key, item) {
             tabla.agregarFila("#data-table-poliza", [
@@ -1608,7 +1576,7 @@ function seguimientoOld(evento) {
         });
     };
     //Servicio Censo
-    var iniciarElementosPaginaSeguimientoCenso = function () {
+    function iniciarElementosPaginaSeguimientoCenso () {
         var respuesta = arguments[0];
         var datosTabla = arguments[1];
         $("#listaPoliza").addClass("hidden");
@@ -2481,7 +2449,7 @@ function seguimientoOld(evento) {
         );
     }
 
-    var eventosParaSeccionSeguimientoCenso = function () {
+    function eventosParaSeccionSeguimientoCenso () {
         var datosTabla = arguments[0];
         var respuesta = arguments[1];
         var servicio = datosTabla[0];
@@ -2602,7 +2570,7 @@ function seguimientoOld(evento) {
         servicios.initBotonNuevaSolicitud(datosTabla[1], "#seccion-servicio-censo");
         servicios.eventosFolio(datosTabla[2], "#seccion-servicio-censo", servicio);
     };
-    var personalizarDependiendoSucursalCenso = function () {
+    function personalizarDependiendoSucursalCenso () {
         var respuesta = arguments[0];
         if (respuesta.informacionDatosGenerales.length > 0) {
             select.cambiarOpcion(
@@ -2625,13 +2593,13 @@ function seguimientoOld(evento) {
             }
         }
     };
-    var colocarBotonGuardarCambiosCenso = function (datosServicio) {
+    function colocarBotonGuardarCambiosCenso(datosServicio) {
         if (datosServicio.Firma !== null) {
             $("#divBotonesServicioCenso").addClass("hidden");
             $("#divGuardarCambiosServicioCenso").removeClass("hidden");
         }
     };
-    var guardarFormularioDatosGeneralesCenso = function () {
+    function guardarFormularioDatosGeneralesCenso () {
         var datosTabla = arguments[0];
         var sucursal = $("#selectSucursales").val();
         var descripcion = $("#inputDescripcionCenso").val();
@@ -2664,7 +2632,7 @@ function seguimientoOld(evento) {
                     );
         }
     };
-    var validarFormularioDatosCenso = function () {
+    function validarFormularioDatosCenso () {
         var areaAtencion = $("#selectAreasAtencion").val();
         var punto = $("#inputPuntoCenso").val();
         var modelo = $("#selectModelosCenso").val();
@@ -2696,7 +2664,7 @@ function seguimientoOld(evento) {
                     );
         }
     };
-    var validarCensoEnTabla = function () {
+    function validarCensoEnTabla () {
         var filas = $("#data-table-censo-modelos")
                 .DataTable()
                 .rows()
@@ -2728,7 +2696,7 @@ function seguimientoOld(evento) {
                     );
         }
     };
-    var agregandoModeloCensoTabla = function () {
+    function agregandoModeloCensoTabla () {
         var filas = [];
         var idAreaAtencion = $("#selectAreasAtencion").val();
         var nombreAreaAtencion = $("#selectAreasAtencion option:selected").text();
@@ -2756,7 +2724,7 @@ function seguimientoOld(evento) {
                     );
         });
     };
-    var limpiarFormularioDatosCenso = function () {
+    function limpiarFormularioDatosCenso () {
         var todos = arguments[0] || false;
         if (todos) {
             select.cambiarOpcion("#selectAreasAtencion", "");
@@ -2767,7 +2735,7 @@ function seguimientoOld(evento) {
         $("#inputSerieCenso").val("");
         $("#inputNumeroTerminalCenso").val("");
     };
-    var guardarFormularioDatosCenso = function () {
+    function guardarFormularioDatosCenso () {
         var datosTablaModelos = arguments[0];
         var servicio = arguments[1];
         var datosTabla = [];
@@ -2799,7 +2767,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var concluirServicioCenso = function () {
+    function concluirServicioCenso () {
         var datosTablaModelos = arguments[0];
         var datosTablaPoliza = arguments[1];
         var servicio = datosTablaPoliza[0];
@@ -2819,7 +2787,7 @@ function seguimientoOld(evento) {
         servicios.validarTecnicoPoliza();
         servicios.modalCampoFirma(datosTablaPoliza[1], data);
     };
-    var guardarCambiosConcluirServicioCenso = function () {
+    function guardarCambiosConcluirServicioCenso () {
         var datosTablaModelos = arguments[0];
         var datosTablaPoliza = arguments[1];
         var servicio = datosTablaPoliza[0];
@@ -2860,7 +2828,7 @@ function seguimientoOld(evento) {
             servicios.servicioValidacion(data, datosTablaPoliza[1]);
         }
     };
-    var eliminarFilaTablaModelos = function () {
+    function eliminarFilaTablaModelos () {
         var datosTablaCensoModelos = arguments[0];
         var servicio = arguments[1];
         var mensaje = mensajeConfirmacionModal();
@@ -2900,7 +2868,7 @@ function seguimientoOld(evento) {
             evento.cerrarModal();
         });
     };
-    var recargandoTablaCensoModelos = function () {
+    function recargandoTablaCensoModelos () {
         var respuesta = arguments[0];
         var mensaje = arguments[1];
         var divError = arguments[2];
@@ -2923,7 +2891,7 @@ function seguimientoOld(evento) {
         evento.mostrarMensaje(divError, true, mensaje, 3000);
     };
     //Servicio Mantenimiento
-    var iniciarElementosPaginaSeguimientoMantenimiento = function () {
+    function iniciarElementosPaginaSeguimientoMantenimiento () {
         var respuesta = arguments[0];
         var datosTablaServicioPoliza = arguments[1];
         $("#listaPoliza").addClass("hidden");
@@ -2960,13 +2928,13 @@ function seguimientoOld(evento) {
         $("#divNotasServicio").slimScroll({height: "400px"});
         nota.initButtons({servicio: datosTablaServicioPoliza[0]}, "Seguimiento");
     };
-    var colocarBotonGuardarCambiosMantenimiento = function (datosServicio) {
+    function colocarBotonGuardarCambiosMantenimiento(datosServicio) {
         if (datosServicio.Firma !== null) {
             $("#divConcluirServicioMantenimiento").addClass("hidden");
             $("#divGuardarCambiosServicioMantenimiento").removeClass("hidden");
         }
     };
-    var eventosParaSeccionSeguimientoMantenimiento = function () {
+    function eventosParaSeccionSeguimientoMantenimiento () {
         var datosTablaPoliza = arguments[0];
         var respuesta = arguments[1];
         var servicio = datosTablaPoliza[0];
@@ -3082,7 +3050,7 @@ function seguimientoOld(evento) {
                 servicio
                 );
     };
-    var guardarFormularioDatosMantenimiento = function () {
+    function guardarFormularioDatosMantenimiento () {
         var servicio = arguments[0];
         var sucursal = $("#selectSucursalesMantenimiento").val();
         if (sucursal !== "") {
@@ -3118,7 +3086,7 @@ function seguimientoOld(evento) {
                     );
         }
     };
-    var recargandoTablaPuntosCensados = function () {
+    function recargandoTablaPuntosCensados () {
         var respuesta = arguments[0];
         var mensaje = arguments[1];
         var divError = arguments[2];
@@ -3140,7 +3108,7 @@ function seguimientoOld(evento) {
         });
         evento.mostrarMensaje(divError, true, mensaje, 3000);
     };
-    var personalizarDependiendoSucursalMantenimiento = function () {
+    function personalizarDependiendoSucursalMantenimiento () {
         var respuesta = arguments[0];
         if (
                 respuesta.informacion.informacionDatosGeneralesMantenimiento.length > 0
@@ -3160,7 +3128,7 @@ function seguimientoOld(evento) {
             }
         }
     };
-    var datosMostrarSucursalGuardada = function () {
+    function datosMostrarSucursalGuardada () {
         $("#selectSucursalesMantenimiento").attr("disabled", "disabled");
         $("[href=#AntesDespues]")
                 .parent("li")
@@ -3175,7 +3143,7 @@ function seguimientoOld(evento) {
         $("#divReporteFirmado").removeClass("hidden");
         $("#divConcluirServicioMantenimiento").removeClass("hidden");
     };
-    var validarFormularioProblemasAdicionales = function () {
+    function validarFormularioProblemasAdicionales () {
         var areaAtencion = $("#selectAreasAtencionProblemasAdicionales").val();
         var areaYPunto = $("#selectAreaPuntoProblemasAdicionales").val();
         var descripcion = $("#inputDescripcionProblemasAdicionales").val();
@@ -3209,7 +3177,7 @@ function seguimientoOld(evento) {
                     );
         }
     };
-    var guardarFormularioProblemasAdicionales = function () {
+    function guardarFormularioProblemasAdicionales () {
         var servicio = arguments[0];
         var arrayFormularioProblemasAdionales = agregandoProblemasAdicionalesArreglo();
         var data = {
@@ -3242,7 +3210,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var agregandoProblemasAdicionalesArreglo = function () {
+    function agregandoProblemasAdicionalesArreglo () {
         var filas = [];
         var areaAtencion = $("#selectAreasAtencionProblemasAdicionales").val();
         var nombreAreaAtencion = $(
@@ -3279,13 +3247,13 @@ function seguimientoOld(evento) {
         }
         return filas;
     };
-    var limpiarFormularioProblemasAdicionales = function () {
+    function limpiarFormularioProblemasAdicionales () {
         select.cambiarOpcion("#selectAreasAtencionProblemasAdicionales", "");
         select.cambiarOpcion("#selectAreaPuntoProblemasAdicionales", "");
         $("#inputDescripcionProblemasAdicionales").val("");
         file.limpiar("#evidenciasProblemasAdicionales");
     };
-    var recargandoTablaProblemasAdicionales = function () {
+    function recargandoTablaProblemasAdicionales () {
         var respuesta = arguments[0];
         var mensaje = arguments[1];
         var divError = arguments[2];
@@ -3301,7 +3269,7 @@ function seguimientoOld(evento) {
                 );
         evento.mostrarMensaje(divError, true, mensaje, 3000);
     };
-    var datosNuevosTablaProblemasAdicionales = function () {
+    function datosNuevosTablaProblemasAdicionales () {
         var columnas = [
             {data: "Sucursal"},
             {
@@ -3351,7 +3319,7 @@ function seguimientoOld(evento) {
         ];
         return columnas;
     };
-    var mostrarFormularioAntesYDespues = function () {
+    function mostrarFormularioAntesYDespues () {
         var datosTablaPuntosCensados = arguments[0];
         var servicio = arguments[1];
         var datosTablaPoliza = arguments[2];
@@ -3378,7 +3346,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var iniciarAntesYDespues = function () {
+    function iniciarAntesYDespues () {
         var file1 = new Upload();
         var file2 = new Upload();
         var respuesta = arguments[0];
@@ -3447,7 +3415,7 @@ function seguimientoOld(evento) {
         );
         $(".kv-file-zoom").addClass("hidden");
     };
-    var eventosAntesYDespues = function () {
+    function eventosAntesYDespues () {
         var datosTablaPuntosCensados = arguments[0];
         var servicio = arguments[1];
         var respuesta = arguments[2];
@@ -3622,7 +3590,7 @@ function seguimientoOld(evento) {
                     );
         });
     };
-    var guardarFormularioFallasEquipo = function () {
+    function guardarFormularioFallasEquipo () {
         var datosTablaPuntosCensados = arguments[0];
         var servicio = arguments[1];
         var datosTablaPoliza = arguments[2];
@@ -3684,12 +3652,12 @@ function seguimientoOld(evento) {
                     );
         }
     };
-    var limpiarFormularioFallasEquipo = function () {
+    function limpiarFormularioFallasEquipo () {
         select.cambiarOpcion("#selectEquipoAntesYDespues", "");
         $("#inputDescripcionFallasEquipo").val("");
         file.limpiar("#evidenciasFallasEquipo");
     };
-    var validarCampos = function () {
+    function validarCampos () {
         var descripcion = arguments[0];
         var divError = arguments[1];
         var mensajeError = arguments[2];
@@ -3699,7 +3667,7 @@ function seguimientoOld(evento) {
             evento.mostrarMensaje(divError, false, mensajeError, 3000);
         }
     };
-    var guardarFormularioAntesYDespues = function () {
+    function guardarFormularioAntesYDespues () {
         var datosTablaPuntosCensados = arguments[0];
         var servicio = arguments[1];
         var operacion = arguments[2];
@@ -3739,7 +3707,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var redireccionEquipoFaltanteAntesDespues = function () {
+    function redireccionEquipoFaltanteAntesDespues () {
         var nombreCampo = arguments[0];
         var selectUtilizado = $("#selectUtilizadoEquipoFaltante").val();
         if (selectUtilizado !== "") {
@@ -3870,7 +3838,7 @@ function seguimientoOld(evento) {
                     );
         }
     };
-    var validarEquipoFaltanteEnTabla = function () {
+    function validarEquipoFaltanteEnTabla () {
         var nombre = arguments[0];
         var filas = $("#data-table-equipos-faltantes")
                 .DataTable()
@@ -3896,7 +3864,7 @@ function seguimientoOld(evento) {
                     );
         }
     };
-    var agregandoEquipoFaltanteTabla = function () {
+    function agregandoEquipoFaltanteTabla () {
         var data = arguments[0];
         var tipoItem = "";
         var filas = [];
@@ -3938,7 +3906,7 @@ function seguimientoOld(evento) {
                 3000
                 );
     };
-    var guardarDatosTablaEquipoFaltante = function () {
+    function guardarDatosTablaEquipoFaltante () {
         var datosTablaEquipoFaltante = arguments[0];
         var servicio = arguments[1];
         var datosTablaPoliza = arguments[2];
@@ -3982,7 +3950,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var eliminarFilaTablaEquiposFaltantes = function () {
+    function eliminarFilaTablaEquiposFaltantes () {
         var datosTablaEquiposFaltantes = arguments[0];
         var servicio = arguments[1];
         var datosTablaPuntosCensados = arguments[2];
@@ -4031,7 +3999,7 @@ function seguimientoOld(evento) {
             evento.cerrarModal();
         });
     };
-    var recargandoTablaEquiposFaltantes = function () {
+    function recargandoTablaEquiposFaltantes () {
         var respuesta = arguments[0];
         var mensaje = arguments[1];
         var divError = arguments[2];
@@ -4051,7 +4019,7 @@ function seguimientoOld(evento) {
         });
         evento.mostrarMensaje(divError, true, mensaje, 3000);
     };
-    var concluirServicioMantenimiento = function () {
+    function concluirServicioMantenimiento () {
         var servicio = arguments[0];
         var datosTablaPoliza = arguments[1];
         var sucursal = $("#selectSucursalesMantenimiento").val();
@@ -4083,7 +4051,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var guardarCambiosConcluirServicioMantenimiento = function () {
+    function guardarCambiosConcluirServicioMantenimiento () {
         var servicio = arguments[0];
         var datosTablaPoliza = arguments[1];
         var sucursal = $("#selectSucursalesMantenimiento").val();
@@ -4117,7 +4085,7 @@ function seguimientoOld(evento) {
         );
     };
     //Servicio Correctivo
-    var iniciarElementosPaginaSeguimientoCorrectivo = function () {
+    function iniciarElementosPaginaSeguimientoCorrectivo () {
         var respuesta = arguments[0];
         var datosTabla = arguments[1];
         var evidenciaReporteFalso = [];
@@ -4420,7 +4388,7 @@ function seguimientoOld(evento) {
         $("#divNotasServicio").slimScroll({height: "400px"});
         nota.initButtons({servicio: datosTabla[0]}, "Seguimiento");
     };
-    var personalizarDependiendoSucursalCorrectivo = function () {
+    function personalizarDependiendoSucursalCorrectivo () {
         var respuesta = arguments[0];
         if (respuesta.informacion.informacionDatosGeneralesCorrectivo.length > 0) {
             select.cambiarOpcion(
@@ -4755,7 +4723,7 @@ function seguimientoOld(evento) {
 
         $(".kv-file-zoom").addClass("hidden");
     };
-    var eventosParaSeccionSeguimientoCorrectivo = function () {
+    function eventosParaSeccionSeguimientoCorrectivo () {
         var datosTabla = arguments[0];
         var respuesta = arguments[1];
         var servicio = datosTabla[0];
@@ -6938,8 +6906,8 @@ function seguimientoOld(evento) {
         servicios.botonEliminarAvanceProblema(servicio);
         servicios.botonEditarAvanceProblema(servicio);
     };
-    var validarFormularioDatosGeneralesCorrectivo = function () {
-        var datosTabla = arguments[0];
+    function validarFormularioDatosGeneralesCorrectivo () {
+        var datosTabla = arguments[0];        
         var sucursal = $("#selectSucursalesCorrectivo").val();
         var areaPunto = $("#selectAreaPuntoCorrectivo").val();
         var equipo = $("#selectEquipoCorrectivo").val();
@@ -7029,7 +6997,7 @@ function seguimientoOld(evento) {
                     );
         }
     };
-    var guardarFormularioDatosGeneralesCorrectivo = function () {
+    function guardarFormularioDatosGeneralesCorrectivo () {
         var data = arguments[0];
         evento.enviarEvento(
                 "Seguimiento/GuardarDatosGeneralesCorrectivo",
@@ -7242,7 +7210,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var guardarFormularioDiagnosticoEquipoCorrectivo = function () {
+    function guardarFormularioDiagnosticoEquipoCorrectivo () {
         var servicio = arguments[0];
         var tipoDiagnostico = arguments[1];
         var observaciones = arguments[2];
@@ -7465,7 +7433,7 @@ function seguimientoOld(evento) {
                     );
         }
     };
-    var limpiarFormulariosDiagnostico = function (tipoDiagnostico) {
+    function limpiarFormulariosDiagnostico(tipoDiagnostico) {
         switch (tipoDiagnostico) {
             case "1":
                 file.limpiar("#evidenciasImpericiaCorrectivo");
@@ -7570,7 +7538,7 @@ function seguimientoOld(evento) {
                 break;
         }
     };
-    var agregandoSolcitudRefaccion = function () {
+    function agregandoSolcitudRefaccion () {
         var filas = [];
         var idRefaccion = $("#selectRefaccionSolicitud").val();
         var nombreRefaccion = $("#selectRefaccionSolicitud option:selected").text();
@@ -7588,7 +7556,7 @@ function seguimientoOld(evento) {
         select.cambiarOpcion("#selectRefaccionSolicitud", "");
         $("#inputCantidadRefaccionSolicitud").val("");
     };
-    var agregandoSolicitudRefaccion = function () {
+    function agregandoSolicitudRefaccion () {
         var filas = [];
         var idRefaccion = $("#selectRefaccionSolucionReparacionConRefaccion").val();
         var nombreRefaccion = $(
@@ -7610,7 +7578,7 @@ function seguimientoOld(evento) {
         select.cambiarOpcion("#selectRefaccionSolucionReparacionConRefaccion", "");
         $("#inputCantidadRefaccionSolicitudReparacionConRefaccion").val("");
     };
-    var guardarDatosTablaRefaccionesSolicitudes = function () {
+    function guardarDatosTablaRefaccionesSolicitudes () {
         var datosTablaRefaccionesSolicitudes = arguments[0];
         var servicio = arguments[1];
         var datosTablaPoliza = arguments[2];
@@ -7764,7 +7732,7 @@ function seguimientoOld(evento) {
             }
         });
     };
-    var recargandoTablaSolicitudRefaccion = function (solicitudesRefaccion) {
+    function recargandoTablaSolicitudRefaccion(solicitudesRefaccion) {
         tabla.limpiarTabla("#data-table-servicios-solicitudes-refacciones");
         if (solicitudesRefaccion.length > 0) {
             var refaccionCantidad;
@@ -7783,7 +7751,7 @@ function seguimientoOld(evento) {
             });
         }
     };
-    var recargandoTablaSolicitudEquipo = function (solicitudesEquipo) {
+    function recargandoTablaSolicitudEquipo(solicitudesEquipo) {
         tabla.limpiarTabla("#data-table-servicios-solicitudes-equipos");
         if (solicitudesEquipo.length > 0) {
             var equipoCantidad = "";
@@ -7802,7 +7770,7 @@ function seguimientoOld(evento) {
             });
         }
     };
-    var recargandoTablaReparacionRefaccion = function (ReparacionRefaccion) {
+    function recargandoTablaReparacionRefaccion(ReparacionRefaccion) {
         tabla.limpiarTabla("#data-table-reparacion-refaccion");
         $.each(ReparacionRefaccion, function (key, item) {
             tabla.agregarFila("#data-table-reparacion-refaccion", [
@@ -7812,7 +7780,7 @@ function seguimientoOld(evento) {
             ]);
         });
     };
-    var agregandoSolicitudEquipo = function () {
+    function agregandoSolicitudEquipo () {
         var filas = [];
         var idEquipo = $("#selectEquipoSolicitud").val();
         var nombreEquipo = $("#selectEquipoSolicitud option:selected").text();
@@ -7829,7 +7797,7 @@ function seguimientoOld(evento) {
                 );
         select.cambiarOpcion("#selectEquipoSolicitud", "");
     };
-    var guardarDatosTablaEquiposSolicitudes = function () {
+    function guardarDatosTablaEquiposSolicitudes () {
         var datosTablaEquiposSolicitudes = arguments[0];
         var servicio = arguments[1];
         var datosTablaPoliza = arguments[2];
@@ -7987,7 +7955,7 @@ function seguimientoOld(evento) {
             }
         });
     };
-    var guardarInformacionRespaldo = function () {
+    function guardarInformacionRespaldo () {
         var data = arguments[0];
         $("#btnGuardarFirma").addClass("disabled");
         evento.enviarEvento(
@@ -8043,7 +8011,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var guardarInformacionRespaldoEvidencia = function () {
+    function guardarInformacionRespaldoEvidencia () {
         var data = arguments[0];
         $("#btnGuardarAutorizacion").addClass("disabled");
         file.enviarArchivos(
@@ -8135,7 +8103,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var guardarSolicitudEquipoRespaldo = function () {
+    function guardarSolicitudEquipoRespaldo () {
         var data = arguments[0];
         $("#btnModalConfirmar").addClass("disabled");
         if (
@@ -8221,7 +8189,7 @@ function seguimientoOld(evento) {
             );
         }
     };
-    var guardarEntregaEquipoGarantia = function () {
+    function guardarEntregaEquipoGarantia () {
         var data = arguments[0];
         var htmlDatosFirma = "";
         $("#btnGuardarFirma").addClass("disabled");
@@ -8275,7 +8243,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var guardarEntregaTIGarantia = function () {
+    function guardarEntregaTIGarantia () {
         var data = arguments[0];
         var htmlDatosFirma = "";
         $("#btnGuardarFirma").addClass("disabled");
@@ -8332,7 +8300,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var guardarEnvioGarantia = function () {
+    function guardarEnvioGarantia () {
         var servicio = arguments[0];
         var envia = $("#selectTipoEnvioGarantia").val();
         var paqueteriaConsolidado = $("#selectListaTipoEnvioGarantia").val();
@@ -8373,7 +8341,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var guardarEntregaGarantia = function () {
+    function guardarEntregaGarantia () {
         var servicio = arguments[0];
         var fecha = $("#entregaFechaEnvioGarantia").val();
         var recibe = $("#selectEquipoRespaldoEntregaEnvioGarantia").val();
@@ -8408,7 +8376,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var guardarConcluirCorrectivoReparacionSinEquipo = function () {
+    function guardarConcluirCorrectivoReparacionSinEquipo () {
         var servicio = arguments[0];
         var datosTablaPoliza = arguments[1];
         var correctivosSoluciones = arguments[2];
@@ -8602,7 +8570,7 @@ function seguimientoOld(evento) {
             );
         }
     };
-    var guardarConcluirCorrectivoReparacionConRefaccion = function () {
+    function guardarConcluirCorrectivoReparacionConRefaccion () {
         var servicio = arguments[0];
         var datosTablaPoliza = arguments[1];
         var datosTablaReparacionRefaccion = arguments[2];
@@ -8808,7 +8776,7 @@ function seguimientoOld(evento) {
             );
         }
     };
-    var guardarConcluirCorrectivoCambioEquipo = function () {
+    function guardarConcluirCorrectivoCambioEquipo () {
         var servicio = arguments[0];
         var datosTablaPoliza = arguments[1];
         var correctivosSoluciones = arguments[2];
@@ -9011,7 +8979,7 @@ function seguimientoOld(evento) {
             );
         }
     };
-    var concluirServicio = function () {
+    function concluirServicio () {
         var servicio = arguments[0];
         var dataConclusion = {servicio: servicio, estatus: "5"};
         evento.enviarEvento(
@@ -9023,7 +8991,7 @@ function seguimientoOld(evento) {
                 }
         );
     };
-    var modalCampoFirma = function () {
+    function modalCampoFirma () {
         var idCliente = "0";
         var respuesta = arguments[0];
         var ticket = arguments[1];
@@ -9117,7 +9085,7 @@ function seguimientoOld(evento) {
             );
         }
     };
-    var htmlCampoTecnicoFirma = function () {
+    function htmlCampoTecnicoFirma () {
         var html =
                 '<div class="row" m-t-10">\n\
                         <div id="divcampoLapizTecnico" class="col-md-12 text-center">\n\
@@ -9134,7 +9102,7 @@ function seguimientoOld(evento) {
         return html;
     };
 
-    var formularioAsignacionSolicitud = function () {
+    function formularioAsignacionSolicitud () {
         var mensajeConfirmacion =
                 '<div id="confirmarSolicitud"\n\
                                         <div class="row">\n\
@@ -9153,7 +9121,7 @@ function seguimientoOld(evento) {
                                 </div> ';
         return mensajeConfirmacion;
     };
-    var formularioPersonalAutoriza = function () {
+    function formularioPersonalAutoriza () {
         var formularioAutoriza =
                 '<div id="formularioPersonalAutoriza">\n\
                                     <div class="row">\n\
@@ -9184,7 +9152,7 @@ function seguimientoOld(evento) {
                                 </div> ';
         return formularioAutoriza;
     };
-    var vistaDetallesSolicitud = function () {
+    function vistaDetallesSolicitud () {
         var datosTablaDetallesSolicitud = arguments[0];
         var tipoAlerta = "";
         var textoSolicitud = "";
@@ -9262,7 +9230,7 @@ function seguimientoOld(evento) {
             return vistaSolicitud;
         }
     };
-    var validarSolitud = function () {
+    function validarSolitud () {
         var tabla = arguments[0];
         var id = arguments[1];
         var divError = arguments[2];
@@ -9290,7 +9258,7 @@ function seguimientoOld(evento) {
                     );
         }
     };
-    var modalCampoFirmaSolicitud = function () {
+    function modalCampoFirmaSolicitud () {
         var textoExtra = arguments[0];
         var campoInput = arguments[1];
         $("#btnModalAbortar").removeClass("hidden");
@@ -9343,7 +9311,7 @@ function seguimientoOld(evento) {
                 </div>';
         return html;
     };
-    var validarCamposFirma = function () {
+    function validarCamposFirma () {
         var data = arguments[0];
         //        var myBoard = null;
         //        var ancho = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -9491,7 +9459,7 @@ function seguimientoOld(evento) {
         });
     };
     // funciones Generales
-    var mensajeConfirmacionModal = function () {
+    function mensajeConfirmacionModal () {
         var mensajeConfirmacion =
                 '<div class="row">\n\
                             <div class="col-md-12 text-center">\n\
@@ -9506,7 +9474,7 @@ function seguimientoOld(evento) {
                         </div> ';
         return mensajeConfirmacion;
     };
-    var eliminarFilaTablaDetallesSolicitud = function () {
+    function eliminarFilaTablaDetallesSolicitud () {
         var idSolicitud = arguments[0];
         var tipoSolicitud = arguments[1];
         var servicio = arguments[2];
@@ -9579,27 +9547,13 @@ function seguimientoOld(evento) {
         format: "YYYY-MM-DD HH:mm:ss"
     });
     //obtener valor fecha
-    $("#fechaValidacion")
-            .find("input")
-            .val();
-    $("#fechaEnvio")
-            .find("input")
-            .val();
-    $("#fechaRecepcionAlmacen")
-            .find("input")
-            .val();
-    $("#fechaRecepcionLab")
-            .find("input")
-            .val();
-    $("#fechaRecepcionLogistica")
-            .find("input")
-            .val();
-    $("#fechaRecepcion")
-            .find("input")
-            .val();
-    $("#fechaRecepcionTecnico")
-            .find("input")
-            .val();
+    $("#fechaValidacion").find("input").val();
+    $("#fechaEnvio").find("input").val();
+    $("#fechaRecepcionAlmacen").find("input").val();
+    $("#fechaRecepcionLab").find("input").val();
+    $("#fechaRecepcionLogistica").find("input").val();
+    $("#fechaRecepcion").find("input").val();
+    $("#fechaRecepcionTecnico").find("input").val();
     //radio inputs valor
     $("input:radio[name=optionsRadios]:checked").val();
     //tablas
@@ -9622,39 +9576,18 @@ function seguimientoOld(evento) {
     //Iniciar input archivos
     file.crearUpload("#archivosProblemaGuia", "Seguimiento/subirProblema");
     file.crearUpload("#evidenciaEnvio", "Seguimiento/subirEvidenciaEnvio");
-    file.crearUpload(
-            "#evidenciaRecepcionAlmacen",
-            "Seguimiento/subirEvidenciaRecepcion"
-            );
-    file.crearUpload(
-            "#evidenciaRecepcionLab",
-            "Seguimiento/subirEvidenciaRecepcion"
-            );
-    file.crearUpload(
-            "#archivosLabHistorial",
-            "Seguimiento/subirAdjuntosLabHistorial"
-            );
-    file.crearUpload(
-            "#evidenciaRecepcionLogistica",
-            "Seguimiento/subirAdjuntosLabHistorial"
-            );
-    file.crearUpload(
-            "#evidenciaEntrega",
-            "Seguimiento/subirAdjuntosLabHistorial"
-            );
-    file.crearUpload(
-            "#evidenciaRecepcionTecnico",
-            "Seguimiento/subirAdjuntosLabHistorial"
-            );
-};
-var eventoAuxiliar;
-var tablaAuxiliar;
-var servicioAuxiliar;
-var eventoEliminarProblemaAdicional = function () {
-    var id = arguments[0];
-    var servicio = arguments[1];
-    var mensaje =
-            '<div class="row">\n\
+    file.crearUpload("#evidenciaRecepcionAlmacen", "Seguimiento/subirEvidenciaRecepcion");
+    file.crearUpload("#evidenciaRecepcionLab", "Seguimiento/subirEvidenciaRecepcion");
+    file.crearUpload("#archivosLabHistorial", "Seguimiento/subirAdjuntosLabHistorial");
+    file.crearUpload("#evidenciaRecepcionLogistica", "Seguimiento/subirAdjuntosLabHistorial");
+    file.crearUpload("#evidenciaEntrega", "Seguimiento/subirAdjuntosLabHistorial");
+    file.crearUpload("#evidenciaRecepcionTecnico", "Seguimiento/subirAdjuntosLabHistorial");
+
+    function eventoEliminarProblemaAdicional () {
+        var id = arguments[0];
+        var servicio = arguments[1];
+        var mensaje =
+                '<div class="row">\n\
                             <div class="col-md-12 text-center">\n\
                                 <p>¿Estas seguro de querer eliminar este registro?</p>\n\
                             </div>\n\
@@ -9665,102 +9598,102 @@ var eventoEliminarProblemaAdicional = function () {
                                 <button type="button" class="btn btn-sm btn-danger" id="btnCancelarGuardarCambios"><i class="fa fa-times"></i> Cancelar</button>\n\
                             </div>\n\
                         </div> ';
-    eventoAuxiliar.mostrarModal("Advertencia", mensaje);
-    $("#btnModalConfirmar").addClass("hidden");
-    $("#btnModalAbortar").addClass("hidden");
-    $("#btnAceptarGuardarCambios").on("click", function () {
-        eventoAuxiliar.cerrarModal();
-        var dataProblemaAdicional = {servicio: servicio, id: id};
-        eventoAuxiliar.enviarEvento(
-                "Seguimiento/Eliminar_ProblemaAdicional",
-                dataProblemaAdicional,
-                "#seccion-servicio-mantemient",
-                function (respuesta) {
-                    recargandoTablaProblemasAdicionales(
-                            respuesta,
-                            "Datos Eliminados correctamente.",
-                            ".errorFormularioProblemasAdicionales"
+        eventoAuxiliar.mostrarModal("Advertencia", mensaje);
+        $("#btnModalConfirmar").addClass("hidden");
+        $("#btnModalAbortar").addClass("hidden");
+        $("#btnAceptarGuardarCambios").on("click", function () {
+            eventoAuxiliar.cerrarModal();
+            var dataProblemaAdicional = {servicio: servicio, id: id};
+            eventoAuxiliar.enviarEvento(
+                    "Seguimiento/Eliminar_ProblemaAdicional",
+                    dataProblemaAdicional,
+                    "#seccion-servicio-mantemient",
+                    function (respuesta) {
+                        recargandoTablaProblemasAdicionales(
+                                respuesta,
+                                "Datos Eliminados correctamente.",
+                                ".errorFormularioProblemasAdicionales"
+                                );
+                    }
+            );
+        });
+        $("#btnCancelarGuardarCambios").on("click", function () {
+            eventoAuxiliar.cerrarModal();
+        });
+    };
+    function datosNuevosTablaProblemasAdicionales () {
+        var columnas = [
+            {data: "Sucursal"},
+            {
+                data: "Punto",
+                render: function (data, type, row, meta) {
+                    if (data === "0") {
+                        data = "-";
+                    }
+                    return data;
+                }
+            },
+            {data: "Descripcion"},
+            {
+                data: null,
+                sClass: "Evidencias",
+                render: function (data, type, row, meta) {
+                    var evidencias = data.Evidencias.split(",");
+                    var filas = [];
+                    $.each(evidencias, function (key, valor) {
+                        filas.push([
+                            '<a href="' +
+                                    valor +
+                                    '" target="_blank"> <img src="' +
+                                    valor +
+                                    '" title="" style="max-height:150px"/> </a>'
+                        ]);
+                    });
+                    return filas;
+                }
+            },
+            {data: "Id"},
+            {
+                data: null,
+                sClass: "Acciones",
+                render: function (data, type, row, meta) {
+                    return (
+                            '<a id="btnEliminarProblemaAdicional' +
+                            row.Id +
+                            '" onclick="eventoEliminarProblemaAdicional(' +
+                            row.Id +
+                            "," +
+                            row.IdServicio +
+                            ');" class="btn btn-danger btn-xs "><i class="fa fa-trash-o"></i> Eliminar</a> </a>'
                             );
                 }
-        );
-    });
-    $("#btnCancelarGuardarCambios").on("click", function () {
-        eventoAuxiliar.cerrarModal();
-    });
-};
-var datosNuevosTablaProblemasAdicionales = function () {
-    var columnas = [
-        {data: "Sucursal"},
-        {
-            data: "Punto",
-            render: function (data, type, row, meta) {
-                if (data === "0") {
-                    data = "-";
-                }
-                return data;
             }
-        },
-        {data: "Descripcion"},
-        {
-            data: null,
-            sClass: "Evidencias",
-            render: function (data, type, row, meta) {
-                var evidencias = data.Evidencias.split(",");
-                var filas = [];
-                $.each(evidencias, function (key, valor) {
-                    filas.push([
-                        '<a href="' +
-                                valor +
-                                '" target="_blank"> <img src="' +
-                                valor +
-                                '" title="" style="max-height:150px"/> </a>'
-                    ]);
-                });
-                return filas;
-            }
-        },
-        {data: "Id"},
-        {
-            data: null,
-            sClass: "Acciones",
-            render: function (data, type, row, meta) {
-                return (
-                        '<a id="btnEliminarProblemaAdicional' +
-                        row.Id +
-                        '" onclick="eventoEliminarProblemaAdicional(' +
-                        row.Id +
-                        "," +
-                        row.IdServicio +
-                        ');" class="btn btn-danger btn-xs "><i class="fa fa-trash-o"></i> Eliminar</a> </a>'
-                        );
-            }
-        }
-    ];
-    return columnas;
-};
-var recargandoTablaProblemasAdicionales = function () {
-    var respuesta = arguments[0];
-    var mensaje = arguments[1];
-    var divError = arguments[2];
-    var columnas = datosNuevosTablaProblemasAdicionales();
-    tablaAuxiliar.limpiarTabla("#data-table-problemas-adicionales");
-    tablaAuxiliar.generaTablaPersonal(
-            "#data-table-problemas-adicionales",
-            respuesta,
-            columnas,
-            true,
-            null,
-            [[0, "desc"]]
-            );
-    eventoAuxiliar.mostrarMensaje(divError, true, mensaje, 3000);
-};
-var eventoEliminarProblemaEquipo = function () {
-    var area = arguments[0];
-    var modelo = arguments[1];
-    var punto = arguments[2];
-    var servicio = arguments[3];
-    var mensaje =
-            '<div class="row">\n\
+        ];
+        return columnas;
+    };
+    function recargandoTablaProblemasAdicionales () {
+        var respuesta = arguments[0];
+        var mensaje = arguments[1];
+        var divError = arguments[2];
+        var columnas = datosNuevosTablaProblemasAdicionales();
+        tablaAuxiliar.limpiarTabla("#data-table-problemas-adicionales");
+        tablaAuxiliar.generaTablaPersonal(
+                "#data-table-problemas-adicionales",
+                respuesta,
+                columnas,
+                true,
+                null,
+                [[0, "desc"]]
+                );
+        eventoAuxiliar.mostrarMensaje(divError, true, mensaje, 3000);
+    };
+    function eventoEliminarProblemaEquipo () {
+        var area = arguments[0];
+        var modelo = arguments[1];
+        var punto = arguments[2];
+        var servicio = arguments[3];
+        var mensaje =
+                '<div class="row">\n\
                             <div class="col-md-12 text-center">\n\
                                 <p>¿Estas seguro de querer eliminar este registro?</p>\n\
                             </div>\n\
@@ -9771,94 +9704,97 @@ var eventoEliminarProblemaEquipo = function () {
                                 <button type="button" class="btn btn-sm btn-danger" id="btnCancelarGuardarCambios"><i class="fa fa-times"></i> Cancelar</button>\n\
                             </div>\n\
                         </div> ';
-    eventoAuxiliar.mostrarModal("Advertencia", mensaje);
-    $("#btnModalConfirmar").addClass("hidden");
-    $("#btnModalAbortar").addClass("hidden");
-    $("#btnAceptarGuardarCambios").on("click", function () {
-        eventoAuxiliar.cerrarModal();
-        var dataProblemaAdicional = {
-            servicio: servicio,
-            area: area,
-            modelo: modelo,
-            punto: punto
-        };
-        eventoAuxiliar.enviarEvento(
-                "Seguimiento/Eliminar_ProblemaEquipo",
-                dataProblemaAdicional,
-                "#seccion-servicio-mantemiento-puntos-censados",
-                function (respuesta) {
-                    recargandoTablaFallasEquipo(
-                            respuesta,
-                            "Datos Eliminados correctamente.",
-                            "#errorGuardarEquipo"
+        eventoAuxiliar.mostrarModal("Advertencia", mensaje);
+        $("#btnModalConfirmar").addClass("hidden");
+        $("#btnModalAbortar").addClass("hidden");
+        $("#btnAceptarGuardarCambios").on("click", function () {
+            eventoAuxiliar.cerrarModal();
+            var dataProblemaAdicional = {
+                servicio: servicio,
+                area: area,
+                modelo: modelo,
+                punto: punto
+            };
+            eventoAuxiliar.enviarEvento(
+                    "Seguimiento/Eliminar_ProblemaEquipo",
+                    dataProblemaAdicional,
+                    "#seccion-servicio-mantemiento-puntos-censados",
+                    function (respuesta) {
+                        recargandoTablaFallasEquipo(
+                                respuesta,
+                                "Datos Eliminados correctamente.",
+                                "#errorGuardarEquipo"
+                                );
+                    }
+            );
+        });
+        $("#btnCancelarGuardarCambios").on("click", function () {
+            eventoAuxiliar.cerrarModal();
+        });
+    };
+    function recargandoTablaFallasEquipo () {
+        var respuesta = arguments[0];
+        var mensaje = arguments[1];
+        var divError = arguments[2];
+        var columnas = datosNuevosTablaFallasEquipo();
+        tablaAuxiliar.limpiarTabla("#data-table-problemas-equipo");
+        tablaAuxiliar.generaTablaPersonal(
+                "#data-table-problemas-equipo",
+                respuesta,
+                columnas,
+                true,
+                null,
+                [[0, "desc"]]
+                );
+        eventoAuxiliar.mostrarMensaje(divError, true, mensaje, 3000);
+    };
+    function datosNuevosTablaFallasEquipo () {
+        var columnas = [
+            {data: "Area"},
+            {data: "Punto"},
+            {data: "Equipo"},
+            {data: "Observaciones"},
+            {
+                data: null,
+                sClass: "Evidencias",
+                render: function (data, type, row, meta) {
+                    var evidencias = data.Evidencias.split(",");
+                    var filas = [];
+                    $.each(evidencias, function (key, valor) {
+                        filas.push([
+                            '<a href="' +
+                                    valor +
+                                    '" target="_blank"> <img src="' +
+                                    valor +
+                                    '" title="" style="max-height:150px"/> </a>'
+                        ]);
+                    });
+                    return filas;
+                }
+            },
+            {
+                data: null,
+                sClass: "Acciones",
+                render: function (data, type, row, meta) {
+                    return (
+                            '<a onclick="eventoEliminarProblemaEquipo(' +
+                            row.IdArea +
+                            ", " +
+                            row.IdModelo +
+                            ", " +
+                            row.Punto +
+                            ", " +
+                            row.IdServicio +
+                            ');" class="btn btn-danger btn-xs "><i class="fa fa-trash-o"></i> Eliminar</a> </a>'
                             );
                 }
-        );
-    });
-    $("#btnCancelarGuardarCambios").on("click", function () {
-        eventoAuxiliar.cerrarModal();
-    });
+            },
+            {data: "IdArea"},
+            {data: "IdModelo"},
+            {data: "IdServicio"}
+        ];
+        return columnas;
+    };
 };
-var recargandoTablaFallasEquipo = function () {
-    var respuesta = arguments[0];
-    var mensaje = arguments[1];
-    var divError = arguments[2];
-    var columnas = datosNuevosTablaFallasEquipo();
-    tablaAuxiliar.limpiarTabla("#data-table-problemas-equipo");
-    tablaAuxiliar.generaTablaPersonal(
-            "#data-table-problemas-equipo",
-            respuesta,
-            columnas,
-            true,
-            null,
-            [[0, "desc"]]
-            );
-    eventoAuxiliar.mostrarMensaje(divError, true, mensaje, 3000);
-};
-var datosNuevosTablaFallasEquipo = function () {
-    var columnas = [
-        {data: "Area"},
-        {data: "Punto"},
-        {data: "Equipo"},
-        {data: "Observaciones"},
-        {
-            data: null,
-            sClass: "Evidencias",
-            render: function (data, type, row, meta) {
-                var evidencias = data.Evidencias.split(",");
-                var filas = [];
-                $.each(evidencias, function (key, valor) {
-                    filas.push([
-                        '<a href="' +
-                                valor +
-                                '" target="_blank"> <img src="' +
-                                valor +
-                                '" title="" style="max-height:150px"/> </a>'
-                    ]);
-                });
-                return filas;
-            }
-        },
-        {
-            data: null,
-            sClass: "Acciones",
-            render: function (data, type, row, meta) {
-                return (
-                        '<a onclick="eventoEliminarProblemaEquipo(' +
-                        row.IdArea +
-                        ", " +
-                        row.IdModelo +
-                        ", " +
-                        row.Punto +
-                        ", " +
-                        row.IdServicio +
-                        ');" class="btn btn-danger btn-xs "><i class="fa fa-trash-o"></i> Eliminar</a> </a>'
-                        );
-            }
-        },
-        {data: "IdArea"},
-        {data: "IdModelo"},
-        {data: "IdServicio"}
-    ];
-    return columnas;
-};
+
+
