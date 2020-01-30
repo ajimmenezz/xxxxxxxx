@@ -63,7 +63,14 @@
             <div class="panel-body">
                 <div class="row m-r-10">
                     <div class="col-md-7">
-                        <h3 class="m-t-10">Información Servicio Correctivo</h3>
+                        <?php
+                            if($datosServicio['IdTipoServicio'] == 20){
+                                echo '<h3 class="m-t-10">Información Servicio Correctivo</h3>';
+                            }else{
+                                echo '<h3 class="m-t-10">Información Servicio Proactivo</h3>';
+                            }
+                        ?>
+                        
                     </div>
                     <div class="col-md-5 text-right">
                         <?php
