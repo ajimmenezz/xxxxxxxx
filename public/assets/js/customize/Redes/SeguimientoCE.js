@@ -131,6 +131,7 @@ $(function () {
                     $('·table-materialNodo').off("click");
                     validacion = "EN VALIDACIÓN";
                 }
+
             });
         }
     });
@@ -1102,7 +1103,7 @@ $(function () {
     });
 
     function validarError(respuesta, objeto = null) {
-        if (!respuesta.operacion) {
+        if (respuesta === undefined) {
             if (objeto !== null) {
                 $(`#${objeto}`).modal('hide');
             }
