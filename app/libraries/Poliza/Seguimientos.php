@@ -42,7 +42,6 @@ class Seguimientos extends General
         $this->MSicsa = \Modelos\Modelo_Sicsa::factory();
         $this->DBCensos = \Modelos\Modelo_Censos::factory();
         $this->Excel = new \Librerias\Generales\CExcel();
-        $this->SimpleXLSX = new SimpleXLSX(null);
 
         parent::getCI()->load->helper('dividestringconviertearray');
     }
@@ -7027,7 +7026,8 @@ class Seguimientos extends General
 
     public function UploadCensoTemplate(array $data)
     {
-        if ($xlsx = $this->SimpleXLSX->_parse($_FILES['censoTemplate']['tmp_name'][0])) {
+        $this->SimpleXLSX = new SimpleXLSX($_FILES['censoTemplate']['tmp_name'][0]);
+        if ($xlsx = $this->SimpleXLSX) {
             $catalogos = [
                 'areas' => $this->DBCensos->getAreasForCensoCompare(),
                 'devices' => $this->DBCensos->getDevicesForCensoCompare(),
