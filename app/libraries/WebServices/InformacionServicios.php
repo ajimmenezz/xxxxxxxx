@@ -1239,7 +1239,7 @@ class InformacionServicios extends General {
         FechaFirma,
         nombreUsuario(tst.IdTecnicoFirma) as Tecnico,
         FirmaTecnico
-        from t_servicios_ticket tst where Id = '" . $servicio . "'");
+        from t_servicios_ticket tst where Ticket = (SELECT Ticket FROM t_servicios_ticket WHERE Id = '" . $servicio . "' limit 1) limit 1");
         return $consulta[0];
     }
 
@@ -1617,16 +1617,16 @@ class InformacionServicios extends General {
 
             if (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '') {
                 if (file_exists('.' . $firmas['FirmaTecnico'])) {
-                    $this->pdf->Image('.' . $firmas['FirmaTecnico'], $this->x, $this->y + 2.5, 80, 35, pathinfo($firmas['FirmaTecnico'], PATHINFO_EXTENSION));
+                    $this->pdf->Image('.' . $firmas['FirmaTecnico'], $this->x + 15, $this->y + 2.5, 80, 35, pathinfo($firmas['FirmaTecnico'], PATHINFO_EXTENSION));
                     $tecnico = utf8_decode($firmas['Tecnico']);
 
-                    $this->setCoordinates(100, $this->y + 35);
+                    $this->setCoordinates($this->x, $this->y + 35);
                     $this->pdf->Cell(95, 5, utf8_decode($tecnico), 0, 0, 'C');
 
-                    $this->setCoordinates(100, $this->y + 5);
+                    $this->setCoordinates($this->x, $this->y + 5);
                     $this->pdf->Cell(95, 5, utf8_decode("Técnico Siccob"), 0, 0, 'C');
 
-                    $this->setCoordinates(100, $this->y + 5);
+                    $this->setCoordinates($this->x, $this->y + 5);
                     $this->pdf->Cell(95, 5, utf8_decode($fechaFirma), 0, 0, 'C');
                 }
             }
@@ -1731,13 +1731,13 @@ class InformacionServicios extends General {
                         $this->pdf->Image('.' . $diagnostico['FirmaTecnico'], $this->x, $this->y + 2.5, 80, 35, pathinfo($diagnostico['FirmaTecnico'], PATHINFO_EXTENSION));
                         $tecnico = utf8_decode($diagnostico['Tecnico']);
 
-                        $this->setCoordinates(100, $this->y + 35);
+                        $this->setCoordinates($this->x, $this->y + 35);
                         $this->pdf->Cell(95, 5, utf8_decode($diagnostico['Tecnico']), 0, 0, 'C');
 
-                        $this->setCoordinates(100, $this->y + 5);
+                        $this->setCoordinates($this->x, $this->y + 5);
                         $this->pdf->Cell(95, 5, utf8_decode("Técnico Siccob"), 0, 0, 'C');
 
-                        $this->setCoordinates(100, $this->y + 5);
+                        $this->setCoordinates($this->x, $this->y + 5);
                         $this->pdf->Cell(95, 5, utf8_decode($fechaFirma), 0, 0, 'C');
                     }
                 }
