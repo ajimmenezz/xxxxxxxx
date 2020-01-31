@@ -1206,6 +1206,7 @@ Servicio.prototype.modalCampoFirma = function () {
                                 _this.enviarEvento('/Generales/Servicio/Concluir_SinClasificar', dataMandar, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
                                         $('#modal-dialogo').modal('hide');
+                                        location.reload();
 //                                        _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                     } else {
                                         $('#modal-dialogo').modal('hide');
@@ -1268,6 +1269,7 @@ Servicio.prototype.modalCampoFirma = function () {
                             _this.enviarEvento('/Generales/Servicio/Concluir_SinClasificar', dataMandar, '#modal-dialogo', function (respuesta) {
                                 if (respuesta === true) {
                                     $('#modal-dialogo').modal('hide');
+                                    location.reload();
 //                                    _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                 } else {
                                     $('#modal-dialogo').modal('hide');
