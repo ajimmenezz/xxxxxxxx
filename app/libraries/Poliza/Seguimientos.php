@@ -4,7 +4,7 @@ namespace Librerias\Poliza;
 
 use Controladores\Controller_Datos_Usuario as General;
 use Librerias\Componentes\Error as Error;
-use SimpleXLSX;
+use Librerias\Generales\SimpleXLSX as SimpleXLSX;
 
 class Seguimientos extends General
 {
@@ -23,6 +23,7 @@ class Seguimientos extends General
     private $MSicsa;
     private $DBCensos;
     private $Excel;
+    private $SimpleXLSX;
 
     public function __construct()
     {
@@ -41,6 +42,7 @@ class Seguimientos extends General
         $this->MSicsa = \Modelos\Modelo_Sicsa::factory();
         $this->DBCensos = \Modelos\Modelo_Censos::factory();
         $this->Excel = new \Librerias\Generales\CExcel();
+        $this->SimpleXLSX = new SimpleXLSX(null);
 
         parent::getCI()->load->helper('dividestringconviertearray');
     }
@@ -7025,7 +7027,7 @@ class Seguimientos extends General
 
     public function UploadCensoTemplate(array $data)
     {
-        if ($xlsx = SimpleXLSX::parse($_FILES['censoTemplate']['tmp_name'][0])) {
+        if ($xlsx = $this->SimpleXLSX->_parse($_FILES['censoTemplate']['tmp_name'][0])) {
             $catalogos = [
                 'areas' => $this->DBCensos->getAreasForCensoCompare(),
                 'devices' => $this->DBCensos->getDevicesForCensoCompare(),
@@ -7119,7 +7121,7 @@ class Seguimientos extends General
                 return ['code' => 500, 'message' => 'No se encontraron registros en el archivo proporcionado'];
             }
         } else {
-            return ['code' => 500, 'message' => SimpleXLSX::parseError()];
+            return ['code' => 500, 'message' => $this->SimpleXLSX->parseError()];
         }
     }
 
