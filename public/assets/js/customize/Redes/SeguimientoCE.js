@@ -94,14 +94,12 @@ $(function () {
 
         datoServicioTabla.id = datosFila[0];
         datoServicioTabla.tipo = datosFila[4];
-        if (datosFila[1] !== '' || datosFila[1] !== 0) {
-            datoServicioTabla.folio = datosFila[1];
-        }
+        datoServicioTabla.folio = datosFila[1];
 
         if (datosFila[tamañoDatosFila - 1] === "ABIERTO") {
             modal.mostrarModal('Iniciar Servicio', '<h3>¿Quieres atender el servicio?</h3>');
             $('#btnAceptar').on('click', function () {
-                peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Atender/' + datosFila[4], datoServicioTabla, function (respuesta) {
+                peticion.enviar('panelServicios', 'SeguimientoCE/SeguimientoGeneral/Atender', datoServicioTabla, function (respuesta) {
                     if (!validarError(respuesta)) {
                         return;
                     }

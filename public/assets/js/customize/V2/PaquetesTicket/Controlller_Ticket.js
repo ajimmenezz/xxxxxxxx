@@ -4,7 +4,7 @@ $(function () {
     let modal = new ModalServicio('modal-dialogo');
     let servicio = undefined;
     let servidor = new Utileria();
-    
+
     //Muestra la hora en el sistema
     evento.horaServidor($("#horaServidor").val());
     //Evento para cerra la session
@@ -17,7 +17,7 @@ $(function () {
         let datosFila = tablaServicios.datosFila(this);
         let factoryServicios = new factoryServicio();
         servicio = factoryServicios.getInstance(datosFila[3]);
-        let url = 'Seguimiento/Atender/';
+        let url = 'Seguimiento/Servicio/Atender';
         let datosServicio;
         let datos = {
             id: datosFila[0],
@@ -29,7 +29,7 @@ $(function () {
             operacion: datosFila[7]
         };
 
-        if (servicio) {
+        if (typeof servicio === undefined) {
             url = 'Seguimiento/Servicio_Datos';
         }
 
@@ -42,21 +42,22 @@ $(function () {
                         datosServicio = datosServidor;
                         modal.cerrarModal();
                     } else {
-                        modal.mostrarError('error','No Existe la información que solicita. Contacte con el administrador');
+                        modal.mostrarError('error', 'No Existe la información que solicita. Contacte con el administrador');
                     }
                 });
             });
-        }
-
-        if (servicio) {
-            servidor.enviar('panelSeguimientoPoliza', url, datos, datos => {
-                datosServicio = datos;
+        } else if (servicio) {
+            servidor.enviar('panelSeguimientoPoliza', url, datos, datosServidor => {
+                datosServicio = datosServidor;
             });
             servicio.setDatos(datosServicio);
+            console.log(servicio);
         } else {
+            console.log(servicio);
             datosServicio = datos;
             seguimientoOld(evento, datosServicio, datosFila);
         }
+
     });
 
 });
