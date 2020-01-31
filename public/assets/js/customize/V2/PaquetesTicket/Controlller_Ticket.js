@@ -2,6 +2,8 @@ $(function () {
     let evento = new Base();
     let tablaServicios = new TablaBasica('data-table-poliza');
     let modal = new ModalServicio('modal-dialogo');
+    let datosFila = undefined;
+    let datosServicio = undefined;
     let servicio = undefined;
     let servidor = new Utileria();
 
@@ -18,7 +20,7 @@ $(function () {
         let factoryServicios = new factoryServicio();
         servicio = factoryServicios.getInstance(datosFila[3]);
         let url = 'Seguimiento/Servicio/Atender';
-        let datosServicio;
+
         let datos = {
             id: datosFila[0],
             tipo: datosFila[3],
@@ -29,10 +31,10 @@ $(function () {
             operacion: datosFila[7]
         };
 
-        if (typeof servicio === undefined) {
+        if (!servicio) {
             url = 'Seguimiento/Servicio_Datos';
         }
-
+         
         if (datosFila[6] === 'ABIERTO') {
             modal.mostrarModal();
             modal.eventoCancelar();
@@ -41,23 +43,30 @@ $(function () {
                     if (datosServidor) {
                         datosServicio = datosServidor;
                         modal.cerrarModal();
+                        mostrarFormulario(datos);
                     } else {
                         modal.mostrarError('error', 'No Existe la información que solicita. Contacte con el administrador');
                     }
                 });
             });
-        } else if (servicio) {
+        } else {
             servidor.enviar('panelSeguimientoPoliza', url, datos, datosServidor => {
                 datosServicio = datosServidor;
+                mostrarFormulario(datos);
             });
-            servicio.setDatos(datosServicio);
-            console.log(servicio);
+            
+        }
+    });
+
+    function mostrarFormulario(datos) {
+        if (servicio) {
+            console.log('Mostrar formulario servicio nuevo');
+            servicio.setDatos(datosServicio);            
         } else {
-            console.log(servicio);
+            console.log(evento, datosServicio, datosFila);
             datosServicio = datos;
             seguimientoOld(evento, datosServicio, datosFila);
         }
-
-    });
+    }
 
 });
