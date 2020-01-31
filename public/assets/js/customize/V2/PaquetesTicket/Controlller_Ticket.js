@@ -5,7 +5,8 @@ $(function () {
     let datosFila = undefined;
     let datosServicio = undefined;
     let servicio = undefined;
-    let servidor = new Utileria();
+    let domHtml = new Utileria();
+    let informacion = new Informacion();
 
     //Muestra la hora en el sistema
     evento.horaServidor($("#horaServidor").val());
@@ -16,7 +17,7 @@ $(function () {
     App.init();
 
     tablaServicios.evento(function () {
-        let datosFila = tablaServicios.datosFila(this);
+        datosFila = tablaServicios.datosFila(this);
         let factoryServicios = new factoryServicio();
         servicio = factoryServicios.getInstance(datosFila[3]);
         let url = 'Seguimiento/Servicio/Atender';
@@ -39,7 +40,7 @@ $(function () {
             modal.mostrarModal();
             modal.eventoCancelar();
             modal.eventoIniciar(function () {
-                servidor.enviar('modal-dialogo', url, datos, datosServidor => {
+                domHtml.enviar('modal-dialogo', url, datos, datosServidor => {
                     if (datosServidor) {
                         datosServicio = datosServidor;
                         modal.cerrarModal();
@@ -50,7 +51,7 @@ $(function () {
                 });
             });
         } else {
-            servidor.enviar('panelSeguimientoPoliza', url, datos, datosServidor => {
+            domHtml.enviar('panelSeguimientoPoliza', url, datos, datosServidor => {
                 datosServicio = datosServidor;
                 mostrarFormulario(datos);
             });
@@ -61,7 +62,10 @@ $(function () {
     function mostrarFormulario(datos) {
         if (servicio) {
             console.log('Mostrar formulario servicio nuevo');
-            servicio.setDatos(datosServicio);            
+            servicio.setDatos(datosServicio);
+            domHtml.ocultarElemento('listaPoliza');
+            domHtml.mostrarElemento('panelDetallesTicket'); 
+            informacion.iniciarElementos();
         } else {
             console.log(evento, datosServicio, datosFila);
             datosServicio = datos;

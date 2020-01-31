@@ -129,6 +129,11 @@ class Utileria {
             elemento.addClass('hidden');
     }
     }
+    
+    insertarContenido(objeto = null, contenido = ''){
+        let elemento = $(`#${objeto}`);        
+        elemento.empty().append(contenido);
+    }
 }
 
 

@@ -1,4 +1,4 @@
-class Select {
+class ISelect {
 
     constructor(nombreSelect) {
         this.select = nombreSelect;
