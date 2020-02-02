@@ -1434,6 +1434,8 @@ class InformacionServicios extends General {
                     break;
                 case 20:
                 case '20':
+                case 27:
+                case '27':
                     $this->setPDFContentCorrectivo($generales['Id'], $datos);
                     break;
             }
