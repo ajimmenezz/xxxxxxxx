@@ -72,38 +72,20 @@
                                                         echo '<td></td>';
                                                         break;
                                                     case '9':
-                                                        echo '<td>Pendiente por Autorizar</td>';
+                                                        echo '<td>Pendiente por Autorizar</td><td>';
                                                         if ($value['IdUsuarioJefe'] == NULL) {
-                                                            echo '<td>
-                                                                    <li>Jefe Inmediato</li>
-                                                                    <li>RH</li>
-                                                                    <li>Contador</li>
-                                                                    <li>Director</li>
-                                                                </td>';
-                                                        } else {
-                                                            if ($value['IdUsuarioRH'] == NULL) {
-                                                                echo '<td>
-                                                                        <li>RH</li>
-                                                                        <li>Contador</li>
-                                                                        <li>Director</li>
-                                                                    </td>';
-                                                            } else {
-                                                                if ($value['IdUsuarioContabilidad'] == NULL) {
-                                                                    echo '<td>
-                                                                            <li>Contador</li>
-                                                                            <li>Director</li>
-                                                                        </td>';
-                                                                } else {
-                                                                    if ($value['IdUsuarioDireccion'] == NULL) {
-                                                                        echo '<td>
-                                                                                <li>Director</li>
-                                                                            </td>';
-                                                                    } else {
-                                                                        echo '<td></td>';
-                                                                    }
-                                                                }
-                                                            }
+                                                            echo '<li>Jefe Inmediato</li>';
                                                         }
+                                                        if ($value['IdUsuarioRH'] == NULL) {
+                                                            echo '<li>RH</li>';
+                                                        }
+                                                        if ($value['IdUsuarioContabilidad'] == NULL) {
+                                                            echo '<li>Contador</li>';
+                                                        }
+                                                        if ($value['IdUsuarioDireccion'] == NULL) {
+                                                            echo '<li>Director</li>';
+                                                        }
+                                                        echo '</td>';
                                                         break;
                                                     case '10':
                                                         echo '<td style="color: red">Rechazado</td>';

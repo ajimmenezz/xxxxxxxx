@@ -761,6 +761,11 @@ class Poliza extends General {
 
     public function guardarConclusionChecklist(array $datos) {
         $usuario = $this->usuario->getDatosUsuario();
+        if (in_array("PPDFP", $usuario["PermisosString"])) {
+            $permisoPDF = true;
+        } else {
+            $permisoPDF = false;
+        }
         $correo = implode(",", $datos['correo']);
         $datosServicio = $this->DBST->getDatosServicio($datos['servicio']);
         $titulo = 'Se concluyo el Servicio Checklist';
@@ -783,17 +788,21 @@ class Poliza extends General {
         );
 
         $actualizarServicio = $this->DBP->concluirServicio($arrayServicio);
-        $pdf = $this->pdfServicioChecklist(array('servicio' => $datos['servicio'], 'ticket' => $datos['ticket'], 'generarPDF' => false));
+        
+        if($permisoPDF == true){
+            $pdf = $this->pdfServicioChecklist(array('servicio' => $datos['servicio'], 'ticket' => $datos['ticket'], 'generarPDF' => false));
 
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist.pdf';
-        } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
-            $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist.pdf';
-        } else {
-            $path = 'http://' . $host . '/' . $pdf;
+            if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+                $path = 'https://siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist.pdf';
+            } elseif ($host === 'pruebas.siccob.solutions' || $host === 'www.pruebas.siccob.solutions') {
+                $path = 'https://pruebas.siccob.solutions/storage/Archivos/Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_Checklist.pdf';
+            } else {
+                $path = 'http://' . $host . '/' . $pdf;
+            }
+            $linkPDF = '<br>Para descargar el archivo PDF de conclusión <a href="' . $path . '" target="_blank">dar click aqui</a>';
+        }else{
+            $linkPDF = '';
         }
-
-        $linkPDF = '<br>Para descargar el archivo PDF de conclusión <a href="' . $path . '" target="_blank">dar click aqui</a>';
         $textoCorreo = '<p>Se notifica que el servicio de ' . $datosServicio['TipoServicio'] . ' con numero de ticket ' . $datos['ticket'] . ' se a concluido por ' . $usuario['Nombre'] . '<br>' . $linkPDF . '</p>';
 
         if ($actualizarServicio) {

@@ -175,6 +175,15 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td class="field">Firma</td>
+                                    <td>
+                                        <div class="col-xs-12">
+                                            <i class="fa fa-pencil fa-lg m-r-5"></i>
+                                            <a class="editarFirma m-l-5" data-campo="Firma" data-input="<?php echo $datosUsuario['Firma']; ?>" href="javascript:;">Editar</a>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -916,6 +925,68 @@
                 <button type="button" id="btnCerrarCambios" class="btn btn-secondary">Cerrar</button>
                 <button type="button" id="btnGuardarCambios" class="btn btn-primary">Guardar</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalDefinirFirma" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Revisar Firma</h4>
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <!--Empieza seccion de Firma Existente-->
+                    <div id="firmaExistente" class="text-center hidden">
+                        <div class="col-md-12">
+                            <div class="col-md-2">
+                            </div>
+                            <div class="col-md-8">
+                                <div id="imagenFirmaUsuario" class="image-inner"></div>
+                                <label>Firma Actual</label>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Finaliza seccion de Firmas Existentes-->
+                </div>
+                <div id="contentfirmaUsuario" class="col-md-12 text-center hidden">
+                    <!--Empieza seccion para agregar Firma-->
+                    <form id="formAgregarFirma">
+                        <div class="col-md-12">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <div id="firmaUsuario" style="width: 600px; height: 300px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <!--Finaliza seccion para agregar Firma-->
+                </div>
+                <div id="checkOtro" class="checkbox">
+                    <label>
+                        <input type="checkbox" value="" />Nueva firma
+                    </label>
+                </div>
+                <!--Empezando mensaje--> 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="errorMessageFirma"></div>
+                    </div>
+                </div>
+                <!--Finalizando mensaje-->
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptarModal" class="btn btn-sm btn-success hidden"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCancelarModal" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
         </div>
     </div>
 </div>

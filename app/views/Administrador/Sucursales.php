@@ -83,6 +83,7 @@
                                 <th class="never">NombreCinemex</th>
                                 <th class="never">Alias</th>
                                 <th class="never">CentroCostos</th>
+                                <th class="never">Dominio</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -116,6 +117,7 @@ foreach ($datos['ListaSucursales'] as $key => $value) {
     echo '<td>' . $value['NombreCinemex'] . '</td>';
     echo '<td>' . $value['Alias'] . '</td>';
     echo '<td>' . $value['CentroCostos'] . '</td>';
+    echo '<td>' . $value['Dominio'] . '</td>';
     echo '</tr>';
 }
 ?>                                        

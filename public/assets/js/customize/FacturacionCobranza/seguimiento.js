@@ -96,6 +96,17 @@ $(function () {
                         idSucursal,
                         datosSD
                         );
+                console.log(respuesta);
+                divItemCategoriaSD(datosDelServicio.TipoServicio);
+                cargarSelectSubcategoriaSD(respuesta.catalogoSubcategoriaSD);
+
+                $("#selectSubcategoriaSD").on("change", function (event, data) {
+                    if ($(this).val() !== '') {
+                        $('#selectItemSD').removeAttr('disabled');
+                    } else {
+                        $('#selectItemSD').attr('disabled', 'disabled');
+                    }
+                });
             } else {
                 //Aqui va el seguimiento especifico
             }
@@ -108,4 +119,16 @@ $(function () {
             tabla.agregarFila('#data-table-facturacion-cobranza', [item.Id, item.Ticket, item.Servicio, item.FechaCreacion, item.Descripcion, item.NombreEstatus, item.IdEstatus, item.Folio]);
         });
     };
+
+    var divItemCategoriaSD = function (tipoServicio) {
+        if (tipoServicio == "Cotización") {
+            $('.divItemCategoria').removeClass('hidden');
+        }
+    }
+
+    var cargarSelectSubcategoriaSD = function (catalogoSubcategoriaSD) {
+        $.each(catalogoSubcategoriaSD, function (key, valor) {
+            $("#selectSubcategoriaSD").append('<option value="' + valor.IdSubcategoria + '">' + valor.Nombre + '</option>');
+        });
+    }
 });

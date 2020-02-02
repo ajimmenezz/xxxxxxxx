@@ -1048,4 +1048,24 @@ class Modelo_ServicioTicket extends Modelo_Base {
         }
     }
 
+    public function catalogoSubcategoriaSD() {
+        $consulta = $this->consulta('SELECT * FROM cat_v3_sd_subcategoria');
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function catalogoItemSD() {
+        $consulta = $this->consulta('SELECT * FROM cat_v3_sd_item');
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
+
 }

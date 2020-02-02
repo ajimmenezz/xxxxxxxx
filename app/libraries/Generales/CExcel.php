@@ -147,6 +147,31 @@ class CExcel {
         return $objWriter;
     }
 
+    public function identify($direccion) {
+        $objWriter = \PHPExcel_IOFactory::identify($direccion);
+        return $objWriter;
+    }
+
+    public function load($direccion) {
+        $objWriter = \PHPExcel_IOFactory::load($direccion);
+        return $objWriter;
+    }
+
+    public function createReader($direccion) {
+        $objWriter = \PHPExcel_IOFactory::createReader($direccion);
+        return $objWriter;
+    }
+
+    public function columnIndexFromString($highestColumn) {
+        $objWriter = \PHPExcel_Cell::columnIndexFromString($highestColumn);
+        return $objWriter;
+    }
+
+    public function dataTypeForValue($val) {
+        $objWriter = \PHPExcel_Cell_DataType::dataTypeForValue($val);
+        return $objWriter;
+    }
+
     public function returnStyle($style) {
         switch ($style) {
             case 'titulo':
@@ -363,5 +388,27 @@ class CExcel {
             'underline' => 'single'
         )
     );
+
+    public function dataImportExcel(array $datos) {
+        $arrayExcel = array();
+        $contador = 0;
+        
+        
+        $objPHPExcel = $this->load($datos['direccion']);
+        
+        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+            $highestRow = $worksheet->getHighestRow();
+            for ($row = 9; $row <= $highestRow; ++$row) {
+                for ($col = 1; $col < 4; ++$col) {
+                    $cell = $worksheet->getCellByColumnAndRow($col, $row);
+                    $val = $cell->getValue();
+                    $arrayExcel[$contador][$col] = $val;
+                }
+                $contador ++;
+            }
+        }
+        
+        return $arrayExcel;
+    }
 
 }

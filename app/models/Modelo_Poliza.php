@@ -944,7 +944,7 @@ class Modelo_Poliza extends Modelo_Base {
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
-                                    WHERE tea.IdEstatus NOT IN('31')");
+                                    WHERE tea.IdEstatus NOT IN('31','6')");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -987,7 +987,9 @@ class Modelo_Poliza extends Modelo_Base {
                                             INNER JOIN
                                         cat_v3_regiones_cliente cvrc ON cvrc.Id = cvs.IdRegionCliente
                                     WHERE
-                                        cvrc.IdResponsableInterno = '" . $usuario . "'");
+                                        cvrc.IdResponsableInterno = '" . $usuario . "'
+                                        AND    
+                                        tea.IdEstatus != '6'");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1013,7 +1015,7 @@ class Modelo_Poliza extends Modelo_Base {
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE tea.IdUsuario = '" . $usuario . "'
-                                    AND tea.IdEstatus != '31'");
+                                    AND tea.IdEstatus NOT IN('31','6')");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1067,7 +1069,8 @@ class Modelo_Poliza extends Modelo_Base {
                                     (CASE
                                         WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '30', '32','33','34','36','37','48')
                                         WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '30', '34', '36') OR tea.IdEstatus = '38' AND Flag = '0'
-                                    END)");
+                                    END)
+                                    AND tea.IdEstatus != '6'");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1124,7 +1127,8 @@ class Modelo_Poliza extends Modelo_Base {
                                                         t_equipos_allab_solicitud_refaccion
                                                     WHERE
                                                         IdRegistro = tea.Id) = '7'
-                                        END)");
+                                        END)
+                                        AND tea.IdEstatus != '6'");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1154,7 +1158,8 @@ class Modelo_Poliza extends Modelo_Base {
                                         WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','36','39','48','49') OR tea.IdEstatus = '2' AND Flag = '1' OR tea.IdEstatus = '12' AND Flag = '0'
                                         WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','28','29','33','39','48','49') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '1'
                                         WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('41')
-                                    END)");
+                                    END)
+                                    AND tea.IdEstatus != '6'");
 
         if (!empty($consulta)) {
             return $consulta;

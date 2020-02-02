@@ -104,6 +104,9 @@ class Controller_Perfil extends Base {
             case 'EliminarDatos':
                 $resultado = $this->perfilUsuario->eliminarDatos($this->input->post());
                 break;
+            case 'ActualizarFirmaUsuario':
+                $resultado = $this->perfil->actualizarFirmaUsuario($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

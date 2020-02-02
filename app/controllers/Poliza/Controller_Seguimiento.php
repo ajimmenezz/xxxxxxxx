@@ -2,7 +2,8 @@
 
 use Controladores\Controller_Base as Base;
 
-class Controller_Seguimiento extends Base {
+class Controller_Seguimiento extends Base
+{
 
     private $Seguimientos;
     private $Servicio;
@@ -11,7 +12,8 @@ class Controller_Seguimiento extends Base {
     private $Catalogo;
     private $ServiciosTicket;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->Seguimientos = \Librerias\Poliza\Seguimientos::factory();
         $this->Servicio = \Librerias\Generales\ServiciosTicket::factory();
@@ -29,7 +31,8 @@ class Controller_Seguimiento extends Base {
      * @return json regresa una repuesta de tipo json.
      */
 
-    public function manejarEvento(string $evento = null) {
+    public function manejarEvento(string $evento = null)
+    {
         switch ($evento) {
             case 'Servicio_Datos':
                 $resultado = $this->Servicio->actualizarServicio($this->input->post());
@@ -407,6 +410,21 @@ class Controller_Seguimiento extends Base {
                 $servicios = array('serviciosAsignados' => $this->ServiciosTicket->getServiciosAsignados($this->input->post('departamento'), $this->input->post('folio')));
                 $resultado = $servicios;
                 break;
+            case 'InfomacionRestaurarCenso':
+                $resultado = $this->Seguimientos->InformacionRestaurarCenso($this->input->post());
+                break;
+            case 'RestaurarCenso':
+                $resultado = $this->Seguimientos->RestaurarCenso($this->input->post());
+                break;
+            case 'DownloadCensoTemplate':
+                $resultado = $this->Seguimientos->DownloadCensoTemplate($this->input->post());
+                break;
+            case 'UploadCensoTemplate':
+                $resultado = $this->Seguimientos->UploadCensoTemplate($this->input->post());
+                break;
+            case 'VerificarDuplicidadCenso':
+                $resultado = $this->Seguimientos->verificarDuplicidadCenso($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
@@ -414,5 +432,4 @@ class Controller_Seguimiento extends Base {
 
         echo json_encode($resultado);
     }
-
 }

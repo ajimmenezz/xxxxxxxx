@@ -20,6 +20,10 @@
                 <li id="btnReasignarServicio"><a href="#"><i class="fa fa-mail-reply-all"></i> Reasignar Servicio</a></li>
                 <li id="btnNuevaSolicitud"><a href="#"><i class="fa fa-puzzle-piece"></i> Solicitar Apoyo</a></li>
                 <li id="btnSubirInformacionSD"><a href="#"><i class="fa fa-cloud-upload"></i> Subir Información SD</a></li>
+                <?php
+                if($datosServicio["IdEstatus"] == 3)
+                    echo '<li id="solicitarTraslado"><a href="#"><i class="fa fa-mail-reply-all"></i> Generar Traslado</a></li>';
+                ?>
             </ul>
         </div>
         <label id="btnRegresarSeguimientoCorrectivo" class="btn btn-success">
@@ -59,7 +63,14 @@
             <div class="panel-body">
                 <div class="row m-r-10">
                     <div class="col-md-7">
-                        <h3 class="m-t-10">Información Servicio Correctivo</h3>
+                        <?php
+                            if($datosServicio['IdTipoServicio'] == 20){
+                                echo '<h3 class="m-t-10">Información Servicio Correctivo</h3>';
+                            }else{
+                                echo '<h3 class="m-t-10">Información Servicio Proactivo</h3>';
+                            }
+                        ?>
+                        
                     </div>
                     <div class="col-md-5 text-right">
                         <?php
@@ -371,12 +382,12 @@
                 </div>
                 <!--Finalizando Separador-->
 
-                <div class="row m-b-15">
+<!--                <div class="row m-b-15">
                     <div class="col-md-12">
                         <label>Falla reportada en sitio *</label>
                         <input id="inputFallaReportadaDiagnostico" type="text" class="form-control"  placeholder="Ingrese la persona que recibe" value="" maxlength="250"/>
                     </div>
-                </div>
+                </div>-->
 
 
                 <ul class="nav nav-pills">

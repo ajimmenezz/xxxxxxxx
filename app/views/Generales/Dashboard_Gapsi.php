@@ -50,6 +50,31 @@
                 </div>
             </div>
             <!--Finaliza selector modena-->
+            <!--Empieza selector conciliado-->
+            <div class="col-md-12">
+                <div class="radio">
+                    <label style="color: #A8ACB1">
+                        <input type="radio" name="optionsConciliado" value="Conciliado" checked="checked"/> Conciliado
+                    </label>
+                </div>
+                <div class="radio">
+                    <label style="color: #A8ACB1">
+                        <input type="radio" name="optionsConciliado" value="sinConciliado" /> Sin Conciliar
+                    </label>
+                </div>
+                <div class="radio">
+                    <label style="color: #A8ACB1">
+                        <input type="radio" name="optionsConciliado" value="Diferencia" /> Diferencia
+                    </label>
+                </div>
+                <div class="radio">
+                    <label style="color: #A8ACB1">
+                        <input type="radio" name="optionsConciliado" value="Todos" /> Todos
+                    </label>
+                </div>
+                <div class="divider"></div>
+            </div>
+            <!--Finaliza selector conciliado-->
             <!--Empieza filtro de fecha-->
             <div class="row">
                 <form id="filtroFecha" data-parsley-validate="true" class="input-group input-daterange">
@@ -258,6 +283,31 @@
             <div class="divider"></div>
         </div>
         <!--Finaliza selector modena-->
+        <!--Empieza selector conciliado-->
+        <div class="col-md-12">
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsConciliadoPrincipal" value="Conciliado" checked="checked"/> Conciliado
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsConciliadoPrincipal" value="sinConciliado" /> Sin Conciliar
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsConciliadoPrincipal" value="Diferencia" /> Diferencia
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsConciliadoPrincipal" value="Todos" /> Todos
+                </label>
+            </div>
+            <div class="divider"></div>
+        </div>
+        <!--Finaliza selector conciliado-->
         <h5 class="m-t-0">Filtros de fechas</h5>
         <!--Empieza filtro Fecha-->
         <form id="filtroFechaPrincipal" data-parsley-validate="true" class="input-group input-daterange">

@@ -14,6 +14,7 @@
                     <li id="btnAgregarProblema"><a href="#"><i class="fa fa-plus"></i> Agregar Problema</a></li>
                     <?php echo $botonAgregarVuelta ?>
                     <li id="btnCancelarServicioSinEspecificar"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
+                    <li id="btnDocumentacionFirmaSinEspecificar"><a href="#"><i class="fa fa-pencil-square-o"></i> Firmar Servicio</a></li>
                     <li id="btnGeneraPdfServicio"><a href="#"><i class="fa fa-file-pdf-o"></i> Generar Pdf</a></li>
                     <li id="btnNuevoServicioSinEspecificar"><a href="#"><i class="fa fa-plus"></i> Nuevo Servicio</a></li>
                     <li id="btnReasignarServicio"><a href="#"><i class="fa fa-mail-reply-all"></i> Reasignar Servicio</a></li>
@@ -277,6 +278,15 @@
                                 </select>
                             </div>
                         </div>
+                        
+                        <div class="col-md-6 divItemCategoria hidden">
+                            <div class="form-group">
+                                <label for="selectSubcategoriaSD">Subcategoria SD</label>
+                                <select id="selectSubcategoriaSD" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <!--Finalizando-->
 
@@ -285,6 +295,17 @@
                             <div class="form-group">
                                 <label for="selectEquipoSinClasificar">Equipo</label>
                                 <select id="selectEquipoSinClasificar" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
+                                    <option data-serie="" data-terminal="" value="">Seleccionar</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 divItemCategoria hidden">
+                            <div class="form-group">
+                                <label for="selectItemSD">Item SD</label>
+                                <select id="selectItemSD" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
                                     <option data-serie="" data-terminal="" value="">Seleccionar</option>
                                 </select>
                             </div>

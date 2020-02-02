@@ -36,11 +36,20 @@ class Inventario extends General
         $init = '';
         $data = [];
         if (isset($v['devices']) && $v['devices'] !== "" && count($v['devices']) > 0) {
-            $view = 'DevicesFirstView';
+            $view = 'devicesFirstView';
         } else if (isset($v['areas']) && $v['areas'] !== "" && count($v['areas']) > 0) {
-            $view = 'AreasFirstView';
+            $view = 'areasFirstView';
+            $data = [
+                'pointsArea' => $this->DB->totalPointsByArea('', $v),
+                'devicesArea' => $this->DB->totalDevicesByArea('', $v),
+                'devicesLine' => $this->DB->totalDevicesByLine('', $v),
+                'devicesSubline' => $this->DB->totalDevicesBySubline('', $v),
+                'devicesModel' => $this->DB->totalDevicesByModel('', $v),
+                'branchList' => $this->DB->branchListAreasAnDevices($v)
+            ];
+            $init = 'areas';
         } else {
-            $view = 'BranchListFirstView';
+            $view = 'branchListFirstView';
             $data['branchList'] = $this->DB->branchListInventories($v);
             $init = 'branchList';
         }
@@ -64,7 +73,6 @@ class Inventario extends General
             'devicesSubline' => $this->DB->totalDevicesBySubline($servicio),
             'devicesModel' => $this->DB->totalDevicesByModel($servicio),
             'details' => $this->DB->detailsInventory($servicio)
-
         ];
 
         return [

@@ -618,6 +618,11 @@ class SimpleXLSX {
 		// Sort sheets
 		ksort($this->sheets);
 	}
+        
+        function parseError() {
+            return 'Error al cargar el archivo, intentalo nuevamente';
+        }
+        
     private function _parseRichText($is = null) {
         $value = array();
 

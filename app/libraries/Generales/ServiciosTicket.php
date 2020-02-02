@@ -262,6 +262,11 @@ class ServiciosTicket extends General {
         $data = array();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $usuario = $this->Usuario->getDatosUsuario();
+        if (in_array("PPDFP", $usuario["PermisosString"])) {
+            $data['pdf'] = true;
+        } else {
+            $data['pdf'] = false;
+        }
         $datosServicio = $this->DBST->getDatosServicio($datos['servicio']);
         $idSolicitud = $datosServicio['IdSolicitud'];
         $data['datosServicio'] = $datosServicio;
@@ -1350,7 +1355,11 @@ class ServiciosTicket extends General {
     public function modalServicioSinEspecificar(array $datosServicio, string $servicio, string $fecha = null, string $departamento = null, $idSolcitud = null) {
         $usuario = $this->Usuario->getDatosUsuario();
         $data = array();
-
+        if (in_array("PPDFP", $usuario["PermisosString"])) {
+            $data['pdf'] = true;
+        } else {
+            $data['pdf'] = false;
+        }
         if ($datosServicio['IdEstatus'] === '1') {
             $data['informacion']['serviciosAsignados'] = $this->cambiarEstatusServicioTicket($servicio, $fecha, '2', $departamento);
             $this->setStatusSD($datosServicio['Folio']);
@@ -1390,6 +1399,11 @@ class ServiciosTicket extends General {
         } else {
             $data['botonAgregarVuelta'] = '';
         }
+        
+        if($datosServicio['TipoServicio'] === 'Cotización'){
+            $data['catalogoSubcategoriaSD'] = $this->DBST->catalogoSubcategoriaSD();
+            $data['catalogoItemSD'] = $this->DBST->catalogoItemSD();
+        }
 
         $data['formulario'] = parent::getCI()->load->view('Generales/Modal/formularioSeguimientoServicioSinClasificar', $data, TRUE);
         return $data;
@@ -1404,16 +1418,23 @@ class ServiciosTicket extends General {
     public function cambiarEstatusServicioTicket(string $servicio, string $fecha, string $estatus, string $departamento = null) {
         $data = array();
 
-        if ($estatus === '4' || $estatus === '5' || $estatus === '10') {
+        if ($estatus === '4' || $estatus === '10') {
             $campoFecha = 'FechaConclusion';
         } elseif ($estatus === '1' || $estatus === '2') {
             $campoFecha = 'FechaInicio';
         }
 
-        $consulta = $this->DBST->actualizarServicio('t_servicios_ticket', array(
-            'IdEstatus' => $estatus,
-            $campoFecha => $fecha
-                ), array('Id' => $servicio));
+        if ($estatus !== '5') {
+            $consulta = $this->DBST->actualizarServicio('t_servicios_ticket', array(
+                'IdEstatus' => $estatus,
+                $campoFecha => $fecha
+                    ), array('Id' => $servicio));
+        } else {
+            $consulta = $this->DBST->actualizarServicio('t_servicios_ticket', array(
+                'IdEstatus' => $estatus
+                    ), array('Id' => $servicio));
+        }
+
         if (!empty($consulta)) {
             if ($departamento !== null) {
                 return $data['serviciosAsignados'] = $this->getServiciosAsignados($departamento);
@@ -1511,10 +1532,21 @@ class ServiciosTicket extends General {
 
     public function verificarServicio(array $datos) {
         try {
+            $usuario = $this->Usuario->getDatosUsuario();
+            if (in_array("PPDFP", $usuario["PermisosString"])) {
+                $permisoPDF = true;
+            } else {
+                $permisoPDF = false;
+            }
             $this->DBST->iniciaTransaccion();
             $host = $_SERVER['SERVER_NAME'];
             $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+            $this->DBST->actualizarServicio('t_servicios_ticket', array('IdUsuarioValida' => $usuario['Id'],
+                'FechaValidacion' => $fecha), array('Id' => $datos['servicio']));
+
             $this->cambiarEstatusServicioTicket($datos['servicio'], $fecha, '4');
+
             $serviciosTicket = $this->DBST->consultaGeneral('SELECT Id FROM t_servicios_ticket WHERE Ticket = "' . $datos['ticket'] . '" AND IdEstatus in(10,5,2,1)');
             $contador = 0;
             $linkPDF = '';
@@ -1566,8 +1598,10 @@ class ServiciosTicket extends General {
                         $path = 'http://' . $host . '/' . $linkPdfServiciosConcluidos;
                         $linkDetallesSolicitud = 'http://' . $host . '/Detalles/Solicitud/' . $datosDescripcionConclusion[0]['IdSolicitud'];
                     }
-
-                    $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
+                    
+                    if($permisoPDF == true){
+                        $linkPDF .= '<br>Ver Servicio PDF-' . $contador . ' <a href="' . $path . '" target="_blank">Aquí</a>';
+                    }
                 }
 
                 $titulo = 'Solicitud Concluida';
@@ -2363,11 +2397,17 @@ class ServiciosTicket extends General {
 
     public function guardarDocumentacionFirma(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
+        if (in_array("PPDFP", $usuario["PermisosString"])) {
+            $permisoPDF = true;
+        } else {
+            $permisoPDF = false;
+        }
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $img = $datos['img'];
         $img = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $img));
         $data = base64_decode($img);
-        $direccionFirma = '/storage/Archivos/imagenesFirmas/DocumentacionFirma/' . str_replace(' ', '_', 'Firma_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
+        $ticket = $this->DBST->consulta("select Ticket from t_servicios_ticket where Id = '" . $datos['servicio'] . "'")[0]['Ticket'];
+        $direccionFirma = '/storage/Archivos/imagenesFirmas/DocumentacionFirma/' . str_replace(' ', '_', 'Firma_' . $ticket . '_' . $datos['servicio']) . '.png';
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $data);
         $fechaNueva = str_replace(' ', '_', $fecha);
         $fechaNueva = str_replace(':', '-', $fechaNueva);
@@ -2388,7 +2428,11 @@ class ServiciosTicket extends General {
             'Firma' => $direccionFirma,
             'UrlArchivo' => $path
         ));
-        $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+        if($permisoPDF){
+            $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+        }else{
+            $PDF = '';
+        }
         $descripcion = 'Descripción: <strong>Se le ha mandado un documento del avance del día de hoy.</strong><br>';
         $titulo = 'Documento Firmado - Avance';
         $texto = '<p>Estimado(a) <strong>' . $datos['recibe'] . '</strong>, se le ha mandado el reporte firmado.</p>' . $descripcion . $PDF;

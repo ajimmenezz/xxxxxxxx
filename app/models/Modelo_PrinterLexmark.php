@@ -201,4 +201,31 @@ class Modelo_PrinterLexmark extends Modelo_Base
             ];
         }
     }
+
+    public function getRecordsBaseLexmark($fi, $ff)
+    {
+        return $this->consulta("select * from v_base_lexmark where FileDate between '" . $fi . "' and '" . $ff . "'");
+    }
+
+    public function setPerformanceByToner($data)
+    {
+        $this->queryBolean("truncate t_base_rendimiento_toner");
+        foreach ($data as $key => $value) {
+            foreach ($value as $k => $v) {
+                $this->insertar("t_base_rendimiento_toner", [
+                    'Complejo' => $key,
+                    'SerieImpresora' => $v['Serie'],
+                    'SerieCartucho' => $v['SerieCartucho'],
+                    'FechaPrimerContador' => $v['FechaPrimerContador'],
+                    'FechaUltimoContador' => $v['FechaUltimoContador'],
+                    'Capacidad' => $v['Capacidad'],
+                    'Nivel' => $v['Nivel'],
+                    'PrimerContador' => $v['PrimerContador'],
+                    'UltimoContador' => $v['UltimoContador'],
+                    'ImpresionesCartucho' => $v['UltimoContador'] - $v['PrimerContador'],
+                    'ImpresionesEsperadas' => ceil($v['Capacidad'] - ($v['Capacidad'] * ($v['Nivel'] / 100)))
+                ]);
+            }
+        }
+    }
 }
