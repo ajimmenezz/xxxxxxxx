@@ -39,7 +39,7 @@ class ModalBase {
 
         if (hijos.length <= 0) {
             objetoError.css('display', 'block');
-            objetoError.append(`<div class="alert alert-danger fade in m-b-15">
+            objetoError.append(`<div class="alert alert-danger fade in m-b-15 text-center">
                                 <strong>Error!</strong> ${mensaje}.
                                 <span class="close" data-dismiss="alert">&times;</span>
                             </div>`);

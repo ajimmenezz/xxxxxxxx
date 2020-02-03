@@ -1,4 +1,4 @@
-class SelectBasico extends Select {
+class SelectBasico extends ISelect {
     
     iniciarSelect() {        
         this.objetoSelect.select2();

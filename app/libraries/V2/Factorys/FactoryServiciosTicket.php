@@ -25,6 +25,9 @@ class FactoryServiciosTicket
             case 'Cableado':
                 $this->servicio= new GeneralRedes($idServicio);//4
                 break;
+            case 'Instalaciones':
+                $this->servicio= new GeneralRedes($idServicio);//4
+                break;
         }
         return $this->servicio;
     }

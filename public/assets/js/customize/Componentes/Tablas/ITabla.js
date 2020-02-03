@@ -1,4 +1,4 @@
-class Tabla {
+class ITabla {
 
     constructor(tabla = '', datos = []) {
 

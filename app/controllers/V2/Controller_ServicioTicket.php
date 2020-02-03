@@ -28,10 +28,10 @@ class Controller_ServicioTicket extends CI_Controller {
         $this->datos = array();
     }
 
-    public function atenderServicio(string $tipoServicio) {
+    public function atenderServicio() {
         try {
             $datosServicio = $this->input->post();
-            $this->servicio = $this->factory->getServicio($tipoServicio, $datosServicio['id']);
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $idUsuario = Usuario::getId();
             $this->servicio->startServicio($idUsuario);
             $this->datos['servicio'] = $this->servicio->getDatos();
@@ -39,7 +39,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['problemas'] = null;
             $this->datos['firmas'] = null;
-            $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
+            $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));
             $this->getInformacionFolio();
             $this->setEstatusServiceDesk();
             $this->datos['operacion'] = TRUE;

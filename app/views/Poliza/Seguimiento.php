@@ -98,6 +98,84 @@
 <div id="seccionSeguimientoServicio" class="content hidden"></div>
 <!-- Finalizando seccion para el seguimiento de algun servicio --> 
 
-<!--Empezando seccion para el seguimiento de un servicio sin clasificar->-->
-<div id="antesYDespues" class="content hidden"></div>
-<!-- Finalizando seccion para el seguimiento de un servicio sin clasificar 
+<!--Empezando seccion para el seguimiento de algun servicio -->
+<div id="panelDetallesTicket" class="content hidden">
+    <div id="seccion-servicio-correctivo" class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
+        <!--Empezando Pestañas para definir la seccion-->
+        <div class="panel-heading p-0">
+            <div class="panel-heading-btn m-r-10 m-t-10">
+                <!-- Single button -->                                  
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+            </div>
+            <!-- begin nav-tabs -->
+            <div class="tab-overflow">
+                <ul class="nav nav-tabs nav-tabs-inverse">
+                    <li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>
+                    <li class="active"><a href="#General" data-toggle="tab">Información</a></li>
+                    <li class=""><a href="#DiagnosticoEquipo" data-toggle="tab">Equipos</a></li>
+                    <li class=""><a href="#ProblemasServicio" data-toggle="tab">Bitacara problemas</a></li>                    
+                    <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>          
+                </ul>
+            </div>
+        </div>
+        <!--Finalizando Pestañas para definir la seccion-->
+
+        <!--Empezando contenido de la informacion del servicio-->
+        <div class="tab-content">
+            <!--Empezando la seccion servicio Correctivo-->
+            <div class="tab-pane fade active in" id="General">
+                <div class="panel-body">
+                    <form class="margin-bottom-0" id="formServicioCorrectivo" data-parsley-validate="true">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h1>Informacion de sevicio</h1>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="selectSucursalesCorrectivo">Sucursal *</label>
+                                    <select id="selectSucursalesCorrectivo" class="form-control" style="width: 100%" data-parsley-required="true">
+                                        <option value="">Seleccionar</option>                                   
+                                        <option value="">Universidad</option>                                   
+                                        <option value="">Polanco</option>                                   
+                                        <option value="">Santa Fe</option>                                   
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="selectAreaPuntoCorrectivo">Área y Punto *</label>
+                                    <select id="selectAreaPuntoCorrectivo" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
+                                        <option value="">Seleccionar</option>
+                                        <option value="">Dulceria</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-10">                                                
+                            <div id="divGuardarDatosCorrectivo" class="col-md-12">
+                                <div class="form-group text-center">
+                                    <br>
+                                    <a id="btnGuardarDatosCorrectivo" href="javascript:;" class="btn btn-primary m-r-5 "><i class="fa fa-floppy-o"></i> Guardar Información</a>                            
+                                </div>
+                            </div>
+                            <div id="divConcluirServicioCorrectivo" class="col-md-12 hidden">
+                                <div class="form-group text-center">
+                                    <br>
+                                    <a id="btnConcluirServicioCorrectivo" href="javascript:;" class="btn btn-danger m-r-5 "><i class="fa fa-unlock-alt"></i> Concluir Servicio</a>                            
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--Finalizando la seccion de servicio Correctivo-->
+
+        </div> 
+    </div>
+    <!-- Finalizando seccion para el seguimiento de algun servicio --> 
+
+    <!--Empezando seccion para el seguimiento de un servicio sin clasificar->-->
+    <div id="antesYDespues" class="content hidden"></div>
+    <!-- Finalizando seccion para el seguimiento de un servicio sin clasificar 

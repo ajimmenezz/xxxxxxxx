@@ -91,6 +91,7 @@ $route['Poliza/ReportesPoliza/(:any)'] = 'Poliza/Controller_ReportesPoliza/manej
 $route['Poliza/Tester/(:any)'] = 'Generales/Controller_Tester/manejarEvento/$1';
 $route['Poliza/EventoCatalogoRevisionFisica/(:any)'] = 'Poliza/Controller_Poliza/manejarEvento/$1';
 $route['Poliza/Inventarios/(:any)'] = 'Poliza/Controller_ReportesPoliza/manejarEvento/$1';
+$route['Poliza/Seguimiento/Servicio/Atender'] = 'V2/Controller_ServicioTicket/atenderServicio';
 
 /* Routers para el manejo nuevo de Proyectos */
 $route['Proyectos2/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
@@ -198,7 +199,7 @@ $route['Salas4D/EventoCatalogos/(:any)'] = 'Salas4D/Controller_Catalogos/manejar
 /* Routers para el manejo de Redes */
 $route['Redes/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Redes/Seguimiento/(:any)'] = 'Redes/Controller_Seguimiento/manejarEvento/$1';
-$route['Redes/SeguimientoCE/SeguimientoGeneral/Atender/(:any)'] = 'V2/Controller_ServicioTicket/atenderServicio/$1';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/Atender'] = 'V2/Controller_ServicioTicket/atenderServicio';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/Seguimiento/(:any)'] = 'V2/Controller_ServicioTicket/seguimientoServicio/$1';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/Folio/(:any)'] = 'V2/Controller_ServicioTicket/setFolio';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/Accion/(:any)'] = 'V2/Controller_ServicioTicket/runEvento/$1';
