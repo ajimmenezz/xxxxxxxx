@@ -39,4 +39,35 @@ class Modelo_ServicioTicketV2 extends Modelo_Base {
         }
     }
 
+    public function getDatosServicio(string $idServicio) {
+        $consulta = $this->consulta('select 
+                                            serviciosTicket.Id AS IdServicio,
+                                            serviciosTicket.FechaCreacion,
+                                            serviciosTicket.FechaInicio,
+                                            serviciosTicket.Ticket,
+                                            nombreUsuario(serviciosTicket.Atiende) as Atiende,
+                                            serviciosTicket.IdSolicitud,
+                                            serviciosTicket.Descripcion,
+                                            serviciosTicket.IdSucursal,
+                                            (select idCliente from cat_v3_sucursales where Id = serviciosTicket.IdSucursal) as IdCliente,
+                                            usuario(serviciosTicket.Solicita) as Solicita,
+                                            solicitudes.FechaCreacion as FechaSolicitud,
+                                            solicitudesInternas.Descripcion as DescripcionSolicitud,
+                                            solicitudes.Folio,
+                                            (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = serviciosTicket.Atiende) CorreoAtiende
+                                        from 
+                                                t_servicios_ticket serviciosTicket
+                                        join 
+                                                t_solicitudes solicitudes
+                                        on
+                                                serviciosTicket.IdSolicitud=solicitudes.Id
+                                        join
+                                                t_solicitudes_internas solicitudesInternas
+                                        on
+                                                solicitudes.Id=solicitudesInternas.IdSolicitud
+                                        where
+                                                serviciosTicket.Id = ' . $idServicio);
+        return $consulta;
+    }
+
 }

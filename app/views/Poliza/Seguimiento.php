@@ -100,11 +100,27 @@
 
 <!--Empezando seccion para el seguimiento de algun servicio -->
 <div id="panelDetallesTicket" class="content hidden">
+    <div class="row">
+        <div class="col-md-9 col-sm-6 col-xs-12">
+            <h1 class="page-header">Seguimiento Póliza</h1>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12 text-right">
+            <label id="btnRegresar" class="btn btn-success">
+                <i class="fa fa fa-reply"></i> Regresar
+            </label>  
+        </div>
+    </div> 
     <div id="seccion-servicio-correctivo" class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
         <!--Empezando Pestañas para definir la seccion-->
         <div class="panel-heading p-0">
             <div class="panel-heading-btn m-r-10 m-t-10">
-                <!-- Single button -->                                  
+                <!-- Single button -->  
+                <label id="btnRegresarSeguimiento" class="btn btn-info btn-xs">
+                    <i class="fa fa fa-unlock-alt"></i> Cierre
+                </label> 
+                <label id="btnRegresarSeguimiento" class="btn btn-danger btn-xs">
+                    <i class="fa fa fa-exclamation-triangle"></i> Reportar Problema
+                </label> 
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-expand"><i class="fa fa-expand"></i></a>
             </div>
             <!-- begin nav-tabs -->
@@ -112,8 +128,8 @@
                 <ul class="nav nav-tabs nav-tabs-inverse">
                     <li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>
                     <li class="active"><a href="#General" data-toggle="tab">Información</a></li>
-                    <li class=""><a href="#DiagnosticoEquipo" data-toggle="tab">Equipos</a></li>
-                    <li class=""><a href="#ProblemasServicio" data-toggle="tab">Bitacara problemas</a></li>                    
+                    <li class=""><a href="#EquiposInstalaciones" data-toggle="tab">Equipos</a></li>
+                    <li class=""><a href="#BitacoraProblemas" data-toggle="tab">Bitácara problemas</a></li>                    
                     <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>          
                 </ul>
             </div>
@@ -125,45 +141,91 @@
             <!--Empezando la seccion servicio Correctivo-->
             <div class="tab-pane fade active in" id="General">
                 <div class="panel-body">
+
+                    <div class="row m-r-10">
+                        <div class="col-md-12">
+                            <h3 class="m-t-10">Información General de solicitud y servicio</h3>
+                        </div>
+                    </div>
+
+                    <!--Empezando Separador-->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="underline m-b-15 m-t-15"></div>
+                        </div>
+                    </div>
+                    <!--Finalizando Separador--> 
                     <form class="margin-bottom-0" id="formServicioCorrectivo" data-parsley-validate="true">
                         <div class="row">
-                            <div class="col-md-12">
-                                <h1>Informacion de sevicio</h1>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <h5 class="f-w-700">Solicitud:</h5>
+                                <pre id="solicitudInformacionGeneral"></pre>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <div class="form-group">
+                                    <h5 class="f-w-700">Incidente SD:</h5>
+                                    <div class="input-group">
+                                        <input id="folioInformacionGeneral" type="number" class="form-control"  placeholder="Folio" disabled/>
+                                        <span class="input-group-addon">
+                                            <button id="btnAgregarRuta" type="button" class="btn btn-success btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-edit"></i></button>
+                                            <button id="btnAgregarRuta" type="button" class="btn btn-warning btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-trash-o"></i></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <h5 class="f-w-700">Ticket:</h5>
+                                <pre id="ticketInformacionGeneral"></pre>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                <h5 class="f-w-700">Servicio</h5>
+                                <pre id="servicioInformacionGeneral"></pre>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <h5 class="f-w-700">Solicita:</h5>
+                                <pre id="solicitaInformacionGeneral"></pre>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <h5 class="f-w-700">Atiende:</h5>
+                                <pre id="atiendeInformacionGeneral"></pre>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <h5 class="f-w-700">Fecha Solicitud:</h5>
+                                <pre id="fechaSolicitudInformacionGeneral"></pre>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <h5 class="f-w-700">Fecha Creación Servicio:</h5>
+                                <pre id="fechaCreacionServicioInformacionGeneral"></pre>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <h5 class="f-w-700">Fecha Inicio Servicio:</h5>
+                                <pre id="fechaInicioServicioInformacionGeneral"></pre>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="selectSucursalesCorrectivo">Sucursal *</label>
-                                    <select id="selectSucursalesCorrectivo" class="form-control" style="width: 100%" data-parsley-required="true">
-                                        <option value="">Seleccionar</option>                                   
-                                        <option value="">Universidad</option>                                   
-                                        <option value="">Polanco</option>                                   
-                                        <option value="">Santa Fe</option>                                   
+                                    <h5 class="f-w-700">Cliente *</h5>
+                                    <select id="selectClienteInformacionGeneral" class="form-control" style="width: 100%" data-parsley-required="true">
+                                        <option value="">Seleccionar</option>                                                                    
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="selectAreaPuntoCorrectivo">Área y Punto *</label>
-                                    <select id="selectAreaPuntoCorrectivo" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
-                                        <option value="">Seleccionar</option>
-                                        <option value="">Dulceria</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row m-t-10">                                                
-                            <div id="divGuardarDatosCorrectivo" class="col-md-12">
-                                <div class="form-group text-center">
-                                    <br>
-                                    <a id="btnGuardarDatosCorrectivo" href="javascript:;" class="btn btn-primary m-r-5 "><i class="fa fa-floppy-o"></i> Guardar Información</a>                            
-                                </div>
-                            </div>
-                            <div id="divConcluirServicioCorrectivo" class="col-md-12 hidden">
-                                <div class="form-group text-center">
-                                    <br>
-                                    <a id="btnConcluirServicioCorrectivo" href="javascript:;" class="btn btn-danger m-r-5 "><i class="fa fa-unlock-alt"></i> Concluir Servicio</a>                            
+                                    <h5 class="f-w-700">Sucursal *</h5>
+                                    <div class="input-group">
+                                        <select id="selectSucursalInformacionGeneral" class="form-control generales" style="width: 100%">
+                                            <option value="">Seleccionar</option>
+                                        </select>
+                                        <span class="input-group-addon">
+                                            <button id="btnAgregarRuta" type="button" class="btn btn-primary btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-floppy-o"></i></button>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -172,10 +234,99 @@
             </div>
             <!--Finalizando la seccion de servicio Correctivo-->
 
+
+            <div class="tab-pane fade " id="EquiposInstalaciones">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <h5 class="f-w-700">Operación *</h5>
+                                <select id="selectOperacionInstalaciones" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">                                           
+                                <h5 class="f-w-700">Área de Atención *</h5>
+                                <input id="inputCantidadRefaccionSolicitud" type="number" class="form-control"  placeholder="Cantidad"/>
+                            </div>                               
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">                                           
+                                <h5 class="f-w-700">Punto *</h5>
+                                <input id="inputCantidadRefaccionSolicitud" type="number" class="form-control"  placeholder="Cantidad"/>
+                            </div>                               
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <h5 class="f-w-700">Modelo *</h5>
+                                <select id="selectModeloInstalaciones" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">                                           
+                                <h5 class="f-w-700">Serie *</h5>
+                                <input id="inputCantidadRefaccionSolicitud" type="number" class="form-control"  placeholder="Cantidad"/>
+                            </div>                               
+                        </div>
+                        <div class="col-md-2 m-t-30"> 
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="inputMultimedia" name="inputMultimedia" value="1" />
+                                        Ilegible
+                                    </label>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="row m-t-10">
+                        <!--Empezando error Impericia--> 
+                        <div class="col-md-12">
+                            <div class="errorEnviarReporteImpericia"></div>
+                        </div>
+                        <!--Finalizando Error Impericia-->
+
+                        <div class="row m-t-10">
+                            <div class="col-md-12">
+                                <div class="form-group text-center">
+                                    <a id="btnAgregarEquipoInstalacion" href="javascript:;" class="btn btn-success m-r-5 "><i class="fa fa-plus"></i> Agregar</a>                            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="data-table-equipos-instalaciones" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="all">Modelo</th>
+                                    <th class="all">Serie</th>
+                                    <th class="all">Área</th>
+                                    <th class="all">Punto</th>
+                                    <th class="all">Operación</th>
+                                </tr>
+                            </thead>
+                            <tbody>                                      
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade " id="BitacoraProblemas">
+                <div class="panel-body">
+
+                </div>
+            </div>
         </div> 
     </div>
-    <!-- Finalizando seccion para el seguimiento de algun servicio --> 
+</div>
+<!-- Finalizando seccion para el seguimiento de algun servicio --> 
 
-    <!--Empezando seccion para el seguimiento de un servicio sin clasificar->-->
-    <div id="antesYDespues" class="content hidden"></div>
-    <!-- Finalizando seccion para el seguimiento de un servicio sin clasificar 
+<!--Empezando seccion para el seguimiento de un servicio sin clasificar->-->
+<div id="antesYDespues" class="content hidden"></div>
+<!-- Finalizando seccion para el seguimiento de un servicio sin clasificar 

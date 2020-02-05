@@ -879,6 +879,7 @@ $config['Poliza'] = array(
             'V2/PaquetesTicket/IServicio',
             'V2/PaquetesTicket/ServicioInstalaciones',
             'V2/PaquetesTicket/Informacion',
+            'V2/PaquetesTicket/Solucion',
             'Poliza/seguimiento',
             'V2/PaquetesTicket/Controlller_Ticket'),
         'pluginsJs' => array(

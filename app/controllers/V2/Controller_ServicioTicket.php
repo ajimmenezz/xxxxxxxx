@@ -4,6 +4,7 @@ use Librerias\V2\Factorys\FactoryServiciosTicket as FactoryServiciosTicket;
 use Librerias\V2\PaquetesGenerales\Utilerias\ServiceDesk as ServiceDesk;
 use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
 use Librerias\V2\PaquetesGenerales\Utilerias\Archivo as Archivo;
+use Librerias\V2\PaquetesClientes\GestorClientes as GestorCliente;
 use Librerias\V2\PaquetesSucursales\GestorSucursales as GestorSucursal;
 use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenVirtual;
@@ -12,6 +13,7 @@ use Librerias\V2\PaquetesTicket\Utilerias\Solicitud as Solicitud;
 class Controller_ServicioTicket extends CI_Controller {
 
     private $factory;
+    private $gestorClientes;
     private $gestorSucursales;
     private $gestorServicios;
     private $servicio;
@@ -21,6 +23,7 @@ class Controller_ServicioTicket extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->factory = new FactoryServiciosTicket();
+        $this->gestorClientes = new GestorCliente();
         $this->gestorSucursales = new GestorSucursal();
         $this->gestorServicios = new GestorServicio();
         $this->almacenVirtual = new AlmacenVirtual();
@@ -35,6 +38,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $idUsuario = Usuario::getId();
             $this->servicio->startServicio($idUsuario);
             $this->datos['servicio'] = $this->servicio->getDatos();
+            $this->datos['clientes'] = $this->gestorClientes->getClientes('1,4,12,18,20');
             $this->datos['sucursales'] = $this->gestorSucursales->getSucursales();
             $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['problemas'] = null;
