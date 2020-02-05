@@ -282,4 +282,20 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
+    public function guardarInformacionGeneral() {
+        try {
+            $datosServicio = $this->input->post();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->setInformacionGeneral($datosServicio);
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->datos['servicio'] = $this->servicio->getDatos();
+            $this->datos['operacion'] = TRUE;
+            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
+
 }

@@ -142,20 +142,25 @@
             <div class="tab-pane fade active in" id="General">
                 <div class="panel-body">
 
-                    <div class="row m-r-10">
-                        <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
                             <h3 class="m-t-10">Información General de solicitud y servicio</h3>
+                        </div>
+                        <div class="col-md-6 m-t-10 text-right">
+                            <a id="btnGuardarInformacionGeneral" href="javascript:;" class="btn btn-success btn-xs m-r-5 hidden"><i class="fa fa fa-floppy-o"></i> Guardar</a>
+                            <a id="btnCancelarInformacionGeneral" href="javascript:;" class="btn btn-danger btn-xs m-r-5 hidden"><i class="fa fa fa-times"></i> Cancelar</a>
+                            <a id="btnEditarInformacionGeneral" href="javascript:;" class="btn btn-warning btn-xs m-r-5"><i class="fa fa fa-pencil-square-o"></i> Editar</a>
                         </div>
                     </div>
 
                     <!--Empezando Separador-->
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="underline m-b-15 m-t-15"></div>
+                            <div class="underline m-b-15"></div>
                         </div>
                     </div>
                     <!--Finalizando Separador--> 
-                    <form class="margin-bottom-0" id="formServicioCorrectivo" data-parsley-validate="true">
+                    <form class="margin-bottom-0" id="formInformacionGeneral" data-parsley-validate="true">
                         <div class="row">
                             <div class="col-md-3 col-sm-3 col-xs-12">
                                 <h5 class="f-w-700">Solicitud:</h5>
@@ -210,7 +215,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <h5 class="f-w-700">Cliente *</h5>
-                                    <select id="selectCliente" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <select id="selectCliente" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
                                         <option value="">Seleccionar</option>                                                                    
                                     </select>
                                 </div>
@@ -218,14 +223,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <h5 class="f-w-700">Sucursal *</h5>
-                                    <div class="input-group">
-                                        <select id="selectSucursal" class="form-control" style="width: 100%">
-                                            <option value="">Seleccionar</option>
-                                        </select>
-                                        <span class="input-group-addon">
-                                            <button id="btnGuardarSucursal" type="button" class="btn btn-primary btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-floppy-o"></i></button>
-                                        </span>
-                                    </div>
+                                    <select id="selectSucursal" class="form-control" style="width: 100%" data-parsley-required="true"  disabled>
+                                        <option value="">Seleccionar</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>

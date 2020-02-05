@@ -54,6 +54,7 @@ class Modelo_ServicioTicketV2 extends Modelo_Base {
                                             solicitudes.FechaCreacion as FechaSolicitud,
                                             solicitudesInternas.Descripcion as DescripcionSolicitud,
                                             solicitudes.Folio,
+                                            tipoServicio(serviciosTicket.IdTipoServicio) AS TipoServicio,
                                             (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = serviciosTicket.Atiende) CorreoAtiende
                                         from 
                                                 t_servicios_ticket serviciosTicket
@@ -68,6 +69,10 @@ class Modelo_ServicioTicketV2 extends Modelo_Base {
                                         where
                                                 serviciosTicket.Id = ' . $idServicio);
         return $consulta;
+    }
+
+    public function actualizarServicio(array $campos, array $where) {
+        $consulta = $this->actualizarArray('t_servicios_ticket', $campos, $where);
     }
 
 }

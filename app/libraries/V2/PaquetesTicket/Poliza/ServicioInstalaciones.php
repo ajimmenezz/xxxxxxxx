@@ -46,6 +46,7 @@ class ServicioInstalaciones implements Servicio {
         $this->solicita = $consulta[0]['Solicita'];
         $this->descripcionSolicitud = $consulta[0]['DescripcionSolicitud'];
         $this->correoAtiende = $consulta[0]['CorreoAtiende'];
+        $this->tipoServicio = $consulta[0]['TipoServicio'];
     }
 
     public function startServicio(string $atiende) {
@@ -54,13 +55,13 @@ class ServicioInstalaciones implements Servicio {
 //        $this->setEstatus('2');
 //        $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
+
 //
     public function setEstatus(string $estatus) {
 //        $this->DBServiciosGeneralRedes->empezarTransaccion();
 //        $this->DBServiciosGeneralRedes->setEstatus($this->id, $estatus);
 //        $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
-
 
     public function getFolio() {
         return $this->folioSolicitud;
@@ -78,7 +79,9 @@ class ServicioInstalaciones implements Servicio {
             "solicita" => $this->solicita,
             "sucursal" => $this->idSucursal,
             "fechaSolicitud" => $this->fechaSolicitud,
-            "descripcionSolicitud" => $this->descripcionSolicitud
+            "descripcionSolicitud" => $this->descripcionSolicitud,
+            "tipoServicio" => $this->tipoServicio,
+            "cliente" => $this->idCliente
         );
     }
 
@@ -127,6 +130,12 @@ class ServicioInstalaciones implements Servicio {
             default:
                 break;
         }
+    }
+
+    public function setInformacionGeneral(array $datos) {
+        $this->DBServicioTicket->empezarTransaccion();
+        $this->DBServicioTicket->actualizarServicio(array('IdSucursal' => $datos['sucursal']), array('Id' => $this->id));
+        $this->DBServicioTicket->finalizarTransaccion();
     }
 
 }

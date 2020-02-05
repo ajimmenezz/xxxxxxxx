@@ -4,7 +4,8 @@ class ServicioInstalaciones extends IServicio {
 
     }
 
-    setDatos(datos) {         
+    setDatos(datos) { 
+        console.log(datos);
         if (datos.hasOwnProperty('Error')) {
             console.log(datos);
         }
