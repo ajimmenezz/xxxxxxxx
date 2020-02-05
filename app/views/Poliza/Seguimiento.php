@@ -159,7 +159,7 @@
                         <div class="row">
                             <div class="col-md-3 col-sm-3 col-xs-12">
                                 <h5 class="f-w-700">Solicitud:</h5>
-                                <pre id="solicitudInformacionGeneral"></pre>
+                                <input id="solicitud" type="text" class="form-control" disabled/>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-12">
                                 <div class="form-group">
@@ -167,50 +167,50 @@
                                     <div class="input-group">
                                         <input id="folioInformacionGeneral" type="number" class="form-control"  placeholder="Folio" disabled/>
                                         <span class="input-group-addon">
-                                            <button id="btnAgregarRuta" type="button" class="btn btn-success btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-edit"></i></button>
-                                            <button id="btnAgregarRuta" type="button" class="btn btn-warning btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-trash-o"></i></button>
+                                            <button id="btnEditarFolio" type="button" class="btn btn-success btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-edit"></i></button>
+                                            <button id="btnEliminarFolio" type="button" class="btn btn-warning btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-trash-o"></i></button>
                                         </span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-12">
                                 <h5 class="f-w-700">Ticket:</h5>
-                                <pre id="ticketInformacionGeneral"></pre>
+                                <input id="ticket" type="text" class="form-control" disabled/>                                
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-12">
                                 <h5 class="f-w-700">Servicio</h5>
-                                <pre id="servicioInformacionGeneral"></pre>
+                                <input id="servicio" type="text" class="form-control" disabled/>                                
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 <h5 class="f-w-700">Solicita:</h5>
-                                <pre id="solicitaInformacionGeneral"></pre>
+                                <input id="solicita" type="text" class="form-control" disabled/>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 <h5 class="f-w-700">Atiende:</h5>
-                                <pre id="atiendeInformacionGeneral"></pre>
+                                <input id="atiende" type="text" class="form-control" disabled/>                         
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4 col-sm-4 col-xs-12">
                                 <h5 class="f-w-700">Fecha Solicitud:</h5>
-                                <pre id="fechaSolicitudInformacionGeneral"></pre>
+                                <input id="fechaSolicitud" type="text" class="form-control" disabled/>                                
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-12">
                                 <h5 class="f-w-700">Fecha Creación Servicio:</h5>
-                                <pre id="fechaCreacionServicioInformacionGeneral"></pre>
+                                <input id="fechaCreacion" type="text" class="form-control" disabled/>                                
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-12">
                                 <h5 class="f-w-700">Fecha Inicio Servicio:</h5>
-                                <pre id="fechaInicioServicioInformacionGeneral"></pre>
+                                <input id="fechaInicio" type="text" class="form-control" disabled/>                                
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <h5 class="f-w-700">Cliente *</h5>
-                                    <select id="selectClienteInformacionGeneral" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <select id="selectCliente" class="form-control" style="width: 100%" data-parsley-required="true">
                                         <option value="">Seleccionar</option>                                                                    
                                     </select>
                                 </div>
@@ -219,11 +219,11 @@
                                 <div class="form-group">
                                     <h5 class="f-w-700">Sucursal *</h5>
                                     <div class="input-group">
-                                        <select id="selectSucursalInformacionGeneral" class="form-control generales" style="width: 100%">
+                                        <select id="selectSucursal" class="form-control" style="width: 100%">
                                             <option value="">Seleccionar</option>
                                         </select>
                                         <span class="input-group-addon">
-                                            <button id="btnAgregarRuta" type="button" class="btn btn-primary btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-floppy-o"></i></button>
+                                            <button id="btnGuardarSucursal" type="button" class="btn btn-primary btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-floppy-o"></i></button>
                                         </span>
                                     </div>
                                 </div>

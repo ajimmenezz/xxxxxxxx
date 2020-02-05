@@ -16,7 +16,10 @@ $(function () {
 
     //Inicializa funciones de la plantilla
     App.init();
-
+    
+    informacion.iniciarElementos();   
+//    solucion.iniciarElementos();
+    
     tablaServicios.evento(function () {
         datosFila = tablaServicios.datosFila(this);
         let factoryServicios = new factoryServicio();
@@ -63,18 +66,13 @@ $(function () {
         if (servicio) {
             servicio.setDatos(datosServicio);
             domHtml.ocultarElemento('listaPoliza');
-            domHtml.mostrarElemento('panelDetallesTicket');
-            informacion.iniciarElementos(datosServicio);
-            solucion.iniciarElementos();
-            servicio.setInformacion(datosServicio);
-            informacion.colocandoDatosSelects(datosServicio);
-            
-
-        } else {
-            console.log(evento, datosServicio, datosFila);
+            domHtml.mostrarElemento('panelDetallesTicket'); 
+            informacion.setDatos(datosServicio);
+            informacion.listener(dato => servicio.setDatos(dato));
+        } else {           
             datosServicio = datos;
             seguimientoOld(evento, datosServicio, datosFila);
         }
     }
-
+    
 });

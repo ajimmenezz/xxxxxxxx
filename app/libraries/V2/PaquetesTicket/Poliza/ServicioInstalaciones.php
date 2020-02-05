@@ -67,17 +67,17 @@ class ServicioInstalaciones implements Servicio {
     }
 
     public function getDatos() {
-        return array("Folio" => $this->folioSolicitud,
-            "FechaCreacion" => $this->fechaCreacion,
-            "FechaInicio" => $this->fechaInicio,
-            "Ticket" => $this->ticket,
-            "Atiende" => $this->atiende,
-            "idSolicitud" => $this->idSolicitud,
-            "idServicio" => $this->idServicio,
-            "Descripcion" => $this->descripcion,
-            "Solicita" => $this->solicita,
-            "Sucursal" => $this->idSucursal,
-            "FechaSolicitud" => $this->fechaSolicitud,
+        return array("folio" => $this->folioSolicitud,
+            "fechaCreacion" => $this->fechaCreacion,
+            "fechaInicio" => $this->fechaInicio,
+            "ticket" => $this->ticket,
+            "atiende" => $this->atiende,
+            "solicitud" => $this->idSolicitud,
+            "servicio" => $this->idServicio,
+            "descripcion" => $this->descripcion,
+            "solicita" => $this->solicita,
+            "sucursal" => $this->idSucursal,
+            "fechaSolicitud" => $this->fechaSolicitud,
             "descripcionSolicitud" => $this->descripcionSolicitud
         );
     }
