@@ -170,7 +170,7 @@
                                 <div class="form-group">
                                     <h5 class="f-w-700">Incidente SD:</h5>
                                     <div class="input-group">
-                                        <input id="folioInformacionGeneral" type="number" class="form-control"  placeholder="Folio" disabled/>
+                                        <input id="folio" type="number" class="form-control"  placeholder="Folio" disabled/>
                                         <span class="input-group-addon">
                                             <button id="btnEditarFolio" type="button" class="btn btn-success btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-edit"></i></button>
                                             <button id="btnEliminarFolio" type="button" class="btn btn-warning btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-trash-o"></i></button>

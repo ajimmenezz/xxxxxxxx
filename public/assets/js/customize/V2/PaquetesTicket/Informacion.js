@@ -2,6 +2,8 @@ class Informacion {
 
     constructor() {
         this.peticion = new Utileria();
+        this.modal = new Modal('modal-dialogo');
+        this.bug = new Bug();
         this.formulario = null;
         this.datos = null;
         this.selects = {};
@@ -75,19 +77,18 @@ class Informacion {
     }
 
     listener(callback) {
-        let dato = {};
         let _this = this;
         let evento = new Base();
 
-        _this.selects["selectCliente"].evento('change', function () {            
+        _this.selects["selectCliente"].evento('change', function () {
             _this.selects["selectCliente"].cargarElementosASelect('selectSucursal', _this.datos.sucursales, 'cliente');
 
-             if (_this.selects['selectCliente'].obtenerValor() === '') {
+            if (_this.selects['selectCliente'].obtenerValor() === '') {
                 _this.selects['selectSucursal'].bloquearElemento();
-            }else{
+            } else {
                 _this.selects['selectSucursal'].habilitarElemento();
             }
-           
+
         });
 
         $('#btnGuardarInformacionGeneral').on('click', function () {
@@ -96,14 +97,17 @@ class Informacion {
                 let data = {sucursal: sucursal, id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
                 _this.peticion.enviar('panelDetallesTicket', 'Seguimiento/Servicio/GuardarInformacionGeneral', data, function (respuesta) {
                     console.log(respuesta);
-                    _this.mostrarOcultarBotones(true);
-                    _this.habilitarDeshabilitarSelect(false);
-                    callback(respuesta);
+                    if (_this.bug.validar(respuesta)) {
+                        _this.datos.servicio = respuesta.servicio;
+                        _this.mostrarOcultarBotones(true);
+                        _this.habilitarDeshabilitarSelect(false);
+                        callback(respuesta);
+                    }
                 });
             }
         });
 
-        $('#btnEditarInformacionGeneral').on('click', function () {            
+        $('#btnEditarInformacionGeneral').on('click', function () {
             _this.mostrarOcultarBotones(false);
             _this.habilitarDeshabilitarSelect(true);
 
@@ -123,30 +127,30 @@ class Informacion {
         });
 
         $('#btnEliminarFolio').on('click', function () {
-            console.log('pumas');
-//            modal.mostrarModal('Eliminar Folio', '<h4>¿Estas Seguro de eliminar este FOLIO?</h4>');
-//            $('#btnAceptar').on('click', function () {
-//                datoServicioTabla.folio = '';
-//                peticion.enviar('contentServiciosGeneralesRedes', 'SeguimientoCE/SeguimientoGeneral/Folio/eliminar', datoServicioTabla, function (respuesta) {
-//                    if (!validarError(respuesta)) {
-//                        return;
-//                    }
-//                    $('#addFolio').prop('disabled', false);
-//                    $('#addFolio').val('');
-//
-//                    ocultarElementosAgregarFolio();
-//                    $("#creadoPorFolio").empty();
-//                    $("#fechaCreacionFolio").empty();
-//                    $("#solicitaFolio").empty();
-//                    $("#prioridadFolio").empty();
-//                    $("#asignadoFolio").empty();
-//                    $("#estatusFolio").empty();
-//                    $("#asuntoFolio").empty();
-//                    $('#editarFolio').addClass('hidden');
-//                    $('#guardarFolio').removeClass('hidden');
+            console.log(_this.inputs['folio'].obtenerValor());
+            if (_this.inputs['folio'].obtenerValor() !== '0' && _this.inputs['folio'].obtenerValor() !== '') {
+                _this.modal.mostrarModal('Eliminar Folio', '<h3 class="text-center">¿Estas Seguro de eliminar este FOLIO?</h3>');
+//                $('#btnModalConfirmar').on('click', function () {
+//                    let data = {folio: '', id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
+//                    _this.peticion.enviar('modal-dialog', 'Seguimiento/Servicio/Folio/eliminar', data, function (respuesta) {
+//                        if (_this.bug.validar(respuesta)) {
+//                            _this.inputs['folio'].definirValor('');
+//                        }
+//                    });
+//                    _this.modal.cerrarModal();
 //                });
-//                modal.cerrarModal();
-//            });
+                _this.modal.funcionalidadBotonAceptar(null, function () {
+                    console.log('pumas');
+//                    let dato = _this.formularioJustificarMaterial.validarFormulario();
+//                    datos.justificacion = dato['textarea-justificar'];
+//                    _this.insertarDatosTablaMaterial(datos);
+//                    _this.formularioMaterialNodo.limpiarElementos();
+//                    _this.modal.cerrarModal();
+                });
+            } else {
+                _this.modal.mostrarModal('Eliminar Folio', '<h3 class="text-center">No cuenta con folio este servicio</h3>');
+                _this.modal.ocultarBotonAceptar();
+            }
         });
     }
 
@@ -176,6 +180,11 @@ class Informacion {
             this.selects['selectCliente'].bloquearElemento();
             this.selects['selectSucursal'].bloquearElemento();
         }
+    }
+
+    mensajeConfirmacionModal(mensaje) {
+        this.modal.mostrarModal('Correcto', '<h3 class="text-center">' + mensaje + '</h3>');
+        this.modal.ocultarBotonAceptar();
     }
 }
 

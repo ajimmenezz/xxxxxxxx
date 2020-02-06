@@ -86,10 +86,9 @@ class ServicioInstalaciones implements Servicio {
     }
 
     public function setFolioServiceDesk(string $folio) {
-//        $this->DBServiciosGeneralRedes->empezarTransaccion();
-//        $this->DBServiciosGeneralRedes->setFolioServiceDesk($this->idSolicitud, $folio);
-//        $this->setDatos();
-//        $this->DBServiciosGeneralRedes->finalizarTransaccion();
+        $this->DBServicioTicket->empezarTransaccion();
+        $this->DBServicioTicket->actualizarSolicitud(array('folio' => $folio), array('Id' => $this->idSolicitud));
+        $this->DBServicioTicket->finalizarTransaccion();
     }
 
     public function getCliente() {

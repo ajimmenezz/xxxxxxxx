@@ -284,6 +284,7 @@ class Controller_ServicioTicket extends CI_Controller {
 
     public function guardarInformacionGeneral() {
         try {
+            throw new Exception('no se guardo la informacion');
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->setInformacionGeneral($datosServicio);

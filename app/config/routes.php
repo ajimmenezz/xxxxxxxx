@@ -93,6 +93,7 @@ $route['Poliza/EventoCatalogoRevisionFisica/(:any)'] = 'Poliza/Controller_Poliza
 $route['Poliza/Inventarios/(:any)'] = 'Poliza/Controller_ReportesPoliza/manejarEvento/$1';
 $route['Poliza/Seguimiento/Servicio/Atender'] = 'V2/Controller_ServicioTicket/atenderServicio';
 $route['Poliza/Seguimiento/Servicio/GuardarInformacionGeneral'] = 'V2/Controller_ServicioTicket/guardarInformacionGeneral';
+$route['Poliza/Seguimiento/Servicio/Folio/(:any)'] = 'V2/Controller_ServicioTicket/setFolio';
 
 
 /* Routers para el manejo nuevo de Proyectos */

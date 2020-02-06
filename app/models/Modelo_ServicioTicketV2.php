@@ -74,5 +74,4 @@ class Modelo_ServicioTicketV2 extends Modelo_Base {
     public function actualizarServicio(array $campos, array $where) {
         $consulta = $this->actualizarArray('t_servicios_ticket', $campos, $where);
     }
-
 }

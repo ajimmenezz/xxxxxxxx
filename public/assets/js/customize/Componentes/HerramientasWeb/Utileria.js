@@ -18,7 +18,7 @@ class Utileria {
                 }
             }
         }).done(function (data) {
-            _this.errorServidor(data);
+//            _this.errorServidor(data);
             _this.quitarPantallaCargando(objeto);
             if (callback !== null) {
                 callback(data);
