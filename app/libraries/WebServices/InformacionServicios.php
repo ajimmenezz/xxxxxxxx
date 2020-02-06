@@ -1239,7 +1239,7 @@ class InformacionServicios extends General {
         FechaFirma,
         nombreUsuario(tst.IdTecnicoFirma) as Tecnico,
         FirmaTecnico
-        from t_servicios_ticket tst where Ticket = (SELECT Ticket FROM t_servicios_ticket WHERE Id = '" . $servicio . "' limit 1) limit 1");
+        from t_servicios_ticket tst WHERE Id = '" . $servicio . "' limit 1");
         return $consulta[0];
     }
 
@@ -1431,6 +1431,8 @@ class InformacionServicios extends General {
                     break;
                 case 20:
                 case '20':
+                case 27:
+                case '27':
                     $this->setPDFContentCorrectivo($generales['Id'], $datos);
                     break;
             }
