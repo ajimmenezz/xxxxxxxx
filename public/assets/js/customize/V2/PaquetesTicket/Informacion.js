@@ -62,10 +62,7 @@ class Informacion {
         });
 
         this.selects["selectCliente"].cargaDatosEnSelect(temporal);
-
-        if (datos.servicio.cliente !== '') {
-            this.seleccionarSelect();
-        }
+        this.setDatosSelects();
     }
 
     setDatosInputs(datos) {
@@ -82,17 +79,15 @@ class Informacion {
         let _this = this;
         let evento = new Base();
 
-        _this.selects["selectCliente"].evento('change', function () {
-            dato = {algo: 'valor'};
+        _this.selects["selectCliente"].evento('change', function () {            
             _this.selects["selectCliente"].cargarElementosASelect('selectSucursal', _this.datos.sucursales, 'cliente');
 
-            if ($(this).val() !== '' && !$('#selectCliente').is(':disabled')) {
-                $('#selectSucursal').prop('disabled', false);
-            } else {
-                $('#selectSucursal').prop('disabled', true);
+             if (_this.selects['selectCliente'].obtenerValor() === '') {
+                _this.selects['selectSucursal'].bloquearElemento();
+            }else{
+                _this.selects['selectSucursal'].habilitarElemento();
             }
-
-            callback(dato);
+           
         });
 
         $('#btnGuardarInformacionGeneral').on('click', function () {
@@ -101,23 +96,26 @@ class Informacion {
                 let data = {sucursal: sucursal, id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
                 _this.peticion.enviar('panelDetallesTicket', 'Seguimiento/Servicio/GuardarInformacionGeneral', data, function (respuesta) {
                     console.log(respuesta);
-                    _this.eventosBotonCancelar();
+                    _this.mostrarOcultarBotones(true);
+                    _this.habilitarDeshabilitarSelect(false);
                     callback(respuesta);
                 });
             }
         });
 
-        $('#btnEditarInformacionGeneral').on('click', function () {
+        $('#btnEditarInformacionGeneral').on('click', function () {            
             _this.mostrarOcultarBotones(false);
-            $('#selectCliente').prop('disabled', false);
+            _this.habilitarDeshabilitarSelect(true);
 
-            if (_this.datos.servicio.cliente !== '') {
-                $('#selectSucursal').prop('disabled', false);
+            if (_this.selects['selectCliente'].obtenerValor() === '') {
+                _this.selects['selectSucursal'].bloquearElemento();
             }
         });
 
         $('#btnCancelarInformacionGeneral').on('click', function () {
-            _this.eventosBotonCancelar();
+            _this.setDatosSelects();
+            _this.mostrarOcultarBotones(true);
+            _this.habilitarDeshabilitarSelect(false);
         });
 
         $('#btnEditarFolio').on('click', function () {
@@ -164,19 +162,19 @@ class Informacion {
         }
     }
 
-    seleccionarSelect() {
+    setDatosSelects() {
         this.selects["selectCliente"].definirValor(this.datos.servicio.cliente);
         this.selects["selectCliente"].cargarElementosASelect('selectSucursal', this.datos.sucursales, 'cliente');
         this.selects["selectSucursal"].definirValor(this.datos.servicio.sucursal);
     }
 
-    eventosBotonCancelar() {
-        this.mostrarOcultarBotones(true);
-        $('#selectSucursal').prop('disabled', true);
-        $('#selectCliente').prop('disabled', true);
-
-        if (this.datos.servicio.cliente !== '') {
-            this.seleccionarSelect();
+    habilitarDeshabilitarSelect(accion) {
+        if (accion) {
+            this.selects['selectCliente'].habilitarElemento();
+            this.selects['selectSucursal'].habilitarElemento();
+        } else {
+            this.selects['selectCliente'].bloquearElemento();
+            this.selects['selectSucursal'].bloquearElemento();
         }
     }
 }
