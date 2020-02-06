@@ -1322,7 +1322,7 @@ class Seguimientos extends General
                         La fecha de creacion fue el ' . $fecha . '. <br><br> Por lo que se solicita que se atienda lo mas pronto posible el servicio.'
                 );
 
-                $textoTecnico = '<p>Estimado(a) <strong>' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la solicitud de refacción a Almacén que realizo.</p><br><a href="' . $linkPDF . '">Documento PDF</a>';
+                $textoTecnico = '<p>Estimado(a) <strong>' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la solicitud de refacción a Almacén que realizo.</p><br><a href="' . $linkPDF["link"] . '">Documento PDF</a>';
                 $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Solicitud de Refacción', $textoTecnico);
                 $this->InformacionServicios->setHTMLService($datos);
 
@@ -1417,7 +1417,7 @@ class Seguimientos extends General
                         La fecha de creacion fue el ' . $fecha . '. <br><br> Por lo que se solicita que se atienda lo mas pronto posible el servicio.'
                 );
 
-                $textoTecnico = '<p>Estimado(a) <strong>' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la solicitud de equipo a Almacén que realizo.</p><br><a href="' . $linkPDF . '">Documento PDF</a>';
+                $textoTecnico = '<p>Estimado(a) <strong>' . $usuario['Nombre'] . ',</strong> se le ha mandado el documento de la solicitud de equipo a Almacén que realizo.</p><br><a href="' . $linkPDF["link"] . '">Documento PDF</a>';
                 $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Solicitud de Equipo', $textoTecnico);
                 $this->InformacionServicios->setHTMLService($datos);
 

@@ -1377,13 +1377,10 @@ class InformacionServicios extends General {
         $this->setCellValue(30, 5, "Atiende:", 'R');
 
         $restarYFallaReportada = 25;
-        $restarY = 20;
+        $restarY = 25;
 
         if ($generales['IdEstatus'] === '4') {
             $this->setCellValue(30, 5, "Fecha Conclusión:", 'R', true);
-            if ($generales['IdTipoServicio'] === '20') {
-                $restarY = 25;
-            }
         }
 
 //        if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {

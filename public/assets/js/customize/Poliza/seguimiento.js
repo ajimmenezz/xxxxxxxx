@@ -5950,32 +5950,16 @@ $(function () {
         });
         $("#btnSolicitarEquipoRespaldo").off("click");
         $("#btnSolicitarEquipoRespaldo").on("click", function (e) {
-            evento.mostrarModal(
-                    "Confirmar Solicitud de Equipo de Respaldo",
-                    formularioAsignacionSolicitud()
-                    );
+            evento.mostrarModal("Confirmar Solicitud de Equipo de Respaldo",formularioAsignacionSolicitud());
             select.crearSelect("#selectAtiendeSolcitud");
-            evento.enviarEvento(
-                    "Seguimiento/ConsultaAtiendeAlmacen",
-                    {},
-                    "#confirmarSolicitud",
-                    function (respuesta) {
-                        $("#selectAtiendeSolcitud").removeAttr("disabled", "disabled");
-                        $("#selectAtiendeSolcitud")
-                                .empty()
-                                .append('<option value="">Seleccionar</option>');
-                        $.each(respuesta, function (key, valor) {
-                            $("#selectAtiendeSolcitud").append(
-                                    "<option value=" +
-                                    valor.IdUsuario +
-                                    ">" +
-                                    valor.Nombre +
-                                    "</option>"
-                                    );
-                        });
-                        select.cambiarOpcion("#selectAtiendeSolcitud", "12");
-                    }
-            );
+            evento.enviarEvento("Seguimiento/ConsultaAtiendeAlmacen",{},"#confirmarSolicitud",function (respuesta) {
+                $("#selectAtiendeSolcitud").removeAttr("disabled", "disabled");
+                $("#selectAtiendeSolcitud").empty().append('<option value="">Seleccionar</option>');
+                $.each(respuesta, function (key, valor) {
+                    $("#selectAtiendeSolcitud").append("<option value=" +valor.IdUsuario +">" +valor.Nombre +"</option>");
+                });
+                select.cambiarOpcion("#selectAtiendeSolcitud", "12");
+            });
             $("#btnModalConfirmar").off("click");
             $("#btnModalConfirmar").on("click", function () {
                 var sucursal = $("#selectSucursalesCorrectivo").val();
@@ -6839,7 +6823,7 @@ $(function () {
                     }
             );
         });
-        $("#solicitarTraslado").on("click", function () {
+        $(".solicitarTraslado").on("click", function () {
             window.open("/Poliza/Seguimiento_Equipos", "_self");
         });
 
