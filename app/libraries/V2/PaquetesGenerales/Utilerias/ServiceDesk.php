@@ -212,4 +212,15 @@ class ServiceDesk {
         self::validarError($respuesta);
     }
 
+    static function getResolucion(string $folio) {
+        self::setVariables();
+        $key = Usuario::getAPIKEY();
+        $key = self::validarAPIKey(strval($key));
+
+        self::$FIELDS = 'format=json&OPERATION_NAME=GET_RESOLUTION&TECHNICIAN_KEY=' . $key;
+        $respuesta = self::sendSolicitud(self::$url . '/' . $folio . '?' . self::$FIELDS);
+        self::validarError($respuesta);
+        $respuesta = $respuesta->operation->Details;
+        return $respuesta;
+    }
 }

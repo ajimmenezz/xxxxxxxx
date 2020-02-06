@@ -46,6 +46,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));
             $this->getInformacionFolio();
             $this->setEstatusServiceDesk();
+            $this->datos['html'] = $this->getHtml($datosServicio['tipo'], $this->datos);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $exc) {
@@ -79,21 +80,23 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $this->datos['folio'] = null;
             $this->datos['notasFolio'] = null;
+            $this->datos['resolucionFolio'] = null;
 
             if (!empty($this->servicio->getFolio())) {
                 $this->datos['folio'] = ServiceDesk::getDatos($this->servicio->getFolio());
                 $this->datos['notasFolio'] = ServiceDesk::getNotas($this->servicio->getFolio());
+                $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($this->servicio->getFolio());
             }
         } catch (Exception $ex) {
             $this->datos['folio'] = array('Error' => $ex->getMessage());
             $this->datos['notasFolio'] = array('Error' => $ex->getMessage());
+            $this->datos['resolucionFolio'] = array('Error' => $ex->getMessage());
         }
     }
 
     private function setEstatusServiceDesk() {
         $estatusFolio = null;
         try {
-
             if (!empty($this->datos['folio'] && property_exists($this->datos['folio'], 'STATUS'))) {
                 $estatusFolio = $this->datos['folio']->STATUS;
             }
@@ -111,13 +114,31 @@ class Controller_ServicioTicket extends CI_Controller {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->setFolioServiceDesk($datosServicio['folio']);
-            $this->getInformacionFolio();
+            $this->getInformacionFolioNuevo($datosServicio['folio']);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
             $this->datos['Error'] = $ex->getMessage();
             echo json_encode($this->datos);
+        }
+    }
+
+    private function getInformacionFolioNuevo(string $folio) {
+        try {
+            $this->datos['folio'] = null;
+            $this->datos['notasFolio'] = null;
+            $this->datos['resolucionFolio'] = null;
+
+            if (!empty($this->servicio->getFolio())) {
+                $this->datos['folio'] = ServiceDesk::getDatos($folio);
+                $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
+                $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($folio);
+            }
+        } catch (Exception $ex) {
+            $this->datos['folio'] = array('Error' => $ex->getMessage());
+            $this->datos['notasFolio'] = array('Error' => $ex->getMessage());
+            $this->datos['resolucionFolio'] = array('Error' => $ex->getMessage());
         }
     }
 
@@ -284,7 +305,6 @@ class Controller_ServicioTicket extends CI_Controller {
 
     public function guardarInformacionGeneral() {
         try {
-            throw new Exception('no se guardo la informacion');
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->setInformacionGeneral($datosServicio);
@@ -297,6 +317,30 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['Error'] = $ex->getMessage();
             echo json_encode($this->datos);
         }
+    }
+
+//
+//    private function formularioInformacionFolio(array $datos) {
+//        $formulario = array('html' => $this->load->view('V2/PaquetesTickets/Poliza/InformacionFolio', $datos, TRUE));
+//        return $formulario;
+//    }
+    private function getHtml(string $tipoServicio, array $datos) {
+        $html = array();
+
+        $html['folio'] = $this->load->view('V2/PaquetesTickets/Poliza/InformacionFolio', $datos, TRUE);
+//        $html['bitacora'] =
+
+        switch ($tipoServicio) {
+            case 'Instalaciones':
+//                $html['solucion'] = $this->load->view('V2/PaquetesTickets/Poliza/InformacionFolio', $datos, TRUE);
+
+                break;
+
+            default:
+                break;
+        }
+
+        return $html;
     }
 
 }

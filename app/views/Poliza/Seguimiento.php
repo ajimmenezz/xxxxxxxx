@@ -110,7 +110,7 @@
             </label>  
         </div>
     </div> 
-    <div id="seccion-servicio-correctivo" class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
+    <div id="panel-ticket" class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
         <!--Empezando Pestañas para definir la seccion-->
         <div class="panel-heading p-0">
             <div class="panel-heading-btn m-r-10 m-t-10">
@@ -172,8 +172,9 @@
                                     <div class="input-group">
                                         <input id="folio" type="number" class="form-control"  placeholder="Folio" disabled/>
                                         <span class="input-group-addon">
-                                            <button id="btnEditarFolio" type="button" class="btn btn-success btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-edit"></i></button>
-                                            <button id="btnEliminarFolio" type="button" class="btn btn-warning btn-xs generales" title="Agregar nueva Ruta al Select"><i class="fa fa-trash-o"></i></button>
+                                            <button id="btnVerFolio" type="button" class="btn btn-info btn-xs" title="Ver Información del Folio"><i class="fa fa-eye"></i></button>
+                                            <button id="btnEditarFolio" type="button" class="btn btn-success btn-xs" title="Editar Folio"><i class="fa fa-pencil"></i></button>
+                                            <button id="btnEliminarFolio" type="button" class="btn btn-warning btn-xs" title="Eliminar Folio"><i class="fa fa-trash-o"></i></button>
                                         </span>
                                     </div>
                                 </div>

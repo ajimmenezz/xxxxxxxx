@@ -95,13 +95,14 @@ class Informacion {
             if (evento.validarFormulario('#formInformacionGeneral')) {
                 let sucursal = $('#selectSucursal').val();
                 let data = {sucursal: sucursal, id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
-                _this.peticion.enviar('panelDetallesTicket', 'Seguimiento/Servicio/GuardarInformacionGeneral', data, function (respuesta) {
+                _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/GuardarInformacionGeneral', data, function (respuesta) {
                     console.log(respuesta);
                     if (_this.bug.validar(respuesta)) {
                         _this.datos.servicio = respuesta.servicio;
                         _this.mostrarOcultarBotones(true);
                         _this.habilitarDeshabilitarSelect(false);
                         callback(respuesta);
+                        _this.mensajeConfirmacionModal('Se actualizo correctamente la sucursal.');
                     }
                 });
             }
@@ -123,33 +124,47 @@ class Informacion {
         });
 
         $('#btnEditarFolio').on('click', function () {
-            console.log('pumas');
+            let html = `<div class="row">
+                            <div class="col-md-12">
+                                <h5 class="f-w-700">Incidente SD:</h5>
+                                <input id="inputEditarFolio" type="text" class="form-control"/>
+                            </div>
+                        </div>`;
+            _this.modal.mostrarModal(`Incidente SD`, html);
+            _this.modal.funcionalidadBotonAceptar(null, function () {
+                let data = {folio: $('#inputEditarFolio').val(), id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
+                _this.peticion.enviar('modal-dialog', 'Seguimiento/Servicio/Folio/editar', data, function (respuesta) {
+                    console.log(respuesta);
+                    if (_this.bug.validar(respuesta)) {
+                        _this.datos.servicio.folio = $('#inputEditarFolio').val();
+                        _this.inputs['folio'].definirValor(_this.datos.servicio.folio);
+                    }
+                });
+                _this.modal.cerrarModal();
+            });
+        });
+
+        $('#btnVerFolio').on('click', function () {
+            if (_this.validarExistenciaFolio()) {
+                _this.modal.mostrarModal(`Información SD - ${_this.datos.servicio.folio}`, _this.datos.html.folio);
+                _this.modal.ocultarBotonAceptar();
+                _this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
+            }
         });
 
         $('#btnEliminarFolio').on('click', function () {
-            console.log(_this.inputs['folio'].obtenerValor());
-            if (_this.inputs['folio'].obtenerValor() !== '0' && _this.inputs['folio'].obtenerValor() !== '') {
+            if (_this.validarExistenciaFolio()) {
                 _this.modal.mostrarModal('Eliminar Folio', '<h3 class="text-center">¿Estas Seguro de eliminar este FOLIO?</h3>');
-//                $('#btnModalConfirmar').on('click', function () {
-//                    let data = {folio: '', id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
-//                    _this.peticion.enviar('modal-dialog', 'Seguimiento/Servicio/Folio/eliminar', data, function (respuesta) {
-//                        if (_this.bug.validar(respuesta)) {
-//                            _this.inputs['folio'].definirValor('');
-//                        }
-//                    });
-//                    _this.modal.cerrarModal();
-//                });
                 _this.modal.funcionalidadBotonAceptar(null, function () {
-                    console.log('pumas');
-//                    let dato = _this.formularioJustificarMaterial.validarFormulario();
-//                    datos.justificacion = dato['textarea-justificar'];
-//                    _this.insertarDatosTablaMaterial(datos);
-//                    _this.formularioMaterialNodo.limpiarElementos();
-//                    _this.modal.cerrarModal();
+                    let data = {folio: '', id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
+                    _this.peticion.enviar('modal-dialog', 'Seguimiento/Servicio/Folio/eliminar', data, function (respuesta) {
+                        if (_this.bug.validar(respuesta)) {
+                            _this.datos.servicio.folio = null;
+                            _this.inputs['folio'].definirValor('');
+                        }
+                    });
+                    _this.modal.cerrarModal();
                 });
-            } else {
-                _this.modal.mostrarModal('Eliminar Folio', '<h3 class="text-center">No cuenta con folio este servicio</h3>');
-                _this.modal.ocultarBotonAceptar();
             }
         });
     }
@@ -185,6 +200,23 @@ class Informacion {
     mensajeConfirmacionModal(mensaje) {
         this.modal.mostrarModal('Correcto', '<h3 class="text-center">' + mensaje + '</h3>');
         this.modal.ocultarBotonAceptar();
+        this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
+    }
+
+    validarExistenciaFolio() {
+        if (this.inputs['folio'].obtenerValor() !== '0' && this.inputs['folio'].obtenerValor() !== '') {
+            if (this.datos.folio.Error === undefined) {
+                return true;
+            } else {
+                this.modal.mostrarModal('Incidente SD', '<h3 class="text-center">' + this.datos.folio.Error + '</h3>');
+                this.modal.ocultarBotonAceptar();
+                this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
+            }
+        } else {
+            this.modal.mostrarModal('Incidente SD', '<h3 class="text-center">No cuenta con folio este servicio</h3>');
+            this.modal.ocultarBotonAceptar();
+            this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
+        }
     }
 }
 
