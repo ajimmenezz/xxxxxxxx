@@ -386,16 +386,12 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
-//
-//    private function formularioInformacionFolio(array $datos) {
-//        $formulario = array('html' => $this->load->view('V2/PaquetesTickets/Poliza/InformacionFolio', $datos, TRUE));
-//        return $formulario;
-//    }
     private function getHtml(string $tipoServicio, array $datos) {
         $html = array();
 
+        $datosAvacenProblema = $this->servicio->getAvanceProblema();
         $html['folio'] = $this->load->view('V2/PaquetesTickets/Poliza/InformacionFolio', $datos, TRUE);
-//        $html['bitacora'] =
+        $html['bitacora'] = $this->load->view('Generales/Detalles/HistorialAvancesProblemas', $datosAvacenProblema, TRUE);
 
         switch ($tipoServicio) {
             case 'Instalaciones':

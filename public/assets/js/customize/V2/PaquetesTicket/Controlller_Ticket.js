@@ -8,6 +8,7 @@ $(function () {
     let domHtml = new Utileria();
     let informacion = new Informacion();
     let solucion = new Solucion();
+    let bitacora = new Bitacora();
 
     //Muestra la hora en el sistema
     evento.horaServidor($("#horaServidor").val());
@@ -69,6 +70,7 @@ $(function () {
             domHtml.mostrarElemento('panelDetallesTicket'); 
             informacion.setDatos(datosServicio);
             informacion.listener(dato => servicio.setDatos(dato));
+            bitacora.setDatos(datosServicio);
         } else {           
             datosServicio = datos;
             seguimientoOld(evento, datosServicio, datosFila);

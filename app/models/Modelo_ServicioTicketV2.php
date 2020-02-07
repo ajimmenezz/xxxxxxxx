@@ -79,4 +79,17 @@ class Modelo_ServicioTicketV2 extends Modelo_Base {
     public function actualizarServicio(array $campos, array $where) {
         $consulta = $this->actualizarArray('t_servicios_ticket', $campos, $where);
     }
+
+    public function getAvanceProblema(string $servicio) {
+        $consulta = $this->consulta('SELECT tsa.*,
+                                                (SELECT Nombre FROM cat_v3_tipos_avance WHERE Id = tsa.IdTipo) AS TipoAvance,
+                                                (SELECT UrlFoto FROM t_rh_personal WHERE Id = tsa.IdUsuario) AS Foto,
+                                                nombreUsuario(IdUSuario) AS Usuario
+                                                FROM t_servicios_avance tsa
+                                                WHERE IdServicio = "' . $servicio . '"
+                                                AND Flag = "1"
+                                                ORDER BY Fecha ASC');
+        return $consulta;
+    }
+
 }

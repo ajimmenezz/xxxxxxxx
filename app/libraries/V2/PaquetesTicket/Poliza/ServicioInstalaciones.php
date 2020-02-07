@@ -136,5 +136,9 @@ class ServicioInstalaciones implements Servicio {
         $this->DBServicioTicket->actualizarServicio(array('IdSucursal' => $datos['sucursal']), array('Id' => $this->id));
         $this->DBServicioTicket->finalizarTransaccion();
     }
+    
+    public function getAvanceProblema() {
+        return $this->DBServicioTicket->getAvanceProblema($this->id);
+    }
 
 }

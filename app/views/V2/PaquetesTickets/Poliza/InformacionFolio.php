@@ -11,7 +11,7 @@
 <div class="row">
     <div class="col-md-6 col-sm-6 col-xs-12">
         <h5 class="f-w-700">Fecha Cración:</h5>
-        <input type="text" class="form-control" value="<?php echo $folio->CREATEDTIME; ?>" disabled/>
+        <input type="text" class="form-control" value="<?php echo date('Y-m-d H:i:s', $folio->CREATEDTIME / 1000); ?>" disabled/>
     </div>
     <div class="col-md-6 col-sm-6 col-xs-12">
         <h5 class="f-w-700">Prioridad:</h5>
@@ -41,7 +41,7 @@
                             <h3 class="panel-title">
                                 <a class="accordion-toggle accordion-toggle-styled" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
                                     <i class="fa fa-plus-circle pull-right"></i> 
-                                    ' . $value->USERNAME . ' - ' . $value->NOTESDATE . '
+                                    ' . $value->USERNAME . ' - ' . date('Y-m-d H:i:s', $value->NOTESDATE / 1000) . '
                                 </a>
                             </h3>
                         </div>
@@ -54,10 +54,13 @@
             }
             ?>
         </div>
+
     </div>
     <div class="tab-pane fade" id="resolucionFolio">
-        <p>
-            <?php echo $resolucionFolio->RESOLUTION; ?>
-        </p>
+        <!--<div class="height-xs" data-scrollbar="true" data-height="20%" style="padding: 10px;">-->
+            <p>
+                <?php echo $resolucionFolio->RESOLUTION; ?>
+            </p>
+        <!--</div>-->
     </div>
 </div>
