@@ -82,7 +82,7 @@ class Archivo {
             $temporal = '/storage/Archivos/' . $carpeta . '/' . $key . '.png';
 
             if (!file_put_contents($_SERVER['DOCUMENT_ROOT'] . $temporal, $archivo)) {
-                throw new \Exception('Error : No se puede gardar la imagen de tipo 64 ');
+                throw new \Exception('Error : No se puede guardar la imagen de tipo 64 ');
             }
             array_push(self::$archivos, $temporal);
         }

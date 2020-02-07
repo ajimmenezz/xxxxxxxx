@@ -5,6 +5,7 @@ namespace Librerias\V2\PaquetesTicket\Redes;
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesTicket\Redes\GestorNodosRedes as GestorNodo;
 use Librerias\V2\PaquetesGenerales\Utilerias\PDF as PDF;
+use Librerias\V2\PaquetesTicket\Utilerias\Solicitud as Solicitud;
 use Modelos\Modelo_ServicioCableado as Modelo;
 use Modelos\Modelo_ServicioTicket as ModeloServicioTicket;
 use Librerias\Generales\Correo as Correo;
@@ -26,6 +27,7 @@ class ServicioCableado implements Servicio {
     private $DBServicioTicket;
     private $gestorNodos;
     private $correoAtiende;
+    private $pdf;
 
     public function __construct(string $idServicio) {
         $this->id = $idServicio;
@@ -82,11 +84,19 @@ class ServicioCableado implements Servicio {
         );
     }
 
-    public function setFolioServiceDesk(string $folio) {
-        $this->DBServiciosGeneralRedes->empezarTransaccion();
-        $this->DBServiciosGeneralRedes->setFolioServiceDesk($this->idSolicitud, $folio);
-        $this->setDatos();
-        $this->DBServiciosGeneralRedes->finalizarTransaccion();
+    public function setFolioServiceDesk(string $folio = NULL) {
+        $solicitud = new solicitud($this->idSolicitud);
+        $folioSolicitudes = $solicitud->folioSolicitudes(array('folio' => $folio));
+
+        if (empty($folioSolicitudes)) {
+            $this->DBServiciosGeneralRedes->empezarTransaccion();
+            $this->DBServiciosGeneralRedes->setFolioServiceDesk($this->idSolicitud, $folio);
+            $this->setDatos();
+            $this->DBServiciosGeneralRedes->finalizarTransaccion();
+            return TRUE;
+        } else {
+            return FALSE;
+        }
     }
 
     public function getCliente() {
@@ -172,6 +182,9 @@ class ServicioCableado implements Servicio {
     }
 
     public function setSolucion(array $datos) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $datos['fecha'] = $fecha;
+
         $this->DBServiciosGeneralRedes->empezarTransaccion();
         $consulta = $this->DBServiciosGeneralRedes->getEvidencias($this->id);
 
@@ -185,12 +198,12 @@ class ServicioCableado implements Servicio {
             $datos['archivos'] .= ',' . $consulta[0]['Archivos'];
         }
 
-        $consulta = $this->DBServiciosGeneralRedes->getDatosServicio($this->id);
+        $consulta = $this->DBServiciosGeneralRedes->getDatosSolucion($this->id);
 
         if (empty($consulta)) {
             $this->DBServiciosGeneralRedes->setServicio($this->id, $datos);
         } else {
-            $this->DBServiciosGeneralRedes->updateServicio($this->id, $datos);
+            $consulta = $this->DBServiciosGeneralRedes->updateServicio($this->id, $datos);
         }
 
         $this->DBServiciosGeneralRedes->setSucursal($this->id, $datos['idSucursal']);
@@ -222,6 +235,11 @@ class ServicioCableado implements Servicio {
         return $evidencias;
     }
 
+    public function deleteFolio() {
+        $datos = $this->getDatos();
+        $this->DBServiciosGeneralRedes->setFolioServiceDesk($datos['idSolicitud']);
+    }
+
     public function getFirmas(string $idServicio) {
         $consulta = $this->DBServiciosGeneralRedes->getFirmas($idServicio);
         return $consulta[0]['firmas'];
@@ -229,20 +247,86 @@ class ServicioCableado implements Servicio {
 
     public function getPDF(array $datos) {
         $informacionServicio = $this->DBServiciosGeneralRedes->getDatosSolucionPDF($datos);
-        $pdf = new PDF($this->folioSolicitud);
-        $pdf->AddPage();
-        $pdf->tituloTabla('#1 Información General');
-        $pdf->tabla(array(), $informacionServicio['infoGeneral']);
-        $pdf->tituloTabla('Solución del Servicio');
-        $pdf->tabla(array(), $informacionServicio['infoNodos']);
-        $evidencias = explode(',', $informacionServicio['evidencias'][0]['Archivos']);
-        $pdf->tablaImagenes($evidencias);
-        $pdf->tituloTabla('Firmas del Servicio');
-        $pdf->firma($informacionServicio['infoFirmas'][0]);
-        $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
-        $pdf->Output('F', $carpeta, true);
+
+        $this->pdf = new PDF($this->id);
+        $this->pdf->AddPage();
+        $this->pdf->tituloTabla('Información General');
+        $this->pdf->tabla(array(), $informacionServicio['infoGeneral']);
+
+        $totalMaterial = $this->gestorNodos->getTotalMaterial();
+        $arrayNuevoTotalMaterial = array();
+
+        foreach ($totalMaterial as $key => $value) {
+            $arrayNuevoTotalMaterial[$key] = array($value['Producto'], $value['Cantidad']);
+        }
+
+        $this->FancyTable(array('Material', 'Cantidad'), $arrayNuevoTotalMaterial);
+
+        $contador = 1;
+        foreach ($informacionServicio['infoNodos'] as $key => $value) {
+            $ancho = $this->pdf->GetPageWidth() - 20;
+            $y = $this->pdf->GetY();
+            $x = 30;
+
+            if ($x < $ancho) {
+                $arrayNuevo = array(
+                    'Area' => $value['Area'],
+                    'Nodo' => $value['Nodo'],
+                    'Switch' => $value['Switch'],
+                    'NumeroSwitch' => $value['NumeroSwitch']);
+                $this->pdf->tituloTabla('Solución del Nodo: ' . $contador);
+                $this->pdf->tabla(array(), array($arrayNuevo));
+                $evidencias = explode(',', $value['Evidencias']);
+                $this->pdf->tablaImagenes($evidencias);
+                $contador ++;
+                $x += 80;
+            } else {
+                $x = 30;
+                $y += 50;
+            }
+
+            $altura = $y + 258;
+
+            if ($altura > ($this->pdf->GetPageHeight())) {
+                $this->pdf->AddPage();
+            }
+        }
+
+        $this->pdf->tituloTabla('Firmas del Servicio');
+        $this->pdf->firma($informacionServicio['infoFirmas'][0]);
+        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', $this->id . '-PDF');
+        $this->pdf->Output('F', $carpeta, true);
         $archivo = substr($carpeta, 1);
         return $archivo;
+    }
+
+    function FancyTable($header, $data) {
+        // Colors, line width and bold font
+        $this->pdf->SetFillColor(31, 56, 100);
+        $this->pdf->SetTextColor(255);
+        $this->pdf->SetLineWidth(.3);
+        $this->pdf->SetFont('', 'B');
+        // Header
+        $w = array(95, 95);
+        for ($i = 0; $i < count($header); $i++)
+            $this->pdf->Cell($w[$i], 7, $header[$i], 1, 0, 'C', true);
+        $this->pdf->Ln();
+        // Color and font restoration
+        $this->pdf->SetFillColor(224, 235, 255);
+        $this->pdf->SetTextColor(0);
+        $this->pdf->SetFont('');
+        // Data
+        $fill = false;
+
+        foreach ($data as $row) {
+            $this->pdf->Cell($w[0], 6, $row[0], 'LR', 0, 'L', $fill);
+            $this->pdf->Cell($w[1], 6, $row[1], 'LR', 0, 'L', $fill);
+            $this->pdf->Ln();
+            $fill = !$fill;
+        }
+        // Closing line
+        $this->pdf->Cell(array_sum($w), 0, '', 'T');
+        $this->pdf->Ln(10);
     }
 
     public function enviarServicioConcluido(array $datos) {
