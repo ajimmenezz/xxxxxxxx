@@ -139,7 +139,7 @@
         <!--Empezando contenido de la informacion del servicio-->
         <div class="tab-content">
             <!--Empezando la seccion servicio Correctivo-->
-            <div class="tab-pane fade active in" id="General">
+            <div id="General" class="tab-pane fade active in" >
                 <div class="panel-body">
 
                     <div class="row">
@@ -172,9 +172,11 @@
                                     <div class="input-group">
                                         <input id="folio" type="number" class="form-control"  placeholder="Folio" disabled/>
                                         <span class="input-group-addon">
-                                            <button id="btnVerFolio" type="button" class="btn btn-info btn-xs" title="Ver Información del Folio"><i class="fa fa-eye"></i></button>
-                                            <button id="btnEditarFolio" type="button" class="btn btn-success btn-xs" title="Editar Folio"><i class="fa fa-pencil"></i></button>
-                                            <button id="btnEliminarFolio" type="button" class="btn btn-warning btn-xs" title="Eliminar Folio"><i class="fa fa-trash-o"></i></button>
+                                            <button id="btnAgregar" type="button" class="btn btn-success btn-xs" title="Agregar Folio"><i class="fa fa-plus"></i></button>
+                                            <button id="btnEditarFolio" type="button" class="btn btn-success btn-xs hidden" title="Editar Folio"><i class="fa fa-pencil"></i></button>
+                                            <button id="btnVerFolio" type="button" class="btn btn-info btn-xs hidden" title="Ver Información del Folio"><i class="fa fa-eye"></i></button>
+                                            <button id="btnGuardar" type="button" class="btn btn-success btn-xs hidden" title="Actualizar Folio"><i class="fa fa-floppy-o"></i></button>
+                                            <button id="btnCancelar" type="button" class="btn btn-success btn-xs hidden" title="Cancelar Actualización"><i class="fa fa-close"></i></button>                                            
                                         </span>
                                     </div>
                                 </div>
@@ -234,8 +236,6 @@
                 </div>
             </div>
             <!--Finalizando la seccion de servicio Correctivo-->
-
-
             <div class="tab-pane fade " id="EquiposInstalaciones">
                 <div class="panel-body">
                     <div class="row">
