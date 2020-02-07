@@ -89,20 +89,20 @@ class Controller_ServicioTicket extends CI_Controller {
                     $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($this->servicio->getFolio());
                     $this->datos['operacionFolio'] = TRUE;
                     return true;
-                } else {
-                    $this->datos['folio'] = ServiceDesk::getDatos($datos['folio']);
-                    $this->datos['notasFolio'] = ServiceDesk::getNotas($datos['folio']);
-                    $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($datos['folio']);
-                    $this->datos['operacionFolio'] = TRUE;
-                    return true;
                 }
+            } else {
+                $this->datos['folio'] = ServiceDesk::getDatos($datos['folio']);
+                $this->datos['notasFolio'] = ServiceDesk::getNotas($datos['folio']);
+                $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($datos['folio']);
+                $this->datos['operacionFolio'] = TRUE;
+                return true;
             }
         } catch (Exception $ex) {
             $this->datos['errorFolio'] = array('Error' => $ex->getMessage());
             $this->datos['folio'] = array('Error' => $ex->getMessage());
             $this->datos['notasFolio'] = array('Error' => $ex->getMessage());
-            $this->datos['operacionFolio'] = FALSE;
             $this->datos['resolucionFolio'] = array('Error' => $ex->getMessage());
+            $this->datos['operacionFolio'] = FALSE;
         }
     }
 

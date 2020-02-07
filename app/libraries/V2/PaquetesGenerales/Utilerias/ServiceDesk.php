@@ -122,12 +122,16 @@ class ServiceDesk {
         $respuesta = self::sendSolicitud(self::$url . '/' . $folio . '/notes/?' . self::$FIELDS);
         self::validarError($respuesta);
 
-        if (strpos($respuesta->operation->result->message, "No Notes present for request") === '') {
-            $respuesta = $respuesta->operation->Details;
-        }else{
+        if (strpos($respuesta->operation->result->message, "No Notes present for request") !== '') {
+            if (isset($respuesta->operation->Details)) {
+                $respuesta = $respuesta->operation->Details;
+            } else {
+                $respuesta = FALSE;
+            }
+        } else {
             $respuesta = FALSE;
         }
-        
+
         return $respuesta;
     }
 
@@ -226,7 +230,14 @@ class ServiceDesk {
         self::$FIELDS = 'format=json&OPERATION_NAME=GET_RESOLUTION&TECHNICIAN_KEY=' . $key;
         $respuesta = self::sendSolicitud(self::$url . '/' . $folio . '?' . self::$FIELDS);
         self::validarError($respuesta);
-        $respuesta = $respuesta->operation->Details;
+
+        if (isset($respuesta->operation->Details)) {
+            $respuesta = $respuesta->operation->Details;
+        } else {
+            $respuesta = NULL;
+        }
+        
         return $respuesta;
     }
+
 }

@@ -136,8 +136,14 @@ class Informacion {
                 _this.peticion.enviar('modal-dialog', 'Seguimiento/Servicio/Folio/editar', data, function (respuesta) {
                     console.log(respuesta);
                     if (_this.bug.validar(respuesta)) {
-                        _this.datos.servicio.folio = $('#inputEditarFolio').val();
-                        _this.inputs['folio'].definirValor(_this.datos.servicio.folio);
+                        if (respuesta.operacionFolio === true) {
+                            _this.datos.servicio.folio = $('#inputEditarFolio').val();
+                            _this.inputs['folio'].definirValor(_this.datos.servicio.folio);
+                        } else {
+                            _this.modal.mostrarModal('Incidente SD', '<h3 class="text-center">' + respuesta.folio.Error + '</h3>');
+                            _this.modal.ocultarBotonAceptar();
+                            _this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
+                        }
                     }
                 });
                 _this.modal.cerrarModal();
