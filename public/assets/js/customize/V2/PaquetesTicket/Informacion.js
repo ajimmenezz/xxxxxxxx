@@ -54,6 +54,7 @@ class Informacion {
         this.datos = datos;
         this.setDatosSelect(datos);
         this.setDatosInputs(datos.servicio);
+        this.mostrarOcultarBotonesFolio(false, true);
     }
 
     setDatosSelect(datos) {
@@ -69,6 +70,7 @@ class Informacion {
 
     setDatosInputs(datos) {
         let _this = this;
+//        _this.datos.servicio.folio = "";
         $.each(datos, function (index, value) {
             if (_this.inputs.hasOwnProperty(index)) {
                 _this.inputs[index].definirValor(value);
@@ -96,7 +98,6 @@ class Informacion {
                 let sucursal = $('#selectSucursal').val();
                 let data = {sucursal: sucursal, id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
                 _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/GuardarInformacionGeneral', data, function (respuesta) {
-                    console.log(respuesta);
                     if (_this.bug.validar(respuesta)) {
                         _this.datos.servicio = respuesta.servicio;
                         _this.mostrarOcultarBotones(true);
@@ -123,30 +124,56 @@ class Informacion {
             _this.habilitarDeshabilitarSelect(false);
         });
 
+        $('#btnAgregar').on('click', function () {
+            _this.inputs['folio'].habilitarElemento();
+            _this.mostrarOcultarBotonesFolio(true);
+        });
+
         $('#btnEditarFolio').on('click', function () {
-            let html = `<div class="row">
-                            <div class="col-md-12">
-                                <h5 class="f-w-700">Incidente SD:</h5>
-                                <input id="inputEditarFolio" type="text" class="form-control"/>
-                            </div>
-                        </div>`;
-            _this.modal.mostrarModal(`Incidente SD`, html);
-            _this.modal.funcionalidadBotonAceptar(null, function () {
-                let data = {folio: $('#inputEditarFolio').val(), id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
-                _this.peticion.enviar('modal-dialog', 'Seguimiento/Servicio/Folio/editar', data, function (respuesta) {
-                    console.log(respuesta);
-                    if (_this.bug.validar(respuesta)) {
-                        if (respuesta.operacionFolio === true) {
-                            _this.datos.servicio.folio = $('#inputEditarFolio').val();
-                            _this.inputs['folio'].definirValor(_this.datos.servicio.folio);
-                        } else {
-                            _this.modal.mostrarModal('Incidente SD', '<h3 class="text-center">' + respuesta.folio.Error + '</h3>');
-                            _this.modal.ocultarBotonAceptar();
-                            _this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
-                        }
-                    }
-                });
-                _this.modal.cerrarModal();
+            _this.inputs['folio'].habilitarElemento();
+            _this.mostrarOcultarBotonesFolio(true);
+//            let html = `<div class="row">
+//                            <div class="col-md-12">
+//                                <h5 class="f-w-700">Incidente SD:</h5>
+//                                <input id="inputEditarFolio" type="text" class="form-control"/>
+//                            </div>
+//                        </div>`;
+//            _this.modal.mostrarModal(`Incidente SD`, html);
+//            _this.modal.funcionalidadBotonAceptar(null, function () {
+//                let data = {folio: $('#inputEditarFolio').val(), id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
+//                _this.peticion.enviar('modal-dialog', 'Seguimiento/Servicio/Folio/editar', data, function (respuesta) {
+//                    console.log(respuesta);
+//                    if (_this.bug.validar(respuesta)) {
+//                        if (respuesta.operacionFolio === true) {
+//                            _this.datos.servicio.folio = $('#inputEditarFolio').val();
+//                            _this.inputs['folio'].definirValor(_this.datos.servicio.folio);
+//                        } else {
+//                            _this.modal.mostrarModal('Incidente SD', '<h3 class="text-center">' + respuesta.folio.Error + '</h3>');
+//                            _this.modal.ocultarBotonAceptar();
+//                            _this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
+//                        }
+//                    }
+//                });
+//                _this.modal.cerrarModal();
+//            });
+        });
+
+        $('#btnCancelar').on('click', function () {
+            _this.inputs['folio'].bloquearElemento();
+            _this.inputs['folio'].definirValor(_this.datos.servicio.folio);
+            _this.mostrarOcultarBotonesFolio(false);
+        });
+
+        $('#btnGuardar').on('click', function () {
+            let nuevoFolio = _this.inputs['folio'].obtenerValor();
+            let data = {folio: nuevoFolio, id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
+            _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/Folio/editar', data, function (respuesta) {
+                if (_this.bug.validar(respuesta)) {
+                    
+                }
+                
+                _this.inputs['folio'].bloquearElemento();
+                _this.mostrarOcultarBotonesFolio(false);
             });
         });
 
@@ -175,8 +202,8 @@ class Informacion {
         });
     }
 
-    mostrarOcultarBotones(accion) {
-        if (accion) {
+    mostrarOcultarBotones(habilitar) {
+        if (habilitar) {
             this.peticion.mostrarElemento('btnEditarInformacionGeneral')
             this.peticion.ocultarElemento('btnGuardarInformacionGeneral');
             this.peticion.ocultarElemento('btnCancelarInformacionGeneral');
@@ -223,6 +250,38 @@ class Informacion {
             this.modal.ocultarBotonAceptar();
             this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
         }
+    }
+
+    mostrarOcultarBotonesFolio(editar = false, establecer = false) {
+        let folio = this.datos.servicio.folio;
+
+        if (folio !== '' && establecer) {
+            this.peticion.mostrarElemento('btnEditarFolio');
+            this.peticion.mostrarElemento('btnVerFolio');
+            this.peticion.ocultarElemento('btnAgregar');
+        }
+
+        if (folio === '' && editar && !establecer) {
+            this.peticion.ocultarElemento('btnAgregar');
+            this.peticion.mostrarElemento('btnGuardar');
+            this.peticion.mostrarElemento('btnCancelar');
+        } else if (folio === '' && !editar && !establecer) {
+            this.peticion.mostrarElemento('btnAgregar');
+            this.peticion.ocultarElemento('btnGuardar');
+            this.peticion.ocultarElemento('btnCancelar');
+        } else if (folio !== '' && !editar && !establecer) {
+            this.peticion.mostrarElemento('btnEditarFolio');
+            this.peticion.mostrarElemento('btnVerFolio');
+            this.peticion.ocultarElemento('btnAgregar');
+            this.peticion.ocultarElemento('btnGuardar');
+            this.peticion.ocultarElemento('btnCancelar');
+        } else if (folio !== '' && editar && !establecer) {
+            this.peticion.ocultarElemento('btnAgregar');
+            this.peticion.ocultarElemento('btnEditarFolio');
+            this.peticion.ocultarElemento('btnVerFolio');
+            this.peticion.mostrarElemento('btnGuardar');
+            this.peticion.mostrarElemento('btnCancelar');
+    }
     }
 }
 
