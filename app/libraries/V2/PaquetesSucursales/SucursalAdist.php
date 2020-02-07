@@ -41,13 +41,12 @@ class SucursalAdist implements Sucursal {
     
     public function getAreas(){        
         $datos = array();
-        $consulta = $this->DBSucursal->getAreas('10');
+        $consulta = $this->DBSucursal->getAreas();
         
         foreach ($consulta as $value) {
             array_push($datos, array(
-                'id' => $value['IdArea'],
-                'text' => $value['Area'],
-                'punto' => $value['Punto']
+                'id' => $value['Id'],
+                'text' => $value['Nombre']
             ));
         }
         

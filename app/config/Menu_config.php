@@ -867,18 +867,21 @@ $config['Poliza'] = array(
             'Base/Tabla', 
             'Base/Botones', 
             'Base/Nota', 
+            'Componentes/Inputs/Input',
             'Componentes/Selects/ISelect',
             'Componentes/Selects/SelectBasico',
             'Componentes/HerramientasWeb/Utileria',
             'Componentes/Modal/ModalBase',
             'Componentes/Modal/Modal',
             'Componentes/Modal/ModalServicio',
+            'Componentes/HerramientasWeb/Bug',
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
             'V2/PaquetesTicket/Factorys/factoryServicios',
             'V2/PaquetesTicket/IServicio',
             'V2/PaquetesTicket/ServicioInstalaciones',
             'V2/PaquetesTicket/Informacion',
+            'V2/PaquetesTicket/Solucion',
             'Poliza/seguimiento',
             'V2/PaquetesTicket/Controlller_Ticket'),
         'pluginsJs' => array(
@@ -2141,6 +2144,38 @@ $config['Redes'] = array(
             'switchery/switchery.min'
         ),
         'Permiso' => 'VSGRCE'
+    ),
+    'CatalogoSwitchRedes' => array(
+        'liga' => 'Catálogo Switch',
+        'icono' => '',
+        'Url' => '/Redes/CatalogoSwitch',
+        'css' => array(
+            'Proyecto/tareasTecnico'
+        ),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley'
+        ),
+        'js' => array(
+            'Base/Base', 
+            'Componentes/HerramientasWeb/Utileria',
+            'Componentes/HerramientasWeb/Modal',
+            'Componentes/Selects/Select', 
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Tablas/Tabla', 
+            'Componentes/Tablas/TablaBasica',
+            'Redes/CatalogoSwitch'
+        ),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'DrawingBoard/js/drawingboard.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es'
+        ),
+        'Permiso' => 'VCSRCE'
     )
 );
 

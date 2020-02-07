@@ -20,8 +20,8 @@
             <!--Finaliza el encabezado del panel-->
             <!--Empieza tabla de servicios-->
             <div class="col-md-12">
-                <label id="nombreTrabajador" class="hidden"><?php echo $datos['infoServicios']["nombre"];?></label>
-                <label id="rolTrabajador" class="hidden"><?php echo $datos['infoServicios']["rol"];?></label>
+                <label id="nombreTrabajador" class="hidden"><?php echo $datos['infoServicios']["nombre"]; ?></label>
+                <label id="accesoTrabajador" class="hidden"><?php echo $datos['infoServicios']["acceso"]; ?></label>
                 <div class="table-responsive">
                     <table id="table-ServiciosGeneralesRedes" class="table table-hover table-striped table-bordered" style="cursor:pointer" width="100%">
                         <thead>
@@ -33,7 +33,7 @@
                                 <th class="all">Servicio</th>
                                 <th class="all">Fecha de Creación</th>
                                 <?php
-                                if ($datos['infoServicios']['rol'] == "Jefe") {
+                                if ($datos['infoServicios']["acceso"] == true) {
                                     echo '<th class="all">Técnico</th>';
                                 }
                                 ?>
@@ -44,20 +44,18 @@
                         <tbody>
                             <?php
                             foreach ($datos['infoServicios']['servicios'] as $valor) {
-                                if ($datos['infoServicios']['rol'] == "Jefe") {
-                                    foreach ($valor as $dato) {
-                                        echo '<tr>
-                                                <th>' . $dato['Id'] . '</th>
-                                                <th>' . $dato['Folio'] . '</th>
-                                                <th>' . $dato['Ticket'] . '</th>
-                                                <th>' . $dato['IdSolicitud'] . '</th>
-                                                <th>' . $dato['TipoServicio'] . '</th>
-                                                <th>' . $dato['FechaCreacion'] . '</th>
-                                                <th>' . $dato['Atiende'] . '</th>
-                                                <th>' . $dato['Descripcion'] . '</th>
-                                                <th>' . $dato['Estatus'] . '</th>
-                                            </tr>';
-                                    }
+                                if ($datos['infoServicios']["acceso"] == true) {
+                                    echo '<tr>
+                                        <th>' . $valor['Id'] . '</th>
+                                        <th>' . $valor['Folio'] . '</th>
+                                        <th>' . $valor['Ticket'] . '</th>
+                                        <th>' . $valor['IdSolicitud'] . '</th>
+                                        <th>' . $valor['TipoServicio'] . '</th>
+                                        <th>' . $valor['FechaCreacion'] . '</th>
+                                        <th>' . $valor['Atiende'] . '</th>
+                                        <th>' . $valor['Descripcion'] . '</th>
+                                        <th>' . $valor['Estatus'] . '</th>
+                                    </tr>';
                                 } else {
                                     echo '<tr>
                                             <th>' . $valor['Id'] . '</th>
@@ -107,14 +105,17 @@
                 <div class="col-md-12">
                     <div class="panel-heading-btn">
                         <?php
-                        if ($datos['infoServicios']['rol'] == "Jefe") {
-                            echo '<div id="scciones" class="btn-group btn-sm hidden">
+                        foreach ($usuario["PermisosString"] as $permiso) {
+                            if ($permiso == "AMC") {
+                                echo '<div id="scciones" class="btn-group btn-sm hidden">
                                     <a href="javascript:;" data-toggle="dropdown" class="btn btn-warning dropdown-toggle">Acciones <span class="caret"></span></a>
                                     <ul class="dropdown-menu">
                                         <li><a href="#" id="validarServicio"><span class="fa fa-check"></span> Validar Servicio</a></li>
+                                        <li><a href="#" id="rechazarServicio"><span class="fa fa-times"></span> Cancelar Servicio</a></li>
                                         <li><a href="#" id="exportarPDF"><span class="fa fa-file-pdf-o"></span> Exportar PDF</a></li>
                                     </ul>
                                 </div>';
+                            }
                         }
                         ?>
                         <label id="btnAgregarFolio" class="btn btn-warning btn-sm bloqueoConclusionBtn">
@@ -180,7 +181,7 @@
                     <!--Empieza seccion de agregar Folio-->
                     <div id="agregarFolio" class="col-md-6 hidden" style="background: #F9EAC6">
                         <!--Empieza panel y eventos de folio-->
-                        <div class="col-md-12">
+                        <div id="formularioAgregarFolio" class="col-md-12">
                             <br>
                             <form id="folio" data-parsley-validate="true" enctype="multipart/form-data">
                                 <div class="form-group">
@@ -260,17 +261,17 @@
                 </div>
                 <!--Finaliza detalles de servicio-->
                 <!--Empieza seccion de Solucion y Problemas-->
-                <div class="col-md-12">
+                <div class="col-md-12 m-b-30">
                     <!--Empieza datos solucion-->
                     <div class="col-md-6">
                         <!--Empieza Titulo solucion-->
                         <div class="col-md-12 row">
                             <div class="panel-heading-btn">
                                 <label id="btnSinMaterial" class="btn btn-default btn-xs hidden bloqueoConclusionBtn">
-                                    <i class="fa fa-toggle-off"></i> solo Evidencia
+                                    <i class="fa fa-toggle-off"></i> Con Uso de Material
                                 </label>
                                 <label id="btnConMaterial" class="btn btn-primary btn-xs bloqueoConclusionBtn">
-                                    <i class="fa fa-toggle-off fa-rotate-180"></i> Con Uso de Material
+                                    <i class="fa fa-toggle-off fa-rotate-180"></i> Solo Evidencia
                                 </label>
                             </div>
                             <h4>Datos de solución</h4>
@@ -309,7 +310,7 @@
                         <div class="col-md-12">
                             <div class="col-md-12">
                                 <span>Sección donde podras reportar y ver todos los problemas del Servicio</span><br><br>
-                                <label id="btnReportar" href="#modalDefinirProblema" class="btn btn-success bloqueoConclusionBtn" data-toggle="modal">Reportar</label>
+                                <label id="btnReportar" href="#modalDefinirProblema" class="btn btn-success bloqueoConclusionBtn" data-toggle="modal"><i class="fa fa-exclamation-triangle"></i> Reportar</label>
                                 <br><br>
                             </div>
                             <div class="col-md-12">
@@ -408,10 +409,10 @@
                                         <input id="agregarEvidenciaFija" name="agregarEvidenciaProblema[]" type="file" multiple data-parsley-required="true">
                                     </div>
                                 </div>
+                                <label>Oprime el botón "Examinar" para agregar la Evidencia</label>
                                 <div class="col-md-12">
                                     <div id="evidenciasMaterialFija"></div>
                                 </div>
-                                <label>Oprime el botón "Examinar" para agregar la Evidencia</label>
                             </form>
                         </div>
                         <!--Finaliza seccion agregar evidencia-->
@@ -438,13 +439,15 @@
                     <div class="col-md-12">
                         <br><br>
                         <div class="col-md-6">
-                            <a id="btnGuardar" class="btn btn-success bloqueoConclusionBtn">
-                                GUARDAR
+                            <a id="btnGuardar" class="btn btn-primary bloqueoConclusionBtn">
+                                <i class="fa fa-save"></i>
+                                 GUARDAR
                             </a>
                         </div>
                         <div class="col-md-6">
                             <a id="btnConcluir" class="btn btn-danger bloqueoConclusionBtn" data-toggle="modal">
-                                CONCLUIR
+                                <i class="fa fa-unlock-alt"></i>
+                                 CONCLUIR
                             </a>
                         </div>
                     </div>
@@ -503,29 +506,31 @@
                     <form id="formMaterial" data-parsley-validate="true" enctype="multipart/form-data">
                         <!--Empieza seccion agregar Material-->
                         <div class="col-md-12">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label><br>Tipo de Material</label>
+                                    <select id="selectTipoMaterial" class="form-control bloqueoConclusion" style="width: 100%"></select>
+                                </div>
+                            </div>
                             <div class="col-md-5">
                                 <div class="form-group">
-                                    <label>Material</label>
+                                    <label><br>Material</label>
                                     <select id="selectMaterial" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"></select>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Cantidad Disponible</label>
-                                    <input id="materialDisponible" class="form-control" style="width: 100%" disabled/>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label>Cantidad Utilizar</label>
-                                    <input id="materialUtilizar" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"/>
+                                    <input id="materialUtilizar" type="number" class="form-control bloqueoConclusion" style="width: 100%" data-parsley-required="true"/>
                                 </div>
                             </div>
-                            <div class="col-md-1">
-                                <br>
-                                <label id="btnAgregarMaterialATablaNodo" class="btn btn-success bloqueoConclusionBtn">
-                                    <i class="fa fa-plus"></i>
-                                </label>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <br><br>
+                                    <label id="btnAgregarMaterialATablaNodo" class="btn btn-success bloqueoConclusionBtn">
+                                        <i class="fa fa-plus"></i>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <!--Finaliza seccion agregar Material-->
@@ -534,7 +539,10 @@
                 </div>
                 <!--Inicio Nota de material extra-->
                 <div id="notaMaterial" class="col-md-12 hidden">
-                    <label style="color: red">Has seleccionado material que no tienes disponible</label>
+                    <label style="color: red">Has seleccionado material no disponible</label>
+                </div>
+                <div id="notaAgregarMaterial" class="col-md-12 hidden">
+                    <label style="color: red">Falta agregar material</label>
                 </div>
                 <!--Fin Nota de material extra-->
                 <form id="formEvidenciaMaterial" data-parsley-validate="true" enctype="multipart/form-data">
@@ -574,6 +582,7 @@
                                 <input id="actualizarEvidenciaNodo" name="actualizarEvidenciaNodo[]" type="file" multiple data-parsley-required="true">
                             </div>
                         </div>
+                        <label>Oprime el botón "Examinar" para agregar Evidencia u orpime <i class="fa fa-trash"></i> en la imagen para eliminar evidencia</label>
                         <div id="notaEvidencia" class="col-md-12 hidden">
                             <label style="color: red">Es necesario enviar una evidencia</label>
                         </div>
@@ -585,7 +594,6 @@
                                 </div>
                             </div>
                         </div>
-                        <label>Oprime el botón "Examinar" para agregar Evidencia</label>
                         <div class="col-md-12"><br></div>
                     </div>
                     <!--Finaliza seccion de evidencia-->
@@ -631,8 +639,9 @@
                         <div class="col-md-12">
                             <label>Evidencia</label><br>
                             <div id="archivoProblema" class="form-group">
-                                <input id="agregarEvidenciaProblema" name="agregarEvidenciaProblema[]" type="file" multiple data-parsley-required="true">
+                                <input id="agregarEvidenciaProblema" name="agregarEvidenciaProblema[]" type="file" multiple>
                             </div>
+                            <label>Puedes agregar maximo 8 imagenes</label>
                         </div>
                     </form>
                 </div>   
@@ -640,7 +649,7 @@
             <!--Finaliza cuerpo del modal-->
             <!--Empieza pie del modal-->
             <div class="modal-footer text-center">
-                <a id="btnAceptarProblema" class="btn btn-sm btn-success" data-dismiss="modal"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnAceptarProblema" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
                 <a id="btnCancelarProblema" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
             </div>
             <!--Finaliza pie del modal-->
@@ -690,40 +699,10 @@
                     <div class="col-md-12"><br><br></div>
                 </form>
             </div>
-            <div id="contentfirmaTecnico" class="col-md-12 text-center hidden">
-                <form id="formAgregarTecnico" data-parsley-validate="true" enctype="multipart/form-data">
-                    <div class="col-md-12">
-                        <div class="col-md-2"></div>
-                        <div class="col-md-7">
-                            <div class="form-group">
-                                <label>Firma de Técnico</label>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Empezando mensaje--> 
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div id="errorMessageFirmaTecnico"></div>
-                        </div>
-                    </div>
-                    <!--Finalizando mensaje-->
-                    <div class="col-md-12">
-                        <div class="col-md-2"></div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <div id="firmaTecnico" style="width: 600px; height: 300px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12"><br><br></div>
-                </form>
-            </div>
             <div class="col-md-12 text-center">
                 <a id="btnResumen" class="btn btn-sm btn-info hidden"><i class="fa fa-info-circle"></i> Resumen</a>
-                <a id="btnContinuar" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> Continuar</a>
-                <a id="btnTerminar" class="btn btn-sm btn-success hidden"><i class="fa fa-sign-in"></i> Concluir</a>
+                <a id="btnTerminar" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> Concluir</a>
                 <a id="btnRegresarServicio" class="btn btn-sm btn-danger"><i class="fa fa-rotate-180 fa-sign-in"></i> Regresar</a>
-                <a id="btnRegresarServicio2" class="btn btn-sm btn-danger hidden"><i class="fa fa-rotate-180 fa-sign-in"></i> Regresar</a>
             </div>
             <!--Finaliza contenido de elementos-->
         </div>

@@ -1,12 +1,16 @@
-class ServicioInstalaciones extends IServicio{
-    constructor(){        
-        super();        
-        
+class ServicioInstalaciones extends IServicio {
+    constructor() {
+        super();
+
     }
-    
-    setDatos(datos){
+
+    setDatos(datos) { 
         console.log(datos);
+        if (datos.hasOwnProperty('Error')) {
+            console.log(datos);
+        }
     }
+
 }
 
 

@@ -7,6 +7,7 @@ $(function () {
     let servicio = undefined;
     let domHtml = new Utileria();
     let informacion = new Informacion();
+    let solucion = new Solucion();
 
     //Muestra la hora en el sistema
     evento.horaServidor($("#horaServidor").val());
@@ -15,7 +16,10 @@ $(function () {
 
     //Inicializa funciones de la plantilla
     App.init();
-
+    
+    informacion.iniciarElementos();   
+//    solucion.iniciarElementos();
+    
     tablaServicios.evento(function () {
         datosFila = tablaServicios.datosFila(this);
         let factoryServicios = new factoryServicio();
@@ -35,7 +39,7 @@ $(function () {
         if (!servicio) {
             url = 'Seguimiento/Servicio_Datos';
         }
-         
+
         if (datosFila[6] === 'ABIERTO') {
             modal.mostrarModal();
             modal.eventoCancelar();
@@ -55,22 +59,20 @@ $(function () {
                 datosServicio = datosServidor;
                 mostrarFormulario(datos);
             });
-            
         }
     });
 
     function mostrarFormulario(datos) {
         if (servicio) {
-            console.log('Mostrar formulario servicio nuevo');
             servicio.setDatos(datosServicio);
             domHtml.ocultarElemento('listaPoliza');
             domHtml.mostrarElemento('panelDetallesTicket'); 
-            informacion.iniciarElementos();
-        } else {
-            console.log(evento, datosServicio, datosFila);
+            informacion.setDatos(datosServicio);
+            informacion.listener(dato => servicio.setDatos(dato));
+        } else {           
             datosServicio = datos;
             seguimientoOld(evento, datosServicio, datosFila);
         }
     }
-
+    
 });

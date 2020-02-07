@@ -60,7 +60,7 @@ class ISelect {
 
         $.each(contenido, function (key, valor) {
             if (seleccion === valor[comparacion]) {
-                datos[contador] = {id: valor.Id, text: valor.Nombre};
+                datos[contador] = {id: valor.id, text: valor.text};
                 contador++;
             }
         });

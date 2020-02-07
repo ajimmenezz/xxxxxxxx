@@ -4,6 +4,7 @@ use Librerias\V2\Factorys\FactoryServiciosTicket as FactoryServiciosTicket;
 use Librerias\V2\PaquetesGenerales\Utilerias\ServiceDesk as ServiceDesk;
 use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
 use Librerias\V2\PaquetesGenerales\Utilerias\Archivo as Archivo;
+use Librerias\V2\PaquetesClientes\GestorClientes as GestorCliente;
 use Librerias\V2\PaquetesSucursales\GestorSucursales as GestorSucursal;
 use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenVirtual;
@@ -12,6 +13,7 @@ use Librerias\V2\PaquetesTicket\Utilerias\Solicitud as Solicitud;
 class Controller_ServicioTicket extends CI_Controller {
 
     private $factory;
+    private $gestorClientes;
     private $gestorSucursales;
     private $gestorServicios;
     private $servicio;
@@ -21,11 +23,12 @@ class Controller_ServicioTicket extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->factory = new FactoryServiciosTicket();
+        $this->gestorClientes = new GestorCliente();
         $this->gestorSucursales = new GestorSucursal();
         $this->gestorServicios = new GestorServicio();
         $this->almacenVirtual = new AlmacenVirtual();
-
         $this->datos = array();
+        $this->load->helper(array('conversionpalabra'));
     }
 
     public function atenderServicio() {
@@ -35,6 +38,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $idUsuario = Usuario::getId();
             $this->servicio->startServicio($idUsuario);
             $this->datos['servicio'] = $this->servicio->getDatos();
+            $this->datos['clientes'] = $this->gestorClientes->getClientes('1,4,12,18,20');
             $this->datos['sucursales'] = $this->gestorSucursales->getSucursales();
             $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['problemas'] = null;
@@ -42,6 +46,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));
             $this->getInformacionFolio();
             $this->setEstatusServiceDesk();
+            $this->datos['html'] = $this->getHtml($datosServicio['tipo'], $this->datos);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $exc) {
@@ -71,25 +76,39 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
-    private function getInformacionFolio() {
+    private function getInformacionFolio(array $datos = NULL) {
         try {
             $this->datos['folio'] = null;
             $this->datos['notasFolio'] = null;
+            $this->datos['resolucionFolio'] = null;
 
-            if (!empty($this->servicio->getFolio())) {
-                $this->datos['folio'] = ServiceDesk::getDatos($this->servicio->getFolio());
-                $this->datos['notasFolio'] = ServiceDesk::getNotas($this->servicio->getFolio());
+            if (empty($datos)) {
+                if (!empty($this->servicio->getFolio())) {
+                    $this->datos['folio'] = ServiceDesk::getDatos($this->servicio->getFolio());
+                    $this->datos['notasFolio'] = ServiceDesk::getNotas($this->servicio->getFolio());
+                    $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($this->servicio->getFolio());
+                    $this->datos['operacionFolio'] = TRUE;
+                    return true;
+                }
+            } else {
+                $this->datos['folio'] = ServiceDesk::getDatos($datos['folio']);
+                $this->datos['notasFolio'] = ServiceDesk::getNotas($datos['folio']);
+                $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($datos['folio']);
+                $this->datos['operacionFolio'] = TRUE;
+                return true;
             }
         } catch (Exception $ex) {
+            $this->datos['errorFolio'] = array('Error' => $ex->getMessage());
             $this->datos['folio'] = array('Error' => $ex->getMessage());
             $this->datos['notasFolio'] = array('Error' => $ex->getMessage());
+            $this->datos['resolucionFolio'] = array('Error' => $ex->getMessage());
+            $this->datos['operacionFolio'] = FALSE;
         }
     }
 
     private function setEstatusServiceDesk() {
         $estatusFolio = null;
         try {
-
             if (!empty($this->datos['folio'] && property_exists($this->datos['folio'], 'STATUS'))) {
                 $estatusFolio = $this->datos['folio']->STATUS;
             }
@@ -106,14 +125,55 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $this->servicio->setFolioServiceDesk($datosServicio['folio']);
-            $this->getInformacionFolio();
-            $this->datos['operacion'] = TRUE;
+            $informacionFolio = $this->getInformacionFolio($datosServicio);
+
+            if (!empty($informacionFolio)) {
+                $nuevoFolio = $this->servicio->setFolioServiceDesk($datosServicio['folio']);
+
+                $this->datos['nuevoFolio'] = $nuevoFolio;
+
+                if ($nuevoFolio === FALSE && $informacionFolio) {
+                    $this->datos['errorFolio'] = array('Error' => 'El folio ya esta siendo atendido en otra solicitud.');
+                }
+                $informacionFolio = $this->getInformacionFolio($datosServicio);
+            }
+
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
             $this->datos['Error'] = $ex->getMessage();
             echo json_encode($this->datos);
+        }
+    }
+
+    public function eliminarFolio() {
+        try {
+            $datosServicio = $this->input->post();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->deleteFolio();
+            echo json_encode(TRUE);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
+
+    private function getInformacionFolioNuevo(string $folio) {
+        try {
+            $this->datos['folio'] = null;
+            $this->datos['notasFolio'] = null;
+            $this->datos['resolucionFolio'] = null;
+
+            if (!empty($this->servicio->getFolio())) {
+                $this->datos['folio'] = ServiceDesk::getDatos($folio);
+                $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
+                $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($folio);
+            }
+        } catch (Exception $ex) {
+            $this->datos['folio'] = array('Error' => $ex->getMessage());
+            $this->datos['notasFolio'] = array('Error' => $ex->getMessage());
+            $this->datos['resolucionFolio'] = array('Error' => $ex->getMessage());
         }
     }
 
@@ -137,21 +197,39 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $datosServicio['idUsuario'] = Usuario::getId();
-            $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciaProblemas/';
-            Archivo::saveArchivos($carpeta);
-            $datosServicio['archivos'] = Archivo::getString();
+            if ($datosServicio['evidencia'] !== 'false') {
+                $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciaProblemas/';
+                Archivo::saveArchivos($carpeta);
+                $datosServicio['archivos'] = Archivo::getString();
+            } else {
+                $datosServicio['archivos'] = null;
+            }
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->setProblema($datosServicio);
-            $this->setNotaServiceDesk($datosServicio);
+
+            $key = Usuario::getAPIKEY();
+            $key = ServiceDesk::validarAPIKey(strval($key));
+
+            if ($key !== '') {
+                $this->setNotaServiceDesk($datosServicio);
+                $this->getInformacionFolio();
+            }
+
             $this->datos['problemas'] = $this->servicio->getProblemas();
-            $this->getInformacionFolio();
             $this->datos['operacion'] = TRUE;
+
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
             $this->datos['Error'] = $ex->getMessage();
             echo json_encode($this->datos);
         }
+    }
+
+    public function getMaterial() {
+        $datosServicio = $this->input->post();
+        $this->datos['materialAlmacen'] = $this->almacenVirtual->getAlmacen($datosServicio["tipoMaterial"]);
+        echo json_encode($this->datos);
     }
 
     public function setSolucion() {
@@ -200,9 +278,9 @@ class Controller_ServicioTicket extends CI_Controller {
             $datosServicio = $this->input->post();
             $datosServicio['idUsuario'] = Usuario::getId();
             $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciasFirmas';
+            $firmaCliente = stripAccents($datosServicio['nombreCliente']);
             $firmas = array(
-                'Firma-Cliente-' . $datosServicio['nombreCliente'] => $datosServicio['firmaCliente'],
-                'Firma-Tecnico-' . Usuario::getNombre() => $datosServicio['firmaTecnico']
+                'Firma-Cliente-' . str_replace(" ", "_", $firmaCliente) => $datosServicio['firmaCliente'],
             );
             Archivo::saveArchivos64($carpeta, $firmas);
             $datosServicio['archivos'] = Archivo::getArray();
@@ -276,6 +354,60 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['Error'] = $ex->getMessage();
             echo json_encode($this->datos);
         }
+    }
+
+    public function rechazarServicio() {
+        try {
+            $datosServicio = $this->input->post();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->setEstatus('2');
+            $this->datos['operacion'] = TRUE;
+            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
+
+    public function guardarInformacionGeneral() {
+        try {
+            $datosServicio = $this->input->post();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->setInformacionGeneral($datosServicio);
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->datos['servicio'] = $this->servicio->getDatos();
+            $this->datos['operacion'] = TRUE;
+            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
+
+//
+//    private function formularioInformacionFolio(array $datos) {
+//        $formulario = array('html' => $this->load->view('V2/PaquetesTickets/Poliza/InformacionFolio', $datos, TRUE));
+//        return $formulario;
+//    }
+    private function getHtml(string $tipoServicio, array $datos) {
+        $html = array();
+
+        $html['folio'] = $this->load->view('V2/PaquetesTickets/Poliza/InformacionFolio', $datos, TRUE);
+//        $html['bitacora'] =
+
+        switch ($tipoServicio) {
+            case 'Instalaciones':
+//                $html['solucion'] = $this->load->view('V2/PaquetesTickets/Poliza/InformacionFolio', $datos, TRUE);
+
+                break;
+
+            default:
+                break;
+        }
+
+        return $html;
     }
 
 }

@@ -15,18 +15,33 @@ class AlmacenVirtual {
         $this->idUsuario = Usuario::getId();
     }
 
-    public function getAlmacen() {
+    public function getTipoMaterialAlmacen() {
         $datos = array();
-        $consulta = $this->DBAlmacenVirtual->getMaterial($this->idUsuario);
+        $consulta = $this->DBAlmacenVirtual->getTipoMaterial();
 
         foreach ($consulta as $value) {
             array_push($datos, array(
                 'id' => $value['Id'],
-                'text' => $value['Producto'],
-                'cantidad' => $value['Cantidad'],
-                'bloqueado' => $value['Bloqueado']));
+                'text' => $value['Nombre']));
         }
         return $datos;
+    }
+
+    public function getAlmacen(string $datos = null) {
+        if ($datos == null) {
+            $condicion = '';
+        } else {
+            $condicion = 'where cap.Id = ' . $datos;
+        }
+        $informacion = array();
+        $consulta = $this->DBAlmacenVirtual->getMaterial($condicion);
+
+        foreach ($consulta as $value) {
+            array_push($informacion, array(
+                'id' => $value['Id'],
+                'text' => $value['Nombre']));
+        }
+        return $informacion;
     }
 
     public function updateAlmacen(array $datos) {
@@ -55,4 +70,15 @@ class AlmacenVirtual {
         $this->DBAlmacenVirtual->finalizarTransaccion();
     }
 
+    public function getMarcaEquipo() {
+        $informacion = array();
+        $consulta = $this->DBAlmacenVirtual->getMarcaEquipo();
+
+        foreach ($consulta as $value) {
+            array_push($informacion, array(
+                'id' => $value['IdMar'],
+                'text' => $value['Marca']));
+        }
+        return $informacion;
+    }
 }
