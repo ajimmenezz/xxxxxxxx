@@ -1,47 +1,52 @@
-class Solucion{
-    
-    constructor(){
+class Solucion {
+
+    constructor() {
+        this.peticion = new Utileria();
         this.formulario = null;
         this.selects = {};
         this.tablas = {};
         this.inputs = {};
     }
-    
-    iniciarElementos(){
+
+    iniciarElementos() {
+        this.peticion.insertarContenido('Solucion', this.datos.html.solucion);
         this.crearSelects();
         this.crearTablas();
     }
-    
-    crearSelects(){
+
+    crearSelects() {
         let _this = this;
         let selects = [
             'selectOperacionInstalaciones',
             'selectModeloInstalaciones'
-        ];        
-        $.each(selects, function(index, value){
-            _this.selects[value] = new SelectBasico(value); 
+        ];
+        $.each(selects, function (index, value) {
+            _this.selects[value] = new SelectBasico(value);
         });
-        
-        $.each(_this.selects, function(index, value){
-            value.iniciarSelect(); 
+
+        $.each(_this.selects, function (index, value) {
+            value.iniciarSelect();
         });
-    }  
-    
-    crearTablas(){
+    }
+
+    crearTablas() {
         let _this = this;
         let tablas = [
             'data-table-equipos-instalaciones'
-        ];   
-        
-        $.each(tablas, function(index, value){
-            _this.tablas[value] = new TablaBasica(value); 
+        ];
+
+        $.each(tablas, function (index, value) {
+            _this.tablas[value] = new TablaBasica(value);
         });
-        
-        $.each(_this.tablas, function(index, value){
-            value.iniciarTabla(); 
+
+        $.each(_this.tablas, function (index, value) {
+            value.iniciarTabla();
         });
-    }  
-    
-    
+    }
+
+    setDatos(datos) {
+        this.datos = datos;
+    }
+
 }
 

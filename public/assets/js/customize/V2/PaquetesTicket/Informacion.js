@@ -3,6 +3,7 @@ class Informacion {
     constructor() {
         this.peticion = new Utileria();
         this.modal = new Modal('modal-dialogo');
+        this.alerta = new Alertas('modal-dialogo');
         this.bug = new Bug();
         this.formulario = null;
         this.datos = null;
@@ -70,7 +71,6 @@ class Informacion {
 
     setDatosInputs(datos) {
         let _this = this;
-//        _this.datos.servicio.folio = "";
         $.each(datos, function (index, value) {
             if (_this.inputs.hasOwnProperty(index)) {
                 _this.inputs[index].definirValor(value);
@@ -132,30 +132,6 @@ class Informacion {
         $('#btnEditarFolio').on('click', function () {
             _this.inputs['folio'].habilitarElemento();
             _this.mostrarOcultarBotonesFolio(true);
-//            let html = `<div class="row">
-//                            <div class="col-md-12">
-//                                <h5 class="f-w-700">Incidente SD:</h5>
-//                                <input id="inputEditarFolio" type="text" class="form-control"/>
-//                            </div>
-//                        </div>`;
-//            _this.modal.mostrarModal(`Incidente SD`, html);
-//            _this.modal.funcionalidadBotonAceptar(null, function () {
-//                let data = {folio: $('#inputEditarFolio').val(), id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
-//                _this.peticion.enviar('modal-dialog', 'Seguimiento/Servicio/Folio/editar', data, function (respuesta) {
-//                    console.log(respuesta);
-//                    if (_this.bug.validar(respuesta)) {
-//                        if (respuesta.operacionFolio === true) {
-//                            _this.datos.servicio.folio = $('#inputEditarFolio').val();
-//                            _this.inputs['folio'].definirValor(_this.datos.servicio.folio);
-//                        } else {
-//                            _this.modal.mostrarModal('Incidente SD', '<h3 class="text-center">' + respuesta.folio.Error + '</h3>');
-//                            _this.modal.ocultarBotonAceptar();
-//                            _this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
-//                        }
-//                    }
-//                });
-//                _this.modal.cerrarModal();
-//            });
         });
 
         $('#btnCancelar').on('click', function () {
@@ -169,20 +145,25 @@ class Informacion {
             let data = {folio: nuevoFolio, id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
             _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/Folio/editar', data, function (respuesta) {
                 if (_this.bug.validar(respuesta)) {
-                    
+                    if (respuesta.operacionFolio === true) {
+                        _this.cambiarValoresFolio(respuesta, nuevoFolio);
+                    } else {
+                        if (respuesta.folio.Error === 'URL no válida para la operación solicitada.') {
+                            _this.cambiarValoresFolio(respuesta, nuevoFolio);
+                        } else {
+                            _this.modal.mostrarModal('Incidente SD', '<h3 class="text-center">' + respuesta.folio.Error + '</h3>');
+                            _this.modal.ocultarBotonAceptar();
+                            _this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
+                        }
+                    }
                 }
-                
-                _this.inputs['folio'].bloquearElemento();
-                _this.mostrarOcultarBotonesFolio(false);
             });
         });
 
         $('#btnVerFolio').on('click', function () {
-            if (_this.validarExistenciaFolio()) {
-                _this.modal.mostrarModal(`Información SD - ${_this.datos.servicio.folio}`, _this.datos.html.folio);
-                _this.modal.ocultarBotonAceptar();
-                _this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
-            }
+            _this.modal.mostrarModal(`Información SD - ${_this.datos.servicio.folio}`, _this.datos.html.folio);
+            _this.modal.ocultarBotonAceptar();
+            _this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
         });
 
         $('#btnEliminarFolio').on('click', function () {
@@ -236,24 +217,12 @@ class Informacion {
         this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
     }
 
-    validarExistenciaFolio() {
-        if (this.inputs['folio'].obtenerValor() !== '0' && this.inputs['folio'].obtenerValor() !== '') {
-            if (this.datos.folio.Error === undefined) {
-                return true;
-            } else {
-                this.modal.mostrarModal('Incidente SD', '<h3 class="text-center">' + this.datos.folio.Error + '</h3>');
-                this.modal.ocultarBotonAceptar();
-                this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
-            }
-        } else {
-            this.modal.mostrarModal('Incidente SD', '<h3 class="text-center">No cuenta con folio este servicio</h3>');
-            this.modal.ocultarBotonAceptar();
-            this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
-        }
-    }
-
     mostrarOcultarBotonesFolio(editar = false, establecer = false) {
         let folio = this.datos.servicio.folio;
+
+        if (folio === '0') {
+            folio = '';
+        }
 
         if (folio !== '' && establecer) {
             this.peticion.mostrarElemento('btnEditarFolio');
@@ -282,6 +251,16 @@ class Informacion {
             this.peticion.mostrarElemento('btnGuardar');
             this.peticion.mostrarElemento('btnCancelar');
     }
+    }
+
+    cambiarValoresFolio(respuesta, nuevoFolio) {
+        this.datos.servicio.folio = nuevoFolio;
+        this.datos.folio = respuesta.folio;
+        this.datos.notasFolio = respuesta.notasFolio;
+        this.datos.resolucionFolio = respuesta.resolucionFolio;
+        this.datos.html.folio = respuesta.html.folio;
+        this.inputs['folio'].bloquearElemento();
+        this.mostrarOcultarBotonesFolio(false);
     }
 }
 

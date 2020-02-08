@@ -104,6 +104,31 @@ class ServicioInstalaciones implements Servicio {
 //        return $datos;
     }
 
+    public function setProblema(array $datos) {
+        $this->DBServicioTicket->empezarTransaccion();
+        $this->DBServicioTicket->setProblema($this->id, $datos);
+        $this->DBServicioTicket->finalizarTransaccion();
+    }
+
+    public function getProblemas() {
+        $datos = array();
+        $consulta = $this->DBServicioTicket->getAvanceProblema($this->id);
+
+        if (!empty($consulta)) {
+            foreach ($consulta as $value) {
+                $temporal = explode(',', $value['Archivos']);
+                array_push($datos, array(
+                    'usuario' => $value['Usuario'],
+                    'fecha' => $value['Fecha'],
+                    'descripcion' => $value['Descripcion'],
+                    'archivos' => $temporal
+                ));
+            }
+        }
+
+        return $datos;
+    }
+
     public function runAccion(string $evento, array $datos = array()) {
 
         switch ($evento) {
@@ -136,7 +161,7 @@ class ServicioInstalaciones implements Servicio {
         $this->DBServicioTicket->actualizarServicio(array('IdSucursal' => $datos['sucursal']), array('Id' => $this->id));
         $this->DBServicioTicket->finalizarTransaccion();
     }
-    
+
     public function getAvanceProblema() {
         return $this->DBServicioTicket->getAvanceProblema($this->id);
     }

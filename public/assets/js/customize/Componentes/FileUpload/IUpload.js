@@ -1,11 +1,11 @@
-class Upload {
+class IUpload {
 
     constructor(nombreFileUpload, configuracion = {}) {
         this.fileUpload = nombreFileUpload;
         this.configuracion = configuracion;
         this.datosExtra = {};
         //this.iniciarFileUpload();
-        //this.pagina = pagina;
+        this.pagina = new Utileria();
     }
 
     iniciarPlugin() {
@@ -78,10 +78,10 @@ class Upload {
 
         if (_this.validarArchivos()) {
             $(`#${this.fileUpload}`).on('filebatchpreupload', function (event, data, previewId, index) {
-//                _this.pagina.empezarPantallaCargando(panel);
+                _this.pagina.empezarPantallaCargando(panel);
             }).on('filebatchuploadsuccess', function (event, data, previewId, index) {
 //                _this.pagina.errorServidor(data.response);
-//                _this.pagina.quitarPantallaCargando(panel);
+                _this.pagina.quitarPantallaCargando(panel);
                 if (callback !== null) {
                     callback(data.response);
                 }

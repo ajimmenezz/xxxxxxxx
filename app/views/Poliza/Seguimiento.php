@@ -115,12 +115,13 @@
         <div class="panel-heading p-0">
             <div class="panel-heading-btn m-r-10 m-t-10">
                 <!-- Single button -->  
-                <label id="btnRegresarSeguimiento" class="btn btn-info btn-xs">
+                <label id="btnCierre" class="btn btn-info btn-xs">
                     <i class="fa fa fa-unlock-alt"></i> Cierre
                 </label> 
-                <label id="btnRegresarSeguimiento" class="btn btn-danger btn-xs">
+                <label id="btnReportarProblema" href="#modalReportarProblema" class="btn btn-danger btn-xs" data-toggle="modal">
                     <i class="fa fa fa-exclamation-triangle"></i> Reportar Problema
                 </label> 
+                <!--<a id="btnReportarProblema" href="#modalReportarProblema" class="btn btn-danger btn-xs m-r-5"><i class="fa fa fa-exclamation-triangle"></i> Reportar Problema</a>-->
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-expand"><i class="fa fa-expand"></i></a>
             </div>
             <!-- begin nav-tabs -->
@@ -128,7 +129,7 @@
                 <ul class="nav nav-tabs nav-tabs-inverse">
                     <li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>
                     <li class="active"><a href="#General" data-toggle="tab">Información</a></li>
-                    <li class=""><a href="#EquiposInstalaciones" data-toggle="tab">Equipos</a></li>
+                    <li class=""><a href="#Solucion" data-toggle="tab">Equipos</a></li>
                     <li class=""><a href="#BitacoraProblemas" data-toggle="tab">Bitácara problemas</a></li>                    
                     <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>          
                 </ul>
@@ -175,8 +176,8 @@
                                             <button id="btnAgregar" type="button" class="btn btn-success btn-xs" title="Agregar Folio"><i class="fa fa-plus"></i></button>
                                             <button id="btnEditarFolio" type="button" class="btn btn-success btn-xs hidden" title="Editar Folio"><i class="fa fa-pencil"></i></button>
                                             <button id="btnVerFolio" type="button" class="btn btn-info btn-xs hidden" title="Ver Información del Folio"><i class="fa fa-eye"></i></button>
-                                            <button id="btnGuardar" type="button" class="btn btn-success btn-xs hidden" title="Actualizar Folio"><i class="fa fa-floppy-o"></i></button>
-                                            <button id="btnCancelar" type="button" class="btn btn-success btn-xs hidden" title="Cancelar Actualización"><i class="fa fa-close"></i></button>                                            
+                                            <button id="btnGuardar" type="button" class="btn btn-primary btn-xs hidden" title="Actualizar Folio"><i class="fa fa-floppy-o"></i></button>
+                                            <button id="btnCancelar" type="button" class="btn btn-danger btn-xs hidden" title="Cancelar Actualización"><i class="fa fa-close"></i></button>                                            
                                         </span>
                                     </div>
                                 </div>
@@ -236,92 +237,9 @@
                 </div>
             </div>
             <!--Finalizando la seccion de servicio Correctivo-->
-            <div class="tab-pane fade " id="EquiposInstalaciones">
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <h5 class="f-w-700">Operación *</h5>
-                                <select id="selectOperacionInstalaciones" class="form-control" style="width: 100%" data-parsley-required="true">
-                                    <option value="">Seleccionar</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">                                           
-                                <h5 class="f-w-700">Área de Atención *</h5>
-                                <input id="inputCantidadRefaccionSolicitud" type="number" class="form-control"  placeholder="Cantidad"/>
-                            </div>                               
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">                                           
-                                <h5 class="f-w-700">Punto *</h5>
-                                <input id="inputCantidadRefaccionSolicitud" type="number" class="form-control"  placeholder="Cantidad"/>
-                            </div>                               
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <h5 class="f-w-700">Modelo *</h5>
-                                <select id="selectModeloInstalaciones" class="form-control" style="width: 100%" data-parsley-required="true">
-                                    <option value="">Seleccionar</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">                                           
-                                <h5 class="f-w-700">Serie *</h5>
-                                <input id="inputCantidadRefaccionSolicitud" type="number" class="form-control"  placeholder="Cantidad"/>
-                            </div>                               
-                        </div>
-                        <div class="col-md-2 m-t-30"> 
-                            <div class="form-group">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" id="inputMultimedia" name="inputMultimedia" value="1" />
-                                        Ilegible
-                                    </label>
-                                </div>
-                            </div>                            
-                        </div>
-                    </div>
-                    <div class="row m-t-10">
-                        <!--Empezando error Impericia--> 
-                        <div class="col-md-12">
-                            <div class="errorEnviarReporteImpericia"></div>
-                        </div>
-                        <!--Finalizando Error Impericia-->
-
-                        <div class="row m-t-10">
-                            <div class="col-md-12">
-                                <div class="form-group text-center">
-                                    <a id="btnAgregarEquipoInstalacion" href="javascript:;" class="btn btn-success m-r-5 "><i class="fa fa-plus"></i> Agregar</a>                            
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table id="data-table-equipos-instalaciones" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-                            <thead>
-                                <tr>
-                                    <th class="all">Modelo</th>
-                                    <th class="all">Serie</th>
-                                    <th class="all">Área</th>
-                                    <th class="all">Punto</th>
-                                    <th class="all">Operación</th>
-                                </tr>
-                            </thead>
-                            <tbody>                                      
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="tab-pane fade " id="Solucion">
             </div>
             <div class="tab-pane fade " id="BitacoraProblemas">
-                <div class="panel-body">
-
-                </div>
             </div>
         </div> 
     </div>
@@ -330,4 +248,44 @@
 
 <!--Empezando seccion para el seguimiento de un servicio sin clasificar->-->
 <div id="antesYDespues" class="content hidden"></div>
-<!-- Finalizando seccion para el seguimiento de un servicio sin clasificar 
+<!-- Finalizando seccion para el seguimiento de un servicio sin clasificar--> 
+
+<div class="modal fade" id="modalReportarProblema" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#f59c1a;">
+                <h4 class="modal-title text-white text-center">Agregar Problema</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formProblema" data-parsley-validate="true" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <h5 class="f-w-700">Describe el problema *</h5>
+                                <textarea id="textareaDescProblema" class="form-control" rows="4" data-parsley-required="true"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 class="f-w-700">Adjuntos del problema *</h5>
+                            <div id="archivoProblema" class="form-group">
+                                <input id="agregarEvidenciaProblema" name="agregarEvidenciaProblema[]" type="file" multiple data-parsley-required="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-t-10">
+                        <div class="col-md-12">
+                            <div id="errorAgregarProblema"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div id="error-in-modal"></div>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-close"></i> Cerrar</button>
+                <button type="button" id="btnGuardarProblema" class="btn btn-warning"><i class="fa fa-floppy-o"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>

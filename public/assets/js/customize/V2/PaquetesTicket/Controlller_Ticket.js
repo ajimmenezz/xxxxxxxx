@@ -17,10 +17,10 @@ $(function () {
 
     //Inicializa funciones de la plantilla
     App.init();
-    
-    informacion.iniciarElementos();   
-//    solucion.iniciarElementos();
-    
+
+    informacion.iniciarElementos();
+    bitacora.iniciarElementos();
+
     tablaServicios.evento(function () {
         datosFila = tablaServicios.datosFila(this);
         let factoryServicios = new factoryServicio();
@@ -67,14 +67,18 @@ $(function () {
         if (servicio) {
             servicio.setDatos(datosServicio);
             domHtml.ocultarElemento('listaPoliza');
-            domHtml.mostrarElemento('panelDetallesTicket'); 
+            domHtml.mostrarElemento('panelDetallesTicket');
             informacion.setDatos(datosServicio);
             informacion.listener(dato => servicio.setDatos(dato));
+            solucion.setDatos(datosServicio);
+            solucion.iniciarElementos();
+//            solucion.listener(dato => servicio.setDatos(dato));
             bitacora.setDatos(datosServicio);
-        } else {           
+            bitacora.listener(dato => servicio.setDatos(dato));
+        } else {
             datosServicio = datos;
             seguimientoOld(evento, datosServicio, datosFila);
         }
     }
-    
+
 });

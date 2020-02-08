@@ -92,4 +92,17 @@ class Modelo_ServicioTicketV2 extends Modelo_Base {
         return $consulta;
     }
 
+    public function setProblema(string $idServicio, array $datos) {
+        $this->insertar('insert into t_servicios_avance values (
+                            null,
+                            ' . $idServicio . ',
+                            ' . $datos['idUsuario'] . ',
+                            2,
+                            now(),
+                            "' . $datos['descripcion'] . '",
+                            "' . $datos['archivos'] . '",
+                            1
+                        )');
+    }
+
 }

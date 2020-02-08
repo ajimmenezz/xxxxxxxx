@@ -35,8 +35,9 @@
     <div class="tab-pane fade" id="notasFolio">
         <div class="panel-group" id="accordion">
             <?php
-            foreach ($notasFolio as $key => $value) {
-                echo '<div class="panel panel-inverse overflow-hidden">
+            if ($notasFolio) {
+                foreach ($notasFolio as $key => $value) {
+                    echo '<div class="panel panel-inverse overflow-hidden">
                         <div class="panel-heading">
                             <h3 class="panel-title">
                                 <a class="accordion-toggle accordion-toggle-styled" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
@@ -51,6 +52,7 @@
                             </div>
                         </div>
                     </div>';
+                }
             }
             ?>
         </div>
@@ -58,9 +60,9 @@
     </div>
     <div class="tab-pane fade" id="resolucionFolio">
         <!--<div class="height-xs" data-scrollbar="true" data-height="20%" style="padding: 10px;">-->
-            <p>
-                <?php echo $resolucionFolio->RESOLUTION; ?>
-            </p>
+        <p>
+            <?php echo $resolucionFolio->RESOLUTION; ?>
+        </p>
         <!--</div>-->
     </div>
 </div>

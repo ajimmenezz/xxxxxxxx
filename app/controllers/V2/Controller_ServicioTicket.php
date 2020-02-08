@@ -81,7 +81,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['folio'] = null;
             $this->datos['notasFolio'] = null;
             $this->datos['resolucionFolio'] = null;
-
+            
             if (empty($datos)) {
                 if (!empty($this->servicio->getFolio())) {
                     $this->datos['folio'] = ServiceDesk::getDatos($this->servicio->getFolio());
@@ -137,6 +137,8 @@ class Controller_ServicioTicket extends CI_Controller {
                 }
                 $informacionFolio = $this->getInformacionFolio($datosServicio);
             }
+
+            $this->datos['html']['folio'] = $this->getHtmlFolio($this->datos);
 
             echo json_encode($this->datos);
         } catch (Exception $ex) {
@@ -216,6 +218,7 @@ class Controller_ServicioTicket extends CI_Controller {
             }
 
             $this->datos['problemas'] = $this->servicio->getProblemas();
+            $this->datos['html']['bitacora'] = $this->getHtmlBitacora();
             $this->datos['operacion'] = TRUE;
 
             echo json_encode($this->datos);
@@ -389,14 +392,13 @@ class Controller_ServicioTicket extends CI_Controller {
     private function getHtml(string $tipoServicio, array $datos) {
         $html = array();
 
-        $datosAvacenProblema = $this->servicio->getAvanceProblema();
-        $html['folio'] = $this->load->view('V2/PaquetesTickets/Poliza/InformacionFolio', $datos, TRUE);
-        $html['bitacora'] = $this->load->view('Generales/Detalles/HistorialAvancesProblemas', $datosAvacenProblema, TRUE);
-
+        
+        $html['folio'] = $this->getHtmlFolio($datos);
+        $html['bitacora'] = $this->getHtmlBitacora();
+        
         switch ($tipoServicio) {
             case 'Instalaciones':
-//                $html['solucion'] = $this->load->view('V2/PaquetesTickets/Poliza/InformacionFolio', $datos, TRUE);
-
+                $html['solucion'] = $this->load->view('V2/PaquetesTickets/Poliza/SolucionServicioInstalaciones', $datos, TRUE);
                 break;
 
             default:
@@ -404,6 +406,15 @@ class Controller_ServicioTicket extends CI_Controller {
         }
 
         return $html;
+    }
+
+    private function getHtmlFolio(array $datos) {
+        return $this->load->view('V2/PaquetesTickets/InformacionFolio', $datos, TRUE);
+    }
+    
+    private function getHtmlBitacora(){
+        $datosAvacenProblema['avanceServicio'] = $this->servicio->getAvanceProblema();
+        return $this->load->view('Generales/Detalles/HistorialAvancesProblemas', $datosAvacenProblema, TRUE);
     }
 
 }
