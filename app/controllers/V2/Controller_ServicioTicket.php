@@ -44,7 +44,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['problemas'] = null;
             $this->datos['firmas'] = null;
             $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));
-            $this->getInformacionFolio();
+            $this->getInformacionFolio($this->servicio->getFolio());
             $this->setEstatusServiceDesk();
             $this->datos['html'] = $this->getHtml($datosServicio['tipo'], $this->datos);
             $this->datos['operacion'] = TRUE;
@@ -66,7 +66,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['problemas'] = $this->servicio->getProblemas();
             $this->datos['firmas'] = $this->servicio->getFirmas($datosServicio['id']);
             $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
-            $this->getInformacionFolio();
+            $this->getInformacionFolio($this->servicio->getFolio());
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $exc) {
@@ -76,34 +76,16 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
-    private function getInformacionFolio(array $datos = NULL) {
-        try {
+    private function getInformacionFolio(string $folio = NULL) {
             $this->datos['folio'] = null;
             $this->datos['notasFolio'] = null;
             $this->datos['resolucionFolio'] = null;
-            
-            if (empty($datos)) {
-                if (!empty($this->servicio->getFolio())) {
-                    $this->datos['folio'] = ServiceDesk::getDatos($this->servicio->getFolio());
-                    $this->datos['notasFolio'] = ServiceDesk::getNotas($this->servicio->getFolio());
-                    $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($this->servicio->getFolio());
-                    $this->datos['operacionFolio'] = TRUE;
-                    return true;
-                }
-            } else {
-                $this->datos['folio'] = ServiceDesk::getDatos($datos['folio']);
-                $this->datos['notasFolio'] = ServiceDesk::getNotas($datos['folio']);
-                $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($datos['folio']);
-                $this->datos['operacionFolio'] = TRUE;
-                return true;
+
+            if (!empty($folio)) {               
+                $this->datos['folio'] = ServiceDesk::getDatos($folio);
+                $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
+                $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($folio);
             }
-        } catch (Exception $ex) {
-            $this->datos['errorFolio'] = array('Error' => $ex->getMessage());
-            $this->datos['folio'] = array('Error' => $ex->getMessage());
-            $this->datos['notasFolio'] = array('Error' => $ex->getMessage());
-            $this->datos['resolucionFolio'] = array('Error' => $ex->getMessage());
-            $this->datos['operacionFolio'] = FALSE;
-        }
     }
 
     private function setEstatusServiceDesk() {
@@ -125,21 +107,11 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $informacionFolio = $this->getInformacionFolio($datosServicio);
-
-            if (!empty($informacionFolio)) {
-                $nuevoFolio = $this->servicio->setFolioServiceDesk($datosServicio['folio']);
-
-                $this->datos['nuevoFolio'] = $nuevoFolio;
-
-                if ($nuevoFolio === FALSE && $informacionFolio) {
-                    $this->datos['errorFolio'] = array('Error' => 'El folio ya esta siendo atendido en otra solicitud.');
-                }
-                $informacionFolio = $this->getInformacionFolio($datosServicio);
+            if ($datosServicio['folio'] !== '') {
+                $this->servicio->validarFolioServiceDesk($datosServicio['folio']);
             }
-
-            $this->datos['html']['folio'] = $this->getHtmlFolio($this->datos);
-
+            $this->getInformacionFolio($datosServicio['folio']);
+            $this->servicio->setFolioServiceDesk($datosServicio['folio']);
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
@@ -214,7 +186,7 @@ class Controller_ServicioTicket extends CI_Controller {
 
             if ($key !== '') {
                 $this->setNotaServiceDesk($datosServicio);
-                $this->getInformacionFolio();
+                $this->getInformacionFolio($this->servicio->getFolio());
             }
 
             $this->datos['problemas'] = $this->servicio->getProblemas();
@@ -301,7 +273,7 @@ class Controller_ServicioTicket extends CI_Controller {
     }
 
     private function setResolucionServiceDesk(array $datosServicio) {
-        $this->getInformacionFolio();
+        $this->getInformacionFolio($this->servicio->getFolio());
 
         if ($this->datos['folio'] !== NULL) {
             ServiceDesk::setNota($datosServicio['folio'], $datosServicio['mensaje']);
@@ -391,16 +363,14 @@ class Controller_ServicioTicket extends CI_Controller {
 
     private function getHtml(string $tipoServicio, array $datos) {
         $html = array();
-
-        
+       
         $html['folio'] = $this->getHtmlFolio($datos);
         $html['bitacora'] = $this->getHtmlBitacora();
-        
+
         switch ($tipoServicio) {
             case 'Instalaciones':
                 $html['solucion'] = $this->load->view('V2/PaquetesTickets/Poliza/SolucionServicioInstalaciones', $datos, TRUE);
                 break;
-
             default:
                 break;
         }
@@ -411,8 +381,8 @@ class Controller_ServicioTicket extends CI_Controller {
     private function getHtmlFolio(array $datos) {
         return $this->load->view('V2/PaquetesTickets/InformacionFolio', $datos, TRUE);
     }
-    
-    private function getHtmlBitacora(){
+
+    private function getHtmlBitacora() {
         $datosAvacenProblema['avanceServicio'] = $this->servicio->getAvanceProblema();
         return $this->load->view('Generales/Detalles/HistorialAvancesProblemas', $datosAvacenProblema, TRUE);
     }

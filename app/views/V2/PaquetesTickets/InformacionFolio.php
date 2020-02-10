@@ -30,32 +30,37 @@
 </div>
 <div class="tab-content">
     <div class="tab-pane fade active in" id="descripcionFolio">
-        <h3 class="m-t-10"><?php echo $folio->DESCRIPTION; ?></h3>
+        <p class="m-t-10"><?php echo $folio->DESCRIPTION; ?></p>
     </div>
-    <div class="tab-pane fade" id="notasFolio">
-        <div class="panel-group" id="accordion">
-            <?php
-            if ($notasFolio) {
-                foreach ($notasFolio as $key => $value) {
-                    echo '<div class="panel panel-inverse overflow-hidden">
+    <div id="notasFolio" class="tab-pane fade">
+        <!--Empieza contenedor y scroll del acordean-->
+        <div class="height-xs" data-scrollbar="true" data-height="100%" style="padding: 10px;">
+            <div id="accordion" class="panel-group">
+                <?php
+                if ($notasFolio) {
+                    foreach ($notasFolio as $key => $value) {
+                        echo '<div class="panel panel-inverse overflow-hidden">
                         <div class="panel-heading">
                             <h3 class="panel-title">
-                                <a class="accordion-toggle accordion-toggle-styled" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                <a class="accordion-toggle accordion-toggle-styled" data-toggle="collapse" data-parent="#accordion" href="#collapse'.$key.'">
                                     <i class="fa fa-plus-circle pull-right"></i> 
                                     ' . $value->USERNAME . ' - ' . date('Y-m-d H:i:s', $value->NOTESDATE / 1000) . '
                                 </a>
                             </h3>
                         </div>
-                        <div id="collapseOne" class="panel-collapse collapse">
+                        <div id="collapse'.$key.'" class="panel-collapse collapse">
                             <div class="panel-body">
                             <p>' . $value->NOTESTEXT . '</p>
                             </div>
                         </div>
                     </div>';
+                    }
                 }
-            }
-            ?>
+                ?>
+            </div>
         </div>
+        <!--Finaliza contenedor y scroll del acordean-->
+
 
     </div>
     <div class="tab-pane fade" id="resolucionFolio">
