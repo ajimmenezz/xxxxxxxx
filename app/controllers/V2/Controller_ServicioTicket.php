@@ -46,7 +46,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));
             $this->getInformacionFolio($this->servicio->getFolio());
             $this->setEstatusServiceDesk();
-            $this->datos['html'] = $this->getHtml($datosServicio['tipo'], $this->datos);
+            $this->getHtml($datosServicio['tipo'], $this->datos);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $exc) {
@@ -67,6 +67,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['firmas'] = $this->servicio->getFirmas($datosServicio['id']);
             $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
             $this->getInformacionFolio($this->servicio->getFolio());
+            $this->getHtml($datosServicio['tipo'], $this->datos);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $exc) {
@@ -77,15 +78,15 @@ class Controller_ServicioTicket extends CI_Controller {
     }
 
     private function getInformacionFolio(string $folio = NULL) {
-            $this->datos['folio'] = null;
-            $this->datos['notasFolio'] = null;
-            $this->datos['resolucionFolio'] = null;
+        $this->datos['folio'] = null;
+        $this->datos['notasFolio'] = null;
+        $this->datos['resolucionFolio'] = null;
 
-            if (!empty($folio)) {               
-                $this->datos['folio'] = ServiceDesk::getDatos($folio);
-                $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
-                $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($folio);
-            }
+        if (!empty($folio)) {
+            $this->datos['folio'] = ServiceDesk::getDatos($folio);
+            $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
+            $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($folio);
+        }
     }
 
     private function setEstatusServiceDesk() {
@@ -112,6 +113,7 @@ class Controller_ServicioTicket extends CI_Controller {
             }
             $this->getInformacionFolio($datosServicio['folio']);
             $this->servicio->setFolioServiceDesk($datosServicio['folio']);
+            $this->getHtmlFolio($this->datos);
             echo json_encode($this->datos);
         } catch (Exception $ex) {
             $this->datos['operacion'] = FALSE;
@@ -361,30 +363,27 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
-    private function getHtml(string $tipoServicio, array $datos) {
-        $html = array();
-       
-        $html['folio'] = $this->getHtmlFolio($datos);
-        $html['bitacora'] = $this->getHtmlBitacora();
+    private function getHtml(string $tipoServicio, array $datos) {       
+        $this->getHtmlFolio($datos);
+        $this->getHtmlBitacora();
 
         switch ($tipoServicio) {
             case 'Instalaciones':
-                $html['solucion'] = $this->load->view('V2/PaquetesTickets/Poliza/SolucionServicioInstalaciones', $datos, TRUE);
+                $this->datos['html']['solucion'] = $this->load->view('V2/PaquetesTickets/Poliza/SolucionServicioInstalaciones', $datos, TRUE);
                 break;
             default:
                 break;
         }
-
-        return $html;
+       
     }
 
     private function getHtmlFolio(array $datos) {
-        return $this->load->view('V2/PaquetesTickets/InformacionFolio', $datos, TRUE);
+        $this->datos['html']['folio'] = $this->load->view('V2/PaquetesTickets/InformacionFolio', $datos, TRUE);
     }
 
     private function getHtmlBitacora() {
         $datosAvacenProblema['avanceServicio'] = $this->servicio->getAvanceProblema();
-        return $this->load->view('Generales/Detalles/HistorialAvancesProblemas', $datosAvacenProblema, TRUE);
+        $this->datos['html']['bitacora'] = $this->load->view('Generales/Detalles/HistorialAvancesProblemas', $datosAvacenProblema, TRUE);
     }
 
 }
