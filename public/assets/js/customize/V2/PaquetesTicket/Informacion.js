@@ -145,17 +145,14 @@ class Informacion {
             let data = {folio: nuevoFolio, id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
             _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/Folio/editar', data, function (respuesta) {
                 if (_this.bug.validar(respuesta)) {
-                    if (respuesta.operacionFolio === true) {
-                        _this.cambiarValoresFolio(respuesta, nuevoFolio);
-                    } else {
-                        if (respuesta.folio.Error === 'URL no válida para la operación solicitada.') {
-                            _this.cambiarValoresFolio(respuesta, nuevoFolio);
-                        } else {
-                            _this.modal.mostrarModal('Incidente SD', '<h3 class="text-center">' + respuesta.folio.Error + '</h3>');
-                            _this.modal.ocultarBotonAceptar();
-                            _this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
-                        }
-                    }
+                    _this.datos.servicio.folio = nuevoFolio;
+                    _this.datos.folio = respuesta.folio;
+                    _this.datos.notasFolio = respuesta.notasFolio;
+                    _this.datos.resolucionFolio = respuesta.resolucionFolio;
+                    _this.datos.html.folio = respuesta.html.folio;
+                    _this.inputs['folio'].bloquearElemento();
+                    _this.mostrarOcultarBotonesFolio(false);
+                    _this.mensajeConfirmacionModal(`Se actualizo el folio correctamente.`);
                 }
             });
         });
@@ -164,22 +161,7 @@ class Informacion {
             _this.modal.mostrarModal(`Información SD - ${_this.datos.servicio.folio}`, _this.datos.html.folio);
             _this.modal.ocultarBotonAceptar();
             _this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
-        });
-
-        $('#btnEliminarFolio').on('click', function () {
-            if (_this.validarExistenciaFolio()) {
-                _this.modal.mostrarModal('Eliminar Folio', '<h3 class="text-center">¿Estas Seguro de eliminar este FOLIO?</h3>');
-                _this.modal.funcionalidadBotonAceptar(null, function () {
-                    let data = {folio: '', id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
-                    _this.peticion.enviar('modal-dialog', 'Seguimiento/Servicio/Folio/eliminar', data, function (respuesta) {
-                        if (_this.bug.validar(respuesta)) {
-                            _this.datos.servicio.folio = null;
-                            _this.inputs['folio'].definirValor('');
-                        }
-                    });
-                    _this.modal.cerrarModal();
-                });
-            }
+            handleSlimScroll();
         });
     }
 
@@ -212,7 +194,7 @@ class Informacion {
     }
 
     mensajeConfirmacionModal(mensaje) {
-        this.modal.mostrarModal('Correcto', '<h3 class="text-center">' + mensaje + '</h3>');
+        this.modal.mostrarModal('Actualizar', '<h3 class="text-center">' + mensaje + '</h3>');
         this.modal.ocultarBotonAceptar();
         this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
     }
@@ -251,16 +233,6 @@ class Informacion {
             this.peticion.mostrarElemento('btnGuardar');
             this.peticion.mostrarElemento('btnCancelar');
     }
-    }
-
-    cambiarValoresFolio(respuesta, nuevoFolio) {
-        this.datos.servicio.folio = nuevoFolio;
-        this.datos.folio = respuesta.folio;
-        this.datos.notasFolio = respuesta.notasFolio;
-        this.datos.resolucionFolio = respuesta.resolucionFolio;
-        this.datos.html.folio = respuesta.html.folio;
-        this.inputs['folio'].bloquearElemento();
-        this.mostrarOcultarBotonesFolio(false);
     }
 }
 

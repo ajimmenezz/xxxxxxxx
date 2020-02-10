@@ -4,6 +4,7 @@ class Bug {
     }
 
     validar(dato) {
+        
         if (!dato) {
             this.modal.mostrarModal('Error', '<h3 class="text-center">Ocurrió un problema en la petición. Intentalo mas tarde</h3>');
             this.modal.ocultarBotonAceptar();
@@ -14,6 +15,7 @@ class Bug {
             return false;
         }
         return true;
+        
     }
 }
 

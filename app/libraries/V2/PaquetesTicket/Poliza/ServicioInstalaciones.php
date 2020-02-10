@@ -18,14 +18,12 @@ class ServicioInstalaciones implements Servicio {
     private $descripcion;
     private $solicita;
     private $descripcionSolicitud;
-    private $DBServiciosGeneralRedes;
     private $DBServicioTicket;
-    private $gestorNodos;
     private $correoAtiende;
+    private $problemas;
 
     public function __construct(string $idServicio) {
         $this->id = $idServicio;
-//        $this->DBServiciosGeneralRedes = new Modelo();
         $this->DBServicioTicket = new ModeloServicioTicket();
         $this->setDatos();
     }
@@ -47,6 +45,8 @@ class ServicioInstalaciones implements Servicio {
         $this->descripcionSolicitud = $consulta[0]['DescripcionSolicitud'];
         $this->correoAtiende = $consulta[0]['CorreoAtiende'];
         $this->tipoServicio = $consulta[0]['TipoServicio'];
+        $this->problemas = $this->getAvanceProblema();
+        
     }
 
     public function startServicio(string $atiende) {
@@ -56,7 +56,6 @@ class ServicioInstalaciones implements Servicio {
 //        $this->DBServiciosGeneralRedes->finalizarTransaccion();
     }
 
-//
     public function setEstatus(string $estatus) {
 //        $this->DBServiciosGeneralRedes->empezarTransaccion();
 //        $this->DBServiciosGeneralRedes->setEstatus($this->id, $estatus);
@@ -81,13 +80,23 @@ class ServicioInstalaciones implements Servicio {
             "fechaSolicitud" => $this->fechaSolicitud,
             "descripcionSolicitud" => $this->descripcionSolicitud,
             "tipoServicio" => $this->tipoServicio,
-            "cliente" => $this->idCliente
+            "cliente" => $this->idCliente,
+            "problemas" => $this->problemas
         );
     }
 
     public function setFolioServiceDesk(string $folio) {
         $this->DBServicioTicket->empezarTransaccion();
         $this->DBServicioTicket->actualizarSolicitud(array('folio' => $folio), array('Id' => $this->idSolicitud));
+        $this->DBServicioTicket->finalizarTransaccion();
+    }
+    
+    public function validarFolioServiceDesk(string $folio){
+        $this->DBServicioTicket->empezarTransaccion();
+        $registrosFolio = $this->DBServicioTicket->folioSolicitudes(array('folio' => $folio));
+        if(count($registrosFolio) > 1){
+            throw new \Exception('Ya esta asignado a un folio');
+        }
         $this->DBServicioTicket->finalizarTransaccion();
     }
 
