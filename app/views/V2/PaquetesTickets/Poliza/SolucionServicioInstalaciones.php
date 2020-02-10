@@ -47,6 +47,14 @@
             </div>                            
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h5 class="f-w-700">Adjuntos *</h5>
+            <div id="archivoEquipo" class="form-group">
+                <input id="agregarEvidenciaEquipo" name="agregarEvidenciaEquipo[]" type="file" multiple data-parsley-required="true">
+            </div>
+        </div>
+    </div>
     <div class="row m-t-10">
         <!--Empezando error Impericia--> 
         <div class="col-md-12">
