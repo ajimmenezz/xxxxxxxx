@@ -72,7 +72,7 @@ $(function () {
             informacion.listener(dato => servicio.setDatos(dato));
             solucion.setDatos(datosServicio);
             solucion.iniciarElementos();
-//            solucion.listener(dato => servicio.setDatos(dato));
+            solucion.listener(dato => servicio.setDatos(dato));
             bitacora.setDatos(datosServicio);
             bitacora.listener(dato => servicio.setDatos(dato));
         } else {

@@ -6,12 +6,14 @@ class Solucion {
         this.selects = {};
         this.tablas = {};
         this.inputs = {};
+        this.file = {};
     }
 
     iniciarElementos() {
         this.peticion.insertarContenido('Solucion', this.datos.html.solucion);
         this.crearSelects();
-        this.crearTablas();
+//        this.crearTablas();
+        this.crearFiles()
     }
 
     crearSelects() {
@@ -44,8 +46,21 @@ class Solucion {
         });
     }
 
+    crearFiles() {
+        console.log('pumas');
+        this.file = new FileUpload_Basico('agregarEvidenciaEquipo', {url: 'Seguimiento/Servicio/agregarProblema', extensiones: ['jpg', 'jpeg', 'png']});
+        this.file.iniciarFileUpload();
+    }
+
     setDatos(datos) {
         this.datos = datos;
+    }
+
+    listener(callback) {
+        let _this = this;
+        let evento = new Base();
+
+
     }
 
 }
