@@ -31,30 +31,15 @@ $(function () {
         var folio = $("#inputBuscarFolio").val();
         if (folio !== "") {
             var data = {departamento: "11", folio: folio};
-            evento.enviarEvento(
-                    "Seguimiento/MostrarServicios",
-                    data,
-                    "#panelSeguimientoPoliza",
-                    function (respuesta) {
-                        if (respuesta !== false) {
-                            recargandoTablaPoliza(respuesta);
-                        } else {
-                            evento.mostrarMensaje(
-                                    ".errorListaPoliza",
-                                    false,
-                                    "No hay servicios con ese folio.",
-                                    4000
-                                    );
-                        }
-                    }
-            );
+            evento.enviarEvento("Seguimiento/MostrarServicios",data,"#panelSeguimientoPoliza",function (respuesta) {
+                if (respuesta !== false) {
+                    recargandoTablaPoliza(respuesta);
+                } else {
+                    evento.mostrarMensaje(".errorListaPoliza",false,"No hay servicios con ese folio.",4000);
+                }
+            });
         } else {
-            evento.mostrarMensaje(
-                    ".errorListaPoliza",
-                    false,
-                    "Agrega el folio.",
-                    3000
-                    );
+            evento.mostrarMensaje(".errorListaPoliza",false,"Agrega el folio.",3000);
         }
     });
 
@@ -62,14 +47,9 @@ $(function () {
     $("#btnMostrarServicios").on("click", function () {
         $("#inputBuscarFolio").val("");
         var data = {departamento: "11"};
-        evento.enviarEvento(
-                "Seguimiento/MostrarServicios",
-                data,
-                "#panelSeguimientoPoliza",
-                function (respuesta) {
-                    recargandoTablaPoliza(respuesta);
-                }
-        );
+        evento.enviarEvento("Seguimiento/MostrarServicios",data,"#panelSeguimientoPoliza",function (respuesta) {
+            recargandoTablaPoliza(respuesta);
+        });
     });
 
     //Evento que carga la seccion de seguimiento de un servicio de tipo Poliza
@@ -97,9 +77,7 @@ $(function () {
                 $("#btnModalConfirmar").addClass("hidden");
                 $("#btnModalAbortar").addClass("hidden");
                 evento.mostrarModal("Iniciar Servicio", html);
-                $("#btnModalConfirmar")
-                        .empty()
-                        .append("Eliminar");
+                $("#btnModalConfirmar").empty().append("Eliminar");
                 $("#btnModalConfirmar").off("click");
                 $("#btnIniciarServicio").off("click");
                 $("#btnIniciarServicio").on("click", function () {
@@ -7666,9 +7644,7 @@ $(function () {
         $("#btnModalConfirmar").on("click", function () {
             if ($("#selectAtiendeSolcitud").val() !== "") {
                 var atiende = $("#selectAtiendeSolcitud").val();
-                var nombreSucursal = $(
-                        "#selectSucursalesCorrectivo option:selected"
-                        ).text();
+                var nombreSucursal = $("#selectSucursalesCorrectivo option:selected").text();
                 var data = {
                     servicio: servicio,
                     refaccionesSolicitudes: datosTabla,
@@ -7679,54 +7655,28 @@ $(function () {
                     nombreSucursal: nombreSucursal,
                     tipoSolicitud: tipoSolicitud
                 };
-                evento.enviarEvento(
-                        "Seguimiento/guardarRefaccionesSolicitud",
-                        data,
-                        "#modal-dialogo",
-                        function (respuesta) {
-                            if (respuesta instanceof Array || respuesta instanceof Object) {
-                                select.cambiarOpcion("#selectEquipoRespaldo", "");
-                                $("#inputSerieRespaldo").val("");
-                                $("#dejarEquipoRespaldo").attr("checked", false);
-                                $("#noSeCuentaEquipoRespaldo").attr("checked", false);
-                                tabla.limpiarTabla(
-                                        "#data-table-servicios-solicitudes-refacciones"
-                                        );
-                                $("#dejarEquipoGarantia").addClass("hidden");
-                                $("#entregaEnvioEquipo").addClass("hidden");
-                                recargandoTablaSolicitudRefaccion(respuesta);
-                                tabla.limpiarTabla("#data-table-solicitud-refacciones");
-                                evento.mostrarMensaje(
-                                        ".errorRefaccionSolicitud",
-                                        true,
-                                        "Datos GuardadosCorrectamente.",
-                                        3000
-                                        );
-                            } else if (respuesta === "faltaFolio") {
-                                evento.mostrarMensaje(
-                                        ".errorRefaccionSolicitud",
-                                        false,
-                                        "El servicio no tiene Folio.",
-                                        3000
-                                        );
-                            } else {
-                                evento.mostrarMensaje(
-                                        ".errorRefaccionSolicitud",
-                                        false,
-                                        "No se pudo guardar los datos por favor de contates al Área de Desarrollo.",
-                                        3000
-                                        );
-                            }
-                            evento.cerrarModal();
-                        }
-                );
+                evento.enviarEvento("Seguimiento/guardarRefaccionesSolicitud",data,"#modal-dialogo",function (respuesta) {
+                    if (respuesta instanceof Array || respuesta instanceof Object) {
+                        select.cambiarOpcion("#selectEquipoRespaldo", "");
+                        $("#inputSerieRespaldo").val("");
+                        $("#dejarEquipoRespaldo").attr("checked", false);
+                        $("#noSeCuentaEquipoRespaldo").attr("checked", false);
+                        tabla.limpiarTabla("#data-table-servicios-solicitudes-refacciones");
+                        $("#dejarEquipoGarantia").addClass("hidden");
+                        $("#entregaEnvioEquipo").addClass("hidden");
+                        recargandoTablaSolicitudRefaccion(respuesta);
+                        tabla.limpiarTabla("#data-table-solicitud-refacciones");
+                        evento.mostrarMensaje(".errorRefaccionSolicitud",true,"Datos GuardadosCorrectamente.",3000);
+                        confirmacionFirmaProblema(servicio, datosTabla[1]);
+                    } else if (respuesta === "faltaFolio") {
+                        evento.mostrarMensaje(".errorRefaccionSolicitud",false,"El servicio no tiene Folio.",3000);
+                    } else {
+                        evento.mostrarMensaje(".errorRefaccionSolicitud",false,"No se pudo guardar los datos por favor de contates al Área de Desarrollo.",3000);
+                    }
+                    evento.cerrarModal();
+                });
             } else {
-                evento.mostrarMensaje(
-                        ".errorAtiendeSolicitud",
-                        false,
-                        "Debe seleccionar para quien va la solicitud.",
-                        3000
-                        );
+                evento.mostrarMensaje(".errorAtiendeSolicitud",false,"Debe seleccionar para quien va la solicitud.",3000);
             }
         });
     };
@@ -7900,49 +7850,28 @@ $(function () {
                     nombreSucursal: nombreSucursal,
                     tipoSolicitud: tipoSolicitud
                 };
-                evento.enviarEvento(
-                        "Seguimiento/guardarEquiposSolicitud",
-                        data,
-                        "#modal-dialogo",
-                        function (respuesta) {
-                            if (respuesta instanceof Array || respuesta instanceof Object) {
-                                tabla.limpiarTabla("#data-table-solicitud-equipos");
-                                $("#inputSerieRespaldo").removeAttr("disabled");
-                                $("#selectEquipoRespaldo").removeAttr("disabled");
-                                select.cambiarOpcion("#selectEquipoRespaldo", "");
-                                $("#inputSerieRespaldo").val("");
-                                $("#dejarEquipoRespaldo").attr("checked", false);
-                                $("#noSeCuentaEquipoRespaldo").attr("checked", false);
-                                tabla.limpiarTabla(
-                                        "#data-table-servicios-solicitudes-refacciones"
-                                        );
-                                $("#dejarEquipoGarantia").addClass("hidden");
-                                $("#entregaEnvioEquipo").addClass("hidden");
-                                recargandoTablaSolicitudEquipo(respuesta);
-                                evento.mostrarMensaje(
-                                        ".errorEquipoSolicitud",
-                                        true,
-                                        "Datos GuardadosCorrectamente.",
-                                        3000
-                                        );
-                            } else if (respuesta === "faltaFolio") {
-                                evento.mostrarMensaje(
-                                        ".errorEquipoSolicitud",
-                                        false,
-                                        "El servicio no tiene Folio.",
-                                        3000
-                                        );
-                            } else {
-                                evento.mostrarMensaje(
-                                        ".errorEquipoSolicitud",
-                                        false,
-                                        "No se pudo guardar los datos por favor de contates al Área de Desarrollo.",
-                                        3000
-                                        );
-                            }
-                            evento.cerrarModal();
-                        }
-                );
+                evento.enviarEvento("Seguimiento/guardarEquiposSolicitud",data,"#modal-dialogo",function (respuesta) {
+                    if (respuesta instanceof Array || respuesta instanceof Object) {
+                        tabla.limpiarTabla("#data-table-solicitud-equipos");
+                        $("#inputSerieRespaldo").removeAttr("disabled");
+                        $("#selectEquipoRespaldo").removeAttr("disabled");
+                        select.cambiarOpcion("#selectEquipoRespaldo", "");
+                        $("#inputSerieRespaldo").val("");
+                        $("#dejarEquipoRespaldo").attr("checked", false);
+                        $("#noSeCuentaEquipoRespaldo").attr("checked", false);
+                        tabla.limpiarTabla("#data-table-servicios-solicitudes-refacciones");
+                        $("#dejarEquipoGarantia").addClass("hidden");
+                        $("#entregaEnvioEquipo").addClass("hidden");
+                        recargandoTablaSolicitudEquipo(respuesta);
+                        evento.mostrarMensaje(".errorEquipoSolicitud",true,"Datos GuardadosCorrectamente.",3000);
+                        confirmacionFirmaProblema(servicio, datosTabla[1]);
+                    } else if (respuesta === "faltaFolio") {
+                        evento.mostrarMensaje(".errorEquipoSolicitud",false,"El servicio no tiene Folio.",3000);
+                    } else {
+                        evento.mostrarMensaje(".errorEquipoSolicitud",false,"No se pudo guardar los datos por favor de contates al Área de Desarrollo.",3000);
+                    }
+                    evento.cerrarModal();
+                });
             } else {
                 evento.mostrarMensaje(
                         ".errorAtiendeSolicitud",
@@ -8104,13 +8033,7 @@ $(function () {
     var guardarSolicitudEquipoRespaldo = function () {
         var data = arguments[0];
         $("#btnModalConfirmar").addClass("disabled");
-        if (
-                validarCampos(
-                        $("#selectAtiendeSolcitud").val(),
-                        ".errorAtiendeSolicitud",
-                        "Debes seleccionar el campo confirmar y asignar a."
-                        )
-                ) {
+        if (validarCampos($("#selectAtiendeSolcitud").val(),".errorAtiendeSolicitud","Debes seleccionar el campo confirmar y asignar a.")) {
             var dataEquipoRespaldo = {
                 servicio: data.servicio,
                 sucursal: data.sucursal,
@@ -8121,70 +8044,45 @@ $(function () {
                 equipo: $("#selectEquipoCorrectivo").val(),
                 cantidad: "1"
             };
-            evento.enviarEvento(
-                    "Seguimiento/guardarCrearSolicitarEquipoRespaldo",
-                    dataEquipoRespaldo,
-                    "#confirmarSolicitud",
-                    function (respuesta) {
-                        $("#btnModalConfirmar").removeClass("disabled");
-                        if (respuesta instanceof Array || respuesta instanceof Object) {
-                            file.limpiar("#evidenciaEnvioGarantia");
-                            tabla.limpiarTabla("#data-table-servicios-solicitudes-refacciones");
-                            tabla.limpiarTabla("#data-table-servicios-solicitudes-equipos");
-                            $("#entregaEnvioEquipo").removeClass("hidden");
-                            $("#informacionAutorisacionSinRespaldo").addClass("hidden");
-                            $("#firmaEntregaEquipo").addClass("hidden");
-                            $("#informacionSolicitudEquipoRespaldo").removeClass("hidden");
-                            $("#botonEntregaEquipo").removeClass("hidden");
-                            $("#selectEquipoRespaldo").removeAttr("disabled");
-                            $("#inputSerieRespaldo").removeAttr("disabled");
-                            select.cambiarOpcion("#selectEquipoRespaldo", "");
-                            select.cambiarOpcion("#selectTipoEnvioGarantia", "");
-                            select.cambiarOpcion("#selectListaTipoEnvioGarantia", "");
-                            select.cambiarOpcion(
-                                    "#selectEquipoRespaldoEntregaEnvioGarantia",
-                                    ""
-                                    );
-                            $("#inputGuiaGarantia").val("");
-                            $("#inputComentarioEntregaEnvioGarantia").val("");
-                            $("#entregaFechaEnvioGarantia").val("");
-                            $(".entregaGarantia").attr("disabled", "disabled");
-                            $("#inputSerieRespaldo").val("");
-                            $("#inputComentariosEnvioGarantia").val("");
-                            $("#btnGuardarInformacionGarantia").removeClass("disabled");
-                            $("[href=#eviar-equipo]")
-                                    .parent("li")
-                                    .removeClass("active");
-                            $("#eviar-equipo").removeClass("active in");
-                            $("[href=#entrega-equipo]")
-                                    .parent("li")
-                                    .addClass("active");
-                            $("#entrega-equipo").addClass("active in");
-                            $("[href=#entregaEquipo]")
-                                    .parent("li")
-                                    .removeClass("active");
-                            $("#entregaEquipo").removeClass("active in");
-                            $("[href=#formaEnvio]")
-                                    .parent("li")
-                                    .addClass("active");
-                            $("#formaEnvio").addClass("active in");
-                            $("#divAtiende")
-                                    .empty()
-                                    .html(respuesta[0].Atiende);
-                            $("#divFechaAtiende")
-                                    .empty()
-                                    .html(respuesta[0].FechaCreacion);
-                            evento.cerrarModal();
-                            evento.mostrarMensaje(
-                                    ".errorInformacionRespaldo",
-                                    true,
-                                    "Datos Guardados Correctamente.",
-                                    3000
-                                    );
-                            file.limpiar("#evidenciaEntregaEnvioGarantia");
-                        }
-                    }
-            );
+            evento.enviarEvento("Seguimiento/guardarCrearSolicitarEquipoRespaldo",dataEquipoRespaldo,"#confirmarSolicitud",function (respuesta) {
+                $("#btnModalConfirmar").removeClass("disabled");
+                if (respuesta instanceof Array || respuesta instanceof Object) {
+                    file.limpiar("#evidenciaEnvioGarantia");
+                    tabla.limpiarTabla("#data-table-servicios-solicitudes-refacciones");
+                    tabla.limpiarTabla("#data-table-servicios-solicitudes-equipos");
+                    $("#entregaEnvioEquipo").removeClass("hidden");
+                    $("#informacionAutorisacionSinRespaldo").addClass("hidden");
+                    $("#firmaEntregaEquipo").addClass("hidden");
+                    $("#informacionSolicitudEquipoRespaldo").removeClass("hidden");
+                    $("#botonEntregaEquipo").removeClass("hidden");
+                    $("#selectEquipoRespaldo").removeAttr("disabled");
+                    $("#inputSerieRespaldo").removeAttr("disabled");
+                    select.cambiarOpcion("#selectEquipoRespaldo", "");
+                    select.cambiarOpcion("#selectTipoEnvioGarantia", "");
+                    select.cambiarOpcion("#selectListaTipoEnvioGarantia", "");
+                    select.cambiarOpcion("#selectEquipoRespaldoEntregaEnvioGarantia","");
+                    $("#inputGuiaGarantia").val("");
+                    $("#inputComentarioEntregaEnvioGarantia").val("");
+                    $("#entregaFechaEnvioGarantia").val("");
+                    $(".entregaGarantia").attr("disabled", "disabled");
+                    $("#inputSerieRespaldo").val("");
+                    $("#inputComentariosEnvioGarantia").val("");
+                    $("#btnGuardarInformacionGarantia").removeClass("disabled");
+                    $("[href=#eviar-equipo]").parent("li").removeClass("active");
+                    $("#eviar-equipo").removeClass("active in");
+                    $("[href=#entrega-equipo]").parent("li").addClass("active");
+                    $("#entrega-equipo").addClass("active in");
+                    $("[href=#entregaEquipo]").parent("li").removeClass("active");
+                    $("#entregaEquipo").removeClass("active in");
+                    $("[href=#formaEnvio]").parent("li").addClass("active");
+                    $("#formaEnvio").addClass("active in");
+                    $("#divAtiende").empty().html(respuesta[0].Atiende);
+                    $("#divFechaAtiende").empty().html(respuesta[0].FechaCreacion);
+                    evento.cerrarModal();
+                    evento.mostrarMensaje(".errorInformacionRespaldo",true,"Datos Guardados Correctamente.",3000);
+                    file.limpiar("#evidenciaEntregaEnvioGarantia");
+                }
+            });
         }
     };
     var guardarEntregaEquipoGarantia = function () {
@@ -9521,6 +9419,28 @@ $(function () {
             evento.cerrarModal();
         });
     };
+    var confirmacionFirmaProblema = function (servicio, ticket) {
+        var data = {servicio: servicio};
+        evento.enviarEvento("Seguimiento/verificarDiagnostico",data,"#seccion-servicio-correctivo",function (respuesta) {
+            if (respuesta) {
+                evento.enviarEvento("/Generales/Servicio/VerificarFolioServicio",data,"#seccion-servicio-correctivo",function (respuesta) {
+                    if (respuesta === true) {
+                        var sucursal = $("#selectSucursalesCorrectivo").val();
+                        var dataConcluir = {
+                            servicio: servicio,
+                            operacion: "1",
+                            sucursal: sucursal
+                        };
+                        servicios.modalCampoFirma(ticket,dataConcluir,"Seguimiento/enviarReporteImpericia");
+                    } else {
+                        servicios.mensajeModal("No existe Folio para este servicio","Advertencia",true);
+                    }
+                });
+            } else {
+                servicios.mensajeModal("No se ha guardado el Diagnostico","Advertencia",true);
+            }
+        });
+    }
     // catalogo Poliza equipo almacen y laborario
     //Fecha y hora
     $("#fechaValidacion").datetimepicker({
