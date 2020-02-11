@@ -47,7 +47,6 @@ class Solucion {
     }
 
     crearFiles() {
-        console.log('pumas');
         this.file = new FileUpload_Basico('agregarEvidenciaEquipo', {url: 'Seguimiento/Servicio/agregarProblema', extensiones: ['jpg', 'jpeg', 'png']});
         this.file.iniciarFileUpload();
     }

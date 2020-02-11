@@ -105,4 +105,17 @@ class Modelo_ServicioTicketV2 extends Modelo_Base {
                         )');
     }
 
+    public function actualizarServiciosAvance(array $campos, array $where) {
+        $this->actualizarArray('t_servicios_avance', $campos, $where);
+    }
+
+    public function getAvanceProblemaPorId(string $idAvanceProblema) {
+        $consulta = $this->consulta('SELECT tsa.*
+                                                FROM t_servicios_avance tsa
+                                                WHERE tsa.Id = "' . $idAvanceProblema . '"
+                                                AND Flag = "1"
+                                                ORDER BY Fecha ASC');
+        return $consulta;
+    }
+
 }

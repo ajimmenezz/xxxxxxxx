@@ -28,7 +28,7 @@ class Controller_ServicioTicket extends CI_Controller {
         $this->gestorServicios = new GestorServicio();
         $this->almacenVirtual = new AlmacenVirtual();
         $this->datos = array();
-        $this->load->helper(array('conversionpalabra'));
+        $this->load->helper(array('conversionpalabra', 'date'));
     }
 
     public function atenderServicio() {
@@ -192,7 +192,8 @@ class Controller_ServicioTicket extends CI_Controller {
             }
 
             $this->datos['problemas'] = $this->servicio->getProblemas();
-            $this->datos['html']['bitacora'] = $this->getHtmlBitacora();
+            $this->datos['servicio'] = $this->servicio->getDatos();
+            $this->getHtmlBitacora();
             $this->datos['operacion'] = TRUE;
 
             echo json_encode($this->datos);
@@ -363,7 +364,7 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
-    private function getHtml(string $tipoServicio, array $datos) {       
+    private function getHtml(string $tipoServicio, array $datos) {
         $this->getHtmlFolio($datos);
         $this->getHtmlBitacora();
 
@@ -374,7 +375,6 @@ class Controller_ServicioTicket extends CI_Controller {
             default:
                 break;
         }
-       
     }
 
     private function getHtmlFolio(array $datos) {
@@ -384,6 +384,41 @@ class Controller_ServicioTicket extends CI_Controller {
     private function getHtmlBitacora() {
         $datosAvacenProblema['avanceServicio'] = $this->servicio->getAvanceProblema();
         $this->datos['html']['bitacora'] = $this->load->view('Generales/Detalles/HistorialAvancesProblemas', $datosAvacenProblema, TRUE);
+    }
+
+    public function deleteAvenceProblema() {
+        try {
+            $datosServicio = $this->input->post();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $archivos = $this->servicio->deleteAvanceProblema($datosServicio['idAvanceProblema']);
+            foreach ($archivos as $value) {
+                Archivo::deleteArchivo($value);
+            }
+            $this->datos['servicio'] = $this->servicio->getDatos();
+            $this->getHtmlBitacora();
+            $this->datos['operacion'] = TRUE;
+            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
+
+    public function deleteAvidenciaProblema() {
+        try {
+            $datosServicio = $this->input->post();
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->deleteArchivoProblema($datosServicio);
+            $this->datos['servicio'] = $this->servicio->getDatos();
+            $this->getHtmlBitacora();
+            $this->datos['operacion'] = TRUE;
+            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
     }
 
 }

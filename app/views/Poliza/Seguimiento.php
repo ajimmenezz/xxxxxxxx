@@ -136,7 +136,7 @@
 
         <!--Empezando definición de pestañas-->
         <div class="panel-heading p-0">
-            
+
             <!-- Empezando botones de cabecera -->  
             <div class="panel-heading-btn m-r-10 m-t-10">
                 <label id="btnCierre" class="btn btn-info btn-xs">
@@ -167,13 +167,13 @@
 
         <!-- Empezando contenido de pestañas -->
         <div class="tab-content">
-            
+
             <!--Empezando la seccion información-->
             <div id="General" class="tab-pane fade active in" > 
-                
+
                 <!--Empezando Contenido de seccion-->
                 <div class="panel-body">
-                    
+
                     <!--Empezando titulo y botones-->
                     <div class="row">
                         <div class="col-md-6">
@@ -194,7 +194,7 @@
                         </div>
                     </div>
                     <!--Finalizando Separador--> 
-                    
+
                     <!--Empezando formulario -->
                     <form class="margin-bottom-0" id="formInformacionGeneral" data-parsley-validate="true">
                         <!--Empezando fila: Solicitud, Incidente SD, Ticket y Servicio  -->
@@ -228,7 +228,7 @@
                             </div>
                         </div>
                         <!--Finalizando fila  -->
-                        
+
                         <!--Empezando fila: Solicita y Atiende  -->
                         <div class="row">
                             <div class="col-md-6 col-sm-6 col-xs-12">
@@ -241,7 +241,7 @@
                             </div>
                         </div>
                         <!--Finalizando fila  -->
-                        
+
                         <!--Empezando fila: fecha solicitd, Fecha creación servicio y fecha inicio servicio -->
                         <div class="row">
                             <div class="col-md-4 col-sm-4 col-xs-12">
@@ -258,7 +258,7 @@
                             </div>
                         </div>
                         <!--Finalizando fila  -->
-                        
+
                         <!--Empezando fila: cliente y sucursal -->
                         <div class="row">
                             <div class="col-md-6">
@@ -279,26 +279,26 @@
                             </div>
                         </div>
                         <!--Finalizando fila  -->
-                        
+
                     </form>
                     <!--Finalizando formulario -->
                 </div>
                 <!--Finalizando Contenido de seccion-->
-                
+
             </div>
             <!--Finalizando la seccion información-->
-            
+
             <!--Empezando la seccion solución-->
             <div class="tab-pane fade " id="Solucion"></div>
             <!--Finalizando la seccion solución-->
-            
+
             <!--Empezando la seccion bitacora problemas-->
             <div class="tab-pane fade " id="BitacoraProblemas"></div>
             <!--Finalizando la seccion bitacora problemas-->
-            
+
         </div> 
         <!-- Finalizando contenido de pestañas -->
-        
+
     </div>
     <!--Finalizando panel con pestañas-->
 </div>
@@ -329,6 +329,12 @@
                             </div>
                         </div>
                     </div>
+                    <div id="fileMostrarEvidenciaProblema" class="row hidden">
+                        <div class="col-md-12">
+                            <div id="evidenciasProblema">
+                            </div>
+                        </div>
+                    </div>
                     <div class="row m-t-10">
                         <div class="col-md-12">
                             <div id="errorAgregarProblema"></div>
@@ -338,7 +344,7 @@
             </div>
             <div class="modal-footer">
                 <div id="error-in-modal"></div>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-close"></i> Cerrar</button>
+                <button type="button" id="btnCancelarProblema" class="btn btn-secondary"><i class="fa fa-close"></i> Cerrar</button>
                 <button type="button" id="btnGuardarProblema" class="btn btn-warning"><i class="fa fa-floppy-o"></i> Guardar</button>
             </div>
         </div>

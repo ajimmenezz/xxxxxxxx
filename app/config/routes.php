@@ -95,6 +95,8 @@ $route['Poliza/Seguimiento/Servicio/Atender'] = 'V2/Controller_ServicioTicket/at
 $route['Poliza/Seguimiento/Servicio/GuardarInformacionGeneral'] = 'V2/Controller_ServicioTicket/guardarInformacionGeneral';
 $route['Poliza/Seguimiento/Servicio/Folio/(:any)'] = 'V2/Controller_ServicioTicket/setFolio';
 $route['Poliza/Seguimiento/Servicio/agregarProblema'] = 'V2/Controller_ServicioTicket/setProblema';
+$route['Poliza/Seguimiento/Servicio/elminarAvanceProblema'] = 'V2/Controller_ServicioTicket/deleteAvenceProblema';
+$route['Poliza/Seguimiento/Servicio/eliminarEvidenciaProblema'] = 'V2/Controller_ServicioTicket/deleteAvidenciaProblema';
 
 
 /* Routers para el manejo nuevo de Proyectos */

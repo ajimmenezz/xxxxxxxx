@@ -46,20 +46,20 @@ class ServicioInstalaciones implements Servicio {
         $this->correoAtiende = $consulta[0]['CorreoAtiende'];
         $this->tipoServicio = $consulta[0]['TipoServicio'];
         $this->problemas = $this->getAvanceProblema();
-        
     }
 
     public function startServicio(string $atiende) {
-//        $this->DBServiciosGeneralRedes->empezarTransaccion();
-//        $this->DBServiciosGeneralRedes->setFechaAtencion($this->id, $atiende);
-//        $this->setEstatus('2');
-//        $this->DBServiciosGeneralRedes->finalizarTransaccion();
+        $this->DBServicioTicket->empezarTransaccion();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $this->DBServicioTicket->actualizarServicio(array('FechaInicio' => $fecha, 'Atiende' => $atiende), array('Id' => $this->id));
+        $this->setEstatus('2');
+        $this->DBServicioTicket->finalizarTransaccion();
     }
 
     public function setEstatus(string $estatus) {
-//        $this->DBServiciosGeneralRedes->empezarTransaccion();
-//        $this->DBServiciosGeneralRedes->setEstatus($this->id, $estatus);
-//        $this->DBServiciosGeneralRedes->finalizarTransaccion();
+        $this->DBServicioTicket->empezarTransaccion();
+        $this->DBServicioTicket->actualizarServicio(array('IdEstatus' => $estatus), array('Id' => $this->id));
+        $this->DBServicioTicket->finalizarTransaccion();
     }
 
     public function getFolio() {
@@ -90,11 +90,11 @@ class ServicioInstalaciones implements Servicio {
         $this->DBServicioTicket->actualizarSolicitud(array('folio' => $folio), array('Id' => $this->idSolicitud));
         $this->DBServicioTicket->finalizarTransaccion();
     }
-    
-    public function validarFolioServiceDesk(string $folio){
+
+    public function validarFolioServiceDesk(string $folio) {
         $this->DBServicioTicket->empezarTransaccion();
         $registrosFolio = $this->DBServicioTicket->folioSolicitudes(array('folio' => $folio));
-        if(count($registrosFolio) > 1){
+        if (count($registrosFolio) > 1) {
             throw new \Exception('Ya esta asignado a un folio');
         }
         $this->DBServicioTicket->finalizarTransaccion();
@@ -173,6 +173,37 @@ class ServicioInstalaciones implements Servicio {
 
     public function getAvanceProblema() {
         return $this->DBServicioTicket->getAvanceProblema($this->id);
+    }
+
+    public function deleteAvanceProblema(string $idAvanceProblema) {
+        $this->DBServicioTicket->empezarTransaccion();
+        $temporal = $this->DBServicioTicket->getAvanceProblemaPorId($idAvanceProblema);
+        $evidencias = explode(',', $temporal[0]['Archivos']);
+        $this->DBServicioTicket->actualizarServiciosAvance(array('Flag' => '0'), array('Id' => $idAvanceProblema));
+        $this->DBServicioTicket->finalizarTransaccion();
+        return $evidencias;
+    }
+
+    public function deleteArchivoProblema(array $datos) {
+        $temporal = null;
+        $this->DBServicioTicket->empezarTransaccion();
+
+        $arrayAvanceProblema = $this->DBServicioTicket->getAvanceProblemaPorId($datos['idAvanceProblema']);
+
+        if (!empty($arrayAvanceProblema)) {
+            foreach ($arrayAvanceProblema as $value) {
+                $temporal = explode(',', $value['Archivos']);
+            }
+        }
+
+        if (in_array($datos['evidencia'], $temporal)) {
+            $key = array_search($datos['evidencia'], $temporal);
+            unset($temporal[$key]);
+        }
+
+        $archivos = implode(',', $temporal);
+        $this->DBServicioTicket->actualizarServiciosAvance(array('Archivos' => $archivos), array('Id' => $datos['idAvanceProblema']));
+        $this->DBServicioTicket->finalizarTransaccion();
     }
 
 }

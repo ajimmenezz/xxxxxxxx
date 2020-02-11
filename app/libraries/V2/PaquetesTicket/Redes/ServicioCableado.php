@@ -8,6 +8,7 @@ use Librerias\V2\PaquetesGenerales\Utilerias\PDF as PDF;
 use Librerias\V2\PaquetesTicket\Utilerias\Solicitud as Solicitud;
 use Modelos\Modelo_ServicioCableado as Modelo;
 use Modelos\Modelo_ServicioTicket as ModeloServicioTicket;
+use Modelos\Modelo_ServicioTicketV2 as ModeloServicioTicketV2;
 use Librerias\Generales\Correo as Correo;
 
 class ServicioCableado implements Servicio {
@@ -27,12 +28,14 @@ class ServicioCableado implements Servicio {
     private $DBServicioTicket;
     private $gestorNodos;
     private $correoAtiende;
+    private $DBServicioTicketV2;
     private $pdf;
 
     public function __construct(string $idServicio) {
         $this->id = $idServicio;
         $this->DBServiciosGeneralRedes = new Modelo();
         $this->DBServicioTicket = new ModeloServicioTicket();
+        $this->DBServicioTicketV2 = new ModeloServicioTicketV2();
         $this->gestorNodos = new GestorNodo($this->id);
         $this->setDatos();
     }
@@ -346,6 +349,10 @@ class ServicioCableado implements Servicio {
         $mensajeFirma = $correo->mensajeCorreo($titulo, $textoCorreo);
 
         $correo->enviarCorreo('notificaciones@siccob.solutions', array($this->correoAtiende), $titulo, $mensajeFirma);
+    }
+
+    public function getAvanceProblema() {
+        return $this->DBServicioTicketV2->getAvanceProblema($this->id);
     }
 
 }

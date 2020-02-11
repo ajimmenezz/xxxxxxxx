@@ -64,10 +64,8 @@
 
     </div>
     <div class="tab-pane fade" id="resolucionFolio">
-        <!--<div class="height-xs" data-scrollbar="true" data-height="20%" style="padding: 10px;">-->
         <p>
             <?php echo $resolucionFolio->RESOLUTION; ?>
         </p>
-        <!--</div>-->
     </div>
 </div>

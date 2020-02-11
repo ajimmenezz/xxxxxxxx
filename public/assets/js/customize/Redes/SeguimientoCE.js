@@ -417,7 +417,7 @@ $(function () {
             try {
                 evidenciaMaterial.validarArchivos()
                 infoMaterialNodo.evidencias = true;
-                evidenciaMaterial.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
+                evidenciaMaterial.enviarPeticionServidor('modalMaterialNodo', infoMaterialNodo, function (respuesta) {
                     if (!validarError(respuesta, 'modalMaterialNodo')) {
                         return;
                     }
@@ -498,7 +498,7 @@ $(function () {
             } else {
                 infoMaterialNodo.archivos = evidenciaOpcional;
                 infoMaterialNodo.evidencias = true;
-                actualizarEvidencia.enviarPeticionServidor('#modalMaterialNodo', infoMaterialNodo, function (respuesta) {
+                actualizarEvidencia.enviarPeticionServidor('modalMaterialNodo', infoMaterialNodo, function (respuesta) {
                     respuestaNodos(respuesta);
                 });
             }

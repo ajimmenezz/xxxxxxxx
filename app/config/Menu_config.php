@@ -2132,7 +2132,7 @@ $config['Redes'] = array(
             'Componentes/Selects/SelectBasico',
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
-            'Componentes/FileUpload/Upload',
+            'Componentes/FileUpload/IUpload',
             'Componentes/FileUpload/FileUpload_Basico',
             'Redes/SeguimientoCE'
         ),
