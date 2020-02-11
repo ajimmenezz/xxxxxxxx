@@ -344,8 +344,9 @@
             </div>
             <div class="modal-footer">
                 <div id="error-in-modal"></div>
-                <button type="button" id="btnCancelarProblema" class="btn btn-secondary"><i class="fa fa-close"></i> Cerrar</button>
+                <button type="button" id="btnCancelarProblema" class="btn btn-white"><i class="fa fa-close"></i> Cerrar</button>
                 <button type="button" id="btnGuardarProblema" class="btn btn-warning"><i class="fa fa-floppy-o"></i> Guardar</button>
+                <button type="button" id="btnActualizarProblema" class="btn btn-warning hidden"><i class="fa fa-pencil"></i> Actualizar</button>
             </div>
         </div>
     </div>
