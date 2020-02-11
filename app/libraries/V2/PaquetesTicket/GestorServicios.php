@@ -39,6 +39,7 @@ Class GestorServicios {
     }
 
     public function getInformacion(string $servicio, array $datos = array()) {
+//        var_dump($datos);
         $informacion = array();
         switch ($servicio) {
             case 'Cableado':
@@ -50,7 +51,11 @@ Class GestorServicios {
                 $informacion['areasSucursal'] = $this->sucursal->getAreas();
                 $informacion['censoSwitch'] = $this->censo->getRegistrosComponente(28);
                 break;
-
+            case 'Instalaciones':
+                $this->sucursal = new Sucursal($datos['datosServicio']['sucursal']);
+                $informacion['areasSucursal'] = $this->sucursal->getAreas();
+//                var_dump($informacion);
+                break;
             default:
                 break;
         }

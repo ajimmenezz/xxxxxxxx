@@ -5,19 +5,23 @@
                 <h5 class="f-w-700">Operación *</h5>
                 <select id="selectOperacionInstalaciones" class="form-control" style="width: 100%" data-parsley-required="true">
                     <option value="">Seleccionar</option>
+                    <option value="1">Instalación</option>
+                    <option value="2">Retiro de equipo</option>
                 </select>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">                                           
                 <h5 class="f-w-700">Área de Atención *</h5>
-                <input id="inputCantidadRefaccionSolicitud" type="number" class="form-control"  placeholder="Cantidad"/>
+                <select id="selectAreaAtencionInstalaciones" class="form-control" style="width: 100%" data-parsley-required="true">
+                    <option value="">Seleccionar</option>
+                </select>
             </div>                               
         </div>
         <div class="col-md-2">
             <div class="form-group">                                           
                 <h5 class="f-w-700">Punto *</h5>
-                <input id="inputCantidadRefaccionSolicitud" type="number" class="form-control"  placeholder="Cantidad"/>
+                <input id="inputPuntoInstalaciones" type="number" class="form-control"  placeholder="Punto"/>
             </div>                               
         </div>
     </div>
@@ -33,21 +37,21 @@
         <div class="col-md-4">
             <div class="form-group">                                           
                 <h5 class="f-w-700">Serie *</h5>
-                <input id="inputCantidadRefaccionSolicitud" type="number" class="form-control"  placeholder="Cantidad"/>
+                <input id="inputSerieInstalaciones" type="number" class="form-control"  placeholder="Serie"/>
             </div>                               
         </div>
-        <div class="col-md-2 m-t-30"> 
+        <div id="divIlegible" class="col-md-2 m-t-30 hidden"> 
             <div class="form-group">
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" id="inputMultimedia" name="inputMultimedia" value="1" />
+                        <input type="checkbox" id="inputIlegibleInstalciones" name="inputIlegibleInstalciones" value="1"/>
                         Ilegible
                     </label>
                 </div>
             </div>                            
         </div>
     </div>
-    <div class="row">
+    <div id="divAdjuntos" class="row hidden">
         <div class="col-md-12">
             <h5 class="f-w-700">Adjuntos *</h5>
             <div id="archivoEquipo" class="form-group">
@@ -56,11 +60,9 @@
         </div>
     </div>
     <div class="row m-t-10">
-        <!--Empezando error Impericia--> 
         <div class="col-md-12">
-            <div class="errorEnviarReporteImpericia"></div>
+            <div class="errorInstalaciones"></div>
         </div>
-        <!--Finalizando Error Impericia-->
 
         <div class="row m-t-10">
             <div class="col-md-12">

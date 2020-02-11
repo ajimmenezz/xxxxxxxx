@@ -163,6 +163,11 @@ class Informacion {
             _this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
             handleSlimScroll();
         });
+
+        $('#btnRegresar').on('click', function () {
+            evento.empezarCargando('#panel-ticket');
+            location.reload();
+        });
     }
 
     mostrarOcultarBotones(habilitar) {
