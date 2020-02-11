@@ -115,7 +115,17 @@ class ServicioInstalaciones implements Servicio {
 
     public function setProblema(array $datos) {
         $this->DBServicioTicket->empezarTransaccion();
-        $this->DBServicioTicket->setProblema($this->id, $datos);
+        if ($datos['tipoOperacion'] === 'Guardar') {
+            $this->DBServicioTicket->setProblema($this->id, $datos);
+        } else {
+            $arrayAvanceProblema = $this->DBServicioTicket->getAvanceProblemaPorId($datos['idAvanceProblema']);
+            if (!empty($datos['archivos'])) {
+                $archivos = $arrayAvanceProblema[0]['Archivos'] . ',' . $datos['archivos'];
+            } else {
+                $archivos = $arrayAvanceProblema[0]['Archivos'];
+            }
+            $this->DBServicioTicket->actualizarServiciosAvance(array('Descripcion' => $datos['descripcion'], 'Archivos' => $archivos), array('Id' => $datos['idAvanceProblema']));
+        }
         $this->DBServicioTicket->finalizarTransaccion();
     }
 

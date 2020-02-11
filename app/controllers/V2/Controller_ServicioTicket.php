@@ -135,24 +135,6 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
-    private function getInformacionFolioNuevo(string $folio) {
-        try {
-            $this->datos['folio'] = null;
-            $this->datos['notasFolio'] = null;
-            $this->datos['resolucionFolio'] = null;
-
-            if (!empty($this->servicio->getFolio())) {
-                $this->datos['folio'] = ServiceDesk::getDatos($folio);
-                $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
-                $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($folio);
-            }
-        } catch (Exception $ex) {
-            $this->datos['folio'] = array('Error' => $ex->getMessage());
-            $this->datos['notasFolio'] = array('Error' => $ex->getMessage());
-            $this->datos['resolucionFolio'] = array('Error' => $ex->getMessage());
-        }
-    }
-
     public function runEvento(string $evento) {
         try {
             $datosServicio = $this->input->post();
@@ -181,6 +163,7 @@ class Controller_ServicioTicket extends CI_Controller {
                 $datosServicio['archivos'] = null;
             }
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            
             $this->servicio->setProblema($datosServicio);
 
             $key = Usuario::getAPIKEY();
@@ -192,6 +175,7 @@ class Controller_ServicioTicket extends CI_Controller {
             }
 
             $this->datos['problemas'] = $this->servicio->getProblemas();
+            $this->servicio->setDatos();
             $this->datos['servicio'] = $this->servicio->getDatos();
             $this->getHtmlBitacora();
             $this->datos['operacion'] = TRUE;
@@ -354,6 +338,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->setInformacionGeneral($datosServicio);
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
+            $this->servicio->setDatos();
             $this->datos['servicio'] = $this->servicio->getDatos();
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
@@ -394,6 +379,7 @@ class Controller_ServicioTicket extends CI_Controller {
             foreach ($archivos as $value) {
                 Archivo::deleteArchivo($value);
             }
+            $this->servicio->setDatos();
             $this->datos['servicio'] = $this->servicio->getDatos();
             $this->getHtmlBitacora();
             $this->datos['operacion'] = TRUE;
@@ -410,6 +396,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->deleteArchivoProblema($datosServicio);
+            $this->servicio->setDatos();
             $this->datos['servicio'] = $this->servicio->getDatos();
             $this->getHtmlBitacora();
             $this->datos['operacion'] = TRUE;
