@@ -16,7 +16,7 @@ class SucursalAdist implements Sucursal {
 
     public function __construct(string $idSucursal) {
         $this->id = $idSucursal;
-        $this->DBSucursal = new Modelo();                
+        $this->DBSucursal = new Modelo();
         $this->setDatos();
     }
 
@@ -37,25 +37,55 @@ class SucursalAdist implements Sucursal {
     }
 
     public function getDatos() {
+        
     }
-    
-    public function getAreas(){        
+
+    public function getAreas() {
         $datos = array();
         $consulta = $this->DBSucursal->getAreas();
-        
+
         foreach ($consulta as $value) {
             array_push($datos, array(
                 'id' => $value['Id'],
                 'text' => $value['Nombre']
             ));
         }
-        
+
+        return $datos;
+    }
+
+    public function getAreasSucursal() {
+        $datos = array();
+        $consulta = $this->DBSucursal->getAreasSucursal($this->id);
+
+        foreach ($consulta as $value) {
+            array_push($datos, array(
+                'id' => $value['IdArea'],
+                'text' => $value['AreaAtencion'],
+                'punto' => $value['Punto'],
+            ));
+        }
+
+        return $datos;
+    }
+    
+    public function getAreasPuntoSucursal() {
+        $datos = array();
+        $consulta = $this->DBSucursal->getAreasPuntoSucursal($this->id);
+
+        foreach ($consulta as $value) {
+            array_push($datos, array(
+                'idArea' => $value['IdArea'],
+                'id' => $value['Punto'],
+                'text' => $value['Punto']
+            ));
+        }
+
         return $datos;
     }
 
     public function getId() {
         return $this->id;
     }
-        
 
 }

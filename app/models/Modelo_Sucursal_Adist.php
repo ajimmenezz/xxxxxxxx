@@ -24,20 +24,48 @@ class Modelo_Sucursal_Adist extends Base{
         return $consulta;
     }
     
-    public function getAreas(){
+    public function getAreasSucursal(string $sucursal){
         $consulta = $this->consulta('SELECT 
-                                          tc.IdArea,
-                                          tc.Punto,
-                                          cvaa.Nombre as Area
-                                          FROM t_censos tc inner join cat_v3_areas_atencion cvaa
-                                          on tc.IdArea = cvaa.Id
-                                        WHERE IdServicio = (select MAX(tcg.IdServicio) 
-                                        from t_censos_generales tcg 
-                                        inner join t_servicios_ticket tst
-                                        on tcg.IdServicio = tst.Id
-                                        WHERE tcg.IdSucursal = "' . $sucursal . '"
-                                        and tst.IdEstatus = 4)
-                                        group by ' . $agruparX);
+                                        tcapr.*,
+                                            areaAtencion(tcapr.IdArea) AS AreaAtencion
+                                    FROM
+                                        t_censos_areas_puntos_revisados tcapr
+                                            INNER JOIN
+                                        t_servicios_ticket tst ON tst.Id = tcapr.IdServicio
+                                    WHERE
+                                        IdServicio = (select 
+                                                MAX(tcg.IdServicio)
+                                            from
+                                                t_censos_generales tcg
+                                                    inner join
+                                                t_servicios_ticket tst ON tcg.IdServicio = tst.Id
+                                            WHERE
+                                                tcg.IdSucursal = ' . $sucursal . '
+                                                    and tst.IdEstatus = 4)
+                                    GROUP BY tcapr.IdArea
+                                    ORDER BY AreaAtencion');
+        return $consulta;
+    }
+    
+    public function getAreasPuntoSucursal(string $sucursal){
+        $consulta = $this->consulta('SELECT 
+                                        tcapr.*,
+                                            areaAtencion(tcapr.IdArea) AS AreaAtencion
+                                    FROM
+                                        t_censos_areas_puntos_revisados tcapr
+                                            INNER JOIN
+                                        t_servicios_ticket tst ON tst.Id = tcapr.IdServicio
+                                    WHERE
+                                        IdServicio = (select 
+                                                MAX(tcg.IdServicio)
+                                            from
+                                                t_censos_generales tcg
+                                                    inner join
+                                                t_servicios_ticket tst ON tcg.IdServicio = tst.Id
+                                            WHERE
+                                                tcg.IdSucursal = ' . $sucursal .  '
+                                                    and tst.IdEstatus = 4)
+                                    ORDER BY AreaAtencion');
         return $consulta;
     }
 }

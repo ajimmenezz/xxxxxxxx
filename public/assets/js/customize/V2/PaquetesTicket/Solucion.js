@@ -3,6 +3,7 @@ class Solucion {
     constructor() {
         this.peticion = new Utileria();
         this.evento = new Base();
+//        this.input = new IInput();
         this.formulario = null;
         this.selects = {};
         this.tablas = {};
@@ -14,7 +15,8 @@ class Solucion {
         this.peticion.insertarContenido('Solucion', this.datos.html.solucion);
         this.crearSelects();
 //        this.crearTablas();
-        this.crearFiles()
+        this.crearInputs();
+        this.crearFiles();
     }
 
     crearSelects() {
@@ -22,7 +24,8 @@ class Solucion {
         let selects = [
             'selectOperacionInstalaciones',
             'selectModeloInstalaciones',
-            'selectAreaAtencionInstalaciones'
+            'selectAreaAtencionInstalaciones',
+            'selectPuntoInstalaciones'
         ];
         $.each(selects, function (index, value) {
             _this.selects[value] = new SelectBasico(value);
@@ -48,6 +51,17 @@ class Solucion {
         });
     }
 
+    crearInputs() {
+        let _this = this;
+        let inputs = [
+            'inputSerieInstalaciones'
+        ];
+
+        $.each(inputs, function (index, value) {
+            _this.inputs[value] = new IInput(value);
+        });
+    }
+
     crearFiles() {
         this.file = new FileUpload_Basico('agregarEvidenciaEquipo', {url: 'Seguimiento/Servicio/agregarProblema', extensiones: ['jpg', 'jpeg', 'png']});
         this.file.iniciarFileUpload();
@@ -61,12 +75,43 @@ class Solucion {
         let _this = this;
 
         _this.selects['selectOperacionInstalaciones'].evento('change', function () {
-            if (_this.selects['selectOperacionInstalaciones'].obtenerValor() === '1') {
-                $(`#divIlegible`).removeClass('hidden');
-                $(`#inputSerieInstalaciones`).prop('disabled', false);
+            if (_this.selects['selectOperacionInstalaciones'].obtenerValor() === '') {
+                _this.selects['selectAreaAtencionInstalaciones'].bloquearElemento();
+                _this.selects['selectPuntoInstalaciones'].bloquearElemento();
             } else {
+                _this.selects['selectAreaAtencionInstalaciones'].habilitarElemento();
+            }
+
+            if (_this.selects['selectOperacionInstalaciones'].obtenerValor() === '1') {
+                _this.selects['selectAreaAtencionInstalaciones'].cargaDatosEnSelect(_this.datos.datosServicio.areasAtencionSucursal);
+                let dataPuntos = [
+                    {id: '1', text: 1},
+                    {id: '2', text: 2},
+                    {id: '3', text: 3},
+                    {id: '4', text: 4},
+                    {id: '5', text: 5},
+                    {id: '6', text: 6},
+                    {id: '7', text: 7},
+                    {id: '8', text: 8},
+                    {id: '9', text: 9},
+                    {id: '10', text: 10}
+                ];
+                _this.selects['selectPuntoInstalaciones'].cargaDatosEnSelect(dataPuntos);
+                $(`#divIlegible`).removeClass('hidden');
+                _this.inputs['inputSerieInstalaciones'].habilitarElemento();
+                _this.selects['selectPuntoInstalaciones'].habilitarElemento();
+            } else {
+                _this.selects['selectAreaAtencionInstalaciones'].cargaDatosEnSelect(_this.datos.datosServicio.areasSucursal);
                 $(`#divIlegible`).addClass('hidden');
-                $(`#inputSerieInstalaciones`).prop('disabled', true);
+                _this.inputs['inputSerieInstalaciones'].bloquearElemento();
+                _this.selects['selectPuntoInstalaciones'].bloquearElemento();
+            }
+        });
+        
+        _this.selects['selectAreaAtencionInstalaciones'].evento('change', function () {
+            _this.selects['selectPuntoInstalaciones'].habilitarElemento();
+            if (_this.selects['selectOperacionInstalaciones'].obtenerValor() === '2') {
+                _this.selects["selectOperacionInstalaciones"].cargarElementosASelect('selectPuntoInstalaciones', _this.datos.datosServicio.areasPuntosSucursal, 'idArea');
             }
         });
 

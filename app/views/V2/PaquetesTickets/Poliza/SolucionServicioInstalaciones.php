@@ -13,7 +13,7 @@
         <div class="col-md-4">
             <div class="form-group">                                           
                 <h5 class="f-w-700">Área de Atención *</h5>
-                <select id="selectAreaAtencionInstalaciones" class="form-control" style="width: 100%" data-parsley-required="true">
+                <select id="selectAreaAtencionInstalaciones" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
                     <option value="">Seleccionar</option>
                 </select>
             </div>                               
@@ -21,7 +21,9 @@
         <div class="col-md-2">
             <div class="form-group">                                           
                 <h5 class="f-w-700">Punto *</h5>
-                <input id="inputPuntoInstalaciones" type="number" class="form-control"  placeholder="Punto"/>
+                <select id="selectPuntoInstalaciones" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
+                    <option value="">Seleccionar</option>
+                </select>
             </div>                               
         </div>
     </div>
@@ -37,7 +39,7 @@
         <div class="col-md-4">
             <div class="form-group">                                           
                 <h5 class="f-w-700">Serie *</h5>
-                <input id="inputSerieInstalaciones" type="number" class="form-control"  placeholder="Serie"/>
+                <input id="inputSerieInstalaciones" type="number" class="form-control"  placeholder="Serie" disabled/>
             </div>                               
         </div>
         <div id="divIlegible" class="col-md-2 m-t-30 hidden"> 

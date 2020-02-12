@@ -1,4 +1,4 @@
-class Input {
+class IInput {
 
     constructor(nombreInput) {
         this.input = nombreInput;

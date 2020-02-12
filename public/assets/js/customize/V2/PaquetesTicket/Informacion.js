@@ -47,7 +47,7 @@ class Informacion {
         ];
 
         $.each(inputs, function (index, value) {
-            _this.inputs[value] = new Input(value);
+            _this.inputs[value] = new IInput(value);
         });
     }
 
