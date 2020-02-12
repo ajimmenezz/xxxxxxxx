@@ -65,7 +65,8 @@ class Modelo_Sucursal_Adist extends Base{
                                             WHERE
                                                 tcg.IdSucursal = ' . $sucursal .  '
                                                     and tst.IdEstatus = 4)
-                                    ORDER BY AreaAtencion');
+                                    GROUP BY IdArea, Punto
+                                    ORDER BY AreaAtencion, Punto');
         return $consulta;
     }
 }

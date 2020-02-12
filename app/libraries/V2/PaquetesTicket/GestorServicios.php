@@ -6,6 +6,7 @@ use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
 use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenUsuario;
 use Librerias\V2\PaquetesSucursales\SucursalAdist as Sucursal;
 use Librerias\V2\PaquetesSucursales\Censo as Censo;
+use Librerias\V2\PaquetesEquipo\Equipo as Equipo;
 use Modelos\Modelo_GestorServicio as ModeloServicio;
 
 Class GestorServicios {
@@ -14,6 +15,7 @@ Class GestorServicios {
     private $almacenUsuario;
     private $sucursal;
     private $censo;
+    private $equipo;
 
     public function __construct() {
         $this->DBServicios = new ModeloServicio();
@@ -51,10 +53,14 @@ Class GestorServicios {
                 $informacion['censoSwitch'] = $this->censo->getRegistrosComponente(28);
                 break;
             case 'Instalaciones':
-                $this->sucursal = new Sucursal($datos['datosServicio']['sucursal']);
-                $informacion['areasAtencionSucursal'] = $this->sucursal->getAreas();
-                $informacion['areasSucursal'] = $this->sucursal->getAreasSucursal();
-                $informacion['areasPuntosSucursal'] = $this->sucursal->getAreasPuntoSucursal();
+                if (!empty($datos['datosServicio']['sucursal'])) {
+                    $this->sucursal = new Sucursal($datos['datosServicio']['sucursal']);
+                    $this->equipo = new Equipo();
+                    $informacion['areasAtencionSucursal'] = $this->sucursal->getAreas();
+                    $informacion['areasSucursal'] = $this->sucursal->getAreasSucursal();
+                    $informacion['areasPuntosSucursal'] = $this->sucursal->getAreasPuntoSucursal();
+                    $informacion['equipos'] = $this->equipo->getEquipo();
+                }
                 break;
             default:
                 break;

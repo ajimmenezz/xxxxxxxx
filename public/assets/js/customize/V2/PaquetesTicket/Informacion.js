@@ -100,6 +100,7 @@ class Informacion {
                 _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/GuardarInformacionGeneral', data, function (respuesta) {
                     if (_this.bug.validar(respuesta)) {
                         _this.datos.servicio = respuesta.servicio;
+                        _this.datos.datosServicio = respuesta.datosServicio;
                         _this.mostrarOcultarBotones(true);
                         _this.habilitarDeshabilitarSelect(false);
                         callback(respuesta);

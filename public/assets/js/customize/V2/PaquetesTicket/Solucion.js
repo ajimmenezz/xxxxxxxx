@@ -78,6 +78,10 @@ class Solucion {
             if (_this.selects['selectOperacionInstalaciones'].obtenerValor() === '') {
                 _this.selects['selectAreaAtencionInstalaciones'].bloquearElemento();
                 _this.selects['selectPuntoInstalaciones'].bloquearElemento();
+                _this.selects['selectModeloInstalaciones'].bloquearElemento();
+                _this.selects['selectAreaAtencionInstalaciones'].limpiarElemento();
+                _this.selects['selectPuntoInstalaciones'].limpiarElemento();
+                _this.selects['selectModeloInstalaciones'].limpiarElemento();
             } else {
                 _this.selects['selectAreaAtencionInstalaciones'].habilitarElemento();
             }
@@ -107,11 +111,38 @@ class Solucion {
                 _this.selects['selectPuntoInstalaciones'].bloquearElemento();
             }
         });
-        
+
         _this.selects['selectAreaAtencionInstalaciones'].evento('change', function () {
             _this.selects['selectPuntoInstalaciones'].habilitarElemento();
             if (_this.selects['selectOperacionInstalaciones'].obtenerValor() === '2') {
-                _this.selects["selectOperacionInstalaciones"].cargarElementosASelect('selectPuntoInstalaciones', _this.datos.datosServicio.areasPuntosSucursal, 'idArea');
+                _this.selects["selectAreaAtencionInstalaciones"].cargarElementosASelect('selectPuntoInstalaciones', _this.datos.datosServicio.areasPuntosSucursal, 'idArea');
+            }
+        });
+
+        _this.selects['selectPuntoInstalaciones'].evento('change', function () {
+            _this.selects['selectModeloInstalaciones'].habilitarElemento();
+            if (_this.selects['selectOperacionInstalaciones'].obtenerValor() === '1') {
+                _this.selects['selectModeloInstalaciones'].cargaDatosEnSelect(_this.datos.datosServicio.equipos);
+            } else {
+                let sucursal = _this.datos.servicio.sucursal;
+                let area = _this.selects['selectAreaAtencionInstalaciones'].obtenerValor();
+                let punto = _this.selects['selectPuntoInstalaciones'].obtenerValor();
+                let data = {sucursal: sucursal, area: area, punto: punto};
+                _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/equipoCensadosAreaEquipo', data, function (respuesta) {
+                    $("#selectModeloInstalaciones").empty().append('<option data-serie="" value="">Seleccionar</option>');
+                    if (respuesta !== false) {
+                        $.each(respuesta.equipos, function (key, valor) {
+                            $("#selectModeloInstalaciones").append(`<option data-serie="${valor.serie}" value="${valor.id}">${valor.text}</option>`);
+                        });
+                    }
+                });
+            }
+        });
+
+        _this.selects['selectModeloInstalaciones'].evento('change', function () {
+            if (_this.selects['selectOperacionInstalaciones'].obtenerValor() === '2') {
+                let serie = $("#selectModeloInstalaciones option:selected").attr("data-serie");
+                _this.inputs['inputSerieInstalaciones'].definirValor(serie);
             }
         });
 
