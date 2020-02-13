@@ -31,7 +31,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <h5 class="f-w-700">Modelo *</h5>
-                <select id="selectModeloInstalaciones" class="form-control" style="width: 100%" data-parsley-required="true">
+                <select id="selectModeloInstalaciones" class="form-control" style="width: 100%" data-parsley-required="true" disabled>
                     <option value="">Seleccionar</option>
                 </select>
             </div>
@@ -39,7 +39,7 @@
         <div class="col-md-4">
             <div class="form-group">                                           
                 <h5 class="f-w-700">Serie *</h5>
-                <input id="inputSerieInstalaciones" type="number" class="form-control"  placeholder="Serie" disabled/>
+                <input id="inputSerieInstalaciones" class="form-control"  placeholder="Serie" disabled/>
             </div>                               
         </div>
         <div id="divIlegible" class="col-md-2 m-t-30 hidden"> 

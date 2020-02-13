@@ -9,6 +9,7 @@ use Librerias\V2\PaquetesSucursales\GestorSucursales as GestorSucursal;
 use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenVirtual;
 use Librerias\V2\PaquetesTicket\Utilerias\Solicitud as Solicitud;
+use Librerias\V2\PaquetesEquipo\Equipo as Equipo;
 
 class Controller_ServicioTicket extends CI_Controller {
 
@@ -163,7 +164,7 @@ class Controller_ServicioTicket extends CI_Controller {
                 $datosServicio['archivos'] = null;
             }
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            
+
             $this->servicio->setProblema($datosServicio);
 
             $key = Usuario::getAPIKEY();
@@ -340,6 +341,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->servicio->setDatos();
             $this->datos['servicio'] = $this->servicio->getDatos();
+            $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {
@@ -400,6 +402,20 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->servicio->setDatos();
             $this->datos['servicio'] = $this->servicio->getDatos();
             $this->getHtmlBitacora();
+            $this->datos['operacion'] = TRUE;
+            echo json_encode($this->datos);
+        } catch (Exception $ex) {
+            $this->datos['operacion'] = FALSE;
+            $this->datos['Error'] = $ex->getMessage();
+            echo json_encode($this->datos);
+        }
+    }
+
+    public function getEquipoCensadosAreaPunto() {
+        try {
+            $datosServicio = $this->input->post();
+            $this->equipo = new Equipo();
+            $this->datos['equipos'] = $this->equipo->getEquipoCensadosAreaPunto($datosServicio);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {
