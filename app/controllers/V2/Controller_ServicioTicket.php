@@ -352,7 +352,8 @@ class Controller_ServicioTicket extends CI_Controller {
     private function getHtml(string $tipoServicio, array $datos) {
         $this->getHtmlFolio($datos);
         $this->getHtmlBitacora();
-
+        $this->datos['html']['problema'] = $this->load->view('V2/PaquetesTickets/FormularioProblema', [], TRUE);
+        
         switch ($tipoServicio) {
             case 'Instalaciones':
                 $this->datos['html']['solucion'] = $this->load->view('V2/PaquetesTickets/Poliza/SolucionServicioInstalaciones', $datos, TRUE);

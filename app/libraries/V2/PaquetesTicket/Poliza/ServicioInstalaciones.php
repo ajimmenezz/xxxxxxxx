@@ -115,7 +115,7 @@ class ServicioInstalaciones implements Servicio {
 
     public function setProblema(array $datos) {
         $this->DBServicioTicket->empezarTransaccion();
-        if ($datos['tipoOperacion'] === 'Guardar') {
+        if ($datos['tipoOperacion'] === 'guardar') {
             $this->DBServicioTicket->setProblema($this->id, $datos);
         } else {
             $arrayAvanceProblema = $this->DBServicioTicket->getAvanceProblemaPorId($datos['idAvanceProblema']);

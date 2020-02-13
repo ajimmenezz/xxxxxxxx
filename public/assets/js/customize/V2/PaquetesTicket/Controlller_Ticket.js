@@ -19,7 +19,7 @@ $(function () {
     App.init();
 
     informacion.iniciarElementos();
-    bitacora.iniciarElementos();
+//    bitacora.iniciarElementos();
 
     tablaServicios.evento(function () {
         datosFila = tablaServicios.datosFila(this);

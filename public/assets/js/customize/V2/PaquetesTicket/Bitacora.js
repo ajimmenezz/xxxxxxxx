@@ -3,15 +3,20 @@ class Bitacora {
     constructor() {
         this.peticion = new Utileria();
         this.modal = new Modal('modal-dialogo');
+        this.modalBox = new ModalBox('modal-box');
         this.bug = new Bug();
         this.evento = new Base();
 
         this.datos = null;
         this.file = {};
+        this.inputs = {};
+        this.idAvanceProblema = null;
+        this.botones = `<button type="button" id="btnCancelarProblema" class="btn btn-white"><i class="fa fa-close"></i> Cerrar</button>`;
     }
 
     iniciarElementos() {
         this.crearFiles();
+        this.crearInputs();
     }
 
     crearFiles() {
@@ -19,6 +24,16 @@ class Bitacora {
         this.file.iniciarFileUpload();
     }
 
+    crearInputs() {
+        let _this = this;
+        let inputs = [
+            'textareaDescProblema'
+        ];
+
+        $.each(inputs, function (index, value) {
+            _this.inputs[value] = new IInput(value);
+        });
+    }
     setDatos(datos) {
         this.datos = datos;
         this.peticion.insertarContenido('BitacoraProblemas', this.datos.html.bitacora);
@@ -27,73 +42,46 @@ class Bitacora {
     listener(callback) {
         let _this = this;
 
-        $('#btnGuardarProblema').on('click', function () {
-            let problema = $('#textareaDescProblema').val();
-            if (_this.evento.validarFormulario('#formProblema')) {
-                let data = {'evidencia': true, descripcion: problema, id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio, tipoOperacion: 'guardar'};
-                _this.file.enviarPeticionServidor('modalReportarProblema', data, function (respuesta) {
-                    if (_this.bug.validar(respuesta)) {
-                        _this.datos.servicio = respuesta.servicio;
-                        _this.datos.html.bitacora = respuesta.html.bitacora;
-                        _this.peticion.insertarContenido('BitacoraProblemas', respuesta.html.bitacora);
-                        $('#textareaDescProblema').val('');
-                        _this.file.limpiarElemento();
-                        $('#modalReportarProblema').modal('hide');
-                        _this.botonEditar();
-                        _this.botonEliminar();
-                    }
-                });
-            }
-        });
-
-        $('#btnCancelarProblema').on('click', function () {
-            $('#fileMostrarEvidenciaProblema').addClass('hidden');
-            $('#textareaDescProblema').val('');
-            _this.file.limpiarElemento();
-            $('#modalReportarProblema').modal('hide');
-        });
-
-        $('#btnActualizarProblema').on('click', function () {
-            var idAvanceProblema = $(".btnEditarAvanceSeguimientoSinEspecificar").data('id');
-            let problema = $('#textareaDescProblema').val();
-            if (problema !== '') {
-                var data = {
-                    evidencia: true,
-                    descripcion: problema,
-                    id: _this.datos.servicio.servicio,
-                    tipo: _this.datos.servicio.tipoServicio,
-                    tipoOperacion: 'actualizar',
-                    idAvanceProblema: idAvanceProblema
-                };
-                try {
-                    data.evidencia = true;
-                    _this.file.enviarPeticionServidor('modalReportarProblema', data, function (respuesta) {
+        $("#btnReportarProblema").off("click");
+        $("#btnReportarProblema").on("click", function () {
+            _this.cargarModalProblema('Agregar Problema', '<i class="fa fa-pencil"></i> Guardar');
+            _this.modalBox.funcionalidadBotonAceptar(null, function () {
+                let problema = _this.inputs['textareaDescProblema'].obtenerValor();
+                if (_this.evento.validarFormulario('#formProblema')) {
+                    let data = {'evidencia': true, descripcion: problema, id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio, tipoOperacion: 'guardar'};
+                    _this.file.enviarPeticionServidor('modal-box', data, function (respuesta) {
                         if (_this.bug.validar(respuesta)) {
-                            _this.respuestaProblemaActualizar(respuesta);
+                            _this.datos.servicio = respuesta.servicio;
+                            _this.datos.html.bitacora = respuesta.html.bitacora;
+                            _this.peticion.insertarContenido('BitacoraProblemas', respuesta.html.bitacora);
+                            _this.modalBox.cerrarModal();
+                            _this.botonEditar();
+                            _this.botonEliminar();
                         }
                     });
-                } catch (exception) {
-                    data.evidencia = false;
-                    _this.peticion.enviar('modalReportarProblema', 'Seguimiento/Servicio/agregarProblema', data, function (respuesta) {
-                        _this.respuestaProblemaActualizar(respuesta);
-                    });
                 }
-            } else {
-                _this.evento.mostrarMensaje('#errorAgregarProblema', false, 'Falta un campo de descripción.', 3000);
-            }
+            });
         });
 
         _this.botonEditar();
         _this.botonEliminar();
     }
 
+    cargarModalProblema(titulo, textoBoton) {
+        this.modalBox.mostrarModal(titulo, this.datos.html.problema);
+        this.modalBox.colorFondoTitulo('background-color:#f59c1a');
+        this.modalBox.colorTitulo('text-white');
+        this.modalBox.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
+        this.modalBox.cambiarValorBotonAceptar(textoBoton);
+        this.modalBox.colorBotonAceptar('btn-warning');
+        this.iniciarElementos();
+    }
+
     respuestaProblemaActualizar(respuesta) {
         this.datos.servicio = respuesta.servicio;
         this.datos.html.bitacora = respuesta.html.bitacora;
         this.peticion.insertarContenido('BitacoraProblemas', respuesta.html.bitacora);
-        $('#textareaDescProblema').val('');
-        this.file.limpiarElemento();
-        $('#modalReportarProblema').modal('hide');
+        this.modalBox.cerrarModal();
         this.botonEditar();
         this.botonEliminar();
     }
@@ -103,18 +91,12 @@ class Bitacora {
 
         $(".btnEditarAvanceSeguimientoSinEspecificar").off("click");
         $(".btnEditarAvanceSeguimientoSinEspecificar").on("click", function () {
+            _this.idAvanceProblema = $(this).data('id');
+            _this.cargarModalProblema('Actualizar Problema', '<i class="fa fa-pencil"></i> Actualizar');
             let htmlEvidencias = '';
-            var idAvanceProblema = $(this).data('id');
-            $('#modalReportarProblema').modal({
-                backdrop: 'static',
-                keyboard: true
-            });
-            $('#modalReportarProblema .modal-title').empty().append('Actualizar Problema');
-            $('#btnGuardarProblema').addClass('hidden');
-            $('#btnActualizarProblema').removeClass('hidden');
             $.each(_this.datos.servicio.problemas, function (index, value) {
-                if (value.Id == idAvanceProblema) {
-                    $('#textareaDescProblema').val(value.Descripcion);
+                if (value.Id == _this.idAvanceProblema) {
+                    _this.inputs['textareaDescProblema'].definirValor(value.Descripcion);
                     $('#fileMostrarEvidenciaProblema').removeClass('hidden');
                     let arrayEvidencias = value.Archivos.split(',');
                     $.each(arrayEvidencias, function (key, valor) {
@@ -122,7 +104,7 @@ class Bitacora {
                                     <a href="${valor}" data-lightbox="evidencias">
                                         <img src ="${valor}" />
                                     </a>
-                                    <div class="eliminarEvidenciaProblema" data-id="${idAvanceProblema}" data-value="${valor}" data-key="${key}">
+                                    <div class="eliminarEvidenciaProblema" data-id="${_this.idAvanceProblema}" data-value="${valor}" data-key="${key}">
                                         <a href="#">
                                             <i class="fa fa-trash text-danger"></i>
                                         </a>
@@ -134,6 +116,34 @@ class Bitacora {
                     _this.botonEditar();
                     _this.botonEliminar();
                 }
+                _this.modalBox.funcionalidadBotonAceptar(null, function () {
+                    let problema = _this.inputs['textareaDescProblema'].obtenerValor();
+                    if (problema !== '') {
+                        let data = {
+                            evidencia: true,
+                            descripcion: problema,
+                            id: _this.datos.servicio.servicio,
+                            tipo: _this.datos.servicio.tipoServicio,
+                            tipoOperacion: 'actualizar',
+                            idAvanceProblema: idAvanceProblema
+                        };
+                        try {
+                            data.evidencia = true;
+                            _this.file.enviarPeticionServidor('modal-box', data, function (respuesta) {
+                                if (_this.bug.validar(respuesta)) {
+                                    _this.respuestaProblemaActualizar(respuesta);
+                                }
+                            });
+                        } catch (exception) {
+                            data.evidencia = false;
+                            _this.peticion.enviar('modal-box', 'Seguimiento/Servicio/agregarProblema', data, function (respuesta) {
+                                _this.respuestaProblemaActualizar(respuesta);
+                            });
+                        }
+                    } else {
+                        _this.evento.mostrarMensaje('#errorAgregarProblema', false, 'Falta un campo de descripción.', 3000);
+                    }
+                });
             });
         });
     }
@@ -142,10 +152,9 @@ class Bitacora {
         let _this = this;
         $('.btnEliminarAvanceSeguimientoSinEspecificar').off('click');
         $('.btnEliminarAvanceSeguimientoSinEspecificar').on('click', function () {
-            var idAvanceProblema = $(this).data('id');
             _this.modal.mostrarModal(`Advertencia`, '<h3 class="text-center">¿Realmente quiere eliminar la información?</h3>');
             _this.modal.funcionalidadBotonAceptar(null, function () {
-                let data = {'idAvanceProblema': idAvanceProblema, id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
+                let data = {'idAvanceProblema': _this.idAvanceProblema, id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
                 _this.peticion.enviar('modal-dialogo', 'Seguimiento/Servicio/elminarAvanceProblema', data, function (respuesta) {
                     if (_this.bug.validar(respuesta)) {
                         _this.datos.servicio = respuesta.servicio;

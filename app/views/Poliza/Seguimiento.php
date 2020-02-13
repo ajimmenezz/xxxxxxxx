@@ -142,7 +142,7 @@
                 <label id="btnCierre" class="btn btn-info btn-xs">
                     <i class="fa fa fa-unlock-alt"></i> Cierre
                 </label> 
-                <label id="btnReportarProblema" href="#modalReportarProblema" class="btn btn-danger btn-xs" data-toggle="modal">
+                <label id="btnReportarProblema" class="btn btn-danger btn-xs">
                     <i class="fa fa fa-exclamation-triangle"></i> Reportar Problema
                 </label> 
                 <!--<a id="btnReportarProblema" href="#modalReportarProblema" class="btn btn-danger btn-xs m-r-5"><i class="fa fa fa-exclamation-triangle"></i> Reportar Problema</a>-->
@@ -303,52 +303,3 @@
     <!--Finalizando panel con pestañas-->
 </div>
 <!-- Finalizando #contenido del servicio (version 2) --> 
-
-<!--Empezando modal -->
-<div id="modalReportarProblema" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color:#f59c1a;">
-                <h4 class="modal-title text-white text-center">Agregar Problema</h4>
-            </div>
-            <div class="modal-body">
-                <form id="formProblema" data-parsley-validate="true" enctype="multipart/form-data">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <h5 class="f-w-700">Describe el problema *</h5>
-                                <textarea id="textareaDescProblema" class="form-control" rows="4" data-parsley-required="true"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h5 class="f-w-700">Adjuntos del problema *</h5>
-                            <div id="archivoProblema" class="form-group">
-                                <input id="agregarEvidenciaProblema" name="agregarEvidenciaProblema[]" type="file" multiple data-parsley-required="true">
-                            </div>
-                        </div>
-                    </div>
-                    <div id="fileMostrarEvidenciaProblema" class="row hidden">
-                        <div class="col-md-12">
-                            <div id="evidenciasProblema">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row m-t-10">
-                        <div class="col-md-12">
-                            <div id="errorAgregarProblema"></div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <div id="error-in-modal"></div>
-                <button type="button" id="btnCancelarProblema" class="btn btn-white"><i class="fa fa-close"></i> Cerrar</button>
-                <button type="button" id="btnGuardarProblema" class="btn btn-warning"><i class="fa fa-floppy-o"></i> Guardar</button>
-                <button type="button" id="btnActualizarProblema" class="btn btn-warning hidden"><i class="fa fa-pencil"></i> Actualizar</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!--Finalizando modal -->

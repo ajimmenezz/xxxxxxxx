@@ -873,6 +873,7 @@ $config['Poliza'] = array(
             'Componentes/HerramientasWeb/Utileria',
             'Componentes/Modal/ModalBase',
             'Componentes/Modal/Modal',
+            'Componentes/Modal/ModalBox',
             'Componentes/Modal/ModalServicio',
             'Componentes/Modal/Alertas',
             'Componentes/HerramientasWeb/Bug',

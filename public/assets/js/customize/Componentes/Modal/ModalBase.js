@@ -5,6 +5,7 @@ class ModalBase {
         this.modal = $(`#${nombreModal}`);
         this.titulo = $(`#${nombreModal} .modal-title`);
         this.cuerpo = $(`#${nombreModal} .modal-body`);
+        this.piePagina = $(`#${nombreModal} .modal-footer`);
                        
     }
     

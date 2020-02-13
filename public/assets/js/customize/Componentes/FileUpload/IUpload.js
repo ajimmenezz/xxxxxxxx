@@ -24,6 +24,7 @@ class IUpload {
             allowedFileExtensions: ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx'],
             overwriteInitial: false,
             initialPreviewAsData: true,
+            showAjaxErrorDetails: false,
             initialPreview: [],
             previewSettings: {
                 image: {width: '160px', height: '164px'},
@@ -80,12 +81,15 @@ class IUpload {
             $(`#${this.fileUpload}`).on('filebatchpreupload', function (event, data, previewId, index) {
                 _this.pagina.empezarPantallaCargando(panel);
             }).on('filebatchuploadsuccess', function (event, data, previewId, index) {
-//                _this.pagina.errorServidor(data.response);
+                _this.pagina.errorServidor(data.response);
                 _this.pagina.quitarPantallaCargando(panel);
                 if (callback !== null) {
                     callback(data.response);
                 }
+            }).on('filebatchuploaderror ', (event, data, msg) => {
+                _this.pagina.quitarPantallaCargando(panel);
             });
+
             $(`#${this.fileUpload}`).fileinput('upload');
     }
 
