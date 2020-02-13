@@ -1341,6 +1341,10 @@ class InformacionServicios extends General {
 
     public function definirPDF(array $datos) {
         $this->pdf = new PDFAux();
+        $this->pdf->setDato($datos['servicio']);
+        
+//        $firmas = $this->getFirmasServicio($datos['servicio']);
+//        $this->pdf->setFirmas($firmas);
         $this->pdf->AliasNbPages();
         $nombreExtra = '';
 
@@ -1438,7 +1442,7 @@ class InformacionServicios extends General {
                     break;
             }
         }
-
+        
         $this->pdf->Output('F', $carpeta, true);
         $this->pdf->Close();
         $carpeta = substr($carpeta, 1);
@@ -1584,50 +1588,43 @@ class InformacionServicios extends General {
     private function setFirmasGerenteTecnico(array $datos) {
         $firmas = $this->getFirmasServicio($datos['servicio']);
         if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '') || (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '')) {
-            if (($this->y + 66) > 276) {
-                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-            }
+//            if (($this->y + 66) > 276) {
+//                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+//            }
 
-            $this->setCoordinates(55, $this->y + 5);
+            $this->setCoordinates(100, 229);
             $this->pdf->SetTextColor(0, 0, 0);
-            $this->pdf->Cell(95, 1, "Firmas de Cierre", 0, 0, 'C');
-
-            $gerente = '';
-            $fechaFirma = '';
 
             if (!is_null($firmas['Firma']) && $firmas['Firma'] != '') {
                 if (file_exists('.' . $firmas['Firma'])) {
-                    $this->pdf->Image('.' . $firmas['Firma'], 12, $this->y + 12, 80, 35, pathinfo($firmas['Firma'], PATHINFO_EXTENSION));
-                    $gerente = utf8_decode($firmas['Gerente']);
-                    $fechaFirma = utf8_decode($firmas['FechaFirma']);
-                    $this->setCoordinates(10, $this->y + 45);
-                    $this->pdf->Cell(95, 5, utf8_decode($gerente), 0, 0, 'C');
+                    $this->pdf->Image('.' . $firmas['Firma'], $this->x + 30, $this->y + 15, 40, 20, pathinfo($firmas['Firma'], PATHINFO_EXTENSION));
+                    
+                    $this->setCoordinates($this->x, $this->y + 32);
+                    $this->pdf->Cell(95, 5, utf8_decode($firmas['Gerente']), 0, 0, 'C');
 
-                    $this->setCoordinates(10, $this->y + 5);
+                    $this->setCoordinates($this->x, $this->y + 5);
                     $this->pdf->Cell(95, 5, 'Gerente en turno Cinemex', 0, 0, 'C');
 
-                    $this->setCoordinates(10, $this->y + 5);
-                    $this->pdf->Cell(95, 5, utf8_decode($fechaFirma), 0, 0, 'C');
+                    $this->setCoordinates($this->x, $this->y + 5);
+                    $this->pdf->Cell(95, 5, utf8_decode($firmas['FechaFirma']), 0, 0, 'C');
 
-                    $this->setCoordinates(105, $this->y - 45);
+                    $this->setCoordinates($this->x, $this->y - 45);
                 }
             }
-
-            $tecnico = '';
-
+            
+            $this->setCoordinates(140, 229);
             if (!is_null($firmas['FirmaTecnico']) && $firmas['FirmaTecnico'] != '') {
                 if (file_exists('.' . $firmas['FirmaTecnico'])) {
-                    $this->pdf->Image('.' . $firmas['FirmaTecnico'], $this->x + 15, $this->y + 2.5, 80, 35, pathinfo($firmas['FirmaTecnico'], PATHINFO_EXTENSION));
-                    $tecnico = utf8_decode($firmas['Tecnico']);
+                    $this->pdf->Image('.' . $firmas['FirmaTecnico'], $this->x + 30, $this->y + 15, 40, 20, pathinfo($firmas['FirmaTecnico'], PATHINFO_EXTENSION));
 
-                    $this->setCoordinates($this->x, $this->y + 35);
-                    $this->pdf->Cell(95, 5, utf8_decode($tecnico), 0, 0, 'C');
+                    $this->setCoordinates($this->x, $this->y + 32);
+                    $this->pdf->Cell(95, 5, utf8_decode($firmas['Tecnico']), 0, 0, 'C');
 
                     $this->setCoordinates($this->x, $this->y + 5);
                     $this->pdf->Cell(95, 5, utf8_decode("Técnico Siccob"), 0, 0, 'C');
 
                     $this->setCoordinates($this->x, $this->y + 5);
-                    $this->pdf->Cell(95, 5, utf8_decode($fechaFirma), 0, 0, 'C');
+                    $this->pdf->Cell(95, 5, utf8_decode($firmas['FechaFirma']), 0, 0, 'C');
                 }
             }
         }
@@ -2604,8 +2601,10 @@ class InformacionServicios extends General {
 }
 
 class PDFAux extends PDF {
-
-    function Footer() {
+    
+    private $dato;
+    
+    public function Footer() {
         $fecha = date('d/m/Y');
 // Go to 1.5 cm from bottom
         $this->SetY(-15);
@@ -2614,6 +2613,24 @@ class PDFAux extends PDF {
 // Print centered page number
 // $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
         $this->Cell(100, 10, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
+        $this->setFirmas();
     }
+    
+    public function setDato(string $dato = null) {
+        $this->dato = $dato;
+    }
+    
+    public function setFirmas(array $datosFirmas = null) {
+        
+//        var_dump($datosFirmas);
+//        if ((!is_null($datosFirmas['Firma']) && $datosFirmas['Firma'] != '') || (!is_null($datosFirmas['FirmaTecnico']) && $datosFirmas['FirmaTecnico'] != '')) {
 
+//            $this->Image('.' . $firmas['Firma'], 100, 15, 40, 20, pathinfo($firmas['Firma'], PATHINFO_EXTENSION));
+
+//            $this->SetXY(100, 15);
+//            $this->Cell(95, 5, utf8_decode($datosFirmas['Gerente']), 0, 0, 'C');
+//
+////            }
+        $this->Cell(100, 10, 'Gerente', 0, 0, 'R');
+    }
 }
