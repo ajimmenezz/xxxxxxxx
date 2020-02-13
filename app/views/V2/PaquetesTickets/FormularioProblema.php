@@ -11,7 +11,7 @@
         <div class="col-md-12">
             <h5 class="f-w-700">Adjuntos del problema *</h5>
             <div id="archivoProblema" class="form-group">
-                <input id="agregarEvidenciaProblema" name="agregarEvidenciaProblema[]" type="file" multiple data-parsley-required="true">
+                <input id="agregarEvidenciaProblema" name="agregarEvidenciaProblema[]" type="file" multiple >
             </div>
         </div>
     </div>

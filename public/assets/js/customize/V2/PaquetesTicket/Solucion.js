@@ -58,7 +58,7 @@ class Solucion {
         ];
 
         $.each(inputs, function (index, value) {
-            _this.inputs[value] = new IInput(value);
+            _this.inputs[value] = new Input(value);
         });
     }
 

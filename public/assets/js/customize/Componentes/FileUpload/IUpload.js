@@ -2,9 +2,8 @@ class IUpload {
 
     constructor(nombreFileUpload, configuracion = {}) {
         this.fileUpload = nombreFileUpload;
-        this.configuracion = configuracion;
+        this.configuracion = configuracion;        
         this.datosExtra = {};
-        //this.iniciarFileUpload();
         this.pagina = new Utileria();
     }
 
@@ -77,11 +76,10 @@ class IUpload {
         let _this = this;
         _this.definiendoDatosExtra(datos);
 
-        if (_this.validarArchivos()) {
+//        if (_this.validarArchivos()) {
             $(`#${this.fileUpload}`).on('filebatchpreupload', function (event, data, previewId, index) {
                 _this.pagina.empezarPantallaCargando(panel);
             }).on('filebatchuploadsuccess', function (event, data, previewId, index) {
-                _this.pagina.errorServidor(data.response);
                 _this.pagina.quitarPantallaCargando(panel);
                 if (callback !== null) {
                     callback(data.response);
@@ -91,7 +89,7 @@ class IUpload {
             });
 
             $(`#${this.fileUpload}`).fileinput('upload');
-    }
+//    }
 
     }
 
@@ -121,6 +119,13 @@ class IUpload {
 
     habilitarElemento() {
         $(`#${this.fileUpload}`).fileinput('enable');
+    }
+
+    setAtributos(valores = {}){
+        let _this = this;           
+        $.each(valores, function (key, value) {
+            $(`#${_this.fileUpload}`).attr(key, value);
+        });
     }
 
 }
