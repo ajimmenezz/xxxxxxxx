@@ -75,6 +75,10 @@ class ISelect {
     obtenerDatosSeleccionado() {
         return this.objetoSelect.select2('data');
     }
+    
+    obtenerTexto(){
+        return $(this.objetoSelect + ' option:selected').html()
+    }
 
 }
 

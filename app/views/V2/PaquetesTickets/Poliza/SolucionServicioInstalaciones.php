@@ -78,10 +78,13 @@
         <table id="data-table-equipos-instalaciones" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
             <thead>
                 <tr>
+                    <th class="never">IdModelo</th>
                     <th class="all">Modelo</th>
                     <th class="all">Serie</th>
+                    <th class="never">IdArea</th>
                     <th class="all">Área</th>
                     <th class="all">Punto</th>
+                    <th class="never">IdOperación</th>
                     <th class="all">Operación</th>
                 </tr>
             </thead>

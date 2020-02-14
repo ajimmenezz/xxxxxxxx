@@ -7,7 +7,7 @@ class Solucion {
         this.datos = null;
 
         this.selects = {};
-        this.tablas = {};
+        this.tabla = {};
         this.inputs = {};
         this.file = {};
 
@@ -36,25 +36,15 @@ class Solucion {
         this.formulario = new Formulario('formProblema', elementosFormulario);
     }
 
-    crearTablas() {
-        let _this = this;
-        let tablas = [
-            'data-table-equipos-instalaciones'
-        ];
-
-        $.each(tablas, function (index, value) {
-            _this.tablas[value] = new TablaBasica(value);
-        });
-
-        $.each(_this.tablas, function (index, value) {
-            value.iniciarTabla();
-        });
+    crearTabla() {
+        this.tabla = new TablaBasica('data-table-equipos-instalaciones');
     }
 
     setDatos(datos) {
         this.datos = datos;
         this.peticion.insertarContenido('Solucion', this.datos.html.solucion);
         this.formulario.iniciarElementos();
+        this.crearTabla();
     }
 
     listener(callback) {
@@ -166,19 +156,31 @@ class Solucion {
             if ($('#inputIlegibleInstalciones').is(':checked')) {
                 arrayCampos.push({'objeto': '#agregarEvidenciaEquipo', 'mensajeError': 'Falta seleccionar el campo adjuntos.'});
             }
-
+//
             let camposFormularioValidados = _this.evento.validarCamposObjetos(arrayCampos, '.errorInstalaciones');
-
+//
             if (camposFormularioValidados) {
-                let data = {
-                    operacion: selectOperacion.obtenerValor(),
-                    areaAtencion: selectAreaAtencion.obtenerValor(),
-                    punto: selectPunto.obtenerValor(),
-                    modelo: selectModelo.obtenerValor(),
-                    serie: inputSerie.obtenerValor()
-                };
-                console.log(data);
+                console.log(camposFormularioValidados);
             }
+//                _this.tabla.agregarDatosFila([
+//                    selectModelo.obtenerValor(),
+//                    selectModelo.obtenerTexto(),
+//                    inputSerie.obtenerValor(),
+//                    selectAreaAtencion.obtenerValor(),
+//                    selectAreaAtencion.obtenerTexto(),
+//                    selectPunto.obtenerValor(),
+//                    selectOperacion.obtenerValor(),
+//                    selectOperacion.obtenerTexto()
+//                ]);
+//                
+//                
+//                selectOperacion.limpiarElemento();
+//                selectAreaAtencion.limpiarElemento();
+//                selectPunto.limpiarElemento();
+//                selectPunto.bloquearElemento();
+//                selectModelo.limpiarElemento();
+//                inputSerie.limpiarElemento();
+//            }
         });
     }
 

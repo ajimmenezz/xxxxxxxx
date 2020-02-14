@@ -1,4 +1,4 @@
-$(function () {
+f$(function () {
 
     let peticion = new Utileria();
     let modal = new Modal();
