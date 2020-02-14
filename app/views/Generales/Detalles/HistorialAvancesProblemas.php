@@ -54,31 +54,27 @@
                         </div>
                         <div class="row">
                             <?php
+                            $htmlArchivos = '';
                             foreach ($arrayArchivos as $key => $value) {
-                                if ($value != '') {
-                                    echo '<div class="thumbnail-pic m-5 p-5">';
-                                    $ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
-                                    switch ($ext) {
-                                        case 'png': case 'jpeg': case 'jpg': case 'gif':
-                                            echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="' . $value . '" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
-                                            break;
-                                        case 'xls': case 'xlsx':
-                                            echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/excel_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
-                                            break;
-                                        case 'doc': case 'docx':
-                                            echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/word_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
-                                            break;
-                                        case 'pdf':
-                                            echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/pdf_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
-                                            break;
-                                        default :
-                                            echo '<a class="imagenesSolicitud" target="_blank" href="' . $value . '"><img src="/assets/img/Iconos/no-thumbnail.jpg" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>';
-                                            break;
-                                    }
-                                    echo '</div>';
-                                }
+                                $htmlArchivos .= ''
+                                        . '<div class="col-md-4 m-t-15">  '
+                                        . '<div style="display: inline-block; padding: 10px; box-shadow: 3px 3px 0.5em;">'
+                                        . ' <a class="m-l-5 m-r-5"'
+                                        . '     href="' . $value . '" '
+                                        . '     data-lightbox="evidencias' . $item['Descripcion'] . '" '
+                                        . '     data-title="' . basename($value) . '">'
+                                        . '     <img src="' . $value . '" width="70" height="70" '
+                                        . '         style="max-height:100px !important;" '
+                                        . '         alt="' . basename($value) . '">     '
+                                        . ' </a>'
+                                        . '</div>'
+                                        . '</div>';
                             }
-                            ?>
+                            ?>            
+                            <div class="col-md-12">
+                                <h5 class="f-w-700">Evidencias</h5>
+                                <h4><?php echo $htmlArchivos; ?></h4>
+                            </div>            
                         </div>
                         <?php
                         if (!empty($item[0]['tablaEquipos'])) {

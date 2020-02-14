@@ -124,6 +124,20 @@ class ServicioInstalaciones implements Servicio {
             } else {
                 $archivos = $arrayAvanceProblema[0]['Archivos'];
             }
+
+
+            if (isset($datos['archivosEleminar'])) {
+                $arrayArchivos = explode(',', $archivos);
+
+                foreach ($arrayArchivos as $key => $value) {
+                    if (in_array($value, explode(',', $datos['archivosEleminar']))) {
+                        unset($arrayArchivos[$key]);
+                    }
+                }
+
+                $archivos = implode(',', $arrayArchivos);
+            }
+
             $this->DBServicioTicket->actualizarServiciosAvance(array('Descripcion' => $datos['descripcion'], 'Archivos' => $archivos), array('Id' => $datos['idAvanceProblema']));
         }
         $this->DBServicioTicket->finalizarTransaccion();

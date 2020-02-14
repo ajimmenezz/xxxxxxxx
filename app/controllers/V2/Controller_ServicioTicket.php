@@ -156,13 +156,15 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $datosServicio['idUsuario'] = Usuario::getId();
-            if ($datosServicio['evidencia'] !== 'false') {
+
+            if (!empty($_FILES)) {
                 $carpeta = 'Servicios/Servicio-' . $datosServicio['id'] . '/EvidenciaProblemas/';
                 Archivo::saveArchivos($carpeta);
                 $datosServicio['archivos'] = Archivo::getString();
             } else {
                 $datosServicio['archivos'] = null;
             }
+            
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
 
             $this->servicio->setProblema($datosServicio);

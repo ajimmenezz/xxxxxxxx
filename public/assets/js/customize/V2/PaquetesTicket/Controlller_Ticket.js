@@ -65,13 +65,13 @@ $(function () {
 
     function mostrarFormulario(datos) {
         if (servicio) {
+            console.log(datosServicio);
             servicio.setDatos(datosServicio);
             domHtml.ocultarElemento('listaPoliza');
             domHtml.mostrarElemento('panelDetallesTicket');
             informacion.setDatos(datosServicio);
             informacion.listener(dato => servicio.setDatos(dato));
             solucion.setDatos(datosServicio);
-            solucion.iniciarElementos();
             solucion.listener(dato => servicio.setDatos(dato));
             bitacora.setDatos(datosServicio);
             bitacora.listener(dato => servicio.setDatos(dato));
