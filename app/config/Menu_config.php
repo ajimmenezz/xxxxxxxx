@@ -881,6 +881,7 @@ $config['Poliza'] = array(
             'Componentes/HerramientasWeb/Bug',            
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
+            'Componentes/Tablas/TablaBotones',
             'Componentes/FileUpload/IUpload',
             'Componentes/FileUpload/FileUpload_Basico',
             'Componentes/Formulario',

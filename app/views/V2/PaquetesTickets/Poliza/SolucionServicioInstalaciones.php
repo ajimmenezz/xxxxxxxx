@@ -86,6 +86,8 @@
                     <th class="all">Punto</th>
                     <th class="never">IdOperación</th>
                     <th class="all">Operación</th>
+                    <th class="all">Evidencia</th>
+                    <th class="all">Acciones</th>
                 </tr>
             </thead>
             <tbody>                                      

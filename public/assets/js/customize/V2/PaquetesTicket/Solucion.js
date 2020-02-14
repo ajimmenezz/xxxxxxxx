@@ -37,7 +37,7 @@ class Solucion {
     }
 
     crearTabla() {
-        this.tabla = new TablaBasica('data-table-equipos-instalaciones');
+        this.tabla = new TablaBotones('data-table-equipos-instalaciones');
     }
 
     setDatos(datos) {
@@ -108,24 +108,24 @@ class Solucion {
         selectPunto.evento('change', function () {
             if (selectPunto.obtenerValor() !== '') {
                 selectModelo.habilitarElemento();
+                if (selectOperacion.obtenerValor() === '1') {
+                    selectModelo.cargaDatosEnSelect(_this.datos.datosServicio.equipos);
+                } else if (selectOperacion.obtenerValor() === '2') {
+                    let sucursal = _this.datos.servicio.sucursal;
+                    let area = selectAreaAtencion.obtenerValor();
+                    let punto = selectPunto.obtenerValor();
+                    let data = {sucursal: sucursal, area: area, punto: punto};
+                    _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/equipoCensadosAreaEquipo', data, function (respuesta) {
+                        $("#selectModeloInstalaciones").empty().append('<option data-serie="" value="">Seleccionar</option>');
+                        if (respuesta !== false) {
+                            $.each(respuesta.equipos, function (key, valor) {
+                                $("#selectModeloInstalaciones").append(`<option data-serie="${valor.serie}" value="${valor.id}">${valor.text}</option>`);
+                            });
+                        }
+                    });
+                }
             }
 
-            if (selectOperacion.obtenerValor() === '1') {
-                selectModelo.cargaDatosEnSelect(_this.datos.datosServicio.equipos);
-            } else {
-                let sucursal = _this.datos.servicio.sucursal;
-                let area = selectAreaAtencion.obtenerValor();
-                let punto = selectPunto.obtenerValor();
-                let data = {sucursal: sucursal, area: area, punto: punto};
-                _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/equipoCensadosAreaEquipo', data, function (respuesta) {
-                    $("#selectModeloInstalaciones").empty().append('<option data-serie="" value="">Seleccionar</option>');
-                    if (respuesta !== false) {
-                        $.each(respuesta.equipos, function (key, valor) {
-                            $("#selectModeloInstalaciones").append(`<option data-serie="${valor.serie}" value="${valor.id}">${valor.text}</option>`);
-                        });
-                    }
-                });
-            }
         });
 
         selectModelo.evento('change', function () {
@@ -145,41 +145,49 @@ class Solucion {
 
         $('#btnAgregarEquipoInstalacion').off("click");
         $('#btnAgregarEquipoInstalacion').on("click", function () {
-            let arrayCampos = [
-                {'objeto': '#selectOperacionInstalaciones', 'mensajeError': 'Falta seleccionar el campo operación.'},
-                {'objeto': '#selectAreaAtencionInstalaciones', 'mensajeError': 'Falta seleccionarel campo Área de Atención.'},
-                {'objeto': '#selectPuntoInstalaciones', 'mensajeError': 'Falta seleccionar el campo Punto.'},
-                {'objeto': '#selectModeloInstalaciones', 'mensajeError': 'Falta seleccionar el campo Modelo.'},
-                {'objeto': '#inputSerieInstalaciones', 'mensajeError': 'Falta escribir el campo Serie.'}
-            ];
+            try {
+                let datosFormulario = _this.formulario.validarFormulario();
+            } catch (Error) {
+                console.log(Error);
+            }
+//            let arrayCampos = [
+//                {'objeto': '#selectOperacionInstalaciones', 'mensajeError': 'Falta seleccionar el campo operación.'},
+//                {'objeto': '#selectAreaAtencionInstalaciones', 'mensajeError': 'Falta seleccionarel campo Área de Atención.'},
+//                {'objeto': '#selectPuntoInstalaciones', 'mensajeError': 'Falta seleccionar el campo Punto.'},
+//                {'objeto': '#selectModeloInstalaciones', 'mensajeError': 'Falta seleccionar el campo Modelo.'},
+//                {'objeto': '#inputSerieInstalaciones', 'mensajeError': 'Falta escribir el campo Serie.'}
+//            ];
+//
+//            if ($('#inputIlegibleInstalciones').is(':checked')) {
+//                arrayCampos.push({'objeto': '#agregarEvidenciaEquipo', 'mensajeError': 'Falta seleccionar el campo adjuntos.'});
+//            }
 
-            if ($('#inputIlegibleInstalciones').is(':checked')) {
-                arrayCampos.push({'objeto': '#agregarEvidenciaEquipo', 'mensajeError': 'Falta seleccionar el campo adjuntos.'});
-            }
+//            let camposFormularioValidados = _this.evento.validarCamposObjetos(arrayCampos, '.errorInstalaciones');
+
+//            if (camposFormularioValidados) {
+//            _this.tabla.agregarDatosFila([
+//                selectModelo.obtenerValor(),
+//                selectModelo.obtenerTexto(),
+//                inputSerie.obtenerValor(),
+//                selectAreaAtencion.obtenerValor(),
+//                selectAreaAtencion.obtenerTexto(),
+//                selectPunto.obtenerValor(),
+//                selectOperacion.obtenerValor(),
+//                selectOperacion.obtenerTexto(),
+//                `<div class"text-center">
+//                        <a href="/storage/Archivos/Servicios/Servicio-825/EvidenciaProblemas/_93107522_hazelnutandcubs_creditzsl1.jpg" data-lightbox="evidencias">
+//                            <img src ="/assets/img/Iconos/jpg_icon.png" width="20" height="20" />
+//                        </a>
+//                    </div>`,
+//                `<a id="btnCancelarInformacionGeneral" href="javascript:;" class="btn btn-danger btn-xs m-r-5"><i class="fa fa fa-trash-o"></i> Eliminar</a>`
+//            ]);
 //
-            let camposFormularioValidados = _this.evento.validarCamposObjetos(arrayCampos, '.errorInstalaciones');
-//
-            if (camposFormularioValidados) {
-                console.log(camposFormularioValidados);
-            }
-//                _this.tabla.agregarDatosFila([
-//                    selectModelo.obtenerValor(),
-//                    selectModelo.obtenerTexto(),
-//                    inputSerie.obtenerValor(),
-//                    selectAreaAtencion.obtenerValor(),
-//                    selectAreaAtencion.obtenerTexto(),
-//                    selectPunto.obtenerValor(),
-//                    selectOperacion.obtenerValor(),
-//                    selectOperacion.obtenerTexto()
-//                ]);
-//                
-//                
-//                selectOperacion.limpiarElemento();
-//                selectAreaAtencion.limpiarElemento();
-//                selectPunto.limpiarElemento();
-//                selectPunto.bloquearElemento();
-//                selectModelo.limpiarElemento();
-//                inputSerie.limpiarElemento();
+//            selectOperacion.limpiarElemento();
+//            selectAreaAtencion.limpiarElemento();
+//            selectPunto.limpiarElemento();
+//            selectPunto.bloquearElemento();
+//            selectModelo.limpiarElemento();
+//            inputSerie.limpiarElemento();
 //            }
         });
     }
