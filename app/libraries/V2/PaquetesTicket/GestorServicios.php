@@ -3,6 +3,7 @@
 namespace Librerias\V2\PaquetesTicket;
 
 use Librerias\V2\PaquetesGenerales\Utilerias\Usuario as Usuario;
+use Librerias\V2\PaquetesGenerales\Utilerias\Archivo as Archivo;
 use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenUsuario;
 use Librerias\V2\PaquetesSucursales\SucursalAdist as Sucursal;
 use Librerias\V2\PaquetesSucursales\Censo as Censo;
@@ -61,6 +62,7 @@ Class GestorServicios {
                     $informacion['areasPuntosSucursal'] = $this->sucursal->getAreasPuntoSucursal();
                     $informacion['equipos'] = $this->equipo->getEquipo();
                     $informacion['operaciones'] = $this->getOperacionesPoliza();
+                    $informacion['instalaciones'] = $this->DBServicios->getInstalaciones($datos['datosServicio']['servicio']);
                 }
                 break;
             default:
@@ -90,6 +92,19 @@ Class GestorServicios {
         }
 
         return $datos;
+    }
+
+    public function setEquipo(array $datos) {
+        if ($_FILES) {
+            $carpeta = 'Servicios/Servicio-' . $datos['id'] . '/ServicioInstalaciones/';
+            Archivo::saveArchivos($carpeta);
+            $datos['archivos'] = Archivo::getString();
+        } else {
+            $datos['archivos'] = NULL;
+        }
+        $this->DBServicios->empezarTransaccion();
+        $this->DBServicios->setInstalaciones($datos);
+        $this->DBServicios->finalizarTransaccion();
     }
 
 }

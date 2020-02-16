@@ -85,7 +85,7 @@ Class Modelo_GestorServicio extends Base {
         }
         return $consulta;
     }
-    
+
     public function getOperacionesPoliza() {
         $consulta = array();
         try {
@@ -95,15 +95,32 @@ Class Modelo_GestorServicio extends Base {
         }
         return $consulta;
     }
-    
-    public function getInstalaciones() {
+
+    public function getInstalaciones(string $idServicio) {
         $consulta = array();
         try {
-            $consulta = $this->consulta("SELECT * FROM cat_v3_tipo_operaciones_poliza WHERE Flag = 1");
+            $consulta = $this->consulta("SELECT tie.*,
+                                        (SELECT Nombre FROM cat_v3_tipo_operaciones_poliza WHERE Id = tie.IdOperacion) AS Operacion,
+                                        areaAtencion(tie.IdArea)  AS Area,
+                                        modelo(tie.IdModelo)  AS Modelo
+                                         FROM t_instalaciones_equipo tie
+                                         WHERE IdServicio = '" . $idServicio . "'");
         } catch (\Exception $ex) {
             var_dump($ex->getMessage());
         }
         return $consulta;
+    }
+
+    public function setInstalaciones(array $datos) {
+        $this->insertarArray('t_instalaciones_equipo',array(
+            'IdServicio' => $datos['id'],
+            'IdOperacion' => $datos['idOperacion'],
+            'IdArea' => $datos['idArea'],
+            'Punto' => $datos['punto'],
+            'IdModelo' => $datos['idModelo'],
+            'Serie' => $datos['serie'],
+            'Archivos' => $datos['archivos']
+        ));
     }
 
 }

@@ -3,8 +3,9 @@
 namespace Librerias\V2\PaquetesTicket\Poliza;
 
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
+use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 use Modelos\Modelo_ServicioTicketV2 as ModeloServicioTicket;
-use Modelos\Modelo_ServicioTicketV2 as ModeloServicioTicket;
+//use Modelos\Modelo_GestorServicio as GestorServicio;
 
 class ServicioInstalaciones implements Servicio {
 
@@ -164,10 +165,10 @@ class ServicioInstalaciones implements Servicio {
     }
 
     public function runAccion(string $evento, array $datos = array()) {
-        var_dump($evento);
         switch ($evento) {
             case 'AgregarEquipo':
-                $this->setEquipo($datos);
+                $this->GestorServicio = new GestorServicio();
+                $this->GestorServicio->setEquipo($datos);
                 break;
             case 'borrarNodo':
                 $this->gestorNodos->deleteNodo($datos['idNodo']);
@@ -194,13 +195,6 @@ class ServicioInstalaciones implements Servicio {
         $this->DBServicioTicket->actualizarServiciosAvance(array('Flag' => '0'), array('Id' => $idAvanceProblema));
         $this->DBServicioTicket->finalizarTransaccion();
         return $evidencias;
-    }
-
-    public function setEquipo(array $datos) {
-        var_dump($datos);
-        $this->DBServicioTicket->empezarTransaccion();
-//        $this->DBServicioTicket->actualizarServicio(array('IdSucursal' => $datos['sucursal']), array('Id' => $this->id));
-        $this->DBServicioTicket->finalizarTransaccion();
     }
 
 }

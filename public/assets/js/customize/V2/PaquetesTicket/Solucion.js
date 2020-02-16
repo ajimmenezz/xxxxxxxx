@@ -6,13 +6,7 @@ class Solucion {
         this.modal = new Modal('modal-dialogo');
         this.formulario = null;
         this.datos = null;
-
-//        this.selects = {};
-//        this.tabla = {};
-//        this.inputs = {};
-//        this.file = {};
         this.selectOperacion = null
-
         this.setElementosFormulario();
     }
 
@@ -49,6 +43,7 @@ class Solucion {
         this.selectOperacion = this.formulario.obtenerElemento('selectOperacionInstalaciones');
         this.selectOperacion.cargaDatosEnSelect(this.datos.datosServicio.operaciones);
         this.crearTabla();
+        this.agregarDatosTabla();
     }
 
     listener(callback) {
@@ -154,49 +149,60 @@ class Solucion {
             } else {
                 file.setAtributos({'data-parsley-required': 'false'});
             }
-            
+
             try {
                 _this.formulario.validarFormulario();
                 let data = {
-                    'id': _this.datos.servicio.servicio, 
+                    'id': _this.datos.servicio.servicio,
                     'tipo': _this.datos.servicio.tipoServicio,
                     'idOperacion': _this.selectOperacion.obtenerValor(),
                     'idArea': selectAreaAtencion.obtenerValor(),
                     'punto': selectPunto.obtenerValor(),
-                    'idModelo': selectModelo.obtenerValor()
+                    'idModelo': selectModelo.obtenerValor(),
+                    'serie': inputSerie.obtenerValor()
                 };
-                
+
                 file.enviarPeticionServidor('panel-ticket', data, function (respuesta) {
+                    _this.selectOperacion.limpiarElemento();
+                    selectAreaAtencion.limpiarElemento();
+                    selectPunto.limpiarElemento();
+                    selectPunto.bloquearElemento();
+                    selectModelo.limpiarElemento();
+                    inputSerie.limpiarElemento();
                     
+                    _this.datos.datosServicio = respuesta.datosServicio;
+                    _this.tabla.limpiartabla();
+                    _this.agregarDatosTabla();
                 });
-                
-                
-//                _this.tabla.agregarDatosFila([
-//                    selectModelo.obtenerValor(),
-//                    selectModelo.obtenerTexto(),
-//                    inputSerie.obtenerValor(),
-//                    selectAreaAtencion.obtenerValor(),
-//                    selectAreaAtencion.obtenerTexto(),
-//                    selectPunto.obtenerValor(),
-//                    _this.selectOperacion.obtenerValor(),
-//                    _this.selectOperacion.obtenerTexto(),
-//                    `<div class"text-center">
-//                        <a href="/storage/Archivos/Servicios/Servicio-825/EvidenciaProblemas/_93107522_hazelnutandcubs_creditzsl1.jpg" data-lightbox="evidencias">
-//                            <img src ="/assets/img/Iconos/jpg_icon.png" width="20" height="20" />
-//                        </a>
-//                    </div>`,
-//                    `<a id="btnCancelarInformacionGeneral" href="javascript:;" class="btn btn-danger btn-xs m-r-5"><i class="fa fa fa-trash-o"></i> Eliminar</a>`
-//                ]);
-//
-//                _this.selectOperacion.limpiarElemento();
-//                selectAreaAtencion.limpiarElemento();
-//                selectPunto.limpiarElemento();
-//                selectPunto.bloquearElemento();
-//                selectModelo.limpiarElemento();
-//                inputSerie.limpiarElemento();
             } catch (Error) {
                 _this.modal.mostrarError('errorInstalaciones', Error);
             }
+        });
+    }
+
+    agregarDatosTabla() {
+        let _this = this;
+
+        $.each(this.datos.datosServicio.instalaciones, function (key, valor) {
+            let evidencias = 'Sin Evidencias';
+
+            if (valor.Archivos !== null) {
+                evidencias = _this.tabla.campoEvidencias(valor.Archivos);
+            }
+            
+            _this.tabla.agregarDatosFila([
+                valor.Id,
+                valor.IdModelo,
+                valor.Modelo,
+                valor.Serie,
+                valor.IdArea,
+                valor.Area,
+                valor.Punto,
+                valor.IdOperacion,
+                valor.Operacion,
+                evidencias,
+                _this.tabla.botonEliminar(valor.Id)
+            ]);
         });
     }
 
