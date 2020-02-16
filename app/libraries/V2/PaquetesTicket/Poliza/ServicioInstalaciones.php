@@ -5,6 +5,7 @@ namespace Librerias\V2\PaquetesTicket\Poliza;
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 use Modelos\Modelo_ServicioTicketV2 as ModeloServicioTicket;
+
 //use Modelos\Modelo_GestorServicio as GestorServicio;
 
 class ServicioInstalaciones implements Servicio {
@@ -165,13 +166,14 @@ class ServicioInstalaciones implements Servicio {
     }
 
     public function runAccion(string $evento, array $datos = array()) {
+        $this->GestorServicio = new GestorServicio();
+        
         switch ($evento) {
             case 'AgregarEquipo':
-                $this->GestorServicio = new GestorServicio();
                 $this->GestorServicio->setEquipo($datos);
                 break;
-            case 'borrarNodo':
-                $this->gestorNodos->deleteNodo($datos['idNodo']);
+            case 'EliminarEquipo':
+                $this->GestorServicio->deleteEquipo($datos);
                 break;
             default:
                 break;

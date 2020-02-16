@@ -43,7 +43,7 @@ class Solucion {
         this.selectOperacion = this.formulario.obtenerElemento('selectOperacionInstalaciones');
         this.selectOperacion.cargaDatosEnSelect(this.datos.datosServicio.operaciones);
         this.crearTabla();
-        this.agregarDatosTabla();
+        this.agregarDatosTabla(this.datos.datosServicio.instalaciones);
     }
 
     listener(callback) {
@@ -169,27 +169,47 @@ class Solucion {
                     selectPunto.bloquearElemento();
                     selectModelo.limpiarElemento();
                     inputSerie.limpiarElemento();
-                    
-                    _this.datos.datosServicio = respuesta.datosServicio;
-                    _this.tabla.limpiartabla();
-                    _this.agregarDatosTabla();
+
+                    _this.respuestaDatosServicio(respuesta);
                 });
             } catch (Error) {
                 _this.modal.mostrarError('errorInstalaciones', Error);
             }
         });
+        
+        _this.botonEliminar()
     }
 
-    agregarDatosTabla() {
+    botonEliminar() {
+        let _this = this;
+        
+        $('.btnEliminar').off("click");
+        $('.btnEliminar').on("click", function () {
+            let idInstalacion = $(this).data('id');
+            let data = {'id': _this.datos.servicio.servicio, 'tipo': _this.datos.servicio.tipoServicio, 'idInstalacion': idInstalacion};
+            _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/Accion/EliminarEquipo', data, function (respuesta) {
+                _this.respuestaDatosServicio(respuesta);
+            });
+        });
+    }
+
+    respuestaDatosServicio(respuesta) {
+        this.datos.datosServicio = respuesta.datosServicio;
+        this.tabla.limpiartabla();
+        this.agregarDatosTabla(respuesta.datosServicio.instalaciones);
+        this.botonEliminar();
+    }
+
+    agregarDatosTabla(datos) {
         let _this = this;
 
-        $.each(this.datos.datosServicio.instalaciones, function (key, valor) {
+        $.each(datos, function (key, valor) {
             let evidencias = 'Sin Evidencias';
 
             if (valor.Archivos !== null) {
-                evidencias = _this.tabla.campoEvidencias(valor.Archivos);
+                evidencias = _this.tabla.campoEvidencias(valor.Archivos, valor.Id);
             }
-            
+
             _this.tabla.agregarDatosFila([
                 valor.Id,
                 valor.IdModelo,

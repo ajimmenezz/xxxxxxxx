@@ -106,5 +106,11 @@ Class GestorServicios {
         $this->DBServicios->setInstalaciones($datos);
         $this->DBServicios->finalizarTransaccion();
     }
+    
+    public function deleteEquipo(array $datos) {
+        $this->DBServicios->empezarTransaccion();
+        $this->DBServicios->deleteInstalacion($datos['idInstalacion']);
+        $this->DBServicios->finalizarTransaccion();
+    }
 
 }

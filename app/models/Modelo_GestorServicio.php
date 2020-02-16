@@ -112,7 +112,7 @@ Class Modelo_GestorServicio extends Base {
     }
 
     public function setInstalaciones(array $datos) {
-        $this->insertarArray('t_instalaciones_equipo',array(
+        $this->insertarArray('t_instalaciones_equipo', array(
             'IdServicio' => $datos['id'],
             'IdOperacion' => $datos['idOperacion'],
             'IdArea' => $datos['idArea'],
@@ -121,6 +121,17 @@ Class Modelo_GestorServicio extends Base {
             'Serie' => $datos['serie'],
             'Archivos' => $datos['archivos']
         ));
+    }
+
+    public function deleteInstalacion(string $id) {
+        $consulta = array();
+        try {
+            $consulta = $this->borrar("DELETE FROM t_instalaciones_equipo
+                                         WHERE Id = '" . $id . "'");
+        } catch (\Exception $ex) {
+            var_dump($ex->getMessage());
+        }
+        return $consulta;
     }
 
 }
