@@ -60,6 +60,7 @@ Class GestorServicios {
                     $informacion['areasSucursal'] = $this->sucursal->getAreasSucursal();
                     $informacion['areasPuntosSucursal'] = $this->sucursal->getAreasPuntoSucursal();
                     $informacion['equipos'] = $this->equipo->getEquipo();
+                    $informacion['operaciones'] = $this->getOperacionesPoliza();
                 }
                 break;
             default:
@@ -74,6 +75,20 @@ Class GestorServicios {
         $this->censo = new Censo($this->sucursal);
         $datos['marcaEquipo'] = $this->almacenUsuario->getMarcaEquipo();
         $datos['censoSwitch'] = $this->censo->getRegistrosComponente(28);
+        return $datos;
+    }
+
+    public function getOperacionesPoliza() {
+        $datos = array();
+        $consulta = $this->DBServicios->getOperacionesPoliza();
+
+        foreach ($consulta as $value) {
+            array_push($datos, array(
+                'id' => $value['Id'],
+                'text' => $value['Nombre']
+            ));
+        }
+
         return $datos;
     }
 

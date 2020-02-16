@@ -4,6 +4,7 @@ namespace Librerias\V2\PaquetesTicket\Poliza;
 
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Modelos\Modelo_ServicioTicketV2 as ModeloServicioTicket;
+use Modelos\Modelo_ServicioTicketV2 as ModeloServicioTicket;
 
 class ServicioInstalaciones implements Servicio {
 
@@ -163,27 +164,14 @@ class ServicioInstalaciones implements Servicio {
     }
 
     public function runAccion(string $evento, array $datos = array()) {
-
+        var_dump($evento);
         switch ($evento) {
-//            case 'agregarNodo':
-//                $this->gestorNodos->setNodo($datos);
-//                break;
-//            case 'borrarNodo':
-//                $this->gestorNodos->deleteNodo($datos['idNodo']);
-//                break;
-//            case 'actualizarNodo':
-//                $this->gestorNodos->updateNodo($datos);
-//                break;
-//            case 'borrarNodos':
-//                $this->borrarNodos();
-//                $this->setSucursal($datos['idSucursal']);
-//                break;
-//            case 'borrarArchivos':
-//                $this->gestorNodos->deleteArchivosNodo($datos);
-//                break;
-//            case 'borrarArchivo':
-//                $this->gestorNodos->deleteArchivo($datos);
-//                break;
+            case 'AgregarEquipo':
+                $this->setEquipo($datos);
+                break;
+            case 'borrarNodo':
+                $this->gestorNodos->deleteNodo($datos['idNodo']);
+                break;
             default:
                 break;
         }
@@ -208,25 +196,10 @@ class ServicioInstalaciones implements Servicio {
         return $evidencias;
     }
 
-    public function deleteArchivoProblema(array $datos) {
-        $temporal = null;
+    public function setEquipo(array $datos) {
+        var_dump($datos);
         $this->DBServicioTicket->empezarTransaccion();
-
-        $arrayAvanceProblema = $this->DBServicioTicket->getAvanceProblemaPorId($datos['idAvanceProblema']);
-
-        if (!empty($arrayAvanceProblema)) {
-            foreach ($arrayAvanceProblema as $value) {
-                $temporal = explode(',', $value['Archivos']);
-            }
-        }
-
-        if (in_array($datos['evidencia'], $temporal)) {
-            $key = array_search($datos['evidencia'], $temporal);
-            unset($temporal[$key]);
-        }
-
-        $archivos = implode(',', $temporal);
-        $this->DBServicioTicket->actualizarServiciosAvance(array('Archivos' => $archivos), array('Id' => $datos['idAvanceProblema']));
+//        $this->DBServicioTicket->actualizarServicio(array('IdSucursal' => $datos['sucursal']), array('Id' => $this->id));
         $this->DBServicioTicket->finalizarTransaccion();
     }
 

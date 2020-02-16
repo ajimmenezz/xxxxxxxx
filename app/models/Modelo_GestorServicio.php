@@ -85,5 +85,25 @@ Class Modelo_GestorServicio extends Base {
         }
         return $consulta;
     }
+    
+    public function getOperacionesPoliza() {
+        $consulta = array();
+        try {
+            $consulta = $this->consulta("SELECT * FROM cat_v3_tipo_operaciones_poliza WHERE Flag = 1");
+        } catch (\Exception $ex) {
+            var_dump($ex->getMessage());
+        }
+        return $consulta;
+    }
+    
+    public function getInstalaciones() {
+        $consulta = array();
+        try {
+            $consulta = $this->consulta("SELECT * FROM cat_v3_tipo_operaciones_poliza WHERE Flag = 1");
+        } catch (\Exception $ex) {
+            var_dump($ex->getMessage());
+        }
+        return $consulta;
+    }
 
 }

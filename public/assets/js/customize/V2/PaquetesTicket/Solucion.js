@@ -3,13 +3,15 @@ class Solucion {
     constructor() {
         this.peticion = new Utileria();
         this.evento = new Base();
+        this.modal = new Modal('modal-dialogo');
         this.formulario = null;
         this.datos = null;
 
-        this.selects = {};
-        this.tabla = {};
-        this.inputs = {};
-        this.file = {};
+//        this.selects = {};
+//        this.tabla = {};
+//        this.inputs = {};
+//        this.file = {};
+        this.selectOperacion = null
 
         this.setElementosFormulario();
     }
@@ -28,12 +30,12 @@ class Solucion {
             filesUpload: {
                 'agregarEvidenciaEquipo': {
                     tipo: 'basico',
-                    url: 'Seguimiento/Servicio/agregarProblema',
+                    url: 'Seguimiento/Servicio/Accion/AgregarEquipo',
                     extensiones: ['jpg', 'jpeg', 'png']}
             },
         };
 
-        this.formulario = new Formulario('formProblema', elementosFormulario);
+        this.formulario = new Formulario('formInstalaciones', elementosFormulario);
     }
 
     crearTabla() {
@@ -44,20 +46,22 @@ class Solucion {
         this.datos = datos;
         this.peticion.insertarContenido('Solucion', this.datos.html.solucion);
         this.formulario.iniciarElementos();
+        this.selectOperacion = this.formulario.obtenerElemento('selectOperacionInstalaciones');
+        this.selectOperacion.cargaDatosEnSelect(this.datos.datosServicio.operaciones);
         this.crearTabla();
     }
 
     listener(callback) {
         let _this = this;
 
-        let selectOperacion = _this.formulario.obtenerElemento('selectOperacionInstalaciones');
         let selectModelo = _this.formulario.obtenerElemento('selectModeloInstalaciones');
         let selectAreaAtencion = _this.formulario.obtenerElemento('selectAreaAtencionInstalaciones');
         let selectPunto = _this.formulario.obtenerElemento('selectPuntoInstalaciones');
         let inputSerie = _this.formulario.obtenerElemento('inputSerieInstalaciones');
+        let file = _this.formulario.obtenerElemento('agregarEvidenciaEquipo');
 
-        selectOperacion.evento('change', function () {
-            if (selectOperacion.obtenerValor() === '') {
+        this.selectOperacion.evento('change', function () {
+            if (_this.selectOperacion.obtenerValor() === '') {
                 selectAreaAtencion.bloquearElemento();
                 selectPunto.bloquearElemento();
                 selectAreaAtencion.limpiarElemento();
@@ -72,7 +76,7 @@ class Solucion {
             selectModelo.limpiarElemento();
             selectModelo.bloquearElemento();
 
-            if (selectOperacion.obtenerValor() === '1') {
+            if (_this.selectOperacion.obtenerValor() === '1') {
                 selectAreaAtencion.cargaDatosEnSelect(_this.datos.datosServicio.areasAtencionSucursal);
                 let dataPuntos = [
                     {id: '1', text: 1},
@@ -100,7 +104,7 @@ class Solucion {
 
         selectAreaAtencion.evento('change', function () {
             selectPunto.habilitarElemento();
-            if (selectOperacion.obtenerValor() === '2') {
+            if (_this.selectOperacion.obtenerValor() === '2') {
                 selectAreaAtencion.cargarElementosASelect('selectPuntoInstalaciones', _this.datos.datosServicio.areasPuntosSucursal, 'idArea');
             }
         });
@@ -108,9 +112,9 @@ class Solucion {
         selectPunto.evento('change', function () {
             if (selectPunto.obtenerValor() !== '') {
                 selectModelo.habilitarElemento();
-                if (selectOperacion.obtenerValor() === '1') {
+                if (_this.selectOperacion.obtenerValor() === '1') {
                     selectModelo.cargaDatosEnSelect(_this.datos.datosServicio.equipos);
-                } else if (selectOperacion.obtenerValor() === '2') {
+                } else if (_this.selectOperacion.obtenerValor() === '2') {
                     let sucursal = _this.datos.servicio.sucursal;
                     let area = selectAreaAtencion.obtenerValor();
                     let punto = selectPunto.obtenerValor();
@@ -129,7 +133,7 @@ class Solucion {
         });
 
         selectModelo.evento('change', function () {
-            if (selectOperacion.obtenerValor() === '2') {
+            if (_this.selectOperacion.obtenerValor() === '2') {
                 let serie = $("#selectModeloInstalaciones option:selected").attr("data-serie");
                 inputSerie.definirValor(serie);
             }
@@ -145,50 +149,54 @@ class Solucion {
 
         $('#btnAgregarEquipoInstalacion').off("click");
         $('#btnAgregarEquipoInstalacion').on("click", function () {
-            try {
-                let datosFormulario = _this.formulario.validarFormulario();
-            } catch (Error) {
-                console.log(Error);
+            if ($('#inputIlegibleInstalciones').is(':checked')) {
+                file.setAtributos({'data-parsley-required': 'true'});
+            } else {
+                file.setAtributos({'data-parsley-required': 'false'});
             }
-//            let arrayCampos = [
-//                {'objeto': '#selectOperacionInstalaciones', 'mensajeError': 'Falta seleccionar el campo operación.'},
-//                {'objeto': '#selectAreaAtencionInstalaciones', 'mensajeError': 'Falta seleccionarel campo Área de Atención.'},
-//                {'objeto': '#selectPuntoInstalaciones', 'mensajeError': 'Falta seleccionar el campo Punto.'},
-//                {'objeto': '#selectModeloInstalaciones', 'mensajeError': 'Falta seleccionar el campo Modelo.'},
-//                {'objeto': '#inputSerieInstalaciones', 'mensajeError': 'Falta escribir el campo Serie.'}
-//            ];
-//
-//            if ($('#inputIlegibleInstalciones').is(':checked')) {
-//                arrayCampos.push({'objeto': '#agregarEvidenciaEquipo', 'mensajeError': 'Falta seleccionar el campo adjuntos.'});
-//            }
-
-//            let camposFormularioValidados = _this.evento.validarCamposObjetos(arrayCampos, '.errorInstalaciones');
-
-//            if (camposFormularioValidados) {
-//            _this.tabla.agregarDatosFila([
-//                selectModelo.obtenerValor(),
-//                selectModelo.obtenerTexto(),
-//                inputSerie.obtenerValor(),
-//                selectAreaAtencion.obtenerValor(),
-//                selectAreaAtencion.obtenerTexto(),
-//                selectPunto.obtenerValor(),
-//                selectOperacion.obtenerValor(),
-//                selectOperacion.obtenerTexto(),
-//                `<div class"text-center">
+            
+            try {
+                _this.formulario.validarFormulario();
+                let data = {
+                    'id': _this.datos.servicio.servicio, 
+                    'tipo': _this.datos.servicio.tipoServicio,
+                    'idOperacion': _this.selectOperacion.obtenerValor(),
+                    'idArea': selectAreaAtencion.obtenerValor(),
+                    'punto': selectPunto.obtenerValor(),
+                    'idModelo': selectModelo.obtenerValor()
+                };
+                
+                file.enviarPeticionServidor('panel-ticket', data, function (respuesta) {
+                    
+                });
+                
+                
+//                _this.tabla.agregarDatosFila([
+//                    selectModelo.obtenerValor(),
+//                    selectModelo.obtenerTexto(),
+//                    inputSerie.obtenerValor(),
+//                    selectAreaAtencion.obtenerValor(),
+//                    selectAreaAtencion.obtenerTexto(),
+//                    selectPunto.obtenerValor(),
+//                    _this.selectOperacion.obtenerValor(),
+//                    _this.selectOperacion.obtenerTexto(),
+//                    `<div class"text-center">
 //                        <a href="/storage/Archivos/Servicios/Servicio-825/EvidenciaProblemas/_93107522_hazelnutandcubs_creditzsl1.jpg" data-lightbox="evidencias">
 //                            <img src ="/assets/img/Iconos/jpg_icon.png" width="20" height="20" />
 //                        </a>
 //                    </div>`,
-//                `<a id="btnCancelarInformacionGeneral" href="javascript:;" class="btn btn-danger btn-xs m-r-5"><i class="fa fa fa-trash-o"></i> Eliminar</a>`
-//            ]);
+//                    `<a id="btnCancelarInformacionGeneral" href="javascript:;" class="btn btn-danger btn-xs m-r-5"><i class="fa fa fa-trash-o"></i> Eliminar</a>`
+//                ]);
 //
-//            selectOperacion.limpiarElemento();
-//            selectAreaAtencion.limpiarElemento();
-//            selectPunto.limpiarElemento();
-//            selectPunto.bloquearElemento();
-//            selectModelo.limpiarElemento();
-//            inputSerie.limpiarElemento();
-//            }
+//                _this.selectOperacion.limpiarElemento();
+//                selectAreaAtencion.limpiarElemento();
+//                selectPunto.limpiarElemento();
+//                selectPunto.bloquearElemento();
+//                selectModelo.limpiarElemento();
+//                inputSerie.limpiarElemento();
+            } catch (Error) {
+                _this.modal.mostrarError('errorInstalaciones', Error);
+            }
         });
     }
 
