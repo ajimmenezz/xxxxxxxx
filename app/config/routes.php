@@ -99,6 +99,8 @@ $route['Poliza/Seguimiento/Servicio/elminarAvanceProblema'] = 'V2/Controller_Ser
 $route['Poliza/Seguimiento/Servicio/eliminarEvidenciaProblema'] = 'V2/Controller_ServicioTicket/deleteAvidenciaProblema';
 $route['Poliza/Seguimiento/Servicio/equipoCensadosAreaEquipo'] = 'V2/Controller_ServicioTicket/getEquipoCensadosAreaPunto';
 $route['Poliza/Seguimiento/Servicio/Accion/(:any)'] = 'V2/Controller_ServicioTicket/runEvento/$1';
+$route['Poliza/Seguimiento/Servicio/concluir'] = 'V2/Controller_ServicioTicket/setConcluir';
+$route['Poliza/Seguimiento/Servicio/validarServicio'] = 'V2/Controller_ServicioTicket/validarServicio';
 
 
 /* Routers para el manejo nuevo de Proyectos */

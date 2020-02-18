@@ -120,10 +120,23 @@
 
     <!--Empezando Titulo y boton regresar-->
     <div class="row">
-        <div class="col-md-9 col-sm-6 col-xs-12">
+        <div class="col-md-6 col-sm-6 col-xs-12">
             <h1 class="page-header">Seguimiento Póliza</h1>
         </div>
-        <div class="col-md-3 col-sm-6 col-xs-12 text-right">
+        <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Acciones <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li id="btnCancelarServicioSeguimiento"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
+                    <li id="btnNuevoServicioSeguimiento"><a href="#"><i class="fa fa-plus"></i> Nuevo Servicio</a></li>
+                    <li id="btnReasignarServicio"><a href="#"><i class="fa fa-mail-reply-all"></i> Reasignar Servicio</a></li>
+                    <li id="btnNuevaSolicitud"><a href="#"><i class="fa fa-puzzle-piece"></i> Solicitar Apoyo</a></li>
+                    <li id="btnSubirInformacionSD"><a href="#"><i class="fa fa-cloud-upload"></i> Subir Información SD</a></li>
+                    <li id="btnValidarServicio" class="hidden"><a href="#"><i class="fa fa-check"></i> Validar Servicio</a></li>
+                </ul>
+            </div>
             <label id="btnRegresar" class="btn btn-success">
                 <i class="fa fa fa-reply"></i> Regresar
             </label>  
@@ -155,7 +168,7 @@
                 <ul class="nav nav-tabs nav-tabs-inverse">
                     <li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>
                     <li class="active"><a href="#General" data-toggle="tab">Información</a></li>
-                    <li class=""><a href="#Solucion" data-toggle="tab">Equipos</a></li>
+                    <li class=""><a href="#Solucion" data-toggle="tab">Solución</a></li>
                     <li class=""><a href="#BitacoraProblemas" data-toggle="tab">Bitácara problemas</a></li>                    
                     <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>          
                 </ul>

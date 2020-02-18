@@ -35,6 +35,7 @@ class Bitacora {
     setDatos(datos) {
         this.datos = datos;
         this.peticion.insertarContenido('BitacoraProblemas', this.datos.html.bitacora);
+        this.desabilitarFormulario();
     }
 
     listener(callback) {
@@ -183,5 +184,12 @@ class Bitacora {
                 });
             });
         });
+    }
+
+    desabilitarFormulario() {
+        if (this.datos.servicio.estatusServicio === '5') {
+            this.peticion.ocultarElemento('btnReportarProblema');
+            $('.seccion-botones-problema').addClass('hidden');
+        }
     }
 }

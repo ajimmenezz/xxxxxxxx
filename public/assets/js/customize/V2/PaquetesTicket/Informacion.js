@@ -56,6 +56,7 @@ class Informacion {
         this.setDatosSelect(datos);
         this.setDatosInputs(datos.servicio);
         this.mostrarOcultarBotonesFolio(false, true);
+        this.desabilitarFormulario();
     }
 
     setDatosSelect(datos) {
@@ -169,6 +170,21 @@ class Informacion {
             evento.empezarCargando('#panel-ticket');
             location.reload();
         });
+
+        $('#btnValidarServicio').on('click', function () {
+            console.log('pumas');
+            let data = {id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
+            _this.peticion.enviar('panelServiciosGeneralesRedes', 'Seguimiento/Servicio/validarServicio', data, function (respuesta) {
+                if (_this.bug.validar(respuesta)) {
+                    _this.modal.mostrarModal("Exito", '<h4>Servicio validado correctamente</h4>');
+//                    $('#btnAceptar').addClass('hidden');
+                    _this.modal.btnAceptar('btnCerrar', function () {
+                        _this.modal.cerrarModal();
+                        location.reload();
+                    });
+                }
+            });
+        });
     }
 
     mostrarOcultarBotones(habilitar) {
@@ -239,6 +255,14 @@ class Informacion {
             this.peticion.mostrarElemento('btnGuardar');
             this.peticion.mostrarElemento('btnCancelar');
     }
+    }
+
+    desabilitarFormulario() {
+        if (this.datos.servicio.estatusServicio === '5') {
+            this.peticion.ocultarElemento('btnEditarFolio');
+            this.peticion.ocultarElemento('btnEditarInformacionGeneral');
+            this.peticion.mostrarElemento('btnValidarServicio');
+        }
     }
 }
 

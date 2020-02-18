@@ -9,6 +9,8 @@ $(function () {
     let informacion = new Informacion();
     let solucion = new Solucion();
     let bitacora = new Bitacora();
+    let firma = new Firma();
+    var servicios = new Servicio();
 
     //Muestra la hora en el sistema
     evento.horaServidor($("#horaServidor").val());
@@ -75,10 +77,53 @@ $(function () {
             solucion.listener(dato => servicio.setDatos(dato));
             bitacora.setDatos(datosServicio);
             bitacora.listener(dato => servicio.setDatos(dato));
+            firma.setDatos(datosServicio);
+            firma.listener(dato => servicio.setDatos(dato));
+
+            eventosBotonAcciones(datosServicio);
         } else {
             datosServicio = datos;
             seguimientoOld(evento, datosServicio, datosFila);
         }
+    }
+
+    function eventosBotonAcciones(datosServicio) {
+        $("#btnNuevoServicioSeguimiento").off("click");
+        $("#btnNuevoServicioSeguimiento").on("click", function () {
+            var data = {servicio: datosServicio.servicio.servicio};
+            servicios.nuevoServicio(
+                    data,
+                    datosServicio.servicio.ticket,
+                    datosServicio.servicio.solicitud,
+                    "Seguimiento/Servicio_Nuevo_Modal",
+                    "#panel-ticket",
+                    "Seguimiento/Servicio_Nuevo"
+                    );
+        });
+        //Encargado de cancelar servicio
+        $("#btnCancelarServicioSeguimiento").off("click");
+        $("#btnCancelarServicioSeguimiento").on("click", function () {
+            var data = {servicio: datosServicio.servicio.servicio, ticket: datosServicio.servicio.ticket};
+            servicios.cancelarServicio(
+                    data,
+                    "Seguimiento/Servicio_Cancelar_Modal",
+                    "#panel-ticket",
+                    "Seguimiento/Servicio_Cancelar"
+                    );
+        });
+
+        servicios.initBotonReasignarServicio(
+                servicio,
+                datosServicio.servicio.servicio,
+                "#panel-ticket"
+                );
+        //evento para crear nueva solicitud
+        servicios.initBotonNuevaSolicitud(
+                datosServicio.servicio.servicio,
+                "#panel-ticket"
+                );
+
+        servicios.subirInformacionSD(servicio, "#panel-ticket");
     }
 
 });

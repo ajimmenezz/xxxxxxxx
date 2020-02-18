@@ -4,6 +4,7 @@ class Solucion {
         this.peticion = new Utileria();
         this.evento = new Base();
         this.modal = new Modal('modal-dialogo');
+        this.bug = new Bug();
         this.formulario = null;
         this.datos = null;
         this.selectOperacion = null
@@ -44,6 +45,7 @@ class Solucion {
         this.selectOperacion.cargaDatosEnSelect(this.datos.datosServicio.operaciones);
         this.crearTabla();
         this.agregarDatosTabla(this.datos.datosServicio.instalaciones);
+        this.desabilitarFormulario();
     }
 
     listener(callback) {
@@ -176,19 +178,21 @@ class Solucion {
                 _this.modal.mostrarError('errorInstalaciones', Error);
             }
         });
-        
+
         _this.botonEliminar()
     }
 
     botonEliminar() {
         let _this = this;
-        
+
         $('.btnEliminar').off("click");
         $('.btnEliminar').on("click", function () {
             let idInstalacion = $(this).data('id');
             let data = {'id': _this.datos.servicio.servicio, 'tipo': _this.datos.servicio.tipoServicio, 'idInstalacion': idInstalacion};
             _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/Accion/EliminarEquipo', data, function (respuesta) {
-                _this.respuestaDatosServicio(respuesta);
+                if (_this.bug.validar(respuesta)) {
+                    _this.respuestaDatosServicio(respuesta);
+                }
             });
         });
     }
@@ -224,6 +228,21 @@ class Solucion {
                 _this.tabla.botonEliminar(valor.Id)
             ]);
         });
+    }
+
+    validarSolucion() {
+        if (this.datos.datosServicio.instalaciones.length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    desabilitarFormulario() {
+        if (this.datos.servicio.estatusServicio === '5') {
+            this.peticion.ocultarElemento('seccion-formulario');
+            $('.seccion-botones-acciones').addClass('hidden');
+        }
     }
 
 }

@@ -164,7 +164,7 @@ class Controller_ServicioTicket extends CI_Controller {
             } else {
                 $datosServicio['archivos'] = null;
             }
-            
+
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
 
             $this->servicio->setProblema($datosServicio);
@@ -252,7 +252,8 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $datosServicio['mensaje'] = $this->servicio->setConcluir($datosServicio);
             $this->setResolucionServiceDesk($datosServicio);
-            $this->almacenVirtual->updateAlmacen($datosServicio);
+            $this->concluirServicioRedes($datosServicio);
+
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (\Exception $ex) {
@@ -307,8 +308,8 @@ class Controller_ServicioTicket extends CI_Controller {
         try {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $idSolicitud = $this->servicio->getDatos()['idSolicitud'];
-            $solicitud = new Solicitud($idSolicitud);
+            $idSolicitud = $this->servicio->getDatos();
+            $solicitud = new Solicitud($idSolicitud['solicitud']);
             $this->servicio->setEstatus('4');
             $solicitud->verificarServiciosParaConcluirSolicitudTicket();
             $this->servicio->enviarServicioConcluido($datosServicio);
@@ -357,7 +358,7 @@ class Controller_ServicioTicket extends CI_Controller {
         $this->getHtmlFolio($datos);
         $this->getHtmlBitacora();
         $this->datos['html']['problema'] = $this->load->view('V2/PaquetesTickets/FormularioProblema', [], TRUE);
-        
+
         switch ($tipoServicio) {
             case 'Instalaciones':
                 $this->datos['html']['solucion'] = $this->load->view('V2/PaquetesTickets/Poliza/SolucionServicioInstalaciones', $datos, TRUE);
@@ -424,6 +425,16 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->datos['operacion'] = FALSE;
             $this->datos['Error'] = $ex->getMessage();
             echo json_encode($this->datos);
+        }
+    }
+
+    private function concluirServicioRedes(array $datos) {
+        switch ($datos['id']) {
+            case 'Cableado':
+                $this->almacenVirtual->updateAlmacen($datosServicio);
+                break;
+            default:
+                break;
         }
     }
 

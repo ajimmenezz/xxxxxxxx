@@ -37,7 +37,7 @@
                                     <?php (($item['IdTipo'] === '1')) ? $colorTituloAvance = 'color:#337ab7' : $colorTituloAvance = 'color:#ff5b57'; ?>
                                     <span class="pull-right text-muted "><h4 style="<?php echo $colorTituloAvance ?>"><?php echo $item['TipoAvance'] ?></h4></span>
                                 </div>
-                                <div class="col-md-3 col-xs-3 text-right">
+                                <div class="col-md-3 col-xs-3 text-right seccion-botones-problema">
                                     <label class="btnEditarAvanceSeguimientoSinEspecificar btn btn-primary btn-xs" data-id="<?php echo $item['Id'] ?>" >
                                         <i class="fa fa-pencil"></i> Editar
                                     </label>  

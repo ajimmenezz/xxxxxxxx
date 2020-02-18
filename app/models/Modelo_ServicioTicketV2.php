@@ -60,7 +60,8 @@ class Modelo_ServicioTicketV2 extends Modelo_Base {
                                             solicitudesInternas.Descripcion as DescripcionSolicitud,
                                             solicitudes.Folio,
                                             tipoServicio(serviciosTicket.IdTipoServicio) AS TipoServicio,
-                                            (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = serviciosTicket.Atiende) CorreoAtiende
+                                            (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = serviciosTicket.Atiende) CorreoAtiende,
+                                            serviciosTicket.IdEstatus AS EstatusServicio
                                         from 
                                                 t_servicios_ticket serviciosTicket
                                         join 

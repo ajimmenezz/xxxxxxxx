@@ -21,7 +21,9 @@ class TablaBotones extends ITabla {
     }
 
     botonEliminar(id) {
-        return `<a href="javascript:;" class="btn btn-danger btn-xs m-r-5 btnEliminar" data-id="${id}"><i class="fa fa fa-trash-o"></i> Eliminar</a>`;
+        return `<div class="seccion-botones-acciones">
+                    <a href="javascript:;" class="btn btn-danger btn-xs m-r-5 btnEliminar" data-id="${id}"><i class="fa fa fa-trash-o"></i> Eliminar</a>
+                </div>`;
     }
 }
 ;
