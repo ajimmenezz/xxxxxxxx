@@ -509,6 +509,7 @@ class Busqueda extends General {
                     return parent::getCI()->load->view("Generales/Modal/detallesServicio_11", $data, TRUE);
                     break;
                 case '20': case 20:
+                case '27': case 27:
                     $data = [
                         /* Datos generales del servicio */
                         'datos' => $this->DBB->getGeneralesServicioGeneralCompleto($servicio)[0],

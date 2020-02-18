@@ -2852,6 +2852,7 @@ class Servicio extends General {
 
             switch ($tipo[0]['IdTipoServicio']) {
                 case '20': case 20:
+                case '27': case 27:
                     $titulo = 'Resumen de Servicio - Correctivo';
                     $contenido .= $this->getDetallesCorrectivo($value['Id']);
                     break;

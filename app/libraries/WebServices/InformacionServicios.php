@@ -948,7 +948,7 @@ class InformacionServicios extends General {
 
     public function checklist(array $datos) {
         $linkPdf = $this->definirPDF($datos);
-        $descripcion = "<div>Ha concluido el Servicio Checklist</div><br/><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a>";
+        $descripcion = "<div>Ha concluido el Correctivo Proactivo</div><br/><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a>";
 
         return $descripcion;
     }
@@ -1330,6 +1330,7 @@ class InformacionServicios extends General {
                         switch ($generales['IdTipoServicio']) {
                             case 20:
                             case '20':
+                            case '27': case 27:
                                 $this->setPDFContentCorrectivo($generales['Id'], $datos);
                                 break;
                         }
