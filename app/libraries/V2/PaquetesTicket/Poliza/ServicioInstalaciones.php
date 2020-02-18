@@ -27,7 +27,6 @@ class ServicioInstalaciones implements Servicio {
     private $y;
     private $InformacionServicios;
 
-
     public function __construct(string $idServicio) {
         $this->id = $idServicio;
         $this->DBServicioTicket = new ModeloServicioTicket();
@@ -144,6 +143,7 @@ class ServicioInstalaciones implements Servicio {
 
             $this->DBServicioTicket->actualizarServiciosAvance(array('Descripcion' => $datos['descripcion'], 'Archivos' => $archivos), array('Id' => $datos['idAvanceProblema']));
         }
+        $this->DBServicioTicket->actualizarServicio(array('IdEstatus' => '3'), array('Id' => $this->id));
         $this->DBServicioTicket->finalizarTransaccion();
     }
 

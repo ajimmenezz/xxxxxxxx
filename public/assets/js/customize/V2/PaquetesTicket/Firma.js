@@ -42,13 +42,28 @@ class Firma {
 
                 _this.botonRegresar();
                 _this.botonConcluir(firmaCliente);
+                _this.ocultarSecciones();
             } else {
                 _this.modal.mostrarModal('Advertencia', '<h3 class="text-center">Falta la solución del servicio.</h3>');
                 _this.modal.ocultarBotonAceptar();
                 _this.modal.cambiarValorBotonCanelar('<i class="fa fa-times"></i> Cerrar');
             }
         });
+    }
 
+    ocultarSecciones() {
+        $("[href=#General]")
+                .parent("li")
+                .removeClass("active");
+        $("#General").removeClass("active in");
+        $("[href=#BitacoraProblemas]")
+                .parent("li")
+                .removeClass("active");
+        $("#BitacoraProblemas").removeClass("active in");
+        $("[href=#Solucion]")
+                .parent("li")
+                .addClass("active");
+        $("#Solucion").addClass("active in");
     }
 
     htmlFirma() {

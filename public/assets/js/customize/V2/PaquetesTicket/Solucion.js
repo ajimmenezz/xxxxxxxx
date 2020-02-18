@@ -44,7 +44,10 @@ class Solucion {
         this.selectOperacion = this.formulario.obtenerElemento('selectOperacionInstalaciones');
         this.selectOperacion.cargaDatosEnSelect(this.datos.datosServicio.operaciones);
         this.crearTabla();
-        this.agregarDatosTabla(this.datos.datosServicio.instalaciones);
+
+        if (this.datos.datosServicio.instalaciones !== undefined) {
+            this.agregarDatosTabla(this.datos.datosServicio.instalaciones);
+        }
         this.desabilitarFormulario();
     }
 
@@ -207,27 +210,29 @@ class Solucion {
     agregarDatosTabla(datos) {
         let _this = this;
 
-        $.each(datos, function (key, valor) {
-            let evidencias = 'Sin Evidencias';
+        if (datos.length > 0) {
+            $.each(datos, function (key, valor) {
+                let evidencias = 'Sin Evidencias';
 
-            if (valor.Archivos !== null) {
-                evidencias = _this.tabla.campoEvidencias(valor.Archivos, valor.Id);
-            }
+                if (valor.Archivos !== null) {
+                    evidencias = _this.tabla.campoEvidencias(valor.Archivos, valor.Id);
+                }
 
-            _this.tabla.agregarDatosFila([
-                valor.Id,
-                valor.IdModelo,
-                valor.Modelo,
-                valor.Serie,
-                valor.IdArea,
-                valor.Area,
-                valor.Punto,
-                valor.IdOperacion,
-                valor.Operacion,
-                evidencias,
-                _this.tabla.botonEliminar(valor.Id)
-            ]);
-        });
+                _this.tabla.agregarDatosFila([
+                    valor.Id,
+                    valor.IdModelo,
+                    valor.Modelo,
+                    valor.Serie,
+                    valor.IdArea,
+                    valor.Area,
+                    valor.Punto,
+                    valor.IdOperacion,
+                    valor.Operacion,
+                    evidencias,
+                    _this.tabla.botonEliminar(valor.Id)
+                ]);
+            });
+        }
     }
 
     validarSolucion() {

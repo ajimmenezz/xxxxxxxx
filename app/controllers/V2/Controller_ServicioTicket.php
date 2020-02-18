@@ -37,7 +37,6 @@ class Controller_ServicioTicket extends CI_Controller {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $idUsuario = Usuario::getId();
-            var_dump($datosServicio);
             $this->servicio->startServicio($idUsuario);
             $this->datos['servicio'] = $this->servicio->getDatos();
             $this->datos['clientes'] = $this->gestorClientes->getClientes('1,4,12,18,20');

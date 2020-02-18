@@ -54,20 +54,21 @@ Class GestorServicios {
                 $informacion['censoSwitch'] = $this->censo->getRegistrosComponente(28);
                 break;
             case 'Instalaciones':
+                $informacion['operaciones'] = $this->getOperacionesPoliza();
+                $this->equipo = new Equipo();
+                $informacion['equipos'] = $this->equipo->getEquipo();
                 if (!empty($datos['datosServicio']['sucursal'])) {
                     $this->sucursal = new Sucursal($datos['datosServicio']['sucursal']);
-                    $this->equipo = new Equipo();
                     $informacion['areasAtencionSucursal'] = $this->sucursal->getAreas();
                     $informacion['areasSucursal'] = $this->sucursal->getAreasSucursal();
                     $informacion['areasPuntosSucursal'] = $this->sucursal->getAreasPuntoSucursal();
-                    $informacion['equipos'] = $this->equipo->getEquipo();
-                    $informacion['operaciones'] = $this->getOperacionesPoliza();
                     $informacion['instalaciones'] = $this->DBServicios->getInstalaciones($datos['datosServicio']['servicio']);
                 }
                 break;
             default:
                 break;
         }
+
         return $informacion;
     }
 
@@ -106,7 +107,7 @@ Class GestorServicios {
         $this->DBServicios->setInstalaciones($datos);
         $this->DBServicios->finalizarTransaccion();
     }
-    
+
     public function deleteEquipo(array $datos) {
         $this->DBServicios->empezarTransaccion();
         $this->DBServicios->deleteInstalacion($datos['idInstalacion']);
