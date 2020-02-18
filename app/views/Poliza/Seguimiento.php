@@ -135,6 +135,7 @@
                     <li id="btnNuevaSolicitud"><a href="#"><i class="fa fa-puzzle-piece"></i> Solicitar Apoyo</a></li>
                     <li id="btnSubirInformacionSD"><a href="#"><i class="fa fa-cloud-upload"></i> Subir Información SD</a></li>
                     <li id="btnValidarServicio" class="hidden"><a href="#"><i class="fa fa-check"></i> Validar Servicio</a></li>
+                    <li id="btnExportarPDF" class="hidden"><a href="#"><i class="fa fa-check"></i> Exportar PDF</a></li>
                 </ul>
             </div>
             <label id="btnRegresar" class="btn btn-success">

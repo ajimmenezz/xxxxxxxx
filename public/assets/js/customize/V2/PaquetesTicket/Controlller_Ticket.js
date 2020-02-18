@@ -10,7 +10,8 @@ $(function () {
     let solucion = new Solucion();
     let bitacora = new Bitacora();
     let firma = new Firma();
-    var servicios = new Servicio();
+    let servicios = new Servicio();
+    let bug = new Bug();
 
     //Muestra la hora en el sistema
     evento.horaServidor($("#horaServidor").val());
@@ -58,9 +59,11 @@ $(function () {
                 });
             });
         } else {
-            domHtml.enviar('panelSeguimientoPoliza', url, datos, datosServidor => {
-                datosServicio = datosServidor;
-                mostrarFormulario(datos);
+            domHtml.enviar('panelSeguimientoPoliza', 'Seguimiento/Servicio/Seguimiento', datos, datosServidor => {
+                if (bug.validar(datosServidor)) {
+                    datosServicio = datosServidor;
+                    mostrarFormulario(datos);
+                }
             });
         }
     });

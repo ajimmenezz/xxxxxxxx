@@ -89,7 +89,7 @@ Class Modelo_GestorServicio extends Base {
     public function getOperacionesPoliza() {
         $consulta = array();
         try {
-            $consulta = $this->consulta("SELECT * FROM cat_v3_tipos_operaciones_poliza WHERE Flag = 1");
+            $consulta = $this->consulta("SELECT * FROM cat_v3_tipos_operaciones WHERE Flag = 1");
         } catch (\Exception $ex) {
             var_dump($ex->getMessage());
         }
@@ -100,10 +100,10 @@ Class Modelo_GestorServicio extends Base {
         $consulta = array();
         try {
             $consulta = $this->consulta("SELECT tie.*,
-                                        (SELECT Nombre FROM cat_v3_tipos_operaciones_poliza WHERE Id = tie.IdOperacion) AS Operacion,
+                                        (SELECT Nombre FROM cat_v3_tipos_operaciones WHERE Id = tie.IdOperacion) AS Operacion,
                                         areaAtencion(tie.IdArea)  AS Area,
                                         modelo(tie.IdModelo)  AS Modelo
-                                         FROM t_instalaciones_equipos tie
+                                         FROM t_instalaciones_equipos_poliza tie
                                          WHERE IdServicio = '" . $idServicio . "'");
         } catch (\Exception $ex) {
             var_dump($ex->getMessage());
@@ -112,7 +112,7 @@ Class Modelo_GestorServicio extends Base {
     }
 
     public function setInstalaciones(array $datos) {
-        $this->insertarArray('t_instalaciones_equipos', array(
+        $this->insertarArray('t_instalaciones_equipos_poliza', array(
             'IdServicio' => $datos['id'],
             'IdOperacion' => $datos['idOperacion'],
             'IdArea' => $datos['idArea'],
@@ -126,12 +126,14 @@ Class Modelo_GestorServicio extends Base {
     public function deleteInstalacion(string $id) {
         $consulta = array();
         try {
-            $consulta = $this->borrar("DELETE FROM t_instalaciones_equipos
+            $consulta = $this->borrar("DELETE FROM t_instalaciones_equipos_poliza
                                          WHERE Id = '" . $id . "'");
         } catch (\Exception $ex) {
             var_dump($ex->getMessage());
         }
         return $consulta;
     }
+
+
 
 }

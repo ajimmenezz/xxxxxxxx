@@ -1438,6 +1438,12 @@ class InformacionServicios extends General {
                 case '27':
                     $this->setPDFContentCorrectivo($generales['Id'], $datos);
                     break;
+                case 53:
+                case '53':
+                    $this->setInstalaciones($generales['Id'], $datos);
+                    $this->setAvancesProblemasPDF($generales['Id'], $datos);
+                    $this->setFirmasServicio($generales['Id'], $datos);
+                    break;
             }
         }
 
@@ -1785,6 +1791,59 @@ class InformacionServicios extends General {
         }
     }
 
+    private function setInstalaciones(int $id, array $datos) {
+        $registros = $this->DBST->getInstalaciones($id);
+
+        if (!empty($registros)) {
+            if (($this->y + 26) > 276) {
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+            }
+
+            $this->setCoordinates(10, $this->y + 5);
+            $this->setStyleHeader();
+            $this->setHeaderValue("Equipos");
+
+            foreach ($registros as $key => $value) {
+                $this->setStyleTitle();
+                $this->setCellValue(25, 5, "Operación:", 'R', true);
+                $this->setCoordinates(100, $this->y - 5);
+                $this->setCellValue(20, 5, "Modelo:", 'R', true);
+
+                $this->setStyleSubtitle();
+                $this->setCoordinates(35, $this->y - 5);
+                $this->setCellValue(70, 5, $value['Operacion'], 'L', true);
+                $this->setCoordinates(120, $this->y - 5);
+                $this->setCellValue(80, 5, $value['Modelo'], 'L', true);
+
+                $this->setCoordinates(10);
+                $this->setStyleTitle();
+                $this->setCellValue(25, 5, "Área Atención:", 'R', true);
+                $this->setCoordinates(100, $this->y - 5);
+                $this->setCellValue(20, 5, "Punto:", 'R', true);
+
+                $this->setStyleSubtitle();
+                $this->setCoordinates(35, $this->y - 5);
+                $this->setCellValue(70, 5, $value['Area'], 'L', true);
+                $this->setCoordinates(120, $this->y - 5);
+                $this->setCellValue(80, 5, $value['Punto'], 'L', true);
+
+                $this->setCoordinates(10);
+                $this->setStyleTitle();
+                $this->setCellValue(25, 5, "Serie:", 'R', true);
+
+                $this->setStyleSubtitle();
+                $this->setCoordinates(35, $this->y - 5);
+                $this->setCellValue(165, 5, $value['Serie'], 'L', true);
+
+
+                $this->setCoordinates(10, $this->pdf->GetY());
+                if (isset($value['Archivos']) && !empty($value['Archivos'])) {
+                    $this->setEvidenciasPDF($datos, $value['Archivos'], 'Historial de Avances y Problemas');
+                }
+            }
+        }
+    }
+
     private function setPDFContentCorrectivo(int $id, array $datos) {
         $diagnostico = $this->getDiagnosticoCorrectivoForPDF($id);
 
@@ -2039,7 +2098,7 @@ class InformacionServicios extends General {
 
                 $this->setCoordinates(10, $this->pdf->GetY());
             }
-            
+
             $totalEvidencias = $this->totalEvidenciasSolicitud($datos['servicio']);
 
             $this->setEvidenciasPDF($datos, $totalEvidencias, "Solución del Servicio");
@@ -2533,17 +2592,17 @@ class InformacionServicios extends General {
 
         $this->pdf->MultiCell($width, $height, utf8_decode($value), 1, $align, $trueFill);
     }
-    
+
     private function obtenerEquipoMaterialServicio(string $servicio) {
         $serviciosAvance = $this->DBST->servicioAvanceProblema($servicio);
         $folio = '';
-        $folio .= $this->DBST->consulta('select folioByServicio('.$servicio.') as folio')[0]['folio'];
+        $folio .= $this->DBST->consulta('select folioByServicio(' . $servicio . ') as folio')[0]['folio'];
         $equipoMaterial = array();
-        
-        if($serviciosAvance){
+
+        if ($serviciosAvance) {
             foreach ($serviciosAvance as $avance) {
                 $avanceEquipo = $this->DBST->serviciosAvanceEquipo($avance['Id']);
-                if($avanceEquipo){
+                if ($avanceEquipo) {
                     foreach ($avanceEquipo as $equipo) {
                         array_push($equipoMaterial, $equipo);
                     }
@@ -2552,9 +2611,9 @@ class InformacionServicios extends General {
         }
         if (!empty($equipoMaterial)) {
             $this->agregarPDFEquipoMaterial($equipoMaterial, $folio);
-       }
+        }
     }
-    
+
     private function agregarPDFEquipoMaterial(array $materialEquipo, string $folio = '') {
         if (($this->y + 26) > 276) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $folio);
@@ -2563,7 +2622,7 @@ class InformacionServicios extends General {
         $this->setCoordinates(10);
         $this->setStyleHeader();
         $this->setHeaderValue("Equipo y Material Utilizado");
-        
+
         $this->setStyleTitle();
         $this->setCellValue(30, 5, "Tipo", 'C', true);
         $this->setCoordinates(40, $this->y - 5);
@@ -2583,26 +2642,26 @@ class InformacionServicios extends General {
             $this->setCellValue(30, 5, $value['Serie'], 'C');
             $this->setCoordinates(170, $this->y - 5);
             $this->setCellValue(30, 5, $value['Cantidad'], 'C');
-        
+
             if (($this->y + 26) > 276) {
                 $this->setCoordinates(10, $this->pdf->GetY());
             }
 //            $this->setCoordinates(10);
-
 //            $this->setCoordinates(10, $this->pdf->GetY());
         }
     }
-    
+
     function totalEvidenciasSolicitud($servicio) {
         $consulta = $this->DBS->consulta("select Evidencias from t_correctivos_soluciones where IdServicio = '" . $servicio . "'");
-        
+
         foreach ($consulta as $evidencias) {
             $concatena = $evidencias['Evidencias'] . ',';
         }
-        
+
         $todaEvidencia = substr($concatena, 0, -1);
         return $todaEvidencia;
     }
+
 }
 
 class PDFAux extends PDF {

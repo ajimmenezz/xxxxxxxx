@@ -119,4 +119,8 @@ class Modelo_ServicioTicketV2 extends Modelo_Base {
         return $consulta;
     }
 
+    public function getFirmas(string $idServicio) {
+        return $this->consulta('select concat(Firma,",", FirmaTecnico) as firmas from t_servicios_ticket where Id=' . $idServicio);
+    }
+
 }

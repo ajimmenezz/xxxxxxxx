@@ -37,6 +37,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $datosServicio = $this->input->post();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $idUsuario = Usuario::getId();
+            var_dump($datosServicio);
             $this->servicio->startServicio($idUsuario);
             $this->datos['servicio'] = $this->servicio->getDatos();
             $this->datos['clientes'] = $this->gestorClientes->getClientes('1,4,12,18,20');
@@ -57,16 +58,17 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
-    public function seguimientoServicio(string $tipoServicio) {
+    public function seguimientoServicio() {
         try {
             $datosServicio = $this->input->post();
-            $this->servicio = $this->factory->getServicio($tipoServicio, $datosServicio['id']);
+            $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $this->datos['servicio'] = $this->servicio->getDatos();
+            $this->datos['clientes'] = $this->gestorClientes->getClientes('1,4,12,18,20');
             $this->datos['sucursales'] = $this->gestorSucursales->getSucursales();
             $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['problemas'] = $this->servicio->getProblemas();
             $this->datos['firmas'] = $this->servicio->getFirmas($datosServicio['id']);
-            $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($tipoServicio, array('datosServicio' => $this->servicio->getDatos()));
+            $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));
             $this->getInformacionFolio($this->servicio->getFolio());
             $this->getHtml($datosServicio['tipo'], $this->datos);
             $this->datos['operacion'] = TRUE;

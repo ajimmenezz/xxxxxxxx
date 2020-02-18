@@ -5,7 +5,6 @@ namespace Librerias\V2\PaquetesTicket\Poliza;
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 use Modelos\Modelo_ServicioTicketV2 as ModeloServicioTicket;
-use Librerias\V2\PaquetesGenerales\Utilerias\PDF as PDF;
 use Librerias\Generales\Correo as Correo;
 
 class ServicioInstalaciones implements Servicio {
@@ -24,10 +23,15 @@ class ServicioInstalaciones implements Servicio {
     private $DBServicioTicket;
     private $correoAtiende;
     private $problemas;
+    private $x;
+    private $y;
+    private $InformacionServicios;
+
 
     public function __construct(string $idServicio) {
         $this->id = $idServicio;
         $this->DBServicioTicket = new ModeloServicioTicket();
+        $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         $this->setDatos();
     }
 
@@ -228,114 +232,17 @@ class ServicioInstalaciones implements Servicio {
         $textoCorreo = '<p>Estimado(a) <strong>' . $this->atiende . ',</strong> se ha concluido el </p><br>Servicio: <strong>' . $this->id . '</strong><br> Número Solicitud: <strong>' . $this->idSolicitud . '</strong><br>' . $linkPDF;
         $mensajeFirma = $correo->mensajeCorreo($titulo, $textoCorreo);
 
-//        $correo->enviarCorreo('notificaciones@siccob.solutions', array($this->correoAtiende), $titulo, $mensajeFirma);
-        $correo->enviarCorreo('notificaciones@siccob.solutions', array('abarcenas@siccob.com.mx'), $titulo, $mensajeFirma);
+        $correo->enviarCorreo('notificaciones@siccob.solutions', array($this->correoAtiende), $titulo, $mensajeFirma);
     }
 
     public function getPDF(array $datos) {
-        $informacionServicio = $this->DBServicioTicket->getDatosServicio($this->id);
-//        var_dump($informacionServicio);
-        $this->pdf = new PDF($this->id);
-        $this->pdf->AddPage();
-        $this->pdf->tituloTabla('Información General');
-        $this->pdf->tabla(array(), $informacionServicio);
-//
-//        $totalMaterial = $this->gestorNodos->getTotalMaterial();
-//        $arrayNuevoTotalMaterial = array();
-//
-//        foreach ($totalMaterial as $key => $value) {
-//            $arrayNuevoTotalMaterial[$key] = array($value['Producto'], $value['Cantidad']);
-//        }
-//
-//        $this->FancyTable(array('Material', 'Cantidad'), $arrayNuevoTotalMaterial);
-//
-//        $contador = 1;
-//        foreach ($informacionServicio['infoNodos'] as $key => $value) {
-//            $ancho = $this->pdf->GetPageWidth() - 20;
-//            $y = $this->pdf->GetY();
-//            $x = 30;
-//
-//            if ($x < $ancho) {
-//                $arrayNuevo = array(
-//                    'Area' => $value['Area'],
-//                    'Nodo' => $value['Nodo'],
-//                    'Switch' => $value['Switch'],
-//                    'NumeroSwitch' => $value['NumeroSwitch']);
-//                $this->pdf->tituloTabla('Solución del Nodo: ' . $contador);
-//                $this->pdf->tabla(array(), array($arrayNuevo));
-//                $evidencias = explode(',', $value['Evidencias']);
-//                $this->pdf->tablaImagenes($evidencias);
-//                $contador ++;
-//                $x += 80;
-//            } else {
-//                $x = 30;
-//                $y += 50;
-//            }
-//
-//            $altura = $y + 258;
-//
-//            if ($altura > ($this->pdf->GetPageHeight())) {
-//                $this->pdf->AddPage();
-//            }
-//        }
-//        
-//        
-//        $this->setCoordinates(10);
-        $this->setStyleHeader();
-        $this->setHeaderValue("Información General");
-
-        $this->setStyleTitle();
-        $this->setCellValue(30, 5, "Cliente:", 'R', true);
-        $this->setCellValue(30, 5, "Sucursal:", 'R');
-        $this->setCellValue(30, 5, "Tipo Serv:", 'R', true);
-        $this->setCoordinates(100, $this->y - 5);
-        $this->setCellValue(27, 5, "Estatus:", 'R', true);
-        $this->setCoordinates(10);
-        $this->setCellValue(30, 5, "Atiende:", 'R');
-
-        $restarYFallaReportada = 25;
-        $restarY = 20;
-
-        if ($generales['IdEstatus'] === '4') {
-            $this->setCellValue(30, 5, "Fecha Conclusión:", 'R', true);
-            if ($generales['IdTipoServicio'] === '20') {
-                $restarY = 25;
-            }
-        }
-
-//        if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
-//            $this->setCellValue(30, 5, "Falla Reportada:", 'R');
-//            $restarY = $restarYFallaReportada;
-//        }
-
-        $this->setStyleSubtitle();
-        $this->setCoordinates(40, $this->y - $restarY);
-        $this->setCellValue(0, 5, $generales['Cliente'], 'L', true);
-        $this->setCellValue(0, 5, $generales['Sucursal'], 'L');
-        $this->setCellValue(70, 5, $generales['TipoServicio'], 'L', true);
-        $this->setCoordinates(127, $this->y - 5);
-
-        if ($generales['IdEstatus'] === '5') {
-            $estatus = 'EN ATENCIÓN';
-        } else {
-            $estatus = $generales['Estatus'];
-        }
-
-        $this->setCellValue(73, 5, $estatus, 'L', true);
-        $this->setCoordinates(40);
-        $this->setCellValue(0, 5, $generales['Atiende'], 'L');
-
-        if ($generales['IdEstatus'] === '4') {
-            $this->setCellValue(0, 5, $generales['FechaConclusion'], 'L', true);
-        }
-
-//
-        $this->pdf->tituloTabla('Firmas del Servicio');
-//        $this->pdf->firma($informacionServicio['infoFirmas'][0]);
-        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', $this->id . '-PDF');
-        $this->pdf->Output('F', $carpeta, true);
-        $archivo = substr($carpeta, 1);
+        $archivo = $this->InformacionServicios->definirPDF(array('servicio' => $this->id));
         return $archivo;
+    }
+
+    public function getFirmas(string $idServicio) {
+        $consulta = $this->DBServicioTicket->getFirmas($idServicio);
+        return $consulta[0]['firmas'];
     }
 
 }
