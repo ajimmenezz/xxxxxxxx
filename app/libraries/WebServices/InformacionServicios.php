@@ -1252,7 +1252,11 @@ class InformacionServicios extends General {
                                         from t_correctivos_diagnostico tcd 
                                         join t_servicios_ticket tst on tcd.IdServicio = tst.Id
                                         where IdServicio = '".$servicio."' limit 1");
-        return $consulta[0];
+        if($consulta){
+            return $consulta[0];
+        }else{
+            return null;
+        }
     }
 
     public function pdfFromFolio(array $datos) {
