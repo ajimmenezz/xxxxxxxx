@@ -1232,14 +1232,26 @@ class InformacionServicios extends General {
     }
 
     private function getFirmasServicio(int $servicio) {
-        $consulta = $this->DBS->consulta("
-        select 
-        Firma,
-        NombreFirma as Gerente,
-        FechaFirma,
-        nombreUsuario(tst.IdTecnicoFirma) as Tecnico,
-        FirmaTecnico
-        from t_servicios_ticket tst WHERE Id = '" . $servicio . "' limit 1");
+        $consulta = $this->DBS->consulta("select 
+                                            Firma,
+                                            NombreFirma as Gerente,
+                                            FechaFirma,
+                                            nombreUsuario(tst.IdTecnicoFirma) as Tecnico,
+                                            FirmaTecnico
+                                        from t_servicios_ticket tst WHERE Ticket = (
+                                        select Ticket from t_servicios_ticket where Id = '".$servicio."') limit 1");
+        return $consulta[0];
+    }
+    private function getFirmasServicioTicket(int $servicio) {
+        $consulta = $this->DBS->consulta("select 
+                                            tcd.Gerente,
+                                            tcd.Firma,
+                                            tcd.FechaFirma,
+                                            nombreUsuario(tst.IdTecnicoFirma) as Tecnico,
+                                            tst.FirmaTecnico
+                                        from t_correctivos_diagnostico tcd 
+                                        join t_servicios_ticket tst on tcd.IdServicio = tst.Id
+                                        where IdServicio = '".$servicio."' limit 1");
         return $consulta[0];
     }
 
@@ -1343,6 +1355,9 @@ class InformacionServicios extends General {
         $this->pdf = new PDFAux();
         
         $firmas = $this->getFirmasServicio($datos['servicio']);
+        if (is_null($firmas['Firma']) || $firmas['Firma'] === '') {
+            $firmas = $this->getFirmasServicioTicket($datos['servicio']);
+        }
         $this->pdf->setDato($firmas);
 
         $this->pdf->AliasNbPages();
@@ -1417,7 +1432,9 @@ class InformacionServicios extends General {
 //        if ($generales['FallaReportada'] !== null && $generales['FallaReportada'] !== '') {
 //            $this->setCellValue(0, 5, $generales['FallaReportada'], 'L');
 //        }
-
+        
+        $this->informacionSD($generales['SD']);
+        
         if ($generales['HasSeguimiento'] === '0') {
             $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
             $this->obtenerEquipoMaterialServicio($datos['servicio']);
@@ -1448,6 +1465,30 @@ class InformacionServicios extends General {
         $carpeta = substr($carpeta, 1);
 
         return $carpeta;
+    }
+    
+    private function informacionSD($folio) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $resultadoSD = $this->ServiceDesk->getDetallesFolio($usuario["SDKey"],$folio);
+        $infoSD = json_decode(json_encode($resultadoSD), True);
+        
+        $this->setCoordinates(10, $this->y + 5);
+        $this->setStyleHeader();
+        $this->setHeaderValue("Información SD");
+
+        $this->setStyleTitle();
+        $this->setCellValue(30, 5, "Gerente del folio:", 'R', true);
+        $this->setCellValue(30, 5, "Asunto:", 'R');
+        $this->setCellValue(30, 5, "Descripción:", 'R', true);
+        
+        $this->setStyleSubtitle();
+        $this->setCoordinates(40, $this->y - 15);
+        $this->setCellValue(0, 5, utf8_decode($infoSD["Nombre del Gerente"]), 'L', true);
+        $this->setMulticellValue(0, 5, utf8_decode($infoSD["SUBJECT"]), 'L');
+        $this->setCoordinates(40, $this->y + 5);
+        $this->setMulticellValue(0, 5, utf8_decode($infoSD["SHORTDESCRIPTION"]), 'L', true);
+        
+        $this->setCoordinates(10, $this->y + 15);
     }
 
     private function setPDFContentSinSeguimiento(int $id, array $datos) {
