@@ -1361,7 +1361,9 @@ class InformacionServicios extends General {
         
         $firmas = $this->getFirmasServicio($datos['servicio']);
         if (is_null($firmas['Firma']) || $firmas['Firma'] === '') {
-            $firmas = $this->getFirmasServicioTicket($datos['servicio']);
+            $temporal = $this->getFirmasServicioTicket($datos['servicio']);
+            $firmas['Firma'] = $temporal['Firma'];
+            $firmas['Gerente'] = $temporal['Gerente'];
         }
         $this->pdf->setDato($firmas);
 
