@@ -1548,7 +1548,9 @@ class InformacionServicios extends General {
         $registros = $this->getAvancesProblemasForPDF($id);
 
         if (!empty($registros)) {
-            
+            if (($this->y + 26) > 276) {
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+            }
             $this->setCoordinates(10);
             $this->setStyleHeader();
             $this->setHeaderValue("Historial de Avances y Problemas");
