@@ -1486,14 +1486,16 @@ class InformacionServicios extends General {
         $this->setStyleTitle();
         $this->setCellValue(30, 5, "Gerente del folio:", 'R', true);
         $this->setCellValue(30, 5, "Asunto:", 'R');
-        $this->setCellValue(30, 5, "Descripción:", 'R', true);
         
         $this->setStyleSubtitle();
-        $this->setCoordinates(40, $this->y - 15);
+        $this->setCoordinates(40, $this->y - 10);
         $this->setCellValue(0, 5, utf8_decode($infoSD["Nombre del Gerente"]), 'L', true);
         $this->setMulticellValue(0, 5, utf8_decode($infoSD["SUBJECT"]), 'L');
         $this->setCoordinates(40, $this->y + 5);
         $this->setMulticellValue(0, 5, utf8_decode($infoSD["SHORTDESCRIPTION"]), 'L', true);
+        $heightMulti = $this->pdf->GetY() - $this->y;
+        $this->setCoordinates(10, $this->y);
+        $this->setCellValue(30, $heightMulti, "Descripción:", 'R', true);
         
         $this->setCoordinates(10, $this->y + 15);
     }
@@ -1546,15 +1548,15 @@ class InformacionServicios extends General {
         $registros = $this->getAvancesProblemasForPDF($id);
 
         if (!empty($registros)) {
-            if (($this->y + 26) > 276) {
-                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-            }
-
+            
             $this->setCoordinates(10);
             $this->setStyleHeader();
             $this->setHeaderValue("Historial de Avances y Problemas");
 
             foreach ($registros as $key => $value) {
+                if (($this->y + 26) > 276) {
+                    $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                }
                 $this->setStyleTitle();
                 $this->setCellValue(25, 5, "Usuario:", 'R', true);
                 $this->setCoordinates(100, $this->y - 5);
@@ -1810,7 +1812,7 @@ class InformacionServicios extends General {
                 $this->setCoordinates(10);
 
                 for ($i = 1; $i <= 4; $i++) {
-                    if (isset($evidencias[$indice]) && $evidencias[$indice] != '') {
+                    if (isset($evidencias[$indice]) && $evidencias[$indice] != '' && file_exists('.' . $evidencias[$indice])) {
                         $image = $evidencias[$indice];
                         if (!in_array(pathinfo($image, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
                             $image = '/assets/img/Iconos/no-thumbnail.jpg';
