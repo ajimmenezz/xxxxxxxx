@@ -2681,7 +2681,7 @@ class PDFAux extends PDF {
             }
         }
         
-        if (!is_null($this->dato['Firma']) && $this->dato['Firma'] != '') {
+        if (!is_null($this->dato['FirmaTecnico']) && $this->dato['FirmaTecnico'] != '') {
             if (file_exists('.' . $this->dato['Firma'])) {
                 $this->Image('.' . $this->dato['FirmaTecnico'], 175, 269, 40, 20, pathinfo($this->dato['FirmaTecnico'], PATHINFO_EXTENSION));
                 $this->SetXY(100, 15);
