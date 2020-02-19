@@ -1710,7 +1710,7 @@ class Servicio extends General {
 
             $tipoServicio = $verificarServicioSinClaficar[0]['IdTipoServicio'];
 
-            if (in_array($tipoServicio, [11, '11'])) {
+            if (in_array($tipoServicio, [11, '11', 50, '50'])) {
                 $this->borrarCensos($datos['servicio']);
             }
 
