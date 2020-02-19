@@ -1251,7 +1251,7 @@ class InformacionServicios extends General {
                                             tst.FirmaTecnico
                                         from t_correctivos_diagnostico tcd 
                                         join t_servicios_ticket tst on tcd.IdServicio = tst.Id
-                                        where IdServicio = '".$servicio."' limit 1");
+                                        where IdServicio = '".$servicio."' and tcd.Gerente is not null limit 1");
         if($consulta){
             return $consulta[0];
         }else{
