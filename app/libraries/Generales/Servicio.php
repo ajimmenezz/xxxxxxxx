@@ -1877,8 +1877,8 @@ class Servicio extends General {
                 'NombreFirma' => $datos['recibe'],
                 'CorreoCopiaFirma' => $correo,
                 'FechaFirma' => $fecha,
-                'IdTecnicoFirma' => $idTecnico,
-                'FirmaTecnico' => $imgFirmaTecnico,
+//                'IdTecnicoFirma' => $idTecnico,
+//                'FirmaTecnico' => $imgFirmaTecnico,
                 'IdValidaCinemex' => $encargadoTI,
                 'IdEstatus' => '5'
                     ), array('Id' => $datos['servicio']));
@@ -1966,7 +1966,7 @@ class Servicio extends General {
             $this->DBS->terminaTransaccion();
             return TRUE;
         } catch (\Exception $ex) {
-            return $ex;
+            return 'La información se guardo, pero no la firma';
         }
     }
 
@@ -2991,7 +2991,7 @@ class Servicio extends General {
     public function varificarTecnicoPoliza() {
         $usuario = $this->Usuario->getDatosUsuario();
 
-        $tecnicoPoliza = $this->DBS->getServicios('SELECT * FROM cat_v3_usuarios WHERE Id = "' . $usuario['IdPerfil'] . '" AND IdPerfil in(57,64)');
+        $tecnicoPoliza = $this->DBS->getServicios('SELECT * FROM cat_v3_usuarios WHERE Id = "' . $usuario['IdPerfil'] . '" AND IdPerfil in(57,64, 83)');
 
         if ($tecnicoPoliza === FALSE) {
             return TRUE;

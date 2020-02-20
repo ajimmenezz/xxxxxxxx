@@ -6692,8 +6692,7 @@ $(function () {
                                 _dataEquipo
                                 );
                     } else {
-                        var _mensaje =
-                                "Para guardar la información debes seleccionar al menos un equipo y tener una evidencia";
+                        var _mensaje = "Para guardar la información debes seleccionar al menos un equipo y tener una evidencia";
                         evento.mostrarMensaje(
                                 ".errorFormularioSolucionCambioEquipo",
                                 false,
@@ -8896,7 +8895,7 @@ $(function () {
         var encargadosTI = arguments[4].informacion.listaCinemexValidadores;
         var concluirServicio = arguments[5] || false;
         var estatus = arguments[6] || false;
-        var html = htmlCampoTecnicoFirma();
+        var html = '';
         if (arguments[4].informacion.idCliente !== null) {
             idCliente = arguments[4].informacion.idCliente[0].IdCliente;
             if (idCliente === "1") {
