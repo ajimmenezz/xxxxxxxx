@@ -1440,7 +1440,9 @@ class InformacionServicios extends General {
 //            $this->setCellValue(0, 5, $generales['FallaReportada'], 'L');
 //        }
         
-        $this->informacionSD($generales['SD']);
+        if($datos['folio'] != '' || $datos['folio'] != null){
+            $this->informacionSD($datos['folio']);
+        }
         
         if ($generales['HasSeguimiento'] === '0') {
             $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
