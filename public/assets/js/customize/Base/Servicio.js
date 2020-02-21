@@ -431,18 +431,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
 //                    if (respuesta === true) {
                 _this.validarTecnicoPoliza();
 
-                var html = '<div class="row" m-t-10">\n\
-                                        <div id="col-md-12 text-center">\n\
-                                            <div id="campoLapizTecnico"></div>\n\
-                                        </div>\n\
-                                    </div>\n\
-                                    <div class="row m-t-20">\n\
-                                        <div class="col-md-12 text-center">\n\
-                                            <br>\n\
-                                            <label>Firma del técnico</label><br>\n\
-                                        </div>\n\
-                                    </div>\n\
-                                    <br>';
+                var html = '';
 
                 $('#btnModalConfirmar').addClass('hidden');
                 $('#btnModalConfirmar').off('click');

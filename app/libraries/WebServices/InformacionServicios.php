@@ -1261,6 +1261,23 @@ class InformacionServicios extends General {
             return null;
         }
     }
+    
+    private function getFirmasByTicket(int $servicio){
+        $consulta = $this->DBS->consulta("select 
+                                            Firma,
+                                            NombreFirma as Gerente,
+                                            FechaFirma,
+                                            nombreUsuario(tst.IdTecnicoFirma) as Tecnico,
+                                            FirmaTecnico
+                                        from t_servicios_ticket tst 
+                                            WHERE Ticket = (select Ticket from t_servicios_ticket where Id = '".$servicio."') 
+                                            and tst.NombreFirma is not null limit 1;");
+        if($consulta){
+            return $consulta[0];
+        }else{
+            return null;
+        }
+    }
 
     public function pdfFromFolio(array $datos) {
         $this->pdf = new PDFAux();
@@ -1365,8 +1382,18 @@ class InformacionServicios extends General {
         $firmas = $this->getFirmasServicio($datos['servicio']);
         if (is_null($firmas['Firma']) || $firmas['Firma'] === '') {
             $temporal = $this->getFirmasServicioTicket($datos['servicio']);
-            $firmas['Firma'] = $temporal['Firma'];
-            $firmas['Gerente'] = $temporal['Gerente'];
+            if($temporal != null){
+                $firmas['Firma'] = $temporal['Firma'];
+                $firmas['Gerente'] = $temporal['Gerente'];
+            }else{
+                $temporal = $this->getFirmasByTicket($datos['servicio']);
+                $firmas['Firma'] = $temporal['Firma'];
+                $firmas['Gerente'] = $temporal['Gerente'];
+                $firmas['FirmaTecnico'] = $temporal['FirmaTecnico'];
+                $firmas['Tecnico'] = $temporal['Tecnico'];
+                $firmas['FechaFirma'] = $temporal['FechaFirma'];
+            }
+            
         }
         $this->pdf->setDato($firmas);
 
@@ -2639,12 +2666,6 @@ class InformacionServicios extends General {
             $this->setCellValue(30, 5, $value['Serie'], 'C');
             $this->setCoordinates(170, $this->y - 5);
             $this->setCellValue(30, 5, $value['Cantidad'], 'C');
-
-//            if (($this->y + 26) > 276) {
-//                $this->setCoordinates(10, $this->pdf->GetY());
-//            }
-//            $this->setCoordinates(10);
-//            $this->setCoordinates(10, $this->pdf->GetY());
         }
     }
 

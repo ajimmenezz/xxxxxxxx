@@ -1850,7 +1850,7 @@ class Servicio extends General {
             $direccionFirma = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'Firma_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
             $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'FirmaTecnico_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
             file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $dataFirma);
-            file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $dataFirmaTecnico);
+//            file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $dataFirmaTecnico);
 
             if ($datos['encargadoTI'] !== NULL) {
                 $encargadoTI = $datos['encargadoTI'];
@@ -2153,8 +2153,18 @@ class Servicio extends General {
 
         return TRUE;
     }
+    
+    private function ticketByServicio($servicio) {
+        $consulta = $this->DBS->consulta("select Ticket from t_servicios_ticket where Id = '".$servicio."' limit 1");
+        if($consulta){
+            return $consulta[0];
+        }else{
+            return null;
+        }
+    }
 
     public function cambiarEstatus(string $fecha, array $datos, array $datosExtra = NULL, string $status) {
+        $datos['ticket'] = $this->ticketByServicio($datos['servicio'])["Ticket"];
         $cambiarEstatus = $this->DBS->actualizarServicio('t_servicios_ticket', array(
             'IdEstatus' => $status,
             'FechaConclusion' => $fecha
