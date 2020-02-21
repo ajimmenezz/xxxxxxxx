@@ -2640,9 +2640,9 @@ class InformacionServicios extends General {
             $this->setCoordinates(170, $this->y - 5);
             $this->setCellValue(30, 5, $value['Cantidad'], 'C');
 
-            if (($this->y + 26) > 276) {
-                $this->setCoordinates(10, $this->pdf->GetY());
-            }
+//            if (($this->y + 26) > 276) {
+//                $this->setCoordinates(10, $this->pdf->GetY());
+//            }
 //            $this->setCoordinates(10);
 //            $this->setCoordinates(10, $this->pdf->GetY());
         }
