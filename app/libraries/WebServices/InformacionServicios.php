@@ -1238,9 +1238,12 @@ class InformacionServicios extends General {
                                             FechaFirma,
                                             nombreUsuario(tst.IdTecnicoFirma) as Tecnico,
                                             FirmaTecnico
-                                        from t_servicios_ticket tst WHERE Ticket = (
-                                        select Ticket from t_servicios_ticket where Id = '".$servicio."') limit 1");
-        return $consulta[0];
+                                        from t_servicios_ticket tst WHERE Id = '".$servicio."'  and tst.NombreFirma is not null limit 1");
+        if($consulta){
+            return $consulta[0];
+        }else{
+            return null;
+        }
     }
     private function getFirmasServicioTicket(int $servicio) {
         $consulta = $this->DBS->consulta("select 
@@ -2624,6 +2627,9 @@ class InformacionServicios extends General {
         $this->setCellValue(30, 5, "Cantidad", 'C', true);
 
         foreach ($materialEquipo as $value) {
+            if (($this->y + 26) > 276) {
+                $this->setHeaderPDF("Resumen de Incidente Service Desk", $folio);
+            }
             $this->setCoordinates(10);
             $this->setStyleSubtitle();
             $this->setCellValue(30, 5, $value['Tipo'], 'C');

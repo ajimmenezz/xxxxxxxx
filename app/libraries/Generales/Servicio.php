@@ -1819,10 +1819,8 @@ class Servicio extends General {
                         . "where IdServicio = '" . $value['IdServicio'] . "' "
                         . "and IdArea = '" . $value['IdArea'] . "' "
                         . "and Punto > " . $value['Puntos']);
-            }
-        }
-
-        $this->DBS->queryBolean("delete
+                
+                $this->DBS->queryBolean("delete
                                     from t_censos
                                     where IdServicio = '" . $value['IdServicio'] . "'
                                     and IdArea not in (
@@ -1830,6 +1828,8 @@ class Servicio extends General {
                                                     IdArea 
                                                     from t_censos_puntos 
                                                     where IdServicio = '" . $value['IdServicio'] . "')");
+            }
+        }
     }
 
     public function enviar_Reporte_PDF(array $datos) {
@@ -1843,8 +1843,8 @@ class Servicio extends General {
             $imgFirma = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirma));
             $dataFirma = base64_decode($imgFirma);
             $imgFirmaTecnico = $datos['imgFirmaTecnico'];
-            $imgFirmaTecnico = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirmaTecnico));
-            $dataFirmaTecnico = base64_decode($imgFirmaTecnico);
+//            $imgFirmaTecnico = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirmaTecnico));
+//            $dataFirmaTecnico = base64_decode($imgFirmaTecnico);
             $folio = $this->DBS->consultaFolio($datos['servicio']);
 
             $direccionFirma = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'Firma_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
@@ -1966,7 +1966,7 @@ class Servicio extends General {
             $this->DBS->terminaTransaccion();
             return TRUE;
         } catch (\Exception $ex) {
-            return 'La información se guardo, pero no la firma';
+            return $ex->getMessage();
         }
     }
 
