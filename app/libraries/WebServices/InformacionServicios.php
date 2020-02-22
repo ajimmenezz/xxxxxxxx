@@ -1526,10 +1526,11 @@ class InformacionServicios extends General {
         $this->setCoordinates(40, $this->y + 5);
         $this->setMulticellValue(0, 5, utf8_decode($infoSD["SHORTDESCRIPTION"]), 'L', true);
         $heightMulti = $this->pdf->GetY() - $this->y;
+        $this->setStyleTitle();
         $this->setCoordinates(10, $this->y);
         $this->setCellValue(30, $heightMulti, "Descripción:", 'R', true);
         
-        $this->setCoordinates(10, $this->y + 15);
+        $this->setCoordinates(10);
     }
 
     private function setPDFContentSinSeguimiento(int $id, array $datos) {
@@ -2706,9 +2707,9 @@ class PDFAux extends PDF {
         
         if (!is_null($this->dato['Firma']) && $this->dato['Firma'] != '') {
             if (file_exists('.' . $this->dato['Firma'])) {
-                $this->Image('.' . $this->dato['Firma'], 140, 269, 40, 20, pathinfo($this->dato['Firma'], PATHINFO_EXTENSION));
+                $this->Image('.' . $this->dato['Firma'], 145, 269, 30, 16, pathinfo($this->dato['Firma'], PATHINFO_EXTENSION));
             } else{
-                $this->Image('./assets/img/Iconos/sin_firma.png', 140, 269, 35, 20, 'png');
+                $this->Image('./assets/img/Iconos/sin_firma.png', 145, 269, 30, 16, 'png');
             }
             $this->Cell(95, 10, utf8_decode($this->dato['Gerente']), 0, 0, 'C');
             $this->SetXY(100, 15);
@@ -2716,16 +2717,16 @@ class PDFAux extends PDF {
             $this->SetXY(100, 15);
             $this->Cell(115, 555, utf8_decode($this->dato['FechaFirma']), 0, 0, 'C');
         } else {
-            $this->Image('./assets/img/Iconos/sin_firma.png', 140, 269, 35, 20, 'png');
+            $this->Image('./assets/img/Iconos/sin_firma.png', 145, 269, 30, 16, 'png');
             $this->SetXY(100, 15);
             $this->Cell(115, 548, utf8_decode('Gerente'), 0, 0, 'C');
         }
         
         if (!is_null($this->dato['FirmaTecnico']) && $this->dato['FirmaTecnico'] != '') {
             if (file_exists('.' . $this->dato['Firma'])) {
-                $this->Image('.' . $this->dato['FirmaTecnico'], 175, 269, 35, 20, pathinfo($this->dato['FirmaTecnico'], PATHINFO_EXTENSION));
+                $this->Image('.' . $this->dato['FirmaTecnico'], 175, 269, 30, 16, pathinfo($this->dato['FirmaTecnico'], PATHINFO_EXTENSION));
             } else{
-                $this->Image('./assets/img/Iconos/sin_firma.png', 175, 269, 40, 20, 'png');
+                $this->Image('./assets/img/Iconos/sin_firma.png', 175, 269, 30, 16, 'png');
             }
             $this->SetXY(100, 15);
             $this->Cell(180, 545, utf8_decode($this->dato['Tecnico']), 0, 0, 'C');
@@ -2734,7 +2735,7 @@ class PDFAux extends PDF {
             $this->SetXY(100, 15);
             $this->Cell(180, 555, utf8_decode($this->dato['FechaFirma']), 0, 0, 'C');
         } else {
-            $this->Image('./assets/img/Iconos/sin_firma.png', 175, 269, 35, 20, 'png');
+            $this->Image('./assets/img/Iconos/sin_firma.png', 175, 269, 30, 16, 'png');
             $this->SetXY(100, 15);
             $this->Cell(185, 548, utf8_decode('Técnico'), 0, 0, 'C');
         }
