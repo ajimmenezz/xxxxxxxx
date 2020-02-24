@@ -1238,7 +1238,7 @@ class InformacionServicios extends General {
                                             FechaFirma,
                                             nombreUsuario(tst.IdTecnicoFirma) as Tecnico,
                                             FirmaTecnico
-                                        from t_servicios_ticket tst WHERE Id = '".$servicio."'  and tst.NombreFirma is not null limit 1");
+                                        from t_servicios_ticket tst WHERE Id = '".$servicio."' limit 1");
         if($consulta){
             return $consulta[0];
         }else{
@@ -1271,7 +1271,7 @@ class InformacionServicios extends General {
                                             FirmaTecnico
                                         from t_servicios_ticket tst 
                                             WHERE Ticket = (select Ticket from t_servicios_ticket where Id = '".$servicio."') 
-                                            and tst.NombreFirma is not null limit 1;");
+                                            and tst.NombreFirma is not null limit 1");
         if($consulta){
             return $consulta[0];
         }else{
@@ -1385,6 +1385,7 @@ class InformacionServicios extends General {
             if($temporal != null){
                 $firmas['Firma'] = $temporal['Firma'];
                 $firmas['Gerente'] = $temporal['Gerente'];
+                $firmas['FechaFirma'] = $temporal['FechaFirma'];
             }else{
                 $temporal = $this->getFirmasByTicket($datos['servicio']);
                 $firmas['Firma'] = $temporal['Firma'];
