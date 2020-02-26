@@ -1502,7 +1502,7 @@ class InformacionServicios extends General {
         $this->setCoordinates(10, $this->y);
         $this->setCellValue(30, $heightMulti, "Descripción:", 'R', true);
         
-        $this->setCoordinates(10, $this->y + 5);
+        $this->setCoordinates(10);
     }
 
     private function setPDFContentSinSeguimiento(int $id, array $datos) {
@@ -2107,7 +2107,7 @@ class InformacionServicios extends General {
         if (($this->y + 26) > 270) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
         }
-
+        $this->setCoordinates(10, $this->y + 5);
         $this->setHeadersCensoData();
 
         $censo = $this->DBC->getCensos($datos['servicio']);
