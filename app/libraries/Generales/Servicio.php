@@ -2861,8 +2861,16 @@ class Servicio extends General {
             $verificarSeguimiento = $this->verificarServiciosDepartamento($tipo[0]['IdTipoServicio']);
 
             switch ($tipo[0]['IdTipoServicio']) {
-                case '20': case 20:
                 case '27': case 27:
+                    $titulo = 'Resumen de Servicio - Correctivo Proactivo';
+                    $datosServicio = $this->DBB->getGeneralesServicioGeneral($value['Id']);
+                    if (count($datosServicio) > 0) {
+                        $contenido .= $this->getDetallesSinClasificar($value['Id'], true);
+                    } else {
+                        $contenido .= $this->getDetallesCorrectivo($value['Id']);
+                    }
+                    break;
+                case '20': case 20:
                     $titulo = 'Resumen de Servicio - Correctivo';
                     $contenido .= $this->getDetallesCorrectivo($value['Id']);
                     break;
