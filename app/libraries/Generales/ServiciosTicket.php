@@ -2459,6 +2459,8 @@ class ServiciosTicket extends General
 
     public function guardarDocumentacionFirma(array $datos)
     {
+        $this->DBST->iniciaTransaccion();
+
         $usuario = $this->Usuario->getDatosUsuario();
         if (in_array("PPDFP", $usuario["PermisosString"])) {
             $permisoPDF = true;
@@ -2472,14 +2474,17 @@ class ServiciosTicket extends General
         $ticket = $this->DBST->consulta("select Ticket from t_servicios_ticket where Id = '" . $datos['servicio'] . "'")[0]['Ticket'];
         $direccionFirma = '/storage/Archivos/imagenesFirmas/DocumentacionFirma/' . str_replace(' ', '_', 'Firma_' . $ticket . '_' . $datos['servicio']) . '.png';
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $data);
+
+        $this->DBST->actualizar("t_servicios_ticket", [
+            'Firma' => $direccionFirma,
+            'Nombrefirma' => $datos['recibe'],
+            'CorreoCopiaFirma' => (!empty($datos['correo'])) ? implode(",", $datos['correo']) : '',
+            'FechaFirma' => $fecha
+        ], ['Id' => $datos['servicio']]);
+
         $fechaNueva = str_replace(' ', '_', $fecha);
         $fechaNueva = str_replace(':', '-', $fechaNueva);
         $path = $this->getDocumentoFirmadoPDF(array('servicio' => $datos['servicio']), $fechaNueva);
-        $correo = $datos['correo'];
-
-        if (is_array($correo)) {
-            $correo = implode(",", $correo);
-        }
 
         $consulta = $this->DBST->setNuevoElemento('t_servicios_documentacion_firmada', array(
             'IdServicio' => $datos['servicio'],
@@ -2487,10 +2492,11 @@ class ServiciosTicket extends General
             'IdUsuario' => $usuario['Id'],
             'Fecha' => $fecha,
             'Recibe' => $datos['recibe'],
-            'Correos' => $correo,
+            'Correos' => (!empty($datos['correo'])) ? implode(",", $datos['correo']) : '',
             'Firma' => $direccionFirma,
             'UrlArchivo' => $path
         ));
+
         if ($permisoPDF) {
             $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
         } else {
@@ -2530,6 +2536,14 @@ class ServiciosTicket extends General
             $descripcion = "<div>" . $fecha . "</div><div>AVANCE DE SERVICIO</div><div><a href='" . $path . "'>Documento PDF</a></div>";
             $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
             $this->InformacionServicios->setNoteAndWorkLog(array('key' => $key, 'folio' => $departamento[0]['Folio'], 'html' => $descripcion));
+
+            if ($this->DBST->estatusTransaccion() === FALSE) {
+                $this->DBST->roolbackTransaccion();
+                return FALSE;
+            } else {
+                $this->DBST->commitTransaccion();
+                return $this->DBST->consultaDocumentacioFirmadaServicio($datos['servicio'], TRUE);
+            }
 
             return $this->DBST->consultaDocumentacioFirmadaServicio($datos['servicio'], TRUE);
         } else {
