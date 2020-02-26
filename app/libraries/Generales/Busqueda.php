@@ -508,8 +508,29 @@ class Busqueda extends General {
                     ];
                     return parent::getCI()->load->view("Generales/Modal/detallesServicio_11", $data, TRUE);
                     break;
-                case '20': case 20:
                 case '27': case 27:
+                    $datosServicio = $this->DBB->getGeneralesServicioGeneral($servicio);
+                    if (count($datosServicio) > 0) {
+                        return parent::getCI()->load->view("Generales/Modal/detallesServicio", ['datos' => $datosServicio[0]], TRUE);
+                    } else {
+                        $data = [
+                            'datos' => $this->DBB->getGeneralesServicioGeneralCompleto($servicio)[0],
+                            'datosCorrectivo' => $this->DBB->getGeneralesServicio20($servicio)[0],
+                            'diagnosticoEquipo' => $this->DBB->getDiagnosticoEquipo20($servicio),
+                            'tipoProblema' => $this->DBB->getTipoProblema20($servicio)[0]['IdTipoProblema'],
+                            'problemasServicio' => $this->DBB->getProblemaServicio20($servicio),
+                            'verificarEnvioEntrega' => $this->DBB->getVerificarEnvioEntrega20($servicio),
+                            'envioEntrega' => $this->DBB->consultaEntregaEnvio($servicio),
+                            'correctivoSoluciones' => $this->DBB->getCorrectivosSoluciones($servicio),
+                        ];
+                        if (empty($data['diagnosticoEquipo'])) {
+                            $bitacoraObservaciones = $this->InformacionServicios->getHistorialReporteEnFalso($servicio);
+                            $data['diagnosticoEquipo'][0]['BitacoraObservaciones'] = $bitacoraObservaciones;
+                        }
+                        return parent::getCI()->load->view("Generales/Modal/detallesServicio_20", $data, TRUE);
+                    }
+                    break;
+                case '20': case 20:
                     $data = [
                         /* Datos generales del servicio */
                         'datos' => $this->DBB->getGeneralesServicioGeneralCompleto($servicio)[0],

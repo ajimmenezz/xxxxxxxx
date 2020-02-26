@@ -8,6 +8,7 @@ use Librerias\Generales\PDF as PDF;
 class InformacionServicios extends General {
 
     private $DBS;
+    private $DBB;
     private $Correo;
     private $ServiceDesk;
     private $MSP;
@@ -23,6 +24,7 @@ class InformacionServicios extends General {
         parent::__construct();
         ini_set('max_execution_time', 300);
         $this->DBS = \Modelos\Modelo_Loguistica_Seguimiento::factory();
+        $this->DBB = \Modelos\Modelo_Busqueda::factory();
         $this->Correo = \Librerias\Generales\Correo::factory();
         $this->ServiceDesk = \Librerias\WebServices\ServiceDesk::factory();
         $this->MSP = \Modelos\Modelo_SegundoPlano::factory();
@@ -1337,8 +1339,17 @@ class InformacionServicios extends General {
                         switch ($generales['IdTipoServicio']) {
                             case 20:
                             case '20':
-                            case '27': case 27:
                                 $this->setPDFContentCorrectivo($generales['Id'], $datos);
+                                break;
+                            case 27:
+                            case '27':
+                                $datosServicio = $this->DBB->getGeneralesServicioGeneral($datos['servicio']);
+                                if (count($datosServicio) > 0) {
+                                    $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
+                                    $this->obtenerEquipoMaterialServicio($datos['servicio']);
+                                } else {
+                                    $this->setPDFContentCorrectivo($generales['Id'], $datos);
+                                }
                                 break;
                         }
                     }
@@ -1464,9 +1475,17 @@ class InformacionServicios extends General {
                     break;
                 case 20:
                 case '20':
+                    $this->setPDFContentCorrectivo($generales['Id'], $datos);
+                    break;
                 case 27:
                 case '27':
-                    $this->setPDFContentCorrectivo($generales['Id'], $datos);
+                    $datosServicio = $this->DBB->getGeneralesServicioGeneral($datos['servicio']);
+                    if (count($datosServicio) > 0) {
+                        $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
+                        $this->obtenerEquipoMaterialServicio($datos['servicio']);
+                    } else {
+                        $this->setPDFContentCorrectivo($generales['Id'], $datos);
+                    }
                     break;
             }
         }
@@ -1507,7 +1526,7 @@ class InformacionServicios extends General {
 
     private function setPDFContentSinSeguimiento(int $id, array $datos) {
         $this->setAvancesProblemasPDF($id, $datos);
-
+        $this->setCoordinates(10, $this->y + 5);
         $resolucion = $this->getResolucionSinClasificarForPDF($id);
 
         if (isset($resolucion[0])) {
