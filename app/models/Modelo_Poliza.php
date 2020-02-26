@@ -4,11 +4,13 @@ namespace Modelos;
 
 use Librerias\Modelos\Base as Modelo_Base;
 
-class Modelo_Poliza extends Modelo_Base {
+class Modelo_Poliza extends Modelo_Base
+{
 
     private $usuario;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
     }
@@ -19,7 +21,8 @@ class Modelo_Poliza extends Modelo_Base {
      * @return array regresa Id y Nombre de los tipos de proyectos vigentes
      */
 
-    public function getTiposProyecto() {
+    public function getTiposProyecto()
+    {
         $datos = array();
         $consulta = $this->encontrar('cat_tipos_proyecto', array('Flag' => '1'));
         if (!empty($consulta)) {
@@ -36,11 +39,12 @@ class Modelo_Poliza extends Modelo_Base {
      * @return array regresa datos de los proyectos creados con estatus abierto (sin iniciar)
      */
 
-    public function getProyectosSinAtender() {
+    public function getProyectosSinAtender()
+    {
         $datos = array();
         $consulta = $this->consulta('select p.Id,p.Ticket,p.Nombre,e.Nombre Estado,s.Nombre Sucursal,p.FechaInicio,p.FechaTermino '
-                . 'from t_proyectos p inner join cat_v3_sucursales s on p.IdSucursal = s.Id '
-                . 'inner join cat_v3_estados e on s.IdEstado = e.Id where p.IdEstatus = 1');
+            . 'from t_proyectos p inner join cat_v3_sucursales s on p.IdSucursal = s.Id '
+            . 'inner join cat_v3_estados e on s.IdEstado = e.Id where p.IdEstatus = 1');
         if (!empty($consulta)) {
             foreach ($consulta as $value) {
                 array_push($datos, array(
@@ -63,7 +67,8 @@ class Modelo_Poliza extends Modelo_Base {
      * @return array regresa Id y Nombre de los tipos de proyectos vigentes
      */
 
-    public function getSolicitudesMultimedia(string $email) {
+    public function getSolicitudesMultimedia(string $email)
+    {
         $datos = array();
         $consulta = parent::connectDBAdist2()->query("call getTicketsIngenieroByEmail('" . $email . "')");
         if (!empty($consulta)) {
@@ -79,7 +84,8 @@ class Modelo_Poliza extends Modelo_Base {
      *  $datos = datos para insertar en la tabla t_minutas
      */
 
-    public function setSolicitudesMultimedia(array $datos) {
+    public function setSolicitudesMultimedia(array $datos)
+    {
         $consulta = parent::connectDBAdist2()->query("INSERT INTO t_tiempos_multimedia (IdUsuario, Ticket, FechaSolicitud, FechaApoyo, FechaCaptura) VALUES (" . $datos['IdUsuario'] . ", " . $datos['Ticket'] . ", '" . $datos['FechaSolicitud'] . "', '" . $datos['FechaApoyo'] . "', '" . $datos['FechaCaptura'] . "')");
         if (!empty($consulta)) {
             return $consulta;
@@ -93,7 +99,8 @@ class Modelo_Poliza extends Modelo_Base {
      *  $datos = datos para actualizar en la tabla t_minutas
      */
 
-    public function actualizarSolicitudesMultimedia(array $datos) {
+    public function actualizarSolicitudesMultimedia(array $datos)
+    {
         $consulta = parent::connectDBAdist2()->query("UPDATE t_tiempos_multimedia 
                                                       SET FechaSolicitud='" . $datos['FechaSolicitud'] . "', FechaApoyo='" . $datos['FechaApoyo'] . "', FechaCaptura='" . $datos['FechaCaptura'] . "'
                                                       WHERE Ticket=" . $datos['Ticket']);
@@ -109,7 +116,8 @@ class Modelo_Poliza extends Modelo_Base {
      *  $dato = datos para insertar en la tabla t_minutas
      */
 
-    public function consultaSolicitudesMinuta(string $dato) {
+    public function consultaSolicitudesMinuta(string $dato)
+    {
         $datos = array();
         $consulta = parent::connectDBAdist2()->query("SELECT * FROM t_tiempos_multimedia WHERE Ticket=" . $dato);
         if (!empty($consulta)) {
@@ -138,7 +146,8 @@ class Modelo_Poliza extends Modelo_Base {
      *  $datos = datos para insertar en la tabla t_minutas
      */
 
-    public function insertarEvidenciasSM(array $data, string $campoBD, array $datos) {
+    public function insertarEvidenciasSM(array $data, string $campoBD, array $datos)
+    {
         $consulta = parent::connectDBAdist2()->query("INSERT INTO t_tiempos_multimedia (IdUsuario, Ticket, " . $campoBD . ", FechaCaptura) VALUES (" . $data['IdUsuario'] . ", " . $data['Ticket'] . ", '" . $datos['Archivo'] . "', '" . $data['FechaCaptura'] . "')");
         if (!empty($consulta)) {
             return $consulta;
@@ -154,7 +163,8 @@ class Modelo_Poliza extends Modelo_Base {
      *  $datos = datos para insertar en la tabla t_minutas
      */
 
-    public function actualizarEvidenciasSM(array $data, string $campoBD, array $datos) {
+    public function actualizarEvidenciasSM(array $data, string $campoBD, array $datos)
+    {
         $consulta = parent::connectDBAdist2()->query("UPDATE t_tiempos_multimedia 
                                                       SET " . $campoBD . "='" . $datos['Archivo'] . "', FechaCaptura= '" . $data['FechaCaptura'] . "'
                                                       WHERE Ticket=" . $data['Ticket']);
@@ -165,7 +175,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function mostrarNombreEvidencia(string $campoBD, string $ticket) {
+    public function mostrarNombreEvidencia(string $campoBD, string $ticket)
+    {
         $datos = array();
         $consulta = parent::connectDBAdist2()->query("SELECT " . $campoBD . " FROM t_tiempos_multimedia WHERE Ticket = " . $ticket);
         if (!empty($consulta)) {
@@ -180,7 +191,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function insertarServiciosTicketCorrectivosSolicitudes(array $datos, array $datos2, array $datosExtra) {
+    public function insertarServiciosTicketCorrectivosSolicitudes(array $datos, array $datos2, array $datosExtra)
+    {
         $this->iniciaTransaccion();
         $this->insertar('t_servicios_ticket', $datos);
         $IdServicio = parent::connectDBPrueba()->insert_id();
@@ -205,7 +217,8 @@ class Modelo_Poliza extends Modelo_Base {
                 'IdServicioOrigen' => $datosExtra['Servicio'],
                 'IdServicio' => $IdServicio,
                 $idTabla => $value[0],
-                'Cantidad' => $value[2]));
+                'Cantidad' => $value[2]
+            ));
         }
 
         $this->insertar('t_correctivos_problemas', array(
@@ -213,16 +226,19 @@ class Modelo_Poliza extends Modelo_Base {
             'IdTipoProblema' => $datosExtra['TipoProblema'],
             'IdUsuario' => $datosExtra['Usuario'],
             'Fecha' => $datos['FechaCreacion'],
-            'RecibeSolicitud' => $recibeSolicitud));
+            'RecibeSolicitud' => $recibeSolicitud
+        ));
         $this->insertar('t_servicios_relaciones', array(
             'IdServicioOrigen' => $datosExtra['Servicio'],
-            'IdServicioNuevo' => $IdServicio));
+            'IdServicioNuevo' => $IdServicio
+        ));
 
         $this->terminaTransaccion();
         return $IdServicio;
     }
 
-    public function insertarCorrectivosSolicitudes(array $datos2, array $datosExtra) {
+    public function insertarCorrectivosSolicitudes(array $datos2, array $datosExtra)
+    {
         $this->iniciaTransaccion();
 
         if ($datosExtra['Tabla'] === 't_correctivos_solicitudes_equipo') {
@@ -236,19 +252,22 @@ class Modelo_Poliza extends Modelo_Base {
                 'IdServicioOrigen' => $datosExtra['Servicio'],
                 'IdServicio' => $datosExtra['Servicio'],
                 $idTabla => $value[0],
-                'Cantidad' => $value[2]));
+                'Cantidad' => $value[2]
+            ));
         }
         $this->insertar('t_correctivos_problemas', array(
             'IdServicio' => $datosExtra['Servicio'],
             'IdTipoProblema' => $datosExtra['TipoProblema'],
             'IdUsuario' => $datosExtra['Usuario'],
-            'Fecha' => $datosExtra['FechaCreacion']));
+            'Fecha' => $datosExtra['FechaCreacion']
+        ));
 
         $this->terminaTransaccion();
         return $datosExtra['Servicio'];
     }
 
-    public function insertarCorrectivoProblemasRespaldo(array $datos, array $datos2) {
+    public function insertarCorrectivoProblemasRespaldo(array $datos, array $datos2)
+    {
         $this->iniciaTransaccion();
 
         if ($datos['EsRespaldo'] === '1') {
@@ -266,19 +285,22 @@ class Modelo_Poliza extends Modelo_Base {
             'SolicitaEquipo' => $datos['SolicitaEquipo'],
             $campoVariantes1 => $datos['campoVariantes1'],
             $campoVariantes2 => $datos['campoVariantes2'],
-            'Fecha' => $datos['Fecha']));
+            'Fecha' => $datos['Fecha']
+        ));
         $IdServicio = parent::connectDBPrueba()->insert_id();
 
         $this->insertar('t_correctivos_problemas', array(
             'IdServicio' => $datos2['IdServicio'],
             'IdTipoProblema' => $datos2['IdTipoProblema'],
             'IdUsuario' => $datos2['IdUsuario'],
-            'Fecha' => $datos['Fecha']));
+            'Fecha' => $datos['Fecha']
+        ));
         $this->terminaTransaccion();
         return $IdServicio;
     }
 
-    public function insertarServicioCorrectivoSolicitudGarantiaRespaldo(array $dataInformacionGarantia, array $dataNuevoServicio, array $dataCorrectivosSolicitudesEquipo, array $dataCorrectivosProblemas) {
+    public function insertarServicioCorrectivoSolicitudGarantiaRespaldo(array $dataInformacionGarantia, array $dataNuevoServicio, array $dataCorrectivosSolicitudesEquipo, array $dataCorrectivosProblemas)
+    {
         $this->iniciaTransaccion();
 
         $this->insertar('t_correctivos_garantia_respaldo', $dataInformacionGarantia);
@@ -288,30 +310,35 @@ class Modelo_Poliza extends Modelo_Base {
             'IdServicioOrigen' => $dataCorrectivosSolicitudesEquipo['IdServicioOrigen'],
             'IdServicio' => $IdServicio,
             'IdModelo' => $dataCorrectivosSolicitudesEquipo['IdModelo'],
-            'Cantidad' => $dataCorrectivosSolicitudesEquipo['Cantidad']));
+            'Cantidad' => $dataCorrectivosSolicitudesEquipo['Cantidad']
+        ));
         $this->insertar('t_correctivos_problemas', $dataCorrectivosProblemas);
         $this->insertar('t_servicios_relaciones', array(
             'IdServicioOrigen' => $dataCorrectivosSolicitudesEquipo['IdServicioOrigen'],
-            'IdServicioNuevo' => $IdServicio));
+            'IdServicioNuevo' => $IdServicio
+        ));
 
         $this->terminaTransaccion();
         return $IdServicio;
     }
 
-    public function insertarServicioCorrectivoSolicitudesSolucionEquipo(array $dataCorrectivosSoluciones, string $solucion) {
+    public function insertarServicioCorrectivoSolicitudesSolucionEquipo(array $dataCorrectivosSoluciones, string $solucion)
+    {
         $this->iniciaTransaccion();
 
         $this->insertar('t_correctivos_soluciones', $dataCorrectivosSoluciones);
         $IdCorrectivoSoluciones = parent::connectDBPrueba()->insert_id();
         $this->insertar('t_correctivos_solucion_sin_equipo', array(
             'IdSolucionCorrectivo' => $IdCorrectivoSoluciones,
-            'IdSolucionEquipo' => $solucion));
+            'IdSolucionEquipo' => $solucion
+        ));
 
         $this->terminaTransaccion();
         return $IdCorrectivoSoluciones;
     }
 
-    public function insertarServicioCorrectivoSolicitudesSolucionRefaccion(array $dataCorrectivosSoluciones, array $dataCorrectivosSolucionesRefaccion) {
+    public function insertarServicioCorrectivoSolicitudesSolucionRefaccion(array $dataCorrectivosSoluciones, array $dataCorrectivosSolucionesRefaccion)
+    {
         $this->iniciaTransaccion();
 
 
@@ -343,13 +370,17 @@ class Modelo_Poliza extends Modelo_Base {
                     'IdSolucionCorrectivo' => $IdCorrectivoSoluciones,
                     'IdRefaccion' => $value['IdProducto'],
                     'Cantidad' => $value['Cantidad'],
-                    'IdInventario' => $value['Id']));
+                    'IdInventario' => $value['Id']
+                ));
                 $this->actualizar("t_inventario", ['Bloqueado' => 1], ['Id' => $value['Id']]);
             } else {
-                $this->insertar('t_correctivos_solucion_refaccion', array(
-                    'IdSolucionCorrectivo' => $IdCorrectivoSoluciones,
-                    'IdRefaccion' => $value[0],
-                    'Cantidad' => $value[2])
+                $this->insertar(
+                    't_correctivos_solucion_refaccion',
+                    array(
+                        'IdSolucionCorrectivo' => $IdCorrectivoSoluciones,
+                        'IdRefaccion' => $value[0],
+                        'Cantidad' => $value[2]
+                    )
                 );
             }
         }
@@ -358,7 +389,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $IdCorrectivoSoluciones;
     }
 
-    public function insertarServicioCorrectivoSolicitudesSolucionCambio(array $dataCorrectivosSoluciones, string $equipo, string $serie, array $dataCenso, string $inventario = null, string $operacion) {
+    public function insertarServicioCorrectivoSolicitudesSolucionCambio(array $dataCorrectivosSoluciones, string $equipo, string $serie, array $dataCenso, string $inventario = null, string $operacion)
+    {
         $this->iniciaTransaccion();
 
         /* Se ejecuta el siguiente código para que se desbloqueen todos los
@@ -386,7 +418,8 @@ class Modelo_Poliza extends Modelo_Base {
             'IdSolucionCorrectivo' => $IdCorrectivoSoluciones,
             'IdModelo' => $equipo,
             'Serie' => $serie,
-            'IdInventario' => $inventario));
+            'IdInventario' => $inventario
+        ));
 
         $this->actualizar("t_inventario", ['Bloqueado' => 1], ['Id' => $inventario]);
 
@@ -398,14 +431,16 @@ class Modelo_Poliza extends Modelo_Base {
                 'IdModelo' => $equipo,
                 'Punto' => $dataCenso['Punto'],
                 'Serie' => $serie,
-                'Extra' => $dataCenso['Terminal']));
+                'Extra' => $dataCenso['Terminal']
+            ));
         }
 
         $this->terminaTransaccion();
         return $IdCorrectivoSoluciones;
     }
 
-    public function insertarCorrectivosSolicitudesProblemas(array $datos, array $datosExtra) {
+    public function insertarCorrectivosSolicitudesProblemas(array $datos, array $datosExtra)
+    {
         $this->iniciaTransaccion();
 
         if ($datos['tipoSolicitud'] === 'equipo') {
@@ -423,20 +458,23 @@ class Modelo_Poliza extends Modelo_Base {
                 'IdServicioOrigen' => $datos['servicio'],
                 'IdServicio' => $datos['servicio'],
                 $idTabla => $value[0],
-                'Cantidad' => $value[2]));
+                'Cantidad' => $value[2]
+            ));
         }
         $this->insertar('t_correctivos_problemas', array(
             'IdServicio' => $datos['servicio'],
             'IdTipoProblema' => $idTipoProblema,
             'IdUsuario' => $datosExtra['Usuario'],
             'Fecha' => $datosExtra['FechaCreacion'],
-            'RecibeSolicitud' => '3'));
+            'RecibeSolicitud' => '3'
+        ));
 
         $this->terminaTransaccion();
         return TRUE;
     }
 
-    public function consultaCorrectivosSolucionesServicio(string $servicio) {
+    public function consultaCorrectivosSolucionesServicio(string $servicio)
+    {
         $consulta = $this->consulta('SELECT 
                                         *
                                     FROM
@@ -448,7 +486,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function consultaCorreoCoordinadorPoliza() {
+    public function consultaCorreoCoordinadorPoliza()
+    {
         $consulta = $this->consulta('SELECT 
                                         EmailCorporativo 
                                     FROM cat_v3_usuarios
@@ -456,7 +495,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function consultaCategorias(int $idCategoria = null) {
+    public function consultaCategorias(int $idCategoria = null)
+    {
         $condicion = (!is_null($idCategoria)) ? " where Id = '" . $idCategoria . "'" : '';
         $consulta = $this->consulta("SELECT 
                                         Id,
@@ -467,7 +507,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function mostrarCategoriaRevisionPunto() {
+    public function mostrarCategoriaRevisionPunto()
+    {
         $consulta = $this->consulta("SELECT * 
                                     FROM t_checklist_revision_area tcra
                                     INNER JOIN cat_v3_checklist_poliza_categorias cvcpc on tcra.IdCategoria = cvcpc.Id
@@ -476,7 +517,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function agregarCategoria(string $categoria) {
+    public function agregarCategoria(string $categoria)
+    {
         $insertar = $this->insertar("cat_v3_checklist_poliza_categorias", array('Nombre' => mb_strtoupper($categoria)));
         if (!is_null($insertar)) {
             return ['Id' => $this->ultimoId()];
@@ -485,7 +527,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function editarCategoria(array $datosCategoria) {
+    public function editarCategoria(array $datosCategoria)
+    {
         $editar = $this->actualizar('cat_v3_checklist_poliza_categorias', array('Nombre' => $datosCategoria['Nombre'], 'Flag' => $datosCategoria['Flag']), array('Id' => $datosCategoria['Id']));
 
         if (!is_null($editar)) {
@@ -493,7 +536,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaListaPreguntas(int $idPregunta = null, int $idCategoria = null) {
+    public function consultaListaPreguntas(int $idPregunta = null, int $idCategoria = null)
+    {
         $condicion = (!is_null($idPregunta)) ? " WHERE Id = '" . $idPregunta . "'" : '';
         $consultaCategoria = (!is_null($idCategoria)) ? " WHERE IdCategoria = '" . $idCategoria . "'" : '';
         $consulta = $this->consulta("SELECT cvcf.Id,
@@ -510,8 +554,9 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function consultaAreasAtencion() {
-        $arrayAreaAtencion = Array();
+    public function consultaAreasAtencion()
+    {
+        $arrayAreaAtencion = array();
 
         $consulta = $this->consulta("SELECT * FROM cat_v3_areas_atencion WHERE Flag = 1 ");
         foreach ($consulta as $value) {
@@ -520,7 +565,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $arrayAreaAtencion;
     }
 
-    public function insertarPregunta(array $datos) {
+    public function insertarPregunta(array $datos)
+    {
         $insertar = $this->insertar('cat_v3_checklist_conceptos_fisicos', $datos);
         if (!is_null($insertar)) {
             return ['Id' => $this->ultimoId()];
@@ -529,7 +575,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function editarPregunta(array $datosPregunta) {
+    public function editarPregunta(array $datosPregunta)
+    {
 
         $editar = $this->actualizar('cat_v3_checklist_conceptos_fisicos', $datosPregunta, array('Id' => $datosPregunta['Id']));
         $consultaPregunta = $this->consultaListaPreguntas($datosPregunta['Id']);
@@ -539,12 +586,14 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultarRevisionArea(array $datos) {
+    public function consultarRevisionArea(array $datos)
+    {
         $consulta = $this->consulta("SELECT * FROM t_checklist_revision_area WHERE IdServicio = '" . $datos['servicio'] . "' AND IdCategoria = '" . $datos['idCategoria'] . "'");
         return $consulta;
     }
 
-    public function mostrarRevisionAreaCategoria(array $datos) {
+    public function mostrarRevisionAreaCategoria(array $datos)
+    {
 
         $revisionArea = $this->consulta("SELECT
                                         tcra.Id,
@@ -565,15 +614,20 @@ class Modelo_Poliza extends Modelo_Base {
         return $revisionArea;
     }
 
-    public function actualizarSucursal($datos) {
-        $editar = $this->actualizar('t_servicios_ticket', array(
-            'IdSucursal' => $datos['sucursal'],
-                ), array('Id' => $datos['servicio'])
+    public function actualizarSucursal($datos)
+    {
+        $editar = $this->actualizar(
+            't_servicios_ticket',
+            array(
+                'IdSucursal' => $datos['sucursal'],
+            ),
+            array('Id' => $datos['servicio'])
         );
         return $editar;
     }
 
-    public function nombreArea($dato, $sucursal) {
+    public function nombreArea($dato, $sucursal)
+    {
 
         $consultaCenso = $this->consulta("SELECT * 
                                         FROM t_censos 
@@ -590,7 +644,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function insertarRevisionAreas($datos) {
+    public function insertarRevisionAreas($datos)
+    {
         if (isset($datos['DatosTabla'])) {
 
             foreach ($datos['DatosTabla'] as $value) {
@@ -626,7 +681,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function obtenerIdRevicionArea(array $datos) {
+    public function obtenerIdRevicionArea(array $datos)
+    {
         $consulta = $this->consulta("select 
                                             tcra.Id
                                     from cat_v3_areas_atencion cvaa
@@ -644,7 +700,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function obtenerEvidenciasPuntosCheckList(array $datos) {
+    public function obtenerEvidenciasPuntosCheckList(array $datos)
+    {
         $consulta = $this->consulta('SELECT 
                                         Id,
                                         Evidencia 
@@ -664,7 +721,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function actualizarEvidencia(array $datos) {
+    public function actualizarEvidencia(array $datos)
+    {
         $consulta = $this->actualizar('t_checklist_revision_punto', array('Evidencia' => $datos['Evidencia']), array('Id' => $datos['Id']));
         if (!empty($consulta)) {
             return true;
@@ -673,7 +731,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function mostrarRevisionPunto(array $datos) {
+    public function mostrarRevisionPunto(array $datos)
+    {
         $consulta = $this->consulta("SELECT
                                         tcrp.Id,
                                         tcrp.IdServicio,
@@ -697,7 +756,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function insertarRevisionPunto(array $datos) {
+    public function insertarRevisionPunto(array $datos)
+    {
         $insertar = $this->insertar('t_checklist_revision_punto', $datos);
 
         if (!empty($insertar)) {
@@ -707,7 +767,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function actulaizarRevisionPunto(array $datos) {
+    public function actulaizarRevisionPunto(array $datos)
+    {
         $tabla = "t_checklist_revision_punto";
 
         if ($datos['tipoActualizar'] == 1) {
@@ -725,7 +786,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function mostrarFallasTecnicas($servicio, $idRevision = null) {
+    public function mostrarFallasTecnicas($servicio, $idRevision = null)
+    {
         $condicion = (!is_null($idRevision)) ? " AND Id = '" . $idRevision . "'" : '';
         $consultaFallas = "SELECT 
                                 tcrt.Id,
@@ -759,7 +821,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function guardarRevisionTecnicaCheck(array $datos) {
+    public function guardarRevisionTecnicaCheck(array $datos)
+    {
 
         $this->iniciaTransaccion();
 
@@ -774,14 +837,16 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function actualizaFallasTecnicas(array $datos) {
+    public function actualizaFallasTecnicas(array $datos)
+    {
         $actualizar = $this->actualizar("t_checklist_revision_tecnica", array('Flag' => $datos['estatusRevision']), array('Id' => $datos['idRevisionTecnica'], 'IdServicio' => $datos['servicio']));
         return $actualizar;
     }
 
     //PDF
 
-    public function consultaRevisionPunotPDF($servicio) {
+    public function consultaRevisionPunotPDF($servicio)
+    {
         $consulta = $this->consulta("SELECT 
                                         tcrp.Id,
                                         tcrp.IdServicio,
@@ -799,7 +864,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function concluirServicio(array $dato) {
+    public function concluirServicio(array $dato)
+    {
 
         $this->actualizar('t_servicios_ticket', array(
             'IdEstatus' => $dato['Estatus'],
@@ -808,13 +874,14 @@ class Modelo_Poliza extends Modelo_Base {
             'NombreFirma' => $dato['NombreFirma'],
             'CorreoCopiaFirma' => $dato['CorreoCopiaFirma'],
             'FechaFirma' => $dato['FechaFirma']
-                ), array('Id' => $dato['servicio']));
+        ), array('Id' => $dato['servicio']));
 
 
         return $this->consulta("SELECT * FROM t_servicios_ticket where Id = '" . $dato['servicio'] . "'");
     }
 
-    public function getNombreServicio(string $servicio) {
+    public function getNombreServicio(string $servicio)
+    {
         $consulta = $this->consulta("select
                                             tipoServicio(tst.IdTipoServicio) as nombreServicio
                                     from t_servicios_ticket tst
@@ -822,12 +889,14 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta[0];
     }
 
-    public function mostrarServicio($servicio) {
+    public function mostrarServicio($servicio)
+    {
         $consulta = $this->consulta("select * from t_servicios_ticket where Id = '" . $servicio . "'");
         return $consulta;
     }
 
-    public function insertarNuevoServicioCorrectivo(array $datos) {
+    public function insertarNuevoServicioCorrectivo(array $datos)
+    {
         $respuesta = null;
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $consultaChecklistRevisionTecnica = $this->mostrarFallasTecnicas($datos['IdServicio']);
@@ -839,7 +908,8 @@ class Modelo_Poliza extends Modelo_Base {
             $descripcionCorrectivo = "Seguimiento de Diagnostico en Checklist para el equipo " . $falla['Equipo'] . " con la Serie " . $falla['Serie'] . " por falla " . $falla['Falla'];
 
             // insertando en t_servicios_ticket
-            $datosInsertarTicket = array('Ticket' => $datos['Ticket'],
+            $datosInsertarTicket = array(
+                'Ticket' => $datos['Ticket'],
                 'IdSolicitud' => $datos['IdSolicitud'],
                 'IdTipoServicio' => 20,
                 'IdSucursal' => $datos['IdSucursal'],
@@ -862,7 +932,8 @@ class Modelo_Poliza extends Modelo_Base {
             }
 
             // insertando en t_correctivos_generales            
-            $datosInsertarCorrectivos = array('IdServicio' => $ultimaIdServicioTicket,
+            $datosInsertarCorrectivos = array(
+                'IdServicio' => $ultimaIdServicioTicket,
                 'IdArea' => $falla['IdArea'],
                 'Punto' => $falla['Punto'],
                 'IdModelo' => $falla['IdModelo'],
@@ -882,7 +953,8 @@ class Modelo_Poliza extends Modelo_Base {
             // insertando en t_correctivos_diagnostico            
             $consultaCorrectivosGenerales = $this->consulta("SELECT * FROM t_correctivos_generales WHERE Id = '" . $ultimoIdCorrectivosGenerales . "'");
 
-            $datosInsertarCorrectivosDiagnostico = array('IdServicio' => $consultaCorrectivosGenerales[0]['IdServicio'],
+            $datosInsertarCorrectivosDiagnostico = array(
+                'IdServicio' => $consultaCorrectivosGenerales[0]['IdServicio'],
                 'IdTipoDiagnostico' => $falla['IdTipoDiagnostico'],
                 'IdUsuario' => $this->usuario['Id'],
                 'IdComponente' => $falla['IdComponente'],
@@ -903,21 +975,22 @@ class Modelo_Poliza extends Modelo_Base {
             if ($this->estatusTransaccion() === FALSE) {
                 $this->roolbackTransaccion();
                 $respuesta = 0;
-//                $return_array['inserto'] = "no paso";
-//                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
+                //                $return_array['inserto'] = "no paso";
+                //                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
             } else {
                 $this->commitTransaccion();
                 $this->actualizar("t_checklist_revision_tecnica", array('FlagInsert' => 1), array('Id' => $falla['Id']));
                 $respuesta = 1;
-//                $return_array['code'] = $datos;
-//                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
+                //                $return_array['code'] = $datos;
+                //                $return_array = array('insertoTicket' => $insertoTicket, 'insertoCorrectivoGeneral' => $insertarCorrectivosGenerales, 'insertarCorrectivosDiagnostico' => $insertarCorrectivosDiagnostico);
             }
         }
         return $respuesta;
     }
 
-// SELECTS ------------- Seguimiento Equipos
-    public function estatusAllab($idServicio) {
+    // SELECTS ------------- Seguimiento Equipos
+    public function estatusAllab($idServicio)
+    {
         if (!empty($idServicio)) {
             $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "'");
             foreach ($consulta as $value) {
@@ -928,7 +1001,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaTablaServicioAllab() {
+    public function consultaTablaServicioAllab()
+    {
         $consulta = $this->consulta("SELECT 
                                         tea.Id,
                                         tst.Id as IdServicio,
@@ -953,7 +1027,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaTablaServicioAllabSupervisor(string $usuario) {
+    public function consultaTablaServicioAllabSupervisor(string $usuario)
+    {
         $consulta = $this->consulta("SELECT 
                                         tea.Id,
                                         tst.Id as IdServicio,
@@ -998,7 +1073,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaTablaServicioAllabTecnico(string $usuario) {
+    public function consultaTablaServicioAllabTecnico(string $usuario)
+    {
         $consulta = $this->consulta("SELECT 
                                         tea.Id,
                                         tst.Id as IdServicio,
@@ -1024,7 +1100,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaTablaServicioAllabPerfil(string $estatus) {
+    public function consultaTablaServicioAllabPerfil(string $estatus)
+    {
         $consulta = $this->consulta("SELECT 
                                         tea.Id,
                                         tst.Id as IdServicio,
@@ -1049,7 +1126,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaTablaServicioAllabPerfilLogistica() {
+    public function consultaTablaServicioAllabPerfilLogistica()
+    {
         $consulta = $this->consulta("SELECT 
                                         tea.Id,
                                         tst.Id as IdServicio,
@@ -1079,7 +1157,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaTablaServicioAllabPerfilAlmacen() {
+    public function consultaTablaServicioAllabPerfilAlmacen()
+    {
         $consulta = $this->consulta("SELECT 
                                         tea.Id,
                                         tst.Id as IdServicio,
@@ -1137,7 +1216,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaTablaServicioAllabPerfilLaboratorio() {
+    public function consultaTablaServicioAllabPerfilLaboratorio()
+    {
         $consulta = $this->consulta("SELECT 
                                         tea.Id,
                                         tst.Id as IdServicio,
@@ -1168,7 +1248,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaDatosValidacion(array $datos = null) {
+    public function consultaDatosValidacion(array $datos = null)
+    {
         $condicion = "";
         $valor = "";
         if (!empty($datos['IdRefaccion'])) {
@@ -1211,7 +1292,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaSolicitudGuiaTecnico(int $idServicio) {
+    public function consultaSolicitudGuiaTecnico(int $idServicio)
+    {
         $datosServicio = $this->estatusAllab($idServicio);
 
         if (!empty($datosServicio)) {
@@ -1232,7 +1314,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaRecepcionAlmacen(array $datos) {
+    public function consultaRecepcionAlmacen(array $datos)
+    {
         $datosServcio = $this->estatusAllab($datos['IdServicio']);
         $idRecepcion = null;
         $consultaRecepcion = $this->consulta("SELECT 
@@ -1268,7 +1351,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaEnvioLogistica(array $datos) {
+    public function consultaEnvioLogistica(array $datos)
+    {
         $datosServcio = $this->estatusAllab($datos['IdServicio']);
 
         $consulta = $this->consulta("SELECT 
@@ -1297,7 +1381,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function actualizaInventariosMovimientosXConslusionCorrectivo(int $id) {
+    public function actualizaInventariosMovimientosXConslusionCorrectivo(int $id)
+    {
         $this->iniciaTransaccion();
 
         /* Obtiene la última solución del correctivo y el tipo de solución */
@@ -1307,7 +1392,8 @@ class Modelo_Poliza extends Modelo_Base {
             $_tipoSolucion = $solucion[0]['IdTipoSolucion'];
 
             switch ($_tipoSolucion) {
-                case 2: case '2':
+                case 2:
+                case '2':
                     $_refaccionesUtilizadas = $this->consulta("select 
                                                                 * 
                                                                 from t_inventario 
@@ -1320,8 +1406,6 @@ class Modelo_Poliza extends Modelo_Base {
                                                                 and IdTipoProducto = 2;");
                     if (!empty($_refaccionesUtilizadas)) {
                         foreach ($_refaccionesUtilizadas as $key => $value) {
-
-
                             /*
                              * Agrega al inventario la refacciòn dañada
                              * que se supone que el usuario retira cuando
@@ -1340,11 +1424,11 @@ class Modelo_Poliza extends Modelo_Base {
                              * correspondiente al complejo del servicio
                              */
                             $almacen = $this->consulta(""
-                                    . "select "
-                                    . "Id "
-                                    . "from cat_v3_almacenes_virtuales "
-                                    . "where IdTipoAlmacen = 2 "
-                                    . "and IdReferenciaAlmacen = (select IdSucursal from t_servicios_ticket where Id = '" . $id . "')");
+                                . "select "
+                                . "Id "
+                                . "from cat_v3_almacenes_virtuales "
+                                . "where IdTipoAlmacen = 2 "
+                                . "and IdReferenciaAlmacen = (select IdSucursal from t_servicios_ticket where Id = '" . $id . "')");
                             $almacen = $almacen[0]['Id'];
 
                             /*
@@ -1435,7 +1519,8 @@ class Modelo_Poliza extends Modelo_Base {
                     }
                     break;
 
-                case 3: case '3':
+                case 3:
+                case '3':
                     $datosEquipo = $this->consulta("select IdModelo, Serie from t_correctivos_generales where IdServicio = '" . $id . "'")[0];
 
                     $_equiposUtilizados = $this->consulta("select 
@@ -1453,27 +1538,43 @@ class Modelo_Poliza extends Modelo_Base {
                             /*
                              * Agrega al inventario el equipo dañado
                              * que se supone que el usuario retira cuando
-                             * deja otra refacciòn
+                             * deja otro equipo completo. 
                              */
-                            $this->insertar("t_inventario", [
-                                'IdAlmacen' => $value['IdAlmacen'],
-                                'IdTipoProducto' => 1,
-                                'IdProducto' => $datosEquipo['IdModelo'],
-                                'IdEstatus' => 22,
-                                'Cantidad' => 1,
-                                'Serie' => $datosEquipo['Serie']
-                            ]);
+
+                            $idInventario = $this->consulta("
+                            select Id 
+                            from t_inventario 
+                            where IdTipoProducto = 1 
+                            and IdProducto = '" . $datosEquipo['IdModelo'] . "' 
+                            and Serie = '" . $datosEquipo['Serie'] . "'");
+                            if (!empty($idInventario) && isset($idInventario[0]['Id']) && $idInventario[0]['Id'] > 0) {
+                                $this->actualizar("t_inventario", [
+                                    'IdAlmacen' => $value['IdAlmacen'],
+                                    'IdEstatus' => 22,
+                                    'Bloqueado' => 0
+                                ], ['Id' => $idInventario[0]['Id']]);
+                            } else {
+                                $this->insertar("t_inventario", [
+                                    'IdAlmacen' => $value['IdAlmacen'],
+                                    'IdTipoProducto' => 1,
+                                    'IdProducto' => $datosEquipo['IdModelo'],
+                                    'IdEstatus' => 22,
+                                    'Cantidad' => 1,
+                                    'Serie' => $datosEquipo['Serie'],
+                                    'Bloqueado' => 0
+                                ]);
+                            }
 
                             /*
                              * Obtiene el id de almacèn virtual
                              * correspondiente al complejo del servicio
                              */
                             $almacen = $this->consulta(""
-                                    . "select "
-                                    . "Id "
-                                    . "from cat_v3_almacenes_virtuales "
-                                    . "where IdTipoAlmacen = 2 "
-                                    . "and IdReferenciaAlmacen = (select IdSucursal from t_servicios_ticket where Id = '" . $id . "')");
+                                . "select "
+                                . "Id "
+                                . "from cat_v3_almacenes_virtuales "
+                                . "where IdTipoAlmacen = 2 "
+                                . "and IdReferenciaAlmacen = (select IdSucursal from t_servicios_ticket where Id = '" . $id . "')");
                             $almacen = $almacen[0]['Id'];
 
                             /*
@@ -1519,7 +1620,10 @@ class Modelo_Poliza extends Modelo_Base {
                             /*
                              * Actualiza el almacen del producto utilizado
                              */
-                            $this->actualizar("t_inventario", ['IdAlmacen' => $almacen], ['Id' => $value['Id']]);
+                            $this->actualizar("t_inventario", [
+                                'IdAlmacen' => $almacen,
+                                'Bloqueado' => 0
+                            ], ['Id' => $value['Id']]);
 
                             /*
                              * Inserta el movimiento de salida del almacèn del usuario
@@ -1571,14 +1675,15 @@ class Modelo_Poliza extends Modelo_Base {
 
         if ($this->estatusTransaccion() === false) {
             $this->roolbackTransaccion();
-            return ['code' => 400];
+            return ['code' => 400, 'error' => $this->tipoError()];
         } else {
             $this->commitTransaccion();
             return ['code' => 200];
         }
     }
 
-    public function insertarEquiposAllabRevicionLaboratorioHistorial(array $datos) {
+    public function insertarEquiposAllabRevicionLaboratorioHistorial(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $revisionLaboratorio = $this->consultaEquiposAllabRevicionLaboratorio($datos);
@@ -1608,7 +1713,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function insertarEquiposAllabRevicionLaboratorio(array $datos) {
+    public function insertarEquiposAllabRevicionLaboratorio(array $datos)
+    {
         $this->insertar('t_equipos_allab_revision_laboratorio', [
             'IdRegistro' => $datos['id'],
             'IdUsuario' => $datos['idUsuario'],
@@ -1621,12 +1727,13 @@ class Modelo_Poliza extends Modelo_Base {
         return $idRevision;
     }
 
-    public function actualizarEquiposAllabRevicionLaboratorio(array $datos) {
+    public function actualizarEquiposAllabRevicionLaboratorio(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $this->actualizar('t_equipos_allab_revision_laboratorio', array(
             'IdEstatus' => '4',
-                ), array('IdRegistro' => $datos['id']));
+        ), array('IdRegistro' => $datos['id']));
 
         $consultaLaboratorioRefacciones = $this->consulta('SELECT 
                                                                 tearlr.IdInventario,
@@ -1654,7 +1761,8 @@ class Modelo_Poliza extends Modelo_Base {
                 'IdUsuario' => $datos['idUsuario'],
                 'Cantidad' => $value['Cantidad'],
                 'Serie' => $value['Serie'],
-                'Fecha' => $datos['fecha']);
+                'Fecha' => $datos['fecha']
+            );
 
             $this->insertar('t_movimientos_inventario', $arrayMovimientoInventarioSalida);
 
@@ -1682,7 +1790,8 @@ class Modelo_Poliza extends Modelo_Base {
                 'IdUsuario' => $datos['idUsuario'],
                 'Cantidad' => $value['Cantidad'],
                 'Serie' => $value['Serie'],
-                'Fecha' => $datos['fecha']);
+                'Fecha' => $datos['fecha']
+            );
 
             $this->insertar('t_movimientos_inventario', $arrayMovimientoInventarioEntrada);
         }
@@ -1699,12 +1808,14 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaEquiposAllabRevicionLaboratorio(array $datos) {
+    public function consultaEquiposAllabRevicionLaboratorio(array $datos)
+    {
         $consulta = $this->consulta('SELECT * FROM t_equipos_allab_revision_laboratorio WHERE IdRegistro = " ' . $datos['id'] . ' "');
         return $consulta;
     }
 
-    public function insertarEquiposAllabRecepcionesProblemas(array $datos) {
+    public function insertarEquiposAllabRecepcionesProblemas(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $this->insertar('t_equipos_allab_recepciones_problemas', [
@@ -1727,7 +1838,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaComentariosAdjuntosSolicitudEquipo(int $id) {
+    public function consultaComentariosAdjuntosSolicitudEquipo(int $id)
+    {
         $consulta = $this->consulta('select 
                                         tearlh.Id,
                                         nombreUsuario(tearlh.IdUsuario) as Usuario,
@@ -1751,7 +1863,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function consultaRecepcionesProblemasSolicitudEquipo(array $datos) {
+    public function consultaRecepcionesProblemasSolicitudEquipo(array $datos)
+    {
         $consulta = $this->consulta('SELECT 
                                             tearp.Id,
                                     nombreUsuario(tearp.IdUsuario) as Usuario,
@@ -1776,7 +1889,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function insertarEquiposAllabRecepcionesCambiarEstatus(array $datos) {
+    public function insertarEquiposAllabRecepcionesCambiarEstatus(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $this->insertarEquiposAllabRecpciones($datos);
@@ -1793,7 +1907,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function insertarEquiposAllabRecpciones(array $datos) {
+    public function insertarEquiposAllabRecpciones(array $datos)
+    {
         $this->iniciaTransaccion();
         $this->insertar('t_equipos_allab_recepciones', [
             'IdRegistro' => $datos['id'],
@@ -1814,12 +1929,15 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function actualizarEquiposAllabRecepciones(array $datos) {
+    public function actualizarEquiposAllabRecepciones(array $datos)
+    {
         $this->iniciaTransaccion();
-        $this->actualizar('t_equipos_allab_recepciones', array('IdEstatus' => $datos['idEstatus'],
+        $this->actualizar('t_equipos_allab_recepciones', array(
+            'IdEstatus' => $datos['idEstatus'],
             'IdUsuario' => $datos['idUsuario'],
             'Fecha' => $datos['fecha'],
-            'Archivos' => $datos['archivos']), array('IdRegistro' => $datos['id'], 'IdDepartamento' => $datos['idDepartamento']));
+            'Archivos' => $datos['archivos']
+        ), array('IdRegistro' => $datos['id'], 'IdDepartamento' => $datos['idDepartamento']));
         $this->cambiarEsatus($datos);
 
         $this->terminaTransaccion();
@@ -1832,7 +1950,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function cambiarEsatus(array $datos) {
+    public function cambiarEsatus(array $datos)
+    {
         $resultado = $this->actualizar('t_equipos_allab', array('IdEstatus' => $datos['idEstatus'], 'Flag' => $datos['flag'], 'FechaEstatus' => $datos['fecha']), ['Id' => $datos['id']]);
 
         if (!empty($resultado)) {
@@ -1842,7 +1961,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaTicketsUsuario(array $datos) {
+    public function consultaTicketsUsuario(array $datos)
+    {
         $consulta = $this->consulta('SELECT
                                         tst.Ticket,
                                         (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) AS Folio
@@ -1856,7 +1976,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function consultaServiciosUsuario(array $datos) {
+    public function consultaServiciosUsuario(array $datos)
+    {
         $consulta = $this->consulta('SELECT 
                                         tst.Id,
                                         tst.Descripcion,
@@ -1871,7 +1992,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function mostrarTipoPersonaValida() {
+    public function mostrarTipoPersonaValida()
+    {
         $personaValida = $this->consulta("SELECT 
                                             cp.Id, cp.Nombre
                                         FROM
@@ -1881,7 +2003,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $personaValida;
     }
 
-    public function mostrarNombrePersonalValida($datos) {
+    public function mostrarNombrePersonalValida($datos)
+    {
         $datosPersonal = $this->consulta("SELECT 
                                             cvu.Id,CONCAT(trp.Nombres,' ',trp.ApPaterno) AS Nombre
                                         FROM
@@ -1893,17 +2016,20 @@ class Modelo_Poliza extends Modelo_Base {
         return $datosPersonal;
     }
 
-    public function mostrarEquipo() {
+    public function mostrarEquipo()
+    {
         $equipo = $this->consulta("SELECT * FROM v_equipos");
         return $equipo;
     }
 
-    public function mostrarRefaccionXEquipo($dato) {
+    public function mostrarRefaccionXEquipo($dato)
+    {
         $refaccionXequipo = $this->consulta("SELECT * FROM cat_v3_componentes_equipo WHERE IdModelo = '" . $dato . "' AND Flag = 1");
         return $refaccionXequipo;
     }
 
-    public function consultaEquiposAllab(int $idServicio = null) {
+    public function consultaEquiposAllab(int $idServicio = null)
+    {
         if (!empty($idServicio)) {
             $consulta = $this->consulta("SELECT
                                              *, nombreUsuario(IdUsuario) NombreUsuario,
@@ -1917,7 +2043,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function insertarValidacionTecnico($dato) {
+    public function insertarValidacionTecnico($dato)
+    {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
         if ($dato['IdRefaccion'] === '') {
@@ -1928,7 +2055,8 @@ class Modelo_Poliza extends Modelo_Base {
             $dato['Serie'] = null;
         }
 
-        $datos = array('IdServicio' => $dato['IdServicio'],
+        $datos = array(
+            'IdServicio' => $dato['IdServicio'],
             'IdPersonalValida' => $dato['IdPersonalValida'],
             'FechaValidacion' => $dato['FechaValidacion'],
             'IdTipoMovimiento' => $dato['IdTipoMovimiento'],
@@ -1939,7 +2067,8 @@ class Modelo_Poliza extends Modelo_Base {
             'IdEstatus' => 2,
             'FechaEstatus' => $fecha,
             'IdTecnicoSolicita' => $dato['idTecnicoSolicita'],
-            'Flag' => 0);
+            'Flag' => 0
+        );
 
         $insertar = $this->insertar('t_equipos_allab', $datos);
 
@@ -1950,7 +2079,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function mostrarEquipoDanado($idModelo) {
+    public function mostrarEquipoDanado($idModelo)
+    {
         $equipoDanado = $this->consulta("SELECT 
                                             *
                                         FROM
@@ -1961,14 +2091,16 @@ class Modelo_Poliza extends Modelo_Base {
         return $equipoDanado;
     }
 
-    public function mostrarPaqueterias() {
+    public function mostrarPaqueterias()
+    {
         $consulta = $this->consulta("SELECT * FROM cat_v3_paqueterias WHERE Flag = 1");
         if (!empty($consulta)) {
             return $consulta;
         }
     }
 
-    public function insertarEnvioGuia(array $datos, array $estatus) {
+    public function insertarEnvioGuia(array $datos, array $estatus)
+    {
         $this->iniciaTransaccion();
 
         $this->insertar('t_equipos_allab_envio_tecnico', $datos);
@@ -1984,7 +2116,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function actualizarEnvioGuia(array $datos, array $datosEstatus, string $id) {
+    public function actualizarEnvioGuia(array $datos, array $datosEstatus, string $id)
+    {
         $this->iniciaTransaccion();
 
         $this->actualizar('t_equipos_allab_envio_tecnico', $datos, ['Id' => $id]);
@@ -2001,13 +2134,14 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaIdRegistro(array $datos) {
-        if(isset($datos['idEstatus'])){
+    public function consultaIdRegistro(array $datos)
+    {
+        if (isset($datos['idEstatus'])) {
             $idEstatus = 'AND IdEstatus = "' . $datos['idEstatus'] . '"';
-        }else{
+        } else {
             $idEstatus = '';
         }
-        
+
         $equipoDanado = $this->consulta('SELECT 
                                             Id
                                         FROM
@@ -2019,7 +2153,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $equipoDanado;
     }
 
-    public function consultaComponentesEquipoInvetario(array $datos) {
+    public function consultaComponentesEquipoInvetario(array $datos)
+    {
         $equipoDanado = $this->consulta('select 
                                             ti.Id,
                                             ti.Serie,
@@ -2051,7 +2186,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $equipoDanado;
     }
 
-    public function laboratorioRefacciones(array $datos) {
+    public function laboratorioRefacciones(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $this->insertar('t_equipos_allab_revision_laboratorio_refacciones', array(
@@ -2077,7 +2213,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaListaRefaccionesUtilizadasServicio(string $idServicio) {
+    public function consultaListaRefaccionesUtilizadasServicio(string $idServicio)
+    {
         $equipoDanado = $this->consulta('SELECT 
                                                 tearlr.Id,
                                                 tearlr.Cantidad,
@@ -2096,7 +2233,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $equipoDanado;
     }
 
-    public function flagearRefaccionUtilizada(array $datos) {
+    public function flagearRefaccionUtilizada(array $datos)
+    {
         $resultado = $this->actualizar('t_equipos_allab_revision_laboratorio_refacciones', array('Flag' => $datos['flag']), ['Id' => $datos['id']]);
         $this->actualizar('t_inventario', array('Bloqueado' => '0'), ['Id' => $datos['idInventario']]);
 
@@ -2107,7 +2245,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaHistorialRegistro(array $datos) {
+    public function consultaHistorialRegistro(array $datos)
+    {
         $equipoDanado = $this->consulta('SELECT 
                                             *
                                         FROM
@@ -2120,7 +2259,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $equipoDanado;
     }
 
-    public function insertarEnvioLogistica(array $datos, array $datosEstatus) {
+    public function insertarEnvioLogistica(array $datos, array $datosEstatus)
+    {
         $this->iniciaTransaccion();
 
         $this->insertar('t_equipos_allab_envio_logistica', $datos);
@@ -2137,7 +2277,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function actualizarEnvioLogistica(array $datos, array $datosEstatus) {
+    public function actualizarEnvioLogistica(array $datos, array $datosEstatus)
+    {
         $this->iniciaTransaccion();
 
         $this->actualizar("t_equipos_allab_envio_logistica", $datos, ['IdRegistro' => $datosEstatus['id']]);
@@ -2153,7 +2294,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaInventarioAlmacenesVirtuales(array $datos) {
+    public function consultaInventarioAlmacenesVirtuales(array $datos)
+    {
         $equipoDanado = $this->consulta('SELECT 
                                             *
                                         FROM
@@ -2168,7 +2310,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $equipoDanado;
     }
 
-    public function insertarEquiposAllabSolicitudRefaccion(array $datos) {
+    public function insertarEquiposAllabSolicitudRefaccion(array $datos)
+    {
         $resultado = $this->insertar('t_equipos_allab_solicitud_refaccion', [
             'IdRegistro' => $datos['id'],
             'IdUsuario' => $datos['idUsuario'],
@@ -2179,18 +2322,20 @@ class Modelo_Poliza extends Modelo_Base {
         return $resultado;
     }
 
-    public function actualizarEquiposAllabSolicitudesRefaccion(array $datos) {
+    public function actualizarEquiposAllabSolicitudesRefaccion(array $datos)
+    {
         $resultado = $this->actualizar("t_equipos_allab_solicitud_refaccion", array(
             'IdUsuario' => $datos['idUsuario'],
             'IdEstatus' => $datos['idEstatus'],
             'FechaEstatus' => $datos['fechaEstatus'],
             'Cobrable' => $datos['cobrable']
-                ), ['IdRegistro' => $datos['id']]);
+        ), ['IdRegistro' => $datos['id']]);
 
         return $resultado;
     }
 
-    public function consultaEquiposAllabSolicitudesRefaccion(string $idServicio) {
+    public function consultaEquiposAllabSolicitudesRefaccion(string $idServicio)
+    {
         $consulta = $this->consulta('SELECT 
                                             teasr.*
                                         FROM
@@ -2202,7 +2347,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function consultaInventarioAlmacen(array $datos) {
+    public function consultaInventarioAlmacen(array $datos)
+    {
         $consulta = $this->consulta('select 
                                         ti.Id,
                                         ti.Serie,
@@ -2225,7 +2371,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function insertarRefaccionRefacciones(array $datos, array $datosEstatus) {
+    public function insertarRefaccionRefacciones(array $datos, array $datosEstatus)
+    {
         $this->iniciaTransaccion();
 
         foreach ($datos['listaProductos'] as $key => $value) {
@@ -2250,7 +2397,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function consultaRefaccionEquipoUtilizadoAlmacen(array $datos) {
+    public function consultaRefaccionEquipoUtilizadoAlmacen(array $datos)
+    {
         $consulta = $this->consulta('SELECT 
                                             (CASE
                                                 WHEN
@@ -2286,7 +2434,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
-    public function consultPostByProfiles(string $idProfile, string $idTechnical) {
+    public function consultPostByProfiles(string $idProfile, string $idTechnical)
+    {
         $answerQuery = $this->consulta("SELECT 
                                         EmailCorporativo
                                     FROM
@@ -2298,7 +2447,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $answerQuery;
     }
 
-    public function consultSupervisorAndTechnicalMail(string $idTechnical) {
+    public function consultSupervisorAndTechnicalMail(string $idTechnical)
+    {
         $answerQuery = $this->consulta("(SELECT 
                                             cvu.EmailCorporativo
                                         FROM
@@ -2327,7 +2477,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $answerQuery;
     }
 
-    public function consultationServiceAndRequest(string $service) {
+    public function consultationServiceAndRequest(string $service)
+    {
         $answerQuery = $this->consulta("SELECT 
                                             ts.Ticket,
                                                 ts.Folio
@@ -2340,7 +2491,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $answerQuery;
     }
 
-    public function transparencyFromLaboratoryToEarehouse(array $dataTransparencyFromLaboratoryToEarehouse, array $dataStatus) {
+    public function transparencyFromLaboratoryToEarehouse(array $dataTransparencyFromLaboratoryToEarehouse, array $dataStatus)
+    {
         $this->iniciaTransaccion();
 
         foreach ($dataTransparencyFromLaboratoryToEarehouse['listaProductos'] as $key => $value) {
@@ -2356,7 +2508,8 @@ class Modelo_Poliza extends Modelo_Base {
                 'IdUsuario' => $dataTransparencyFromLaboratoryToEarehouse['idUsuario'],
                 'Cantidad' => $inquiryQuery[0]['Cantidad'],
                 'Serie' => $inquiryQuery[0]['Serie'],
-                'Fecha' => $dataTransparencyFromLaboratoryToEarehouse['fecha']);
+                'Fecha' => $dataTransparencyFromLaboratoryToEarehouse['fecha']
+            );
             $this->actualizar('t_inventario', array('IdAlmacen' => '58'), ['Id' => $value]);
             $this->insertar('t_movimientos_inventario', $dataMovementInventoryTransfer);
 
@@ -2376,7 +2529,8 @@ class Modelo_Poliza extends Modelo_Base {
                 'IdUsuario' => $dataTransparencyFromLaboratoryToEarehouse['idUsuario'],
                 'Cantidad' => $inquiryQueryUpdated[0]['Cantidad'],
                 'Serie' => $inquiryQueryUpdated[0]['Serie'],
-                'Fecha' => $dataTransparencyFromLaboratoryToEarehouse['fecha']);
+                'Fecha' => $dataTransparencyFromLaboratoryToEarehouse['fecha']
+            );
 
             $this->insertar('t_movimientos_inventario', $dataMovementInventoryEntry);
         }
@@ -2393,7 +2547,8 @@ class Modelo_Poliza extends Modelo_Base {
         }
     }
 
-    public function previousQuoteQuery(string $service) {
+    public function previousQuoteQuery(string $service)
+    {
         $answerQuery = $this->consulta("select
                 count(*) as Total
                 from t_servicios_ticket tst
@@ -2403,7 +2558,8 @@ class Modelo_Poliza extends Modelo_Base {
         return $answerQuery;
     }
 
-    public function getAdvanceService(string $service) {
+    public function getAdvanceService(string $service)
+    {
         $answerQuery = $this->consulta("SELECT 
                                             tsa . *
                                         FROM
@@ -2418,12 +2574,14 @@ class Modelo_Poliza extends Modelo_Base {
         return $answerQuery;
     }
 
-    public function insertarBitacoraReporteFalso(array $datos) {
+    public function insertarBitacoraReporteFalso(array $datos)
+    {
         $resultado = $this->insertar('t_correctivos_bitacora_reporte_falso', $datos);
         return $resultado;
     }
 
-    public function consultaBitacoraReporteFalso(string $servicio) {
+    public function consultaBitacoraReporteFalso(string $servicio)
+    {
         $consulta = $this->consulta('SELECT 
                                         tcbrf.*,
                                         (SELECT 
@@ -2438,5 +2596,4 @@ class Modelo_Poliza extends Modelo_Base {
                                     WHERE tcbrf.IdServicio = "' . $servicio . '"');
         return $consulta;
     }
-
 }

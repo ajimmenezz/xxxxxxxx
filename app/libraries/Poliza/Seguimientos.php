@@ -2745,9 +2745,7 @@ class Seguimientos extends General
                 'FechaConclusion' => $fecha
             ),
             array('Id' => $datos['servicio'])
-        );
-
-        $this->DBP->actualizaInventariosMovimientosXConslusionCorrectivo($datos['servicio']);
+        );        
     }
 
     public function solicitarMultimedia(array $datos)
