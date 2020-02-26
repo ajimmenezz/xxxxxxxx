@@ -1058,6 +1058,7 @@ class InformacionServicios extends General {
         if(folioByServicio(tst.Id) is null, '', folioByServicio(tst.Id)) as SD,
         tst.Ticket,
         nombreUsuario(tst.Atiende) as Atiende,
+        (select cp.Nombre from cat_v3_usuarios cu join cat_perfiles cp on cu.IdPerfil = cp.Id where cu.Id = tst.Atiende) as Perfil,
         (select FechaCreacion from t_solicitudes where Id = tst.IdSolicitud) as FechaSolicitud,
         tst.FechaCreacion,
         tst.FechaInicio,
@@ -1186,6 +1187,7 @@ class InformacionServicios extends General {
         $consulta = $this->DBS->consulta("select
         tsa.Id,
         nombreUsuario(tsa.IdUsuario) as Usuario,
+        (select cp.Nombre from cat_v3_usuarios cu join cat_perfiles cp on cu.IdPerfil = cp.Id where cu.Id = tsa.IdUsuario) as Perfil,
         tsa.IdTipo,
         tsa.Fecha,
         tsa.Descripcion,
@@ -1225,6 +1227,7 @@ class InformacionServicios extends General {
         $consulta = $this->DBS->consulta("select
         tcbrf.Id,
         nombreUsuario(tcbrf.IdUsuario) as Usuario,
+        (select cp.Nombre from cat_v3_usuarios cu join cat_perfiles cp on cu.IdPerfil = cp.Id where cu.Id = tcbrf.IdUsuario) as Perfil,
         tcbrf.Fecha,
         tcbrf.Observaciones as Descripcion,
         tcbrf.Evidencias
@@ -1323,7 +1326,7 @@ class InformacionServicios extends General {
                     $this->setCoordinates(130, $this->y - 5);
                     $this->setCellValue(70, 5, $generales['Estatus'], 'L', true);
                     $this->setCoordinates(40);
-                    $this->setCellValue(0, 5, $generales['Atiende'], 'L');
+                    $this->setCellValue(0, 5, $generales['Atiende']." (".$generales['Perfil'].")", 'L');
 
                     if ($generales['IdEstatus'] === '4') {
                         $this->setCellValue(0, 5, $generales['FechaConclusion'], 'L', true);
@@ -1447,7 +1450,7 @@ class InformacionServicios extends General {
 
         $this->setCellValue(73, 5, $estatus, 'L', true);
         $this->setCoordinates(40);
-        $this->setCellValue(0, 5, $generales['Atiende'], 'L');
+        $this->setCellValue(0, 5, $generales['Atiende']." (".$generales['Perfil'].")", 'L');
 
         if ($generales['IdEstatus'] === '4') {
             $this->setCellValue(0, 5, $generales['FechaConclusion'], 'L', true);
@@ -1590,7 +1593,7 @@ class InformacionServicios extends General {
 
                 $this->setStyleSubtitle();
                 $this->setCoordinates(35, $this->y - 5);
-                $this->setCellValue(75, 5, $value['Usuario'], 'L', true);
+                $this->setCellValue(75, 5, $value['Usuario'] . " (".$value['Perfil'].")", 'L', true);
                 $this->setCoordinates(125, $this->y - 5);
                 $this->setCellValue(75, 5, $value['Fecha'], 'L', true);
 
@@ -1629,6 +1632,9 @@ class InformacionServicios extends General {
             $this->setHeaderValue("Bitácora de Revisión Reporte en Falso");
 
             foreach ($registros as $key => $value) {
+                if (($this->y + 16) > 270) {
+                    $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                }
                 $this->setStyleTitle();
                 $this->setCellValue(25, 5, "Usuario:", 'R', true);
                 $this->setCoordinates(100, $this->y - 5);
@@ -1636,7 +1642,7 @@ class InformacionServicios extends General {
 
                 $this->setStyleSubtitle();
                 $this->setCoordinates(35, $this->y - 5);
-                $this->setCellValue(75, 5, $value['Usuario'], 'L', true);
+                $this->setCellValue(75, 5, $value['Usuario'] . " (".$value['Perfil'].")", 'L', true);
                 $this->setCoordinates(125, $this->y - 5);
                 $this->setCellValue(75, 5, $value['Fecha'], 'L', true);
 
@@ -1969,6 +1975,9 @@ class InformacionServicios extends General {
             switch ($problema['IdTipoProblema']) {
                 case 1:
                 case '1':
+                    if (($this->y + 16) > 270) {
+                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                    }
                     $this->setCoordinates(10);
 
                     $this->setStyleTitle();
@@ -1986,6 +1995,9 @@ class InformacionServicios extends General {
                     break;
                 case 2:
                 case '2':
+                    if (($this->y + 16) > 270) {
+                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                    }
                     $this->setCoordinates(10);
 
                     $this->setStyleTitle();
@@ -1997,6 +2009,9 @@ class InformacionServicios extends General {
                     break;
                 case 3:
                 case '3':
+                    if (($this->y + 16) > 270) {
+                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                    }
                     $this->setCoordinates(10);
                     $this->setStyleTitle();
                     if ($problema['DejaRespaldo'] == 1 || 1 == 1) {
@@ -2044,6 +2059,9 @@ class InformacionServicios extends General {
             switch ($solucion['IdTipoSolucion']) {
                 case 1:
                 case '1':
+                    if (($this->y + 16) > 270) {
+                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                    }
                     $this->setCoordinates(10);
 
                     $this->setStyleTitle();
@@ -2055,6 +2073,9 @@ class InformacionServicios extends General {
                     break;
                 case 2:
                 case '2':
+                    if (($this->y + 16) > 270) {
+                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                    }
                     $this->setCoordinates(10);
 
                     $this->setStyleTitle();
@@ -2072,6 +2093,9 @@ class InformacionServicios extends General {
                     break;
                 case 3:
                 case '3':
+                    if (($this->y + 16) > 270) {
+                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                    }
                     $this->setCoordinates(10);
                     $this->setStyleTitle();
                     $this->setCellValue(25, 5, "Equipo:", 'R');
@@ -2090,7 +2114,9 @@ class InformacionServicios extends General {
 
             if ($solucion['Observaciones'] != '') {
                 $fill = true;
-
+                if (($this->y + 16) > 270) {
+                    $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                }
                 $this->setStyleMinisubtitle();
                 $this->setCoordinates(35);
                 $this->setMulticellValue(0, 4, $solucion['Observaciones'], 'J', $fill);
