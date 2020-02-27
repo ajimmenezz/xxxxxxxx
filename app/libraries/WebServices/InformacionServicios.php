@@ -1843,6 +1843,12 @@ class InformacionServicios extends General {
 
     private function setEvidenciasPDF($datos, $evidencias, $header) {
         $host = $_SERVER['SERVER_NAME'];
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'http://siccob.solutions';
+        } else {
+            $path = 'http://' . $host;
+        }
+            
         $evidencias = explode(",", $evidencias);
         $totalEvidencias = count($evidencias);
         if ($totalEvidencias > 0) {
@@ -1864,8 +1870,11 @@ class InformacionServicios extends General {
                         $image = $evidencias[$indice];
                         if (!in_array(pathinfo($image, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
                             $image = '/assets/img/Iconos/no-thumbnail.jpg';
+                            if (!in_array(pathinfo($image, PATHINFO_EXTENSION), ['PDF', 'DOC', 'DOCX', 'XLSX', 'XML', 'HTML'])) {
+                                $image = '/assets/img/Iconos/file.jpg';
+                            }
                         }
-                        $this->pdf->Image('.' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), 'http://siccob.solutions' . $evidencias[$indice]);
+                        $this->pdf->Image('.' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), $path . $evidencias[$indice]);
                     }
 
                     $this->setCoordinates($this->x + 47.5);
