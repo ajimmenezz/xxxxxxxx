@@ -1960,7 +1960,7 @@ class ServiciosTicket extends General
             $fill = !$fill;
         }
 
-        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados', 'Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaVuelta);
+        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/', 'Ticket_' . $datos['ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $fechaVuelta);
         $this->pdf->Output('F', $carpeta, true);
         $carpeta = substr($carpeta, 1);
         return $carpeta;
