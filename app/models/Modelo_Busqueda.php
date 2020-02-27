@@ -75,6 +75,10 @@ class Modelo_Busqueda extends Modelo_Base {
                         . "on tst.Id = tsg.IdServicio "
                         . "where tst.Id = '" . $servicio . "';");
     }
+    
+    public function getServicioDiagnostico(string $servicio) {
+        return $this->consulta("select * from t_correctivos_diagnostico where IdServicio in ('" . $servicio . "');");
+    }
 
     public function getGeneralesServicioGeneralCompleto(string $servicio) {
         return $this->consulta("select tst.Id, 

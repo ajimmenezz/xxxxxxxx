@@ -509,10 +509,8 @@ class Busqueda extends General {
                     return parent::getCI()->load->view("Generales/Modal/detallesServicio_11", $data, TRUE);
                     break;
                 case '27': case 27:
-                    $datosServicio = $this->DBB->getGeneralesServicioGeneral($servicio);
+                    $datosServicio = $this->DBB->getServicioDiagnostico($servicio);
                     if (count($datosServicio) > 0) {
-                        return parent::getCI()->load->view("Generales/Modal/detallesServicio", ['datos' => $datosServicio[0]], TRUE);
-                    } else {
                         $data = [
                             'datos' => $this->DBB->getGeneralesServicioGeneralCompleto($servicio)[0],
                             'datosCorrectivo' => $this->DBB->getGeneralesServicio20($servicio)[0],
@@ -528,6 +526,8 @@ class Busqueda extends General {
                             $data['diagnosticoEquipo'][0]['BitacoraObservaciones'] = $bitacoraObservaciones;
                         }
                         return parent::getCI()->load->view("Generales/Modal/detallesServicio_20", $data, TRUE);
+                    } else {
+                        return parent::getCI()->load->view("Generales/Modal/detallesServicio", ['datos' => $datosServicio[0]], TRUE);
                     }
                     break;
                 case '20': case 20:
