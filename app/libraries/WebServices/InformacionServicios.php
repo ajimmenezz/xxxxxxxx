@@ -2723,12 +2723,12 @@ class PDFAux extends PDF {
 
     public function Footer() {
         $fecha = date('d/m/Y');
-// Go to 1.5 cm from bottom
+
         $this->SetY(-15);
-// Select Arial italic 8
+
         $this->SetFont('Helvetica', 'I', 10);
-// Print centered page number
-// $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
+
+        $this->SetTextColor(0, 0, 0);
         $this->Cell(100, 10, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
         $this->setFirmas();
     }
@@ -2739,7 +2739,7 @@ class PDFAux extends PDF {
 
     public function setFirmas() {
         $this->SetFont('Helvetica', 'I', 6);
-        $this->SetTextColor(0, 0, 0);
+        
         if (!is_null($this->dato['Firma']) && $this->dato['Firma'] != '') {
             if (file_exists('.' . $this->dato['Firma'])) {
                 $this->Image('.' . $this->dato['Firma'], 145, 274, 25, 12, pathinfo($this->dato['Firma'], PATHINFO_EXTENSION));

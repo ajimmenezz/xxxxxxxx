@@ -77,7 +77,7 @@ class Modelo_Busqueda extends Modelo_Base {
     }
     
     public function getServicioDiagnostico(string $servicio) {
-        return $this->consulta("select * from t_correctivos_diagnostico where IdServicio in ('" . $servicio . "');");
+        return $this->consulta("select * from t_servicios_generales where IdServicio = '" . $servicio . "'");
     }
 
     public function getGeneralesServicioGeneralCompleto(string $servicio) {
