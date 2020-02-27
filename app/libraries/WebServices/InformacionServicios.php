@@ -405,7 +405,7 @@ class InformacionServicios extends General {
                                                                             WHERE tst.Id = "' . $datos['servicio'] . '"');
 
         $pdf = $this->definirPDF($datos);
-
+        
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'http://siccob.solutions/' . $pdf;
         } else {
@@ -949,15 +949,31 @@ class InformacionServicios extends General {
     }
 
     public function checklist(array $datos) {
+        $host = $_SERVER['SERVER_NAME'];
+        
         $linkPdf = $this->definirPDF($datos);
-        $descripcion = "<div>Ha concluido el Correctivo Proactivo</div><br/><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a>";
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'http://siccob.solutions/' . $linkPdf;
+        } else {
+            $path = 'http://' . $host . '/' . $linkPdf;
+        }
+        
+        $descripcion = "<div>Ha concluido el Correctivo Proactivo</div><br/><a href='" . $path . "' target='_blank'>DOCUMENTO PDF</a>";
 
         return $descripcion;
     }
 
     public function trafficService(array $datos) {
+        $host = $_SERVER['SERVER_NAME'];
         $linkPdf = $this->definirPDF($datos);
-        $descripcion = "<br/><div>Se ha realizo un servicio de Tráfico</div><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a><br/>";
+        
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'http://siccob.solutions/' . $linkPdf;
+        } else {
+            $path = 'http://' . $host . '/' . $linkPdf;
+        }
+        
+        $descripcion = "<br/><div>Se ha realizo un servicio de Tráfico</div><a href='" . $path . "' target='_blank'>DOCUMENTO PDF</a><br/>";
         return $descripcion;
     }
 
