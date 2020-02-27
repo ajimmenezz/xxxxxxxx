@@ -1500,10 +1500,10 @@ class InformacionServicios extends General {
                 case '27':
                     $datosServicio = $this->DBB->getServicioDiagnostico($datos['servicio']);
                     if (count($datosServicio) > 0) {
-                        $this->setPDFContentCorrectivo($generales['Id'], $datos);
-                    } else {
                         $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
                         $this->obtenerEquipoMaterialServicio($datos['servicio']);
+                    } else {
+                        $this->setPDFContentCorrectivo($generales['Id'], $datos);
                     }
                     break;
             }
@@ -1871,7 +1871,7 @@ class InformacionServicios extends General {
                         if (!in_array(pathinfo($image, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
                             $image = '/assets/img/Iconos/no-thumbnail.jpg';
                             if (!in_array(pathinfo($image, PATHINFO_EXTENSION), ['PDF', 'DOC', 'DOCX', 'XLSX', 'XML', 'HTML'])) {
-                                $image = '/assets/img/Iconos/file.jpg';
+                                $image = '/assets/img/Iconos/icono_file.jpg';
                             }
                         }
                         $this->pdf->Image('.' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), $path . $evidencias[$indice]);
