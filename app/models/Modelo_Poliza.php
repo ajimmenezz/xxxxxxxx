@@ -1416,7 +1416,8 @@ class Modelo_Poliza extends Modelo_Base
                                 'IdTipoProducto' => $value['IdTipoProducto'],
                                 'IdProducto' => $value['IdProducto'],
                                 'IdEstatus' => 22,
-                                'Cantidad' => 1
+                                'Cantidad' => 1,
+                                'Bloqueado' => 0
                             ]);
 
                             /*
@@ -1474,7 +1475,10 @@ class Modelo_Poliza extends Modelo_Base
                             /*
                              * Actualiza el almacen del producto utilizado
                              */
-                            $this->actualizar("t_inventario", ['IdAlmacen' => $almacen], ['Id' => $value['Id']]);
+                            $this->actualizar("t_inventario", [
+                                'IdAlmacen' => $almacen,
+                                'Bloqueado' => 0
+                            ], ['Id' => $value['Id']]);
 
                             /*
                              * Inserta el movimiento de salida del almacèn del usuario
