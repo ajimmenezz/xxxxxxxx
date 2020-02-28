@@ -1500,10 +1500,10 @@ class InformacionServicios extends General {
                 case '27':
                     $datosServicio = $this->DBB->getServicioDiagnostico($datos['servicio']);
                     if (count($datosServicio) > 0) {
-                        $this->setPDFContentCorrectivo($generales['Id'], $datos);
-                    } else {
                         $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
                         $this->obtenerEquipoMaterialServicio($datos['servicio']);
+                    } else {
+                        $this->setPDFContentCorrectivo($generales['Id'], $datos);
                     }
                     break;
             }
@@ -1843,6 +1843,12 @@ class InformacionServicios extends General {
 
     private function setEvidenciasPDF($datos, $evidencias, $header) {
         $host = $_SERVER['SERVER_NAME'];
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'http://siccob.solutions';
+        } else {
+            $path = 'http://' . $host;
+        }
+            
         $evidencias = explode(",", $evidencias);
         $totalEvidencias = count($evidencias);
         if ($totalEvidencias > 0) {
@@ -1864,8 +1870,11 @@ class InformacionServicios extends General {
                         $image = $evidencias[$indice];
                         if (!in_array(pathinfo($image, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
                             $image = '/assets/img/Iconos/no-thumbnail.jpg';
+                            if (!in_array(pathinfo($image, PATHINFO_EXTENSION), ['PDF', 'DOC', 'DOCX', 'XLSX', 'XML', 'HTML'])) {
+                                $image = '/assets/img/Iconos/icono_file.jpg';
+                            }
                         }
-                        $this->pdf->Image('.' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), 'http://siccob.solutions' . $evidencias[$indice]);
+                        $this->pdf->Image('.' . $image, $this->x + 2.5, $this->y + 2.5, 42.5, 40, pathinfo($image, PATHINFO_EXTENSION), $path . $evidencias[$indice]);
                     }
 
                     $this->setCoordinates($this->x + 47.5);
@@ -2714,12 +2723,12 @@ class PDFAux extends PDF {
 
     public function Footer() {
         $fecha = date('d/m/Y');
-// Go to 1.5 cm from bottom
+
         $this->SetY(-15);
-// Select Arial italic 8
+
         $this->SetFont('Helvetica', 'I', 10);
-// Print centered page number
-// $this->Cell(120, 10, utf8_decode('Fecha de Generación: ') . $fecha, 0, 0, 'L');
+
+        $this->SetTextColor(0, 0, 0);
         $this->Cell(100, 10, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
         $this->setFirmas();
     }
@@ -2730,7 +2739,7 @@ class PDFAux extends PDF {
 
     public function setFirmas() {
         $this->SetFont('Helvetica', 'I', 6);
-        $this->SetTextColor(0, 0, 0);
+        
         if (!is_null($this->dato['Firma']) && $this->dato['Firma'] != '') {
             if (file_exists('.' . $this->dato['Firma'])) {
                 $this->Image('.' . $this->dato['Firma'], 145, 274, 25, 12, pathinfo($this->dato['Firma'], PATHINFO_EXTENSION));

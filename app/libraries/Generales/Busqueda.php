@@ -521,7 +521,7 @@ class Busqueda extends General {
                             'envioEntrega' => $this->DBB->consultaEntregaEnvio($servicio),
                             'correctivoSoluciones' => $this->DBB->getCorrectivosSoluciones($servicio),
                         ];
-                        if (empty($data['diagnosticoEquipo'])) {
+                        if (!empty($data['diagnosticoEquipo'])) {
                             $bitacoraObservaciones = $this->InformacionServicios->getHistorialReporteEnFalso($servicio);
                             $data['diagnosticoEquipo'][0]['BitacoraObservaciones'] = $bitacoraObservaciones;
                         }
