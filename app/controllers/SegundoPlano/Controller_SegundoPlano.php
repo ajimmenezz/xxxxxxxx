@@ -390,7 +390,7 @@ class Controller_SegundoPlano extends \CI_Controller
                 $this->informacionServicios->guardarLogSD($resultadoSD, $value['Folio']);
             }
         }
-    }
+    }    
 
     public function checkUbicaphoneEstatus()
     {

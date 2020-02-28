@@ -4,7 +4,6 @@ use Controladores\Controller_Base as Base;
 
 class Controller_Seguimiento extends Base
 {
-
     private $Seguimientos;
     private $Servicio;
     private $notas;
