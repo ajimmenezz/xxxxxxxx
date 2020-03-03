@@ -1500,10 +1500,10 @@ class InformacionServicios extends General {
                 case '27':
                     $datosServicio = $this->DBB->getServicioDiagnostico($datos['servicio']);
                     if (count($datosServicio) > 0) {
+                        $this->setPDFContentCorrectivo($generales['Id'], $datos);
+                    } else {
                         $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
                         $this->obtenerEquipoMaterialServicio($datos['servicio']);
-                    } else {
-                        $this->setPDFContentCorrectivo($generales['Id'], $datos);
                     }
                     break;
             }
