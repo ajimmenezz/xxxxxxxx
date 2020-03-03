@@ -1395,13 +1395,15 @@ class InformacionServicios extends General {
             $firmas['FirmaTecnico'] = $firmaTecnico['FirmaTecnico'];
             $firmas['Tecnico'] = $firmaTecnico['Tecnico'];
         }
-        $firmaGerente = $this->getFirmasGerenteDiagnostico($datos['servicio']);
+        $firmaGerente = $this->getFirmasGerenteTicket($datos['servicio']);
+        //$firmaGerente = $this->getFirmasGerenteDiagnostico($datos['servicio']);
         if (!is_null($firmaGerente)) {
             $firmas['Firma'] = $firmaGerente['Firma'];
             $firmas['Gerente'] = $firmaGerente['Gerente'];
             $firmas['FechaFirma'] = $firmaGerente['FechaFirma'];
         } else {
-            $firmaGerente = $this->getFirmasGerenteTicket($datos['servicio']);
+            $firmaGerente = $this->getFirmasGerenteDiagnostico($datos['servicio']);
+            //$firmaGerente = $this->getFirmasGerenteTicket($datos['servicio']);
             $firmas['Firma'] = $firmaGerente['Firma'];
             $firmas['Gerente'] = $firmaGerente['Gerente'];
             $firmas['FechaFirma'] = $firmaGerente['FechaFirma'];
