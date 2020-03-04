@@ -116,6 +116,7 @@ class ServiciosTicket extends General
                 tst.IdEstatus,
                 tst.IdSolicitud,
                 estatus(tst.IdEstatus)as NombreEstatus,
+                sucursal(tst.IdSucursal) as Sucursal,
                 (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
             from t_servicios_ticket tst inner join cat_v3_servicios_departamento csd
             on tst.IdTipoServicio = csd.Id or tst.IdTipoServicio = 9
@@ -135,6 +136,7 @@ class ServiciosTicket extends General
                 tst.IdEstatus,
                 tst.IdSolicitud,
                 estatus(tst.IdEstatus)as NombreEstatus,
+                sucursal(tst.IdSucursal) as Sucursal,
                 (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
             from t_servicios_ticket tst inner join cat_v3_servicios_departamento csd
             on tst.IdTipoServicio = csd.Id or tst.IdTipoServicio = 9
