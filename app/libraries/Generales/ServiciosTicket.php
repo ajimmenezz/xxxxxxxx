@@ -161,11 +161,12 @@ class ServiciosTicket extends General
                 tst.Id,
                 tst.Ticket,
                 tipoServicio(tst.IdTipoServicio) as Servicio,
-                usuario((select Solicita from t_solicitudes where Id = tst.IdSolicitud)) as Solicita,                
+                usuario((select Solicita from t_solicitudes where Id = tst.IdSolicitud)) as Solicita,
                 tst.FechaCreacion,
                 tst.Descripcion,
                 tst.IdEstatus,
                 tst.IdSolicitud,
+                sucursal(tst.IdSucursal) as Sucursal,
                 estatus(tst.IdEstatus)as NombreEstatus,
                 (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
             from t_servicios_ticket tst inner join cat_v3_servicios_departamento csd

@@ -6712,15 +6712,15 @@ class Seguimientos extends General
 
         $viewHtml .= '<div>Paqueteria: ' . $dataTechnicalShipment[0]['Paqueteria'] . '</div>';
         $viewHtml .= '<div>Fecha de envío: ' . $dataTechnicalShipment[0]['Fecha'] . '</div>';
-        $viewHtml .= '<div>Evidencia de envío: </div>';
-        $evidence = explode(',', $dataTechnicalShipment[0]['ArchivosEnvio']);
+//        $viewHtml .= '<div>Evidencia de envío: </div>';
+//        $evidence = explode(',', $dataTechnicalShipment[0]['ArchivosEnvio']);
 
-        foreach ($evidence as $value) {
-            if ($value != '') {
-                $counter++;
-                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
-            }
-        }
+//        foreach ($evidence as $value) {
+//            if ($value != '') {
+//                $counter++;
+//                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
+//            }
+//        }
 
 
         return $viewHtml;
@@ -6735,16 +6735,16 @@ class Seguimientos extends General
         $viewHtml .= '<div>**Recepción por Almacén**</div>';
         $viewHtml .= '<div>Recibió en almacén: ' . $dataWarehouse['recepcion'][0]['UsuarioRecibe'] . '</div>';
         $viewHtml .= '<div>Fecha recibida en almacén: ' . $dataWarehouse['recepcion'][0]['Fecha'] . '</div>';
-        $viewHtml .= '<div>Evidencia de recepción en almacén: </div>';
+//        $viewHtml .= '<div>Evidencia de recepción en almacén: </div>';
 
-        $evidence = explode(',', $dataWarehouse['recepcion'][0]['Archivos']);
+//        $evidence = explode(',', $dataWarehouse['recepcion'][0]['Archivos']);
 
-        foreach ($evidence as $value) {
-            if ($value != '') {
-                $counter++;
-                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
-            }
-        }
+//        foreach ($evidence as $value) {
+//            if ($value != '') {
+//                $counter++;
+//                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
+//            }
+//        }
 
         return $viewHtml;
     }
@@ -6764,14 +6764,14 @@ class Seguimientos extends General
             $viewHtml .= '<div>Nota: ' . $value['Nota'] . '</div>';
             if ($value['Adjuntos'] !== '') {
                 $viewHtml .= '<div>Adjunto: : <a href="http://' . $host . $value['Adjuntos'] . '">Archivo</a></div>';
-                $evidence = explode(',', $value['Adjuntos']);
+//                $evidence = explode(',', $value['Adjuntos']);
 
-                foreach ($evidence as $value2) {
-                    if ($value2 != '') {
-                        $counter++;
-                        $viewHtml .= "<a href='http://" . $host . $value2 . "'>Archivo" . $counter . "</a> &nbsp ";
-                    }
-                }
+//                foreach ($evidence as $value2) {
+//                    if ($value2 != '') {
+//                        $counter++;
+//                        $viewHtml .= "<a href='http://" . $host . $value2 . "'>Archivo" . $counter . "</a> &nbsp ";
+//                    }
+//                }
             }
         }
 
@@ -6812,16 +6812,16 @@ class Seguimientos extends General
         }
 
         $viewHtml .= '<div>Recibe: ' . $dataLogistica[0]['Recibe'] . '</div>';
-        $viewHtml .= '<div>Evidencia de envío: </div>';
+//        $viewHtml .= '<div>Evidencia de envío: </div>';
 
-        $evidence = explode(',', $dataLogistica[0]['ArchivosEntrega']);
+//        $evidence = explode(',', $dataLogistica[0]['ArchivosEntrega']);
 
-        foreach ($evidence as $value) {
-            if ($value != '') {
-                $counter++;
-                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
-            }
-        }
+//        foreach ($evidence as $value) {
+//            if ($value != '') {
+//                $counter++;
+//                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
+//            }
+//        }
 
         return $viewHtml;
     }
@@ -6837,17 +6837,17 @@ class Seguimientos extends General
         $viewHtml .= '<div>Guia: ' . $dataTechnicalShipment[0]['Guia'] . '</div>';
         $viewHtml .= '<div>Comentarios: ' . $dataTechnicalShipment[0]['ComentariosSolicitud'] . '</div>';
 
-        if ($dataTechnicalShipment[0]['ArchivosSolicitud'] !== NULL) {
-            $viewHtml .= '<div>Evidencia:</div>';
-            $evidence = explode(',', $dataTechnicalShipment[0]['ArchivosSolicitud']);
-
-            foreach ($evidence as $value) {
-                if ($value != '') {
-                    $counter++;
-                    $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
-                }
-            }
-        }
+//        if ($dataTechnicalShipment[0]['ArchivosSolicitud'] !== NULL) {
+//            $viewHtml .= '<div>Evidencia:</div>';
+//            $evidence = explode(',', $dataTechnicalShipment[0]['ArchivosSolicitud']);
+//
+//            foreach ($evidence as $value) {
+//                if ($value != '') {
+//                    $counter++;
+//                    $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
+//                }
+//            }
+//        }
 
         return $viewHtml;
     }
@@ -6863,15 +6863,15 @@ class Seguimientos extends General
         $viewHtml .= '<div>**Recepción por Técnico**</div>';
         $viewHtml .= '<div>Recibió Técnico: ' . $dataTechnicalReception['recepcion'][0]['UsuarioRecibe'] . '</div>';
         $viewHtml .= '<div>Fecha recibida del Técnico: ' . $dataTechnicalReception['recepcion'][0]['Fecha'] . '</div>';
-        $viewHtml .= '<div>Evidencia de recepción del Técnico: </div>';
-        $evidence = explode(',', $dataTechnicalReception['recepcion'][0]['Archivos']);
+//        $viewHtml .= '<div>Evidencia de recepción del Técnico: </div>';
+//        $evidence = explode(',', $dataTechnicalReception['recepcion'][0]['Archivos']);
 
-        foreach ($evidence as $value) {
-            if ($value != '') {
-                $counter++;
-                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
-            }
-        }
+//        foreach ($evidence as $value) {
+//            if ($value != '') {
+//                $counter++;
+//                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
+//            }
+//        }
         return $viewHtml;
     }
 
