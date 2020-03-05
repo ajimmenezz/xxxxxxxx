@@ -810,6 +810,11 @@ class Modelo_FondoFijo extends Modelo_Base
         $empleados = $this->getEmpleadosByIdJefe($id);
         $ids = implode(",", $empleados);
 
+        $condicion = " tfm.IdUsuarioFondoFijo <> '" . $this->usuario['Id'] . "' ";
+        if (in_array($this->usuario['Id'], [2, 43])) {
+            $condicion = "";
+        }
+
         $consulta = $this->consulta("
             select
         tfm.Id,
@@ -821,8 +826,8 @@ class Modelo_FondoFijo extends Modelo_Base
         tfm.Monto 
         from 
         t_fondofijo_movimientos tfm
-        where tfm.IdUsuarioFondoFijo in (" . $ids . ")
-        and tfm.IdUsuarioFondoFijo <> '" . $this->usuario['Id'] . "'
+        where tfm.IdUsuarioFondoFijo in (" . $ids . ")                
+        " . $condicion . "
         and tfm.IdEstatus = 8
         order by Id asc");
         return $consulta;
