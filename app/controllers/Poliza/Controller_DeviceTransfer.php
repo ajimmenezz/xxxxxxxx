@@ -19,6 +19,12 @@ class Controller_DeviceTransfer extends Base
             case 'DeviceTransferAndDeviceRequestForm':
                 $result = $this->deviceTransferLibrary->deviceTransferAndDeviceRequestForm($this->input->post());
                 break;
+            case 'SaveDeviceTransferOrDeviceRequest':
+                $result = $this->deviceTransferLibrary->saveDeviceTransferOrDeviceRequest($this->input->post());
+                break;
+            case 'RequestLogisticGuide':
+                $result = $this->deviceTransferLibrary->requestLogisticGuide($this->input->post());
+                break;
             default:
                 $result = FALSE;
                 break;

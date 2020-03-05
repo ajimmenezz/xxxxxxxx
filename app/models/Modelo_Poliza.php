@@ -1550,7 +1550,8 @@ class Modelo_Poliza extends Modelo_Base
                             from t_inventario 
                             where IdTipoProducto = 1 
                             and IdProducto = '" . $datosEquipo['IdModelo'] . "' 
-                            and Serie = '" . $datosEquipo['Serie'] . "'");
+                            and Serie = '" . $datosEquipo['Serie'] . "' 
+                            and Serie <> 'ILEGIBLE'");
                             if (!empty($idInventario) && isset($idInventario[0]['Id']) && $idInventario[0]['Id'] > 0) {
                                 $this->actualizar("t_inventario", [
                                     'IdAlmacen' => $value['IdAlmacen'],

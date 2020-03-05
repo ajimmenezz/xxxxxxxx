@@ -9703,15 +9703,280 @@ $(function() {
   }
 
   function deviceTransferAndDeviceRequestForm(serviceId) {
+    $("#DeviceTransfers").empty();
     evento.enviarEvento(
       "/Poliza/DeviceTransfer/DeviceTransferAndDeviceRequestForm",
       { serviceId: serviceId },
-      "#seccionSeguimientoServicio",
+      "#DeviceTransfers",
       function(response) {
-        
+        $("#DeviceTransfers").append(response.form);
+        switch (response.init) {
+          case "transferRequestForm":
+            initDeviceTransferAndRequestForm();
+            break;
+          case "movementInformation":
+            initMovementInformation();
+            break;
+        }
       }
     );
   }
+
+  function initMovementInformation() {
+    select.crearSelect("#logisticCompaniesList");
+    select.crearSelect("#customerValidatorsList");
+    initAddBoxButton();
+    initRemoveBoxButton();
+    initRequestGuideButton();
+  }
+
+  function initRequestGuideButton() {
+    $("#requestGuideButton").off("click");
+    $("#requestGuideButton").on("click", function() {
+      let formData = {
+        movementId: $("#movementId").val(),
+        to: $.trim($("#adressTo").val()),
+        customerValidatorId: $("#customerValidatorsList option:selected").val(),
+        customerValidator: $("#customerValidatorsList option:selected").text(),
+        boxes: getBoxesValues()
+      };
+
+      if (
+        formData.to == "" ||
+        formData.customerValidatorId == "" ||
+        formData.boxes.length <= 0
+      ) {
+        evento.mostrarMensaje(
+          "#errorMessage",
+          false,
+          "Para solicitar una guí es necesario que se defina el destino, el personal que valida y al menos las medidas y peso de una caja. Revise su información e intente de nuevo",
+          3000
+        );
+      } else {
+        evento.enviarEvento(
+          "/Poliza/DeviceTransfer/RequestLogisticGuide",
+          formData,
+          "#DeviceTransfers",
+          function(response) {
+            if (response.code == 200) {
+              deviceTransferAndDeviceRequestForm($("#DeviceTransfers #serviceId").val());
+            } else {
+              evento.mostrarMensaje(
+                "#errorMessage",
+                false,
+                resonse.error,
+                3000
+              );
+            }
+          }
+        );
+      }
+    });
+  }
+
+  function getBoxesValues() {
+    var boxes = [];
+
+    $("#boxForGuideRequestTable tbody tr").each(function() {
+      let values = {
+        weight: $.trim(
+          $(this)
+            .find(".weightBox")
+            .val()
+        ),
+        length: $.trim(
+          $(this)
+            .find(".lengthBox")
+            .val()
+        ),
+        width: $.trim(
+          $(this)
+            .find(".widthBox")
+            .val()
+        ),
+        eight: $.trim(
+          $(this)
+            .find(".heightBox")
+            .val()
+        )
+      };
+
+      if (
+        values.weight != "" &&
+        values.length != "" &&
+        values.width != "" &&
+        values.eight != ""
+      ) {
+        boxes.push(values);
+      }
+    });
+
+    return boxes;
+  }
+
+  function initAddBoxButton() {
+    $("#addBoxButton").off("click");
+    $("#addBoxButton").on("click", function() {
+      let htmlRow = `
+      <tr>
+        <td></td>
+        <td><input type="number" class="form-control weightBox" value="" /></td>
+        <td><input type="number" class="form-control lengthBox" value="" /></td>
+        <td><input type="number" class="form-control widthBox" value="" /></td>
+        <td><input type="number" class="form-control heightBox" value="" /></td>
+        <td><a class="btn btn-danger removeBoxButton"><i class="fa fa-trash"></i></a></td>
+      </tr>
+      `;
+      $("#boxForGuideRequestTable > tbody").append(htmlRow);
+      reloadBoxNumbersInTable();
+      initRemoveBoxButton();
+    });
+  }
+
+  function initRemoveBoxButton() {
+    $(".removeBoxButton").each(function() {
+      $(this).off("click");
+      $(this).on("click", function() {
+        if ($("#boxForGuideRequestTable tbody tr").length > 1) {
+          $(this)
+            .closest("tr")
+            .remove();
+          reloadBoxNumbersInTable();
+        }
+      });
+    });
+  }
+
+  function reloadBoxNumbersInTable() {
+    var c = 0;
+    $("#boxForGuideRequestTable > tbody > tr").each(function() {
+      c++;
+      $(this)
+        .children("td:first")
+        .empty()
+        .append(c);
+    });
+  }
+
+  function initDeviceTransferAndRequestForm() {
+    select.crearSelect("#validatorsList");
+    select.crearSelect("#movementsList");
+    select.crearSelect("#warehousesList");
+    movementsListChange();
+    initBackupDevicesTable();
+    initSaveDeviceTransferButton();
+  }
+
+  function movementsListChange() {
+    $("#movementsList").on("change", function() {
+      $("#warehousesDiv, #backupDeviceDiv").addClass("hidden");
+      if ($("#movementsList option:selected").val() !== "") {
+        $("#backupDeviceDiv").removeClass("hidden");
+      }
+
+      if ($("#movementsList option:selected").val() == 3) {
+        $("#warehousesDiv").removeClass("hidden");
+      }
+    });
+  }
+
+  function initBackupDevicesTable() {
+    tabla.generaTablaPersonal(
+      "#technicianInventoryTable",
+      null,
+      null,
+      true,
+      true,
+      [],
+      true,
+      "lfrtip",
+      false
+    );
+
+    $("#technicianInventoryTable").on("click", "tr", function() {
+      var check = $(this).find(".checkEquipoStock");
+      if (check.hasClass("fa-square-o")) {
+        $(".checkEquipoStock").removeClass("fa-check-square-o");
+        $(".checkEquipoStock").addClass("fa-square-o");
+        check.removeClass("fa-square-o");
+        check.addClass("fa-check-square-o");
+      } else {
+        $(".checkEquipoStock").removeClass("fa-check-square-o");
+        $(".checkEquipoStock").addClass("fa-square-o");
+      }
+    });
+  }
+
+  function initSaveDeviceTransferButton() {
+    $("#saveDeviceTransferButton").off("click");
+    $("#saveDeviceTransferButton").on("click", function() {
+      var backupDevice = "";
+      $("#technicianInventoryTable .checkEquipoStock").each(function() {
+        if ($(this).hasClass("fa-check-square-o")) {
+          backupDevice = $(this).attr("data-id");
+        }
+      });
+
+      let formData = {
+        validator: $("#validatorsList option:selected").val(),
+        movement: $("#movementsList option:selected").val(),
+        requestTo: $("#warehousesList option:selected").val(),
+        backupDevice: backupDevice,
+        isBadUse: $("#isBadUse").val(),
+        serviceId: $("#DeviceTransfers #serviceId").val()
+      };
+
+      let validForm = validateFieldsDeviceTransferForm(formData);
+
+      if (validForm === true) {
+        saveDeviceTransferOrDeviceRequest(formData);
+      }
+    });
+  }
+
+  function saveDeviceTransferOrDeviceRequest(formData) {
+    evento.enviarEvento(
+      "/Poliza/DeviceTransfer/SaveDeviceTransferOrDeviceRequest",
+      formData,
+      "#DeviceTransfers",
+      function(response) {
+        //$("#DeviceTransfers").append(response.form);
+        //initDeviceTransferAndRequestForm();
+      }
+    );
+  }
+
+  function validateFieldsDeviceTransferForm(formData) {
+    var errorMessage = "";
+    var isValid = true;
+    if (formData.validator == "") {
+      errorMessage =
+        'Es necesario definir "Quién valida el retiro de la solicitud" ';
+      isValid = false;
+    }
+
+    if (formData.movement == "") {
+      errorMessage = 'Es necesario definir el "Movimiento a realizar" ';
+      isValid = false;
+    }
+
+    if (formData.movement == 3 && formData.requestTo == "") {
+      errorMessage =
+        'Es necesario definir "A quién solicita el equipo o refacción" ';
+      isValid = false;
+    }
+
+    if (isValid === false) {
+      eventoAuxiliar.mostrarMensaje(
+        "#DeviceTransfers #errorMessage",
+        false,
+        errorMessage,
+        3000
+      );
+    }
+    return isValid;
+  }
+
   /*****************************************************************/
 });
 var eventoAuxiliar;
