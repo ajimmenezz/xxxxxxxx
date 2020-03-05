@@ -810,7 +810,7 @@ class Modelo_FondoFijo extends Modelo_Base
         $empleados = $this->getEmpleadosByIdJefe($id);
         $ids = implode(",", $empleados);
 
-        $condicion = " tfm.IdUsuarioFondoFijo <> '" . $this->usuario['Id'] . "' ";
+        $condicion = " and tfm.IdUsuarioFondoFijo <> '" . $this->usuario['Id'] . "' ";
         if (in_array($this->usuario['Id'], [2, 43])) {
             $condicion = "";
         }
