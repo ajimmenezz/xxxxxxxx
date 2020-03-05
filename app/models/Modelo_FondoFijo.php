@@ -822,7 +822,7 @@ class Modelo_FondoFijo extends Modelo_Base
         from 
         t_fondofijo_movimientos tfm
         where tfm.IdUsuarioFondoFijo in (" . $ids . ")
-        and tmf.IdUsuarioFondoFijo <> '" . $this->usuario['Id'] . "'
+        and tfm.IdUsuarioFondoFijo <> '" . $this->usuario['Id'] . "'
         and tfm.IdEstatus = 8
         order by Id asc");
         return $consulta;
