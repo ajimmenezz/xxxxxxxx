@@ -1812,6 +1812,46 @@ class Modelo_Poliza extends Modelo_Base
         }
     }
 
+    public function consultaEquiposAllabRecepciones(string $IdRegistro)
+    {
+        $consulta = $this->consulta('select 
+                                        tear.*, 
+                                        nombreUsuario(tear.IdUsuario) UsuarioRecepcion,
+                                        (select cp.Nombre from cat_v3_usuarios cu join cat_perfiles cp on cu.IdPerfil = cp.Id where cu.Id = tear.IdUsuario) as Perfil,
+                                        estatus(tear.IdEstatus) Estatus ,
+                                        tearp.Fecha FechaProblema,
+                                        tearp.Problema,
+                                        nombreUsuario(tearp.IdUsuario) UsuarioProblema,
+                                        (select cp.Nombre from cat_v3_usuarios cu join cat_perfiles cp on cu.IdPerfil = cp.Id where cu.Id = tearp.IdUsuario) as PerfilProblema,
+                                        tearp.Archivos ArchivosProblema
+                                    from t_equipos_allab_recepciones tear
+                                    left join t_equipos_allab_recepciones_problemas tearp on tear.Id = tearp.IdRecepcion
+                                    where tear.IdRegistro = " ' . $IdRegistro . '" order by tear.Id asc');
+        return $consulta;
+    }
+    
+    public function consultaEquiposAllabRecepcionesLaboratorio(string $IdRegistro)
+    {
+        $consulta = $this->consulta('select 
+                                        tearl.*,
+                                        nombreUsuario(tearl.IdUsuario) UsuarioLab,
+                                        (select cp.Nombre from cat_v3_usuarios cu join cat_perfiles cp on cu.IdPerfil = cp.Id where cu.Id = tearl.IdUsuario) as Perfil,
+                                        estatus(tearl.IdEstatus) Estatus,
+                                        nombreUsuario(tearlh.IdUsuario) UsuarioLabHist,
+                                        tearlh.Fecha FechaHist,
+                                        tearlh.Comentarios,
+                                        tearlh.Archivos,
+                                        nombreUsuario(tearlr.IdUsuario) UsuarioLabRef,
+                                        tearlr.Fecha FechaRef,
+                                        tearlr.IdInventario,
+                                        tearlr.Cantidad
+                                    from t_equipos_allab_revision_laboratorio tearl
+                                    left join t_equipos_allab_revision_laboratorio_historial tearlh on tearl.Id = tearlh.IdRevision
+                                    left join t_equipos_allab_revision_laboratorio_refacciones tearlr on tearl.Id = tearlr.IdRevision
+                                    where tearl.IdRegistro = " ' . $IdRegistro . ' "');
+        return $consulta;
+    }
+    
     public function consultaEquiposAllabRevicionLaboratorio(array $datos)
     {
         $consulta = $this->consulta('SELECT * FROM t_equipos_allab_revision_laboratorio WHERE IdRegistro = " ' . $datos['id'] . ' "');
@@ -2152,7 +2192,7 @@ class Modelo_Poliza extends Modelo_Base
                                             t_equipos_allab_recepciones tear
                                         WHERE IdRegistro = "' . $datos['idRegistro'] . '"
                                         AND IdDepartamento = "' . $datos['idDepartamento'] . '"
-                                        ' . $idEstatus);
+                                        ' . $idEstatus . '  order by Id desc');
 
         return $equipoDanado;
     }

@@ -6695,6 +6695,15 @@ class Seguimientos extends General
                 }
                 break;
         }
+        $host = $_SERVER['SERVER_NAME'];
+        $pdf = $this->InformacionServicios->definirPDFTraslado(array('servicio' => $dataCreateTextSD['service']));
+
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'http://siccob.solutions/' . $pdf;
+        } else {
+            $path = 'http://' . $host . '/' . $pdf;
+        }
+        $viewHtml .= '<div><a href="' . $path . '">Documento PDF</a></div>';
 
         return $viewHtml;
     }
@@ -6762,8 +6771,8 @@ class Seguimientos extends General
             $viewHtml .= '<div>Usuario: ' . $value['Usuario'] . '</div>';
             $viewHtml .= '<div>Fecha: ' . $value['Fecha'] . '</div>';
             $viewHtml .= '<div>Nota: ' . $value['Nota'] . '</div>';
-            if ($value['Adjuntos'] !== '') {
-                $viewHtml .= '<div>Adjunto: : <a href="http://' . $host . $value['Adjuntos'] . '">Archivo</a></div>';
+//            if ($value['Adjuntos'] !== '') {
+//                $viewHtml .= '<div>Adjunto: : <a href="http://' . $host . $value['Adjuntos'] . '">Archivo</a></div>';
 //                $evidence = explode(',', $value['Adjuntos']);
 
 //                foreach ($evidence as $value2) {
@@ -6772,7 +6781,7 @@ class Seguimientos extends General
 //                        $viewHtml .= "<a href='http://" . $host . $value2 . "'>Archivo" . $counter . "</a> &nbsp ";
 //                    }
 //                }
-            }
+//            }
         }
 
         return $viewHtml;
