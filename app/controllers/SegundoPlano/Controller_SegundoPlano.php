@@ -16,6 +16,7 @@ class Controller_SegundoPlano extends \CI_Controller
     private $informacionServicios;
     private $solicitud;
     private $sae;
+    private $pruebas;
 
     public function __construct()
     {
@@ -29,6 +30,7 @@ class Controller_SegundoPlano extends \CI_Controller
         $this->informacionServicios = \Librerias\WebServices\InformacionServicios::factory();
         $this->solicitud = \Librerias\Generales\Solicitud::factory();
         $this->sae = \Librerias\SAEReports\Reportes::factory();
+        $this->pruebas = \Librerias\Pruebas\Pruebas::factory();
     }
 
     public function actulizarTablaEquiposSae()
@@ -390,7 +392,7 @@ class Controller_SegundoPlano extends \CI_Controller
                 $this->informacionServicios->guardarLogSD($resultadoSD, $value['Folio']);
             }
         }
-    }    
+    }
 
     public function checkUbicaphoneEstatus()
     {
@@ -528,5 +530,10 @@ class Controller_SegundoPlano extends \CI_Controller
     public function getComprobantesPagoSAE7()
     {
         $this->sae->getComprobantesPagoSAE7();
+    }
+
+    public function getPersonalSiccob()
+    {
+        $this->pruebas->getActivePersonal();
     }
 }

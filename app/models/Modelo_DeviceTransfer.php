@@ -60,6 +60,193 @@ class Modelo_DeviceTransfer extends Modelo_Base
         return $this->consulta("select * from t_correctivos_diagnostico where IdServicio = '" . $serviceId . "' order by Id desc limit 1");
     }
 
+    public function cancelMovementDeviceTransfer($data)
+    {
+        $this->iniciaTransaccion();
+        $generalsService = $this->getGeneralsService($data['serviceId'])[0];
+        $movementInfo = $this->getDeviceMovementData(null, $data['movementId'])[0];
+
+        $branchWarehouseId = $this->getBranchWarehouseId($generalsService['Sucursal']);
+        $technicianWarehouseId = $this->getTechnicianWareahouseId($this->user['Id']);
+
+        if (!is_null($movementInfo['IdInventarioRespaldo']) && $movementInfo['IdInventarioRespaldo'] > 0) {
+            $backupDeviceInfo = $this->getDeviceInventoryInfo($movementInfo['IdInventarioRespaldo']);
+            $this->rollbackWarehousesBackupUse($backupDeviceInfo, $data['serviceId'], $branchWarehouseId, $technicianWarehouseId);
+        }
+
+        $this->rollbackWarehouses($data['serviceId'], $branchWarehouseId, $technicianWarehouseId);
+
+        $this->actualizar("t_equipos_allab", ['IdEstatus' => 6], ['Id' => $data['movementId']]);
+
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400, 'error' => $this->tipoError()];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    private function rollbackWarehouses($serviceId, $branchWarehouseId, $technicianWarehouseId)
+    {
+        $this->returnDeviceToCenso($serviceId);
+        $censoInfo = $this->getCensoIdFromService($serviceId, 1);
+        $deviceInfo = $this->getDeviceInventoryInfoFromPreviusCenso($serviceId, $censoInfo);
+        $this->transferDeviceToTechnicianWareahouse($serviceId, $deviceInfo, $technicianWarehouseId, $branchWarehouseId);
+    }
+
+    private function getDeviceInventoryInfoFromPreviusCenso($serviceId, $censoInfo)
+    {
+        $sqlText = "
+        select 
+        ti.*
+        from t_inventario ti
+        where ti.IdTipoProducto = 1
+        and IdProducto = '" . $censoInfo['IdModelo'] . "' 
+        and IdEstatus = 22
+        and Serie = '" . $censoInfo['Serie'] . "'
+        and IdAlmacen = (
+                        select 
+                        Id 
+                        from cat_v3_almacenes_virtuales 
+                        where IdTipoAlmacen = 1 
+                        and IdReferenciaAlmacen = '" . $this->user['Id'] . "')";
+        $query = $this->consulta($sqlText);
+        if (empty($query)) {
+            var_dump($sqlText);
+        } else {
+            return $query[0];
+        }
+    }
+
+    private function returnDeviceToCenso($serviceId)
+    {
+        $generalsService = $this->getGeneralsService($serviceId)[0];
+        $this->queryBolean("
+        update 
+        t_censos tc
+        set Existe = 1,
+        IdEstatus = 17,
+        Danado = 0
+        where tc.IdServicio = (
+            select 
+            MAX(Id) 
+            from t_servicios_ticket 
+            where IdSucursal = (select IdSucursal from t_servicios_ticket where Id = '" . $serviceId . "') 
+            and IdTipoServicio = 11 
+            and IdEstatus = 4
+        ) 
+        and tc.IdArea = '" . $generalsService['IdArea'] . "'
+        and tc.Punto = '" . $generalsService['Punto'] . "'
+        and tc.IdModelo = '" . $generalsService['IdModelo'] . "'
+        and Serie = '" . $generalsService['Serie'] . "'
+        and Existe = 0
+        and IdEstatus = 22
+        and Danado = 1");
+    }
+
+    private function rollbackWarehousesBackupUse($deviceInfo, $serviceId, $branchWarehouseId, $technicianWarehouseId)
+    {
+        $this->removeBackupFromCenso($serviceId, $deviceInfo);
+        $this->transferBackupToTechnicianWareahouse($serviceId, $deviceInfo, $technicianWarehouseId, $branchWarehouseId);
+    }
+
+    private function removeBackupFromCenso($serviceId, $deviceInfo)
+    {
+        $generalsService = $this->getGeneralsService($serviceId)[0];
+        $this->queryBolean("
+        delete        
+        from t_censos
+        where IdServicio = (
+            select 
+            MAX(Id) 
+            from t_servicios_ticket 
+            where IdSucursal = (select IdSucursal from t_servicios_ticket where Id = '" . $serviceId . "') 
+            and IdTipoServicio = 11 
+            and IdEstatus = 4
+        ) 
+        and IdArea = '" . $generalsService['IdArea'] . "' 
+        and Punto = '" . $generalsService['Punto'] . "' 
+        and IdModelo = '" . $deviceInfo['IdProducto'] . "' 
+        and Serie = '" . $deviceInfo['Serie'] . "'");
+    }
+
+    private function transferBackupToTechnicianWareahouse($serviceId, $deviceInfo, $technicianWarehouseId, $branchWarehouseId)
+    {
+        $this->actualizar('t_inventario', [
+            'IdAlmacen' => $technicianWarehouseId,
+            'Bloqueado' => 0,
+            'IdEstatus' => 17
+        ], ['Id' => $deviceInfo['Id']]);
+
+        //Inserta el movimiento de salida del equipo de respaldo de la sucursal al almacén del técnico
+        $this->insertar("t_movimientos_inventario", [
+            'IdTipoMovimiento' => 4,
+            'IdServicio' => $serviceId,
+            'IdAlmacen' => $branchWarehouseId,
+            'IdTipoProducto' => 1,
+            'IdProducto' => $deviceInfo['IdProducto'],
+            'IdEstatus' => 17,
+            'IdUsuario' => $this->user['Id'],
+            'Cantidad' => 1,
+            'Serie' => $deviceInfo['Serie'],
+            'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+        ]);
+
+        //Inserta el movimiento de entrada del equipo de respaldo al almacén de la sucursal
+        $this->insertar("t_movimientos_inventario", [
+            'IdMovimientoEnlazado' => $this->ultimoId(),
+            'IdTipoMovimiento' => 5,
+            'IdServicio' => $serviceId,
+            'IdAlmacen' => $technicianWarehouseId,
+            'IdTipoProducto' => 1,
+            'IdProducto' => $deviceInfo['IdProducto'],
+            'IdEstatus' => 17,
+            'IdUsuario' => $this->user['Id'],
+            'Cantidad' => 1,
+            'Serie' => $deviceInfo['Serie'],
+            'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+        ]);
+    }
+
+    private function transferDeviceToTechnicianWareahouse($serviceId, $deviceInfo, $technicianWarehouseId, $branchWarehouseId)
+    {
+        $this->actualizar('t_inventario', [
+            'IdAlmacen' => $branchWarehouseId,
+            'Bloqueado' => 0,
+            'IdEstatus' => 17
+        ], ['Id' => $deviceInfo['Id']]);
+
+        //Inserta el movimiento de salida del equipo de respaldo de la sucursal al almacén del técnico
+        $this->insertar("t_movimientos_inventario", [
+            'IdTipoMovimiento' => 4,
+            'IdServicio' => $serviceId,
+            'IdAlmacen' => $technicianWarehouseId,
+            'IdTipoProducto' => 1,
+            'IdProducto' => $deviceInfo['IdProducto'],
+            'IdEstatus' => 17,
+            'IdUsuario' => $this->user['Id'],
+            'Cantidad' => 1,
+            'Serie' => $deviceInfo['Serie'],
+            'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+        ]);
+
+        //Inserta el movimiento de entrada del equipo de respaldo al almacén de la sucursal
+        $this->insertar("t_movimientos_inventario", [
+            'IdMovimientoEnlazado' => $this->ultimoId(),
+            'IdTipoMovimiento' => 5,
+            'IdServicio' => $serviceId,
+            'IdAlmacen' => $branchWarehouseId,
+            'IdTipoProducto' => 1,
+            'IdProducto' => $deviceInfo['IdProducto'],
+            'IdEstatus' => 17,
+            'IdUsuario' => $this->user['Id'],
+            'Cantidad' => 1,
+            'Serie' => $deviceInfo['Serie'],
+            'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
+        ]);
+    }
+
     public function saveDeviceTransfer($data)
     {
         $this->iniciaTransaccion();
@@ -259,7 +446,7 @@ class Modelo_DeviceTransfer extends Modelo_Base
         }
     }
 
-    private function getCensoIdFromService($serviceId)
+    private function getCensoIdFromService($serviceId, $exists = 1)
     {
         $generalsService = $this->getGeneralsService($serviceId)[0];
         return $this->consulta("
@@ -277,7 +464,8 @@ class Modelo_DeviceTransfer extends Modelo_Base
         and tc.IdArea = '" . $generalsService['IdArea'] . "'
         and tc.Punto = '" . $generalsService['Punto'] . "'
         and tc.IdModelo = '" . $generalsService['IdModelo'] . "'
-        and Serie = '" . $generalsService['Serie'] . "'
+        and Serie = '" . $generalsService['Serie'] . "' 
+        and Existe = " . $exists . "
         limit 1")[0];
     }
 
@@ -345,5 +533,81 @@ class Modelo_DeviceTransfer extends Modelo_Base
             $this->commitTransaccion();
             return ['code' => 200];
         }
+    }
+
+    public function cancelRequestLogisticGuide($logisticGuideRequestId)
+    {
+        $this->iniciaTransaccion();
+        $requestLogisticGuideInfo = $this->consulta("
+        select 
+        * 
+        from t_equipos_allab_envio_tecnico 
+        where Id = '" . $logisticGuideRequestId . "'")[0];
+
+        $this->eliminar("t_equipos_allab_envio_tecnico", ['Id' => $logisticGuideRequestId]);
+
+        $this->actualizar("t_equipos_allab", [
+            'IdUsuario' => $this->user['Id'],
+            'IdEstatus' => 2,
+            'FechaEstatus' => date('Y-m-d H:i:s'),
+            'Flag' => 0
+        ], ['Id' => $requestLogisticGuideInfo['IdRegistro']]);
+
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400, 'error' => $this->tipoError()];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200, 'bodyText' => $requestLogisticGuideInfo['InformacionSolicitudGuia']];
+        }
+    }
+
+    public function saveShipingInfo($formData)
+    {
+        $this->iniciaTransaccion();
+        if ($formData['shipingId'] > 0) {
+            $this->actualizar("t_equipos_allab_envio_tecnico", [
+                'IdEstatusEnvio' => 12,
+                'IdPaqueteria' => $formData['logisticCompanie'],
+                'Guia' => $formData['logisticTrackNumber'],
+                'Fecha' => date('Y-m-d H:i:s')
+            ], ['Id' => $formData['shipingId']]);
+        } else {
+            $this->insertar("t_equipos_allab_envio_tecnico", [
+                'IdRegistro' => $formData['movementId'],
+                'IdUsuario' => $this->user['Id'],
+                'IdEstatusEnvio' => 12,
+                'IdPaqueteria' => $formData['logisticCompanie'],
+                'Guia' => $formData['logisticTrackNumber'],
+                'Fecha' => date('Y-m-d H:i:s'),
+                'Solicitud' => 0
+            ]);
+        }
+
+        $this->actualizar("t_equipos_allab", [
+            'IdUsuario' => $this->user['Id'],
+            'IdEstatus' => 12,
+            'FechaEstatus' => date('Y-m-d H:i:s'),
+            'Flag' => 1
+        ], ['Id' => $formData['movementId']]);
+
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400, 'error' => $this->tipoError()];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
+    }
+
+    public function getTechnicianLogicticInfo($movementId)
+    {
+        return $this->consulta("
+        select
+        (select Nombre from cat_v3_paqueterias where Id = teaet.IdPaqueteria) as Paqueteria, 
+        teaet.* 
+        from t_equipos_allab_envio_tecnico teaet
+        where teaet.IdRegistro = '" . $movementId . "' 
+        and teaet.IdEstatusEnvio <> 6");
     }
 }

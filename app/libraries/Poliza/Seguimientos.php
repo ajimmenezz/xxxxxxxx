@@ -2745,7 +2745,7 @@ class Seguimientos extends General
                 'FechaConclusion' => $fecha
             ),
             array('Id' => $datos['servicio'])
-        );        
+        );
     }
 
     public function solicitarMultimedia(array $datos)
@@ -2937,15 +2937,15 @@ class Seguimientos extends General
     public function mostrarTabla()
     {
         $usuario = $this->Usuario->getDatosUsuario();
-        $idPerfil = $usuario['IdPerfil'];
+        $idPerfil = $usuario['IdPerfil'];        
 
-        if (in_array('306', $usuario['PermisosAdicionales']) || in_array('306', $usuario['Permisos'])) {
+        if (in_array('306', $usuario['PermisosAdicionales']) || in_array('306', $usuario['Permisos'])) {            
             $datosServicio = $this->DBP->consultaTablaServicioAllab(); // Todas las Solicitudes de equipo
-        } else if (in_array('307', $usuario['PermisosAdicionales']) || in_array('307', $usuario['Permisos'])) {
+        } else if (in_array('307', $usuario['PermisosAdicionales']) || in_array('307', $usuario['Permisos'])) {            
             $datosServicio = $this->DBP->consultaTablaServicioAllabSupervisor($usuario['Id']); // Solicitudes de equipo por Zona del Supervisor
-        } else if (in_array('308', $usuario['PermisosAdicionales']) || in_array('308', $usuario['Permisos'])) {
+        } else if (in_array('308', $usuario['PermisosAdicionales']) || in_array('308', $usuario['Permisos'])) {            
             $datosServicio = $this->DBP->consultaTablaServicioAllabTecnico($usuario['Id']); // Solicitudes de equipo por Tecnico
-        } else if (in_array('309', $usuario['PermisosAdicionales']) || in_array('309', $usuario['Permisos'])) {
+        } else if (in_array('309', $usuario['PermisosAdicionales']) || in_array('309', $usuario['Permisos'])) {            
             switch ($idPerfil) {
                 case '51':
                 case '62': // Almacen
@@ -4023,9 +4023,9 @@ class Seguimientos extends General
 
     public function formulariosTecnico(array $datos = null, string $idEstatus = null, string $flag = null, array $permisos, array $permisosAdicionales)
     {
-        $usuario = $this->Usuario->getDatosUsuario();
+        $usuario = $this->Usuario->getDatosUsuario();        
         if ($idEstatus === '2' && $flag === '0') {
-            $equipoAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+            $equipoAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);            
             switch ($equipoAllab[0]['IdTipoMovimiento']) {
                 case '1':
                     return array(

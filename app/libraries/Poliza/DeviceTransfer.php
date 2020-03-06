@@ -33,8 +33,18 @@ class DeviceTransfer extends General
 
         $view = 'Poliza/Formularios/deviceTransferAndDeviceRequestForm';
         if (!empty($dataForm['deviceMovementData'])) {
-            $dataForm['logisticCompanies'] = $this->db->getLogisticCompanies();
-            $dataForm['customerValidators'] = $this->sd->consultarValidadoresTI();
+            switch ($dataForm['deviceMovementData'][0]['IdTipoMovimiento']) {
+                case 1:
+                    $dataForm['logisticCompanies'] = $this->db->getLogisticCompanies();
+
+                    $technicianLogisticInfo = $this->db->getTechnicianLogicticInfo($dataForm['deviceMovementData'][0]['Id']);
+                    if (!empty($technicianLogisticInfo)) {
+                        $dataForm['technicianLogisticInfo'] = $technicianLogisticInfo[0];
+                    } else {
+                        $dataForm['customerValidators'] = $this->sd->consultarValidadoresTI();
+                    }
+                    break;
+            }
             $view = 'Poliza/Formularios/deviceMovementInformation';
             $init = 'movementInformation';
         }
@@ -60,6 +70,11 @@ class DeviceTransfer extends General
         return $result;
     }
 
+    public function cancelMovementDeviceTransfer(array $data)
+    {
+        return $this->db->cancelMovementDeviceTransfer($data);
+    }
+
     public function requestLogisticGuide(array $data)
     {
         $movementInfo = $this->db->getDeviceMovementData(null, $data['movementId'])[0];
@@ -71,6 +86,25 @@ class DeviceTransfer extends General
             $this->mail->enviarCorreo('notificaciones@siccob.solutions', ['ajimenez@siccob.com.mx'], 'Solicitud de Guía', $bodyMail);
         }
         return $result;
+    }
+
+    public function cancelRequestLogisticGuide(array $data)
+    {
+        $result = $this->db->cancelRequestLogisticGuide($data['logisticGuideRequestId']);
+        if ($result['code'] == 200) {
+            $bodyText = '
+                <p style="font-size:15px; font-weight:600;">
+                    Se ha solicitado la cancelación de la solicitud de guía con la siguiente información
+                </p>' . $result['bodyText'];
+            $bodyMail = $this->mail->mensajeCorreo('Cancelación de Solicitud de Guía', $bodyText);
+            $this->mail->enviarCorreo('notificaciones@siccob.solutions', ['ajimenez@siccob.com.mx'], 'Cancelación de Solicitud de Guía', $bodyMail);
+        }
+        return $result;
+    }
+
+    public function saveShipingInfo(array $data)
+    {
+        return $this->db->saveShipingInfo($data);
     }
 
     private function getBodyTextForLogisticGuide($dataFormRequest, $movementInfo)

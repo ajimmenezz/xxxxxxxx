@@ -9728,11 +9728,53 @@ $(function() {
     initAddBoxButton();
     initRemoveBoxButton();
     initRequestGuideButton();
+    initCancelRequestGuideButton();
+    initSaveShipingButton();
+    initCancelMovementButton();
+  }
+
+  function initCancelMovementButton() {
+    $("#cancelMovementButton").off("click");
+    $("#cancelMovementButton").on("click", function() {
+      evento.mostrarModal(
+        "Cancelar traslado o solicitud de equipo",
+        `<p class='f-s-15 f-w-600'>
+        Está a punto de cancelar el traslado o la solicitud de equipo. Esto implica el retorno del equipo de respaldo a su almacén y el retorno del equipo dañado al complejo.
+        <br />¿Desea continuar?</p>`
+      );
+      $("#btnModalConfirmar").off("click");
+      $("#btnModalConfirmar").on("click", function() {
+        evento.enviarEvento(
+          "/Poliza/DeviceTransfer/CancelMovementDeviceTransfer",
+          {
+            movementId: $("#movementId").val(),
+            serviceId: $("#serviceId").val()
+          },
+          "#modal-dialogo",
+          function(response) {
+            if (response.code == 200) {
+              evento.cerrarModal();
+              deviceTransferAndDeviceRequestForm(
+                $("#DeviceTransfers #serviceId").val()
+              );
+            } else {
+              evento.mostrarMensaje(
+                "#errorCancelMovement",
+                false,
+                response.error,
+                3000
+              );
+            }
+          }
+        );
+      });
+    });
   }
 
   function initRequestGuideButton() {
     $("#requestGuideButton").off("click");
     $("#requestGuideButton").on("click", function() {
+      $("#requestGuideButton").addClass("hidden");
       let formData = {
         movementId: $("#movementId").val(),
         to: $.trim($("#adressTo").val()),
@@ -9749,17 +9791,20 @@ $(function() {
         evento.mostrarMensaje(
           "#errorMessage",
           false,
-          "Para solicitar una guí es necesario que se defina el destino, el personal que valida y al menos las medidas y peso de una caja. Revise su información e intente de nuevo",
+          "Para solicitar una guía es necesario que se defina el destino, el personal que valida y al menos las medidas y peso de una caja. Revise su información e intente de nuevo",
           3000
         );
+        $("#requestGuideButton").removeClass("hidden");
       } else {
         evento.enviarEvento(
           "/Poliza/DeviceTransfer/RequestLogisticGuide",
           formData,
-          "#DeviceTransfers",
+          "#TrackNumberRequest",
           function(response) {
             if (response.code == 200) {
-              deviceTransferAndDeviceRequestForm($("#DeviceTransfers #serviceId").val());
+              deviceTransferAndDeviceRequestForm(
+                $("#DeviceTransfers #serviceId").val()
+              );
             } else {
               evento.mostrarMensaje(
                 "#errorMessage",
@@ -9767,11 +9812,93 @@ $(function() {
                 resonse.error,
                 3000
               );
+              $("#requestGuideButton").removeClass("hidden");
             }
           }
         );
       }
     });
+  }
+
+  function initCancelRequestGuideButton() {
+    $("#cancelRequestGuideButton").off("click");
+    $("#cancelRequestGuideButton").on("click", function() {
+      let logisticGuideRequestId = $(this).attr("data-id");
+      evento.mostrarModal(
+        "Cancelar solicitud de guía",
+        "<p class='f-s-15 f-w-600'>Está a punto de cancelar la solicitud de su guía.<br />¿Desea continuar?</p>"
+      );
+      $("#btnModalConfirmar").off("click");
+      $("#btnModalConfirmar").on("click", function() {
+        evento.enviarEvento(
+          "/Poliza/DeviceTransfer/CancelRequestLogisticGuide",
+          { logisticGuideRequestId: logisticGuideRequestId },
+          "#modal-dialogo",
+          function(response) {
+            if (response.code == 200) {
+              evento.cerrarModal();
+              deviceTransferAndDeviceRequestForm(
+                $("#DeviceTransfers #serviceId").val()
+              );
+            } else {
+              $("#modal-dialogo .modal-body")
+                .empty()
+                .append("<p class='f-s-13 f-w-15'>" + response.error + "</p>");
+              $("#btnModalConfirmar").addClass("hidden");
+              $("#btnModalAbortar")
+                .empty()
+                .append("Cerrar");
+            }
+          }
+        );
+      });
+    });
+  }
+
+  function initSaveShipingButton() {
+    $("#saveShipingButton").off("click");
+    $("#saveShipingButton").on("click", function() {
+      $("#saveShipingButton").addClass("hidden");
+      let formData = {
+        logisticCompanie: $("#logisticCompaniesList option:selected").val(),
+        logisticTrackNumber: $.trim($("#logisticTrackNumber").val()),
+        movementId: $("#movementId").val(),
+        shipingId: $(this).attr("data-id")
+      };
+
+      if (
+        formData.logisticCompanie == "" ||
+        formData.logisticTrackNumber == ""
+      ) {
+        $("#saveShipingButton").removeClass("hidden");
+        evento.mostrarMensaje(
+          "#errorMessage",
+          false,
+          "Es necesario seleccionar la paquetería y definir la guía. Revise su información e intente de nuevo.",
+          3000
+        );
+      } else {
+        saveShipingInfo(formData);
+      }
+    });
+  }
+
+  function saveShipingInfo(formData) {
+    evento.enviarEvento(
+      "/Poliza/DeviceTransfer/SaveShipingInfo",
+      formData,
+      "#DeviceTransfers",
+      function(response) {
+        if (response.code == 200) {
+          deviceTransferAndDeviceRequestForm(
+            $("#DeviceTransfers #serviceId").val()
+          );
+        } else {
+          evento.mostrarMensaje("#errorMessage", false, response.error, 3000);
+          $("#saveShipingButton").removeClass("hidden");
+        }
+      }
+    );
   }
 
   function getBoxesValues() {
@@ -9940,8 +10067,7 @@ $(function() {
       formData,
       "#DeviceTransfers",
       function(response) {
-        //$("#DeviceTransfers").append(response.form);
-        //initDeviceTransferAndRequestForm();
+        deviceTransferAndDeviceRequestForm($("#serviceId").val());
       }
     );
   }
