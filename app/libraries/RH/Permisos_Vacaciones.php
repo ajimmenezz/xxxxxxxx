@@ -136,7 +136,7 @@ class Permisos_Vacaciones extends General {
             if (in_array(pathinfo($nuevoNombreArchivo, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
                 $image = '../public/storage/Archivos/Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/' . $nuevoNombreArchivo;
                 $this->pdf->AddPage();
-                $this->pdf->Image($image, 10, 10, 50, 50, pathinfo($image, PATHINFO_EXTENSION), $image);
+                $this->pdf->Image($image, 10, 10, 80, 100, pathinfo($image, PATHINFO_EXTENSION), $image);
             } else {
                 $paginasArchivo = $this->pdf->setSourceFile('../public/storage/Archivos/Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/' . $nuevoNombreArchivo);
                 for ($i = 1; $i <= $paginasArchivo; $i++) {
