@@ -195,8 +195,7 @@
                         </div>
                         <div class="col-md-9">
                             <div id="archivoCitaIncapacidad" class="form-group" style="display: none">
-                                <label>Archivo Cita o Incapacidad</label><br>
-                                <label style="color: red">Todos los archivos que se requiera adjuntar deben ser escaneados a color y en formato PDF</label>
+                                <label>Archivo Cita o Incapacidad</label><br><br>
                                 <input id="inputEvidenciaIncapacidad" name="evidenciasIncapacidad[]" type="file" multiple>
                             </div>
                         </div>
