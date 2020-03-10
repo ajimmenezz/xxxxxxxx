@@ -83,7 +83,7 @@ class DeviceTransfer extends General
         $result = $this->db->requestLogisticGuide($data, $bodyText);
         if ($result['code'] == 200) {
             $bodyMail = $this->mail->mensajeCorreo('Solicitud de Guía', $bodyText);
-            $this->mail->enviarCorreo('notificaciones@siccob.solutions', ['ajimenez@siccob.com.mx'], 'Solicitud de Guía', $bodyMail);
+            $this->mail->enviarCorreo('notificaciones@siccob.solutions', ['ajimenez@siccob.com.mx', 'g.gonzalez@siccob.com.mx', 'erodriguez@siccob.com.mx', 'oflores@siccob.com.mx'], 'Solicitud de Guía', $bodyMail);
         }
         return $result;
     }
@@ -97,7 +97,7 @@ class DeviceTransfer extends General
                     Se ha solicitado la cancelación de la solicitud de guía con la siguiente información
                 </p>' . $result['bodyText'];
             $bodyMail = $this->mail->mensajeCorreo('Cancelación de Solicitud de Guía', $bodyText);
-            $this->mail->enviarCorreo('notificaciones@siccob.solutions', ['ajimenez@siccob.com.mx'], 'Cancelación de Solicitud de Guía', $bodyMail);
+            $this->mail->enviarCorreo('notificaciones@siccob.solutions', ['ajimenez@siccob.com.mx', 'g.gonzalez@siccob.com.mx', 'erodriguez@siccob.com.mx', 'oflores@siccob.com.mx'], 'Cancelación de Solicitud de Guía', $bodyMail);
         }
         return $result;
     }
@@ -139,7 +139,8 @@ class DeviceTransfer extends General
         }
         $bodyText .= '
                 </tbody>
-            </table>';
+            </table>
+            <p>Para consultar sus pendientes de asignación de guía, puede seguir el siguiente enlace:<br /><a target="_blank" href="http://siccob.solutions/Poliza/Seguimiento_Equipos">Seguimiento de Guías</a></p>';
 
 
         return $bodyText;
