@@ -131,19 +131,22 @@
                     if ($datosAusencia[0]['Doc'] == 1) {
                         if($datosAusencia[0]["ArchivosOriginales"] == '') {
                                 echo '<div id="archivoCitaIncapacidadAct" class="form-group">
-                                    <label>Archivo Cita o Incapacidad</label><br>
-                                    <label style="color: red">Todos los archivos que se requiera adjuntar deben ser escaneados a color y en formato PDF</label>
+                                    <label>Archivo Cita o Incapacidad</label><br><br>
                                     <input id="inputEvidenciaIncapacidadAct" name="evidenciasIncapacidadAct[]" type="file" multiple data-parsley-required="true">
                                 </div>';
                         } else {
+                            if (in_array(pathinfo($datosAusencia[0]["ArchivosOriginales"], PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
+                                $image = 'http://adist/storage/Archivos/'.$datosAusencia[0]["ArchivosOriginales"];
+                            }else{
+                                $image = 'http://adist/assets/img/Iconos/icono_file.jpg';
+                            }
                             echo '<div id="archivoCitaIncapacidadAct" class="thumbnail-pic m-5 p-5">
-                                <a class="imagenesSolicitud" target="_blank" href="' . $datosAusencia[0]["ArchivosOriginales"] . '"><img src="/assets/img/Iconos/pdf_icon.png" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>
+                                <a class="imagenesSolicitud" target="_blank" href="http://adist/storage/Archivos/' . $datosAusencia[0]["ArchivosOriginales"] . '"><img src="'.$image.'" class="img-responsive img-thumbnail" style="max-height:160px !important;" alt="Evidencia" /></a>
                                 </div>';
                         }
                     }else{
                         echo '<div id="archivoCitaIncapacidadAct" class="form-group" style="display: none">
-                                <label>Archivo Cita o Incapacidad</label><br>
-                                <label style="color: red">Todos los archivos que se requiera adjuntar deben ser escaneados a color y en formato PDF</label>
+                                <label>Archivo Cita o Incapacidad</label><br><br>
                                 <input id="inputEvidenciaIncapacidadAct" name="evidenciasIncapacidadAct[]" type="file" multiple>
                             </div>';
                     }
