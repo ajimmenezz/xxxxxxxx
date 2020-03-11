@@ -1575,18 +1575,7 @@ class Catalogo extends General
                     return FALSE;
                 } else {
                     $consulta = $this->DBC->setArticulo('cat_v3_modelos_equipo', array('Marca' => $datos['marca'], 'Nombre' => strtoupper($datos['nombre']), 'NoParte' => strtoupper($datos['parte']), 'Flag' => '1'));
-                    if (!empty($consulta)) {
-                        $query = 'select * from v_equipos where Id = "' . $consulta['ultimoId'] . '"';
-                        $datosModelo = $this->DBC->getJuntarTablas($query);
-                        if (!empty($datosModelo)) {
-                            $query = ""
-                                . "INSERT INTO Empresa03.dbo.INVE03 "
-                                . "(CVE_ART, DESCR, LIN_PROD, CON_SERIE, UNI_MED, UNI_EMP, TIEM_SURT, STOCK_MIN, STOCK_MAX, TIP_COSTEO, NUM_MON, COMP_X_REC, PEND_SURT, EXIST, COSTO_PROM, ULT_COSTO, CVE_OBS, TIPO_ELE, UNI_ALT, FAC_CONV, APART, CON_LOTE, CON_PEDIMENTO, PESO, VOLUMEN, CVE_ESQIMPU, VTAS_ANL_C, VTAS_ANL_M, COMP_ANL_C, COMP_ANL_M, BLK_CST_EXT, STATUS)"
-                                . "values "
-                                . "('I" . $datosModelo[0]['Id'] . "-P" . $datosModelo[0]['Parte'] . "','" . $datosModelo[0]['Equipo'] . "','ADST', 'N', 'pz', '1', '0', '0', '0', 'P','1','0','0','0','0','0','0','P','pz','1','0','N','N','0','0','1','0','0','0','0','N','A');";
-                            \Librerias\Modelos\Base::connectDBSAE()->query($query);
-                            $consultaSAE = \Librerias\Modelos\Base::connectDBSAE()->affected_rows();
-                        }
+                    if (!empty($consulta)) {                                                                    
                         return $this->catModelosEquipo('3');
                     } else {
                         return FALSE;
@@ -1610,19 +1599,7 @@ class Catalogo extends General
                         'Flag' => $datos['estatus']
                     ), array('Id' => $datos['id']));
                     if (!empty($consulta)) {
-                        $query = 'select * from v_equipos where Id = "' . $datos['id'] . '"';
-                        $datosModelo = $this->DBC->getJuntarTablas($query);
-                        if (!empty($datosModelo)) {
-                            $query = ""
-                                . "UPDATE Empresa03.dbo.INVE03 "
-                                . "SET CVE_ART = 'I" . $datosModelo[0]['Id'] . "-P" . $datosModelo[0]['Parte'] . "', "
-                                . "DESCR = '" . $datosModelo[0]['Equipo'] . "', "
-                                . "STATUS = '" . (($datos['estatus'] == 1) ? 'A' : 'B') . "' "
-                                . "WHERE CVE_ART like 'I" . $datos['id'] . "-%' "
-                                . "AND LIN_PROD = 'ADST'";
-                            \Librerias\Modelos\Base::connectDBSAE()->query($query);
-                            $consultaSAE = \Librerias\Modelos\Base::connectDBSAE()->affected_rows();
-                        }
+                        $query = 'select * from v_equipos where Id = "' . $datos['id'] . '"';                 
                         return $this->catModelosEquipo('3');
                     } else {
                         return $this->catModelosEquipo('3');
