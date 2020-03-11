@@ -540,7 +540,7 @@ class Solicitud extends General
                     }
                     $data['usuarioApiKey'] = $apiKey;
                 }
-                $data['datos']['detalles'] = array();
+                $data['datos']['detalles'] = $this->DBS->consulta("select * from t_solicitudes_internas where IdSolicitud = '" . $datos['solicitud'] . "'");
                 $data['formularioSolicitud'] = parent::getCI()->load->view('Generales/Modal/formularioAsignadaSolicitudSistemasExternos', $data, TRUE);
             } else if ($datos['operacion'] === '2') {
                 //Regresa la formulario para editar solicitud en la seccion autorizacion                
