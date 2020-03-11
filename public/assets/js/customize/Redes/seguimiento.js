@@ -106,7 +106,7 @@ $(function () {
     var recargandoTablaRedes = function (informacionServicio) {
         tabla.limpiarTabla('#data-table-redes');
         $.each(informacionServicio.serviciosAsignados, function (key, item) {
-            tabla.agregarFila('#data-table-redes', [item.Id, item.Ticket, item.Servicio, item.FechaCreacion, item.Descripcion, item.NombreEstatus, item.IdEstatus, item.Folio]);
+            tabla.agregarFila('#data-table-redes', [item.Id, item.Ticket, item.Servicio, item.FechaCreacion, item.Descripcion, item.NombreEstatus, item.IdEstatus, item.Folio, item.Sucursal]);
         });
     };
 
