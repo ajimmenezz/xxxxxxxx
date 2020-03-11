@@ -522,7 +522,7 @@ class Tesoreria extends General {
         if ($usuario['Id'] === '119') {
             $iva = 8;
         } else {
-            $iva = 16;
+            $iva = 10;
         }
 
         return $iva;
