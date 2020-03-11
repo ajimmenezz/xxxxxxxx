@@ -158,7 +158,7 @@ class ServiciosTicket extends General
                 $queryUnion = $queryUnionLogistica;
             }
 
-            return $this->DBST->getServicios('
+            $query = '
             select 
                 tst.Id,
                 tst.Ticket,
@@ -179,8 +179,10 @@ class ServiciosTicket extends General
             and tst.IdEstatus in (1,2,3,10,12)
             AND tst.IdTipoServicio != 45
             ' . $whereFolio . '
-            and (csd.IdDepartamento = ' . $departamento . ' or tst.IdTipoServicio = 9) group by tst.Id desc '
-                . $queryUnion);
+            and (concat(",",csd.IdDepartamentos,",") like "%,' . $departamento . ',%" or tst.IdTipoServicio = 9) 
+            group by tst.Id desc '
+                . $queryUnion;                
+            return $this->DBST->getServicios($query);
         }
     }
 
