@@ -1643,7 +1643,7 @@ class Catalogo extends General
                 cvme.Nombre as Marca,
                 cvse.Nombre as Sublinea,
                 cvle.Nombre as Linea,                
-                cvme.Flag,
+                cvmoe.Flag,
                 if(cvmoe.Flag = 0,'Inactivo','Activo') as Activacion
                 from cat_v3_lineas_equipo cvle inner join cat_v3_sublineas_equipo cvse
                 on cvle.Id = cvse.Linea
