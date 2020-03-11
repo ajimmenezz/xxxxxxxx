@@ -288,7 +288,6 @@ class InformacionServicios extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->ServiceDesk->validarAPIKey($this->MSP->getApiKeyByUser($usuario['Id']));
 
-
         if ($informacionDiagnostico !== FALSE) {
             if ($informacionDiagnostico[0]['IdTipoDiagnostico'] === '4') {
                 $componente = "<div> Componente: " . $informacionDiagnostico[0]['Componente'] . "</div>";
@@ -371,12 +370,41 @@ class InformacionServicios extends General {
                 }
             }
 
+            if ($informacionDiagnostico[0]['IdTipoDiagnostico'] === '1') {
+                $bitacoraReporteFalso = $this->DBP->consultaBitacoraReporteFalso($datos['servicio']);
+                $observaciones = "<div>Bitácora Observaciones del Diagnóstico: </div>";
+                $observacionesEvidencia = '';
+
+                $contadorBitacora = 0;
+
+                foreach ($bitacoraReporteFalso as $key => $value) {
+                    $contadorBitacora++;
+
+                    if (!empty($value['Evidencias'])) {
+                        $archivosBitacora = explode(',', $value['Evidencias']);
+                        $contadorBitacoraEvidencia = 0;
+                        $linkImagenBitacora = '';
+
+                        foreach ($archivosBitacora as $v) {
+                            $contadorBitacoraEvidencia++;
+                            $linkImagenBitacora .= "<a href='http://" . $host . $v . "' target='_blank'>Archivo" . $contadorBitacoraEvidencia . "</a> &nbsp ";
+                        }
+
+                        $observacionesEvidencia = " " . $linkImagenBitacora;
+                    }
+
+                    $observaciones .= "<div>Observación " . $contadorBitacora . ": " . $value['Observaciones'] . $observacionesEvidencia . "</div>";
+                }
+            } else {
+                $observaciones = "<div>Observaciones: " . $informacionDiagnostico[0]['Observaciones'] . "</div>";
+            }
+
             $descripcion = "<br>"
                     . "<div>***DIAGNÓSTICO DEL EQUIPO***</div>"
                     . "<div>" . $informacionSolicitud['sucursal'] . " &nbsp " . $informacionCorrectivo[0]['NombreArea'] . " " . $informacionCorrectivo[0]['Punto'] . " &nbsp " . $informacionCorrectivo[0]['Equipo'] . "&nbsp Serie: " . $informacionCorrectivo[0]['Serie'] . "&nbsp Terminal: " . $informacionCorrectivo[0]['Serie'] . "</div>"
                     . "<div>" . $informacionDiagnostico[0]['NombreTipoDiagnostico'] . " &nbsp " . $componente . "</div>"
                     . $datosFalla
-                    . "<div>Observaciones: " . $informacionDiagnostico[0]['Observaciones'] . "</div>"
+                    . $observaciones
                     . $linkImagenesDiagnostico
                     . $informacionProblema
                     . $solucionDiv
@@ -407,7 +435,7 @@ class InformacionServicios extends General {
                                                                             WHERE tst.Id = "' . $datos['servicio'] . '"');
 
         $pdf = $this->definirPDF($datos);
-        
+
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'http://siccob.solutions/' . $pdf;
         } else {
@@ -952,14 +980,14 @@ class InformacionServicios extends General {
 
     public function checklist(array $datos) {
         $host = $_SERVER['SERVER_NAME'];
-        
+
         $linkPdf = $this->definirPDF($datos);
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'http://siccob.solutions/' . $linkPdf;
         } else {
             $path = 'http://' . $host . '/' . $linkPdf;
         }
-        
+
         $descripcion = "<div>Ha concluido el Correctivo Proactivo</div><br/><a href='" . $path . "' target='_blank'>DOCUMENTO PDF</a>";
 
         return $descripcion;
@@ -968,13 +996,13 @@ class InformacionServicios extends General {
     public function trafficService(array $datos) {
         $host = $_SERVER['SERVER_NAME'];
         $linkPdf = $this->definirPDF($datos);
-        
+
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'http://siccob.solutions/' . $linkPdf;
         } else {
             $path = 'http://' . $host . '/' . $linkPdf;
         }
-        
+
         $descripcion = "<br/><div>Se ha realizo un servicio de Tráfico</div><a href='" . $path . "' target='_blank'>DOCUMENTO PDF</a><br/>";
         return $descripcion;
     }
@@ -1258,38 +1286,39 @@ class InformacionServicios extends General {
         $consulta = $this->DBS->consulta("select 
                                             nombreUsuario(tst.IdTecnicoFirma) as Tecnico,
                                             FirmaTecnico
-                                        from t_servicios_ticket tst WHERE Id = '".$servicio."' limit 1");
-        if($consulta){
+                                        from t_servicios_ticket tst WHERE Id = '" . $servicio . "' limit 1");
+        if ($consulta) {
             return $consulta[0];
-        }else{
+        } else {
             return null;
         }
     }
+
     private function getFirmasGerenteDiagnostico(int $servicio) {
         $consulta = $this->DBS->consulta("select 
                                             Gerente,
                                             Firma,
                                             FechaFirma
                                         from t_correctivos_diagnostico 
-                                        where IdServicio = '".$servicio."' and Gerente is not null limit 1");
-        if($consulta){
+                                        where IdServicio = '" . $servicio . "' and Gerente is not null limit 1");
+        if ($consulta) {
             return $consulta[0];
-        }else{
+        } else {
             return null;
         }
     }
-    
-    private function getFirmasGerenteTicket(int $servicio){
+
+    private function getFirmasGerenteTicket(int $servicio) {
         $consulta = $this->DBS->consulta("select 
                                             Firma,
                                             NombreFirma as Gerente,
                                             FechaFirma
                                         from t_servicios_ticket tst 
-                                        WHERE  Id = '".$servicio."' 
+                                        WHERE  Id = '" . $servicio . "' 
                                         and tst.NombreFirma is not null limit 1");
-        if($consulta){
+        if ($consulta) {
             return $consulta[0];
-        }else{
+        } else {
             return null;
         }
     }
@@ -1344,7 +1373,7 @@ class InformacionServicios extends General {
                     $this->setCoordinates(130, $this->y - 5);
                     $this->setCellValue(70, 5, $generales['Estatus'], 'L', true);
                     $this->setCoordinates(40);
-                    $this->setCellValue(0, 5, $generales['Atiende']." (".$generales['Perfil'].")", 'L');
+                    $this->setCellValue(0, 5, $generales['Atiende'] . " (" . $generales['Perfil'] . ")", 'L');
 
                     if ($generales['IdEstatus'] === '4') {
                         $this->setCellValue(0, 5, $generales['FechaConclusion'], 'L', true);
@@ -1390,7 +1419,7 @@ class InformacionServicios extends General {
 
     public function definirPDF(array $datos) {
         $this->pdf = new PDFAux();
-        
+
         $firmas = array();
         $firmaTecnico = $this->getFirmasTecnico($datos['servicio']);
         if (!is_null($firmaTecnico)) {
@@ -1423,9 +1452,9 @@ class InformacionServicios extends General {
         }
 
         if (isset($datos['archivo'])) {
-            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/', str_replace(' ','_',$datos['archivo'] . $nombreExtra));
+            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/', str_replace(' ', '_', $datos['archivo'] . $nombreExtra));
         } else {
-            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', str_replace(' ','_','Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio'] . $nombreExtra));
+            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', str_replace(' ', '_', 'Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio'] . $nombreExtra));
         }
 
         if (file_exists($carpeta)) {
@@ -1470,16 +1499,16 @@ class InformacionServicios extends General {
 
         $this->setCellValue(73, 5, $estatus, 'L', true);
         $this->setCoordinates(40);
-        $this->setCellValue(0, 5, $generales['Atiende']." (".$generales['Perfil'].")", 'L');
+        $this->setCellValue(0, 5, $generales['Atiende'] . " (" . $generales['Perfil'] . ")", 'L');
 
         if ($generales['IdEstatus'] === '4') {
             $this->setCellValue(0, 5, $generales['FechaConclusion'], 'L', true);
         }
-        
-        if($datos['folio'] != '' || $datos['folio'] != null){
+
+        if ($datos['folio'] != '' || $datos['folio'] != null) {
             $this->informacionSD($datos['folio']);
         }
-        
+
         if ($generales['HasSeguimiento'] === '0') {
             $this->setPDFContentSinSeguimiento($generales['Id'], $datos);
             $this->obtenerEquipoMaterialServicio($datos['servicio']);
@@ -1519,10 +1548,10 @@ class InformacionServicios extends General {
 
         return $carpeta;
     }
-    
+
     public function definirPDFTraslado(array $datos) {
         $this->pdf = new PDFAux();
-        
+
         $firmas = array();
         $firmaTecnico = $this->getFirmasTecnico($datos['servicio']);
         if (!is_null($firmaTecnico)) {
@@ -1547,9 +1576,9 @@ class InformacionServicios extends General {
         $datos['folio'] = $generales['SD'];
 
         if (isset($datos['archivo'])) {
-            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/', str_replace(' ','_',$datos['archivo'] . 'Traslado'));
+            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/Asociados/', str_replace(' ', '_', $datos['archivo'] . 'Traslado'));
         } else {
-            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', str_replace(' ','_','Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio'] . 'Traslado'));
+            $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', str_replace(' ', '_', 'Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio'] . 'Traslado'));
         }
 
         if (file_exists($carpeta)) {
@@ -1593,30 +1622,30 @@ class InformacionServicios extends General {
 
         $this->setCellValue(73, 5, $estatus, 'L', true);
         $this->setCoordinates(40);
-        $this->setCellValue(0, 5, $generales['Atiende']." (".$generales['Perfil'].")", 'L');
+        $this->setCellValue(0, 5, $generales['Atiende'] . " (" . $generales['Perfil'] . ")", 'L');
 
         if ($generales['IdEstatus'] === '4') {
             $this->setCellValue(0, 5, $generales['FechaConclusion'], 'L', true);
         }
-        
-        if($datos['folio'] != '' || $datos['folio'] != null){
+
+        if ($datos['folio'] != '' || $datos['folio'] != null) {
             $this->informacionSD($datos['folio']);
         }
-        
+
         $equipoAllab = $this->DBP->consultaEquiposAllab($datos['servicio']);
-        
-        if(!empty($equipoAllab)){
+
+        if (!empty($equipoAllab)) {
             $recepcionesAllab = $this->DBP->consultaEquiposAllabRecepciones($equipoAllab[0]['Id']);
             $recepcionesAllabLaboratorio = $this->DBP->consultaEquiposAllabRecepcionesLaboratorio($equipoAllab[0]['Id']);
-            if(!empty($recepcionesAllab)){
-                
+            if (!empty($recepcionesAllab)) {
+
                 foreach ($recepcionesAllab as $value) {
                     if (($this->y + 45) > 270) {
                         $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
                         $this->setStyleHeader();
                         $this->setHeaderValue($header);
                     }
-                    
+
                     $this->setCoordinates(10, $this->y + 5);
                     $this->setStyleHeader();
                     $this->setHeaderValue($value['Estatus']);
@@ -1625,11 +1654,11 @@ class InformacionServicios extends General {
                     $this->setCellValue(30, 5, "Fecha:", 'R');
                     $this->setStyleSubtitle();
                     $this->setCoordinates(40, $this->y - 10);
-                    $this->setCellValue(0, 5, $value['UsuarioRecepcion']." (".$value['Perfil'].")", 'L', true);
+                    $this->setCellValue(0, 5, $value['UsuarioRecepcion'] . " (" . $value['Perfil'] . ")", 'L', true);
                     $this->setCellValue(0, 5, $value['Fecha'], 'L');
                     $this->setEvidenciasPDF($datos, $value['Archivos'], $value['Estatus']);
-                    
-                    if($value['FechaProblema'] !== null){
+
+                    if ($value['FechaProblema'] !== null) {
                         if (($this->y + 45) > 270) {
                             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
                             $this->setStyleHeader();
@@ -1643,14 +1672,14 @@ class InformacionServicios extends General {
                         $this->setCellValue(30, 5, "Problema:", 'R', true);
                         $this->setStyleSubtitle();
                         $this->setCoordinates(40, $this->y - 15);
-                        $this->setCellValue(0, 5, $value['UsuarioProblema']." (".$value['PerfilProblema'].")", 'L', true);
+                        $this->setCellValue(0, 5, $value['UsuarioProblema'] . " (" . $value['PerfilProblema'] . ")", 'L', true);
                         $this->setCellValue(0, 5, $value['FechaProblema'], 'L');
                         $this->setCellValue(0, 5, $value['Problema'], 'L', true);
                         $this->setEvidenciasPDF($datos, $value['ArchivosProblema'], "PROBLEMA CON " . $value['Estatus']);
                     }
-                    
-                    if($value['IdDepartamento'] == 2){
-                        if(!empty($recepcionesAllabLaboratorio)){
+
+                    if ($value['IdDepartamento'] == 2) {
+                        if (!empty($recepcionesAllabLaboratorio)) {
                             if (($this->y + 45) > 270) {
                                 $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
                                 $this->setStyleHeader();
@@ -1670,7 +1699,7 @@ class InformacionServicios extends General {
 
                             $this->setStyleSubtitle();
                             $this->setCoordinates(40, $this->y - 15);
-                            $this->setCellValue(0, 5, $recepcionesAllabLaboratorio[0]['UsuarioLab']." (".$recepcionesAllabLaboratorio[0]['Perfil'].")", 'L', true);
+                            $this->setCellValue(0, 5, $recepcionesAllabLaboratorio[0]['UsuarioLab'] . " (" . $recepcionesAllabLaboratorio[0]['Perfil'] . ")", 'L', true);
                             $this->setCellValue(0, 5, $recepcionesAllabLaboratorio[0]['Comentarios'], 'L');
                             $this->setCellValue(70, 5, $recepcionesAllabLaboratorio[0]['Fecha'], 'L', true);
                             $this->setCoordinates(127, $this->y - 5);
@@ -1690,12 +1719,12 @@ class InformacionServicios extends General {
 
         return $carpeta;
     }
-    
+
     private function informacionSD($folio) {
         $usuario = $this->Usuario->getDatosUsuario();
-        $resultadoSD = $this->ServiceDesk->getDetallesFolio($usuario["SDKey"],$folio);
+        $resultadoSD = $this->ServiceDesk->getDetallesFolio($usuario["SDKey"], $folio);
         $infoSD = json_decode(json_encode($resultadoSD), True);
-        
+
         $this->setCoordinates(10, $this->y + 5);
         $this->setStyleHeader();
         $this->setHeaderValue("Información SD");
@@ -1703,7 +1732,7 @@ class InformacionServicios extends General {
         $this->setStyleTitle();
         $this->setCellValue(30, 5, "Gerente del folio:", 'R', true);
         $this->setCellValue(30, 5, "Asunto:", 'R');
-        
+
         $this->setStyleSubtitle();
         $this->setCoordinates(40, $this->y - 10);
         $this->setCellValue(0, 5, $infoSD["Nombre del Gerente"], 'L', true);
@@ -1714,7 +1743,7 @@ class InformacionServicios extends General {
         $this->setStyleTitle();
         $this->setCoordinates(10, $this->y);
         $this->setCellValue(30, $heightMulti, "Descripción:", 'R', true);
-        
+
         $this->setCoordinates(10);
     }
 
@@ -1784,7 +1813,7 @@ class InformacionServicios extends General {
 
                 $this->setStyleSubtitle();
                 $this->setCoordinates(35, $this->y - 5);
-                $this->setCellValue(75, 5, $value['Usuario'] . " (".$value['Perfil'].")", 'L', true);
+                $this->setCellValue(75, 5, $value['Usuario'] . " (" . $value['Perfil'] . ")", 'L', true);
                 $this->setCoordinates(125, $this->y - 5);
                 $this->setCellValue(75, 5, $value['Fecha'], 'L', true);
 
@@ -1833,7 +1862,7 @@ class InformacionServicios extends General {
 
                 $this->setStyleSubtitle();
                 $this->setCoordinates(35, $this->y - 5);
-                $this->setCellValue(75, 5, $value['Usuario'] . " (".$value['Perfil'].")", 'L', true);
+                $this->setCellValue(75, 5, $value['Usuario'] . " (" . $value['Perfil'] . ")", 'L', true);
                 $this->setCoordinates(125, $this->y - 5);
                 $this->setCellValue(75, 5, $value['Fecha'], 'L', true);
 
@@ -2023,7 +2052,7 @@ class InformacionServicios extends General {
         } else {
             $path = 'http://' . $host;
         }
-            
+
         $evidencias = explode(",", $evidencias);
         $totalEvidencias = count($evidencias);
         if ($totalEvidencias > 0) {
@@ -2828,13 +2857,13 @@ class InformacionServicios extends General {
     private function obtenerEquipoMaterialServicio(string $servicio) {
         $serviciosAvance = $this->DBST->servicioAvanceProblema($servicio);
         $folio = '';
-        $folio .= $this->DBST->consulta('select folioByServicio('.$servicio.') as folio')[0]['folio'];
+        $folio .= $this->DBST->consulta('select folioByServicio(' . $servicio . ') as folio')[0]['folio'];
         $equipoMaterial = array();
 
-        if($serviciosAvance){
+        if ($serviciosAvance) {
             foreach ($serviciosAvance as $avance) {
                 $avanceEquipo = $this->DBST->serviciosAvanceEquipo($avance['Id']);
-                if($avanceEquipo){
+                if ($avanceEquipo) {
                     foreach ($avanceEquipo as $equipo) {
                         array_push($equipoMaterial, $equipo);
                     }
@@ -2890,6 +2919,7 @@ class InformacionServicios extends General {
         $todaEvidencia = substr($concatena, 0, -1);
         return $todaEvidencia;
     }
+
 }
 
 class PDFAux extends PDF {
@@ -2914,11 +2944,11 @@ class PDFAux extends PDF {
 
     public function setFirmas() {
         $this->SetFont('Helvetica', 'I', 6);
-        
+
         if (!is_null($this->dato['Firma']) && $this->dato['Firma'] != '') {
             if (file_exists('.' . $this->dato['Firma'])) {
                 $this->Image('.' . $this->dato['Firma'], 145, 274, 25, 12, pathinfo($this->dato['Firma'], PATHINFO_EXTENSION));
-            } else{
+            } else {
                 $this->Image('./assets/img/Iconos/sin_firma.png', 145, 274, 25, 12, 'png');
             }
             $this->Cell(95, 10, utf8_decode($this->dato['Gerente']), 0, 0, 'C');
@@ -2931,11 +2961,11 @@ class PDFAux extends PDF {
             $this->SetXY(100, 15);
             $this->Cell(115, 548, utf8_decode('Gerente'), 0, 0, 'C');
         }
-        
+
         if (!is_null($this->dato['FirmaTecnico']) && $this->dato['FirmaTecnico'] != '') {
             if (file_exists('.' . $this->dato['FirmaTecnico'])) {
                 $this->Image('.' . $this->dato['FirmaTecnico'], 175, 274, 25, 12, pathinfo($this->dato['FirmaTecnico'], PATHINFO_EXTENSION));
-            } else{
+            } else {
                 $this->Image('./assets/img/Iconos/sin_firma.png', 175, 274, 25, 12, 'png');
             }
             $this->SetXY(100, 15);
@@ -2950,4 +2980,5 @@ class PDFAux extends PDF {
             $this->Cell(185, 548, utf8_decode('Técnico'), 0, 0, 'C');
         }
     }
+
 }
