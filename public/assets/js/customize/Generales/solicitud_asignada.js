@@ -724,7 +724,7 @@ $(function() {
     if (typeof respuesta.datosSD === "object") {
       descripcionSolicitud = respuesta.datosSD.DESCRIPTION;
     } else if (
-      typeof respuesta.datos.detalles[0].Descripcion != "undefined" &&
+      typeof(respuesta.datos.detalles[0].Descripcion) != "undefined" &&
       respuesta.datos.detalles[0].Descripcion !== null
     ) {
       descripcionSolicitud = respuesta.datos.detalles[0].Descripcion;
