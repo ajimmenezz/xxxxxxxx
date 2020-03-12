@@ -1998,7 +1998,7 @@ class Modelo_Poliza extends Modelo_Base
 
     public function cambiarEsatus(array $datos)
     {
-        $resultado = $this->actualizar('t_equipos_allab', array('IdEstatus' => $datos['idEstatus'], 'Flag' => $datos['flag'], 'FechaEstatus' => $datos['fecha']), ['Id' => $datos['id']]);
+        $resultado = $this->actualizar('t_equipos_allab', array('IdEstatus' => $datos['idEstatus'], 'Flag' => $datos['flag'], 'FechaEstatus' => $datos['fecha'], 'idUsuario' => $datos['idUsuario']), ['Id' => $datos['id']]);
 
         if (!empty($resultado)) {
             return TRUE;

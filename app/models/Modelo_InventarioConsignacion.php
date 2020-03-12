@@ -551,7 +551,6 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                     ]);
                 }
 
-
                 $this->insertar('t_movimientos_inventario', [
                     "IdTipoMovimiento" => 2,
                     "IdAlmacen" => $datos['IdAlmacen'],
@@ -776,6 +775,11 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                     and IdAlmacen in (select Id from cat_v3_almacenes_virtuales where (IdTipoAlmacen = 1 && IdReferenciaAlmacen = '" . $usuario . "') || IdResponsable = '" . $usuario . "')
                                     and (Bloqueado = 0 || Id in (" . $idsBloqueados . "))
                                     and IdEstatus = 17;");
+        return $consulta;
+    }
+
+    public function getAlmacenesVirtualesPorUsuario(string $idUsuario) {
+        $consulta = $this->consulta("SELECT * FROM cat_v3_almacenes_virtuales WHERE IdReferenciaAlmacen = '" . $idUsuario . "' AND IdTipoAlmacen = '1'");
         return $consulta;
     }
 
