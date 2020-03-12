@@ -1090,7 +1090,7 @@ class Modelo_Poliza extends Modelo_Base
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
-                                    WHERE tea.IdUsuario = '" . $usuario . "'
+                                    WHERE tea.IdTecnicoSolicita = '" . $usuario . "'
                                     AND tea.IdEstatus NOT IN('31','6')");
 
         if (!empty($consulta)) {
