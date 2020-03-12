@@ -520,9 +520,9 @@ class Tesoreria extends General {
         $usuario = $this->Usuario->getDatosUsuario();
 
         if ($usuario['Id'] === '119') {
-            $iva = 8;
+            $iva = 5;
         } else {
-            $iva = 16;
+            $iva = 10;
         }
 
         return $iva;

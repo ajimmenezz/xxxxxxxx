@@ -342,7 +342,8 @@ class Secciones extends General
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('16');
                 break;
             case 'Almacen/Almacenes':
-                $datos['ListaAlmacenes'] = $this->Catalogo->catAlmacenesVirtuales('3');
+                $datos['ListaAlmacenes'] = $this->Catalogo->catAlmacenesVirtuales('3', null, null, $usuario);
+                $datos['userInfo'] = $usuario;
                 break;
             case 'Almacen/Lineas':
                 $datos['ListaLineas'] = $this->Catalogo->catLineasEquipo('3');

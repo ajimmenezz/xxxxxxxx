@@ -17,7 +17,7 @@ $(function () {
     //Evento para mostrar la ayuda del sistema
     evento.mostrarAyuda('Ayuda_Proyectos');
 
-    file.crearUpload('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', ['pdf'], false, [], '', null, false, 1);
+    file.crearUpload('#inputEvidenciaIncapacidad', 'EventoPermisosVacaciones/Permisos', ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx'], false, [], '', null, false, 1);
     tabla.generaTablaPersonal('#table-permisos-ausencia', null, null, true, true);
     //Inicializa funciones de la plantilla
     App.init();

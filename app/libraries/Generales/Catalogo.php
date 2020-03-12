@@ -13,13 +13,16 @@ class Catalogo extends General
 {
 
     private $DBC;
+    private $user;
 
     public function __construct()
     {
         parent::__construct();
         $this->DBC = \Modelos\Modelo_Catalogo::factory();
+        parent::getCI()->load->library('session');
         parent::getCI()->load->helper('date');
         parent::getCI()->load->helper('conversionpalabra');
+        $this->user = \Librerias\Generales\Usuario::getCI()->session->userdata();
     }
 
     /*
@@ -1269,7 +1272,7 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catAlmacenesVirtuales(string $operacion, array $datos = null, array $where = null)
+    public function catAlmacenesVirtuales(string $operacion, array $datos = null, array $where = null, $infoUsuario = array())
     {
         switch ($operacion) {
                 //Inserta en la tabla
@@ -1306,29 +1309,7 @@ class Catalogo extends General
                 break;
                 //Obtiene Informacion 
             case '3';
-                $this->DBC->queryBolean("
-                insert into cat_v3_almacenes_virtuales(IdTipoAlmacen,IdReferenciaAlmacen,Nombre, Flag)
-                select 
-                1,
-                cu.Id,
-                concat('Almacén de ',nombreUsuario(cu.Id)),
-                1
-                from cat_v3_usuarios cu
-                where cu.Id 
-                not in (select IdReferenciaAlmacen from cat_v3_almacenes_virtuales where IdTipoAlmacen = 1)
-                and cu.Flag = 1
-                and cu.Id <> 1");
-                $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
-                $query = ''
-                    . 'select '
-                    . 'cav.Id, '
-                    . 'cav.Nombre, '
-                    . 'ctav.Nombre as Tipo, '
-                    . 'cav.IdReferenciaAlmacen as Referencia, '
-                    . 'cav.Flag '
-                    . 'from cat_v3_almacenes_virtuales cav '
-                    . 'inner join cat_v3_tipos_almacenes_virtuales ctav on cav.IdtipoAlmacen = ctav.Id';
-                return $this->DBC->getJuntarTablas($query);
+                return $this->DBC->getAlmacenesVirtuales(null, null, $infoUsuario);
                 break;
             default:
                 break;
@@ -1576,17 +1557,6 @@ class Catalogo extends General
                 } else {
                     $consulta = $this->DBC->setArticulo('cat_v3_modelos_equipo', array('Marca' => $datos['marca'], 'Nombre' => strtoupper($datos['nombre']), 'NoParte' => strtoupper($datos['parte']), 'Flag' => '1'));
                     if (!empty($consulta)) {
-                        $query = 'select * from v_equipos where Id = "' . $consulta['ultimoId'] . '"';
-                        $datosModelo = $this->DBC->getJuntarTablas($query);
-                        if (!empty($datosModelo)) {
-                            $query = ""
-                                . "INSERT INTO Empresa03.dbo.INVE03 "
-                                . "(CVE_ART, DESCR, LIN_PROD, CON_SERIE, UNI_MED, UNI_EMP, TIEM_SURT, STOCK_MIN, STOCK_MAX, TIP_COSTEO, NUM_MON, COMP_X_REC, PEND_SURT, EXIST, COSTO_PROM, ULT_COSTO, CVE_OBS, TIPO_ELE, UNI_ALT, FAC_CONV, APART, CON_LOTE, CON_PEDIMENTO, PESO, VOLUMEN, CVE_ESQIMPU, VTAS_ANL_C, VTAS_ANL_M, COMP_ANL_C, COMP_ANL_M, BLK_CST_EXT, STATUS)"
-                                . "values "
-                                . "('I" . $datosModelo[0]['Id'] . "-P" . $datosModelo[0]['Parte'] . "','" . $datosModelo[0]['Equipo'] . "','ADST', 'N', 'pz', '1', '0', '0', '0', 'P','1','0','0','0','0','0','0','P','pz','1','0','N','N','0','0','1','0','0','0','0','N','A');";
-                            \Librerias\Modelos\Base::connectDBSAE()->query($query);
-                            $consultaSAE = \Librerias\Modelos\Base::connectDBSAE()->affected_rows();
-                        }
                         return $this->catModelosEquipo('3');
                     } else {
                         return FALSE;
@@ -1611,18 +1581,6 @@ class Catalogo extends General
                     ), array('Id' => $datos['id']));
                     if (!empty($consulta)) {
                         $query = 'select * from v_equipos where Id = "' . $datos['id'] . '"';
-                        $datosModelo = $this->DBC->getJuntarTablas($query);
-                        if (!empty($datosModelo)) {
-                            $query = ""
-                                . "UPDATE Empresa03.dbo.INVE03 "
-                                . "SET CVE_ART = 'I" . $datosModelo[0]['Id'] . "-P" . $datosModelo[0]['Parte'] . "', "
-                                . "DESCR = '" . $datosModelo[0]['Equipo'] . "', "
-                                . "STATUS = '" . (($datos['estatus'] == 1) ? 'A' : 'B') . "' "
-                                . "WHERE CVE_ART like 'I" . $datos['id'] . "-%' "
-                                . "AND LIN_PROD = 'ADST'";
-                            \Librerias\Modelos\Base::connectDBSAE()->query($query);
-                            $consultaSAE = \Librerias\Modelos\Base::connectDBSAE()->affected_rows();
-                        }
                         return $this->catModelosEquipo('3');
                     } else {
                         return $this->catModelosEquipo('3');
@@ -1643,7 +1601,7 @@ class Catalogo extends General
                 cvme.Nombre as Marca,
                 cvse.Nombre as Sublinea,
                 cvle.Nombre as Linea,                
-                cvme.Flag,
+                cvmoe.Flag,
                 if(cvmoe.Flag = 0,'Inactivo','Activo') as Activacion
                 from cat_v3_lineas_equipo cvle inner join cat_v3_sublineas_equipo cvse
                 on cvle.Id = cvse.Linea

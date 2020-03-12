@@ -116,6 +116,7 @@ class ServiciosTicket extends General
                 tst.IdEstatus,
                 tst.IdSolicitud,
                 estatus(tst.IdEstatus)as NombreEstatus,
+                sucursal(tst.IdSucursal) as Sucursal,
                 (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
             from t_servicios_ticket tst inner join cat_v3_servicios_departamento csd
             on tst.IdTipoServicio = csd.Id or tst.IdTipoServicio = 9
@@ -135,6 +136,7 @@ class ServiciosTicket extends General
                 tst.IdEstatus,
                 tst.IdSolicitud,
                 estatus(tst.IdEstatus)as NombreEstatus,
+                sucursal(tst.IdSucursal) as Sucursal,
                 (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
             from t_servicios_ticket tst inner join cat_v3_servicios_departamento csd
             on tst.IdTipoServicio = csd.Id or tst.IdTipoServicio = 9
@@ -156,16 +158,17 @@ class ServiciosTicket extends General
                 $queryUnion = $queryUnionLogistica;
             }
 
-            return $this->DBST->getServicios('
+            $query = '
             select 
                 tst.Id,
                 tst.Ticket,
                 tipoServicio(tst.IdTipoServicio) as Servicio,
-                usuario((select Solicita from t_solicitudes where Id = tst.IdSolicitud)) as Solicita,                
+                usuario((select Solicita from t_solicitudes where Id = tst.IdSolicitud)) as Solicita,
                 tst.FechaCreacion,
                 tst.Descripcion,
                 tst.IdEstatus,
                 tst.IdSolicitud,
+                sucursal(tst.IdSucursal) as Sucursal,
                 estatus(tst.IdEstatus)as NombreEstatus,
                 (SELECT Folio FROM t_solicitudes WHERE Id = tst.IdSolicitud) Folio
             from t_servicios_ticket tst inner join cat_v3_servicios_departamento csd
@@ -176,8 +179,10 @@ class ServiciosTicket extends General
             and tst.IdEstatus in (1,2,3,10,12)
             AND tst.IdTipoServicio != 45
             ' . $whereFolio . '
-            and (csd.IdDepartamento = ' . $departamento . ' or tst.IdTipoServicio = 9) group by tst.Id desc '
-                . $queryUnion);
+            and (concat(",",csd.IdDepartamentos,",") like "%,' . $departamento . ',%" or tst.IdTipoServicio = 9) 
+            group by tst.Id desc '
+                . $queryUnion;                
+            return $this->DBST->getServicios($query);
         }
     }
 

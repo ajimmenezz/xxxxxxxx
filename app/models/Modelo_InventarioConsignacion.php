@@ -104,7 +104,7 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
     }
 
     public function getComponentesPoliza($modelo) {
-        $consulta = $this->consulta("select * from cat_v3_componentes_equipo where IdModelo = '" . $modelo . "' order by Nombre;");
+        $consulta = $this->consulta("select * from cat_v3_componentes_equipo where IdModelo = '" . $modelo . "' and Flag = 1 order by Nombre;");
         return $consulta;
     }
 
