@@ -1,11 +1,10 @@
-
 <!-- Empezando #contenido -->
 <div id="divListaCatalogos" class="content">
-    <!-- Empezando titulo de la pagina -->    
+    <!-- Empezando titulo de la pagina -->
     <!-- Finalizando titulo de la pagina -->
     <div class="row">
         <div class="col-md-6 col-xs-6">
-            <h1 class="page-header">Catálogo <small>de Almacenes Virtuales</small></h1>            
+            <h1 class="page-header">Catálogo <small>de Almacenes Virtuales</small></h1>
         </div>
         <div class="col-md-6 col-xs-6 text-right">
             <div class="btn-group">
@@ -13,14 +12,14 @@
                     Acciones <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right">
-                    <li id="btnTraspasarAlmacenes"><a href="#"><i class="fa fa-exchange"></i> Traspasar productos.</a></li>                    
-                    <li id="btnVerTraspasos"><a href="#"><i class="fa fa-eye"></i> Ver Traspasos.</a></li>                    
-                    <li id="btnVerAltasIniciales"><a href="#"><i class="fa fa-eye"></i> Ver Altas Iniciales.</a></li>                    
-                    <li id="btnVerKitsEquipo"><a href="#"><i class="fa fa-laptop"></i> Kits de Equipos.</a></li>                    
-                    <li id="btnDeshuesarEquipo"><a href="#"><i class="fa fa-wrench"></i> Deshuesar Equipo.</a></li>                    
-                    <li id="btnHistorialEquipo"><a href="#"><i class="fa fa-history"></i> Historial de Equipo.</a></li>                    
+                    <li id="btnTraspasarAlmacenes"><a href="#"><i class="fa fa-exchange"></i> Traspasar productos.</a></li>
+                    <li id="btnVerTraspasos"><a href="#"><i class="fa fa-eye"></i> Ver Traspasos.</a></li>
+                    <li id="btnVerAltasIniciales"><a href="#"><i class="fa fa-eye"></i> Ver Altas Iniciales.</a></li>
+                    <li id="btnVerKitsEquipo"><a href="#"><i class="fa fa-laptop"></i> Kits de Equipos.</a></li>
+                    <li id="btnDeshuesarEquipo"><a href="#"><i class="fa fa-wrench"></i> Deshuesar Equipo.</a></li>
+                    <li id="btnHistorialEquipo"><a href="#"><i class="fa fa-history"></i> Historial de Equipo.</a></li>
                 </ul>
-            </div>             
+            </div>
         </div>
     </div>
     <!-- Empezando panel catálogo de almacenes virtuales -->
@@ -28,8 +27,8 @@
         <!--Empezando cabecera del panel-->
         <div class="panel-heading">
             <div class="panel-heading-btn">
-                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>                            
-                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>                            
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
             </div>
             <h4 class="panel-title">Catálogo de Almacenes Virtuales</h4>
         </div>
@@ -37,26 +36,33 @@
         <!--Empezando cuerpo del panel-->
         <div class="panel-body">
             <!--Empezando fila 1 -->
-            <div id="formularioAlmacen" class="row m-t-10" >
+            <div id="formularioAlmacen" class="row m-t-10">
             </div>
             <!--Finalizando fila 1-->
             <!--Empezando tabla fila 2 -->
-            <div id='listaAlmacenes' class="row"> 
-                <!--Empezando error--> 
+            <div id='listaAlmacenes' class="row">
+                <!--Empezando error-->
                 <div class="col-md-12">
                     <div class="errorListaAlmacenes"></div>
                 </div>
                 <!--Finalizando Error-->
-                <div class="col-md-12">                        
+                <div class="col-md-12">
                     <div class="form-group">
                         <div class="col-md-6">
                             <h3 class="m-t-10">Lista de Almacenes Virtuales</h3>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group text-right">
-                                <a href="javascript:;" class="btn btn-success btn-lg " id="btnAgregarAlmacen"><i class="fa fa-plus"></i> Agregar</a>
+                        <?php
+                        if (isset($datos['userInfo']) && in_array(337, $datos['userInfo']['Permisos']) || in_array(337, $datos['userInfo']['PermisosAdicionales'])) {
+                            $condicionPermiso = "";
+                        ?>
+                            <div class="col-md-6">
+                                <div class="form-group text-right">
+                                    <a href="javascript:;" class="btn btn-success btn-lg " id="btnAgregarAlmacen"><i class="fa fa-plus"></i> Agregar</a>
+                                </div>
                             </div>
-                        </div>
+                        <?php
+                        }
+                        ?>
                         <!--Empezando Separador-->
                         <div class="col-md-12">
                             <div class="underline m-b-15 m-t-15"></div>
@@ -86,11 +92,11 @@
                                         echo '</tr>';
                                     }
                                 }
-                                ?>                                        
+                                ?>
                             </tbody>
                         </table>
-                    </div>    
-                </div> 
+                    </div>
+                </div>
             </div>
             <!--Finalizando tabla fila 2-->
         </div>
