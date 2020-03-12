@@ -4984,10 +4984,11 @@ class Seguimientos extends General {
     public function guardarRecepcionTecnico(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $archivos = $result = null;
         $CI = parent::getCI();
         $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/solicitudesEquipo/Solicitud_' . $datos['id'] . '/RecepcionTecnico/';
         $archivos = "";
+        $datosAllabAnterior = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+
         if (!empty($_FILES)) {
             $archivos = setMultiplesArchivos($CI, 'evidenciaRecepcionTecnico', $carpeta);
             if ($archivos) {
@@ -5029,6 +5030,8 @@ class Seguimientos extends General {
                 'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200
             ];
+            $this->traspasoEquipo(array('origenUsuario' => $datosAllabAnterior[0]['IdUsuario'], 'destinoUsuario' => $datos['idUsuario'], 'equipos' => [$datosAllabAnterior[0]['IdInventarioRetiro']]));
+
             return $mensaje;
         } else {
             $mensaje = [
@@ -5041,12 +5044,12 @@ class Seguimientos extends General {
 
     public function guardarRecepcionLogistica(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $archivos = $result = null;
         $CI = parent::getCI();
         $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/solicitudesEquipo/Solicitud_' . $datos['id'] . '/RecepcionLogistica/';
         $archivos = "";
+        $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+
         if (!empty($_FILES)) {
             $archivos = setMultiplesArchivos($CI, 'evidenciaRecepcionLogistica', $carpeta);
             if ($archivos) {
@@ -5081,6 +5084,9 @@ class Seguimientos extends General {
                 'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200
             ];
+
+            $this->traspasoEquipo(array('origenUsuario' => $datosAllab[0]['IdUsuario'], 'destinoUsuario' => $datos['idUsuario'], 'equipos' => [$datosAllab[0]['IdInventarioRetiro']]));
+
             return $mensaje;
         } else {
             $mensaje = [
@@ -5094,10 +5100,11 @@ class Seguimientos extends General {
     public function guardarRecepcionAlmacen(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $archivos = $result = null;
         $CI = parent::getCI();
         $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/solicitudesEquipo/Solicitud_' . $datos['id'] . '/RecepcionAlmacen/';
         $archivos = "";
+        $datosAllabAnterior = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+
         if (!empty($_FILES)) {
             $archivos = setMultiplesArchivos($CI, 'evidenciaRecepcionAlmacen', $carpeta);
             if ($archivos) {
@@ -5142,7 +5149,7 @@ class Seguimientos extends General {
                     'code' => 200
                 ];
 
-                $this->traspasoEquipo(array('origen' => $datosAllab[0]['IdUsuario'], 'destino' => $datos['idUsuario'], 'equipos' => ['18286']));
+                $this->traspasoEquipo(array('origenUsuario' => $datosAllabAnterior[0]['IdUsuario'], 'destinoUsuario' => $datos['idUsuario'], 'equipos' => [$datosAllabAnterior[0]['IdInventarioRetiro']]));
 
                 return $mensaje;
             } else {
@@ -5187,6 +5194,9 @@ class Seguimientos extends General {
                     'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                     'code' => 200
                 ];
+
+                $this->traspasoEquipo(array('origenUsuario' => $datosAllabAnterior[0]['IdUsuario'], 'destinoUsuario' => $datos['idUsuario'], 'equipos' => [$datosAllabAnterior[0]['IdInventarioRetiro']]));
+
                 return $mensaje;
             } else {
                 $mensaje = [
@@ -5205,6 +5215,8 @@ class Seguimientos extends General {
         $CI = parent::getCI();
         $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/solicitudesEquipo/Solicitud_' . $datos['id'] . '/RecepcionLaboratorio/';
         $archivos = "";
+        $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+
         if (!empty($_FILES)) {
             $archivos = setMultiplesArchivos($CI, 'evidenciaRecepcionLab', $carpeta);
             if ($archivos) {
@@ -5239,6 +5251,9 @@ class Seguimientos extends General {
                 'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200
             ];
+
+            $this->traspasoEquipo(array('origenUsuario' => $datosAllab[0]['IdUsuario'], 'destinoUsuario' => $datos['idUsuario'], 'equipos' => [$datosAllab[0]['IdInventarioRetiro']]));
+
             return $mensaje;
         } else {
             $mensaje = [
@@ -5250,7 +5265,10 @@ class Seguimientos extends General {
     }
 
     public function traspasoEquipo(array $datos) {
-        $this->DBIC->traspasarProductos($datos);
+        $idInvetarioOrigen = $this->DBIC->getAlmacenesVirtualesPorUsuario($datos['origenUsuario']);
+        $idInvetarioDestino = $this->DBIC->getAlmacenesVirtualesPorUsuario($datos['destinoUsuario']);
+
+        $this->DBIC->traspasarProductos(array('origen' => $idInvetarioOrigen[0]['Id'], 'destino' => $idInvetarioDestino[0]['Id'], 'equipos' => $datos['equipos']));
     }
 
     public function consultaServiciosTecnico(array $datos) {
