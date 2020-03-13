@@ -2108,7 +2108,7 @@ class Solicitud extends General
 
         $path = "../public/storage/Archivos/Reportes";
         if (!is_dir($path)) {
-            mkdir($path, 775, true);
+            mkdir($path, 0775, true);
         }
         $this->Excel->saveFile($ruta);
 
